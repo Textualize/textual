@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 import pytest
 
 from textual.app import App, ComposeResult
@@ -5,8 +6,8 @@ from textual.containers import Horizontal
 from textual.widget import Widget
 
 
-@pytest.fixture
-async def app():
+@asynccontextmanager
+async def run_app():
     class HorizontalAutoWidth(App):
         def compose(self) -> ComposeResult:
             child1 = Widget(id="child1")
@@ -23,7 +24,8 @@ async def app():
         yield app
 
 
-async def test_horizontal_get_content_width(app):
-    size = app.screen.size
-    width = app.horizontal.get_content_width(size, size)
-    assert width == 15
+async def test_horizontal_get_content_width():
+    async with run_app() as app:
+        size = app.screen.size
+        width = app.horizontal.get_content_width(size, size)
+        assert width == 15

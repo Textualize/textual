@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import asyncio
 import sys
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -8,6 +7,7 @@ from functools import partial
 from typing import TYPE_CHECKING, Any, Callable, TypeVar
 
 from . import _clock
+from ._anyio import Flag, _spoof_asyncio_if_needed
 from ._callback import invoke
 from ._easing import DEFAULT_EASING, EASING
 from ._types import CallbackType
@@ -169,17 +169,18 @@ class Animator:
     """An object to manage updates to a given attribute over a period of time."""
 
     def __init__(self, app: App, frames_per_second: int = 60) -> None:
-        self._animations: dict[tuple[object, str], Animation] = {}
-        self.app = app
-        self._timer = Timer(
-            app,
-            1 / frames_per_second,
-            app,
-            name="Animator",
-            callback=self,
-            pause=True,
-        )
-        self._idle_event = asyncio.Event()
+        with _spoof_asyncio_if_needed():
+            self._animations: dict[tuple[object, str], Animation] = {}
+            self.app = app
+            self._timer = Timer(
+                app,
+                1 / frames_per_second,
+                app,
+                name="Animator",
+                callback=self,
+                pause=True,
+            )
+            self._idle_event = Flag()
 
     async def start(self) -> None:
         """Start the animator task."""
@@ -190,8 +191,6 @@ class Animator:
         """Stop the animator task."""
         try:
             await self._timer.stop()
-        except asyncio.CancelledError:
-            pass
         finally:
             self._idle_event.set()
 

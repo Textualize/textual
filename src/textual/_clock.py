@@ -1,11 +1,11 @@
-import asyncio
+import anyio
 
 from ._time import time
 
 
 """
 A module that serves as the single source of truth for everything time-related in a Textual app.
-Having this logic centralised makes it easier to simulate time in integration tests, 
+Having this logic centralised makes it easier to simulate time in integration tests,
 by mocking the few functions exposed by this module.
 """
 
@@ -21,7 +21,7 @@ class _Clock:
         return time()
 
     async def sleep(self, seconds: float) -> None:
-        await asyncio.sleep(seconds)
+        await anyio.sleep(seconds)
 
 
 _clock = _Clock()
@@ -39,7 +39,7 @@ def get_time_no_wait() -> float:
 
 async def get_time() -> float:
     """
-    Asynchronous version of `get_time`. Useful in situations where we want asyncio to be
+    Asynchronous version of `get_time`. Useful in situations where we want anyio to be
     able to "do things" elsewhere right before we fetch the time.
 
     Returns:

@@ -16,7 +16,6 @@ if TYPE_CHECKING:
     from .timer import Timer as TimerClass
     from .timer import TimerCallback
     from .widget import Widget
-    import asyncio
 
 
 @rich.repr.auto

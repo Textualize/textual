@@ -1,6 +1,6 @@
 from __future__ import annotations
+from functools import partial
 
-import asyncio
 import inspect
 import io
 import os
@@ -9,7 +9,6 @@ import sys
 import threading
 import unicodedata
 import warnings
-from asyncio import Task
 from contextlib import asynccontextmanager, redirect_stderr, redirect_stdout
 from datetime import datetime
 from pathlib import Path, PurePath
@@ -30,15 +29,19 @@ from typing import (
 )
 from weakref import WeakSet, WeakValueDictionary
 
+import anyio
+import anyio.abc
 import nanoid
 import rich
 import rich.repr
+import sniffio
 from rich.console import Console, RenderableType
 from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
 from rich.traceback import Traceback
 
 from . import Logger, LogGroup, LogVerbosity, actions, events, log, messages
+from ._anyio import _spoof_asyncio_if_needed
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
 from ._callback import invoke
@@ -75,9 +78,6 @@ WINDOWS = PLATFORM == "Windows"
 
 # asyncio will warn against resources not being cleared
 warnings.simplefilter("always", ResourceWarning)
-
-# `asyncio.get_event_loop()` is deprecated since Python 3.10:
-_ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED = sys.version_info >= (3, 10, 0)
 
 LayoutDefinition = "dict[str, Any]"
 
@@ -247,115 +247,129 @@ class App(Generic[ReturnType], DOMNode):
         css_path: CSSPathType = None,
         watch_css: bool = False,
     ):
-        # N.B. This must be done *before* we call the parent constructor, because MessagePump's
-        # constructor instantiates a `asyncio.PriorityQueue` and in Python versions older than 3.10
-        # this will create some first references to an asyncio loop.
-        _init_uvloop()
+        # App objects can be, and often are, instantiated outside of an async
+        # context and only enter async-land with the synchronous run method.
+        # This puts us in an awkward situation here because we want to use
+        # anyio objects, but anyio does not know what backend to use.
+        #
+        # We will assume that asyncio should be the backend in this case. If
+        # that turns out not to be true later, we raise an exception in
+        # run_async. Users who hit this can always create their app object in
+        # an async context and stop our guessing.
+        with _spoof_asyncio_if_needed() as async_lib:
+            super().__init__()
+            self.features: frozenset[FeatureFlag] = parse_features(
+                os.getenv("TEXTUAL", "")
+            )
 
-        super().__init__()
-        self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
+            self._async_lib = async_lib
 
-        self._filter: LineFilter | None = None
-        environ = dict(os.environ)
-        no_color = environ.pop("NO_COLOR", None)
-        if no_color is not None:
-            self._filter = Monochrome()
+            self._filter: LineFilter | None = None
+            environ = dict(os.environ)
+            no_color = environ.pop("NO_COLOR", None)
+            if no_color is not None:
+                self._filter = Monochrome()
 
-        self._writer_thread: _WriterThread | None = None
-        if sys.__stdout__ is None:
-            file = _NullFile()
-        else:
-            self._writer_thread = _WriterThread()
-            self._writer_thread.start()
-            file = self._writer_thread
+            self._writer_thread: _WriterThread | None = None
+            if sys.__stdout__ is None:
+                file = _NullFile()
+            else:
+                self._writer_thread = _WriterThread()
+                self._writer_thread.start()
+                file = self._writer_thread
 
-        self.console = Console(
-            file=file,
-            markup=False,
-            highlight=False,
-            emoji=False,
-            legacy_windows=False,
-            _environ=environ,
-        )
-        self.error_console = Console(markup=False, stderr=True)
-        self.driver_class = driver_class or self.get_driver_class()
-        self._screen_stack: list[Screen] = []
-        self._sync_available = False
+            self.console = Console(
+                file=file,
+                markup=False,
+                highlight=False,
+                emoji=False,
+                legacy_windows=False,
+                _environ=environ,
+            )
+            self.error_console = Console(markup=False, stderr=True)
+            self.driver_class = driver_class or self.get_driver_class()
+            self._screen_stack: list[Screen] = []
+            self._sync_available = False
 
-        self.mouse_over: Widget | None = None
-        self.mouse_captured: Widget | None = None
-        self._driver: Driver | None = None
-        self._exit_renderables: list[RenderableType] = []
+            self.mouse_over: Widget | None = None
+            self.mouse_captured: Widget | None = None
+            self._driver: Driver | None = None
+            self._exit_renderables: list[RenderableType] = []
+            self._task_group: anyio.abc.TaskGroup | None = None
 
-        self._action_targets = {"app", "screen"}
-        self._animator = Animator(self)
-        self._animate = self._animator.bind(self)
-        self.mouse_position = Offset(0, 0)
-        self.title = (
-            self.TITLE if self.TITLE is not None else f"{self.__class__.__name__}"
-        )
-        self.sub_title = self.SUB_TITLE if self.SUB_TITLE is not None else ""
+            self._action_targets = {"app", "screen"}
+            self._animator = Animator(self)
+            self._animate = self._animator.bind(self)
+            self.mouse_position = Offset(0, 0)
+            self.title = (
+                self.TITLE if self.TITLE is not None else f"{self.__class__.__name__}"
+            )
+            self.sub_title = self.SUB_TITLE if self.SUB_TITLE is not None else ""
 
-        self._logger = Logger(self._log)
+            self._logger = Logger(self._log)
 
-        self._bindings.bind("ctrl+c", "quit", show=False, universal=True)
-        self._refresh_required = False
+            self._bindings.bind("ctrl+c", "quit", show=False, universal=True)
+            self._refresh_required = False
 
-        self.design = DEFAULT_COLORS
+            self.design = DEFAULT_COLORS
 
-        self.stylesheet = Stylesheet(variables=self.get_css_variables())
-        self._require_stylesheet_update: set[DOMNode] = set()
+            self.stylesheet = Stylesheet(variables=self.get_css_variables())
+            self._require_stylesheet_update: set[DOMNode] = set()
 
-        css_path = css_path or self.CSS_PATH
-        if css_path is not None:
-            # When value(s) are supplied for CSS_PATH, we normalise them to a list of Paths.
-            if isinstance(css_path, str):
-                css_paths = [Path(css_path)]
-            elif isinstance(css_path, PurePath):
-                css_paths = [css_path]
-            elif isinstance(css_path, list):
+            css_path = css_path or self.CSS_PATH
+            if css_path is not None:
+                # When value(s) are supplied for CSS_PATH, we normalise them to a list of Paths.
+                if isinstance(css_path, str):
+                    css_paths = [Path(css_path)]
+                elif isinstance(css_path, PurePath):
+                    css_paths = [css_path]
+                elif isinstance(css_path, list):
+                    css_paths = []
+                    for path in css_path:
+                        css_paths.append(Path(path) if isinstance(path, str) else path)
+                else:
+                    raise CssPathError(
+                        "Expected a str, Path or list[str | Path] for the CSS_PATH."
+                    )
+
+                # We want the CSS path to be resolved from the location of the App subclass
+                css_paths = [
+                    _make_path_object_relative(css_path, self) for css_path in css_paths
+                ]
+            else:
                 css_paths = []
-                for path in css_path:
-                    css_paths.append(Path(path) if isinstance(path, str) else path)
-            else:
-                raise CssPathError(
-                    "Expected a str, Path or list[str | Path] for the CSS_PATH."
-                )
 
-            # We want the CSS path to be resolved from the location of the App subclass
-            css_paths = [
-                _make_path_object_relative(css_path, self) for css_path in css_paths
-            ]
-        else:
-            css_paths = []
+            self.css_path = css_paths
+            self._registry: WeakSet[DOMNode] = WeakSet()
 
-        self.css_path = css_paths
-        self._registry: WeakSet[DOMNode] = WeakSet()
+            self._installed_screens: WeakValueDictionary[
+                str, Screen | Callable[[], Screen]
+            ] = WeakValueDictionary()
+            self._installed_screens.update(**self.SCREENS)
 
-        self._installed_screens: WeakValueDictionary[
-            str, Screen | Callable[[], Screen]
-        ] = WeakValueDictionary()
-        self._installed_screens.update(**self.SCREENS)
+            self.devtools: DevtoolsClient | None = None
+            if "devtools" in self.features:
+                # The devtools client uses aiohttp, which is only compatible
+                # with asyncio.
+                if async_lib != "asyncio":
+                    raise AppError("devtools can only be used with asyncio")
+                try:
+                    from .devtools.client import DevtoolsClient
+                except ImportError:
+                    # Dev dependencies not installed
+                    pass
+                else:
+                    self.devtools = DevtoolsClient()
 
-        self.devtools: DevtoolsClient | None = None
-        if "devtools" in self.features:
-            try:
-                from .devtools.client import DevtoolsClient
-            except ImportError:
-                # Dev dependencies not installed
-                pass
-            else:
-                self.devtools = DevtoolsClient()
+            self._return_value: ReturnType | None = None
 
-        self._return_value: ReturnType | None = None
-
-        self.css_monitor = (
-            FileMonitor(self.css_path, self._on_css_change)
-            if ((watch_css or self.debug) and self.css_path)
-            else None
-        )
-        self._screenshot: str | None = None
-        self._dom_lock = asyncio.Lock()
+            self.css_monitor = (
+                FileMonitor(self.css_path, self._on_css_change)
+                if ((watch_css or self.debug) and self.css_path)
+                else None
+            )
+            self._screenshot: str | None = None
+            self._dom_lock = anyio.Lock()
 
     @property
     def return_value(self) -> ReturnType | None:
@@ -692,15 +706,15 @@ class App(Generic[ReturnType], DOMNode):
         app = self
         driver = app._driver
         assert driver is not None
-        await asyncio.sleep(0.02)
+        await anyio.sleep(0.02)
         for key in keys:
             if key == "_":
                 print("(pause 50ms)")
-                await asyncio.sleep(0.05)
+                await anyio.sleep(0.05)
             elif key.startswith("wait:"):
                 _, wait_ms = key.split(":")
                 print(f"(pause {wait_ms}ms)")
-                await asyncio.sleep(float(wait_ms) / 1000)
+                await anyio.sleep(float(wait_ms) / 1000)
             else:
                 if len(key) == 1 and not key.isalnum():
                     key = (
@@ -723,8 +737,8 @@ class App(Generic[ReturnType], DOMNode):
                 #  More information here: https://github.com/Textualize/textual/issues/1009
                 #  This conditional sleep can be removed after that issue is closed.
                 if key == "tab":
-                    await asyncio.sleep(0.05)
-                await asyncio.sleep(0.025)
+                    await anyio.sleep(0.05)
+                await anyio.sleep(0.025)
         await app._animator.wait_for_idle()
 
     @asynccontextmanager
@@ -745,35 +759,44 @@ class App(Generic[ReturnType], DOMNode):
         from .pilot import Pilot
 
         app = self
-        app_ready_event = asyncio.Event()
+        app_ready_event = anyio.Event()
 
         def on_app_ready() -> None:
             """Called when app is ready to process events."""
             app_ready_event.set()
 
-        async def run_app(app) -> None:
-            await app._process_messages(
-                ready_callback=on_app_ready,
-                headless=headless,
-                terminal_size=size,
+        async with self._run_task_group() as task_group:
+            # Launch the app in the "background"
+            task_group.start_soon(
+                partial(
+                    self._process_messages,
+                    ready_callback=on_app_ready,
+                    headless=headless,
+                    terminal_size=size,
+                )
             )
 
-        # Launch the app in the "background"
-        app_task = asyncio.create_task(run_app(app))
+            # Wait until the app has performed all startup routines.
+            await app_ready_event.wait()
 
-        # Wait until the app has performed all startup routines.
-        await app_ready_event.wait()
+            # Get the app in an active state.
+            app._set_active()
 
-        # Get the app in an active state.
-        app._set_active()
+            # Context manager returns pilot object to manipulate the app
+            try:
+                yield Pilot(app)
+            finally:
+                # Shutdown the app cleanly
+                await app._shutdown()
 
-        # Context manager returns pilot object to manipulate the app
-        try:
-            yield Pilot(app)
-        finally:
-            # Shutdown the app cleanly
-            await app._shutdown()
-            await app_task
+    @asynccontextmanager
+    async def _run_task_group(self):
+        async with anyio.create_task_group() as task_group:
+            self._task_group = task_group
+            try:
+                yield task_group
+            finally:
+                self._task_group = None
 
     async def run_async(
         self,
@@ -796,12 +819,13 @@ class App(Generic[ReturnType], DOMNode):
         from .pilot import Pilot
 
         app = self
-
-        auto_pilot_task: Task | None = None
+        if self._async_lib != sniffio.current_async_library():
+            raise AppError(
+                "App was initialized for a different async library than it is currently running in"
+            )
 
         async def app_ready() -> None:
             """Called by the message loop when the app is ready."""
-            nonlocal auto_pilot_task
             if auto_pilot is not None:
 
                 async def run_auto_pilot(
@@ -814,18 +838,15 @@ class App(Generic[ReturnType], DOMNode):
                         raise
 
                 pilot = Pilot(app)
-                auto_pilot_task = asyncio.create_task(run_auto_pilot(auto_pilot, pilot))
+                self._task_group.start_soon(run_auto_pilot, auto_pilot, pilot)
 
-        try:
-            await app._process_messages(
-                ready_callback=None if auto_pilot is None else app_ready,
-                headless=headless,
-                terminal_size=size,
-            )
-        finally:
+        async with self._run_task_group():
             try:
-                if auto_pilot_task is not None:
-                    await auto_pilot_task
+                await app._process_messages(
+                    ready_callback=None if auto_pilot is None else app_ready,
+                    headless=headless,
+                    terminal_size=size,
+                )
             finally:
                 await app._shutdown()
 
@@ -858,13 +879,7 @@ class App(Generic[ReturnType], DOMNode):
                 auto_pilot=auto_pilot,
             )
 
-        if _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED:
-            # N.B. This doesn't work with Python<3.10, as we end up with 2 event loops:
-            asyncio.run(run_app())
-        else:
-            # However, this works with Python<3.10:
-            event_loop = asyncio.get_event_loop()
-            event_loop.run_until_complete(run_app())
+        anyio.run(run_app)
         return self.return_value
 
     async def _on_css_change(self) -> None:
@@ -1319,7 +1334,7 @@ class App(Generic[ReturnType], DOMNode):
         self.log.system("---")
 
         self.log.system(driver=self.driver_class)
-        self.log.system(loop=asyncio.get_running_loop())
+        self.log.system(async_backend=self._async_lib)
         self.log.system(features=self.features)
 
         try:
@@ -1383,8 +1398,6 @@ class App(Generic[ReturnType], DOMNode):
 
             try:
                 await self._process_messages_loop()
-            except asyncio.CancelledError:
-                pass
             finally:
                 self._running = False
                 try:
@@ -1403,9 +1416,11 @@ class App(Generic[ReturnType], DOMNode):
                 "type[Driver]",
                 HeadlessDriver if headless else self.driver_class,
             )
-            driver = self._driver = driver_class(self.console, self, size=terminal_size)
+            driver = self._driver = driver_class(
+                self.console, self, self._task_group, size=terminal_size
+            )
 
-            driver.start_application_mode()
+            await driver.start_application_mode()
             try:
                 if headless:
                     await run_process_messages()
@@ -1522,7 +1537,7 @@ class App(Generic[ReturnType], DOMNode):
             self._registry.add(child)
             child._attach(parent)
             child._post_register(self)
-            child._start_messages()
+            child._start_messages(self._task_group)
 
     def _register(
         self,
@@ -1588,9 +1603,8 @@ class App(Generic[ReturnType], DOMNode):
             parent (Widget): The parent of the Widget.
             widget (Widget): The Widget to start.
         """
-
         widget._attach(parent)
-        widget._start_messages()
+        widget._start_messages(self._task_group)
         self.app._registry.add(widget)
 
     def is_mounted(self, widget: Widget) -> bool:
@@ -1629,7 +1643,7 @@ class App(Generic[ReturnType], DOMNode):
         driver = self._driver
         self._running = False
         if driver is not None:
-            driver.disable_input()
+            await driver.disable_input()
         await self._close_all()
         await self._close_messages()
 
@@ -1643,7 +1657,7 @@ class App(Generic[ReturnType], DOMNode):
             self._writer_thread.stop()
 
     async def _on_exit_app(self) -> None:
-        await self._message_queue.put(None)
+        await self._close_messages()
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
         if self._screen_stack:
@@ -2001,13 +2015,13 @@ class App(Generic[ReturnType], DOMNode):
         """
 
         async def prune_widgets_task(
-            widgets: list[Widget], finished_event: asyncio.Event
+            widgets: list[Widget], finished_event: anyio.Event
         ) -> None:
             """Prune widgets as a background task.
 
             Args:
                 widgets (list[Widget]): Widgets to prune.
-                finished_event (asyncio.Event): Event to set when complete.
+                finished_event (anyio.Event): Event to set when complete.
             """
             try:
                 await self._prune_nodes(widgets)
@@ -2017,8 +2031,8 @@ class App(Generic[ReturnType], DOMNode):
         removed_widgets = self._detach_from_dom(widgets)
         self.refresh(layout=True)
 
-        finished_event = asyncio.Event()
-        asyncio.create_task(prune_widgets_task(removed_widgets, finished_event))
+        finished_event = anyio.Event()
+        self._task_group.start_soon(prune_widgets_task, removed_widgets, finished_event)
 
         return AwaitRemove(finished_event)
 
@@ -2046,14 +2060,13 @@ class App(Generic[ReturnType], DOMNode):
 
         for children in reversed(node_children):
             # Closing children can be done asynchronously.
-            close_messages = [
-                child._close_messages(wait=True) for child in children if child._running
-            ]
             # TODO: What if a message pump refuses to exit?
-            if close_messages:
-                await asyncio.gather(*close_messages)
+            async with anyio.create_task_group() as task_group:
                 for child in children:
-                    self._unregister(child)
+                    if child._running:
+                        task_group.start_soon(child._close_messages, True)
+            for child in children:
+                self._unregister(child)
 
         await root._close_messages(wait=False)
         self._unregister(root)
@@ -2134,26 +2147,3 @@ class App(Generic[ReturnType], DOMNode):
     def _end_update(self) -> None:
         if self._sync_available:
             self.console.file.write(SYNC_END)
-
-
-_uvloop_init_done: bool = False
-
-
-def _init_uvloop() -> None:
-    """
-    Import and install the `uvloop` asyncio policy, if available.
-    This is done only once, even if the function is called multiple times.
-    """
-    global _uvloop_init_done
-
-    if _uvloop_init_done:
-        return
-
-    try:
-        import uvloop
-    except ImportError:
-        pass
-    else:
-        uvloop.install()
-
-    _uvloop_init_done = True

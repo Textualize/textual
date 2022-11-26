@@ -17,7 +17,6 @@ a method which evaluates the query, such as first() and last().
 from __future__ import annotations
 
 from typing import cast, Generic, TYPE_CHECKING, Iterator, TypeVar, overload
-import asyncio
 
 import rich.repr
 

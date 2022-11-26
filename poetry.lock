@@ -35,7 +35,7 @@ frozenlist = ">=1.1.0"
 name = "anyio"
 version = "3.6.2"
 description = "High level compatibility layer for multiple asynchronous event loop implementations"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6.2"
 
@@ -879,7 +879,7 @@ python-versions = ">=3.6"
 name = "sniffio"
 version = "1.3.0"
 description = "Sniff out which async library your code is running under"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 
@@ -1019,7 +1019,7 @@ dev = ["aiohttp", "click", "msgpack"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "578d7f611a797d406b8db7c61f28796e81af2e637d9671caab9b4ea2b1cf93c6"
+content-hash = "0ca916cb4ecb4596aef790abb972d6d89a8cc29909b079c2cf3304b93b14b9b5"
 
 [metadata.files]
 aiohttp = [

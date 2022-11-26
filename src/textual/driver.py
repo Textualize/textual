@@ -1,6 +1,8 @@
 from __future__ import annotations
+import threading
 
-import asyncio
+import anyio.abc
+import anyio.from_thread
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
@@ -16,15 +18,16 @@ class Driver(ABC):
         self,
         console: "Console",
         target: "MessageTarget",
+        task_group: anyio.abc.TaskGroup,
         *,
         debug: bool = False,
         size: tuple[int, int] | None = None,
     ) -> None:
         self.console = console
         self._target = target
+        self._task_group = task_group
         self._debug = debug
         self._size = size
-        self._loop = asyncio.get_running_loop()
         self._mouse_down_time = _clock.get_time_no_wait()
 
     @property
@@ -33,9 +36,7 @@ class Driver(ABC):
         return False
 
     def send_event(self, event: events.Event) -> None:
-        asyncio.run_coroutine_threadsafe(
-            self._target.post_message(event), loop=self._loop
-        )
+        self._task_group.start_soon(self._target.post_message, event)
 
     def process_event(self, event: events.Event) -> None:
         """Performs some additional processing of events."""
@@ -51,12 +52,25 @@ class Driver(ABC):
             click_event = events.Click.from_event(event)
             self.send_event(click_event)
 
+    async def _start_thread_portal(self) -> anyio.from_thread.BlockingPortal:
+        """
+        Starts a blocking portal, which can be used to call back into the event
+        loop from a thread.
+        """
+
+        async def portal_task(*, task_status=anyio.TASK_STATUS_IGNORED):
+            async with anyio.from_thread.BlockingPortal() as portal:
+                task_status.started(portal)
+                await portal.sleep_until_stopped()
+
+        return await self._task_group.start(portal_task)
+
     @abstractmethod
-    def start_application_mode(self) -> None:
+    async def start_application_mode(self) -> None:
         ...
 
     @abstractmethod
-    def disable_input(self) -> None:
+    async def disable_input(self) -> None:
         ...
 
     @abstractmethod

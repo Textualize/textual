@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import rich.repr
 
-import asyncio
+import anyio
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -40,8 +40,8 @@ class Pilot:
         Args:
             delay (float, optional): Seconds to pause. Defaults to 50ms.
         """
-        # These sleep zeros, are to force asyncio to give up a time-slice,
-        await asyncio.sleep(delay)
+        # These sleep zeros, are to force anyio to give up a time-slice,
+        await anyio.sleep(delay)
 
     async def wait_for_animation(self) -> None:
         """Wait for any animation to complete."""

@@ -7,18 +7,14 @@ Timer objects are created by [set_interval][textual.message_pump.MessagePump.set
 
 from __future__ import annotations
 
-import asyncio
 import weakref
-from asyncio import (
-    CancelledError,
-    Event,
-    Task,
-)
 from typing import Awaitable, Callable, Union
+import anyio
 
 from rich.repr import Result, rich_repr
 
-from . import events
+from . import events, log
+from ._anyio import Flag, _spoof_asyncio_if_needed
 from ._callback import invoke
 from ._context import active_app
 from . import _clock
@@ -60,20 +56,23 @@ class Timer:
         skip: bool = True,
         pause: bool = False,
     ) -> None:
-        self._target_repr = repr(event_target)
-        self._target = weakref.ref(event_target)
-        self._interval = interval
-        self.sender = sender
-        self.name = f"Timer#{self._timer_count}" if name is None else name
-        self._timer_count += 1
-        self._callback = callback
-        self._repeat = repeat
-        self._skip = skip
-        self._active = Event()
-        self._task: Task | None = None
-        self._reset: bool = False
-        if not pause:
-            self._active.set()
+        with _spoof_asyncio_if_needed():
+            self._target_repr = repr(event_target)
+            self._target = weakref.ref(event_target)
+            self._interval = interval
+            self.sender = sender
+            self.name = f"Timer#{self._timer_count}" if name is None else name
+            self._timer_count += 1
+            self._callback = callback
+            self._repeat = repeat
+            self._skip = skip
+            self._active = Flag()
+            self._has_task: bool = False
+            self._reset: bool = False
+            self._cancel_scope: anyio.abc.CancelScope | None = None
+            self._stopped = False
+            if not pause:
+                self._active.set()
 
     def __rich_repr__(self) -> Result:
         yield self._interval
@@ -87,27 +86,35 @@ class Timer:
             raise EventTargetGone()
         return target
 
-    def start(self) -> Task:
+    def start(self) -> None:
         """Start the timer return the task.
 
         Returns:
             Task: A Task instance for the timer.
         """
-        self._task = asyncio.create_task(self._run_timer())
-        return self._task
+        assert not self._has_task, "Timer has already been started"
+        app = active_app.get()
+        if not app._running:
+            return
+        # Being able to wait on the task to start would simplify this class and
+        # remove potential race conditions, but this method is not async.
+        app._task_group.start_soon(self._run_timer, name=self.name)
+        # This helps avoid the race condition where the task is queued, stop
+        # is called, and then the task actually starts.
+        self._stopped = False
+        self._has_task = True
 
     def stop_no_wait(self) -> None:
         """Stop the timer."""
-        if self._task is not None:
-            self._task.cancel()
-            self._task = None
+        self._stopped = True
+        if self._cancel_scope is not None:
+            self._cancel_scope.cancel()
 
     async def stop(self) -> None:
         """Stop the timer, and block until it exits."""
-        if self._task is not None:
-            self._active.set()
-            self._task.cancel()
-            self._task = None
+        self._stopped = True
+        if self._cancel_scope is not None:
+            self._cancel_scope.cancel()
 
     def pause(self) -> None:
         """Pause the timer.
@@ -128,10 +135,15 @@ class Timer:
 
     async def _run_timer(self) -> None:
         """Run the timer task."""
-        try:
-            await self._run()
-        except CancelledError:
-            pass
+        if self._stopped:
+            return
+        with anyio.CancelScope() as cancel_scope:
+            self._cancel_scope = cancel_scope
+            try:
+                await self._run()
+            finally:
+                self._has_task = False
+                self._cancel_scope = None
 
     async def _run(self) -> None:
         """Run the timer."""

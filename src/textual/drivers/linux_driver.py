@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-import asyncio
 import os
 from codecs import getincrementaldecoder
+from contextlib import contextmanager
 import selectors
 import signal
 import sys
@@ -10,6 +10,8 @@ import termios
 import tty
 from typing import Any, TYPE_CHECKING
 from threading import Event, Thread
+import anyio.abc
+import anyio.from_thread
 
 if TYPE_CHECKING:
     from rich.console import Console
@@ -33,15 +35,18 @@ class LinuxDriver(Driver):
         self,
         console: "Console",
         target: "MessageTarget",
+        task_group: anyio.abc.TaskGroup,
         *,
         debug: bool = False,
         size: tuple[int, int] | None = None,
     ) -> None:
-        super().__init__(console, target, debug=debug, size=size)
+        super().__init__(console, target, task_group, debug=debug, size=size)
         self.fileno = sys.stdin.fileno()
         self.attrs_before: list[Any] | None = None
         self.exit_event = Event()
         self._key_thread: Thread | None = None
+        self._thread_portal: anyio.from_thread.BlockingPortal | None = None
+        self._cancel_scopes = set()
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "debug", self._debug
@@ -91,24 +96,19 @@ class LinuxDriver(Driver):
         write("\x1b[?1006l")
         self.console.file.flush()
 
-    def start_application_mode(self):
-
-        loop = asyncio.get_running_loop()
-
+    async def start_application_mode(self):
         def send_size_event():
             terminal_size = self._get_terminal_size()
             width, height = terminal_size
             textual_size = Size(width, height)
             event = events.Resize(self._target, textual_size, textual_size)
-            asyncio.run_coroutine_threadsafe(
-                self._target.post_message(event),
-                loop=loop,
-            )
+            self.send_event(event)
 
-        def on_terminal_resize(signum, stack) -> None:
-            send_size_event()
-
-        signal.signal(signal.SIGWINCH, on_terminal_resize)
+        async def signal_handler():
+            with self._push_cancel_scope():
+                with anyio.open_signal_receiver(signal.SIGWINCH) as receiver:
+                    async for _ in receiver:
+                        send_size_event()
 
         self.console.set_alt_screen(True)
         self._enable_mouse_support()
@@ -136,14 +136,20 @@ class LinuxDriver(Driver):
 
             termios.tcsetattr(self.fileno, termios.TCSANOW, newattr)
 
+        self._thread_portal = await self._start_thread_portal()
+
         self.console.show_cursor(False)
         self.console.file.write("\033[?1003h\n")
         self.console.file.flush()
-        self._key_thread = Thread(target=self.run_input_thread, args=(loop,))
+        self._key_thread = Thread(
+            target=self.run_input_thread, args=(self._thread_portal,)
+        )
         send_size_event()
         self._key_thread.start()
         self._request_terminal_sync_mode_support()
         self._enable_bracketed_paste()
+
+        self._task_group.start_soon(signal_handler)
 
     def _request_terminal_sync_mode_support(self):
         self.console.file.write("\033[?2026$p")
@@ -168,15 +174,18 @@ class LinuxDriver(Driver):
             | termios.IGNCR
         )
 
-    def disable_input(self) -> None:
+    async def disable_input(self) -> None:
         try:
-            if not self.exit_event.is_set():
-                signal.signal(signal.SIGWINCH, signal.SIG_DFL)
+            if not self.exit_event.set():
+                for scope in self._cancel_scopes:
+                    scope.cancel()
+                self._cancel_scopes.clear()
                 self._disable_mouse_support()
                 self.exit_event.set()
                 if self._key_thread is not None:
                     self._key_thread.join()
                 self.exit_event.clear()
+                await self._thread_portal.stop()
                 termios.tcflush(self.fileno, termios.TCIFLUSH)
         except Exception as error:
             # TODO: log this
@@ -196,13 +205,24 @@ class LinuxDriver(Driver):
             self.console.set_alt_screen(False)
             self.console.show_cursor(True)
 
-    def run_input_thread(self, loop) -> None:
+    @contextmanager
+    def _push_cancel_scope(self):
+        with anyio.CancelScope() as cancel_scope:
+            self._cancel_scopes.add(cancel_scope)
+            try:
+                yield
+            finally:
+                self._cancel_scopes.discard(cancel_scope)
+
+    def run_input_thread(self, thread_portal: anyio.from_thread.BlockingPortal) -> None:
         try:
-            self._run_input_thread(loop)
+            self._run_input_thread(thread_portal)
         except Exception:
             pass  # TODO: log
 
-    def _run_input_thread(self, loop) -> None:
+    def _run_input_thread(
+        self, thread_portal: anyio.from_thread.BlockingPortal
+    ) -> None:
 
         selector = selectors.DefaultSelector()
         selector.register(self.fileno, selectors.EVENT_READ)
@@ -226,12 +246,20 @@ class LinuxDriver(Driver):
 
         try:
             while not self.exit_event.is_set():
+                # This causes spurious wakes and hurts battery life. It would
+                # be better if this code were event driven.
+                #
+                # One way to do this would be anyio.wait_socket_readable, which
+                # despite the documentation and function signature does seem to
+                # work on arbitrary file descriptors on Linux. Another way
+                # would be to use anyio.wrap_file, which does synchronous reads
+                # in its own thread.
                 selector_events = selector.select(0.1)
                 for _selector_key, mask in selector_events:
                     if mask | EVENT_READ:
                         unicode_data = decode(read(fileno, 1024))
                         for event in feed(unicode_data):
-                            self.process_event(event)
+                            thread_portal.call(self.process_event, event)
         except Exception as error:
             log(error)
         finally:

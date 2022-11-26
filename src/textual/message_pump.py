@@ -6,15 +6,18 @@ It is a base class for the App, Screen, and Widgets.
 
 """
 from __future__ import annotations
+from contextlib import contextmanager
+import math
 
-import asyncio
+import anyio
+import anyio.abc
 import inspect
-from asyncio import CancelledError, Queue, QueueEmpty, Task
 from functools import partial
-from typing import TYPE_CHECKING, Any, Awaitable, Callable, Iterable
+from typing import TYPE_CHECKING, Any, Awaitable, Callable, Generator, Iterable
 from weakref import WeakSet
 
 from . import Logger, events, log, messages
+from ._anyio import _spoof_asyncio_if_needed
 from ._callback import invoke
 from ._context import NoActiveAppError, active_app
 from ._time import time
@@ -62,23 +65,22 @@ class MessagePumpMeta(type):
 
 class MessagePump(metaclass=MessagePumpMeta):
     def __init__(self, parent: MessagePump | None = None) -> None:
-        self._message_queue: Queue[Message | None] = Queue()
-        self._parent = parent
-        self._running: bool = False
-        self._closing: bool = False
-        self._closed: bool = False
-        self._disabled_messages: set[type[Message]] = set()
-        self._pending_message: Message | None = None
-        self._task: Task | None = None
-        self._timers: WeakSet[Timer] = WeakSet()
-        self._last_idle: float = time()
-        self._max_idle: float | None = None
-        self._mounted_event = asyncio.Event()
-
-    @property
-    def task(self) -> Task:
-        assert self._task is not None
-        return self._task
+        with _spoof_asyncio_if_needed():
+            (
+                self._message_send_stream,
+                self._message_receive_stream,
+            ) = anyio.create_memory_object_stream(math.inf, Message)
+            self._parent = parent
+            self._running: bool = False
+            self._closing: bool = False
+            self._closed: bool = False
+            self._disabled_messages: set[type[Message]] = set()
+            self._pending_message: Message | None = None
+            self._timers: WeakSet[Timer] = WeakSet()
+            self._last_idle: float = time()
+            self._max_idle: float | None = None
+            self._mounted_event = anyio.Event()
+            self._done_event = anyio.Event()
 
     @property
     def has_parent(self) -> bool:
@@ -93,7 +95,7 @@ class MessagePump(metaclass=MessagePumpMeta):
             App: The current app.
 
         Raises:
-            NoActiveAppError: if no active app could be found for the current asyncio context
+            NoActiveAppError: if no active app could be found for the current async context
         """
         try:
             return active_app.get()
@@ -151,17 +153,15 @@ class MessagePump(metaclass=MessagePumpMeta):
         if self._closed:
             raise MessagePumpClosed("The message pump is closed")
         if self._pending_message is not None:
-            try:
-                return self._pending_message
-            finally:
-                self._pending_message = None
+            result = self._pending_message
+            self._pending_message = None
+            return result
 
-        message = await self._message_queue.get()
-
-        if message is None:
+        try:
+            return await self._message_receive_stream.receive()
+        except anyio.EndOfStream:
             self._closed = True
             raise MessagePumpClosed("The message pump is now closed")
-        return message
 
     def _peek_message(self) -> Message | None:
         """Peek the message at the head of the queue (does not remove it from the queue),
@@ -172,18 +172,14 @@ class MessagePump(metaclass=MessagePumpMeta):
         """
         if self._pending_message is None:
             try:
-                message = self._message_queue.get_nowait()
-            except QueueEmpty:
+                self._pending_message = self._message_receive_stream.receive_nowait()
+            except anyio.WouldBlock:
                 pass
-            else:
-                if message is None:
-                    self._closed = True
-                    raise MessagePumpClosed("The message pump is now closed")
-                self._pending_message = message
+            except anyio.EndOfStream:
+                self._closed = True
+                raise MessagePumpClosed("The message pump is now closed")
 
-        if self._pending_message is not None:
-            return self._pending_message
-        return None
+        return self._pending_message
 
     def set_timer(
         self,
@@ -279,7 +275,8 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     def _close_messages_no_wait(self) -> None:
         """Request the message queue to immediately exit."""
-        self._message_queue.put_nowait(messages.CloseMessages(sender=self))
+        if not self._closed and not self._closing:
+            self._message_send_stream.send_nowait(messages.CloseMessages(sender=self))
 
     async def _on_close_messages(self, message: messages.CloseMessages) -> None:
         await self._close_messages()
@@ -293,17 +290,21 @@ class MessagePump(metaclass=MessagePumpMeta):
         for timer in stop_timers:
             await timer.stop()
         self._timers.clear()
-        await self._message_queue.put(events.Unmount(sender=self))
+        await self._message_send_stream.send(events.Unmount(sender=self))
         Reactive._reset_object(self)
-        await self._message_queue.put(None)
-        if wait and self._task is not None and asyncio.current_task() != self._task:
+        await self._message_send_stream.aclose()
+        if wait:
             # Ensure everything is closed before returning
-            await self._task
+            # JR TODO: We can't wait on this event because we're called from within event dispatch and will deadlock
+            # await self._done_event.wait()
+            pass
 
-    def _start_messages(self) -> None:
+    def _start_messages(self, task_group: anyio.abc.TaskGroup) -> None:
         """Start messages task."""
         if self.app._running:
-            self._task = asyncio.create_task(self._process_messages())
+            task_group.start_soon(
+                self._process_messages, name=str(self) + " process messages"
+            )
 
     async def _process_messages(self) -> None:
         self._running = True
@@ -312,12 +313,11 @@ class MessagePump(metaclass=MessagePumpMeta):
 
         try:
             await self._process_messages_loop()
-        except CancelledError:
-            pass
         finally:
             self._running = False
             for timer in list(self._timers):
                 await timer.stop()
+            self._done_event.set()
 
     async def _pre_process(self) -> None:
         """Procedure to run before processing messages."""
@@ -340,14 +340,13 @@ class MessagePump(metaclass=MessagePumpMeta):
                 message = await self._get_message()
             except MessagePumpClosed:
                 break
-            except CancelledError:
-                raise
             except Exception as error:
                 raise error from None
 
             # Combine any pending messages that may supersede this one
             while not (self._closed or self._closing):
                 try:
+                    # JR TODO: This actually looks wrong (nested breaks)
                     pending = self._peek_message()
                 except MessagePumpClosed:
                     break
@@ -360,21 +359,20 @@ class MessagePump(metaclass=MessagePumpMeta):
 
             try:
                 await self._dispatch_message(message)
-            except CancelledError:
-                raise
             except Exception as error:
                 self._mounted_event.set()
                 self.app._handle_exception(error)
                 break
             finally:
-
-                self._message_queue.task_done()
                 current_time = time()
 
                 # Insert idle events
-                if self._message_queue.empty() or (
-                    self._max_idle is not None
-                    and current_time - self._last_idle > self._max_idle
+                if (
+                    self._message_receive_stream.statistics().current_buffer_used == 0
+                    or (
+                        self._max_idle is not None
+                        and current_time - self._last_idle > self._max_idle
+                    )
                 ):
                     self._last_idle = current_time
                     if not self._closed:
@@ -463,7 +461,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     def check_idle(self) -> None:
         """Prompt the message pump to call idle if the queue is empty."""
-        if self._message_queue.empty():
+        if self._message_receive_stream.statistics().current_buffer_used == 0:
             self.post_message_no_wait(messages.Prompt(sender=self))
 
     async def post_message(self, message: Message) -> bool:
@@ -481,7 +479,7 @@ class MessagePump(metaclass=MessagePumpMeta):
             return False
         if not self.check_message_enabled(message):
             return True
-        await self._message_queue.put(message)
+        await self._message_send_stream.send(message)
         return True
 
     # TODO: This may not be needed, or may only be needed by the timer
@@ -503,7 +501,7 @@ class MessagePump(metaclass=MessagePumpMeta):
             return False
         if not self.check_message_enabled(message):
             return False
-        await self._message_queue.put(message)
+        await self._message_send_stream.send(message)
         return True
 
     def post_message_no_wait(self, message: Message) -> bool:
@@ -519,7 +517,7 @@ class MessagePump(metaclass=MessagePumpMeta):
             return False
         if not self.check_message_enabled(message):
             return False
-        self._message_queue.put_nowait(message)
+        self._message_send_stream.send_nowait(message)
         return True
 
     async def _post_message_from_child(self, message: Message) -> bool:

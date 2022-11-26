@@ -1,6 +1,6 @@
 """Provides the type of an awaitable remove."""
 
-from asyncio import Event
+from anyio import Event
 from typing import Generator
 
 
@@ -11,7 +11,7 @@ class AwaitRemove:
         """Initialise the instance of ``AwaitRemove``.
 
         Args:
-            finished_flag (asyncio.Event): The asyncio event to wait on.
+            finished_flag (anyio.Event): The anyio event to wait on.
         """
         self.finished_flag = finished_flag
 

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import asyncio
 from ..driver import Driver
 from ..geometry import Size
 from .. import events
@@ -31,22 +30,17 @@ class HeadlessDriver(Driver):
         height = height or 25
         return width, height
 
-    def start_application_mode(self) -> None:
-        loop = asyncio.get_running_loop()
-
-        def send_size_event():
+    async def start_application_mode(self) -> None:
+        async def send_size_event():
             terminal_size = self._get_terminal_size()
             width, height = terminal_size
             textual_size = Size(width, height)
             event = events.Resize(self._target, textual_size, textual_size)
-            asyncio.run_coroutine_threadsafe(
-                self._target.post_message(event),
-                loop=loop,
-            )
+            await self._target.post_message(event)
 
-        send_size_event()
+        await send_size_event()
 
-    def disable_input(self) -> None:
+    async def disable_input(self) -> None:
         pass
 
     def stop_application_mode(self) -> None:

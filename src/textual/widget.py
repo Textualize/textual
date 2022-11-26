@@ -1,7 +1,7 @@
 from __future__ import annotations
+from contextlib import contextmanager
 
-from asyncio import Event as AsyncEvent
-from asyncio import Lock, create_task, wait
+import anyio
 from collections import Counter
 from fractions import Fraction
 from itertools import islice
@@ -52,6 +52,7 @@ from .dom import DOMNode, NoScreen
 from .geometry import Offset, Region, Size, Spacing, clamp
 from .layouts.vertical import VerticalLayout
 from .message import Message
+from .message_pump import _spoof_asyncio_if_needed
 from .messages import CallbackType
 from .reactive import Reactive
 from .render import measure
@@ -89,13 +90,9 @@ class AwaitMount:
 
     def __await__(self) -> Generator[None, None, None]:
         async def await_mount() -> None:
-            if self._widgets:
-                aws = [
-                    create_task(widget._mounted_event.wait())
-                    for widget in self._widgets
-                ]
-                if aws:
-                    await wait(aws)
+            async with anyio.create_task_group() as task_group:
+                for widget in self._widgets:
+                    task_group.start_soon(widget._mounted_event.wait)
 
         return await_mount().__await__()
 
@@ -223,47 +220,48 @@ class Widget(DOMNode):
         id: str | None = None,
         classes: str | None = None,
     ) -> None:
-        self._size = Size(0, 0)
-        self._container_size = Size(0, 0)
-        self._layout_required = False
-        self._repaint_required = False
-        self._default_layout = VerticalLayout()
-        self._animate: BoundAnimator | None = None
-        self.highlight_style: Style | None = None
+        with _spoof_asyncio_if_needed():
+            self._size = Size(0, 0)
+            self._container_size = Size(0, 0)
+            self._layout_required = False
+            self._repaint_required = False
+            self._default_layout = VerticalLayout()
+            self._animate: BoundAnimator | None = None
+            self.highlight_style: Style | None = None
 
-        self._vertical_scrollbar: ScrollBar | None = None
-        self._horizontal_scrollbar: ScrollBar | None = None
-        self._scrollbar_corner: ScrollBarCorner | None = None
+            self._vertical_scrollbar: ScrollBar | None = None
+            self._horizontal_scrollbar: ScrollBar | None = None
+            self._scrollbar_corner: ScrollBarCorner | None = None
 
-        self._render_cache = RenderCache(Size(0, 0), [])
-        # Regions which need to be updated (in Widget)
-        self._dirty_regions: set[Region] = set()
-        # Regions which need to be transferred from cache to screen
-        self._repaint_regions: set[Region] = set()
+            self._render_cache = RenderCache(Size(0, 0), [])
+            # Regions which need to be updated (in Widget)
+            self._dirty_regions: set[Region] = set()
+            # Regions which need to be transferred from cache to screen
+            self._repaint_regions: set[Region] = set()
 
-        # Cache the auto content dimensions
-        # TODO: add mechanism to explicitly clear this
-        self._content_width_cache: tuple[object, int] = (None, 0)
-        self._content_height_cache: tuple[object, int] = (None, 0)
+            # Cache the auto content dimensions
+            # TODO: add mechanism to explicitly clear this
+            self._content_width_cache: tuple[object, int] = (None, 0)
+            self._content_height_cache: tuple[object, int] = (None, 0)
 
-        self._arrangement: DockArrangeResult | None = None
-        self._arrangement_cache_key: tuple[int, Size] = (-1, Size())
+            self._arrangement: DockArrangeResult | None = None
+            self._arrangement_cache_key: tuple[int, Size] = (-1, Size())
 
-        self._styles_cache = StylesCache()
-        self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
-        self._stabilized_scrollbar_size: Size | None = None
-        self._lock = Lock()
+            self._styles_cache = StylesCache()
+            self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
+            self._stabilized_scrollbar_size: Size | None = None
 
-        super().__init__(
-            name=name,
-            id=id,
-            classes=self.DEFAULT_CLASSES if classes is None else classes,
-        )
+            super().__init__(
+                name=name,
+                id=id,
+                classes=self.DEFAULT_CLASSES if classes is None else classes,
+            )
+            self._lock = anyio.Lock()
 
-        if self in children:
-            raise WidgetError("A widget can't be its own parent")
+            if self in children:
+                raise WidgetError("A widget can't be its own parent")
 
-        self._add_children(*children)
+            self._add_children(*children)
 
     virtual_size = Reactive(Size(0, 0), layout=True)
     auto_width = Reactive(True)
