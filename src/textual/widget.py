@@ -2301,7 +2301,7 @@ class Widget(DOMNode):
     def _on_styles_updated(self) -> None:
         self._rich_style_cache.clear()
 
-    async def _on_mouse_down(self, event: events.MouseUp) -> None:
+    async def _on_mouse_down(self, event: events.MouseDown) -> None:
         await self.broker_event("mouse.down", event)
 
     async def _on_mouse_up(self, event: events.MouseUp) -> None:
