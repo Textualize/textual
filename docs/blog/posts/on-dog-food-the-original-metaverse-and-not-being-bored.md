@@ -175,7 +175,7 @@ is going to be really useful.
 ## unbored
 
 The next application was initially going to be a very quick hack, but
-actually turned into a less-trivial build that I'd initially envisaged; not
+actually turned into a less-trivial build than I'd initially envisaged; not
 in a negative way though. The more I played with it the more I explored and
 I feel that this ended up being my first really good exploration of some
 useful (personal -- your kilometerage may vary) patterns and approaches when
@@ -218,7 +218,7 @@ It was easy enough to do, and I had an action in the `Main` screen that
 with some `if`/`elif` work but it didn't feel elegant. Moreover, it meant
 that the `Footer` always displayed the same description for the key.
 
-That's when I realised that it made way more sense to have a `BINDING` for
+That's when I realised that it made way more sense to have a `Binding` for
 `escape` in every widget that was the actual context for escape's use. So I
 went from one top-level binding to...
 
@@ -302,7 +302,7 @@ So, thanks to this bit of code in my `Activity` widget...
 
 ### Pain points
 
-On top the issues of getting to know terminal-based-CSS that I mentioned
+On top of the issues of getting to know terminal-based-CSS that I mentioned
 earlier:
 
 - Textual currently lacks any sort of selection list or radio-set widget.
