@@ -302,7 +302,7 @@ So, thanks to this bit of code in my `Activity` widget...
 
 ### Pain points
 
-On top the issues of getting to know terminal-based-CSS that I mentioned
+On top of the issues of getting to know terminal-based-CSS that I mentioned
 earlier:
 
 - Textual currently lacks any sort of selection list or radio-set widget.
