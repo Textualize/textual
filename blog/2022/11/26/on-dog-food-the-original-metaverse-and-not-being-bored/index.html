@@ -4063,7 +4063,7 @@ class</a>
 is going to be really useful.</p>
 <h2 id="unbored">unbored<a class="headerlink" href="#unbored" title="Permanent link">&para;</a></h2>
 <p>The next application was initially going to be a very quick hack, but
-actually turned into a less-trivial build that I'd initially envisaged; not
+actually turned into a less-trivial build than I'd initially envisaged; not
 in a negative way though. The more I played with it the more I explored and
 I feel that this ended up being my first really good exploration of some
 useful (personal -- your kilometerage may vary) patterns and approaches when
@@ -4096,7 +4096,7 @@ to work more or less like this:</p>
 <code>escape</code> was bound to (again, in the <code>Main</code> screen) that did all this logic
 with some <code>if</code>/<code>elif</code> work but it didn't feel elegant. Moreover, it meant
 that the <code>Footer</code> always displayed the same description for the key.</p>
-<p>That's when I realised that it made way more sense to have a <code>BINDING</code> for
+<p>That's when I realised that it made way more sense to have a <code>Binding</code> for
 <code>escape</code> in every widget that was the actual context for escape's use. So I
 went from one top-level binding to...</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="o">...</span>
@@ -4165,7 +4165,7 @@ information.</p>
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">save_activity_list</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="pain-points_1">Pain points<a class="headerlink" href="#pain-points_1" title="Permanent link">&para;</a></h3>
-<p>On top the issues of getting to know terminal-based-CSS that I mentioned
+<p>On top of the issues of getting to know terminal-based-CSS that I mentioned
 earlier:</p>
 <ul>
 <li>Textual currently lacks any sort of selection list or radio-set widget.
