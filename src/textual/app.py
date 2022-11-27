@@ -1321,6 +1321,7 @@ class App(Generic[ReturnType], DOMNode):
         terminal_size: tuple[int, int] | None = None,
     ) -> None:
         self._set_active()
+        self._state = self._State.Starting
 
         if self.devtools is not None:
             from .devtools.client import DevtoolsConnectionError
@@ -1394,19 +1395,20 @@ class App(Generic[ReturnType], DOMNode):
                 await self._ready()
                 await invoke_ready_callback()
 
-            self._running = True
+            assert self._state == self._State.Starting
+            self._state = self._State.Running
 
             try:
                 await self._process_messages_loop()
             finally:
-                self._running = False
                 try:
                     await self.animator.stop()
                 finally:
                     for timer in list(self._timers):
                         await timer.stop()
+                    self._done_event.set()
+                    self._state = self._State.Closed
 
-        self._running = True
         try:
             load_event = events.Load(sender=self)
             await self._dispatch_message(load_event)
@@ -1641,7 +1643,6 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _shutdown(self) -> None:
         driver = self._driver
-        self._running = False
         if driver is not None:
             await driver.disable_input()
         await self._close_all()
@@ -1657,7 +1658,7 @@ class App(Generic[ReturnType], DOMNode):
             self._writer_thread.stop()
 
     async def _on_exit_app(self) -> None:
-        await self._close_messages()
+        await self._close_messages(wait=False)
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
         if self._screen_stack:
@@ -1688,7 +1689,7 @@ class App(Generic[ReturnType], DOMNode):
             if screen is not self.screen or renderable is None:
                 return
 
-            if self._running and not self._closed and not self.is_headless:
+            if self._running and not self.is_headless:
                 console = self.console
                 self._begin_update()
                 try:
@@ -2068,7 +2069,7 @@ class App(Generic[ReturnType], DOMNode):
             for child in children:
                 self._unregister(child)
 
-        await root._close_messages(wait=False)
+        await root._close_messages(wait=True)
         self._unregister(root)
 
     async def action_check_bindings(self, key: str) -> None:

@@ -7,6 +7,7 @@ It is a base class for the App, Screen, and Widgets.
 """
 from __future__ import annotations
 from contextlib import contextmanager
+import enum
 import math
 
 import anyio
@@ -64,6 +65,16 @@ class MessagePumpMeta(type):
 
 
 class MessagePump(metaclass=MessagePumpMeta):
+    class _State(enum.Enum):
+        NotStarted = enum.auto()
+        Starting = enum.auto()
+        Running = enum.auto()
+        Closing = enum.auto()
+        Closed = enum.auto()
+
+        def accepts_messages(self):
+            return self != self.Closing and self != self.Closed
+
     def __init__(self, parent: MessagePump | None = None) -> None:
         with _spoof_asyncio_if_needed():
             (
@@ -71,9 +82,7 @@ class MessagePump(metaclass=MessagePumpMeta):
                 self._message_receive_stream,
             ) = anyio.create_memory_object_stream(math.inf, Message)
             self._parent = parent
-            self._running: bool = False
-            self._closing: bool = False
-            self._closed: bool = False
+            self._state = self._State.NotStarted
             self._disabled_messages: set[type[Message]] = set()
             self._pending_message: Message | None = None
             self._timers: WeakSet[Timer] = WeakSet()
@@ -103,10 +112,12 @@ class MessagePump(metaclass=MessagePumpMeta):
             raise NoActiveAppError()
 
     @property
+    def _running(self):
+        return self._state == self._state.Starting or self._state == self._state.Running
+
+    @property
     def is_parent_active(self) -> bool:
-        return bool(
-            self._parent and not self._parent._closed and not self._parent._closing
-        )
+        return bool(self._parent and self._parent._state.accepts_messages())
 
     @property
     def is_running(self) -> bool:
@@ -150,7 +161,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         Returns:
             Optional[Event]: Event object or None.
         """
-        if self._closed:
+        if self._state == self._State.Closed:
             raise MessagePumpClosed("The message pump is closed")
         if self._pending_message is not None:
             result = self._pending_message
@@ -160,7 +171,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         try:
             return await self._message_receive_stream.receive()
         except anyio.EndOfStream:
-            self._closed = True
+            self._state = self._State.Closed
             raise MessagePumpClosed("The message pump is now closed")
 
     def _peek_message(self) -> Message | None:
@@ -176,7 +187,7 @@ class MessagePump(metaclass=MessagePumpMeta):
             except anyio.WouldBlock:
                 pass
             except anyio.EndOfStream:
-                self._closed = True
+                self._state = self._State.Closed
                 raise MessagePumpClosed("The message pump is now closed")
 
         return self._pending_message
@@ -275,17 +286,23 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     def _close_messages_no_wait(self) -> None:
         """Request the message queue to immediately exit."""
-        if not self._closed and not self._closing:
+        if self._state.accepts_messages():
             self._message_send_stream.send_nowait(messages.CloseMessages(sender=self))
 
     async def _on_close_messages(self, message: messages.CloseMessages) -> None:
-        await self._close_messages()
+        # We can't wait on this because this is called from processing a
+        # message and would deadlock.
+        await self._close_messages(wait=False)
 
     async def _close_messages(self, wait: bool = True) -> None:
         """Close message queue, and optionally wait for queue to finish processing."""
-        if self._closed or self._closing:
+        if not self._state.accepts_messages():
             return
-        self._closing = True
+
+        done_event = self._done_event
+
+        was_started = self._state != self._State.NotStarted
+        self._state = self._State.Closing
         stop_timers = list(self._timers)
         for timer in stop_timers:
             await timer.stop()
@@ -293,31 +310,39 @@ class MessagePump(metaclass=MessagePumpMeta):
         await self._message_send_stream.send(events.Unmount(sender=self))
         Reactive._reset_object(self)
         await self._message_send_stream.aclose()
-        if wait:
+        if wait and was_started:
             # Ensure everything is closed before returning
-            # JR TODO: We can't wait on this event because we're called from within event dispatch and will deadlock
-            # await self._done_event.wait()
-            pass
+            await done_event.wait()
 
     def _start_messages(self, task_group: anyio.abc.TaskGroup) -> None:
         """Start messages task."""
         if self.app._running:
+            assert not self._running, "Messages have already been started"
+            self._state = self._State.Starting
             task_group.start_soon(
                 self._process_messages, name=str(self) + " process messages"
             )
 
     async def _process_messages(self) -> None:
-        self._running = True
+        assert self._state == self._State.Starting
+        self._state = self._State.Running
 
         await self._pre_process()
 
         try:
             await self._process_messages_loop()
         finally:
-            self._running = False
             for timer in list(self._timers):
                 await timer.stop()
             self._done_event.set()
+            self._state = self._State.Closed
+
+            # Streams and events are one-shot, so they need to be created each time
+            (
+                self._message_send_stream,
+                self._message_receive_stream,
+            ) = anyio.create_memory_object_stream(math.inf, Message)
+            self._done_event = anyio.Event()
 
     async def _pre_process(self) -> None:
         """Procedure to run before processing messages."""
@@ -335,7 +360,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         """Process messages until the queue is closed."""
         _rich_traceback_guard = True
 
-        while not self._closed:
+        while self._state != self._State.Closed:
             try:
                 message = await self._get_message()
             except MessagePumpClosed:
@@ -344,9 +369,8 @@ class MessagePump(metaclass=MessagePumpMeta):
                 raise error from None
 
             # Combine any pending messages that may supersede this one
-            while not (self._closed or self._closing):
+            while self._state != self._State.Closed:
                 try:
-                    # JR TODO: This actually looks wrong (nested breaks)
                     pending = self._peek_message()
                 except MessagePumpClosed:
                     break
@@ -375,7 +399,7 @@ class MessagePump(metaclass=MessagePumpMeta):
                     )
                 ):
                     self._last_idle = current_time
-                    if not self._closed:
+                    if self._state.accepts_messages():
                         event = events.Idle(self)
                         for _cls, method in self._get_dispatch_methods(
                             "on_idle", event
@@ -456,7 +480,7 @@ class MessagePump(metaclass=MessagePumpMeta):
             if message.sender == self._parent:
                 # parent is sender, so we stop propagation after parent
                 message.stop()
-            if self.is_parent_active and not self._parent._closing:
+            if self.is_parent_active and self._parent._state.accepts_messages():
                 await message._bubble_to(self._parent)
 
     def check_idle(self) -> None:
@@ -475,7 +499,7 @@ class MessagePump(metaclass=MessagePumpMeta):
                 (because the message pump was in the process of closing).
         """
 
-        if self._closing or self._closed:
+        if not self._state.accepts_messages():
             return False
         if not self.check_message_enabled(message):
             return True
@@ -497,7 +521,7 @@ class MessagePump(metaclass=MessagePumpMeta):
             bool: True if the messages was processed, False if it wasn't.
         """
         # TODO: Allow priority messages to jump the queue
-        if self._closing or self._closed:
+        if not self._state.accepts_messages():
             return False
         if not self.check_message_enabled(message):
             return False
@@ -513,7 +537,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         Returns:
             bool: True if the messages was processed, False if it wasn't.
         """
-        if self._closing or self._closed:
+        if not self._state.accepts_messages():
             return False
         if not self.check_message_enabled(message):
             return False
@@ -521,12 +545,12 @@ class MessagePump(metaclass=MessagePumpMeta):
         return True
 
     async def _post_message_from_child(self, message: Message) -> bool:
-        if self._closing or self._closed:
+        if not self._state.accepts_messages():
             return False
         return await self.post_message(message)
 
     def _post_message_from_child_no_wait(self, message: Message) -> bool:
-        if self._closing or self._closed:
+        if not self._state.accepts_messages():
             return False
         return self.post_message_no_wait(message)
 

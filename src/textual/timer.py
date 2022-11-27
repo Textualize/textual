@@ -94,8 +94,6 @@ class Timer:
         """
         assert not self._has_task, "Timer has already been started"
         app = active_app.get()
-        if not app._running:
-            return
         # Being able to wait on the task to start would simplify this class and
         # remove potential race conditions, but this method is not async.
         app._task_group.start_soon(self._run_timer, name=self.name)

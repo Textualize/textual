@@ -2239,7 +2239,7 @@ class Widget(DOMNode):
         Args:
             event (events.Idle): Idle event.
         """
-        if self._parent is not None and not self._closing:
+        if self._parent is not None and self._state != self._State.Closing:
             try:
                 screen = self.screen
             except NoScreen:
