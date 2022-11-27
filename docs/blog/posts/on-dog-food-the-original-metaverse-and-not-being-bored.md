@@ -30,6 +30,8 @@ do things, but it was fascinating to a mostly-self-taught 20-something me to
 be reading this (excellent -- go read it if you care about the history of
 your craft) book and to see the idea written down and named.
 
+<!-- more -->
+
 While [Textualize](https://www.textualize.io/) isn't (thankfully -- really,
 I do recommend reading the book) anything like working on the team building
 Windows NT, the idea of taking a little time out from working *on* Textual,
