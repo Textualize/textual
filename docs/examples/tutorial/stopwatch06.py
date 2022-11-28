@@ -32,13 +32,13 @@ class TimeDisplay(Static):
         self.start_time = monotonic()
         self.update_timer.resume()
 
-    def stop(self):
+    def stop(self) -> None:
         """Method to stop the time display updating."""
         self.update_timer.pause()
         self.total += monotonic() - self.start_time
         self.time = self.total
 
-    def reset(self):
+    def reset(self) -> None:
         """Method to reset the time display to zero."""
         self.total = 0
         self.time = 0
