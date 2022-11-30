@@ -29,6 +29,12 @@ of multiple `ListItem`s. The arrow keys can be used to navigate the list.
 
 ## Messages
 
+### Selected
+
+The `ListItem.Selected` message is sent when the item is selected.
+
+ - [x] Bubbles
+
 #### Attributes
 
 | attribute | type       | purpose                     |
