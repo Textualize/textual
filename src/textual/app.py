@@ -26,6 +26,7 @@ from typing import (
     TypeVar,
     Union,
     cast,
+    overload,
 )
 from weakref import WeakSet, WeakValueDictionary
 
@@ -892,23 +893,52 @@ class App(Generic[ReturnType], DOMNode):
     def render(self) -> RenderableType:
         return Blank(self.styles.background)
 
+    ExpectType = TypeVar("ExpectType", bound=Widget)
+
+    @overload
     def get_child_by_id(self, id: str) -> Widget:
+        ...
+
+    @overload
+    def get_child_by_id(self, id: str, expect_type: type[ExpectType]) -> ExpectType:
+        ...
+
+    def get_child_by_id(
+        self, id: str, expect_type: type[ExpectType] | None = None
+    ) -> ExpectType | Widget:
         """Shorthand for self.screen.get_child(id: str)
         Returns the first child (immediate descendent) of this DOMNode
         with the given ID.
 
         Args:
             id (str): The ID of the node to search for.
+            expect_type (type | None, optional): Require the object be of the supplied type, or None for any type.
+                Defaults to None.
 
         Returns:
-            DOMNode: The first child of this node with the specified ID.
+            ExpectType | Widget: The first child of this node with the specified ID.
 
         Raises:
             NoMatches: if no children could be found for this ID
+            WrongType: if the wrong type was found.
         """
-        return self.screen.get_child_by_id(id)
+        return (
+            self.screen.get_child_by_id(id)
+            if expect_type is None
+            else self.screen.get_child_by_id(id, expect_type)
+        )
 
+    @overload
     def get_widget_by_id(self, id: str) -> Widget:
+        ...
+
+    @overload
+    def get_widget_by_id(self, id: str, expect_type: type[ExpectType]) -> ExpectType:
+        ...
+
+    def get_widget_by_id(
+        self, id: str, expect_type: type[ExpectType] | None = None
+    ) -> ExpectType | Widget:
         """Shorthand for self.screen.get_widget_by_id(id)
         Return the first descendant widget with the given ID.
 
@@ -918,14 +948,21 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             id (str): The ID to search for in the subtree
+            expect_type (type | None, optional): Require the object be of the supplied type, or None for any type.
+                Defaults to None.
 
         Returns:
-            DOMNode: The first descendant encountered with this ID.
+            ExpectType | Widget: The first descendant encountered with this ID.
 
         Raises:
             NoMatches: if no children could be found for this ID
+            WrongType: if the wrong type was found.
         """
-        return self.screen.get_widget_by_id(id)
+        return (
+            self.screen.get_widget_by_id(id)
+            if expect_type is None
+            else self.screen.get_widget_by_id(id, expect_type)
+        )
 
     def update_styles(self, node: DOMNode | None = None) -> None:
         """Request update of styles.
@@ -1463,7 +1500,6 @@ class App(Generic[ReturnType], DOMNode):
 
         # If we don't already know about this widget...
         if child not in self._registry:
-
             # Now to figure out where to place it. If we've got a `before`...
             if before is not None:
                 # ...it's safe to NodeList._insert before that location.

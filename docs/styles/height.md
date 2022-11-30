@@ -39,7 +39,7 @@ height: 10;
 height: 50%;
 
 /* Automatic height */
-width: auto
+height: auto
 ```
 
 ## Python

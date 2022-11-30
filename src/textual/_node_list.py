@@ -101,8 +101,8 @@ class NodeList(Sequence):
         if widget_id in self._nodes_by_id:
             raise DuplicateIds(
                 f"Tried to insert a widget with ID {widget_id!r}, but a widget {self._nodes_by_id[widget_id]!r} "
-                f"already exists with that ID in this list of children. "
-                f"The children of a widget must have unique IDs."
+                "already exists with that ID in this list of children. "
+                "The children of a widget must have unique IDs."
             )
 
     def _remove(self, widget: Widget) -> None:
