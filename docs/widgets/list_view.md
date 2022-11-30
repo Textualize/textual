@@ -61,7 +61,7 @@ or by clicking on it.
 ### ChildrenUpdated
 
 The `ListView.ChildrenUpdated` message is emitted when the elements in the `ListView`
-are changed (e.g. a child is added, or the list is cleared)
+are changed (e.g. a child is added, or the list is cleared).
 
 - [x] Bubbles
 
