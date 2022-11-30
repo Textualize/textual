@@ -1,18 +1,24 @@
 from __future__ import annotations
 
-import asyncio
-from asyncio import Future
-
 from textual import events
+from textual.await_remove import AwaitRemove
 from textual.binding import Binding
 from textual.containers import Vertical
 from textual.geometry import clamp
 from textual.message import Message
 from textual.reactive import reactive
+from textual.widget import AwaitMount
 from textual.widgets._list_item import ListItem
 
 
 class ListView(Vertical, can_focus=True, can_focus_children=False):
+    """Displays a vertical list of `ListItem`s which can be highlighted
+    and selected using the mouse or keyboard.
+
+    Attributes:
+        index: The index in the list that's currently highlighted.
+    """
+
     DEFAULT_CSS = """
     ListView {
         scrollbar-size-vertical: 1;
@@ -35,12 +41,20 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         id: str | None = None,
         classes: str | None = None,
     ) -> None:
+        """
+        Args:
+            *children: The ListItems to display in the list.
+            initial_index: The index that should be highlighted when the list is first mounted.
+            name: The name of the widget.
+            id: The unique ID of the widget used in CSS/query selection.
+            classes: The CSS classes of the widget.
+        """
         super().__init__(*children, name=name, id=id, classes=classes)
         self.index = initial_index
 
     @property
     def highlighted_child(self) -> ListItem | None:
-        """Get the currently highlighted ListItem
+        """Get the currently highlighted ListItem.
 
         Returns:
             ListItem | None: The currently highlighted ListItem, or None if nothing is highlighted.
@@ -51,6 +65,7 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
             return self.children[self.index]
 
     def validate_index(self, index: int | None) -> int | None:
+        """Clamp the index to the valid range, or set to None if there's nothing to highlight."""
         if not self.children or index is None:
             return None
         return self._clamp_index(index)
@@ -67,6 +82,7 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         return 0 <= index < len(self.children)
 
     def watch_index(self, old_index: int, new_index: int) -> None:
+        """Updates the highlighting when the index changes."""
         if self._is_valid_index(old_index):
             old_child = self.children[old_index]
             old_child.highlighted = False
@@ -79,21 +95,31 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         self._scroll_highlighted_region()
         self.emit_no_wait(self.Highlighted(self, new_child))
 
-    async def append(self, item: ListItem) -> None:
+    def append(self, item: ListItem) -> AwaitMount:
         """Append a new ListItem to the end of the ListView.
 
         Args:
             item (ListItem): The ListItem to append.
+
+        Returns:
+            AwaitMount: An awaitable that yields control to the event loop
+                until the DOM has been updated with the new child item.
         """
-        await self.mount(item)
+        await_mount = self.mount(item)
         if len(self) == 1:
             self.index = 0
-        await self.emit(self.ChildrenUpdated(self, self.children))
+        return await_mount
 
-    async def clear(self) -> None:
-        """Clear all items from the ListView."""
-        await self.query("ListView > ListItem").remove()
-        await self.emit(self.ChildrenUpdated(self, self.children))
+    def clear(self) -> AwaitRemove:
+        """Clear all items from the ListView.
+
+        Returns:
+            AwaitRemove: An awaitable that yields control to the event loop until
+                the DOM has been updated to reflect all children being removed.
+        """
+        await_remove = self.query("ListView > ListItem").remove()
+        self.index = None
+        return await_remove
 
     def action_select(self) -> None:
         selected_child = self.highlighted_child
@@ -135,11 +161,3 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         def __init__(self, sender: ListView, item: ListItem) -> None:
             super().__init__(sender)
             self.item = item
-
-    class ChildrenUpdated(Message, bubble=True):
-        """Emitted when the elements in the `ListView` are changed (e.g. a child is
-        added, or the list is cleared)"""
-
-        def __init__(self, sender: ListView, children: list[ListItem]) -> None:
-            super().__init__(sender)
-            self.children = children
