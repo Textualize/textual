@@ -123,20 +123,16 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         selected_child = self.highlighted_child
         self.emit_no_wait(self.Selected(self, selected_child))
 
+    def action_cursor_down(self) -> None:
+        self.index += 1
+
+    def action_cursor_up(self) -> None:
+        self.index -= 1
+
     def on_list_item__child_clicked(self, event: ListItem._ChildClicked) -> None:
         self.focus()
         self.index = self.children.index(event.sender)
         self.emit_no_wait(self.Selected(self, event.sender))
-
-    def key_up(self, event: events.Key) -> None:
-        event.stop()
-        event.prevent_default()
-        self.index -= 1
-
-    def key_down(self, event: events.Key) -> None:
-        event.stop()
-        event.prevent_default()
-        self.index += 1
 
     def _scroll_highlighted_region(self) -> None:
         """Used to keep the highlighted index within vision"""
