@@ -1,6 +1,11 @@
 import asyncio
 from functools import wraps
-from typing import Any, Callable, Optional, ParamSpec
+from typing import Any, Callable, Optional
+
+try:
+    from typing import ParamSpec
+except ImportError:
+    from typing_extensions import ParamSpec
 
 from .app import App
 from .timer import Timer as TimerClass
