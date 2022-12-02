@@ -17,7 +17,7 @@ def debounce(timeout: float) -> Callable[[Callable[P, Any]], Callable[P, None]]:
     """Debounce repeated events.
 
     If event handlers perform expensive operations, then it is sometimes desirable to
-    limit the number of calls to the handler. The debounce decorartor will (re)start
+    limit the number of calls to the handler. The debounce decorator will (re)start
     a timer for every event received and only call the handler if no events have occured
     in the time period provided.
 
