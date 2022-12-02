@@ -34,9 +34,7 @@ def debounce(timeout: float) -> Callable[[Callable[P, Any]], Callable[P, None]]:
             if timer:
                 timer.reset()
             else:
-                timer = self.set_timer(
-                    timeout, lambda: asyncio.create_task(f(self, *args, *kwargs))
-                )
+                timer = self.set_timer(timeout, lambda: f(self, *args, **kwargs))
 
         return wrapper
 
