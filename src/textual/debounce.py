@@ -1,12 +1,14 @@
 import asyncio
 from functools import wraps
-from typing import Callable, Optional
+from typing import Any, Callable, Optional, ParamSpec
 
 from .app import App
 from .timer import Timer as TimerClass
 
+P = ParamSpec("P")
 
-def debounce(timeout: float) -> Callable:
+
+def debounce(timeout: float) -> Callable[[Callable[P, Any]], Callable[P, None]]:
     """Debounce repeated events.
 
     If event handlers perform expensive operations, then it is sometimes desirable to
@@ -18,11 +20,11 @@ def debounce(timeout: float) -> Callable:
         timeout (float): the number of seconds to wait for repeated events.
     """
 
-    def decorator(f: Callable) -> Callable:
+    def decorator(f: Callable[P, Any]) -> Callable[P, None]:
         timer: Optional[TimerClass] = None
 
         @wraps(f)
-        async def wrapper(self: App, *args, **kwargs) -> None:
+        async def wrapper(self: App, *args: P.args, **kwargs: P.kwargs) -> None:
             nonlocal timer
             if timer:
                 timer.reset()
