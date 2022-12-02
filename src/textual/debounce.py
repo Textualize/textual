@@ -32,9 +32,9 @@ def debounce(timeout: float) -> Callable[[Callable[P, Any]], Callable[P, None]]:
         async def wrapper(self: App, *args: P.args, **kwargs: P.kwargs) -> None:
             nonlocal timer
             if timer:
-                timer.reset()
-            else:
-                timer = self.set_timer(timeout, lambda: f(self, *args, **kwargs))
+                timer.stop_no_wait()
+
+            timer = self.set_timer(timeout, lambda: f(self, *args, **kwargs))
 
         return wrapper
 
