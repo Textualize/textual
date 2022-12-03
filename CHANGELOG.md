@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Rebuilt `DirectoryTree` with new `Tree` control.
+- Empty containers with a dimension set to `"auto"` will now collapse instead of filling up the available space.
 
 ### Fixed
 
