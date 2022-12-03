@@ -67,7 +67,7 @@ class Layout(ABC):
                 )
                 width = child_width if width is None else max(width, child_width)
         if width is None:
-            width = container.width
+            width = 0
 
         return width
 
@@ -86,7 +86,7 @@ class Layout(ABC):
             int: Content height (in lines).
         """
         if not widget.displayed_children:
-            height = container.height
+            height = 0
         else:
             placements, *_ = widget._arrange(Size(width, container.height))
             height = max(
