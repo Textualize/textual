@@ -51,6 +51,7 @@ def arrange(
     styles = widget.styles
 
     for widgets in dock_layers.values():
+        region = size.region
 
         layout_widgets, dock_widgets = partition(get_dock, widgets)
 
