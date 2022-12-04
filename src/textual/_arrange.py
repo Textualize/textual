@@ -41,7 +41,6 @@ def arrange(
 
     placements: list[WidgetPlacement] = []
     add_placement = placements.append
-    region = size.region
 
     _WidgetPlacement = WidgetPlacement
     top_z = TOP_Z
@@ -50,7 +49,9 @@ def arrange(
     get_dock = attrgetter("styles.dock")
     styles = widget.styles
 
+    layer_region = size.region
     for widgets in dock_layers.values():
+        region = layer_region
 
         layout_widgets, dock_widgets = partition(get_dock, widgets)
 
