@@ -9,8 +9,3 @@ Report bugs via GitHub on the Textual [issues](https://github.com/Textualize/tex
 ## Discord Server
 
 For more realtime feedback or chat, join our discord server to connect with the [Textual community](https://discord.gg/Enf6Z3qhVr).
-
-## Forum
-
-Visit the [Textual forum](https://community.textualize.io/) for Textual (and Rich) discussions.
-
