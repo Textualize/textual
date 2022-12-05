@@ -7,7 +7,7 @@ class Label(Static):
     """A simple label widget for displaying text-oriented renderables."""
 
     DEFAULT_CSS = """
-    Static {
+    Label {
         width: auto;
         height: auto;
     }
