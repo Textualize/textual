@@ -20,7 +20,7 @@ The first line sets the [background](../styles/background.md) style to `"darkblu
 
 The second line sets [border](../styles/border.md) to a tuple of `("heavy", "white")` which tells Textual to draw a white border with a style of `"heavy"`. Running this code will show the following:
 
-```{.textual path="docs/examples/guide/styles/screen.py"}
+```{.textual path="docs/examples/guide/styles/screen.py" press="_"}
 ```
 
 ## Styling widgets
@@ -48,9 +48,9 @@ Note how the combined height of the widget is three rows in the terminal. This i
 
 ## Colors
 
-There are a number of style attributes which accept colors. The most commonly used are [color](../styles/color.md) which sets the default color of text on a widget, and [background](..styles/background/md) which sets the background color (beneath the text).
+There are a number of style attributes which accept colors. The most commonly used are [color](../styles/color.md) which sets the default color of text on a widget, and [background](../styles/background.md) which sets the background color (beneath the text).
 
-You can set a color value to one of a number of pre-defined color constants, such as `"crimson"`, `"lime"`, and `"palegreen"`. You can find a full list in the [Color reference](../reference/color.md#textual.color--named-colors).
+You can set a color value to one of a number of pre-defined color constants, such as `"crimson"`, `"lime"`, and `"palegreen"`. You can find a full list in the [Color API](../api/color.md#textual.color--named-colors).
 
 Here's how you would set the screen background to lime:
 

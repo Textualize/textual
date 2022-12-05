@@ -18,6 +18,7 @@ from time import perf_counter
 from typing import (
     TYPE_CHECKING,
     Any,
+    Callable,
     Generic,
     Iterable,
     List,
@@ -25,7 +26,7 @@ from typing import (
     TypeVar,
     Union,
     cast,
-    Callable,
+    overload,
 )
 from weakref import WeakSet, WeakValueDictionary
 
@@ -45,7 +46,8 @@ from ._context import active_app
 from ._event_broker import NoHandler, extract_handler_actions
 from ._filter import LineFilter, Monochrome
 from ._path import _make_path_object_relative
-from ._typing import TypeAlias, Final
+from ._typing import Final, TypeAlias
+from .await_remove import AwaitRemove
 from .binding import Binding, Bindings
 from .css.query import NoMatches
 from .css.stylesheet import Stylesheet
@@ -61,7 +63,8 @@ from .messages import CallbackType
 from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import Screen
-from .widget import AwaitMount, Widget
+from .widget import AwaitMount, MountError, Widget
+
 
 if TYPE_CHECKING:
     from .devtools.client import DevtoolsClient
@@ -352,6 +355,7 @@ class App(Generic[ReturnType], DOMNode):
             else None
         )
         self._screenshot: str | None = None
+        self._dom_lock = asyncio.Lock()
 
     @property
     def return_value(self) -> ReturnType | None:
@@ -889,23 +893,52 @@ class App(Generic[ReturnType], DOMNode):
     def render(self) -> RenderableType:
         return Blank(self.styles.background)
 
+    ExpectType = TypeVar("ExpectType", bound=Widget)
+
+    @overload
     def get_child_by_id(self, id: str) -> Widget:
+        ...
+
+    @overload
+    def get_child_by_id(self, id: str, expect_type: type[ExpectType]) -> ExpectType:
+        ...
+
+    def get_child_by_id(
+        self, id: str, expect_type: type[ExpectType] | None = None
+    ) -> ExpectType | Widget:
         """Shorthand for self.screen.get_child(id: str)
         Returns the first child (immediate descendent) of this DOMNode
         with the given ID.
 
         Args:
             id (str): The ID of the node to search for.
+            expect_type (type | None, optional): Require the object be of the supplied type, or None for any type.
+                Defaults to None.
 
         Returns:
-            DOMNode: The first child of this node with the specified ID.
+            ExpectType | Widget: The first child of this node with the specified ID.
 
         Raises:
             NoMatches: if no children could be found for this ID
+            WrongType: if the wrong type was found.
         """
-        return self.screen.get_child_by_id(id)
+        return (
+            self.screen.get_child_by_id(id)
+            if expect_type is None
+            else self.screen.get_child_by_id(id, expect_type)
+        )
 
+    @overload
     def get_widget_by_id(self, id: str) -> Widget:
+        ...
+
+    @overload
+    def get_widget_by_id(self, id: str, expect_type: type[ExpectType]) -> ExpectType:
+        ...
+
+    def get_widget_by_id(
+        self, id: str, expect_type: type[ExpectType] | None = None
+    ) -> ExpectType | Widget:
         """Shorthand for self.screen.get_widget_by_id(id)
         Return the first descendant widget with the given ID.
 
@@ -915,14 +948,21 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             id (str): The ID to search for in the subtree
+            expect_type (type | None, optional): Require the object be of the supplied type, or None for any type.
+                Defaults to None.
 
         Returns:
-            DOMNode: The first descendant encountered with this ID.
+            ExpectType | Widget: The first descendant encountered with this ID.
 
         Raises:
             NoMatches: if no children could be found for this ID
+            WrongType: if the wrong type was found.
         """
-        return self.screen.get_widget_by_id(id)
+        return (
+            self.screen.get_widget_by_id(id)
+            if expect_type is None
+            else self.screen.get_widget_by_id(id, expect_type)
+        )
 
     def update_styles(self, node: DOMNode | None = None) -> None:
         """Request update of styles.
@@ -1460,7 +1500,6 @@ class App(Generic[ReturnType], DOMNode):
 
         # If we don't already know about this widget...
         if child not in self._registry:
-
             # Now to figure out where to place it. If we've got a `before`...
             if before is not None:
                 # ...it's safe to NodeList._insert before that location.
@@ -1951,6 +1990,48 @@ class App(Generic[ReturnType], DOMNode):
             for child in widget.children:
                 push(child)
 
+    def _remove_nodes(self, widgets: list[Widget]) -> AwaitRemove:
+        """Remove nodes from DOM, and return an awaitable that awaits cleanup.
+
+        Args:
+            widgets (list[Widget]): List of nodes to remvoe.
+
+        Returns:
+            AwaitRemove: Awaitable that returns when the nodes have been fully removed.
+        """
+
+        async def prune_widgets_task(
+            widgets: list[Widget], finished_event: asyncio.Event
+        ) -> None:
+            """Prune widgets as a background task.
+
+            Args:
+                widgets (list[Widget]): Widgets to prune.
+                finished_event (asyncio.Event): Event to set when complete.
+            """
+            try:
+                await self._prune_nodes(widgets)
+            finally:
+                finished_event.set()
+
+        removed_widgets = self._detach_from_dom(widgets)
+        self.refresh(layout=True)
+
+        finished_event = asyncio.Event()
+        asyncio.create_task(prune_widgets_task(removed_widgets, finished_event))
+
+        return AwaitRemove(finished_event)
+
+    async def _prune_nodes(self, widgets: list[Widget]) -> None:
+        """Remove nodes and children.
+
+        Args:
+            widgets (Widget): _description_
+        """
+        async with self._dom_lock:
+            for widget in widgets:
+                await self._prune_node(widget)
+
     async def _prune_node(self, root: Widget) -> None:
         """Remove a node and its children. Children are removed before parents.
 
@@ -1966,7 +2047,7 @@ class App(Generic[ReturnType], DOMNode):
         for children in reversed(node_children):
             # Closing children can be done asynchronously.
             close_messages = [
-                child._close_messages() for child in children if child._running
+                child._close_messages(wait=True) for child in children if child._running
             ]
             # TODO: What if a message pump refuses to exit?
             if close_messages:
@@ -1974,7 +2055,7 @@ class App(Generic[ReturnType], DOMNode):
                 for child in children:
                     self._unregister(child)
 
-        await root._close_messages()
+        await root._close_messages(wait=False)
         self._unregister(root)
 
     async def action_check_bindings(self, key: str) -> None:

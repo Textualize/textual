@@ -284,7 +284,7 @@ class MessagePump(metaclass=MessagePumpMeta):
     async def _on_close_messages(self, message: messages.CloseMessages) -> None:
         await self._close_messages()
 
-    async def _close_messages(self) -> None:
+    async def _close_messages(self, wait: bool = True) -> None:
         """Close message queue, and optionally wait for queue to finish processing."""
         if self._closed or self._closing:
             return
@@ -296,7 +296,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         await self._message_queue.put(events.Unmount(sender=self))
         Reactive._reset_object(self)
         await self._message_queue.put(None)
-        if self._task is not None and asyncio.current_task() != self._task:
+        if wait and self._task is not None and asyncio.current_task() != self._task:
             # Ensure everything is closed before returning
             await self._task
 

@@ -75,8 +75,9 @@ class ScrollView(Widget):
         ):
             self._size = size
             virtual_size = self.virtual_size
-            self._scroll_update(virtual_size)
             self._container_size = size - self.styles.gutter.totals
+            self._scroll_update(virtual_size)
+
             self.scroll_to(self.scroll_x, self.scroll_y, animate=False)
             self.refresh()
 

@@ -1,12 +1,28 @@
 # Change Log
 
-
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.5.0] - Unreleased
+
+## [0.6.0] - Unreleased
+
+### Added
+
+- Added "inherited bindings" -- BINDINGS classvar will be merged with base classes, unless inherit_bindings is set to False
+- Added `Tree` widget which replaces `TreeControl`.
+
+### Changed
+
+- Rebuilt `DirectoryTree` with new `Tree` control.
+- The default `width` of a `Label` is now `auto`.
+
+### Fixed
+
+- Type selectors can now contain numbers https://github.com/Textualize/textual/issues/1253
+
+## [0.5.0] - 2022-11-20
 
 ### Added
 
@@ -46,6 +62,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed containers with transparent background not showing borders https://github.com/Textualize/textual/issues/1175
 - Fixed auto-width in horizontal containers https://github.com/Textualize/textual/pull/1155
 - Fixed Input cursor invisible when placeholder empty https://github.com/Textualize/textual/pull/1202
+- Fixed deadlock when removing widgets from the App https://github.com/Textualize/textual/pull/1219
 
 ## [0.4.0] - 2022-11-08
 

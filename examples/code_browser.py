@@ -39,7 +39,7 @@ class CodeBrowser(App):
         path = "./" if len(sys.argv) < 2 else sys.argv[1]
         yield Header()
         yield Container(
-            Vertical(DirectoryTree(path), id="tree-view"),
+            DirectoryTree(path, id="tree-view"),
             Vertical(Static(id="code", expand=True), id="code-view"),
         )
         yield Footer()
@@ -47,8 +47,11 @@ class CodeBrowser(App):
     def on_mount(self, event: events.Mount) -> None:
         self.query_one(DirectoryTree).focus()
 
-    def on_directory_tree_file_click(self, event: DirectoryTree.FileClick) -> None:
+    def on_directory_tree_file_selected(
+        self, event: DirectoryTree.FileSelected
+    ) -> None:
         """Called when the user click a file in the directory tree."""
+        event.stop()
         code_view = self.query_one("#code", Static)
         try:
             syntax = Syntax.from_path(

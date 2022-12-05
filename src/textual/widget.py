@@ -1,19 +1,22 @@
 from __future__ import annotations
 
+from asyncio import Event as AsyncEvent
+from asyncio import Lock, create_task, wait
 from collections import Counter
-from asyncio import Lock, wait, create_task, Event as AsyncEvent
 from fractions import Fraction
 from itertools import islice
 from operator import attrgetter
 from typing import (
-    Generator,
     TYPE_CHECKING,
     ClassVar,
     Collection,
+    Generator,
     Iterable,
     NamedTuple,
     Sequence,
+    TypeVar,
     cast,
+    overload,
 )
 
 import rich.repr
@@ -32,7 +35,7 @@ from rich.style import Style
 from rich.text import Text
 
 from . import errors, events, messages
-from ._animator import BoundAnimator, DEFAULT_EASING, Animatable, EasingFunction
+from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
 from ._context import active_app
 from ._easing import DEFAULT_SCROLL_EASING
@@ -40,9 +43,10 @@ from ._layout import Layout
 from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
 from ._types import Lines
-from .binding import NoBinding
+from .await_remove import AwaitRemove
+from .binding import Binding
 from .box_model import BoxModel, get_box_model
-from .css.query import NoMatches
+from .css.query import NoMatches, WrongType
 from .css.scalar import ScalarOffset
 from .dom import DOMNode, NoScreen
 from .geometry import Offset, Region, Size, Spacing, clamp
@@ -51,7 +55,6 @@ from .message import Message
 from .messages import CallbackType
 from .reactive import Reactive
 from .render import measure
-from .await_remove import AwaitRemove
 from .walk import walk_depth_first
 
 if TYPE_CHECKING:
@@ -169,6 +172,17 @@ class Widget(DOMNode):
 
     """
 
+    BINDINGS = [
+        Binding("up", "scroll_up", "Scroll Up", show=False),
+        Binding("down", "scroll_down", "Scroll Down", show=False),
+        Binding("left", "scroll_left", "Scroll Up", show=False),
+        Binding("right", "scroll_right", "Scroll Right", show=False),
+        Binding("home", "scroll_home", "Scroll Home", show=False),
+        Binding("end", "scroll_end", "Scroll End", show=False),
+        Binding("pageup", "page_up", "Page Up", show=False),
+        Binding("pagedown", "page_down", "Page Down", show=False),
+    ]
+
     DEFAULT_CSS = """
     Widget{
         scrollbar-background: $panel-darken-1;
@@ -209,7 +223,6 @@ class Widget(DOMNode):
         id: str | None = None,
         classes: str | None = None,
     ) -> None:
-
         self._size = Size(0, 0)
         self._container_size = Size(0, 0)
         self._layout_required = False
@@ -237,7 +250,7 @@ class Widget(DOMNode):
         self._arrangement_cache_key: tuple[int, Size] = (-1, Size())
 
         self._styles_cache = StylesCache()
-        self._rich_style_cache: dict[str, Style] = {}
+        self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
         self._stabilized_scrollbar_size: Size | None = None
         self._lock = Lock()
 
@@ -337,57 +350,103 @@ class Widget(DOMNode):
     def offset(self, offset: Offset) -> None:
         self.styles.offset = ScalarOffset.from_offset(offset)
 
+    ExpectType = TypeVar("ExpectType", bound="Widget")
+
+    @overload
     def get_child_by_id(self, id: str) -> Widget:
+        ...
+
+    @overload
+    def get_child_by_id(self, id: str, expect_type: type[ExpectType]) -> ExpectType:
+        ...
+
+    def get_child_by_id(
+        self, id: str, expect_type: type[ExpectType] | None = None
+    ) -> ExpectType | Widget:
         """Return the first child (immediate descendent) of this node with the given ID.
 
         Args:
             id (str): The ID of the child.
+            expect_type (type | None, optional): Require the object be of the supplied type, or None for any type.
+                Defaults to None.
 
         Returns:
-            DOMNode: The first child of this node with the ID.
+            ExpectType | Widget: The first child of this node with the ID.
 
         Raises:
             NoMatches: if no children could be found for this ID
+            WrongType: if the wrong type was found.
         """
         child = self.children._get_by_id(id)
-        if child is not None:
+        if child is None:
+            raise NoMatches(f"No child found with id={id!r}")
+        if expect_type is None:
             return child
-        raise NoMatches(f"No child found with id={id!r}")
+        if not isinstance(child, expect_type):
+            raise WrongType(
+                f"Child with id={id!r} is wrong type; expected {expect_type}, got"
+                f" {type(child)}"
+            )
+        return child
 
+    @overload
     def get_widget_by_id(self, id: str) -> Widget:
+        ...
+
+    @overload
+    def get_widget_by_id(self, id: str, expect_type: type[ExpectType]) -> ExpectType:
+        ...
+
+    def get_widget_by_id(
+        self, id: str, expect_type: type[ExpectType] | None = None
+    ) -> ExpectType | Widget:
         """Return the first descendant widget with the given ID.
         Performs a depth-first search rooted at this widget.
 
         Args:
             id (str): The ID to search for in the subtree
+            expect_type (type | None, optional): Require the object be of the supplied type, or None for any type.
+                Defaults to None.
 
         Returns:
-            DOMNode: The first descendant encountered with this ID.
+            ExpectType | Widget: The first descendant encountered with this ID.
 
         Raises:
             NoMatches: if no children could be found for this ID
+            WrongType: if the wrong type was found.
         """
         for child in walk_depth_first(self):
             try:
-                return child.get_child_by_id(id)
+                return child.get_child_by_id(id, expect_type=expect_type)
             except NoMatches:
                 pass
+            except WrongType as exc:
+                raise WrongType(
+                    f"Descendant with id={id!r} is wrong type; expected {expect_type},"
+                    f" got {type(child)}"
+                ) from exc
         raise NoMatches(f"No descendant found with id={id!r}")
 
-    def get_component_rich_style(self, name: str) -> Style:
+    def get_component_rich_style(self, name: str, *, partial: bool = False) -> Style:
         """Get a *Rich* style for a component.
 
         Args:
             name (str): Name of component.
+            partial (bool, optional): Return a partial style (not combined with parent).
 
         Returns:
             Style: A Rich style object.
         """
-        style = self._rich_style_cache.get(name)
-        if style is None:
-            style = self.get_component_styles(name).rich_style
-            self._rich_style_cache[name] = style
-        return style
+
+        if name not in self._rich_style_cache:
+            component_styles = self.get_component_styles(name)
+            style = component_styles.rich_style
+            partial_style = component_styles.partial_rich_style
+            self._rich_style_cache[name] = (style, partial_style)
+
+        style, partial_style = self._rich_style_cache[name]
+
+        return partial_style if partial else style
 
     def _arrange(self, size: Size) -> DockArrangeResult:
         """Arrange children.
@@ -512,7 +571,7 @@ class Widget(DOMNode):
                 if count > 1:
                     raise MountError(
                         f"Tried to insert {count!r} widgets with the same ID {widget_id!r}. "
-                        f"Widget IDs must be unique."
+                        "Widget IDs must be unique."
                     )
 
         # Saying you want to mount before *and* after something is an error.
@@ -523,15 +582,19 @@ class Widget(DOMNode):
 
         # Decide the final resting place depending on what we've been asked
         # to do.
+        insert_before: int | None = None
+        insert_after: int | None = None
         if before is not None:
-            parent, before = self._find_mount_point(before)
+            parent, insert_before = self._find_mount_point(before)
         elif after is not None:
-            parent, after = self._find_mount_point(after)
+            parent, insert_after = self._find_mount_point(after)
         else:
             parent = self
 
         return AwaitMount(
-            self.app._register(parent, *widgets, before=before, after=after)
+            self.app._register(
+                parent, *widgets, before=insert_before, after=insert_after
+            )
         )
 
     def move_child(
@@ -697,7 +760,6 @@ class Widget(DOMNode):
         Returns:
             int: The height of the content.
         """
-
         if self.is_container:
             assert self._layout is not None
             height = (
@@ -733,14 +795,12 @@ class Widget(DOMNode):
     def watch_scroll_x(self, new_value: float) -> None:
         if self.show_horizontal_scrollbar:
             self.horizontal_scrollbar.position = int(new_value)
-            self.horizontal_scrollbar.refresh()
-            self.refresh(layout=True)
+            self.refresh(layout=True, repaint=False)
 
     def watch_scroll_y(self, new_value: float) -> None:
         if self.show_vertical_scrollbar:
             self.vertical_scrollbar.position = int(new_value)
-            self.vertical_scrollbar.refresh()
-            self.refresh(layout=True)
+            self.refresh(layout=True, repaint=False)
 
     def validate_scroll_x(self, value: float) -> float:
         return clamp(value, 0, self.max_scroll_x)
@@ -900,8 +960,6 @@ class Widget(DOMNode):
             int: Number of rows in the horizontal scrollbar.
         """
         styles = self.styles
-        if styles.scrollbar_gutter == "stable" and styles.overflow_x == "auto":
-            return styles.scrollbar_size_horizontal
         return styles.scrollbar_size_horizontal if self.show_horizontal_scrollbar else 0
 
     @property
@@ -961,6 +1019,18 @@ class Widget(DOMNode):
             Region: Screen region that contains a widget's content.
         """
         content_region = self.region.shrink(self.styles.gutter)
+        return content_region
+
+    @property
+    def scrollable_content_region(self) -> Region:
+        """Gets an absolute region containing the scrollable content (minus padding, border, and scrollbars).
+
+        Returns:
+            Region: Screen region that contains a widget's content.
+        """
+        content_region = self.region.shrink(self.styles.gutter).shrink(
+            self.scrollbar_gutter
+        )
         return content_region
 
     @property
@@ -1728,7 +1798,7 @@ class Widget(DOMNode):
         Returns:
             Offset: The distance that was scrolled.
         """
-        window = self.content_region.at_offset(self.scroll_offset)
+        window = self.scrollable_content_region.at_offset(self.scroll_offset)
         if spacing is not None:
             window = window.shrink(spacing)
 
@@ -1790,9 +1860,13 @@ class Widget(DOMNode):
         can_focus: bool | None = None,
         can_focus_children: bool | None = None,
         inherit_css: bool = True,
+        inherit_bindings: bool = True,
     ) -> None:
         base = cls.__mro__[0]
-        super().__init_subclass__(inherit_css=inherit_css)
+        super().__init_subclass__(
+            inherit_css=inherit_css,
+            inherit_bindings=inherit_bindings,
+        )
         if issubclass(base, Widget):
             cls.can_focus = base.can_focus if can_focus is None else can_focus
             cls.can_focus_children = (
@@ -2114,15 +2188,9 @@ class Widget(DOMNode):
         Returns:
             AwaitRemove: An awaitable object that waits for the widget to be removed.
         """
-        prune_finished_event = AsyncEvent()
-        self.app.post_message_no_wait(
-            events.Prune(
-                self,
-                widgets=self.app._detach_from_dom([self]),
-                finished_flag=prune_finished_event,
-            )
-        )
-        return AwaitRemove(prune_finished_event)
+
+        await_remove = self.app._remove_nodes([self])
+        return await_remove
 
     def render(self) -> RenderableType:
         """Get renderable for widget.
@@ -2233,7 +2301,7 @@ class Widget(DOMNode):
     def _on_styles_updated(self) -> None:
         self._rich_style_cache.clear()
 
-    async def _on_mouse_down(self, event: events.MouseUp) -> None:
+    async def _on_mouse_down(self, event: events.MouseDown) -> None:
         await self.broker_event("mouse.down", event)
 
     async def _on_mouse_up(self, event: events.MouseUp) -> None:
@@ -2325,50 +2393,34 @@ class Widget(DOMNode):
     def _on_scroll_to_region(self, message: messages.ScrollToRegion) -> None:
         self.scroll_to_region(message.region, animate=True)
 
-    def _key_home(self) -> bool:
+    def action_scroll_home(self) -> None:
         if self._allow_scroll:
             self.scroll_home()
-            return True
-        return False
 
-    def _key_end(self) -> bool:
+    def action_scroll_end(self) -> None:
         if self._allow_scroll:
             self.scroll_end()
-            return True
-        return False
 
-    def _key_left(self) -> bool:
+    def action_scroll_left(self) -> None:
         if self.allow_horizontal_scroll:
             self.scroll_left()
-            return True
-        return False
 
-    def _key_right(self) -> bool:
+    def action_scroll_right(self) -> None:
         if self.allow_horizontal_scroll:
             self.scroll_right()
-            return True
-        return False
 
-    def _key_down(self) -> bool:
-        if self.allow_vertical_scroll:
-            self.scroll_down()
-            return True
-        return False
-
-    def _key_up(self) -> bool:
+    def action_scroll_up(self) -> None:
         if self.allow_vertical_scroll:
             self.scroll_up()
-            return True
-        return False
 
-    def _key_pagedown(self) -> bool:
+    def action_scroll_down(self) -> None:
+        if self.allow_vertical_scroll:
+            self.scroll_down()
+
+    def action_page_down(self) -> None:
         if self.allow_vertical_scroll:
             self.scroll_page_down()
-            return True
-        return False
 
-    def _key_pageup(self) -> bool:
+    def action_page_up(self) -> None:
         if self.allow_vertical_scroll:
             self.scroll_page_up()
-            return True
-        return False
