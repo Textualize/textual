@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Rebuilt `DirectoryTree` with new `Tree` control.
+- The default `width` of a `Label` is now `auto`.
 
 ### Fixed
 
