@@ -3,10 +3,11 @@ from __future__ import annotations
 from itertools import cycle
 
 from .. import events
-from ..app import ComposeResult
+from ..containers import Container
 from ..css._error_tools import friendly_list
 from ..reactive import Reactive, reactive
-from ..widgets import Static
+from ..widget import Widget, RenderResult
+from ..widgets import Label
 from .._typing import Literal
 
 PlaceholderVariant = Literal["default", "size", "text"]
@@ -32,17 +33,23 @@ _PLACEHOLDER_BACKGROUND_COLORS = [
     "#3366bb",
     "#663399",
 ]
+_LOREM_IPSUM_PLACEHOLDER_TEXT = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam feugiat ac elit sit amet accumsan. Suspendisse bibendum nec libero quis gravida. Phasellus id eleifend ligula. Nullam imperdiet sem tellus, sed vehicula nisl faucibus sit amet. Praesent iaculis tempor ultricies. Sed lacinia, tellus id rutrum lacinia, sapien sapien congue mauris, sit amet pellentesque quam quam vel nisl. Curabitur vulputate erat pellentesque mauris posuere, non dictum risus mattis."
 
 
 class InvalidPlaceholderVariant(Exception):
     pass
 
 
-class _PlaceholderLabel(Static):
-    pass
+class _PlaceholderLabel(Widget):
+    def __init__(self, content, classes) -> None:
+        super().__init__(classes=classes)
+        self._content = content
+
+    def render(self) -> RenderResult:
+        return self._content
 
 
-class Placeholder(Static):
+class Placeholder(Container):
     """A simple placeholder widget to use before you build your custom widgets.
 
     This placeholder has a couple of variants that show different data.
@@ -58,19 +65,38 @@ class Placeholder(Static):
     DEFAULT_CSS = """
     Placeholder {
         align: center middle;
-        overflow-y: auto;
     }
 
     Placeholder.-text {
         padding: 1;
     }
 
+    _PlaceholderLabel {
+        height: auto;
+    }
+
     Placeholder > _PlaceholderLabel {
         content-align: center middle;
+    }
+
+    Placeholder.-default > _PlaceholderLabel.-size,
+    Placeholder.-default > _PlaceholderLabel.-text,
+    Placeholder.-size    > _PlaceholderLabel.-default,
+    Placeholder.-size    > _PlaceholderLabel.-text,
+    Placeholder.-text    > _PlaceholderLabel.-default,
+    Placeholder.-text    > _PlaceholderLabel.-size {
+        display: none;
+    }
+
+    Placeholder.-default > _PlaceholderLabel.-default,
+    Placeholder.-size    > _PlaceholderLabel.-size,
+    Placeholder.-text    > _PlaceholderLabel.-text {
+        display: block;
     }
     """
     # Consecutive placeholders get assigned consecutive colors.
     _COLORS = cycle(_PLACEHOLDER_BACKGROUND_COLORS)
+    _SIZE_RENDER_TEMPLATE = "[b]{} x {}[/b]"
 
     variant: Reactive[PlaceholderVariant] = reactive("default")
 
@@ -101,22 +127,35 @@ class Placeholder(Static):
             classes (str | None, optional): A space separated string with the CSS classes
                 of the placeholder, if any. Defaults to None.
         """
-        super().__init__(name=name, id=id, classes=classes)
-        self._placeholder_text = label if label else f"#{id}" if id else "Placeholder"
-        self._placeholder_label = _PlaceholderLabel()
+        # Create and cache labels for all the variants.
+        self._default_label = _PlaceholderLabel(
+            label if label else f"#{id}" if id else "Placeholder",
+            "-default",
+        )
+        self._size_label = _PlaceholderLabel(
+            "",
+            "-size",
+        )
+        self._text_label = _PlaceholderLabel(
+            _LOREM_IPSUM_PLACEHOLDER_TEXT,
+            "-text",
+        )
+        super().__init__(
+            self._default_label,
+            self._size_label,
+            self._text_label,
+            name=name,
+            id=id,
+            classes=classes,
+        )
+
         self.styles.background = f"{next(Placeholder._COLORS)} 70%"
+
         self.variant = self.validate_variant(variant)
         # Set a cycle through the variants with the correct starting point.
         self._variants_cycle = cycle(_VALID_PLACEHOLDER_VARIANTS_ORDERED)
         while next(self._variants_cycle) != self.variant:
             pass
-
-    def compose(self) -> ComposeResult:
-        yield self._placeholder_label
-
-    def on_click(self) -> None:
-        """Click handler to cycle through the placeholder variants."""
-        self.cycle_variant()
 
     def cycle_variant(self) -> None:
         """Get the next variant in the cycle."""
@@ -127,32 +166,6 @@ class Placeholder(Static):
     ) -> None:
         self.remove_class(f"-{old_variant}")
         self.add_class(f"-{variant}")
-        self.call_variant_update()
-
-    def call_variant_update(self) -> None:
-        """Calls the appropriate method to update the render of the placeholder."""
-        update_variant_method = getattr(self, f"_update_{self.variant}_variant")
-        update_variant_method()
-
-    def _update_default_variant(self) -> None:
-        """Update the placeholder with its label."""
-        self._placeholder_label.update(self._placeholder_text)
-
-    def _update_size_variant(self) -> None:
-        """Update the placeholder with the size of the placeholder."""
-        width, height = self.size
-        self._placeholder_label.update(f"[b]{width} x {height}[/b]")
-
-    def _update_text_variant(self) -> None:
-        """Update the placeholder with some Lorem Ipsum text."""
-        self._placeholder_label.update(
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam feugiat ac elit sit amet accumsan. Suspendisse bibendum nec libero quis gravida. Phasellus id eleifend ligula. Nullam imperdiet sem tellus, sed vehicula nisl faucibus sit amet. Praesent iaculis tempor ultricies. Sed lacinia, tellus id rutrum lacinia, sapien sapien congue mauris, sit amet pellentesque quam quam vel nisl. Curabitur vulputate erat pellentesque mauris posuere, non dictum risus mattis."
-        )
-
-    def on_resize(self, event: events.Resize) -> None:
-        """Update the placeholder "size" variant with the new placeholder size."""
-        if self.variant == "size":
-            self._update_size_variant()
 
     def validate_variant(self, variant: PlaceholderVariant) -> PlaceholderVariant:
         """Validate the variant to which the placeholder was set."""
@@ -162,3 +175,13 @@ class Placeholder(Static):
                 + f"{friendly_list(_VALID_PLACEHOLDER_VARIANTS)}"
             )
         return variant
+
+    def on_click(self) -> None:
+        """Click handler to cycle through the placeholder variants."""
+        self.cycle_variant()
+
+    def on_resize(self, event: events.Resize) -> None:
+        """Update the placeholder "size" variant with the new placeholder size."""
+        self._size_label._content = self._SIZE_RENDER_TEMPLATE.format(*self.size)
+        if self.variant == "size":
+            self._size_label.refresh(layout=True)
