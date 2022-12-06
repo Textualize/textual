@@ -6,6 +6,7 @@ from typing import Iterable, MutableMapping
 import rich.repr
 
 from textual._typing import TypeAlias
+from textual.keys import _get_key_for_char
 
 BindingType: TypeAlias = "Binding | tuple[str, str, str]"
 
@@ -50,6 +51,14 @@ class Bindings:
                     binding = Binding(*binding)
 
                 binding_keys = binding.key.split(",")
+                for key in binding_keys:
+                    if not key.isalnum():
+                        msg = "BINDINGS require alphanumeric keys"
+                        suggested_key = _get_key_for_char(key)
+                        if suggested_key:
+                            msg += f"; try replacing '{key}' with '{suggested_key}'"
+                        raise BindingError(msg)
+
                 if len(binding_keys) > 1:
                     for key in binding_keys:
                         new_binding = Binding(

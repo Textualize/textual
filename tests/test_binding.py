@@ -48,3 +48,8 @@ def test_shown():
         ) for key in ascii_lowercase
     ])
     assert len(bindings.shown_keys)==(len(ascii_lowercase)/2)
+
+def test_non_alphanumeric_binding():
+    with pytest.raises(BindingError) as raised:
+        _ = Bindings(((".", "action1", "description1"),))
+        assert "full_stop" in str(raised)

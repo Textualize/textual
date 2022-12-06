@@ -229,6 +229,7 @@ KEY_DISPLAY_ALIASES = {
     "escape": "ESC",
     "enter": "⏎",
 }
+ALIASED_KEYS = {value: key for key, value in KEY_DISPLAY_ALIASES.items()}
 
 
 def _get_key_aliases(key: str) -> list[str]:
@@ -251,3 +252,23 @@ def _get_key_display(key: str) -> str:
         return original_key.upper()
 
     return unicode_character
+
+
+def _get_key_for_char(char: str) -> str:
+    aliased_key = ALIASED_KEYS.get(char)
+    if aliased_key:
+        return aliased_key
+
+    if len(char) == 1 and not char.isalnum():
+        return (
+            unicodedata.name(char)
+            .lower()
+            .replace("-", "_")
+            .replace(" ", "_")
+        )
+
+    replaced_key = KEY_NAME_REPLACEMENTS.get(char, char)
+    if replaced_key:
+        return replaced_key
+
+    return char if len(char) == 1 else None
