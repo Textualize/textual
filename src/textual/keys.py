@@ -229,7 +229,7 @@ KEY_DISPLAY_ALIASES = {
     "escape": "ESC",
     "enter": "⏎",
 }
-ALIASED_KEYS = {value: key for key, value in KEY_DISPLAY_ALIASES.items()}
+ALIASED_DISPLAY_KEYS = {value: key for key, value in KEY_DISPLAY_ALIASES.items()}
 
 
 def _get_key_aliases(key: str) -> list[str]:
@@ -258,7 +258,7 @@ def _get_suggested_binding_key(key: str) -> str:
     """Given a (potentially malformed) binding key as input, return a suggested binding
     key to use.
     """
-    aliased_key = ALIASED_KEYS.get(key)
+    aliased_key = ALIASED_DISPLAY_KEYS.get(key)
     if aliased_key:
         return aliased_key
 
