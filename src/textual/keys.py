@@ -255,6 +255,9 @@ def _get_key_display(key: str) -> str:
 
 
 def _get_suggested_binding_key(key: str) -> str:
+    """Given a (potentially malformed) binding key as input, return a suggested binding
+    key to use.
+    """
     aliased_key = ALIASED_KEYS.get(key)
     if aliased_key:
         return aliased_key
