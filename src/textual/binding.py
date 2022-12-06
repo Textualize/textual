@@ -6,6 +6,7 @@ from typing import Iterable, MutableMapping
 import rich.repr
 
 from textual._typing import TypeAlias
+from textual.events import _normalize_key
 from textual.keys import _get_suggested_binding_key
 
 BindingType: TypeAlias = "Binding | tuple[str, str, str]"
@@ -52,7 +53,7 @@ class Bindings:
 
                 binding_keys = binding.key.split(",")
                 for key in binding_keys:
-                    if not key.isalnum():
+                    if not _normalize_key(key).isidentifier():
                         msg = "BINDINGS require alphanumeric keys"
                         suggested_key = _get_suggested_binding_key(key)
                         if suggested_key:
