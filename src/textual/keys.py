@@ -260,7 +260,7 @@ def _get_key_for_char(char: str) -> str:
         return aliased_key
 
     if len(char) == 1 and not char.isalnum():
-        return (
+        char = (
             unicodedata.name(char)
             .lower()
             .replace("-", "_")

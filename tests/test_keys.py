@@ -8,6 +8,7 @@ char_key_mappings = [
     ("a", "a"),
     (".", "full_stop"),
     ("#", "number_sign"),
+    ("+", "plus"),
 ]
 
 
