@@ -1,10 +1,10 @@
 import pytest
 
 from textual.keys import (
-    _get_key_for_char,
+    _get_suggested_binding_key,
 )
 
-char_key_mappings = [
+suggested_binding_keys = [
     ("a", "a"),
     (".", "full_stop"),
     ("#", "number_sign"),
@@ -12,7 +12,7 @@ char_key_mappings = [
 ]
 
 
-@pytest.mark.parametrize("char,expected_key", char_key_mappings)
-def test_char_key_mapping(char, expected_key):
-    key_from_char = _get_key_for_char(char)
-    assert key_from_char == expected_key
+@pytest.mark.parametrize("key,expected_suggestion", suggested_binding_keys)
+def test_suggested_binding_key(key, expected_suggestion):
+    suggestion = _get_suggested_binding_key(key)
+    assert suggestion == expected_suggestion

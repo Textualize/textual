@@ -254,21 +254,21 @@ def _get_key_display(key: str) -> str:
     return unicode_character
 
 
-def _get_key_for_char(char: str) -> str:
-    aliased_key = ALIASED_KEYS.get(char)
+def _get_suggested_binding_key(key: str) -> str:
+    aliased_key = ALIASED_KEYS.get(key)
     if aliased_key:
         return aliased_key
 
-    if len(char) == 1 and not char.isalnum():
-        char = (
-            unicodedata.name(char)
+    if len(key) == 1 and not key.isalnum():
+        key = (
+            unicodedata.name(key)
             .lower()
             .replace("-", "_")
             .replace(" ", "_")
         )
 
-    replaced_key = KEY_NAME_REPLACEMENTS.get(char, char)
+    replaced_key = KEY_NAME_REPLACEMENTS.get(key, key)
     if replaced_key:
         return replaced_key
 
-    return char if len(char) == 1 else None
+    return key if len(key) == 1 else None
