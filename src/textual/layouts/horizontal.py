@@ -73,7 +73,7 @@ class HorizontalLayout(Layout):
             int: Width of the content.
         """
         if not widget.displayed_children:
-            width = container.width
+            width = 0
         else:
             placements, *_ = widget._arrange(container)
             width = max(

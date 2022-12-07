@@ -61,12 +61,13 @@ class Input(Widget, can_focus=True):
         border: tall $background;
         width: 100%;
         height: 1;
+        min-height: 1;
     }
     Input.-disabled {
         opacity: 0.6;
     }
     Input:focus {
-       border: tall $accent;
+        border: tall $accent;
     }
     Input>.input--cursor {
         background: $surface;
