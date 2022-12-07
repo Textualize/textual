@@ -69,7 +69,7 @@ It is by using the module `asyncio` from the standard library that our cook lear
 [Textual](https://github.com/textualize/textual) is an async framework, which means it knows how to interoperate with the module `asyncio` and this will be the solution to our problem.
 By using `asyncio` with the tasks we want to run in the background, we will let the application remain responsive while we load and parse the data we need, or while we crunch the numbers we need to crunch, or while we connect to some slow API over the Internet, or whatever it is you want to do.
 
-The module `asyncio` introduces a keyword `async` that you can use to identify functions that you want to be able to run asynchronously.
+The module `asyncio` uses the keyword `async` to know which functions can be run asynchronously.
 In other words, you use the keyword `async` to identify functions that contain tasks that would otherwise force the cook to waste time.
 (Functions with the keyword `async` are called _coroutines_.)
 
