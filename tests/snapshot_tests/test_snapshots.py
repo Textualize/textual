@@ -100,6 +100,10 @@ def test_fr_units(snap_compare):
     assert snap_compare("snapshot_apps/fr_units.py")
 
 
+def test_visibility(snap_compare):
+    assert snap_compare("snapshot_apps/visibility.py")
+
+
 def test_tree_example(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "tree.py")
 
