@@ -23,6 +23,7 @@ Placeholder {
 #c1 {
     row-span: 4;
     column-span: 8;
+    height: 100%;
 }
 
 #col1, #col2, #col3 {
