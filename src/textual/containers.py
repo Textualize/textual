@@ -6,6 +6,7 @@ class Container(Widget):
 
     DEFAULT_CSS = """
     Container {
+        height: 1fr;
         layout: vertical;
         overflow: auto;
     }
@@ -17,6 +18,7 @@ class Vertical(Widget):
 
     DEFAULT_CSS = """
     Vertical {
+        height: 1fr;
         layout: vertical;
         overflow-y: auto;
     }
@@ -28,6 +30,7 @@ class Horizontal(Widget):
 
     DEFAULT_CSS = """
     Horizontal {
+        height: 1fr;
         layout: horizontal;
         overflow-x: hidden;
     }
@@ -39,6 +42,7 @@ class Grid(Widget):
 
     DEFAULT_CSS = """
     Grid {
+        height: 1fr;
         layout: grid;
     }    
     """
@@ -49,6 +53,7 @@ class Content(Widget, can_focus=True, can_focus_children=False):
 
     DEFAULT_CSS = """
     Vertical {
+        height: 1fr;
         layout: vertical;
         overflow-y: auto;
     }
