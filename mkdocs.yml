@@ -98,6 +98,7 @@ nav:
       - "widgets/index.md"
       - "widgets/input.md"
       - "widgets/label.md"
+      - "widgets/placeholder.md"
       - "widgets/static.md"
       - "widgets/tree.md"
   - API:

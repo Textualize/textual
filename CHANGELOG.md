@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added "inherited bindings" -- BINDINGS classvar will be merged with base classes, unless inherit_bindings is set to False
 - Added `Tree` widget which replaces `TreeControl`.
+- Added widget `Placeholder` https://github.com/Textualize/textual/issues/1200.
 
 ### Changed
 
