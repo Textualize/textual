@@ -12,15 +12,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added "inherited bindings" -- BINDINGS classvar will be merged with base classes, unless inherit_bindings is set to False
 - Added `Tree` widget which replaces `TreeControl`.
+- Added widget `Placeholder` https://github.com/Textualize/textual/issues/1200.
 
 ### Changed
 
 - Rebuilt `DirectoryTree` with new `Tree` control.
 - Empty containers with a dimension set to `"auto"` will now collapse instead of filling up the available space.
+- Container widgets now have default height of `1fr`.
+- The default `width` of a `Label` is now `auto`.
 
 ### Fixed
 
 - Type selectors can now contain numbers https://github.com/Textualize/textual/issues/1253
+- Fixed visibility not affecting children https://github.com/Textualize/textual/issues/1313
 
 ## [0.5.0] - 2022-11-20
 

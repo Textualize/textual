@@ -2,6 +2,8 @@ from pathlib import Path
 
 import pytest
 
+from textual.widgets import Placeholder
+
 # These paths should be relative to THIS directory.
 WIDGET_EXAMPLES_DIR = Path("../../docs/examples/widgets")
 LAYOUT_EXAMPLES_DIR = Path("../../docs/examples/guide/layout")
@@ -79,6 +81,12 @@ def test_buttons_render(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "button.py", press=["tab"])
 
 
+def test_placeholder_render(snap_compare):
+    # Testing the rendering of the multiple placeholder variants and labels.
+    Placeholder.reset_color_cycle()
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "placeholder.py")
+
+
 def test_datatable_render(snap_compare):
     press = ["tab", "down", "down", "right", "up", "left"]
     assert snap_compare(WIDGET_EXAMPLES_DIR / "data_table.py", press=press)
@@ -98,6 +106,10 @@ def test_textlog_max_lines(snap_compare):
 
 def test_fr_units(snap_compare):
     assert snap_compare("snapshot_apps/fr_units.py")
+
+
+def test_visibility(snap_compare):
+    assert snap_compare("snapshot_apps/visibility.py")
 
 
 def test_tree_example(snap_compare):
@@ -124,6 +136,16 @@ def test_css_property(file_name, snap_compare):
 def test_multiple_css(snap_compare):
     # Interaction between multiple CSS files and app-level/classvar CSS
     assert snap_compare("snapshot_apps/multiple_css/multiple_css.py")
+
+
+def test_order_independence(snap_compare):
+    # Interaction between multiple CSS files and app-level/classvar CSS
+    assert snap_compare("snapshot_apps/order_independence.py")
+
+
+def test_order_independence_toggle(snap_compare):
+    # Interaction between multiple CSS files and app-level/classvar CSS
+    assert snap_compare("snapshot_apps/order_independence.py", press="t,_")
 
 
 # --- Other ---
