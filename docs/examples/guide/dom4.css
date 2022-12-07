@@ -1,6 +1,7 @@
 
 /* The top level dialog (a Container) */
 #dialog {
+    height: 100%;
     margin: 4 8;
     background: $panel;
     color: $text;
