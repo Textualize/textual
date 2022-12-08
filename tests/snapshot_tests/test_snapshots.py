@@ -139,13 +139,16 @@ def test_multiple_css(snap_compare):
 
 
 def test_order_independence(snap_compare):
-    # Interaction between multiple CSS files and app-level/classvar CSS
     assert snap_compare("snapshot_apps/order_independence.py")
 
 
 def test_order_independence_toggle(snap_compare):
-    # Interaction between multiple CSS files and app-level/classvar CSS
     assert snap_compare("snapshot_apps/order_independence.py", press="t,_")
+
+
+def test_columns_height(snap_compare):
+    # Interaction with height auto, and relative heights to make columns
+    assert snap_compare("snapshot_apps/columns_height.py")
 
 
 # --- Other ---
@@ -153,3 +156,8 @@ def test_order_independence_toggle(snap_compare):
 
 def test_key_display(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "key_display.py")
+
+
+def test_demo(snap_compare):
+    """Test the demo app (python -m textual)"""
+    assert snap_compare(Path("../../src/textual/demo.py"))
