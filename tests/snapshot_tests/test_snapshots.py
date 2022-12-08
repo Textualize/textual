@@ -156,3 +156,8 @@ def test_columns_height(snap_compare):
 
 def test_key_display(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "key_display.py")
+
+
+def test_demo(snap_compare):
+    """Test the demo app (python -m textual)"""
+    assert snap_compare(Path("../../src/textual/demo.py"))
