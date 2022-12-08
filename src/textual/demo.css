@@ -190,7 +190,7 @@ LocationLink {
     padding: 1 2;
     background: $boost;
     color: $text;  
-
+    box-sizing: content-box;
     content-align: center middle;
 }
 
