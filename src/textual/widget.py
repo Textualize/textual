@@ -475,7 +475,6 @@ class Widget(DOMNode):
 
     def _clear_arrangement_cache(self) -> None:
         """Clear arrangement cache, forcing a new arrange operation."""
-        # self._arrangement = None
         self._arrangement_cache.clear()
 
     def _get_virtual_dom(self) -> Iterable[Widget]:
