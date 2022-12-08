@@ -107,7 +107,7 @@ just recording, steak app for the Terminal.
 
 As of the time of writing I only finished the first version of this
 yesterday evening, so there are plenty of rough edges; but having got it to
-a point where it performed the basic tasks I wanted form it, that seemed
+a point where it performed the basic tasks I wanted from it, that seemed
 like a good time to publish.
 
 Expect to see this getting more updates and polish.
@@ -162,7 +162,7 @@ just an easy install away.
 
 I think there's a call to be made here too: have you built anything to help
 speed up how you work with Textual, or just make the development experience
-"just so"? If so, do let is know, and come yell about it on the
+"just so"? If so, do let us know, and come yell about it on the
 [`#show-and-tell`
 channel](https://discord.com/channels/1026214085173461072/1033752599112994867)
 in [our Discord server](https://discord.gg/Enf6Z3qhVr).
