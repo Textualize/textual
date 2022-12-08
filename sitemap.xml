@@ -176,6 +176,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://textual.textualize.io/blog/2022/12/08/be-the-keymaster/</loc>
+         <lastmod>2022-12-08</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://textual.textualize.io/blog/2022/11/06/new-blog/</loc>
          <lastmod>2022-12-08</lastmod>
          <changefreq>daily</changefreq>
