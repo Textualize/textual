@@ -151,6 +151,11 @@ def test_columns_height(snap_compare):
     assert snap_compare("snapshot_apps/columns_height.py")
 
 
+def test_offsets(snap_compare):
+    """Test offsets of containers"""
+    assert snap_compare("snapshot_apps/offsets.py")
+
+
 # --- Other ---
 
 

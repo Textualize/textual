@@ -371,7 +371,9 @@ class Compositor:
             )
 
             # Container region is minus border
-            container_region = region.shrink(widget.styles.gutter)
+            container_region = region.shrink(widget.styles.gutter).translate(
+                layout_offset
+            )
             container_size = container_region.size
 
             # Widgets with scrollbars (containers or scroll view) require additional processing
@@ -393,7 +395,7 @@ class Compositor:
                     widgets.update(arranged_widgets)
 
                     # An offset added to all placements
-                    placement_offset = container_region.offset + layout_offset
+                    placement_offset = container_region.offset
                     placement_scroll_offset = placement_offset - widget.scroll_offset
 
                     _layers = widget.layers
