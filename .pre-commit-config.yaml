@@ -9,7 +9,7 @@ repos:
     -   id: check-yaml
         args: ['--unsafe']
 -   repo: https://github.com/psf/black
-    rev: 22.3.0
+    rev: 22.10.0
     hooks:
     -   id: black
         exclude: ^tests/
