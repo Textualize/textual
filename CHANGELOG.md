@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Type selectors can now contain numbers https://github.com/Textualize/textual/issues/1253
 - Fixed visibility not affecting children https://github.com/Textualize/textual/issues/1313
 - Fixed issue with auto width/height and relative children https://github.com/Textualize/textual/issues/1319
+- Fixed issue with offset applied to containers https://github.com/Textualize/textual/issues/1256
 
 ## [0.5.0] - 2022-11-20
 
