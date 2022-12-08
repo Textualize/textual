@@ -46,8 +46,7 @@ class Layout(ABC):
         """
 
     def get_content_width(self, widget: Widget, container: Size, viewport: Size) -> int:
-        """Get the width of the content. In Horizontal layout, the content width of
-        a widget is the sum of the widths of its children.
+        """Get the optimal content width by arranging children.
 
         Args:
             widget (Widget): The container widget.
@@ -60,6 +59,7 @@ class Layout(ABC):
         if not widget.children:
             width = 0
         else:
+            # Use a size of 0, 0 to ignore relative sizes, since those are flexible anyway
             placements, _, _ = widget._arrange(Size(0, 0))
             width = max(
                 [
@@ -87,6 +87,7 @@ class Layout(ABC):
         if not widget.children:
             height = 0
         else:
+            # Use a height of zero to ignore relative heights
             placements, _, _ = widget._arrange(Size(width, 0))
             height = max(
                 [
