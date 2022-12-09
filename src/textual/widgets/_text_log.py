@@ -4,6 +4,7 @@ from typing import cast
 
 from rich.console import RenderableType
 from rich.highlighter import ReprHighlighter
+from rich.measure import measure_renderables
 from rich.pretty import Pretty
 from rich.protocol import is_renderable
 from rich.segment import Segment
@@ -82,14 +83,15 @@ class TextLog(ScrollView, can_focus=True):
                 renderable = cast(RenderableType, content)
 
         console = self.app.console
-        width = max(
-            self.min_width, self.scrollable_content_region.width or self.min_width
-        )
-
-        render_options = console.options.update_width(width)
+        render_options = console.options
 
         if isinstance(renderable, Text) and not self.wrap:
             render_options = render_options.update(overflow="ignore", no_wrap=True)
+
+        width = max(
+            self.min_width,
+            measure_renderables(console, render_options, [renderable]).maximum,
+        )
 
         segments = self.app.console.render(
             renderable, render_options.update_width(width)
