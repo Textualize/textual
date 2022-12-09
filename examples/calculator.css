@@ -11,6 +11,7 @@ Screen {
     margin: 1 2;
     min-height: 25;
     min-width: 26;
+    height: 100%;
 }
 
 Button {

@@ -635,6 +635,7 @@ class Region(NamedTuple):
             and (y2 >= oy2 >= y1)
         )
 
+    @lru_cache(maxsize=1024)
     def translate(self, offset: tuple[int, int]) -> Region:
         """Move the offset of the Region.
 

@@ -100,7 +100,7 @@ def test_width():
 
 
 def test_height():
-    """Test width settings."""
+    """Test height settings."""
     styles = Styles()
     one = Fraction(1)
 
@@ -123,7 +123,7 @@ def test_height():
     )
     assert box_model == BoxModel(Fraction(54), Fraction(16), Spacing(1, 2, 3, 4))
 
-    # Set width to 100 vw which should make it the width of the parent
+    # Set height to 100 vw which should make it the height of the parent
     styles.height = "100vh"
 
     box_model = get_box_model(
@@ -131,7 +131,7 @@ def test_height():
     )
     assert box_model == BoxModel(Fraction(54), Fraction(24), Spacing(1, 2, 3, 4))
 
-    # Set the width to 100% should make it fill the container size
+    # Set the height to 100% should make it fill the container size
     styles.height = "100%"
 
     box_model = get_box_model(
@@ -155,6 +155,14 @@ def test_height():
         styles, Size(60, 20), Size(80, 24), one, one, get_auto_width, get_auto_height
     )
     assert box_model == BoxModel(Fraction(54), Fraction(10), Spacing(1, 2, 3, 4))
+
+    # Set height to auto and set content height to 0 to check if box collapses.
+    styles.height = "auto"
+
+    box_model = get_box_model(
+        styles, Size(60, 20), Size(80, 24), one, one, get_auto_width, lambda *_: 0
+    )
+    assert box_model == BoxModel(Fraction(54), Fraction(0), Spacing(1, 2, 3, 4))
 
 
 def test_max():

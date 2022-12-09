@@ -379,8 +379,6 @@ class Screen(Widget):
 
             for widget in hidden:
                 widget.post_message_no_wait(Hide(self))
-            for widget in shown:
-                widget.post_message_no_wait(Show(self))
 
             # We want to send a resize event to widgets that were just added or change since last layout
             send_resize = shown | resized
@@ -401,11 +399,17 @@ class Screen(Widget):
                         ResizeEvent(self, region.size, virtual_size, container_size)
                     )
 
+            for widget in shown:
+                widget.post_message_no_wait(Show(self))
+
         except Exception as error:
             self.app._handle_exception(error)
             return
         display_update = self._compositor.render(full=full)
         self.app._display(self, display_update)
+        if not self.app._dom_ready:
+            self.app.post_message_no_wait(events.Ready(self))
+            self.app._dom_ready = True
 
     async def _on_update(self, message: messages.Update) -> None:
         message.stop()

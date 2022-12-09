@@ -356,6 +356,7 @@ class App(Generic[ReturnType], DOMNode):
         )
         self._screenshot: str | None = None
         self._dom_lock = asyncio.Lock()
+        self._dom_ready = False
 
     @property
     def return_value(self) -> ReturnType | None:

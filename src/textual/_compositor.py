@@ -347,6 +347,7 @@ class Compositor:
             order: tuple[tuple[int, ...], ...],
             layer_order: int,
             clip: Region,
+            visible: bool,
         ) -> None:
             """Called recursively to place a widget and its children in the map.
 
@@ -356,7 +357,12 @@ class Compositor:
                 order (tuple[int, ...]): A tuple of ints to define the order.
                 clip (Region): The clipping region (i.e. the viewport which contains it).
             """
-            widgets.add(widget)
+            visibility = widget.styles.get_rule("visibility")
+            if visibility is not None:
+                visible = visibility == "visible"
+
+            if visible:
+                widgets.add(widget)
             styles_offset = widget.styles.offset
             layout_offset = (
                 styles_offset.resolve(region.size, clip.size)
@@ -365,7 +371,9 @@ class Compositor:
             )
 
             # Container region is minus border
-            container_region = region.shrink(widget.styles.gutter)
+            container_region = region.shrink(widget.styles.gutter).translate(
+                layout_offset
+            )
             container_size = container_region.size
 
             # Widgets with scrollbars (containers or scroll view) require additional processing
@@ -387,7 +395,7 @@ class Compositor:
                     widgets.update(arranged_widgets)
 
                     # An offset added to all placements
-                    placement_offset = container_region.offset + layout_offset
+                    placement_offset = container_region.offset
                     placement_scroll_offset = placement_offset - widget.scroll_offset
 
                     _layers = widget.layers
@@ -420,32 +428,34 @@ class Compositor:
                             widget_order,
                             layer_order,
                             sub_clip,
+                            visible,
                         )
                         layer_order -= 1
 
-                # Add any scrollbars
-                for chrome_widget, chrome_region in widget._arrange_scrollbars(
-                    container_region
-                ):
-                    map[chrome_widget] = MapGeometry(
-                        chrome_region + layout_offset,
+                if visible:
+                    # Add any scrollbars
+                    for chrome_widget, chrome_region in widget._arrange_scrollbars(
+                        container_region
+                    ):
+                        map[chrome_widget] = MapGeometry(
+                            chrome_region + layout_offset,
+                            order,
+                            clip,
+                            container_size,
+                            container_size,
+                            chrome_region,
+                        )
+
+                    map[widget] = MapGeometry(
+                        region + layout_offset,
                         order,
                         clip,
+                        total_region.size,
                         container_size,
-                        container_size,
-                        chrome_region,
+                        virtual_region,
                     )
 
-                map[widget] = MapGeometry(
-                    region + layout_offset,
-                    order,
-                    clip,
-                    total_region.size,
-                    container_size,
-                    virtual_region,
-                )
-
-            else:
+            elif visible:
                 # Add the widget to the map
                 map[widget] = MapGeometry(
                     region + layout_offset,
@@ -457,7 +467,15 @@ class Compositor:
                 )
 
         # Add top level (root) widget
-        add_widget(root, size.region, size.region, ((0,),), layer_order, size.region)
+        add_widget(
+            root,
+            size.region,
+            size.region,
+            ((0,),),
+            layer_order,
+            size.region,
+            True,
+        )
         return map, widgets
 
     @property
@@ -630,11 +648,6 @@ class Compositor:
         if not self.map:
             return
 
-        def is_visible(widget: Widget) -> bool:
-            """Return True if the widget is (literally) visible by examining various
-            properties which affect whether it can be seen or not."""
-            return widget.visible and widget.styles.opacity > 0
-
         _Region = Region
 
         visible_widgets = self.visible_widgets
@@ -644,13 +657,13 @@ class Compositor:
             widget_regions = [
                 (widget, region, clip)
                 for widget, (region, clip) in visible_widgets.items()
-                if crop_overlaps(clip) and is_visible(widget)
+                if crop_overlaps(clip) and widget.styles.opacity > 0
             ]
         else:
             widget_regions = [
                 (widget, region, clip)
                 for widget, (region, clip) in visible_widgets.items()
-                if is_visible(widget)
+                if widget.styles.opacity > 0
             ]
 
         intersection = _Region.intersection
