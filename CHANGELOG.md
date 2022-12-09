@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Type selectors can now contain numbers https://github.com/Textualize/textual/issues/1253
 - Fixed visibility not affecting children https://github.com/Textualize/textual/issues/1313
+- Fixed default CSS retrieval for widgets with no `DEFAULT_CSS` that inherited from widgets with `DEFAULT_CSS` https://github.com/Textualize/textual/issues/1335
 
 ## [0.5.0] - 2022-11-20
 
