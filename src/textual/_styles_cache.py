@@ -198,7 +198,7 @@ class StylesCache:
         if crop is None:
             crop = size.region
 
-        width, height = size
+        width, _height = size
         if width != self._width:
             self.clear()
             self._width = width
