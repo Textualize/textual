@@ -82,13 +82,21 @@ class TextLog(ScrollView, can_focus=True):
                 renderable = cast(RenderableType, content)
 
         console = self.app.console
-        width = max(self.min_width, self.size.width or self.min_width)
+        width = max(
+            self.min_width, self.scrollable_content_region.width or self.min_width
+        )
 
         render_options = console.options.update_width(width)
-        if not self.wrap:
+
+        if isinstance(renderable, Text) and not self.wrap:
             render_options = render_options.update(overflow="ignore", no_wrap=True)
-        segments = self.app.console.render(renderable, render_options.update_width(80))
+
+        segments = self.app.console.render(
+            renderable, render_options.update_width(width)
+        )
         lines = list(Segment.split_lines(segments))
+        if not lines:
+            return
 
         self.max_width = max(
             self.max_width,
