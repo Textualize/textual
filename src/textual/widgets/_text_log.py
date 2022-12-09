@@ -74,11 +74,11 @@ class TextLog(ScrollView, can_focus=True):
         else:
             if isinstance(content, str):
                 if self.markup:
-                    content = Text.from_markup(content)
-                if self.highlight:
-                    renderable = self.highlighter(content)
+                    renderable = Text.from_markup(content)
                 else:
                     renderable = Text(content)
+                if self.highlight:
+                    renderable = self.highlighter(content)
             else:
                 renderable = cast(RenderableType, content)
 
