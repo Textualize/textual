@@ -1955,24 +1955,6 @@ class App(Generic[ReturnType], DOMNode):
         # prune event.
         return pruned_remove
 
-    async def _on_prune(self, event: events.Prune) -> None:
-        """Handle a prune event.
-
-        Args:
-            event (events.Prune): The prune event.
-        """
-
-        try:
-            # Prune all the widgets.
-            for widget in event.widgets:
-                await self._prune_node(widget)
-        finally:
-            # Finally, flag that we're done.
-            event.finished_flag.set()
-
-        # Flag that the layout needs refreshing.
-        self.refresh(layout=True)
-
     def _walk_children(self, root: Widget) -> Iterable[list[Widget]]:
         """Walk children depth first, generating widgets and a list of their siblings.
 

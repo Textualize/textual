@@ -289,7 +289,7 @@ class DOMNode(MessagePump):
         from .screen import Screen
 
         node = self
-        while node and not isinstance(node, Screen):
+        while node is not None and not isinstance(node, Screen):
             node = node._parent
         if not isinstance(node, Screen):
             raise NoScreen("node has no screen")
