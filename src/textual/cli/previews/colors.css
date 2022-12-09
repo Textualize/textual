@@ -1,3 +1,6 @@
+Label {
+    width: 100%;
+}
 
 ColorButtons {
     dock: left;

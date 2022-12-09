@@ -37,6 +37,7 @@ from rich.text import Text
 from . import errors, events, messages
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
+from ._cache import LRUCache
 from ._context import active_app
 from ._easing import DEFAULT_SCROLL_EASING
 from ._layout import Layout
@@ -246,8 +247,8 @@ class Widget(DOMNode):
         self._content_width_cache: tuple[object, int] = (None, 0)
         self._content_height_cache: tuple[object, int] = (None, 0)
 
-        self._arrangement: DockArrangeResult | None = None
-        self._arrangement_cache_key: tuple[int, Size] = (-1, Size())
+        self._arrangement_cache_updates: int = -1
+        self._arrangement_cache: LRUCache[Size, DockArrangeResult] = LRUCache(4)
 
         self._styles_cache = StylesCache()
         self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
@@ -457,21 +458,24 @@ class Widget(DOMNode):
         Returns:
             ArrangeResult: Widget locations.
         """
+        assert self.is_container
 
-        arrange_cache_key = (self.children._updates, size)
-        if (
-            self._arrangement is not None
-            and arrange_cache_key == self._arrangement_cache_key
-        ):
-            return self._arrangement
+        if self._arrangement_cache_updates != self.children._updates:
+            self._arrangement_cache_updates = self.children._updates
+            self._arrangement_cache.clear()
 
-        self._arrangement_cache_key = arrange_cache_key
-        self._arrangement = arrange(self, self.children, size, self.screen.size)
-        return self._arrangement
+        cached_arrangement = self._arrangement_cache.get(size, None)
+        if cached_arrangement is not None:
+            return cached_arrangement
+
+        arrangement = self._arrangement_cache[size] = arrange(
+            self, self.children, size, self.screen.size
+        )
+        return arrangement
 
     def _clear_arrangement_cache(self) -> None:
         """Clear arrangement cache, forcing a new arrange operation."""
-        self._arrangement = None
+        self._arrangement_cache.clear()
 
     def _get_virtual_dom(self) -> Iterable[Widget]:
         """Get widgets not part of the DOM.

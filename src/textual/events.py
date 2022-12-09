@@ -140,6 +140,10 @@ class Hide(Event, bubble=False):
     """
 
 
+class Ready(Event, bubble=False):
+    """Sent to the app when the DOM is ready."""
+
+
 @rich.repr.auto
 class MouseCapture(Event, bubble=False):
     """Sent when the mouse has been captured.

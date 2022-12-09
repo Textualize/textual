@@ -8,7 +8,6 @@ from ..case import camel_to_snake
 # but also to the `__init__.pyi` file in this same folder - otherwise text editors and type checkers won't
 # be able to "see" them.
 if typing.TYPE_CHECKING:
-
     from ._button import Button
     from ._checkbox import Checkbox
     from ._data_table import DataTable
@@ -17,6 +16,8 @@ if typing.TYPE_CHECKING:
     from ._header import Header
     from ._input import Input
     from ._label import Label
+    from ._list_item import ListItem
+    from ._list_view import ListView
     from ._placeholder import Placeholder
     from ._pretty import Pretty
     from ._static import Static
@@ -25,6 +26,7 @@ if typing.TYPE_CHECKING:
     from ._tree_node import TreeNode
     from ._welcome import Welcome
     from ..widget import Widget
+
 
 __all__ = [
     "Button",
@@ -35,6 +37,8 @@ __all__ = [
     "Header",
     "Input",
     "Label",
+    "ListItem",
+    "ListView",
     "Placeholder",
     "Pretty",
     "Static",

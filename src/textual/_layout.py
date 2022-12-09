@@ -46,7 +46,7 @@ class Layout(ABC):
         """
 
     def get_content_width(self, widget: Widget, container: Size, viewport: Size) -> int:
-        """Get the width of the content.
+        """Get the optimal content width by arranging children.
 
         Args:
             widget (Widget): The container widget.
@@ -56,19 +56,18 @@ class Layout(ABC):
         Returns:
             int: Width of the content.
         """
-        width: int | None = None
-        gutter_width = widget.gutter.width
-        for child in widget.displayed_children:
-            if not child.is_container:
-                child_width = (
-                    child.get_content_width(container, viewport)
-                    + gutter_width
-                    + child.gutter.width
-                )
-                width = child_width if width is None else max(width, child_width)
-        if width is None:
+        if not widget.children:
             width = 0
-
+        else:
+            # Use a size of 0, 0 to ignore relative sizes, since those are flexible anyway
+            placements, _, _ = widget._arrange(Size(0, 0))
+            width = max(
+                [
+                    placement.region.right + placement.margin.right
+                    for placement in placements
+                ],
+                default=0,
+            )
         return width
 
     def get_content_height(
@@ -85,12 +84,17 @@ class Layout(ABC):
         Returns:
             int: Content height (in lines).
         """
-        if not widget.displayed_children:
+        if not widget.children:
             height = 0
         else:
-            placements, *_ = widget._arrange(Size(width, container.height))
+            # Use a height of zero to ignore relative heights
+            placements, _, _ = widget._arrange(Size(width, 0))
             height = max(
-                placement.region.bottom + placement.margin.bottom
-                for placement in placements
+                [
+                    placement.region.bottom + placement.margin.bottom
+                    for placement in placements
+                ],
+                default=0,
             )
+
         return height
