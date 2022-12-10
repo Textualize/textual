@@ -39,5 +39,5 @@ The `DirectoryTree.FileSelected` message is sent when the user selects a file in
 
 ## See Also
 
-* [Tree][textual.widgets.DirectoryTree] code reference
+* [DirectoryTree][textual.widgets.DirectoryTree] code reference
 * [Tree][textual.widgets.Tree] code reference
