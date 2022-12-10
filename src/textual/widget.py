@@ -973,10 +973,9 @@ class Widget(DOMNode):
         Returns:
             Spacing: Scrollbar gutter spacing.
         """
-        gutter = Spacing(
+        return Spacing(
             0, self.scrollbar_size_vertical, self.scrollbar_size_horizontal, 0
         )
-        return gutter
 
     @property
     def gutter(self) -> Spacing:

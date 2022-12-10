@@ -9,6 +9,7 @@ when setting and getting.
 
 from __future__ import annotations
 
+from operator import attrgetter
 from typing import TYPE_CHECKING, Generic, Iterable, NamedTuple, TypeVar, cast
 
 import rich.repr
@@ -262,10 +263,7 @@ class BoxProperty:
             A ``tuple[EdgeType, Style]`` containing the string type of the box and
                 it's style. Example types are "rounded", "solid", and "dashed".
         """
-        box_type, color = obj.get_rule(self.name) or ("", self._default_color)
-        if box_type in {"none", "hidden"}:
-            box_type = ""
-        return (box_type, color)
+        return obj.get_rule(self.name) or ("", self._default_color)
 
     def __set__(self, obj: Styles, border: tuple[EdgeType, str | Color] | None):
         """Set the box property
@@ -286,6 +284,8 @@ class BoxProperty:
                 obj.refresh(layout=True)
         else:
             _type, color = border
+            if _type in ("none", "hidden"):
+                _type = ""
             new_value = border
             if isinstance(color, str):
                 try:
@@ -367,6 +367,7 @@ class BorderProperty:
             f"{name}_bottom",
             f"{name}_left",
         )
+        self._get_properties = attrgetter(*self._properties)
 
     def __get__(
         self, obj: StylesBase, objtype: type[StylesBase] | None = None
@@ -380,13 +381,8 @@ class BorderProperty:
         Returns:
             An ``Edges`` object describing the type and style of each edge.
         """
-        top, right, bottom, left = self._properties
-        return Edges(
-            getattr(obj, top),
-            getattr(obj, right),
-            getattr(obj, bottom),
-            getattr(obj, left),
-        )
+
+        return Edges(*self._get_properties(obj))
 
     def __set__(
         self,
@@ -411,27 +407,14 @@ class BorderProperty:
         _rich_traceback_omit = True
         top, right, bottom, left = self._properties
 
-        border_spacing = Edges(
-            getattr(obj, top),
-            getattr(obj, right),
-            getattr(obj, bottom),
-            getattr(obj, left),
-        ).spacing
+        border_spacing = Edges(*self._get_properties(obj)).spacing
 
         def check_refresh() -> None:
             """Check if an update requires a layout"""
             if not self._layout:
                 obj.refresh()
             else:
-                layout = (
-                    Edges(
-                        getattr(obj, top),
-                        getattr(obj, right),
-                        getattr(obj, bottom),
-                        getattr(obj, left),
-                    ).spacing
-                    != border_spacing
-                )
+                layout = Edges(*self._get_properties(obj)).spacing != border_spacing
                 obj.refresh(layout=layout)
 
         if border is None:

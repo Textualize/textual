@@ -691,7 +691,8 @@ class Region(NamedTuple):
         Returns:
             Region: New region.
         """
-
+        if not any(margin):
+            return self
         top, right, bottom, left = margin
         x, y, width, height = self
         return Region(
