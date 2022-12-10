@@ -150,7 +150,7 @@ class Placeholder(Container):
             classes=classes,
         )
 
-        self.styles.background = f"{next(Placeholder._COLORS)} 70%"
+        self.styles.background = f"{next(Placeholder._COLORS)} 50%"
 
         self.variant = self.validate_variant(variant)
         # Set a cycle through the variants with the correct starting point.
