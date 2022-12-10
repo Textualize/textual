@@ -7,7 +7,6 @@ from ..containers import Container
 from ..css._error_tools import friendly_list
 from ..reactive import Reactive, reactive
 from ..widget import Widget, RenderResult
-from ..widgets import Label
 from .._typing import Literal
 
 PlaceholderVariant = Literal["default", "size", "text"]
@@ -65,6 +64,7 @@ class Placeholder(Container):
     DEFAULT_CSS = """
     Placeholder {
         align: center middle;
+        overflow: hidden;
     }
 
     Placeholder.-text {
@@ -73,6 +73,7 @@ class Placeholder(Container):
 
     _PlaceholderLabel {
         height: auto;
+        color: $text;
     }
 
     Placeholder > _PlaceholderLabel {
@@ -137,7 +138,7 @@ class Placeholder(Container):
             "-size",
         )
         self._text_label = _PlaceholderLabel(
-            _LOREM_IPSUM_PLACEHOLDER_TEXT,
+            "\n\n".join(_LOREM_IPSUM_PLACEHOLDER_TEXT for _ in range(5)),
             "-text",
         )
         super().__init__(

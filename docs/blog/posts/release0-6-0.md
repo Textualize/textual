@@ -62,9 +62,9 @@ We have a new list view control to navigate and select items in a list. Items ca
 
 The Placeholder widget was broken since the big CSS update. We've brought it back and given it a bit of a polish.
 
-Use this widget in place of custom widgets you have yet to build when designing your UI.
+Use this widget in place of custom widgets you have yet to build when designing your UI. The colors are automatically cycled to differentiate one placeholder rom the next. You can click a placeholder to cycle between its ID, size, and lorem ipsum text.
 
-```{.textual path="docs/examples/widgets/placeholder.py"}
+```{.textual path="docs/examples/widgets/placeholder.py" columns="100" lines="45"}
 ```
 
 ## Fixes
