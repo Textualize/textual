@@ -64,8 +64,23 @@ The Placeholder widget was broken since the big CSS update. We've brought it bac
 
 Use this widget in place of custom widgets you have yet to build when designing your UI. The colors are automatically cycled to differentiate one placeholder rom the next. You can click a placeholder to cycle between its ID, size, and lorem ipsum text.
 
-```{.textual path="docs/examples/widgets/placeholder.py" columns="100" lines="45"}
-```
+=== "Output"
+
+    ```{.textual path="docs/examples/widgets/placeholder.py" columns="100" lines="45"}
+    ```
+
+=== "placeholder.py"
+
+    ```python
+    --8<-- "docs/examples/widgets/placeholder.py"
+    ```
+
+=== "placeholder.css"
+
+    ```sass
+    --8<-- "docs/examples/widgets/placeholder.css"
+    ```
+
 
 ## Fixes
 
