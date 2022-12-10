@@ -27,8 +27,8 @@ from . import errors
 from ._cells import cell_len
 from ._loop import loop_last
 from ._types import Lines
-from .geometry import Offset, Region, Size
 from ._typing import TypeAlias
+from .geometry import NULL_OFFSET, Offset, Region, Size
 
 if TYPE_CHECKING:
     from .widget import Widget
@@ -334,7 +334,7 @@ class Compositor:
             tuple[CompositorMap, set[Widget]]: Compositor map and set of widgets.
         """
 
-        ORIGIN = Offset(0, 0)
+        ORIGIN = NULL_OFFSET
 
         map: CompositorMap = {}
         widgets: set[Widget] = set()
