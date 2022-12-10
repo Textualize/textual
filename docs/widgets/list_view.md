@@ -21,10 +21,16 @@ The example below shows an app with a simple `ListView`.
     --8<-- "docs/examples/widgets/list_view.py"
     ```
 
+=== "list_view.css"
+
+    ```sass
+    --8<-- "docs/examples/widgets/list_view.css"
+    ```
+
 ## Reactive Attributes
 
 | Name    | Type  | Default | Description                     |
-|---------|-------|---------|---------------------------------|
+| ------- | ----- | ------- | ------------------------------- |
 | `index` | `int` | `0`     | The currently highlighted index |
 
 ## Messages
@@ -40,7 +46,7 @@ click on a list item.
 #### Attributes
 
 | attribute | type       | purpose                        |
-|-----------|------------|--------------------------------|
+| --------- | ---------- | ------------------------------ |
 | `item`    | `ListItem` | The item that was highlighted. |
 
 ### Selected
@@ -54,7 +60,7 @@ or by clicking on it.
 #### Attributes
 
 | attribute | type       | purpose                     |
-|-----------|------------|-----------------------------|
+| --------- | ---------- | --------------------------- |
 | `item`    | `ListItem` | The item that was selected. |
 
 
@@ -68,7 +74,7 @@ are changed (e.g. a child is added, or the list is cleared).
 #### Attributes
 
 | attribute  | type             | purpose                   |
-|------------|------------------|---------------------------|
+| ---------- | ---------------- | ------------------------- |
 | `children` | `list[ListItem]` | The new ListView children |
 
 

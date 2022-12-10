@@ -55,8 +55,22 @@ The Tree control forms the foundation of the [DirectoryTree](../../widgets/direc
 
 We have a new list view control to navigate and select items in a list. Items can be widgets themselves, which makes this a great platform for building more sophisticated controls.
 
-```{.textual path="docs/examples/widgets/list_view.py"}
-```
+=== "Output"
+
+    ```{.textual path="docs/examples/widgets/list_view.py"}
+    ```
+
+=== "list_view.py"
+
+    ```python
+    --8<-- "docs/examples/widgets/list_view.py"
+    ```
+
+=== "list_view.css"
+
+    ```sass
+    --8<-- "docs/examples/widgets/list_view.css"
+    ```
 
 ## Placeholder
 

@@ -3,6 +3,9 @@ from textual.widgets import ListView, ListItem, Label, Footer
 
 
 class ListViewExample(App):
+
+    CSS_PATH = "list_view.css"
+
     def compose(self) -> ComposeResult:
         yield ListView(
             ListItem(Label("One")),
@@ -12,6 +15,6 @@ class ListViewExample(App):
         yield Footer()
 
 
-app = ListViewExample(css_path="list_view.css")
 if __name__ == "__main__":
+    app = ListViewExample()
     app.run()
