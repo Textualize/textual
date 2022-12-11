@@ -232,21 +232,21 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         color: $text;
     }
     Tree > .tree--label {
-        
+
     }
     Tree > .tree--guides {
         color: $success-darken-3;
     }
 
-    Tree > .tree--guides-hover {  
-        color: $success;      
+    Tree > .tree--guides-hover {
+        color: $success;
         text-style: bold;
     }
 
     Tree > .tree--guides-selected {
         color: $warning;
         text-style: bold;
-    }    
+    }
 
     Tree > .tree--cursor {
         background: $secondary;
@@ -254,11 +254,11 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         text-style: bold;
     }
 
-    Tree > .tree--highlight {        
+    Tree > .tree--highlight {
         text-style: underline;
     }
-    
-    Tree > .tree--highlight-line {        
+
+    Tree > .tree--highlight-line {
         background: $boost;
     }
 
