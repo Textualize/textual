@@ -314,7 +314,12 @@ class Input(Widget, can_focus=True):
         await self.emit(self.Submitted(self, self.value))
 
     class Changed(Message, bubble=True):
-        """Value was changed."""
+        """Value was changed.
+
+        Attributes:
+            value (str): The value that the input was changed to.
+            input (Input): The `Input` widget that was changed.
+        """
 
         def __init__(self, sender: Input, value: str) -> None:
             super().__init__(sender)
