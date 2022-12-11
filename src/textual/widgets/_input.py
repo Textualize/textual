@@ -327,7 +327,12 @@ class Input(Widget, can_focus=True):
             self.input = sender
 
     class Submitted(Message, bubble=True):
-        """Value was updated via enter key or blur."""
+        """Sent when the enter key is pressed within an `Input`.
+
+        Attributes:
+            value (str): The value of the `Input` being submitted..
+            input (Input): The `Input` widget that is being submitted.
+        """
 
         def __init__(self, sender: Input, value: str) -> None:
             super().__init__(sender)
