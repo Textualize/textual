@@ -156,6 +156,7 @@ class Button(Static, can_focus=True):
         Attributes:
             button (Button): The button that was pressed.
         """
+
         @property
         def button(self) -> Button:
             return cast(Button, self.sender)
