@@ -22,7 +22,7 @@ class PlaceholderApp(App):
                     Placeholder(variant="size", id="col3"),
                     id="c1",
                 ),
-                id="bot"
+                id="bot",
             ),
             Container(
                 Placeholder(variant="text", id="left"),

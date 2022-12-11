@@ -33,6 +33,13 @@ class TreeApp(App):
         highlighter = ReprHighlighter()
 
         def add_node(name: str, node: TreeNode, data: object) -> None:
+            """Adds a node to the tree.
+
+            Args:
+                name (str): Name of the node.
+                node (TreeNode): Parent node.
+                data (object): Data associated with the node.
+            """
             if isinstance(data, dict):
                 node._label = Text(f"{{}} {name}")
                 for key, value in data.items():
@@ -56,20 +63,24 @@ class TreeApp(App):
         add_node("JSON", node, json_data)
 
     def on_mount(self) -> None:
+        """Load some JSON when the app starts."""
         with open("food.json") as data_file:
             self.json_data = json.load(data_file)
 
     def action_add(self) -> None:
+        """Add a node to the tree."""
         tree = self.query_one(Tree)
         json_node = tree.root.add("JSON")
         self.add_json(json_node, self.json_data)
         tree.root.expand()
 
     def action_clear(self) -> None:
+        """Clear the tree (remove all nodes)."""
         tree = self.query_one(Tree)
         tree.clear()
 
     def action_toggle_root(self) -> None:
+        """Toggle the root node."""
         tree = self.query_one(Tree)
         tree.show_root = not tree.show_root
 

@@ -4,12 +4,12 @@ from textual.widgets import Tree
 
 class TreeApp(App):
     def compose(self) -> ComposeResult:
-        tree: Tree = Tree("Dune")
+        tree: Tree[dict] = Tree("Dune")
         tree.root.expand()
         characters = tree.root.add("Characters", expand=True)
         characters.add_leaf("Paul")
         characters.add_leaf("Jessica")
-        characters.add_leaf("Channi")
+        characters.add_leaf("Chani")
         yield tree
 
 
