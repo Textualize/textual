@@ -154,7 +154,11 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
             self.item = item
 
     class Selected(Message, bubble=True):
-        """Emitted when a list item is selected, e.g. when you press the enter key on it"""
+        """Emitted when a list item is selected, e.g. when you press the enter key on it
+
+        Attributes:
+            item (ListItem): The selected item.
+        """
 
         def __init__(self, sender: ListView, item: ListItem) -> None:
             super().__init__(sender)
