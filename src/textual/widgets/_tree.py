@@ -322,7 +322,11 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             super().__init__(sender)
 
     class NodeExpanded(Generic[EventTreeDataType], Message, bubble=True):
-        """Event sent when a node is expanded."""
+        """Event sent when a node is expanded.
+
+        Attributes:
+            TreeNode[EventTreeDataType]: The node that was expanded.
+        """
 
         def __init__(
             self, sender: MessageTarget, node: TreeNode[EventTreeDataType]
