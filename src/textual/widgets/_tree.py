@@ -335,7 +335,11 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             super().__init__(sender)
 
     class NodeCollapsed(Generic[EventTreeDataType], Message, bubble=True):
-        """Event sent when a node is collapsed."""
+        """Event sent when a node is collapsed.
+
+        Attributes:
+            TreeNode[EventTreeDataType]: The node that was collapsed.
+        """
 
         def __init__(
             self, sender: MessageTarget, node: TreeNode[EventTreeDataType]
