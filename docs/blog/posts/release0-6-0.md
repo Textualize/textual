@@ -53,7 +53,7 @@ The Tree control forms the foundation of the [DirectoryTree](../../widgets/direc
 
 ## List View
 
-We have a new list view control to navigate and select items in a list. Items can be widgets themselves, which makes this a great platform for building more sophisticated controls.
+We have a new [ListView](../../widgets/list_view.md) control to navigate and select items in a list. Items can be widgets themselves, which makes this a great platform for building more sophisticated controls.
 
 === "Output"
 
@@ -74,7 +74,7 @@ We have a new list view control to navigate and select items in a list. Items ca
 
 ## Placeholder
 
-The Placeholder widget was broken since the big CSS update. We've brought it back and given it a bit of a polish.
+The [Placeholder](../../widgets/placeholder.md) widget was broken since the big CSS update. We've brought it back and given it a bit of a polish.
 
 Use this widget in place of custom widgets you have yet to build when designing your UI. The colors are automatically cycled to differentiate one placeholder rom the next. You can click a placeholder to cycle between its ID, size, and lorem ipsum text.
 
