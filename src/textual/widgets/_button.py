@@ -151,6 +151,11 @@ class Button(Static, can_focus=True):
     """When buttons are clicked they get the `-active` class for this duration (in seconds)"""
 
     class Pressed(Message, bubble=True):
+        """Event sent when a `Button` is pressed.
+
+        Attributes:
+            button (Button): The button that was pressed.
+        """
         @property
         def button(self) -> Button:
             return cast(Button, self.sender)
