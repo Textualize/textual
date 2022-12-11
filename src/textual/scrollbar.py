@@ -4,7 +4,7 @@ from math import ceil
 
 import rich.repr
 from rich.color import Color
-from rich.console import ConsoleOptions, RenderableType, RenderResult
+from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.segment import Segment, Segments
 from rich.style import Style, StyleType
 
