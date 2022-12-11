@@ -76,7 +76,7 @@ We have a new [ListView](../../widgets/list_view.md) control to navigate and sel
 
 The [Placeholder](../../widgets/placeholder.md) widget was broken since the big CSS update. We've brought it back and given it a bit of a polish.
 
-Use this widget in place of custom widgets you have yet to build when designing your UI. The colors are automatically cycled to differentiate one placeholder rom the next. You can click a placeholder to cycle between its ID, size, and lorem ipsum text.
+Use this widget in place of custom widgets you have yet to build when designing your UI. The colors are automatically cycled to differentiate one placeholder from the next. You can click a placeholder to cycle between its ID, size, and lorem ipsum text.
 
 === "Output"
 
