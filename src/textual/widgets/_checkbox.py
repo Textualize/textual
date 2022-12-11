@@ -127,7 +127,7 @@ class Checkbox(Widget, can_focus=True):
 
         Attributes:
             value (bool): The value that the checkbox was changed to.
-            input (Checkbox): The checkout widget that was changed.
+            input (Checkbox): The `Checkbox` widget that was changed.
         """
 
         def __init__(self, sender: Checkbox, value: bool) -> None:
