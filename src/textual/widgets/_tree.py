@@ -309,7 +309,11 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     }
 
     class NodeSelected(Generic[EventTreeDataType], Message, bubble=True):
-        """Event sent when a node is selected."""
+        """Event sent when a node is selected.
+
+        Attributes:
+            TreeNode[EventTreeDataType]: The node that was selected.
+        """
 
         def __init__(
             self, sender: MessageTarget, node: TreeNode[EventTreeDataType]
