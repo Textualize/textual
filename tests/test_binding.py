@@ -55,4 +55,5 @@ def test_shown():
 def test_non_alphanumeric_binding():
     with pytest.raises(BindingError) as raised:
         _ = Bindings(((".", "action1", "description1"),))
-        assert "full_stop" in str(raised)
+        expected_error = "BINDINGS key '.' is invalid; try replacing it with 'full_stop'"
+        assert expected_error == str(raised)
