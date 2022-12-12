@@ -55,10 +55,10 @@ class Bindings:
                 for key in binding_keys:
                     # normalized keys have modifier characters (like '+') replaced with Python-identifier substitutes
                     if not _normalize_key(key).isidentifier():
-                        msg = "BINDINGS require alphanumeric keys"
+                        msg = "BINDINGS key '{key}' is invalid"
                         suggested_key = _get_suggested_binding_key(key)
                         if suggested_key:
-                            msg += f"; try replacing '{key}' with '{suggested_key}'"
+                            msg += f"; try replacing it with '{suggested_key}'"
                         raise BindingError(msg)
 
                 if len(binding_keys) > 1:
