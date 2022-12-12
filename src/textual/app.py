@@ -356,6 +356,7 @@ class App(Generic[ReturnType], DOMNode):
         )
         self._screenshot: str | None = None
         self._dom_lock = asyncio.Lock()
+        self._dom_ready = False
 
     @property
     def return_value(self) -> ReturnType | None:
@@ -1953,24 +1954,6 @@ class App(Generic[ReturnType], DOMNode):
         # Return the list of widgets that should end up being sent off in a
         # prune event.
         return pruned_remove
-
-    async def _on_prune(self, event: events.Prune) -> None:
-        """Handle a prune event.
-
-        Args:
-            event (events.Prune): The prune event.
-        """
-
-        try:
-            # Prune all the widgets.
-            for widget in event.widgets:
-                await self._prune_node(widget)
-        finally:
-            # Finally, flag that we're done.
-            event.finished_flag.set()
-
-        # Flag that the layout needs refreshing.
-        self.refresh(layout=True)
 
     def _walk_children(self, root: Widget) -> Iterable[list[Widget]]:
         """Walk children depth first, generating widgets and a list of their siblings.

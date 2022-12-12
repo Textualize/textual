@@ -322,7 +322,7 @@ class Region(NamedTuple):
 
         if region in window_region:
             # Region is already inside the window, so no need to move it.
-            return Offset(0, 0)
+            return NULL_OFFSET
 
         window_left, window_top, window_right, window_bottom = window_region.corners
         region = region.crop_size(window_region.size)
@@ -635,6 +635,7 @@ class Region(NamedTuple):
             and (y2 >= oy2 >= y1)
         )
 
+    @lru_cache(maxsize=1024)
     def translate(self, offset: tuple[int, int]) -> Region:
         """Move the offset of the Region.
 
@@ -690,7 +691,8 @@ class Region(NamedTuple):
         Returns:
             Region: New region.
         """
-
+        if not any(margin):
+            return self
         top, right, bottom, left = margin
         x, y, width, height = self
         return Region(

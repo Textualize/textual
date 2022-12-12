@@ -6,21 +6,27 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## [0.6.0] - Unreleased
+## [0.6.0] - 2022-12-11
 
 ### Added
 
 - Added "inherited bindings" -- BINDINGS classvar will be merged with base classes, unless inherit_bindings is set to False
 - Added `Tree` widget which replaces `TreeControl`.
+- Added widget `Placeholder` https://github.com/Textualize/textual/issues/1200.
 
 ### Changed
 
 - Rebuilt `DirectoryTree` with new `Tree` control.
+- Empty containers with a dimension set to `"auto"` will now collapse instead of filling up the available space.
+- Container widgets now have default height of `1fr`.
 - The default `width` of a `Label` is now `auto`.
 
 ### Fixed
 
 - Type selectors can now contain numbers https://github.com/Textualize/textual/issues/1253
+- Fixed visibility not affecting children https://github.com/Textualize/textual/issues/1313
+- Fixed issue with auto width/height and relative children https://github.com/Textualize/textual/issues/1319
+- Fixed issue with offset applied to containers https://github.com/Textualize/textual/issues/1256
 
 ## [0.5.0] - 2022-11-20
 
@@ -240,6 +246,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.6.0]: https://github.com/Textualize/textual/compare/v0.3.0...v0.6.0
+[0.5.0]: https://github.com/Textualize/textual/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/Textualize/textual/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/Textualize/textual/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/Textualize/textual/compare/v0.2.0...v0.2.1

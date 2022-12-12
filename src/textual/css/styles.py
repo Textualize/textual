@@ -351,8 +351,7 @@ class StylesBase(ABC):
         Returns:
             Spacing: Space around widget content.
         """
-        spacing = self.padding + self.border.spacing
-        return spacing
+        return self.padding + self.border.spacing
 
     @property
     def auto_dimensions(self) -> bool:
@@ -993,9 +992,10 @@ class RenderStyles(StylesBase):
         Returns:
             Spacing: Space around widget content.
         """
+        # This is (surprisingly) a bit of a bottleneck
         if self._gutter is not None:
             cache_key, gutter = self._gutter
-            if cache_key == self._updates:
+            if cache_key == self._cache_key:
                 return gutter
         gutter = self.padding + self.border.spacing
         self._gutter = (self._cache_key, gutter)

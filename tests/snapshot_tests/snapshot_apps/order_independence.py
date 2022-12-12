@@ -16,7 +16,7 @@ class Body1(Vertical):
 
 class Body2(Vertical):
     def compose(self) -> ComposeResult:
-        yield Label("I'm sorry, Dave. I'm afraid I can't do that. " * 300)
+        yield Label("My God! It's full of stars! " * 300)
 
 
 class Good(Screen):
@@ -51,6 +51,10 @@ class Layers(App[None]):
         border: solid yellow;
         background: red;
         color: yellow;
+    }
+
+    Body2 {
+        background: green;
     }
     """
 

@@ -2,6 +2,8 @@ from pathlib import Path
 
 import pytest
 
+from textual.widgets import Placeholder
+
 # These paths should be relative to THIS directory.
 WIDGET_EXAMPLES_DIR = Path("../../docs/examples/widgets")
 LAYOUT_EXAMPLES_DIR = Path("../../docs/examples/guide/layout")
@@ -79,6 +81,12 @@ def test_buttons_render(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "button.py", press=["tab"])
 
 
+def test_placeholder_render(snap_compare):
+    # Testing the rendering of the multiple placeholder variants and labels.
+    Placeholder.reset_color_cycle()
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "placeholder.py")
+
+
 def test_datatable_render(snap_compare):
     press = ["tab", "down", "down", "right", "up", "left"]
     assert snap_compare(WIDGET_EXAMPLES_DIR / "data_table.py", press=press)
@@ -92,12 +100,20 @@ def test_header_render(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "header.py")
 
 
+def test_list_view(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "list_view.py", press=["tab", "down", "down", "up"])
+
+
 def test_textlog_max_lines(snap_compare):
     assert snap_compare("snapshot_apps/textlog_max_lines.py", press=[*"abcde", "_"])
 
 
 def test_fr_units(snap_compare):
     assert snap_compare("snapshot_apps/fr_units.py")
+
+
+def test_visibility(snap_compare):
+    assert snap_compare("snapshot_apps/visibility.py")
 
 
 def test_tree_example(snap_compare):
@@ -127,13 +143,21 @@ def test_multiple_css(snap_compare):
 
 
 def test_order_independence(snap_compare):
-    # Interaction between multiple CSS files and app-level/classvar CSS
     assert snap_compare("snapshot_apps/order_independence.py")
 
 
 def test_order_independence_toggle(snap_compare):
-    # Interaction between multiple CSS files and app-level/classvar CSS
     assert snap_compare("snapshot_apps/order_independence.py", press="t,_")
+
+
+def test_columns_height(snap_compare):
+    # Interaction with height auto, and relative heights to make columns
+    assert snap_compare("snapshot_apps/columns_height.py")
+
+
+def test_offsets(snap_compare):
+    """Test offsets of containers"""
+    assert snap_compare("snapshot_apps/offsets.py")
 
 
 # --- Other ---
@@ -141,3 +165,8 @@ def test_order_independence_toggle(snap_compare):
 
 def test_key_display(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "key_display.py")
+
+
+def test_demo(snap_compare):
+    """Test the demo app (python -m textual)"""
+    assert snap_compare(Path("../../src/textual/demo.py"))

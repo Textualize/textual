@@ -9,46 +9,46 @@ when setting and getting.
 
 from __future__ import annotations
 
-from typing import Generic, Iterable, NamedTuple, TypeVar, TYPE_CHECKING, cast
+from operator import attrgetter
+from typing import TYPE_CHECKING, Generic, Iterable, NamedTuple, TypeVar, cast
 
 import rich.repr
 from rich.style import Style
 
-from ._help_text import (
-    border_property_help_text,
-    layout_property_help_text,
-    fractional_property_help_text,
-    offset_property_help_text,
-    style_flags_property_help_text,
-)
-from ._help_text import (
-    spacing_wrong_number_of_values_help_text,
-    scalar_help_text,
-    string_enum_help_text,
-    color_property_help_text,
-)
 from .._border import normalize_border_value
 from ..color import Color, ColorParseError
+from ..geometry import Spacing, SpacingDimensions, clamp
 from ._error_tools import friendly_list
+from ._help_text import (
+    border_property_help_text,
+    color_property_help_text,
+    fractional_property_help_text,
+    layout_property_help_text,
+    offset_property_help_text,
+    scalar_help_text,
+    spacing_wrong_number_of_values_help_text,
+    string_enum_help_text,
+    style_flags_property_help_text,
+)
 from .constants import NULL_SPACING, VALID_STYLE_FLAGS
 from .errors import StyleTypeError, StyleValueError
 from .scalar import (
-    get_symbols,
+    NULL_SCALAR,
     UNIT_SYMBOL,
-    Unit,
     Scalar,
     ScalarOffset,
     ScalarParseError,
+    Unit,
+    get_symbols,
     percentage_string_to_float,
 )
 from .transition import Transition
-from ..geometry import Spacing, SpacingDimensions, clamp
 
 if TYPE_CHECKING:
     from .._layout import Layout
     from .styles import Styles, StylesBase
 
-from .types import DockEdge, EdgeType, AlignHorizontal, AlignVertical
+from .types import AlignHorizontal, AlignVertical, DockEdge, EdgeType
 
 BorderDefinition = (
     "Sequence[tuple[EdgeType, str | Color] | None] | tuple[EdgeType, str | Color]"
@@ -138,8 +138,7 @@ class ScalarProperty:
         Returns:
             The Scalar object or ``None`` if it's not set.
         """
-        value = obj.get_rule(self.name)
-        return value
+        return obj.get_rule(self.name)
 
     def __set__(
         self, obj: StylesBase, value: float | int | Scalar | str | None
@@ -208,8 +207,7 @@ class ScalarListProperty:
     def __get__(
         self, obj: StylesBase, objtype: type[StylesBase] | None = None
     ) -> tuple[Scalar, ...] | None:
-        value = obj.get_rule(self.name)
-        return value
+        return obj.get_rule(self.name)
 
     def __set__(
         self, obj: StylesBase, value: str | Iterable[str | float] | None
@@ -265,10 +263,7 @@ class BoxProperty:
             A ``tuple[EdgeType, Style]`` containing the string type of the box and
                 it's style. Example types are "rounded", "solid", and "dashed".
         """
-        box_type, color = obj.get_rule(self.name) or ("", self._default_color)
-        if box_type in {"none", "hidden"}:
-            box_type = ""
-        return (box_type, color)
+        return obj.get_rule(self.name) or ("", self._default_color)
 
     def __set__(self, obj: Styles, border: tuple[EdgeType, str | Color] | None):
         """Set the box property
@@ -289,6 +284,8 @@ class BoxProperty:
                 obj.refresh(layout=True)
         else:
             _type, color = border
+            if _type in ("none", "hidden"):
+                _type = ""
             new_value = border
             if isinstance(color, str):
                 try:
@@ -370,6 +367,7 @@ class BorderProperty:
             f"{name}_bottom",
             f"{name}_left",
         )
+        self._get_properties = attrgetter(*self._properties)
 
     def __get__(
         self, obj: StylesBase, objtype: type[StylesBase] | None = None
@@ -383,15 +381,8 @@ class BorderProperty:
         Returns:
             An ``Edges`` object describing the type and style of each edge.
         """
-        top, right, bottom, left = self._properties
 
-        border = Edges(
-            getattr(obj, top),
-            getattr(obj, right),
-            getattr(obj, bottom),
-            getattr(obj, left),
-        )
-        return border
+        return Edges(*self._get_properties(obj))
 
     def __set__(
         self,
@@ -416,27 +407,14 @@ class BorderProperty:
         _rich_traceback_omit = True
         top, right, bottom, left = self._properties
 
-        border_spacing = Edges(
-            getattr(obj, top),
-            getattr(obj, right),
-            getattr(obj, bottom),
-            getattr(obj, left),
-        ).spacing
+        border_spacing = Edges(*self._get_properties(obj)).spacing
 
         def check_refresh() -> None:
             """Check if an update requires a layout"""
             if not self._layout:
                 obj.refresh()
             else:
-                layout = (
-                    Edges(
-                        getattr(obj, top),
-                        getattr(obj, right),
-                        getattr(obj, bottom),
-                        getattr(obj, left),
-                    ).spacing
-                    != border_spacing
-                )
+                layout = Edges(*self._get_properties(obj)).spacing != border_spacing
                 obj.refresh(layout=layout)
 
         if border is None:
@@ -601,10 +579,10 @@ class LayoutProperty:
         """
 
         from ..layouts.factory import (
-            get_layout,
-            Layout,
+            Layout,  # Prevents circular import
             MissingLayout,
-        )  # Prevents circular import
+            get_layout,
+        )
 
         _rich_traceback_omit = True
         if layout is None:
@@ -647,7 +625,7 @@ class OffsetProperty:
             ScalarOffset: The ``ScalarOffset`` indicating the adjustment that
                 will be made to widget position prior to it being rendered.
         """
-        return obj.get_rule(self.name, ScalarOffset.null())
+        return obj.get_rule(self.name, NULL_SCALAR)
 
     def __set__(
         self, obj: StylesBase, offset: tuple[int | str, int | str] | ScalarOffset | None

@@ -1,0 +1,51 @@
+Placeholder {
+    height: 100%;
+}
+
+#top {
+    height: 50%;
+    width: 100%;
+    layout: grid;
+    grid-size: 2 2;
+}
+
+#left {
+    row-span: 2;
+}
+
+#bot {
+    height: 50%;
+    width: 100%;
+    layout: grid;
+    grid-size: 8 8;
+}
+
+#c1 {
+    row-span: 4;
+    column-span: 8;
+    height: 100%;
+}
+
+#col1, #col2, #col3 {
+    width: 1fr;
+}
+
+#p1 {
+    row-span: 4;
+    column-span: 4;
+}
+
+#p2 {
+    row-span: 2;
+    column-span: 4;
+}
+
+#p3 {
+    row-span: 2;
+    column-span: 2;
+}
+
+#p4 {
+    row-span: 1;
+    column-span: 2;
+}

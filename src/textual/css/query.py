@@ -16,12 +16,10 @@ a method which evaluates the query, such as first() and last().
 
 from __future__ import annotations
 
-from typing import cast, Generic, TYPE_CHECKING, Iterator, TypeVar, overload
-import asyncio
+from typing import TYPE_CHECKING, Generic, Iterator, TypeVar, cast, overload
 
 import rich.repr
 
-from .. import events
 from .._context import active_app
 from ..await_remove import AwaitRemove
 from .errors import DeclarationError, TokenError

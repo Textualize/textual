@@ -22,6 +22,14 @@ class DirEntry:
 
 
 class DirectoryTree(Tree[DirEntry]):
+    """A Tree widget that presents files and directories.
+
+    Args:
+        path (str): Path to directory.
+        name (str | None, optional): The name of the widget, or None for no name. Defaults to None.
+        id (str | None, optional): The ID of the widget in the DOM, or None for no ID. Defaults to None.
+        classes (str | None, optional): A space-separated list of classes, or None for no classes. Defaults to None.
+    """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
         "tree--label",
@@ -68,6 +76,7 @@ class DirectoryTree(Tree[DirEntry]):
         id: str | None = None,
         classes: str | None = None,
     ) -> None:
+
         self.path = path
         super().__init__(
             path,

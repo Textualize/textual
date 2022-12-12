@@ -1,0 +1,13 @@
+Screen {
+    align: center middle;
+}
+
+ListView {
+    width: 30;
+    height: auto;
+    margin: 2 2;
+}
+
+Label {
+    padding: 1 2;
+}

@@ -322,7 +322,7 @@ class DemoApp(App):
         example_css = "\n".join(Path(self.css_path[0]).read_text().splitlines()[:50])
         yield Container(
             Sidebar(classes="-hidden"),
-            Header(show_clock=True),
+            Header(show_clock=False),
             TextLog(classes="-hidden", wrap=False, highlight=True, markup=True),
             Body(
                 QuickAccess(
