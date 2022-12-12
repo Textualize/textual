@@ -53,7 +53,7 @@ class Bindings:
 
                 binding_keys = binding.key.split(",")
                 for key in binding_keys:
-                    # normalized keys have modified characters (like '+') replaced with Python-identifier substitutes
+                    # normalized keys have modifier characters (like '+') replaced with Python-identifier substitutes
                     if not _normalize_key(key).isidentifier():
                         msg = "BINDINGS require alphanumeric keys"
                         suggested_key = _get_suggested_binding_key(key)
