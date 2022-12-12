@@ -91,3 +91,36 @@ async def test_just_app_no_bindings_widget_no_bindings() -> None:
     async with NoBindingsAndStaticWidgetNoBindings().run_test() as pilot:
         assert list(pilot.app._bindings.keys.keys()) == ["ctrl+c"]
         assert list(pilot.app.screen.query_one(Static)._bindings.keys.keys()) == []
+
+##############################################################################
+class AppKeyRecorder(App[None]):
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.pressed_keys: list[str] = []
+
+    async def action_record(self, key: str) -> None:
+        self.pressed_keys.append(key)
+
+##############################################################################
+class AppWithUpKeyBound(AppKeyRecorder):
+    BINDINGS=[
+        Binding("x","record('x')","x"),
+        Binding("up","record('up')","up")
+    ]
+
+async def test_pressing_alpha_on_app() -> None:
+    """Test that pressing the an alpha key, when it's bound on the app, results in an action fire."""
+    async with AppWithUpKeyBound().run_test() as pilot:
+        await pilot.press(*"xxxxx")
+        assert "".join(pilot.app.pressed_keys) == "xxxxx"
+
+@pytest.mark.xfail(
+    reason="Up key isn't firing bound action on an app due to key inheritence of its screen [issue#1343]"
+)
+async def test_pressing_up_on_app() -> None:
+    """Test that pressing the up key, when it's bound on the app, results in an action fire."""
+    async with AppWithUpKeyBound().run_test() as pilot:
+        await pilot.press("x", "up", "x")
+        assert pilot.app.pressed_keys == ["x", "up", "x"]
+
