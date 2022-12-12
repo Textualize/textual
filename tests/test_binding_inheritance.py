@@ -75,3 +75,19 @@ async def test_app_screen_with_bindings() -> None:
     """An app with a screen and a binding should only have ctrl+c as a binding."""
     async with AppWithScreenThatHasABinding().run_test() as pilot:
         assert list(pilot.app.screen._bindings.keys.keys()) == ["a"]
+
+##############################################################################
+class NoBindingsAndStaticWidgetNoBindings(App[None]):
+    """An app with no bindings, enclosing a widget with no bindings."""
+
+    def compose(self) -> ComposeResult:
+        yield Static("Poetry! They should have sent a poet.")
+
+@pytest.mark.xfail(
+    reason="Static is incorrectly starting with bindings for movement keys [issue#1343]"
+)
+async def test_just_app_no_bindings_widget_no_bindings() -> None:
+    """A widget with no bindings should have no bindings. Its app should have just ctrl+c"""
+    async with NoBindingsAndStaticWidgetNoBindings().run_test() as pilot:
+        assert list(pilot.app._bindings.keys.keys()) == ["ctrl+c"]
+        assert list(pilot.app.screen.query_one(Static)._bindings.keys.keys()) == []
