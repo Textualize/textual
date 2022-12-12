@@ -263,12 +263,7 @@ def _get_suggested_binding_key(key: str) -> str:
         return aliased_key
 
     if len(key) == 1 and not key.isalnum():
-        key = (
-            unicodedata.name(key)
-            .lower()
-            .replace("-", "_")
-            .replace(" ", "_")
-        )
+        key = unicodedata.name(key).lower().replace("-", "_").replace(" ", "_")
 
     replaced_key = KEY_NAME_REPLACEMENTS.get(key, key)
     if replaced_key:
