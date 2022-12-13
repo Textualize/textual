@@ -183,7 +183,7 @@ class ScreenWithMovementBindings(Screen):
     """A screen that binds keys, including movement keys."""
 
     BINDINGS = [
-        Binding("x", "record('x')", "x"),
+        Binding("x", "screen_record('x')", "x"),
         *[Binding(key, f"screen_record('{key}')", key) for key in MOVEMENT_KEYS]
     ]
 
@@ -212,7 +212,7 @@ async def test_focused_child_widget_with_movement_bindings_on_screen() -> None:
     """A focused child widget, with movement bindings in the screen, should trigger screen actions."""
     async with AppWithScreenWithBindingsWidgetNoBindings().run_test() as pilot:
         await pilot.press("x", *MOVEMENT_KEYS, "x")
-        assert pilot.app.pressed_keys == ["x", *[f"screen_{key}" for key in MOVEMENT_KEYS], "x"]
+        assert pilot.app.pressed_keys == ["screen_x", *[f"screen_{key}" for key in MOVEMENT_KEYS], "screen_x"]
 
 ##############################################################################
 class WidgetWithBindingsNoInherit(Static, can_focus=True, inherit_bindings=False):
