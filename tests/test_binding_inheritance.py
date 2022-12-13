@@ -202,4 +202,4 @@ async def test_focused_child_widget_with_movement_bindings_on_screen() -> None:
     """A focused child widget, with movement bindings in the screen, should trigger screen actions."""
     async with AppWithScreenWithBindingsWidgetNoBindings().run_test() as pilot:
         await pilot.press("x", *MOVEMENT_KEYS, "x")
-        assert pilot.app.pressed_keys == ["x", *[f"locally_{key}" for key in MOVEMENT_KEYS], "x"]
+        assert pilot.app.pressed_keys == ["x", *[f"screen_{key}" for key in MOVEMENT_KEYS], "x"]
