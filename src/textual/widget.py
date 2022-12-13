@@ -1227,7 +1227,7 @@ class Widget(DOMNode):
         Returns:
             bool: True if this widget may be scrolled.
         """
-        return self.is_container
+        return self.styles.layout is not None or bool(self.children)
 
     @property
     def layer(self) -> str:
