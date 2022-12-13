@@ -77,7 +77,7 @@ class AppWithScreenThatHasABinding(App[None]):
     reason="Screen is incorrectly starting with bindings for movement keys [issue#1343]"
 )
 async def test_app_screen_with_bindings() -> None:
-    """An app with a screen and a binding should only have ctrl+c as a binding."""
+    """A screen with a single alpha key binding should only have that key as a binding."""
     async with AppWithScreenThatHasABinding().run_test() as pilot:
         assert list(pilot.app.screen._bindings.keys.keys()) == ["a"]
 
