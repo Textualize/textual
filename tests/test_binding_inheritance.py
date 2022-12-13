@@ -6,6 +6,20 @@ from textual.screen import Screen
 from textual.binding import Binding
 
 ##############################################################################
+# These are the movement keys within Textual; they kind of have a special
+# status in that they will get bound to movement-related methods.
+MOVEMENT_KEYS = [
+    "up",
+    "down",
+    "left",
+    "right",
+    "home",
+    "end",
+    "pageup",
+    "pagedown"
+]
+
+##############################################################################
 class NoBindings(App[None]):
     """An app with zero bindings."""
 
@@ -103,24 +117,24 @@ class AppKeyRecorder(App[None]):
         self.pressed_keys.append(key)
 
 ##############################################################################
-class AppWithUpKeyBound(AppKeyRecorder):
+class AppWithMovementKeysBound(AppKeyRecorder):
     BINDINGS=[
         Binding("x","record('x')","x"),
-        Binding("up","record('up')","up")
+        *[Binding(key,f"record({key}')",key) for key in MOVEMENT_KEYS]
     ]
 
 async def test_pressing_alpha_on_app() -> None:
     """Test that pressing the an alpha key, when it's bound on the app, results in an action fire."""
-    async with AppWithUpKeyBound().run_test() as pilot:
+    async with AppWithMovementKeysBound().run_test() as pilot:
         await pilot.press(*"xxxxx")
         assert "".join(pilot.app.pressed_keys) == "xxxxx"
 
 @pytest.mark.xfail(
     reason="Up key isn't firing bound action on an app due to key inheritence of its screen [issue#1343]"
 )
-async def test_pressing_up_on_app() -> None:
-    """Test that pressing the up key, when it's bound on the app, results in an action fire."""
-    async with AppWithUpKeyBound().run_test() as pilot:
-        await pilot.press("x", "up", "x")
-        assert pilot.app.pressed_keys == ["x", "up", "x"]
+async def test_pressing_movement_keys_app() -> None:
+    """Test that pressing the movement keys, when they're bound on the app, results in an action fire."""
+    async with AppWithMovementKeysBound().run_test() as pilot:
+        await pilot.press("x", *MOVEMENT_KEYS, "x")
+        assert pilot.app.pressed_keys == ["x", *MOVEMENT_KEYS, "x"]
 
