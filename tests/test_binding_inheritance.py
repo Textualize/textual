@@ -188,6 +188,17 @@ class AppKeyRecorder(App[None]):
         """
         self.pressed_keys.append(key)
 
+    def all_recorded(self, prefix: str="") -> bool:
+        """Were all the bindings recorded from the presses?
+
+        Args:
+            prefix (str, optional): An optional prefix.
+
+        Returns:
+            bool: ``True`` if all the bindings were recorded, ``False``if not.
+        """
+        return self.pressed_keys == [f"{prefix}{key}" for key in self.ALL_KEYS]
+
 
 ##############################################################################
 # An app with bindings for movement keys.
@@ -218,7 +229,7 @@ async def test_pressing_movement_keys_app() -> None:
     async with AppWithMovementKeysBound().run_test() as pilot:
         await pilot.press(*AppKeyRecorder.ALL_KEYS)
         await pilot.pause(2/100)
-        assert pilot.app.pressed_keys == AppKeyRecorder.ALL_KEYS
+        assert pilot.app.all_recorded()
 
 
 ##############################################################################
@@ -254,7 +265,7 @@ async def test_focused_child_widget_with_movement_bindings() -> None:
     async with AppWithWidgetWithBindings().run_test() as pilot:
         await pilot.press(*AppKeyRecorder.ALL_KEYS)
         await pilot.pause(2/100)
-        assert pilot.app.pressed_keys == [f"locally_{key}" for key in AppKeyRecorder.ALL_KEYS]
+        assert pilot.app.all_recorded("locally_")
 
 ##############################################################################
 # A focused widget within a screen that handles bindings.
@@ -299,7 +310,7 @@ async def test_focused_child_widget_with_movement_bindings_on_screen() -> None:
     async with AppWithScreenWithBindingsWidgetNoBindings().run_test() as pilot:
         await pilot.press(*AppKeyRecorder.ALL_KEYS)
         await pilot.pause(2/100)
-        assert pilot.app.pressed_keys == [f"screenly_{key}" for key in AppKeyRecorder.ALL_KEYS]
+        assert pilot.app.all_recorded("screenly_")
 
 ##############################################################################
 # A focused widget with bindings but no inheriting of bindings, on app.
@@ -335,7 +346,7 @@ async def test_focused_child_widget_with_movement_bindings_no_inherit() -> None:
     async with AppWithWidgetWithBindingsNoInherit().run_test() as pilot:
         await pilot.press(*AppKeyRecorder.ALL_KEYS)
         await pilot.pause(2/100)
-        assert pilot.app.pressed_keys == [f"locally_{key}" for key in AppKeyRecorder.ALL_KEYS]
+        assert pilot.app.all_recorded("locally_")
 
 ##############################################################################
 # A focused widget with no bindings and no inheriting of bindings, on screen.
@@ -380,7 +391,7 @@ async def test_focused_child_widget_no_inherit_with_movement_bindings_on_screen(
     async with AppWithScreenWithBindingsWidgetNoBindingsNoInherit().run_test() as pilot:
         await pilot.press(*AppKeyRecorder.ALL_KEYS)
         await pilot.pause(2/100)
-        assert pilot.app.pressed_keys == [f"screenly_{key}" for key in AppKeyRecorder.ALL_KEYS]
+        assert pilot.app.all_recorded("screenly_")
 
 ##############################################################################
 # A focused widget with zero bindings declared, but no inheriting of
@@ -427,4 +438,4 @@ async def test_focused_child_widget_no_inherit_empty_bindings_with_movement_bind
     async with AppWithScreenWithBindingsWidgetEmptyBindingsNoInherit().run_test() as pilot:
         await pilot.press(*AppKeyRecorder.ALL_KEYS)
         await pilot.pause(2/100)
-        assert pilot.app.pressed_keys == [f"screenly_{key}" for key in AppKeyRecorder.ALL_KEYS]
+        assert pilot.app.all_recorded("screenly_")
