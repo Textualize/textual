@@ -229,7 +229,7 @@ class DOMNode(MessagePump):
             if issubclass(base, DOMNode):
                 if not base._inherit_bindings:
                     bindings.clear()
-                bindings.append(Bindings(base.BINDINGS))
+                bindings.append(Bindings(base.__dict__.get("BINDINGS", [])))
         keys = {}
         for bindings_ in bindings:
             keys.update(bindings_.keys)
