@@ -146,7 +146,7 @@ async def test_pressing_movement_keys_app() -> None:
 
 
 ##############################################################################
-class WidgetWithBindings(Static, can_focus=True):
+class FocusableWidgetWithBindings(Static, can_focus=True):
     """A widget that has its own bindings for the movement keys."""
 
     BINDINGS = [
@@ -163,10 +163,10 @@ class AppWithWidgetWithBindings(AppKeyRecorder):
     """A test app that composes with a widget that has movement bindings."""
 
     def compose(self) -> ComposeResult:
-        yield WidgetWithBindings()
+        yield FocusableWidgetWithBindings()
 
     def on_mount(self) -> None:
-        self.query_one(WidgetWithBindings).focus()
+        self.query_one(FocusableWidgetWithBindings).focus()
 
 
 async def test_focused_child_widget_with_movement_bindings() -> None:
