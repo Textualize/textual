@@ -94,9 +94,8 @@ class NoBindingsAndStaticWidgetNoBindings(App[None]):
     reason="Static is incorrectly starting with bindings for movement keys [issue#1343]"
 )
 async def test_just_app_no_bindings_widget_no_bindings() -> None:
-    """A widget with no bindings should have no bindings. Its app should have just ctrl+c"""
+    """A widget with no bindings should have no bindings"""
     async with NoBindingsAndStaticWidgetNoBindings().run_test() as pilot:
-        assert list(pilot.app._bindings.keys.keys()) == ["ctrl+c"]
         assert list(pilot.app.screen.query_one(Static)._bindings.keys.keys()) == []
 
 
