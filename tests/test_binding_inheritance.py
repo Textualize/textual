@@ -383,7 +383,7 @@ async def test_focused_child_widget_no_inherit_with_movement_bindings_on_screen(
         assert pilot.app.pressed_keys == [f"screenly_{key}" for key in AppKeyRecorder.ALL_KEYS]
 
 ##############################################################################
-# A focused widget with zero bindings dwclared, but no inheriting of
+# A focused widget with zero bindings declared, but no inheriting of
 # bindings, on screen.
 #
 # Now let's test with a widget that can and will have focus, which has zero
