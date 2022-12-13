@@ -138,3 +138,27 @@ async def test_pressing_movement_keys_app() -> None:
         await pilot.press("x", *MOVEMENT_KEYS, "x")
         assert pilot.app.pressed_keys == ["x", *MOVEMENT_KEYS, "x"]
 
+##############################################################################
+class WidgetWithBindings(Static,can_focus=True):
+    """A widget that has its own bindings for the movement keys."""
+
+    BINDINGS=[Binding(key,f"local_record('{key}')",key) for key in MOVEMENT_KEYS]
+
+    async def action_local_record(self, key:str) -> None:
+        # Sneaky forward reference. Just for the purposes of testing.
+        await self.app.action_record(f"locally_{key}")
+
+class AppWithWidgetWithBindings(AppKeyRecorder):
+    """A test app that composes with a widget that has movement bindings."""
+
+    def compose(self) -> ComposeResult:
+        yield WidgetWithBindings()
+
+    def on_mount(self) -> None:
+        self.query_one(WidgetWithBindings).focus()
+
+async def test_focused_child_widget_with_movement_bindings() -> None:
+    """A focused child widget with movement bindings should handle its own actions."""
+    async with AppWithWidgetWithBindings().run_test() as pilot:
+        await pilot.press(*MOVEMENT_KEYS)
+        assert pilot.app.pressed_keys == [f"locally_{key}" for key in MOVEMENT_KEYS]
