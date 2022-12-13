@@ -8,16 +8,7 @@ from textual.binding import Binding
 ##############################################################################
 # These are the movement keys within Textual; they kind of have a special
 # status in that they will get bound to movement-related methods.
-MOVEMENT_KEYS = [
-    "up",
-    "down",
-    "left",
-    "right",
-    "home",
-    "end",
-    "pageup",
-    "pagedown"
-]
+MOVEMENT_KEYS = ["up", "down", "left", "right", "home", "end", "pageup", "pagedown"]
 
 ##############################################################################
 class NoBindings(App[None]):
@@ -90,12 +81,14 @@ async def test_app_screen_with_bindings() -> None:
     async with AppWithScreenThatHasABinding().run_test() as pilot:
         assert list(pilot.app.screen._bindings.keys.keys()) == ["a"]
 
+
 ##############################################################################
 class NoBindingsAndStaticWidgetNoBindings(App[None]):
     """An app with no bindings, enclosing a widget with no bindings."""
 
     def compose(self) -> ComposeResult:
         yield Static("Poetry! They should have sent a poet.")
+
 
 @pytest.mark.xfail(
     reason="Static is incorrectly starting with bindings for movement keys [issue#1343]"
@@ -106,9 +99,9 @@ async def test_just_app_no_bindings_widget_no_bindings() -> None:
         assert list(pilot.app._bindings.keys.keys()) == ["ctrl+c"]
         assert list(pilot.app.screen.query_one(Static)._bindings.keys.keys()) == []
 
+
 ##############################################################################
 class AppKeyRecorder(App[None]):
-
     def __init__(self) -> None:
         super().__init__()
         self.pressed_keys: list[str] = []
@@ -116,18 +109,21 @@ class AppKeyRecorder(App[None]):
     async def action_record(self, key: str) -> None:
         self.pressed_keys.append(key)
 
+
 ##############################################################################
 class AppWithMovementKeysBound(AppKeyRecorder):
-    BINDINGS=[
-        Binding("x","record('x')","x"),
-        *[Binding(key,f"record({key}')",key) for key in MOVEMENT_KEYS]
+    BINDINGS = [
+        Binding("x", "record('x')", "x"),
+        *[Binding(key, f"record({key}')", key) for key in MOVEMENT_KEYS],
     ]
+
 
 async def test_pressing_alpha_on_app() -> None:
     """Test that pressing the an alpha key, when it's bound on the app, results in an action fire."""
     async with AppWithMovementKeysBound().run_test() as pilot:
         await pilot.press(*"xxxxx")
         assert "".join(pilot.app.pressed_keys) == "xxxxx"
+
 
 @pytest.mark.xfail(
     reason="Up key isn't firing bound action on an app due to key inheritence of its screen [issue#1343]"
@@ -138,15 +134,17 @@ async def test_pressing_movement_keys_app() -> None:
         await pilot.press("x", *MOVEMENT_KEYS, "x")
         assert pilot.app.pressed_keys == ["x", *MOVEMENT_KEYS, "x"]
 
+
 ##############################################################################
-class WidgetWithBindings(Static,can_focus=True):
+class WidgetWithBindings(Static, can_focus=True):
     """A widget that has its own bindings for the movement keys."""
 
-    BINDINGS=[Binding(key,f"local_record('{key}')",key) for key in MOVEMENT_KEYS]
+    BINDINGS = [Binding(key, f"local_record('{key}')", key) for key in MOVEMENT_KEYS]
 
-    async def action_local_record(self, key:str) -> None:
+    async def action_local_record(self, key: str) -> None:
         # Sneaky forward reference. Just for the purposes of testing.
         await self.app.action_record(f"locally_{key}")
+
 
 class AppWithWidgetWithBindings(AppKeyRecorder):
     """A test app that composes with a widget that has movement bindings."""
@@ -156,6 +154,7 @@ class AppWithWidgetWithBindings(AppKeyRecorder):
 
     def on_mount(self) -> None:
         self.query_one(WidgetWithBindings).focus()
+
 
 async def test_focused_child_widget_with_movement_bindings() -> None:
     """A focused child widget with movement bindings should handle its own actions."""
