@@ -266,7 +266,7 @@ class DOMNode(MessagePump):
                 return f"{base.__name__}"
 
         for tie_breaker, base in enumerate(self._node_bases):
-            css = base.DEFAULT_CSS.strip()
+            css = base.__dict__.get("DEFAULT_CSS", "").strip()
             if css:
                 css_stack.append((get_path(base), css, -tie_breaker))
 
