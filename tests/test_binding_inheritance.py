@@ -1,3 +1,14 @@
+"""Tests relating to key binding inheritance.
+
+In here you'll find some tests for general key binding inheritance, but
+there is an emphasis on the inheriting of movement key bindings as they (as
+of the time of writing) hold a special place in the Widget hierarchy of
+Textual.
+
+<URL:https://github.com/Textualize/textual/issues/1343> holds much of the
+background relating to this.
+"""
+
 import pytest
 
 from textual.app import App, ComposeResult
