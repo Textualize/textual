@@ -232,21 +232,21 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         color: $text;
     }
     Tree > .tree--label {
-        
+
     }
     Tree > .tree--guides {
         color: $success-darken-3;
     }
 
-    Tree > .tree--guides-hover {  
-        color: $success;      
+    Tree > .tree--guides-hover {
+        color: $success;
         text-style: bold;
     }
 
     Tree > .tree--guides-selected {
         color: $warning;
         text-style: bold;
-    }    
+    }
 
     Tree > .tree--cursor {
         background: $secondary;
@@ -254,11 +254,11 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         text-style: bold;
     }
 
-    Tree > .tree--highlight {        
+    Tree > .tree--highlight {
         text-style: underline;
     }
-    
-    Tree > .tree--highlight-line {        
+
+    Tree > .tree--highlight-line {
         background: $boost;
     }
 
@@ -309,7 +309,11 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     }
 
     class NodeSelected(Generic[EventTreeDataType], Message, bubble=True):
-        """Event sent when a node is selected."""
+        """Event sent when a node is selected.
+
+        Attributes:
+            TreeNode[EventTreeDataType]: The node that was selected.
+        """
 
         def __init__(
             self, sender: MessageTarget, node: TreeNode[EventTreeDataType]
@@ -318,7 +322,11 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             super().__init__(sender)
 
     class NodeExpanded(Generic[EventTreeDataType], Message, bubble=True):
-        """Event sent when a node is expanded."""
+        """Event sent when a node is expanded.
+
+        Attributes:
+            TreeNode[EventTreeDataType]: The node that was expanded.
+        """
 
         def __init__(
             self, sender: MessageTarget, node: TreeNode[EventTreeDataType]
@@ -327,7 +335,11 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             super().__init__(sender)
 
     class NodeCollapsed(Generic[EventTreeDataType], Message, bubble=True):
-        """Event sent when a node is collapsed."""
+        """Event sent when a node is collapsed.
+
+        Attributes:
+            TreeNode[EventTreeDataType]: The node that was collapsed.
+        """
 
         def __init__(
             self, sender: MessageTarget, node: TreeNode[EventTreeDataType]

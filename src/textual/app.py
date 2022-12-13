@@ -1996,9 +1996,9 @@ class App(Generic[ReturnType], DOMNode):
                 await self._prune_nodes(widgets)
             finally:
                 finished_event.set()
+                self.refresh(layout=True)
 
         removed_widgets = self._detach_from_dom(widgets)
-        self.refresh(layout=True)
 
         finished_event = asyncio.Event()
         asyncio.create_task(prune_widgets_task(removed_widgets, finished_event))

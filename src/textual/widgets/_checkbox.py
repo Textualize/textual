@@ -123,7 +123,12 @@ class Checkbox(Widget, can_focus=True):
         self.value = not self.value
 
     class Changed(Message, bubble=True):
-        """Checkbox was toggled."""
+        """Checkbox was toggled.
+
+        Attributes:
+            value (bool): The value that the checkbox was changed to.
+            input (Checkbox): The `Checkbox` widget that was changed.
+        """
 
         def __init__(self, sender: Checkbox, value: bool) -> None:
             super().__init__(sender)
