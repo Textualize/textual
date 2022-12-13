@@ -17,6 +17,7 @@ from textual.app import App, ComposeResult
 from textual.widgets import Static
 from textual.screen import Screen
 from textual.binding import Binding
+from textual.containers import Container
 
 ##############################################################################
 # These are the movement keys within Textual; they kind of have a special
@@ -307,7 +308,52 @@ async def test_focused_child_widget_with_movement_bindings_on_screen() -> None:
     async with AppWithScreenWithBindingsWidgetNoBindings().run_test() as pilot:
         await pilot.press(*AppKeyRecorder.ALL_KEYS)
         await pilot.pause(2/100)
-        assert pilot.app.all_recorded("screenly_")
+        pilot.app.all_recorded("screenly_")
+
+##############################################################################
+# A focused widget within a container within a screen that handles bindings.
+#
+# Similar again to the previous test, here we're wrapping an app around a
+# non-default screen, which in turn wraps a container which wraps a widget
+# that can have, and will have, focus. The issue here is that if the
+# container isn't scrolling, especially if it's set up to just wrap a widget
+# and do nothing else, it should not rob the screen of the binding hits.
+#
+# Although it's not at the end of the unit tests, this is potentially the
+# "final boss" of these tests.
+
+class ScreenWithMovementBindingsAndContainerAroundWidget(Screen):
+    """A screen that binds keys, including movement keys."""
+
+    BINDINGS = AppKeyRecorder.mk_bindings("screen_")
+
+    async def action_screen_record(self, key: str) -> None:
+        # Sneaky forward reference. Just for the purposes of testing.
+        await self.app.action_record(f"screenly_{key}")
+
+    def compose(self) -> ComposeResult:
+        yield Container(FocusableWidgetWithNoBindings())
+
+    def on_mount(self) -> None:
+        self.query_one(FocusableWidgetWithNoBindings).focus()
+
+class AppWithScreenWithBindingsWrappedWidgetNoBindings(AppKeyRecorder):
+    """An app with a non-default screen that handles movement key bindings."""
+
+    SCREENS = {"main":ScreenWithMovementBindings}
+
+    def on_mount(self) -> None:
+        self.push_screen("main")
+
+@pytest.mark.xfail(
+    reason="Movement keys never make it to the screen with such bindings due to key inheritance and pre-bound movement keys [issue#1343]"
+)
+async def test_contained_focused_child_widget_with_movement_bindings_on_screen() -> None:
+    """A contained focused child widget, with movement bindings in the screen, should trigger screen actions."""
+    async with AppWithScreenWithBindingsWrappedWidgetNoBindings().run_test() as pilot:
+        await pilot.press(*AppKeyRecorder.ALL_KEYS)
+        await pilot.pause(2/100)
+        pilot.app.all_recorded("screenly_")
 
 ##############################################################################
 # A focused widget with bindings but no inheriting of bindings, on app.
