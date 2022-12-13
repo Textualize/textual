@@ -164,3 +164,42 @@ async def test_focused_child_widget_with_movement_bindings() -> None:
     async with AppWithWidgetWithBindings().run_test() as pilot:
         await pilot.press("x", *MOVEMENT_KEYS, "x")
         assert pilot.app.pressed_keys == ["x", *[f"locally_{key}" for key in MOVEMENT_KEYS], "x"]
+
+##############################################################################
+class FocusableWidgetWithNoBindings(Static, can_focus=True):
+    """A widget that can receive focus but has no bindings."""
+
+class ScreenWithMovementBindings(Screen):
+    """A screen that binds keys, including movement keys."""
+
+    BINDINGS = [
+        Binding("x", "record('x')", "x"),
+        *[Binding(key, f"screen_record('{key}')", key) for key in MOVEMENT_KEYS]
+    ]
+
+    async def action_screen_record(self, key: str) -> None:
+        # Sneaky forward reference. Just for the purposes of testing.
+        await self.app.action_record(f"screen_{key}")
+
+    def compose(self) -> ComposeResult:
+        yield FocusableWidgetWithNoBindings()
+
+    def on_mount(self) -> None:
+        self.query_one(FocusableWidgetWithNoBindings).focus()
+
+class AppWithScreenWithBindingsWidgetNoBindings(AppKeyRecorder):
+    """An app with a non-default screen that handles movement key bindings."""
+
+    SCREENS = {"main":ScreenWithMovementBindings}
+
+    def on_mount(self) -> None:
+        self.push_screen("main")
+
+@pytest.mark.xfail(
+    reason="Movement keys never make it to the screen with such bindings due to key inheritance and pre-bound movement keys [issue#1343]"
+)
+async def test_focused_child_widget_with_movement_bindings_on_screen() -> None:
+    """A focused child widget, with movement bindings in the screen, should trigger screen actions."""
+    async with AppWithScreenWithBindingsWidgetNoBindings().run_test() as pilot:
+        await pilot.press("x", *MOVEMENT_KEYS, "x")
+        assert pilot.app.pressed_keys == ["x", *[f"locally_{key}" for key in MOVEMENT_KEYS], "x"]
