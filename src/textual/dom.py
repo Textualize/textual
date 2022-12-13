@@ -265,12 +265,9 @@ class DOMNode(MessagePump):
             except TypeError:
                 return f"{base.__name__}"
 
-        default_css = [base.DEFAULT_CSS.strip() for base in self._node_bases]
-        ancestor_default_css = default_css[1:] + [""]
-        for tie_breaker, (base, css, ancestor_css) in enumerate(
-            zip(self._node_bases, default_css, ancestor_default_css)
-        ):
-            if css and css != ancestor_css:
+        for tie_breaker, base in enumerate(self._node_bases):
+            css = base.__dict__.get("DEFAULT_CSS", "").strip()
+            if css:
                 css_stack.append((get_path(base), css, -tie_breaker))
 
         return css_stack
