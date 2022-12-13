@@ -274,9 +274,6 @@ class AppWithScreenWithBindingsWidgetNoBindingsNoInherit(AppKeyRecorder):
     def on_mount(self) -> None:
         self.push_screen("main")
 
-@pytest.mark.xfail(
-    reason="A child widget that doesn't inherit bindings, but has no bindings, incorrectly defers to its parent class [issue#1351]"
-)
 async def test_focused_child_widget_no_inherit_with_movement_bindings_on_screen() -> None:
     """A focused child widget, that doesn't inherit bindings, with movement bindings in the screen, should trigger screen actions."""
     async with AppWithScreenWithBindingsWidgetNoBindingsNoInherit().run_test() as pilot:
