@@ -282,3 +282,40 @@ async def test_focused_child_widget_no_inherit_with_movement_bindings_on_screen(
     async with AppWithScreenWithBindingsWidgetNoBindingsNoInherit().run_test() as pilot:
         await pilot.press("x", *MOVEMENT_KEYS, "x")
         assert pilot.app.pressed_keys == ["screen_x", *[f"screen_{key}" for key in MOVEMENT_KEYS], "screen_x"]
+
+##############################################################################
+class FocusableWidgetWithEmptyBindingsNoInherit(Static, can_focus=True, inherit_bindings=False):
+    """A widget that can receive focus but has empty bindings and doesn't inherit bindings."""
+    BINDINGS = []
+
+class ScreenWithMovementBindingsNoInheritEmptyChild(Screen):
+    """A screen that binds keys, including movement keys."""
+
+    BINDINGS = [
+        Binding("x", "screen_record('x')", "x"),
+        *[Binding(key, f"screen_record('{key}')", key) for key in MOVEMENT_KEYS]
+    ]
+
+    async def action_screen_record(self, key: str) -> None:
+        # Sneaky forward reference. Just for the purposes of testing.
+        await self.app.action_record(f"screen_{key}")
+
+    def compose(self) -> ComposeResult:
+        yield FocusableWidgetWithEmptyBindingsNoInherit()
+
+    def on_mount(self) -> None:
+        self.query_one(FocusableWidgetWithEmptyBindingsNoInherit).focus()
+
+class AppWithScreenWithBindingsWidgetEmptyBindingsNoInherit(AppKeyRecorder):
+    """An app with a non-default screen that handles movement key bindings, child no-inherit."""
+
+    SCREENS = {"main":ScreenWithMovementBindingsNoInheritEmptyChild}
+
+    def on_mount(self) -> None:
+        self.push_screen("main")
+
+async def test_focused_child_widget_no_inherit_empty_bindings_with_movement_bindings_on_screen() -> None:
+    """A focused child widget, that doesn't inherit bindings and sets BINDINGS empty, with movement bindings in the screen, should trigger screen actions."""
+    async with AppWithScreenWithBindingsWidgetEmptyBindingsNoInherit().run_test() as pilot:
+        await pilot.press("x", *MOVEMENT_KEYS, "x")
+        assert pilot.app.pressed_keys == ["screen_x", *[f"screen_{key}" for key in MOVEMENT_KEYS], "screen_x"]
