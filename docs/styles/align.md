@@ -30,7 +30,9 @@ align-vertical: <VERTICAL>;
 | `bottom`        | Align content at the bottom of the vertical axis |
 
 
-## Example
+## Examples
+
+This example contains a simple app with two labels centered on the screen with `align: center middle;`:
 
 === "align.py"
 
@@ -48,6 +50,26 @@ align-vertical: <VERTICAL>;
 
     ```{.textual path="docs/examples/styles/align.py"}
 
+    ```
+
+The next example shows a 3 by 3 grid of containers with text labels.
+Each label has been aligned differently inside its container, and its text shows its `align: ...` value.
+
+=== "align_all.py"
+
+    ```python
+    --8<-- "docs/examples/styles/align_all.py"
+    ```
+
+=== "align_all.css"
+
+    ```css
+    --8<-- "docs/examples/styles/align_all.css"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/align_all.py"}
     ```
 
 ## CSS
