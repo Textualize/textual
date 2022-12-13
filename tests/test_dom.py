@@ -45,6 +45,39 @@ def test_validate():
         node.toggle_class("1")
 
 
+def test_inherited_bindings():
+    """Test if binding merging is done correctly when (not) inheriting bindings."""
+    class A(DOMNode):
+        BINDINGS = [("a", "a", "a")]
+
+    class B(A):
+        BINDINGS = [("b", "b", "b")]
+
+    class C(B, inherit_bindings=False):
+        BINDINGS = [("c", "c", "c")]
+
+    class D(C, inherit_bindings=False):
+        pass
+
+    class E(D):
+        BINDINGS = [("e", "e", "e")]
+
+    a = A()
+    assert list(a._bindings.keys.keys()) == ["a"]
+
+    b = B()
+    assert list(b._bindings.keys.keys()) == ["a", "b"]
+
+    c = C()
+    assert list(c._bindings.keys.keys()) == ["c"]
+
+    d = D()
+    assert not list(d._bindings.keys.keys())
+
+    e = E()
+    assert list(e._bindings.keys.keys()) == ["e"]
+
+
 def test_get_default_css():
     class A(DOMNode):
         pass

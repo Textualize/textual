@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed issue with auto width/height and relative children https://github.com/Textualize/textual/issues/1319
 - Fixed issue with offset applied to containers https://github.com/Textualize/textual/issues/1256
 - Fixed default CSS retrieval for widgets with no `DEFAULT_CSS` that inherited from widgets with `DEFAULT_CSS` https://github.com/Textualize/textual/issues/1335
+- Fixed merging of `BINDINGS` when binding inheritance is set to `None` https://github.com/Textualize/textual/issues/1351
 
 ## [0.5.0] - 2022-11-20
 
