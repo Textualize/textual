@@ -51,10 +51,10 @@ class AppWithScreenNoBindings(App[None]):
 @pytest.mark.xfail(
     reason="Screen is incorrectly starting with bindings for movement keys [issue#1343]"
 )
-async def test_app_screen_no_bindings() -> None:
-    """An screen with no bindings should have no bindings."""
+async def test_app_screen_has_no_movement_bindings() -> None:
+    """A screen with no bindings should not have movement key bindings."""
     async with AppWithScreenNoBindings().run_test() as pilot:
-        assert list(pilot.app.screen._bindings.keys.keys()) == []
+        assert list(pilot.app.screen._bindings.keys.keys()) != MOVEMENT_KEYS
 
 
 ##############################################################################
