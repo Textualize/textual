@@ -213,3 +213,33 @@ async def test_focused_child_widget_with_movement_bindings_on_screen() -> None:
     async with AppWithScreenWithBindingsWidgetNoBindings().run_test() as pilot:
         await pilot.press("x", *MOVEMENT_KEYS, "x")
         assert pilot.app.pressed_keys == ["x", *[f"screen_{key}" for key in MOVEMENT_KEYS], "x"]
+
+##############################################################################
+class WidgetWithBindingsNoInherit(Static, can_focus=True, inherit_bindings=False):
+    """A widget that has its own bindings for the movement keys, no binding inheritance."""
+
+    BINDINGS = [
+        Binding("x", "record('x')", "x"),
+        *[Binding(key, f"local_record('{key}')", key) for key in MOVEMENT_KEYS]
+    ]
+
+    async def action_local_record(self, key: str) -> None:
+        # Sneaky forward reference. Just for the purposes of testing.
+        await self.app.action_record(f"locally_{key}")
+
+
+class AppWithWidgetWithBindingsNoInherit(AppKeyRecorder):
+    """A test app that composes with a widget that has movement bindings without binding inheritance."""
+
+    def compose(self) -> ComposeResult:
+        yield WidgetWithBindingsNoInherit()
+
+    def on_mount(self) -> None:
+        self.query_one(WidgetWithBindingsNoInherit).focus()
+
+
+async def test_focused_child_widget_with_movement_bindings_no_inherit() -> None:
+    """A focused child widget with movement bindings and inherit_bindings=False should handle its own actions."""
+    async with AppWithWidgetWithBindingsNoInherit().run_test() as pilot:
+        await pilot.press("x", *MOVEMENT_KEYS, "x")
+        assert pilot.app.pressed_keys == ["x", *[f"locally_{key}" for key in MOVEMENT_KEYS], "x"]
