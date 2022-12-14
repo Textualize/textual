@@ -394,16 +394,21 @@ class Color(NamedTuple):
             - `#RRGGBB`
             - `#RRGGBBAA`
 
-        - Text in the following formats is parsed as decimal values,
-         where RED, GREEN, and BLUE must be numbers between 0 and 255
-         and ALPHA must be a value between 0 and 1:
+        - Alternatively, RGB colors can also be specified in the format
+         that follows, where R, G, and B must be numbers between 0 and 255
+         and A must be a value between 0 and 1:
 
-            - `rgb(RED,GREEN,BLUE)`
-            - `rgba(RED,GREEN,BLUE,ALPHA)`
-            - `hsl(RED,GREEN,BLUE)`
-            - `hsla(RED,GREEN,BLUE,ALPHA)`
+            - `rgb(R,G,B)`
+            - `rgb(R,G,B,A)`
 
-        All other text will raise a `ColorParseError`.
+        - The HSL model can also be used, with a syntax similar to the above,
+         if H is a value between 0 and 360, S and L are percentages, and A
+         is a value between 0 and 1:
+
+            - `hsl(H,S,L)`
+            - `hsla(H,S,L,A)`
+
+        Any other formats will raise a `ColorParseError`.
 
         Args:
             color_text (str | Color): Text with a valid color format. Color objects will
@@ -413,7 +418,7 @@ class Color(NamedTuple):
             ColorParseError: If the color is not encoded correctly.
 
         Returns:
-            Color: New color object.
+            Color: Instance encoding the color specified by the argument.
         """
         if isinstance(color_text, Color):
             return color_text
