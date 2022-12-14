@@ -41,6 +41,17 @@ class Bindings:
     """Manage a set of bindings."""
 
     def __init__(self, bindings: Iterable[BindingType] | None = None) -> None:
+        """Initialise a collection of bindings.
+
+        Args:
+            bindings (Iterable[BindingType] | None, optional): An optional set of initial bindings.
+
+        Note:
+            The iterable of bindings can contain either a `Binding`
+            instance, or a tuple of 3 values mapping to the first three
+            properties of a `Binding`.
+        """
+
         def make_bindings(bindings: Iterable[BindingType]) -> Iterable[Binding]:
             for binding in bindings:
                 # If it's a tuple of length 3, convert into a Binding first
