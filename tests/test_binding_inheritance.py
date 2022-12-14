@@ -93,9 +93,7 @@ class AppWithScreenNoBindings(App[None]):
 async def test_app_screen_has_no_movement_bindings() -> None:
     """A screen with no bindings should not have movement key bindings."""
     async with AppWithScreenNoBindings().run_test() as pilot:
-        assert sorted(list(pilot.app.screen._bindings.keys.keys())) != sorted(
-            MOVEMENT_KEYS
-        )
+        assert not list(pilot.app.screen._bindings.keys.keys())
 
 
 ##############################################################################
