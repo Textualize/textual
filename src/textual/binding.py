@@ -62,20 +62,18 @@ class Bindings:
                         )
                     binding = Binding(*binding)
 
-                binding_keys = binding.key.split(",")
-                if len(binding_keys) > 1:
-                    for key in binding_keys:
-                        new_binding = Binding(
-                            key=key,
-                            action=binding.action,
-                            description=binding.description,
-                            show=binding.show,
-                            key_display=binding.key_display,
-                            priority=binding.priority,
-                        )
-                        yield new_binding
-                else:
-                    yield binding
+                # At this point we have a Binding instance, but the key may
+                # be a list of keys, so now we unroll that single Binding
+                # into a (potential) collection of Binding instances.
+                for key in binding.key.split(","):
+                    yield Binding(
+                        key=key.strip(),
+                        action=binding.action,
+                        description=binding.description,
+                        show=binding.show,
+                        key_display=binding.key_display,
+                        priority=binding.priority,
+                    )
 
         self.keys: MutableMapping[str, Binding] = (
             {binding.key: binding for binding in make_bindings(bindings)}
