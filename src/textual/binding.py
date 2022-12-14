@@ -20,6 +20,8 @@ class NoBinding(Exception):
 
 @dataclass(frozen=True)
 class Binding:
+    """The configuration of a key binding."""
+
     key: str
     """str: Key to bind. This can also be a comma-separated list of keys to map multiple keys to a single action."""
     action: str
