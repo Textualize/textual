@@ -40,6 +40,7 @@ async def test_just_app_no_bindings() -> None:
     """An app with no bindings should have no bindings, other than ctrl+c."""
     async with NoBindings().run_test() as pilot:
         assert list(pilot.app._bindings.keys.keys()) == ["ctrl+c"]
+        assert pilot.app._bindings.get_key("ctrl+c").priority == True
 
 
 ##############################################################################
@@ -61,47 +62,38 @@ async def test_just_app_alpha_binding() -> None:
     """An app with a single binding should have just the one binding."""
     async with AlphaBinding().run_test() as pilot:
         assert sorted(pilot.app._bindings.keys.keys()) == sorted(["ctrl+c", "a"])
+        assert pilot.app._bindings.get_key("ctrl+c").priority == True
+        assert pilot.app._bindings.get_key("a").priority == True
 
 
 ##############################################################################
-# Introduce a non-default screen.
+# An application with a single low-priority alpha binding.
 #
-# Having tested an app using the default screen, we now introduce a
-# non-default screen. Generally this won't make a difference, but we *are*
-# working with a subsclass of Screen now so this should be covered.
-#
-# To start with the screen has no bindings -- it's just a direct subclass
-# with no other changes.
+# The same as the above, but in this case we're going to, on purpose, lower
+# the priority of our own bindings, while any define by App itself should
+# remain the same.
 
 
-class ScreenNoBindings(Screen):
-    """A screen with no added bindings."""
+class LowAlphaBinding(App[None]):
+    """An app with a simple low-priority alpha key binding."""
+
+    PRIORITY_BINDINGS = False
+    BINDINGS = [Binding("a", "a", "a")]
 
 
-class AppWithScreenNoBindings(App[None]):
-    """An app with no extra bindings but with a custom screen."""
-
-    SCREENS = {"main": ScreenNoBindings}
-
-    def on_mount(self) -> None:
-        self.push_screen("main")
-
-
-@pytest.mark.xfail(
-    reason="Screen is incorrectly starting with bindings for movement keys [issue#1343]"
-)
-async def test_app_screen_has_no_movement_bindings() -> None:
-    """A screen with no bindings should not have movement key bindings."""
-    async with AppWithScreenNoBindings().run_test() as pilot:
-        assert not list(pilot.app.screen._bindings.keys.keys())
-
+async def test_just_app_low_priority_alpha_binding() -> None:
+    """An app with a single low-priority binding should have just the one binding."""
+    async with LowAlphaBinding().run_test() as pilot:
+        assert sorted(pilot.app._bindings.keys.keys()) == sorted(["ctrl+c", "a"])
+        assert pilot.app._bindings.get_key("ctrl+c").priority == True
+        assert pilot.app._bindings.get_key("a").priority == False
 
 ##############################################################################
-# Add an alpha-binding to a non-default screen.
+# A non-default screen with a single alpha key binding.
 #
-# Hacking checked things with a non-default screen with no bindings, let's
-# now do the same thing but with a binding added that isn't for a movement
-# key.
+# There's little point in testing a screen with no bindings added as that's
+# pretty much the same as an app with a default screen (for the purposes of
+# these tests). So, let's test a screen with a single alpha-key binding.
 
 
 class ScreenWithBindings(Screen):
@@ -119,42 +111,52 @@ class AppWithScreenThatHasABinding(App[None]):
         self.push_screen("main")
 
 
-@pytest.mark.xfail(
-    reason="Screen is incorrectly starting with bindings for movement keys [issue#1343]"
-)
 async def test_app_screen_with_bindings() -> None:
-    """A screen with a single alpha key binding should only have that key as a binding."""
+    """Test a screen with a single key binding defined."""
     async with AppWithScreenThatHasABinding().run_test() as pilot:
-        assert list(pilot.app.screen._bindings.keys.keys()) == ["a"]
-
+        # The screen will contain all of the movement keys, because it
+        # inherits from Widget. That's fine. Let's check they're there, but
+        # also let's check that they all have a non-priority binding.
+        assert all(pilot.app.screen._bindings.get_key(key).priority == False for key in MOVEMENT_KEYS)
+        # Let's also check that the 'a' key is there, and it *is* a priority
+        # binding.
+        assert pilot.app.screen._bindings.get_key("a").priority == True
 
 ##############################################################################
-# An app with a non-default screen wrapping a Static.
+# A non-default screen with a single low-priority alpha key binding.
 #
-# So far the screens we've been pushing likely haven't passed the test of
-# being a container. So now we test with zero bindings in place, expecting
-# to see zero bindings in place, but do so when the screen has a child;
-# presumably making it pass as a container.
+# As above, but because Screen sets akk keys as high priority by default, we
+# want to be sure that if we set our keys in our subclass as low priority as
+# default, they come through as such.
 
 
-class NoBindingsAndStaticWidgetNoBindings(App[None]):
-    """An app with no bindings, enclosing a widget with no bindings."""
+class ScreenWithLowBindings(Screen):
+    """A screen with a simple low-priority alpha key binding."""
 
-    def compose(self) -> ComposeResult:
-        yield Static("Poetry! They should have sent a poet.")
+    PRIORITY_BINDINGS = False
+    BINDINGS = [Binding("a", "a", "a")]
 
 
-@pytest.mark.xfail(
-    reason="Static is incorrectly starting with bindings for movement keys [issue#1343]"
-)
-async def test_just_app_no_bindings_widget_no_bindings() -> None:
-    """A widget with no bindings should have no bindings"""
-    async with NoBindingsAndStaticWidgetNoBindings().run_test() as pilot:
-        assert list(pilot.app.screen.query_one(Static)._bindings.keys.keys()) == []
+class AppWithScreenThatHasALowBinding(App[None]):
+    """An app with no extra bindings but with a custom screen with a low-priority binding."""
+
+    SCREENS = {"main": ScreenWithLowBindings}
+
+    def on_mount(self) -> None:
+        self.push_screen("main")
+
+
+async def test_app_screen_with_low_bindings() -> None:
+    """Test a screen with a single low-priority key binding defined."""
+    async with AppWithScreenThatHasALowBinding().run_test() as pilot:
+        # Screens inherit from Widget which means they get movement keys
+        # too, so let's ensure they're all in there, along with our own key,
+        # and that everyone is low-priority.
+        assert all(pilot.app.screen._bindings.get_key(key).priority == False for key in ["a", *MOVEMENT_KEYS])
 
 
 ##############################################################################
-# From here on in we're going to start simulating key strokes to ensure that
+# From here on in we're going to start simulating keystrokes to ensure that
 # any bindings that are in place actually fire the correct actions. To help
 # with this let's build a simple key/binding/action recorder base app.
 
@@ -169,17 +171,17 @@ class AppKeyRecorder(App[None]):
     """list[str]: All the test keys."""
 
     @staticmethod
-    def mk_bindings(prefix: str = "") -> list[Binding]:
+    def mk_bindings(action_prefix: str = "") -> list[Binding]:
         """Make the binding list for testing an app.
 
         Args:
-            prefix (str, optional): An optional prefix for the actions.
+            action_prefix (str, optional): An optional prefix for the action name.
 
         Returns:
             list[Binding]: The resulting list of bindings.
         """
         return [
-            Binding(key, f"{prefix}record('{key}')", key)
+            Binding(key, f"{action_prefix}record('{key}')", key)
             for key in [*AppKeyRecorder.ALPHAS, *MOVEMENT_KEYS]
         ]
 
@@ -196,13 +198,13 @@ class AppKeyRecorder(App[None]):
         """
         self.pressed_keys.append(key)
 
-    def all_recorded(self, prefix: str = "") -> None:
+    def all_recorded(self, marker_prefix: str = "") -> None:
         """Were all the bindings recorded from the presses?
 
         Args:
-            prefix (str, optional): An optional prefix.
+            marker_prefix (str, optional): An optional prefix for the result markers.
         """
-        assert self.pressed_keys == [f"{prefix}{key}" for key in self.ALL_KEYS]
+        assert self.pressed_keys == [f"{marker_prefix}{key}" for key in self.ALL_KEYS]
 
 
 ##############################################################################
@@ -228,9 +230,6 @@ async def test_pressing_alpha_on_app() -> None:
         assert pilot.app.pressed_keys == [*AppKeyRecorder.ALPHAS]
 
 
-@pytest.mark.xfail(
-    reason="Up key isn't firing bound action on an app due to key inheritance of its screen [issue#1343]"
-)
 async def test_pressing_movement_keys_app() -> None:
     """Test that pressing the movement keys, when they're bound on the app, results in an action fire."""
     async with AppWithMovementKeysBound().run_test() as pilot:
@@ -316,9 +315,6 @@ class AppWithScreenWithBindingsWidgetNoBindings(AppKeyRecorder):
         self.push_screen("main")
 
 
-@pytest.mark.xfail(
-    reason="Movement keys never make it to the screen with such bindings due to key inheritance and pre-bound movement keys [issue#1343]"
-)
 async def test_focused_child_widget_with_movement_bindings_on_screen() -> None:
     """A focused child widget, with movement bindings in the screen, should trigger screen actions."""
     async with AppWithScreenWithBindingsWidgetNoBindings().run_test() as pilot:
@@ -365,9 +361,6 @@ class AppWithScreenWithBindingsWrappedWidgetNoBindings(AppKeyRecorder):
         self.push_screen("main")
 
 
-@pytest.mark.xfail(
-    reason="Movement keys never make it to the screen with such bindings due to key inheritance and pre-bound movement keys [issue#1343]"
-)
 async def test_contained_focused_child_widget_with_movement_bindings_on_screen() -> None:
     """A contained focused child widget, with movement bindings in the screen, should trigger screen actions."""
     async with AppWithScreenWithBindingsWrappedWidgetNoBindings().run_test() as pilot:
