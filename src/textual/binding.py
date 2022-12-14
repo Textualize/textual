@@ -75,7 +75,7 @@ class Bindings:
 
     @classmethod
     def merge(cls, bindings: Iterable[Bindings]) -> Bindings:
-        """Merge a bindings. Subsequence bound keys override initial keys.
+        """Merge a bindings. Subsequent bound keys override initial keys.
 
         Args:
             bindings (Iterable[Bindings]): A number of bindings.
