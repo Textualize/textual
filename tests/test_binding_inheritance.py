@@ -231,7 +231,7 @@ async def test_pressing_alpha_on_app() -> None:
 
 
 @pytest.mark.xfail(
-    reason="Up key isn't firing bound action on an app due to key inheritence of its screen [issue#1343]"
+    reason="Up key isn't firing bound action on an app due to key inheritance of its screen [issue#1343]"
 )
 async def test_pressing_movement_keys_app() -> None:
     """Test that pressing the movement keys, when they're bound on the app, results in an action fire."""
