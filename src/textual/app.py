@@ -231,6 +231,8 @@ class App(Generic[ReturnType], DOMNode):
     }
     """
 
+    PRIORITY_BINDINGS = True
+
     SCREENS: dict[str, Screen | Callable[[], Screen]] = {}
     _BASE_PATH: str | None = None
     CSS_PATH: CSSPathType = None
