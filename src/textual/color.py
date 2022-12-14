@@ -386,23 +386,22 @@ class Color(NamedTuple):
 
         Colors may be parsed from the following formats:
 
-        Text beginning with a `#` is parsed as hex:
+        - Text beginning with a `#` is parsed as a hexadecimal color code,
+         where R, G, B, and A must be hexadecimal digits (0-9A-F):
 
-        R, G, and B must be hex digits (0-9A-F)
+            - `#RGB`
+            - `#RGBA`
+            - `#RRGGBB`
+            - `#RRGGBBAA`
 
-        - `#RGB`
-        - `#RRGGBB`
-        - `#RRGGBBAA`
+        - Text in the following formats is parsed as decimal values,
+         where RED, GREEN, and BLUE must be numbers between 0 and 255
+         and ALPHA must be a value between 0 and 1:
 
-        Text in the following formats is parsed as decimal values:
-
-        RED, GREEN, and BLUE must be numbers between 0 and 255.
-        ALPHA should ba a value between 0 and 1.
-
-        - `rgb(RED,GREEN,BLUE)`
-        - `rgba(RED,GREEN,BLUE,ALPHA)`
-        - `hsl(RED,GREEN,BLUE)`
-        - `hsla(RED,GREEN,BLUE,ALPHA)`
+            - `rgb(RED,GREEN,BLUE)`
+            - `rgba(RED,GREEN,BLUE,ALPHA)`
+            - `hsl(RED,GREEN,BLUE)`
+            - `hsla(RED,GREEN,BLUE,ALPHA)`
 
         All other text will raise a `ColorParseError`.
 
