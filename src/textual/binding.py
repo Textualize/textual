@@ -32,8 +32,8 @@ class Binding:
     """bool: Show the action in Footer, or False to hide."""
     key_display: str | None = None
     """str | None: How the key should be shown in footer."""
-    universal: bool = False
-    """bool: Allow forwarding from app to focused widget."""
+    priority: bool = False
+    """bool: Is this a priority binding, checked form app down to focused widget?"""
 
 
 @rich.repr.auto
@@ -60,7 +60,7 @@ class Bindings:
                             description=binding.description,
                             show=binding.show,
                             key_display=binding.key_display,
-                            universal=binding.universal,
+                            priority=binding.priority,
                         )
                         yield new_binding
                 else:
@@ -107,7 +107,7 @@ class Bindings:
         description: str = "",
         show: bool = True,
         key_display: str | None = None,
-        universal: bool = False,
+        priority: bool = False,
     ) -> None:
         """Bind keys to an action.
 
@@ -117,7 +117,7 @@ class Bindings:
             description (str, optional): An optional description for the binding.
             show (bool, optional): A flag to say if the binding should appear in the footer.
             key_display (str | None, optional): Optional string to display in the footer for the key.
-            universal (bool, optional): Allow forwarding from the app to the focused widget.
+            priority (bool, optional): Is this a priority binding, checked form app down to focused widget?
         """
         all_keys = [key.strip() for key in keys.split(",")]
         for key in all_keys:
@@ -127,7 +127,7 @@ class Bindings:
                 description,
                 show=show,
                 key_display=key_display,
-                universal=universal,
+                priority=priority,
             )
 
     def get_key(self, key: str) -> Binding:
