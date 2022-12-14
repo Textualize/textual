@@ -32,19 +32,24 @@ class Binding:
     """bool: Show the action in Footer, or False to hide."""
     key_display: str | None = None
     """str | None: How the key should be shown in footer."""
-    priority: bool = False
-    """bool: Is this a priority binding, checked form app down to focused widget?"""
+    priority: bool | None = None
+    """bool | None: Is this a priority binding, checked form app down to focused widget?"""
 
 
 @rich.repr.auto
 class Bindings:
     """Manage a set of bindings."""
 
-    def __init__(self, bindings: Iterable[BindingType] | None = None) -> None:
+    def __init__(
+        self,
+        bindings: Iterable[BindingType] | None = None,
+        default_priority: bool | None = None,
+    ) -> None:
         """Initialise a collection of bindings.
 
         Args:
             bindings (Iterable[BindingType] | None, optional): An optional set of initial bindings.
+            default_priority (bool | None, optional): The default priority of the bindings.
 
         Note:
             The iterable of bindings can contain either a `Binding`
@@ -72,7 +77,9 @@ class Bindings:
                         description=binding.description,
                         show=binding.show,
                         key_display=binding.key_display,
-                        priority=binding.priority,
+                        priority=default_priority
+                        if binding.priority is None
+                        else binding.priority,
                     )
 
         self.keys: MutableMapping[str, Binding] = (
