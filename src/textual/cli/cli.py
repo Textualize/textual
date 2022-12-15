@@ -123,3 +123,11 @@ def colors():
     from textual.cli.previews import colors
 
     colors.app.run()
+
+
+@run.command("keys")
+def keys():
+    """Explore keys and their names, that are available in Textual."""
+    from textual.cli.keys.app import TextualKeys
+
+    TextualKeys().run()
