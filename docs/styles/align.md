@@ -81,8 +81,13 @@ Each label has been aligned differently inside its container, and its text shows
 ```sass
 /* Align child widgets to the center. */
 align: center middle;
-/* Align child widget to th top right */
+/* Align child widget to the top right */
 align: right top;
+
+/* Change the horizontal alignment of the children of a widget */
+align-horizontal: right;
+/* Change the vertical alignment of the children of a widget */
+align-vertical: middle;
 ```
 
 ## Python
@@ -91,4 +96,9 @@ align: right top;
 widget.styles.align = ("center", "middle")
 # Align child widgets to the top right
 widget.styles.align = ("right", "top")
+
+# Change the horizontal alignment of the children of a widget
+widget.styles.align_horizontal = "right"
+# Change the vertical alignment of the children of a widget
+widget.styles.align_vertical = "middle"
 ```
