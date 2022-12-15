@@ -598,7 +598,7 @@ async def test_overlapping_priority_bindings() -> None:
     """Test an app stack with overlapping bindings."""
     async with PriorityOverlapApp().run_test() as pilot:
         await pilot.press(*"0abcdef")
-        await pilot.pause(2 / 100)
+        await pilot.pause(5 / 100)
         assert pilot.app.pressed_keys == [
             "widget_0",
             "app_a",
