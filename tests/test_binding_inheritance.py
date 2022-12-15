@@ -331,9 +331,6 @@ async def test_focused_child_widget_with_movement_bindings_on_screen() -> None:
 # that can have, and will have, focus. The issue here is that if the
 # container isn't scrolling, especially if it's set up to just wrap a widget
 # and do nothing else, it should not rob the screen of the binding hits.
-#
-# Although it's not at the end of the unit tests, this is potentially the
-# "final boss" of these tests.
 
 
 class ScreenWithMovementBindingsAndContainerAroundWidget(Screen):
