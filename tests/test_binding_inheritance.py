@@ -527,7 +527,7 @@ async def test_focused_child_widget_no_inherit_empty_bindings_with_movement_bind
 # combination of overlapping bindings, each with different forms of
 # priority, so we can check who wins where.
 #
-# Here are the permurations tested, with the expected winner:
+# Here are the permutations tested, with the expected winner:
 #
 # |-----|----------|----------|----------|--------|
 # | Key | App      | Screen   | Widget   | Winner |
