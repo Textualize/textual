@@ -137,6 +137,10 @@ Bindings are particularly useful for configurable hot-keys. Bindings can also be
 
 In a future version of Textual it will also be possible to specify bindings in a configuration file, which will allow users to override app bindings.
 
+!!! tip
+
+    Run `textual keys` to learn which keys are available and what their names are for binding.
+
 ## Mouse Input
 
 Textual will send events in response to mouse movement and mouse clicks. These events contain the coordinates of the mouse cursor relative to the terminal or widget.
