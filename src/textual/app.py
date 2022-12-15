@@ -1742,7 +1742,9 @@ class App(Generic[ReturnType], DOMNode):
             bool: True if the key was handled by a binding, otherwise False
         """
 
-        for namespace, bindings in self._binding_chain:
+        for namespace, bindings in (
+            reversed(self._binding_chain) if priority else self._binding_chain
+        ):
             binding = bindings.keys.get(key)
             if binding is not None and binding.priority == priority:
                 await self.action(binding.action, default_namespace=namespace)
