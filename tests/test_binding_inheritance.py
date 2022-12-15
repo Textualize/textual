@@ -587,7 +587,7 @@ class PriorityOverlapApp(AppKeyRecorder):
         Binding("f", "record('app_f')", "f", priority=False),
     ]
 
-    SCREENS = {"main": PriorityOverlapScreen()}
+    SCREENS = {"main": PriorityOverlapScreen}
 
     def on_mount(self) -> None:
         self.push_screen("main")
