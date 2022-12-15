@@ -545,29 +545,27 @@ class PriorityOverlapWidget(Static, can_focus=True):
     """A focusable widget with a priority binding."""
 
     BINDINGS = [
-        Binding("0", "record('widget_0')", "0", priority=False),
-        Binding("a", "record('widget_a')", "a", priority=False),
-        Binding("b", "record('widget_b')", "b", priority=False),
-        Binding("c", "record('widget_c')", "c", priority=True),
-        Binding("d", "record('widget_d')", "d", priority=False),
-        Binding("e", "record('widget_e')", "e", priority=True),
-        Binding("f", "record('widget_f')", "f", priority=True),
+        Binding("0", "app.record('widget_0')", "0", priority=False),
+        Binding("a", "app.record('widget_a')", "a", priority=False),
+        Binding("b", "app.record('widget_b')", "b", priority=False),
+        Binding("c", "app.record('widget_c')", "c", priority=True),
+        Binding("d", "app.record('widget_d')", "d", priority=False),
+        Binding("e", "app.record('widget_e')", "e", priority=True),
+        Binding("f", "app.record('widget_f')", "f", priority=True),
     ]
 
-    async def action_record( self, key: str ) -> None:
-        await self.app.action_record( key )
 
 class PriorityOverlapScreen(Screen):
     """A screen with a priority binding."""
 
     BINDINGS = [
-        Binding("0", "record('screen_0')", "0", priority=False),
-        Binding("a", "record('screen_a')", "a", priority=False),
-        Binding("b", "record('screen_b')", "b", priority=True),
-        Binding("c", "record('screen_c')", "c", priority=False),
-        Binding("d", "record('screen_d')", "c", priority=True),
-        Binding("e", "record('screen_e')", "e", priority=False),
-        Binding("f", "record('screen_f')", "f", priority=True),
+        Binding("0", "app.record('screen_0')", "0", priority=False),
+        Binding("a", "app.record('screen_a')", "a", priority=False),
+        Binding("b", "app.record('screen_b')", "b", priority=True),
+        Binding("c", "app.record('screen_c')", "c", priority=False),
+        Binding("d", "app.record('screen_d')", "c", priority=True),
+        Binding("e", "app.record('screen_e')", "e", priority=False),
+        Binding("f", "app.record('screen_f')", "f", priority=True),
     ]
 
     def compose(self) -> ComposeResult:
@@ -575,9 +573,6 @@ class PriorityOverlapScreen(Screen):
 
     def on_mount(self) -> None:
         self.query_one(PriorityOverlapWidget).focus()
-
-    async def action_record( self, key: str ) -> None:
-        await self.app.action_record( key )
 
 class PriorityOverlapApp(AppKeyRecorder):
     """An application with a priority binding."""
@@ -596,9 +591,6 @@ class PriorityOverlapApp(AppKeyRecorder):
 
     def on_mount(self) -> None:
         self.push_screen("main")
-
-    async def action_record( self, key: str ) -> None:
-        await super().action_record( key )
 
 
 async def test_overlapping_priority_bindings() -> None:
