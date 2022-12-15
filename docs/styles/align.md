@@ -1,6 +1,10 @@
 # Align
 
 The `align` style aligns children within a container.
+Not to be confused with [`content-align`](../content_align).
+
+You can specify the alignment of children on both the horizontal and vertical axes at the same time,
+or on each of the axis separately.
 
 ## Syntax
 
