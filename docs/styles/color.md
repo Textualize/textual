@@ -1,16 +1,22 @@
 # Color
 
-The `color` rule sets the text color of a Widget.
+The `color` rule sets the text color of a widget.
 
 ## Syntax
 
 ```
-color: <COLOR> | auto [<PERCENTAGE>];
+color: (<COLOR> | auto) [<PERCENTAGE>];
 ```
 
-## Example
+Use `auto` to automatically choose a color with suitable contrast for readability.
 
-This example sets a different text color to three different widgets.
+--8<-- "docs/styles/snippets/color_css_syntax.md"
+
+The optional percentage sets the transparency level.
+
+## Examples
+
+This example sets a different text color for each of three different widgets.
 
 === "color.py"
 
@@ -27,6 +33,25 @@ This example sets a different text color to three different widgets.
 === "Output"
 
     ```{.textual path="docs/examples/styles/color.py"}
+    ```
+
+The next example shows how `auto` chooses between a lighter or a darker text color to increase the contrast and improve readability.
+
+=== "color_auto.py"
+
+    ```py
+    --8<-- "docs/examples/styles/color_auto.py"
+    ```
+
+=== "color_auto.css"
+
+    ```css hl_lines="2"
+    --8<-- "docs/examples/styles/color_auto.css"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/color_auto.py"}
     ```
 
 ## CSS
@@ -56,5 +81,4 @@ widget.styles.color = "blue"
 from textual.color import Color
 # Set with a color object
 widget.styles.color = Color.parse("pink")
-
 ```
