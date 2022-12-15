@@ -179,7 +179,7 @@ class AppKeyRecorder(App[None]):
     """list[str]: All the test keys."""
 
     @staticmethod
-    def mk_bindings(action_prefix: str = "") -> list[Binding]:
+    def make_bindings(action_prefix: str = "") -> list[Binding]:
         """Make the binding list for testing an app.
 
         Args:
@@ -227,7 +227,7 @@ class AppKeyRecorder(App[None]):
 class AppWithMovementKeysBound(AppKeyRecorder):
     """An application with bindings."""
 
-    BINDINGS = AppKeyRecorder.mk_bindings()
+    BINDINGS = AppKeyRecorder.make_bindings()
 
 
 async def test_pressing_alpha_on_app() -> None:
@@ -259,7 +259,7 @@ async def test_pressing_movement_keys_app() -> None:
 class FocusableWidgetWithBindings(Static, can_focus=True):
     """A widget that has its own bindings for the movement keys."""
 
-    BINDINGS = AppKeyRecorder.mk_bindings("local_")
+    BINDINGS = AppKeyRecorder.make_bindings("local_")
 
     async def action_local_record(self, key: str) -> None:
         # Sneaky forward reference. Just for the purposes of testing.
@@ -301,7 +301,7 @@ class FocusableWidgetWithNoBindings(Static, can_focus=True):
 class ScreenWithMovementBindings(Screen):
     """A screen that binds keys, including movement keys."""
 
-    BINDINGS = AppKeyRecorder.mk_bindings("screen_")
+    BINDINGS = AppKeyRecorder.make_bindings("screen_")
 
     async def action_screen_record(self, key: str) -> None:
         # Sneaky forward reference. Just for the purposes of testing.
@@ -344,7 +344,7 @@ async def test_focused_child_widget_with_movement_bindings_on_screen() -> None:
 class ScreenWithMovementBindingsAndContainerAroundWidget(Screen):
     """A screen that binds keys, including movement keys."""
 
-    BINDINGS = AppKeyRecorder.mk_bindings("screen_")
+    BINDINGS = AppKeyRecorder.make_bindings("screen_")
 
     async def action_screen_record(self, key: str) -> None:
         # Sneaky forward reference. Just for the purposes of testing.
@@ -388,7 +388,7 @@ async def test_contained_focused_child_widget_with_movement_bindings_on_screen()
 class WidgetWithBindingsNoInherit(Static, can_focus=True, inherit_bindings=False):
     """A widget that has its own bindings for the movement keys, no binding inheritance."""
 
-    BINDINGS = AppKeyRecorder.mk_bindings("local_")
+    BINDINGS = AppKeyRecorder.make_bindings("local_")
 
     async def action_local_record(self, key: str) -> None:
         # Sneaky forward reference. Just for the purposes of testing.
@@ -435,7 +435,7 @@ class FocusableWidgetWithNoBindingsNoInherit(
 class ScreenWithMovementBindingsNoInheritChild(Screen):
     """A screen that binds keys, including movement keys."""
 
-    BINDINGS = AppKeyRecorder.mk_bindings("screen_")
+    BINDINGS = AppKeyRecorder.make_bindings("screen_")
 
     async def action_screen_record(self, key: str) -> None:
         # Sneaky forward reference. Just for the purposes of testing.
@@ -490,7 +490,7 @@ class FocusableWidgetWithEmptyBindingsNoInherit(
 class ScreenWithMovementBindingsNoInheritEmptyChild(Screen):
     """A screen that binds keys, including movement keys."""
 
-    BINDINGS = AppKeyRecorder.mk_bindings("screen_")
+    BINDINGS = AppKeyRecorder.make_bindings("screen_")
 
     async def action_screen_record(self, key: str) -> None:
         # Sneaky forward reference. Just for the purposes of testing.
