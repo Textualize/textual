@@ -1743,7 +1743,7 @@ class App(Generic[ReturnType], DOMNode):
         """
 
         for namespace, bindings in (
-            reversed(self._binding_chain) if priority else self._binding_chain
+            list(reversed(self._binding_chain)) if priority else self._binding_chain
         ):
             binding = bindings.keys.get(key)
             if binding is not None and binding.priority == priority:
