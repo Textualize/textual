@@ -18,7 +18,7 @@ box-sizing: [border-box|content-box];
 ## Example
 
 Both widgets in this example have the same height (5).
-The top widget has `box-sizing: border-box` which means that padding and border reduces the space for content.
+The top widget has `box-sizing: border-box` which means that padding and border reduce the space for content.
 The bottom widget has `box-sizing: content-box` which increases the size of the widget to compensate for padding and border.
 
 === "box_sizing.py"
