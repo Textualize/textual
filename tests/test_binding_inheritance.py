@@ -532,22 +532,20 @@ async def test_focused_child_widget_no_inherit_empty_bindings_with_movement_bind
 # |-----|----------|----------|----------|--------|
 # | Key | App      | Screen   | Widget   | Winner |
 # |-----|----------|----------|----------|--------|
+# | 0   |          |          |          | Widget |
 # | A   | Priority |          |          | App    |
 # | B   |          | Priority |          | Screen |
 # | C   |          |          | Priority | Widget |
 # | D   | Priority | Priority |          | App    |
 # | E   | Priority |          | Priority | App    |
 # | F   |          | Priority | Priority | Screen |
-#
-# NOTE: The winner column is still up for grabs when there's more than one
-# priority binding. Need to check with Will which he feels makes more sense:
-# deeper priority wins, or shallower?
 
 
 class PriorityOverlapWidget(Static, can_focus=True):
     """A focusable widget with a priority binding."""
 
     BINDINGS = [
+        Binding("0", "record('widget_0')", "0", priority=False),
         Binding("a", "record('widget_a')", "a", priority=False),
         Binding("b", "record('widget_b')", "b", priority=False),
         Binding("c", "record('widget_c')", "c", priority=True),
@@ -561,6 +559,7 @@ class PriorityOverlapScreen(Screen):
     """A screen with a priority binding."""
 
     BINDINGS = [
+        Binding("0", "record('screen_0')", "0", priority=False),
         Binding("a", "record('screen_a')", "a", priority=False),
         Binding("b", "record('screen_b')", "b", priority=True),
         Binding("c", "record('screen_c')", "c", priority=False),
@@ -580,6 +579,7 @@ class PriorityOverlapApp(AppKeyRecorder):
     """An application with a priority binding."""
 
     BINDINGS = [
+        Binding("0", "record('app_0')", "0", priority=False),
         Binding("a", "record('app_a')", "a", priority=True),
         Binding("b", "record('app_b')", "b", priority=False),
         Binding("c", "record('app_c')", "c", priority=False),
@@ -594,13 +594,13 @@ class PriorityOverlapApp(AppKeyRecorder):
         self.push_screen("main")
 
 
-@pytest.mark.xfail(reason="The final decision about who wins when needs to be made")
 async def test_overlapping_priority_bindings() -> None:
     """Test an app stack with overlapping bindings."""
     async with PriorityOverlapApp().run_test() as pilot:
-        await pilot.press(*"abcdef")
+        await pilot.press(*"0abcdef")
         await pilot.pause(2 / 100)
         assert pilot.app.pressed_keys == [
+            "widget_0",
             "app_a",
             "screen_b",
             "widget_c",
