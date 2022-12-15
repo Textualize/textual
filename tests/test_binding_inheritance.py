@@ -545,7 +545,7 @@ class PriorityOverlapWidget(Static, can_focus=True):
     """A focusable widget with a priority binding."""
 
     BINDINGS = [
-#        Binding("0", "app.record('widget_0')", "0", priority=False),
+        Binding("0", "app.record('widget_0')", "0", priority=False),
         Binding("a", "app.record('widget_a')", "a", priority=False),
         Binding("b", "app.record('widget_b')", "b", priority=False),
         Binding("c", "app.record('widget_c')", "c", priority=True),
@@ -559,7 +559,7 @@ class PriorityOverlapScreen(Screen):
     """A screen with a priority binding."""
 
     BINDINGS = [
-#        Binding("0", "app.record('screen_0')", "0", priority=False),
+        Binding("0", "app.record('screen_0')", "0", priority=False),
         Binding("a", "app.record('screen_a')", "a", priority=False),
         Binding("b", "app.record('screen_b')", "b", priority=True),
         Binding("c", "app.record('screen_c')", "c", priority=False),
@@ -579,7 +579,7 @@ class PriorityOverlapApp(AppKeyRecorder):
     """An application with a priority binding."""
 
     BINDINGS = [
-#        Binding("0", "record('app_0')", "0", priority=False),
+        Binding("0", "record('app_0')", "0", priority=False),
         Binding("a", "record('app_a')", "a", priority=True),
         Binding("b", "record('app_b')", "b", priority=False),
         Binding("c", "record('app_c')", "c", priority=False),
@@ -597,10 +597,10 @@ class PriorityOverlapApp(AppKeyRecorder):
 async def test_overlapping_priority_bindings() -> None:
     """Test an app stack with overlapping bindings."""
     async with PriorityOverlapApp().run_test() as pilot:
-        await pilot.press(*"abcdef")
+        await pilot.press(*"0abcdef")
         await pilot.pause(2 / 100)
         assert pilot.app.pressed_keys == [
-#            "widget_0",
+            "widget_0",
             "app_a",
             "screen_b",
             "widget_c",
