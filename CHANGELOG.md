@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Ensure only printable characters are used as key_display https://github.com/Textualize/textual/pull/1361
 
 ## [0.6.0] - 2022-12-11
 
