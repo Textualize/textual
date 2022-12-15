@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed validator not running on first reactive set https://github.com/Textualize/textual/pull/1359
+- Fixed watch method incorrectly running on first set when value hasnt changed and init=False https://github.com/Textualize/textual/pull/1367
 
 ## [0.6.0] - 2022-12-11
 
