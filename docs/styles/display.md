@@ -5,19 +5,19 @@ The `display` property defines whether a widget is displayed or not.
 ## Syntax
 
 ```
-display: [none|block];
+display: none | block;
 ```
 
 ### Values
 
-| Value             | Description                                                               |
-|-------------------|---------------------------------------------------------------------------|
-| `block` (default) | Display the widget as normal                                              |
-| `none`            | The widget not be displayed, and space will no longer be reserved for it. |
+| Value             | Description                                                              |
+|-------------------|--------------------------------------------------------------------------|
+| `block` (default) | Display the widget as normal.                                            |
+| `none`            | The widget is not displayed and space will no longer be reserved for it. |
 
 ## Example
 
-Note that the second widget is hidden by adding the `"remove"` class which sets the display style to None.
+Note that the second widget is hidden by adding the `"remove"` class which sets the display style to `none`.
 
 === "display.py"
 
@@ -39,10 +39,10 @@ Note that the second widget is hidden by adding the `"remove"` class which sets 
 ## CSS
 
 ```sass
-/* Widget is on screen */
+/* Widget is shown */
 display: block;
 
-/* Widget is not on the screen */
+/* Widget is not shown */
 display: none;
 ```
 
