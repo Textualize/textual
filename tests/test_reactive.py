@@ -88,8 +88,6 @@ async def test_watch_async_init_true():
     assert app.watcher_new_value == OLD_VALUE  # The value wasn't changed
 
 
-@pytest.mark.xfail(
-    reason="Reactive watcher is incorrectly always called the first time it is set, even if value is same [issue#1230]")
 async def test_watch_init_false_always_update_false():
     class WatcherInitFalse(App):
         count = reactive(0, init=False)
@@ -102,6 +100,10 @@ async def test_watch_init_false_always_update_false():
     async with app.run_test():
         app.count = 0  # Value hasn't changed, and always_update=False, so watch_count shouldn't run
         assert app.watcher_call_count == 0
+        app.count = 0
+        assert app.watcher_call_count == 0
+        app.count = 1
+        assert app.watcher_call_count == 1
 
 
 async def test_watch_init_true():
