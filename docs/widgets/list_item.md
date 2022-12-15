@@ -2,8 +2,8 @@
 
 `ListItem` is the type of the elements in a `ListView`.
 
-- [] Focusable
-- [] Container
+- [ ] Focusable
+- [ ] Container
 
 ## Example
 
