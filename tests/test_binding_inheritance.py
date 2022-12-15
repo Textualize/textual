@@ -40,7 +40,7 @@ async def test_just_app_no_bindings() -> None:
     """An app with no bindings should have no bindings, other than ctrl+c."""
     async with NoBindings().run_test() as pilot:
         assert list(pilot.app._bindings.keys.keys()) == ["ctrl+c"]
-        assert pilot.app._bindings.get_key("ctrl+c").priority == True
+        assert pilot.app._bindings.get_key("ctrl+c").priority is True
 
 
 ##############################################################################
@@ -62,8 +62,8 @@ async def test_just_app_alpha_binding() -> None:
     """An app with a single binding should have just the one binding."""
     async with AlphaBinding().run_test() as pilot:
         assert sorted(pilot.app._bindings.keys.keys()) == sorted(["ctrl+c", "a"])
-        assert pilot.app._bindings.get_key("ctrl+c").priority == True
-        assert pilot.app._bindings.get_key("a").priority == True
+        assert pilot.app._bindings.get_key("ctrl+c").priority is True
+        assert pilot.app._bindings.get_key("a").priority is True
 
 
 ##############################################################################
@@ -85,8 +85,8 @@ async def test_just_app_low_priority_alpha_binding() -> None:
     """An app with a single low-priority binding should have just the one binding."""
     async with LowAlphaBinding().run_test() as pilot:
         assert sorted(pilot.app._bindings.keys.keys()) == sorted(["ctrl+c", "a"])
-        assert pilot.app._bindings.get_key("ctrl+c").priority == True
-        assert pilot.app._bindings.get_key("a").priority == False
+        assert pilot.app._bindings.get_key("ctrl+c").priority is True
+        assert pilot.app._bindings.get_key("a").priority is False
 
 
 ##############################################################################
@@ -119,12 +119,12 @@ async def test_app_screen_with_bindings() -> None:
         # inherits from Widget. That's fine. Let's check they're there, but
         # also let's check that they all have a non-priority binding.
         assert all(
-            pilot.app.screen._bindings.get_key(key).priority == False
+            pilot.app.screen._bindings.get_key(key).priority is False
             for key in MOVEMENT_KEYS
         )
         # Let's also check that the 'a' key is there, and it *is* a priority
         # binding.
-        assert pilot.app.screen._bindings.get_key("a").priority == True
+        assert pilot.app.screen._bindings.get_key("a").priority is True
 
 
 ##############################################################################
@@ -158,7 +158,7 @@ async def test_app_screen_with_low_bindings() -> None:
         # too, so let's ensure they're all in there, along with our own key,
         # and that everyone is low-priority.
         assert all(
-            pilot.app.screen._bindings.get_key(key).priority == False
+            pilot.app.screen._bindings.get_key(key).priority is False
             for key in ["a", *MOVEMENT_KEYS]
         )
 
