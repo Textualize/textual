@@ -1,6 +1,6 @@
 # Background
 
-The `background` rule sets the background color of the widget.
+The `background` rule sets the background color of a widget with an optional transparency level.
 
 ## Syntax
 
@@ -8,7 +8,15 @@ The `background` rule sets the background color of the widget.
 background: <COLOR> [<PERCENTAGE>];
 ```
 
-## Example
+The legal values for `<COLOR>` are dependant on the [class `Color`][textual.color.Color] and include:
+
+ - a recognised [named color](../../api/color#textual.color--named-colors) (e.g., `red`);
+ - a hexadecimal number representing the RGB values of the color (e.g., `#F35573`);
+ - a color description in the HSL system (e.g., `hsl(290,70%,80%)`)
+
+For more details about the exact formats accepted, see [the class method `Color.parse`][textual.color.Color.parse].
+
+## Examples
 
 This example creates three widgets and applies a different background to each.
 
@@ -29,6 +37,25 @@ This example creates three widgets and applies a different background to each.
     ```{.textual path="docs/examples/styles/background.py"}
     ```
 
+The next example creates ten widgets layed out side by side to show the effect of setting different percentages for the transparency of the background color.
+
+=== "background_transparency.py"
+
+    ```python
+    --8<-- "docs/examples/styles/background_transparency.py"
+    ```
+
+=== "background_transparency.css"
+
+    ```sass
+    --8<-- "docs/examples/styles/background_transparency.css"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/background_transparency.py"}
+    ```
+
 ## CSS
 
 ```sass
@@ -40,6 +67,9 @@ background: red 20%;
 
 /* RGB color */
 background: rgb(100,120,200);
+
+/* HSL color */
+background: hsl(290,70%,80%);
 ```
 
 ## Python
@@ -49,9 +79,13 @@ You can use the same syntax as CSS, or explicitly set a `Color` object for finer
 ```python
 # Set blue background
 widget.styles.background = "blue"
+# Set through HSL model
+widget.styles.background = "hsl(351,32%,89%)"
 
 from textual.color import Color
-# Set with a color object
+# Set with a color object by parsing a string
 widget.styles.background = Color.parse("pink")
+widget.styles.background = Color.parse("#FF00FF")
+# Set with a color object instantiated directly
 widget.styles.background = Color(120, 60, 100)
 ```
