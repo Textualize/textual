@@ -8,13 +8,7 @@ The `background` rule sets the background color of a widget with an optional tra
 background: <COLOR> [<PERCENTAGE>];
 ```
 
-The legal values for `<COLOR>` are dependant on the [class `Color`][textual.color.Color] and include:
-
- - a recognised [named color](../../api/color#textual.color--named-colors) (e.g., `red`);
- - a hexadecimal number representing the RGB values of the color (e.g., `#F35573`);
- - a color description in the HSL system (e.g., `hsl(290,70%,80%)`)
-
-For more details about the exact formats accepted, see [the class method `Color.parse`][textual.color.Color.parse].
+--8<-- "docs/styles/snippets/color_css_syntax.md"
 
 ## Examples
 
