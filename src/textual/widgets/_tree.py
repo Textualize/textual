@@ -451,6 +451,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
     def clear(self) -> None:
         """Clear all nodes under root."""
+        self._line_cache.clear()
         self._tree_lines_cached = None
         self._current_id = 0
         root_label = self.root._label
@@ -810,7 +811,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             cursor_line = meta["line"]
             if meta.get("toggle", False):
                 node = self.get_node_at_line(cursor_line)
-                if node is not None and self.auto_expand:
+                if node is not None:
                     self._toggle_node(node)
 
             else:

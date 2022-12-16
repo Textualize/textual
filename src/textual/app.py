@@ -414,14 +414,19 @@ class App(Generic[ReturnType], DOMNode):
         """list[Screen]: A *copy* of the screen stack."""
         return self._screen_stack.copy()
 
-    def exit(self, result: ReturnType | None = None) -> None:
+    def exit(
+        self, result: ReturnType | None = None, message: RenderableType | None = None
+    ) -> None:
         """Exit the app, and return the supplied result.
 
         Args:
             result (ReturnType | None, optional): Return value. Defaults to None.
+            message (RenderableType | None): Optional message to display on exit.
         """
         self._return_value = result
         self.post_message_no_wait(messages.ExitApp(sender=self))
+        if message:
+            self._exit_renderables.append(message)
 
     @property
     def focused(self) -> Widget | None:
