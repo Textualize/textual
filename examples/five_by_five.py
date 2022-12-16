@@ -166,10 +166,10 @@ class Game(Screen):
         Binding("n", "new_game", "New Game"),
         Binding("question_mark", "push_screen('help')", "Help", key_display="?"),
         Binding("q", "quit", "Quit"),
-        Binding("up,w,k", "navigate(-1,0)", "Move Up", False, universal=True),
-        Binding("down,s,j", "navigate(1,0)", "Move Down", False, universal=True),
-        Binding("left,a,h", "navigate(0,-1)", "Move Left", False, universal=True),
-        Binding("right,d,l", "navigate(0,1)", "Move Right", False, universal=True),
+        Binding("up,w,k", "navigate(-1,0)", "Move Up", False),
+        Binding("down,s,j", "navigate(1,0)", "Move Down", False),
+        Binding("left,a,h", "navigate(0,-1)", "Move Left", False),
+        Binding("right,d,l", "navigate(0,1)", "Move Right", False),
         Binding("space", "move", "Toggle", False),
     ]
     """The bindings for the main game grid."""
