@@ -177,8 +177,8 @@ class Reactive(Generic[ReactiveType]):
         validate_function = getattr(obj, f"validate_{name}", None)
         # Check if this is the first time setting the value
         first_set = getattr(obj, f"__first_set_{self.internal_name}", True)
-        # Call validate, but not on first set.
-        if callable(validate_function) and not first_set:
+        # Call validate
+        if callable(validate_function):
             value = validate_function(value)
         # If the value has changed, or this is the first time setting the value
         if current_value != value or first_set or self._always_update:

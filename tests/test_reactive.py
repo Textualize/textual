@@ -2,9 +2,8 @@ import asyncio
 
 import pytest
 
-from textual.app import App, ComposeResult
+from textual.app import App
 from textual.reactive import reactive, var
-from textual.widget import Widget
 
 OLD_VALUE = 5_000
 NEW_VALUE = 1_000_000
@@ -81,14 +80,16 @@ async def test_watch_async_init_true():
         try:
             await asyncio.wait_for(app.watcher_called_event.wait(), timeout=0.05)
         except TimeoutError:
-            pytest.fail("Async watcher wasn't called within timeout when reactive init = True")
+            pytest.fail(
+                "Async watcher wasn't called within timeout when reactive init = True")
 
     assert app.count == OLD_VALUE
     assert app.watcher_old_value == OLD_VALUE
     assert app.watcher_new_value == OLD_VALUE  # The value wasn't changed
 
 
-@pytest.mark.xfail(reason="Reactive watcher is incorrectly always called the first time it is set, even if value is same [issue#1230]")
+@pytest.mark.xfail(
+    reason="Reactive watcher is incorrectly always called the first time it is set, even if value is same [issue#1230]")
 async def test_watch_init_false_always_update_false():
     class WatcherInitFalse(App):
         count = reactive(0, init=False)
@@ -173,20 +174,45 @@ async def test_reactive_with_callable_default():
     assert app.watcher_called_with == OLD_VALUE
 
 
-@pytest.mark.xfail(reason="Validator methods not running when init=True [issue#1220]")
 async def test_validate_init_true():
     """When init is True for a reactive attribute, Textual should call the validator
     AND the watch method when the app starts."""
+    validator_call_count = 0
 
     class ValidatorInitTrue(App):
         count = var(5, init=True)
 
         def validate_count(self, value: int) -> int:
+            nonlocal validator_call_count
+            validator_call_count += 1
             return value + 1
 
     app = ValidatorInitTrue()
     async with app.run_test():
+        app.count = 5
         assert app.count == 6  # Validator should run, so value should be 5+1=6
+        assert validator_call_count == 1
+
+
+async def test_validate_init_true_set_before_dom_ready():
+    """When init is True for a reactive attribute, Textual should call the validator
+    AND the watch method when the app starts."""
+    validator_call_count = 0
+
+    class ValidatorInitTrue(App):
+        count = var(5, init=True)
+
+        def validate_count(self, value: int) -> int:
+            nonlocal validator_call_count
+            validator_call_count += 1
+            return value + 1
+
+    app = ValidatorInitTrue()
+    app.count = 5
+    async with app.run_test():
+        assert app.count == 6  # Validator should run, so value should be 5+1=6
+        assert validator_call_count == 1
+
 
 
 @pytest.mark.xfail(reason="Compute methods not called when init=True [issue#1227]")

@@ -246,12 +246,17 @@ def _get_key_display(key: str) -> str:
         return display_alias
 
     original_key = REPLACED_KEYS.get(key, key)
+    upper_original = original_key.upper().replace("_", " ")
     try:
-        unicode_character = unicodedata.lookup(original_key.upper().replace("_", " "))
+        unicode_character = unicodedata.lookup(upper_original)
     except KeyError:
-        return original_key.upper()
+        return upper_original
 
-    return unicode_character
+    # Check if printable. `delete` for example maps to a control sequence
+    # which we don't want to write to the terminal.
+    if unicode_character.isprintable():
+        return unicode_character
+    return upper_original
 
 
 def _get_suggested_binding_key(key: str) -> str:

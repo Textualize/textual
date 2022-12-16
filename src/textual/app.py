@@ -63,7 +63,7 @@ from .messages import CallbackType
 from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import Screen
-from .widget import AwaitMount, MountError, Widget
+from .widget import AwaitMount, Widget
 
 
 if TYPE_CHECKING:
@@ -231,6 +231,8 @@ class App(Generic[ReturnType], DOMNode):
     }
     """
 
+    PRIORITY_BINDINGS = True
+
     SCREENS: dict[str, Screen | Callable[[], Screen]] = {}
     _BASE_PATH: str | None = None
     CSS_PATH: CSSPathType = None
@@ -298,7 +300,7 @@ class App(Generic[ReturnType], DOMNode):
 
         self._logger = Logger(self._log)
 
-        self._bindings.bind("ctrl+c", "quit", show=False, universal=True)
+        self._bindings.bind("ctrl+c", "quit", show=False, priority=True)
         self._refresh_required = False
 
         self.design = DEFAULT_COLORS
@@ -1729,20 +1731,22 @@ class App(Generic[ReturnType], DOMNode):
             ]
         return namespace_bindings
 
-    async def check_bindings(self, key: str, universal: bool = False) -> bool:
+    async def check_bindings(self, key: str, priority: bool = False) -> bool:
         """Handle a key press.
 
         Args:
             key (str): A key
-            universal (bool): Check universal keys if True, otherwise non-universal keys.
+            priority (bool): If `True` check from `App` down, otherwise from focused up.
 
         Returns:
             bool: True if the key was handled by a binding, otherwise False
         """
 
-        for namespace, bindings in self._binding_chain:
+        for namespace, bindings in (
+            reversed(self._binding_chain) if priority else self._binding_chain
+        ):
             binding = bindings.keys.get(key)
-            if binding is not None and binding.universal == universal:
+            if binding is not None and binding.priority == priority:
                 await self.action(binding.action, default_namespace=namespace)
                 return True
         return False
@@ -1762,7 +1766,7 @@ class App(Generic[ReturnType], DOMNode):
                 self.mouse_position = Offset(event.x, event.y)
                 await self.screen._forward_event(event)
             elif isinstance(event, events.Key):
-                if not await self.check_bindings(event.key, universal=True):
+                if not await self.check_bindings(event.key, priority=True):
                     forward_target = self.focused or self.screen
                     await forward_target._forward_event(event)
             else:
@@ -1996,9 +2000,9 @@ class App(Generic[ReturnType], DOMNode):
                 await self._prune_nodes(widgets)
             finally:
                 finished_event.set()
+                self.refresh(layout=True)
 
         removed_widgets = self._detach_from_dom(widgets)
-        self.refresh(layout=True)
 
         finished_event = asyncio.Event()
         asyncio.create_task(prune_widgets_task(removed_widgets, finished_event))

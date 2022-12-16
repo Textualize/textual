@@ -22,6 +22,8 @@ class NoBinding(Exception):
 
 @dataclass(frozen=True)
 class Binding:
+    """The configuration of a key binding."""
+
     key: str
     """str: Key to bind. This can also be a comma-separated list of keys to map multiple keys to a single action."""
     action: str
@@ -32,15 +34,31 @@ class Binding:
     """bool: Show the action in Footer, or False to hide."""
     key_display: str | None = None
     """str | None: How the key should be shown in footer."""
-    universal: bool = False
-    """bool: Allow forwarding from app to focused widget."""
+    priority: bool | None = None
+    """bool | None: Is this a priority binding, checked form app down to focused widget?"""
 
 
 @rich.repr.auto
 class Bindings:
     """Manage a set of bindings."""
 
-    def __init__(self, bindings: Iterable[BindingType] | None = None) -> None:
+    def __init__(
+        self,
+        bindings: Iterable[BindingType] | None = None,
+        default_priority: bool | None = None,
+    ) -> None:
+        """Initialise a collection of bindings.
+
+        Args:
+            bindings (Iterable[BindingType] | None, optional): An optional set of initial bindings.
+            default_priority (bool | None, optional): The default priority of the bindings.
+
+        Note:
+            The iterable of bindings can contain either a `Binding`
+            instance, or a tuple of 3 values mapping to the first three
+            properties of a `Binding`.
+        """
+
         def make_bindings(bindings: Iterable[BindingType]) -> Iterable[Binding]:
             for binding in bindings:
                 # If it's a tuple of length 3, convert into a Binding first
@@ -61,19 +79,20 @@ class Bindings:
                             msg += f"; try replacing it with '{suggested_key}'"
                         raise BindingError(msg)
 
-                if len(binding_keys) > 1:
-                    for key in binding_keys:
-                        new_binding = Binding(
-                            key=key,
-                            action=binding.action,
-                            description=binding.description,
-                            show=binding.show,
-                            key_display=binding.key_display,
-                            universal=binding.universal,
-                        )
-                        yield new_binding
-                else:
-                    yield binding
+                # At this point we have a Binding instance, but the key may
+                # be a list of keys, so now we unroll that single Binding
+                # into a (potential) collection of Binding instances.
+                for key in binding.key.split(","):
+                    yield Binding(
+                        key=key.strip(),
+                        action=binding.action,
+                        description=binding.description,
+                        show=binding.show,
+                        key_display=binding.key_display,
+                        priority=default_priority
+                        if binding.priority is None
+                        else binding.priority,
+                    )
 
         self.keys: MutableMapping[str, Binding] = (
             {binding.key: binding for binding in make_bindings(bindings)}
@@ -86,7 +105,7 @@ class Bindings:
 
     @classmethod
     def merge(cls, bindings: Iterable[Bindings]) -> Bindings:
-        """Merge a bindings. Subsequence bound keys override initial keys.
+        """Merge a bindings. Subsequent bound keys override initial keys.
 
         Args:
             bindings (Iterable[Bindings]): A number of bindings.
@@ -116,7 +135,7 @@ class Bindings:
         description: str = "",
         show: bool = True,
         key_display: str | None = None,
-        universal: bool = False,
+        priority: bool = False,
     ) -> None:
         """Bind keys to an action.
 
@@ -126,7 +145,7 @@ class Bindings:
             description (str, optional): An optional description for the binding.
             show (bool, optional): A flag to say if the binding should appear in the footer.
             key_display (str | None, optional): Optional string to display in the footer for the key.
-            universal (bool, optional): Allow forwarding from the app to the focused widget.
+            priority (bool, optional): Is this a priority binding, checked form app down to focused widget?
         """
         all_keys = [key.strip() for key in keys.split(",")]
         for key in all_keys:
@@ -136,7 +155,7 @@ class Bindings:
                 description,
                 show=show,
                 key_display=key_display,
-                universal=universal,
+                priority=priority,
             )
 
     def get_key(self, key: str) -> Binding:

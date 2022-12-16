@@ -45,6 +45,76 @@ def test_validate():
         node.toggle_class("1")
 
 
+def test_inherited_bindings():
+    """Test if binding merging is done correctly when (not) inheriting bindings."""
+    class A(DOMNode):
+        BINDINGS = [("a", "a", "a")]
+
+    class B(A):
+        BINDINGS = [("b", "b", "b")]
+
+    class C(B, inherit_bindings=False):
+        BINDINGS = [("c", "c", "c")]
+
+    class D(C, inherit_bindings=False):
+        pass
+
+    class E(D):
+        BINDINGS = [("e", "e", "e")]
+
+    a = A()
+    assert list(a._bindings.keys.keys()) == ["a"]
+
+    b = B()
+    assert list(b._bindings.keys.keys()) == ["a", "b"]
+
+    c = C()
+    assert list(c._bindings.keys.keys()) == ["c"]
+
+    d = D()
+    assert not list(d._bindings.keys.keys())
+
+    e = E()
+    assert list(e._bindings.keys.keys()) == ["e"]
+
+
+def test_get_default_css():
+    class A(DOMNode):
+        pass
+    class B(A):
+        pass
+    class C(B):
+        DEFAULT_CSS = "C"
+    class D(C):
+        pass
+    class E(D):
+        DEFAULT_CSS = "E"
+    node = DOMNode()
+    node_css = node.get_default_css()
+    a = A()
+    a_css = a.get_default_css()
+    b = B()
+    b_css = b.get_default_css()
+    c = C()
+    c_css = c.get_default_css()
+    d = D()
+    d_css = d.get_default_css()
+    e = E()
+    e_css = e.get_default_css()
+
+    # Descendants that don't assign to DEFAULT_CSS don't add new CSS to the stack.
+    assert len(node_css) == len(a_css) == len(b_css) == 0
+    assert len(c_css) == len(d_css) == 1
+    assert len(e_css) == 2
+
+    # Descendants do push the priority of the ancestors' rules down.
+    assert c_css[0][2] == d_css[0][2] + 1 == 0
+
+    # The CSS on the stack is the correct one.
+    assert e_css[0][1:] == ("E", 0)
+    assert e_css[1][1:] == ("C", -2)
+
+
 @pytest.fixture
 def search():
     """

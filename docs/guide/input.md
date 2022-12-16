@@ -127,6 +127,15 @@ Note how the footer displays bindings and makes them clickable.
     Multiple keys can be bound to a single action by comma-separating them.
     For example, `("r,t", "add_bar('red')", "Add Red")` means both ++r++ and ++t++ are bound to `add_bar('red')`.
 
+
+!!! note
+
+    Ordinarily a binding on a focused widget has precedence over the same key binding at a higher level. However, bindings at the `App` or `Screen` level always have priority.
+
+    The priority of a single binding can be controlled with the `priority` parameter of a `Binding` instance. Set it to `True` to give it priority, or `False` to not.
+
+    The default priority of all bindings on a class can be controlled with the `PRIORITY_BINDINGS` class variable. Set it to `True` or `False` to set the default priroty for all `BINDINGS`.
+
 ### Binding class
 
 The tuple of three strings may be enough for simple bindings, but you can also replace the tuple with a [Binding][textual.binding.Binding] instance which exposes a few more options.

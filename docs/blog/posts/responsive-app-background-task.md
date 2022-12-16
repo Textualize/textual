@@ -107,7 +107,7 @@ The animation below shows that we can still change colours while the application
 === "Code"
 
     ```py hl_lines="40 41 42"
-    --8<-- "docs\blog\snippets\2022-12-07-responsive-app-background-task\nonblocking01.py"
+    --8<-- "docs/blog/snippets/2022-12-07-responsive-app-background-task/nonblocking01.py"
     ```
 
     1. We create a label that tells the user that we are starting our time-consuming operation.
