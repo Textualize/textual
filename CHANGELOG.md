@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fixed validator not running on first reactive set https://github.com/Textualize/textual/pull/1359
 - Ensure only printable characters are used as key_display https://github.com/Textualize/textual/pull/1361
 
 ## [0.6.0] - 2022-12-11
