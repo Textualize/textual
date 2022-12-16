@@ -614,6 +614,11 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         assert self._tree_lines_cached is not None
         return self._tree_lines_cached
 
+    def _on_idle(self) -> None:
+        """Check tree needs a rebuild on idle."""
+        # Property calls build if required
+        self._tree_lines
+
     def _build(self) -> None:
         """Builds the tree by traversing nodes, and creating tree lines."""
 
@@ -805,7 +810,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             cursor_line = meta["line"]
             if meta.get("toggle", False):
                 node = self.get_node_at_line(cursor_line)
-                if node is not None:
+                if node is not None and self.auto_expand:
                     self._toggle_node(node)
 
             else:

@@ -507,8 +507,8 @@ class DOMNode(MessagePump):
     @property
     def rich_style(self) -> Style:
         """Get a Rich Style object for this DOMNode."""
-        background = WHITE
-        color = BLACK
+        background = Color(0, 0, 0, 0)
+        color = Color(255, 255, 255, 0)
         style = Style()
         for node in reversed(self.ancestors_with_self):
             styles = node.styles
@@ -520,7 +520,8 @@ class DOMNode(MessagePump):
             if styles.has_rule("auto_color") and styles.auto_color:
                 color = background.get_contrast_text(color.a)
         style += Style.from_color(
-            (background + color).rich_color, background.rich_color
+            (background + color).rich_color if (background.a or color.a) else None,
+            background.rich_color if background.a else None,
         )
         return style
 
