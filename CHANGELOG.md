@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+- Added `PRIORITY_BINDINGS` class variable, which can be used to control if a widget's bindings have priority by default. https://github.com/Textualize/textual/issues/1343
+
+### Changed
+
+- Renamed the `Binding` argument `universal` to `priority`. https://github.com/Textualize/textual/issues/1343
+- When looking for bindings that have priority, they are now looked from `App` downwards. https://github.com/Textualize/textual/issues/1343
+- `BINDINGS` on an `App`-derived class have priority by default. https://github.com/Textualize/textual/issues/1343
+- `BINDINGS` on a `Screen`-derived class have priority by default. https://github.com/Textualize/textual/issues/1343
+
 ### Fixed
 
 - Fixed validator not running on first reactive set https://github.com/Textualize/textual/pull/1359

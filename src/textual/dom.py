@@ -92,6 +92,9 @@ class DOMNode(MessagePump):
     # Virtual DOM nodes
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
 
+    # Should the content of BINDINGS be treated as priority bindings?
+    PRIORITY_BINDINGS: ClassVar[bool] = False
+
     # Mapping of key bindings
     BINDINGS: ClassVar[list[BindingType]] = []
 
@@ -225,11 +228,18 @@ class DOMNode(MessagePump):
         """
         bindings: list[Bindings] = []
 
+        # To start with, assume that bindings won't be priority bindings.
+        priority = False
+
         for base in reversed(cls.__mro__):
             if issubclass(base, DOMNode):
+                # See if the current class wants to set the bindings as
+                # priority bindings. If it doesn't have that property on the
+                # class, go with what we saw last.
+                priority = base.__dict__.get("PRIORITY_BINDINGS", priority)
                 if not base._inherit_bindings:
                     bindings.clear()
-                bindings.append(Bindings(base.__dict__.get("BINDINGS", [])))
+                bindings.append(Bindings(base.__dict__.get("BINDINGS", []), priority))
         keys = {}
         for bindings_ in bindings:
             keys.update(bindings_.keys)
