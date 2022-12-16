@@ -350,6 +350,7 @@ class App(Generic[ReturnType], DOMNode):
                 self.devtools = DevtoolsClient()
 
         self._return_value: ReturnType | None = None
+        self._exit = False
 
         self.css_monitor = (
             FileMonitor(self.css_path, self._on_css_change)
@@ -425,6 +426,7 @@ class App(Generic[ReturnType], DOMNode):
             result (ReturnType | None, optional): Return value. Defaults to None.
             message (RenderableType | None): Optional message to display on exit.
         """
+        self._exit = True
         self._return_value = result
         self.post_message_no_wait(messages.ExitApp(sender=self))
         if message:
@@ -1413,28 +1415,29 @@ class App(Generic[ReturnType], DOMNode):
             )
             driver = self._driver = driver_class(self.console, self, size=terminal_size)
 
-            driver.start_application_mode()
-            try:
-                if headless:
-                    await run_process_messages()
-                else:
-                    if self.devtools is not None:
-                        devtools = self.devtools
-                        assert devtools is not None
-                        from .devtools.redirect_output import StdoutRedirector
-
-                        redirector = StdoutRedirector(devtools)
-                        with redirect_stderr(redirector):
-                            with redirect_stdout(redirector):  # type: ignore
-                                await run_process_messages()
+            if not self._exit:
+                driver.start_application_mode()
+                try:
+                    if headless:
+                        await run_process_messages()
                     else:
-                        null_file = _NullFile()
-                        with redirect_stderr(null_file):
-                            with redirect_stdout(null_file):
-                                await run_process_messages()
+                        if self.devtools is not None:
+                            devtools = self.devtools
+                            assert devtools is not None
+                            from .devtools.redirect_output import StdoutRedirector
 
-            finally:
-                driver.stop_application_mode()
+                            redirector = StdoutRedirector(devtools)
+                            with redirect_stderr(redirector):
+                                with redirect_stdout(redirector):  # type: ignore
+                                    await run_process_messages()
+                        else:
+                            null_file = _NullFile()
+                            with redirect_stderr(null_file):
+                                with redirect_stdout(null_file):
+                                    await run_process_messages()
+
+                finally:
+                    driver.stop_application_mode()
         except Exception as error:
             self._handle_exception(error)
 

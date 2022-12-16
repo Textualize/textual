@@ -297,6 +297,7 @@ class Screen(Widget):
                 self.focused.post_message_no_wait(events.Blur(self))
                 self.focused.emit_no_wait(events.DescendantBlur(self))
                 self.focused = None
+            self.log.debug("focus was removed")
         elif widget.can_focus:
             if self.focused != widget:
                 if self.focused is not None:
@@ -310,6 +311,7 @@ class Screen(Widget):
                     self.screen.scroll_to_widget(widget)
                 widget.post_message_no_wait(events.Focus(self))
                 widget.emit_no_wait(events.DescendantFocus(self))
+                self.log.debug(widget, "was focused")
 
     async def _on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)

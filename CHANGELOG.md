@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - When looking for bindings that have priority, they are now looked from `App` downwards. https://github.com/Textualize/textual/issues/1343
 - `BINDINGS` on an `App`-derived class have priority by default. https://github.com/Textualize/textual/issues/1343
 - `BINDINGS` on a `Screen`-derived class have priority by default. https://github.com/Textualize/textual/issues/1343
+- Added a message parameter to Widget.exit
 
 ### Fixed
 
