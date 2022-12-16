@@ -805,7 +805,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             cursor_line = meta["line"]
             if meta.get("toggle", False):
                 node = self.get_node_at_line(cursor_line)
-                if node is not None and self.auto_expand:
+                if node is not None:
                     self._toggle_node(node)
 
             else:

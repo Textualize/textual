@@ -1805,7 +1805,7 @@ class Widget(DOMNode):
         if spacing is not None:
             window = window.shrink(spacing)
 
-        if window in region:
+        if window in region and not top:
             return Offset()
 
         delta_x, delta_y = Region.get_scroll_to_visible(window, region, top=top)
