@@ -72,9 +72,9 @@ class Bindings:
                 binding_keys = binding.key.split(",")
                 for key in binding_keys:
                     # normalized keys have modifier characters (like '+') replaced with Python-identifier substitutes
-                    if not _normalize_key(key).isidentifier():
+                    if not _normalize_key(key).strip().isidentifier():
                         msg = f"BINDINGS key '{key}' is invalid"
-                        suggested_key = _get_suggested_binding_key(key)
+                        suggested_key = _get_suggested_binding_key(key.strip())
                         if suggested_key:
                             msg += f"; try replacing it with '{suggested_key}'"
                         raise BindingError(msg)

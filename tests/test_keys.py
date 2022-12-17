@@ -9,6 +9,7 @@ suggested_binding_keys = [
     (".", "full_stop"),
     ("#", "number_sign"),
     ("+", "plus"),
+    ("  m  ", "m"),
 ]
 
 
