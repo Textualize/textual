@@ -1742,13 +1742,12 @@ class App(Generic[ReturnType], DOMNode):
         """Handle a key press.
 
         Args:
-            key (str): A key
+            key (str): A key.
             priority (bool): If `True` check from `App` down, otherwise from focused up.
 
         Returns:
             bool: True if the key was handled by a binding, otherwise False
         """
-
         for namespace, bindings in (
             reversed(self._binding_chain) if priority else self._binding_chain
         ):
@@ -2053,7 +2052,8 @@ class App(Generic[ReturnType], DOMNode):
         self._unregister(root)
 
     async def action_check_bindings(self, key: str) -> None:
-        await self.check_bindings(key)
+        if not await self.check_bindings(key, priority=True):
+            await self.check_bindings(key, priority=False)
 
     async def action_quit(self) -> None:
         """Quit the app as soon as possible."""

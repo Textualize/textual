@@ -449,7 +449,7 @@ class Compositor:
                     map[widget] = MapGeometry(
                         region + layout_offset,
                         order,
-                        clip if widget.is_container else sub_clip,
+                        clip,
                         total_region.size,
                         container_size,
                         virtual_region,

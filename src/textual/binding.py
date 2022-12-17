@@ -77,9 +77,11 @@ class Bindings:
                         description=binding.description,
                         show=binding.show,
                         key_display=binding.key_display,
-                        priority=default_priority
-                        if binding.priority is None
-                        else binding.priority,
+                        priority=(
+                            default_priority
+                            if binding.priority is None
+                            else binding.priority
+                        ),
                     )
 
         self.keys: MutableMapping[str, Binding] = (
