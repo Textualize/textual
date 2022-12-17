@@ -85,7 +85,8 @@ class AwaitMount:
 
     """
 
-    def __init__(self, widgets: Sequence[Widget]) -> None:
+    def __init__(self, parent: Widget, widgets: Sequence[Widget]) -> None:
+        self._parent = parent
         self._widgets = widgets
 
     def __await__(self) -> Generator[None, None, None]:
@@ -97,6 +98,7 @@ class AwaitMount:
                 ]
                 if aws:
                     await wait(aws)
+                    self._parent.refresh(layout=True)
 
         return await_mount().__await__()
 
@@ -595,11 +597,11 @@ class Widget(DOMNode):
         else:
             parent = self
 
-        return AwaitMount(
-            self.app._register(
-                parent, *widgets, before=insert_before, after=insert_after
-            )
+        mounted = self.app._register(
+            parent, *widgets, before=insert_before, after=insert_after
         )
+
+        return AwaitMount(self, mounted)
 
     def move_child(
         self,
@@ -1805,7 +1807,7 @@ class Widget(DOMNode):
         if spacing is not None:
             window = window.shrink(spacing)
 
-        if window in region:
+        if window in region and not top:
             return Offset()
 
         delta_x, delta_y = Region.get_scroll_to_visible(window, region, top=top)

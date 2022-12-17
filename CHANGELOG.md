@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.7.0] - 2022-12-17
 
 ### Added
 
@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - When looking for bindings that have priority, they are now looked from `App` downwards. https://github.com/Textualize/textual/issues/1343
 - `BINDINGS` on an `App`-derived class have priority by default. https://github.com/Textualize/textual/issues/1343
 - `BINDINGS` on a `Screen`-derived class have priority by default. https://github.com/Textualize/textual/issues/1343
+- Added a message parameter to Widget.exit
 
 ### Fixed
 
@@ -265,7 +266,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
-[0.6.0]: https://github.com/Textualize/textual/compare/v0.3.0...v0.6.0
+[0.7.0]: https://github.com/Textualize/textual/compare/v0.6.0...v0.7.0
+[0.6.0]: https://github.com/Textualize/textual/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/Textualize/textual/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/Textualize/textual/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/Textualize/textual/compare/v0.2.1...v0.3.0

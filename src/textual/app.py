@@ -350,6 +350,7 @@ class App(Generic[ReturnType], DOMNode):
                 self.devtools = DevtoolsClient()
 
         self._return_value: ReturnType | None = None
+        self._exit = False
 
         self.css_monitor = (
             FileMonitor(self.css_path, self._on_css_change)
@@ -416,14 +417,20 @@ class App(Generic[ReturnType], DOMNode):
         """list[Screen]: A *copy* of the screen stack."""
         return self._screen_stack.copy()
 
-    def exit(self, result: ReturnType | None = None) -> None:
+    def exit(
+        self, result: ReturnType | None = None, message: RenderableType | None = None
+    ) -> None:
         """Exit the app, and return the supplied result.
 
         Args:
             result (ReturnType | None, optional): Return value. Defaults to None.
+            message (RenderableType | None): Optional message to display on exit.
         """
+        self._exit = True
         self._return_value = result
         self.post_message_no_wait(messages.ExitApp(sender=self))
+        if message:
+            self._exit_renderables.append(message)
 
     @property
     def focused(self) -> Widget | None:
@@ -1082,9 +1089,9 @@ class App(Generic[ReturnType], DOMNode):
         _screen = self.get_screen(screen)
         if not _screen.is_running:
             widgets = self._register(self, _screen)
-            return (_screen, AwaitMount(widgets))
+            return (_screen, AwaitMount(_screen, widgets))
         else:
-            return (_screen, AwaitMount([]))
+            return (_screen, AwaitMount(_screen, []))
 
     def _replace_screen(self, screen: Screen) -> Screen:
         """Handle the replaced screen.
@@ -1130,7 +1137,7 @@ class App(Generic[ReturnType], DOMNode):
             self.screen.post_message_no_wait(events.ScreenResume(self))
             self.log.system(f"{self.screen} is current (SWITCHED)")
             return await_mount
-        return AwaitMount([])
+        return AwaitMount(self.screen, [])
 
     def install_screen(self, screen: Screen, name: str | None = None) -> AwaitMount:
         """Install a screen.
@@ -1408,28 +1415,29 @@ class App(Generic[ReturnType], DOMNode):
             )
             driver = self._driver = driver_class(self.console, self, size=terminal_size)
 
-            driver.start_application_mode()
-            try:
-                if headless:
-                    await run_process_messages()
-                else:
-                    if self.devtools is not None:
-                        devtools = self.devtools
-                        assert devtools is not None
-                        from .devtools.redirect_output import StdoutRedirector
-
-                        redirector = StdoutRedirector(devtools)
-                        with redirect_stderr(redirector):
-                            with redirect_stdout(redirector):  # type: ignore
-                                await run_process_messages()
+            if not self._exit:
+                driver.start_application_mode()
+                try:
+                    if headless:
+                        await run_process_messages()
                     else:
-                        null_file = _NullFile()
-                        with redirect_stderr(null_file):
-                            with redirect_stdout(null_file):
-                                await run_process_messages()
+                        if self.devtools is not None:
+                            devtools = self.devtools
+                            assert devtools is not None
+                            from .devtools.redirect_output import StdoutRedirector
 
-            finally:
-                driver.stop_application_mode()
+                            redirector = StdoutRedirector(devtools)
+                            with redirect_stderr(redirector):
+                                with redirect_stdout(redirector):  # type: ignore
+                                    await run_process_messages()
+                        else:
+                            null_file = _NullFile()
+                            with redirect_stderr(null_file):
+                                with redirect_stdout(null_file):
+                                    await run_process_messages()
+
+                finally:
+                    driver.stop_application_mode()
         except Exception as error:
             self._handle_exception(error)
 
@@ -1565,7 +1573,6 @@ class App(Generic[ReturnType], DOMNode):
                 if widget.children:
                     self._register(widget, *widget.children)
                 apply_stylesheet(widget)
-
         return list(widgets)
 
     def _unregister(self, widget: Widget) -> None:
@@ -1735,13 +1742,12 @@ class App(Generic[ReturnType], DOMNode):
         """Handle a key press.
 
         Args:
-            key (str): A key
+            key (str): A key.
             priority (bool): If `True` check from `App` down, otherwise from focused up.
 
         Returns:
             bool: True if the key was handled by a binding, otherwise False
         """
-
         for namespace, bindings in (
             reversed(self._binding_chain) if priority else self._binding_chain
         ):
@@ -2046,7 +2052,8 @@ class App(Generic[ReturnType], DOMNode):
         self._unregister(root)
 
     async def action_check_bindings(self, key: str) -> None:
-        await self.check_bindings(key)
+        if not await self.check_bindings(key, priority=True):
+            await self.check_bindings(key, priority=False)
 
     async def action_quit(self) -> None:
         """Quit the app as soon as possible."""
