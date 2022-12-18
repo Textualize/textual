@@ -1,3 +1,7 @@
+:root {
+  --md-tasklist-icon: url('/images/styles/empty_checkbox_circle.svg')
+}
+
 h2.doc.doc-heading {
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   padding-top: 48px;
