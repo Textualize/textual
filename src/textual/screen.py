@@ -295,7 +295,6 @@ class Screen(Widget):
             # No focus, so blur currently focused widget if it exists
             if self.focused is not None:
                 self.focused.post_message_no_wait(events.Blur(self))
-                self.focused.emit_no_wait(events.DescendantBlur(self))
                 self.focused = None
             self.log.debug("focus was removed")
         elif widget.can_focus:
@@ -303,14 +302,12 @@ class Screen(Widget):
                 if self.focused is not None:
                     # Blur currently focused widget
                     self.focused.post_message_no_wait(events.Blur(self))
-                    self.focused.emit_no_wait(events.DescendantBlur(self))
                 # Change focus
                 self.focused = widget
                 # Send focus event
                 if scroll_visible:
                     self.screen.scroll_to_widget(widget)
                 widget.post_message_no_wait(events.Focus(self))
-                widget.emit_no_wait(events.DescendantFocus(self))
                 self.log.debug(widget, "was focused")
 
     async def _on_idle(self, event: events.Idle) -> None:
