@@ -1753,8 +1753,8 @@ class App(Generic[ReturnType], DOMNode):
         ):
             binding = bindings.keys.get(key)
             if binding is not None and binding.priority == priority:
-                await self.action(binding.action, default_namespace=namespace)
-                return True
+                if await self.action(binding.action, namespace) in (True, None):
+                    return True
         return False
 
     async def on_event(self, event: events.Event) -> None:
@@ -1843,11 +1843,9 @@ class App(Generic[ReturnType], DOMNode):
             )
 
         if callable(private_method):
-            await invoke(private_method, *params)
-            return True
+            return await invoke(private_method, *params)
         elif callable(public_method):
-            await invoke(public_method, *params)
-            return True
+            return await invoke(public_method, *params)
 
         return False
 
