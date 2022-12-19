@@ -29,7 +29,7 @@ Sidebar {
 }
 
 Sidebar:focus-within {
-    offset: 0 0 !important;        
+    offset: 0 0 !important;
 }
 
 Sidebar.-hidden {
