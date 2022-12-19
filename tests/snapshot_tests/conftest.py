@@ -188,7 +188,7 @@ def pytest_terminal_summary(
     Displays the link to the snapshot report that was generated in a prior hook.
     """
     diffs = getattr(config, "_textual_snapshots", None)
-    console = Console()
+    console = Console(legacy_windows=False, force_terminal=True)
     if diffs:
         snapshot_report_location = config._textual_snapshot_html_report
         console.rule("[b red]Textual Snapshot Report", style="red")
