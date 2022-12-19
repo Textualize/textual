@@ -57,6 +57,7 @@ nav:
       - CSS units:
         - "styles/css_units/index.md"
         - "styles/css_units/color.md"
+        - "styles/css_units/fractional.md"
         - "styles/css_units/integer.md"
         - "styles/css_units/percentage.md"
         - "styles/css_units/scalar.md"
