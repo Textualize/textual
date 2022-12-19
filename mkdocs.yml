@@ -54,6 +54,12 @@ nav:
       - "events/screen_suspend.md"
       - "events/show.md"
     - Styles:
+      - CSS units:
+        - "styles/css_units/index.md"
+        - "styles/css_units/color.md"
+        - "styles/css_units/integer.md"
+        - "styles/css_units/percentage.md"
+        - "styles/css_units/scalar.md"
       - "styles/index.md"
       - "styles/align.md"
       - "styles/background.md"
