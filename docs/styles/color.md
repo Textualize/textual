@@ -1,6 +1,6 @@
 # Color
 
-The `color` rule sets the text color of a widget.
+The `color` rule sets the text color of a widget with an optional.
 
 ## Syntax
 
@@ -12,7 +12,7 @@ Use `auto` to automatically choose a color with suitable contrast for readabilit
 
 --8<-- "docs/styles/snippets/color_css_syntax.md"
 
-The optional percentage sets the transparency level.
+The optional [percentage](./css_units/percentage.md) sets the transparency level and will override any transparency specified directly in the color.
 
 ## Examples
 
