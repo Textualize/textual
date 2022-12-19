@@ -1386,10 +1386,9 @@ class App(Generic[ReturnType], DOMNode):
                 raise
 
             finally:
+                self._running = True
                 await self._ready()
                 await invoke_ready_callback()
-
-            self._running = True
 
             try:
                 await self._process_messages_loop()
