@@ -640,7 +640,7 @@ async def test_skip_action() -> None:
         # Check the NoHandle widget has focus
         assert pilot.app.query_one(NoHandle).has_focus
         # Press the "t" key
-        await pilot.press("t", "_")
+        await pilot.press("t")
         # Check the action on the no handle widget was called
         assert no_handle_invoked
         # Check the return value, confirming that the action on Handle was called
