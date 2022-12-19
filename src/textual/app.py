@@ -1834,13 +1834,13 @@ class App(Generic[ReturnType], DOMNode):
             bool: True if handled, otherwise False.
         """
         _rich_traceback_guard = True
-        
+
         log(
             "<action>",
             namespace=namespace,
             action_name=action_name,
             params=params,
-        )        
+        )
 
         try:
             private_method = getattr(namespace, f"_action_{action_name}", None)
