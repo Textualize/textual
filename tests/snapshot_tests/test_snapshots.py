@@ -164,7 +164,7 @@ def test_offsets(snap_compare):
 
 def test_nested_auto_heights(snap_compare):
     """Test refreshing widget within a auto sized container"""
-    assert snap_compare("snapshot_apps/nested_auto_heights.py", press=["1", "2"])
+    assert snap_compare("snapshot_apps/nested_auto_heights.py", press=["1", "2", "_"])
 
 
 # --- Other ---
