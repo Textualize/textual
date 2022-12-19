@@ -38,7 +38,7 @@ from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
 from rich.traceback import Traceback
 
-from . import Logger, LogGroup, LogVerbosity, actions, events, log, messages
+from . import actions, Logger, LogGroup, LogVerbosity, events, log, messages
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
 from ._callback import invoke
@@ -47,6 +47,7 @@ from ._event_broker import NoHandler, extract_handler_actions
 from ._filter import LineFilter, Monochrome
 from ._path import _make_path_object_relative
 from ._typing import Final, TypeAlias
+from .actions import SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding, Bindings
 from .css.query import NoMatches
@@ -1752,7 +1753,7 @@ class App(Generic[ReturnType], DOMNode):
         ):
             binding = bindings.keys.get(key)
             if binding is not None and binding.priority == priority:
-                if await self.action(binding.action, namespace) in (True, None):
+                if await self.action(binding.action, namespace):
                     return True
         return False
 
@@ -1822,30 +1823,41 @@ class App(Generic[ReturnType], DOMNode):
     async def _dispatch_action(
         self, namespace: object, action_name: str, params: Any
     ) -> bool:
+        """Dispatch an action to an action method.
+
+        Args:
+            namespace (object): Namespace (object) of action.
+            action_name (str): Name of the action.
+            params (Any): Action parameters.
+
+        Returns:
+            bool: True if handled, otherwise False.
+        """
+        _rich_traceback_guard = True
+        
         log(
             "<action>",
             namespace=namespace,
             action_name=action_name,
             params=params,
-        )
-        _rich_traceback_guard = True
+        )        
 
-        public_method_name = f"action_{action_name}"
-        private_method_name = f"_{public_method_name}"
-
-        private_method = getattr(namespace, private_method_name, None)
-        public_method = getattr(namespace, public_method_name, None)
-
-        if private_method is None and public_method is None:
+        try:
+            private_method = getattr(namespace, f"_action_{action_name}", None)
+            if callable(private_method):
+                await invoke(private_method, *params)
+                return True
+            public_method = getattr(namespace, f"action_{action_name}", None)
+            if callable(public_method):
+                await invoke(public_method, *params)
+                return True
             log(
-                f"<action> {action_name!r} has no target. Couldn't find methods {public_method_name!r} or {private_method_name!r}"
+                f"<action> {action_name!r} has no target."
+                f" Could not find methods '_action_{action_name}' or 'action_{action_name}'"
             )
-
-        if callable(private_method):
-            return await invoke(private_method, *params)
-        elif callable(public_method):
-            return await invoke(public_method, *params)
-
+        except SkipAction:
+            # The action method raised this to explicitly not handle the action
+            log("<action> {action_name!r} skipped.")
         return False
 
     async def _broker_event(
@@ -1856,7 +1868,7 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             event_name (str): _description_
             event (events.Event): An event object.
-            default_namespace (object | None): TODO: _description_
+            default_namespace (object | None): The default namespace, where one isn't supplied.
 
         Returns:
             bool: True if an action was processed.

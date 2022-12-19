@@ -44,6 +44,7 @@ from ._layout import Layout
 from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
 from ._types import Lines
+from .actions import SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding
 from .box_model import BoxModel, get_box_model
@@ -2403,42 +2404,42 @@ class Widget(DOMNode):
     def _on_scroll_to_region(self, message: messages.ScrollToRegion) -> None:
         self.scroll_to_region(message.region, animate=True)
 
-    def action_scroll_home(self) -> bool | None:
+    def action_scroll_home(self) -> None:
         if not self._allow_scroll:
-            return False
+            raise SkipAction()
         self.scroll_home()
 
-    def action_scroll_end(self) -> bool | None:
+    def action_scroll_end(self) -> None:
         if not self._allow_scroll:
-            return False
+            raise SkipAction()
         self.scroll_end()
 
-    def action_scroll_left(self) -> bool | None:
+    def action_scroll_left(self) -> None:
         if not self.allow_horizontal_scroll:
-            return False
+            raise SkipAction()
         self.scroll_left()
 
-    def action_scroll_right(self) -> bool | None:
+    def action_scroll_right(self) -> None:
         if not self.allow_horizontal_scroll:
-            return False
+            raise SkipAction()
         self.scroll_right()
 
-    def action_scroll_up(self) -> bool | None:
+    def action_scroll_up(self) -> None:
         if not self.allow_vertical_scroll:
-            return False
+            raise SkipAction()
         self.scroll_up()
 
-    def action_scroll_down(self) -> bool | None:
+    def action_scroll_down(self) -> None:
         if not self.allow_vertical_scroll:
-            return False
+            raise SkipAction()
         self.scroll_down()
 
-    def action_page_down(self) -> bool | None:
+    def action_page_down(self) -> None:
         if not self.allow_vertical_scroll:
-            return False
+            raise SkipAction()
         self.scroll_page_down()
 
-    def action_page_up(self) -> bool | None:
+    def action_page_up(self) -> None:
         if not self.allow_vertical_scroll:
-            return False
+            raise SkipAction()
         self.scroll_page_up()

@@ -11,6 +11,7 @@ background relating to this.
 
 from __future__ import annotations
 
+from textual.actions import SkipAction
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Container
@@ -626,7 +627,7 @@ async def test_skip_action() -> None:
         def action_test(self, text: str) -> bool:
             nonlocal no_handle_invoked
             no_handle_invoked = True
-            return False
+            raise SkipAction()
 
     class SkipApp(App):
         def compose(self) -> ComposeResult:
