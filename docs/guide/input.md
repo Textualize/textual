@@ -10,7 +10,7 @@ This chapter will discuss how to make your app respond to input in the form of k
 
 ## Keyboard input
 
-The most fundamental way to receive input is via [Key](./events/key) events. Let's write an app to show key events as you type.
+The most fundamental way to receive input is via [Key][textual.events.Key] events. Let's write an app to show key events as you type.
 
 === "key01.py"
 
@@ -23,25 +23,53 @@ The most fundamental way to receive input is via [Key](./events/key) events. Let
     ```{.textual path="docs/examples/guide/input/key01.py", press="T,e,x,t,u,a,l,!,_"}
     ```
 
-Note the key event handler on the app which logs all key events. If you press any key it will show up on the screen.
+When you press a key, the app will receive the associated event and write it to a [TextLog](../widgets/text_log.md) widget. Try pressing a few keys to see what happens.
 
-### Attributes
+!!! tip
 
-There are two main attributes on a key event. The `key` attribute is the _name_ of the key which may be a single character, or a longer identifier. Textual ensures that the `key` attribute could always be used in a method name.
+    For a more feature feature rich version of this example, run `textual keys` from the command line.
 
-Key events also contain a `char` attribute which contains a single character if it is printable, or ``None`` if it is not printable (like a function key which has no corresponding character).
+### Key Event
 
-To illustrate the difference between `key` and `char`, try `key01.py` with the space key. You should see something like the following:
+The key event contains a number of attributes which tell you what key (or keys) have been pressed.
 
-```{.textual path="docs/examples/guide/input/key01.py", press="space,_"}
 
-```
+#### key
 
-Note that the `key` attribute contains the word "space" while the `char` attribute contains a literal space.
+The `key` attribute is a string which identifies the key that was pressed. The value of `key` will be a single character for letter and numbers, or a longer identifier for other keys.
+
+Some keys may be combined with ++shift++ key. In the case of letters, this will result in a capital letter as you might expect. For non-printable keys, the `key` attribute will be prefixed with `shift+`. For example ++shift+home++ will produce an event with `key="shift+home"`.
+
+Many keys can also be combined with ++ctrl++ which will prefix the key with `ctrl+`. For instance ++ctrl+p++ will produce an event with `key="ctrl+p"`.
+
+!!! warning
+
+    Not all keys combinations are supported in terminals, and some keys may be intercepted by your OS. If in doubt, run `textual keys` from the command line.
+
+#### character
+
+If the key has an associated printable character then the `character` will contain a string containing a single unicode character. If there is no printable character for the key (such as for function keys) then `character` will be `None`.
+
+For example the ++p++ key will produce `character="p"` but ++f2++ will produce `character=None`.
+
+#### name
+
+The `name` attribute is similar to `key` but unlike `key` is guaranteed to be valid within a Python function name. Textual derives `name` from the `key` key attribute by lower casing it and replacing `+` with `_`. Upper case letters are prefixed with `upper_` to distinguish them from lower case names.
+
+For example, ++ctrl+q++ produces `name="ctrl_p"` and ++shift+p++ produces `name="upper_p"`.
+
+#### is_printable
+
+The `is_printable` attribute is a boolean which indicates if the key would typically result in something that could be used in an input widget. If `is_printable` is `False` then the key is a control code or function key that you wouldn't expect to produce anything in an input.
+
+#### aliases
+
+Some keys or combinations of keys can produce the same key. For instance, the ++tab++ key is indistinguishable from ++ctrl+i++ in the terminal. For such keys, Textual events will contain a list of the possible keys that may have produced this event. In the case of ++tab++, the `aliases` attribute will contain `["tab", "ctrl+i"]`
+
 
 ### Key methods
 
-Textual offers a convenient way of handling specific keys. If you create a method beginning with `key_` followed by the name of a key, then that method will be called in response to the key.
+Textual offers a convenient way of handling specific keys. If you create a method beginning with `key_` followed by the key name (the event's `name` attribute), then that method will be called in response to the key.
 
 Let's add a key method to the example code.
 
@@ -134,7 +162,7 @@ Note how the footer displays bindings and makes them clickable.
 
     The priority of a single binding can be controlled with the `priority` parameter of a `Binding` instance. Set it to `True` to give it priority, or `False` to not.
 
-    The default priority of all bindings on a class can be controlled with the `PRIORITY_BINDINGS` class variable. Set it to `True` or `False` to set the default priroty for all `BINDINGS`.
+    The default priority of all bindings on a class can be controlled with the `PRIORITY_BINDINGS` class variable. Set it to `True` or `False` to set the default priority for all `BINDINGS`.
 
 ### Binding class
 

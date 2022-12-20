@@ -24,7 +24,6 @@ class Message:
 
     __slots__ = [
         "sender",
-        "name",
         "time",
         "_forwarded",
         "_no_default_action",
@@ -40,13 +39,14 @@ class Message:
 
     def __init__(self, sender: MessageTarget) -> None:
         self.sender = sender
-        self.name = camel_to_snake(self.__class__.__name__)
+
         self.time = _clock.get_time_no_wait()
         self._forwarded = False
         self._no_default_action = False
         self._stop_propagation = False
+        name = camel_to_snake(self.__class__.__name__)
         self._handler_name = (
-            f"on_{self.namespace}_{self.name}" if self.namespace else f"on_{self.name}"
+            f"on_{self.namespace}_{name}" if self.namespace else f"on_{name}"
         )
         super().__init__()
 

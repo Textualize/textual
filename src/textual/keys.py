@@ -70,10 +70,10 @@ class Keys(str, Enum):
     ControlShift9 = "ctrl+shift+9"
     ControlShift0 = "ctrl+shift+0"
 
-    ControlBackslash = "ctrl+\\"
-    ControlSquareClose = "ctrl+]"
-    ControlCircumflex = "ctrl+^"
-    ControlUnderscore = "ctrl+_"
+    ControlBackslash = "ctrl+backslash"
+    ControlSquareClose = "ctrl+right_square_bracked"
+    ControlCircumflex = "ctrl+circumflex_accent"
+    ControlUnderscore = "ctrl+underscore"
 
     Left = "left"
     Right = "right"

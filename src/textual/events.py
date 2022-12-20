@@ -16,7 +16,6 @@ if TYPE_CHECKING:
     from .timer import Timer as TimerClass
     from .timer import TimerCallback
     from .widget import Widget
-    import asyncio
 
 
 @rich.repr.auto
@@ -183,7 +182,7 @@ class MouseRelease(Event, bubble=False):
 
 
 class InputEvent(Event):
-    pass
+    """Base class for input events."""
 
 
 @rich.repr.auto
@@ -191,47 +190,54 @@ class Key(InputEvent):
     """Sent when the user hits a key on the keyboard.
 
     Args:
-        sender (MessageTarget): The sender of the event (the App).
-        key (str): A key name (textual.keys.Keys).
-        char (str | None, optional): A printable character or None if it is not printable.
+        sender (MessageTarget): The sender of the event (always the App).
+        key (str): The key that was pressed.
+        char (str | None, optional): A printable character or ``None`` if it is not printable.
 
     Attributes:
         key_aliases (list[str]): The aliases for the key, including the key itself
     """
 
-    __slots__ = ["key", "char", "key_aliases"]
+    __slots__ = ["key", "character", "aliases"]
 
     def __init__(self, sender: MessageTarget, key: str, char: str | None) -> None:
         super().__init__(sender)
         self.key = key
-        self.char = (key if len(key) == 1 else None) if char is None else char
-        self.key_aliases = [_normalize_key(alias) for alias in _get_key_aliases(key)]
+        self.character = (key if len(key) == 1 else None) if char is None else char
+        self.aliases = _get_key_aliases(key)
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "key", self.key
-        yield "char", self.char
+        yield "character", self.character
+        yield "name", self.name
         yield "is_printable", self.is_printable
-        yield "key_aliases", self.key_aliases, [self.key_name]
+        yield "aliases", self.aliases, [self.key]
 
     @property
-    def key_name(self) -> str | None:
+    def name(self) -> str | None:
         """Name of a key suitable for use as a Python identifier."""
-        return _normalize_key(self.key)
+        return _key_to_identifier(self.key).lower()
+
+    @property
+    def name_aliases(self) -> list[str]:
+        """The corresponding name for every alias in `aliases` list."""
+        return [_key_to_identifier(key) for key in self.aliases]
 
     @property
     def is_printable(self) -> bool:
-        """Return True if the key is printable. Currently, we assume any key event that
-        isn't defined in key bindings is printable.
+        """Check if the key is printable (produces a unicode character).
 
         Returns:
             bool: True if the key is printable.
         """
-        return False if self.char is None else self.char.isprintable()
+        return False if self.character is None else self.character.isprintable()
 
 
-def _normalize_key(key: str) -> str:
+def _key_to_identifier(key: str) -> str:
     """Convert the key string to a name suitable for use as a Python identifier."""
-    return key.replace("+", "_")
+    if len(key) == 1 and key.isupper():
+        key = f"upper_{key.lower()}"
+    return key.replace("+", "_").lower()
 
 
 @rich.repr.auto

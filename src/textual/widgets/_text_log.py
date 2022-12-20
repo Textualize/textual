@@ -66,6 +66,7 @@ class TextLog(ScrollView, can_focus=True):
         content: RenderableType | object,
         width: int | None = None,
         expand: bool = False,
+        shrink: bool = True,
     ) -> None:
         """Write text or a rich renderable.
 
@@ -95,14 +96,17 @@ class TextLog(ScrollView, can_focus=True):
         if isinstance(renderable, Text) and not self.wrap:
             render_options = render_options.update(overflow="ignore", no_wrap=True)
 
-        if expand:
-            render_width = self.scrollable_content_region.width
-        else:
-            render_width = (
-                measure_renderables(console, render_options, [renderable]).maximum
-                if width is None
-                else width
-            )
+        render_width = measure_renderables(
+            console, render_options, [renderable]
+        ).maximum
+        container_width = (
+            self.scrollable_content_region.width if width is None else width
+        )
+
+        if expand and render_width < container_width:
+            render_width = container_width
+        if shrink and render_width > container_width:
+            render_width = container_width
 
         segments = self.app.console.render(
             renderable, render_options.update_width(render_width)

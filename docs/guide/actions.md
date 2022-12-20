@@ -124,37 +124,9 @@ In the previous example if you wanted a link to set the background on the app ra
 
 Textual supports the following builtin actions which are defined on the app.
 
-
-### Bell
-
-::: textual.app.App.action_bell
-    options:
-        show_root_heading: false
-
-### Push screen
-
-::: textual.app.App.action_push_screen
-
-
-### Pop screen
-
-::: textual.app.App.action_pop_screen
-
-
-### Screenshot
-
-::: textual.app.App.action_screenshot
-
-
-### Switch screen
-
-::: textual.app.App.action_switch_screen
-
-
-### Toggle_dark
-
-::: textual.app.App.action_toggle_dark
-
-### Quit
-
-::: textual.app.App.action_quit
+- [action_bell][textual.app.App.action_bell]
+- [action_push_screen][textual.app.App.action_push_screen]
+- [action_pop_screen][textual.app.App.action_pop_screen]
+- [action_switch_screen][textual.app.App.action_switch_screen]
+- [action_screenshot][textual.app.App.action_screenshot]
+- [action_toggle_dark][textual.app.App.action_toggle_dark]
