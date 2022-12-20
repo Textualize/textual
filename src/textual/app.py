@@ -368,6 +368,7 @@ class App(Generic[ReturnType], DOMNode):
         self._screenshot: str | None = None
         self._dom_lock = asyncio.Lock()
         self._dom_ready = False
+        self.set_class(self.dark, "-dark-mode")
 
     @property
     def return_value(self) -> ReturnType | None:
