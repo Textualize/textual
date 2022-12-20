@@ -2,12 +2,12 @@
 
 The `layout` property defines how a widget arranges its children.
 
-See [layout](../guide/layout.md) guide for more information.
+See the [layout](../guide/layout.md) guide for more information.
 
 ## Syntax
 
 ```
-layout: [grid|horizontal|vertical];
+layout: grid | horizontal | vertical;
 ```
 
 ### Values
@@ -21,6 +21,7 @@ layout: [grid|horizontal|vertical];
 ## Example
 
 Note how the `layout` property affects the arrangement of widgets in the example below.
+To learn more about the grid layout, you can see the [layout guide](../guide/layout.md) or the [grid reference](../grid).
 
 === "layout.py"
 
@@ -48,5 +49,5 @@ layout: horizontal;
 ## Python
 
 ```python
-widget.layout = "horizontal"
+widget.styles.layout = "horizontal"
 ```
