@@ -6,12 +6,12 @@ For an in-depth look at the grid layout, visit the grid [guide](../guide/layout.
 
 | Property       | Description                                    |
 |----------------|------------------------------------------------|
-| `grid-size`    | Number of columns and rows in the grid layout. |
-| `grid-rows`    | Height of grid rows.                           |
-| `grid-columns` | Width of grid columns.                         |
-| `grid-gutter`  | Spacing between grid cells.                    |
-| `row-span`     | Number of rows a cell spans.                   |
-| `column-span`  | Number of columns a cell spans.                |
+| [`grid-size`](./grid_size.md)    | Number of columns and rows in the grid layout. |
+| [`grid-rows`](./grid_rows.md)    | Height of grid rows.                           |
+| [`grid-columns`](./grid_columns.md) | Width of grid columns.                         |
+| [`grid-gutter`](./grid_gutter.md)  | Spacing between grid cells.                    |
+| [`row-span`](./row_span.md)     | Number of rows a cell spans.                   |
+| [`column-span`](./column_span.md)  | Number of columns a cell spans.                |
 
 ## Syntax
 
