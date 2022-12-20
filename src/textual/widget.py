@@ -2179,11 +2179,7 @@ class Widget(DOMNode):
             for ancestor in self.ancestors:
                 if not isinstance(ancestor, Widget):
                     break
-                if ancestor.styles.auto_dimensions:
-                    for ancestor in self.ancestors_with_self:
-                        if isinstance(ancestor, Widget):
-                            ancestor._clear_arrangement_cache()
-                    break
+                ancestor._clear_arrangement_cache()
 
         if repaint:
             self._set_dirty(*regions)
