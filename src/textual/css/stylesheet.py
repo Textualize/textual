@@ -336,11 +336,9 @@ class Stylesheet:
         self.source = stylesheet.source
 
     @classmethod
-    def _check_rule(
-        cls, rule: RuleSet, css_path_nodes: list[DOMNode]
-    ) -> Iterable[Specificity3]:
+    def _check_rule(cls, rule: RuleSet, node: DOMNode) -> Iterable[Specificity3]:
         for selector_set in rule.selector_set:
-            if _check_selectors(selector_set.selectors, css_path_nodes):
+            if _check_selectors(selector_set.selectors, node):
                 yield selector_set.specificity
 
     def apply(
@@ -387,7 +385,7 @@ class Stylesheet:
                 node._has_hover_style = True
             if ":focus-within" in rule.selector_names:
                 node._has_focus_within = True
-            for base_specificity in _check_rule(rule, css_path_nodes):
+            for base_specificity in _check_rule(rule, node):
                 for key, rule_specificity, value in rule.styles.extract_rules(
                     base_specificity, is_default_rules, tie_breaker
                 ):

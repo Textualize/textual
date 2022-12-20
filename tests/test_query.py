@@ -1,5 +1,7 @@
 import pytest
 
+from textual.app import App, ComposeResult
+from textual.containers import Container
 from textual.widget import Widget
 from textual.css.query import InvalidQueryFormat, WrongType, NoMatches, TooManyMatches
 
@@ -50,10 +52,9 @@ def test_query():
         assert list(app.query(".frob")) == []
         assert list(app.query("#frob")) == []
 
-        assert app.query("App")
         assert not app.query("NotAnApp")
 
-        assert list(app.query("App")) == [app]
+        assert list(app.query("App")) == []  # Root is not included in queries
         assert list(app.query("#main")) == [main_view]
         assert list(app.query("View#main")) == [main_view]
         assert list(app.query("View2#help")) == [help_view]
@@ -110,10 +111,10 @@ def test_query():
             tooltip,
         ]
 
-        assert list(app.query("App,View")) == [app, main_view, sub_view, help_view]
+        assert list(app.query("View")) == [main_view, sub_view, help_view]
         assert list(app.query("#widget1, #widget2")) == [widget1, widget2]
         assert list(app.query("#widget1 , #widget2")) == [widget1, widget2]
-        assert list(app.query("#widget1, #widget2, App")) == [app, widget1, widget2]
+        assert list(app.query("#widget1, #widget2, App")) == [widget1, widget2]
 
         assert app.query(".float").first() == sidebar
         assert app.query(".float").last() == helpbar
@@ -187,3 +188,25 @@ def test_invalid_query():
 
     with pytest.raises(InvalidQueryFormat):
         app.query("#foo").exclude("#2")
+
+
+async def test_universal_selector_doesnt_select_self():
+    class ExampleApp(App):
+        def compose(self) -> ComposeResult:
+            yield Container(
+                Widget(
+                    Widget(),
+                    Widget(
+                        Widget(),
+                    ),
+                ),
+                Widget(),
+                id="root-container",
+            )
+
+    app = ExampleApp()
+    async with app.run_test():
+        container = app.query_one("#root-container", Container)
+        query = container.query("*")
+        results = list(query.results())
+        assert len(results) == 5
