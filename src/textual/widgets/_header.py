@@ -97,8 +97,7 @@ class Header(Widget):
     }
     Header.-tall {
         height: 3;
-    }
-    
+    }    
     """
 
     tall = Reactive(False)
