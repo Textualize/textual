@@ -2,16 +2,20 @@
 
 Textual supports the concept of inline "links" embedded in text which trigger an action when pressed.
 
+!!! note
+
+    These CSS rules only target Textual action links. Internet hyperlinks are not affected by these CSS rules.
+
 There are a number of styles which influence the appearance of these links within a widget.
 
 | Property                | Description                                                 |
 |-------------------------|-------------------------------------------------------------|
-| `link-color`            | The color of link text.                                     |
-| `link-background`       | The background color of link text.                          |
-| `link-style`            | The style of link text (e.g. underline).                    |
-| `link-hover-color`      | The color of link text with the cursor above it.            |
-| `link-hover-background` | The background color of link text with the cursor above it. |
-| `link-hover-style`      | The style of link text with the cursor above it.            |
+| [`link-color`](./link_color.md)            | The color of link text.                                     |
+| [`link-background`](./link_background.md)       | The background color of link text.                          |
+| [`link-style`](./link_style.md)            | The style of link text (e.g. underline).                    |
+| [`link-hover-color`](./link_hover_color.md)      | The color of link text with the cursor above it.            |
+| [`link-hover-background`](./link_hover_background.md) | The background color of link text with the cursor above it. |
+| [`link-hover-style`](./link_hover_style.md)      | The style of link text with the cursor above it.            |
 
 ## Syntax
 
@@ -23,6 +27,10 @@ link-hover-color: <COLOR>;
 link-hover-background: <COLOR>;
 link-hover-style: <TEXT STYLE> ...;
 ```
+
+--8<-- "docs/styles/snippets/color_css_syntax.md"
+
+--8<-- "docs/styles/snippets/text_style_syntax.md"
 
 ## Example
 
@@ -52,6 +60,6 @@ The second `Static` uses CSS to customize the link color, background, and style.
 
 ## See Also
 
-* An [introduction to links](../guide/actions.md#links) in the Actions guide.
+* An [introduction to links](../../guide/actions.md#links) in the Actions guide.
 
 [//]: # (TODO: Links are documented twice in the guide, and one will likely be removed. Check the link above still works after that.)
