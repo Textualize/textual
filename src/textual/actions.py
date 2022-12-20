@@ -4,6 +4,10 @@ import ast
 import re
 
 
+class SkipAction(Exception):
+    """Raise in an action to skip the action (and allow any parent bindings to run)."""
+
+
 class ActionError(Exception):
     pass
 

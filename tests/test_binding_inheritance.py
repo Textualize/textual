@@ -11,13 +11,13 @@ background relating to this.
 
 from __future__ import annotations
 
-import pytest
-
+from textual.actions import SkipAction
 from textual.app import App, ComposeResult
-from textual.widgets import Static
-from textual.screen import Screen
 from textual.binding import Binding
 from textual.containers import Container
+from textual.screen import Screen
+from textual.widget import Widget
+from textual.widgets import Static
 
 ##############################################################################
 # These are the movement keys within Textual; they kind of have a special
@@ -614,3 +614,40 @@ async def test_overlapping_priority_bindings() -> None:
             "app_e",
             "screen_f",
         ]
+
+
+async def test_skip_action() -> None:
+    """Test that a binding may be skipped by an action raising SkipAction"""
+
+    class Handle(Widget, can_focus=True):
+        BINDINGS = [("t", "test('foo')", "Test")]
+
+        def action_test(self, text: str) -> None:
+            self.app.exit(text)
+
+    no_handle_invoked = False
+
+    class NoHandle(Widget, can_focus=True):
+        BINDINGS = [("t", "test('bar')", "Test")]
+
+        def action_test(self, text: str) -> bool:
+            nonlocal no_handle_invoked
+            no_handle_invoked = True
+            raise SkipAction()
+
+    class SkipApp(App):
+        def compose(self) -> ComposeResult:
+            yield Handle(NoHandle())
+
+        def on_mount(self) -> None:
+            self.query_one(NoHandle).focus()
+
+    async with SkipApp().run_test() as pilot:
+        # Check the NoHandle widget has focus
+        assert pilot.app.query_one(NoHandle).has_focus
+        # Press the "t" key
+        await pilot.press("t")
+        # Check the action on the no handle widget was called
+        assert no_handle_invoked
+        # Check the return value, confirming that the action on Handle was called
+        assert pilot.app.return_value == "foo"
