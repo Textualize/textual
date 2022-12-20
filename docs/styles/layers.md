@@ -2,7 +2,7 @@
 
 The `layers` property allows you to define an ordered set of layers.
 Layers control the order in which widgets are painted on screen.
-These `layers` can later be referenced using the `layer` property.
+These `layers` can later be referenced using the [`layer`](../layer) property.
 More information on layers can be found in the [guide](../guide/layout.md#layers).
 
 ## Syntax

@@ -2,7 +2,7 @@
 
 The `layer` property is used to assign widgets to a layer.
 Layers control the order in which widgets are painted on screen.
-The value of the `layer` property must be the name of a layer defined using a `layers` declaration.
+The value of the `layer` property must be the name of a layer defined using a [`layers`](../layers) declaration.
 More information on layers can be found in the [guide](../guide/layout.md#layers).
 
 ## Syntax
