@@ -2176,8 +2176,14 @@ class Widget(DOMNode):
 
         if layout:
             self._layout_required = True
-            if isinstance(self._parent, Widget):
-                self._parent._clear_arrangement_cache()
+            for ancestor in self.ancestors:
+                if not isinstance(ancestor, Widget):
+                    break
+                if ancestor.styles.auto_dimensions:
+                    for ancestor in self.ancestors_with_self:
+                        if isinstance(ancestor, Widget):
+                            ancestor._clear_arrangement_cache()
+                    break
 
         if repaint:
             self._set_dirty(*regions)

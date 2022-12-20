@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.8.0] - Unreleased
 
+### Fixed 
+
+- Fixed issues with nested auto dimensions https://github.com/Textualize/textual/issues/1402
+
 ### Added
 
 - Added `textual.actions.SkipAction` exception which can be raised from an action to allow parents to process bindings.
