@@ -209,7 +209,9 @@ class Key(InputEvent):
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "key", self.key
-        yield "char", self.char, None
+        yield "char", self.char
+        yield "is_printable", self.is_printable
+        yield "key_aliases", self.key_aliases, [self.key_name]
 
     @property
     def key_name(self) -> str | None:
