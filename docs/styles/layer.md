@@ -1,8 +1,8 @@
 # Layer
 
 The `layer` property is used to assign widgets to a layer.
-The value of the `layer` property must be the name of a layer defined using a `layers` declaration.
 Layers control the order in which widgets are painted on screen.
+The value of the `layer` property must be the name of a layer defined using a `layers` declaration.
 More information on layers can be found in the [guide](../guide/layout.md#layers).
 
 ## Syntax
@@ -31,7 +31,7 @@ However, since `#box1` is on the higher layer, it is drawn on top of `#box2`.
 
 === "layers.css"
 
-    ```sass hl_lines="3 15 19"
+    ```sass hl_lines="3 14 19"
     --8<-- "docs/examples/guide/layout/layers.css"
     ```
 
@@ -46,5 +46,5 @@ layer: below;
 
 ```python
 # Draw the widget on the layer called 'below'
-widget.layer = "below"
+widget.styles.layer = "below"
 ```
