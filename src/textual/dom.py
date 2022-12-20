@@ -22,7 +22,7 @@ from rich.tree import Tree
 
 from ._context import NoActiveAppError
 from ._node_list import NodeList
-from .binding import Binding, Bindings, BindingType
+from .binding import Bindings, BindingType
 from .color import BLACK, WHITE, Color
 from .css._error_tools import friendly_list
 from .css.constants import VALID_DISPLAY, VALID_VISIBILITY

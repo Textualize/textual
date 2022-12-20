@@ -6,6 +6,13 @@ from textual.containers import Horizontal
 from textual.widgets import Button, Header, TextLog
 
 
+INSTRUCTIONS = """\
+Press some keys!    
+
+Because we want to display all the keys, Ctrl+C won't work for this example. Use the button below to quit.\
+"""
+
+
 class KeyLog(TextLog, inherit_bindings=False):
     """We don't want to handle scroll keys."""
 
@@ -35,7 +42,7 @@ class KeysApp(App, inherit_bindings=False):
         yield KeyLog()
 
     def on_ready(self) -> None:
-        self.query_one(KeyLog).write(Panel("Press some keys!"))
+        self.query_one(KeyLog).write(Panel(INSTRUCTIONS), expand=True)
 
     def on_key(self, event: events.Key) -> None:
         self.query_one(KeyLog).write(event)
