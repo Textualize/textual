@@ -199,7 +199,7 @@ class Key(InputEvent):
         key_aliases (list[str]): The aliases for the key, including the key itself
     """
 
-    __slots__ = ["key", "char"]
+    __slots__ = ["key", "char", "key_aliases"]
 
     def __init__(self, sender: MessageTarget, key: str, char: str | None) -> None:
         super().__init__(sender)
@@ -209,7 +209,9 @@ class Key(InputEvent):
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "key", self.key
-        yield "char", self.char, None
+        yield "char", self.char
+        yield "is_printable", self.is_printable
+        yield "key_aliases", self.key_aliases, [self.key_name]
 
     @property
     def key_name(self) -> str | None:

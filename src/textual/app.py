@@ -240,6 +240,14 @@ class App(Generic[ReturnType], DOMNode):
     TITLE: str | None = None
     SUB_TITLE: str | None = None
 
+    BINDINGS = [
+        Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
+        Binding("tab", "focus_next", "Focus Next", show=False, priority=False),
+        Binding(
+            "shift+tab", "focus_previous", "Focus Previous", show=False, priority=False
+        ),
+    ]
+
     title: Reactive[str] = Reactive("")
     sub_title: Reactive[str] = Reactive("")
     dark: Reactive[bool] = Reactive(True)
@@ -301,7 +309,6 @@ class App(Generic[ReturnType], DOMNode):
 
         self._logger = Logger(self._log)
 
-        self._bindings.bind("ctrl+c", "quit", show=False, priority=True)
         self._refresh_required = False
 
         self.design = DEFAULT_COLORS
@@ -1898,13 +1905,8 @@ class App(Generic[ReturnType], DOMNode):
         message.stop()
 
     async def _on_key(self, event: events.Key) -> None:
-        if event.key == "tab":
-            self.screen.focus_next()
-        elif event.key == "shift+tab":
-            self.screen.focus_previous()
-        else:
-            if not (await self.check_bindings(event.key)):
-                await self.dispatch_key(event)
+        if not (await self.check_bindings(event.key)):
+            await self.dispatch_key(event)
 
     async def _on_shutdown_request(self, event: events.ShutdownRequest) -> None:
         log("shutdown request")
@@ -2123,6 +2125,14 @@ class App(Generic[ReturnType], DOMNode):
 
     async def action_toggle_class(self, selector: str, class_name: str) -> None:
         self.screen.query(selector).toggle_class(class_name)
+
+    def action_focus_next(self) -> None:
+        """Focus the next widget."""
+        self.screen.focus_next()
+
+    def action_focus_previous(self) -> None:
+        """Focus the previous widget."""
+        self.screen.focus_previous()
 
     def _on_terminal_supports_synchronized_output(
         self, message: messages.TerminalSupportsSynchronizedOutput
