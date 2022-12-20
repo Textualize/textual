@@ -24,7 +24,7 @@ def _check_renderable(renderable: object):
         )
 
 
-class Static(Widget):
+class Static(Widget, inherit_bindings=False):
     """A widget to display simple static content, or use as a base class for more complex widgets.
 
     Args:

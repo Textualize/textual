@@ -5,12 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.8.0] - Unreleased
+
+### Added
+
+- Added `textual.actions.SkipAction` exception which can be raised from an action to allow parents to process bindings.
+
+### Fixed
+
+- Fixed watch method incorrectly running on first set when value hasnt changed and init=False https://github.com/Textualize/textual/pull/1367
+
+## [0.7.0] - 2022-12-17
+
+### Added
+
+- Added `PRIORITY_BINDINGS` class variable, which can be used to control if a widget's bindings have priority by default. https://github.com/Textualize/textual/issues/1343
+
+### Changed
+
+- Renamed the `Binding` argument `universal` to `priority`. https://github.com/Textualize/textual/issues/1343
+- When looking for bindings that have priority, they are now looked from `App` downwards. https://github.com/Textualize/textual/issues/1343
+- `BINDINGS` on an `App`-derived class have priority by default. https://github.com/Textualize/textual/issues/1343
+- `BINDINGS` on a `Screen`-derived class have priority by default. https://github.com/Textualize/textual/issues/1343
+- Added a message parameter to Widget.exit
 
 ### Fixed
 
 - Fixed validator not running on first reactive set https://github.com/Textualize/textual/pull/1359
-- Fixed watch method incorrectly running on first set when value hasnt changed and init=False https://github.com/Textualize/textual/pull/1367
+- Ensure only printable characters are used as key_display https://github.com/Textualize/textual/pull/1361
+
 
 ## [0.6.0] - 2022-12-11
 
@@ -254,7 +277,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
-[0.6.0]: https://github.com/Textualize/textual/compare/v0.3.0...v0.6.0
+[0.7.0]: https://github.com/Textualize/textual/compare/v0.6.0...v0.7.0
+[0.6.0]: https://github.com/Textualize/textual/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/Textualize/textual/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/Textualize/textual/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/Textualize/textual/compare/v0.2.1...v0.3.0

@@ -38,7 +38,7 @@ from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
 from rich.traceback import Traceback
 
-from . import Logger, LogGroup, LogVerbosity, actions, events, log, messages
+from . import actions, Logger, LogGroup, LogVerbosity, events, log, messages
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
 from ._callback import invoke
@@ -47,6 +47,7 @@ from ._event_broker import NoHandler, extract_handler_actions
 from ._filter import LineFilter, Monochrome
 from ._path import _make_path_object_relative
 from ._typing import Final, TypeAlias
+from .actions import SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding, Bindings
 from .css.query import NoMatches
@@ -63,7 +64,7 @@ from .messages import CallbackType
 from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import Screen
-from .widget import AwaitMount, MountError, Widget
+from .widget import AwaitMount, Widget
 
 
 if TYPE_CHECKING:
@@ -231,6 +232,8 @@ class App(Generic[ReturnType], DOMNode):
     }
     """
 
+    PRIORITY_BINDINGS = True
+
     SCREENS: dict[str, Screen | Callable[[], Screen]] = {}
     _BASE_PATH: str | None = None
     CSS_PATH: CSSPathType = None
@@ -298,7 +301,7 @@ class App(Generic[ReturnType], DOMNode):
 
         self._logger = Logger(self._log)
 
-        self._bindings.bind("ctrl+c", "quit", show=False, universal=True)
+        self._bindings.bind("ctrl+c", "quit", show=False, priority=True)
         self._refresh_required = False
 
         self.design = DEFAULT_COLORS
@@ -348,6 +351,7 @@ class App(Generic[ReturnType], DOMNode):
                 self.devtools = DevtoolsClient()
 
         self._return_value: ReturnType | None = None
+        self._exit = False
 
         self.css_monitor = (
             FileMonitor(self.css_path, self._on_css_change)
@@ -414,14 +418,20 @@ class App(Generic[ReturnType], DOMNode):
         """list[Screen]: A *copy* of the screen stack."""
         return self._screen_stack.copy()
 
-    def exit(self, result: ReturnType | None = None) -> None:
+    def exit(
+        self, result: ReturnType | None = None, message: RenderableType | None = None
+    ) -> None:
         """Exit the app, and return the supplied result.
 
         Args:
             result (ReturnType | None, optional): Return value. Defaults to None.
+            message (RenderableType | None): Optional message to display on exit.
         """
+        self._exit = True
         self._return_value = result
         self.post_message_no_wait(messages.ExitApp(sender=self))
+        if message:
+            self._exit_renderables.append(message)
 
     @property
     def focused(self) -> Widget | None:
@@ -1080,9 +1090,9 @@ class App(Generic[ReturnType], DOMNode):
         _screen = self.get_screen(screen)
         if not _screen.is_running:
             widgets = self._register(self, _screen)
-            return (_screen, AwaitMount(widgets))
+            return (_screen, AwaitMount(_screen, widgets))
         else:
-            return (_screen, AwaitMount([]))
+            return (_screen, AwaitMount(_screen, []))
 
     def _replace_screen(self, screen: Screen) -> Screen:
         """Handle the replaced screen.
@@ -1128,7 +1138,7 @@ class App(Generic[ReturnType], DOMNode):
             self.screen.post_message_no_wait(events.ScreenResume(self))
             self.log.system(f"{self.screen} is current (SWITCHED)")
             return await_mount
-        return AwaitMount([])
+        return AwaitMount(self.screen, [])
 
     def install_screen(self, screen: Screen, name: str | None = None) -> AwaitMount:
         """Install a screen.
@@ -1377,10 +1387,9 @@ class App(Generic[ReturnType], DOMNode):
                 raise
 
             finally:
+                self._running = True
                 await self._ready()
                 await invoke_ready_callback()
-
-            self._running = True
 
             try:
                 await self._process_messages_loop()
@@ -1406,28 +1415,29 @@ class App(Generic[ReturnType], DOMNode):
             )
             driver = self._driver = driver_class(self.console, self, size=terminal_size)
 
-            driver.start_application_mode()
-            try:
-                if headless:
-                    await run_process_messages()
-                else:
-                    if self.devtools is not None:
-                        devtools = self.devtools
-                        assert devtools is not None
-                        from .devtools.redirect_output import StdoutRedirector
-
-                        redirector = StdoutRedirector(devtools)
-                        with redirect_stderr(redirector):
-                            with redirect_stdout(redirector):  # type: ignore
-                                await run_process_messages()
+            if not self._exit:
+                driver.start_application_mode()
+                try:
+                    if headless:
+                        await run_process_messages()
                     else:
-                        null_file = _NullFile()
-                        with redirect_stderr(null_file):
-                            with redirect_stdout(null_file):
-                                await run_process_messages()
+                        if self.devtools is not None:
+                            devtools = self.devtools
+                            assert devtools is not None
+                            from .devtools.redirect_output import StdoutRedirector
 
-            finally:
-                driver.stop_application_mode()
+                            redirector = StdoutRedirector(devtools)
+                            with redirect_stderr(redirector):
+                                with redirect_stdout(redirector):  # type: ignore
+                                    await run_process_messages()
+                        else:
+                            null_file = _NullFile()
+                            with redirect_stderr(null_file):
+                                with redirect_stdout(null_file):
+                                    await run_process_messages()
+
+                finally:
+                    driver.stop_application_mode()
         except Exception as error:
             self._handle_exception(error)
 
@@ -1563,7 +1573,6 @@ class App(Generic[ReturnType], DOMNode):
                 if widget.children:
                     self._register(widget, *widget.children)
                 apply_stylesheet(widget)
-
         return list(widgets)
 
     def _unregister(self, widget: Widget) -> None:
@@ -1729,22 +1738,23 @@ class App(Generic[ReturnType], DOMNode):
             ]
         return namespace_bindings
 
-    async def check_bindings(self, key: str, universal: bool = False) -> bool:
+    async def check_bindings(self, key: str, priority: bool = False) -> bool:
         """Handle a key press.
 
         Args:
-            key (str): A key
-            universal (bool): Check universal keys if True, otherwise non-universal keys.
+            key (str): A key.
+            priority (bool): If `True` check from `App` down, otherwise from focused up.
 
         Returns:
             bool: True if the key was handled by a binding, otherwise False
         """
-
-        for namespace, bindings in self._binding_chain:
+        for namespace, bindings in (
+            reversed(self._binding_chain) if priority else self._binding_chain
+        ):
             binding = bindings.keys.get(key)
-            if binding is not None and binding.universal == universal:
-                await self.action(binding.action, default_namespace=namespace)
-                return True
+            if binding is not None and binding.priority == priority:
+                if await self.action(binding.action, namespace):
+                    return True
         return False
 
     async def on_event(self, event: events.Event) -> None:
@@ -1762,7 +1772,7 @@ class App(Generic[ReturnType], DOMNode):
                 self.mouse_position = Offset(event.x, event.y)
                 await self.screen._forward_event(event)
             elif isinstance(event, events.Key):
-                if not await self.check_bindings(event.key, universal=True):
+                if not await self.check_bindings(event.key, priority=True):
                     forward_target = self.focused or self.screen
                     await forward_target._forward_event(event)
             else:
@@ -1813,32 +1823,41 @@ class App(Generic[ReturnType], DOMNode):
     async def _dispatch_action(
         self, namespace: object, action_name: str, params: Any
     ) -> bool:
+        """Dispatch an action to an action method.
+
+        Args:
+            namespace (object): Namespace (object) of action.
+            action_name (str): Name of the action.
+            params (Any): Action parameters.
+
+        Returns:
+            bool: True if handled, otherwise False.
+        """
+        _rich_traceback_guard = True
+
         log(
             "<action>",
             namespace=namespace,
             action_name=action_name,
             params=params,
         )
-        _rich_traceback_guard = True
 
-        public_method_name = f"action_{action_name}"
-        private_method_name = f"_{public_method_name}"
-
-        private_method = getattr(namespace, private_method_name, None)
-        public_method = getattr(namespace, public_method_name, None)
-
-        if private_method is None and public_method is None:
+        try:
+            private_method = getattr(namespace, f"_action_{action_name}", None)
+            if callable(private_method):
+                await invoke(private_method, *params)
+                return True
+            public_method = getattr(namespace, f"action_{action_name}", None)
+            if callable(public_method):
+                await invoke(public_method, *params)
+                return True
             log(
-                f"<action> {action_name!r} has no target. Couldn't find methods {public_method_name!r} or {private_method_name!r}"
+                f"<action> {action_name!r} has no target."
+                f" Could not find methods '_action_{action_name}' or 'action_{action_name}'"
             )
-
-        if callable(private_method):
-            await invoke(private_method, *params)
-            return True
-        elif callable(public_method):
-            await invoke(public_method, *params)
-            return True
-
+        except SkipAction:
+            # The action method raised this to explicitly not handle the action
+            log("<action> {action_name!r} skipped.")
         return False
 
     async def _broker_event(
@@ -1849,7 +1868,7 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             event_name (str): _description_
             event (events.Event): An event object.
-            default_namespace (object | None): TODO: _description_
+            default_namespace (object | None): The default namespace, where one isn't supplied.
 
         Returns:
             bool: True if an action was processed.
@@ -2042,7 +2061,8 @@ class App(Generic[ReturnType], DOMNode):
         self._unregister(root)
 
     async def action_check_bindings(self, key: str) -> None:
-        await self.check_bindings(key)
+        if not await self.check_bindings(key, priority=True):
+            await self.check_bindings(key, priority=False)
 
     async def action_quit(self) -> None:
         """Quit the app as soon as possible."""
