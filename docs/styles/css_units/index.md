@@ -4,8 +4,9 @@ Many CSS rules accept units of some sort, as opposed to a set of values.
 
 The different CSS units are:
 
- - [color](./color.md) – e.g., to set the [background color](../background.md);
- - [fractional](./fractional.md) – e.g., to set a widget's [`opacity`](../opacity.md);
- - [integer](./integer.md) – e.g., to set the [`grid-size`](../grid/grid_size.md);
- - [percentage](./percentage.md) – e.g., to set the transparency of the [background color](../background.md); and
- - [scalar](./scalar.md) – e.g., to set the [width](../width.md) of a widget.
+ - [color](./color.md) – e.g., to set the background color of a widget;
+ - [fractional](./fractional.md) – e.g., to set the opacity of a widget;
+ - [integer](./integer.md) – e.g., to set the size of a grid layout;
+ - [percentage](./percentage.md) – e.g., to set the transparency of colors;
+ - [scalar](./scalar.md) – e.g., to set the dimensions of a widget; and
+ - [text style](./text_style.md) – e.g., to style the text of a widget.

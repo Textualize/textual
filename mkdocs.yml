@@ -61,6 +61,7 @@ nav:
         - "styles/css_units/integer.md"
         - "styles/css_units/percentage.md"
         - "styles/css_units/scalar.md"
+        - "styles/css_units/text_style.md"
       - "styles/index.md"
       - "styles/align.md"
       - "styles/background.md"
