@@ -2,6 +2,10 @@
 
 The `row-span` style specifies how many rows a widget will span in a grid layout.
 
+!!! note
+
+    This style only affects widgets that are direct children of a widget with `layout: grid`.
+
 ## Syntax
 
 ```sass

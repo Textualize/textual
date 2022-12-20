@@ -4,6 +4,10 @@ The `grid-size` style sets the number of columns and rows in a grid layout.
 
 The number of rows can be left unspecified and it will be computed automatically.
 
+!!! note
+
+    This style only affects widgets with `layout: grid`.
+
 ## Syntax
 
 ```sass

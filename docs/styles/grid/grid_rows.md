@@ -2,6 +2,10 @@
 
 The `grid-rows` style allows to define the height of the rows of the grid.
 
+!!! note
+
+    This style only affects widgets with `layout: grid`.
+
 ## Syntax
 
 ```sass

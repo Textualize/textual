@@ -6,6 +6,10 @@ That is, it sets the space between adjacent cells in the grid.
 Gutter is only applied _between_ the edges of cells.
 No spacing is added between the edges of cells and the edges of the container.
 
+!!! note
+
+    This style only affects widgets with `layout: grid`.
+
 ## Syntax
 
 ```sass
