@@ -794,9 +794,8 @@ class NameListProperty:
 class ColorProperty:
     """Descriptor for getting and setting color properties."""
 
-    def __init__(self, default_color: Color | str, background: bool = False) -> None:
+    def __init__(self, default_color: Color | str) -> None:
         self._default_color = Color.parse(default_color)
-        self._is_background = background
 
     def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
@@ -830,11 +829,10 @@ class ColorProperty:
         _rich_traceback_omit = True
         if color is None:
             if obj.clear_rule(self.name):
-                obj.refresh(children=self._is_background)
+                obj.refresh(children=True)
         elif isinstance(color, Color):
             if obj.set_rule(self.name, color):
-                obj.refresh(children=self._is_background)
-
+                obj.refresh(children=True)
         elif isinstance(color, str):
             alpha = 1.0
             parsed_color = Color(255, 255, 255)
@@ -855,8 +853,9 @@ class ColorProperty:
                         ),
                     )
             parsed_color = parsed_color.with_alpha(alpha)
+
             if obj.set_rule(self.name, parsed_color):
-                obj.refresh(children=self._is_background)
+                obj.refresh(children=True)
         else:
             raise StyleValueError(f"Invalid color value {color}")
 
