@@ -10,14 +10,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed 
 
 - Fixed issues with nested auto dimensions https://github.com/Textualize/textual/issues/1402
+- Fixed watch method incorrectly running on first set when value hasn't changed and init=False https://github.com/Textualize/textual/pull/1367
 
 ### Added
 
 - Added `textual.actions.SkipAction` exception which can be raised from an action to allow parents to process bindings.
+- Added `textual keys` preview.
 
-### Fixed
+### Changed
 
-- Fixed watch method incorrectly running on first set when value hasnt changed and init=False https://github.com/Textualize/textual/pull/1367
+- Moved Ctrl+C, tab, and shift+tab to App BINDINGS
 
 ## [0.7.0] - 2022-12-17
 
