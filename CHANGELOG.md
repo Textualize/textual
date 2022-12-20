@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `textual.actions.SkipAction` exception which can be raised from an action to allow parents to process bindings.
 
+### Fixed
+
+- Fixed watch method incorrectly running on first set when value hasnt changed and init=False https://github.com/Textualize/textual/pull/1367
+
 ## [0.7.0] - 2022-12-17
 
 ### Added
@@ -33,6 +37,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed validator not running on first reactive set https://github.com/Textualize/textual/pull/1359
 - Ensure only printable characters are used as key_display https://github.com/Textualize/textual/pull/1361
+
 
 ## [0.6.0] - 2022-12-11
 

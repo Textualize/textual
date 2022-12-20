@@ -175,15 +175,11 @@ class Reactive(Generic[ReactiveType]):
         current_value = getattr(obj, name)
         # Check for validate function
         validate_function = getattr(obj, f"validate_{name}", None)
-        # Check if this is the first time setting the value
-        first_set = getattr(obj, f"__first_set_{self.internal_name}", True)
         # Call validate
         if callable(validate_function):
             value = validate_function(value)
         # If the value has changed, or this is the first time setting the value
-        if current_value != value or first_set or self._always_update:
-            # Set the first set flag to False
-            setattr(obj, f"__first_set_{self.internal_name}", False)
+        if current_value != value or self._always_update:
             # Store the internal value
             setattr(obj, self.internal_name, value)
             # Check all watchers
@@ -200,7 +196,6 @@ class Reactive(Generic[ReactiveType]):
             obj (Reactable): The reactable object.
             name (str): Attribute name.
             old_value (Any): The old (previous) value of the attribute.
-            first_set (bool, optional): True if this is the first time setting the value. Defaults to False.
         """
         _rich_traceback_omit = True
         # Get the current value.
