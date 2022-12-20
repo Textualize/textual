@@ -239,6 +239,8 @@ class App(Generic[ReturnType], DOMNode):
     TITLE: str | None = None
     SUB_TITLE: str | None = None
 
+    BINDINGS = [Binding("ctrl+c", "quit", "Quit", show=False, priority=True)]
+
     title: Reactive[str] = Reactive("")
     sub_title: Reactive[str] = Reactive("")
     dark: Reactive[bool] = Reactive(True)
@@ -300,7 +302,6 @@ class App(Generic[ReturnType], DOMNode):
 
         self._logger = Logger(self._log)
 
-        self._bindings.bind("ctrl+c", "quit", show=False, priority=True)
         self._refresh_required = False
 
         self.design = DEFAULT_COLORS

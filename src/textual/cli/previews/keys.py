@@ -2,23 +2,36 @@ from rich.panel import Panel
 
 from textual.app import App, ComposeResult
 from textual import events
-from textual.widgets import Header, Footer, TextLog
+from textual.containers import Horizontal
+from textual.widgets import Button, Header, TextLog
 
 
 class KeyLog(TextLog, inherit_bindings=False):
     """We don't want to handle scroll keys."""
 
 
-class KeysApp(App):
+class KeysApp(App, inherit_bindings=False):
     """Show key events in a text log."""
 
     TITLE = "Textual Keys"
-
     BINDINGS = [("c", "clear", "Clear")]
+    CSS = """
+    #buttons {
+        dock: bottom;
+        height: 3;
+    }
+    Button {
+        width: 1fr;
+    }
+    """
 
     def compose(self) -> ComposeResult:
         yield Header()
-        yield Footer()
+        yield Horizontal(
+            Button("Clear", id="clear", variant="warning"),
+            Button("Quit", id="quit", variant="error"),
+            id="buttons",
+        )
         yield KeyLog()
 
     def on_ready(self) -> None:
@@ -27,8 +40,11 @@ class KeysApp(App):
     def on_key(self, event: events.Key) -> None:
         self.query_one(KeyLog).write(event)
 
-    def action_clear(self) -> None:
-        self.query_one(KeyLog).clear()
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "quit":
+            self.exit()
+        elif event.button.id == "clear":
+            self.query_one(KeyLog).clear()
 
 
 app = KeysApp()
