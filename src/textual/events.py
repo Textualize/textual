@@ -199,7 +199,7 @@ class Key(InputEvent):
         key_aliases (list[str]): The aliases for the key, including the key itself
     """
 
-    __slots__ = ["key", "char"]
+    __slots__ = ["key", "char", "key_aliases"]
 
     def __init__(self, sender: MessageTarget, key: str, char: str | None) -> None:
         super().__init__(sender)
