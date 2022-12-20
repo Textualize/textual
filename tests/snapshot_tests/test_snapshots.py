@@ -101,7 +101,9 @@ def test_header_render(snap_compare):
 
 
 def test_list_view(snap_compare):
-    assert snap_compare(WIDGET_EXAMPLES_DIR / "list_view.py", press=["tab", "down", "down", "up"])
+    assert snap_compare(
+        WIDGET_EXAMPLES_DIR / "list_view.py", press=["tab", "down", "down", "up"]
+    )
 
 
 def test_textlog_max_lines(snap_compare):
@@ -169,4 +171,8 @@ def test_key_display(snap_compare):
 
 def test_demo(snap_compare):
     """Test the demo app (python -m textual)"""
-    assert snap_compare(Path("../../src/textual/demo.py"))
+    assert snap_compare(
+        Path("../../src/textual/demo.py"),
+        press=["down", "down", "down", "_"],
+        terminal_size=(100, 30),
+    )

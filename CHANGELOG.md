@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.8.0] - Unreleased
+
+### Added
+
+- Added `textual.actions.SkipAction` exception which can be raised from an action to allow parents to process bindings.
+
 ## [0.7.0] - 2022-12-17
 
 ### Added

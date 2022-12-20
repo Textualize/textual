@@ -44,6 +44,7 @@ from ._layout import Layout
 from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
 from ._types import Lines
+from .actions import SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding
 from .box_model import BoxModel, get_box_model
@@ -2344,17 +2345,22 @@ class Widget(DOMNode):
         self.mouse_over = True
 
     def _on_focus(self, event: events.Focus) -> None:
-        for node in self.ancestors_with_self:
-            if node._has_focus_within:
-                self.app.update_styles(node)
         self.has_focus = True
         self.refresh()
+        self.emit_no_wait(events.DescendantFocus(self))
 
     def _on_blur(self, event: events.Blur) -> None:
-        if any(node._has_focus_within for node in self.ancestors_with_self):
-            self.app.update_styles(self)
         self.has_focus = False
         self.refresh()
+        self.emit_no_wait(events.DescendantBlur(self))
+
+    def _on_descendant_blur(self, event: events.DescendantBlur) -> None:
+        if self._has_focus_within:
+            self.app.update_styles(self)
+
+    def _on_descendant_focus(self, event: events.DescendantBlur) -> None:
+        if self._has_focus_within:
+            self.app.update_styles(self)
 
     def _on_mouse_scroll_down(self, event) -> None:
         if self.allow_vertical_scroll:
@@ -2399,33 +2405,41 @@ class Widget(DOMNode):
         self.scroll_to_region(message.region, animate=True)
 
     def action_scroll_home(self) -> None:
-        if self._allow_scroll:
-            self.scroll_home()
+        if not self._allow_scroll:
+            raise SkipAction()
+        self.scroll_home()
 
     def action_scroll_end(self) -> None:
-        if self._allow_scroll:
-            self.scroll_end()
+        if not self._allow_scroll:
+            raise SkipAction()
+        self.scroll_end()
 
     def action_scroll_left(self) -> None:
-        if self.allow_horizontal_scroll:
-            self.scroll_left()
+        if not self.allow_horizontal_scroll:
+            raise SkipAction()
+        self.scroll_left()
 
     def action_scroll_right(self) -> None:
-        if self.allow_horizontal_scroll:
-            self.scroll_right()
+        if not self.allow_horizontal_scroll:
+            raise SkipAction()
+        self.scroll_right()
 
     def action_scroll_up(self) -> None:
-        if self.allow_vertical_scroll:
-            self.scroll_up()
+        if not self.allow_vertical_scroll:
+            raise SkipAction()
+        self.scroll_up()
 
     def action_scroll_down(self) -> None:
-        if self.allow_vertical_scroll:
-            self.scroll_down()
+        if not self.allow_vertical_scroll:
+            raise SkipAction()
+        self.scroll_down()
 
     def action_page_down(self) -> None:
-        if self.allow_vertical_scroll:
-            self.scroll_page_down()
+        if not self.allow_vertical_scroll:
+            raise SkipAction()
+        self.scroll_page_down()
 
     def action_page_up(self) -> None:
-        if self.allow_vertical_scroll:
-            self.scroll_page_up()
+        if not self.allow_vertical_scroll:
+            raise SkipAction()
+        self.scroll_page_up()
