@@ -2,6 +2,10 @@
 
 The `grid-columns` style allows to define the width of the columns of the grid.
 
+!!! note
+
+    This style only affects widgets with `layout: grid`.
+
 ## Syntax
 
 ```sass
