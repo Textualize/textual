@@ -611,7 +611,7 @@ async def test_overlapping_priority_bindings() -> None:
 
 
 async def test_skip_action() -> None:
-    """Test that a binding may be skipped by an action returning False"""
+    """Test that a binding may be skipped by an action raising SkipAction"""
 
     class Handle(Widget, can_focus=True):
         BINDINGS = [("t", "test('foo')", "Test")]
