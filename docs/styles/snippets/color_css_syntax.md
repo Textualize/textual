@@ -1,4 +1,4 @@
-The legal values for a [color](/styles/css_units/color.md) depend on the [class `Color`][textual.color.Color] and include:
+The legal values for a [color](/styles/css_units/color) depend on the [class `Color`][textual.color.Color] and include:
 
  - a recognised [named color](../../api/color#textual.color--named-colors) (e.g., `red`);
  - a hexadecimal number representing the RGB values of the color (e.g., `#F35573`);
