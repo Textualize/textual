@@ -8,24 +8,24 @@ Textual supports the concept of inline "links" embedded in text which trigger an
 
 There are a number of styles which influence the appearance of these links within a widget.
 
-| Property                | Description                                                 |
-|-------------------------|-------------------------------------------------------------|
-| [`link-color`](./link_color.md)            | The color of link text.                                     |
-| [`link-background`](./link_background.md)       | The background color of link text.                          |
-| [`link-style`](./link_style.md)            | The style of link text (e.g. underline).                    |
-| [`link-hover-color`](./link_hover_color.md)      | The color of link text with the cursor above it.            |
-| [`link-hover-background`](./link_hover_background.md) | The background color of link text with the cursor above it. |
-| [`link-hover-style`](./link_hover_style.md)      | The style of link text with the cursor above it.            |
+| Property                                              | Description                                                       |
+|-------------------------------------------------------|-------------------------------------------------------------------|
+| [`link-color`](./link_color.md)                       | The color of the link text.                                       |
+| [`link-background`](./link_background.md)             | The background color of the link text.                            |
+| [`link-style`](./link_style.md)                       | The style of the link text (e.g. underline).                      |
+| [`link-hover-color`](./link_hover_color.md)           | The color of the link text when the cursor is over it.            |
+| [`link-hover-background`](./link_hover_background.md) | The background color of the link text when the cursor is over it. |
+| [`link-hover-style`](./link_hover_style.md)           | The style of the link text when the cursor is over it.            |
 
 ## Syntax
 
 ```scss
-link-color: <COLOR>;
-link-background: <COLOR>;
-link-style: <TEXT STYLE> ...;
-link-hover-color: <COLOR>;
-link-hover-background: <COLOR>;
-link-hover-style: <TEXT STYLE> ...;
+link-color: <COLOR> [<PERCENTAGE>];
+link-background: <COLOR> [<PERCENTAGE>];
+link-style: <TEXT STYLE>;
+link-hover-color: <COLOR> [<PERCENTAGE>];
+link-hover-background: <COLOR> [<PERCENTAGE>];
+link-hover-style: <TEXT STYLE>;
 ```
 
 --8<-- "docs/styles/snippets/color_css_syntax.md"
@@ -34,8 +34,8 @@ link-hover-style: <TEXT STYLE> ...;
 
 ## Example
 
-In the example below, the first `Static` illustrates default link styling.
-The second `Static` uses CSS to customize the link color, background, and style.
+In the example below, the first label illustrates default link styling.
+The second label uses CSS to customize the link color, background, and style.
 
 === "Output"
 

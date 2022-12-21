@@ -4,7 +4,7 @@ The `link-hover-color` sets the color of the link text when the mouse cursor is 
 
 !!! note
 
-    `link-hover-color` only applies to "action links" as described in the [actions guide](../../guide/actions.md#links) and not to regular hyperlinks.
+    `link-hover-color` only applies to Textual action links as described in the [actions guide](../../guide/actions.md#links) and not to regular hyperlinks.
 
 ## Syntax
 
