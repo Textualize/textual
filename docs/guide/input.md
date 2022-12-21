@@ -53,7 +53,7 @@ For example the ++p++ key will produce `character="p"` but ++f2++ will produce `
 
 #### name
 
-The `name` attribute is similar to `key` but, unlike `key`, is guaranteed to be valid within a Python function name. Textual derives `name` from the `key`  attribute by lower casing it and replacing `+` with `_`. Upper case letters are prefixed with `upper_` to distinguish them from lower case names.
+The `name` attribute is similar to `key` but, unlike `key`, is guaranteed to be valid within a Python function name. Textual derives `name` from the `key` attribute by lower casing it and replacing `+` with `_`. Upper case letters are prefixed with `upper_` to distinguish them from lower case names.
 
 For example, ++ctrl+p++ produces `name="ctrl_p"` and ++shift+p++ produces `name="upper_p"`.
 
