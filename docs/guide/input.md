@@ -68,7 +68,7 @@ Some keys or combinations of keys can produce the same event. For instance, the 
 
 ### Key methods
 
-Textual offers a convenient way of handling specific keys. If you create a method beginning with `key_` followed by the key name (the event's `name` attribute), then that method will be called in response to the key.
+Textual offers a convenient way of handling specific keys. If you create a method beginning with `key_` followed by the key name (the event's `name` attribute), then that method will be called in response to the key press.
 
 Let's add a key method to the example code.
 
