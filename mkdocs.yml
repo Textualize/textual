@@ -31,11 +31,13 @@ nav:
     - CSS Types:
       - "css_types/index.md"
       - "css_types/color.md"
+      - "css_types/horizontal.md"
       - "css_types/integer.md"
       - "css_types/number.md"
       - "css_types/percentage.md"
       - "css_types/scalar.md"
       - "css_types/text_style.md"
+      - "css_types/vertical.md"
     - Events:
       - "events/index.md"
       - "events/blur.md"
