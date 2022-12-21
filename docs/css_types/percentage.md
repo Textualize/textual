@@ -19,9 +19,3 @@ Widget {
 ```py
 widget.styles.background = "red 70%"
 ```
-
-## Used by
-
- - [`background`](../background.md)
- - [`color`](../color.md)
- - [`tint`](../tint.md)

@@ -38,24 +38,3 @@ widget.styles.background = Color(16, 200, 45)
 # ... which can also parse the CSS syntax
 widget.styles.background = Color.parse("#A8F")
 ```
-
-## Used by
-
- - [`background`](../background.md)
- - [`border`](../border.md)
- - [`color`](../color.md)
- - Links:
-    - [`link-color`](../links/link_color.md)
-    - [`link-background`](../links/link_background.md)
-    - [`link-hover-color`](../links/link_hover_color.md)
-    - [`link-hover-background`](../links/link_hover_background.md)
- - [`outline`](../outline.md)
- - Scrollbars:
-    - [`scrollbar-color`](../scrollbar_colors/scrollbar_color.md)
-    - [`scrollbar-color-hover`](../scrollbar_colors/scrollbar_color_hover.md)
-    - [`scrollbar-color-active`](../scrollbar_colors/scrollbar_color_active.md)
-    - [`scrollbar-background`](../scrollbar_colors/scrollbar_background.md)
-    - [`scrollbar-background-hover`](../scrollbar_colors/scrollbar_background_hover.md)
-    - [`scrollbar-background-active`](../scrollbar_colors/scrollbar_background_active.md)
-    - [`scrollbar-corner-color`](../scrollbar_colors/scrollbar_corner_color.md)
- - [`tint`](../tint.md)

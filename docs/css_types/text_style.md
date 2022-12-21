@@ -42,10 +42,3 @@ widget.styles.text_style = "strike"
 widget.styles.text_style = "strike bold italic reverse"
 widget.styles.text_style = "bold underline italic"
 ```
-
-## Used by
-
- - Links:
-    - [`link-style`](../links/link_style.md)
-    - [`link-hover-style`](../links/link_hover_style.md)
- - [`text-style`](../text_style.md)
