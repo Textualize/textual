@@ -38,7 +38,7 @@ class Binding:
     key_display: str | None = None
     """str | None: How the key should be shown in footer."""
     priority: bool = False
-    """bool | None: Is this a priority binding, checked form app down to focused widget?"""
+    """bool: Enable priority binding for this key."""
 
 
 @rich.repr.auto
