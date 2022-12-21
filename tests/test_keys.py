@@ -35,7 +35,6 @@ async def test_character_bindings():
             counter += 1
 
     app = BindApp()
-    print(app._bindings)
     async with app.run_test() as pilot:
         await pilot.press(".")
         assert counter == 1
