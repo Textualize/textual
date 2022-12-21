@@ -39,7 +39,7 @@ The `key` attribute is a string which identifies the key that was pressed. The v
 
 Some keys may be combined with the ++shift++ key. In the case of letters, this will result in a capital letter as you might expect. For non-printable keys, the `key` attribute will be prefixed with `shift+`. For example, ++shift+home++ will produce an event with `key="shift+home"`.
 
-Many keys can also be combined with ++ctrl++ which will prefix the key with `ctrl+`. For instance ++ctrl+p++ will produce an event with `key="ctrl+p"`.
+Many keys can also be combined with ++ctrl++ which will prefix the key with `ctrl+`. For instance, ++ctrl+p++ will produce an event with `key="ctrl+p"`.
 
 !!! warning
 
