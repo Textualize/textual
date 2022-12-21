@@ -10,6 +10,7 @@ It is often used to represent values that are relative to the parent's values.
 ## Syntax
 
 --8<-- "docs/snippets/type_syntax/percentage.md"
+Some rules may clamp the values between `0%` and `100%`.
 
 ## Examples
 
