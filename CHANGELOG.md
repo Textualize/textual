@@ -16,11 +16,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `textual.actions.SkipAction` exception which can be raised from an action to allow parents to process bindings.
 - Added `textual keys` preview.
+- Added ability to bind to a character in addition to key name. i.e. you can bind to "." or "full_stop"
 
 ### Changed
 
-- Moved Ctrl+C, tab, and shift+tab to App BINDINGS
+- Moved Ctrl+C, tab, and shift+tab to App BINDINGS.
 - Deprecated `PRIORITY_BINDINGS` class variable.
+- Renamed `char` to `character` on Key event.
+- Renamed `key_name` to `name` on Key event.
 
 ## [0.7.0] - 2022-12-17
 
