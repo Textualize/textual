@@ -12,9 +12,9 @@ The `link-hover-color` sets the color of the link text when the mouse cursor is 
 link-hover-color: <COLOR> <PERCENTAGE>;
 ```
 
---8<-- "docs/snippets/color_css_syntax.md"
+--8<-- "docs/snippets/type_syntax/color.md"
 
---8<-- "docs/snippets/percentage_syntax.md"
+--8<-- "docs/snippets/type_syntax/percentage.md"
 
 ## Example
 

@@ -28,9 +28,9 @@ link-hover-background: <COLOR> [<PERCENTAGE>];
 link-hover-style: <TEXT STYLE>;
 ```
 
---8<-- "docs/snippets/color_css_syntax.md"
+--8<-- "docs/snippets/type_syntax/color.md"
 
---8<-- "docs/snippets/text_style_syntax.md"
+--8<-- "docs/snippets/type_syntax/text_style.md"
 
 ## Example
 
