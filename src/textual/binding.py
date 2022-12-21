@@ -19,6 +19,10 @@ class NoBinding(Exception):
     """A binding was not found."""
 
 
+class InvalidBinding(Exception):
+    """Binding key is in an invalid format."""
+
+
 @dataclass(frozen=True)
 class Binding:
     """The configuration of a key binding."""
@@ -71,10 +75,14 @@ class Bindings:
                 # into a (potential) collection of Binding instances.
                 for key in binding.key.split(","):
                     key = key.strip()
+                    if not key:
+                        raise InvalidBinding(
+                            f"Can not bind empty string in {binding.key!r}"
+                        )
                     if len(key) == 1:
                         key = _character_to_key(key)
                     yield Binding(
-                        key=key.strip(),
+                        key=key,
                         action=binding.action,
                         description=binding.description,
                         show=binding.show,
