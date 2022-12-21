@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 from rich.text import Text
 
@@ -64,7 +65,8 @@ class TreeApp(App):
 
     def on_mount(self) -> None:
         """Load some JSON when the app starts."""
-        with open("food.json") as data_file:
+        file_path = Path(__file__).parent / "food.json"
+        with open(file_path) as data_file:
             self.json_data = json.load(data_file)
 
     def action_add(self) -> None:
