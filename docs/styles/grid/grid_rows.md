@@ -16,7 +16,7 @@ If there are more rows in the grid than scalars specified in `grid-rows`, they a
 
 Scalar units can be mixed.
 
---8<-- "docs/styles/snippets/scalar_syntax.md"
+--8<-- "docs/snippets/scalar_syntax.md"
 
 ## Example
 

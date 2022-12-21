@@ -19,7 +19,7 @@ grid-gutter: <SCALAR> [<SCALAR>];
 If only one scalar is supplied, it sets the horizontal and vertical gutter.
 If two scalars are supplied, they set the vertical and horizontal gutters, respectively.
 
---8<-- "docs/styles/snippets/scalar_syntax.md"
+--8<-- "docs/snippets/scalar_syntax.md"
 
 ## Example
 

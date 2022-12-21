@@ -12,7 +12,7 @@ The `link-style` sets the text style for the link text.
 link-style: <TEXT STYLE>;
 ```
 
---8<-- "docs/styles/snippets/text_style_syntax.md"
+--8<-- "docs/snippets/text_style_syntax.md"
 
 ## Example
 

@@ -2,7 +2,7 @@
 
 ## Syntax
 
---8<-- "docs/styles/snippets/percentage_syntax.md"
+--8<-- "docs/snippets/percentage_syntax.md"
 
 !!! warning
 

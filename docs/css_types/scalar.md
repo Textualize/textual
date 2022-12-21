@@ -7,7 +7,7 @@ Scalars also accept the special value `auto`.
 
 ## Syntax
 
---8<-- "docs/styles/snippets/scalar_syntax.md"
+--8<-- "docs/snippets/scalar_syntax.md"
 
 A complete reference table and detailed explanations follow.
 You can [skip to the examples](#Examples).

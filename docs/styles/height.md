@@ -8,7 +8,7 @@ The `height` rule sets a widget's height. By default, it sets the height of the 
 height: <SCALAR>;
 ```
 
---8<-- "docs/styles/snippets/scalar_syntax.md"
+--8<-- "docs/snippets/scalar_syntax.md"
 
 ## Examples
 

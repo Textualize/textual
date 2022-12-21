@@ -12,9 +12,9 @@ The `link-color` sets the color of the link text.
 link-color: <COLOR> <PERCENTAGE>;
 ```
 
---8<-- "docs/styles/snippets/color_css_syntax.md"
+--8<-- "docs/snippets/color_css_syntax.md"
 
---8<-- "docs/styles/snippets/percentage_syntax.md"
+--8<-- "docs/snippets/percentage_syntax.md"
 
 ## Example
 

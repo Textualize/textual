@@ -8,7 +8,7 @@ The text style unit is a combination of any of the legal text style values in a 
 
 ## Syntax
 
---8<-- "docs/styles/snippets/text_style_syntax.md"
+--8<-- "docs/snippets/text_style_syntax.md"
 
 ## Examples
 

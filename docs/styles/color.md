@@ -10,7 +10,7 @@ color: (<COLOR> | auto) [<PERCENTAGE>];
 
 Use `auto` to automatically choose a color with suitable contrast for readability.
 
---8<-- "docs/styles/snippets/color_css_syntax.md"
+--8<-- "docs/snippets/color_css_syntax.md"
 
 The optional [percentage](./css_units/percentage.md) sets the transparency level and will override any transparency specified directly in the color.
 
