@@ -672,12 +672,12 @@ class DOMNode(MessagePump):
         method: WalkMethod = "depth",
         reverse: bool = False,
     ) -> list[DOMNode] | list[WalkType]:
-        """Generate descendant nodes.
+        """Walk the subtree rooted at this node, and return every descendant encountered in a list.
 
         Args:
             filter_type (type[WalkType] | None, optional): Filter only this type, or None for no filter.
                 Defaults to None.
-            with_self (bool, optional): Also yield self in addition to descendants. Defaults to True.
+            with_self (bool, optional): Also yield self in addition to descendants. Defaults to False.
             method (Literal["breadth", "depth"], optional): One of "depth" or "breadth". Defaults to "depth".
             reverse (bool, optional): Reverse the order (bottom up). Defaults to False.
 
