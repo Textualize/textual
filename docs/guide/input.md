@@ -37,7 +37,7 @@ The key event contains following attributes which your app can use to know how t
 
 The `key` attribute is a string which identifies the key that was pressed. The value of `key` will be a single character for letters and numbers, or a longer identifier for other keys.
 
-Some keys may be combined with ++shift++ key. In the case of letters, this will result in a capital letter as you might expect. For non-printable keys, the `key` attribute will be prefixed with `shift+`. For example ++shift+home++ will produce an event with `key="shift+home"`.
+Some keys may be combined with the ++shift++ key. In the case of letters, this will result in a capital letter as you might expect. For non-printable keys, the `key` attribute will be prefixed with `shift+`. For example, ++shift+home++ will produce an event with `key="shift+home"`.
 
 Many keys can also be combined with ++ctrl++ which will prefix the key with `ctrl+`. For instance ++ctrl+p++ will produce an event with `key="ctrl+p"`.
 
