@@ -72,8 +72,9 @@ class TextLog(ScrollView, can_focus=True):
 
         Args:
             content (RenderableType): Rich renderable (or text).
-            width (int): Width to render or None to use optimal width. Defaults to None.
-            expand (bool): Enable expand to widget width, or False to use `width`.
+            width (int): Width to render or None to use optimal width. Defaults to `None`.
+            expand (bool): Enable expand to widget width, or False to use `width`. Defaults to `False`.
+            shrink (bool): Enable shrinking of content to fit width. Defaults to `True`.
         """
 
         renderable: RenderableType

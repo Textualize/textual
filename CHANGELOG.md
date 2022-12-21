@@ -16,7 +16,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `textual.actions.SkipAction` exception which can be raised from an action to allow parents to process bindings.
 - Added `textual keys` preview.
-- Added ability to bind to a character in addition to key name. i.e. you can bind to "." or "full_stop"
+- Added ability to bind to a character in addition to key name. i.e. you can bind to "." or "full_stop".
+- Added TextLog.shrink attribute to allow renderable to reduce in size to fit width.
 
 ### Changed
 
