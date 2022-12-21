@@ -615,7 +615,7 @@ class DOMNode(MessagePump):
         """Reset styles back to their initial state"""
         from .widget import Widget
 
-        for node in self.walk_children():
+        for node in self.walk_children(with_self=True):
             node._css_styles.reset()
             if isinstance(node, Widget):
                 node._set_dirty()
@@ -648,7 +648,7 @@ class DOMNode(MessagePump):
         self,
         filter_type: type[WalkType],
         *,
-        with_self: bool = True,
+        with_self: bool = False,
         method: WalkMethod = "depth",
         reverse: bool = False,
     ) -> list[WalkType]:
@@ -658,7 +658,7 @@ class DOMNode(MessagePump):
     def walk_children(
         self,
         *,
-        with_self: bool = True,
+        with_self: bool = False,
         method: WalkMethod = "depth",
         reverse: bool = False,
     ) -> list[DOMNode]:
@@ -668,7 +668,7 @@ class DOMNode(MessagePump):
         self,
         filter_type: type[WalkType] | None = None,
         *,
-        with_self: bool = True,
+        with_self: bool = False,
         method: WalkMethod = "depth",
         reverse: bool = False,
     ) -> list[DOMNode] | list[WalkType]:

@@ -1491,7 +1491,7 @@ class App(Generic[ReturnType], DOMNode):
             nodes: set[DOMNode] = {
                 child
                 for node in self._require_stylesheet_update
-                for child in node.walk_children()
+                for child in node.walk_children(with_self=True)
             }
             self._require_stylesheet_update.clear()
             self.stylesheet.update_nodes(nodes, animate=True)
