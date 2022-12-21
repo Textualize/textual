@@ -10,11 +10,17 @@ The number of rows can be left unspecified and it will be computed automatically
 
 ## Syntax
 
-```sass
-grid-size: <INTEGER> [<INTEGER>];
-```
+--8<-- "docs/snippets/syntax_block_start.md"
+grid-size: <a href="../css_types/integer.md">&lt;integer&gt;</a> [<a href="../css_types/integer.md">&lt;integer&gt;</a>];
+--8<-- "docs/snippets/syntax_block_end.md"
 
-The first integer specifies the number of columns and the second integer specifies the number of rows.
+The style `grid-size` takes one or two non-negative [`<integer>`](../../css_types/integer.md).
+The first defines how many columns there are in the grid.
+If present, the second one sets the number of rows – regardless of the number of children of the grid –, otherwise the number of rows is computed automatically.
+
+### Values
+
+--8<-- "docs/snippets/type_syntax/integer.md"
 
 ## Examples
 

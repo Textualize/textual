@@ -6,24 +6,43 @@ For an in-depth look at the grid layout, visit the grid [guide](../guide/layout.
 
 | Property       | Description                                    |
 |----------------|------------------------------------------------|
-| [`grid-size`](./grid_size.md)    | Number of columns and rows in the grid layout. |
-| [`grid-rows`](./grid_rows.md)    | Height of grid rows.                           |
+| [`column-span`](./column_span.md)  | Number of columns a cell spans.                |
 | [`grid-columns`](./grid_columns.md) | Width of grid columns.                         |
 | [`grid-gutter`](./grid_gutter.md)  | Spacing between grid cells.                    |
+| [`grid-rows`](./grid_rows.md)    | Height of grid rows.                           |
+| [`grid-size`](./grid_size.md)    | Number of columns and rows in the grid layout. |
 | [`row-span`](./row_span.md)     | Number of rows a cell spans.                   |
-| [`column-span`](./column_span.md)  | Number of columns a cell spans.                |
 
 ## Syntax
 
-```sass
-grid-size: <INTEGER> [<INTEGER>];
-/* columns first, then rows */
-grid-rows: <SCALAR> . . .;
-grid-columns: <SCALAR> . . .;
-grid-gutter: <SCALAR>;
-row-span: <INTEGER>;
-column-span: <INTEGER>;
-```
+--8<-- "docs/snippets/syntax_block_start.md"
+column-span: <a href="../css_types/integer.md">&lt;integer&gt;</a>;
+
+grid-columns: <a href="../css_types/scalar.md">&lt;scalar&gt;</a>+;
+
+grid-gutter: <a href="../css_types/scalar.md">&lt;scalar&gt;</a> [<a href="../css_types/scalar.md">&lt;scalar&gt;</a>];
+
+grid-rows: <a href="../css_types/scalar.md">&lt;scalar&gt;</a>+;
+
+grid-size: <a href="../css_types/integer.md">&lt;integer&gt;</a> [<a href="../css_types/integer.md">&lt;integer&gt;</a>];
+
+row-span: <a href="../css_types/integer.md">&lt;integer&gt;</a>;
+--8<-- "docs/snippets/syntax_block_end.md"
+
+The styles `column-span` and `row-span` accept a single non-negative [`<integer>`](../../css_types/integer.md) while the style `grid-size` accepts one or two non-negative [`<integer>`](../../css_types/integer.md).
+
+The style `grid-gutter` accepts one or two [`<scalar>`](../../css_types/scalar.md) while the styles `grid-columns` and `grid-rows` accept one or more.
+
+
+### Values
+
+#### &lt;integer&gt;
+
+--8<-- "docs/snippets/type_syntax/integer.md"
+
+#### &lt;scalar&gt;
+
+--8<-- "docs/snippets/type_syntax/scalar.md"
 
 ## Example
 
