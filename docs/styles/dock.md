@@ -5,8 +5,10 @@ The `dock` property is used to fix a widget to the edge of a container (which ma
 ## Syntax
 
 ```
-dock: top | right | bottom | left;
+dock: bottom | left | right | top;
 ```
+
+The option chosen determines the edge to which the widget is docked.
 
 ## Examples
 
@@ -53,13 +55,17 @@ The labels will remain in that position (docked) even if the container they are 
 ## CSS
 
 ```sass
-/* Dock the widget on the left edge of its parent container */
-dock: left;
+dock: bottom;  /* Docks on the bottom edge of the parent container. */
+dock: left;    /* Docks on the   left edge of the parent container. */
+dock: right;   /* Docks on the  right edge of the parent container. */
+dock: top;     /* Docks on the    top edge of the parent container. */
 ```
 
 ## Python
 
 ```python
-# Dock the widget on the left edge of its parent container
-widget.styles.dock = "left"
+widget.styles.dock = bottom;  # Dock bottom.
+widget.styles.dock = left;    # Dock   left.
+widget.styles.dock = right;   # Dock  right.
+widget.styles.dock = top;     # Dock    top.
 ```
