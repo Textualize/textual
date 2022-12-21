@@ -9,7 +9,7 @@ For example, the `background` rule sets the color of the background of a widget.
 
 ## Syntax
 
---8<-- "docs/styles/snippets/color_css_syntax.md"
+--8<-- "docs/snippets/color_css_syntax.md"
 
 ## Examples
 
