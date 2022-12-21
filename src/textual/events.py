@@ -192,10 +192,10 @@ class Key(InputEvent):
     Args:
         sender (MessageTarget): The sender of the event (always the App).
         key (str): The key that was pressed.
-        char (str | None, optional): A printable character or ``None`` if it is not printable.
+        character (str | None, optional): A printable character or ``None`` if it is not printable.
 
     Attributes:
-        key_aliases (list[str]): The aliases for the key, including the key itself
+        aliases (list[str]): The aliases for the key, including the key itself.
     """
 
     __slots__ = ["key", "character", "aliases"]
