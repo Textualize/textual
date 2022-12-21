@@ -8,30 +8,23 @@ or on each of the axis separately.
 
 ## Syntax
 
-```
-align: <HORIZONTAL> <VERTICAL>;
-align-horizontal: <HORIZONTAL>;
-align-vertical: <VERTICAL>;
-```
+--8<-- "docs/snippets/syntax_block_start.md"
+align: <a href="../css_types/horizontal.md">&lt;horizontal&gt;</a> <a href="../css_types/vertical.md">&lt;vertical&gt;</a>;
+align-horizontal: <a href="../css_types/horizontal.md">&lt;horizontal&gt;</a>;
+align-vertical: <a href="../css_types/vertical.md">&lt;vertical&gt;</a>;
+--8<-- "docs/snippets/syntax_block_end.md"
 
+The style `align` takes a [`<horizontal>`](../css_types/horizontal.md) followed by a [`<vertical>`](../css_types/vertical.md).
+To specify alignment on a single axis, use the respective style and type:
+
+ - `align-horizontal` takes a [`<horizontal>`](../css_types/horizontal.md) and does alignment along the horizontal axis; and
+ - `align-vertical` takes a [`<vertical>`](../css_types/vertical.md) and does alignment along the vertical axis.
 
 ### Values
 
-#### `HORIZONTAL`
+--8<-- "docs/snippets/type_syntax/horizontal.md"
 
-| Value            | Description                                        |
-| ---------------- | -------------------------------------------------- |
-| `left` (default) | Align content on the left of the horizontal axis   |
-| `center`         | Align content in the center of the horizontal axis |
-| `right`          | Align content on the right of the horizontal axis  |
-
-#### `VERTICAL`
-
-| Value           | Description                                      |
-| --------------- | ------------------------------------------------ |
-| `top` (default) | Align content at the top of the vertical axis    |
-| `middle`        | Align content in the middle of the vertical axis |
-| `bottom`        | Align content at the bottom of the vertical axis |
+--8<-- "docs/snippets/type_syntax/vertical.md"
 
 
 ## Examples
