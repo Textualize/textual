@@ -107,17 +107,3 @@ widget.styles.width = "25vw"
 widget.styles.width = "75vh"
 widget.styles.width = "auto"
 ```
-
-## Used by
-
- - Grids:
-    - [`grid-rows`](../grid/grid_rows.md)
-    - [`grid-columns`](../grid/grid_columns.md)
-    - [`grid-gutter`](../grid/grid_gutter.md)
- - [`height`](../height.md)
- - [`max-height`](../max_height.md)
- - [`max-width`](../max_width.md)
- - [`min-height`](../min_height.md)
- - [`min-width`](../min_width.md)
- - [`offset`](../offset.md)
- - [`width`](../width.md)
