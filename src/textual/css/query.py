@@ -106,7 +106,7 @@ class DOMQuery(Generic[QueryType]):
         if self._nodes is None:
             nodes = [
                 node
-                for node in self._node.walk_children(Widget, with_self=False)
+                for node in self._node.walk_children(Widget)
                 if all(match(selector_set, node) for selector_set in self._filters)
             ]
             nodes = [
