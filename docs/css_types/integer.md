@@ -1,14 +1,14 @@
 # &lt;integer&gt;
 
-The `<integer>` CSS type represents an integer number and can be positive or negative.
+The `<integer>` CSS type represents an integer number.
+
+## Syntax
+
+--8<-- "docs/snippets/type_syntax/integer.md"
 
 !!! note
 
     Some CSS rules may expect an `<integer>` within certain bounds. If that is the case, it will be noted in that rule.
-
-## Syntax
-
-Any legal integer, like `-10` or `42`.
 
 ## Examples
 
