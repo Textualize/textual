@@ -1,40 +1,43 @@
-# Color unit
+# &lt;color&gt;
 
-Color units are used with rules that need to set the color of a part of a widget.
-For example, the `background` rule sets the color of the background of a widget.
+The `<color>` CSS type represents a color.
 
 !!! warning
 
-    Not to be confused with the [`color`](../color.md) CSS rule to set text color.
+    Not to be confused with the [`color`](../styles/color.md) CSS rule to set text color.
 
 ## Syntax
 
---8<-- "docs/snippets/color_css_syntax.md"
+--8<-- "docs/snippets/type_syntax/color.md"
 
 ## Examples
 
-```css
-Widget {
-    background: red;               /* color name                     */
-    background: #A8F;              /* 3-digit hex RGB                */
-    background: #FF00FFDD;         /* 6-digit hex RGB + transparency */
-    background: rgb(15,200,73);    /* RGB description                */
-    background: hsl(300,20%,70%);  /* HSL description                */
-    background: $accent;           /* Textual variable               */
+### CSS
+
+```sass
+* {
+    rule: red;               /* color name                     */
+    rule: #A8F;              /* 3-digit hex RGB                */
+    rule: #FF00FFDD;         /* 6-digit hex RGB + transparency */
+    rule: rgb(15,200,73);    /* RGB description                */
+    rule: hsl(300,20%,70%);  /* HSL description                */
+    rule: $accent;           /* Textual variable               */
 }
 ```
 
+### Python
+
 ```py
 # Mimicking the CSS syntax
-widget.styles.background = "red"
-widget.styles.background = "#A8F"
-widget.styles.background = "#FF00FFDD"
-widget.styles.background = "rgb(15,200,73)"
-widget.styles.background = "hsl(300,20%,70%)"
-widget.styles.background = "$accent"
+color = "red"
+color = "#A8F"
+color = "#FF00FFDD"
+color = "rgb(15,200,73)"
+color = "hsl(300,20%,70%)"
+color = "$accent"
 
 # Using a Color object directly...
-widget.styles.background = Color(16, 200, 45)
+color = Color(16, 200, 45)
 # ... which can also parse the CSS syntax
-widget.styles.background = Color.parse("#A8F")
+color = Color.parse("#A8F")
 ```
