@@ -1,16 +1,19 @@
-# Scalar
+# &lt;scalar&gt;
 
-A scalar unit is a numeric value with a unit, e.g., `50vh`.
-Scalars are used with styles that specify lengths, like `width` and `height`.
+The `<scalar>` CSS type represents a length.
+It can be a [`<number>`](./number.md) and a unit, or the special value `auto`.
+It is used to represent lengths, for example in the [`width`](../styles/width.md) and [`height`](../styles/height.md) rules.
 
-Scalars also accept the special value `auto`.
+!!! warning
+
+    Not to be confused with the [`<number>`](./number.md) or [`<percentage>`](./percentage.md) types.
 
 ## Syntax
 
---8<-- "docs/snippets/scalar_syntax.md"
+--8<-- "docs/snippets/type_syntax/scalar.md"
 
 A complete reference table and detailed explanations follow.
-You can [skip to the examples](#Examples).
+You can [skip to the examples](#examples).
 
 | Unit symbol | Unit            | Example | Description                                                 |
 |-------------|-----------------|---------|-------------------------------------------------------------|
@@ -36,13 +39,13 @@ For example, in `height: 10`, this sets the height of a widget to be equal to 10
 
 ### Fraction
 
-The fraction scalar is used to represent proportional sizes.
+The unit fraction is used to represent proportional sizes.
 
 For example, if two widgets are side by side and one has `width: 1fr` and the other has `width: 3fr`, the second one will be three times as wide as the first one.
 
 ### Percent
 
-The percent scalar is used to specify a total length relative to the space made available by the container widget.
+The percent unit matches a [`<percentage>`](./percentage.md) and is used to specify a total length relative to the space made available by the container widget.
 
 If used to specify a horizontal length, it will be relative to the width of the container.
 For example, `width: 50%` sets the width of a widget to 50% of the width of its container.
@@ -52,27 +55,27 @@ For example, `height: 50%` sets the height of a widget to 50% of the height of i
 
 ### Width
 
-The width scalar is similar to the percent scalar, except it sets the percentage to be relative to the width of the container.
+The width unit is similar to the percent unit, except it sets the percentage to be relative to the width of the container.
 
 For example, `width: 25w` sets the width of a widget to 25% of the width of its container and `height: 25w` sets the height of a widget to 25% of the width of its container.
 So, if the container has a width of 100 cells, the width and the height of the child widget will be of 25 cells.
 
 ### Height
 
-The height scalar is similar to the percent scalar, except it sets the percentage to be relative to the height of the container.
+The height unit is similar to the percent unit, except it sets the percentage to be relative to the height of the container.
 
 For example, `height: 75h` sets the height of a widget to 75% of the height of its container and `width: 75h` sets the width of a widget to 75% of the height of its container.
 So, if the container has a height of 100 cells, the width and the height of the child widget will be of 75 cells.
 
 ### Viewport width
 
-This is the same as the [width scalar](#Width), except that it is relative to the width of the viewport instead of the width of the immediate container.
+This is the same as the [width unit](#width), except that it is relative to the width of the viewport instead of the width of the immediate container.
 
 For example, `width: 25vw` will try to set the width of a widget to be 25% of the viewport width, regardless of the widths of its containers.
 
 ### Viewport height
 
-This is the same as the [height scalar](#Height), except that it is relative to the height of the viewport instead of the height of the immediate container.
+This is the same as the [height unit](#height), except that it is relative to the height of the viewport instead of the height of the immediate container.
 
 For example, `height: 75vh` will try to set the height of a widget to be 75% of the viewport height, regardless of the height of its containers.
 
@@ -84,26 +87,30 @@ For example, if its container is big enough, a label with `width: auto` will be 
 
 ## Examples
 
-```css
-Widget {
-    width: 16;
-    width: 1fr;
-    width: 50%;
-    width: 25w;
-    width: 75h;
-    width: 25vw;
-    width: 75vh;
-    width: auto;
+### CSS
+
+```sass
+* {
+    rule: 16;    /* 16 cells */
+    rule: 1fr;   /* proportional size of 1 */
+    rule: 50%;   /* 50% of the same dimension of the parent */
+    rule: 25w;   /* 25% of the width of the parent */
+    rule: 75h;   /* 75% of the height of the parent */
+    rule: 25vw;  /* 25% of the viewport width */
+    rule: 75vh;  /* 75% of the viewport height */
+    rule: auto;  /* special value */
 }
 ```
 
+### Python
+
 ```py
-widget.styles.width = 16  # Cell scalar can be an int or a float
-widget.styles.width = "1fr"
-widget.styles.width = "50%"
-widget.styles.width = "25w"
-widget.styles.width = "75h"
-widget.styles.width = "25vw"
-widget.styles.width = "75vh"
-widget.styles.width = "auto"
+scalar = 16      # Cell unit can be specified with an int/float
+scalar = "1fr"   # proportional size of 1
+scalar = "50%"   # 50% of the same dimension of the parent
+scalar = "25w"   # 25% of the width of the parent
+scalar = "75h"   # 75% of the height of the parent
+scalar = "25vw"  # 25% of the viewport width
+scalar = "75vh"  # 75% of the viewport height
+scalar = "auto"  # special value
 ```

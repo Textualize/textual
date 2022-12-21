@@ -1,20 +1,31 @@
-# Integer
+# &lt;integer&gt;
 
-An integer unit.
+The `<integer>` CSS type represents an integer number and can be positive or negative.
+
+!!! note
+
+    Some CSS rules may expect an `<integer>` within certain bounds. If that is the case, it will be noted in that rule.
 
 ## Syntax
 
 Any legal integer, like `-10` or `42`.
-Integer units can be negative, althought that may not make sense in some rules.
 
 ## Examples
 
-```css
-Widget {
-    margin: -5 10;
+### CSS
+
+```sass
+* {
+    rule: -5;
+    rule: 10;
 }
 ```
 
+### Python
+
+In Python, a rule that expects a CSS type `<integer>` will expect a value of the type `int`:
+
 ```py
-widget.styles.offset = (-5, 10)
+integer = -5
+integer = 10
 ```

@@ -1,6 +1,6 @@
-# Text style
+# &lt;text-style&gt;
 
-The text style unit is a combination of any of the legal text style values in a space-separated list.
+The `<text-style>` CSS type represents styles that can be applied to text.
 
 !!! warning
 
@@ -8,37 +8,40 @@ The text style unit is a combination of any of the legal text style values in a 
 
 ## Syntax
 
---8<-- "docs/snippets/text_style_syntax.md"
+--8<-- "docs/snippets/type_syntax/text_style.md"
 
 ## Examples
 
-!!! note
+### CSS
 
-    The `text-style` CSS rule and the text style unit are closely related but they are not the same thing.
-    Here, we show examples of the text style unit, which are relevant for [all CSS rules](#used-by) that use the text style unit.
+```sass
+* {
+    /* You can specify any value by itself. */
+    rule: bold;
+    rule: italic;
+    rule: none;
+    rule: reverse;
+    rule: strike;
+    rule: underline;
 
-```css
-Widget {
-    text-style: bold;
-    text-style: italic;
-    text-style: reverse;
-    text-style: underline;
-    text-style: strike;
-
-    /* When the unit expected is a style, you can specify multiple values */
-    text-style: strike bold italic reverse;
-    text-style: bold underline italic;
+    /* You can also combine multiple values. */
+    rule: strike bold italic reverse;
+    rule: bold underline italic;
 }
 ```
 
-```py
-widget.styles.text_style = "bold"
-widget.styles.text_style = "italic"
-widget.styles.text_style = "reverse"
-widget.styles.text_style = "underline"
-widget.styles.text_style = "strike"
+### Python
 
-# Multiple values can be specified
-widget.styles.text_style = "strike bold italic reverse"
-widget.styles.text_style = "bold underline italic"
+```py
+# You can specify any value by itself
+text_style = "bold"
+text_style = "italic"
+text_style = "none"
+text_style = "reverse"
+text_style = "strike"
+text_style = "underline"
+
+# You can also combine multiple values
+text_style = "strike bold italic reverse"
+text_style = "bold underline italic"
 ```
