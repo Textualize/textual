@@ -200,10 +200,12 @@ class Key(InputEvent):
 
     __slots__ = ["key", "character", "aliases"]
 
-    def __init__(self, sender: MessageTarget, key: str, char: str | None) -> None:
+    def __init__(self, sender: MessageTarget, key: str, character: str | None) -> None:
         super().__init__(sender)
         self.key = key
-        self.character = (key if len(key) == 1 else None) if char is None else char
+        self.character = (
+            (key if len(key) == 1 else None) if character is None else character
+        )
         self.aliases = _get_key_aliases(key)
 
     def __rich_repr__(self) -> rich.repr.Result:

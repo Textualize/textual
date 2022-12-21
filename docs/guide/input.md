@@ -160,7 +160,7 @@ The tuple of three strings may be enough for simple bindings, but you can also r
 
 ### Priority bindings
 
-Textual checks bindings for the focused widget first. If there is no matching binding, then the parent widget(s) will be checked. Occasionally, you may want bindings to be checked *before* the focused widget. Typically to create hot-keys.
+Individual bindings may be marked as a *priority*, which means they will be checked prior to the bindings of the focused widget. This feature is often used to create hot-keys on the app or screen. Such bindings can not be disabled by binding the same key on a widget.
 
 You can create priority key bindings by setting `priority=True` on the Binding object. Textual uses this feature to add a default binding for ++ctrl+c++ so there is always a way to exit the app. Here's the bindings from the App base class. Note the first binding is set as a priority:
 
