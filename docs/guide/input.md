@@ -31,7 +31,7 @@ When you press a key, the app will receive the event and write it to a [TextLog]
 
 ### Key Event
 
-The key event contains following attributes which your app can use to know how to respond.
+The key event contains the following attributes which your app can use to know how to respond.
 
 #### key
 
