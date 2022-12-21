@@ -10,7 +10,7 @@ box-sizing: border-box | content-box;
 
 ### Values
 
-| Values                 | Description                                                                                                                                                             |
+| Value                  | Description                                                                                                                                                             |
 |------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `border-box` (default) | Padding and border are included in the width and height. If you add padding and/or border the widget will not change in size, but you will have less space for content. |
 | `content-box`          | Padding and border will increase the size of the widget, leaving the content area unaffected.                                                                           |
