@@ -476,7 +476,14 @@ class App(Generic[ReturnType], DOMNode):
         """Watches the dark bool."""
         self.set_class(dark, "-dark-mode")
         self.set_class(not dark, "-light-mode")
-        self.refresh_css()
+        try:
+            self.refresh_css()
+        except ScreenStackError:
+            # It's possible that `dark` can be set before we have a default
+            # screen, in an app's `on_load`, for example. So let's eat the
+            # ScreenStackError -- the above styles will be handled once the
+            # screen is spun up anyway.
+            pass
 
     def get_driver_class(self) -> Type[Driver]:
         """Get a driver class for this platform.
@@ -1487,7 +1494,7 @@ class App(Generic[ReturnType], DOMNode):
             nodes: set[DOMNode] = {
                 child
                 for node in self._require_stylesheet_update
-                for child in node.walk_children()
+                for child in node.walk_children(with_self=True)
             }
             self._require_stylesheet_update.clear()
             self.stylesheet.update_nodes(nodes, animate=True)

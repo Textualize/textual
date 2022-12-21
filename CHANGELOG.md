@@ -7,10 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.8.0] - Unreleased
 
-### Fixed 
+### Fixed
 
 - Fixed issues with nested auto dimensions https://github.com/Textualize/textual/issues/1402
 - Fixed watch method incorrectly running on first set when value hasn't changed and init=False https://github.com/Textualize/textual/pull/1367
+- `App.dark` can now be set from `App.on_load` without an error being raised  https://github.com/Textualize/textual/issues/1369
 
 ### Added
 
@@ -25,6 +26,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Deprecated `PRIORITY_BINDINGS` class variable.
 - Renamed `char` to `character` on Key event.
 - Renamed `key_name` to `name` on Key event.
+- Moved Ctrl+C, tab, and shift+tab to App BINDINGS
+- Queries/`walk_children` no longer includes self in results by default https://github.com/Textualize/textual/pull/1416
 
 ## [0.7.0] - 2022-12-17
 

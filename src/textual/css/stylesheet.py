@@ -490,7 +490,7 @@ class Stylesheet:
             animate (bool, optional): Enable CSS animation. Defaults to False.
         """
 
-        self.update_nodes(root.walk_children(), animate=animate)
+        self.update_nodes(root.walk_children(with_self=True), animate=animate)
 
     def update_nodes(self, nodes: Iterable[DOMNode], animate: bool = False) -> None:
         """Update styles for nodes.
