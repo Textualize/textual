@@ -12,7 +12,11 @@ The style `background` needs a [`<color>`](../css_types/color.md) followed by an
 
 ### Values
 
+#### &lt;color&gt;
+
 --8<-- "docs/snippets/type_syntax/color.md"
+
+#### &lt;percentage&gt;
 
 --8<-- "docs/snippets/type_syntax/percentage.md"
 This is clamped between `0%` and `100%`.
