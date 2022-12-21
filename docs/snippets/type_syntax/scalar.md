@@ -1,4 +1,4 @@
-A [scalar](/styles/css_units/scalar) can be any of the following:
+A [`<scalar>`](/css_types/scalar) can be any of the following:
 
  - a fixed number of cells (e.g., `10`);
  - a fractional proportion relative to the sizes of the other widgets (e.g., `1fr`);
