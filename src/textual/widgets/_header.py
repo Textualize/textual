@@ -91,13 +91,13 @@ class Header(Widget):
     Header {
         dock: top;
         width: 100%;
-        background: $secondary-background;
+        background: $foreground 5%;
         color: $text;
         height: 1;
     }
     Header.-tall {
         height: 3;
-    }
+    }    
     """
 
     tall = Reactive(False)

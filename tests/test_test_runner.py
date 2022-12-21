@@ -12,7 +12,9 @@ async def test_run_test() -> None:
 
     app = TestApp()
     async with app.run_test() as pilot:
-        assert str(pilot) == "<Pilot app=TestApp(title='TestApp')>"
+        assert (
+            str(pilot) == "<Pilot app=TestApp(title='TestApp', classes={'-dark-mode'})>"
+        )
         await pilot.press("tab", *"foo")
         await pilot.pause(1 / 100)
         await pilot.exit("bar")

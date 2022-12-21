@@ -320,7 +320,7 @@ class Region(NamedTuple):
             Offset: An offset required to add to region to move it inside window_region.
         """
 
-        if region in window_region:
+        if region in window_region and not top:
             # Region is already inside the window, so no need to move it.
             return NULL_OFFSET
 
@@ -341,19 +341,19 @@ class Region(NamedTuple):
                 key=abs,
             )
 
-        if not (
+        if top:
+            delta_y = top_ - window_top
+
+        elif not (
             (window_bottom > top_ >= window_top)
             and (window_bottom > bottom >= window_top)
         ):
             # The window needs to scroll on the Y axis to bring region in to view
-            if top:
-                delta_y = top_ - window_top
-            else:
-                delta_y = min(
-                    top_ - window_top,
-                    top_ - (window_bottom - region.height),
-                    key=abs,
-                )
+            delta_y = min(
+                top_ - window_top,
+                top_ - (window_bottom - region.height),
+                key=abs,
+            )
         return Offset(delta_x, delta_y)
 
     def __bool__(self) -> bool:

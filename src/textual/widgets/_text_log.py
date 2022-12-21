@@ -61,11 +61,18 @@ class TextLog(ScrollView, can_focus=True):
     def _on_styles_updated(self) -> None:
         self._line_cache.clear()
 
-    def write(self, content: RenderableType | object) -> None:
+    def write(
+        self,
+        content: RenderableType | object,
+        width: int | None = None,
+        expand: bool = False,
+    ) -> None:
         """Write text or a rich renderable.
 
         Args:
             content (RenderableType): Rich renderable (or text).
+            width (int): Width to render or None to use optimal width. Defaults to None.
+            expand (bool): Enable expand to widget width, or False to use `width`.
         """
 
         renderable: RenderableType
@@ -88,13 +95,17 @@ class TextLog(ScrollView, can_focus=True):
         if isinstance(renderable, Text) and not self.wrap:
             render_options = render_options.update(overflow="ignore", no_wrap=True)
 
-        width = max(
-            self.min_width,
-            measure_renderables(console, render_options, [renderable]).maximum,
-        )
+        if expand:
+            render_width = self.scrollable_content_region.width
+        else:
+            render_width = (
+                measure_renderables(console, render_options, [renderable]).maximum
+                if width is None
+                else width
+            )
 
         segments = self.app.console.render(
-            renderable, render_options.update_width(width)
+            renderable, render_options.update_width(render_width)
         )
         lines = list(Segment.split_lines(segments))
         if not lines:

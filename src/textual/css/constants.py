@@ -36,20 +36,21 @@ VALID_ALIGN_VERTICAL: Final = {"top", "middle", "bottom"}
 VALID_TEXT_ALIGN: Final = {"start", "end", "left", "right", "center", "justify"}
 VALID_SCROLLBAR_GUTTER: Final = {"auto", "stable"}
 VALID_STYLE_FLAGS: Final = {
+    "b",
+    "blink",
+    "bold",
+    "dim",
+    "i",
+    "italic",
     "none",
     "not",
-    "bold",
-    "blink",
-    "italic",
-    "underline",
-    "overline",
-    "strike",
-    "b",
-    "i",
-    "u",
-    "uu",
     "o",
+    "overline",
     "reverse",
+    "strike",
+    "u",
+    "underline",
+    "uu",
 }
 
 NULL_SPACING: Final = Spacing.all(0)

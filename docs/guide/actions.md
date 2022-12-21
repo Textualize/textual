@@ -75,7 +75,7 @@ When you click any of the links, Textual runs the `"set_background"` action to c
 
 ## Bindings
 
-Textual will also run actions bound to keys. The following example adds key [bindings](./input.md#bindings) for the ++r++, ++g++, and ++b++ keys which call the `"set_background"` action.
+Textual will run actions bound to keys. The following example adds key [bindings](./input.md#bindings) for the ++r++, ++g++, and ++b++ keys which call the `"set_background"` action.
 
 === "actions04.py"
 
@@ -92,7 +92,7 @@ If you run this example, you can change the background by pressing keys in addit
 
 ## Namespaces
 
-Textual will look for action methods on the widget or app where they are used. If we were to create a [custom widget](./widgets.md#custom-widgets) it can have its own set of actions.
+Textual will look for action methods in the class where they are defined (App, Screen, or Widget). If we were to create a [custom widget](./widgets.md#custom-widgets) it can have its own set of actions.
 
 The following example defines a custom widget with its own `set_background` action.
 

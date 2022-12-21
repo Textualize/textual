@@ -44,6 +44,7 @@ from ._layout import Layout
 from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
 from ._types import Lines
+from .actions import SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding
 from .box_model import BoxModel, get_box_model
@@ -85,7 +86,8 @@ class AwaitMount:
 
     """
 
-    def __init__(self, widgets: Sequence[Widget]) -> None:
+    def __init__(self, parent: Widget, widgets: Sequence[Widget]) -> None:
+        self._parent = parent
         self._widgets = widgets
 
     def __await__(self) -> Generator[None, None, None]:
@@ -97,6 +99,7 @@ class AwaitMount:
                 ]
                 if aws:
                     await wait(aws)
+                    self._parent.refresh(layout=True)
 
         return await_mount().__await__()
 
@@ -595,11 +598,11 @@ class Widget(DOMNode):
         else:
             parent = self
 
-        return AwaitMount(
-            self.app._register(
-                parent, *widgets, before=insert_before, after=insert_after
-            )
+        mounted = self.app._register(
+            parent, *widgets, before=insert_before, after=insert_after
         )
+
+        return AwaitMount(self, mounted)
 
     def move_child(
         self,
@@ -1805,7 +1808,7 @@ class Widget(DOMNode):
         if spacing is not None:
             window = window.shrink(spacing)
 
-        if window in region:
+        if window in region and not top:
             return Offset()
 
         delta_x, delta_y = Region.get_scroll_to_visible(window, region, top=top)
@@ -2173,8 +2176,10 @@ class Widget(DOMNode):
 
         if layout:
             self._layout_required = True
-            if isinstance(self._parent, Widget):
-                self._parent._clear_arrangement_cache()
+            for ancestor in self.ancestors:
+                if not isinstance(ancestor, Widget):
+                    break
+                ancestor._clear_arrangement_cache()
 
         if repaint:
             self._set_dirty(*regions)
@@ -2342,17 +2347,22 @@ class Widget(DOMNode):
         self.mouse_over = True
 
     def _on_focus(self, event: events.Focus) -> None:
-        for node in self.ancestors_with_self:
-            if node._has_focus_within:
-                self.app.update_styles(node)
         self.has_focus = True
         self.refresh()
+        self.emit_no_wait(events.DescendantFocus(self))
 
     def _on_blur(self, event: events.Blur) -> None:
-        if any(node._has_focus_within for node in self.ancestors_with_self):
-            self.app.update_styles(self)
         self.has_focus = False
         self.refresh()
+        self.emit_no_wait(events.DescendantBlur(self))
+
+    def _on_descendant_blur(self, event: events.DescendantBlur) -> None:
+        if self._has_focus_within:
+            self.app.update_styles(self)
+
+    def _on_descendant_focus(self, event: events.DescendantBlur) -> None:
+        if self._has_focus_within:
+            self.app.update_styles(self)
 
     def _on_mouse_scroll_down(self, event) -> None:
         if self.allow_vertical_scroll:
@@ -2397,33 +2407,41 @@ class Widget(DOMNode):
         self.scroll_to_region(message.region, animate=True)
 
     def action_scroll_home(self) -> None:
-        if self._allow_scroll:
-            self.scroll_home()
+        if not self._allow_scroll:
+            raise SkipAction()
+        self.scroll_home()
 
     def action_scroll_end(self) -> None:
-        if self._allow_scroll:
-            self.scroll_end()
+        if not self._allow_scroll:
+            raise SkipAction()
+        self.scroll_end()
 
     def action_scroll_left(self) -> None:
-        if self.allow_horizontal_scroll:
-            self.scroll_left()
+        if not self.allow_horizontal_scroll:
+            raise SkipAction()
+        self.scroll_left()
 
     def action_scroll_right(self) -> None:
-        if self.allow_horizontal_scroll:
-            self.scroll_right()
+        if not self.allow_horizontal_scroll:
+            raise SkipAction()
+        self.scroll_right()
 
     def action_scroll_up(self) -> None:
-        if self.allow_vertical_scroll:
-            self.scroll_up()
+        if not self.allow_vertical_scroll:
+            raise SkipAction()
+        self.scroll_up()
 
     def action_scroll_down(self) -> None:
-        if self.allow_vertical_scroll:
-            self.scroll_down()
+        if not self.allow_vertical_scroll:
+            raise SkipAction()
+        self.scroll_down()
 
     def action_page_down(self) -> None:
-        if self.allow_vertical_scroll:
-            self.scroll_page_down()
+        if not self.allow_vertical_scroll:
+            raise SkipAction()
+        self.scroll_page_down()
 
     def action_page_up(self) -> None:
-        if self.allow_vertical_scroll:
-            self.scroll_page_up()
+        if not self.allow_vertical_scroll:
+            raise SkipAction()
+        self.scroll_page_up()
