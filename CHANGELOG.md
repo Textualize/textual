@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Moved Ctrl+C, tab, and shift+tab to App BINDINGS
+- Deprecated `PRIORITY_BINDINGS` class variable.
 
 ## [0.7.0] - 2022-12-17
 

@@ -29,7 +29,6 @@ class Screen(Widget):
     # The screen is a special case and unless a class that inherits from us
     # says otherwise, all screen-level bindings should be treated as having
     # priority.
-    PRIORITY_BINDINGS = True
 
     DEFAULT_CSS = """
     Screen {

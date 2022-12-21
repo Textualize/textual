@@ -10,7 +10,7 @@ This chapter will discuss how to make your app respond to input in the form of k
 
 ## Keyboard input
 
-The most fundamental way to receive input is via [Key][textual.events.Key] events. Let's write an app to show key events as you type.
+The most fundamental way to receive input is via [Key][textual.events.Key] events which are sent to your app when the user presses a key. Let's write an app to show key events as you type.
 
 === "key01.py"
 
@@ -23,7 +23,7 @@ The most fundamental way to receive input is via [Key][textual.events.Key] event
     ```{.textual path="docs/examples/guide/input/key01.py", press="T,e,x,t,u,a,l,!,_"}
     ```
 
-When you press a key, the app will receive the associated event and write it to a [TextLog](../widgets/text_log.md) widget. Try pressing a few keys to see what happens.
+When you press a key, the app will receive the event and write it to a [TextLog](../widgets/text_log.md) widget. Try pressing a few keys to see what happens.
 
 !!! tip
 
@@ -31,8 +31,7 @@ When you press a key, the app will receive the associated event and write it to 
 
 ### Key Event
 
-The key event contains a number of attributes which tell you what key (or keys) have been pressed.
-
+The key event contains following attributes which your app can use to know how to respond.
 
 #### key
 
@@ -48,13 +47,13 @@ Many keys can also be combined with ++ctrl++ which will prefix the key with `ctr
 
 #### character
 
-If the key has an associated printable character then the `character` will contain a string containing a single unicode character. If there is no printable character for the key (such as for function keys) then `character` will be `None`.
+If the key has an associated printable character then `character` will contain a string with a single unicode character. If there is no printable character for the key (such as for function keys) then `character` will be `None`.
 
 For example the ++p++ key will produce `character="p"` but ++f2++ will produce `character=None`.
 
 #### name
 
-The `name` attribute is similar to `key` but unlike `key` is guaranteed to be valid within a Python function name. Textual derives `name` from the `key` key attribute by lower casing it and replacing `+` with `_`. Upper case letters are prefixed with `upper_` to distinguish them from lower case names.
+The `name` attribute is similar to `key` but, unlike `key`, is guaranteed to be valid within a Python function name. Textual derives `name` from the `key`  attribute by lower casing it and replacing `+` with `_`. Upper case letters are prefixed with `upper_` to distinguish them from lower case names.
 
 For example, ++ctrl+q++ produces `name="ctrl_p"` and ++shift+p++ produces `name="upper_p"`.
 
@@ -64,7 +63,7 @@ The `is_printable` attribute is a boolean which indicates if the key would typic
 
 #### aliases
 
-Some keys or combinations of keys can produce the same key. For instance, the ++tab++ key is indistinguishable from ++ctrl+i++ in the terminal. For such keys, Textual events will contain a list of the possible keys that may have produced this event. In the case of ++tab++, the `aliases` attribute will contain `["tab", "ctrl+i"]`
+Some keys or combinations of keys can produce the same event. For instance, the ++tab++ key is indistinguishable from ++ctrl+i++ in the terminal. For such keys, Textual events will contain a list of the possible keys that may have produced this event. In the case of ++tab++, the `aliases` attribute will contain `["tab", "ctrl+i"]`
 
 
 ### Key methods
@@ -155,24 +154,28 @@ Note how the footer displays bindings and makes them clickable.
     Multiple keys can be bound to a single action by comma-separating them.
     For example, `("r,t", "add_bar('red')", "Add Red")` means both ++r++ and ++t++ are bound to `add_bar('red')`.
 
-
-!!! note
-
-    Ordinarily a binding on a focused widget has precedence over the same key binding at a higher level. However, bindings at the `App` or `Screen` level always have priority.
-
-    The priority of a single binding can be controlled with the `priority` parameter of a `Binding` instance. Set it to `True` to give it priority, or `False` to not.
-
-    The default priority of all bindings on a class can be controlled with the `PRIORITY_BINDINGS` class variable. Set it to `True` or `False` to set the default priority for all `BINDINGS`.
-
 ### Binding class
 
 The tuple of three strings may be enough for simple bindings, but you can also replace the tuple with a [Binding][textual.binding.Binding] instance which exposes a few more options.
 
-### Why use bindings?
+### Priority bindings
 
-Bindings are particularly useful for configurable hot-keys. Bindings can also be inspected in widgets such as [Footer](../widgets/footer.md).
+Textual checks bindings for the focused widget first. If there is no matching binding, then the parent widget(s) will be checked. Occasionally, you may want bindings to be checked *before* the focused widget. Typically to create hot-keys.
 
-In a future version of Textual it will also be possible to specify bindings in a configuration file, which will allow users to override app bindings.
+You can create priority key bindings by setting `priority=True` on the Binding object. Textual uses this feature to add a default binding for ++ctrl+c++ so there is always a way to exit the app. Here's the bindings from the App base class. Note the first binding is set as a priority:
+
+```python
+    BINDINGS = [
+        Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
+        Binding("tab", "focus_next", "Focus Next", show=False),
+        Binding("shift+tab", "focus_previous", "Focus Previous", show=False),
+    ]
+```
+
+### Show bindings
+
+The [footer](../widgets/footer.md) widget can inspect bindings to display available keys. If you don't want a binding to display in the footer you can set `show=False`. The default bindings on App do this so that the standard ++ctrl+c++, ++tab++ and ++shift+tab++ bindings don't typically appear in the footer.
+
 
 ## Mouse Input
 

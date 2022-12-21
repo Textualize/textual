@@ -90,6 +90,8 @@ Textual will run actions bound to keys. The following example adds key [bindings
 
 If you run this example, you can change the background by pressing keys in addition to clicking links.
 
+See the previous section on [input](./input.md#bindings) for more information on bindings.
+
 ## Namespaces
 
 Textual will look for action methods in the class where they are defined (App, Screen, or Widget). If we were to create a [custom widget](./widgets.md#custom-widgets) it can have its own set of actions.

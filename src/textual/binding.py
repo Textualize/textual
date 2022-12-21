@@ -5,6 +5,7 @@ from typing import Iterable, MutableMapping
 
 import rich.repr
 
+from textual.keys import _character_to_key
 from textual._typing import TypeAlias
 
 BindingType: TypeAlias = "Binding | tuple[str, str, str]"
@@ -32,7 +33,7 @@ class Binding:
     """bool: Show the action in Footer, or False to hide."""
     key_display: str | None = None
     """str | None: How the key should be shown in footer."""
-    priority: bool | None = None
+    priority: bool = False
     """bool | None: Is this a priority binding, checked form app down to focused widget?"""
 
 
@@ -43,13 +44,11 @@ class Bindings:
     def __init__(
         self,
         bindings: Iterable[BindingType] | None = None,
-        default_priority: bool | None = None,
     ) -> None:
         """Initialise a collection of bindings.
 
         Args:
             bindings (Iterable[BindingType] | None, optional): An optional set of initial bindings.
-            default_priority (bool | None, optional): The default priority of the bindings.
 
         Note:
             The iterable of bindings can contain either a `Binding`
@@ -71,17 +70,16 @@ class Bindings:
                 # be a list of keys, so now we unroll that single Binding
                 # into a (potential) collection of Binding instances.
                 for key in binding.key.split(","):
+                    key = key.strip()
+                    if len(key) == 1:
+                        key = _character_to_key(key)
                     yield Binding(
                         key=key.strip(),
                         action=binding.action,
                         description=binding.description,
                         show=binding.show,
                         key_display=binding.key_display,
-                        priority=(
-                            default_priority
-                            if binding.priority is None
-                            else binding.priority
-                        ),
+                        priority=binding.priority,
                     )
 
         self.keys: MutableMapping[str, Binding] = (

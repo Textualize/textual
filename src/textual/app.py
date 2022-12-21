@@ -232,8 +232,6 @@ class App(Generic[ReturnType], DOMNode):
     }
     """
 
-    PRIORITY_BINDINGS = True
-
     SCREENS: dict[str, Screen | Callable[[], Screen]] = {}
     _BASE_PATH: str | None = None
     CSS_PATH: CSSPathType = None
@@ -242,10 +240,8 @@ class App(Generic[ReturnType], DOMNode):
 
     BINDINGS = [
         Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
-        Binding("tab", "focus_next", "Focus Next", show=False, priority=False),
-        Binding(
-            "shift+tab", "focus_previous", "Focus Previous", show=False, priority=False
-        ),
+        Binding("tab", "focus_next", "Focus Next", show=False),
+        Binding("shift+tab", "focus_previous", "Focus Previous", show=False),
     ]
 
     title: Reactive[str] = Reactive("")
