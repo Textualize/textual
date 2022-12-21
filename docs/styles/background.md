@@ -4,13 +4,18 @@ The `background` rule sets the background color of a widget.
 
 ## Syntax
 
-```
-background: <COLOR> [<PERCENTAGE>];
-```
+--8<-- "docs/snippets/syntax_block_start.md"
+background: <a href="../css_types/color.md">&lt;color&gt;</a> [<a href="../css_types/percentage.md">&lt;percentage&gt;</a>];
+--8<-- "docs/snippets/syntax_block_end.md"
+
+The style `background` needs a [`<color>`](../css_types/color.md) followed by an optional [`<percentage>`](../css_types/percentage.md) to specify the color transparency.
+
+### Values
 
 --8<-- "docs/snippets/type_syntax/color.md"
 
-The optional [percentage](./css_units/percentage.md) sets the transparency level and will override any transparency specified directly in the color.
+--8<-- "docs/snippets/type_syntax/percentage.md"
+This is clamped between `0%` and `100%`.
 
 ## Examples
 
