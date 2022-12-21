@@ -38,7 +38,7 @@ For example, `heavy white` would display a heavy white line around a widget.
 
 ### Color syntax
 
---8<-- "docs/snippets/color_css_syntax.md"
+--8<-- "docs/snippets/type_syntax/color.md"
 
 ### Multiple edge rules
 

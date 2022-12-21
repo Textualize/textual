@@ -16,7 +16,7 @@ If there are more columns in the grid than scalars specified in `grid-columns`, 
 
 Scalar units can be mixed.
 
---8<-- "docs/snippets/scalar_syntax.md"
+--8<-- "docs/snippets/type_syntax/scalar.md"
 
 ## Example
 

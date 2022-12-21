@@ -8,7 +8,7 @@ The `background` rule sets the background color of a widget.
 background: <COLOR> [<PERCENTAGE>];
 ```
 
---8<-- "docs/snippets/color_css_syntax.md"
+--8<-- "docs/snippets/type_syntax/color.md"
 
 The optional [percentage](./css_units/percentage.md) sets the transparency level and will override any transparency specified directly in the color.
 
