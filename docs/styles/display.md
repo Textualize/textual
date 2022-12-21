@@ -5,7 +5,7 @@ The `display` property defines whether a widget is displayed or not.
 ## Syntax
 
 ```
-display: none | block;
+display: block | none;
 ```
 
 ### Values
