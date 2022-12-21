@@ -28,6 +28,14 @@ nav:
   - "roadmap.md"
   - Reference:
     - "reference/index.md"
+    - CSS Types:
+      - "css_types/index.md"
+      - "css_types/color.md"
+      - "css_types/fractional.md"
+      - "css_types/integer.md"
+      - "css_types/percentage.md"
+      - "css_types/scalar.md"
+      - "css_types/text_style.md"
     - Events:
       - "events/index.md"
       - "events/blur.md"
@@ -54,14 +62,6 @@ nav:
       - "events/screen_suspend.md"
       - "events/show.md"
     - Styles:
-      - CSS units:
-        - "styles/css_units/index.md"
-        - "styles/css_units/color.md"
-        - "styles/css_units/fractional.md"
-        - "styles/css_units/integer.md"
-        - "styles/css_units/percentage.md"
-        - "styles/css_units/scalar.md"
-        - "styles/css_units/text_style.md"
       - "styles/index.md"
       - "styles/align.md"
       - "styles/background.md"
