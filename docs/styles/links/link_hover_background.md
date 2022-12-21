@@ -1,10 +1,10 @@
 # Link-hover-background
 
-The `link-hover-background` sets the background color of the link.
+The `link-hover-background` sets the background color of the link when the mouse cursor is over the link.
 
 !!! note
 
-    `link-hover-background` only applies to "action links" as described in the [actions guide](../../guide/actions.md#links) and not to regular hyperlinks.
+    `link-hover-background` only applies to Textual action links as described in the [actions guide](../../guide/actions.md#links) and not to regular hyperlinks.
 
 ## Syntax
 

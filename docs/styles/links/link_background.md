@@ -4,7 +4,7 @@ The `link-background` sets the background color of the link.
 
 !!! note
 
-    `link-background` only applies to "action links" as described in the [actions guide](../../guide/actions.md#links) and not to regular hyperlinks.
+    `link-background` only applies to Textual action links as described in the [actions guide](../../guide/actions.md#links) and not to regular hyperlinks.
 
 ## Syntax
 
@@ -18,7 +18,7 @@ link-background: <COLOR> <PERCENTAGE>;
 
 ## Example
 
-The example below shows some links with their color changed.
+The example below shows some links with their background color changed.
 It also shows that `link-background` does not affect hyperlinks.
 
 === "Output"

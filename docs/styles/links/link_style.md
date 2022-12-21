@@ -4,7 +4,7 @@ The `link-style` sets the text style for the link text.
 
 !!! note
 
-    `link-style` only applies to "action links" as described in the [actions guide](../../guide/actions.md#links) and not to regular hyperlinks.
+    `link-style` only applies to Textual action links as described in the [actions guide](../../guide/actions.md#links) and not to regular hyperlinks.
 
 ## Syntax
 
