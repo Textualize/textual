@@ -43,7 +43,7 @@ Many keys can also be combined with ++ctrl++ which will prefix the key with `ctr
 
 !!! warning
 
-    Not all keys combinations are supported in terminals, and some keys may be intercepted by your OS. If in doubt, run `textual keys` from the command line.
+    Not all keys combinations are supported in terminals and some keys may be intercepted by your OS. If in doubt, run `textual keys` from the command line.
 
 #### character
 
