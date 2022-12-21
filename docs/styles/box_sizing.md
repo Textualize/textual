@@ -5,7 +5,7 @@ The `box-sizing` property determines how the width and height of a widget are ca
 ## Syntax
 
 ```
-box-sizing: [border-box|content-box];
+box-sizing: border-box | content-box;
 ```
 
 ### Values
