@@ -37,10 +37,14 @@ async def test_character_bindings():
     app = BindApp()
     async with app.run_test() as pilot:
         await pilot.press(".")
+        await pilot.pause()
         assert counter == 1
         await pilot.press("~")
+        await pilot.pause()
         assert counter == 2
         await pilot.press(" ")
+        await pilot.pause()
         assert counter == 3
         await pilot.press("x")
+        await pilot.pause()
         assert counter == 3
