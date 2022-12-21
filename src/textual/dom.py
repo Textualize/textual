@@ -615,7 +615,7 @@ class DOMNode(MessagePump):
         """Reset styles back to their initial state"""
         from .widget import Widget
 
-        for node in self.walk_children():
+        for node in self.walk_children(with_self=True):
             node._css_styles.reset()
             if isinstance(node, Widget):
                 node._set_dirty()
@@ -648,7 +648,7 @@ class DOMNode(MessagePump):
         self,
         filter_type: type[WalkType],
         *,
-        with_self: bool = True,
+        with_self: bool = False,
         method: WalkMethod = "depth",
         reverse: bool = False,
     ) -> list[WalkType]:
@@ -658,7 +658,7 @@ class DOMNode(MessagePump):
     def walk_children(
         self,
         *,
-        with_self: bool = True,
+        with_self: bool = False,
         method: WalkMethod = "depth",
         reverse: bool = False,
     ) -> list[DOMNode]:
@@ -668,16 +668,16 @@ class DOMNode(MessagePump):
         self,
         filter_type: type[WalkType] | None = None,
         *,
-        with_self: bool = True,
+        with_self: bool = False,
         method: WalkMethod = "depth",
         reverse: bool = False,
     ) -> list[DOMNode] | list[WalkType]:
-        """Generate descendant nodes.
+        """Walk the subtree rooted at this node, and return every descendant encountered in a list.
 
         Args:
             filter_type (type[WalkType] | None, optional): Filter only this type, or None for no filter.
                 Defaults to None.
-            with_self (bool, optional): Also yield self in addition to descendants. Defaults to True.
+            with_self (bool, optional): Also yield self in addition to descendants. Defaults to False.
             method (Literal["breadth", "depth"], optional): One of "depth" or "breadth". Defaults to "depth".
             reverse (bool, optional): Reverse the order (bottom up). Defaults to False.
 

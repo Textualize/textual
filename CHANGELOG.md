@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Moved Ctrl+C, tab, and shift+tab to App BINDINGS
+- Queries/`walk_children` no longer includes self in results by default https://github.com/Textualize/textual/pull/1416
 
 ## [0.7.0] - 2022-12-17
 
