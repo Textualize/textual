@@ -23,7 +23,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Moved Ctrl+C, tab, and shift+tab to App BINDINGS.
 - Deprecated `PRIORITY_BINDINGS` class variable.
 - Renamed `char` to `character` on Key event.
 - Renamed `key_name` to `name` on Key event.
