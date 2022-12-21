@@ -47,7 +47,7 @@ Many keys can also be combined with ++ctrl++ which will prefix the key with `ctr
 
 #### character
 
-If the key has an associated printable character then `character` will contain a string with a single unicode character. If there is no printable character for the key (such as for function keys) then `character` will be `None`.
+If the key has an associated printable character, then `character` will contain a string with a single Unicode character. If there is no printable character for the key (such as for function keys) then `character` will be `None`.
 
 For example the ++p++ key will produce `character="p"` but ++f2++ will produce `character=None`.
 
