@@ -1,42 +1,29 @@
 # Border
 
-The `border` rule enables the drawing of a box around a widget. A border is set with a border type (see below) and a color.
-
-Borders may also be set individually for the four edges of a widget with the `border-top`, `border-right`, `border-bottom` and `border-left` rules.
+The `border` rule enables the drawing of a box around a widget.
 
 ## Syntax
 
-```
-border: [<BORDER TYPE>] [<COLOR>];
-border-top: [<BORDER TYPE>] [<COLOR>];
-border-right: [<BORDER TYPE>] [<COLOR>];
-border-bottom: [<BORDER TYPE>] [<COLOR>];
-border-left: [<BORDER TYPE>] [<COLOR>];
-```
+--8<-- "docs/snippets/syntax_block_start.md"
+border: [<a href="../css_types/border.md">&lt;border&gt;</a>] [<a href="../css_types/color.md">&lt;color&gt;</a>];
 
-### Border types
+border-top: [<a href="../css_types/border.md">&lt;border&gt;</a>] [<a href="../css_types/color.md">&lt;color&gt;</a>];
+border-right: [<a href="../css_types/border.md">&lt;border&gt;</a>] [<a href="../css_types/color.md">&lt;color&gt;</a>];
+border-bottom: [<a href="../css_types/border.md">&lt;border&gt;</a>] [<a href="../css_types/color.md">&lt;color&gt;</a>];
+border-left: [<a href="../css_types/border.md">&lt;border&gt;</a>] [<a href="../css_types/color.md">&lt;color&gt;</a>];
+--8<-- "docs/snippets/syntax_block_end.md"
 
-| Border type | Description                                             |
-|-------------|---------------------------------------------------------|
-| `"ascii"`   | A border with plus, hyphen, and vertical bar characters |
-| `"blank"`   | A blank border (reserves space for a border)            |
-| `"dashed"`  | Dashed line border                                      |
-| `"double"`  | Double lined border                                     |
-| `"heavy"`   | Heavy border                                            |
-| `"hidden"`  | Alias for "none"                                        |
-| `"hkey"`    | Horizontal key-line border                              |
-| `"inner"`   | Thick solid border                                      |
-| `"none"`    | Disabled border                                         |
-| `"outer"`   | Solid border with additional space around content       |
-| `"round"`   | Rounded corners                                         |
-| `"solid"`   | Solid border                                            |
-| `"tall"`    | Solid border with extras space top and bottom           |
-| `"vkey"`    | Vertical key-line border                                |
-| `"wide"`    | Solid border with additional space left and right       |
+The style `border` accepts an optional [`<border>`](../css_types/border.md) that sets the visual style of the widget border and an optional [`<color>`](../css_types/color.md) to set the color of the border.
 
-For example, `heavy white` would display a heavy white line around a widget.
+Borders may also be set individually for the four edges of a widget with the `border-top`, `border-right`, `border-bottom` and `border-left` rules.
 
-### Color syntax
+### Values
+
+#### &lt;border&gt;
+
+--8<-- "docs/snippets/type_syntax/border.md"
+
+#### &lt;color&gt;
 
 --8<-- "docs/snippets/type_syntax/color.md"
 
@@ -58,8 +45,8 @@ The CSS snippet above will add a solid green border around `Static` widgets, exc
 
 ### Defaults
 
-If a border color is specified but the border type is omitted, it defaults to solid.
-If a border type is specified but the border color is omitted, it defaults to green (RGB color `"#00FF00"`).
+If `<color>` is specified but `<border>` is not, it defaults to `"solid"`.
+If `<border>` is specified but `<color>`is not, it defaults to green (RGB color `"#00FF00"`).
 
 ## Border command
 
