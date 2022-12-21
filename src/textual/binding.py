@@ -5,6 +5,7 @@ from typing import Iterable, MutableMapping
 
 import rich.repr
 
+from textual.keys import _character_to_key
 from textual._typing import TypeAlias
 
 BindingType: TypeAlias = "Binding | tuple[str, str, str]"
@@ -16,6 +17,10 @@ class BindingError(Exception):
 
 class NoBinding(Exception):
     """A binding was not found."""
+
+
+class InvalidBinding(Exception):
+    """Binding key is in an invalid format."""
 
 
 @dataclass(frozen=True)
@@ -32,8 +37,8 @@ class Binding:
     """bool: Show the action in Footer, or False to hide."""
     key_display: str | None = None
     """str | None: How the key should be shown in footer."""
-    priority: bool | None = None
-    """bool | None: Is this a priority binding, checked form app down to focused widget?"""
+    priority: bool = False
+    """bool: Enable priority binding for this key."""
 
 
 @rich.repr.auto
@@ -43,13 +48,11 @@ class Bindings:
     def __init__(
         self,
         bindings: Iterable[BindingType] | None = None,
-        default_priority: bool | None = None,
     ) -> None:
         """Initialise a collection of bindings.
 
         Args:
             bindings (Iterable[BindingType] | None, optional): An optional set of initial bindings.
-            default_priority (bool | None, optional): The default priority of the bindings.
 
         Note:
             The iterable of bindings can contain either a `Binding`
@@ -71,17 +74,20 @@ class Bindings:
                 # be a list of keys, so now we unroll that single Binding
                 # into a (potential) collection of Binding instances.
                 for key in binding.key.split(","):
+                    key = key.strip()
+                    if not key:
+                        raise InvalidBinding(
+                            f"Can not bind empty string in {binding.key!r}"
+                        )
+                    if len(key) == 1:
+                        key = _character_to_key(key)
                     yield Binding(
-                        key=key.strip(),
+                        key=key,
                         action=binding.action,
                         description=binding.description,
                         show=binding.show,
                         key_display=binding.key_display,
-                        priority=(
-                            default_priority
-                            if binding.priority is None
-                            else binding.priority
-                        ),
+                        priority=binding.priority,
                     )
 
         self.keys: MutableMapping[str, Binding] = (

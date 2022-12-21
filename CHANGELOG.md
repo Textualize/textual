@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
 ## [0.8.0] - Unreleased
 
 ### Fixed
@@ -18,10 +19,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `textual.actions.SkipAction` exception which can be raised from an action to allow parents to process bindings.
 - Added `textual keys` preview.
+- Added ability to bind to a character in addition to key name. i.e. you can bind to "." or "full_stop".
+- Added TextLog.shrink attribute to allow renderable to reduce in size to fit width.
 
 ### Changed
 
-- Moved Ctrl+C, tab, and shift+tab to App BINDINGS
+- Deprecated `PRIORITY_BINDINGS` class variable.
+- Renamed `char` to `character` on Key event.
+- Renamed `key_name` to `name` on Key event.
 - Queries/`walk_children` no longer includes self in results by default https://github.com/Textualize/textual/pull/1416
 
 ## [0.7.0] - 2022-12-17
