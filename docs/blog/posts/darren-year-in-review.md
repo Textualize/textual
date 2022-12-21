@@ -84,7 +84,7 @@ However, when animating things in a terminal, we can often achieve better granul
 
 The exact characters that form the bar are "╺", "━" and "╸". When the bar sits perfectly within cell boundaries, every character is “━”. As it travels over a cell boundary, the left and right ends of the bar are updated to "╺" and "╸" respectively.
 
-## Snapshot testing
+## Snapshot testing for terminal apps
 
 One of the great features we added to Rich this year was the ability to export console contents to an SVG. This feature was later exposed to Textual, allowing users to capture screenshots of their running Textual apps.
 Ultimately, I ended up creating a tool for snapshot testing in the Textual codebase.
@@ -136,13 +136,14 @@ A project I worked on earlier in the year to improve the situation was the Textu
 
 Then, by running a Textual application with the `--dev` flag, all standard output will be redirected to it.
 This means you can use the builtin `print` function and still immediately see the output.
-Textual itself also writes information to this console, giving insight into the messages that are flowing throw an application.
+Textual itself also writes information to this console, giving insight into the messages that are flowing through an application.
 
 ## Pixel art
 
 Cells in the terminal are roughly two times taller than they are wide. This means, that two horizontally adjacent cells form an approximate square.
 
 Using this fact, I wrote a simple library based on Rich and PIL which can convert an image file into terminal output.
+You can find the library, `rich-pixels`, [on GitHub](https://github.com/darrenburns/rich-pixels).
 
 It’s particularly good for displaying simple pixel art images. The SVG image below is also a good example of the SVG export functionality I touched on earlier.
 
@@ -167,4 +168,4 @@ Other methods for displaying images in the terminal include:
 
 That was a whirlwind tour of just some of the projects I tackled in 2022.
 If you found it interesting, be sure to [follow me on Twitter](https://twitter.com/_darrenburns).
-I don't post often, but when I do, it's usually about things similar to those I've discussed in this post.
+I don't post often, but when I do, it's usually about things similar to those I've discussed here.
