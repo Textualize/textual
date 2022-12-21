@@ -63,6 +63,17 @@ def test_line_crop_edge_2():
     assert result == expected
 
 
+def test_line_crop_highlight_reverse_bug():
+    """Regression test for #818"""
+    segments_joined = [Segment('a1あ１１bcdaef１２３a1a')]
+    segments_split = [Segment('a1あ１１bcdaef'), Segment('１'), Segment('２３a1a')]
+
+    joined1 = "".join(seg.text for seg in line_crop(segments_split, start=9, end=16, total=23))
+    joined2 = "".join(seg.text for seg in line_crop(segments_joined, start=9, end=16, total=23))
+
+    assert joined1 == joined2
+
+
 def test_line_trim():
     segments = [Segment("foo")]
 
