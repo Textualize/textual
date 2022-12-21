@@ -30,6 +30,7 @@ nav:
     - "reference/index.md"
     - CSS Types:
       - "css_types/index.md"
+      - "css_types/border.md"
       - "css_types/color.md"
       - "css_types/horizontal.md"
       - "css_types/integer.md"
