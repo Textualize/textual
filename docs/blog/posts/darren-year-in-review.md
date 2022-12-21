@@ -119,7 +119,7 @@ I built an example app to demonstrate how to animate in Textual and the availabl
 The smoothness here is achieved using tricks similar to those used in the tabs I discussed earlier.
 In fact, the bar that animates in the video above is the same Rich renderable that is used by Textual's scrollbars.
 
-You can play with this app by running `textual easing`. Please use animation sparingly 😉.
+You can play with this app by running `textual easing`. Please use animation sparingly.
 
 ## Developer console
 
