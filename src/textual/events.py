@@ -214,7 +214,7 @@ class Key(InputEvent):
         yield "aliases", self.aliases, [self.key]
 
     @property
-    def name(self) -> str | None:
+    def name(self) -> str:
         """Name of a key suitable for use as a Python identifier."""
         return _key_to_identifier(self.key).lower()
 
