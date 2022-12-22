@@ -1,20 +1,20 @@
 from textual.app import App
 from textual.containers import Container
-from textual.widgets import Static
+from textual.widgets import Label
 
 
 class LayoutApp(App):
     def compose(self):
         yield Container(
-            Static("Layout"),
-            Static("Is"),
-            Static("Vertical"),
+            Label("Layout"),
+            Label("Is"),
+            Label("Vertical"),
             id="vertical-layout",
         )
         yield Container(
-            Static("Layout"),
-            Static("Is"),
-            Static("Horizontal"),
+            Label("Layout"),
+            Label("Is"),
+            Label("Horizontal"),
             id="horizontal-layout",
         )
 

@@ -2,13 +2,13 @@
 
 The `layout` property defines how a widget arranges its children.
 
-See the [layout](../guide/layout.md) guide for more information.
-
 ## Syntax
 
-```
+--8<-- "docs/snippets/syntax_block_start.md"
 layout: grid | horizontal | vertical;
-```
+--8<-- "docs/snippets/syntax_block_end.md"
+
+The `layout` style takes an option that defines how child widgets will be arranged, as per the table shown below.
 
 ### Values
 
@@ -17,6 +17,8 @@ layout: grid | horizontal | vertical;
 | `grid`               | Child widgets will be arranged in a grid.                                     |
 | `horizontal`         | Child widgets will be arranged along the horizontal axis, from left to right. |
 | `vertical` (default) | Child widgets will be arranged along the vertical axis, from top to bottom.   |
+
+See the [layout](../guide/layout.md) guide for more information.
 
 ## Example
 
