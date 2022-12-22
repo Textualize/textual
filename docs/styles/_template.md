@@ -59,7 +59,7 @@ Short description of the first example.
 
 === "rule.css"
 
-    ```scss
+    ```css
     --8<-- "docs/examples/styles/rule.css"
     ```
 -->
