@@ -5,10 +5,10 @@ The `height` rule sets a widget's height.
 ## Syntax
 
 --8<-- "docs/snippets/syntax_block_start.md"
-height: <a href="../css_types/scalar.md">&lt;scalar&gt;</a>;
+height: <a href="../../css_types/scalar">&lt;scalar&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The style `height` needs a [`<scalar>`](../css_types/scalar.md) to determine the vertical length of the widget.
+The style `height` needs a [`<scalar>`](../../css_types/scalar) to determine the vertical length of the widget.
 By default, it sets the height of the content area, but if [`box-sizing`](./box_sizing) is set to `border-box` it sets the height of the border area.
 
 ### Values

@@ -5,15 +5,15 @@ The `border` rule enables the drawing of a box around a widget.
 ## Syntax
 
 --8<-- "docs/snippets/syntax_block_start.md"
-border: [<a href="../css_types/border.md">&lt;border&gt;</a>] [<a href="../css_types/color.md">&lt;color&gt;</a>];
+border: [<a href="../../css_types/border">&lt;border&gt;</a>] [<a href="../../css_types/color">&lt;color&gt;</a>];
 
-border-top: [<a href="../css_types/border.md">&lt;border&gt;</a>] [<a href="../css_types/color.md">&lt;color&gt;</a>];
-border-right: [<a href="../css_types/border.md">&lt;border&gt;</a>] [<a href="../css_types/color.md">&lt;color&gt;</a>];
-border-bottom: [<a href="../css_types/border.md">&lt;border&gt;</a>] [<a href="../css_types/color.md">&lt;color&gt;</a>];
-border-left: [<a href="../css_types/border.md">&lt;border&gt;</a>] [<a href="../css_types/color.md">&lt;color&gt;</a>];
+border-top: [<a href="../../css_types/border">&lt;border&gt;</a>] [<a href="../../css_types/color">&lt;color&gt;</a>];
+border-right: [<a href="../../css_types/border">&lt;border&gt;</a>] [<a href="../../css_types/color">&lt;color&gt;</a>];
+border-bottom: [<a href="../../css_types/border">&lt;border&gt;</a>] [<a href="../../css_types/color">&lt;color&gt;</a>];
+border-left: [<a href="../../css_types/border">&lt;border&gt;</a>] [<a href="../../css_types/color">&lt;color&gt;</a>];
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The style `border` accepts an optional [`<border>`](../css_types/border.md) that sets the visual style of the widget border and an optional [`<color>`](../css_types/color.md) to set the color of the border.
+The style `border` accepts an optional [`<border>`](../../css_types/border) that sets the visual style of the widget border and an optional [`<color>`](../../css_types/color) to set the color of the border.
 
 Borders may also be set individually for the four edges of a widget with the `border-top`, `border-right`, `border-bottom` and `border-left` rules.
 

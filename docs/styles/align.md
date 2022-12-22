@@ -6,20 +6,20 @@ Not to be confused with [`content-align`](../content_align).
 ## Syntax
 
 --8<-- "docs/snippets/syntax_block_start.md"
-align: <a href="../css_types/horizontal.md">&lt;horizontal&gt;</a> <a href="../css_types/vertical.md">&lt;vertical&gt;</a>;
+align: <a href="../../css_types/horizontal">&lt;horizontal&gt;</a> <a href="../../css_types/vertical">&lt;vertical&gt;</a>;
 
-align-horizontal: <a href="../css_types/horizontal.md">&lt;horizontal&gt;</a>;
-align-vertical: <a href="../css_types/vertical.md">&lt;vertical&gt;</a>;
+align-horizontal: <a href="../../css_types/horizontal">&lt;horizontal&gt;</a>;
+align-vertical: <a href="../../css_types/vertical">&lt;vertical&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The style `align` takes a [`<horizontal>`](../css_types/horizontal.md) followed by a [`<vertical>`](../css_types/vertical.md).
+The style `align` takes a [`<horizontal>`](../../css_types/horizontal) followed by a [`<vertical>`](../../css_types/vertical).
 
 You can specify the alignment of children on both the horizontal and vertical axes at the same time,
 or on each of the axis separately.
 To specify alignment on a single axis, use the respective style and type:
 
- - `align-horizontal` takes a [`<horizontal>`](../css_types/horizontal.md) and does alignment along the horizontal axis; and
- - `align-vertical` takes a [`<vertical>`](../css_types/vertical.md) and does alignment along the vertical axis.
+ - `align-horizontal` takes a [`<horizontal>`](../../css_types/horizontal) and does alignment along the horizontal axis; and
+ - `align-vertical` takes a [`<vertical>`](../../css_types/vertical) and does alignment along the vertical axis.
 
 ### Values
 

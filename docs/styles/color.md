@@ -5,12 +5,12 @@ The `color` rule sets the text color of a widget.
 ## Syntax
 
 --8<-- "docs/snippets/syntax_block_start.md"
-color: (<a href="../css_types/color.md">&lt;color&gt;</a> | auto) [<a href="../css_types/percentage.md">&lt;percentage&gt;</a>];
+color: (<a href="../../css_types/color">&lt;color&gt;</a> | auto) [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The style `color` needs a [`<color>`](../css_types/color.md) followed by an optional [`<percentage>`](../css_types/percentage.md) to specify the color transparency.
+The style `color` needs a [`<color>`](../../css_types/color) followed by an optional [`<percentage>`](../../css_types/percentage) to specify the color transparency.
 
-Instead of a [`<color>`](../css_types/color.md), one can use the special value `"auto"` to choose automatically the color with the best contrast for readability purposes.
+Instead of a [`<color>`](../../css_types/color), one can use the special value `"auto"` to choose automatically the color with the best contrast for readability purposes.
 
 ### Values
 

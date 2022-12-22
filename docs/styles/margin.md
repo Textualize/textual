@@ -5,25 +5,25 @@ The `margin` rule specifies spacing around a widget.
 ## Syntax
 
 --8<-- "docs/snippets/syntax_block_start.md"
-margin: <a href="../css_types/integer.md">&lt;integer&gt;</a>
+margin: <a href="../../css_types/integer">&lt;integer&gt;</a>
       # one value for all edges
-      | <a href="../css_types/integer.md">&lt;integer&gt;</a> <a href="../css_types/integer.md">&lt;integer&gt;</a>
+      | <a href="../../css_types/integer">&lt;integer&gt;</a> <a href="../../css_types/integer">&lt;integer&gt;</a>
       # top/bot   left/right
-      | <a href="../css_types/integer.md">&lt;integer&gt;</a> <a href="../css_types/integer.md">&lt;integer&gt;</a> <a href="../css_types/integer.md">&lt;integer&gt;</a> <a href="../css_types/integer.md">&lt;integer&gt;</a>;
+      | <a href="../../css_types/integer">&lt;integer&gt;</a> <a href="../../css_types/integer">&lt;integer&gt;</a> <a href="../../css_types/integer">&lt;integer&gt;</a> <a href="../../css_types/integer">&lt;integer&gt;</a>;
       # top       right     bot       left
 
-margin-top: <a href="../css_types/integer.md">&lt;integer&gt;</a>;
-margin-right: <a href="../css_types/integer.md">&lt;integer&gt;</a>;
-margin-bottom: <a href="../css_types/integer.md">&lt;integer&gt;</a>;
-margin-left: <a href="../css_types/integer.md">&lt;integer&gt;</a>;
+margin-top: <a href="../../css_types/integer">&lt;integer&gt;</a>;
+margin-right: <a href="../../css_types/integer">&lt;integer&gt;</a>;
+margin-bottom: <a href="../../css_types/integer">&lt;integer&gt;</a>;
+margin-left: <a href="../../css_types/integer">&lt;integer&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The `margin` specifies spacing around the four edges of the widget equal to the [`<integer>`](../css_types/integer.md) specified.
+The `margin` specifies spacing around the four edges of the widget equal to the [`<integer>`](../../css_types/integer) specified.
 The number of values given defines what edges get what margin:
 
- - 1 [`<integer>`](../css_types/integer.md) sets the same margin for the four edges of the widget;
- - 2 [`<integer>`](../css_types/integer.md) set margin for top/bottom and left/right edges, respectively.
- - 4 [`<integer>`](../css_types/integer.md) set margin for the top, right, bottom, and left edges, respectively.
+ - 1 [`<integer>`](../../css_types/integer) sets the same margin for the four edges of the widget;
+ - 2 [`<integer>`](../../css_types/integer) set margin for top/bottom and left/right edges, respectively.
+ - 4 [`<integer>`](../../css_types/integer) set margin for the top, right, bottom, and left edges, respectively.
 
 !!! tip
 
