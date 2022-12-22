@@ -1,4 +1,4 @@
-The [`<text-style>`](/css_types/text_style) type can be any _space-separated_ combination of the following values:
+A [`<text-style>`](/css_types/text_style) can be any _space-separated_ combination of the following values:
 
 | Value       | Description                                                     |
 |-------------|-----------------------------------------------------------------|

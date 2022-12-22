@@ -8,13 +8,25 @@ The `link-hover-background` sets the background color of the link when the mouse
 
 ## Syntax
 
-```sass
-link-hover-background: <COLOR> <PERCENTAGE>;
-```
+--8<-- "docs/snippets/syntax_block_start.md"
+link-hover-background: <a href="../css_types/color.md">&lt;color&gt;</a> [<a href="../css_types/percentage.md">&lt;percentage&gt;</a>];
+--8<-- "docs/snippets/syntax_block_end.md"
+
+`link-hover-background` accepts a [`<color>`](../../css_types/color.md) (with an optional transparency level defined by a [`<percentage>`](../../css_types/percentage.md)) that is used to define the background color of text enclosed in Textual action links when the mouse pointer is over it.
+
+### Values
+
+#### &lt;color&gt;
 
 --8<-- "docs/snippets/type_syntax/color.md"
 
+#### &lt;percentage&gt;
+
 --8<-- "docs/snippets/type_syntax/percentage.md"
+
+### Defaults
+
+If not provided, a Textual action link will have `link-hover-background` set to `$accent`.
 
 ## Example
 

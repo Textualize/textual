@@ -1,34 +1,50 @@
 # Links
 
 Textual supports the concept of inline "links" embedded in text which trigger an action when pressed.
+There are a number of styles which influence the appearance of these links within a widget.
 
 !!! note
 
     These CSS rules only target Textual action links. Internet hyperlinks are not affected by these CSS rules.
 
-There are a number of styles which influence the appearance of these links within a widget.
-
 | Property                                              | Description                                                       |
 |-------------------------------------------------------|-------------------------------------------------------------------|
-| [`link-color`](./link_color.md)                       | The color of the link text.                                       |
 | [`link-background`](./link_background.md)             | The background color of the link text.                            |
-| [`link-style`](./link_style.md)                       | The style of the link text (e.g. underline).                      |
-| [`link-hover-color`](./link_hover_color.md)           | The color of the link text when the cursor is over it.            |
+| [`link-color`](./link_color.md)                       | The color of the link text.                                       |
 | [`link-hover-background`](./link_hover_background.md) | The background color of the link text when the cursor is over it. |
+| [`link-hover-color`](./link_hover_color.md)           | The color of the link text when the cursor is over it.            |
 | [`link-hover-style`](./link_hover_style.md)           | The style of the link text when the cursor is over it.            |
+| [`link-style`](./link_style.md)                       | The style of the link text (e.g. underline).                      |
 
 ## Syntax
 
-```scss
-link-color: <COLOR> [<PERCENTAGE>];
-link-background: <COLOR> [<PERCENTAGE>];
-link-style: <TEXT STYLE>;
-link-hover-color: <COLOR> [<PERCENTAGE>];
-link-hover-background: <COLOR> [<PERCENTAGE>];
-link-hover-style: <TEXT STYLE>;
-```
+--8<-- "docs/snippets/syntax_block_start.md"
+<a href="./link_background.md">link-background</a>: <a href="../css_types/color.md">&lt;color&gt;</a> [<a href="../css_types/percentage.md">&lt;percentage&gt;</a>];
+
+<a href="./link_color.md">link-color</a>: <a href="../css_types/color.md">&lt;color&gt;</a> [<a href="../css_types/percentage.md">&lt;percentage&gt;</a>];
+
+<a href="./link_style.md">link-style</a>: <a href="../css_types/text_style.md">&lt;text-style&gt;</a>;
+
+<a href="./link_hover_background.md">link-hover-background</a>: <a href="../css_types/color.md">&lt;color&gt;</a> [<a href="../css_types/percentage.md">&lt;percentage&gt;</a>];
+
+<a href="./link_hover_color.md">link-hover-color</a>: <a href="../css_types/color.md">&lt;color&gt;</a> [<a href="../css_types/percentage.md">&lt;percentage&gt;</a>];
+
+<a href="./link_hover_style.md">link-hover-style</a>: <a href="../css_types/text_style.md">&lt;text-style&gt;</a>;
+--8<-- "docs/snippets/syntax_block_end.md"
+
+Visit each style's reference page to learn more about how the values are used.
+
+### Values
+
+#### &lt;color&gt;
 
 --8<-- "docs/snippets/type_syntax/color.md"
+
+#### &lt;percentage&gt;
+
+--8<-- "docs/snippets/type_syntax/percentage.md"
+
+#### &lt;text-style&gt;
 
 --8<-- "docs/snippets/type_syntax/text_style.md"
 

@@ -8,11 +8,19 @@ The `link-style` sets the text style for the link text.
 
 ## Syntax
 
-```sass
-link-style: <TEXT STYLE>;
-```
+--8<-- "docs/snippets/syntax_block_start.md"
+link-style: <a href="../css_types/text_style.md">&lt;text-style&gt;</a>;
+--8<-- "docs/snippets/syntax_block_end.md"
+
+`link-style` will take all the values specified and will apply that styling to text that is enclosed by a Textual action link.
+
+### Values
 
 --8<-- "docs/snippets/type_syntax/text_style.md"
+
+### Defaults
+
+If not provided, a Textual action link will have `link-style` set to `underline`.
 
 ## Example
 

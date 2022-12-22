@@ -8,13 +8,19 @@ The `link-hover-style` sets the text style for the link text when the mouse curs
 
 ## Syntax
 
-```sass
-link-hover-style: <COLOR> <PERCENTAGE>;
-```
+--8<-- "docs/snippets/syntax_block_start.md"
+link-hover-style: <a href="../css_types/text_style.md">&lt;text-style&gt;</a>;
+--8<-- "docs/snippets/syntax_block_end.md"
 
---8<-- "docs/snippets/type_syntax/color.md"
+`link-hover-style` applies its [`<text-style>`](../../css_types/text_style.md) to the text of Textual action links when the mouse pointer is over them.
 
---8<-- "docs/snippets/type_syntax/percentage.md"
+### Values
+
+--8<-- "docs/snippets/type_syntax/text_style.md"
+
+### Defaults
+
+If not provided, a Textual action link will have `link-hover-style` set to `bold`.
 
 ## Example
 
