@@ -1,24 +1,33 @@
 # Opacity
 
-The `opacity` property can be used to make a widget partially or fully transparent.
-
+The `opacity` property sets the opacity/transparency of a widget.
 
 ## Syntax
 
-```
-opacity: <FRACTIONAL>;
-```
+--8<-- "docs/snippets/syntax_block_start.md"
+opacity: <a href="../../css_types/number">&lt;number&gt;</a> | <a href="../../css_types/percentage">&lt;percentage&gt;</a>;
+--8<-- "docs/snippets/syntax_block_end.md"
+
+The opacity of a widget can be set as a [`<number>`](../css_types/number.md) between `0` and `1` or a [`<percentage>`](../css_types/percentage.md) between `0%` and `100%`.
+`0`/`0%` means no opacity, which is equivalent to full transparency.
+Conversely, `1`/`100%` means full opacity, which is equivalent to no transparency.
 
 ### Values
 
-As a fractional property, `opacity` can be set to either a float (between 0 and 1),
-or a percentage, e.g. `45%`.
-Float values will be clamped between 0 and 1.
-Percentage values will be clamped between 0% and 100%.
+### &lt;number&gt;
+
+--8<-- "docs/snippets/type_syntax/number.md"
+The value of [`<number>`](../../css_types/number) is clamped between `0` and `1`.
+
+### &lt;percentage&gt;
+
+--8<-- "docs/snippets/type_syntax/percentage.md"
+The value of [`<percentage>`](../../css_types/percentage) is clamped between `0%` and `100%`.
 
 ## Example
 
-This example shows, from top to bottom, increasing opacity values.
+This example shows, from top to bottom, increasing opacity values for a label with a border and some text.
+When the opacity is zero, all we see is the (black) background.
 
 === "opacity.py"
 
