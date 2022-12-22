@@ -1,5 +1,5 @@
 ---
-draft: true
+draft: false
 date: 2022-12-20
 categories:
   - DevLog
