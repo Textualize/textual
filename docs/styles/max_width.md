@@ -4,27 +4,57 @@ The `max-width` rule sets a maximum width for a widget.
 
 ## Syntax
 
-```
-max-width: <SCALAR>;
-```
+--8<-- "docs/snippets/syntax_block_start.md"
+max-width: <a href="../css_types/scalar.md">&lt;scalar&gt;</a>;
+--8<-- "docs/snippets/syntax_block_end.md"
+
+The `max-width` rule accepts a [`<scalar>`](../css_types/scalar.md) that defines an upper bound for the [`width`](./width.md) of a widget.
+That is, the width of a widget is never allowed to exceed `max-width`.
+
+### Values
+
+--8<-- "docs/snippets/type_syntax/scalar.md"
+
+## Example
+
+The example below shows some placeholders that were defined to span horizontally from the top edge of the terminal to the bottom edge.
+Then, we set `max-width` individually on each placeholder.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/max_width.py"}
+    ```
+
+=== "max_width.py"
+
+    ```py
+    --8<-- "docs/examples/styles/max_width.py"
+    ```
+
+=== "max_width.css"
+
+    ```scss
+    --8<-- "docs/examples/styles/max_width.css"
+    ```
+
+    1. This won't affect the placeholder because its width is less than the maximum width.
 
 ## CSS
 
 ```sass
-
-/* Set a maximum width of 10 cells */
+/* Set the maximum width to 10 rows */
 max-width: 10;
 
-/* Set a maximum width of 25% of the screen width */
-max-width: 25vw;
+/* Set the maximum width to 25% of the viewport width */
+max-width: 25vh;
 ```
 
 ## Python
 
 ```python
-# Set the maximum width to 10 cells
+# Set the maximum width to 10 rows
 widget.styles.max_width = 10
 
-# Set the maximum width to 25% of the screen width
-widget.styles.max_width = "25vw"
+# Set the maximum width to 25% of the viewport width
+widget.styles.max_width = "25vh"
 ```

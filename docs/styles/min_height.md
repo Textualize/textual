@@ -4,18 +4,48 @@ The `min-height` rule sets a minimum height for a widget.
 
 ## Syntax
 
-```
-min-height: <SCALAR>;
-```
+--8<-- "docs/snippets/syntax_block_start.md"
+min-height: <a href="../css_types/scalar.md">&lt;scalar&gt;</a>;
+--8<-- "docs/snippets/syntax_block_end.md"
+
+The `min-height` rule accepts a [`<scalar>`](../css_types/scalar.md) that defines a lower bound for the [`height`](./height.md) of a widget.
+That is, the height of a widget is never allowed to be under `min-height`.
+
+### Values
+
+--8<-- "docs/snippets/type_syntax/scalar.md"
+
+## Example
+
+The example below shows some placeholders with their height set to `50%`.
+Then, we set `min-height` individually on each placeholder.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/min_height.py"}
+    ```
+
+=== "min_height.py"
+
+    ```py
+    --8<-- "docs/examples/styles/min_height.py"
+    ```
+
+=== "min_height.css"
+
+    ```css hl_lines="13"
+    --8<-- "docs/examples/styles/min_height.css"
+    ```
+
+    1. This won't affect the placeholder because its height is larger than the minimum height.
 
 ## CSS
 
 ```sass
-
-/* Set a minimum height of 10 rows */
+/* Set the minimum height to 10 rows */
 min-height: 10;
 
-/* Set a minimum height of 25% of the screen height */
+/* Set the minimum height to 25% of the viewport height */
 min-height: 25vh;
 ```
 
@@ -23,9 +53,8 @@ min-height: 25vh;
 
 ```python
 # Set the minimum height to 10 rows
-self.styles.min_height = 10
+widget.styles.min_height = 10
 
-# Set the minimum height to 25% of the screen height
-self.styles.min_height = "25vh"
-
+# Set the minimum height to 25% of the viewport height
+widget.styles.min_height = "25vh"
 ```
