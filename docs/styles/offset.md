@@ -1,18 +1,32 @@
 # Offset
 
-The `offset` rule adds an offset to the widget's position. The offset is given as two values.
-
-Coordinates may be specified individually with `offset-x` and `offset-y`.
+The `offset` rule defines an offset for the position of the widget.
 
 ## Syntax
 
-```
-offset: <SCALAR> <SCALAR>;
-```
+--8<-- "docs/snippets/syntax_block_start.md"
+offset: <a href="../css_types/scalar.md">&lt;scalar&gt;</a> <a href="../css_types/scalar.md">&lt;scalar&gt;</a>;
+
+offset-x: <a href="../css_types/scalar.md">&lt;scalar&gt;</a>;
+offset-y: <a href="../css_types/scalar.md">&lt;scalar&gt;</a> 
+--8<-- "docs/snippets/syntax_block_end.md"
+
+The two [`<scalar>`](../css_types/scalar.md) in the `offset` define, respectively, the offsets in the horizontal and vertical axes for the widget.
+
+To specify an offset along a single axis, you can use `offset-x` and `offset-y`.
+
+### Values
+
+--8<-- "docs/snippets/type_syntax/scalar.md"
 
 ## Example
 
 In this example, we have 3 widgets with differing offsets.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/offset.py"}
+    ```
 
 === "offset.py"
 
@@ -26,19 +40,22 @@ In this example, we have 3 widgets with differing offsets.
     --8<-- "docs/examples/styles/offset.css"
     ```
 
-=== "Output"
-
-    ```{.textual path="docs/examples/styles/offset.py"}
-    ```
-
 ## CSS
 
 ```sass
-/* Move the widget 2 cells in the x direction, and 4 in the y direction. */
-offset: 2 4;
+/* Move the widget 8 cells in the x direction and 2 in tye y direction */
+offset: 8 2;
+
+/* Move the widget 4 cells in the x direction
+offset-x: 4;
+/* Move the widget -2 cells in the y direction
+offset-y: -2;
 ```
 
 ## Python
+
+You cannot change programmatically the offset for a single axis.
+You have to set the two axes at the same time.
 
 ```python
 # Move the widget 2 cells in the x direction, and 4 in the y direction.
