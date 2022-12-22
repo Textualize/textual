@@ -19,10 +19,11 @@
 }
 
 Screen {
-    background: antiquewhite;
+    background: black;
 }
 
-Static {
+Label {
+    width: 100%;
     height: 1fr;
     border: outer dodgerblue;
     background: lightseagreen;
