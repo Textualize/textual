@@ -1,16 +1,13 @@
 #!/usr/bin/env python
 
 '''
-Main file for the BT buddies app.
+Example that shows dynamic bindings.
 '''
 
 from textual.app import App, ComposeResult
-from textual.widgets import Header, Footer
 from textual.binding import Binding
 from textual.reactive import reactive
-
-
-from textual import log
+from textual.widgets import Footer, Header
 
 
 class DynamicBindingsApp(App):
