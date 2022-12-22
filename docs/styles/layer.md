@@ -1,15 +1,25 @@
 # Layer
 
-The `layer` property is used to assign widgets to a layer.
-Layers control the order in which widgets are painted on screen.
-The value of the `layer` property must be the name of a layer defined using a [`layers`](../layers) declaration.
-More information on layers can be found in the [guide](../guide/layout.md#layers).
+The `layer` property defines the layer a widget belongs to.
 
 ## Syntax
 
-```
-layer: <STRING>;
-```
+--8<-- "docs/snippets/syntax_block_start.md"
+layer: <a href="../css_types/name.md">&lt;name&gt;</a>;
+--8<-- "docs/snippets/syntax_block_end.md"
+
+The `layer` rule accepts a [`<name>`](../css_types/name.md) that defines the layer this widget belongs to.
+This [`<name>`](../css_types/name.md) must correspond to a [`<name>`](../css_types/name.md) that has been defined in a [`layers`](./layers.md) rule by an ancestor of this widget.
+
+More information on layers can be found in the [guide](../guide/layout.md#layers).
+
+### Values
+
+--8<-- "docs/snippets/type_syntax/name.md"
+
+!!! warning
+
+    Using a `<name>` that hasn't been defined in a [`layers`](./layers.md) declaration of an ancestor of this widget has no effect.
 
 ## Example
 

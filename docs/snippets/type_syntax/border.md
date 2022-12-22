@@ -1,4 +1,4 @@
-The [`<border>`](/css_types/border.md) type can take any of the following values:
+The [`<border>`](/css_types/border) type can take any of the following values:
 
 | Border type | Description                                              |
 |-------------|----------------------------------------------------------|
