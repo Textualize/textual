@@ -1,19 +1,23 @@
 # Layers
 
 The `layers` property allows you to define an ordered set of layers.
-Layers control the order in which widgets are painted on screen.
-These `layers` can later be referenced using the [`layer`](../layer) property.
-More information on layers can be found in the [guide](../guide/layout.md#layers).
 
 ## Syntax
 
-```
-layers: <STRING> . . .;
-```
+--8<-- "docs/snippets/syntax_block_start.md"
+layers: <a href="../css_types/name.md">&lt;name&gt;</a>+;
+--8<-- "docs/snippets/syntax_block_end.md"
 
-Layers that come first in the list are drawn before the layers that come after.
-This means the first layer will be under all other layers and the last layer will be above all other layers.
-See the example below.
+The `layers` rule accepts one or more [`<name>`](../css_types/name.md) that define the layers that the widget is aware of, and the order in which they will be painted on the screen.
+
+The values used here can later be referenced using the [`layer`](../layer) property.
+The layers defined first in the list are drawn under the layers that are defined later in the list.
+
+More information on layers can be found in the [guide](../guide/layout.md#layers).
+
+### Values
+
+--8<-- "docs/snippets/type_syntax/name.md"
 
 ## Example
 
