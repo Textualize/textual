@@ -36,7 +36,7 @@ To attempt this, I built a tool called [Dunk](https://github.com/darrenburns/dun
 
 ![Untitled](../images/darren-year-in-review/Untitled%201.png)
 
-Although I’m not particularly proud of the code - there are a lot of “hacks” going on, but I’m proud of the result. If anything, it shows what can be achieved for tools like this.
+Although I’m not particularly proud of the code - there are a lot of “hacks” going on - I am proud of the result. If anything, it shows what can be achieved for tools like this.
 
 For many diffs, the difference between running `git diff` and `git diff | dunk | less -R` is night and day.
 
