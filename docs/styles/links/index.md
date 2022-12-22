@@ -19,17 +19,17 @@ There are a number of styles which influence the appearance of these links withi
 ## Syntax
 
 --8<-- "docs/snippets/syntax_block_start.md"
-<a href="./link_background.md">link-background</a>: <a href="../css_types/color.md">&lt;color&gt;</a> [<a href="../css_types/percentage.md">&lt;percentage&gt;</a>];
+<a href="./link_background.md">link-background</a>: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
 
-<a href="./link_color.md">link-color</a>: <a href="../css_types/color.md">&lt;color&gt;</a> [<a href="../css_types/percentage.md">&lt;percentage&gt;</a>];
+<a href="./link_color.md">link-color</a>: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
 
-<a href="./link_style.md">link-style</a>: <a href="../css_types/text_style.md">&lt;text-style&gt;</a>;
+<a href="./link_style.md">link-style</a>: <a href="../../css_types/text_style">&lt;text-style&gt;</a>;
 
-<a href="./link_hover_background.md">link-hover-background</a>: <a href="../css_types/color.md">&lt;color&gt;</a> [<a href="../css_types/percentage.md">&lt;percentage&gt;</a>];
+<a href="./link_hover_background.md">link-hover-background</a>: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
 
-<a href="./link_hover_color.md">link-hover-color</a>: <a href="../css_types/color.md">&lt;color&gt;</a> [<a href="../css_types/percentage.md">&lt;percentage&gt;</a>];
+<a href="./link_hover_color.md">link-hover-color</a>: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
 
-<a href="./link_hover_style.md">link-hover-style</a>: <a href="../css_types/text_style.md">&lt;text-style&gt;</a>;
+<a href="./link_hover_style.md">link-hover-style</a>: <a href="../../css_types/text_style">&lt;text-style&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
 Visit each style's reference page to learn more about how the values are used.

@@ -8,7 +8,10 @@ One or two sentences is typically enough. -->
 ## Syntax
 
 --8<-- "docs/snippets/syntax_block_start.md"
-<!-- Formal syntax description of the rule -->
+<!--
+Formal syntax description of the rule
+rule-name: <a href="../../css_types/type_one">&lt;type-one&gt;</a>;
+-->
 --8<-- "docs/snippets/syntax_block_end.md"
 
 <!-- Description of what the rule uses the types/values for. -->

@@ -13,11 +13,11 @@ No spacing is added between the edges of cells and the edges of the container.
 ## Syntax
 
 --8<-- "docs/snippets/syntax_block_start.md"
-grid-gutter: <a href="../css_types/scalar.md">&lt;scalar&gt;</a> [<a href="../css_types/scalar.md">&lt;scalar&gt;</a>];
+grid-gutter: <a href="../../css_types/scalar">&lt;scalar&gt;</a> [<a href="../../css_types/scalar">&lt;scalar&gt;</a>];
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The style `grid-gutter` takes one or two [`<scalar>`](../../css_types/scalar.md) that set the length of the gutter along the vertical and horizontal axes.
-If only one [`<scalar>`](../../css_types/scalar.md) is supplied, it sets the vertical and horizontal gutters.
+The style `grid-gutter` takes one or two [`<scalar>`](../../../css_types/scalar) that set the length of the gutter along the vertical and horizontal axes.
+If only one [`<scalar>`](../../../css_types/scalar) is supplied, it sets the vertical and horizontal gutters.
 If two are supplied, they set the vertical and horizontal gutters, respectively.
 
 ### Values

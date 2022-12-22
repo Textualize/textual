@@ -9,10 +9,10 @@ The `link-background` sets the background color of the link.
 ## Syntax
 
 --8<-- "docs/snippets/syntax_block_start.md"
-link-background: <a href="../css_types/color.md">&lt;color&gt;</a> [<a href="../css_types/percentage.md">&lt;percentage&gt;</a>];
+link-background: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
 --8<-- "docs/snippets/syntax_block_end.md"
 
-`link-background` accepts a [`<color>`](../../css_types/color.md) (with an optional transparency level defined by a [`<percentage>`](../../css_types/percentage.md)) that is used to define the background color of text enclosed in Textual action links.
+`link-background` accepts a [`<color>`](../../../css_types/color) (with an optional transparency level defined by a [`<percentage>`](../../../css_types/percentage)) that is used to define the background color of text enclosed in Textual action links.
 
 ### Values
 
