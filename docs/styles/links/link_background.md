@@ -8,11 +8,19 @@ The `link-background` sets the background color of the link.
 
 ## Syntax
 
-```sass
-link-background: <COLOR> <PERCENTAGE>;
-```
+--8<-- "docs/snippets/syntax_block_start.md"
+link-background: <a href="../css_types/color.md">&lt;color&gt;</a> [<a href="../css_types/percentage.md">&lt;percentage&gt;</a>];
+--8<-- "docs/snippets/syntax_block_end.md"
+
+`link-background` accepts a [`<color>`](../../css_types/color.md) (with an optional transparency level defined by a [`<percentage>`](../../css_types/percentage.md)) that is used to define the background color of text enclosed in Textual action links.
+
+### Values
+
+#### &lt;color&gt;
 
 --8<-- "docs/snippets/type_syntax/color.md"
+
+#### &lt;percentage&gt;
 
 --8<-- "docs/snippets/type_syntax/percentage.md"
 
