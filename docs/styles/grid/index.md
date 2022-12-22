@@ -16,22 +16,20 @@ For an in-depth look at the grid layout, visit the grid [guide](../guide/layout.
 ## Syntax
 
 --8<-- "docs/snippets/syntax_block_start.md"
-column-span: <a href="../css_types/integer.md">&lt;integer&gt;</a>;
+<a href="./column_span.md">column-span</a>: <a href="../css_types/integer.md">&lt;integer&gt;</a>;
 
-grid-columns: <a href="../css_types/scalar.md">&lt;scalar&gt;</a>+;
+<a href="./grid_columns.md">grid-columns</a>: <a href="../css_types/scalar.md">&lt;scalar&gt;</a>+;
 
-grid-gutter: <a href="../css_types/scalar.md">&lt;scalar&gt;</a> [<a href="../css_types/scalar.md">&lt;scalar&gt;</a>];
+<a href="./grid_gutter.md">grid-gutter</a>: <a href="../css_types/scalar.md">&lt;scalar&gt;</a> [<a href="../css_types/scalar.md">&lt;scalar&gt;</a>];
 
-grid-rows: <a href="../css_types/scalar.md">&lt;scalar&gt;</a>+;
+<a href="./grid_rows.md">grid-rows</a>: <a href="../css_types/scalar.md">&lt;scalar&gt;</a>+;
 
-grid-size: <a href="../css_types/integer.md">&lt;integer&gt;</a> [<a href="../css_types/integer.md">&lt;integer&gt;</a>];
+<a href="./grid_size.md">grid-size</a>: <a href="../css_types/integer.md">&lt;integer&gt;</a> [<a href="../css_types/integer.md">&lt;integer&gt;</a>];
 
-row-span: <a href="../css_types/integer.md">&lt;integer&gt;</a>;
+<a href="./row_span.md">row-span</a>: <a href="../css_types/integer.md">&lt;integer&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The styles `column-span` and `row-span` accept a single non-negative [`<integer>`](../../css_types/integer.md) while the style `grid-size` accepts one or two non-negative [`<integer>`](../../css_types/integer.md).
-
-The style `grid-gutter` accepts one or two [`<scalar>`](../../css_types/scalar.md) while the styles `grid-columns` and `grid-rows` accept one or more.
+Visit each style's reference page to learn more about how the values are used.
 
 
 ### Values
