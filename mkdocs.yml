@@ -34,6 +34,7 @@ nav:
       - "css_types/color.md"
       - "css_types/horizontal.md"
       - "css_types/integer.md"
+      - "css_types/name.md"
       - "css_types/number.md"
       - "css_types/percentage.md"
       - "css_types/scalar.md"
