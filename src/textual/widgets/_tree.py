@@ -787,7 +787,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             segments = line_pad(segments, 0, pad_width - guides.cell_len, line_style)
             self._line_cache[cache_key] = segments
 
-        segments = line_crop(segments, x1, x2, width)
+        segments = line_crop(segments, x1, x2, Segment.get_line_length(segments))
 
         return segments
 
