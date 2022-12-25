@@ -71,7 +71,7 @@ class Keys(str, Enum):
     ControlShift0 = "ctrl+shift+0"
 
     ControlBackslash = "ctrl+backslash"
-    ControlSquareClose = "ctrl+right_square_bracked"
+    ControlSquareClose = "ctrl+right_square_bracket"
     ControlCircumflex = "ctrl+circumflex_accent"
     ControlUnderscore = "ctrl+underscore"
 
