@@ -13,7 +13,6 @@ without having to render the entire screen.
 
 from __future__ import annotations
 
-from itertools import chain
 from operator import itemgetter
 from typing import TYPE_CHECKING, Iterable, NamedTuple, cast
 
@@ -281,12 +280,11 @@ class Compositor:
         # i.e. if something is moved / deleted / added
 
         if screen not in self._dirty_regions:
-            crop_screen = screen.intersection
             changes = map.items() ^ old_map.items()
             regions = {
                 region
                 for region in (
-                    crop_screen(map_geometry.visible_region)
+                    map_geometry.clip.intersection(map_geometry.region)
                     for _, map_geometry in changes
                 )
                 if region
