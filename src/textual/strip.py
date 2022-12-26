@@ -56,6 +56,9 @@ class Strip:
     def __iter__(self) -> Iterator[Segment]:
         return iter(self._segments)
 
+    def __reversed__(self) -> Iterator[Segment]:
+        return reversed(self._segments)
+
     def __len__(self) -> int:
         return len(self._segments)
 

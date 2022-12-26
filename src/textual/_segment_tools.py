@@ -130,7 +130,7 @@ def line_pad(
 
 
 def align_lines(
-    lines: Strips,
+    lines: list[list[Segment]],
     style: Style,
     size: Size,
     horizontal: AlignHorizontal,
@@ -153,7 +153,7 @@ def align_lines(
     width, height = size
     shape_width, shape_height = Segment.get_shape(lines)
 
-    def blank_lines(count: int) -> Strips:
+    def blank_lines(count: int) -> list[list[Segment]]:
         return [[Segment(" " * width, style)]] * count
 
     top_blank_lines = bottom_blank_lines = 0
