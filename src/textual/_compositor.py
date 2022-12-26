@@ -641,7 +641,7 @@ class Compositor:
         """Get rendered widgets (lists of segments) in the composition.
 
         Returns:
-            Iterable[tuple[Region, Region, Lines]]: An iterable of <region>, <clip region>, and <lines>
+            Iterable[tuple[Region, Region, Strips]]: An iterable of <region>, <clip region>, and <strips>
         """
         # If a renderable throws an error while rendering, the user likely doesn't care about the traceback
         # up to this point.
@@ -687,21 +687,7 @@ class Compositor:
                     _Region(delta_x, delta_y, new_width, new_height)
                 )
 
-    # @classmethod
-    # def _assemble_chops(cls, chops: list[dict[int, Strip | None]]) -> list[Strip]:
-    #     """Combine chops in to lines."""
-
-    #     [Strip.join(strips) for strips in chops]
-
-    #     from_iterable = chain.from_iterable
-
-    #     segment_lines: list[list[Segment]] = [
-    #         list(from_iterable(strip for strip in bucket.values() if strip is not None))
-    #         for bucket in chops
-    #     ]
-    #     return segment_lines
-
-    def render(self, full: bool = False) -> RenderableType:
+    def render(self, full: bool = False) -> RenderableType | None:
         """Render a layout.
 
         Returns:
@@ -772,9 +758,9 @@ class Compositor:
                     cut_strips = list(strip.divide(relative_cuts))
 
                 # Since we are painting front to back, the first segments for a cut "wins"
-                for cut, segments in zip(final_cuts, cut_strips):
+                for cut, strip in zip(final_cuts, cut_strips):
                     if chops_line[cut] is None:
-                        chops_line[cut] = segments
+                        chops_line[cut] = strip
 
         if full:
             render_strips = [Strip.join(chop.values()) for chop in chops]
@@ -787,7 +773,7 @@ class Compositor:
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
         if self._dirty_regions:
-            yield self.render()
+            yield self.render() or ""
 
     def update_widgets(self, widgets: set[Widget]) -> None:
         """Update a given widget in the composition.

@@ -44,10 +44,9 @@ class Strip:
         add_segments = segments.append
         total_cell_length = 0
         for strip in strips:
-            if strip is None:
-                continue
-            total_cell_length += strip.cell_length
-            add_segments(strip._segments)
+            if strip is not None:
+                total_cell_length += strip.cell_length
+                add_segments(strip._segments)
         strip = cls(chain.from_iterable(segments), total_cell_length)
         return strip
 
