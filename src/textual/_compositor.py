@@ -755,7 +755,7 @@ class Compositor:
                 else:
                     render_x = render_region.x
                     relative_cuts = [cut - render_x for cut in final_cuts[1:]]
-                    cut_strips = list(strip.divide(relative_cuts))
+                    cut_strips = strip.divide(relative_cuts)
 
                 # Since we are painting front to back, the first segments for a cut "wins"
                 for cut, strip in zip(final_cuts, cut_strips):
