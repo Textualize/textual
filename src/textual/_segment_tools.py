@@ -10,7 +10,7 @@ from rich.segment import Segment
 from rich.style import Style
 
 from ._cells import cell_len
-from ._types import Lines
+from ._types import Strips
 from .css.types import AlignHorizontal, AlignVertical
 from .geometry import Size
 
@@ -22,8 +22,8 @@ def line_crop(
 
     Args:
         segments (list[Segment]): A list of Segments for a line.
-        start (int): Start offset
-        end (int): End offset (exclusive)
+        start (int): Start offset (cells)
+        end (int): End offset (cells, exclusive)
         total (int): Total cell length of segments.
     Returns:
         list[Segment]: A new shorter list of segments
@@ -130,7 +130,7 @@ def line_pad(
 
 
 def align_lines(
-    lines: Lines,
+    lines: Strips,
     style: Style,
     size: Size,
     horizontal: AlignHorizontal,
@@ -153,7 +153,7 @@ def align_lines(
     width, height = size
     shape_width, shape_height = Segment.get_shape(lines)
 
-    def blank_lines(count: int) -> Lines:
+    def blank_lines(count: int) -> Strips:
         return [[Segment(" " * width, style)]] * count
 
     top_blank_lines = bottom_blank_lines = 0

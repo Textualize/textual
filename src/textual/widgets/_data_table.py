@@ -14,7 +14,7 @@ from rich.text import Text, TextType
 from .. import events, messages
 from .._cache import LRUCache
 from .._segment_tools import line_crop
-from .._types import Lines
+from .._types import Strips
 from ..geometry import Region, Size, Spacing, clamp
 from ..reactive import Reactive
 from ..render import measure
@@ -207,10 +207,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.row_count = 0
         self._y_offsets: list[tuple[int, int]] = []
         self._row_render_cache: LRUCache[
-            tuple[int, int, Style, int, int], tuple[Lines, Lines]
+            tuple[int, int, Style, int, int], tuple[Strips, Strips]
         ]
         self._row_render_cache = LRUCache(1000)
-        self._cell_render_cache: LRUCache[tuple[int, int, Style, bool, bool], Lines]
+        self._cell_render_cache: LRUCache[tuple[int, int, Style, bool, bool], Strips]
         self._cell_render_cache = LRUCache(10000)
         self._line_cache: LRUCache[
             tuple[int, int, int, int, int, int, Style], list[Segment]
@@ -450,7 +450,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         width: int,
         cursor: bool = False,
         hover: bool = False,
-    ) -> Lines:
+    ) -> Strips:
         """Render the given cell.
 
         Args:
@@ -488,7 +488,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         base_style: Style,
         cursor_column: int = -1,
         hover_column: int = -1,
-    ) -> tuple[Lines, Lines]:
+    ) -> tuple[Strips, Strips]:
         """Render a row in to lines for each cell.
 
         Args:

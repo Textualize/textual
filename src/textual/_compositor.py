@@ -26,9 +26,11 @@ from rich.style import Style
 from . import errors
 from ._cells import cell_len
 from ._loop import loop_last
-from ._types import Lines
+from .strip import Strip
+from ._types import Strips
 from ._typing import TypeAlias
 from .geometry import NULL_OFFSET, Offset, Region, Size
+
 
 if TYPE_CHECKING:
     from .widget import Widget
@@ -66,8 +68,8 @@ CompositorMap: TypeAlias = "dict[Widget, MapGeometry]"
 class LayoutUpdate:
     """A renderable containing the result of a render for a given region."""
 
-    def __init__(self, lines: Lines, region: Region) -> None:
-        self.lines = lines
+    def __init__(self, strips: Strips, region: Region) -> None:
+        self.strips = strips
         self.region = region
 
     def __rich_console__(
@@ -76,7 +78,7 @@ class LayoutUpdate:
         x = self.region.x
         new_line = Segment.line()
         move_to = Control.move_to
-        for last, (y, line) in loop_last(enumerate(self.lines, self.region.y)):
+        for last, (y, line) in loop_last(enumerate(self.strips, self.region.y)):
             yield move_to(x, y)
             yield from line
             if not last:
@@ -92,7 +94,7 @@ class ChopsUpdate:
 
     def __init__(
         self,
-        chops: list[dict[int, list[Segment] | None]],
+        chops: list[dict[int, Strip | None]],
         spans: list[tuple[int, int, int]],
         chop_ends: list[list[int]],
     ) -> None:
@@ -121,9 +123,9 @@ class ChopsUpdate:
         for y, x1, x2 in self.spans:
             line = chops[y]
             ends = chop_ends[y]
-            for end, (x, segments) in zip(ends, line.items()):
+            for end, (x, strip) in zip(ends, line.items()):
                 # TODO: crop to x extents
-                if segments is None:
+                if strip is None:
                     continue
 
                 if x > x2 or end <= x1:
@@ -131,10 +133,10 @@ class ChopsUpdate:
 
                 if x2 > x >= x1 and end <= x2:
                     yield move_to(x, y)
-                    yield from segments
+                    yield from strip
                     continue
 
-                iter_segments = iter(segments)
+                iter_segments = iter(strip)
                 if x < x1:
                     for segment in iter_segments:
                         next_x = x + _cell_len(segment.text)
@@ -635,7 +637,7 @@ class Compositor:
 
     def _get_renders(
         self, crop: Region | None = None
-    ) -> Iterable[tuple[Region, Region, Lines]]:
+    ) -> Iterable[tuple[Region, Region, Strips]]:
         """Get rendered widgets (lists of segments) in the composition.
 
         Returns:
@@ -685,19 +687,21 @@ class Compositor:
                     _Region(delta_x, delta_y, new_width, new_height)
                 )
 
-    @classmethod
-    def _assemble_chops(
-        cls, chops: list[dict[int, list[Segment] | None]]
-    ) -> list[list[Segment]]:
-        """Combine chops in to lines."""
-        from_iterable = chain.from_iterable
-        segment_lines: list[list[Segment]] = [
-            list(from_iterable(line for line in bucket.values() if line is not None))
-            for bucket in chops
-        ]
-        return segment_lines
+    # @classmethod
+    # def _assemble_chops(cls, chops: list[dict[int, Strip | None]]) -> list[Strip]:
+    #     """Combine chops in to lines."""
 
-    def render(self, full: bool = False) -> RenderableType | None:
+    #     [Strip.join(strips) for strips in chops]
+
+    #     from_iterable = chain.from_iterable
+
+    #     segment_lines: list[list[Segment]] = [
+    #         list(from_iterable(strip for strip in bucket.values() if strip is not None))
+    #         for bucket in chops
+    #     ]
+    #     return segment_lines
+
+    def render(self, full: bool = False) -> RenderableType:
         """Render a layout.
 
         Returns:
@@ -728,8 +732,6 @@ class Compositor:
         else:
             return None
 
-        divide = Segment.divide
-
         # Maps each cut on to a list of segments
         cuts = self.cuts
 
@@ -738,19 +740,19 @@ class Compositor:
             "Callable[[list[int]], dict[int, list[Segment] | None]]", dict.fromkeys
         )
         # A mapping of cut index to a list of segments for each line
-        chops: list[dict[int, list[Segment] | None]]
+        chops: list[dict[int, Strip | None]]
         chops = [fromkeys(cut_set[:-1]) for cut_set in cuts]
 
-        cut_segments: Iterable[list[Segment]]
+        cut_strips: Iterable[Strip]
 
         # Go through all the renders in reverse order and fill buckets with no render
         renders = self._get_renders(crop)
         intersection = Region.intersection
 
-        for region, clip, lines in renders:
+        for region, clip, strips in renders:
             render_region = intersection(region, clip)
 
-            for y, line in zip(render_region.line_range, lines):
+            for y, strip in zip(render_region.line_range, strips):
                 if not is_rendered_line(y):
                     continue
 
@@ -763,20 +765,20 @@ class Compositor:
                 ]
                 if len(final_cuts) <= 2:
                     # Two cuts, which means the entire line
-                    cut_segments = [line]
+                    cut_strips = [strip]
                 else:
                     render_x = render_region.x
                     relative_cuts = [cut - render_x for cut in final_cuts[1:]]
-                    cut_segments = divide(line, relative_cuts)
+                    cut_strips = list(strip.divide(relative_cuts))
 
                 # Since we are painting front to back, the first segments for a cut "wins"
-                for cut, segments in zip(final_cuts, cut_segments):
+                for cut, segments in zip(final_cuts, cut_strips):
                     if chops_line[cut] is None:
                         chops_line[cut] = segments
 
         if full:
-            render_lines = self._assemble_chops(chops)
-            return LayoutUpdate(render_lines, screen_region)
+            render_strips = [Strip.join(chop.values()) for chop in chops]
+            return LayoutUpdate(render_strips, screen_region)
         else:
             chop_ends = [cut_set[1:] for cut_set in cuts]
             return ChopsUpdate(chops, spans, chop_ends)

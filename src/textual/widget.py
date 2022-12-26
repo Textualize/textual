@@ -43,7 +43,7 @@ from ._easing import DEFAULT_SCROLL_EASING
 from ._layout import Layout
 from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
-from ._types import Lines
+from ._types import Strips
 from .actions import SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding
@@ -57,6 +57,7 @@ from .message import Message
 from .messages import CallbackType
 from .reactive import Reactive
 from .render import measure
+from .strip import Strip
 from .walk import walk_depth_first
 
 if TYPE_CHECKING:
@@ -156,7 +157,7 @@ class RenderCache(NamedTuple):
     """Stores results of a previous render."""
 
     size: Size
-    lines: Lines
+    lines: Strips
 
 
 class WidgetError(Exception):
@@ -2118,7 +2119,7 @@ class Widget(DOMNode):
             line = [Segment(" " * self.size.width, self.rich_style)]
         return line
 
-    def render_lines(self, crop: Region) -> Lines:
+    def render_lines(self, crop: Region) -> list[Strip]:
         """Render the widget in to lines.
 
         Args:
@@ -2127,8 +2128,8 @@ class Widget(DOMNode):
         Returns:
             Lines: A list of list of segments.
         """
-        lines = self._styles_cache.render_widget(self, crop)
-        return lines
+        strips = self._styles_cache.render_widget(self, crop)
+        return strips
 
     def get_style_at(self, x: int, y: int) -> Style:
         """Get the Rich style in a widget at a given relative offset.

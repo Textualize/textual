@@ -15,7 +15,7 @@ from ..geometry import Size, Region
 from ..scroll_view import ScrollView
 from .._cache import LRUCache
 from .._segment_tools import line_crop
-from .._types import Lines
+from .._types import Strips
 
 
 class TextLog(ScrollView, can_focus=True):
@@ -143,7 +143,7 @@ class TextLog(ScrollView, can_focus=True):
         line = list(Segment.apply_style(line, self.rich_style))
         return line
 
-    def render_lines(self, crop: Region) -> Lines:
+    def render_lines(self, crop: Region) -> Strips:
         """Render the widget in to lines.
 
         Args:
