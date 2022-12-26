@@ -256,7 +256,7 @@ class StylesCache:
         inner = from_color(bgcolor=(base_background + background).rich_color)
         outer = from_color(bgcolor=base_background.rich_color)
 
-        def post(segments: Iterable[Segment]) -> list[Segment]:
+        def post(segments: Iterable[Segment]) -> Iterable[Segment]:
             """Post process segments to apply opacity and tint.
 
             Args:
@@ -271,8 +271,7 @@ class StylesCache:
                 segments = Tint.process_segments(segments, styles.tint)
             if styles.opacity != 1.0:
                 segments = _apply_opacity(segments, base_background, styles.opacity)
-            segments = list(segments)
-            return segments if isinstance(segments, list) else list(segments)
+            return segments
 
         line: Iterable[Segment]
         # Draw top or bottom borders (A)

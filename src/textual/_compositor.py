@@ -119,7 +119,6 @@ class ChopsUpdate:
         last_y = self.spans[-1][0]
 
         _cell_len = cell_len
-
         for y, x1, x2 in self.spans:
             line = chops[y]
             ends = chop_ends[y]

@@ -157,7 +157,7 @@ class RenderCache(NamedTuple):
     """Stores results of a previous render."""
 
     size: Size
-    lines: Strips
+    lines: list[list[Segment]]
 
 
 class WidgetError(Exception):
