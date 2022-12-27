@@ -43,7 +43,6 @@ from ._easing import DEFAULT_SCROLL_EASING
 from ._layout import Layout
 from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
-from ._types import Strips
 from .actions import SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding
