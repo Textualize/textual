@@ -210,9 +210,7 @@ class FIFOCache(Generic[CacheKey, CacheValue]):
         return len(self._cache)
 
     def __repr__(self) -> str:
-        return (
-            f"<Cache maxsize={self._maxsize!r} hits={self.hits} misses={self.misses}>"
-        )
+        return f"<FIFOCache maxsize={self._maxsize!r} hits={self.hits} misses={self.misses}>"
 
     def clear(self) -> None:
         """Clear the cache."""
@@ -225,7 +223,7 @@ class FIFOCache(Generic[CacheKey, CacheValue]):
 
     def set(self, key: CacheKey, value: CacheValue) -> None:
         with self._lock:
-            if key not in self._cache and len(self._cache) == self._maxsize:
+            if key not in self._cache and len(self._cache) >= self._maxsize:
                 self._cache.pop(next(iter(self._cache.keys())))
             self._cache[key] = value
 
