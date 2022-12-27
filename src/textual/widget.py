@@ -37,7 +37,7 @@ from rich.text import Text
 from . import errors, events, messages
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
-from ._cache import LRUCache
+from ._cache import FIFOCache
 from ._context import active_app
 from ._easing import DEFAULT_SCROLL_EASING
 from ._layout import Layout
@@ -252,7 +252,7 @@ class Widget(DOMNode):
         self._content_height_cache: tuple[object, int] = (None, 0)
 
         self._arrangement_cache_updates: int = -1
-        self._arrangement_cache: LRUCache[Size, DockArrangeResult] = LRUCache(4)
+        self._arrangement_cache: FIFOCache[Size, DockArrangeResult] = FIFOCache(4)
 
         self._styles_cache = StylesCache()
         self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
