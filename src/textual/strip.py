@@ -51,7 +51,7 @@ class Strip:
         return self._cell_length
 
     @classmethod
-    def join(cls, strips: Iterable[Strip]) -> Strip:
+    def join(cls, strips: Iterable[Strip | None]) -> Strip:
         """Join a number of strips in to one.
 
         Args:
