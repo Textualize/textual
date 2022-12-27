@@ -36,6 +36,10 @@ class BorderApp(App):
     """Demonstrates the border styles."""
 
     CSS = """
+    Screen {
+        align: center middle;
+        overflow: auto;
+    }
     #text {
         margin: 2 4;
         padding: 2 4;
@@ -49,6 +53,7 @@ class BorderApp(App):
     def compose(self):
         yield BorderButtons()
         self.text = Label(TEXT, id="text")
+        self.text.shrink = True
         yield self.text
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
