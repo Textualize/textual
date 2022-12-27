@@ -175,3 +175,83 @@ class LRUCache(Generic[CacheKey, CacheValue]):
 
     def __contains__(self, key: CacheKey) -> bool:
         return key in self._cache
+
+
+class FIFOCache(Generic[CacheKey, CacheValue]):
+    """A simple cache that discards the least recently added key when full.
+
+    This has a lower overhead than LRUCache, but won't manage a working set as efficiently.
+    It is most suitable for a cache with a relatively low maximum size that is not expected to
+    do many lookups.
+
+    Args:
+        maxsize (int): Maximum size of the cache.
+    """
+
+    __slots__ = [
+        "_maxsize",
+        "_cache",
+        "_lock",
+        "hits",
+        "misses",
+    ]
+
+    def __init__(self, maxsize: int) -> None:
+        self._maxsize = maxsize
+        self._cache: dict[CacheKey, CacheValue] = {}
+        self._lock = Lock()
+        self.hits = 0
+        self.misses = 0
+
+    def __bool__(self) -> bool:
+        return bool(self._cache)
+
+    def __len__(self) -> int:
+        return len(self._cache)
+
+    def __repr__(self) -> str:
+        return (
+            f"<Cache maxsize={self._maxsize!r} hits={self.hits} misses={self.misses}>"
+        )
+
+    def clear(self) -> None:
+        """Clear the cache."""
+        self._cache.clear()
+
+    def keys(self) -> KeysView[CacheKey]:
+        """Get cache keys."""
+        # Mostly for tests
+        return self._cache.keys()
+
+    def set(self, key: CacheKey, value: CacheValue) -> None:
+        with self._lock:
+            if key not in self._cache and len(self._cache) == self._maxsize:
+                self._cache.pop(next(iter(self._cache.keys())))
+            self._cache[key] = value
+
+    __setitem__ = set
+
+    @overload
+    def get(self, key: CacheKey) -> CacheValue | None:
+        ...
+
+    @overload
+    def get(self, key: CacheKey, default: DefaultValue) -> CacheValue | DefaultValue:
+        ...
+
+    def get(
+        self, key: CacheKey, default: DefaultValue | None = None
+    ) -> CacheValue | DefaultValue | None:
+        return self._cache.get(key, default)
+
+    def __getitem__(self, key: CacheKey) -> CacheValue:
+        try:
+            return self._cache[key]
+        except KeyError:
+            self.misses += 1
+            raise KeyError(key) from None
+        finally:
+            self.hits += 1
+
+    def __container__(self, key: CacheKey) -> bool:
+        return key in self._cache

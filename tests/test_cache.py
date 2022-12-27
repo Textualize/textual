@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 import pytest
 
-from textual._cache import LRUCache
+from textual._cache import FIFOCache, LRUCache
 
 
 def test_lru_cache():
@@ -61,6 +61,7 @@ def test_lru_cache_get():
     assert "egg" not in cache
     assert "eggegg" in cache
 
+
 def test_lru_cache_maxsize():
     cache = LRUCache(3)
 
@@ -74,7 +75,7 @@ def test_lru_cache_maxsize():
     assert cache.maxsize == 30, "Incorrect cache maxsize after setting it"
 
     # Add more than maxsize items to the cache and be sure
-    for spam in range(cache.maxsize+10):
+    for spam in range(cache.maxsize + 10):
         cache[f"spam{spam}"] = spam
 
     # Finally, check the cache is the max size we set.
@@ -146,3 +147,27 @@ def test_lru_cache_len(keys: list[str], expected_len: int):
     for value, key in enumerate(keys):
         cache[key] = value
     assert len(cache) == expected_len
+
+
+def test_fifo_cache():
+    cache = FIFOCache(4)
+    assert not cache
+    cache["foo"] = 1
+    assert cache
+    cache["bar"] = 2
+    cache["baz"] = 3
+    cache["egg"] = 4
+    # Cache is full
+    assert list(cache.keys()) == ["foo", "bar", "baz", "egg"]
+    assert len(cache) == 4
+    cache["Paul"] = 100
+    assert list(cache.keys()) == ["bar", "baz", "egg", "Paul"]
+    assert len(cache) == 4
+    assert cache["baz"] == 3
+    assert cache["bar"] == 2
+    cache["Chani"] = 101
+    assert list(cache.keys()) == ["baz", "egg", "Paul", "Chani"]
+    assert len(cache) == 4
+    cache.clear()
+    assert len(cache) == 0
+    assert list(cache.keys()) == []

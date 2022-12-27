@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added textual.strip primitive
+- Added textual.strip.Strip primitive
+- Added textual._cache.FIFOCache
 
 ## [0.8.1] - 2022-12-25
 

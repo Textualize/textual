@@ -8,7 +8,7 @@ from rich.cells import cell_len, set_cell_size
 from rich.segment import Segment
 from rich.style import Style
 
-from ._cache import LRUCache
+from ._cache import FIFOCache
 from ._filter import LineFilter
 
 
@@ -35,8 +35,8 @@ class Strip:
     ) -> None:
         self._segments = list(segments)
         self._cell_length = cell_length
-        self._divide_cache: LRUCache[tuple[int, ...], list[Strip]] = LRUCache(4)
-        self._crop_cache: LRUCache[tuple[int, int], Strip] = LRUCache(4)
+        self._divide_cache: FIFOCache[tuple[int, ...], list[Strip]] = FIFOCache(4)
+        self._crop_cache: FIFOCache[tuple[int, int], Strip] = FIFOCache(4)
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._segments
