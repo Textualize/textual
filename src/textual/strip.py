@@ -23,15 +23,20 @@ class Strip:
         cell_length (int | None, optional): The cell length if known, or None to calculate on demand. Defaults to None.
     """
 
-    __slots__ = ["_segments", "_cell_length", "_divide_cache"]
+    __slots__ = [
+        "_segments",
+        "_cell_length",
+        "_divide_cache",
+        "_crop_cache",
+    ]
 
     def __init__(
         self, segments: Iterable[Segment], cell_length: int | None = None
     ) -> None:
-
         self._segments = list(segments)
         self._cell_length = cell_length
-        self._divide_cache: LRUCache[tuple[int], list[Strip]] = LRUCache(4)
+        self._divide_cache: LRUCache[tuple[int, ...], list[Strip]] = LRUCache(4)
+        self._crop_cache: LRUCache[tuple[int, int], Strip] = LRUCache(4)
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._segments
@@ -83,7 +88,7 @@ class Strip:
             self._segments == strip._segments and self.cell_length == strip.cell_length
         )
 
-    def adjust_cell_length(self, cell_length: int, style: Style | None) -> Strip:
+    def adjust_cell_length(self, cell_length: int, style: Style | None = None) -> Strip:
         """Adjust the cell length, possibly truncating or extending.
 
         Args:
@@ -101,7 +106,7 @@ class Strip:
         _Segment = Segment
 
         if current_cell_length < cell_length:
-            # Cell length is larger, so padd with spaces.
+            # Cell length is larger, so pad with spaces.
             new_line = line + [
                 _Segment(" " * (cell_length - current_cell_length), style)
             ]
@@ -189,39 +194,46 @@ class Strip:
         Returns:
             Strip: A new Strip.
         """
+        cache_key = (start, end)
+        cached = self._crop_cache.get(cache_key)
+        if cached is not None:
+            return cached
         _cell_len = cell_len
         pos = 0
         output_segments: list[Segment] = []
         add_segment = output_segments.append
         iter_segments = iter(self._segments)
         segment: Segment | None = None
-        for segment in iter_segments:
-            end_pos = pos + _cell_len(segment.text)
-            if end_pos > start:
-                segment = segment.split_cells(start - pos)[1]
-                break
-            pos = end_pos
+        if start > self.cell_length:
+            strip = Strip([], 0)
         else:
-            return Strip([], 0)
+            for segment in iter_segments:
+                end_pos = pos + _cell_len(segment.text)
+                if end_pos > start:
+                    segment = segment.split_cells(start - pos)[1]
+                    break
+                pos = end_pos
 
-        if end >= self.cell_length:
-            # The end crop is the end of the segments, so we can collect all remaining segments
-            if segment:
-                add_segment(segment)
-            output_segments.extend(iter_segments)
-            return Strip(output_segments, self.cell_length - start)
-
-        pos = start
-        while segment is not None:
-            end_pos = pos + _cell_len(segment.text)
-            if end_pos < end:
-                add_segment(segment)
+            if end >= self.cell_length:
+                # The end crop is the end of the segments, so we can collect all remaining segments
+                if segment:
+                    add_segment(segment)
+                output_segments.extend(iter_segments)
+                strip = Strip(output_segments, self.cell_length - start)
             else:
-                add_segment(segment.split_cells(end - pos)[0])
-                break
-            pos = end_pos
-            segment = next(iter_segments, None)
-        return Strip(output_segments, end - start)
+                pos = start
+                while segment is not None:
+                    end_pos = pos + _cell_len(segment.text)
+                    if end_pos < end:
+                        add_segment(segment)
+                    else:
+                        add_segment(segment.split_cells(end - pos)[0])
+                        break
+                    pos = end_pos
+                    segment = next(iter_segments, None)
+                strip = Strip(output_segments, end - start)
+        self._crop_cache[cache_key] = strip
+        return strip
 
     def divide(self, cuts: Iterable[int]) -> list[Strip]:
         """Divide the strip in to multiple smaller strips by cutting at given (cell) indices.

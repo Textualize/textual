@@ -43,6 +43,8 @@ class LRUCache(Generic[CacheKey, CacheValue]):
         self._full = False
         self._head: list[object] = []
         self._lock = Lock()
+        self.hits = 0
+        self.misses = 0
         super().__init__()
 
     @property
@@ -59,6 +61,11 @@ class LRUCache(Generic[CacheKey, CacheValue]):
 
     def __len__(self) -> int:
         return len(self._cache)
+
+    def __repr__(self) -> str:
+        return (
+            f"<LRUCache maxsize={self._maxsize!r} hits={self.hits} misses={self.misses}"
+        )
 
     def grow(self, maxsize: int) -> None:
         """Grow the maximum size to at least `maxsize` elements.
@@ -135,6 +142,7 @@ class LRUCache(Generic[CacheKey, CacheValue]):
         """
         link = self._cache.get(key)
         if link is None:
+            self.misses += 1
             return default
         with self._lock:
             if link is not self._head:
@@ -146,11 +154,14 @@ class LRUCache(Generic[CacheKey, CacheValue]):
                 link[0] = head[0]
                 link[1] = head
                 self._head = head[0][1] = head[0] = link  # type: ignore[index]
-
+            self.hits += 1
             return link[3]  # type: ignore[return-value]
 
     def __getitem__(self, key: CacheKey) -> CacheValue:
-        link = self._cache[key]
+        link = self._cache.get(key)
+        if link is None:
+            self.misses += 1
+            raise KeyError(key)
         with self._lock:
             if link is not self._head:
                 link[0][1] = link[1]  # type: ignore[index]
@@ -159,6 +170,7 @@ class LRUCache(Generic[CacheKey, CacheValue]):
                 link[0] = head[0]
                 link[1] = head
                 self._head = head[0][1] = head[0] = link  # type: ignore[index]
+            self.hits += 1
             return link[3]  # type: ignore[return-value]
 
     def __contains__(self, key: CacheKey) -> bool:
