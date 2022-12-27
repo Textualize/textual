@@ -222,6 +222,12 @@ class FIFOCache(Generic[CacheKey, CacheValue]):
         return self._cache.keys()
 
     def set(self, key: CacheKey, value: CacheValue) -> None:
+        """Set a value.
+
+        Args:
+            key (CacheKey): Key.
+            value (CacheValue): Value.
+        """
         with self._lock:
             if key not in self._cache and len(self._cache) >= self._maxsize:
                 self._cache.pop(next(iter(self._cache.keys())))
@@ -240,6 +246,15 @@ class FIFOCache(Generic[CacheKey, CacheValue]):
     def get(
         self, key: CacheKey, default: DefaultValue | None = None
     ) -> CacheValue | DefaultValue | None:
+        """Get a value from the cache, or return a default if the key is not present.
+
+        Args:
+            key (CacheKey): Key
+            default (Optional[DefaultValue], optional): Default to return if key is not present. Defaults to None.
+
+        Returns:
+            Union[CacheValue, Optional[DefaultValue]]: Either the value or a default.
+        """
         return self._cache.get(key, default)
 
     def __getitem__(self, key: CacheKey) -> CacheValue:
