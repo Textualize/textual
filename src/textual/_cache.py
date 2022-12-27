@@ -64,7 +64,7 @@ class LRUCache(Generic[CacheKey, CacheValue]):
 
     def __repr__(self) -> str:
         return (
-            f"<LRUCache maxsize={self._maxsize!r} hits={self.hits} misses={self.misses}"
+            f"<LRUCache maxsize={self._maxsize} hits={self.hits} misses={self.misses}"
         )
 
     def grow(self, maxsize: int) -> None:
@@ -210,7 +210,9 @@ class FIFOCache(Generic[CacheKey, CacheValue]):
         return len(self._cache)
 
     def __repr__(self) -> str:
-        return f"<FIFOCache maxsize={self._maxsize!r} hits={self.hits} misses={self.misses}>"
+        return (
+            f"<FIFOCache maxsize={self._maxsize} hits={self.hits} misses={self.misses}>"
+        )
 
     def clear(self) -> None:
         """Clear the cache."""
