@@ -1,29 +1,37 @@
 from __future__ import annotations
 
 from itertools import chain
-from typing import Iterator, Iterable, Sequence
+from typing import Iterator, Iterable
 
 import rich.repr
 from rich.cells import cell_len, set_cell_size
 from rich.segment import Segment
 from rich.style import Style
 
+from ._cache import LRUCache
 from ._filter import LineFilter
-from ._segment_tools import line_crop
-
-from ._profile import timer
 
 
 @rich.repr.auto
 class Strip:
+    """Represents a 'strip' (horizontal line) of a Textual Widget.
+
+    A Strip is like an immutable list of Segments. The immutability allows for effective caching.
+
+    Args:
+        segments (Iterable[Segment]): An iterable of segments.
+        cell_length (int | None, optional): The cell length if known, or None to calculate on demand. Defaults to None.
+    """
+
     __slots__ = ["_segments", "_cell_length", "_divide_cache"]
 
     def __init__(
         self, segments: Iterable[Segment], cell_length: int | None = None
     ) -> None:
+
         self._segments = list(segments)
         self._cell_length = cell_length
-        self._divide_cache: dict[tuple[int], list[Strip]] = {}
+        self._divide_cache: LRUCache[tuple[int], list[Strip]] = LRUCache(4)
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._segments
@@ -38,7 +46,15 @@ class Strip:
         return self._cell_length
 
     @classmethod
-    def join(cls, strips: Iterable[Strip | None]) -> Strip:
+    def join(cls, strips: Iterable[Strip]) -> Strip:
+        """Join a number of strips in to one.
+
+        Args:
+            strips (Iterable[Strip]): An iterable of Strips.
+
+        Returns:
+            Strip: A new combined strip.
+        """
 
         segments: list[list[Segment]] = []
         add_segments = segments.append
@@ -67,7 +83,16 @@ class Strip:
             self._segments == strip._segments and self.cell_length == strip.cell_length
         )
 
-    def adjust_line_length(self, cell_length: int, style: Style | None) -> Strip:
+    def adjust_cell_length(self, cell_length: int, style: Style | None) -> Strip:
+        """Adjust the cell length, possibly truncating or extending.
+
+        Args:
+            cell_length (int): New desired cell length.
+            style (Style | None): Style when extending, or `None`. Defaults to `None`.
+
+        Returns:
+            Strip: A new strip with the supplied cell length.
+        """
 
         new_line: list[Segment]
         line = self._segments
@@ -76,11 +101,13 @@ class Strip:
         _Segment = Segment
 
         if current_cell_length < cell_length:
+            # Cell length is larger, so padd with spaces.
             new_line = line + [
                 _Segment(" " * (cell_length - current_cell_length), style)
             ]
 
         elif current_cell_length > cell_length:
+            # Cell length is shorter so we need to truncate.
             new_line = []
             append = new_line.append
             line_length = 0
@@ -95,11 +122,17 @@ class Strip:
                     append(_Segment(text, segment_style))
                     break
         else:
+            # Strip is already the required cell length, so return self.
             return self
 
         return Strip(new_line, cell_length)
 
     def simplify(self) -> Strip:
+        """Simplify the segments (join segments with same style)
+
+        Returns:
+            Strip: New strip.
+        """
         line = Strip(
             Segment.simplify(self._segments),
             self._cell_length,
@@ -107,9 +140,26 @@ class Strip:
         return line
 
     def apply_filter(self, filter: LineFilter) -> Strip:
-        return Strip(filter.filter(self._segments), self._cell_length)
+        """Apply a filter to all segments in the strip.
+
+        Args:
+            filter (LineFilter): A line filter object.
+
+        Returns:
+            Strip: A new Strip.
+        """
+        return Strip(filter.apply(self._segments), self._cell_length)
 
     def style_links(self, link_id: str, link_style: Style) -> Strip:
+        """Apply a style to Segments with the given link_id.
+
+        Args:
+            link_id (str): A link id.
+            link_style (Style): Style to apply.
+
+        Returns:
+            Strip: New strip (or same Strip if no changes).
+        """
         _Segment = Segment
         if not any(
             segment.style._link_id == link_id
@@ -130,6 +180,15 @@ class Strip:
         return Strip(segments, self._cell_length)
 
     def crop(self, start: int, end: int) -> Strip:
+        """Crop a strip between two cell positions.
+
+        Args:
+            start (int): The start cell position (inclusive).
+            end (int): The end cell position (exclusive).
+
+        Returns:
+            Strip: A new Strip.
+        """
         _cell_len = cell_len
         pos = 0
         output_segments: list[Segment] = []
@@ -165,6 +224,14 @@ class Strip:
         return Strip(output_segments, end - start)
 
     def divide(self, cuts: Iterable[int]) -> list[Strip]:
+        """Divide the strip in to multiple smaller strips by cutting at given (cell) indices.
+
+        Args:
+            cuts (Iterable[int]): An iterable of cell positions as ints.
+
+        Returns:
+            list[Strip]: A new list of strips.
+        """
 
         pos = 0
         cache_key = tuple(cuts)
@@ -179,5 +246,4 @@ class Strip:
             pos += cut
 
         self._divide_cache[cache_key] = strips
-
         return strips
