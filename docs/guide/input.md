@@ -27,7 +27,7 @@ When you press a key, the app will receive the event and write it to a [TextLog]
 
 !!! tip
 
-    For a more feature feature rich version of this example, run `textual keys` from the command line.
+    For a more feature rich version of this example, run `textual keys` from the command line.
 
 ### Key Event
 
