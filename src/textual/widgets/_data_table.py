@@ -452,7 +452,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         width: int,
         cursor: bool = False,
         hover: bool = False,
-    ) -> Strips:
+    ) -> SegmentLines:
         """Render the given cell.
 
         Args:
