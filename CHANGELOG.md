@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.8.2] - 2022-12-28
+
+### Fixed
+
+- Fixed issue with TextLog.clear() https://github.com/Textualize/textual/issues/1447
+
 ## [0.8.1] - 2022-12-25
 
 ### Fixed
