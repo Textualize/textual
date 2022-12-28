@@ -36,6 +36,15 @@ class LRUCache(Generic[CacheKey, CacheValue]):
 
     """
 
+    __slots__ = [
+        "_maxsize",
+        "_cache",
+        "_full",
+        "_head",
+        "hits",
+        "misses",
+    ]
+
     def __init__(self, maxsize: int) -> None:
         self._maxsize = maxsize
         self._cache: Dict[CacheKey, list[object]] = {}
@@ -172,7 +181,7 @@ class LRUCache(Generic[CacheKey, CacheValue]):
 
 
 class FIFOCache(Generic[CacheKey, CacheValue]):
-    """A simple cache that discards the least recently added key when full.
+    """A simple cache that discards the first added key when full (First In First Out).
 
     This has a lower overhead than LRUCache, but won't manage a working set as efficiently.
     It is most suitable for a cache with a relatively low maximum size that is not expected to
@@ -185,7 +194,6 @@ class FIFOCache(Generic[CacheKey, CacheValue]):
     __slots__ = [
         "_maxsize",
         "_cache",
-        "_lock",
         "hits",
         "misses",
     ]
