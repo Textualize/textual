@@ -14,7 +14,6 @@ where the overhead of the cache is a small fraction of the total processing time
 
 from __future__ import annotations
 
-from threading import Lock
 from typing import Dict, Generic, KeysView, TypeVar, overload
 
 CacheKey = TypeVar("CacheKey")
@@ -42,7 +41,6 @@ class LRUCache(Generic[CacheKey, CacheValue]):
         self._cache: Dict[CacheKey, list[object]] = {}
         self._full = False
         self._head: list[object] = []
-        self._lock = Lock()
         self.hits = 0
         self.misses = 0
         super().__init__()
@@ -77,10 +75,9 @@ class LRUCache(Generic[CacheKey, CacheValue]):
 
     def clear(self) -> None:
         """Clear the cache."""
-        with self._lock:
-            self._cache.clear()
-            self._full = False
-            self._head = []
+        self._cache.clear()
+        self._full = False
+        self._head = []
 
     def keys(self) -> KeysView[CacheKey]:
         """Get cache keys."""
@@ -94,29 +91,28 @@ class LRUCache(Generic[CacheKey, CacheValue]):
             key (CacheKey): Key.
             value (CacheValue): Value.
         """
-        with self._lock:
-            link = self._cache.get(key)
-            if link is None:
-                head = self._head
-                if not head:
-                    # First link references itself
-                    self._head[:] = [head, head, key, value]
-                else:
-                    # Add a new root to the beginning
-                    self._head = [head[0], head, key, value]
-                    # Updated references on previous root
-                    head[0][1] = self._head  # type: ignore[index]
-                    head[0] = self._head
-                self._cache[key] = self._head
+        link = self._cache.get(key)
+        if link is None:
+            head = self._head
+            if not head:
+                # First link references itself
+                self._head[:] = [head, head, key, value]
+            else:
+                # Add a new root to the beginning
+                self._head = [head[0], head, key, value]
+                # Updated references on previous root
+                head[0][1] = self._head  # type: ignore[index]
+                head[0] = self._head
+            self._cache[key] = self._head
 
-                if self._full or len(self._cache) > self._maxsize:
-                    # Cache is full, we need to evict the oldest one
-                    self._full = True
-                    head = self._head
-                    last = head[0]
-                    last[0][1] = head  # type: ignore[index]
-                    head[0] = last[0]  # type: ignore[index]
-                    del self._cache[last[2]]  # type: ignore[index]
+            if self._full or len(self._cache) > self._maxsize:
+                # Cache is full, we need to evict the oldest one
+                self._full = True
+                head = self._head
+                last = head[0]
+                last[0][1] = head  # type: ignore[index]
+                head[0] = last[0]  # type: ignore[index]
+                del self._cache[last[2]]  # type: ignore[index]
 
     __setitem__ = set
 
@@ -144,34 +140,32 @@ class LRUCache(Generic[CacheKey, CacheValue]):
         if link is None:
             self.misses += 1
             return default
-        with self._lock:
-            if link is not self._head:
-                # Remove link from list
-                link[0][1] = link[1]  # type: ignore[index]
-                link[1][0] = link[0]  # type: ignore[index]
-                head = self._head
-                # Move link to head of list
-                link[0] = head[0]
-                link[1] = head
-                self._head = head[0][1] = head[0] = link  # type: ignore[index]
-            self.hits += 1
-            return link[3]  # type: ignore[return-value]
+        if link is not self._head:
+            # Remove link from list
+            link[0][1] = link[1]  # type: ignore[index]
+            link[1][0] = link[0]  # type: ignore[index]
+            head = self._head
+            # Move link to head of list
+            link[0] = head[0]
+            link[1] = head
+            self._head = head[0][1] = head[0] = link  # type: ignore[index]
+        self.hits += 1
+        return link[3]  # type: ignore[return-value]
 
     def __getitem__(self, key: CacheKey) -> CacheValue:
         link = self._cache.get(key)
         if link is None:
             self.misses += 1
             raise KeyError(key)
-        with self._lock:
-            if link is not self._head:
-                link[0][1] = link[1]  # type: ignore[index]
-                link[1][0] = link[0]  # type: ignore[index]
-                head = self._head
-                link[0] = head[0]
-                link[1] = head
-                self._head = head[0][1] = head[0] = link  # type: ignore[index]
-            self.hits += 1
-            return link[3]  # type: ignore[return-value]
+        if link is not self._head:
+            link[0][1] = link[1]  # type: ignore[index]
+            link[1][0] = link[0]  # type: ignore[index]
+            head = self._head
+            link[0] = head[0]
+            link[1] = head
+            self._head = head[0][1] = head[0] = link  # type: ignore[index]
+        self.hits += 1
+        return link[3]  # type: ignore[return-value]
 
     def __contains__(self, key: CacheKey) -> bool:
         return key in self._cache
@@ -199,7 +193,6 @@ class FIFOCache(Generic[CacheKey, CacheValue]):
     def __init__(self, maxsize: int) -> None:
         self._maxsize = maxsize
         self._cache: dict[CacheKey, CacheValue] = {}
-        self._lock = Lock()
         self.hits = 0
         self.misses = 0
 
@@ -230,10 +223,9 @@ class FIFOCache(Generic[CacheKey, CacheValue]):
             key (CacheKey): Key.
             value (CacheValue): Value.
         """
-        with self._lock:
-            if key not in self._cache and len(self._cache) >= self._maxsize:
-                self._cache.pop(next(iter(self._cache.keys())))
-            self._cache[key] = value
+        if key not in self._cache and len(self._cache) >= self._maxsize:
+            self._cache.pop(next(iter(self._cache.keys())))
+        self._cache[key] = value
 
     __setitem__ = set
 
