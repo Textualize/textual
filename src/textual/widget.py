@@ -37,7 +37,6 @@ from rich.text import Text
 from . import errors, events, messages
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
-from ._cache import FIFOCache
 from ._context import active_app
 from ._easing import DEFAULT_SCROLL_EASING
 from ._layout import Layout
@@ -250,8 +249,8 @@ class Widget(DOMNode):
         self._content_width_cache: tuple[object, int] = (None, 0)
         self._content_height_cache: tuple[object, int] = (None, 0)
 
-        self._arrangement_cache_updates: int = -1
-        self._arrangement_cache: FIFOCache[Size, DockArrangeResult] = FIFOCache(4)
+        self._arrangement_cache_key: tuple[Size, int] = (Size(), -1)
+        self._cached_arrangement: DockArrangeResult | None = None
 
         self._styles_cache = StylesCache()
         self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
@@ -463,22 +462,23 @@ class Widget(DOMNode):
         """
         assert self.is_container
 
-        if self._arrangement_cache_updates != self.children._updates:
-            self._arrangement_cache_updates = self.children._updates
-            self._arrangement_cache.clear()
+        cache_key = (size, self.children._updates)
+        if (
+            self._arrangement_cache_key == cache_key
+            and self._cached_arrangement is not None
+        ):
+            return self._cached_arrangement
 
-        cached_arrangement = self._arrangement_cache.get(size, None)
-        if cached_arrangement is not None:
-            return cached_arrangement
-
-        arrangement = self._arrangement_cache[size] = arrange(
+        self._arrangement_cache_key = cache_key
+        arrangement = self._cached_arrangement = arrange(
             self, self.children, size, self.screen.size
         )
+
         return arrangement
 
     def _clear_arrangement_cache(self) -> None:
         """Clear arrangement cache, forcing a new arrange operation."""
-        self._arrangement_cache.clear()
+        self._cached_arrangement = None
 
     def _get_virtual_dom(self) -> Iterable[Widget]:
         """Get widgets not part of the DOM.
