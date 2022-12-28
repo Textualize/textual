@@ -20,6 +20,8 @@ CacheKey = TypeVar("CacheKey")
 CacheValue = TypeVar("CacheValue")
 DefaultValue = TypeVar("DefaultValue")
 
+__all__ = ["LRUCache", "FIFOCache"]
+
 
 class LRUCache(Generic[CacheKey, CacheValue]):
     """
