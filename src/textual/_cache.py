@@ -234,7 +234,9 @@ class FIFOCache(Generic[CacheKey, CacheValue]):
             value (CacheValue): Value.
         """
         if key not in self._cache and len(self._cache) >= self._maxsize:
-            self._cache.pop(next(iter(self._cache)))
+            for first_key in self._cache:
+                self._cache.pop(first_key)
+                break
         self._cache[key] = value
 
     __setitem__ = set
