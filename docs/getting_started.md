@@ -71,7 +71,7 @@ The Textual repository comes with a number of example apps. To try out the examp
     ```
 
 
-With the repository cloned, navigate to the `/examples/` directory where you fill find a number of Python files you can run from the command line:
+With the repository cloned, navigate to the `/examples/` directory where you will find a number of Python files you can run from the command line:
 
 ```bash
 cd textual/examples/
