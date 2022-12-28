@@ -14,7 +14,7 @@ where the overhead of the cache is a small fraction of the total processing time
 
 from __future__ import annotations
 
-from typing import cast, Dict, Generic, KeysView, TypeVar, overload
+from typing import Dict, Generic, KeysView, TypeVar, overload
 
 CacheKey = TypeVar("CacheKey")
 CacheValue = TypeVar("CacheValue")
@@ -71,7 +71,7 @@ class LRUCache(Generic[CacheKey, CacheValue]):
 
     def __repr__(self) -> str:
         return (
-            f"<LRUCache maxsize={self._maxsize} hits={self.hits} misses={self.misses}"
+            f"<LRUCache maxsize={self._maxsize} hits={self.hits} misses={self.misses}>"
         )
 
     def grow(self, maxsize: int) -> None:

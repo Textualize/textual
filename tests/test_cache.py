@@ -9,6 +9,8 @@ from textual._cache import FIFOCache, LRUCache
 def test_lru_cache():
     cache = LRUCache(3)
 
+    assert str(cache) == "<LRUCache maxsize=3 hits=0 misses=0>"
+
     # insert some values
     cache["foo"] = 1
     cache["bar"] = 2
@@ -33,6 +35,38 @@ def test_lru_cache():
     # Check it kicked out the 'oldest' key
     assert "egg" not in cache
     assert "eggegg" in cache
+
+
+def test_lru_cache_hits():
+    cache = LRUCache(4)
+    assert cache.hits == 0
+    assert cache.misses == 0
+
+    try:
+        cache["foo"]
+    except KeyError:
+        assert cache.hits == 0
+        assert cache.misses == 1
+
+    cache["foo"] = 1
+    assert cache.hits == 0
+    assert cache.misses == 1
+
+    cache["foo"]
+    cache["foo"]
+
+    assert cache.hits == 2
+    assert cache.misses == 1
+
+    cache.get("bar")
+    assert cache.hits == 2
+    assert cache.misses == 2
+
+    cache.get("foo")
+    assert cache.hits == 3
+    assert cache.misses == 2
+
+    assert str(cache) == "<LRUCache maxsize=4 hits=3 misses=2>"
 
 
 def test_lru_cache_get():
