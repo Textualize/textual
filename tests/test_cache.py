@@ -152,7 +152,9 @@ def test_lru_cache_len(keys: list[str], expected_len: int):
 def test_fifo_cache():
     cache = FIFOCache(4)
     assert not cache
+    assert "foo" not in cache
     cache["foo"] = 1
+    assert "foo" in cache
     assert cache
     cache["bar"] = 2
     cache["baz"] = 3
@@ -171,3 +173,35 @@ def test_fifo_cache():
     cache.clear()
     assert len(cache) == 0
     assert list(cache.keys()) == []
+
+
+def test_fifo_cache_hits():
+    cache = FIFOCache(4)
+    assert cache.hits == 0
+    assert cache.misses == 0
+
+    try:
+        cache["foo"]
+    except KeyError:
+        assert cache.hits == 0
+        assert cache.misses == 1
+
+    cache["foo"] = 1
+    assert cache.hits == 0
+    assert cache.misses == 1
+
+    cache["foo"]
+    cache["foo"]
+
+    assert cache.hits == 2
+    assert cache.misses == 1
+
+    cache.get("bar")
+    assert cache.hits == 2
+    assert cache.misses == 2
+
+    cache.get("foo")
+    assert cache.hits == 3
+    assert cache.misses == 2
+
+    assert str(cache) == "<FIFOCache maxsize=4 hits=3 misses=2>"

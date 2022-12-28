@@ -14,7 +14,7 @@ where the overhead of the cache is a small fraction of the total processing time
 
 from __future__ import annotations
 
-from typing import Dict, Generic, KeysView, TypeVar, overload
+from typing import cast, Dict, Generic, KeysView, TypeVar, overload
 
 CacheKey = TypeVar("CacheKey")
 CacheValue = TypeVar("CacheValue")
@@ -257,16 +257,24 @@ class FIFOCache(Generic[CacheKey, CacheValue]):
         Returns:
             Union[CacheValue, Optional[DefaultValue]]: Either the value or a default.
         """
-        return self._cache.get(key, default)
+        try:
+            result = self._cache[key]
+        except KeyError:
+            self.misses += 1
+            return default
+        else:
+            self.hits += 1
+            return result
 
     def __getitem__(self, key: CacheKey) -> CacheValue:
         try:
-            return self._cache[key]
+            result = self._cache[key]
         except KeyError:
             self.misses += 1
             raise KeyError(key) from None
-        finally:
+        else:
             self.hits += 1
+            return result
 
-    def __container__(self, key: CacheKey) -> bool:
+    def __contains__(self, key: CacheKey) -> bool:
         return key in self._cache
