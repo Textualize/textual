@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added textual.strip.Strip primitive
 - Added textual._cache.FIFOCache
+  
+## [0.8.2] - 2022-12-28
+
+### Fixed
+
+- Fixed issue with TextLog.clear() https://github.com/Textualize/textual/issues/1447
 
 ## [0.8.1] - 2022-12-25
 
