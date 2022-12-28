@@ -185,10 +185,12 @@ def test_lru_cache_len(keys: list[str], expected_len: int):
 
 def test_fifo_cache():
     cache = FIFOCache(4)
+    assert len(cache) == 0
     assert not cache
     assert "foo" not in cache
     cache["foo"] = 1
     assert "foo" in cache
+    assert len(cache) == 1
     assert cache
     cache["bar"] = 2
     cache["baz"] = 3
