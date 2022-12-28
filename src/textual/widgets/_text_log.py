@@ -131,7 +131,8 @@ class TextLog(ScrollView, can_focus=True):
 
     def clear(self) -> None:
         """Clear the text log."""
-        del self.lines[:]
+        self.lines.clear()
+        self._line_cache.clear()
         self._start_line = 0
         self.max_width = 0
         self.virtual_size = Size(self.max_width, len(self.lines))
