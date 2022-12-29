@@ -611,10 +611,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         scrollable_line: list[Segment] = list(chain.from_iterable(scrollable))
 
         segments = fixed_line + line_crop(scrollable_line, x1 + fixed_width, x2, width)
-        segments = Segment.adjust_line_length(segments, width, style=base_style)
-        simplified_segments = list(Segment.simplify(segments))
+        strip = Strip(segments).adjust_cell_length(width, base_style).simplify()
 
-        strip = Strip(simplified_segments, width)
         self._line_cache[cache_key] = strip
         return strip
 
