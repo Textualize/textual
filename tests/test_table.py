@@ -1,5 +1,7 @@
 import asyncio
 
+from rich.text import Text
+
 from textual.app import App, ComposeResult
 from textual.widgets import DataTable
 
@@ -18,12 +20,31 @@ async def test_table_clear() -> None:
         table.add_columns("foo", "bar")
         assert table.row_count == 0
         table.add_row("Hello", "World!")
+        assert [col.label for col in table.columns] == [Text("foo"), Text("bar")]
         assert table.data == {0: ["Hello", "World!"]}
         assert table.row_count == 1
         table.clear()
+        assert [col.label for col in table.columns] == [Text("foo"), Text("bar")]
         assert table.data == {}
         assert table.row_count == 0
 
+
+async def test_table_clear_with_columns() -> None:
+    """Check DataTable.clear(columns=True)"""
+
+    app = TableApp()
+    async with app.run_test() as pilot:
+        table = app.query_one(DataTable)
+        table.add_columns("foo", "bar")
+        assert table.row_count == 0
+        table.add_row("Hello", "World!")
+        assert [col.label for col in table.columns] == [Text("foo"), Text("bar")]
+        assert table.data == {0: ["Hello", "World!"]}
+        assert table.row_count == 1
+        table.clear(columns=True)
+        assert [col.label for col in table.columns] == []
+        assert table.data == {}
+        assert table.row_count == 0
 
 async def test_table_add_row() -> None:
 
