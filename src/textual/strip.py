@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from itertools import chain
-from typing import Iterator, Iterable
+from typing import Iterable, Iterator
 
 import rich.repr
 from rich.cells import cell_len, set_cell_size
