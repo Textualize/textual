@@ -9,22 +9,16 @@ from __future__ import annotations
 
 import asyncio
 import weakref
-from asyncio import (
-    CancelledError,
-    Event,
-    Task,
-)
+from asyncio import CancelledError, Event, Task
 from typing import Awaitable, Callable, Union
-
 
 from rich.repr import Result, rich_repr
 
-from . import events
+from . import _clock, events
 from ._callback import invoke
 from ._context import active_app
-from . import _clock
-from ._types import MessageTarget
 from ._time import sleep
+from ._types import MessageTarget
 
 TimerCallback = Union[Callable[[], Awaitable[None]], Callable[[], None]]
 
@@ -142,7 +136,7 @@ class Timer:
         _interval = self._interval
         await self._active.wait()
         start = _clock.get_time_no_wait()
-        sleep_event = Event()
+
         while _repeat is None or count <= _repeat:
             next_timer = start + ((count + 1) * _interval)
             now = await _clock.get_time()
@@ -151,9 +145,8 @@ class Timer:
                 continue
             now = await _clock.get_time()
             wait_time = max(0, next_timer - now)
-            if wait_time > 1/1000:
-               await sleep(wait_time)
-               
+            if wait_time > 1 / 1000:
+                await sleep(wait_time)
 
             count += 1
             await self._active.wait()
