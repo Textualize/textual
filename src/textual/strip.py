@@ -42,6 +42,32 @@ class Strip:
         yield self._segments
         yield self.cell_length
 
+    @classmethod
+    def blank(cls, cell_length: int, style: Style | None) -> Strip:
+        """Create a blank strip.
+
+        Args:
+            cell_length (int): Desired cell length.
+            style (Style | None): Style of blank.
+
+        Returns:
+            Strip: New strip.
+        """
+        return cls([Segment(" " * cell_length, style)], cell_length)
+
+    @classmethod
+    def from_lines(cls, lines: list[list[Segment]], cell_length: int) -> list[Strip]:
+        """Convert lines (lists of segments) to a list of Strips.
+
+        Args:
+            lines (list[list[Segment]]): List of lines, where a line is a list of segments.
+            cell_length (int): Cell length of lines (must be same).
+
+        Returns:
+            list[Strip]: List of strips.
+        """
+        return [cls(segments, cell_length) for segments in lines]
+
     @property
     def cell_length(self) -> int:
         """Get the number of cells required to render this object."""
@@ -194,6 +220,8 @@ class Strip:
         Returns:
             Strip: A new Strip.
         """
+        if start == 0 and end == self.cell_length:
+            return self
         cache_key = (start, end)
         cached = self._crop_cache.get(cache_key)
         if cached is not None:

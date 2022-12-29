@@ -19,6 +19,7 @@ from ..geometry import Region, Size, Spacing, clamp
 from ..reactive import Reactive
 from ..render import measure
 from ..scroll_view import ScrollView
+from ..strip import Strip
 from .._typing import Literal
 
 CursorType = Literal["cell", "row", "column"]
@@ -214,9 +215,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             tuple[int, int, Style, bool, bool], SegmentLines
         ]
         self._cell_render_cache = LRUCache(10000)
-        self._line_cache: LRUCache[
-            tuple[int, int, int, int, int, int, Style], list[Segment]
-        ]
+        self._line_cache: LRUCache[tuple[int, int, int, int, int, int, Style], Strip]
         self._line_cache = LRUCache(1000)
 
         self._line_no = 0
@@ -567,9 +566,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             raise LookupError("Y coord {y!r} is greater than total height")
         return self._y_offsets[y]
 
-    def _render_line(
-        self, y: int, x1: int, x2: int, base_style: Style
-    ) -> list[Segment]:
+    def _render_line(self, y: int, x1: int, x2: int, base_style: Style) -> Strip:
         """Render a line in to a list of segments.
 
         Args:
@@ -587,7 +584,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         try:
             row_index, line_no = self._get_offsets(y)
         except LookupError:
-            return [Segment(" " * width, base_style)]
+            return Strip.blank(width, base_style)
         cursor_column = (
             self.cursor_column
             if (self.show_cursor and self.cursor_row == row_index)
@@ -617,10 +614,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         segments = Segment.adjust_line_length(segments, width, style=base_style)
         simplified_segments = list(Segment.simplify(segments))
 
-        self._line_cache[cache_key] = simplified_segments
-        return segments
+        strip = Strip(simplified_segments, width)
+        self._line_cache[cache_key] = strip
+        return strip
 
-    def render_line(self, y: int) -> list[Segment]:
+    def render_line(self, y: int) -> Strip:
         width, height = self.size
         scroll_x, scroll_y = self.scroll_offset
         fixed_top_row_count = sum(

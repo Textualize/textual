@@ -155,7 +155,7 @@ class RenderCache(NamedTuple):
     """Stores results of a previous render."""
 
     size: Size
-    lines: list[list[Segment]]
+    lines: list[Strip]
 
 
 class WidgetError(Exception):
@@ -2097,11 +2097,11 @@ class Widget(DOMNode):
                 align_vertical,
             )
         )
-
-        self._render_cache = RenderCache(self.size, lines)
+        strips = [Strip(line, width) for line in lines]
+        self._render_cache = RenderCache(self.size, strips)
         self._dirty_regions.clear()
 
-    def render_line(self, y: int) -> list[Segment]:
+    def render_line(self, y: int) -> Strip:
         """Render a line of content.
 
         Args:
@@ -2115,7 +2115,7 @@ class Widget(DOMNode):
         try:
             line = self._render_cache.lines[y]
         except IndexError:
-            line = [Segment(" " * self.size.width, self.rich_style)]
+            line = Strip.blank(self.size.width, self.rich_style)
         return line
 
     def render_lines(self, crop: Region) -> list[Strip]:

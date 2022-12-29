@@ -10,7 +10,6 @@ from rich.segment import Segment
 from rich.style import Style
 
 from ._cells import cell_len
-from ._types import Strips
 from .css.types import AlignHorizontal, AlignVertical
 from .geometry import Size
 

@@ -11,7 +11,6 @@ from ._border import get_box, render_row
 from ._filter import LineFilter
 from ._opacity import _apply_opacity
 from ._segment_tools import line_crop, line_pad, line_trim
-from ._types import Strips
 from ._typing import TypeAlias
 from .color import Color
 from .geometry import Region, Size, Spacing

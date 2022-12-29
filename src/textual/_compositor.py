@@ -26,7 +26,6 @@ from . import errors
 from ._cells import cell_len
 from ._loop import loop_last
 from .strip import Strip
-from ._types import Strips
 from ._typing import TypeAlias
 from .geometry import NULL_OFFSET, Offset, Region, Size
 
@@ -67,7 +66,7 @@ CompositorMap: TypeAlias = "dict[Widget, MapGeometry]"
 class LayoutUpdate:
     """A renderable containing the result of a render for a given region."""
 
-    def __init__(self, strips: Strips, region: Region) -> None:
+    def __init__(self, strips: list[Strip], region: Region) -> None:
         self.strips = strips
         self.region = region
 
@@ -634,7 +633,7 @@ class Compositor:
 
     def _get_renders(
         self, crop: Region | None = None
-    ) -> Iterable[tuple[Region, Region, Strips]]:
+    ) -> Iterable[tuple[Region, Region, list[Strip]]]:
         """Get rendered widgets (lists of segments) in the composition.
 
         Returns:

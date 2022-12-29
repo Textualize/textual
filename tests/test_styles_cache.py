@@ -4,14 +4,13 @@ from rich.segment import Segment
 from rich.style import Style
 
 from textual._styles_cache import StylesCache
-from textual._types import Strips
 from textual.color import Color
 from textual.css.styles import Styles
 from textual.geometry import Region, Size
 from textual.strip import Strip
 
 
-def _extract_content(lines: Strips):
+def _extract_content(lines: list[list[Segment]]):
     """Extract the text content from lines."""
     content = ["".join(segment.text for segment in line) for line in lines]
     return content

@@ -29,6 +29,5 @@ class EventTarget(Protocol):
         ...
 
 
-Strips = List["Strip"]
 SegmentLines = List[List["Segment"]]
 CallbackType = Union[Callable[[], Awaitable[None]], Callable[[], None]]
