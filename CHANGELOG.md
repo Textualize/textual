@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added textual.strip.Strip primitive
 - Added textual._cache.FIFOCache
 - Added an option to clear columns in DataTable.clear() https://github.com/Textualize/textual/pull/1427
+
+### Changed
+
+- Widget.render_line now returns a Strip
   
 ## [0.8.2] - 2022-12-28
 
