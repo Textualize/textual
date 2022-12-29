@@ -314,7 +314,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         cell_region = Region(x, y, width, height)
         return cell_region
 
-    def clear(self) -> None:
+    def clear(self, columns: bool = False) -> None:
         """Clear the table.
 
         Args:
@@ -325,6 +325,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._y_offsets.clear()
         self.data.clear()
         self.rows.clear()
+        if columns:
+            self.columns.clear()
         self._line_no = 0
         self._require_update_dimensions = True
         self.refresh()
