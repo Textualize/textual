@@ -1,7 +1,8 @@
 import platform
 
-from asyncio import sleep as asleep
-from time import monotonic, perf_counter
+from asyncio import sleep as asyncio_sleep, get_running_loop
+from time import monotonic, perf_counter, sleep as time_sleep
+
 
 PLATFORM = platform.system()
 WINDOWS = PLATFORM == "Windows"
@@ -23,9 +24,7 @@ if WINDOWS:
         Args:
             sleep_for (float): Seconds to sleep for.
         """
-        start = time()
-        while time() - start < sleep_for - 1 / 1000:
-            await asleep(0)
+        await get_running_loop().run_in_executor(None, time_sleep, sleep_for)
 
 else:
-    sleep = asleep
+    sleep = asyncio_sleep
