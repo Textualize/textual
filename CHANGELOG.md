@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Widget.render_line now returns a Strip
+- Fix for slow updates on Windows
   
 ## [0.8.2] - 2022-12-28
 
