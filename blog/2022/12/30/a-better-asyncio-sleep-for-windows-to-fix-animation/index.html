@@ -4516,7 +4516,7 @@
 <p>Textual has a <code>Timer</code> class which creates events at regular intervals. It powers the JS-like <code>set_interval</code> and <code>set_timer</code> functions. It is also used internally to do animation (such as smooth scrolling). This Timer class calls <code>asyncio.sleep</code> to wait the time between one event and the next.</p>
 <p>On macOS and Linux, calling <code>asynco.sleep</code> is fairly accurate. If you call <code>sleep(3.14)</code>, it will return within 1% of 3.14 seconds. This is not the case for Windows, which for historical reasons uses a timer with a granularity of 15 milliseconds. The upshot is that sleep times will be rounded up to the nearest multiple of 15 milliseconds.</p>
 <p>This limit appears holds true for all async primitives on Windows. If you wait for something with a timeout, it will return on a multiple of 15 milliseconds. Fortunately there is work in the CPython pipeline to make this more accurate. Thanks to <a href="https://twitter.com/zooba">Steve Dower</a> for pointing this out.</p>
-<p>This lack of accuracy in the timer meant that timer events were created at a far slower rate that intended. Animation was slower because Textual was waiting too long between updates.</p>
+<p>This lack of accuracy in the timer meant that timer events were created at a far slower rate than intended. Animation was slower because Textual was waiting too long between updates.</p>
 <p>Once I had figured that out, I needed an alternative to <code>asyncio.sleep</code> for Textual's Timer class. And I found one. The following version of <code>sleep</code> is accurate to well within 1%:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span> <span class="nn">asyncio</span> <span class="kn">import</span> <span class="n">get_running_loop</span>
@@ -4524,7 +4524,7 @@
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="k">async</span> <span class="k">def</span> <span class="nf">sleep</span><span class="p">(</span><span class="n">sleep_for</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="sd">&quot;&quot;&quot;An asyncio sleep.</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="sd">    On Windows this achieves a better granularity that asyncio.sleep</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="sd">    On Windows this achieves a better granularity than asyncio.sleep</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="sd">    Args:</span>
 <a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="sd">        sleep_for (float): Seconds to sleep for.</span>
