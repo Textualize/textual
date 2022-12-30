@@ -12,8 +12,18 @@ CREATE_WAITABLE_TIMER_HIGH_RESOLUTION = 0x00000002
 
 
 def sleep(sleep_for: float) -> None:
+    """A replacement sleep for Windows.
+
+    Python 3.11 added a more accurate sleep. This may be used on < Python 3.11
+
+    Args:
+        sleep_for (float): Seconds to sleep for.
+    """
     handle = kernel32.CreateWaitableTimerExW(
-        None, None, CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, 0x1F0003
+        None,
+        None,
+        CREATE_WAITABLE_TIMER_HIGH_RESOLUTION,
+        0x1F0003,
     )
     if not handle:
         time_sleep(sleep_for)
