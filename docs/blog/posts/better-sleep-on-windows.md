@@ -28,7 +28,7 @@ On macOS and Linux, calling `asynco.sleep` is fairly accurate. If you call `slee
 
 This limit appears holds true for all async primitives on Windows. If you wait for something with a timeout, it will return on a multiple of 15 milliseconds. Fortunately there is work in the CPython pipeline to make this more accurate. Thanks to [Steve Dower](https://twitter.com/zooba) for pointing this out.
 
-This lack of accuracy in the timer meant that timer events were created at a far slower rate that intended. Animation was slower because Textual was waiting too long between updates.
+This lack of accuracy in the timer meant that timer events were created at a far slower rate than intended. Animation was slower because Textual was waiting too long between updates.
 
 Once I had figured that out, I needed an alternative to `asyncio.sleep` for Textual's Timer class. And I found one. The following version of `sleep` is accurate to well within 1%:
 
@@ -39,7 +39,7 @@ from asyncio import get_running_loop
 async def sleep(sleep_for: float) -> None:
     """An asyncio sleep.
 
-    On Windows this achieves a better granularity that asyncio.sleep
+    On Windows this achieves a better granularity than asyncio.sleep
 
     Args:
         sleep_for (float): Seconds to sleep for.
