@@ -14,12 +14,6 @@ if WINDOWS:
 else:
     time = monotonic
 
-
-import ctypes
-
-winmm = ctypes.WinDLL("winmm")
-
-
 if WINDOWS:
 
     if sys.version_info >= (3, 11, 0):
