@@ -5,22 +5,21 @@ from typing import ClassVar, Generic, NewType, TypeVar
 
 import rich.repr
 from rich.segment import Segment
-from rich.style import Style, NULL_STYLE
+from rich.style import NULL_STYLE, Style
 from rich.text import Text, TextType
 
-
-from ..binding import Binding
-from ..geometry import clamp, Region, Size
-from .._loop import loop_last
+from .. import events
 from .._cache import LRUCache
-from ..message import Message
-from ..reactive import reactive, var
+from .._loop import loop_last
 from .._segment_tools import line_crop, line_pad
 from .._types import MessageTarget
 from .._typing import TypeAlias
+from ..binding import Binding
+from ..geometry import Region, Size, clamp
+from ..message import Message
+from ..reactive import reactive, var
 from ..scroll_view import ScrollView
-
-from .. import events
+from ..strip import Strip
 
 NodeID = NewType("NodeID", int)
 TreeDataType = TypeVar("TreeDataType")
@@ -365,7 +364,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         self._current_id = 0
         self.root = self._add_node(None, text_label, data)
 
-        self._line_cache: LRUCache[LineCacheKey, list[Segment]] = LRUCache(1024)
+        self._line_cache: LRUCache[LineCacheKey, Strip] = LRUCache(1024)
         self._tree_lines_cached: list[_TreeLine] | None = None
         self._cursor_node: TreeNode[TreeDataType] | None = None
 
@@ -666,7 +665,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 self.cursor_line = -1
         self.refresh()
 
-    def render_line(self, y: int) -> list[Segment]:
+    def render_line(self, y: int) -> Strip:
         width = self.size.width
         scroll_x, scroll_y = self.scroll_offset
         style = self.rich_style
@@ -677,14 +676,12 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             style,
         )
 
-    def _render_line(
-        self, y: int, x1: int, x2: int, base_style: Style
-    ) -> list[Segment]:
+    def _render_line(self, y: int, x1: int, x2: int, base_style: Style) -> Strip:
         tree_lines = self._tree_lines
         width = self.size.width
 
         if y >= len(tree_lines):
-            return [Segment(" " * width, base_style)]
+            return Strip.blank(width, base_style)
 
         line = tree_lines[y]
 
@@ -699,7 +696,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             tuple(node._updates for node in line.path),
         )
         if cache_key in self._line_cache:
-            segments = self._line_cache[cache_key]
+            strip = self._line_cache[cache_key]
         else:
             base_guide_style = self.get_component_rich_style(
                 "tree--guides", partial=True
@@ -785,11 +782,10 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             segments = list(guides.render(self.app.console))
             pad_width = max(self.virtual_size.width, width)
             segments = line_pad(segments, 0, pad_width - guides.cell_len, line_style)
-            self._line_cache[cache_key] = segments
+            strip = self._line_cache[cache_key] = Strip(segments)
 
-        segments = line_crop(segments, x1, x2, Segment.get_line_length(segments))
-
-        return segments
+        strip = strip.crop(x1, x2)
+        return strip
 
     def _on_resize(self, event: events.Resize) -> None:
         self._line_cache.grow(event.size.height)

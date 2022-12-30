@@ -4,13 +4,13 @@ from rich.segment import Segment
 from rich.style import Style
 
 from textual._styles_cache import StylesCache
-from textual._types import Lines
 from textual.color import Color
 from textual.css.styles import Styles
 from textual.geometry import Region, Size
+from textual.strip import Strip
 
 
-def _extract_content(lines: Lines):
+def _extract_content(lines: list[list[Segment]]):
     """Extract the text content from lines."""
     content = ["".join(segment.text for segment in line) for line in lines]
     return content
@@ -44,10 +44,11 @@ def test_no_styles():
     )
     style = Style.from_color(bgcolor=Color.parse("green").rich_color)
     expected = [
-        [Segment("foo", style)],
-        [Segment("bar", style)],
-        [Segment("baz", style)],
+        Strip([Segment("foo", style)], 3),
+        Strip([Segment("bar", style)], 3),
+        Strip([Segment("baz", style)], 3),
     ]
+
     assert lines == expected
 
 
