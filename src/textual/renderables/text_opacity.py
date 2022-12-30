@@ -1,5 +1,5 @@
 import functools
-from typing import Iterable
+from typing import Iterable, Iterator
 
 from rich.cells import cell_len
 from rich.color import Color
@@ -63,6 +63,7 @@ class TextOpacity:
         _from_color = Style.from_color
         if opacity == 0:
             for text, style, control in segments:
+                assert style is not None
                 invisible_style = _from_color(bgcolor=style.bgcolor)
                 yield _Segment(cell_len(text) * " ", invisible_style)
         else:
@@ -106,7 +107,7 @@ if __name__ == "__main__":
     opacity_panel = TextOpacity(panel, opacity=0.5)
     console.print(opacity_panel)
 
-    def frange(start, end, step):
+    def frange(start: float, end: float, step: float) -> Iterator[float]:
         current = start
         while current < end:
             yield current
@@ -120,5 +121,5 @@ if __name__ == "__main__":
 
     with Live(opacity_panel, refresh_per_second=60) as live:
         for value in itertools.cycle(frange(0, 1, 0.05)):
-            opacity_panel.value = value
+            opacity_panel.opacity = value
             sleep(0.05)

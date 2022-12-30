@@ -31,12 +31,12 @@ TOGGLE_STYLE = Style.from_meta({"toggle": True})
 
 
 @dataclass
-class _TreeLine:
-    path: list[TreeNode]
+class _TreeLine(Generic[TreeDataType]):
+    path: list[TreeNode[TreeDataType]]
     last: bool
 
     @property
-    def node(self) -> TreeNode:
+    def node(self) -> TreeNode[TreeDataType]:
         """TreeNode: The node associated with this line."""
         return self.path[-1]
 
@@ -74,7 +74,7 @@ class TreeNode(Generic[TreeDataType]):
         self._label = label
         self.data = data
         self._expanded = expanded
-        self._children: list[TreeNode] = []
+        self._children: list[TreeNode[TreeDataType]] = []
 
         self._hover_ = False
         self._selected_ = False
@@ -466,11 +466,11 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         self._updates += 1
         self.refresh()
 
-    def select_node(self, node: TreeNode | None) -> None:
+    def select_node(self, node: TreeNode[TreeDataType] | None) -> None:
         """Move the cursor to the given node, or reset cursor.
 
         Args:
-            node (TreeNode | None): A tree node, or None to reset cursor.
+            node (TreeNode[TreeDataType] | None): A tree node, or None to reset cursor.
         """
         self.cursor_line = -1 if node is None else node._line
 
@@ -570,11 +570,11 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         """
         self.scroll_to_region(Region(0, line, self.size.width, 1))
 
-    def scroll_to_node(self, node: TreeNode) -> None:
+    def scroll_to_node(self, node: TreeNode[TreeDataType]) -> None:
         """Scroll to the given node.
 
         Args:
-            node (TreeNode): Node to scroll in to view.
+            node (TreeNode[TreeDataType]): Node to scroll in to view.
         """
         line = node._line
         if line != -1:
@@ -628,7 +628,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
         root = self.root
 
-        def add_node(path: list[TreeNode], node: TreeNode, last: bool) -> None:
+        def add_node(path: list[TreeNode[TreeDataType]], node: TreeNode[TreeDataType], last: bool) -> None:
             child_path = [*path, node]
             node._line = len(lines)
             add_line(TreeLine(child_path, last))

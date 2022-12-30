@@ -4,8 +4,7 @@ from rich.console import ConsoleOptions, Console, RenderResult
 from rich.traceback import Traceback
 
 from ._help_renderables import HelpText
-from .tokenize import Token
-from .tokenizer import TokenError
+from .tokenizer import Token, TokenError
 
 
 class DeclarationError(Exception):
@@ -32,7 +31,7 @@ class StyleValueError(ValueError):
             error is raised.
     """
 
-    def __init__(self, *args, help_text: HelpText | None = None):
+    def __init__(self, *args: object, help_text: HelpText | None = None):
         super().__init__(*args)
         self.help_text = help_text
 

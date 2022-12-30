@@ -3,24 +3,24 @@ from __future__ import annotations
 import rich.repr
 
 import asyncio
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Generic
 
 if TYPE_CHECKING:
-    from .app import App
+    from .app import App, ReturnType
 
 
 @rich.repr.auto(angular=True)
-class Pilot:
+class Pilot(Generic[ReturnType]):
     """Pilot object to drive an app."""
 
-    def __init__(self, app: App) -> None:
+    def __init__(self, app: App[ReturnType]) -> None:
         self._app = app
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "app", self._app
 
     @property
-    def app(self) -> App:
+    def app(self) -> App[ReturnType]:
         """App: A reference to the application."""
         return self._app
 
@@ -47,7 +47,7 @@ class Pilot:
         """Wait for any animation to complete."""
         await self._app.animator.wait_for_idle()
 
-    async def exit(self, result: object) -> None:
+    async def exit(self, result: ReturnType) -> None:
         """Exit the app with the given result.
 
         Args:
