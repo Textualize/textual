@@ -12,7 +12,7 @@ I spent some time optimizing Textual on Windows recently, and discovered somethi
 
 <!-- more -->
 
-Animation, scrolling, and fading had always been unsatisfactory on Windows. Textual was usable, but the lag when scrolling made it a little unpleasant to use. On macOS and Linux, scrolling is fast enough that it feels close to a native app, and not something running in a terminal. Yet the Windows experience never improved, even as Textual got faster with each release.
+Animation, scrolling, and fading had always been unsatisfactory on Windows. Textual was usable, but the lag when scrolling made apps feel far less snappy that other platforms. On macOS and Linux, scrolling is fast enough that it feels close to a native app, not something running in a terminal. Yet the Windows experience never improved, even as Textual got faster with each release.
 
 I had chalked this up to Windows Terminal being slow to render updates. After all, the classic Windows terminal was (and still is) glacially slow. Perhaps Microsoft just weren't focusing on performance.
 
@@ -33,7 +33,7 @@ This lack of accuracy in the timer meant that timer events were created at a far
 Once I had figured that out, I needed an alternative to `asyncio.sleep` for Textual's Timer class. And I found one. The following version of `sleep` is accurate to well within 1%:
 
 ```python
-from time import sleep
+from time import sleep as time_sleep
 from asyncio import get_running_loop
 
 async def sleep(sleep_for: float) -> None:
@@ -44,7 +44,9 @@ async def sleep(sleep_for: float) -> None:
     Args:
         sleep_for (float): Seconds to sleep for.
     """
-    await get_running_loop().run_in_executor(None, sleep, sleep_for)
+    print("sleep")
+    await get_running_loop().run_in_executor(None, time_sleep, sleep_for)
+
 ```
 
 That is a drop-in replacement for sleep on Windows. With it, Textual runs a *lot* smoother. Easily on par with macOS and Linux.

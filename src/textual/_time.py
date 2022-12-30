@@ -19,7 +19,7 @@ if WINDOWS:
     async def sleep(sleep_for: float) -> None:
         """An asyncio sleep.
 
-        On Windows this achieves a better granularity than asyncio.sleep
+        On Windows this achieves a better granularity that asyncio.sleep
 
         Args:
             sleep_for (float): Seconds to sleep for.
