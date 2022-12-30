@@ -44,7 +44,7 @@ async def sleep(sleep_for: float) -> None:
     Args:
         sleep_for (float): Seconds to sleep for.
     """
-    await get_running_loop().run_in_executor(None, time_sleep, sleep_for)
+    await get_running_loop().run_in_executor(None, sleep, sleep_for)
 ```
 
 That is a drop-in replacement for sleep on Windows. With it, Textual runs a *lot* smoother. Easily on par with macOS and Linux.
