@@ -18,7 +18,7 @@ I had chalked this up to Windows Terminal being slow to render updates. After al
 
 In retrospect, that was highly improbable. Like all modern terminals, Windows Terminal uses the GPU to render updates. Even without focussing on performance, it should be fast.
 
-I figured I'd give it once last attempt to speed up Textual on Windows. If I failed, Windows would forever be a third-class platform for Textual apps.
+I figured I'd give it one last attempt to speed up Textual on Windows. If I failed, Windows would forever be a third-class platform for Textual apps.
 
 It turned out that it was nothing to do with performance, per se. The issue was with a single asyncio function: `asyncio.sleep`.
 
@@ -26,7 +26,7 @@ Textual has a `Timer` class which creates events at regular intervals. It powers
 
 On macOS and Linux, calling `asynco.sleep` is fairly accurate. If you call `sleep(3.14)`, it will return within 1% of 3.14 seconds. This is not the case for Windows, which for historical reasons uses a timer with a granularity of 15 milliseconds. The upshot is that sleep times will be rounded up to the nearest multiple of 15 milliseconds.
 
-This limit appears holds true for all async primitives on Windows. If you wait for something with a timeout, it will return on a multiple of 15 milliseconds. Fortunately there is work in the CPython pipeline to make this more accurate. Thanks to [Steve Dower](https://twitter.com/zooba) for pointing this out.
+This limit appears to hold true for all async primitives on Windows. If you wait for something with a timeout, it will return on a multiple of 15 milliseconds. Fortunately there is work in the CPython pipeline to make this more accurate. Thanks to [Steve Dower](https://twitter.com/zooba) for pointing this out.
 
 This lack of accuracy in the timer meant that timer events were created at a far slower rate than intended. Animation was slower because Textual was waiting too long between updates.
 
