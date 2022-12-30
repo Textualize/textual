@@ -43,8 +43,7 @@ async def sleep(sleep_for: float) -> None:
 
     Args:
         sleep_for (float): Seconds to sleep for.
-    """
-    print("sleep")
+    """    
     await get_running_loop().run_in_executor(None, time_sleep, sleep_for)
 
 ```
