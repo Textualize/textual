@@ -71,7 +71,8 @@ def test_input_and_focus(snap_compare):
         "tab",
         *"Darren",  # Focus first input, write "Darren"
         "tab",
-        *"Burns",  # Tab focus to second input, write "Burns"
+        *"Burns",
+        "_",  # Tab focus to second input, write "Burns"
     ]
     assert snap_compare(WIDGET_EXAMPLES_DIR / "input.py", press=press)
 
