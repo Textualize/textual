@@ -31,14 +31,15 @@ def sleep(sleep_for: float) -> None:
 
     if not kernel32.SetWaitableTimer(
         handle,
-        ctypes.byref(LARGE_INTEGER(int(sleep_for * -10000))),
+        ctypes.byref(LARGE_INTEGER(int(sleep_for * -10_000_000))),
         0,
         None,
         None,
         0,
     ):
+        kernel32.CloseHandle(handle)
         time_sleep(sleep_for)
         return
 
     kernel32.WaitForSingleObject(handle, INFINITE)
-    kernel32.CancelWaitableTimer(handle)
+    kernel32.CloseHandle(handle)
