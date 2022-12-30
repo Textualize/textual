@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from enum import Enum, auto
 from itertools import chain, zip_longest
-from typing import ClassVar, Generic, Iterable, NamedTuple, TypeVar, cast
+from typing import ClassVar, Generic, Iterable, NamedTuple, Sequence, TypeVar, Union, cast
 
 from rich.console import RenderableType
 from rich.padding import Padding
@@ -22,9 +23,9 @@ from ..scroll_view import ScrollView
 from ..strip import Strip
 from .._typing import Literal
 
-CursorType = Literal["cell", "row", "column"]
-CELL: CursorType = "cell"
 CellType = TypeVar("CellType")
+
+RowColSelector = Union[int, Literal["all"]]
 
 
 def default_cell_formatter(obj: object) -> RenderableType | None:
@@ -126,6 +127,14 @@ class Coord(NamedTuple):
 
 
 class DataTable(ScrollView, Generic[CellType], can_focus=True):
+
+    class CursorType(Enum):
+        """ Enum for type of cursor to show (if self.show_cursor) """
+        CELL = auto()
+        ROW = auto()
+        COLUMN = auto()
+        CROSS = auto()
+
     DEFAULT_CSS = """
     App.-dark DataTable {
         background:;
@@ -182,7 +191,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     zebra_stripes = Reactive(False)
     header_height = Reactive(1)
     show_cursor = Reactive(True)
-    cursor_type = Reactive(CELL)
+    cursor_type = Reactive(CursorType.CELL)
 
     cursor_cell: Reactive[Coord] = Reactive(Coord(0, 0), repaint=False)
     hover_cell: Reactive[Coord] = Reactive(Coord(0, 0), repaint=False)
@@ -208,11 +217,16 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.row_count = 0
         self._y_offsets: list[tuple[int, int]] = []
         self._row_render_cache: LRUCache[
-            tuple[int, int, Style, int, int], tuple[SegmentLines, SegmentLines]
-        ]
+            tuple[int, int, Style, RowColSelector, RowColSelector],
+            tuple[SegmentLines, SegmentLines]
         self._row_render_cache = LRUCache(1000)
         self._cell_render_cache: LRUCache[
             tuple[int, int, Style, bool, bool], SegmentLines
+        ]
+        self._cell_render_cache = LRUCache(10000)
+        self._line_cache: LRUCache[
+            tuple[int, int, int, int, RowColSelector, RowColSelector, Style],
+            list[Segment]
         ]
         self._cell_render_cache = LRUCache(10000)
         self._line_cache: LRUCache[tuple[int, int, int, int, int, int, Style], Strip]
@@ -274,8 +288,23 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.refresh_cell(*value)
 
     def watch_cursor_cell(self, old: Coord, value: Coord) -> None:
-        self.refresh_cell(*old)
-        self.refresh_cell(*value)
+        if self.cursor_type is DataTable.CursorType.CELL:
+            self.refresh_cell(*old)
+            self.refresh_cell(*value)
+        elif (
+            self.cursor_type in (DataTable.CursorType.ROW, DataTable.CursorType.CROSS)
+            and old.row != value.row
+        ):
+            for i_col in range(len(self.columns)):
+                self.refresh_cell(old.row, i_col)
+                self.refresh_cell(value.row, i_col)
+        elif (
+            self.cursor_type in (DataTable.CursorType.COLUMN, DataTable.CursorType.CROSS)
+            and old.column != value.column
+        ):
+            for i_row in range(self.row_count):
+                self.refresh_cell(i_row, old.column)
+                self.refresh_cell(i_row, value.column)
 
     def validate_cursor_cell(self, value: Coord) -> Coord:
         row, column = value
@@ -421,7 +450,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         region = region.translate(-self.scroll_offset)
         self.refresh(region)
 
-    def _get_row_renderables(self, row_index: int) -> list[RenderableType]:
+    def _get_row_renderables(self, row_index: int) -> Sequence[RenderableType]:
         """Get renderables for the given row.
 
         Args:
@@ -489,8 +518,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         row_index: int,
         line_no: int,
         base_style: Style,
-        cursor_column: int = -1,
-        hover_column: int = -1,
+        cursor_column: RowColSelector = -1,
+        hover_column: RowColSelector = -1,
     ) -> tuple[SegmentLines, SegmentLines]:
         """Render a row in to lines for each cell.
 
@@ -539,8 +568,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 column.index,
                 row_style,
                 column.render_width,
-                cursor=cursor_column == column.index,
-                hover=hover_column == column.index,
+                cursor=row_index >= 0 and cursor_column in ("all", column.index),
+                hover=row_index >= 0 and hover_column in ("all", column.index),
             )[line_no]
             for column in self.columns
         ]
@@ -585,12 +614,31 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             row_index, line_no = self._get_offsets(y)
         except LookupError:
             return Strip.blank(width, base_style)
-        cursor_column = (
-            self.cursor_column
-            if (self.show_cursor and self.cursor_row == row_index)
-            else -1
-        )
-        hover_column = self.hover_column if (self.hover_row == row_index) else -1
+
+        def _col(col: int, test_row: int) -> RowColSelector:
+            """ Determine which columns are applicable for cursor/highlight,
+            given the current self.cursor_type, self.show_cursor, and row_index.
+            """
+            return (
+                -1 if (
+                    not self.show_cursor
+                )
+                else col if (
+                    self.cursor_type is DataTable.CursorType.CELL
+                    and test_row == row_index
+                )
+                else "all" if (
+                    self.cursor_type in (DataTable.CursorType.ROW, DataTable.CursorType.CROSS)
+                    and test_row == row_index
+                )
+                else col if (
+                    self.cursor_type in (DataTable.CursorType.COLUMN, DataTable.CursorType.CROSS)
+                )
+                else -1
+            )
+
+        cursor_column = -1 if not self.show_cursor else _col(self.cursor_column, self.cursor_row)
+        hover_column = _col(self.hover_column, self.hover_row)
 
         cache_key = (y, x1, x2, width, cursor_column, hover_column, base_style)
         if cache_key in self._line_cache:

@@ -395,6 +395,7 @@ class DemoApp(App):
     def on_mount(self) -> None:
         self.add_note("Textual Demo app is running")
         table = self.query_one(DataTable)
+        table.cursor_type = DataTable.CursorType.ROW
         table.add_column("Foo", width=20)
         table.add_column("Bar", width=20)
         table.add_column("Baz", width=20)
