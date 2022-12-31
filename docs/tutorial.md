@@ -95,7 +95,7 @@ If you run this code, you should see something like the following:
 
 Hit the ++d++ key to toggle between light and dark mode.
 
-```{.textual path="docs/examples/tutorial/stopwatch01.py" press="d" title="TimerApp + dark"}
+```{.textual path="docs/examples/tutorial/stopwatch01.py" press="d" title="StopwatchApp + dark"}
 ```
 
 Hit ++ctrl+c++ to exit the app and return to the command prompt.
