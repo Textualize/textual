@@ -16,6 +16,7 @@ HEX_COLOR = r"\#[0-9a-fA-F]{8}|\#[0-9a-fA-F]{6}|\#[0-9a-fA-F]{4}|\#[0-9a-fA-F]{3
 RGB_COLOR = rf"rgb{OPEN_BRACE}{DECIMAL}{COMMA}{DECIMAL}{COMMA}{DECIMAL}{CLOSE_BRACE}|rgba{OPEN_BRACE}{DECIMAL}{COMMA}{DECIMAL}{COMMA}{DECIMAL}{COMMA}{DECIMAL}{CLOSE_BRACE}"
 HSL_COLOR = rf"hsl{OPEN_BRACE}{DECIMAL}{COMMA}{PERCENT}{COMMA}{PERCENT}{CLOSE_BRACE}|hsla{OPEN_BRACE}{DECIMAL}{COMMA}{PERCENT}{COMMA}{PERCENT}{COMMA}{DECIMAL}{CLOSE_BRACE}"
 
+BOOLEAN = r"true|false"
 COMMENT_START = r"\/\*"
 SCALAR = rf"{DECIMAL}(?:fr|%|w|h|vw|vh)"
 DURATION = r"\d+\.?\d*(?:ms|s)"
@@ -30,6 +31,7 @@ IDENTIFIER = r"[a-zA-Z_\-][a-zA-Z0-9_\-]*"
 
 # Values permitted in variable and rule declarations.
 DECLARATION_VALUES = {
+    "boolean": BOOLEAN,
     "scalar": SCALAR,
     "duration": DURATION,
     "number": NUMBER,

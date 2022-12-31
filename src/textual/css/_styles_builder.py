@@ -26,7 +26,9 @@ from ._help_text import (
     property_invalid_value_help_text,
     scalar_help_text,
     scrollbar_size_property_help_text,
+    scrollbar_thin_property_help_text,
     scrollbar_size_single_axis_help_text,
+    scrollbar_thin_single_axis_help_text,
     spacing_invalid_value_help_text,
     spacing_wrong_number_of_values_help_text,
     string_enum_help_text,
@@ -47,6 +49,7 @@ from .constants import (
     VALID_TEXT_ALIGN,
     VALID_VISIBILITY,
 )
+from .bool import boolean_string_to_bool
 from .errors import DeclarationError, StyleValueError
 from .model import Declaration
 from .scalar import (
@@ -835,6 +838,27 @@ class StylesBuilder:
             self.styles._rules["scrollbar_size_horizontal"] = horizontal
             self.styles._rules["scrollbar_size_vertical"] = vertical
 
+    def process_scrollbar_thin(self, name: str, tokens: list[Token]) -> None:
+        def scrollbar_thin_error(name: str, token: Token) -> None:
+            self.error(name, token, scrollbar_thin_property_help_text(context="css"))
+
+        if not tokens:
+            return
+        if len(tokens) != 2:
+            scrollbar_thin_error(name, tokens[0])
+        else:
+            token1, token2 = tokens
+
+            if token1.name != "boolean":
+                scrollbar_thin_error(name, token1)
+            if token2.name != "boolean":
+                scrollbar_thin_error(name, token2)
+
+            horizontal = boolean_string_to_bool(token1.value)
+            vertical = boolean_string_to_bool(token2.value)
+            self.styles._rules["scrollbar_thin_horizontal"] = horizontal
+            self.styles._rules["scrollbar_thin_vertical"] = vertical
+
     def process_scrollbar_size_vertical(self, name: str, tokens: list[Token]) -> None:
         if not tokens:
             return
@@ -849,6 +873,18 @@ class StylesBuilder:
                 self.error(name, token, scrollbar_size_single_axis_help_text(name))
             self.styles._rules["scrollbar_size_vertical"] = value
 
+    def process_scrollbar_thin_vertical(self, name: str, tokens: list[Token]) -> None:
+        if not tokens:
+            return
+        if len(tokens) != 1:
+            self.error(name, tokens[0], scrollbar_thin_single_axis_help_text(name))
+        else:
+            token = tokens[0]
+            if token.name != "boolean":
+                self.error(name, token, scrollbar_thin_single_axis_help_text(name))
+            value = boolean_string_to_bool(token.value)
+            self.styles._rules["scrollbar_thin_vertical"] = value
+
     def process_scrollbar_size_horizontal(self, name: str, tokens: list[Token]) -> None:
         if not tokens:
             return
@@ -862,6 +898,18 @@ class StylesBuilder:
             if value == 0:
                 self.error(name, token, scrollbar_size_single_axis_help_text(name))
             self.styles._rules["scrollbar_size_horizontal"] = value
+
+    def process_scrollbar_thin_horizontal(self, name: str, tokens: list[Token]) -> None:
+        if not tokens:
+            return
+        if len(tokens) != 1:
+            self.error(name, tokens[0], scrollbar_thin_single_axis_help_text(name))
+        else:
+            token = tokens[0]
+            if token.name != "boolean":
+                self.error(name, token, scrollbar_thin_single_axis_help_text(name))
+            value = boolean_string_to_bool(token.value)
+            self.styles._rules["scrollbar_thin_horizontal"] = value
 
     def _process_grid_rows_or_columns(self, name: str, tokens: list[Token]) -> None:
         scalars: list[Scalar] = []

@@ -69,13 +69,15 @@ class ScrollBarRender:
         window_size: int = 0,
         position: float = 0,
         thickness: int = 1,
+        thin: bool = False,
         vertical: bool = True,
         style: StyleType = "bright_magenta on #555555",
     ) -> None:
         self.virtual_size = virtual_size
         self.window_size = window_size
         self.position = position
-        self.thickness = thickness
+        self.thickness = 1 if thin else thickness
+        self.thin = thin
         self.vertical = vertical
         self.style = style
 
@@ -87,72 +89,97 @@ class ScrollBarRender:
         window_size: float = 20,
         position: float = 0,
         thickness: int = 1,
+        thin: bool = False,
         vertical: bool = True,
         back_color: Color = Color.parse("#555555"),
         bar_color: Color = Color.parse("bright_magenta"),
     ) -> Segments:
 
-        if vertical:
-            bars = ["▁", "▂", "▃", "▄", "▅", "▆", "▇", " "]
-        else:
-            bars = ["▉", "▊", "▋", "▌", "▍", "▎", "▏", " "]
+        if thin:
+            thickness = 1
 
-        back = back_color
-        bar = bar_color
-
-        len_bars = len(bars)
-
-        width_thickness = thickness if vertical else 1
-
-        _Segment = Segment
         _Style = Style
-        blank = " " * width_thickness
+        _Segment = Segment
 
-        foreground_meta = {"@mouse.up": "release", "@mouse.down": "grab"}
+        norm_style  = _Style(bgcolor=back_color, color=bar_color)
+        rev_style   = _Style(bgcolor=bar_color,  color=back_color)
+
+        if vertical:
+            bars_start = ["▁", "▂", "▃", "▄", "▅", "▆", "▇", " "]
+            bars_start_style = norm_style
+            bars_end = bars_start
+            bars_end_style = rev_style
+            blank = " " * thickness
+            blank_style = norm_style
+            full = "█" * thickness
+            full_style = norm_style
+        elif not thin:
+            bars_start = ["▉", "▊", "▋", "▌", "▍", "▎", "▏", " "]
+            bars_start_style = rev_style
+            bars_end = bars_start
+            bars_end_style = norm_style
+            blank = " "
+            blank_style = norm_style
+            full = "█"
+            full_style = norm_style
+        else:
+            bars_start = ["▝", " "]
+            bars_start_style = norm_style
+            bars_end = ["▘", " "]
+            bars_end_style = norm_style
+            blank = " "
+            blank_style = norm_style
+            full = "▀"
+            full_style = norm_style
+
+        assert len(bars_end) == len(bars_start)
+
+        len_bars = len(bars_start)
+
+        upper_meta  = {"@mouse.up": "scroll_up"}
+        middle_meta = {"@mouse.up": "release", "@mouse.down": "grab"}
+        lower_meta  = {"@mouse.up": "scroll_down"}
+
+        upper_back_style = blank_style + _Style.from_meta(upper_meta)
+        middle_fg_style  = full_style  + _Style.from_meta(middle_meta)
+        lower_back_style = blank_style + _Style.from_meta(lower_meta)
+
+        upper_back_segment = _Segment(blank, upper_back_style)
+        middle_fg_segment  = _Segment(full,  middle_fg_style)
+        lower_back_segment = _Segment(blank, lower_back_style)
+
         if window_size and size and virtual_size and size != virtual_size:
             step_size = virtual_size / size
 
             start = int(position / step_size * len_bars)
-            end = start + max(len_bars, int(ceil(window_size / step_size * len_bars)))
+            end   = start + max(len_bars, int(ceil(window_size / step_size * len_bars)))
 
             start_index, start_bar = divmod(max(0, start), len_bars)
-            end_index, end_bar = divmod(max(0, end), len_bars)
+            end_index,   end_bar   = divmod(max(0, end  ), len_bars)
 
-            upper = {"@mouse.up": "scroll_up"}
-            lower = {"@mouse.up": "scroll_down"}
-
-            upper_back_segment = Segment(blank, _Style(bgcolor=back, meta=upper))
-            lower_back_segment = Segment(blank, _Style(bgcolor=back, meta=lower))
-
-            segments = [upper_back_segment] * int(size)
-            segments[end_index:] = [lower_back_segment] * (size - end_index)
-
-            segments[start_index:end_index] = [
-                _Segment(blank, _Style(bgcolor=bar, meta=foreground_meta))
-            ] * (end_index - start_index)
+            segments = (
+                [lower_back_segment] * (start_index) +
+                [middle_fg_segment]  * (end_index - start_index) +
+                [upper_back_segment] * (size - end_index)
+            )
 
             # Apply the smaller bar characters to head and tail of scrollbar for more "granularity"
             if start_index < len(segments):
-                bar_character = bars[len_bars - 1 - start_bar]
-                if bar_character != " ":
+                start_bar_character = bars_start[len_bars - 1 - start_bar]
+                if start_bar_character != " ":
                     segments[start_index] = _Segment(
-                        bar_character * width_thickness,
-                        _Style(bgcolor=back, color=bar, meta=foreground_meta)
-                        if vertical
-                        else _Style(bgcolor=bar, color=back, meta=foreground_meta),
+                        start_bar_character * (thickness if vertical else 1),
+                        bars_start_style + _Style.from_meta(middle_meta),
                     )
             if end_index < len(segments):
-                bar_character = bars[len_bars - 1 - end_bar]
-                if bar_character != " ":
+                end_bar_character = bars_end[len_bars - 1 - end_bar]
+                if end_bar_character != " ":
                     segments[end_index] = _Segment(
-                        bar_character * width_thickness,
-                        _Style(bgcolor=bar, color=back, meta=foreground_meta)
-                        if vertical
-                        else _Style(bgcolor=back, color=bar, meta=foreground_meta),
+                        end_bar_character * (thickness if vertical else 1),
+                        bars_end_style + _Style.from_meta(middle_meta),
                     )
         else:
-            style = _Style(bgcolor=back)
-            segments = [_Segment(blank, style=style)] * int(size)
+            segments = [_Segment(blank, blank_style)] * int(size)
         if vertical:
             return Segments(segments, new_lines=True)
         else:
@@ -181,6 +208,7 @@ class ScrollBarRender:
             position=self.position,
             vertical=self.vertical,
             thickness=thickness,
+            thin=self.thin,
             back_color=_style.bgcolor or Color.parse("#555555"),
             bar_color=_style.color or Color.parse("bright_magenta"),
         )
@@ -201,10 +229,11 @@ class ScrollBar(Widget):
     """
 
     def __init__(
-        self, vertical: bool = True, name: str | None = None, *, thickness: int = 1
+        self, vertical: bool = True, name: str | None = None, *, thickness: int = 1, thin: bool = False,
     ) -> None:
         self.vertical = vertical
         self.thickness = thickness
+        self.thin = thin
         self.grabbed_position: float = 0
         super().__init__(name=name)
         self.auto_links = False
@@ -222,6 +251,8 @@ class ScrollBar(Widget):
         yield "position", self.position
         if self.thickness > 1:
             yield "thickness", self.thickness
+        if self.thin:
+            yield "thin", True
 
     def render(self) -> RenderableType:
         styles = self.parent.styles
@@ -242,6 +273,7 @@ class ScrollBar(Widget):
             ),
             position=self.position,
             thickness=self.thickness,
+            thin=self.thin,
             vertical=self.vertical,
             style=scrollbar_style,
         )

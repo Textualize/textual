@@ -43,6 +43,7 @@ from .constants import (
     VALID_VISIBILITY,
     VALID_TEXT_ALIGN,
 )
+from .bool import bool_to_boolean_string
 from .scalar import Scalar, ScalarOffset, Unit
 from .scalar_animation import ScalarAnimation
 from .transition import Transition
@@ -134,6 +135,9 @@ class RulesMap(TypedDict, total=False):
 
     scrollbar_size_vertical: int
     scrollbar_size_horizontal: int
+
+    scrollbar_thin_vertical: bool
+    scrollbar_thin_horizontal: bool
 
     align_horizontal: AlignHorizontal
     align_vertical: AlignVertical
@@ -268,6 +272,9 @@ class StylesBase(ABC):
 
     scrollbar_size_vertical = IntegerProperty(default=1, layout=True)
     scrollbar_size_horizontal = IntegerProperty(default=1, layout=True)
+
+    scrollbar_thin_vertical = BooleanProperty(default=False, layout=True)
+    scrollbar_thin_horizontal = BooleanProperty(default=False, layout=True)
 
     align_horizontal = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "left")
     align_vertical = StringEnumProperty(VALID_ALIGN_VERTICAL, "top")
@@ -845,7 +852,28 @@ class Styles(StylesBase):
                 append_declaration(
                     "scrollbar-size-vertical", str(self.scrollbar_size_vertical)
                 )
-
+        if has_rule("scrollbar_thin"):
+            append_declaration(
+                "scrollbar-thin",
+                " ".join(
+                    bool_to_boolean_string(b)
+                    for b in (
+                        self.scrollbar_thin_horizontal,
+                        self.scrollbar_thin_vertical,
+                    )
+                )
+            )
+        else:
+            if has_rule("scrollbar_thin_horizontal"):
+                append_declaration(
+                    "scrollbar-thin-horizontal",
+                    bool_to_boolean_string(self.scrollbar_thin_horizontal)
+                )
+            if has_rule("scrollbar_thin_vertical"):
+                append_declaration(
+                    "scrollbar-thin-vertical",
+                    bool_to_boolean_string(self.scrollbar_thin_vertical)
+                )
         if has_rule("box_sizing"):
             append_declaration("box-sizing", self.box_sizing)
         if has_rule("width"):

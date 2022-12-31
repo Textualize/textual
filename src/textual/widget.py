@@ -866,7 +866,10 @@ class Widget(DOMNode):
         if self._vertical_scrollbar is not None:
             return self._vertical_scrollbar
         self._vertical_scrollbar = scroll_bar = ScrollBar(
-            vertical=True, name="vertical", thickness=self.scrollbar_size_vertical
+            vertical=True,
+            name="vertical",
+            thickness=self.scrollbar_size_vertical,
+            thin=self.scrollbar_thin_vertical,
         )
         self._vertical_scrollbar.display = False
         self.app._start_widget(self, scroll_bar)
@@ -885,7 +888,10 @@ class Widget(DOMNode):
         if self._horizontal_scrollbar is not None:
             return self._horizontal_scrollbar
         self._horizontal_scrollbar = scroll_bar = ScrollBar(
-            vertical=False, name="horizontal", thickness=self.scrollbar_size_horizontal
+            vertical=False,
+            name="horizontal",
+            thickness=self.scrollbar_size_horizontal,
+            thin=self.scrollbar_thin_horizontal,
         )
         self._horizontal_scrollbar.display = False
         self.app._start_widget(self, scroll_bar)
@@ -955,9 +961,20 @@ class Widget(DOMNode):
             int: Number of columns in the vertical scrollbar.
         """
         styles = self.styles
+        would_be_size = 1 if styles.scrollbar_thin_vertical else styles.scrollbar_size_vertical
         if styles.scrollbar_gutter == "stable" and styles.overflow_y == "auto":
-            return styles.scrollbar_size_vertical
-        return styles.scrollbar_size_vertical if self.show_vertical_scrollbar else 0
+            return would_be_size
+        return would_be_size if self.show_vertical_scrollbar else 0
+
+    @property
+    def scrollbar_thin_vertical(self) -> bool:
+        """Get whether the *vertical* scroll should be thin
+            (which in the case of the vertical scrollbar means 1 char)
+
+        Returns:
+            bool: Should the vertical scrollbar be one char in width
+        """
+        return self.styles.scrollbar_thin_vertical
 
     @property
     def scrollbar_size_horizontal(self) -> int:
@@ -967,7 +984,17 @@ class Widget(DOMNode):
             int: Number of rows in the horizontal scrollbar.
         """
         styles = self.styles
-        return styles.scrollbar_size_horizontal if self.show_horizontal_scrollbar else 0
+        would_be_size = 1 if styles.scrollbar_thin_horizontal else styles.scrollbar_size_horizontal
+        return would_be_size if self.show_horizontal_scrollbar else 0
+
+    @property
+    def scrollbar_thin_horizontal(self) -> bool:
+        """Get whether the *horizontal* scroll should be thin ("one-half" char in height)
+
+        Returns:
+            bool: Should the horizontal scrollbar be one-half char in height
+        """
+        return self.styles.scrollbar_thin_horizontal
 
     @property
     def scrollbar_gutter(self) -> Spacing:

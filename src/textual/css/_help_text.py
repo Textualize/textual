@@ -590,6 +590,45 @@ def scrollbar_size_property_help_text(context: StylingContext) -> HelpText:
     )
 
 
+def scrollbar_thin_property_help_text(context: StylingContext) -> HelpText:
+    """Help text to show when the user supplies an invalid value for the scrollbar-thin property.
+
+    Args:
+        context (StylingContext | None): The context the property is being used in.
+
+    Returns:
+        HelpText: Renderable for displaying the help text for this property
+    """
+    return HelpText(
+        summary="Invalid value for [i]scrollbar-thin[/] property",
+        bullets=[
+            *ContextSpecificBullets(
+                inline=[
+                    Bullet(
+                        markup="The [i]scrollbar_thin[/] property expects a tuple of 2 values [i](<horizontal>, <vertical>)[/]",
+                        examples=[
+                            Example("widget.styles.scrollbar_thin = (True, False)"),
+                        ],
+                    ),
+                ],
+                css=[
+                    Bullet(
+                        markup="The [i]scrollbar-thin[/] property expects a value of the form [i]<horizontal> <vertical>[/]",
+                        examples=[
+                            Example(
+                                "scrollbar-thin: true false;  [dim]# thin horizontal scrollbar, regular vertical scrollbar"
+                            ),
+                        ],
+                    ),
+                ],
+            ).get_by_context(context),
+            Bullet(
+                "<horizontal> and <vertical> must be booleans"
+            ),
+        ],
+    )
+
+
 def scrollbar_size_single_axis_help_text(property_name: str) -> HelpText:
     """Help text to show when the user supplies an invalid value for a scrollbar-size-* property.
 
@@ -606,6 +645,28 @@ def scrollbar_size_single_axis_help_text(property_name: str) -> HelpText:
                 markup=f"The [i]{property_name}[/] property can only be set to a positive integer, greater than zero",
                 examples=[
                     Example(f"{property_name}: 2;"),
+                ],
+            ),
+        ],
+    )
+
+
+def scrollbar_thin_single_axis_help_text(property_name: str) -> HelpText:
+    """Help text to show when the user supplies an invalid value for a scrollbar-thin-* property.
+
+    Args:
+        property_name (str): The name of the property
+
+    Returns:
+        HelpText: Renderable for displaying the help text for this property
+    """
+    return HelpText(
+        summary=f"Invalid value for [i]{property_name}[/]",
+        bullets=[
+            Bullet(
+                markup=f"The [i]{property_name}[/] property can only be set to a boolean",
+                examples=[
+                    Example(f"{property_name}: true;"),
                 ],
             ),
         ],

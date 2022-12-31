@@ -207,6 +207,7 @@ LocationLink:hover {
 
 DataTable {
     height: 16;
+    scrollbar-thin: true true;
 }
 
 
