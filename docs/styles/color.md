@@ -32,6 +32,9 @@ This example sets a different text color to three different widgets.
 ## CSS
 
 ```sass
+/* ANSI yellow */
+color: ansi_yellow;
+
 /* Blue text */
 color: blue;
 

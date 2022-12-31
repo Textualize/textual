@@ -12,3 +12,6 @@ Static {
 #static3 {
     background: hsl(240, 100%, 50%);
 }
+#static4 {
+    background: ansi_default;
+}

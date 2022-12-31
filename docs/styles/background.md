@@ -32,6 +32,9 @@ This example creates three widgets and applies a different background to each.
 ## CSS
 
 ```sass
+/* Default terminal background */
+background: ansi_default;
+
 /* Blue background */
 background: blue;
 

@@ -11,3 +11,6 @@ Static {
 #static3 {
     color: hsl(240, 100%, 50%)
 }
+#static4 {
+    color: ansi_magenta;
+}

@@ -7,6 +7,7 @@ class ColorApp(App):
         yield Static("I'm red!", id="static1")
         yield Static("I'm rgb(0, 255, 0)!", id="static2")
         yield Static("I'm hsl(240, 100%, 50%)!", id="static3")
+        yield Static("I'm ansi_magenta!", id="static4")
 
 
 app = ColorApp(css_path="color.css")
