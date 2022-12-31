@@ -363,7 +363,7 @@ class Color(NamedTuple):
 
         Args:
             destination (Color): Another color.
-            factor (float): A blend factor, 0 -> 1.
+            factor (float): A blend factor, 0 -> 1, or math.nan for 1.
             alpha (float | None): New alpha for result. Defaults to None.
 
         Returns:
@@ -371,7 +371,7 @@ class Color(NamedTuple):
         """
         if factor == 0:
             return self
-        elif factor == 1:
+        elif factor == 1 or factor is math.nan:
             return destination
         r1, g1, b1, a1 = self
         r2, g2, b2, a2 = destination
