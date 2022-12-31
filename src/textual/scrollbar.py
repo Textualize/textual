@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from math import ceil
+from typing import ClassVar, Type
 
 import rich.repr
 from rich.color import Color
@@ -190,6 +191,8 @@ class ScrollBarRender:
 @rich.repr.auto
 class ScrollBar(Widget):
 
+    renderer: ClassVar[Type[ScrollBarRender]] = ScrollBarRender
+
     DEFAULT_CSS = """
     ScrollBar {
         link-hover-color: ;
@@ -236,7 +239,7 @@ class ScrollBar(Widget):
             color = styles.scrollbar_color
         color = background + color
         scrollbar_style = Style.from_color(color.rich_color, background.rich_color)
-        return ScrollBarRender(
+        return self.renderer(
             virtual_size=self.window_virtual_size,
             window_size=(
                 self.window_size if self.window_size < self.window_virtual_size else 0
