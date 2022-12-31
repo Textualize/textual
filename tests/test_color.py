@@ -18,6 +18,9 @@ def test_rich_color():
     assert Color.parse("ansi_bright_black").rich_color.number == 8
     assert Color.parse("ansi_bright_red").rich_color.number == 9
     assert Color.parse("ansi_bright_white").rich_color.number == 15
+    # Round-trip
+    assert Color.from_rich_color(RichColor.default()).rich_color == RichColor.default()
+    assert Color.from_rich_color(RichColor.from_ansi(3)).rich_color.number == 3
 
 
 def test_rich_color_rich_output():

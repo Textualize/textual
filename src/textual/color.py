@@ -147,7 +147,7 @@ class Color(NamedTuple):
     b: int
     """Blue component (0-255)"""
     a: float = 1.0
-    """Alpha component (0-1)"""
+    """Alpha component (0-1) or math.nan to represent ANSI color"""
 
     @classmethod
     def from_rich_color(cls, rich_color: RichColor) -> Color:
@@ -160,6 +160,10 @@ class Color(NamedTuple):
             Color: A new Color.
         """
         r, g, b = rich_color.get_truecolor()
+        if rich_color.type is ColorType.STANDARD:
+            return cls(r, g, b, math.nan)
+        elif rich_color.type is ColorType.DEFAULT:
+            return cls(1, 1, 1, math.nan)
         return cls(r, g, b)
 
     @classmethod
@@ -227,12 +231,12 @@ class Color(NamedTuple):
         Returns:
             RichColor: A color object as used by Rich.
         """
-        r, g, b, _a = self
+        r, g, b, a = self
 
         rc = RichColor(
             f"#{r:02x}{g:02x}{b:02x}", _TRUECOLOR, None, ColorTriplet(r, g, b)
         )
-        if _a is math.nan:
+        if a is math.nan:
             # ANSI raw colors
             if r == 1 and g == 1 and b == 1:
                 return RichColor.default()  # ansi_default

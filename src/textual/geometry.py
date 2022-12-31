@@ -29,7 +29,8 @@ def clamp(value: T, minimum: T, maximum: T) -> T:
         maximum (T): maximum value.
 
     Returns:
-        T: New value that is not less than the minimum or greater than the maximum.
+        T: New value that is not less than the minimum or greater than the maximum,
+        or the original value if that cannot be satisfied.
     """
     if minimum > maximum:
         maximum, minimum = minimum, maximum
@@ -38,6 +39,7 @@ def clamp(value: T, minimum: T, maximum: T) -> T:
     elif value > maximum:
         return maximum
     else:
+        # math.nan is an example value which is incomparable
         return value
 
 
