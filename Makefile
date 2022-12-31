@@ -1,3 +1,7 @@
+make:
+	python -m build --wheel --skip-dependency-check --no-isolation
+install:
+	python -m installer dist/*.whl
 test:
 	pytest --cov-report term-missing --cov=textual tests/ -vv
 unit-test:
