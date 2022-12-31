@@ -3,7 +3,7 @@ from rich.color import Color as RichColor
 from rich.text import Text
 
 from textual.color import Color, Lab, lab_to_rgb, rgb_to_lab
-
+import math
 
 def test_rich_color():
     """Check conversion to Rich color."""
@@ -11,6 +11,13 @@ def test_rich_color():
     assert Color.from_rich_color(RichColor.from_rgb(10, 20, 30)) == Color(
         10, 20, 30, 1.0
     )
+    assert Color.parse("ansi_default").rich_color == RichColor.default()
+    assert Color.parse("ansi_black").rich_color.number == 0
+    assert Color.parse("ansi_red").rich_color.number == 1
+    assert Color.parse("ansi_white").rich_color.number == 7
+    assert Color.parse("ansi_bright_black").rich_color.number == 8
+    assert Color.parse("ansi_bright_red").rich_color.number == 9
+    assert Color.parse("ansi_bright_white").rich_color.number == 15
 
 
 def test_rich_color_rich_output():

@@ -1,25 +1,29 @@
 from __future__ import annotations
+from math import nan
 
 COLOR_NAME_TO_RGB: dict[str, tuple[int, int, int] | tuple[int, int, int, float]] = {
     # Let's start with a specific pseudo-color::
     "transparent": (0, 0, 0, 0),
+    "ansi_default": (1, 1, 1, nan),
     # Then, the 16 common ANSI colors:
-    "ansi_black": (0, 0, 0),
-    "ansi_red": (128, 0, 0),
-    "ansi_green": (0, 128, 0),
-    "ansi_yellow": (128, 128, 0),
-    "ansi_blue": (0, 0, 128),
-    "ansi_magenta": (128, 0, 128),
-    "ansi_cyan": (0, 128, 128),
-    "ansi_white": (192, 192, 192),
-    "ansi_bright_black": (128, 128, 128),
-    "ansi_bright_red": (255, 0, 0),
-    "ansi_bright_green": (0, 255, 0),
-    "ansi_bright_yellow": (255, 255, 0),
-    "ansi_bright_blue": (0, 0, 255),
-    "ansi_bright_magenta": (255, 0, 255),
-    "ansi_bright_cyan": (0, 255, 255),
-    "ansi_bright_white": (255, 255, 255),
+    # Values from rich._pallettes.STANDARD_PALETTE
+    # so RichColor.downgrade will return the same value
+    "ansi_black": (0, 0, 0, nan),
+    "ansi_red": (170, 0, 0, nan),
+    "ansi_green": (0, 170, 0, nan),
+    "ansi_yellow": (170, 85, 0, nan),
+    "ansi_blue": (0, 0, 170, nan),
+    "ansi_magenta": (170, 0, 170, nan),
+    "ansi_cyan": (0, 170, 170, nan),
+    "ansi_white": (170, 170, 170, nan),
+    "ansi_bright_black": (85, 85, 85, nan),
+    "ansi_bright_red": (255, 85, 85, nan),
+    "ansi_bright_green": (85, 255, 85, nan),
+    "ansi_bright_yellow": (255, 255, 85, nan),
+    "ansi_bright_blue": (85, 85, 255, nan),
+    "ansi_bright_magenta": (255, 85, 255, nan),
+    "ansi_bright_cyan": (85, 255, 255, nan),
+    "ansi_bright_white": (255, 255, 255, nan),
     # And then, Web color keywords: (up to CSS Color Module Level 4)
     "black": (0, 0, 0),
     "silver": (192, 192, 192),

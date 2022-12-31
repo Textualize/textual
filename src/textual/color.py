@@ -54,6 +54,8 @@ from textual.suggestions import get_suggestion
 from ._color_constants import COLOR_NAME_TO_RGB
 from .geometry import clamp
 
+import math
+
 _TRUECOLOR = ColorType.TRUECOLOR
 
 
@@ -226,9 +228,18 @@ class Color(NamedTuple):
             RichColor: A color object as used by Rich.
         """
         r, g, b, _a = self
-        return RichColor(
+
+        rc = RichColor(
             f"#{r:02x}{g:02x}{b:02x}", _TRUECOLOR, None, ColorTriplet(r, g, b)
         )
+        if _a is math.nan:
+            # ANSI raw colors
+            if r == 1 and g == 1 and b == 1:
+                return RichColor.default()  # ansi_default
+            # "Downgrade" color to closest ansi 16
+            return RichColor.downgrade(rc, ColorType.STANDARD)
+
+        return rc
 
     @property
     def normalized(self) -> tuple[float, float, float]:
