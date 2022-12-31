@@ -90,7 +90,7 @@ def test_simplify():
 
 
 def test_apply_filter():
-    strip = Strip([Segment("foo", Style.parse("red"))])
+    strip = Strip([Segment("foo", Style.parse("#800000"))])
     expected = Strip([Segment("foo", Style.parse("#1b1b1b"))])
     print(repr(strip))
     print(repr(expected))

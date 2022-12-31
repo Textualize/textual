@@ -1,6 +1,7 @@
 from contextlib import nullcontext as does_not_raise
 from typing import Any
 
+import math
 import pytest
 
 from textual.color import Color
@@ -130,8 +131,8 @@ def test_stylesheet_apply_user_css_over_widget_css():
     [
         # Valid values:
         ["transparent", does_not_raise(), Color(0, 0, 0, 0)],
-        ["ansi_red", does_not_raise(), Color(128, 0, 0)],
-        ["ansi_bright_magenta", does_not_raise(), Color(255, 0, 255)],
+        ["ansi_red", does_not_raise(), Color(170, 0, 0, math.nan)],
+        ["ansi_bright_magenta", does_not_raise(), Color(255, 85, 255, math.nan)],
         ["red", does_not_raise(), Color(255, 0, 0)],
         ["lime", does_not_raise(), Color(0, 255, 0)],
         ["coral", does_not_raise(), Color(255, 127, 80)],

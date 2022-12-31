@@ -3,7 +3,6 @@ from rich.color import Color as RichColor
 from rich.text import Text
 
 from textual.color import Color, Lab, lab_to_rgb, rgb_to_lab
-import math
 
 def test_rich_color():
     """Check conversion to Rich color."""
