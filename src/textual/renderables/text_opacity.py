@@ -1,5 +1,5 @@
 import functools
-from typing import Iterable, Iterator
+from typing import Iterable, cast
 
 from rich.cells import cell_len
 from rich.color import Color
@@ -62,22 +62,25 @@ class TextOpacity:
         _Segment = Segment
         _from_color = Style.from_color
         if opacity == 0:
-            for text, style, control in segments:
+            for text, style, control in cast(
+                Iterable[tuple[str, Style, object]],
+                segments
+            ):
                 assert style is not None
                 invisible_style = _from_color(bgcolor=style.bgcolor)
                 yield _Segment(cell_len(text) * " ", invisible_style)
         else:
             for segment in segments:
-                text, style, control = segment
-                if not style:
+                text, maybe_style, control = segment
+                if not maybe_style:
                     yield segment
                     continue
 
-                color = style.color
-                bgcolor = style.bgcolor
+                color = maybe_style.color
+                bgcolor = maybe_style.bgcolor
                 if color and color.triplet and bgcolor and bgcolor.triplet:
                     color_style = _get_blended_style_cached(bgcolor, color, opacity)
-                    yield _Segment(text, style + color_style)
+                    yield _Segment(text, maybe_style + color_style)
                 else:
                     yield segment
 
@@ -86,40 +89,3 @@ class TextOpacity:
     ) -> RenderResult:
         segments = console.render(self.renderable, options)
         return self.process_segments(segments, self.opacity)
-
-
-if __name__ == "__main__":
-    from rich.live import Live
-    from rich.panel import Panel
-    from rich.text import Text
-
-    from time import sleep
-
-    console = Console()
-
-    panel = Panel.fit(
-        Text("Steak: £30", style="#fcffde on #03761e"),
-        title="Menu",
-        style="#ffffff on #000000",
-    )
-    console.print(panel)
-
-    opacity_panel = TextOpacity(panel, opacity=0.5)
-    console.print(opacity_panel)
-
-    def frange(start: float, end: float, step: float) -> Iterator[float]:
-        current = start
-        while current < end:
-            yield current
-            current += step
-
-        while current >= 0:
-            yield current
-            current -= step
-
-    import itertools
-
-    with Live(opacity_panel, refresh_per_second=60) as live:
-        for value in itertools.cycle(frange(0, 1, 0.05)):
-            opacity_panel.opacity = value
-            sleep(0.05)

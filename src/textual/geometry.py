@@ -219,8 +219,6 @@ class Size(NamedTuple):
     def __contains__(self, other: Any) -> bool:
         try:
             x, y = other
-            assert isinstance(x, int)
-            assert isinstance(y, int)
         except Exception:
             raise TypeError(
                 "Dimensions.__contains__ requires an iterable of two integers"

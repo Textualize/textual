@@ -76,9 +76,9 @@ class Sparkline(Generic[T]):
 
         buckets = tuple(self._buckets(self.data, num_buckets=width))
 
-        bucket_index = 0
+        bucket_index = 0.0
         bars_rendered = 0
-        step = len(buckets) // width
+        step = len(buckets) / width
         summary_function = self.summary_function
         min_color, max_color = self.min_color.color, self.max_color.color
         assert min_color is not None

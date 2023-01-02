@@ -5,8 +5,7 @@ import rich.repr
 import asyncio
 from typing import TYPE_CHECKING, Generic
 
-if TYPE_CHECKING:
-    from .app import App, ReturnType
+from .app import App, ReturnType
 
 
 @rich.repr.auto(angular=True)
