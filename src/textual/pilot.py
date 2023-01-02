@@ -3,7 +3,7 @@ from __future__ import annotations
 import rich.repr
 
 import asyncio
-from typing import TYPE_CHECKING, Generic
+from typing import Generic
 
 from .app import App, ReturnType
 

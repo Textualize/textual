@@ -1,19 +1,20 @@
 from __future__ import annotations
 import sys
 
-from typing import Any, Hashable, Iterator, Sequence, TypeVar, overload
+from typing import TYPE_CHECKING, Any, Iterator, Sequence, overload
 
 import rich.repr
+
+if TYPE_CHECKING:
+    from .widget import Widget
 
 
 class DuplicateIds(Exception):
     pass
 
 
-_T = TypeVar("_T", bound=Hashable)
-
 @rich.repr.auto(angular=True)
-class NodeList(Sequence[_T]):
+class NodeList(Sequence["Widget"]):
     """
     A container for widgets that forms one level of hierarchy.
 
@@ -23,13 +24,13 @@ class NodeList(Sequence[_T]):
 
     def __init__(self) -> None:
         # The nodes in the list
-        self._nodes: list[_T] = []
-        self._nodes_set: set[_T] = set()
+        self._nodes: list[Widget] = []
+        self._nodes_set: set[Widget] = set()
 
         # We cache widgets by their IDs too for a quick lookup
         # Note that only widgets with IDs are cached like this, so
         # this cache will likely hold fewer values than self._nodes.
-        self._nodes_by_id: dict[str, _T] = {}
+        self._nodes_by_id: dict[str, Widget] = {}
 
         # Increments when list is updated (used for caching)
         self._updates = 0
@@ -63,11 +64,11 @@ class NodeList(Sequence[_T]):
         """
         return self._nodes.index(widget, start, stop)
 
-    def _get_by_id(self, widget_id: str) -> _T | None:
+    def _get_by_id(self, widget_id: str) -> Widget | None:
         """Get the widget for the given widget_id, or None if there's no matches in this list"""
         return self._nodes_by_id.get(widget_id)
 
-    def _append(self, widget: _T) -> None:
+    def _append(self, widget: Widget) -> None:
         """Append a Widget.
 
         Args:
@@ -82,7 +83,7 @@ class NodeList(Sequence[_T]):
                 self._nodes_by_id[widget_id] = widget
             self._updates += 1
 
-    def _insert(self, index: int, widget: _T) -> None:
+    def _insert(self, index: int, widget: Widget) -> None:
         """Insert a Widget.
 
         Args:
@@ -105,7 +106,7 @@ class NodeList(Sequence[_T]):
                 "The children of a widget must have unique IDs."
             )
 
-    def _remove(self, widget: _T) -> None:
+    def _remove(self, widget: Widget) -> None:
         """Remove a widget from the list.
 
         Removing a widget not in the list is a null-op.
@@ -129,19 +130,19 @@ class NodeList(Sequence[_T]):
             self._nodes_by_id.clear()
             self._updates += 1
 
-    def __iter__(self) -> Iterator[_T]:
+    def __iter__(self) -> Iterator[Widget]:
         return iter(self._nodes)
 
-    def __reversed__(self) -> Iterator[_T]:
+    def __reversed__(self) -> Iterator[Widget]:
         return reversed(self._nodes)
 
     @overload
-    def __getitem__(self, index: int) -> _T:
+    def __getitem__(self, index: int) -> Widget:
         ...
 
     @overload
-    def __getitem__(self, index: slice) -> list[_T]:
+    def __getitem__(self, index: slice) -> list[Widget]:
         ...
 
-    def __getitem__(self, index: int | slice) -> _T | list[_T]:
+    def __getitem__(self, index: int | slice) -> Widget | list[Widget]:
         return self._nodes[index]
