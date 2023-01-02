@@ -32,8 +32,8 @@ BORDER_CHARS: dict[EdgeType, tuple[str, str, str]] = {
     "outer": ("▛▀▜", "▌ ▐", "▙▄▟"),
     "hkey": ("▔▔▔", "   ", "▁▁▁"),
     "vkey": ("▏ ▕", "▏ ▕", "▏ ▕"),
-    "tall": ("▊▔▎", "▊ ▎", "▊▁▎"),
-    "wide": ("▁▁▁", "▎ ▋", "▔▔▔"),
+    "tall": ("▐▔▌", "▐ ▌", "▐▁▌"),
+    "wide": ("▁▁▁", "▌ ▐", "▔▔▔"),
 }
 
 # Some of the borders are on the widget background and some are on the background of the parent
@@ -55,8 +55,8 @@ BORDER_LOCATIONS: dict[
     "outer": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
     "hkey": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
     "vkey": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
-    "tall": ((2, 0, 1), (2, 0, 1), (2, 0, 1)),
-    "wide": ((1, 1, 1), (0, 1, 3), (1, 1, 1)),
+    "tall": ((1, 0, 1), (1, 0, 1), (1, 0, 1)),
+    "wide": ((1, 1, 1), (0, 1, 0), (1, 1, 1)),
 }
 
 INVISIBLE_EDGE_TYPES = cast("frozenset[EdgeType]", frozenset(("", "none", "hidden")))
@@ -108,8 +108,6 @@ def get_box(
     styles = (
         inner,
         outer,
-        Style.from_color(outer.bgcolor, inner.color),
-        Style.from_color(inner.bgcolor, outer.color),
     )
 
     return (
