@@ -101,8 +101,8 @@ class ScrollBarRender:
         _Style = Style
         _Segment = Segment
 
-        norm_style  = _Style(bgcolor=back_color, color=bar_color)
-        rev_style   = _Style(bgcolor=bar_color,  color=back_color)
+        norm_style = _Style(bgcolor=back_color, color=bar_color)
+        rev_style = _Style(bgcolor=bar_color, color=back_color)
 
         if vertical:
             bars_start = ["▁", "▂", "▃", "▄", "▅", "▆", "▇", " "]
@@ -136,31 +136,31 @@ class ScrollBarRender:
 
         len_bars = len(bars_start)
 
-        upper_meta  = {"@mouse.up": "scroll_up"}
+        upper_meta = {"@mouse.up": "scroll_up"}
         middle_meta = {"@mouse.up": "release", "@mouse.down": "grab"}
-        lower_meta  = {"@mouse.up": "scroll_down"}
+        lower_meta = {"@mouse.up": "scroll_down"}
 
         upper_back_style = blank_style + _Style.from_meta(upper_meta)
-        middle_fg_style  = full_style  + _Style.from_meta(middle_meta)
+        middle_fg_style = full_style + _Style.from_meta(middle_meta)
         lower_back_style = blank_style + _Style.from_meta(lower_meta)
 
         upper_back_segment = _Segment(blank, upper_back_style)
-        middle_fg_segment  = _Segment(full,  middle_fg_style)
+        middle_fg_segment = _Segment(full, middle_fg_style)
         lower_back_segment = _Segment(blank, lower_back_style)
 
         if window_size and size and virtual_size and size != virtual_size:
             step_size = virtual_size / size
 
             start = int(position / step_size * len_bars)
-            end   = start + max(len_bars, int(ceil(window_size / step_size * len_bars)))
+            end = start + max(len_bars, int(ceil(window_size / step_size * len_bars)))
 
             start_index, start_bar = divmod(max(0, start), len_bars)
-            end_index,   end_bar   = divmod(max(0, end  ), len_bars)
+            end_index, end_bar = divmod(max(0, end), len_bars)
 
             segments = (
-                [lower_back_segment] * (start_index) +
-                [middle_fg_segment]  * (end_index - start_index) +
-                [upper_back_segment] * (size - end_index)
+                [lower_back_segment] * (start_index)
+                + [middle_fg_segment] * (end_index - start_index)
+                + [upper_back_segment] * (size - end_index)
             )
 
             # Apply the smaller bar characters to head and tail of scrollbar for more "granularity"
@@ -229,7 +229,12 @@ class ScrollBar(Widget):
     """
 
     def __init__(
-        self, vertical: bool = True, name: str | None = None, *, thickness: int = 1, thin: bool = False,
+        self,
+        vertical: bool = True,
+        name: str | None = None,
+        *,
+        thickness: int = 1,
+        thin: bool = False,
     ) -> None:
         self.vertical = vertical
         self.thickness = thickness

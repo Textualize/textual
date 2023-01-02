@@ -861,18 +861,18 @@ class Styles(StylesBase):
                         self.scrollbar_thin_horizontal,
                         self.scrollbar_thin_vertical,
                     )
-                )
+                ),
             )
         else:
             if has_rule("scrollbar_thin_horizontal"):
                 append_declaration(
                     "scrollbar-thin-horizontal",
-                    bool_to_boolean_string(self.scrollbar_thin_horizontal)
+                    bool_to_boolean_string(self.scrollbar_thin_horizontal),
                 )
             if has_rule("scrollbar_thin_vertical"):
                 append_declaration(
                     "scrollbar-thin-vertical",
-                    bool_to_boolean_string(self.scrollbar_thin_vertical)
+                    bool_to_boolean_string(self.scrollbar_thin_vertical),
                 )
         if has_rule("box_sizing"):
             append_declaration("box-sizing", self.box_sizing)

@@ -961,7 +961,9 @@ class Widget(DOMNode):
             int: Number of columns in the vertical scrollbar.
         """
         styles = self.styles
-        would_be_size = 1 if styles.scrollbar_thin_vertical else styles.scrollbar_size_vertical
+        would_be_size = (
+            1 if styles.scrollbar_thin_vertical else styles.scrollbar_size_vertical
+        )
         if styles.scrollbar_gutter == "stable" and styles.overflow_y == "auto":
             return would_be_size
         return would_be_size if self.show_vertical_scrollbar else 0
@@ -984,7 +986,9 @@ class Widget(DOMNode):
             int: Number of rows in the horizontal scrollbar.
         """
         styles = self.styles
-        would_be_size = 1 if styles.scrollbar_thin_horizontal else styles.scrollbar_size_horizontal
+        would_be_size = (
+            1 if styles.scrollbar_thin_horizontal else styles.scrollbar_size_horizontal
+        )
         return would_be_size if self.show_horizontal_scrollbar else 0
 
     @property

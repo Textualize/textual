@@ -622,9 +622,7 @@ def scrollbar_thin_property_help_text(context: StylingContext) -> HelpText:
                     ),
                 ],
             ).get_by_context(context),
-            Bullet(
-                "<horizontal> and <vertical> must be booleans"
-            ),
+            Bullet("<horizontal> and <vertical> must be booleans"),
         ],
     )
 
