@@ -239,7 +239,7 @@ def test_mouse_move(parser, sequence, shift, meta, button):
     "sequence, shift, meta",
     [
         ("\x1b[<64;18;25M", False, False),
-        ("\x1b[<68;18;25M", True,  False),
+        ("\x1b[<68;18;25M", True, False),
         ("\x1b[<72;18;25M", False, True),
     ],
 )
@@ -264,7 +264,7 @@ def test_mouse_scroll_up(parser, sequence, shift, meta):
     "sequence, shift, meta",
     [
         ("\x1b[<65;18;25M", False, False),
-        ("\x1b[<69;18;25M", True,  False),
+        ("\x1b[<69;18;25M", True, False),
         ("\x1b[<73;18;25M", False, True),
     ],
 )

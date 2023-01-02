@@ -64,7 +64,9 @@ class XTermParser(Parser[events.Event]):
             event_cls: type[events.MouseEvent]
             button: int
             if buttons & 64:
-                event_cls = events.MouseScrollDown if buttons & 1 else events.MouseScrollUp
+                event_cls = (
+                    events.MouseScrollDown if buttons & 1 else events.MouseScrollUp
+                )
                 button = 0
             else:
                 event_cls = (
