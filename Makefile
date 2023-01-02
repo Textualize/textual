@@ -1,7 +1,10 @@
 make:
 	python -m build --wheel --skip-dependency-check --no-isolation
-install:
+install: uninstall
 	python -m installer dist/*.whl
+uninstall:
+	rm -rf /usr/bin/textual
+	rm -i -rf /usr/lib/python3.*/site-packages/textual*
 test:
 	pytest --cov-report term-missing --cov=textual tests/ -vv
 unit-test:
