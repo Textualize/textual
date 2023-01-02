@@ -20,25 +20,25 @@ if WINDOWS:
 
     from ._win_sleep import sleep as win_sleep
 
-    async def sleep(sleep_for: float) -> None:
+    async def sleep(secs: float) -> None:
         """Sleep for a given number of seconds.
 
         Args:
-            sleep_for (float): Number of seconds to sleep for.
+            secs (float): Number of seconds to sleep for.
         """
-        await get_running_loop().run_in_executor(None, win_sleep, sleep_for)
+        await get_running_loop().run_in_executor(None, win_sleep, secs)
 
 else:
 
-    async def sleep(sleep_for: float) -> None:
+    async def sleep(secs: float) -> None:
         """Sleep for a given number of seconds.
 
         Args:
-            sleep_for (float): Number of seconds to sleep for.
+            secs (float): Number of seconds to sleep for.
         """
         # From practical experiments, asyncio.sleep sleeps for at least half a millisecond too much
         # Presumably there is overhead asyncio itself which accounts for this
         # We will reduce the sleep to compensate, and also don't sleep at all for less than half a millisecond
-        sleep_for -= 0.0005
+        sleep_for = secs - 0.0005
         if sleep_for > 0:
             await asyncio_sleep(sleep_for)
