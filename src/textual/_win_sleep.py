@@ -2,6 +2,7 @@ import ctypes
 from ctypes.wintypes import LARGE_INTEGER
 from time import sleep as time_sleep
 
+
 __all__ = ["sleep"]
 
 kernel32 = ctypes.windll.kernel32
@@ -9,6 +10,7 @@ kernel32 = ctypes.windll.kernel32
 INFINITE = 0xFFFFFFFF
 WAIT_FAILED = 0xFFFFFFFF
 CREATE_WAITABLE_TIMER_HIGH_RESOLUTION = 0x00000002
+
 
 
 def sleep(sleep_for: float) -> None:
@@ -19,6 +21,13 @@ def sleep(sleep_for: float) -> None:
     Args:
         sleep_for (float): Seconds to sleep for.
     """
+
+    # Subtract a millisecond to account for overhead
+    sleep_for = max(0, sleep_for - 0.001)
+    if sleep_for < 0.0005:
+        # Less than 0.5ms and its not worth doing the sleep
+        return
+
     handle = kernel32.CreateWaitableTimerExW(
         None,
         None,
@@ -29,7 +38,6 @@ def sleep(sleep_for: float) -> None:
         time_sleep(sleep_for)
         return
 
-    sleep_for -= 1 / 1000
     if not kernel32.SetWaitableTimer(
         handle,
         ctypes.byref(LARGE_INTEGER(int(sleep_for * -10_000_000))),
@@ -39,7 +47,6 @@ def sleep(sleep_for: float) -> None:
         0,
     ):
         kernel32.CloseHandle(handle)
-        print("error")
         time_sleep(sleep_for)
         return
 
