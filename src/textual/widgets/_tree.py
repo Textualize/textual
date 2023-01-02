@@ -628,7 +628,9 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
         root = self.root
 
-        def add_node(path: list[TreeNode[TreeDataType]], node: TreeNode[TreeDataType], last: bool) -> None:
+        def add_node(
+            path: list[TreeNode[TreeDataType]], node: TreeNode[TreeDataType], last: bool
+        ) -> None:
             child_path = [*path, node]
             node._line = len(lines)
             add_line(TreeLine(child_path, last))

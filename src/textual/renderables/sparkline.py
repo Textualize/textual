@@ -14,6 +14,7 @@ T = TypeVar("T", int, float)
 
 SummaryFunction = Callable[[Sequence[T]], float]
 
+
 class Sparkline(Generic[T]):
     """A sparkline representing a series of data.
 
@@ -100,7 +101,13 @@ if __name__ == "__main__":
     def last(l: Sequence[T]) -> T:
         return l[-1]
 
-    funcs: Sequence[SummaryFunction[int]] = (min, max, last, statistics.median, statistics.mean)
+    funcs: Sequence[SummaryFunction[int]] = (
+        min,
+        max,
+        last,
+        statistics.median,
+        statistics.mean,
+    )
     nums = [10, 2, 30, 60, 45, 20, 7, 8, 9, 10, 50, 13, 10, 6, 5, 4, 3, 7, 20]
     console.print(f"data = {nums}\n")
     for f in funcs:

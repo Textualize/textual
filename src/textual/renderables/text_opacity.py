@@ -63,8 +63,7 @@ class TextOpacity:
         _from_color = Style.from_color
         if opacity == 0:
             for text, style, control in cast(
-                Iterable[tuple[str, Style, object]],
-                segments
+                Iterable[tuple[str, Style, object]], segments
             ):
                 assert style is not None
                 invisible_style = _from_color(bgcolor=style.bgcolor)
