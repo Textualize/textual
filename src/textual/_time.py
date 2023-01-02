@@ -22,4 +22,8 @@ if WINDOWS:
         await get_running_loop().run_in_executor(None, win_sleep, sleep_for)
 
 else:
-    sleep = asyncio_sleep
+
+    async def sleep(sleep_for: float) -> None:
+        sleep_for -= 0.0005
+        if sleep_for > 0:
+            await asyncio_sleep(sleep_for)
