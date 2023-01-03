@@ -65,21 +65,20 @@ class TextOpacity:
             for text, style, control in cast(
                 Iterable[tuple[str, Style, object]], segments
             ):
-                assert style is not None
                 invisible_style = _from_color(bgcolor=style.bgcolor)
                 yield _Segment(cell_len(text) * " ", invisible_style)
         else:
             for segment in segments:
-                text, maybe_style, control = segment
-                if not maybe_style:
+                text, style, control = cast(tuple[str, Style, object], segment)
+                if not style:
                     yield segment
                     continue
 
-                color = maybe_style.color
-                bgcolor = maybe_style.bgcolor
+                color = style.color
+                bgcolor = style.bgcolor
                 if color and color.triplet and bgcolor and bgcolor.triplet:
                     color_style = _get_blended_style_cached(bgcolor, color, opacity)
-                    yield _Segment(text, maybe_style + color_style)
+                    yield _Segment(text, style + color_style)
                 else:
                     yield segment
 

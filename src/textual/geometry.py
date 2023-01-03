@@ -7,7 +7,6 @@ Functions and classes to manage terminal geometry (anything involving coordinate
 from __future__ import annotations
 
 from functools import lru_cache
-import math
 from operator import attrgetter, itemgetter
 from typing import Any, Collection, NamedTuple, Tuple, TypeVar, Union, cast
 
@@ -130,7 +129,7 @@ class Offset(NamedTuple):
         """
         x1, y1 = self
         x2, y2 = other
-        distance = math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1))
+        distance: float = ((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) ** 0.5
         return distance
 
 
@@ -218,6 +217,8 @@ class Size(NamedTuple):
 
     def __contains__(self, other: Any) -> bool:
         try:
+            x: int
+            y: int
             x, y = other
         except Exception:
             raise TypeError(
