@@ -1,49 +1,45 @@
 # Outline
 
-The `outline` rule enables the drawing of a box around a widget. Similar to `border`, but unlike border, outline will
-draw _over_ the content area. This rule can be useful for emphasis if you want to display an outline for a brief time to
-draw the user's attention to it.
+The `outline` rule enables the drawing of a box around the content of a widget, which means the outline is drawn _over_ the content area.
 
-An outline is set with a border value (see table below) followed by a color.
+!!! warning
 
-Outlines may also be set individually with the `outline-top`, `outline-right`, `outline-bottom` and `outline-left`
-rules.
+    Not to be confused with [`border`](./border.md).
 
 ## Syntax
 
-```
-outline: [<COLOR>] [<BORDER VALUE>];
-outline-top: [<COLOR>] [<BORDER VALUE>];
-outline-right: [<COLOR>] [<BORDER VALUE>];
-outline-bottom: [<COLOR>] [<BORDER VALUE>];
-outline-left: [<COLOR>] [<BORDER VALUE>];
-```
+--8<-- "docs/snippets/syntax_block_start.md"
+outline: [<a href="../../css_types/border">&lt;border&gt;</a>] [<a href="../../css_types/color">&lt;color&gt;</a>];
+
+outline-top: [<a href="../../css_types/border">&lt;border&gt;</a>] [<a href="../../css_types/color">&lt;color&gt;</a>];
+outline-right: [<a href="../../css_types/border">&lt;border&gt;</a>] [<a href="../../css_types/color">&lt;color&gt;</a>];
+outline-bottom: [<a href="../../css_types/border">&lt;border&gt;</a>] [<a href="../../css_types/color">&lt;color&gt;</a>];
+outline-left: [<a href="../../css_types/border">&lt;border&gt;</a>] [<a href="../../css_types/color">&lt;color&gt;</a>];
+--8<-- "docs/snippets/syntax_block_end.md"
+
+The style `outline` accepts an optional [`<border>`](../../css_types/border) that sets the visual style of the widget outline and an optional [`<color>`](../../css_types/color) to set the color of the outline.
+
+Unlike the style [`border`](./border.md), the frame of the outline is drawn over the content area of the widget.
+This rule can be useful for temporary emphasis of the content of a widget, if you want to draw the user's attention to it.
 
 ### Values
 
-| Border value | Description                                             |
-|--------------|---------------------------------------------------------|
-| `"ascii"`    | A border with plus, hyphen, and vertical bar            |
-| `"blank"`    | A blank border (reserves space for a border)            |
-| `"dashed"`   | Dashed line border                                      |
-| `"double"`   | Double lined border                                     |
-| `"heavy"`    | Heavy border                                            |
-| `"hidden"`   | Alias for "none"                                        |
-| `"hkey"`     | Horizontal key-line border                              |
-| `"inner"`    | Thick solid border                                      |
-| `"none"`     | Disabled border                                         |
-| `"outer"`    | Think solid border with additional space around content |
-| `"round"`    | Rounded corners                                         |
-| `"solid"`    | Solid border                                            |
-| `"tall"`     | Solid border with extras space top and bottom           |
-| `"vkey"`     | Vertical key-line border                                |
-| `"wide"`     | Solid border with additional space left and right       |
+#### &lt;border&gt;
 
-For example, `heavy white` would display a heavy white line around a widget.
+--8<-- "docs/snippets/type_syntax/border.md"
 
-## Example
+#### &lt;color&gt;
+
+--8<-- "docs/snippets/type_syntax/color.md"
+
+## Examples
 
 This example shows a widget with an outline. Note how the outline occludes the text area.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/outline.py"}
+    ```
 
 === "outline.py"
 
@@ -57,9 +53,25 @@ This example shows a widget with an outline. Note how the outline occludes the t
     --8<-- "docs/examples/styles/outline.css"
     ```
 
+The next example makes the difference clearer, by having three labels side-by-side.
+They contain the same text, have the same width and height, and are styled exactly the same up to their `outline` and [`border`](./border.md) rules.
+This example also shows that a widget can contain both a `border` and an `outline`:
+
 === "Output"
 
-    ```{.textual path="docs/examples/styles/outline.py"}
+    ```{.textual path="docs/examples/styles/outline_vs_border.py"}
+    ```
+
+=== "outline_vs_border.py"
+
+    ```python
+    --8<-- "docs/examples/styles/outline_vs_border.py"
+    ```
+
+=== "outline_vs_border.css"
+
+    ```css
+    --8<-- "docs/examples/styles/outline_vs_border.css"
     ```
 
 ## CSS
@@ -76,8 +88,8 @@ outline-left:outer red;
 
 ```python
 # Set a heavy white outline
-widget.outline = ("heavy", "white)
+widget.outline = ("heavy", "white")
 
 # Set a red outline on the left
-widget.outline_left = ("outer", "red)
+widget.outline_left = ("outer", "red")
 ```
