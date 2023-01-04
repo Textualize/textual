@@ -1,0 +1,11 @@
+Label {
+    height: 8;
+}
+
+.outline {
+    outline: $error round;
+}
+
+.border {
+    border: $success heavy;
+}
