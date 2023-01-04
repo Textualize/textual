@@ -36,6 +36,7 @@ nav:
       - "css_types/integer.md"
       - "css_types/name.md"
       - "css_types/number.md"
+      - "css_types/overflow.md"
       - "css_types/percentage.md"
       - "css_types/scalar.md"
       - "css_types/text_style.md"
