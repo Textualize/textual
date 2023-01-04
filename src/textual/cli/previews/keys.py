@@ -9,7 +9,7 @@ from textual.widgets import Button, Header, TextLog
 INSTRUCTIONS = """\
 Press some keys!    
 
-Because we want to display all the keys, Ctrl+C won't work for this example. Use the button below to quit.\
+Because we want to display all the keys, ctrl+C won't quit this example. Use the Quit button below to exit the app.\
 """
 
 

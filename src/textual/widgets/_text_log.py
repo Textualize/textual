@@ -15,7 +15,7 @@ from ..geometry import Size, Region
 from ..scroll_view import ScrollView
 from .._cache import LRUCache
 from .._segment_tools import line_crop
-from .._types import Lines
+from ..strip import Strip
 
 
 class TextLog(ScrollView, can_focus=True):
@@ -48,8 +48,8 @@ class TextLog(ScrollView, can_focus=True):
         super().__init__(name=name, id=id, classes=classes)
         self.max_lines = max_lines
         self._start_line: int = 0
-        self.lines: list[list[Segment]] = []
-        self._line_cache: LRUCache[tuple[int, int, int, int], list[Segment]]
+        self.lines: list[Strip] = []
+        self._line_cache: LRUCache[tuple[int, int, int, int], Strip]
         self._line_cache = LRUCache(1024)
         self.max_width: int = 0
         self.min_width = min_width
@@ -66,13 +66,15 @@ class TextLog(ScrollView, can_focus=True):
         content: RenderableType | object,
         width: int | None = None,
         expand: bool = False,
+        shrink: bool = True,
     ) -> None:
         """Write text or a rich renderable.
 
         Args:
             content (RenderableType): Rich renderable (or text).
-            width (int): Width to render or None to use optimal width. Defaults to None.
-            expand (bool): Enable expand to widget width, or False to use `width`.
+            width (int): Width to render or None to use optimal width. Defaults to `None`.
+            expand (bool): Enable expand to widget width, or False to use `width`. Defaults to `False`.
+            shrink (bool): Enable shrinking of content to fit width. Defaults to `True`.
         """
 
         renderable: RenderableType
@@ -95,14 +97,17 @@ class TextLog(ScrollView, can_focus=True):
         if isinstance(renderable, Text) and not self.wrap:
             render_options = render_options.update(overflow="ignore", no_wrap=True)
 
-        if expand:
-            render_width = self.scrollable_content_region.width
-        else:
-            render_width = (
-                measure_renderables(console, render_options, [renderable]).maximum
-                if width is None
-                else width
-            )
+        render_width = measure_renderables(
+            console, render_options, [renderable]
+        ).maximum
+        container_width = (
+            self.scrollable_content_region.width if width is None else width
+        )
+
+        if expand and render_width < container_width:
+            render_width = container_width
+        if shrink and render_width > container_width:
+            render_width = container_width
 
         segments = self.app.console.render(
             renderable, render_options.update_width(render_width)
@@ -115,7 +120,8 @@ class TextLog(ScrollView, can_focus=True):
             self.max_width,
             max(sum(segment.cell_length for segment in _line) for _line in lines),
         )
-        self.lines.extend(lines)
+        strips = Strip.from_lines(lines, render_width)
+        self.lines.extend(strips)
 
         if self.max_lines is not None and len(self.lines) > self.max_lines:
             self._start_line += len(self.lines) - self.max_lines
@@ -126,19 +132,20 @@ class TextLog(ScrollView, can_focus=True):
 
     def clear(self) -> None:
         """Clear the text log."""
-        del self.lines[:]
+        self.lines.clear()
+        self._line_cache.clear()
         self._start_line = 0
         self.max_width = 0
         self.virtual_size = Size(self.max_width, len(self.lines))
         self.refresh()
 
-    def render_line(self, y: int) -> list[Segment]:
+    def render_line(self, y: int) -> Strip:
         scroll_x, scroll_y = self.scroll_offset
         line = self._render_line(scroll_y + y, scroll_x, self.size.width)
-        line = list(Segment.apply_style(line, self.rich_style))
-        return line
+        strip = Strip(Segment.apply_style(line, self.rich_style), self.size.width)
+        return strip
 
-    def render_lines(self, crop: Region) -> Lines:
+    def render_lines(self, crop: Region) -> list[Strip]:
         """Render the widget in to lines.
 
         Args:
@@ -150,19 +157,20 @@ class TextLog(ScrollView, can_focus=True):
         lines = self._styles_cache.render_widget(self, crop)
         return lines
 
-    def _render_line(self, y: int, scroll_x: int, width: int) -> list[Segment]:
+    def _render_line(self, y: int, scroll_x: int, width: int) -> Strip:
 
         if y >= len(self.lines):
-            return [Segment(" " * width, self.rich_style)]
+            return Strip.blank(width, self.rich_style)
 
         key = (y + self._start_line, scroll_x, width, self.max_width)
         if key in self._line_cache:
             return self._line_cache[key]
 
-        line = self.lines[y]
-        line = Segment.adjust_line_length(
-            line, max(self.max_width, width), self.rich_style
+        line = (
+            self.lines[y]
+            .adjust_cell_length(max(self.max_width, width), self.rich_style)
+            .crop(scroll_x, scroll_x + width)
         )
-        line = line_crop(line, scroll_x, scroll_x + width, self.max_width)
+
         self._line_cache[key] = line
         return line

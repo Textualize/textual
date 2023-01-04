@@ -70,10 +70,10 @@ class Keys(str, Enum):
     ControlShift9 = "ctrl+shift+9"
     ControlShift0 = "ctrl+shift+0"
 
-    ControlBackslash = "ctrl+\\"
-    ControlSquareClose = "ctrl+]"
-    ControlCircumflex = "ctrl+^"
-    ControlUnderscore = "ctrl+_"
+    ControlBackslash = "ctrl+backslash"
+    ControlSquareClose = "ctrl+right_square_bracket"
+    ControlCircumflex = "ctrl+circumflex_accent"
+    ControlUnderscore = "ctrl+underscore"
 
     Left = "left"
     Right = "right"
@@ -256,3 +256,14 @@ def _get_key_display(key: str) -> str:
     if unicode_character.isprintable():
         return unicode_character
     return upper_original
+
+
+def _character_to_key(character: str) -> str:
+    """Convert a single character to a key value."""
+    assert len(character) == 1
+    if not character.isalnum():
+        key = unicodedata.name(character).lower().replace("-", "_").replace(" ", "_")
+    else:
+        key = character
+    key = KEY_NAME_REPLACEMENTS.get(key, key)
+    return key

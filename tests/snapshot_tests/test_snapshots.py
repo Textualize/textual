@@ -71,7 +71,8 @@ def test_input_and_focus(snap_compare):
         "tab",
         *"Darren",  # Focus first input, write "Darren"
         "tab",
-        *"Burns",  # Tab focus to second input, write "Burns"
+        *"Burns",
+        "_",  # Tab focus to second input, write "Burns"
     ]
     assert snap_compare(WIDGET_EXAMPLES_DIR / "input.py", press=press)
 
@@ -178,6 +179,6 @@ def test_demo(snap_compare):
     """Test the demo app (python -m textual)"""
     assert snap_compare(
         Path("../../src/textual/demo.py"),
-        press=["down", "down", "down", "_"],
+        press=["down", "down", "down", "_", "_"],
         terminal_size=(100, 30),
     )

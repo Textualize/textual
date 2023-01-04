@@ -5,22 +5,60 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.8.0] - Unreleased
+## [0.9.1] - 2022-12-30
+
+### Added
+
+- Added textual._win_sleep for Python on Windows < 3.11 https://github.com/Textualize/textual/pull/1457
+
+## [0.9.0] - 2022-12-30
+
+### Added
+
+- Added textual.strip.Strip primitive
+- Added textual._cache.FIFOCache
+- Added an option to clear columns in DataTable.clear() https://github.com/Textualize/textual/pull/1427
+
+### Changed
+
+- Widget.render_line now returns a Strip
+- Fix for slow updates on Windows
+- Bumped Rich dependency 
+  
+## [0.8.2] - 2022-12-28
+
+### Fixed
+
+- Fixed issue with TextLog.clear() https://github.com/Textualize/textual/issues/1447
+
+## [0.8.1] - 2022-12-25
+
+### Fixed
+
+- Fix for overflowing tree issue https://github.com/Textualize/textual/issues/1425
+
+## [0.8.0] - 2022-12-22
 
 ### Fixed
 
 - Fixed issues with nested auto dimensions https://github.com/Textualize/textual/issues/1402
 - Fixed watch method incorrectly running on first set when value hasn't changed and init=False https://github.com/Textualize/textual/pull/1367
 - `App.dark` can now be set from `App.on_load` without an error being raised  https://github.com/Textualize/textual/issues/1369
+- Fixed setting `visibility` changes needing a `refresh` https://github.com/Textualize/textual/issues/1355
 
 ### Added
 
 - Added `textual.actions.SkipAction` exception which can be raised from an action to allow parents to process bindings.
 - Added `textual keys` preview.
+- Added ability to bind to a character in addition to key name. i.e. you can bind to "." or "full_stop".
+- Added TextLog.shrink attribute to allow renderable to reduce in size to fit width.
 
 ### Changed
 
-- Moved Ctrl+C, tab, and shift+tab to App BINDINGS
+- Deprecated `PRIORITY_BINDINGS` class variable.
+- Renamed `char` to `character` on Key event.
+- Renamed `key_name` to `name` on Key event.
+- Queries/`walk_children` no longer includes self in results by default https://github.com/Textualize/textual/pull/1416
 
 ## [0.7.0] - 2022-12-17
 
@@ -284,6 +322,11 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.9.1]: https://github.com/Textualize/textual/compare/v0.9.0...v0.9.1
+[0.9.0]: https://github.com/Textualize/textual/compare/v0.8.2...v0.9.0
+[0.8.2]: https://github.com/Textualize/textual/compare/v0.8.1...v0.8.2
+[0.8.1]: https://github.com/Textualize/textual/compare/v0.8.0...v0.8.1
+[0.8.0]: https://github.com/Textualize/textual/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/Textualize/textual/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/Textualize/textual/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/Textualize/textual/compare/v0.4.0...v0.5.0

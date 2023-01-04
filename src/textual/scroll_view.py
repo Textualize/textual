@@ -30,6 +30,16 @@ class ScrollView(Widget):
         """Not transparent, i.e. renders something."""
         return False
 
+    def watch_scroll_x(self, new_value: float) -> None:
+        if self.show_horizontal_scrollbar:
+            self.horizontal_scrollbar.position = int(new_value)
+            self.refresh()
+
+    def watch_scroll_y(self, new_value: float) -> None:
+        if self.show_vertical_scrollbar:
+            self.vertical_scrollbar.position = int(new_value)
+            self.refresh()
+
     def on_mount(self):
         self._refresh_scrollbars()
 
@@ -68,6 +78,8 @@ class ScrollView(Widget):
             virtual_size (Size): New virtual size.
             container_size (Size): New container size.
         """
+        if self._size != size or container_size != container_size:
+            self.refresh()
         if (
             self._size != size
             or virtual_size != self.virtual_size
@@ -77,9 +89,7 @@ class ScrollView(Widget):
             virtual_size = self.virtual_size
             self._container_size = size - self.styles.gutter.totals
             self._scroll_update(virtual_size)
-
             self.scroll_to(self.scroll_x, self.scroll_y, animate=False)
-            self.refresh()
 
     def render(self) -> RenderableType:
         """Render the scrollable region (if `render_lines` is not implemented).

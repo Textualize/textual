@@ -106,7 +106,7 @@ def test_cant_match_escape_sequence_too_long(parser):
     # The rest of the characters correspond to the expected key presses
     events = events[1:]
     for index, character in enumerate(sequence[1:]):
-        assert events[index].char == character
+        assert events[index].character == character
 
 
 @pytest.mark.parametrize(

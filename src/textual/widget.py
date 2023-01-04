@@ -37,13 +37,11 @@ from rich.text import Text
 from . import errors, events, messages
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
-from ._cache import LRUCache
 from ._context import active_app
 from ._easing import DEFAULT_SCROLL_EASING
 from ._layout import Layout
 from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
-from ._types import Lines
 from .actions import SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding
@@ -57,6 +55,7 @@ from .message import Message
 from .messages import CallbackType
 from .reactive import Reactive
 from .render import measure
+from .strip import Strip
 from .walk import walk_depth_first
 
 if TYPE_CHECKING:
@@ -156,7 +155,7 @@ class RenderCache(NamedTuple):
     """Stores results of a previous render."""
 
     size: Size
-    lines: Lines
+    lines: list[Strip]
 
 
 class WidgetError(Exception):
@@ -250,8 +249,8 @@ class Widget(DOMNode):
         self._content_width_cache: tuple[object, int] = (None, 0)
         self._content_height_cache: tuple[object, int] = (None, 0)
 
-        self._arrangement_cache_updates: int = -1
-        self._arrangement_cache: LRUCache[Size, DockArrangeResult] = LRUCache(4)
+        self._arrangement_cache_key: tuple[Size, int] = (Size(), -1)
+        self._cached_arrangement: DockArrangeResult | None = None
 
         self._styles_cache = StylesCache()
         self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
@@ -463,22 +462,23 @@ class Widget(DOMNode):
         """
         assert self.is_container
 
-        if self._arrangement_cache_updates != self.children._updates:
-            self._arrangement_cache_updates = self.children._updates
-            self._arrangement_cache.clear()
+        cache_key = (size, self.children._updates)
+        if (
+            self._arrangement_cache_key == cache_key
+            and self._cached_arrangement is not None
+        ):
+            return self._cached_arrangement
 
-        cached_arrangement = self._arrangement_cache.get(size, None)
-        if cached_arrangement is not None:
-            return cached_arrangement
-
-        arrangement = self._arrangement_cache[size] = arrange(
+        self._arrangement_cache_key = cache_key
+        arrangement = self._cached_arrangement = arrange(
             self, self.children, size, self.screen.size
         )
+
         return arrangement
 
     def _clear_arrangement_cache(self) -> None:
         """Clear arrangement cache, forcing a new arrange operation."""
-        self._arrangement_cache.clear()
+        self._cached_arrangement = None
 
     def _get_virtual_dom(self) -> Iterable[Widget]:
         """Get widgets not part of the DOM.
@@ -2097,11 +2097,11 @@ class Widget(DOMNode):
                 align_vertical,
             )
         )
-
-        self._render_cache = RenderCache(self.size, lines)
+        strips = [Strip(line, width) for line in lines]
+        self._render_cache = RenderCache(self.size, strips)
         self._dirty_regions.clear()
 
-    def render_line(self, y: int) -> list[Segment]:
+    def render_line(self, y: int) -> Strip:
         """Render a line of content.
 
         Args:
@@ -2115,10 +2115,10 @@ class Widget(DOMNode):
         try:
             line = self._render_cache.lines[y]
         except IndexError:
-            line = [Segment(" " * self.size.width, self.rich_style)]
+            line = Strip.blank(self.size.width, self.rich_style)
         return line
 
-    def render_lines(self, crop: Region) -> Lines:
+    def render_lines(self, crop: Region) -> list[Strip]:
         """Render the widget in to lines.
 
         Args:
@@ -2127,8 +2127,8 @@ class Widget(DOMNode):
         Returns:
             Lines: A list of list of segments.
         """
-        lines = self._styles_cache.render_widget(self, crop)
-        return lines
+        strips = self._styles_cache.render_widget(self, crop)
+        return strips
 
     def get_style_at(self, x: int, y: int) -> Style:
         """Get the Rich style in a widget at a given relative offset.

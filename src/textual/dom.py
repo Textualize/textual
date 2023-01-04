@@ -92,9 +92,6 @@ class DOMNode(MessagePump):
     # Virtual DOM nodes
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
 
-    # Should the content of BINDINGS be treated as priority bindings?
-    PRIORITY_BINDINGS: ClassVar[bool] = False
-
     # Mapping of key bindings
     BINDINGS: ClassVar[list[BindingType]] = []
 
@@ -233,13 +230,13 @@ class DOMNode(MessagePump):
 
         for base in reversed(cls.__mro__):
             if issubclass(base, DOMNode):
-                # See if the current class wants to set the bindings as
-                # priority bindings. If it doesn't have that property on the
-                # class, go with what we saw last.
-                priority = base.__dict__.get("PRIORITY_BINDINGS", priority)
                 if not base._inherit_bindings:
                     bindings.clear()
-                bindings.append(Bindings(base.__dict__.get("BINDINGS", []), priority))
+                bindings.append(
+                    Bindings(
+                        base.__dict__.get("BINDINGS", []),
+                    )
+                )
         keys = {}
         for bindings_ in bindings:
             keys.update(bindings_.keys)
@@ -615,7 +612,7 @@ class DOMNode(MessagePump):
         """Reset styles back to their initial state"""
         from .widget import Widget
 
-        for node in self.walk_children():
+        for node in self.walk_children(with_self=True):
             node._css_styles.reset()
             if isinstance(node, Widget):
                 node._set_dirty()
@@ -648,7 +645,7 @@ class DOMNode(MessagePump):
         self,
         filter_type: type[WalkType],
         *,
-        with_self: bool = True,
+        with_self: bool = False,
         method: WalkMethod = "depth",
         reverse: bool = False,
     ) -> list[WalkType]:
@@ -658,7 +655,7 @@ class DOMNode(MessagePump):
     def walk_children(
         self,
         *,
-        with_self: bool = True,
+        with_self: bool = False,
         method: WalkMethod = "depth",
         reverse: bool = False,
     ) -> list[DOMNode]:
@@ -668,16 +665,16 @@ class DOMNode(MessagePump):
         self,
         filter_type: type[WalkType] | None = None,
         *,
-        with_self: bool = True,
+        with_self: bool = False,
         method: WalkMethod = "depth",
         reverse: bool = False,
     ) -> list[DOMNode] | list[WalkType]:
-        """Generate descendant nodes.
+        """Walk the subtree rooted at this node, and return every descendant encountered in a list.
 
         Args:
             filter_type (type[WalkType] | None, optional): Filter only this type, or None for no filter.
                 Defaults to None.
-            with_self (bool, optional): Also yield self in addition to descendants. Defaults to True.
+            with_self (bool, optional): Also yield self in addition to descendants. Defaults to False.
             method (Literal["breadth", "depth"], optional): One of "depth" or "breadth". Defaults to "depth".
             reverse (bool, optional): Reverse the order (bottom up). Defaults to False.
 

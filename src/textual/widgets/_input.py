@@ -233,8 +233,8 @@ class Input(Widget, can_focus=True):
             return
         elif event.is_printable:
             event.stop()
-            assert event.char is not None
-            self.insert_text_at_cursor(event.char)
+            assert event.character is not None
+            self.insert_text_at_cursor(event.character)
             event.prevent_default()
 
     def on_paste(self, event: events.Paste) -> None:

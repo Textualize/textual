@@ -191,10 +191,9 @@ def pytest_terminal_summary(
     console = Console(legacy_windows=False, force_terminal=True)
     if diffs:
         snapshot_report_location = config._textual_snapshot_html_report
-        console.rule("[b red]Textual Snapshot Report", style="red")
+        console.print("[b red]Textual Snapshot Report", style="red")
         console.print(
             f"\n[black on red]{len(diffs)} mismatched snapshots[/]\n"
             f"\n[b]View the [link=file://{snapshot_report_location}]failure report[/].\n"
         )
         console.print(f"[dim]{snapshot_report_location}\n")
-        console.rule(style="red")

@@ -14,11 +14,12 @@ from rich.text import Text, TextType
 from .. import events, messages
 from .._cache import LRUCache
 from .._segment_tools import line_crop
-from .._types import Lines
+from .._types import SegmentLines
 from ..geometry import Region, Size, Spacing, clamp
 from ..reactive import Reactive
 from ..render import measure
 from ..scroll_view import ScrollView
+from ..strip import Strip
 from .._typing import Literal
 
 CursorType = Literal["cell", "row", "column"]
@@ -207,14 +208,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.row_count = 0
         self._y_offsets: list[tuple[int, int]] = []
         self._row_render_cache: LRUCache[
-            tuple[int, int, Style, int, int], tuple[Lines, Lines]
+            tuple[int, int, Style, int, int], tuple[SegmentLines, SegmentLines]
         ]
         self._row_render_cache = LRUCache(1000)
-        self._cell_render_cache: LRUCache[tuple[int, int, Style, bool, bool], Lines]
-        self._cell_render_cache = LRUCache(10000)
-        self._line_cache: LRUCache[
-            tuple[int, int, int, int, int, int, Style], list[Segment]
+        self._cell_render_cache: LRUCache[
+            tuple[int, int, Style, bool, bool], SegmentLines
         ]
+        self._cell_render_cache = LRUCache(10000)
+        self._line_cache: LRUCache[tuple[int, int, int, int, int, int, Style], Strip]
         self._line_cache = LRUCache(1000)
 
         self._line_no = 0
@@ -312,7 +313,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         cell_region = Region(x, y, width, height)
         return cell_region
 
-    def clear(self) -> None:
+    def clear(self, columns: bool = False) -> None:
         """Clear the table.
 
         Args:
@@ -323,6 +324,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._y_offsets.clear()
         self.data.clear()
         self.rows.clear()
+        if columns:
+            self.columns.clear()
         self._line_no = 0
         self._require_update_dimensions = True
         self.refresh()
@@ -450,7 +453,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         width: int,
         cursor: bool = False,
         hover: bool = False,
-    ) -> Lines:
+    ) -> SegmentLines:
         """Render the given cell.
 
         Args:
@@ -488,7 +491,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         base_style: Style,
         cursor_column: int = -1,
         hover_column: int = -1,
-    ) -> tuple[Lines, Lines]:
+    ) -> tuple[SegmentLines, SegmentLines]:
         """Render a row in to lines for each cell.
 
         Args:
@@ -563,9 +566,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             raise LookupError("Y coord {y!r} is greater than total height")
         return self._y_offsets[y]
 
-    def _render_line(
-        self, y: int, x1: int, x2: int, base_style: Style
-    ) -> list[Segment]:
+    def _render_line(self, y: int, x1: int, x2: int, base_style: Style) -> Strip:
         """Render a line in to a list of segments.
 
         Args:
@@ -583,7 +584,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         try:
             row_index, line_no = self._get_offsets(y)
         except LookupError:
-            return [Segment(" " * width, base_style)]
+            return Strip.blank(width, base_style)
         cursor_column = (
             self.cursor_column
             if (self.show_cursor and self.cursor_row == row_index)
@@ -610,13 +611,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         scrollable_line: list[Segment] = list(chain.from_iterable(scrollable))
 
         segments = fixed_line + line_crop(scrollable_line, x1 + fixed_width, x2, width)
-        segments = Segment.adjust_line_length(segments, width, style=base_style)
-        simplified_segments = list(Segment.simplify(segments))
+        strip = Strip(segments).adjust_cell_length(width, base_style).simplify()
 
-        self._line_cache[cache_key] = simplified_segments
-        return segments
+        self._line_cache[cache_key] = strip
+        return strip
 
-    def render_line(self, y: int) -> list[Segment]:
+    def render_line(self, y: int) -> Strip:
         width, height = self.size
         scroll_x, scroll_y = self.scroll_offset
         fixed_top_row_count = sum(

@@ -57,7 +57,7 @@ async def test_just_app_no_bindings() -> None:
 class AlphaBinding(App[None]):
     """An app with a simple alpha key binding."""
 
-    BINDINGS = [Binding("a", "a", "a")]
+    BINDINGS = [Binding("a", "a", "a", priority=True)]
 
 
 async def test_just_app_alpha_binding() -> None:
@@ -81,8 +81,7 @@ async def test_just_app_alpha_binding() -> None:
 class LowAlphaBinding(App[None]):
     """An app with a simple low-priority alpha key binding."""
 
-    PRIORITY_BINDINGS = False
-    BINDINGS = [Binding("a", "a", "a")]
+    BINDINGS = [Binding("a", "a", "a", priority=False)]
 
 
 async def test_just_app_low_priority_alpha_binding() -> None:
@@ -106,7 +105,7 @@ async def test_just_app_low_priority_alpha_binding() -> None:
 class ScreenWithBindings(Screen):
     """A screen with a simple alpha key binding."""
 
-    BINDINGS = [Binding("a", "a", "a")]
+    BINDINGS = [Binding("a", "a", "a", priority=True)]
 
 
 class AppWithScreenThatHasABinding(App[None]):
@@ -144,8 +143,7 @@ async def test_app_screen_with_bindings() -> None:
 class ScreenWithLowBindings(Screen):
     """A screen with a simple low-priority alpha key binding."""
 
-    PRIORITY_BINDINGS = False
-    BINDINGS = [Binding("a", "a", "a")]
+    BINDINGS = [Binding("a", "a", "a", priority=False)]
 
 
 class AppWithScreenThatHasALowBinding(App[None]):
