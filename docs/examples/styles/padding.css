@@ -3,7 +3,7 @@ Screen {
     color: blue;
 }
 
-Static {
+Label {
     padding: 4 8;  
     background: blue 20%;  
 }    
