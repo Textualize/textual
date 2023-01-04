@@ -6,6 +6,14 @@ The `<border>` CSS type represents a border style.
 
 --8<-- "docs/snippets/type_syntax/border.md"
 
+## Border command
+
+The `textual` CLI has a subcommand which will let you explore the various border types interactively, when applied to the CSS rule [`border`](../styles/border.md):
+
+```
+textual borders
+```
+
 ## Examples
 
 ### CSS
