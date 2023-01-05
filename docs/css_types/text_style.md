@@ -4,7 +4,7 @@ The `<text-style>` CSS type represents styles that can be applied to text.
 
 !!! warning
 
-    Not to be confused with the [`text-style`](../text_style.md) CSS rule that sets the style of text in a widget.
+    Not to be confused with the [`text-style`](../styles/text_style.md) CSS rule that sets the style of text in a widget.
 
 ## Syntax
 
