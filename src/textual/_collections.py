@@ -42,7 +42,7 @@ class ImmutableSequence(Generic[T]):
         return len(self)
 
     def __bool__(self) -> bool:
-        return bool(len(self))
+        return bool(self._list)
 
     def __contains__(self, item: T) -> bool:
         return item in self._list
