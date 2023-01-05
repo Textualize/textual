@@ -419,22 +419,14 @@ class MouseUp(MouseEvent, bubble=True, verbose=True):
     pass
 
 
-class MouseScrollDown(InputEvent, bubble=True, verbose=True):
-    __slots__ = ["x", "y"]
-
-    def __init__(self, sender: MessageTarget, x: int, y: int) -> None:
-        super().__init__(sender)
-        self.x = x
-        self.y = y
+@rich.repr.auto
+class MouseScrollDown(MouseEvent, bubble=True):
+    pass
 
 
-class MouseScrollUp(InputEvent, bubble=True, verbose=True):
-    __slots__ = ["x", "y"]
-
-    def __init__(self, sender: MessageTarget, x: int, y: int) -> None:
-        super().__init__(sender)
-        self.x = x
-        self.y = y
+@rich.repr.auto
+class MouseScrollUp(MouseEvent, bubble=True):
+    pass
 
 
 class Click(MouseEvent, bubble=True):
