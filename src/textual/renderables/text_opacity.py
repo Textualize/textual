@@ -1,5 +1,5 @@
 import functools
-from typing import Iterable, cast
+from typing import Iterable, Tuple, cast
 
 from rich.cells import cell_len
 from rich.color import Color
@@ -63,13 +63,16 @@ class TextOpacity:
         _from_color = Style.from_color
         if opacity == 0:
             for text, style, control in cast(
-                Iterable[tuple[str, Style, object]], segments
+                # use Tuple rather than tuple so Python 3.7 doesn't complain
+                Iterable[Tuple[str, Style, object]],
+                segments,
             ):
                 invisible_style = _from_color(bgcolor=style.bgcolor)
                 yield _Segment(cell_len(text) * " ", invisible_style)
         else:
             for segment in segments:
-                text, style, control = cast(tuple[str, Style, object], segment)
+                # use Tuple rather than tuple so Python 3.7 doesn't complain
+                text, style, control = cast(Tuple[str, Style, object], segment)
                 if not style:
                     yield segment
                     continue
