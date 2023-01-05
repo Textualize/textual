@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.10.0] - Unreleased
+
+### Added
+
+- Added `TreeNode.parent` -- a read-only property for accessing a node's parent https://github.com/Textualize/textual/issues/1397
+
 ## [0.9.1] - 2022-12-30
 
 ### Added
@@ -23,8 +29,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Widget.render_line now returns a Strip
 - Fix for slow updates on Windows
-- Bumped Rich dependency 
-  
+- Bumped Rich dependency
+
 ## [0.8.2] - 2022-12-28
 
 ### Fixed
