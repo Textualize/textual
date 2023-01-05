@@ -163,6 +163,17 @@ class TreeNode(Generic[TreeDataType]):
         self._updates += 1
         self._tree._invalidate()
 
+    @property
+    def label(self) -> TextType:
+        """TextType: The label for the node."""
+        return self._label
+
+    @label.setter
+    def label(self, new_label: TextType) -> TextType:
+        """TextType: The label for the node."""
+        self.set_label(new_label)
+        return self.label
+
     def set_label(self, label: TextType) -> None:
         """Set a new label for the node.
 
