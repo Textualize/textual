@@ -1,7 +1,6 @@
 import pytest
 from textual.widgets import Tree, TreeNode
 
-
 def label_of(node: TreeNode[None]):
     """Get the label of a node.
 
