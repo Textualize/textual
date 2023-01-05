@@ -39,6 +39,7 @@ nav:
       - "css_types/overflow.md"
       - "css_types/percentage.md"
       - "css_types/scalar.md"
+      - "css_types/text_align.md"
       - "css_types/text_style.md"
       - "css_types/vertical.md"
     - Events:
