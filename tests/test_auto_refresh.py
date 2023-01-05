@@ -1,11 +1,12 @@
 import asyncio
 import time
+from typing import Tuple
 
 from textual.app import App
 from textual.pilot import Pilot
 
 
-class RefreshApp(App[tuple[float, float]]):
+class RefreshApp(App[Tuple[float, float]]):
     def __init__(self) -> None:
         self.count = 0
         super().__init__()
