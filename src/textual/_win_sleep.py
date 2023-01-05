@@ -12,7 +12,6 @@ WAIT_FAILED = 0xFFFFFFFF
 CREATE_WAITABLE_TIMER_HIGH_RESOLUTION = 0x00000002
 
 
-
 def sleep(sleep_for: float) -> None:
     """A replacement sleep for Windows.
 
