@@ -15,7 +15,7 @@ class ImmutableSequence(Generic[T]):
         Args:
             wrap (Iterable[T]): The iterable value being wrapped.
         """
-        self._list = list(wrap)
+        self._wrap = tuple(wrap)
 
     @overload
     def __getitem__(self, index: int) -> T:
@@ -27,25 +27,25 @@ class ImmutableSequence(Generic[T]):
 
     def __getitem__(self, index: int | slice) -> T | ImmutableSequence[T]:
         return (
-            self._list[index]
+            self._wrap[index]
             if isinstance(index, int)
-            else ImmutableSequence[T](self._list[index])
+            else ImmutableSequence[T](self._wrap[index])
         )
 
     def __iter__(self) -> Iterator[T]:
-        return iter(self._list)
+        return iter(self._wrap)
 
     def __len__(self) -> int:
-        return len(self._list)
+        return len(self._wrap)
 
     def __length_hint__(self) -> int:
         return len(self)
 
     def __bool__(self) -> bool:
-        return bool(self._list)
+        return bool(self._wrap)
 
     def __contains__(self, item: T) -> bool:
-        return item in self._list
+        return item in self._wrap
 
     def index(self, item: T) -> int:
         """Return the index of the given item.
@@ -59,7 +59,7 @@ class ImmutableSequence(Generic[T]):
         Raises:
             ValueError: If the item is not in the sequence.
         """
-        return self._list.index(item)
+        return self._wrap.index(item)
 
     def __reversed__(self) -> Iterator[T]:
-        return reversed(self._list)
+        return reversed(self._wrap)
