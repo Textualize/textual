@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added public `TreeNode` label access via `TreeNode.label` https://github.com/Textualize/textual/issues/1396
 
+### Changed
+
+- `MouseScrollUp` and `MouseScrollDown` now inherit from `MouseEvent` and have attached modifier keys. https://github.com/Textualize/textual/pull/1458
+
 ## [0.9.1] - 2022-12-30
 
 ### Added

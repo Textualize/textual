@@ -54,36 +54,40 @@ class XTermParser(Parser[events.Event]):
         if sgr_match:
             _buttons, _x, _y, state = sgr_match.groups()
             buttons = int(_buttons)
-            button = (buttons + 1) & 3
             x = int(_x) - 1
             y = int(_y) - 1
             delta_x = x - self.last_x
             delta_y = y - self.last_y
             self.last_x = x
             self.last_y = y
-            event: events.Event
+            event_class: type[events.MouseEvent]
+
             if buttons & 64:
-                event = (
-                    events.MouseScrollUp if button == 1 else events.MouseScrollDown
-                )(sender, x, y)
-            else:
-                event = (
-                    events.MouseMove
-                    if buttons & 32
-                    else (events.MouseDown if state == "M" else events.MouseUp)
-                )(
-                    sender,
-                    x,
-                    y,
-                    delta_x,
-                    delta_y,
-                    button,
-                    bool(buttons & 4),
-                    bool(buttons & 8),
-                    bool(buttons & 16),
-                    screen_x=x,
-                    screen_y=y,
+                event_class = (
+                    events.MouseScrollDown if buttons & 1 else events.MouseScrollUp
                 )
+                button = 0
+            else:
+                if buttons & 32:
+                    event_class = events.MouseMove
+                else:
+                    event_class = events.MouseDown if state == "M" else events.MouseUp
+
+                button = (buttons + 1) & 3
+
+            event = event_class(
+                sender,
+                x,
+                y,
+                delta_x,
+                delta_y,
+                button,
+                bool(buttons & 4),
+                bool(buttons & 8),
+                bool(buttons & 16),
+                screen_x=x,
+                screen_y=y,
+            )
             return event
         return None
 
