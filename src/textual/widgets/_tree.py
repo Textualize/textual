@@ -122,6 +122,11 @@ class TreeNode(Generic[TreeDataType]):
         return self._id
 
     @property
+    def parent(self) -> TreeNode[TreeDataType] | None:
+        """TreeNode[TreeDataType] | None: The parent of the node."""
+        return self._parent
+
+    @property
     def is_expanded(self) -> bool:
         """bool: Check if the node is expanded."""
         return self._expanded
