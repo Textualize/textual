@@ -1,6 +1,7 @@
 
 # Frequently Asked Questions
 - [Does Textual support images?](#does-textual-support-images)
+- [How can I fix ImportError cannot import name ComposeResult from textual.app ?](#how-can-i-fix-importerror-cannot-import-name-composeresult-from-textualapp-)
 - [How do I center a widget in a screen?](#how-do-i-center-a-widget-in-a-screen)
 - [How do I pass arguments to an app?](#how-do-i-pass-arguments-to-an-app)
 
@@ -10,6 +11,17 @@
 Textual doesn't have built in support for images yet, but it is on the [Roadmap](https://textual.textualize.io/roadmap/).
 
 See also the [rich-pixels](https://github.com/darrenburns/rich-pixels) project for a Rich renderable for images that works with Textual.
+
+<a name="how-can-i-fix-importerror-cannot-import-name-composeresult-from-textualapp-"></a>
+## How can I fix ImportError cannot import name ComposeResult from textual.app ?
+
+You likely have an older version of Textual. You can install the latest version by adding the `-U` switch which will force pip to upgrade.
+
+The following should do it:
+
+```
+pip install "textual[dev]" -U
+```
 
 <a name="how-do-i-center-a-widget-in-a-screen"></a>
 ## How do I center a widget in a screen?
