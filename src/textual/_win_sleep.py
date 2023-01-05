@@ -9,6 +9,7 @@ kernel32 = ctypes.windll.kernel32
 INFINITE = 0xFFFFFFFF
 WAIT_FAILED = 0xFFFFFFFF
 CREATE_WAITABLE_TIMER_HIGH_RESOLUTION = 0x00000002
+TIMER_ALL_ACCESS = 0x1F0003
 
 
 def sleep(sleep_for: float) -> None:
@@ -23,7 +24,7 @@ def sleep(sleep_for: float) -> None:
         None,
         None,
         CREATE_WAITABLE_TIMER_HIGH_RESOLUTION,
-        0x1F0003,
+        TIMER_ALL_ACCESS,
     )
     if not handle:
         time_sleep(sleep_for)
@@ -39,7 +40,6 @@ def sleep(sleep_for: float) -> None:
         0,
     ):
         kernel32.CloseHandle(handle)
-        print("error")
         time_sleep(sleep_for)
         return
 
