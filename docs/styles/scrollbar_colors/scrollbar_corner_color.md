@@ -22,11 +22,11 @@ The `scrollbar-corner-color` sets the color of the gap between the horizontal an
 
 ## Example
 
-The example below sets the scrollbar corner (bottom-right of the screen) to white.
+The example below sets the scrollbar corner (bottom-right corner of the screen) to white.
 
 === "Output"
 
-    ```{.textual path="docs/examples/styles/scrollbar_corner_color.py"}
+    ```{.textual path="docs/examples/styles/scrollbar_corner_color.py" lines=5}
     ```
 
 === "scrollbar_corner_color.py"
@@ -44,11 +44,11 @@ The example below sets the scrollbar corner (bottom-right of the screen) to whit
 ## CSS
 
 ```css
-scrollbar-color: cyan;
+scrollbar-corner-color: white;
 ```
 
 ## Python
 
 ```py
-widget.styles.scrollbar_color = "cyan"
+widget.styles.scrollbar_corner_color = "white"
 ```
