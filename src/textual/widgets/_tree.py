@@ -14,6 +14,7 @@ from .._loop import loop_last
 from .._segment_tools import line_crop, line_pad
 from .._types import MessageTarget
 from .._typing import TypeAlias
+from .._collections import ImmutableSequence
 from ..binding import Binding
 from ..geometry import Region, Size, clamp
 from ..message import Message
@@ -53,6 +54,10 @@ class _TreeLine(Generic[TreeDataType]):
         return guides
 
 
+class TreeNodes(ImmutableSequence["TreeNode[TreeDataType]"]):
+    """An immutable collection of `TreeNode`."""
+
+
 @rich.repr.auto
 class TreeNode(Generic[TreeDataType]):
     """An object that represents a "node" in a tree control."""
@@ -90,6 +95,11 @@ class TreeNode(Generic[TreeDataType]):
         self._hover_ = False
         self._selected_ = False
         self._updates += 1
+
+    @property
+    def children(self) -> TreeNodes[TreeDataType]:
+        """TreeNodes[TreeDataType]: The child nodes of a TreeNode."""
+        return TreeNodes(self._children)
 
     @property
     def line(self) -> int:
