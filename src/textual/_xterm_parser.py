@@ -60,22 +60,22 @@ class XTermParser(Parser[events.Event]):
             delta_y = y - self.last_y
             self.last_x = x
             self.last_y = y
+            event_class: type[events.MouseEvent]
 
-            event_cls: type[events.MouseEvent]
-            button: int
             if buttons & 64:
-                event_cls = (
+                event_class = (
                     events.MouseScrollDown if buttons & 1 else events.MouseScrollUp
                 )
                 button = 0
             else:
-                event_cls = (
-                    events.MouseMove
-                    if buttons & 32
-                    else (events.MouseDown if state == "M" else events.MouseUp)
-                )
+                if buttons & 32:
+                    event_class = events.MouseMove
+                else:
+                    event_class = events.MouseDown if state == "M" else events.MouseUp
+
                 button = (buttons + 1) & 3
-            event = event_cls(
+
+            event = event_class(
                 sender,
                 x,
                 y,
