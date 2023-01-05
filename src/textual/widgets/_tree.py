@@ -71,7 +71,7 @@ class TreeNode(Generic[TreeDataType]):
         self._tree = tree
         self._parent = parent
         self._id = id
-        self._label = label
+        self._label = tree.process_label(label)
         self.data = data
         self._expanded = expanded
         self._children: list[TreeNode] = []
