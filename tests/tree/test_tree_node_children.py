@@ -2,13 +2,8 @@ import pytest
 from textual.widgets import Tree, TreeNode
 
 def label_of(node: TreeNode[None]):
-    """Get the label of a node.
-
-    TODO: This is just a helper function to reduce the number of type
-    errors, which can and will be remove once this code is merged with a
-    version of main that also has the TreeNode.label PR merged.
-    """
-    return str(node._label)
+    """Get the label of a node as a string"""
+    return str(node.label)
 
 
 def test_tree_node_children() -> None:

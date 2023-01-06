@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- Added public `TreeNode` label access via `TreeNode.label` https://github.com/Textualize/textual/issues/1396
 - Added read-only public access to the children of a `TreeNode` via `TreeNode.children` https://github.com/Textualize/textual/issues/1398
 
 ### Changed
