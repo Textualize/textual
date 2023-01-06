@@ -12,18 +12,6 @@ The style `color` needs a [`<color>`](../../css_types/color) followed by an opti
 
 Instead of a [`<color>`](../../css_types/color), one can use the special value `"auto"` to choose automatically the color with the best contrast for readability purposes.
 
-### Values
-
-#### &lt;color&gt;
-
---8<-- "docs/snippets/type_syntax/color.md"
-
-The alternative value `"auto"` picks the color that provides the best contrast for readability purposes.
-
-#### &lt;percentage&gt;
-
---8<-- "docs/snippets/type_syntax/percentage.md"
-
 ## Examples
 
 This example sets a different text color for each of three different widgets.

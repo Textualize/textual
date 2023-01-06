@@ -19,10 +19,6 @@ Overflow may also be set individually for each axis:
  - `overflow-x` sets the overflow for the horizontal axis; and
  - `overflow-y` sets the overflow for the vertical axis.
 
-### Values
-
---8<-- "docs/snippets/type_syntax/overflow.md"
-
 ### Defaults
 
 The default setting for containers is `overflow: auto auto`.

@@ -11,10 +11,6 @@ height: <a href="../../css_types/scalar">&lt;scalar&gt;</a>;
 The style `height` needs a [`<scalar>`](../../css_types/scalar) to determine the vertical length of the widget.
 By default, it sets the height of the content area, but if [`box-sizing`](./box_sizing) is set to `border-box` it sets the height of the border area.
 
-### Values
-
---8<-- "docs/snippets/type_syntax/scalar.md"
-
 ## Examples
 
 This examples creates a widget with a height of 50% of the screen.

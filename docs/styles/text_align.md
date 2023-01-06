@@ -10,10 +10,6 @@ text-align: <a href="../../css_types/text_align">&lt;text-align&gt;</a>;
 
 The `text-align` rule accepts a value of the type [`<text-align>`](../css_types/text_align.md) that defines how text is aligned inside the widget.
 
-### Values
-
---8<-- "docs/snippets/type_syntax/text_align.md"
-
 ### Defaults
 
 The default value is `start`.

@@ -17,16 +17,6 @@ The style `border` accepts an optional [`<border>`](../../css_types/border) that
 
 Borders may also be set individually for the four edges of a widget with the `border-top`, `border-right`, `border-bottom` and `border-left` rules.
 
-### Values
-
-#### &lt;border&gt;
-
---8<-- "docs/snippets/type_syntax/border.md"
-
-#### &lt;color&gt;
-
---8<-- "docs/snippets/type_syntax/color.md"
-
 ### Multiple edge rules
 
 If multiple border rules target the same edge, the last rule that targets a specific edge is the one that is applied to that edge.

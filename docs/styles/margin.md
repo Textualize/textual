@@ -32,10 +32,6 @@ The number of values given defines what edges get what margin:
 
 Alternatively, margin can be set for each edge individually through the rules `margin-top`, `margin-right`, `margin-bottom`, and `margin-left`, respectively.
 
-### Values
-
---8<-- "docs/snippets/type_syntax/integer.md"
-
 ## Examples
 
 In the example below we add a large margin to a label, which makes it move away from the top-left corner of the screen.

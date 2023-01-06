@@ -11,10 +11,6 @@ max-width: <a href="../../css_types/scalar">&lt;scalar&gt;</a>;
 The `max-width` rule accepts a [`<scalar>`](../../css_types/scalar) that defines an upper bound for the [`width`](./width) of a widget.
 That is, the width of a widget is never allowed to exceed `max-width`.
 
-### Values
-
---8<-- "docs/snippets/type_syntax/scalar.md"
-
 ## Example
 
 The example below shows some placeholders that were defined to span horizontally from the top edge of the terminal to the bottom edge.

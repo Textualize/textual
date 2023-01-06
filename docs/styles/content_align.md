@@ -22,16 +22,6 @@ To specify content alignment on a single axis, use the respective style and type
  - `content-align-horizontal` takes a [`<horizontal>`](../../css_types/horizontal) and does alignment along the horizontal axis; and
  - `content-align-vertical` takes a [`<vertical>`](../../css_types/vertical) and does alignment along the vertical axis.
 
-### Values
-
-#### &lt;horizontal&gt;
-
---8<-- "docs/snippets/type_syntax/horizontal.md"
-
-#### &lt;vertical&gt;
-
---8<-- "docs/snippets/type_syntax/vertical.md"
-
 ## Examples
 
 This first example shows three labels stacked vertically, each with different content alignments.

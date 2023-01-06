@@ -11,10 +11,6 @@ min-width: <a href="../../css_types/scalar">&lt;scalar&gt;</a>;
 The `min-width` rule accepts a [`<scalar>`](../../css_types/scalar) that defines a lower bound for the [`width`](./width) of a widget.
 That is, the width of a widget is never allowed to be under `min-width`.
 
-### Values
-
---8<-- "docs/snippets/type_syntax/scalar.md"
-
 ## Example
 
 The example below shows some placeholders with their width set to `50%`.

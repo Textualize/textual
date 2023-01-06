@@ -21,17 +21,6 @@ To specify alignment on a single axis, use the respective style and type:
  - `align-horizontal` takes a [`<horizontal>`](../../css_types/horizontal) and does alignment along the horizontal axis; and
  - `align-vertical` takes a [`<vertical>`](../../css_types/vertical) and does alignment along the vertical axis.
 
-### Values
-
-#### &lt;horizontal&gt;
-
---8<-- "docs/snippets/type_syntax/horizontal.md"
-
-#### &lt;vertical&gt;
-
---8<-- "docs/snippets/type_syntax/vertical.md"
-
-
 ## Examples
 
 This example contains a simple app with two labels centered on the screen with `align: center middle;`:

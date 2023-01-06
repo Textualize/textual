@@ -15,10 +15,6 @@ The two [`<scalar>`](../../css_types/scalar) in the `offset` define, respectivel
 
 To specify an offset along a single axis, you can use `offset-x` and `offset-y`.
 
-### Values
-
---8<-- "docs/snippets/type_syntax/scalar.md"
-
 ## Example
 
 In this example, we have 3 widgets with differing offsets.
