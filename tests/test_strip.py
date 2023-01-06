@@ -160,3 +160,8 @@ def test_divide():
 def test_index_to_cell_position(index, cell_position):
     strip = Strip([Segment("ab"), Segment("cd日本語ef"), Segment("gh")])
     assert cell_position == strip.index_to_cell_position(index)
+
+
+def test_index_cell_position_no_segments():
+    strip = Strip([])
+    assert strip.index_to_cell_position(2) == 0
