@@ -35,7 +35,7 @@ This example shows, from top to bottom: `left`, `center`, `right`, and `justify`
 
 === "text_align.css"
 
-    ```css
+    ```css hl_lines="2 7 12 17"
     --8<-- "docs/examples/styles/text_align.css"
     ```
 
