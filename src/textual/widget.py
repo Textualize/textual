@@ -680,7 +680,7 @@ class Widget(DOMNode):
             def compose(self) -> ComposeResult:
                 yield Header()
                 yield Container(
-                    TreeControl(), Viewer()
+                    Tree(), Viewer()
                 )
                 yield Footer()
             ```

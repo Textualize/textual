@@ -4,7 +4,7 @@
 
 Screen {
     layers: base overlay notes notifications;
-    overflow: hidden;  
+    overflow: hidden;
 }
 
 
@@ -17,15 +17,15 @@ Notification {
     background: $background;
     color: $text;
     height: auto;
-    
+
 }
 
-Sidebar {    
+Sidebar {
     width: 40;
-    background: $panel;   
-    transition: offset 500ms in_out_cubic;    
+    background: $panel;
+    transition: offset 500ms in_out_cubic;
     layer: overlay;
-    
+
 }
 
 Sidebar:focus-within {
@@ -58,8 +58,8 @@ Option {
     margin: 1 0 0 1;
     height: 3;
     padding: 1 2;
-    background: $boost;  
-    border: tall $panel;  
+    background: $boost;
+    border: tall $panel;
     text-align: center;
 }
 
@@ -72,11 +72,11 @@ Body {
     height: 100%;
     overflow-y: scroll;
     width: 100%;
-    background: $surface;    
+    background: $surface;
 
 }
 
-AboveFold {    
+AboveFold {
     width: 100%;
     height: 100%;
     align: center middle;
@@ -84,11 +84,11 @@ AboveFold {
 
 Welcome {
     background: $boost;
-    height: auto;    
+    height: auto;
     max-width: 100;
     min-width: 40;
     border: wide $primary;
-    padding: 1 2;  
+    padding: 1 2;
     margin: 1 2;
     box-sizing: border-box;
 }
@@ -101,11 +101,11 @@ Welcome Button {
 Column {
     height: auto;
     min-height: 100vh;
-    align: center top;    
+    align: center top;
 }
 
 
-DarkSwitch {    
+DarkSwitch {
     background: $panel;
     padding: 1;
     dock: bottom;
@@ -138,8 +138,8 @@ TextLog {
     layer: notes;
     border-top: hkey $primary;
     offset-y: 0;
-    transition: offset 400ms in_out_cubic;  
-    padding: 0 1 1 1;  
+    transition: offset 400ms in_out_cubic;
+    padding: 0 1 1 1;
 }
 
 
@@ -148,15 +148,15 @@ TextLog:focus {
 }
 
 TextLog.-hidden {
-    offset-y: 100%;       
+    offset-y: 100%;
 }
 
 
 
-Section {    
+Section {
     height: auto;
-    min-width: 40;  
-    margin: 1 2 4 2;  
+    min-width: 40;
+    margin: 1 2 4 2;
 
 }
 
@@ -167,7 +167,7 @@ SectionTitle {
     text-style: bold;
 }
 
-SubTitle {    
+SubTitle {
     padding-top: 1;
     border-bottom: heavy $panel;
     color: $text;
@@ -181,7 +181,7 @@ TextContent {
 QuickAccess {
     width: 30;
     dock: left;
-    
+
 }
 
 LocationLink {
@@ -189,7 +189,7 @@ LocationLink {
     height: 1;
     padding: 1 2;
     background: $boost;
-    color: $text;  
+    color: $text;
     box-sizing: content-box;
     content-align: center middle;
 }
@@ -219,7 +219,7 @@ LoginForm {
     grid-rows: 4;
     grid-columns: 12 1fr;
     background: $boost;
-    border: wide $background; 
+    border: wide $background;
 }
 
 LoginForm Button{
@@ -234,11 +234,11 @@ LoginForm .label {
 
 Message {
     margin: 0 1;
-  
+
 }
 
 
-TreeControl {
+Tree {
     margin: 1 0;
 }
 
