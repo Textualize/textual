@@ -71,7 +71,7 @@ class TreeNode(Generic[TreeDataType]):
         self._tree = tree
         self._parent = parent
         self._id = id
-        self._label = label
+        self._label = tree.process_label(label)
         self.data = data
         self._expanded = expanded
         self._children: list[TreeNode] = []
@@ -162,6 +162,15 @@ class TreeNode(Generic[TreeDataType]):
         self._expanded = not self._expanded
         self._updates += 1
         self._tree._invalidate()
+
+    @property
+    def label(self) -> TextType:
+        """TextType: The label for the node."""
+        return self._label
+
+    @label.setter
+    def label(self, new_label: TextType) -> None:
+        self.set_label(new_label)
 
     def set_label(self, label: TextType) -> None:
         """Set a new label for the node.

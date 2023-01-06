@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.10.0] - Unreleased
 
+### Added
+
+- Added public `TreeNode` label access via `TreeNode.label` https://github.com/Textualize/textual/issues/1396
+
 ### Changed
 
 - `MouseScrollUp` and `MouseScrollDown` now inherit from `MouseEvent` and have attached modifier keys. https://github.com/Textualize/textual/pull/1458
@@ -29,8 +33,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Widget.render_line now returns a Strip
 - Fix for slow updates on Windows
-- Bumped Rich dependency 
-  
+- Bumped Rich dependency
+
 ## [0.8.2] - 2022-12-28
 
 ### Fixed
