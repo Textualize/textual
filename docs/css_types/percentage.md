@@ -9,7 +9,7 @@ It is often used to represent values that are relative to the parent's values.
 
 ## Syntax
 
---8<-- "docs/snippets/type_syntax/percentage.md"
+A [`<percentage>`](/css_types/percentage) is a [`<number>`](/css_types/number) followed by the percent sign `%` (without spaces).
 Some rules may clamp the values between `0%` and `100%`.
 
 ## Examples

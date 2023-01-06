@@ -8,7 +8,15 @@ The `<color>` CSS type represents a color.
 
 ## Syntax
 
---8<-- "docs/snippets/type_syntax/color.md"
+The legal values for a [`<color>`](/css_types/color) depend on the [class `Color`][textual.color.Color] and include:
+
+ - a recognised [named color](../../api/color#textual.color--named-colors) (e.g., `red`);
+ - a hexadecimal number representing the RGB values of the color (e.g., `#F35573`);
+ - a color description in the RGB system (e.g., `rgb(23,78,200)`);
+ - a color description in the HSL system (e.g., `hsl(290,70%,80%)`); and
+
+For more details about the exact formats accepted, see [the class method `Color.parse`][textual.color.Color.parse].
+[Textual's default themes](../../guide/design#theme-reference) also provide many CSS variables with colors.
 
 ## Examples
 
