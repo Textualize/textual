@@ -1,35 +1,35 @@
-"""Provides collection-based utility code."""
+"""Provides an immutable sequence view class."""
 
 from __future__ import annotations
-from typing import Generic, TypeVar, Iterator, overload, Iterable, Sequence
+from typing import Generic, TypeVar, Iterator, overload, Sequence
 
 T = TypeVar("T")
 
 
-class ImmutableSequence(Generic[T]):
+class ImmutableSequenceView(Generic[T]):
     """Class to wrap a sequence of some sort, but not allow modification."""
 
-    def __init__(self, wrap: Iterable[T]) -> None:
+    def __init__(self, wrap: Sequence[T]) -> None:
         """Initialise the immutable sequence.
 
         Args:
-            wrap (Iterable[T]): The iterable value being wrapped.
+            wrap (Sequence[T]): The sequence being wrapped.
         """
-        self._wrap = wrap if isinstance(wrap, Sequence) else tuple(wrap)
+        self._wrap = wrap
 
     @overload
     def __getitem__(self, index: int) -> T:
         ...
 
     @overload
-    def __getitem__(self, index: slice) -> ImmutableSequence[T]:
+    def __getitem__(self, index: slice) -> ImmutableSequenceView[T]:
         ...
 
-    def __getitem__(self, index: int | slice) -> T | ImmutableSequence[T]:
+    def __getitem__(self, index: int | slice) -> T | ImmutableSequenceView[T]:
         return (
             self._wrap[index]
             if isinstance(index, int)
-            else ImmutableSequence[T](self._wrap[index])
+            else ImmutableSequenceView[T](self._wrap[index])
         )
 
     def __iter__(self) -> Iterator[T]:
