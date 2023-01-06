@@ -57,10 +57,11 @@ def test_get_item_from_immutable_sequence() -> None:
     assert wrap(range(10))[0] == 0
     assert wrap(range(10))[-1] == 9
 
+
 def test_get_slice_from_immutable_sequence() -> None:
     """It should be possible to get a slice from an immutable sequence."""
-    assert list(wrap(range(10))[0:2]) == [0,1]
-    assert list(wrap(range(10))[0:-1]) == [0,1,2,3,4,5,6,7,8]
+    assert list(wrap(iter(range(10)))[0:2]) == [0,1]
+    assert list(wrap(iter(range(10)))[0:-1]) == [0,1,2,3,4,5,6,7,8]
 
 
 def test_immutable_sequence_contains() -> None:
