@@ -14,7 +14,7 @@ from .._loop import loop_last
 from .._segment_tools import line_crop, line_pad
 from .._types import MessageTarget
 from .._typing import TypeAlias
-from .._collections import ImmutableSequence
+from .._immutable_sequence_view import ImmutableSequenceView
 from ..binding import Binding
 from ..geometry import Region, Size, clamp
 from ..message import Message
@@ -54,7 +54,7 @@ class _TreeLine:
         return guides
 
 
-class TreeNodes(ImmutableSequence["TreeNode[TreeDataType]"]):
+class TreeNodes(ImmutableSequenceView["TreeNode[TreeDataType]"]):
     """An immutable collection of `TreeNode`."""
 
 
