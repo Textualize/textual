@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - The styles `scrollbar-background-active` and `scrollbar-color-hover` are no longer ignored https://github.com/Textualize/textual/pull/1480
+- The widget `Placeholder` can now have its width set to `auto` https://github.com/Textualize/textual/pull/1508
 
 ## [0.9.1] - 2022-12-30
 
