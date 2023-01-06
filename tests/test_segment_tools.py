@@ -1,4 +1,3 @@
-import pytest
 from rich.segment import Segment
 from rich.style import Style
 
