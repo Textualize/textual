@@ -68,6 +68,41 @@ class Strip:
         """
         return [cls(segments, cell_length) for segments in lines]
 
+    def index_to_cell_position(self, index: int) -> int:
+        """Given a character index, return the cell position of that character.
+        This is the sum of the cell lengths of all the characters *before* the character
+        at `index`.
+
+        Args:
+            index (int): The index to convert.
+
+        Returns:
+            int: The cell position of the character at `index`.
+        """
+        if index == 0:
+            return 0
+
+        cell_position_end = 0
+        segment_length = 0
+        segment_end_index = 0
+        segment_cell_length = 0
+        text = ""
+        iter_segments = iter(self)
+        while segment_end_index < index:
+            segment = next(iter_segments)
+            text = segment.text
+            segment_length = len(text)
+            segment_cell_length = cell_len(text)
+            cell_position_end += segment_cell_length
+            segment_end_index += segment_length
+
+        # Check how far into this segment the target index is
+        segment_index_start = segment_end_index - segment_length
+        index_within_segment = index - segment_index_start
+        segment_cell_start = cell_position_end - segment_cell_length
+
+        return segment_cell_start + cell_len(text[:index_within_segment])
+
     @property
     def cell_length(self) -> int:
         """Get the number of cells required to render this object."""

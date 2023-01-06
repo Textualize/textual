@@ -1,3 +1,4 @@
+import pytest
 from rich.segment import Segment
 from rich.style import Style
 
@@ -62,9 +63,7 @@ def test_eq():
 
 
 def test_adjust_cell_length():
-
     for repeat in range(3):
-
         assert Strip([]).adjust_cell_length(3) == Strip([Segment("   ")])
         assert Strip([Segment("f")]).adjust_cell_length(3) == Strip(
             [Segment("f"), Segment("  ")]
@@ -119,9 +118,7 @@ def test_style_links():
 
 
 def test_crop():
-
     for repeat in range(3):
-
         assert Strip([Segment("foo")]).crop(0, 3) == Strip([Segment("foo")])
         assert Strip([Segment("foo")]).crop(0, 2) == Strip([Segment("fo")])
         assert Strip([Segment("foo")]).crop(0, 1) == Strip([Segment("f")])
@@ -136,10 +133,30 @@ def test_crop():
 
 
 def test_divide():
-
     for repeat in range(3):
-
         assert Strip([Segment("foo")]).divide([1, 2]) == [
             Strip([Segment("f")]),
             Strip([Segment("o")]),
         ]
+
+
+@pytest.mark.parametrize(
+    "index,cell_position",
+    [
+        (0, 0),
+        (1, 1),
+        (2, 2),
+        (3, 3),
+        (4, 4),
+        (5, 6),
+        (6, 8),
+        (7, 10),
+        (8, 11),
+        (9, 12),
+        (10, 13),
+        (11, 14),
+    ],
+)
+def test_index_to_cell_position(index, cell_position):
+    strip = Strip([Segment("ab"), Segment("cd日本語ef"), Segment("gh")])
+    assert cell_position == strip.index_to_cell_position(index)
