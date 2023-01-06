@@ -4,7 +4,7 @@ The `<integer>` CSS type represents an integer number.
 
 ## Syntax
 
---8<-- "docs/snippets/type_syntax/integer.md"
+An [`<integer>`](/css_types/integer) is any valid integer number like `-10` or `42`.
 
 !!! note
 

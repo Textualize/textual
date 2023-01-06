@@ -4,7 +4,7 @@ The `<number>` CSS type represents a real number, which can be an integer or a n
 
 ## Syntax
 
---8<-- "docs/snippets/type_syntax/number.md"
+A [`<number>`](/css_types/number) is an [`<integer>`](/css_types/integer), optionally followed by the decimal point `.` and a decimal part composed of one or more digits.
 
 ## Examples
 
