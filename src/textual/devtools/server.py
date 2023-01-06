@@ -40,8 +40,8 @@ async def _on_startup(app: Application) -> None:
 def _run_devtools(verbose: bool, exclude: list[str] | None = None) -> None:
     app = _make_devtools_aiohttp_app(verbose=verbose, exclude=exclude)
 
-    def noop_print(_: str):
-        return None
+    def noop_print(_: str) -> None:
+        pass
 
     try:
         run_app(
@@ -77,7 +77,3 @@ def _make_devtools_aiohttp_app(
     )
 
     return app
-
-
-if __name__ == "__main__":
-    _run_devtools()

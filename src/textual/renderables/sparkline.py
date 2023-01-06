@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import statistics
-from typing import Sequence, Iterable, Callable, TypeVar
+from typing import Generic, Sequence, Iterable, Callable, TypeVar
 
 from rich.color import Color
 from rich.console import ConsoleOptions, Console, RenderResult
@@ -12,8 +12,10 @@ from textual.renderables._blend_colors import blend_colors
 
 T = TypeVar("T", int, float)
 
+SummaryFunction = Callable[[Sequence[T]], float]
 
-class Sparkline:
+
+class Sparkline(Generic[T]):
     """A sparkline representing a series of data.
 
     Args:
@@ -33,16 +35,16 @@ class Sparkline:
         width: int | None,
         min_color: Color = Color.from_rgb(0, 255, 0),
         max_color: Color = Color.from_rgb(255, 0, 0),
-        summary_function: Callable[[list[T]], float] = max,
+        summary_function: SummaryFunction[T] = max,
     ) -> None:
-        self.data = data
+        self.data: Sequence[T] = data
         self.width = width
         self.min_color = Style.from_color(min_color)
         self.max_color = Style.from_color(max_color)
-        self.summary_function = summary_function
+        self.summary_function: SummaryFunction[T] = summary_function
 
     @classmethod
-    def _buckets(cls, data: Sequence[T], num_buckets: int) -> Iterable[list[T]]:
+    def _buckets(cls, data: Sequence[T], num_buckets: int) -> Iterable[Sequence[T]]:
         """Partition ``data`` into ``num_buckets`` buckets. For example, the data
         [1, 2, 3, 4] partitioned into 2 buckets is [[1, 2], [3, 4]].
 
@@ -73,13 +75,15 @@ class Sparkline:
         minimum, maximum = min(self.data), max(self.data)
         extent = maximum - minimum or 1
 
-        buckets = list(self._buckets(self.data, num_buckets=self.width))
+        buckets = tuple(self._buckets(self.data, num_buckets=width))
 
-        bucket_index = 0
+        bucket_index = 0.0
         bars_rendered = 0
         step = len(buckets) / width
         summary_function = self.summary_function
         min_color, max_color = self.min_color.color, self.max_color.color
+        assert min_color is not None
+        assert max_color is not None
         while bars_rendered < width:
             partition = buckets[int(bucket_index)]
             partition_summary = summary_function(partition)
@@ -94,10 +98,16 @@ class Sparkline:
 if __name__ == "__main__":
     console = Console()
 
-    def last(l):
+    def last(l: Sequence[T]) -> T:
         return l[-1]
 
-    funcs = min, max, last, statistics.median, statistics.mean
+    funcs: Sequence[SummaryFunction[int]] = (
+        min,
+        max,
+        last,
+        statistics.median,
+        statistics.mean,
+    )
     nums = [10, 2, 30, 60, 45, 20, 7, 8, 9, 10, 50, 13, 10, 6, 5, 4, 3, 7, 20]
     console.print(f"data = {nums}\n")
     for f in funcs:

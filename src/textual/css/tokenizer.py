@@ -242,7 +242,7 @@ class Tokenizer:
         while True:
             if line_no >= len(self.lines):
                 raise EOFError(
-                    self.path, self.code, line_no, col_no, "Unexpected end of file"
+                    self.path, self.code, (line_no, col_no), "Unexpected end of file"
                 )
             line = self.lines[line_no]
             match = expect.search(line, col_no)
