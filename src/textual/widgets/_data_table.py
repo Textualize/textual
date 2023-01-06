@@ -16,6 +16,7 @@ from .._cache import LRUCache
 from .._segment_tools import line_crop
 from .._types import SegmentLines
 from ..geometry import Region, Size, Spacing, clamp
+from ..message import Message
 from ..reactive import Reactive
 from ..render import measure
 from ..scroll_view import ScrollView
@@ -685,3 +686,21 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         event.stop()
         event.prevent_default()
         self._scroll_cursor_in_to_view(animate=True)
+
+    class CellHighlighted(Message):
+        pass
+
+    class CellActivated(Message):
+        pass
+
+    class RowHighlighted(Message):
+        pass
+
+    class RowActivated(Message):
+        pass
+
+    class ColumnHighlighted(Message):
+        pass
+
+    class ColumnActivated(Message):
+        pass
