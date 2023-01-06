@@ -1,6 +1,7 @@
 """Provides an immutable sequence view class."""
 
 from __future__ import annotations
+from sys import maxsize
 from typing import Generic, TypeVar, Iterator, overload, Sequence
 
 T = TypeVar("T")
@@ -47,11 +48,13 @@ class ImmutableSequenceView(Generic[T]):
     def __contains__(self, item: T) -> bool:
         return item in self._wrap
 
-    def index(self, item: T) -> int:
+    def index(self, item: T, start: int = 0, stop: int = maxsize) -> int:
         """Return the index of the given item.
 
         Args:
             item (T): The item to find in the sequence.
+            start (int, optional): Optional start location.
+            stop (int, optional): Optional stop location.
 
         Returns:
             T: The index of the item in the sequence.
@@ -59,7 +62,7 @@ class ImmutableSequenceView(Generic[T]):
         Raises:
             ValueError: If the item is not in the sequence.
         """
-        return self._wrap.index(item)
+        return self._wrap.index(item, start, stop)
 
     def __reversed__(self) -> Iterator[T]:
         return reversed(self._wrap)
