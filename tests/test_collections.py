@@ -24,16 +24,16 @@ def test_non_empty_immutable_sequence() -> None:
 
 def test_immutable_sequence_from_empty_iter() -> None:
     """An immutable sequence around an empty iterator should act as anticipated."""
-    assert len(wrap([])) == 0
-    assert bool(wrap([])) is False
+    assert len(wrap(iter([]))) == 0
+    assert bool(wrap(iter([]))) is False
     assert list(wrap(iter([]))) == []
 
 
 def test_immutable_sequence_from_non_empty_iter() -> None:
     """An immutable sequence around a non-empty iterator should act as anticipated."""
-    assert len(wrap(range(23))) == 23
-    assert bool(wrap(range(23))) is True
-    assert list(wrap(range(23))) == list(range(23))
+    assert len(wrap(iter(range(23)))) == 23
+    assert bool(wrap(iter(range(23)))) is True
+    assert list(wrap(iter(range(23)))) == list(range(23))
 
 
 def test_no_assign_to_immutable_sequence() -> None:
@@ -60,8 +60,8 @@ def test_get_item_from_immutable_sequence() -> None:
 
 def test_get_slice_from_immutable_sequence() -> None:
     """It should be possible to get a slice from an immutable sequence."""
-    assert list(wrap(iter(range(10)))[0:2]) == [0,1]
-    assert list(wrap(iter(range(10)))[0:-1]) == [0,1,2,3,4,5,6,7,8]
+    assert list(wrap(range(10))[0:2]) == [0,1]
+    assert list(wrap(range(10))[0:-1]) == [0,1,2,3,4,5,6,7,8]
 
 
 def test_immutable_sequence_contains() -> None:
