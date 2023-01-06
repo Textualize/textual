@@ -1,6 +1,7 @@
 from __future__ import annotations
+import sys
 
-from typing import TYPE_CHECKING, Iterator, Sequence, overload
+from typing import TYPE_CHECKING, Any, Iterator, Sequence, overload
 
 import rich.repr
 
@@ -13,7 +14,7 @@ class DuplicateIds(Exception):
 
 
 @rich.repr.auto(angular=True)
-class NodeList(Sequence):
+class NodeList(Sequence["Widget"]):
     """
     A container for widgets that forms one level of hierarchy.
 
@@ -46,10 +47,10 @@ class NodeList(Sequence):
     def __len__(self) -> int:
         return len(self._nodes)
 
-    def __contains__(self, widget: Widget) -> bool:
+    def __contains__(self, widget: object) -> bool:
         return widget in self._nodes
 
-    def index(self, widget: Widget) -> int:
+    def index(self, widget: Any, start: int = 0, stop: int = sys.maxsize) -> int:
         """Return the index of the given widget.
 
         Args:
@@ -61,7 +62,7 @@ class NodeList(Sequence):
         Raises:
             ValueError: If the widget is not in the node list.
         """
-        return self._nodes.index(widget)
+        return self._nodes.index(widget, start, stop)
 
     def _get_by_id(self, widget_id: str) -> Widget | None:
         """Get the widget for the given widget_id, or None if there's no matches in this list"""
