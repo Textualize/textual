@@ -10,10 +10,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `TreeNode.parent` -- a read-only property for accessing a node's parent https://github.com/Textualize/textual/issues/1397
+- Added public `TreeNode` label access via `TreeNode.label` https://github.com/Textualize/textual/issues/1396
 
 ### Changed
 
 - `MouseScrollUp` and `MouseScrollDown` now inherit from `MouseEvent` and have attached modifier keys. https://github.com/Textualize/textual/pull/1458
+
+### Fixed
+
+- The styles `scrollbar-background-active` and `scrollbar-color-hover` are no longer ignored https://github.com/Textualize/textual/pull/1480
 
 ## [0.9.1] - 2022-12-30
 

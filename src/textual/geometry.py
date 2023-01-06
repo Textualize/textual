@@ -129,7 +129,7 @@ class Offset(NamedTuple):
         """
         x1, y1 = self
         x2, y2 = other
-        distance = ((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) ** 0.5
+        distance: float = ((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) ** 0.5
         return distance
 
 
@@ -217,6 +217,8 @@ class Size(NamedTuple):
 
     def __contains__(self, other: Any) -> bool:
         try:
+            x: int
+            y: int
             x, y = other
         except Exception:
             raise TypeError(

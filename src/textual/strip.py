@@ -109,8 +109,8 @@ class Strip:
     def __len__(self) -> int:
         return len(self._segments)
 
-    def __eq__(self, strip: Strip) -> bool:
-        return (
+    def __eq__(self, strip: object) -> bool:
+        return isinstance(strip, Strip) and (
             self._segments == strip._segments and self.cell_length == strip.cell_length
         )
 
