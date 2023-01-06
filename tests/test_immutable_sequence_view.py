@@ -1,11 +1,11 @@
 import pytest
 
-from typing import Iterable
-from textual._collections import ImmutableSequence
+from typing import Sequence
+from textual._immutable_sequence_view import ImmutableSequenceView
 
-def wrap(source: Iterable[int]) -> ImmutableSequence[int]:
-    """Wrap an itertable of integers inside an immutable sequence."""
-    return ImmutableSequence[int](source)
+def wrap(source: Sequence[int]) -> ImmutableSequenceView[int]:
+    """Wrap a sequence of integers inside an immutable sequence view."""
+    return ImmutableSequenceView[int](source)
 
 
 def test_empty_immutable_sequence() -> None:
@@ -20,20 +20,6 @@ def test_non_empty_immutable_sequence() -> None:
     assert len(wrap([0])) == 1
     assert bool(wrap([0])) is True
     assert list(wrap([0])) == [0]
-
-
-def test_immutable_sequence_from_empty_iter() -> None:
-    """An immutable sequence around an empty iterator should act as anticipated."""
-    assert len(wrap(iter([]))) == 0
-    assert bool(wrap(iter([]))) is False
-    assert list(wrap(iter([]))) == []
-
-
-def test_immutable_sequence_from_non_empty_iter() -> None:
-    """An immutable sequence around a non-empty iterator should act as anticipated."""
-    assert len(wrap(iter(range(23)))) == 23
-    assert bool(wrap(iter(range(23)))) is True
-    assert list(wrap(iter(range(23)))) == list(range(23))
 
 
 def test_no_assign_to_immutable_sequence() -> None:
