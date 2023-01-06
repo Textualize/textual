@@ -25,14 +25,14 @@ def match(selector_sets: Iterable[SelectorSet], node: DOMNode) -> bool:
 
 
 def _check_selectors(selectors: list[Selector], css_path_nodes: list[DOMNode]) -> bool:
-    """Match a list of selectors against a node.
+    """Match a list of selectors against DOM nodes.
 
     Args:
         selectors (list[Selector]): A list of selectors.
-        node (DOMNode): A DOM node.
+        css_path_nodes (list[DOMNode]): The DOM nodes to check the selectors against.
 
     Returns:
-        bool: True if the node matches the selector.
+        bool: True if any node in css_path_nodes matches a selector.
     """
 
     DESCENDENT = CombinatorType.DESCENDENT

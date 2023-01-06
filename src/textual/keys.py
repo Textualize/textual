@@ -70,10 +70,10 @@ class Keys(str, Enum):
     ControlShift9 = "ctrl+shift+9"
     ControlShift0 = "ctrl+shift+0"
 
-    ControlBackslash = "ctrl+\\"
-    ControlSquareClose = "ctrl+]"
-    ControlCircumflex = "ctrl+^"
-    ControlUnderscore = "ctrl+_"
+    ControlBackslash = "ctrl+backslash"
+    ControlSquareClose = "ctrl+right_square_bracket"
+    ControlCircumflex = "ctrl+circumflex_accent"
+    ControlUnderscore = "ctrl+underscore"
 
     Left = "left"
     Right = "right"
@@ -245,9 +245,25 @@ def _get_key_display(key: str) -> str:
         return display_alias
 
     original_key = REPLACED_KEYS.get(key, key)
+    upper_original = original_key.upper().replace("_", " ")
     try:
-        unicode_character = unicodedata.lookup(original_key.upper().replace("_", " "))
+        unicode_character = unicodedata.lookup(upper_original)
     except KeyError:
-        return original_key.upper()
+        return upper_original
 
-    return unicode_character
+    # Check if printable. `delete` for example maps to a control sequence
+    # which we don't want to write to the terminal.
+    if unicode_character.isprintable():
+        return unicode_character
+    return upper_original
+
+
+def _character_to_key(character: str) -> str:
+    """Convert a single character to a key value."""
+    assert len(character) == 1
+    if not character.isalnum():
+        key = unicodedata.name(character).lower().replace("-", "_").replace(" ", "_")
+    else:
+        key = character
+    key = KEY_NAME_REPLACEMENTS.get(key, key)
+    return key

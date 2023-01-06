@@ -593,12 +593,12 @@ class MessagePump(metaclass=MessagePumpMeta):
 
         handled = False
         invoked_method = None
-        key_name = event.key_name
+        key_name = event.name
         if not key_name:
             return False
 
-        for key_alias in event.key_aliases:
-            key_method = get_key_handler(self, key_alias)
+        for key_method_name in event.name_aliases:
+            key_method = get_key_handler(self, key_method_name)
             if key_method is not None:
                 if invoked_method:
                     _raise_duplicate_key_handlers_error(

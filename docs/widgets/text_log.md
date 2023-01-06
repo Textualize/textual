@@ -41,4 +41,4 @@ This widget sends no messages.
 
 ## See Also
 
-* [TextLog](../api/textlog.md) code reference
+* [TextLog](../api/text_log.md) code reference

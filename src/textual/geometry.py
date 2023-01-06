@@ -129,7 +129,7 @@ class Offset(NamedTuple):
         """
         x1, y1 = self
         x2, y2 = other
-        distance = ((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) ** 0.5
+        distance: float = ((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) ** 0.5
         return distance
 
 
@@ -217,6 +217,8 @@ class Size(NamedTuple):
 
     def __contains__(self, other: Any) -> bool:
         try:
+            x: int
+            y: int
             x, y = other
         except Exception:
             raise TypeError(
@@ -320,7 +322,7 @@ class Region(NamedTuple):
             Offset: An offset required to add to region to move it inside window_region.
         """
 
-        if region in window_region:
+        if region in window_region and not top:
             # Region is already inside the window, so no need to move it.
             return NULL_OFFSET
 
@@ -341,19 +343,19 @@ class Region(NamedTuple):
                 key=abs,
             )
 
-        if not (
+        if top:
+            delta_y = top_ - window_top
+
+        elif not (
             (window_bottom > top_ >= window_top)
             and (window_bottom > bottom >= window_top)
         ):
             # The window needs to scroll on the Y axis to bring region in to view
-            if top:
-                delta_y = top_ - window_top
-            else:
-                delta_y = min(
-                    top_ - window_top,
-                    top_ - (window_bottom - region.height),
-                    key=abs,
-                )
+            delta_y = min(
+                top_ - window_top,
+                top_ - (window_bottom - region.height),
+                key=abs,
+            )
         return Offset(delta_x, delta_y)
 
     def __bool__(self) -> bool:

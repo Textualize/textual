@@ -13,14 +13,14 @@ class LineFilter(ABC):
     """Base class for a line filter."""
 
     @abstractmethod
-    def filter(self, segments: list[Segment]) -> list[Segment]:
+    def apply(self, segments: list[Segment]) -> list[Segment]:
         """Transform a list of segments."""
 
 
 class Monochrome(LineFilter):
     """Convert all colors to monochrome."""
 
-    def filter(self, segments: list[Segment]) -> list[Segment]:
+    def apply(self, segments: list[Segment]) -> list[Segment]:
         to_monochrome = self.to_monochrome
         _Segment = Segment
         return [

@@ -1,0 +1,145 @@
+from rich.segment import Segment
+from rich.style import Style
+
+from textual.strip import Strip
+from textual._filter import Monochrome
+
+
+def test_cell_length() -> None:
+    strip = Strip([Segment("foo"), Segment("💩"), Segment("bar")])
+    assert strip._cell_length is None
+    assert strip.cell_length == 8
+    assert strip._cell_length == 8
+
+
+def test_repr() -> None:
+    strip = Strip([Segment("foo")])
+    assert repr(strip) == "Strip([Segment('foo')], 3)"
+
+
+def test_join() -> None:
+    strip1 = Strip([Segment("foo")])
+    strip2 = Strip([Segment("bar")])
+    strip = Strip.join([strip1, strip2])
+    assert len(strip) == 2
+    assert strip.cell_length == 6
+    assert list(strip) == [Segment("foo"), Segment("bar")]
+
+
+def test_bool() -> None:
+    assert not Strip([])
+    assert Strip([Segment("foo")])
+
+
+def test_iter() -> None:
+    assert list(Strip([])) == []
+    assert list(Strip([Segment("foo")])) == [Segment("foo")]
+    assert list(Strip([Segment("foo"), Segment("bar")])) == [
+        Segment("foo"),
+        Segment("bar"),
+    ]
+
+
+def test_len():
+    assert len(Strip([])) == 0
+    assert len(Strip([Segment("foo")])) == 1
+    assert len(Strip([Segment("foo"), Segment("bar")])) == 2
+
+
+def test_reversed():
+    assert list(reversed(Strip([]))) == []
+    assert list(reversed(Strip([Segment("foo")]))) == [Segment("foo")]
+    assert list(reversed(Strip([Segment("foo"), Segment("bar")]))) == [
+        Segment("bar"),
+        Segment("foo"),
+    ]
+
+
+def test_eq():
+    assert Strip([]) == Strip([])
+    assert Strip([Segment("foo")]) == Strip([Segment("foo")])
+    assert Strip([Segment("foo")]) != Strip([Segment("bar")])
+
+
+def test_adjust_cell_length():
+
+    for repeat in range(3):
+
+        assert Strip([]).adjust_cell_length(3) == Strip([Segment("   ")])
+        assert Strip([Segment("f")]).adjust_cell_length(3) == Strip(
+            [Segment("f"), Segment("  ")]
+        )
+        assert Strip([Segment("💩")]).adjust_cell_length(3) == Strip(
+            [Segment("💩"), Segment(" ")]
+        )
+
+        assert Strip([Segment("💩💩")]).adjust_cell_length(3) == Strip([Segment("💩 ")])
+        assert Strip([Segment("💩💩")]).adjust_cell_length(4) == Strip([Segment("💩💩")])
+        assert Strip([Segment("💩"), Segment("💩💩")]).adjust_cell_length(2) == Strip(
+            [Segment("💩")]
+        )
+        assert Strip([Segment("💩"), Segment("💩💩")]).adjust_cell_length(4) == Strip(
+            [Segment("💩"), Segment("💩")]
+        )
+
+
+def test_simplify():
+    assert Strip([Segment("foo"), Segment("bar")]).simplify() == Strip(
+        [Segment("foobar")]
+    )
+
+
+def test_apply_filter():
+    strip = Strip([Segment("foo", Style.parse("red"))])
+    expected = Strip([Segment("foo", Style.parse("#1b1b1b"))])
+    print(repr(strip))
+    print(repr(expected))
+    assert strip.apply_filter(Monochrome()) == expected
+
+
+def test_style_links():
+    link_style = Style.on(click="clicked")
+    strip = Strip(
+        [
+            Segment("foo"),
+            Segment("bar", link_style),
+            Segment("baz"),
+        ]
+    )
+    hover_style = Style(underline=True)
+    new_strip = strip.style_links(link_style._link_id, hover_style)
+    expected = Strip(
+        [
+            Segment("foo"),
+            Segment("bar", link_style + hover_style),
+            Segment("baz"),
+        ]
+    )
+    assert new_strip == expected
+
+
+def test_crop():
+
+    for repeat in range(3):
+
+        assert Strip([Segment("foo")]).crop(0, 3) == Strip([Segment("foo")])
+        assert Strip([Segment("foo")]).crop(0, 2) == Strip([Segment("fo")])
+        assert Strip([Segment("foo")]).crop(0, 1) == Strip([Segment("f")])
+
+        assert Strip([Segment("foo")]).crop(1, 3) == Strip([Segment("oo")])
+        assert Strip([Segment("foo")]).crop(1, 2) == Strip([Segment("o")])
+        assert Strip([Segment("foo")]).crop(1, 1) == Strip([Segment("")])
+
+        assert Strip([Segment("foo💩"), Segment("b💩ar"), Segment("ba💩z")]).crop(
+            1, 6
+        ) == Strip([Segment("oo💩"), Segment("b")])
+
+
+def test_divide():
+
+    for repeat in range(3):
+
+        assert Strip([Segment("foo")]).divide([1, 2]) == [
+            Strip([Segment("f")]),
+            Strip([Segment("o")]),
+        ]

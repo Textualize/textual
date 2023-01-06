@@ -11,47 +11,18 @@ from ._border import get_box, render_row
 from ._filter import LineFilter
 from ._opacity import _apply_opacity
 from ._segment_tools import line_crop, line_pad, line_trim
-from ._types import Lines
 from ._typing import TypeAlias
 from .color import Color
 from .geometry import Region, Size, Spacing
 from .renderables.text_opacity import TextOpacity
 from .renderables.tint import Tint
+from .strip import Strip
 
 if TYPE_CHECKING:
     from .css.styles import StylesBase
     from .widget import Widget
 
 RenderLineCallback: TypeAlias = Callable[[int], List[Segment]]
-
-
-def style_links(
-    segments: Iterable[Segment], link_id: str, link_style: Style
-) -> list[Segment]:
-    """Apply a style to the given link id.
-
-    Args:
-        segments (Iterable[Segment]): Segments.
-        link_id (str): A link id.
-        link_style (Style): Style to apply.
-
-    Returns:
-        list[Segment]: A list of new segments.
-    """
-
-    _Segment = Segment
-
-    segments = [
-        _Segment(
-            text,
-            (style + link_style if style is not None else None)
-            if (style and not style._null and style._link_id == link_id)
-            else style,
-            control,
-        )
-        for text, style, control in segments
-    ]
-    return segments
 
 
 @lru_cache(1024 * 8)
@@ -95,7 +66,7 @@ class StylesCache:
     """
 
     def __init__(self) -> None:
-        self._cache: dict[int, list[Segment]] = {}
+        self._cache: dict[int, Strip] = {}
         self._dirty_lines: set[int] = set()
         self._width = 1
 
@@ -123,7 +94,7 @@ class StylesCache:
         self._cache.clear()
         self._dirty_lines.clear()
 
-    def render_widget(self, widget: Widget, crop: Region) -> Lines:
+    def render_widget(self, widget: Widget, crop: Region) -> list[Strip]:
         """Render the content for a widget.
 
         Args:
@@ -135,7 +106,7 @@ class StylesCache:
         """
         base_background, background = widget.background_colors
         styles = widget.styles
-        lines = self.render(
+        strips = self.render(
             styles,
             widget.region.size,
             base_background,
@@ -147,7 +118,6 @@ class StylesCache:
             filter=widget.app._filter,
         )
         if widget.auto_links:
-            _style_links = style_links
             hover_style = widget.hover_style
             link_hover_style = widget.link_hover_style
             if (
@@ -157,12 +127,12 @@ class StylesCache:
                 and "@click" in hover_style.meta
             ):
                 if link_hover_style:
-                    lines = [
-                        _style_links(line, hover_style.link_id, link_hover_style)
-                        for line in lines
+                    strips = [
+                        strip.style_links(hover_style.link_id, link_hover_style)
+                        for strip in strips
                     ]
 
-        return lines
+        return strips
 
     def render(
         self,
@@ -175,7 +145,7 @@ class StylesCache:
         padding: Spacing | None = None,
         crop: Region | None = None,
         filter: LineFilter | None = None,
-    ) -> Lines:
+    ) -> list[Strip]:
         """Render a widget content plus CSS styles.
 
         Args:
@@ -202,15 +172,14 @@ class StylesCache:
         if width != self._width:
             self.clear()
             self._width = width
-        lines: Lines = []
-        add_line = lines.append
-        simplify = Segment.simplify
+        strips: list[Strip] = []
+        add_strip = strips.append
 
         is_dirty = self._dirty_lines.__contains__
         render_line = self.render_line
         for y in crop.line_range:
             if is_dirty(y) or y not in self._cache:
-                line = render_line(
+                strip = render_line(
                     styles,
                     y,
                     size,
@@ -220,21 +189,19 @@ class StylesCache:
                     background,
                     render_content_line,
                 )
-                line = list(simplify(line))
-                self._cache[y] = line
+                self._cache[y] = strip
             else:
-                line = self._cache[y]
+                strip = self._cache[y]
             if filter:
-                line = filter.filter(line)
-            add_line(line)
+                strip = strip.apply_filter(filter)
+            add_strip(strip)
         self._dirty_lines.difference_update(crop.line_range)
 
         if crop.column_span != (0, width):
-            _line_crop = line_crop
             x1, x2 = crop.column_span
-            lines = [_line_crop(line, x1, x2, width) for line in lines]
+            strips = [strip.crop(x1, x2) for strip in strips]
 
-        return lines
+        return strips
 
     def render_line(
         self,
@@ -246,7 +213,7 @@ class StylesCache:
         base_background: Color,
         background: Color,
         render_content_line: RenderLineCallback,
-    ) -> list[Segment]:
+    ) -> Strip:
         """Render a styled line.
 
         Args:
@@ -288,7 +255,7 @@ class StylesCache:
         inner = from_color(bgcolor=(base_background + background).rich_color)
         outer = from_color(bgcolor=base_background.rich_color)
 
-        def post(segments: Iterable[Segment]) -> list[Segment]:
+        def post(segments: Iterable[Segment]) -> Iterable[Segment]:
             """Post process segments to apply opacity and tint.
 
             Args:
@@ -303,8 +270,7 @@ class StylesCache:
                 segments = Tint.process_segments(segments, styles.tint)
             if styles.opacity != 1.0:
                 segments = _apply_opacity(segments, base_background, styles.opacity)
-            segments = list(segments)
-            return segments if isinstance(segments, list) else list(segments)
+            return segments
 
         line: Iterable[Segment]
         # Draw top or bottom borders (A)
@@ -402,4 +368,5 @@ class StylesCache:
             else:
                 line = [*line, right]
 
-        return post(line)
+        strip = Strip(post(line), width)
+        return strip

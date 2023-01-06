@@ -22,7 +22,7 @@ from rich.tree import Tree
 
 from ._context import NoActiveAppError
 from ._node_list import NodeList
-from .binding import Binding, Bindings, BindingType
+from .binding import Bindings, BindingType
 from .color import BLACK, WHITE, Color
 from .css._error_tools import friendly_list
 from .css.constants import VALID_DISPLAY, VALID_VISIBILITY
@@ -225,11 +225,18 @@ class DOMNode(MessagePump):
         """
         bindings: list[Bindings] = []
 
+        # To start with, assume that bindings won't be priority bindings.
+        priority = False
+
         for base in reversed(cls.__mro__):
             if issubclass(base, DOMNode):
                 if not base._inherit_bindings:
                     bindings.clear()
-                bindings.append(Bindings(base.__dict__.get("BINDINGS", [])))
+                bindings.append(
+                    Bindings(
+                        base.__dict__.get("BINDINGS", []),
+                    )
+                )
         keys = {}
         for bindings_ in bindings:
             keys.update(bindings_.keys)
@@ -507,8 +514,8 @@ class DOMNode(MessagePump):
     @property
     def rich_style(self) -> Style:
         """Get a Rich Style object for this DOMNode."""
-        background = WHITE
-        color = BLACK
+        background = Color(0, 0, 0, 0)
+        color = Color(255, 255, 255, 0)
         style = Style()
         for node in reversed(self.ancestors_with_self):
             styles = node.styles
@@ -520,7 +527,8 @@ class DOMNode(MessagePump):
             if styles.has_rule("auto_color") and styles.auto_color:
                 color = background.get_contrast_text(color.a)
         style += Style.from_color(
-            (background + color).rich_color, background.rich_color
+            (background + color).rich_color if (background.a or color.a) else None,
+            background.rich_color if background.a else None,
         )
         return style
 
@@ -604,7 +612,7 @@ class DOMNode(MessagePump):
         """Reset styles back to their initial state"""
         from .widget import Widget
 
-        for node in self.walk_children():
+        for node in self.walk_children(with_self=True):
             node._css_styles.reset()
             if isinstance(node, Widget):
                 node._set_dirty()
@@ -637,7 +645,7 @@ class DOMNode(MessagePump):
         self,
         filter_type: type[WalkType],
         *,
-        with_self: bool = True,
+        with_self: bool = False,
         method: WalkMethod = "depth",
         reverse: bool = False,
     ) -> list[WalkType]:
@@ -647,7 +655,7 @@ class DOMNode(MessagePump):
     def walk_children(
         self,
         *,
-        with_self: bool = True,
+        with_self: bool = False,
         method: WalkMethod = "depth",
         reverse: bool = False,
     ) -> list[DOMNode]:
@@ -657,16 +665,16 @@ class DOMNode(MessagePump):
         self,
         filter_type: type[WalkType] | None = None,
         *,
-        with_self: bool = True,
+        with_self: bool = False,
         method: WalkMethod = "depth",
         reverse: bool = False,
     ) -> list[DOMNode] | list[WalkType]:
-        """Generate descendant nodes.
+        """Walk the subtree rooted at this node, and return every descendant encountered in a list.
 
         Args:
             filter_type (type[WalkType] | None, optional): Filter only this type, or None for no filter.
                 Defaults to None.
-            with_self (bool, optional): Also yield self in addition to descendants. Defaults to True.
+            with_self (bool, optional): Also yield self in addition to descendants. Defaults to False.
             method (Literal["breadth", "depth"], optional): One of "depth" or "breadth". Defaults to "depth".
             reverse (bool, optional): Reverse the order (bottom up). Defaults to False.
 

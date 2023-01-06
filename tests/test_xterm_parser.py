@@ -106,7 +106,7 @@ def test_cant_match_escape_sequence_too_long(parser):
     # The rest of the characters correspond to the expected key presses
     events = events[1:]
     for index, character in enumerate(sequence[1:]):
-        assert events[index].char == character
+        assert events[index].character == character
 
 
 @pytest.mark.parametrize(
@@ -236,14 +236,14 @@ def test_mouse_move(parser, sequence, shift, meta, button):
 
 
 @pytest.mark.parametrize(
-    "sequence",
+    "sequence, shift, meta",
     [
-        "\x1b[<64;18;25M",
-        "\x1b[<68;18;25M",
-        "\x1b[<72;18;25M",
+        ("\x1b[<64;18;25M", False, False),
+        ("\x1b[<68;18;25M", True, False),
+        ("\x1b[<72;18;25M", False, True),
     ],
 )
-def test_mouse_scroll_up(parser, sequence):
+def test_mouse_scroll_up(parser, sequence, shift, meta):
     """Scrolling the mouse with and without modifiers held down.
     We don't currently capture modifier keys in scroll events.
     """
@@ -256,17 +256,19 @@ def test_mouse_scroll_up(parser, sequence):
     assert isinstance(event, MouseScrollUp)
     assert event.x == 17
     assert event.y == 24
+    assert event.shift is shift
+    assert event.meta is meta
 
 
 @pytest.mark.parametrize(
-    "sequence",
+    "sequence, shift, meta",
     [
-        "\x1b[<65;18;25M",
-        "\x1b[<69;18;25M",
-        "\x1b[<73;18;25M",
+        ("\x1b[<65;18;25M", False, False),
+        ("\x1b[<69;18;25M", True, False),
+        ("\x1b[<73;18;25M", False, True),
     ],
 )
-def test_mouse_scroll_down(parser, sequence):
+def test_mouse_scroll_down(parser, sequence, shift, meta):
     events = list(parser.feed(sequence))
 
     assert len(events) == 1
@@ -276,6 +278,8 @@ def test_mouse_scroll_down(parser, sequence):
     assert isinstance(event, MouseScrollDown)
     assert event.x == 17
     assert event.y == 24
+    assert event.shift is shift
+    assert event.meta is meta
 
 
 def test_mouse_event_detected_but_info_not_parsed(parser):

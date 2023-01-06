@@ -71,7 +71,8 @@ def test_input_and_focus(snap_compare):
         "tab",
         *"Darren",  # Focus first input, write "Darren"
         "tab",
-        *"Burns",  # Tab focus to second input, write "Burns"
+        *"Burns",
+        "_",  # Tab focus to second input, write "Burns"
     ]
     assert snap_compare(WIDGET_EXAMPLES_DIR / "input.py", press=press)
 
@@ -101,7 +102,9 @@ def test_header_render(snap_compare):
 
 
 def test_list_view(snap_compare):
-    assert snap_compare(WIDGET_EXAMPLES_DIR / "list_view.py", press=["tab", "down", "down", "up"])
+    assert snap_compare(
+        WIDGET_EXAMPLES_DIR / "list_view.py", press=["tab", "down", "down", "up"]
+    )
 
 
 def test_textlog_max_lines(snap_compare):
@@ -160,6 +163,11 @@ def test_offsets(snap_compare):
     assert snap_compare("snapshot_apps/offsets.py")
 
 
+def test_nested_auto_heights(snap_compare):
+    """Test refreshing widget within a auto sized container"""
+    assert snap_compare("snapshot_apps/nested_auto_heights.py", press=["1", "2", "_"])
+
+
 # --- Other ---
 
 
@@ -169,4 +177,8 @@ def test_key_display(snap_compare):
 
 def test_demo(snap_compare):
     """Test the demo app (python -m textual)"""
-    assert snap_compare(Path("../../src/textual/demo.py"))
+    assert snap_compare(
+        Path("../../src/textual/demo.py"),
+        press=["down", "down", "down", "_", "_"],
+        terminal_size=(100, 30),
+    )

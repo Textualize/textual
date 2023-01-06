@@ -75,7 +75,7 @@ When you click any of the links, Textual runs the `"set_background"` action to c
 
 ## Bindings
 
-Textual will also run actions bound to keys. The following example adds key [bindings](./input.md#bindings) for the ++r++, ++g++, and ++b++ keys which call the `"set_background"` action.
+Textual will run actions bound to keys. The following example adds key [bindings](./input.md#bindings) for the ++r++, ++g++, and ++b++ keys which call the `"set_background"` action.
 
 === "actions04.py"
 
@@ -90,9 +90,11 @@ Textual will also run actions bound to keys. The following example adds key [bin
 
 If you run this example, you can change the background by pressing keys in addition to clicking links.
 
+See the previous section on [input](./input.md#bindings) for more information on bindings.
+
 ## Namespaces
 
-Textual will look for action methods on the widget or app where they are used. If we were to create a [custom widget](./widgets.md#custom-widgets) it can have its own set of actions.
+Textual will look for action methods in the class where they are defined (App, Screen, or Widget). If we were to create a [custom widget](./widgets.md#custom-widgets) it can have its own set of actions.
 
 The following example defines a custom widget with its own `set_background` action.
 
@@ -124,37 +126,9 @@ In the previous example if you wanted a link to set the background on the app ra
 
 Textual supports the following builtin actions which are defined on the app.
 
-
-### Bell
-
-::: textual.app.App.action_bell
-    options:
-        show_root_heading: false
-
-### Push screen
-
-::: textual.app.App.action_push_screen
-
-
-### Pop screen
-
-::: textual.app.App.action_pop_screen
-
-
-### Screenshot
-
-::: textual.app.App.action_screenshot
-
-
-### Switch screen
-
-::: textual.app.App.action_switch_screen
-
-
-### Toggle_dark
-
-::: textual.app.App.action_toggle_dark
-
-### Quit
-
-::: textual.app.App.action_quit
+- [action_bell][textual.app.App.action_bell]
+- [action_push_screen][textual.app.App.action_push_screen]
+- [action_pop_screen][textual.app.App.action_pop_screen]
+- [action_switch_screen][textual.app.App.action_switch_screen]
+- [action_screenshot][textual.app.App.action_screenshot]
+- [action_toggle_dark][textual.app.App.action_toggle_dark]

@@ -209,12 +209,12 @@ class StylesBase(ABC):
     node: DOMNode | None = None
 
     display = StringEnumProperty(VALID_DISPLAY, "block", layout=True)
-    visibility = StringEnumProperty(VALID_VISIBILITY, "visible")
+    visibility = StringEnumProperty(VALID_VISIBILITY, "visible", layout=True)
     layout = LayoutProperty()
 
     auto_color = BooleanProperty(default=False)
     color = ColorProperty(Color(255, 255, 255))
-    background = ColorProperty(Color(0, 0, 0, 0), background=True)
+    background = ColorProperty(Color(0, 0, 0, 0))
     text_style = StyleFlagsProperty()
 
     opacity = FractionalProperty()
@@ -421,7 +421,7 @@ class StylesBase(ABC):
 
         Args:
             layout (bool, optional): Also require a layout. Defaults to False.
-            children (bool, opional): Also refresh children. Defaults to False.
+            children (bool, optional): Also refresh children. Defaults to False.
         """
 
     @abstractmethod

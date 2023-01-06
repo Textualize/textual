@@ -37,13 +37,12 @@ from rich.text import Text
 from . import errors, events, messages
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
-from ._cache import LRUCache
 from ._context import active_app
 from ._easing import DEFAULT_SCROLL_EASING
 from ._layout import Layout
 from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
-from ._types import Lines
+from .actions import SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding
 from .box_model import BoxModel, get_box_model
@@ -56,6 +55,7 @@ from .message import Message
 from .messages import CallbackType
 from .reactive import Reactive
 from .render import measure
+from .strip import Strip
 from .walk import walk_depth_first
 
 if TYPE_CHECKING:
@@ -85,7 +85,8 @@ class AwaitMount:
 
     """
 
-    def __init__(self, widgets: Sequence[Widget]) -> None:
+    def __init__(self, parent: Widget, widgets: Sequence[Widget]) -> None:
+        self._parent = parent
         self._widgets = widgets
 
     def __await__(self) -> Generator[None, None, None]:
@@ -97,6 +98,7 @@ class AwaitMount:
                 ]
                 if aws:
                     await wait(aws)
+                    self._parent.refresh(layout=True)
 
         return await_mount().__await__()
 
@@ -153,7 +155,7 @@ class RenderCache(NamedTuple):
     """Stores results of a previous render."""
 
     size: Size
-    lines: Lines
+    lines: list[Strip]
 
 
 class WidgetError(Exception):
@@ -188,8 +190,10 @@ class Widget(DOMNode):
     Widget{
         scrollbar-background: $panel-darken-1;
         scrollbar-background-hover: $panel-darken-2;
+        scrollbar-background-active: $panel-darken-3;
         scrollbar-color: $primary-lighten-1;
         scrollbar-color-active: $warning-darken-1;
+        scrollbar-color-hover: $primary-lighten-1;
         scrollbar-corner-color: $panel-darken-1;
         scrollbar-size-vertical: 2;
         scrollbar-size-horizontal: 1;
@@ -247,8 +251,8 @@ class Widget(DOMNode):
         self._content_width_cache: tuple[object, int] = (None, 0)
         self._content_height_cache: tuple[object, int] = (None, 0)
 
-        self._arrangement_cache_updates: int = -1
-        self._arrangement_cache: LRUCache[Size, DockArrangeResult] = LRUCache(4)
+        self._arrangement_cache_key: tuple[Size, int] = (Size(), -1)
+        self._cached_arrangement: DockArrangeResult | None = None
 
         self._styles_cache = StylesCache()
         self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
@@ -460,22 +464,23 @@ class Widget(DOMNode):
         """
         assert self.is_container
 
-        if self._arrangement_cache_updates != self.children._updates:
-            self._arrangement_cache_updates = self.children._updates
-            self._arrangement_cache.clear()
+        cache_key = (size, self.children._updates)
+        if (
+            self._arrangement_cache_key == cache_key
+            and self._cached_arrangement is not None
+        ):
+            return self._cached_arrangement
 
-        cached_arrangement = self._arrangement_cache.get(size, None)
-        if cached_arrangement is not None:
-            return cached_arrangement
-
-        arrangement = self._arrangement_cache[size] = arrange(
+        self._arrangement_cache_key = cache_key
+        arrangement = self._cached_arrangement = arrange(
             self, self.children, size, self.screen.size
         )
+
         return arrangement
 
     def _clear_arrangement_cache(self) -> None:
         """Clear arrangement cache, forcing a new arrange operation."""
-        self._arrangement_cache.clear()
+        self._cached_arrangement = None
 
     def _get_virtual_dom(self) -> Iterable[Widget]:
         """Get widgets not part of the DOM.
@@ -595,11 +600,11 @@ class Widget(DOMNode):
         else:
             parent = self
 
-        return AwaitMount(
-            self.app._register(
-                parent, *widgets, before=insert_before, after=insert_after
-            )
+        mounted = self.app._register(
+            parent, *widgets, before=insert_before, after=insert_after
         )
+
+        return AwaitMount(self, mounted)
 
     def move_child(
         self,
@@ -1805,7 +1810,7 @@ class Widget(DOMNode):
         if spacing is not None:
             window = window.shrink(spacing)
 
-        if window in region:
+        if window in region and not top:
             return Offset()
 
         delta_x, delta_y = Region.get_scroll_to_visible(window, region, top=top)
@@ -2094,11 +2099,11 @@ class Widget(DOMNode):
                 align_vertical,
             )
         )
-
-        self._render_cache = RenderCache(self.size, lines)
+        strips = [Strip(line, width) for line in lines]
+        self._render_cache = RenderCache(self.size, strips)
         self._dirty_regions.clear()
 
-    def render_line(self, y: int) -> list[Segment]:
+    def render_line(self, y: int) -> Strip:
         """Render a line of content.
 
         Args:
@@ -2112,10 +2117,10 @@ class Widget(DOMNode):
         try:
             line = self._render_cache.lines[y]
         except IndexError:
-            line = [Segment(" " * self.size.width, self.rich_style)]
+            line = Strip.blank(self.size.width, self.rich_style)
         return line
 
-    def render_lines(self, crop: Region) -> Lines:
+    def render_lines(self, crop: Region) -> list[Strip]:
         """Render the widget in to lines.
 
         Args:
@@ -2124,8 +2129,8 @@ class Widget(DOMNode):
         Returns:
             Lines: A list of list of segments.
         """
-        lines = self._styles_cache.render_widget(self, crop)
-        return lines
+        strips = self._styles_cache.render_widget(self, crop)
+        return strips
 
     def get_style_at(self, x: int, y: int) -> Style:
         """Get the Rich style in a widget at a given relative offset.
@@ -2173,8 +2178,10 @@ class Widget(DOMNode):
 
         if layout:
             self._layout_required = True
-            if isinstance(self._parent, Widget):
-                self._parent._clear_arrangement_cache()
+            for ancestor in self.ancestors:
+                if not isinstance(ancestor, Widget):
+                    break
+                ancestor._clear_arrangement_cache()
 
         if repaint:
             self._set_dirty(*regions)
@@ -2342,17 +2349,22 @@ class Widget(DOMNode):
         self.mouse_over = True
 
     def _on_focus(self, event: events.Focus) -> None:
-        for node in self.ancestors_with_self:
-            if node._has_focus_within:
-                self.app.update_styles(node)
         self.has_focus = True
         self.refresh()
+        self.emit_no_wait(events.DescendantFocus(self))
 
     def _on_blur(self, event: events.Blur) -> None:
-        if any(node._has_focus_within for node in self.ancestors_with_self):
-            self.app.update_styles(self)
         self.has_focus = False
         self.refresh()
+        self.emit_no_wait(events.DescendantBlur(self))
+
+    def _on_descendant_blur(self, event: events.DescendantBlur) -> None:
+        if self._has_focus_within:
+            self.app.update_styles(self)
+
+    def _on_descendant_focus(self, event: events.DescendantBlur) -> None:
+        if self._has_focus_within:
+            self.app.update_styles(self)
 
     def _on_mouse_scroll_down(self, event) -> None:
         if self.allow_vertical_scroll:
@@ -2397,33 +2409,41 @@ class Widget(DOMNode):
         self.scroll_to_region(message.region, animate=True)
 
     def action_scroll_home(self) -> None:
-        if self._allow_scroll:
-            self.scroll_home()
+        if not self._allow_scroll:
+            raise SkipAction()
+        self.scroll_home()
 
     def action_scroll_end(self) -> None:
-        if self._allow_scroll:
-            self.scroll_end()
+        if not self._allow_scroll:
+            raise SkipAction()
+        self.scroll_end()
 
     def action_scroll_left(self) -> None:
-        if self.allow_horizontal_scroll:
-            self.scroll_left()
+        if not self.allow_horizontal_scroll:
+            raise SkipAction()
+        self.scroll_left()
 
     def action_scroll_right(self) -> None:
-        if self.allow_horizontal_scroll:
-            self.scroll_right()
+        if not self.allow_horizontal_scroll:
+            raise SkipAction()
+        self.scroll_right()
 
     def action_scroll_up(self) -> None:
-        if self.allow_vertical_scroll:
-            self.scroll_up()
+        if not self.allow_vertical_scroll:
+            raise SkipAction()
+        self.scroll_up()
 
     def action_scroll_down(self) -> None:
-        if self.allow_vertical_scroll:
-            self.scroll_down()
+        if not self.allow_vertical_scroll:
+            raise SkipAction()
+        self.scroll_down()
 
     def action_page_down(self) -> None:
-        if self.allow_vertical_scroll:
-            self.scroll_page_down()
+        if not self.allow_vertical_scroll:
+            raise SkipAction()
+        self.scroll_page_down()
 
     def action_page_up(self) -> None:
-        if self.allow_vertical_scroll:
-            self.scroll_page_up()
+        if not self.allow_vertical_scroll:
+            raise SkipAction()
+        self.scroll_page_up()
