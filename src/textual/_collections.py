@@ -1,7 +1,7 @@
 """Provides collection-based utility code."""
 
 from __future__ import annotations
-from typing import Generic, TypeVar, Iterator, overload, Iterable
+from typing import Generic, TypeVar, Iterator, overload, Iterable, Sequence
 
 T = TypeVar("T")
 
@@ -15,7 +15,7 @@ class ImmutableSequence(Generic[T]):
         Args:
             wrap (Iterable[T]): The iterable value being wrapped.
         """
-        self._wrap = tuple(wrap)
+        self._wrap = wrap if isinstance(wrap, Sequence) else tuple(wrap)
 
     @overload
     def __getitem__(self, index: int) -> T:
