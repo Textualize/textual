@@ -54,7 +54,7 @@ class ImmutableSequenceView(Generic[T]):
             item (T): The item to find in the sequence.
 
         Returns:
-            int: The index of the item in the sequence.
+            T: The index of the item in the sequence.
 
         Raises:
             ValueError: If the item is not in the sequence.
