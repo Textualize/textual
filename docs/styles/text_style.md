@@ -10,10 +10,6 @@ text-style: <a href="../../css_types/text_style">&lt;text-style&gt;</a>;
 
 `text-style` will take all the values specified and will apply that styling combination to the text in the widget.
 
-### Values
-
---8<-- "docs/snippets/type_syntax/text_style.md"
-
 ## Examples
 
 Each of the three text panels has a different text style, respectively `bold`, `italic`, and `reverse`, from left to right.

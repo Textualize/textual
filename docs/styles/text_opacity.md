@@ -13,18 +13,6 @@ The text opacity can be set as a [`<number>`](../css_types/number.md) or a [`<pe
 Conversely, `1`/`100%` means full opacity, which is equivalent to no transparency.
 Values outside of these ranges will be clamped.
 
-### Values
-
-### &lt;number&gt;
-
---8<-- "docs/snippets/type_syntax/number.md"
-The value of [`<number>`](../../css_types/number) is clamped between `0` and `1`.
-
-### &lt;percentage&gt;
-
---8<-- "docs/snippets/type_syntax/percentage.md"
-The value of [`<percentage>`](../../css_types/percentage) is clamped between `0%` and `100%`.
-
 ## Example
 
 This example shows, from top to bottom, increasing `text-opacity` values.

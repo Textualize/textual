@@ -11,10 +11,6 @@ min-height: <a href="../../css_types/scalar">&lt;scalar&gt;</a>;
 The `min-height` rule accepts a [`<scalar>`](../../css_types/scalar) that defines a lower bound for the [`height`](./height) of a widget.
 That is, the height of a widget is never allowed to be under `min-height`.
 
-### Values
-
---8<-- "docs/snippets/type_syntax/scalar.md"
-
 ## Example
 
 The example below shows some placeholders with their height set to `50%`.

@@ -13,10 +13,6 @@ This [`<name>`](../../css_types/name) must correspond to a [`<name>`](../../css_
 
 More information on layers can be found in the [guide](../guide/layout.md#layers).
 
-### Values
-
---8<-- "docs/snippets/type_syntax/name.md"
-
 !!! warning
 
     Using a `<name>` that hasn't been defined in a [`layers`](./layers.md) declaration of an ancestor of this widget has no effect.

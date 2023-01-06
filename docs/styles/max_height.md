@@ -11,10 +11,6 @@ max-height: <a href="../../css_types/scalar">&lt;scalar&gt;</a>;
 The `max-height` rule accepts a [`<scalar>`](../../css_types/scalar) that defines an upper bound for the [`height`](./height) of a widget.
 That is, the height of a widget is never allowed to exceed `max-height`.
 
-### Values
-
---8<-- "docs/snippets/type_syntax/scalar.md"
-
 ## Example
 
 The example below shows some placeholders that were defined to span vertically from the top edge of the terminal to the bottom edge.

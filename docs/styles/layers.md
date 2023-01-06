@@ -15,10 +15,6 @@ The layers defined first in the list are drawn under the layers that are defined
 
 More information on layers can be found in the [guide](../guide/layout.md#layers).
 
-### Values
-
---8<-- "docs/snippets/type_syntax/name.md"
-
 ## Example
 
 In the example below, `#box1` is yielded before `#box2`.
