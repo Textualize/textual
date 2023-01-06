@@ -8,9 +8,10 @@ The `opacity` property sets the opacity/transparency of a widget.
 opacity: <a href="../../css_types/number">&lt;number&gt;</a> | <a href="../../css_types/percentage">&lt;percentage&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The opacity of a widget can be set as a [`<number>`](../css_types/number.md) between `0` and `1` or a [`<percentage>`](../css_types/percentage.md) between `0%` and `100%`.
+The opacity of a widget can be set as a [`<number>`](../css_types/number.md)  or a [`<percentage>`](../css_types/percentage.md).
 `0`/`0%` means no opacity, which is equivalent to full transparency.
 Conversely, `1`/`100%` means full opacity, which is equivalent to no transparency.
+Values outside of these ranges will be clamped.
 
 ### Values
 
