@@ -18,8 +18,9 @@
     text-opacity: 100%;
 }
 
-Static {
+Label {
     height: 1fr;
+    width: 100%;
     text-align: center;
     text-style: bold;
 }
