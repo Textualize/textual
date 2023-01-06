@@ -14,6 +14,10 @@ from .css.types import AlignHorizontal, AlignVertical
 from .geometry import Size
 
 
+class NoCellPositionForIndex(Exception):
+    pass
+
+
 def index_to_cell_position(segments: Iterable[Segment], index: int) -> int:
     """Given a character index, return the cell position of that character within
     an Iterable of Segments. This is the sum of the cell lengths of all the characters
@@ -24,9 +28,14 @@ def index_to_cell_position(segments: Iterable[Segment], index: int) -> int:
         index (int): The index to convert into a cell position.
 
     Returns:
-        int: The cell position of the character at `index`. If the `index` is not
-            valid within the segments, returns 0.
+        int: The cell position of the character at `index`.
+
+    Raises:
+        NoCellPositionForIndex: If the supplied index doesn't fall within the given segments.
     """
+    if not segments:
+        raise NoCellPositionForIndex
+
     if index == 0:
         return 0
 
@@ -45,7 +54,7 @@ def index_to_cell_position(segments: Iterable[Segment], index: int) -> int:
             cell_position_end += segment_cell_length
             segment_end_index += segment_length
     except StopIteration:
-        return 0
+        raise NoCellPositionForIndex
 
     # Check how far into this segment the target index is
     segment_index_start = segment_end_index - segment_length

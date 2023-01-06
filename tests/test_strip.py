@@ -2,6 +2,7 @@ import pytest
 from rich.segment import Segment
 from rich.style import Style
 
+from textual._segment_tools import NoCellPositionForIndex
 from textual.strip import Strip
 from textual._filter import Monochrome
 
@@ -164,4 +165,11 @@ def test_index_to_cell_position(index, cell_position):
 
 def test_index_cell_position_no_segments():
     strip = Strip([])
-    assert strip.index_to_cell_position(2) == 0
+    with pytest.raises(NoCellPositionForIndex):
+        strip.index_to_cell_position(2)
+
+
+def test_index_cell_position_index_too_large():
+    strip = Strip([Segment("abcdef"), Segment("ghi")])
+    with pytest.raises(NoCellPositionForIndex):
+        strip.index_to_cell_position(100)
