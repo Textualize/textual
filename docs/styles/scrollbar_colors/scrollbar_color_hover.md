@@ -24,7 +24,12 @@ The `scrollbar-color-hover` sets the color of the scrollbar when the cursor is o
 
 === "Output"
 
-    Awaits resolution of [issue 1479](https://github.com/textualize/textual/issues/1479).
+    ![](scrollbar_colors_demo.gif)
+
+    !!! note
+
+        The GIF above has reduced quality to make it easier to load in the documentation.
+        Try running the example yourself with `textual run docs/examples/styles/scrollbars2.py`.
 
 === "scrollbars2.py"
 
