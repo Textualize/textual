@@ -33,6 +33,7 @@ from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text
+from rich.traceback import Traceback
 
 from . import errors, events, messages
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
@@ -2333,7 +2334,10 @@ class Widget(DOMNode):
             raise TypeError(
                 f"{self!r} compose() returned an invalid response; {error}"
             ) from None
-        await self.mount(*widgets)
+        except Exception:
+            self.app.panic(Traceback())
+        else:
+            await self.mount(*widgets)
 
     def _on_mount(self, event: events.Mount) -> None:
         if self.styles.overflow_y == "scroll":
