@@ -1,12 +1,14 @@
 # Tint
 
-The tint rule blends a color with the widget. The color should likely have an _alpha_ component, or the end result would obscure the widget content.
+The `tint` rule blends a color with the whole widget.
 
 ## Syntax
 
-```
-tint: <COLOR> [<PERCENTAGE>];
-```
+--8<-- "docs/snippets/syntax_block_start.md"
+tint: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
+--8<-- "docs/snippets/syntax_block_end.md"
+
+The tint rule blends a [`<color>`](../css_types/color.md) with the widget. The color should likely have an _alpha_ component (specified directly in the color used or by the optional [`<percentage>`](../css_types/percentage.md)), otherwise the end result will obscure the widget content.
 
 ## Example
 
@@ -47,5 +49,5 @@ from textual.color import Color
 widget.styles.tint = Color.parse("red").with_alpha(0.2);
 
 # A green tint
-widget.styles.tint = "rgba(0, 200, 0, 0.3):
+widget.styles.tint = "rgba(0, 200, 0, 0.3)"
 ```
