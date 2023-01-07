@@ -201,7 +201,7 @@ the right one.
 
 ### Don't...
 
-Okay, now for a bot of old-hacker finger-wagging. Here's a few things I'd
+Okay, now for a bit of old-hacker finger-wagging. Here's a few things I'd
 personally discourage:
 
 #### Lack patience
