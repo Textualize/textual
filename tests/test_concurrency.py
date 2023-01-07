@@ -14,6 +14,8 @@ def test_call_from_thread_app_not_running():
 
 
 def test_call_from_thread():
+    """Test the call_from_thread method."""
+
     class BackgroundThread(Thread):
         """A background thread which will modify app in some way."""
 
@@ -41,6 +43,7 @@ def test_call_from_thread():
             try:
                 self.call_from_thread(print)
             except RuntimeError as error:
+                # Calling this from the same thread as the app is an error
                 self._runtime_error = error
             BackgroundThread(self).start()
 
