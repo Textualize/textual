@@ -128,7 +128,7 @@ didn't run"*, often even with some of the code supplied, is so much harder
 to help than *"I ran this code I'm posting here, and I expected this
 particular outcome, and I expected it because I'd read this particular thing
 in the docs and had comprehended it to mean this, but instead the outcome
-was this exception here, and I'm a but stuck -- can someone offer some
+was this exception here, and I'm a bit stuck -- can someone offer some
 pointers?"*
 
 The former approach means there often ends up having to be a back and forth
