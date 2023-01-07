@@ -3,16 +3,16 @@ from textual.containers import Vertical
 from textual.widgets import Placeholder, Label, Static
 
 
-class VerticalRuler(Static):
+class Ruler(Static):
     def compose(self):
-        ruler_text = "\n".join(map(str, range(1, 100)))
+        ruler_text = "·\n·\n·\n·\n•\n" * 100
         yield Label(ruler_text)
 
 
 class HeightComparisonApp(App):
     def compose(self):
         yield Vertical(
-            Placeholder(id="cells"),    # (1)!
+            Placeholder(id="cells"),  # (1)!
             Placeholder(id="percent"),
             Placeholder(id="w"),
             Placeholder(id="h"),
@@ -22,7 +22,7 @@ class HeightComparisonApp(App):
             Placeholder(id="fr1"),
             Placeholder(id="fr2"),
         )
-        yield VerticalRuler()
+        yield Ruler()
 
 
 app = HeightComparisonApp(css_path="height_comparison.css")

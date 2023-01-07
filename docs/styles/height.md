@@ -59,7 +59,7 @@ Open the CSS file tab to see the comments that explain how each height is comput
     2. This sets the height to 12.5% of the space made available by the container. The container is 24 lines tall, so 12.5% of 24 is 3.
     3. This sets the height to 5% of the width of the direct container, which is the `Vertical` container. Because it expands to fit all of the terminal, the width of the `Vertical` is 80 and 5% of 80 is 4.
     4. This sets the height to 12.5% of the height of the direct container, which is the `Vertical` container. Because it expands to fit all of the terminal, the height of the `Vertical` is 24 and 12.5% of 24 is 3.
-    5. This sets the height to 7.5% of the viewport width, which is 80. 7.5% of 80 is 5.6 which gets truncated to 5.
+    5. This sets the height to 6.25% of the viewport width, which is 80. 6.25% of 80 is 5.
     6. This sets the height to 12.5% of the viewport height, which is 24. 12.5% of 24 is 3.
     7. This sets the height of the placeholder to be the optimal size that fits the content without scrolling.
     Because the content only spans one line, the placeholder has its height set to 1.

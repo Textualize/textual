@@ -11,7 +11,7 @@
     height: 12.5h;   /* (4)! */
 }
 #vw {
-    height: 7.5vw;   /* (5)! */
+    height: 6.25vw;  /* (5)! */
 }
 #vh {
     height: 12.5vh;  /* (6)! */
@@ -26,9 +26,14 @@
     height: 2fr;     /* (9)! */
 }
 
-VerticalRuler {
+Screen {
+    layers: ruler;
+}
+
+Ruler {
+    layer: ruler;
     dock: right;
     overflow: hidden;
-    width: auto;
+    width: 1;
     background: $accent;
 }
