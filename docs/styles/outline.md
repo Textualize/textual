@@ -2,9 +2,9 @@
 
 The `outline` rule enables the drawing of a box around the content of a widget, which means the outline is drawn _over_ the content area.
 
-!!! warning
+!!! note
 
-    Not to be confused with [`border`](./border.md).
+    Due to a Textual limitation, [`border`](./border.md) and [`outline`](./outline.md) cannot coexist in the same edge of a widget.
 
 ## Syntax
 
