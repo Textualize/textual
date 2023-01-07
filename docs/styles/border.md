@@ -2,6 +2,10 @@
 
 The `border` rule enables the drawing of a box around a widget.
 
+!!! note
+
+    Due to a Textual limitation, [`border`](./border.md) and [`outline`](./outline.md) cannot coexist in the same edge of a widget.
+
 ## Syntax
 
 --8<-- "docs/snippets/syntax_block_start.md"
