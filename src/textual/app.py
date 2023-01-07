@@ -650,7 +650,7 @@ class App(Generic[ReturnType], DOMNode):
             return await invoke(callback_with_args)
 
         # Post the message to the main loop
-        future: Future[Any] = asyncio.run_coroutine_threadsafe(
+        future: Future[CallThreadReturnType] = asyncio.run_coroutine_threadsafe(
             run_callback(), loop=self._loop
         )
         result = future.result()
