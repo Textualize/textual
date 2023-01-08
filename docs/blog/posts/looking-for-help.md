@@ -84,6 +84,15 @@ in the moment but fades away pretty quickly. It's like knocking on a
 friend's door to see if they're in. If they're not in, you might leave them
 a note, which is sort of like going to...
 
+!!! note
+
+    As a slight aside here: sometimes people will pop up in Discord, ask a
+    question about something that turns out looking like a bug, and that's
+    the last we hear of it. Please, please, **please**, if this happens, the
+    most helpful thing you can do is go raise an issue for us. It'll help us
+    to keep track of problems, it'll help get your problem fixed, it'll mean
+    everyone benefits.
+
 ### GitHub
 
 On the other hand, if you have a question or need some help or something
@@ -199,6 +208,20 @@ comes after you to acknowledge if it worked or not. That way a future
 help-seeker will know if the answer they're reading stands a chance of being
 the right one.
 
+#### Accept that Textual is zero-point software (right now)
+
+Of course the aim is to have every release of Textual be stable and useful,
+but things will break. So, please, do keep in mind things like:
+
+- Textual likely doesn't have your feature of choice just yet.
+- Might accidentally break something (perhaps pinning Textual and testing
+  each release is a good plan here?).
+- Might deliberately break something because we've decided to take a
+  particular feature or way of doing things in a better direction.
+
+Of course it can be a bit frustrating a times, but overall the aim is to
+have the best framework possible in the long run.
+
 ### Don't...
 
 Okay, now for a bit of old-hacker finger-wagging. Here's a few things I'd
@@ -260,3 +283,37 @@ idea:
 - The next seeker-of-help gets to miss out on your question and the answer.
   If asked and answered in public, it's a record that can help someone else
   in the future.
+
+#### Doubt your ability or skill level
+
+I suppose this should really be a do rather than a don't, as here I want to
+encourage something positive. A few times I've helped people out who have
+been very apologetic about their questions being "noob" questions, or about
+how they're fairly new to Python, or programming in general. Really, please,
+don't feel the need to apologise and don't be ashamed of where you're at.
+
+If you've asked something that's obviously answered in the documentation,
+that's not a problem; you'll likely get pointed at the docs and it's what
+happens next that's the key bit. If the attitude is *"oh, cool, that's
+exactly what I needed to be reading, thanks!"* that's a really positive
+thing. The only time it's a problem is when there's a real reluctance to use
+the available resources. We've all seen that person somewhere at some point,
+right? ;-)
+
+## Conclusion
+
+So, that's my waffle over. As I said at the start: this is my own personal
+thoughts on how to get help with Textual, both as someone whose job it is to
+work on Textual and help people with Textual, and also as a FOSS advocate
+and supporter who can normally be found helping Textual users when he's not
+"on the clock" too.
+
+What I've written here isn't exhaustive. Neither is it novel. Plenty has
+been written on the general subject in the past, and I'm sure more will be
+written on the subject in the future. I do, however, feel that these are the
+most common things I notice. I'd say those dos and don'ts cover 90% of *"can
+I get some help?"* interactions; perhaps closer to 99%.
+
+Finally, and I think this is the most important thing to remember, the next
+time you are battling some issue while working with Textual: [don't lose
+your head](https://www.youtube.com/watch?v=KdYvKF9O7Y8)!
