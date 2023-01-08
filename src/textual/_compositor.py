@@ -255,9 +255,7 @@ class Compositor:
         old_map = self.map.copy()
         old_widgets = old_map.keys()
 
-        with timer("arrange"):
-            map, widgets = self._arrange_root(parent, size)
-
+        map, widgets = self._arrange_root(parent, size)
         new_widgets = map.keys()
 
         # Newly visible widgets
@@ -269,8 +267,7 @@ class Compositor:
         self.map = map
         self.widgets = widgets
 
-        screen = size.region
-
+        # Contains widgets + geometry for every widget that changed (added, removed, or updated)
         changes = map.items() ^ old_map.items()
 
         # Widgets with changed size
@@ -280,10 +277,8 @@ class Compositor:
             if widget in old_widgets and old_map[widget].region.size != region.size
         }
 
-        # Gets pairs of tuples of (Widget, MapGeometry) which have changed
-        # i.e. if something is moved / deleted / added
-
-        if screen not in self._dirty_regions:
+        screen_region = size.region
+        if screen_region not in self._dirty_regions:
             regions = {
                 region
                 for region in (
