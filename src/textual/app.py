@@ -644,7 +644,7 @@ class App(Generic[ReturnType], DOMNode):
         self,
         filename: str | None = None,
         path: str = "./",
-        time_format: str = "%Y%m%d %H%M%S %f",
+        time_format: str | None = None,
     ) -> str:
         """Save an SVG screenshot of the current screen.
 
@@ -652,16 +652,19 @@ class App(Generic[ReturnType], DOMNode):
             filename (str | None, optional): Filename of SVG screenshot, or None to auto-generate
                 a filename with the date and time. Defaults to None.
             path (str, optional): Path to directory for output. Defaults to current working directory.
-            time_format (str, optional): Time format to use if filename is None. Defaults to "%Y-%m-%d %X %f".
+            time_format (str | None, optional): Date and time format to use if filename is None.
+                Defaults to ISO 8601 format. Colons are replaced with underscores.
 
         Returns:
             str: Filename of screenshot.
         """
         if filename is None:
-            svg_filename = (
-                f"{self.title.lower()} {datetime.now().strftime(time_format)}.svg"
-            )
-            for reserved in '<>:"/\\|?*':
+            if time_format is None:
+                dt = datetime.now().isoformat()
+            else:
+                dt = datetime.now().strftime(time_format)
+            svg_filename = f"{self.title.lower()} {dt}.svg"
+            for reserved in ' <>:"/\\|?*':
                 svg_filename = svg_filename.replace(reserved, "_")
         else:
             svg_filename = filename
