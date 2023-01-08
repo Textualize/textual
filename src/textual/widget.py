@@ -43,6 +43,7 @@ from ._easing import DEFAULT_SCROLL_EASING
 from ._layout import Layout
 from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
+from ._profile import timer
 from .actions import SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding
@@ -804,13 +805,17 @@ class Widget(DOMNode):
 
     def watch_scroll_x(self, new_value: float) -> None:
         if self.show_horizontal_scrollbar:
-            self.horizontal_scrollbar.position = int(new_value)
-            self.refresh(layout=True, repaint=False)
+            new_position = int(round(new_value))
+            if self.horizontal_scrollbar.position != new_position:
+                self.horizontal_scrollbar.position = new_position
+                self._refresh_scroll()
 
     def watch_scroll_y(self, new_value: float) -> None:
         if self.show_vertical_scrollbar:
-            self.vertical_scrollbar.position = int(new_value)
-            self.refresh(layout=True, repaint=False)
+            new_position = int(round(new_value))
+            if self.vertical_scrollbar.position != new_position:
+                self.vertical_scrollbar.position = new_position
+                self._refresh_scroll()
 
     def validate_scroll_x(self, value: float) -> float:
         return clamp(value, 0, self.max_scroll_x)
@@ -2155,8 +2160,16 @@ class Widget(DOMNode):
         event._set_forwarded()
         await self.post_message(event)
 
+    def _refresh_scroll(self) -> None:
+        """Refreshes the scroll position."""
+        self._layout_required = True
+        self.check_idle()
+
     def refresh(
-        self, *regions: Region, repaint: bool = True, layout: bool = False
+        self,
+        *regions: Region,
+        repaint: bool = True,
+        layout: bool = False,
     ) -> None:
         """Initiate a refresh of the widget.
 
