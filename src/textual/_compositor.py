@@ -390,43 +390,47 @@ class Compositor:
                     )
                     widgets.update(arranged_widgets)
 
-                    # An offset added to all placements
-                    placement_offset = container_region.offset
-                    placement_scroll_offset = placement_offset - widget.scroll_offset
+                    if placements:
+                        # An offset added to all placements
+                        placement_offset = container_region.offset
+                        placement_scroll_offset = (
+                            placement_offset - widget.scroll_offset
+                        )
 
-                    _layers = widget.layers
-                    layers_to_index = {
-                        layer_name: index for index, layer_name in enumerate(_layers)
-                    }
-                    get_layer_index = layers_to_index.get
+                        _layers = widget.layers
+                        layers_to_index = {
+                            layer_name: index
+                            for index, layer_name in enumerate(_layers)
+                        }
+                        get_layer_index = layers_to_index.get
 
-                    # Add all the widgets
-                    for sub_region, margin, sub_widget, z, fixed in reversed(
-                        placements
-                    ):
-                        # Combine regions with children to calculate the "virtual size"
-                        if fixed:
-                            widget_region = sub_region + placement_offset
-                        else:
-                            total_region = total_region.union(
-                                sub_region.grow(spacing + margin)
+                        # Add all the widgets
+                        for sub_region, margin, sub_widget, z, fixed in reversed(
+                            placements
+                        ):
+                            # Combine regions with children to calculate the "virtual size"
+                            if fixed:
+                                widget_region = sub_region + placement_offset
+                            else:
+                                total_region = total_region.union(
+                                    sub_region.grow(spacing).grow(margin)
+                                )
+                                widget_region = sub_region + placement_scroll_offset
+
+                            widget_order = order + (
+                                (get_layer_index(sub_widget.layer, 0), z, layer_order),
                             )
-                            widget_region = sub_region + placement_scroll_offset
 
-                        widget_order = order + (
-                            (get_layer_index(sub_widget.layer, 0), z, layer_order),
-                        )
-
-                        add_widget(
-                            sub_widget,
-                            sub_region,
-                            widget_region,
-                            widget_order,
-                            layer_order,
-                            sub_clip,
-                            visible,
-                        )
-                        layer_order -= 1
+                            add_widget(
+                                sub_widget,
+                                sub_region,
+                                widget_region,
+                                widget_order,
+                                layer_order,
+                                sub_clip,
+                                visible,
+                            )
+                            layer_order -= 1
 
                 if visible:
                     # Add any scrollbars
