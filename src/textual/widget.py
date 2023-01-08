@@ -802,18 +802,16 @@ class Widget(DOMNode):
         if self.auto_links:
             self.highlight_link_id = hover_style.link_id
 
-    def watch_scroll_x(self, new_value: float) -> None:
+    def watch_scroll_x(self, old_value: float, new_value: float) -> None:
         if self.show_horizontal_scrollbar:
-            new_position = int(round(new_value))
-            if self.horizontal_scrollbar.position != new_position:
-                self.horizontal_scrollbar.position = new_position
+            self.horizontal_scrollbar.position = int(new_value)
+            if int(old_value) != int(new_value):
                 self._refresh_scroll()
 
-    def watch_scroll_y(self, new_value: float) -> None:
+    def watch_scroll_y(self, old_value: float, new_value: float) -> None:
         if self.show_vertical_scrollbar:
-            new_position = int(round(new_value))
-            if self.vertical_scrollbar.position != new_position:
-                self.vertical_scrollbar.position = new_position
+            self.vertical_scrollbar.position = int(new_value)
+            if int(old_value) != int(new_value):
                 self._refresh_scroll()
 
     def validate_scroll_x(self, value: float) -> float:
