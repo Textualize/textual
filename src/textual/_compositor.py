@@ -25,6 +25,7 @@ from rich.style import Style
 from . import errors
 from ._cells import cell_len
 from ._loop import loop_last
+from ._profile import timer
 from .strip import Strip
 from ._typing import TypeAlias
 from .geometry import NULL_OFFSET, Offset, Region, Size
@@ -253,7 +254,9 @@ class Compositor:
         # Keep a copy of the old map because we're going to compare it with the update
         old_map = self.map.copy()
         old_widgets = old_map.keys()
-        map, widgets = self._arrange_root(parent, size)
+
+        with timer("arrange"):
+            map, widgets = self._arrange_root(parent, size)
 
         new_widgets = map.keys()
 
@@ -268,10 +271,12 @@ class Compositor:
 
         screen = size.region
 
+        changes = map.items() ^ old_map.items()
+
         # Widgets with changed size
         resized_widgets = {
             widget
-            for widget, (region, *_) in map.items()
+            for widget, (region, *_) in changes
             if widget in old_widgets and old_map[widget].region.size != region.size
         }
 
@@ -279,7 +284,6 @@ class Compositor:
         # i.e. if something is moved / deleted / added
 
         if screen not in self._dirty_regions:
-            changes = map.items() ^ old_map.items()
             regions = {
                 region
                 for region in (
