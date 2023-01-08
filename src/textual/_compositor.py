@@ -269,11 +269,14 @@ class Compositor:
         # Contains widgets + geometry for every widget that changed (added, removed, or updated)
         changes = map.items() ^ old_map.items()
 
+        # Widgets in both new and old
+        common_widgets = old_widgets & new_widgets
+
         # Widgets with changed size
         resized_widgets = {
             widget
             for widget, (region, *_) in changes
-            if widget in old_widgets and old_map[widget].region.size != region.size
+            if widget in common_widgets and old_map[widget].region.size != region.size
         }
 
         screen_region = size.region
