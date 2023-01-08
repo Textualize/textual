@@ -1,6 +1,6 @@
 ---
-draft: true
-date: 2023-01-07
+draft: false
+date: 2023-01-08
 categories:
   - DevLog
 authors:
@@ -24,14 +24,14 @@ As of the time of writing, I'm a handful of days off having been with
 Textualize for 3 months. It's been fun, and educational, and every bit as
 engaging as I'd hoped, and more. One thing I hadn't quite prepared for
 though, but which I really love, is how so many other people are learning
-Textual along with me!
+Textual along with me.
 
 <!-- more -->
 
 Even in those three months the library has changed and expanded quite a lot,
-and it continues to do so. Meanwhile, more and more people are turning up
-and using the framework; you can see this online in social media, blogs and
-of course [in the ever-growing list of projects on GitHub which depend on
+and it continues to do so. Meanwhile, more people are turning up and using
+the framework; you can see this online in social media, blogs and of course
+[in the ever-growing list of projects on GitHub which depend on
 Textual](https://github.com/Textualize/textual/network/dependents).
 
 This inevitably means there's a lot of people getting to grips with a new
@@ -52,7 +52,7 @@ anyone who wishes to take it. It's not Textual (the project) or Textualize
 take on how best to go about asking for help, informed by years of asking
 for and also providing help in email, on Usenet, on forums, etc.
 
-Or, put another way, if what you read in here seems sensible to you, I
+Or, put another way: if what you read in here seems sensible to you, I
 figure we'll likely have already hit it off over on GitHub or in the Discord
 sever. ;-)
 
@@ -79,12 +79,7 @@ missed. If something catches my eye, I'll try and reply, but if it
 doesn't... well, it's mostly an instant chat thing so I don't dive too
 deeply back in time.
 
-My own advice would be to treat Discord as an ephemeral resource. It happens
-in the moment but fades away pretty quickly. It's like knocking on a
-friend's door to see if they're in. If they're not in, you might leave them
-a note, which is sort of like going to...
-
-!!! note
+!!! tip inline end "Going from Discord to a GitHub issue"
 
     As a slight aside here: sometimes people will pop up in Discord, ask a
     question about something that turns out looking like a bug, and that's
@@ -92,6 +87,11 @@ a note, which is sort of like going to...
     most helpful thing you can do is go raise an issue for us. It'll help us
     to keep track of problems, it'll help get your problem fixed, it'll mean
     everyone benefits.
+
+My own advice would be to treat Discord as an ephemeral resource. It happens
+in the moment but fades away pretty quickly. It's like knocking on a
+friend's door to see if they're in. If they're not in, you might leave them
+a note, which is sort of like going to...
 
 ### GitHub
 
@@ -214,9 +214,9 @@ Of course the aim is to have every release of Textual be stable and useful,
 but things will break. So, please, do keep in mind things like:
 
 - Textual likely doesn't have your feature of choice just yet.
-- Might accidentally break something (perhaps pinning Textual and testing
+- We might accidentally break something (perhaps pinning Textual and testing
   each release is a good plan here?).
-- Might deliberately break something because we've decided to take a
+- We might deliberately break something because we've decided to take a
   particular feature or way of doing things in a better direction.
 
 Of course it can be a bit frustrating a times, but overall the aim is to
@@ -268,9 +268,9 @@ Again, I'm going to speak totally for myself here, but I also feel the
 general case is polite for all: there's a lot of good support resources
 available already; sending DMs on Discord or Twitter or in the Fediverse,
 looking for direct personal support, isn't really the best way to get help.
-Using those resources is absolutely the *best* way to get that help. Why's
-it a bad idea to dive into DMs? Here's some reasons I think it's not a good
-idea:
+Using the public/collective resources is absolutely the *best* way to get
+that help. Why's it a bad idea to dive into DMs? Here's some reasons I think
+it's not a good idea:
 
 - It's a variation on "unnecessarily tagging individuals".
 - You're short-changing yourself when it comes to getting help. If you ask
@@ -286,11 +286,12 @@ idea:
 
 #### Doubt your ability or skill level
 
-I suppose this should really be a do rather than a don't, as here I want to
-encourage something positive. A few times I've helped people out who have
-been very apologetic about their questions being "noob" questions, or about
-how they're fairly new to Python, or programming in general. Really, please,
-don't feel the need to apologise and don't be ashamed of where you're at.
+I suppose this should really be phrased as a do rather than a don't, as here
+I want to encourage something positive. A few times I've helped people out
+who have been very apologetic about their questions being "noob" questions,
+or about how they're fairly new to Python, or programming in general.
+Really, please, don't feel the need to apologise and don't be ashamed of
+where you're at.
 
 If you've asked something that's obviously answered in the documentation,
 that's not a problem; you'll likely get pointed at the docs and it's what
@@ -299,6 +300,8 @@ exactly what I needed to be reading, thanks!"* that's a really positive
 thing. The only time it's a problem is when there's a real reluctance to use
 the available resources. We've all seen that person somewhere at some point,
 right? ;-)
+
+Not knowing things [is totally cool](https://xkcd.com/1053/).
 
 ## Conclusion
 
