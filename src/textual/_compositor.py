@@ -344,6 +344,7 @@ class Compositor:
             layer_order: int,
             clip: Region,
             visible: bool,
+            _MapGeometry=MapGeometry,
         ) -> None:
             """Called recursively to place a widget and its children in the map.
 
@@ -413,12 +414,15 @@ class Compositor:
                                 widget_region = sub_region + placement_offset
                             else:
                                 total_region = total_region.union(
-                                    sub_region.grow(spacing).grow(margin)
+                                    sub_region.grow(spacing + margin)
                                 )
                                 widget_region = sub_region + placement_scroll_offset
 
-                            widget_order = order + (
-                                (get_layer_index(sub_widget.layer, 0), z, layer_order),
+                            widget_order = (
+                                *order,
+                                get_layer_index(sub_widget.layer, 0),
+                                z,
+                                layer_order,
                             )
 
                             add_widget(
@@ -437,7 +441,7 @@ class Compositor:
                     for chrome_widget, chrome_region in widget._arrange_scrollbars(
                         container_region
                     ):
-                        map[chrome_widget] = MapGeometry(
+                        map[chrome_widget] = _MapGeometry(
                             chrome_region + layout_offset,
                             order,
                             clip,
@@ -446,7 +450,7 @@ class Compositor:
                             chrome_region,
                         )
 
-                    map[widget] = MapGeometry(
+                    map[widget] = _MapGeometry(
                         region + layout_offset,
                         order,
                         clip,
@@ -457,7 +461,7 @@ class Compositor:
 
             elif visible:
                 # Add the widget to the map
-                map[widget] = MapGeometry(
+                map[widget] = _MapGeometry(
                     region + layout_offset,
                     order,
                     clip,
