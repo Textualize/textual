@@ -4,6 +4,7 @@ from textual.widget import Widget
 from textual.widgets import Static, Button
 from textual.containers import Container
 
+
 async def test_remove_single_widget():
     """It should be possible to the only widget on a screen."""
     async with App().run_test() as pilot:
@@ -11,6 +12,7 @@ async def test_remove_single_widget():
         assert len(pilot.app.screen.children) == 1
         await pilot.app.query_one(Static).remove()
         assert len(pilot.app.screen.children) == 0
+
 
 async def test_many_remove_all_widgets():
     """It should be possible to remove all widgets on a multi-widget screen."""
@@ -20,6 +22,7 @@ async def test_many_remove_all_widgets():
         await pilot.app.query(Static).remove()
         assert len(pilot.app.screen.children) == 0
 
+
 async def test_many_remove_some_widgets():
     """It should be possible to remove some widgets on a multi-widget screen."""
     async with App().run_test() as pilot:
@@ -28,79 +31,42 @@ async def test_many_remove_some_widgets():
         await pilot.app.query(".is-0").remove()
         assert len(pilot.app.screen.children) == 5
 
+
 async def test_remove_branch():
     """It should be possible to remove a whole branch in the DOM."""
     async with App().run_test() as pilot:
         await pilot.app.mount(
-            Container(
-                Container(
-                    Container(
-                        Container(
-                            Container(
-                                Static()
-                            )
-                        )
-                    )
-                )
-            ),
+            Container(Container(Container(Container(Container(Static()))))),
             Static(),
-            Container(
-                Container(
-                    Container(
-                        Container(
-                            Container(
-                                Static()
-                            )
-                        )
-                    )
-                )
-            ),
+            Container(Container(Container(Container(Container(Static()))))),
         )
         assert len(pilot.app.screen.walk_children(with_self=False)) == 13
         await pilot.app.screen.children[0].remove()
         assert len(pilot.app.screen.walk_children(with_self=False)) == 7
 
+
 async def test_remove_overlap():
     """It should be possible to remove an overlapping collection of widgets."""
     async with App().run_test() as pilot:
         await pilot.app.mount(
-            Container(
-                Container(
-                    Container(
-                        Container(
-                            Container(
-                                Static()
-                            )
-                        )
-                    )
-                )
-            ),
+            Container(Container(Container(Container(Container(Static()))))),
             Static(),
-            Container(
-                Container(
-                    Container(
-                        Container(
-                            Container(
-                                Static()
-                            )
-                        )
-                    )
-                )
-            ),
+            Container(Container(Container(Container(Container(Static()))))),
         )
         assert len(pilot.app.screen.walk_children(with_self=False)) == 13
         await pilot.app.query(Container).remove()
         assert len(pilot.app.screen.walk_children(with_self=False)) == 1
 
+
 async def test_remove_move_focus():
     """Removing a focused widget should settle focus elsewhere."""
     async with App().run_test() as pilot:
-        buttons = [ Button(str(n)) for n in range(10)]
+        buttons = [Button(str(n)) for n in range(10)]
         await pilot.app.mount(Container(*buttons[:5]), Container(*buttons[5:]))
         assert len(pilot.app.screen.children) == 2
         assert len(pilot.app.screen.walk_children(with_self=False)) == 12
         assert pilot.app.focused is None
-        await pilot.press( "tab" )
+        await pilot.press("tab")
         assert pilot.app.focused is not None
         assert pilot.app.focused == buttons[0]
         await pilot.app.screen.children[0].remove()
@@ -109,13 +75,14 @@ async def test_remove_move_focus():
         assert pilot.app.focused is not None
         assert pilot.app.focused == buttons[9]
 
+
 async def test_widget_remove_order():
     """A Widget.remove of a top-level widget should cause bottom-first removal."""
 
     removals: list[str] = []
 
     class Removable(Container):
-        def on_unmount( self, _ ):
+        def on_unmount(self, _):
             removals.append(self.id if self.id is not None else "unknown")
 
     async with App().run_test() as pilot:
@@ -127,13 +94,14 @@ async def test_widget_remove_order():
         assert len(pilot.app.screen.walk_children(with_self=False)) == 0
         assert removals == ["grandchild", "child", "parent"]
 
+
 async def test_query_remove_order():
     """A DOMQuery.remove of a top-level widget should cause bottom-first removal."""
 
     removals: list[str] = []
 
     class Removable(Container):
-        def on_unmount( self, _ ):
+        def on_unmount(self, _):
             removals.append(self.id if self.id is not None else "unknown")
 
     async with App().run_test() as pilot:
