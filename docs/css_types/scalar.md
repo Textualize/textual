@@ -77,12 +77,14 @@ So, if the container has a height of 100 cells, the width and the height of the 
 ### Viewport width
 
 This is the same as the [width unit](#width), except that it is relative to the width of the viewport instead of the width of the immediate container.
+The width of the viewport is the width of the terminal minus the widths of widgets that are docked left or right.
 
 For example, `width: 25vw` will try to set the width of a widget to be 25% of the viewport width, regardless of the widths of its containers.
 
 ### Viewport height
 
 This is the same as the [height unit](#height), except that it is relative to the height of the viewport instead of the height of the immediate container.
+The height of the viewport is the height of the terminal minus the heights of widgets that are docked top or bottom.
 
 For example, `height: 75vh` will try to set the height of a widget to be 75% of the viewport height, regardless of the height of its containers.
 
