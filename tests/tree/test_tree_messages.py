@@ -16,7 +16,6 @@ class TreeApp(App[None]):
         yield Tree[None]("Root")
 
     def on_mount(self) -> None:
-        """"""
         self.query_one(Tree[None]).root.add("Child")
         self.query_one(Tree[None]).focus()
 
