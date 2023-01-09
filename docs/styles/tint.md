@@ -41,7 +41,7 @@ tint: red 20%
 tint: rgba(0, 200, 0, 0.3);
 ```
 
-# Python
+## Python
 
 ```python
 # A red tint

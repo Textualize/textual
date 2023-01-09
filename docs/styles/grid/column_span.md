@@ -1,6 +1,6 @@
 # Column-span
 
-The `column-span` style specifies how many rows a widget will span in a grid layout.
+The `column-span` style specifies how many columns a widget will span in a grid layout.
 
 !!! note
 
