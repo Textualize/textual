@@ -19,6 +19,11 @@ display: block | none;
 
 Note that the second widget is hidden by adding the `"remove"` class which sets the display style to `none`.
 
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/display.py"}
+    ```
+
 === "display.py"
 
     ```python
@@ -29,11 +34,6 @@ Note that the second widget is hidden by adding the `"remove"` class which sets 
 
     ```sass
     --8<-- "docs/examples/styles/display.css"
-    ```
-
-=== "Output"
-
-    ```{.textual path="docs/examples/styles/display.py"}
     ```
 
 ## CSS

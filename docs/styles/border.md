@@ -58,6 +58,11 @@ Alternatively, you can see the examples below.
 
 This examples shows three widgets with different border styles.
 
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/border.py"}
+    ```
+
 === "border.py"
 
     ```python
@@ -70,14 +75,14 @@ This examples shows three widgets with different border styles.
     --8<-- "docs/examples/styles/border.css"
     ```
 
-=== "Output"
-
-    ```{.textual path="docs/examples/styles/border.py"}
-    ```
-
 ### All border types
 
 The next example shows a grid with all the available border types.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/border_all.py"}
+    ```
 
 === "border_all.py"
 
@@ -89,11 +94,6 @@ The next example shows a grid with all the available border types.
 
     ```sass
     --8<-- "docs/examples/styles/border_all.css"
-    ```
-
-=== "Output"
-
-    ```{.textual path="docs/examples/styles/border_all.py"}
     ```
 
 ### Borders and outlines

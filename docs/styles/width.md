@@ -17,6 +17,11 @@ By default, it sets the width of the content area, but if [`box-sizing`](./box_s
 
 This example adds a widget with 50% width of the screen.
 
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/width.py"}
+    ```
+
 === "width.py"
 
     ```python
@@ -27,11 +32,6 @@ This example adds a widget with 50% width of the screen.
 
     ```sass
     --8<-- "docs/examples/styles/width.css"
-    ```
-
-=== "Output"
-
-    ```{.textual path="docs/examples/styles/width.py"}
     ```
 
 ### All width formats

@@ -14,6 +14,11 @@ The tint rule blends a [`<color>`](../css_types/color.md) with the widget. The c
 
 This examples shows a green tint with gradually increasing alpha.
 
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/tint.py"}
+    ```
+
 === "tint.py"
 
     ```python
@@ -24,11 +29,6 @@ This examples shows a green tint with gradually increasing alpha.
 
     ```sass
     --8<-- "docs/examples/styles/tint.css"
-    ```
-
-=== "Output"
-
-    ```{.textual path="docs/examples/styles/tint.py"}
     ```
 
 ## CSS
