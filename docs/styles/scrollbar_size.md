@@ -19,6 +19,8 @@ The scrollbar widths may also be set individually with `scrollbar-size-horizonta
 
 ## Examples
 
+### Basic usage
+
 In this example we modify the size of the widget's scrollbar to be _much_ larger than usual.
 
 === "Output"
@@ -37,6 +39,8 @@ In this example we modify the size of the widget's scrollbar to be _much_ larger
     ```sass hl_lines="13"
     --8<-- "docs/examples/styles/scrollbar_size.css"
     ```
+
+### Scrollbar sizes comparison
 
 In the next example we show three containers with differently sized scrollbars.
 

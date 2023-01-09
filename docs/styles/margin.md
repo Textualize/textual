@@ -34,6 +34,8 @@ Alternatively, margin can be set for each edge individually through the rules `m
 
 ## Examples
 
+### Basic usage
+
 In the example below we add a large margin to a label, which makes it move away from the top-left corner of the screen.
 
 === "Output"
@@ -52,6 +54,8 @@ In the example below we add a large margin to a label, which makes it move away 
     ```sass
     --8<-- "docs/examples/styles/margin.css"
     ```
+
+### All margin settings
 
 The next example shows a grid.
 In each cell, we have a placeholder that has its margins set in different ways.

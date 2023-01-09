@@ -23,6 +23,8 @@ To specify alignment on a single axis, use the respective style and type:
 
 ## Examples
 
+### Basic usage
+
 This example contains a simple app with two labels centered on the screen with `align: center middle;`:
 
 === "align.py"
@@ -42,6 +44,8 @@ This example contains a simple app with two labels centered on the screen with `
     ```{.textual path="docs/examples/styles/align.py"}
 
     ```
+
+### All alignments
 
 The next example shows a 3 by 3 grid of containers with text labels.
 Each label has been aligned differently inside its container, and its text shows its `align: ...` value.

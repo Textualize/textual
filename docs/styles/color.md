@@ -14,6 +14,8 @@ Instead of a [`<color>`](../../css_types/color), one can use the special value `
 
 ## Examples
 
+### Basic usage
+
 This example sets a different text color for each of three different widgets.
 
 === "color.py"
@@ -32,6 +34,8 @@ This example sets a different text color for each of three different widgets.
 
     ```{.textual path="docs/examples/styles/color.py"}
     ```
+
+### Auto
 
 The next example shows how `auto` chooses between a lighter or a darker text color to increase the contrast and improve readability.
 

@@ -30,6 +30,8 @@ This is shown in the second example below.
 
 ## Examples
 
+### Basic usage
+
 Note that the second widget is hidden, while leaving a space where it would have been rendered.
 
 === "Output"
@@ -48,6 +50,8 @@ Note that the second widget is hidden, while leaving a space where it would have
     ```sass
     --8<-- "docs/examples/styles/visibility.css"
     ```
+
+### Overriding container visibility
 
 The next example shows the interaction of the `visibility` rule with invisible containers that have visible children.
 The app below has three rows with a `Horizontal` container per row and three placeholders per row.

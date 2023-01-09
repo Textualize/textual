@@ -12,6 +12,8 @@ The style `background` needs a [`<color>`](../../css_types/color) followed by an
 
 ## Examples
 
+### Basic usage
+
 This example creates three widgets and applies a different background to each.
 
 === "background.py"
@@ -30,6 +32,8 @@ This example creates three widgets and applies a different background to each.
 
     ```{.textual path="docs/examples/styles/background.py"}
     ```
+
+### Different transparency settings
 
 The next example creates ten widgets layed out side by side to show the effect of setting different percentages for the transparency of the background color.
 

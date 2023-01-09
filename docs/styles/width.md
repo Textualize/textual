@@ -13,6 +13,8 @@ By default, it sets the width of the content area, but if [`box-sizing`](./box_s
 
 ## Examples
 
+### Basic usage
+
 This example adds a widget with 50% width of the screen.
 
 === "width.py"
@@ -32,8 +34,7 @@ This example adds a widget with 50% width of the screen.
     ```{.textual path="docs/examples/styles/width.py"}
     ```
 
----
-
+### All width formats
 
 === "Output"
 

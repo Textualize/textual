@@ -24,6 +24,8 @@ To specify content alignment on a single axis, use the respective style and type
 
 ## Examples
 
+### Basic usage
+
 This first example shows three labels stacked vertically, each with different content alignments.
 
 === "content_align.py"
@@ -42,6 +44,8 @@ This first example shows three labels stacked vertically, each with different co
 
     ```{.textual path="docs/examples/styles/content_align.py"}
     ```
+
+### All content alignments
 
 The next example shows a 3 by 3 grid of labels.
 Each label has its text aligned differently.
