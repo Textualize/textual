@@ -20,10 +20,6 @@ The style `grid-gutter` takes one or two [`<scalar>`](../../../css_types/scalar)
 If only one [`<scalar>`](../../../css_types/scalar) is supplied, it sets the vertical and horizontal gutters.
 If two are supplied, they set the vertical and horizontal gutters, respectively.
 
-### Values
-
---8<-- "docs/snippets/type_syntax/scalar.md"
-
 ## Example
 
 The example below employs a common trick to apply visually consistent spacing around all grid cells.

@@ -10,16 +10,6 @@ The `scrollbar-corner-color` sets the color of the gap between the horizontal an
 
 `scrollbar-corner-color` accepts a [`<color>`](../../../css_types/color) (with an optional transparency level defined by a [`<percentage>`](../../../css_types/percentage)) that is used to define the color of the gap between the horizontal and vertical scrollbars of a widget.
 
-### Values
-
-#### &lt;color&gt;
-
---8<-- "docs/snippets/type_syntax/color.md"
-
-#### &lt;percentage&gt;
-
---8<-- "docs/snippets/type_syntax/percentage.md"
-
 ## Example
 
 The example below sets the scrollbar corner (bottom-right corner of the screen) to white.

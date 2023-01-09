@@ -31,17 +31,6 @@ For an in-depth look at the grid layout, visit the grid [guide](../guide/layout.
 
 Visit each style's reference page to learn more about how the values are used.
 
-
-### Values
-
-#### &lt;integer&gt;
-
---8<-- "docs/snippets/type_syntax/integer.md"
-
-#### &lt;scalar&gt;
-
---8<-- "docs/snippets/type_syntax/scalar.md"
-
 ## Example
 
 The example below shows all the properties above in action.

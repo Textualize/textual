@@ -33,16 +33,6 @@ You won't typically need to do this, as the default themes have carefully chosen
 
 Visit each style's reference page to learn more about how the values are used.
 
-### Values
-
-#### &lt;color&gt;
-
---8<-- "docs/snippets/type_syntax/color.md"
-
-#### &lt;percentage&gt;
-
---8<-- "docs/snippets/type_syntax/percentage.md"
-
 ## Example
 
 This example shows two planels that contain oversized text.
