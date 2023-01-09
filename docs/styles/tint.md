@@ -22,7 +22,7 @@ This examples shows a green tint with gradually increasing alpha.
 
 === "tint.css"
 
-    ```css
+    ```sass
     --8<-- "docs/examples/styles/tint.css"
     ```
 

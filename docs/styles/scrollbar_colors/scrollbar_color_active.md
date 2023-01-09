@@ -39,13 +39,13 @@ The `scrollbar-color-active` sets the color of the scrollbar when the thumb is b
 
 === "scrollbars2.css"
 
-    ```css hl_lines="6"
+    ```sass hl_lines="6"
     --8<-- "docs/examples/styles/scrollbars2.css"
     ```
 
 ## CSS
 
-```css
+```sass
 scrollbar-color-active: yellow;
 ```
 

@@ -48,7 +48,7 @@ The labels will remain in that position (docked) even if the container they are 
 
 === "dock_all.css"
 
-    ```css hl_lines="2-5 8-11 14-17 20-23"
+    ```sass hl_lines="2-5 8-11 14-17 20-23"
     --8<-- "docs/examples/styles/dock_all.css"
     ```
 

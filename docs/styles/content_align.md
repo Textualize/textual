@@ -34,7 +34,7 @@ This first example shows three labels stacked vertically, each with different co
 
 === "content_align.css"
 
-    ```scss hl_lines="2 7-8 13"
+    ```sass hl_lines="2 7-8 13"
     --8<-- "docs/examples/styles/content_align.css"
     ```
 
@@ -54,7 +54,7 @@ Each label has its text aligned differently.
 
 === "content_align_all.css"
 
-    ```css
+    ```sass
     --8<-- "docs/examples/styles/content_align_all.css"
     ```
 

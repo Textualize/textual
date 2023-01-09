@@ -29,7 +29,7 @@ Then, we set `min-width` individually on each placeholder.
 
 === "min_width.css"
 
-    ```css hl_lines="13"
+    ```sass hl_lines="13"
     --8<-- "docs/examples/styles/min_width.css"
     ```
 

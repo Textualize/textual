@@ -39,13 +39,13 @@ The `scrollbar-color-hover` sets the color of the scrollbar when the cursor is o
 
 === "scrollbars2.css"
 
-    ```css hl_lines="7"
+    ```sass hl_lines="7"
     --8<-- "docs/examples/styles/scrollbars2.css"
     ```
 
 ## CSS
 
-```css
+```sass
 scrollbar-color-hover: pink;
 ```
 

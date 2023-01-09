@@ -49,7 +49,7 @@ In the example below we add a large margin to a label, which makes it move away 
 
 === "margin.css"
 
-    ```css
+    ```sass
     --8<-- "docs/examples/styles/margin.css"
     ```
 

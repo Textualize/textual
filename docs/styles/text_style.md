@@ -27,7 +27,7 @@ Each of the three text panels has a different text style, respectively `bold`, `
 
 === "text_style.css"
 
-    ```css
+    ```sass
     --8<-- "docs/examples/styles/text_style.css"
     ```
 
@@ -46,7 +46,7 @@ The next example shows all different styles on their own, as well as some combin
 
 === "text_style_all.css"
 
-    ```css
+    ```sass
     --8<-- "docs/examples/styles/text_style_all.css"
     ```
 

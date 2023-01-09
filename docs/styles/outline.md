@@ -39,7 +39,7 @@ This example shows a widget with an outline. Note how the outline occludes the t
 
 === "outline.css"
 
-    ```css
+    ```sass
     --8<-- "docs/examples/styles/outline.css"
     ```
 
@@ -60,7 +60,7 @@ This example also shows that a widget can contain both a `border` and an `outlin
 
 === "outline_vs_border.css"
 
-    ```css
+    ```sass
     --8<-- "docs/examples/styles/outline_vs_border.css"
     ```
 

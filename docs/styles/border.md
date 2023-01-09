@@ -64,7 +64,7 @@ This examples shows three widgets with different border styles.
 
 === "border.css"
 
-    ```css
+    ```sass
     --8<-- "docs/examples/styles/border.css"
     ```
 
@@ -83,7 +83,7 @@ The next example shows a grid with all the available border types.
 
 === "border_all.css"
 
-    ```css
+    ```sass
     --8<-- "docs/examples/styles/border_all.css"
     ```
 

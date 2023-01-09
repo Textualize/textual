@@ -30,7 +30,7 @@ This example shows, from top to bottom, increasing `text-opacity` values.
 
 === "text_opacity.css"
 
-    ```css
+    ```sass
     --8<-- "docs/examples/styles/text_opacity.css"
     ```
 

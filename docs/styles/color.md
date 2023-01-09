@@ -24,7 +24,7 @@ This example sets a different text color for each of three different widgets.
 
 === "color.css"
 
-    ```css
+    ```sass
     --8<-- "docs/examples/styles/color.css"
     ```
 
@@ -43,7 +43,7 @@ The next example shows how `auto` chooses between a lighter or a darker text col
 
 === "color_auto.css"
 
-    ```css hl_lines="2"
+    ```sass hl_lines="2"
     --8<-- "docs/examples/styles/color_auto.css"
     ```
 

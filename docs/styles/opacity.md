@@ -26,7 +26,7 @@ When the opacity is zero, all we see is the (black) background.
 
 === "opacity.css"
 
-    ```scss
+    ```sass
     --8<-- "docs/examples/styles/opacity.css"
     ```
 

@@ -38,13 +38,13 @@ The `scrollbar-background` sets the background color of the scrollbar.
 
 === "scrollbars2.css"
 
-    ```css hl_lines="2"
+    ```sass hl_lines="2"
     --8<-- "docs/examples/styles/scrollbars2.css"
     ```
 
 ## CSS
 
-```css
+```sass
 scrollbar-backround: blue;
 ```
 

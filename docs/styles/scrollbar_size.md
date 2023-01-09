@@ -34,7 +34,7 @@ In this example we modify the size of the widget's scrollbar to be _much_ larger
 
 === "scrollbar_size.css"
 
-    ```css hl_lines="13"
+    ```sass hl_lines="13"
     --8<-- "docs/examples/styles/scrollbar_size.css"
     ```
 
@@ -53,7 +53,7 @@ In the next example we show three containers with differently sized scrollbars.
 
 === "scrollbar_size2.css"
 
-    ```css hl_lines="6 11 16"
+    ```sass hl_lines="6 11 16"
     --8<-- "docs/examples/styles/scrollbar_size2.css"
     ```
 
