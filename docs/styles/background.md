@@ -16,6 +16,11 @@ The style `background` needs a [`<color>`](../../css_types/color) followed by an
 
 This example creates three widgets and applies a different background to each.
 
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/background.py"}
+    ```
+
 === "background.py"
 
     ```python
@@ -28,14 +33,14 @@ This example creates three widgets and applies a different background to each.
     --8<-- "docs/examples/styles/background.css"
     ```
 
-=== "Output"
-
-    ```{.textual path="docs/examples/styles/background.py"}
-    ```
-
 ### Different transparency settings
 
 The next example creates ten widgets layed out side by side to show the effect of setting different percentages for the transparency of the background color.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/background_transparency.py"}
+    ```
 
 === "background_transparency.py"
 
@@ -47,11 +52,6 @@ The next example creates ten widgets layed out side by side to show the effect o
 
     ```sass
     --8<-- "docs/examples/styles/background_transparency.css"
-    ```
-
-=== "Output"
-
-    ```{.textual path="docs/examples/styles/background_transparency.py"}
     ```
 
 ## CSS

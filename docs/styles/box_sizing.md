@@ -21,6 +21,11 @@ Both widgets in this example have the same height (5).
 The top widget has `box-sizing: border-box` which means that padding and border reduce the space for content.
 The bottom widget has `box-sizing: content-box` which increases the size of the widget to compensate for padding and border.
 
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/box_sizing.py"}
+    ```
+
 === "box_sizing.py"
 
     ```python
@@ -31,11 +36,6 @@ The bottom widget has `box-sizing: content-box` which increases the size of the 
 
     ```sass
     --8<-- "docs/examples/styles/box_sizing.css"
-    ```
-
-=== "Output"
-
-    ```{.textual path="docs/examples/styles/box_sizing.py"}
     ```
 
 ## CSS

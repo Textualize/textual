@@ -18,6 +18,11 @@ Instead of a [`<color>`](../../css_types/color), one can use the special value `
 
 This example sets a different text color for each of three different widgets.
 
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/color.py"}
+    ```
+
 === "color.py"
 
     ```python
@@ -30,14 +35,14 @@ This example sets a different text color for each of three different widgets.
     --8<-- "docs/examples/styles/color.css"
     ```
 
-=== "Output"
-
-    ```{.textual path="docs/examples/styles/color.py"}
-    ```
-
 ### Auto
 
 The next example shows how `auto` chooses between a lighter or a darker text color to increase the contrast and improve readability.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/color_auto.py"}
+    ```
 
 === "color_auto.py"
 
@@ -49,11 +54,6 @@ The next example shows how `auto` chooses between a lighter or a darker text col
 
     ```sass hl_lines="2"
     --8<-- "docs/examples/styles/color_auto.css"
-    ```
-
-=== "Output"
-
-    ```{.textual path="docs/examples/styles/color_auto.py"}
     ```
 
 ## CSS

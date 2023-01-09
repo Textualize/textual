@@ -28,6 +28,11 @@ To specify content alignment on a single axis, use the respective style and type
 
 This first example shows three labels stacked vertically, each with different content alignments.
 
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/content_align.py"}
+    ```
+
 === "content_align.py"
 
     ```python
@@ -40,15 +45,15 @@ This first example shows three labels stacked vertically, each with different co
     --8<-- "docs/examples/styles/content_align.css"
     ```
 
-=== "Output"
-
-    ```{.textual path="docs/examples/styles/content_align.py"}
-    ```
-
 ### All content alignments
 
 The next example shows a 3 by 3 grid of labels.
 Each label has its text aligned differently.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/content_align_all.py"}
+    ```
 
 === "content_align_all.py"
 
@@ -60,11 +65,6 @@ Each label has its text aligned differently.
 
     ```sass
     --8<-- "docs/examples/styles/content_align_all.css"
-    ```
-
-=== "Output"
-
-    ```{.textual path="docs/examples/styles/content_align_all.py"}
     ```
 
 ## CSS

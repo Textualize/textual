@@ -57,6 +57,11 @@ This example shows a widget with an outline. Note how the outline occludes the t
 
 The next example shows a grid with all the available outline types.
 
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/outline_all.py"}
+    ```
+
 === "outline_all.py"
 
     ```py
@@ -67,11 +72,6 @@ The next example shows a grid with all the available outline types.
 
     ```sass
     --8<-- "docs/examples/styles/outline_all.css"
-    ```
-
-=== "Output"
-
-    ```{.textual path="docs/examples/styles/outline_all.py"}
     ```
 
 ### Borders and outlines

@@ -17,6 +17,11 @@ By default, it sets the height of the content area, but if [`box-sizing`](./box_
 
 This examples creates a widget with a height of 50% of the screen.
 
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/height.py"}
+    ```
+
 === "height.py"
 
     ```python
@@ -27,11 +32,6 @@ This examples creates a widget with a height of 50% of the screen.
 
     ```python
     --8<-- "docs/examples/styles/height.css"
-    ```
-
-=== "Output"
-
-    ```{.textual path="docs/examples/styles/height.py"}
     ```
 
 ### All height formats

@@ -18,6 +18,11 @@ Values outside of these ranges will be clamped.
 This example shows, from top to bottom, increasing opacity values for a label with a border and some text.
 When the opacity is zero, all we see is the (black) background.
 
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/opacity.py"}
+    ```
+
 === "opacity.py"
 
     ```python
@@ -28,11 +33,6 @@ When the opacity is zero, all we see is the (black) background.
 
     ```sass
     --8<-- "docs/examples/styles/opacity.css"
-    ```
-
-=== "Output"
-
-    ```{.textual path="docs/examples/styles/opacity.py"}
     ```
 
 ## CSS

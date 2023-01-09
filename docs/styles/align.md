@@ -27,6 +27,11 @@ To specify alignment on a single axis, use the respective style and type:
 
 This example contains a simple app with two labels centered on the screen with `align: center middle;`:
 
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/align.py"}
+    ```
+
 === "align.py"
 
     ```python
@@ -39,16 +44,15 @@ This example contains a simple app with two labels centered on the screen with `
     --8<-- "docs/examples/styles/align.css"
     ```
 
-=== "Output"
-
-    ```{.textual path="docs/examples/styles/align.py"}
-
-    ```
-
 ### All alignments
 
 The next example shows a 3 by 3 grid of containers with text labels.
 Each label has been aligned differently inside its container, and its text shows its `align: ...` value.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/align_all.py"}
+    ```
 
 === "align_all.py"
 
@@ -60,11 +64,6 @@ Each label has been aligned differently inside its container, and its text shows
 
     ```sass
     --8<-- "docs/examples/styles/align_all.css"
-    ```
-
-=== "Output"
-
-    ```{.textual path="docs/examples/styles/align_all.py"}
     ```
 
 ## CSS
