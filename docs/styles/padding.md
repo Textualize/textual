@@ -33,6 +33,8 @@ Alternatively, padding can be set for each edge individually through the rules `
 
 ## Example
 
+### Basic usage
+
 This example adds padding around some text.
 
 === "Output"
@@ -52,11 +54,34 @@ This example adds padding around some text.
     --8<-- "docs/examples/styles/padding.css"
     ```
 
+### All padding settings
+
+The next example shows a grid.
+In each cell, we have a placeholder that has its padding set in different ways.
+The effect of each padding setting is noticeable in the colored background around the text of each placeholder.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/padding_all.py"}
+    ```
+
+=== "padding_all.py"
+
+    ```py
+    --8<-- "docs/examples/styles/padding_all.py"
+    ```
+
+=== "padding_all.css"
+
+    ```py
+    --8<-- "docs/examples/styles/padding_all.css"
+    ```
+
 ## CSS
 
 ```sass
 /* Set padding of 1 around all edges */
-padding: 1
+padding: 1;
 /* Set padding of 2 on the top and bottom edges, and 4 on the left and right */
 padding: 2 4;
 /* Set padding of 1 on the top, 2 on the right,
@@ -87,4 +112,4 @@ widget.styles.padding = (1, 2, 3, 4)
 ## See also
 
  - [`box-sizing`](./box_sizing.md) to specify how to account for padding in a widget's dimensions.
- - [`margin`](./margin.md) to add spacing around a widget.
+ - [`padding`](./margin.md) to add spacing around a widget.
