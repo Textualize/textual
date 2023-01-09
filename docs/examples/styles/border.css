@@ -1,6 +1,25 @@
+#label1 {
+    background: red 20%;
+    color: red;
+    border: solid red;
+}
+
+#label2 {
+    background: green 20%;
+    color: green;
+    border: dashed green;
+}
+
+#label3 {
+    background: blue 20%;
+    color: blue;
+    border: tall blue;
+}
+
 Screen {
     background: white;
 }
+
 Screen > Label {
     width: 100%;
     height: 5;
@@ -8,19 +27,4 @@ Screen > Label {
     color: white;
     margin: 1;
     box-sizing: border-box;
-}    
-#label1 {
-    background: red 20%;
-    color: red;
-    border: solid red;
-}
-#label2 {
-    background: green 20%;
-    color: green;
-    border: dashed green;
-}
-#label3 {
-    background: blue 20%;
-    color: blue;
-    border: tall blue;
 }

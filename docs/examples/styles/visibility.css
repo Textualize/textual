@@ -1,6 +1,7 @@
 Screen {
     background: green;
 }
+
 Label {
     height: 5;
     width: 100%;
@@ -8,6 +9,7 @@ Label {
     color: blue;
     border: heavy blue;
 }
+
 Label.invisible {
     visibility: hidden;
 }
