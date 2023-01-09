@@ -34,7 +34,8 @@ textual borders
 
 ### Basic usage
 
-This example shows a widget with an outline. Note how the outline occludes the text area.
+This example shows a widget with an outline.
+Note how the outline occludes the text area.
 
 === "Output"
 
@@ -49,7 +50,7 @@ This example shows a widget with an outline. Note how the outline occludes the t
 
 === "outline.css"
 
-    ```sass
+    ```sass hl_lines="8"
     --8<-- "docs/examples/styles/outline.css"
     ```
 
@@ -70,7 +71,7 @@ The next example shows a grid with all the available outline types.
 
 === "outline_all.css"
 
-    ```sass
+    ```sass hl_lines="2 6 10 14 18 22 26 30 34 38 42 46 50 54 58"
     --8<-- "docs/examples/styles/outline_all.css"
     ```
 
@@ -94,7 +95,7 @@ This example also shows that a widget cannot contain both a `border` and an `out
 
 === "outline_vs_border.css"
 
-    ```sass
+    ```sass hl_lines="5-7 9-11"
     --8<-- "docs/examples/styles/outline_vs_border.css"
     ```
 

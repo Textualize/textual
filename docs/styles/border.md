@@ -71,7 +71,7 @@ This examples shows three widgets with different border styles.
 
 === "border.css"
 
-    ```sass
+    ```sass hl_lines="4 10 16"
     --8<-- "docs/examples/styles/border.css"
     ```
 
@@ -86,7 +86,7 @@ The next example shows a grid with all the available border types.
 
 === "border_all.py"
 
-    ```py
+    ```py hl_lines="2 6 10 14 18 22 26 30 34 38 42 46 50 54 58"
     --8<-- "docs/examples/styles/border_all.py"
     ```
 
@@ -116,7 +116,7 @@ This example also shows that a widget cannot contain both a `border` and an `out
 
 === "outline_vs_border.css"
 
-    ```sass
+    ```sass hl_lines="5-7 9-11"
     --8<-- "docs/examples/styles/outline_vs_border.css"
     ```
 

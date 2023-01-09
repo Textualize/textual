@@ -31,14 +31,14 @@ The example below shows a 4 by 4 grid where many placeholders span over several 
 
 === "column_span.css"
 
-    ```sass
+    ```sass hl_lines="2 5 8 11 14 20"
     --8<-- "docs/examples/styles/column_span.css"
     ```
 
 ## CSS
 
 ```sass
-column-span: 3
+column-span: 3;
 ```
 
 ## Python

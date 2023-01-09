@@ -31,7 +31,7 @@ When the opacity is zero, all we see is the (black) background.
 
 === "opacity.css"
 
-    ```sass
+    ```sass hl_lines="2 6 10 14 18"
     --8<-- "docs/examples/styles/opacity.css"
     ```
 
@@ -39,9 +39,7 @@ When the opacity is zero, all we see is the (black) background.
 
 ```sass
 /* Fade the widget to 50% against its parent's background */
-Widget {
-    opacity: 50%;
-}
+opacity: 50%;
 ```
 
 ## Python

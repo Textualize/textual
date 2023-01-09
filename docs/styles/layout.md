@@ -38,7 +38,7 @@ To learn more about the grid layout, you can see the [layout guide](../guide/lay
 
 === "layout.css"
 
-    ```sass
+    ```sass hl_lines="2 8"
     --8<-- "docs/examples/styles/layout.css"
     ```
 

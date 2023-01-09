@@ -37,7 +37,7 @@ The example below employs a common trick to apply visually consistent spacing ar
 
 === "grid_gutter.css"
 
-    ```sass
+    ```sass hl_lines="3"
     --8<-- "docs/examples/styles/grid_gutter.css"
     ```
 

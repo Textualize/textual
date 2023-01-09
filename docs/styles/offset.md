@@ -32,7 +32,7 @@ In this example, we have 3 widgets with differing offsets.
 
 === "offset.css"
 
-    ```sass
+    ```sass hl_lines="13 20 27"
     --8<-- "docs/examples/styles/offset.css"
     ```
 

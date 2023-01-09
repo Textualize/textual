@@ -47,7 +47,7 @@ Note that the second widget is hidden, while leaving a space where it would have
 
 === "visibility.css"
 
-    ```sass
+    ```sass hl_lines="14"
     --8<-- "docs/examples/styles/visibility.css"
     ```
 

@@ -34,7 +34,7 @@ The bottom widget has `box-sizing: content-box` which increases the size of the 
 
 === "box_sizing.css"
 
-    ```sass
+    ```sass hl_lines="2 6"
     --8<-- "docs/examples/styles/box_sizing.css"
     ```
 
