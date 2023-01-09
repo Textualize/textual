@@ -6,17 +6,17 @@ TextLog {
     layer: log;
 }
 
-PlayArea { 
-    background: transparent;
+PlayArea {
+    opacity: 0%;
     layer: ball;
-    
+
 }
 Ball {
     layer: ball;
     width: auto;
     height: 1;
     background: $secondary;
-    border: tall $secondary;    
+    border: tall $secondary;
     color: $background;
     box-sizing: content-box;
     text-style: bold;
