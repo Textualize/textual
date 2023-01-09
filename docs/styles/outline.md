@@ -22,6 +22,14 @@ The style `outline` accepts an optional [`<border>`](../../css_types/border) tha
 Unlike the style [`border`](./border.md), the frame of the outline is drawn over the content area of the widget.
 This rule can be useful for temporary emphasis of the content of a widget, if you want to draw the user's attention to it.
 
+## Border command
+
+The `textual` CLI has a subcommand which will let you explore the various border types interactively, when applied to the CSS rule [`border`](../styles/border.md):
+
+```
+textual borders
+```
+
 ## Examples
 
 ### Basic usage
