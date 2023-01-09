@@ -1,6 +1,6 @@
 ---
 draft: false
-date: 2023-01-08
+date: 2023-01-09
 categories:
   - DevLog
 authors:
@@ -20,7 +20,7 @@ authors:
 
     <cite>Juan Sánchez Villalobos Ramírez, Chief metallurgist to King Charles V of Spain</cite>
 
-As of the time of writing, I'm a handful of days off having been with
+As of the time of writing, I'm a couple or so days off having been with
 Textualize for 3 months. It's been fun, and educational, and every bit as
 engaging as I'd hoped, and more. One thing I hadn't quite prepared for
 though, but which I really love, is how so many other people are learning
