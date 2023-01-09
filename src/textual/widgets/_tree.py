@@ -364,6 +364,13 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             TreeNode[EventTreeDataType]: The node that was collapsed.
         """
 
+    class NodeHighlighted(NodeMessage[EventTreeDataType]):
+        """Event sent when a node is highlighted.
+
+        Attributes:
+            TreeNode[EventTreeDataType]: The node that was collapsed.
+        """
+
     def __init__(
         self,
         label: TextType,
@@ -572,6 +579,8 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             self._refresh_node(node)
             node._selected = True
             self._cursor_node = node
+            if previous_node != node:
+                self.post_message_no_wait(self.NodeHighlighted(self, node))
 
     def watch_guide_depth(self, guide_depth: int) -> None:
         self._invalidate()
