@@ -29,7 +29,7 @@ Then, we set `max-height` individually on each placeholder.
 
 === "max_height.css"
 
-    ```sass
+    ```sass hl_lines="12 16 20 24"
     --8<-- "docs/examples/styles/max_height.css"
     ```
 

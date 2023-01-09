@@ -29,7 +29,7 @@ This example creates three widgets and applies a different background to each.
 
 === "background.css"
 
-    ```sass
+    ```sass hl_lines="9 13 17"
     --8<-- "docs/examples/styles/background.css"
     ```
 
@@ -50,7 +50,7 @@ The next example creates ten widgets layed out side by side to show the effect o
 
 === "background_transparency.css"
 
-    ```sass
+    ```sass hl_lines="2 6 10 14 18 22 26 30 34 38"
     --8<-- "docs/examples/styles/background_transparency.css"
     ```
 
@@ -64,10 +64,10 @@ background: blue;
 background: red 20%;
 
 /* RGB color */
-background: rgb(100,120,200);
+background: rgb(100, 120, 200);
 
 /* HSL color */
-background: hsl(290,70%,80%);
+background: hsl(290, 70%, 80%);
 ```
 
 ## Python

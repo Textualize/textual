@@ -61,7 +61,7 @@ Each label has been aligned differently inside its container, and its text shows
 
 === "align_all.css"
 
-    ```sass
+    ```sass hl_lines="2 6 10 14 18 22 26 30 34"
     --8<-- "docs/examples/styles/align_all.css"
     ```
 

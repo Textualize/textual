@@ -51,7 +51,7 @@ In the example below we add a large margin to a label, which makes it move away 
 
 === "margin.css"
 
-    ```sass
+    ```sass hl_lines="7"
     --8<-- "docs/examples/styles/margin.css"
     ```
 
@@ -73,7 +73,7 @@ In each cell, we have a placeholder that has its margins set in different ways.
 
 === "margin_all.css"
 
-    ```py
+    ```sass hl_lines="25 29 33 37 41 45 49 53"
     --8<-- "docs/examples/styles/margin_all.css"
     ```
 
@@ -81,7 +81,7 @@ In each cell, we have a placeholder that has its margins set in different ways.
 
 ```sass
 /* Set margin of 1 around all edges */
-margin: 1
+margin: 1;
 /* Set margin of 2 on the top and bottom edges, and 4 on the left and right */
 margin: 2 4;
 /* Set margin of 1 on the top, 2 on the right,

@@ -21,9 +21,11 @@ This examples shows a green tint with gradually increasing alpha.
 
 === "tint.py"
 
-    ```python
+    ```python hl_lines="11"
     --8<-- "docs/examples/styles/tint.py"
     ```
+
+    1. We set the tint to a `Color` instance with varying levels of transparency, set through the method `.with_alpha`.
 
 === "tint.css"
 
@@ -35,7 +37,7 @@ This examples shows a green tint with gradually increasing alpha.
 
 ```sass
 /* A red tint (could indicate an error) */
-tint: red 20%
+tint: red 20%;
 
 /* A green tint */
 tint: rgba(0, 200, 0, 0.3);

@@ -30,7 +30,7 @@ This example adds a widget with 50% width of the screen.
 
 === "width.css"
 
-    ```sass
+    ```sass hl_lines="3"
     --8<-- "docs/examples/styles/width.css"
     ```
 
@@ -82,7 +82,7 @@ width: 10;
 width: 50%;
 
 /* Automatic width */
-width: auto
+width: auto;
 ```
 
 ## Python

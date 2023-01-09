@@ -60,7 +60,7 @@ In the second example, we create a grid with 2 columns and however many rows are
 
 === "grid_size_columns.css"
 
-    ```sass
+    ```sass hl_lines="2"
     --8<-- "docs/examples/styles/grid_size_columns.css"
     ```
 

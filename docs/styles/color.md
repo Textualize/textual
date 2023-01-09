@@ -31,7 +31,7 @@ This example sets a different text color for each of three different widgets.
 
 === "color.css"
 
-    ```sass
+    ```sass hl_lines="8 12 16"
     --8<-- "docs/examples/styles/color.css"
     ```
 
@@ -66,7 +66,7 @@ color: blue;
 color: red 20%;
 
 /* RGB color */
-color: rgb(100,120,200);
+color: rgb(100, 120, 200);
 
 /* Automatically choose color with suitable contrast for readability */
 color: auto;

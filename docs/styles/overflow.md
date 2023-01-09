@@ -47,7 +47,7 @@ The right side has `overflow-y: hidden` which will prevent a scrollbar from bein
 
 === "overflow.css"
 
-    ```sass
+    ```sass hl_lines="19"
     --8<-- "docs/examples/styles/overflow.css"
     ```
 

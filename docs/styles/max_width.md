@@ -29,7 +29,7 @@ Then, we set `max-width` individually on each placeholder.
 
 === "max_width.css"
 
-    ```sass
+    ```sass hl_lines="12 16 20 24"
     --8<-- "docs/examples/styles/max_width.css"
     ```
 

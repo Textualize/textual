@@ -30,7 +30,7 @@ This examples creates a widget with a height of 50% of the screen.
 
 === "height.css"
 
-    ```python
+    ```sass hl_lines="3"
     --8<-- "docs/examples/styles/height.css"
     ```
 

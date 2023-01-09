@@ -50,7 +50,7 @@ This example adds padding around some text.
 
 === "padding.css"
 
-    ```sass
+    ```sass hl_lines="7"
     --8<-- "docs/examples/styles/padding.css"
     ```
 
@@ -73,7 +73,7 @@ The effect of each padding setting is noticeable in the colored background aroun
 
 === "padding_all.css"
 
-    ```py
+    ```sass hl_lines="16 20 24 28 32 36 40 44"
     --8<-- "docs/examples/styles/padding_all.css"
     ```
 
