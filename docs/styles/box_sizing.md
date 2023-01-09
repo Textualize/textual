@@ -57,3 +57,8 @@ widget.box_sizing = "border-box"
 # Set box sizing to content-box
 widget.box_sizing = "content-box"
 ```
+
+## See also
+
+ - [`border`](./border.md) to add a border around a widget.
+ - [`padding`](./padding.md) to add spacing around the content of a widget.

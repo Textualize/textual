@@ -42,3 +42,8 @@ scrollbar-corner-color: white;
 ```py
 widget.styles.scrollbar_corner_color = "white"
 ```
+
+## See also
+
+ - [`scrollbar-background`](./scrollbar_background.md) to set the background color of scrollbars.
+ - [`scrollbar-color`](./scrollbar_color.md) to set the color of scrollbars.

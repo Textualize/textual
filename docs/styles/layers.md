@@ -52,3 +52,8 @@ layers: below above;
 # Bottom layer is called 'below', layer above it is called 'above'
 widget.style.layers = ("below", "above")
 ```
+
+## See also
+
+ - The [layout guide](../guide/layout.md#layers) section on layers.
+ - [`layer`](./layer.md) to set the layer a widget belongs to.

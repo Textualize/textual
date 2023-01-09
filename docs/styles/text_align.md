@@ -50,3 +50,8 @@ text-align: right;
 # Set text in the widget to be right aligned
 widget.styles.text_align = "right"
 ```
+
+## See also
+
+ - [`align`](./align.md) to set the alignment of children widgets inside a container.
+ - [`content-align`](./content_align.md) to set the alignment of content inside a widget.

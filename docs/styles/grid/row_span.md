@@ -49,3 +49,7 @@ row-span: 3
 ```py
 widget.styles.row_span = 3
 ```
+
+## See also
+
+ - [`column-span`](./column_span.md) to specify how many columns a widget spans.

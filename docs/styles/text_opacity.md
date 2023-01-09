@@ -47,3 +47,7 @@ text-opacity: 50%;
 # Set the text to be "half-faded" against the background of the widget
 widget.styles.text_opacity = "50%"
 ```
+
+## See also
+
+ - [`opacity`](./opacity.md) to specify the transparency of a whole widget.

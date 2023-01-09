@@ -56,9 +56,13 @@ grid-columns: 50%;
 grid-columns: 1fr 2fr;
 ```
 
-### Python
+## Python
 
 ```py
 grid.styles.grid_columns = "50%"
 grid.styles.grid_columns = "1fr 2fr"
 ```
+
+## See also
+
+ - [`grid-rows`](./grid_rows.md) to specify the height of the grid rows.

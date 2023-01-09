@@ -53,3 +53,8 @@ layout: horizontal;
 ```python
 widget.styles.layout = "horizontal"
 ```
+
+## See also
+
+ - [Layout guide](../guide/layout.md).
+ - [Grid reference](./grid/index.md).

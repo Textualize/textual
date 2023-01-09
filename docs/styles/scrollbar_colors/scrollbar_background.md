@@ -43,3 +43,10 @@ scrollbar-backround: blue;
 ```py
 widget.styles.scrollbar_background = "blue"
 ```
+
+## See also
+
+ - [`scrollbar-bakcground-active`](./scrollbar_color_active.md) to set the scrollbar bakcground color when the scrollbar is being dragged.
+ - [`scrollbar-bakcground-hover`](./scrollbar_color_hover.md) to set the scrollbar bakcground color when the mouse pointer is over it.
+ - [`scrollbar-color`](./scrollbar_color.md) to set the color of scrollbars.
+ - [`scrollbar-corner-color`](./scrollbar_corner_color.md) to set the color of the corner where horizontal and vertical scrollbars meet.

@@ -91,3 +91,8 @@ self.styles.height = 10  # Explicit cell height can be an int
 self.styles.height = "50%"
 self.styles.height = "auto"
 ```
+
+## See also
+
+ - [`max-height`](./max_height.md) and [`min-height`](./min_height.md) to limit the height of a widget.
+ - [`width`](./width.md) to set the width of a widget.

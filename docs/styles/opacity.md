@@ -50,3 +50,7 @@ Widget {
 # Fade the widget to 50% against its parent's background
 widget.styles.opacity = "50%"
 ```
+
+## See also
+
+ - [`text-opacity`](./text_opacity.md) to blend the color of a widget's content with its background color.

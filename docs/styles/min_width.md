@@ -54,3 +54,8 @@ widget.styles.min_width = 10
 # Set the minimum width to 25% of the viewport width
 widget.styles.min_width = "25vh"
 ```
+
+## See also
+
+ - [`max-width`](./max_width.md) to set an upper bound on the width of a widget.
+ - [`width`](./width.md) to set the width of a widget.

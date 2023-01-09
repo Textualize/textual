@@ -1,7 +1,6 @@
 # Align
 
 The `align` style aligns children within a container.
-Not to be confused with [`content-align`](../content_align).
 
 ## Syntax
 
@@ -92,3 +91,8 @@ widget.styles.align_horizontal = "right"
 # Change the vertical alignment of the children of a widget
 widget.styles.align_vertical = "middle"
 ```
+
+## See also
+
+ - [`content-align`](./content_align.md) to set the alignment of content inside a widget.
+ - [`text-align`](./text_align.md) to set the alignment of text in a widget.

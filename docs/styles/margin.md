@@ -108,3 +108,7 @@ widget.styles.margin = (2, 4)
 # Set margin of 1 on top, 2 on the right, 3 on the bottom, and 4 on the left
 widget.styles.margin = (1, 2, 3, 4)
 ```
+
+## See also
+
+ - [`padding`](./padding.md) to add spacing around the content of a widget.
