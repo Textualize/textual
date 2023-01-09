@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from typing import ClassVar, Generic, NewType, TypeVar
 
 import rich.repr
-from rich.segment import Segment
 from rich.style import NULL_STYLE, Style
 from rich.text import Text, TextType
 
