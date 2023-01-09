@@ -4,14 +4,13 @@ from dataclasses import dataclass
 from typing import ClassVar, Generic, NewType, TypeVar
 
 import rich.repr
-from rich.segment import Segment
 from rich.style import NULL_STYLE, Style
 from rich.text import Text, TextType
 
 from .. import events
 from .._cache import LRUCache
 from .._loop import loop_last
-from .._segment_tools import line_crop, line_pad
+from .._segment_tools import line_pad
 from .._types import MessageTarget
 from .._typing import TypeAlias
 from .._immutable_sequence_view import ImmutableSequenceView
