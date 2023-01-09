@@ -54,7 +54,7 @@ for and also providing help in email, on Usenet, on forums, etc.
 
 Or, put another way: if what you read in here seems sensible to you, I
 figure we'll likely have already hit it off over on GitHub or in the Discord
-sever. ;-)
+server. ;-)
 
 ## Where to go for help
 
