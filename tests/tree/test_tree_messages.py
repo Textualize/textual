@@ -37,18 +37,23 @@ async def test_tree_node_selected_message() -> None:
     """Selecting a node should result in a selected message being emitted."""
     async with TreeApp().run_test() as pilot:
         await pilot.press("enter")
-        assert pilot.app.messages[-1] == "NodeSelected"
+        assert pilot.app.messages == ["NodeExpanded", "NodeSelected"]
 
 
 async def test_tree_node_expanded_message() -> None:
     """Expanding a node should result in an expanded message being emitted."""
     async with TreeApp().run_test() as pilot:
         await pilot.press("enter")
-        assert pilot.app.messages[0] == "NodeExpanded"
+        assert pilot.app.messages == ["NodeExpanded", "NodeSelected"]
 
 
 async def test_tree_node_collapsed_message() -> None:
     """Collapsing a node should result in a collapsed message being emitted."""
     async with TreeApp().run_test() as pilot:
         await pilot.press("enter", "enter")
-        assert pilot.app.messages[-2] == "NodeCollapsed"
+        assert pilot.app.messages == [
+            "NodeExpanded",
+            "NodeSelected",
+            "NodeCollapsed",
+            "NodeSelected",
+        ]
