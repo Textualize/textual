@@ -35,7 +35,7 @@ The example below shows a 4 by 4 grid where many placeholders span over several 
 
 === "column_span.css"
 
-    ```css
+    ```sass
     --8<-- "docs/examples/styles/column_span.css"
     ```
 

@@ -62,7 +62,7 @@ Short description of the first example.
 
 === "rule.css"
 
-    ```css
+    ```sass
     --8<-- "docs/examples/styles/rule.css"
     ```
 -->
@@ -84,7 +84,7 @@ Short description of the second example.
 
 === "rule.css"
 
-    ```scss
+    ```sass
     --8<-- "docs/examples/styles/rule.css"
     ```
 

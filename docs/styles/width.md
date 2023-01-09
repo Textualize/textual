@@ -23,7 +23,7 @@ This example adds a widget with 50% width of the screen.
 
 === "width.css"
 
-    ```css
+    ```sass
     --8<-- "docs/examples/styles/width.css"
     ```
 
@@ -50,7 +50,7 @@ This example adds a widget with 50% width of the screen.
 
 === "width_comparison.css"
 
-    ```css hl_lines="2 5 8 11 14 17 20 23 26"
+    ```sass hl_lines="2 5 8 11 14 17 20 23 26"
     --8<-- "docs/examples/styles/width_comparison.css"
     ```
 

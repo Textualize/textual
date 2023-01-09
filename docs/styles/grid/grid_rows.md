@@ -46,7 +46,7 @@ Because there are more rows than scalars in the style rule, the scalars will be 
 
 === "grid_rows.css"
 
-    ```css
+    ```sass
     --8<-- "docs/examples/styles/grid_rows.css"
     ```
 

@@ -27,7 +27,7 @@ Note that the second widget is hidden by adding the `"remove"` class which sets 
 
 === "display.css"
 
-    ```css
+    ```sass
     --8<-- "docs/examples/styles/display.css"
     ```
 

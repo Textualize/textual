@@ -45,7 +45,7 @@ It also shows that `link-style` does not affect hyperlinks.
 
 === "link_style.css"
 
-    ```css hl_lines="2 6 10"
+    ```sass hl_lines="2 6 10"
     --8<-- "docs/examples/styles/link_style.css"
     ```
 
@@ -53,7 +53,7 @@ It also shows that `link-style` does not affect hyperlinks.
 
 ## CSS
 
-```css
+```sass
 link-style: bold;
 link-style: bold italic reverse;
 ```

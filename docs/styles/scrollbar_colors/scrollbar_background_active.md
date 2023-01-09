@@ -39,13 +39,13 @@ The `scrollbar-background-active` sets the background color of the scrollbar whe
 
 === "scrollbars2.css"
 
-    ```css hl_lines="3"
+    ```sass hl_lines="3"
     --8<-- "docs/examples/styles/scrollbars2.css"
     ```
 
 ## CSS
 
-```css
+```sass
 scrollbar-backround-active: red;
 ```
 

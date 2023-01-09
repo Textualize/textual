@@ -33,7 +33,7 @@ This example contains a simple app with two labels centered on the screen with `
 
 === "align.css"
 
-    ```scss hl_lines="2"
+    ```sass hl_lines="2"
     --8<-- "docs/examples/styles/align.css"
     ```
 
@@ -54,7 +54,7 @@ Each label has been aligned differently inside its container, and its text shows
 
 === "align_all.css"
 
-    ```css
+    ```sass
     --8<-- "docs/examples/styles/align_all.css"
     ```
 

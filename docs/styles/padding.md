@@ -48,7 +48,7 @@ This example adds padding around some text.
 
 === "padding.css"
 
-    ```css
+    ```sass
     --8<-- "docs/examples/styles/padding.css"
     ```
 

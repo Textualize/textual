@@ -39,13 +39,13 @@ The `scrollbar-background-hover` sets the background color of the scrollbar when
 
 === "scrollbars2.css"
 
-    ```css hl_lines="4"
+    ```sass hl_lines="4"
     --8<-- "docs/examples/styles/scrollbars2.css"
     ```
 
 ## CSS
 
-```css
+```sass
 scrollbar-background-hover: purple;
 ```
 

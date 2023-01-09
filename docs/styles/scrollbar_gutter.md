@@ -35,7 +35,7 @@ terminal window.
 
 === "scrollbar_gutter.css"
 
-    ```scss hl_lines="2"
+    ```sass hl_lines="2"
     --8<-- "docs/examples/styles/scrollbar_gutter.css"
     ```
 

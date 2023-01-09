@@ -39,13 +39,13 @@ The `scrollbar-color` sets the color of the scrollbar.
 
 === "scrollbars2.css"
 
-    ```css hl_lines="5"
+    ```sass hl_lines="5"
     --8<-- "docs/examples/styles/scrollbars2.css"
     ```
 
 ## CSS
 
-```css
+```sass
 scrollbar-color: cyan;
 ```
 

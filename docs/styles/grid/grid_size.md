@@ -39,7 +39,7 @@ In the first example, we create a grid with 2 columns and 5 rows, regardless of 
 
 === "grid_size_both.css"
 
-    ```css hl_lines="2"
+    ```sass hl_lines="2"
     --8<-- "docs/examples/styles/grid_size_both.css"
     ```
 
@@ -60,7 +60,7 @@ In the second example, we create a grid with 2 columns and however many rows are
 
 === "grid_size_columns.css"
 
-    ```css
+    ```sass
     --8<-- "docs/examples/styles/grid_size_columns.css"
     ```
 

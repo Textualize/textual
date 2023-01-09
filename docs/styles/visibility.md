@@ -45,7 +45,7 @@ Note that the second widget is hidden, while leaving a space where it would have
 
 === "visibility.css"
 
-    ```css
+    ```sass
     --8<-- "docs/examples/styles/visibility.css"
     ```
 
@@ -70,7 +70,7 @@ The containers all have a white background, and then:
 
 === "visibility_containers.css"
 
-    ```css hl_lines="2-3 6 8-10 12-14 16-18"
+    ```sass hl_lines="2-3 6 8-10 12-14 16-18"
     --8<-- "docs/examples/styles/visibility_containers.css"
     ```
 

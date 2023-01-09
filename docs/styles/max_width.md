@@ -29,7 +29,7 @@ Then, we set `max-width` individually on each placeholder.
 
 === "max_width.css"
 
-    ```scss
+    ```sass
     --8<-- "docs/examples/styles/max_width.css"
     ```
 
