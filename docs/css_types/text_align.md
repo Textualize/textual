@@ -28,23 +28,13 @@ A [`<text-align>`](/css_types/text_align) can be any of the following values:
 ### CSS
 
 ```sass
-* {
-    rule: center;
-    rule: end;
+Label {
     rule: justify;
-    rule: left;
-    rule: right;
-    rule: start;
 }
 ```
 
 ### Python
 
 ```py
-text_align = "center"
-text_align = "end"
-text_align = "justify"
-text_align = "left"
-text_align = "right"
-text_align = "start"
+widget.styles.text_align = "justify"
 ```

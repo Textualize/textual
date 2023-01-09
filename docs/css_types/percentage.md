@@ -17,14 +17,21 @@ Some rules may clamp the values between `0%` and `100%`.
 ### CSS
 
 ```sass
-* {
-    rule: 70%;    /* Integer followed by % */
-    rule: -3.5%;  /* The number can be negative/decimal */
+#footer {
+    /* Integer followed by % */
+    color: red 70%;
+
+    /* The number can be negative/decimal, although that may not make sense */
+    offset: -30% 12.5%;
 }
 ```
 
 ### Python
 
 ```py
-percentage = "70%"
+# Integer followed by %
+widget.styles.color = "red 70%"
+
+# The number can be negative/decimal, althought that may not make sense
+widget.styles.offset = ("-30%", "12.5%")
 ```

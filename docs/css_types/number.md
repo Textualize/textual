@@ -11,11 +11,12 @@ A [`<number>`](/css_types/number) is an [`<integer>`](/css_types/integer), optio
 ### CSS
 
 ```sass
-* {
-    css-rule: 6       /* Integers are numbers */
-    css-rule: -13     /* Numbers can be negative */
-    css-rule: 4.75    /* Numbers can have a decimal part */
-    css-rule: -73.73
+Grid {
+    grid-size: 3 6  /* Integers are numbers */
+}
+
+.translucid {
+    opacity: 0.5    /* Numbers can have a decimal part */
 }
 ```
 
@@ -24,8 +25,6 @@ A [`<number>`](/css_types/number) is an [`<integer>`](/css_types/integer), optio
 In Python, a rule that expects a CSS type `<number>` will accept an `int` or a `float`:
 
 ```py
-number = 6       # ints are numbers
-number = -13     # ints can be negative
-number = 4.75    # floats are numbers
-number = -73.73  # negative floats too
+widget.styles.grid_size = (3, 6)  # Integers are numbers
+widget.styles.opacity = 0.5       # Numbers can have a decimal part
 ```

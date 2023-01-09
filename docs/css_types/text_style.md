@@ -24,18 +24,14 @@ A [`<text-style>`](/css_types/text_style) can be any _space-separated_ combinati
 ### CSS
 
 ```sass
-* {
+#label1 {
     /* You can specify any value by itself. */
-    rule: bold;
-    rule: italic;
-    rule: none;
-    rule: reverse;
     rule: strike;
-    rule: underline;
+}
 
+#label2 {
     /* You can also combine multiple values. */
     rule: strike bold italic reverse;
-    rule: bold underline italic;
 }
 ```
 
@@ -43,14 +39,8 @@ A [`<text-style>`](/css_types/text_style) can be any _space-separated_ combinati
 
 ```py
 # You can specify any value by itself
-text_style = "bold"
-text_style = "italic"
-text_style = "none"
-text_style = "reverse"
-text_style = "strike"
-text_style = "underline"
+widget.styles.text_style = "strike"
 
 # You can also combine multiple values
-text_style = "strike bold italic reverse"
-text_style = "bold underline italic"
+widget.styles.text_style = "bold underline italic"
 ```

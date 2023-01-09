@@ -46,14 +46,13 @@ The [`<my-type>`](/css_types/my_type) type can take any of the following values:
 ### CSS
 
 <!--
-Examples should be rule-agnostic.
 Include a good variety of examples.
 If the type has many different syntaxes, cover all of them.
 Add comments when needed/if helpful.
 -->
 
 ```sass
-* {
+.some-class {
     rule: type-value-1;
     rule: type-value-2;
     rule: type-value-3;
@@ -65,7 +64,7 @@ Add comments when needed/if helpful.
 <!-- Same examples as above. -->
 
 ```py
-type_name = type_value_1
-type_name = type_value_2
-type_name = type_value_3
+widget.styles.rule = type_value_1
+widget.styles.rule = type_value_2
+widget.styles.rule = type_value_3
 ```
