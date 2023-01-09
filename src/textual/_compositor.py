@@ -276,10 +276,7 @@ class Compositor:
         resized_widgets = {
             widget
             for widget, (region, *_) in changes
-            if (
-                widget in common_widgets
-                and not old_map[widget].region.same_size(region)
-            )
+            if (widget in common_widgets and old_map[widget].region[2:] != region[2:])
         }
 
         screen_region = size.region

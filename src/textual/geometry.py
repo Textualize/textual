@@ -541,18 +541,6 @@ class Region(NamedTuple):
         width2, height2 = size
         return Region(x, y, min(width1, width2), min(height1, height2))
 
-    def same_size(self, region: Region) -> bool:
-        """Check if another region is the same size. Equivalent to `self.size == region.size`,
-        but a little faster.
-
-        Args:
-            region (Region): A region.
-
-        Returns:
-            bool: True if both regions are the same size, False if they are different sizes.
-        """
-        return self[2:] == region[2:]
-
     def expand(self, size: tuple[int, int]) -> Region:
         """Increase the size of the region by adding a border.
 
