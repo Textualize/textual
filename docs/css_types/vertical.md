@@ -17,17 +17,13 @@ The [`<vertical>`](/css_types/vertical) type can take any of the following value
 ### CSS
 
 ```sass
-* {
-    rule: top;
-    rule: middle;
-    rule: bottom
+.container {
+    align-vertical: top;
 }
 ```
 
 ### Python
 
 ```py
-vertical = "top"
-vertical = "middle"
-vertical = "bottom"
+widget.styles.align_vertical = "top"
 ```

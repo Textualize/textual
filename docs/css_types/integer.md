@@ -15,9 +15,8 @@ An [`<integer>`](/css_types/integer) is any valid integer number like `-10` or `
 ### CSS
 
 ```sass
-* {
-    rule: -5;
-    rule: 10;
+.classname {
+    offset: 10 -20
 }
 ```
 
@@ -26,6 +25,5 @@ An [`<integer>`](/css_types/integer) is any valid integer number like `-10` or `
 In Python, a rule that expects a CSS type `<integer>` will expect a value of the type `int`:
 
 ```py
-integer = -5
-integer = 10
+widget.styles.offset = (10, -20)
 ```

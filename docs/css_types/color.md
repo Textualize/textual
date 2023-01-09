@@ -23,27 +23,30 @@ For more details about the exact formats accepted, see [the class method `Color.
 ### CSS
 
 ```sass
-* {
-    rule: red;               /* color name                     */
-    rule: #A8F;              /* 3-digit hex RGB                */
-    rule: #FF00FFDD;         /* 6-digit hex RGB + transparency */
-    rule: rgb(15,200,73);    /* RGB description                */
-    rule: hsl(300,20%,70%);  /* HSL description                */
-    rule: $accent;           /* Textual variable               */
+Header {
+    background: red;           /* Color name */
+}
+
+.accent {
+    color: $accent;            /* Textual variable */
+}
+
+#footer {
+    tint: hsl(300, 20%, 70%);  /* HSL description */
 }
 ```
 
 ### Python
 
+In Python, rules that expect a `<color>` can also accept an instance of the type [`Color`][textual.color.Color].
+
 ```py
 # Mimicking the CSS syntax
-color = "red"
-color = "#A8F"
-color = "#FF00FFDD"
-color = "rgb(15,200,73)"
-color = "hsl(300,20%,70%)"
-color = "$accent"
+widget.styles.background = "red"           # Color name
+widget.styles.color = "$accent"            # Textual variable
+widget.styles.tint = "hsl(300, 20%, 70%)"  # HSL description
 
+from textual.color import Color
 # Using a Color object directly...
 color = Color(16, 200, 45)
 # ... which can also parse the CSS syntax

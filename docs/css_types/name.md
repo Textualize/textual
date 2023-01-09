@@ -14,23 +14,13 @@ A [`<name>`](/css_types/name) is any non-empty sequence of characters:
 ### CSS
 
 ```sass
-* {
-    rule: onlyLetters;
-    rule: Letters-and-hiphens;
-    rule: _leading-underscore;
-    rule: letters-and-1-digit;
-    rule: name1234567890;
+Screen {
+    layers: onlyLetters Letters-and-hiphens _lead-under letters-1-digit;
 }
 ```
 
 ### Python
 
-<!-- Same examples as above. -->
-
 ```py
-name = "onlyLetters"
-name = "Letters-and-hiphens"
-name = "_leading-underscore"
-name = "letters-and-1-digit"
-name = "name1234567890"
+widget.styles.layers = "onlyLetters Letters-and-hiphens _lead-under letters-1-digit"
 ```

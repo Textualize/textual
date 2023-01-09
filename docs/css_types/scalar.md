@@ -97,27 +97,15 @@ For example, if its container is big enough, a label with `width: auto` will be 
 ### CSS
 
 ```sass
-* {
-    rule: 16;    /* 16 cells */
-    rule: 1fr;   /* proportional size of 1 */
-    rule: 50%;   /* 50% of the same dimension of the parent */
-    rule: 25w;   /* 25% of the width of the parent */
-    rule: 75h;   /* 75% of the height of the parent */
-    rule: 25vw;  /* 25% of the viewport width */
-    rule: 75vh;  /* 75% of the viewport height */
-    rule: auto;  /* special value */
+Horizontal {
+    width: 60;     /* 60 cells */
+    height: 1fr;   /* proportional size of 1 */
 }
 ```
 
 ### Python
 
 ```py
-scalar = 16      # Cell unit can be specified with an int/float
-scalar = "1fr"   # proportional size of 1
-scalar = "50%"   # 50% of the same dimension of the parent
-scalar = "25w"   # 25% of the width of the parent
-scalar = "75h"   # 75% of the height of the parent
-scalar = "25vw"  # 25% of the viewport width
-scalar = "75vh"  # 75% of the viewport height
-scalar = "auto"  # special value
+widget.styles.width = 16       # Cell unit can be specified with an int/float
+widget.styles.height = "1fr"   # proportional size of 1
 ```

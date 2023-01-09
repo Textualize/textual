@@ -17,17 +17,13 @@ The [`<horizontal>`](/css_types/horizontal) type can take any of the following v
 ### CSS
 
 ```sass
-* {
-    rule: left;
-    rule: center;
-    rule: right
+.container {
+    align-horizontal: right;
 }
 ```
 
 ### Python
 
 ```py
-horizontal = "left"
-horizontal = "center"
-horizontal = "right"
+widget.styles.align_horizontal = "right"
 ```
