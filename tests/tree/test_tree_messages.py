@@ -32,6 +32,9 @@ class TreeApp(App[None]):
     def on_tree_node_collapsed(self, event: Tree.NodeCollapsed[None]) -> None:
         self.record(event)
 
+    def on_tree_node_highlighted(self, event: Tree.NodeHighlighted[None]) -> None:
+        self.record(event)
+
 
 async def test_tree_node_selected_message() -> None:
     """Selecting a node should result in a selected message being emitted."""
@@ -57,3 +60,10 @@ async def test_tree_node_collapsed_message() -> None:
             "NodeCollapsed",
             "NodeSelected",
         ]
+
+
+async def test_tree_node_highlighted_message() -> None:
+    """Highlighting a node should result in a highlighted message being emitted."""
+    async with TreeApp().run_test() as pilot:
+        await pilot.press("enter", "down")
+        assert pilot.app.messages == ["NodeExpanded", "NodeSelected", "NodeHighlighted"]
