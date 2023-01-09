@@ -12,6 +12,8 @@ The option chosen determines the edge to which the widget is docked.
 
 ## Examples
 
+### Basic usage
+
 The example below shows a `left` docked sidebar.
 Notice that even though the content is scrolled, the sidebar remains fixed.
 
@@ -31,6 +33,8 @@ Notice that even though the content is scrolled, the sidebar remains fixed.
     ```sass hl_lines="2"
     --8<-- "docs/examples/guide/layout/dock_layout1_sidebar.css"
     ```
+
+### Advanced usage
 
 The second example shows how one can use full-width or full-height containers to dock labels to the edges of a larger container.
 The labels will remain in that position (docked) even if the container they are in scrolls horizontally and/or vertically.

@@ -20,6 +20,8 @@ If present, the second one sets the number of rows – regardless of the number 
 
 ## Examples
 
+### Columns and rows
+
 In the first example, we create a grid with 2 columns and 5 rows, regardless of the fact that we do not have enough labels to fill in the whole grid:
 
 === "Output"
@@ -40,6 +42,8 @@ In the first example, we create a grid with 2 columns and 5 rows, regardless of 
     ```
 
     1. Create a grid with 2 columns and 4 rows.
+
+### Columns only
 
 In the second example, we create a grid with 2 columns and however many rows are needed to display all of the grid children:
 

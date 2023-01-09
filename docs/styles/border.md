@@ -54,6 +54,8 @@ Alternatively, you can see the examples below.
 
 ## Examples
 
+### Basic usage
+
 This examples shows three widgets with different border styles.
 
 === "border.py"
@@ -73,6 +75,8 @@ This examples shows three widgets with different border styles.
     ```{.textual path="docs/examples/styles/border.py"}
     ```
 
+### All border types
+
 The next example shows a grid with all the available border types.
 
 === "border_all.py"
@@ -90,6 +94,30 @@ The next example shows a grid with all the available border types.
 === "Output"
 
     ```{.textual path="docs/examples/styles/border_all.py"}
+    ```
+
+### Borders and outlines
+
+The next example makes the difference between [`border`](./border.md) and [`outline`](./outline.md) clearer by having three labels side-by-side.
+They contain the same text, have the same width and height, and are styled exactly the same up to their `outline` and [`border`](./border.md) rules.
+
+This example also shows that a widget cannot contain both a `border` and an `outline`:
+
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/outline_vs_border.py"}
+    ```
+
+=== "outline_vs_border.py"
+
+    ```python
+    --8<-- "docs/examples/styles/outline_vs_border.py"
+    ```
+
+=== "outline_vs_border.css"
+
+    ```sass
+    --8<-- "docs/examples/styles/outline_vs_border.css"
     ```
 
 ## CSS

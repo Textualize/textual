@@ -24,6 +24,8 @@ This rule can be useful for temporary emphasis of the content of a widget, if yo
 
 ## Examples
 
+### Basic usage
+
 This example shows a widget with an outline. Note how the outline occludes the text area.
 
 === "Output"
@@ -43,9 +45,33 @@ This example shows a widget with an outline. Note how the outline occludes the t
     --8<-- "docs/examples/styles/outline.css"
     ```
 
-The next example makes the difference clearer, by having three labels side-by-side.
+### All outline types
+
+The next example shows a grid with all the available outline types.
+
+=== "outline_all.py"
+
+    ```py
+    --8<-- "docs/examples/styles/outline_all.py"
+    ```
+
+=== "outline_all.css"
+
+    ```sass
+    --8<-- "docs/examples/styles/outline_all.css"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/outline_all.py"}
+    ```
+
+### Borders and outlines
+
+The next example makes the difference between [`border`](./border.md) and [`outline`](./outline.md) clearer by having three labels side-by-side.
 They contain the same text, have the same width and height, and are styled exactly the same up to their `outline` and [`border`](./border.md) rules.
-This example also shows that a widget can contain both a `border` and an `outline`:
+
+This example also shows that a widget cannot contain both a `border` and an `outline`:
 
 === "Output"
 

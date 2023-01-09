@@ -12,6 +12,8 @@ text-style: <a href="../../css_types/text_style">&lt;text-style&gt;</a>;
 
 ## Examples
 
+### Basic usage
+
 Each of the three text panels has a different text style, respectively `bold`, `italic`, and `reverse`, from left to right.
 
 === "Output"
@@ -30,6 +32,8 @@ Each of the three text panels has a different text style, respectively `bold`, `
     ```sass
     --8<-- "docs/examples/styles/text_style.css"
     ```
+
+### All text styles
 
 The next example shows all different styles on their own, as well as some combinations of styles in a single widget.
 
