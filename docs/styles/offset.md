@@ -39,13 +39,13 @@ In this example, we have 3 widgets with differing offsets.
 ## CSS
 
 ```sass
-/* Move the widget 8 cells in the x direction and 2 in tye y direction */
+/* Move the widget 8 cells in the x direction and 2 in the y direction */
 offset: 8 2;
 
 /* Move the widget 4 cells in the x direction
 offset-x: 4;
-/* Move the widget -2 cells in the y direction
-offset-y: -2;
+/* Move the widget -3 cells in the y direction
+offset-y: -3;
 ```
 
 ## Python
