@@ -330,44 +330,39 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         ),
     }
 
-    class NodeSelected(Generic[EventTreeDataType], Message, bubble=True):
+    class NodeMessage(Generic[EventTreeDataType], Message, bubble=True):
+        """Base class for events sent when something happens with a node.
+
+        Attributes:
+            TreeNode[EventTreeDataType]: The node involved in the event.
+        """
+
+        def __init__(
+            self, sender: MessageTarget, node: TreeNode[EventTreeDataType]
+        ) -> None:
+            self.node = node
+            super().__init__(sender)
+
+    class NodeSelected(NodeMessage[EventTreeDataType]):
         """Event sent when a node is selected.
 
         Attributes:
             TreeNode[EventTreeDataType]: The node that was selected.
         """
 
-        def __init__(
-            self, sender: MessageTarget, node: TreeNode[EventTreeDataType]
-        ) -> None:
-            self.node = node
-            super().__init__(sender)
-
-    class NodeExpanded(Generic[EventTreeDataType], Message, bubble=True):
+    class NodeExpanded(NodeMessage[EventTreeDataType]):
         """Event sent when a node is expanded.
 
         Attributes:
             TreeNode[EventTreeDataType]: The node that was expanded.
         """
 
-        def __init__(
-            self, sender: MessageTarget, node: TreeNode[EventTreeDataType]
-        ) -> None:
-            self.node = node
-            super().__init__(sender)
-
-    class NodeCollapsed(Generic[EventTreeDataType], Message, bubble=True):
+    class NodeCollapsed(NodeMessage[EventTreeDataType]):
         """Event sent when a node is collapsed.
 
         Attributes:
             TreeNode[EventTreeDataType]: The node that was collapsed.
         """
-
-        def __init__(
-            self, sender: MessageTarget, node: TreeNode[EventTreeDataType]
-        ) -> None:
-            self.node = node
-            super().__init__(sender)
 
     def __init__(
         self,
