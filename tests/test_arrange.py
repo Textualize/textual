@@ -94,8 +94,9 @@ def test_arrange_dock_bottom():
     assert widgets == {child, header}
     assert spacing == Spacing(0, 0, 1, 0)
 
+
 def test_arrange_dock_badly():
     child = Widget(id="child")
     child.styles.dock = "nowhere"
     with pytest.raises(AssertionError):
-        _ = arrange( Widget(), [child], Size(80, 24), Size(80, 24))
+        _ = arrange(Widget(), [child], Size(80, 24), Size(80, 24))
