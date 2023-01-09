@@ -1,6 +1,6 @@
 Grid {
     grid-size: 2 4;
-    grid-gutter: 1 2  /* (1)! */
+    grid-gutter: 1 2;  /* (1)! */
 }
 
 Label {
