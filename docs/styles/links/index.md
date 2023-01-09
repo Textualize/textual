@@ -34,20 +34,6 @@ There are a number of styles which influence the appearance of these links withi
 
 Visit each style's reference page to learn more about how the values are used.
 
-### Values
-
-#### &lt;color&gt;
-
---8<-- "docs/snippets/type_syntax/color.md"
-
-#### &lt;percentage&gt;
-
---8<-- "docs/snippets/type_syntax/percentage.md"
-
-#### &lt;text-style&gt;
-
---8<-- "docs/snippets/type_syntax/text_style.md"
-
 ## Example
 
 In the example below, the first label illustrates default link styling.

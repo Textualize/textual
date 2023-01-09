@@ -18,10 +18,6 @@ The style `grid-size` takes one or two non-negative [`<integer>`](../../../css_t
 The first defines how many columns there are in the grid.
 If present, the second one sets the number of rows – regardless of the number of children of the grid –, otherwise the number of rows is computed automatically.
 
-### Values
-
---8<-- "docs/snippets/type_syntax/integer.md"
-
 ## Examples
 
 In the first example, we create a grid with 2 columns and 5 rows, regardless of the fact that we do not have enough labels to fill in the whole grid:

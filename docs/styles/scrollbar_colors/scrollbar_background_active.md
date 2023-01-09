@@ -10,16 +10,6 @@ The `scrollbar-background-active` sets the background color of the scrollbar whe
 
 `scrollbar-background-active` accepts a [`<color>`](../../../css_types/color) (with an optional transparency level defined by a [`<percentage>`](../../../css_types/percentage)) that is used to define the background color of a scrollbar when its thumb is being dragged.
 
-### Values
-
-#### &lt;color&gt;
-
---8<-- "docs/snippets/type_syntax/color.md"
-
-#### &lt;percentage&gt;
-
---8<-- "docs/snippets/type_syntax/percentage.md"
-
 ## Example
 
 === "Output"

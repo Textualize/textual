@@ -14,10 +14,6 @@ link-style: <a href="../../css_types/text_style">&lt;text-style&gt;</a>;
 
 `link-style` will take all the values specified and will apply that styling to text that is enclosed by a Textual action link.
 
-### Values
-
---8<-- "docs/snippets/type_syntax/text_style.md"
-
 ### Defaults
 
 If not provided, a Textual action link will have `link-style` set to `underline`.

@@ -14,10 +14,6 @@ row-span: <a href="../../css_types/integer">&lt;integer&gt;</a>;
 
 The style `row-span` accepts a single non-negative [`<integer>`](../../../css_types/integer) that quantifies how many rows the given widget spans.
 
-### Values
-
---8<-- "docs/snippets/type_syntax/integer.md"
-
 ## Example
 
 The example below shows a 4 by 4 grid where many placeholders span over several rows.

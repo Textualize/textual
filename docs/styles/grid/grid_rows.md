@@ -17,10 +17,6 @@ The style `grid-rows` takes one or more [`<scalar>`](../../../css_types/scalar) 
 If there are more rows in the grid than scalars specified in `grid-rows`, they are reused cyclically.
 If the number of [`<scalar>`](../../../css_types/scalar) is in excess, the excess is ignored.
 
-### Values
-
---8<-- "docs/snippets/type_syntax/scalar.md"
-
 ## Example
 
 The example below shows a grid with 10 labels laid out in a grid with 5 rows and 2 columns.

@@ -14,10 +14,6 @@ link-hover-style: <a href="../../css_types/text_style">&lt;text-style&gt;</a>;
 
 `link-hover-style` applies its [`<text-style>`](../../../css_types/text_style) to the text of Textual action links when the mouse pointer is over them.
 
-### Values
-
---8<-- "docs/snippets/type_syntax/text_style.md"
-
 ### Defaults
 
 If not provided, a Textual action link will have `link-hover-style` set to `bold`.

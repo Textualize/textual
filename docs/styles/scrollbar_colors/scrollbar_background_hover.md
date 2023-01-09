@@ -10,16 +10,6 @@ The `scrollbar-background-hover` sets the background color of the scrollbar when
 
 `scrollbar-background-hover` accepts a [`<color>`](../../../css_types/color) (with an optional transparency level defined by a [`<percentage>`](../../../css_types/percentage)) that is used to define the background color of a scrollbar when the cursor is over it.
 
-### Values
-
-#### &lt;color&gt;
-
---8<-- "docs/snippets/type_syntax/color.md"
-
-#### &lt;percentage&gt;
-
---8<-- "docs/snippets/type_syntax/percentage.md"
-
 ## Example
 
 === "Output"
