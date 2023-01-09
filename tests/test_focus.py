@@ -10,6 +10,7 @@ class Focusable(Widget, can_focus=True):
 class NonFocusable(Widget, can_focus=False, can_focus_children=False):
     pass
 
+
 class ChildrenFocusableOnly(Widget, can_focus=False, can_focus_children=True):
     pass
 
