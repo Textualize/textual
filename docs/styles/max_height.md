@@ -54,3 +54,8 @@ widget.styles.max_height = 10
 # Set the maximum height to 25% of the viewport height
 widget.styles.max_height = "25vh"
 ```
+
+## See also
+
+ - [`min-height`](./min_height.md) to set a lower bound on the height of a widget.
+ - [`height`](./height.md) to set the height of a widget.

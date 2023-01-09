@@ -57,3 +57,7 @@ You have to set the two axes at the same time.
 # Move the widget 2 cells in the x direction, and 4 in the y direction.
 widget.styles.offset = (2, 4)
 ```
+
+## See also
+
+ - The [layout guide](../guide/layout.md#offsets) section on offsets.

@@ -117,3 +117,7 @@ widget.outline = ("heavy", "white")
 # Set a red outline on the left
 widget.outline_left = ("outer", "red")
 ```
+
+## See also
+
+ - [`border`](./border.md) to add a border around a widget.

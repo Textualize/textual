@@ -87,3 +87,7 @@ widget.styles.background = Color.parse("#FF00FF")
 # Set with a color object instantiated directly
 widget.styles.background = Color(120, 60, 100)
 ```
+
+## See also
+
+ - [`color`](./color.md) to set the color of text in a widget.

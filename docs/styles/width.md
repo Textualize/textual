@@ -92,3 +92,8 @@ widget.styles.width = 10
 widget.styles.width = "50%
 widget.styles.width = "auto"
 ```
+
+## See also
+
+ - [`max-width`](./max_width.md) and [`min-width`](./min_width.md) to limit the width of a widget.
+ - [`height`](./height.md) to set the height of a widget.

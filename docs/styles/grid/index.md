@@ -58,3 +58,7 @@ The spacing between grid cells is because of the `grid-gutter` declaration.
 !!! warning
 
     The properties listed on this page will only work when the layout is `grid`.
+
+## See also
+
+ - The [grid layout](../../guide/layout.md#grid) guide.

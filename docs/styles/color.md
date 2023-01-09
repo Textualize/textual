@@ -84,3 +84,7 @@ from textual.color import Color
 # Set with a color object
 widget.styles.color = Color.parse("pink")
 ```
+
+## See also
+
+ - [`background`](./background.md) to set the background color in a widget.

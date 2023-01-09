@@ -83,3 +83,8 @@ widget.styles.padding = (2, 4)
 # Set padding of 1 on top, 2 on the right, 3 on the bottom, and 4 on the left
 widget.styles.padding = (1, 2, 3, 4)
 ```
+
+## See also
+
+ - [`box-sizing`](./box_sizing.md) to specify how to account for padding in a widget's dimensions.
+ - [`margin`](./margin.md) to add spacing around a widget.

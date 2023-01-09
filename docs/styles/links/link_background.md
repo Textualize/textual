@@ -59,3 +59,8 @@ widget.styles.link_background = "$accent"
 # You can also use a `Color` object directly:
 widget.styles.link_background = Color(100, 30, 173)
 ```
+
+## See also
+
+ - [`link-color`](./link_color.md) to set the color of link text.
+ - [`link-hover-background](./link_hover_background.md) to set the background color of link text when the mouse pointer is over it.

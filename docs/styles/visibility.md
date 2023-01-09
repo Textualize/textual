@@ -113,3 +113,7 @@ widget.visible = False
 # Make the widget visible again
 widget.visible = True
 ```
+
+## See also
+
+ - [`display`](./display.md) to specify whether a widget is displayed or not.

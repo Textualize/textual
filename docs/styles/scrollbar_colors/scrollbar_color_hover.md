@@ -44,3 +44,9 @@ scrollbar-color-hover: pink;
 ```py
 widget.styles.scrollbar_color_hover = "pink"
 ```
+
+## See also
+
+ - [`scrollbar-bakcground-hover`](./scrollbar_color_hover.md) to set the scrollbar bakcground color when the mouse pointer is over it.
+ - [`scrollbar-color`](./scrollbar_color.md) to set the color of scrollbars.
+ - [`scrollbar-color-active`](./scrollbar_color_active.md) to set the scrollbar color when the scrollbar is being dragged.

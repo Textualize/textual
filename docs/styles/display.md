@@ -65,3 +65,7 @@ widget.display = False
 # Show the widget
 widget.display = True
 ```
+
+## See also
+
+ - [`visibility`](./visibility.md) to specify whether a widget is visible or not.

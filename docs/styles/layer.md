@@ -54,3 +54,8 @@ layer: below;
 # Draw the widget on the layer called 'below'
 widget.styles.layer = "below"
 ```
+
+## See also
+
+ - The [layout guide](../guide/layout.md#layers) section on layers.
+ - [`layers`](./layers.md) to define an ordered set of layers.

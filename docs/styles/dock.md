@@ -73,3 +73,7 @@ widget.styles.dock = left;    # Dock   left.
 widget.styles.dock = right;   # Dock  right.
 widget.styles.dock = top;     # Dock    top.
 ```
+
+## See also
+
+ - The [layout guide](../guide/layout.md#docking) section on docking.
