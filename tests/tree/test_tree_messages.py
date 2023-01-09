@@ -6,6 +6,10 @@ from textual.widgets import Tree
 from textual.message import Message
 
 
+class MyTree(Tree[None]):
+    pass
+
+
 class TreeApp(App[None]):
     """Test tree app."""
 
@@ -15,11 +19,11 @@ class TreeApp(App[None]):
 
     def compose(self) -> ComposeResult:
         """Compose the child widgets."""
-        yield Tree[None]("Root")
+        yield MyTree("Root")
 
     def on_mount(self) -> None:
-        self.query_one(Tree[None]).root.add("Child")
-        self.query_one(Tree[None]).focus()
+        self.query_one(MyTree).root.add("Child")
+        self.query_one(MyTree).focus()
 
     def record(self, event: Message) -> None:
         self.messages.append(event.__class__.__name__)
