@@ -79,7 +79,7 @@ class Reactive(Generic[ReactiveType]):
             always_update (bool, optional): Call watchers even when the new value equals the old value. Defaults to False.
 
         Returns:
-            Reactive: A Reactive instance which calls watchers or initialize.
+            Reactive: A Reactive instance which calls watchers on initialize.
         """
         return cls(
             default,
