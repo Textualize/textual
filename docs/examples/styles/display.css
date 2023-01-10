@@ -1,12 +1,14 @@
 Screen {
     background: green;
 }
-Static {             
-    height: 5;        
-    background: white;        
-    color: blue;   
-    border: heavy blue;     
+
+Static {
+    height: 5;
+    background: white;
+    color: blue;
+    border: heavy blue;
 }
+
 Static.remove {
     display: none;
 }

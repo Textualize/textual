@@ -5,12 +5,12 @@ The `box-sizing` property determines how the width and height of a widget are ca
 ## Syntax
 
 ```
-box-sizing: [border-box|content-box];
+box-sizing: border-box | content-box;
 ```
 
 ### Values
 
-| Values                 | Description                                                                                                                                                             |
+| Value                  | Description                                                                                                                                                             |
 |------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `border-box` (default) | Padding and border are included in the width and height. If you add padding and/or border the widget will not change in size, but you will have less space for content. |
 | `content-box`          | Padding and border will increase the size of the widget, leaving the content area unaffected.                                                                           |
@@ -18,8 +18,13 @@ box-sizing: [border-box|content-box];
 ## Example
 
 Both widgets in this example have the same height (5).
-The top widget has `box-sizing: border-box` which means that padding and border reduces the space for content.
+The top widget has `box-sizing: border-box` which means that padding and border reduce the space for content.
 The bottom widget has `box-sizing: content-box` which increases the size of the widget to compensate for padding and border.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/box_sizing.py"}
+    ```
 
 === "box_sizing.py"
 
@@ -29,13 +34,8 @@ The bottom widget has `box-sizing: content-box` which increases the size of the 
 
 === "box_sizing.css"
 
-    ```css
+    ```sass hl_lines="2 6"
     --8<-- "docs/examples/styles/box_sizing.css"
-    ```
-
-=== "Output"
-
-    ```{.textual path="docs/examples/styles/box_sizing.py"}
     ```
 
 ## CSS
@@ -57,3 +57,8 @@ widget.box_sizing = "border-box"
 # Set box sizing to content-box
 widget.box_sizing = "content-box"
 ```
+
+## See also
+
+ - [`border`](./border.md) to add a border around a widget.
+ - [`padding`](./padding.md) to add spacing around the content of a widget.

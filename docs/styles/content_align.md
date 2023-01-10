@@ -2,33 +2,34 @@
 
 The `content-align` style aligns content _inside_ a widget.
 
-You can specify the alignment of content on both the horizontal and vertical axes.
-
 ## Syntax
 
-```
-content-align: <HORIZONTAL> <VERTICAL>;
-```
+--8<-- "docs/snippets/syntax_block_start.md"
+content-align: <a href="../../css_types/horizontal">&lt;horizontal&gt;</a> <a href="../../css_types/vertical">&lt;vertical&gt;</a>;
 
-### Values
+content-align-horizontal: <a href="../../css_types/horizontal">&lt;horizontal&gt;</a>;
+content-align-vertical: <a href="../../css_types/vertical">&lt;vertical&gt;</a>;
+--8<-- "docs/snippets/syntax_block_end.md"
 
-#### `HORIZONTAL`
+The style `content-align` takes a [`<horizontal>`](../../css_types/horizontal) followed by a [`<vertical>`](../../css_types/vertical).
 
-| Value            | Description                                        |
-| ---------------- | -------------------------------------------------- |
-| `left` (default) | Align content on the left of the horizontal axis   |
-| `center`         | Align content in the center of the horizontal axis |
-| `right`          | Align content on the right of the horizontal axis  |
+You can specify the alignment of content on both the horizontal and vertical axes at the same time,
+or on each of the axis separately.
+To specify content alignment on a single axis, use the respective style and type:
 
-#### `VERTICAL`
+ - `content-align-horizontal` takes a [`<horizontal>`](../../css_types/horizontal) and does alignment along the horizontal axis; and
+ - `content-align-vertical` takes a [`<vertical>`](../../css_types/vertical) and does alignment along the vertical axis.
 
-| Value           | Description                                      |
-| --------------- | ------------------------------------------------ |
-| `top` (default) | Align content at the top of the vertical axis    |
-| `middle`        | Align content in the middle of the vertical axis |
-| `bottom`        | Align content at the bottom of the vertical axis |
+## Examples
 
-## Example
+### Basic usage
+
+This first example shows three labels stacked vertically, each with different content alignments.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/content_align.py"}
+    ```
 
 === "content_align.py"
 
@@ -38,13 +39,30 @@ content-align: <HORIZONTAL> <VERTICAL>;
 
 === "content_align.css"
 
-    ```scss
+    ```sass hl_lines="2 7-8 13"
     --8<-- "docs/examples/styles/content_align.css"
     ```
 
+### All content alignments
+
+The next example shows a 3 by 3 grid of labels.
+Each label has its text aligned differently.
+
 === "Output"
 
-    ```{.textual path="docs/examples/styles/content_align.py"}
+    ```{.textual path="docs/examples/styles/content_align_all.py"}
+    ```
+
+=== "content_align_all.py"
+
+    ```py
+    --8<-- "docs/examples/styles/content_align_all.py"
+    ```
+
+=== "content_align_all.css"
+
+    ```sass hl_lines="2 5 8 11 14 17 20 23 26"
+    --8<-- "docs/examples/styles/content_align_all.css"
     ```
 
 ## CSS
@@ -54,6 +72,11 @@ content-align: <HORIZONTAL> <VERTICAL>;
 content-align: center middle;
 /* Align content at the top right of a widget */
 content-align: right top;
+
+/* Change the horizontal alignment of the content of a widget */
+content-align-horizontal: right;
+/* Change the vertical alignment of the content of a widget */
+content-align-vertical: middle;
 ```
 
 ## Python
@@ -62,4 +85,14 @@ content-align: right top;
 widget.styles.content_align = ("center", "middle")
 # Align content at the top right of a widget
 widget.styles.content_align = ("right", "top")
+
+# Change the horizontal alignment of the content of a widget
+widget.styles.content_align_horizontal = "right"
+# Change the vertical alignment of the content of a widget
+widget.styles.content_align_vertical = "middle"
 ```
+
+## See also
+
+ - [`align`](./align.md) to set the alignment of children widgets inside a container.
+ - [`text-align`](./text_align.md) to set the alignment of text in a widget.
