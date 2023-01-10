@@ -513,7 +513,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         else:
             return line.node
 
-    class UnknownID(Exception):
+    class UnknownNodeID(Exception):
         """Exception raised when referring to an unknown `TreeNode` ID."""
 
     def get_node_by_id(self, node_id: NodeID) -> TreeNode[TreeDataType]:
@@ -531,7 +531,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         try:
             return self._nodes[node_id]
         except KeyError:
-            raise self.UnknownID(f"Unknown TreeNode ID: {node_id}") from None
+            raise self.UnknownNodeID(f"Unknown NodeID ({node_id}) in tree") from None
 
     def validate_cursor_line(self, value: int) -> int:
         """Prevent cursor line from going outside of range."""
