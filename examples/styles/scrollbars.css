@@ -1,23 +1,14 @@
-Screen {
-    background: #212121;
-    color: white 80%;
-    layout: horizontal;
+Label {
+    width: 150%;
+    height: 150%;
 }
 
-Static {
-    padding: 1 2;
-}
-
-.panel1 {
-    width: 1fr;
+.right {
+    scrollbar-background: red;
     scrollbar-color: green;
-    scrollbar-background: #bbb;
-    padding: 1 2;        
-} 
+    scrollbar-corner-color: blue;
+}
 
-.panel2 {
-    width: 1fr;
-    scrollbar-color: yellow;
-    scrollbar-background: purple;
-    padding: 1 2;
-}   
+Horizontal > Container {
+    width: 50%;
+}

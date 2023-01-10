@@ -1,0 +1,45 @@
+Screen {
+    background: $background;
+}
+
+Grid {
+    grid-size: 4;
+    grid-gutter: 1 2;
+}
+
+Placeholder {
+    width: auto;
+    height: auto;
+}
+
+#p1 {
+    /* default is no padding */
+}
+
+#p2 {
+    padding: 1;
+}
+
+#p3 {
+    padding: 1 5;
+}
+
+#p4 {
+    padding: 1 1 2 6;
+}
+
+#p5 {
+    padding-top: 4;
+}
+
+#p6 {
+    padding-right: 3;
+}
+
+#p7 {
+    padding-bottom: 4;
+}
+
+#p8 {
+    padding-left: 3;
+}

@@ -4,7 +4,7 @@ Screen {
     layout: horizontal;
 }
 
-Static {
+Label {
     padding: 1 2;
     width: 200;
 }

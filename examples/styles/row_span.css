@@ -1,0 +1,30 @@
+#p1 {
+    row-span: 4;
+}
+#p2 {
+    row-span: 3;
+}
+#p3 {
+    row-span: 2;
+}
+#p4 {
+    row-span: 1;  /* Didn't need to be set explicitly. */
+}
+#p5 {
+    row-span: 3;
+}
+#p6 {
+    row-span: 2;
+}
+#p7 {
+    /* Default value is 1. */
+}
+
+Grid {
+    grid-size: 4 4;
+    grid-gutter: 1 2;
+}
+
+Placeholder {
+    height: 100%;
+}
