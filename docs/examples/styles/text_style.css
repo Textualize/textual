@@ -1,18 +1,18 @@
 Screen {
     layout: horizontal;    
 }
-Static {
-    width:1fr;        
+Label {
+    width: 1fr;
 }    
-#static1 {
+#lbl1 {
     background: red 30%;
     text-style: bold;
 }
-#static2 {
+#lbl2 {
     background: green 30%;
     text-style: italic;
 }
-#static3 {
+#lbl3 {
     background: blue 30%;
     text-style: reverse;
 }

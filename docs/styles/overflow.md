@@ -1,34 +1,43 @@
 # Overflow
 
-The `overflow` rule specifies if and when scrollbars should be displayed on the `x` and `y` axis.
-The rule takes two overflow values; one for the horizontal bar (x-axis), followed by the vertical bar (y-axis).
-
-The default value for overflow is `"auto auto"` which will show scrollbars automatically for both scrollbars if content doesn't fit within container.
-
-Overflow may also be set independently by setting the `overflow-x` rule for the horizontal bar, and `overflow-y` for the vertical bar.
+The `overflow` rule specifies if and when scrollbars should be displayed.
 
 ## Syntax
 
-```
-overflow: [auto|hidden|scroll];
-overflow-x: [auto|hidden|scroll];
-overflow-y: [auto|hidden|scroll];
-```
+--8<-- "docs/snippets/syntax_block_start.md"
+overflow: <a href="../../css_types/overflow">&lt;overflow&gt;</a> <a href="../../css_types/overflow">&lt;overflow&gt;</a>;
 
-### Values
+overflow-x: <a href="../../css_types/overflow">&lt;overflow&gt;</a>;
+overflow-y: <a href="../../css_types/overflow">&lt;overflow&gt;</a>;
+--8<-- "docs/snippets/syntax_block_end.md"
 
-| Value            | Description                                             |
-|------------------|---------------------------------------------------------|
-| `auto` (default) | Automatically show the scrollbar if content doesn't fit |
-| `hidden`         | Never show the scrollbar                                |
-| `scroll`         | Always show the scrollbar                               |
+The style `overflow` accepts two values that determine when to display scrollbars in a container widget.
+The two values set the overflow for the horizontal and vertical axes, respectively.
+
+Overflow may also be set individually for each axis:
+
+ - `overflow-x` sets the overflow for the horizontal axis; and
+ - `overflow-y` sets the overflow for the vertical axis.
+
+### Defaults
+
+The default setting for containers is `overflow: auto auto`.
+
+!!! warning
+
+    Some built-in containers like `Horizontal` and `Vertical` override these defaults.
 
 ## Example
 
-Here we split the screen in to left and right sections, each with three vertically scrolling widgets that do not fit in to the height of the terminal.
+Here we split the screen into left and right sections, each with three vertically scrolling widgets that do not fit into the height of the terminal.
 
 The left side has `overflow-y: auto` (the default) and will automatically show a scrollbar.
 The right side has `overflow-y: hidden` which will prevent a scrollbar from being shown.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/overflow.py"}
+    ```
 
 === "overflow.py"
 
@@ -38,13 +47,8 @@ The right side has `overflow-y: hidden` which will prevent a scrollbar from bein
 
 === "overflow.css"
 
-    ```css
+    ```sass hl_lines="19"
     --8<-- "docs/examples/styles/overflow.css"
-    ```
-
-=== "Output"
-
-    ```{.textual path="docs/examples/styles/overflow.py"}
     ```
 
 ## CSS
@@ -62,11 +66,12 @@ overflow-x: scroll;
 
 ## Python
 
+Overflow cannot be programmatically set for both axes at the same time.
+
 ```python
 # Hide the vertical scrollbar
 widget.styles.overflow_y = "hidden"
 
 # Always show the horizontal scrollbar
 widget.styles.overflow_x = "scroll"
-
 ```

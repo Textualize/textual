@@ -1,0 +1,26 @@
+Label {
+    color: auto 80%;
+    content-align: center middle;
+    height: 1fr;
+    width: 100%;
+}
+
+#lbl1 {
+    background: red 80%;
+}
+
+#lbl2 {
+    background: yellow 80%;
+}
+
+#lbl3 {
+    background: blue 80%;
+}
+
+#lbl4 {
+    background: pink 80%;
+}
+
+#lbl5 {
+    background: green 80%;
+}

@@ -1,0 +1,39 @@
+#cells {
+    width: 9;      /* (1)! */
+}
+#percent {
+    width: 12.5%;  /* (2)! */
+}
+#w {
+    width: 10w;    /* (3)! */
+}
+#h {
+    width: 25h;    /* (4)! */
+}
+#vw {
+    width: 15vw;   /* (5)! */
+}
+#vh {
+    width: 25vh;   /* (6)! */
+}
+#auto {
+    width: auto;   /* (7)! */
+}
+#fr1 {
+    width: 1fr;    /* (8)! */
+}
+#fr3 {
+    width: 3fr;    /* (9)! */
+}
+
+Screen {
+    layers: ruler;
+}
+
+Ruler {
+    layer: ruler;
+    dock: bottom;
+    overflow: hidden;
+    height: 1;
+    background: $accent;
+}
