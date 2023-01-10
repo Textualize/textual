@@ -576,6 +576,27 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         else:
             return tree_line.node
 
+    def _get_label_region(self, line: int) -> Region | None:
+        """Returns the region occupied by the label of the node at line `line`.
+
+        This can be used, e.g., when scrolling to that line such that the label
+        is visible after the scroll.
+
+        Args:
+            line (int): A line number.
+
+        Returns:
+            Region | None: the region occupied by the label, or `None` if the
+            line is not in the tree.
+        """
+        try:
+            tree_line = self._tree_lines[line]
+        except IndexError:
+            return None
+        region_x = tree_line._get_guide_width(self.guide_depth, self.show_root)
+        region_width = self.get_label_width(tree_line.node)
+        return Region(region_x, line, region_width, 1)
+
     def watch_hover_line(self, previous_hover_line: int, hover_line: int) -> None:
         previous_node = self._get_node(previous_hover_line)
         if previous_node is not None:
@@ -615,7 +636,9 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         Args:
             line (int): A line number.
         """
-        self.scroll_to_region(Region(0, line, self.size.width, 1))
+        region = self._get_label_region(line)
+        if region is not None:
+            self.scroll_to_region(region)
 
     def scroll_to_node(self, node: TreeNode[TreeDataType]) -> None:
         """Scroll to the given node.
