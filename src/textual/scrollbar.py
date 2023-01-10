@@ -192,6 +192,27 @@ class ScrollBarRender:
 class ScrollBar(Widget):
 
     renderer: ClassVar[Type[ScrollBarRender]] = ScrollBarRender
+    """The class used for rendering scrollbars.
+    This can be overriden and set to a ScrollBarRender-derived class
+    in order to delegate all scrollbar rendering to that class. E.g.:
+
+    ```
+    class MyScrollBarRender(ScrollBarRender): ...
+
+    app = MyApp()
+    ScrollBar.renderer = MyScrollBarRender
+    app.run()
+    ```
+
+    Because this variable is accessed through specific instances
+    (rather than through the class ScrollBar itself) it is also possible
+    to set this on specific scrollbar instance to change only that
+    instance:
+
+    ```
+    my_widget.horizontal_scrollbar.renderer = MyScrollBarRender
+    ```
+    """
 
     DEFAULT_CSS = """
     ScrollBar {
