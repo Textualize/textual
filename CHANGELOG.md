@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `TreeNode.parent` -- a read-only property for accessing a node's parent https://github.com/Textualize/textual/issues/1397
 - Added public `TreeNode` label access via `TreeNode.label` https://github.com/Textualize/textual/issues/1396
 - Added read-only public access to the children of a `TreeNode` via `TreeNode.children` https://github.com/Textualize/textual/issues/1398
+- Added `Tree.get_node_by_id` to allow getting a node by its ID
 
 ### Changed
 

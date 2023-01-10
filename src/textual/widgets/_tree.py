@@ -513,6 +513,17 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         else:
             return line.node
 
+    def get_node_by_id(self, node_id: NodeID) -> TreeNode[TreeDataType]:
+        """Get a tree node by its ID.
+
+        Args:
+            node_id (NodeID): The ID of the node to get.
+
+        Returns:
+            TreeNode[TreeDataType]: The node associated with that ID.
+        """
+        return self._nodes[node_id]
+
     def validate_cursor_line(self, value: int) -> int:
         """Prevent cursor line from going outside of range."""
         return clamp(value, 0, len(self._tree_lines) - 1)
