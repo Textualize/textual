@@ -182,15 +182,47 @@ class Reactive(Generic[ReactiveType]):
         if current_value != value or self._always_update:
             # Store the internal value
             setattr(obj, self.internal_name, value)
-            # Check all watchers
+            # Check all relevant watchers
             self._check_watchers(obj, name, current_value)
+            # Check all computes
+            self._check_computes(obj)
             # Refresh according to descriptor flags
             if self._layout or self._repaint:
                 obj.refresh(repaint=self._repaint, layout=self._layout)
 
     @classmethod
+    def _check_computes(cls, obj: Reactable) -> None:
+        """Invoke all computes.
+
+        Args:
+            obj (Reactable): Reactable object whose computes will be called.
+        """
+        _rich_traceback_guard = True
+
+        async def _set_later(obj: Reactable, compute: str, compute_method: Callable) -> None:
+            value = await compute_method()
+            setattr(obj, compute, value)
+
+        computes = getattr(obj, "__computes", [])
+        for compute in computes:
+            try:
+                compute_method = getattr(obj, f"compute_{compute}")
+            except AttributeError:
+                continue
+
+            if isawaitable(compute_method):
+                # Post message to call compute method when possible.
+                obj.post_message_no_wait(
+                    events.Callback(sender=obj, callback=partial(_set_later, obj, compute, compute_method))
+                )
+            else:
+                # Compute method is synchronous so we invoke immediately.
+                value = compute_method()
+                setattr(obj, compute, value)
+
+    @classmethod
     def _check_watchers(cls, obj: Reactable, name: str, old_value: Any):
-        """Check watchers, and call watch methods / computes
+        """Call all watch methods.
 
         Args:
             obj (Reactable): The reactable object.
@@ -206,10 +238,6 @@ class Reactive(Generic[ReactiveType]):
             """Coroutine to await an awaitable returned from a watcher"""
             _rich_traceback_omit = True
             await awaitable
-            # Watcher may have changed the state, so run compute again
-            obj.post_message_no_wait(
-                events.Callback(sender=obj, callback=partial(Reactive._compute, obj))
-            )
 
         def invoke_watcher(
             watch_function: Callable, old_value: object, value: object
@@ -236,47 +264,14 @@ class Reactive(Generic[ReactiveType]):
                         sender=obj, callback=partial(await_watcher, watch_result)
                     )
                 )
-                return False
-            else:
-                return True
 
-        # Compute is only required if a watcher runs immediately, not if they were posted.
-        require_compute = False
         watch_function = getattr(obj, f"watch_{name}", None)
         if callable(watch_function):
-            require_compute = require_compute or invoke_watcher(
-                watch_function, old_value, value
-            )
+            invoke_watcher(watch_function, old_value, value)
 
         watchers: list[Callable] = getattr(obj, "__watchers", {}).get(name, [])
         for watcher in watchers:
-            require_compute = require_compute or invoke_watcher(
-                watcher, old_value, value
-            )
-
-        if require_compute:
-            # Run computes
-            obj.post_message_no_wait(
-                events.Callback(sender=obj, callback=partial(Reactive._compute, obj))
-            )
-
-    @classmethod
-    async def _compute(cls, obj: Reactable) -> None:
-        """Invoke all computes.
-
-        Args:
-            obj (Reactable): Reactable object.
-        """
-        _rich_traceback_guard = True
-        computes = getattr(obj, "__computes", [])
-        for compute in computes:
-            try:
-                compute_method = getattr(obj, f"compute_{compute}")
-            except AttributeError:
-                continue
-
-            value = await invoke(compute_method)
-            setattr(obj, compute, value)
+            invoke_watcher(watcher, old_value, value)
 
 
 class reactive(Reactive[ReactiveType]):
