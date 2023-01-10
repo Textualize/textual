@@ -6,7 +6,7 @@ Welcome to the [Textual](https://github.com/Textualize/textual) framework docume
 
 ## In a hurry?
 
-[Get started](./getting_started.md){ .md-button .md-button--primary } or jump straight to [Tutorial](./tutorial.md){ .md-button .md-button--primary }
+[Get started](./getting_started.md){ .md-button .md-button--primary } or [Tutorial](./tutorial.md){ .md-button .md-button--secondary }
 
 ## What is Textual?
 
