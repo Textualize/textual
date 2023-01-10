@@ -1,26 +1,31 @@
 # Scrollbar-gutter
 
-The `scrollbar-gutter` rule allows authors to reserve space for the vertical scrollbar.
-
-Setting the value to `stable` prevents unwanted layout changes when the scrollbar becomes visible.
+The `scrollbar-gutter` rule allows reserving space for a vertical scrollbar.
 
 ## Syntax
 
-```
-scrollbar-gutter: [auto|stable];
-```
+--8<-- "docs/snippets/syntax_block_start.md"
+scrollbar-gutter: auto | stable;
+--8<-- "docs/snippets/syntax_block_end.md"
 
 ### Values
 
-| Value            | Description                                      |
-|------------------|--------------------------------------------------|
-| `auto` (default) | No space is reserved for the vertical scrollbar. |
-| `stable`         | Space is reserved for the vertical scrollbar.    |
+| Value            | Description                                    |
+|------------------|------------------------------------------------|
+| `auto` (default) | No space is reserved for a vertical scrollbar. |
+| `stable`         | Space is reserved for a vertical scrollbar.    |
+
+Setting the value to `stable` prevents unwanted layout changes when the scrollbar becomes visible, whereas the default value of `auto` means that the layout of your application is recomputed when a vertical scrollbar becomes needed.
 
 ## Example
 
 In the example below, notice the gap reserved for the scrollbar on the right side of the
 terminal window.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/scrollbar_gutter.py"}
+    ```
 
 === "scrollbar_gutter.py"
 
@@ -30,24 +35,20 @@ terminal window.
 
 === "scrollbar_gutter.css"
 
-    ```scss
+    ```sass hl_lines="2"
     --8<-- "docs/examples/styles/scrollbar_gutter.css"
-    ```
-
-=== "Output"
-
-    ```{.textual path="docs/examples/styles/scrollbar_gutter.py"}
     ```
 
 ## CSS
 
 ```sass
-/* Reserve space for vertical scrollbar */
-scrollbar-gutter: stable;
+scrollbar-gutter: auto;    /* Don't reserve space for a vertical scrollbar. */
+scrollbar-gutter: stable;  /* Reserve space for a vertical scrollbar. */
 ```
 
 ## Python
 
 ```python
-self.styles.scrollbar_gutter = "stable"
+self.styles.scrollbar_gutter = "auto"    # Don't reserve space for a vertical scrollbar.
+self.styles.scrollbar_gutter = "stable"  # Reserve space for a vertical scrollbar.
 ```

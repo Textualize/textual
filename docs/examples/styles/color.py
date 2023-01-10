@@ -1,12 +1,12 @@
 from textual.app import App
-from textual.widgets import Static
+from textual.widgets import Label
 
 
 class ColorApp(App):
     def compose(self):
-        yield Static("I'm red!", id="static1")
-        yield Static("I'm rgb(0, 255, 0)!", id="static2")
-        yield Static("I'm hsl(240, 100%, 50%)!", id="static3")
+        yield Label("I'm red!", id="label1")
+        yield Label("I'm rgb(0, 255, 0)!", id="label2")
+        yield Label("I'm hsl(240, 100%, 50%)!", id="label3")
 
 
 app = ColorApp(css_path="color.css")

@@ -1,0 +1,26 @@
+Vertical {
+    height: 100%;
+    width: 100%;
+    overflow-x: auto;
+}
+
+Placeholder {
+    height: 1fr;
+    width: 50%;
+}
+
+#p1 {
+    min-width: 25%;  /* (1)! */
+}
+
+#p2 {
+    min-width: 75%;
+}
+
+#p3 {
+    min-width: 100;
+}
+
+#p4 {
+    min-width: 400h;
+}

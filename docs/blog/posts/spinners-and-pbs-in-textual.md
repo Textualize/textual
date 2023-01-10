@@ -396,7 +396,7 @@ Below you can see the code I wrote and a short animation of the app working.
 
 === "CSS"
 
-    ```css
+    ```sass
     Screen {
         align: center middle;
     }
