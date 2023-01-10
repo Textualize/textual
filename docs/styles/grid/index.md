@@ -2,7 +2,7 @@
 
 There are a number of properties relating to the Textual `grid` layout.
 
-For an in-depth look at the grid layout, visit the grid [guide](../guide/layout.md#grid).
+For an in-depth look at the grid layout, visit the grid [guide](../../guide/layout.md#grid).
 
 | Property       | Description                                    |
 |----------------|------------------------------------------------|
