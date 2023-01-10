@@ -557,6 +557,18 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             return tree_line.node
 
     def _get_label_region(self, line: int) -> Region | None:
+        """Returns the region occupied by the label of the node at line `line`.
+
+        This can be used, e.g., when scrolling to that line such that the label
+        is visible after the scroll.
+
+        Args:
+            line (int): A line number.
+
+        Returns:
+            Region | None: the region occupied by the label, or `None` if the
+            line is not in the tree.
+        """
         try:
             tree_line = self._tree_lines[line]
         except IndexError:
