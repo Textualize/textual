@@ -3,7 +3,16 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum, auto
 from itertools import chain, zip_longest
-from typing import ClassVar, Generic, Iterable, NamedTuple, Sequence, TypeVar, Union, cast
+from typing import (
+    ClassVar,
+    Generic,
+    Iterable,
+    NamedTuple,
+    Sequence,
+    TypeVar,
+    Union,
+    cast,
+)
 
 from rich.console import RenderableType
 from rich.padding import Padding
@@ -127,9 +136,9 @@ class Coord(NamedTuple):
 
 
 class DataTable(ScrollView, Generic[CellType], can_focus=True):
-
     class CursorType(Enum):
-        """ Enum for type of cursor to show (if self.show_cursor) """
+        """Enum for type of cursor to show (if self.show_cursor)"""
+
         CELL = auto()
         ROW = auto()
         COLUMN = auto()
@@ -218,7 +227,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._y_offsets: list[tuple[int, int]] = []
         self._row_render_cache: LRUCache[
             tuple[int, int, Style, RowColSelector, RowColSelector],
-            tuple[SegmentLines, SegmentLines]
+            tuple[SegmentLines, SegmentLines],
+        ]
         self._row_render_cache = LRUCache(1000)
         self._cell_render_cache: LRUCache[
             tuple[int, int, Style, bool, bool], SegmentLines
@@ -226,7 +236,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._cell_render_cache = LRUCache(10000)
         self._line_cache: LRUCache[
             tuple[int, int, int, int, RowColSelector, RowColSelector, Style],
-            list[Segment]
+            list[Segment],
         ]
         self._cell_render_cache = LRUCache(10000)
         self._line_cache: LRUCache[tuple[int, int, int, int, int, int, Style], Strip]
@@ -299,7 +309,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 self.refresh_cell(old.row, i_col)
                 self.refresh_cell(value.row, i_col)
         elif (
-            self.cursor_type in (DataTable.CursorType.COLUMN, DataTable.CursorType.CROSS)
+            self.cursor_type
+            in (DataTable.CursorType.COLUMN, DataTable.CursorType.CROSS)
             and old.column != value.column
         ):
             for i_row in range(self.row_count):
@@ -616,28 +627,34 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             return Strip.blank(width, base_style)
 
         def _col(col: int, test_row: int) -> RowColSelector:
-            """ Determine which columns are applicable for cursor/highlight,
+            """Determine which columns are applicable for cursor/highlight,
             given the current self.cursor_type, self.show_cursor, and row_index.
             """
             return (
-                -1 if (
-                    not self.show_cursor
-                )
-                else col if (
+                -1
+                if (not self.show_cursor)
+                else col
+                if (
                     self.cursor_type is DataTable.CursorType.CELL
                     and test_row == row_index
                 )
-                else "all" if (
-                    self.cursor_type in (DataTable.CursorType.ROW, DataTable.CursorType.CROSS)
+                else "all"
+                if (
+                    self.cursor_type
+                    in (DataTable.CursorType.ROW, DataTable.CursorType.CROSS)
                     and test_row == row_index
                 )
-                else col if (
-                    self.cursor_type in (DataTable.CursorType.COLUMN, DataTable.CursorType.CROSS)
+                else col
+                if (
+                    self.cursor_type
+                    in (DataTable.CursorType.COLUMN, DataTable.CursorType.CROSS)
                 )
                 else -1
             )
 
-        cursor_column = -1 if not self.show_cursor else _col(self.cursor_column, self.cursor_row)
+        cursor_column = (
+            -1 if not self.show_cursor else _col(self.cursor_column, self.cursor_row)
+        )
         hover_column = _col(self.hover_column, self.hover_row)
 
         cache_key = (y, x1, x2, width, cursor_column, hover_column, base_style)
