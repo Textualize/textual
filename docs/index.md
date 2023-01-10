@@ -6,6 +6,8 @@ Welcome to the [Textual](https://github.com/Textualize/textual) framework docume
 
 ## In a hurry?
 
+See the navigation links in the header or side-bars. Click the :octicons-three-bars-16: button (top left) on mobile.
+
 [Get started](./getting_started.md){ .md-button .md-button--primary } or [Tutorial](./tutorial.md){ .md-button .md-button--secondary }
 
 ## What is Textual?
