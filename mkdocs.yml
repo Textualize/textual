@@ -258,7 +258,8 @@ plugins:
               - "!^_"
               - "^__init__$"
               - "!^can_replace$"
-
+          import:
+            - https://docs.python.org/3/objects.inv
     watch:
       - src/textual
 

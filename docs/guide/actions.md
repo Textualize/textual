@@ -132,3 +132,23 @@ Textual supports the following builtin actions which are defined on the app.
 - [action_switch_screen][textual.app.App.action_switch_screen]
 - [action_screenshot][textual.app.App.action_screenshot]
 - [action_toggle_dark][textual.app.App.action_toggle_dark]
+
+## Temporarily suspending the application
+
+You may find yourself wanting to use an action to temporarily stop your application from running
+so that you can run some other Python code (or even another program)
+that wants to control the terminal or read input from the user,
+such as a text editor.
+
+To support this, Textual provides the [`suspend`][textual.app.App.suspend] method on the app,
+which returns a context manager that temporarily suspends "application mode".
+
+In the example below, we use `suspend` to start Python's [built-in REPL](https://docs.python.org/3/tutorial/interpreter.html)
+when you press `r`, which runs the `open_repl` action.
+[`InteractiveConsole.interact`][code.InteractiveConsole.interact] returns when the REPL exits (e.g., by running `quit()`),
+at which point we exit the `with self.suspend()` block,
+resuming the Textual application.
+
+```python title="suspend.py" hl_lines="19-22"
+--8<-- "docs/examples/guide/actions/suspend.py"
+```

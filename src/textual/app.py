@@ -12,7 +12,12 @@ import threading
 import unicodedata
 import warnings
 from asyncio import Task
-from contextlib import asynccontextmanager, redirect_stderr, redirect_stdout
+from contextlib import (
+    asynccontextmanager,
+    contextmanager,
+    redirect_stderr,
+    redirect_stdout,
+)
 from datetime import datetime
 from pathlib import Path, PurePath
 from queue import Queue
@@ -24,6 +29,7 @@ from typing import (
     Callable,
     Generic,
     Iterable,
+    Iterator,
     List,
     Type,
     TypeVar,
@@ -946,6 +952,24 @@ class App(Generic[ReturnType], DOMNode):
             event_loop = asyncio.get_event_loop()
             event_loop.run_until_complete(run_app())
         return self.return_value
+
+    @contextmanager
+    def suspend(self) -> Iterator[None]:
+        """
+        A context manager that temporarily suspends the app while inside the managed block.
+
+        While inside the `with` block, the app will stop reading input and emitting output.
+        Other applications will have full control of the terminal,
+        configured as it was before the app started running.
+
+        When the `with` block ends, the application will start reading input and emitting output again.
+        """
+        driver = self._driver
+        if driver is not None:
+            driver.stop_application_mode()
+            with redirect_stdout(sys.__stdout__), redirect_stderr(sys.__stderr__):
+                yield
+            driver.start_application_mode()
 
     async def _on_css_change(self) -> None:
         """Called when the CSS changes (if watch_css is True)."""
