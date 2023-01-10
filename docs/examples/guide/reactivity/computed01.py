@@ -25,7 +25,7 @@ class ComputedApp(App):
     def compute_color(self) -> Color:  # (1)!
         return Color(self.red, self.green, self.blue).clamped
 
-    def watch_color(self, color: Color) -> None:  # (2)
+    def watch_color(self, color: Color) -> None:  # (2)!
         self.query_one("#color").styles.background = color
 
     def on_input_changed(self, event: Input.Changed) -> None:
