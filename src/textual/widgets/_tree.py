@@ -556,6 +556,15 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         else:
             return tree_line.node
 
+    def _get_label_region(self, line: int) -> Region | None:
+        try:
+            tree_line = self._tree_lines[line]
+        except IndexError:
+            return None
+        region_x = tree_line._get_guide_width(self.guide_depth, self.show_root)
+        region_width = self.get_label_width(tree_line.node)
+        return Region(region_x, line, region_width, 1)
+
     def watch_hover_line(self, previous_hover_line: int, hover_line: int) -> None:
         previous_node = self._get_node(previous_hover_line)
         if previous_node is not None:
@@ -595,10 +604,9 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         Args:
             line (int): A line number.
         """
-        tree_line = self._tree_lines[line]
-        region_x = tree_line._get_guide_width(self.guide_depth, self.show_root)
-        region_width = self.get_label_width(tree_line.node)
-        self.scroll_to_region(Region(region_x, line, region_width, 1))
+        region = self._get_label_region(line)
+        if region is not None:
+            self.scroll_to_region(region)
 
     def scroll_to_node(self, node: TreeNode[TreeDataType]) -> None:
         """Scroll to the given node.
@@ -619,36 +627,23 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         region = Region(0, line - self.scroll_offset.y, self.size.width, 1)
         self.refresh(region)
 
+    def _refresh_node_line(self, line: int) -> None:
+        node = self._get_node(line)
+        if node is not None:
+            self._refresh_node(node)
+
     def _refresh_node(self, node: TreeNode[TreeDataType]) -> None:
         """Refresh a node and all its children.
 
         Args:
             node (TreeNode[TreeDataType]): A tree node.
         """
-        view_y1 = self.scroll_offset.y
-        view_y2 = min(view_y1 + self.size.height, len(self._tree_lines))
-
-        refresh_region_y = max(node.line, view_y1)
-        if refresh_region_y >= view_y2:
-            return
-
-        refresh_region_height = 0
-        for y in range(refresh_region_y, view_y2):
-            if node in self._tree_lines[y].path:
-                refresh_region_height += 1
-            else:
-                break
-
-        if refresh_region_height == 0:
-            return
-
-        region = Region(
-            0,
-            refresh_region_y - self.scroll_offset.y,
-            self.size.width,
-            refresh_region_height,
-        )
-        self.refresh(region)
+        scroll_y = self.scroll_offset.y
+        height = self.size.height
+        visible_lines = self._tree_lines[scroll_y : scroll_y + height]
+        for line_no, line in enumerate(visible_lines, scroll_y):
+            if node in line.path:
+                self.refresh_line(line_no)
 
     @property
     def _tree_lines(self) -> list[_TreeLine]:
