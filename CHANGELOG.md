@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `MouseScrollUp` and `MouseScrollDown` now inherit from `MouseEvent` and have attached modifier keys. https://github.com/Textualize/textual/pull/1458
 - Fail-fast and print pretty tracebacks for Widget compose errors https://github.com/Textualize/textual/pull/1505
 - Added Widget._refresh_scroll to avoid expensive layout when scrolling https://github.com/Textualize/textual/pull/1524
+- `events.Pase` now bubbles https://github.com/Textualize/textual/issues/1434
 
 ### Fixed
 
