@@ -163,11 +163,15 @@ class DOMNode(MessagePump):
         self.refresh()
 
     def __init_subclass__(
-        cls, inherit_css: bool = True, inherit_bindings: bool = True
+        cls,
+        inherit_css: bool = True,
+        inherit_bindings: bool = True,
+        inherit_component_classes: bool = True,
     ) -> None:
         super().__init_subclass__()
         cls._inherit_css = inherit_css
         cls._inherit_bindings = inherit_bindings
+        cls._inherit_component_classes = inherit_component_classes
         css_type_names: set[str] = set()
         for base in cls._css_bases(cls):
             css_type_names.add(base.__name__)
