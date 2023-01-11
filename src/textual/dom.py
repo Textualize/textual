@@ -300,7 +300,6 @@ class DOMNode(MessagePump):
 
         return component_classes
 
-
     @property
     def parent(self) -> DOMNode | None:
         """DOMNode | None: The parent node."""
