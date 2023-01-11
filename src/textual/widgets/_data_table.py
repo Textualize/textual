@@ -330,8 +330,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         y = row.y
         if self.show_header:
             y += self.header_height
-        region = Region(0, y, row_width, row.height)
-        return region
+        row_region = Region(0, y, row_width, row.height)
+        return row_region
 
     def clear(self, columns: bool = False) -> None:
         """Clear the table.
