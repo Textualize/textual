@@ -272,6 +272,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._clear_caches()
         self.refresh()
 
+    def watch_show_cursor(self, show_cursor: bool) -> None:
+        self._clear_caches()
+
     def watch_show_header(self, show_header: bool) -> None:
         self._clear_caches()
 
