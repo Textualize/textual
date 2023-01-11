@@ -159,6 +159,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         color: $text;
     }
 
+    DataTable > .datatable--cursor-header {
+        background: $secondary-darken-1;
+    }
+
     .-dark-mode DataTable > .datatable--even-row {
         background: $primary 15%;
     }
@@ -175,6 +179,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         "datatable--even-row",
         "datatable--highlight",
         "datatable--cursor",
+        "datatable--cursor-header",
     }
 
     show_header = Reactive(True)
@@ -334,7 +339,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Get the region of the row at the given index."""
         rows = self.rows
         if row_index < 0 or row_index >= len(rows):
-            return Region()
+            return Region(0, 0, 0, 0)
         row = rows[row_index]
         row_width = sum(column.render_width for column in self.columns)
         y = row.y
@@ -347,11 +352,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Get the region of the column at the given index."""
         columns = self.columns
         if column_index < 0 or column_index >= len(columns):
-            return Region()
+            return Region(0, 0, 0, 0)
 
         # TODO: We probably don't want to refresh the entire column region
         #  each time we move the cursor. Moving the cursor won't result in
-        #  a resize of the contents, so it seems quite wasteful.
+        #  a change of the contents, so it seems quite wasteful.
         #  If we do that we'd need to ensure that we re-apply the cursor/hover
         #  effects if any scrolling happens.
         x = sum(column.render_width for column in self.columns[:column_index])
@@ -547,11 +552,16 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             style += self.get_component_styles("datatable--highlight").rich_style
         if cursor:
             style += self.get_component_styles("datatable--cursor").rich_style
+
+        is_header_row = row_index == -1
+        if is_header_row and cursor:
+            style += self.get_component_styles("datatable--cursor-header").rich_style
+
         cell_key = (row_index, column_index, style, cursor, hover)
         if cell_key not in self._cell_render_cache:
             style += Style.from_meta({"row": row_index, "column": column_index})
             height = (
-                self.header_height if row_index == -1 else self.rows[row_index].height
+                self.header_height if is_header_row else self.rows[row_index].height
             )
             cell = self._get_row_renderables(row_index)[column_index]
             lines = self.app.console.render_lines(
