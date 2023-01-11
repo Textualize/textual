@@ -548,14 +548,16 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Returns:
             Lines: A list of segments per line.
         """
+        is_header_row = row_index == -1
+
         if hover:
             style += self.get_component_styles("datatable--highlight").rich_style
         if cursor:
             style += self.get_component_styles("datatable--cursor").rich_style
-
-        is_header_row = row_index == -1
-        if is_header_row and cursor:
-            style += self.get_component_styles("datatable--cursor-header").rich_style
+            if is_header_row:
+                style += self.get_component_styles(
+                    "datatable--cursor-header"
+                ).rich_style
 
         cell_key = (row_index, column_index, style, cursor, hover)
         if cell_key not in self._cell_render_cache:
