@@ -630,19 +630,22 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             else:
                 row_style = base_style
 
-        def should_highlight(
-            target_location: Coord,
+        def _should_highlight(
+            cursor_location: Coord,
             cell_location: Coord,
             cursor_type: CursorType,
         ) -> bool:
+            """Determine whether we should highlight a cell given the location
+            of the cursor, the location of the cell, and the type of cursor that
+            is currently active."""
             if cursor_type == "cell":
-                return target_location == cell_location
+                return cursor_location == cell_location
             elif cursor_type == "row":
-                target_row, _ = target_location
+                target_row, _ = cursor_location
                 cell_row, _ = cell_location
                 return target_row == cell_row
             elif cursor_type == "column":
-                _, target_column = target_location
+                _, target_column = cursor_location
                 _, cell_column = cell_location
                 return target_column == cell_column
             else:
@@ -658,8 +661,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 column.index,
                 row_style,
                 column.render_width,
-                cursor=should_highlight(cursor_location, cell_location, cursor_type),
-                hover=should_highlight(hover_location, cell_location, cursor_type),
+                cursor=_should_highlight(cursor_location, cell_location, cursor_type),
+                hover=_should_highlight(hover_location, cell_location, cursor_type),
             )[line_no]
             scrollable_row.append(cell_lines)
 
