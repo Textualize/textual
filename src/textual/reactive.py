@@ -199,7 +199,10 @@ class Reactive(Generic[ReactiveType]):
         """
         _rich_traceback_guard = True
 
-        async def _set_later(obj: Reactable, compute: str, compute_method: Callable) -> None:
+        async def _set_later(
+            obj: Reactable, compute: str, compute_method: Callable
+        ) -> None:
+            """Coroutine to schedule compute method invocation and attribute update."""
             value = await compute_method()
             setattr(obj, compute, value)
 
@@ -213,7 +216,10 @@ class Reactive(Generic[ReactiveType]):
             if isawaitable(compute_method):
                 # Post message to call compute method when possible.
                 obj.post_message_no_wait(
-                    events.Callback(sender=obj, callback=partial(_set_later, obj, compute, compute_method))
+                    events.Callback(
+                        sender=obj,
+                        callback=partial(_set_later, obj, compute, compute_method),
+                    )
                 )
             else:
                 # Compute method is synchronous so we invoke immediately.
