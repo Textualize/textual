@@ -562,7 +562,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         is_header_row = row_index == -1
         show_cursor = self.show_cursor
 
-        if hover and show_cursor:
+        if hover and show_cursor and self._show_hover_cursor:
             style += self.get_component_styles("datatable--highlight").rich_style
             if is_header_row:
                 style += self.get_component_styles(
@@ -618,6 +618,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             hover_location,
             cursor_type,
             show_cursor,
+            self._show_hover_cursor,
         )
 
         if cache_key in self._row_render_cache:
@@ -732,6 +733,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self.hover_cell,
             base_style,
             self.cursor_type,
+            self._show_hover_cursor,
         )
         if cache_key in self._line_cache:
             return self._line_cache[cache_key]
@@ -771,7 +773,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return self._render_line(y, scroll_x, scroll_x + width, self.rich_style)
 
     def on_mouse_move(self, event: events.MouseMove):
-        self._show_hover_cursor = True
+        self._set_hover_cursor(True)
         meta = event.style.meta
         if meta and self.show_cursor and self.cursor_type != "none":
             try:
@@ -807,8 +809,18 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         self.scroll_to_region(region, animate=animate, spacing=spacing)
 
+    def _set_hover_cursor(self, active: bool):
+        self._show_hover_cursor = active
+        cursor_type = self.cursor_type
+        if cursor_type == "column":
+            self.refresh_column(self.hover_column)
+        elif cursor_type == "row":
+            self.refresh_row(self.hover_row)
+        elif cursor_type == "cell":
+            self.refresh_cell(*self.hover_cell)
+
     def on_click(self, event: events.Click) -> None:
-        self._show_hover_cursor = True
+        self._set_hover_cursor(True)
         if self.cursor_type != "none" and self.show_cursor:
             meta = self.get_style_at(event.x, event.y).meta
             if meta:
@@ -817,7 +829,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 event.stop()
 
     def key_down(self, event: events.Key):
-        self._show_hover_cursor = False
+        self._set_hover_cursor(False)
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
             self.cursor_cell = self.cursor_cell.down()
@@ -826,7 +838,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self._scroll_cursor_into_view()
 
     def key_up(self, event: events.Key):
-        self._show_hover_cursor = False
+        self._set_hover_cursor(False)
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
             self.cursor_cell = self.cursor_cell.up()
@@ -835,7 +847,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self._scroll_cursor_into_view()
 
     def key_right(self, event: events.Key):
-        self._show_hover_cursor = False
+        self._set_hover_cursor(False)
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "column"):
             self.cursor_cell = self.cursor_cell.right()
@@ -844,7 +856,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self._scroll_cursor_into_view(animate=True)
 
     def key_left(self, event: events.Key):
-        self._show_hover_cursor = False
+        self._set_hover_cursor(False)
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "column"):
             self.cursor_cell = self.cursor_cell.left()
