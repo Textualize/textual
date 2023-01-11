@@ -291,6 +291,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         column = clamp(column, self.fixed_columns, len(self.columns) - 1)
         return Coord(row, column)
 
+    def watch_cursor_type(self, old: str, value: str) -> None:
+        row_index, column_index = self.cursor_cell
+        if "cell" in (old, value):
+            self.refresh_cell(row_index, column_index)
+        elif "row" in (old, value):
+            self.refresh_row(row_index)
+        elif "column" in (old, value):
+            self.refresh_column(column_index)
+
     def _update_dimensions(self, new_rows: Iterable[int]) -> None:
         """Called to recalculate the virtual (scrollable) size."""
         for row_index in new_rows:
@@ -572,7 +581,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             tuple[Lines, Lines]: Lines for fixed cells, and Lines for scrollable cells.
         """
 
-        cache_key = (row_index, line_no, base_style, cursor_location, hover_location)
+        cache_key = (
+            row_index,
+            line_no,
+            base_style,
+            cursor_location,
+            hover_location,
+            self.cursor_type,
+        )
 
         if cache_key in self._row_render_cache:
             return self._row_render_cache[cache_key]
@@ -676,14 +692,16 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         except LookupError:
             return Strip.blank(width, base_style)
 
-        cursor_column = (
-            self.cursor_column
-            if (self.show_cursor and self.cursor_row == row_index)
-            else -1
+        cache_key = (
+            y,
+            x1,
+            x2,
+            width,
+            self.cursor_cell,
+            self.hover_cell,
+            base_style,
+            self.cursor_type,
         )
-        hover_column = self.hover_column if (self.hover_row == row_index) else -1
-
-        cache_key = (y, x1, x2, width, self.cursor_cell, self.hover_cell, base_style)
         if cache_key in self._line_cache:
             return self._line_cache[cache_key]
 
