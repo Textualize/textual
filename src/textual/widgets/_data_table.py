@@ -657,13 +657,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             if cursor_type == "cell":
                 return cursor_location == cell_location
             elif cursor_type == "row":
-                target_row, _ = cursor_location
+                cursor_row, _ = cursor_location
                 cell_row, _ = cell_location
-                return target_row == cell_row
+                return cursor_row == cell_row
             elif cursor_type == "column":
-                _, target_column = cursor_location
+                _, cursor_column = cursor_location
                 _, cell_column = cell_location
-                return target_column == cell_column
+                return cursor_column == cell_column
             else:
                 return False
 
