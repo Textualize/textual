@@ -23,7 +23,7 @@ from ..scroll_view import ScrollView
 from ..strip import Strip
 from .._typing import Literal
 
-CursorType = Literal["cell", "row", "column"]
+CursorType = Literal["cell", "row", "column", "none"]
 CELL: CursorType = "cell"
 CellType = TypeVar("CellType")
 
@@ -490,8 +490,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         row_index: int,
         line_no: int,
         base_style: Style,
-        cursor_column: int = -1,
-        hover_column: int = -1,
+        cursor_location: Coord,
+        hover_location: Coord,
     ) -> tuple[SegmentLines, SegmentLines]:
         """Render a row in to lines for each cell.
 
@@ -504,7 +504,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             tuple[Lines, Lines]: Lines for fixed cells, and Lines for scrollable cells.
         """
 
-        cache_key = (row_index, line_no, base_style, cursor_column, hover_column)
+        cache_key = (row_index, line_no, base_style, cursor_location, hover_location)
 
         if cache_key in self._row_render_cache:
             return self._row_render_cache[cache_key]
@@ -534,17 +534,38 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             else:
                 row_style = base_style
 
-        scrollable_row = [
-            render_cell(
+        def should_highlight(
+            target_location: Coord,
+            cell_location: Coord,
+            cursor_type: CursorType,
+        ) -> bool:
+            if cursor_type == "cell":
+                return target_location == cell_location
+            elif cursor_type == "row":
+                target_row, _ = target_location
+                cell_row, _ = cell_location
+                return target_row == cell_row
+            elif cursor_type == "column":
+                _, target_column = target_location
+                _, cell_column = cell_location
+                return target_column == cell_column
+            else:
+                return False
+
+        cursor_type = self.cursor_type
+
+        scrollable_row = []
+        for column in self.columns:
+            cell_location = Coord(row_index, column.index)
+            cell_lines = render_cell(
                 row_index,
                 column.index,
                 row_style,
                 column.render_width,
-                cursor=cursor_column == column.index,
-                hover=hover_column == column.index,
+                cursor=should_highlight(cursor_location, cell_location, cursor_type),
+                hover=should_highlight(hover_location, cell_location, cursor_type),
             )[line_no]
-            for column in self.columns
-        ]
+            scrollable_row.append(cell_lines)
 
         row_pair = (fixed_row, scrollable_row)
         self._row_render_cache[cache_key] = row_pair
@@ -586,6 +607,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             row_index, line_no = self._get_offsets(y)
         except LookupError:
             return Strip.blank(width, base_style)
+
         cursor_column = (
             self.cursor_column
             if (self.show_cursor and self.cursor_row == row_index)
@@ -593,7 +615,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         )
         hover_column = self.hover_column if (self.hover_row == row_index) else -1
 
-        cache_key = (y, x1, x2, width, cursor_column, hover_column, base_style)
+        cache_key = (y, x1, x2, width, self.cursor_cell, self.hover_cell, base_style)
         if cache_key in self._line_cache:
             return self._line_cache[cache_key]
 
@@ -601,8 +623,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             row_index,
             line_no,
             base_style,
-            cursor_column=cursor_column,
-            hover_column=hover_column,
+            cursor_location=self.cursor_cell,
+            hover_location=self.hover_cell,
         )
         fixed_width = sum(
             column.render_width for column in self.columns[: self.fixed_columns]
@@ -626,12 +648,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if self.show_header:
             fixed_top_row_count += self.get_row_height(-1)
 
-        style = self.rich_style
-
         if y >= fixed_top_row_count:
             y += scroll_y
 
-        return self._render_line(y, scroll_x, scroll_x + width, style)
+        return self._render_line(y, scroll_x, scroll_x + width, self.rich_style)
 
     def on_mouse_move(self, event: events.MouseMove):
         meta = event.style.meta
