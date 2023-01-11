@@ -313,6 +313,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self.refresh_row(row_index)
         elif "column" in (old, value):
             self.refresh_column(column_index)
+        self._scroll_cursor_into_view()
 
     def _update_dimensions(self, new_rows: Iterable[int]) -> None:
         """Called to recalculate the virtual (scrollable) size."""
@@ -770,7 +771,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     def on_mouse_move(self, event: events.MouseMove):
         meta = event.style.meta
-        if meta:
+        if meta and self.show_cursor and self.cursor_type != "none":
             try:
                 self.hover_cell = Coord(meta["row"], meta["column"])
             except KeyError:
@@ -786,45 +787,63 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         left = sum(column.render_width for column in self.columns[: self.fixed_columns])
         return Spacing(top, 0, 0, left)
 
-    def _scroll_cursor_in_to_view(self, animate: bool = False) -> None:
-        region = self._get_cell_region(self.cursor_row, self.cursor_column)
-        spacing = self._get_cell_border()
-
+    def _scroll_cursor_into_view(self, animate: bool = False) -> None:
         # TODO: Calculate overlap of cursor (depends on cursor type) and
         #  the window, then scroll that into view.
+        if self.cursor_type == "cell":
+            region = self._get_cell_region(self.cursor_row, self.cursor_column)
+            spacing = self._get_cell_border()
+        elif self.cursor_type == "row":
+            region = self._get_row_region(self.cursor_row)
+            spacing = Spacing()
+        elif self.cursor_type == "column":
+            region = self._get_column_region(self.cursor_column)
+            spacing = Spacing()
+        else:
+            region = Region()
+            spacing = Spacing()
 
         self.scroll_to_region(region, animate=animate, spacing=spacing)
 
     def on_click(self, event: events.Click) -> None:
-        meta = self.get_style_at(event.x, event.y).meta
-        if meta:
-            self.cursor_cell = Coord(meta["row"], meta["column"])
-            self._scroll_cursor_in_to_view()
-            event.stop()
+        if self.cursor_type != "none" and self.show_cursor:
+            meta = self.get_style_at(event.x, event.y).meta
+            if meta:
+                self.cursor_cell = Coord(meta["row"], meta["column"])
+                self._scroll_cursor_into_view()
+                event.stop()
 
     def key_down(self, event: events.Key):
-        self.cursor_cell = self.cursor_cell.down()
-        event.stop()
-        event.prevent_default()
-        self._scroll_cursor_in_to_view()
+        cursor_type = self.cursor_type
+        if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
+            self.cursor_cell = self.cursor_cell.down()
+            event.stop()
+            event.prevent_default()
+            self._scroll_cursor_into_view()
 
     def key_up(self, event: events.Key):
-        self.cursor_cell = self.cursor_cell.up()
-        event.stop()
-        event.prevent_default()
-        self._scroll_cursor_in_to_view()
+        cursor_type = self.cursor_type
+        if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
+            self.cursor_cell = self.cursor_cell.up()
+            event.stop()
+            event.prevent_default()
+            self._scroll_cursor_into_view()
 
     def key_right(self, event: events.Key):
-        self.cursor_cell = self.cursor_cell.right()
-        event.stop()
-        event.prevent_default()
-        self._scroll_cursor_in_to_view(animate=True)
+        cursor_type = self.cursor_type
+        if self.show_cursor and (cursor_type == "cell" or cursor_type == "column"):
+            self.cursor_cell = self.cursor_cell.right()
+            event.stop()
+            event.prevent_default()
+            self._scroll_cursor_into_view(animate=True)
 
     def key_left(self, event: events.Key):
-        self.cursor_cell = self.cursor_cell.left()
-        event.stop()
-        event.prevent_default()
-        self._scroll_cursor_in_to_view(animate=True)
+        cursor_type = self.cursor_type
+        if self.show_cursor and (cursor_type == "cell" or cursor_type == "column"):
+            self.cursor_cell = self.cursor_cell.left()
+            event.stop()
+            event.prevent_default()
+            self._scroll_cursor_into_view(animate=True)
 
     class CellHighlighted(Message):
         pass
