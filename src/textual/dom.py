@@ -98,6 +98,9 @@ class DOMNode(MessagePump):
     # True if this node inherits the CSS from the base class.
     _inherit_css: ClassVar[bool] = True
 
+    # True if this node inherits the component classes from the base class.
+    _inherit_component_classes: ClassVar[bool] = True
+
     # True to inherit bindings from base class
     _inherit_bindings: ClassVar[bool] = True
 
