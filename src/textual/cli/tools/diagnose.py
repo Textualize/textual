@@ -69,10 +69,10 @@ def _guess_term() -> str:
             term_program = "Kitty"
         elif "WT_SESSION" in os.environ:
             term_program = "Windows Terminal"
-        elif "INSIDE_EMACS" in os.environ and os.environ["INSIDE_EMACS"].endswith(
-            "eshell"
-        ):
-            term_program = "GNU Emacs (eshell)"
+        elif "INSIDE_EMACS" in os.environ and os.environ["INSIDE_EMACS"]:
+            term_program = (
+                f"GNU Emacs {' '.join(os.environ['INSIDE_EMACS'].split(','))}"
+            )
         elif "JEDITERM_SOURCE_ARGS" in os.environ:
             term_program = "PyCharm"
 
