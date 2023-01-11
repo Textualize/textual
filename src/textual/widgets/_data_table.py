@@ -426,6 +426,24 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if row_index < 0 or column_index < 0:
             return
         region = self._get_cell_region(row_index, column_index)
+        self._refresh_region(region)
+
+    def refresh_row(self, row_index: int) -> None:
+        """Refresh the row at the given index.
+
+        Args:
+            row_index (int): The index of the row to refresh.
+        """
+        if row_index < 0:
+            return
+
+        region = self._get_row_region(row_index)
+        self._refresh_region(region)
+
+    def _refresh_region(self, region: Region) -> None:
+        """Refresh a region of the DataTable, if its visible within
+        the window. This method will translate the region to account
+        for scrolling."""
         if not self.window_region.overlaps(region):
             return
         region = region.translate(-self.scroll_offset)
