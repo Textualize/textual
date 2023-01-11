@@ -159,8 +159,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         color: $text;
     }
 
-    DataTable > .datatable--cursor-header {
+    DataTable > .datatable--cursor-fixed {
         background: $secondary-darken-1;
+        color: $text;
+    }
+
+    DataTable > .datatable--highlight-fixed {
+        background: $secondary 30%;
     }
 
     .-dark-mode DataTable > .datatable--even-row {
@@ -174,12 +179,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
         "datatable--header",
+        "datatable--cursor-fixed",
+        "datatable--highlight-fixed",
         "datatable--fixed",
         "datatable--odd-row",
         "datatable--even-row",
         "datatable--highlight",
         "datatable--cursor",
-        "datatable--cursor-header",
     }
 
     show_header = Reactive(True)
@@ -549,15 +555,19 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             Lines: A list of segments per line.
         """
         is_header_row = row_index == -1
+        show_cursor = self.show_cursor
 
-        if hover:
+        if hover and show_cursor:
             style += self.get_component_styles("datatable--highlight").rich_style
-        if cursor:
-            style += self.get_component_styles("datatable--cursor").rich_style
             if is_header_row:
                 style += self.get_component_styles(
-                    "datatable--cursor-header"
+                    "datatable--highlight-fixed"
                 ).rich_style
+
+        if cursor and show_cursor:
+            style += self.get_component_styles("datatable--cursor").rich_style
+            if is_header_row:
+                style += self.get_component_styles("datatable--cursor-fixed").rich_style
 
         cell_key = (row_index, column_index, style, cursor, hover)
         if cell_key not in self._cell_render_cache:
@@ -592,6 +602,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Returns:
             tuple[Lines, Lines]: Lines for fixed cells, and Lines for scrollable cells.
         """
+        cursor_type = self.cursor_type
+        show_cursor = self.show_cursor
 
         cache_key = (
             row_index,
@@ -599,7 +611,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             base_style,
             cursor_location,
             hover_location,
-            self.cursor_type,
+            cursor_type,
+            show_cursor,
         )
 
         if cache_key in self._row_render_cache:
@@ -650,8 +663,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 return target_column == cell_column
             else:
                 return False
-
-        cursor_type = self.cursor_type
 
         scrollable_row = []
         for column in self.columns:
@@ -775,6 +786,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def _scroll_cursor_in_to_view(self, animate: bool = False) -> None:
         region = self._get_cell_region(self.cursor_row, self.cursor_column)
         spacing = self._get_cell_border()
+
+        # TODO: Calculate overlap of cursor (depends on cursor type) and
+        #  the window, then scroll that into view.
+
         self.scroll_to_region(region, animate=animate, spacing=spacing)
 
     def on_click(self, event: events.Click) -> None:
