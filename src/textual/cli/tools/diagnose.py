@@ -14,8 +14,8 @@ def _section(title: str, values: dict[str, str]) -> None:
         title (str): The title for the section.
         values (dict[str, str]): The values to print out.
     """
-    max_name = len(max(list(values.keys()), key=len))
-    max_value = len(max(list(values.values()), key=len))
+    max_name = max(map(len, values.keys()))
+    max_value = max(map(len, values.values()))
     print(f"## {title}")
     print()
     print(f"| {'Name':{max_name}} | {'Value':{max_value}} |")
