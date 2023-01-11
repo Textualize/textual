@@ -323,15 +323,34 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     def _get_row_region(self, row_index: int) -> Region:
         """Get the region of the row at the given index."""
-        if row_index < 0:
+        rows = self.rows
+        if row_index < 0 or row_index >= len(rows):
             return Region()
-        row = self.rows[row_index]
+        row = rows[row_index]
         row_width = sum(column.render_width for column in self.columns)
         y = row.y
         if self.show_header:
             y += self.header_height
         row_region = Region(0, y, row_width, row.height)
         return row_region
+
+    def _get_column_region(self, column_index: int) -> Region:
+        """Get the region of the column at the given index."""
+        columns = self.columns
+        if column_index < 0 or column_index >= len(columns):
+            return Region()
+
+        # TODO: We probably don't want to refresh the entire column region
+        #  each time we move the cursor. Moving the cursor won't result in
+        #  a resize of the contents, so it seems quite wasteful.
+        #  If we do that we'd need to ensure that we re-apply the cursor/hover
+        #  effects if any scrolling happens.
+        x = sum(column.render_width for column in self.columns[:column_index])
+        width = columns[column_index].render_width
+        header_height = self.header_height if self.show_header else 0
+        height = len(self._y_offsets) + header_height
+        full_column_region = Region(x, 0, width, height)
+        return full_column_region
 
     def clear(self, columns: bool = False) -> None:
         """Clear the table.
@@ -444,10 +463,22 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Args:
             row_index (int): The index of the row to refresh.
         """
-        if row_index < 0:
+        if row_index < 0 or row_index >= len(self.rows):
             return
 
         region = self._get_row_region(row_index)
+        self._refresh_region(region)
+
+    def refresh_column(self, column_index: int) -> None:
+        """Refresh the column at the given index.
+
+        Args:
+            column_index (int): The index of the column to refresh.
+        """
+        if column_index < 0 or column_index >= len(self.columns):
+            return
+
+        region = self._get_column_region(column_index)
         self._refresh_region(region)
 
     def _refresh_region(self, region: Region) -> None:
