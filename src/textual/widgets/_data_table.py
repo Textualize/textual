@@ -275,8 +275,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.refresh_cell(*value)
 
     def watch_cursor_cell(self, old: Coord, value: Coord) -> None:
-        self.refresh_cell(*old)
-        self.refresh_cell(*value)
+        if self.cursor_type == "cell":
+            self.refresh_cell(*old)
+            self.refresh_cell(*value)
+        elif self.cursor_type == "row":
+            self.refresh_row(old.row)
+            self.refresh_row(value.row)
+        elif self.cursor_type == "column":
+            self.refresh_column(old.column)
+            self.refresh_column(value.column)
 
     def validate_cursor_cell(self, value: Coord) -> Coord:
         row, column = value
@@ -320,7 +327,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             return Region()
         row = self.rows[row_index]
         row_width = sum(column.render_width for column in self.columns)
-        region = Region(0, row.y, row_width, row.height)
+        y = row.y
+        if self.show_header:
+            y += self.header_height
+        region = Region(0, y, row_width, row.height)
         return region
 
     def clear(self, columns: bool = False) -> None:
