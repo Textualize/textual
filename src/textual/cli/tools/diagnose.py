@@ -85,16 +85,28 @@ def _guess_term() -> str:
     return "*Unknown*" if term_program is None else term_program
 
 
+def _env(var_name: str) -> str:
+    """Get a representation of an environment variable.
+
+    Args:
+        var_name (str): The name of the variable to get.
+
+    Returns:
+        str: The value, or an indication that it isn't set.
+    """
+    return os.environ.get(var_name, "*Not set*")
+
+
 def _term() -> None:
     """Print information about the terminal."""
     _section(
         "Terminal",
         {
             "Terminal Application": _guess_term(),
-            "TERM": os.environ.get("TERM", "*Not set*"),
-            "COLORTERM": os.environ.get("COLORTERM", "*Not set*"),
-            "FORCE_COLOR": os.environ.get("FORCE_COLOR", "*Not set*"),
-            "NO_COLOR": os.environ.get("NO_COLOR", "*Not set*"),
+            "TERM": _env("TERM"),
+            "COLORTERM": _env("COLORTERM"),
+            "FORCE_COLOR": _env("FORCE_COLOR"),
+            "NO_COLOR": _env("NO_COLOR"),
         },
     )
 
