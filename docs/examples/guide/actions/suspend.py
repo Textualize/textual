@@ -1,5 +1,4 @@
 from code import InteractiveConsole
-import readline  # enable readline support in the REPL https://docs.python.org/3/library/readline.html
 
 from textual.app import App, ComposeResult
 from textual.widgets import Footer, Static

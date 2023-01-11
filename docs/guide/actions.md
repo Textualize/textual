@@ -152,3 +152,8 @@ resuming the Textual application.
 ```python title="suspend.py" hl_lines="19-22"
 --8<-- "docs/examples/guide/actions/suspend.py"
 ```
+
+!!! tip "Readline support on Unix"
+
+    On Unix systems you can [`import readline`](https://docs.python.org/3/library/readline.html)
+    to enable Readline support in the REPL.
