@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Tree.get_node_by_id` to allow getting a node by its ID https://github.com/Textualize/textual/pull/1535
 - Added a `Tree.NodeHighlighted` message, giving a `on_tree_node_highlighted` event handler https://github.com/Textualize/textual/issues/1400
 - Added a `_inherit_component_classes` class variable to control whether or not component classes are inherited from base classes https://github.com/Textualize/textual/issues/1399
+- Added `diagnose` as a `textual` command https://github.com/Textualize/textual/issues/1542
 
 ### Changed
 
