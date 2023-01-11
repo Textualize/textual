@@ -314,6 +314,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         cell_region = Region(x, y, width, height)
         return cell_region
 
+    def _get_row_region(self, row_index: int) -> Region:
+        """Get the region of the row at the given index."""
+        if row_index < 0:
+            return Region()
+        row = self.rows[row_index]
+        row_width = sum(column.render_width for column in self.columns)
+        region = Region(0, row.y, row_width, row.height)
+        return region
+
     def clear(self, columns: bool = False) -> None:
         """Clear the table.
 
