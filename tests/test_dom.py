@@ -115,6 +115,53 @@ def test_get_default_css():
     assert e_css[1][1:] == ("C", -2)
 
 
+def test_component_classes_inheritance():
+    """Test if component classes are inherited properly."""
+
+    class A(DOMNode):
+        COMPONENT_CLASSES = {"a-1", "a-2"}
+
+    class B(A):
+        COMPONENT_CLASSES = {"b-1"}
+        _inherit_component_classes = False
+
+    class C(B):
+        COMPONENT_CLASSES = {"c-1", "c-2"}
+
+    class D(C):
+        pass
+
+    class E(D):
+        COMPONENT_CLASSES = {"e-1"}
+
+    class F(E):
+        COMPONENT_CLASSES = {"f-1"}
+        _inherit_component_classes = False
+
+    node = DOMNode()
+    node_cc = node.get_component_classes()
+    a = A()
+    a_cc = a.get_component_classes()
+    b = B()
+    b_cc = b.get_component_classes()
+    c = C()
+    c_cc = c.get_component_classes()
+    d = D()
+    d_cc = d.get_component_classes()
+    e = E()
+    e_cc = e.get_component_classes()
+    f = F()
+    f_cc = f.get_component_classes()
+
+    assert node_cc == set()
+    assert a_cc == {"a-1", "a-2"}
+    assert b_cc == {"b-1"}
+    assert c_cc == {"b-1", "c-1", "c-2"}
+    assert d_cc == c_cc
+    assert e_cc == {"b-1", "c-1", "c-2", "e-1"}
+    assert f_cc == {"f-1"}
+
+
 @pytest.fixture
 def search():
     """
