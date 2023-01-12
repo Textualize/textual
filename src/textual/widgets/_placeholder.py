@@ -46,9 +46,12 @@ class Placeholder(Widget):
     can also be initialised in a specific variant.
 
     The variants available are:
-        default: shows an identifier label or the ID of the placeholder.
-        size: shows the size of the placeholder.
-        text: shows some Lorem Ipsum text on the placeholder.
+
+    | Variant | Placeholder shows                              |
+    |---------|------------------------------------------------|
+    | default | Identifier label or the ID of the placeholder. |
+    | size    | Size of the placeholder.                       |
+    | text    | Lorem Ipsum text.                              |
     """
 
     DEFAULT_CSS = """
