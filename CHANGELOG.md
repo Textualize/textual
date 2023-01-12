@@ -22,12 +22,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fail-fast and print pretty tracebacks for Widget compose errors https://github.com/Textualize/textual/pull/1505
 - Added Widget._refresh_scroll to avoid expensive layout when scrolling https://github.com/Textualize/textual/pull/1524
 - `events.Paste` now bubbles https://github.com/Textualize/textual/issues/1434
+- Improved error message when style flag `none` is mixed with other flags (e.g., when setting `text-style`) https://github.com/Textualize/textual/issues/1420
 
 ### Fixed
 
 - The styles `scrollbar-background-active` and `scrollbar-color-hover` are no longer ignored https://github.com/Textualize/textual/pull/1480
 - The widget `Placeholder` can now have its width set to `auto` https://github.com/Textualize/textual/pull/1508
-- The style `text-style` option `none` can also be mixed with other options https://github.com/Textualize/textual/issues/1420
 
 ## [0.9.1] - 2022-12-30
 
