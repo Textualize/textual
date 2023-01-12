@@ -290,7 +290,7 @@ class DOMNode(MessagePump):
         """Gets the component classes for this class and inherited from bases.
 
         Component classes are inherited from base classes, unless
-        `_inherit_component_classes` is set to `False`.
+        `inherit_component_classes` is set to `False` when subclassing.
 
         Returns:
             set[str]: a set with all the component classes available.
