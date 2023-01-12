@@ -15,7 +15,7 @@ from .. import events, messages
 from .._cache import LRUCache
 from .._segment_tools import line_crop
 from .._types import SegmentLines
-from ..geometry import Region, Size, Spacing, clamp
+from ..geometry import Region, Size, Spacing, clamp, Offset
 from ..message import Message
 from ..reactive import Reactive
 from ..render import measure
@@ -793,19 +793,25 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return Spacing(top, 0, 0, left)
 
     def _scroll_cursor_into_view(self, animate: bool = False) -> None:
-        # TODO: Calculate overlap of cursor (depends on cursor type) and
-        #  the window, then scroll that into view.
-        spacing = self._get_fixed_offset()
-        if self.cursor_type == "cell":
-            region = self._get_cell_region(self.cursor_row, self.cursor_column)
-        elif self.cursor_type == "row":
-            region = self._get_row_region(self.cursor_row)
-        elif self.cursor_type == "column":
-            region = self._get_column_region(self.cursor_column)
-        else:
-            region = Region()
+        fixed_offset = self._get_fixed_offset()
+        top, _, _, left = fixed_offset
 
-        self.scroll_to_region(region, animate=animate, spacing=spacing)
+        # For row cursor, it's not the start of the row we wish to scroll to,
+        # it's the start of the row (0) with left fixed offset applied
+        if self.cursor_type == "row":
+            x, y, width, height = self._get_row_region(self.cursor_row)
+            region = Region(
+                int(self.scroll_x) + fixed_offset.left, y, width - left, height
+            )
+        elif self.cursor_type == "column":
+            x, y, width, height = self._get_column_region(self.cursor_column)
+            region = Region(
+                x, int(self.scroll_y) + fixed_offset.top, width, height - top
+            )
+        else:
+            region = self._get_cell_region(self.cursor_row, self.cursor_column)
+
+        self.scroll_to_region(region, animate=animate, spacing=fixed_offset)
 
     def _set_hover_cursor(self, active: bool):
         self._show_hover_cursor = active
