@@ -2,8 +2,9 @@ import asyncio
 
 import pytest
 
-from textual.app import App
+from textual.app import App, ComposeResult
 from textual.reactive import reactive, var
+from textual.widget import Widget
 
 OLD_VALUE = 5_000
 NEW_VALUE = 1_000_000
@@ -81,7 +82,8 @@ async def test_watch_async_init_true():
             await asyncio.wait_for(app.watcher_called_event.wait(), timeout=0.05)
         except TimeoutError:
             pytest.fail(
-                "Async watcher wasn't called within timeout when reactive init = True")
+                "Async watcher wasn't called within timeout when reactive init = True"
+            )
 
     assert app.count == OLD_VALUE
     assert app.watcher_old_value == OLD_VALUE
@@ -171,8 +173,12 @@ async def test_reactive_with_callable_default():
 
     app = ReactiveCallable()
     async with app.run_test():
-        assert app.value == OLD_VALUE  # The value should be set to the return val of the callable
-    assert called_with_app is app  # Ensure the App is passed into the reactive default callable
+        assert (
+            app.value == OLD_VALUE
+        )  # The value should be set to the return val of the callable
+    assert (
+        called_with_app is app
+    )  # Ensure the App is passed into the reactive default callable
     assert app.watcher_called_with == OLD_VALUE
 
 
@@ -216,8 +222,7 @@ async def test_validate_init_true_set_before_dom_ready():
         assert validator_call_count == 1
 
 
-
-@pytest.mark.xfail(reason="Compute methods not called when init=True [issue#1227]")
+# @pytest.mark.xfail(reason="Compute methods not called when init=True [issue#1227]")
 async def test_reactive_compute_first_time_set():
     class ReactiveComputeFirstTimeSet(App):
         number = reactive(1)
@@ -228,11 +233,10 @@ async def test_reactive_compute_first_time_set():
 
     app = ReactiveComputeFirstTimeSet()
     async with app.run_test():
-        await asyncio.sleep(.2)  # TODO: We sleep here while issue#1218 is open
+        await asyncio.sleep(0.2)  # TODO: We sleep here while issue#1218 is open
         assert app.double_number == 2
 
 
-@pytest.mark.xfail(reason="Compute methods not called immediately [issue#1218]")
 async def test_reactive_method_call_order():
     class CallOrder(App):
         count = reactive(OLD_VALUE, init=False)
@@ -266,3 +270,28 @@ async def test_reactive_method_call_order():
         ]
         assert app.count == NEW_VALUE + 1
         assert app.count_times_ten == (NEW_VALUE + 1) * 10
+
+
+async def test_premature_reactive_call():
+
+    watcher_called = False
+
+    class BrokenWidget(Widget):
+        foo = reactive(1)
+
+        def __init__(self) -> None:
+            super().__init__()
+            self.foo = "bar"
+
+        async def watch_foo(self) -> None:
+            nonlocal watcher_called
+            watcher_called = True
+
+    class PrematureApp(App):
+        def compose(self) -> ComposeResult:
+            yield BrokenWidget()
+
+    app = PrematureApp()
+    async with app.run_test() as pilot:
+        assert watcher_called
+        app.exit()

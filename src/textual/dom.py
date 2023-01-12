@@ -31,6 +31,7 @@ from .css.parse import parse_declarations
 from .css.styles import RenderStyles, Styles
 from .css.tokenize import IDENTIFIER
 from .message_pump import MessagePump
+from .reactive import Reactive
 from .timer import Timer
 from .walk import walk_breadth_first, walk_depth_first
 
