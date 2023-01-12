@@ -805,14 +805,14 @@ class Widget(DOMNode):
     def watch_scroll_x(self, old_value: float, new_value: float) -> None:
         if self.show_horizontal_scrollbar:
             self.horizontal_scrollbar.position = round(new_value)
-            if round(old_value) != round(new_value):
-                self._refresh_scroll()
+        if round(old_value) != round(new_value):
+            self._refresh_scroll()
 
     def watch_scroll_y(self, old_value: float, new_value: float) -> None:
         if self.show_vertical_scrollbar:
             self.vertical_scrollbar.position = round(new_value)
-            if round(old_value) != round(new_value):
-                self._refresh_scroll()
+        if round(old_value) != round(new_value):
+            self._refresh_scroll()
 
     def validate_scroll_x(self, value: float) -> float:
         return clamp(value, 0, self.max_scroll_x)
