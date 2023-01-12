@@ -23,12 +23,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fail-fast and print pretty tracebacks for Widget compose errors https://github.com/Textualize/textual/pull/1505
 - Added Widget._refresh_scroll to avoid expensive layout when scrolling https://github.com/Textualize/textual/pull/1524
 - `events.Paste` now bubbles https://github.com/Textualize/textual/issues/1434
+- Clock color in the `Header` widget now matches the header color https://github.com/Textualize/textual/issues/1459
 - `COMPONENT_CLASSES` are now inherited from base classes https://github.com/Textualize/textual/issues/1399
 
 ### Fixed
 
 - The styles `scrollbar-background-active` and `scrollbar-color-hover` are no longer ignored https://github.com/Textualize/textual/pull/1480
 - The widget `Placeholder` can now have its width set to `auto` https://github.com/Textualize/textual/pull/1508
+- Behavior of widget `Input` when rendering after programmatic value change and related scenarios https://github.com/Textualize/textual/issues/1477 https://github.com/Textualize/textual/issues/1443
 
 ## [0.9.1] - 2022-12-30
 
