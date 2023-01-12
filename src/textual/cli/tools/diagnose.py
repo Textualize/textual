@@ -55,7 +55,11 @@ def _os() -> None:
 
 
 def _guess_term() -> str:
-    """Try and guess which terminal is being used."""
+    """Try and guess which terminal is being used.
+
+    Returns:
+        str: The best guess at the name of the terminal.
+    """
 
     # First obvious place to look is in $TERM_PROGRAM.
     term_program = os.environ.get("TERM_PROGRAM")
