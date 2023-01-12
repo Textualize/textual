@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added Widget._refresh_scroll to avoid expensive layout when scrolling https://github.com/Textualize/textual/pull/1524
 - `events.Paste` now bubbles https://github.com/Textualize/textual/issues/1434
 - Improved error message when style flag `none` is mixed with other flags (e.g., when setting `text-style`) https://github.com/Textualize/textual/issues/1420
+- Clock color in the `Header` widget now matches the header color https://github.com/Textualize/textual/issues/1459
 
 ### Fixed
 
