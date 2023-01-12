@@ -891,6 +891,7 @@ class StyleFlagsProperty:
         Raises:
             StyleValueError: If the value is an invalid style flag
         """
+        print(repr(style_flags))
         _rich_traceback_omit = True
         if style_flags is None:
             if obj.clear_rule(self.name):
@@ -909,7 +910,8 @@ class StyleFlagsProperty:
                             self.name, word, context="inline"
                         ),
                     )
-            style = Style.parse(style_flags)
+            # rich doesn't like "none" mixed with other styles, so short-circuit here.
+            style = Style() if "none" in words else Style.parse(style_flags)
             if obj.set_rule(self.name, style):
                 obj.refresh()
 
