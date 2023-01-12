@@ -12,6 +12,7 @@ from __future__ import annotations
 from operator import attrgetter
 from typing import TYPE_CHECKING, Generic, Iterable, NamedTuple, TypeVar, cast
 
+import rich.errors
 import rich.repr
 from rich.style import Style
 
@@ -909,8 +910,17 @@ class StyleFlagsProperty:
                             self.name, word, context="inline"
                         ),
                     )
-            # rich doesn't like "none" mixed with other styles, so short-circuit here.
-            style = Style() if "none" in words else Style.parse(style_flags)
+            try:
+                style = Style.parse(style_flags)
+            except rich.errors.StyleSyntaxError as exc:
+                if "none" in words and len(words) > 1:
+                    raise StyleValueError(
+                        "cannot mix 'none' with other style flags",
+                        help_text=style_flags_property_help_text(
+                            self.name, " ".join(words), context="inline"
+                        ),
+                    ) from None
+                raise exc from None
             if obj.set_rule(self.name, style):
                 obj.refresh()
 
