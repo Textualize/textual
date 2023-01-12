@@ -1337,6 +1337,7 @@ class Widget(DOMNode):
         speed: float | None = None,
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
+        force: bool = False,
     ) -> bool:
         """Scroll to a given (absolute) coordinate, optionally animating.
 
@@ -1348,10 +1349,13 @@ class Widget(DOMNode):
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the default scrolling easing function.
+            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
 
         Returns:
             bool: True if the scroll position changed, otherwise False.
         """
+        maybe_scroll_x = x is not None and (self.allow_horizontal_scroll or force)
+        maybe_scroll_y = y is not None and (self.allow_vertical_scroll or force)
         scrolled_x = scrolled_y = False
         if animate:
             # TODO: configure animation speed
@@ -1361,7 +1365,7 @@ class Widget(DOMNode):
             if easing is None:
                 easing = DEFAULT_SCROLL_EASING
 
-            if x is not None:
+            if maybe_scroll_x:
                 self.scroll_target_x = x
                 if x != self.scroll_x:
                     self.animate(
@@ -1372,7 +1376,7 @@ class Widget(DOMNode):
                         easing=easing,
                     )
                     scrolled_x = True
-            if y is not None:
+            if maybe_scroll_y:
                 self.scroll_target_y = y
                 if y != self.scroll_y:
                     self.animate(
@@ -1385,11 +1389,11 @@ class Widget(DOMNode):
                     scrolled_y = True
 
         else:
-            if x is not None:
+            if maybe_scroll_x:
                 scroll_x = self.scroll_x
                 self.scroll_target_x = self.scroll_x = x
                 scrolled_x = scroll_x != self.scroll_x
-            if y is not None:
+            if maybe_scroll_y:
                 scroll_y = self.scroll_y
                 self.scroll_target_y = self.scroll_y = y
                 scrolled_y = scroll_y != self.scroll_y
@@ -1405,6 +1409,7 @@ class Widget(DOMNode):
         speed: float | None = None,
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
+        force: bool = False,
     ) -> bool:
         """Scroll relative to current position.
 
@@ -1416,6 +1421,7 @@ class Widget(DOMNode):
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the configured default scrolling easing function.
+            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
 
         Returns:
             bool: True if the scroll position changed, otherwise False.
@@ -1427,6 +1433,7 @@ class Widget(DOMNode):
             speed=speed,
             duration=duration,
             easing=easing,
+            force=force,
         )
 
     def scroll_home(
@@ -1436,6 +1443,7 @@ class Widget(DOMNode):
         speed: float | None = None,
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
+        force: bool = False,
     ) -> bool:
         """Scroll to home position.
 
@@ -1445,6 +1453,7 @@ class Widget(DOMNode):
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the configured default scrolling easing function.
+            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1452,7 +1461,13 @@ class Widget(DOMNode):
         if speed is None and duration is None:
             duration = 1.0
         return self.scroll_to(
-            0, 0, animate=animate, speed=speed, duration=duration, easing=easing
+            0,
+            0,
+            animate=animate,
+            speed=speed,
+            duration=duration,
+            easing=easing,
+            force=force,
         )
 
     def scroll_end(
@@ -1462,6 +1477,7 @@ class Widget(DOMNode):
         speed: float | None = None,
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
+        force: bool = False,
     ) -> bool:
         """Scroll to the end of the container.
 
@@ -1471,6 +1487,7 @@ class Widget(DOMNode):
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the configured default scrolling easing function.
+            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1485,6 +1502,7 @@ class Widget(DOMNode):
             speed=speed,
             duration=duration,
             easing=easing,
+            force=force,
         )
 
     def scroll_left(
@@ -1494,6 +1512,7 @@ class Widget(DOMNode):
         speed: float | None = None,
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
+        force: bool = False,
     ) -> bool:
         """Scroll one cell left.
 
@@ -1503,6 +1522,7 @@ class Widget(DOMNode):
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the configured default scrolling easing function.
+            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1514,6 +1534,7 @@ class Widget(DOMNode):
             speed=speed,
             duration=duration,
             easing=easing,
+            force=force,
         )
 
     def scroll_right(
@@ -1523,6 +1544,7 @@ class Widget(DOMNode):
         speed: float | None = None,
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
+        force: bool = False,
     ) -> bool:
         """Scroll on cell right.
 
@@ -1532,6 +1554,7 @@ class Widget(DOMNode):
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the configured default scrolling easing function.
+            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1543,6 +1566,7 @@ class Widget(DOMNode):
             speed=speed,
             duration=duration,
             easing=easing,
+            force=force,
         )
 
     def scroll_down(
@@ -1552,6 +1576,7 @@ class Widget(DOMNode):
         speed: float | None = None,
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
+        force: bool = False,
     ) -> bool:
         """Scroll one line down.
 
@@ -1561,6 +1586,7 @@ class Widget(DOMNode):
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the configured default scrolling easing function.
+            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1572,6 +1598,7 @@ class Widget(DOMNode):
             speed=speed,
             duration=duration,
             easing=easing,
+            force=force,
         )
 
     def scroll_up(
@@ -1581,6 +1608,7 @@ class Widget(DOMNode):
         speed: float | None = None,
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
+        force: bool = False,
     ) -> bool:
         """Scroll one line up.
 
@@ -1590,6 +1618,7 @@ class Widget(DOMNode):
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the configured default scrolling easing function.
+            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1601,6 +1630,7 @@ class Widget(DOMNode):
             speed=speed,
             duration=duration,
             easing=easing,
+            force=force,
         )
 
     def scroll_page_up(
@@ -1610,6 +1640,7 @@ class Widget(DOMNode):
         speed: float | None = None,
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
+        force: bool = False,
     ) -> bool:
         """Scroll one page up.
 
@@ -1619,6 +1650,7 @@ class Widget(DOMNode):
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the configured default scrolling easing function.
+            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1630,6 +1662,7 @@ class Widget(DOMNode):
             speed=speed,
             duration=duration,
             easing=easing,
+            force=force,
         )
 
     def scroll_page_down(
@@ -1639,6 +1672,7 @@ class Widget(DOMNode):
         speed: float | None = None,
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
+        force: bool = False,
     ) -> bool:
         """Scroll one page down.
 
@@ -1648,6 +1682,7 @@ class Widget(DOMNode):
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the configured default scrolling easing function.
+            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1659,6 +1694,7 @@ class Widget(DOMNode):
             speed=speed,
             duration=duration,
             easing=easing,
+            force=force,
         )
 
     def scroll_page_left(
@@ -1668,6 +1704,7 @@ class Widget(DOMNode):
         speed: float | None = None,
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
+        force: bool = False,
     ) -> bool:
         """Scroll one page left.
 
@@ -1677,6 +1714,7 @@ class Widget(DOMNode):
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the configured default scrolling easing function.
+            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1690,6 +1728,7 @@ class Widget(DOMNode):
             speed=speed,
             duration=duration,
             easing=easing,
+            force=force,
         )
 
     def scroll_page_right(
@@ -1699,6 +1738,7 @@ class Widget(DOMNode):
         speed: float | None = None,
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
+        force: bool = False,
     ) -> bool:
         """Scroll one page right.
 
@@ -1708,6 +1748,7 @@ class Widget(DOMNode):
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the configured default scrolling easing function.
+            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1721,6 +1762,7 @@ class Widget(DOMNode):
             speed=speed,
             duration=duration,
             easing=easing,
+            force=force,
         )
 
     def scroll_to_widget(
@@ -1732,6 +1774,7 @@ class Widget(DOMNode):
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
         top: bool = False,
+        force: bool = False,
     ) -> bool:
         """Scroll scrolling to bring a widget in to view.
 
@@ -1743,6 +1786,7 @@ class Widget(DOMNode):
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the configured default scrolling easing function.
             top (bool, optional): Scroll widget to top of container. Defaults to False.
+            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
 
         Returns:
             bool: True if any scrolling has occurred in any descendant, otherwise False.
@@ -1762,6 +1806,7 @@ class Widget(DOMNode):
                 duration=duration,
                 top=top,
                 easing=easing,
+                force=force,
             )
             if scroll_offset:
                 scrolled = True
@@ -1790,6 +1835,7 @@ class Widget(DOMNode):
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
         top: bool = False,
+        force: bool = False,
     ) -> Offset:
         """Scrolls a given region in to view, if required.
 
@@ -1805,6 +1851,7 @@ class Widget(DOMNode):
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the configured default scrolling easing function.
             top (bool, optional): Scroll region to top of container. Defaults to False.
+            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
 
         Returns:
             Offset: The distance that was scrolled.
@@ -1832,6 +1879,7 @@ class Widget(DOMNode):
                 speed=speed,
                 duration=duration,
                 easing=easing,
+                force=force,
             )
         return delta
 
@@ -1843,6 +1891,7 @@ class Widget(DOMNode):
         duration: float | None = None,
         top: bool = False,
         easing: EasingFunction | str | None = None,
+        force: bool = False,
     ) -> None:
         """Scroll the container to make this widget visible.
 
@@ -1853,6 +1902,7 @@ class Widget(DOMNode):
             top (bool, optional): Scroll to top of container. Defaults to False.
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the configured default scrolling easing function.
+            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
         """
         parent = self.parent
         if isinstance(parent, Widget):
@@ -1864,6 +1914,7 @@ class Widget(DOMNode):
                 duration=duration,
                 top=top,
                 easing=easing,
+                force=force,
             )
 
     def __init_subclass__(
