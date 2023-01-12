@@ -1349,7 +1349,7 @@ class Widget(DOMNode):
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the default scrolling easing function.
-            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            force (bool, optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
 
         Returns:
             bool: True if the scroll position changed, otherwise False.
@@ -1421,7 +1421,7 @@ class Widget(DOMNode):
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the configured default scrolling easing function.
-            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            force (bool, optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
 
         Returns:
             bool: True if the scroll position changed, otherwise False.
@@ -1453,7 +1453,7 @@ class Widget(DOMNode):
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the configured default scrolling easing function.
-            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            force (bool, optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1487,7 +1487,7 @@ class Widget(DOMNode):
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the configured default scrolling easing function.
-            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            force (bool, optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1522,7 +1522,7 @@ class Widget(DOMNode):
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the configured default scrolling easing function.
-            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            force (bool, optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1554,7 +1554,7 @@ class Widget(DOMNode):
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the configured default scrolling easing function.
-            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            force (bool, optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1586,7 +1586,7 @@ class Widget(DOMNode):
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the configured default scrolling easing function.
-            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            force (bool, optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1618,7 +1618,7 @@ class Widget(DOMNode):
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the configured default scrolling easing function.
-            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            force (bool, optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1650,7 +1650,7 @@ class Widget(DOMNode):
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the configured default scrolling easing function.
-            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            force (bool, optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1682,7 +1682,7 @@ class Widget(DOMNode):
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the configured default scrolling easing function.
-            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            force (bool, optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1714,7 +1714,7 @@ class Widget(DOMNode):
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the configured default scrolling easing function.
-            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            force (bool, optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1748,7 +1748,7 @@ class Widget(DOMNode):
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the configured default scrolling easing function.
-            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            force (bool, optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1786,7 +1786,7 @@ class Widget(DOMNode):
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the configured default scrolling easing function.
             top (bool, optional): Scroll widget to top of container. Defaults to False.
-            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            force (bool, optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
 
         Returns:
             bool: True if any scrolling has occurred in any descendant, otherwise False.
@@ -1851,7 +1851,7 @@ class Widget(DOMNode):
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the configured default scrolling easing function.
             top (bool, optional): Scroll region to top of container. Defaults to False.
-            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            force (bool, optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
 
         Returns:
             Offset: The distance that was scrolled.
@@ -1902,7 +1902,7 @@ class Widget(DOMNode):
             top (bool, optional): Scroll to top of container. Defaults to False.
             easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
                 which will result in Textual choosing the configured default scrolling easing function.
-            force (bool,optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            force (bool, optional): Force scrolling even when prohibited by overflow styling. Defaults to `False`.
         """
         parent = self.parent
         if isinstance(parent, Widget):
