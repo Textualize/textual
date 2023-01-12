@@ -781,7 +781,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             except KeyError:
                 pass
 
-    def _get_cell_border(self) -> Spacing:
+    def _get_fixed_offset(self) -> Spacing:
         top = self.header_height if self.show_header else 0
         top += sum(
             self.rows[row_index].height
@@ -794,18 +794,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def _scroll_cursor_into_view(self, animate: bool = False) -> None:
         # TODO: Calculate overlap of cursor (depends on cursor type) and
         #  the window, then scroll that into view.
+        spacing = self._get_fixed_offset()
         if self.cursor_type == "cell":
             region = self._get_cell_region(self.cursor_row, self.cursor_column)
-            spacing = self._get_cell_border()
         elif self.cursor_type == "row":
             region = self._get_row_region(self.cursor_row)
-            spacing = Spacing()
         elif self.cursor_type == "column":
             region = self._get_column_region(self.cursor_column)
-            spacing = Spacing()
         else:
             region = Region()
-            spacing = Spacing()
 
         self.scroll_to_region(region, animate=animate, spacing=spacing)
 
