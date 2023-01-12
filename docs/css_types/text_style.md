@@ -8,13 +8,13 @@ The `<text-style>` CSS type represents styles that can be applied to text.
 
 ## Syntax
 
-A [`<text-style>`](/css_types/text_style) can be any _space-separated_ combination of the following values:
+A [`<text-style>`](/css_types/text_style) can be the value `none` for plain text with no styling,
+or any _space-separated_ combination of the following values:
 
 | Value       | Description                                                     |
 |-------------|-----------------------------------------------------------------|
 | `bold`      | **Bold text.**                                                  |
 | `italic`    | _Italic text._                                                  |
-| `none`      | Plain text with no styling.                                     |
 | `reverse`   | Reverse video text (foreground and background colors reversed). |
 | `strike`    | <s>Strikethrough text.</s>                                      |
 | `underline` | <u>Underline text.</u>                                          |
@@ -42,5 +42,5 @@ A [`<text-style>`](/css_types/text_style) can be any _space-separated_ combinati
 widget.styles.text_style = "strike"
 
 # You can also combine multiple values
-widget.styles.text_style = "bold underline italic"
+widget.styles.text_style = "strike bold italic reverse
 ```
