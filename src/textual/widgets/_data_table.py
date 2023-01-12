@@ -275,6 +275,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     def watch_show_cursor(self, show_cursor: bool) -> None:
         self._clear_caches()
+        self._scroll_cursor_into_view(animate=False)
 
     def watch_show_header(self, show_header: bool) -> None:
         self._clear_caches()
@@ -301,7 +302,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self.refresh_column(value.column)
 
     def validate_cursor_cell(self, value: Coord) -> Coord:
-        row, column = value
+        return self._clamp_cursor_cell(value)
+
+    def _clamp_cursor_cell(self, cursor_cell: Coord) -> Coord:
+        row, column = cursor_cell
         row = clamp(row, 0, self.row_count - 1)
         column = clamp(column, self.fixed_columns, len(self.columns) - 1)
         return Coord(row, column)
@@ -452,6 +456,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         self._new_rows.add(row_index)
         self._require_update_dimensions = True
+
+        # TODO - I want to set this here, but that will trigger the validator
+        #  again which is pointless - since I know the value is valid...
+        #  Don't think we have a means of doing this yet.
+        self.cursor_cell = self._clamp_cursor_cell(self.cursor_cell)
         self.check_idle()
 
     def add_rows(self, rows: Iterable[Iterable[CellType]]) -> None:
