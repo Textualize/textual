@@ -60,9 +60,9 @@ async def test_input_value_visible_if_mounted_later_and_focused():
     class MyApp(App):
         BINDINGS = [("a", "add_input", "add_input")]
 
-        def action_add_input(self):
+        async def action_add_input(self):
             inp = Input(value="value")
-            self.mount(inp)
+            await self.mount(inp)
             inp.focus()
 
     app = MyApp()
