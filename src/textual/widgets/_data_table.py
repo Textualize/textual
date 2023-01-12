@@ -796,18 +796,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         fixed_offset = self._get_fixed_offset()
         top, _, _, left = fixed_offset
 
-        # For row cursor, it's not the start of the row we wish to scroll to,
-        # it's the start of the row (0) with left fixed offset applied
         if self.cursor_type == "row":
             x, y, width, height = self._get_row_region(self.cursor_row)
-            region = Region(
-                int(self.scroll_x) + fixed_offset.left, y, width - left, height
-            )
+            region = Region(int(self.scroll_x) + left, y, width - left, height)
         elif self.cursor_type == "column":
             x, y, width, height = self._get_column_region(self.cursor_column)
-            region = Region(
-                x, int(self.scroll_y) + fixed_offset.top, width, height - top
-            )
+            region = Region(x, int(self.scroll_y) + top, width, height - top)
         else:
             region = self._get_cell_region(self.cursor_row, self.cursor_column)
 
