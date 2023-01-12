@@ -891,7 +891,6 @@ class StyleFlagsProperty:
         Raises:
             StyleValueError: If the value is an invalid style flag
         """
-        print(repr(style_flags))
         _rich_traceback_omit = True
         if style_flags is None:
             if obj.clear_rule(self.name):
