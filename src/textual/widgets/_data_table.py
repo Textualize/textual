@@ -308,11 +308,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     def watch_cursor_type(self, old: str, value: str) -> None:
         row_index, column_index = self.cursor_cell
-        if "cell" in (old, value):
+        cursor_types = (old, value)
+        if "cell" in cursor_types:
             self.refresh_cell(row_index, column_index)
-        elif "row" in (old, value):
+        elif "row" in cursor_types:
             self.refresh_row(row_index)
-        elif "column" in (old, value):
+        elif "column" in cursor_types:
             self.refresh_column(column_index)
         self._scroll_cursor_into_view()
 
