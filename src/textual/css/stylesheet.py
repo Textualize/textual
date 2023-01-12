@@ -407,7 +407,7 @@ class Stylesheet:
         self.replace_rules(node, node_rules, animate=animate)
 
         node._component_styles.clear()
-        for component in node.get_component_classes():
+        for component in node._get_component_classes():
             virtual_node = DOMNode(classes=component)
             virtual_node._attach(node)
             self.apply(virtual_node, animate=False)

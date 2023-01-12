@@ -262,8 +262,11 @@ class DOMNode(MessagePump):
         if self._classes:
             yield "classes", " ".join(self._classes)
 
-    def get_default_css(self) -> list[tuple[str, str, int]]:
+    def _get_default_css(self) -> list[tuple[str, str, int]]:
         """Gets the CSS for this class and inherited from bases.
+
+        Default CSS is inherited from base classes, unless `inherit_css` is set to
+        `False` when subclassing.
 
         Returns:
             list[tuple[str, str]]: a list of tuples containing (PATH, SOURCE) for this
@@ -286,7 +289,7 @@ class DOMNode(MessagePump):
 
         return css_stack
 
-    def get_component_classes(self) -> set[str]:
+    def _get_component_classes(self) -> set[str]:
         """Gets the component classes for this class and inherited from bases.
 
         Component classes are inherited from base classes, unless

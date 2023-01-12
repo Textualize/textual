@@ -79,7 +79,7 @@ def test_inherited_bindings():
     assert list(e._bindings.keys.keys()) == ["e"]
 
 
-def test_get_default_css():
+def test__get_default_css():
     class A(DOMNode):
         pass
 
@@ -96,17 +96,17 @@ def test_get_default_css():
         DEFAULT_CSS = "E"
 
     node = DOMNode()
-    node_css = node.get_default_css()
+    node_css = node._get_default_css()
     a = A()
-    a_css = a.get_default_css()
+    a_css = a._get_default_css()
     b = B()
-    b_css = b.get_default_css()
+    b_css = b._get_default_css()
     c = C()
-    c_css = c.get_default_css()
+    c_css = c._get_default_css()
     d = D()
-    d_css = d.get_default_css()
+    d_css = d._get_default_css()
     e = E()
-    e_css = e.get_default_css()
+    e_css = e._get_default_css()
 
     # Descendants that don't assign to DEFAULT_CSS don't add new CSS to the stack.
     assert len(node_css) == len(a_css) == len(b_css) == 0
@@ -143,19 +143,19 @@ def test_component_classes_inheritance():
         COMPONENT_CLASSES = {"f-1"}
 
     node = DOMNode()
-    node_cc = node.get_component_classes()
+    node_cc = node._get_component_classes()
     a = A()
-    a_cc = a.get_component_classes()
+    a_cc = a._get_component_classes()
     b = B()
-    b_cc = b.get_component_classes()
+    b_cc = b._get_component_classes()
     c = C()
-    c_cc = c.get_component_classes()
+    c_cc = c._get_component_classes()
     d = D()
-    d_cc = d.get_component_classes()
+    d_cc = d._get_component_classes()
     e = E()
-    e_cc = e.get_component_classes()
+    e_cc = e._get_component_classes()
     f = F()
-    f_cc = f.get_component_classes()
+    f_cc = f._get_component_classes()
 
     assert node_cc == set()
     assert a_cc == {"a-1", "a-2"}
