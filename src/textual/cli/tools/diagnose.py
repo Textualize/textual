@@ -3,8 +3,10 @@
 import os
 import sys
 import platform
+from typing import Any
+from functools import singledispatch
 from importlib_metadata import version
-from rich.console import Console
+from rich.console import Console, ConsoleDimensions
 
 
 def _section(title: str, values: dict[str, str]) -> None:
@@ -55,7 +57,11 @@ def _os() -> None:
 
 
 def _guess_term() -> str:
-    """Try and guess which terminal is being used."""
+    """Try and guess which terminal is being used.
+
+    Returns:
+        str: The best guess at the name of the terminal.
+    """
 
     # First obvious place to look is in $TERM_PROGRAM.
     term_program = os.environ.get("TERM_PROGRAM")
@@ -111,11 +117,29 @@ def _term() -> None:
     )
 
 
+@singledispatch
+def _str_rich(value: Any) -> str:
+    """Convert a rich console option to a string.
+
+    Args:
+        value (Any): The value to convert to a string.
+
+    Returns:
+        str: The string version of the value for output
+    """
+    return str(value)
+
+
+@_str_rich.register
+def _(value: ConsoleDimensions) -> str:
+    return f"width={value.width}, height={value.height}"
+
+
 def _console() -> None:
     """Print The Rich console options."""
     _section(
         "Rich Console options",
-        {k: str(v) for k, v in Console().options.__dict__.items()},
+        {k: _str_rich(v) for k, v in Console().options.__dict__.items()},
     )
 
 
