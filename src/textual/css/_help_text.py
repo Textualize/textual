@@ -729,6 +729,7 @@ def style_flags_property_help_text(
                 f"Style flag values such as [i]{property_name}[/] expect space-separated values"
             ),
             Bullet(f"Permitted values are {friendly_list(VALID_STYLE_FLAGS)}"),
+            Bullet("The value 'none' cannot be mixed with others"),
             *ContextSpecificBullets(
                 inline=[
                     Bullet(
