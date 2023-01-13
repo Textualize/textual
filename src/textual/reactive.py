@@ -124,6 +124,12 @@ class Reactive(Generic[ReactiveType]):
         return cls(default, layout=False, repaint=False, init=False)
 
     def _initialize_reactive(self, obj: Reactable, name: str) -> None:
+        """Initialized a reactive attribute on an object.
+
+        Args:
+            obj (Reactable): An object with reactive attributes.
+            name (str): name of attribute.
+        """
         internal_name = f"_reactive_{name}"
         if hasattr(obj, internal_name):
             # Attribute already has a value
