@@ -103,7 +103,7 @@ def test_header_render(snap_compare):
 
 def test_list_view(snap_compare):
     assert snap_compare(
-        WIDGET_EXAMPLES_DIR / "list_view.py", press=["tab", "down", "down", "up"]
+        WIDGET_EXAMPLES_DIR / "list_view.py", press=["tab", "down", "down", "up", "_"]
     )
 
 

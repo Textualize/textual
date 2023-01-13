@@ -45,7 +45,7 @@ class HeaderClock(HeaderClockSpace):
 
     DEFAULT_CSS = """
     HeaderClock {
-        background: $secondary-background-lighten-1;
+        background: $foreground-darken-1 5%;
         color: $text;
         text-opacity: 85%;
         content-align: center middle;
@@ -97,7 +97,7 @@ class Header(Widget):
     }
     Header.-tall {
         height: 3;
-    }    
+    }
     """
 
     tall = Reactive(False)

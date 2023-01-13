@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added read-only public access to the children of a `TreeNode` via `TreeNode.children` https://github.com/Textualize/textual/issues/1398
 - Added `Tree.get_node_by_id` to allow getting a node by its ID https://github.com/Textualize/textual/pull/1535
 - Added a `Tree.NodeHighlighted` message, giving a `on_tree_node_highlighted` event handler https://github.com/Textualize/textual/issues/1400
+- Added `diagnose` as a `textual` command https://github.com/Textualize/textual/issues/1542
 - Added `App.suspend()`, which returns a context manager that temporarily suspends the application https://github.com/Textualize/textual/pull/1541
 
 ### Changed
@@ -22,11 +23,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fail-fast and print pretty tracebacks for Widget compose errors https://github.com/Textualize/textual/pull/1505
 - Added Widget._refresh_scroll to avoid expensive layout when scrolling https://github.com/Textualize/textual/pull/1524
 - `events.Paste` now bubbles https://github.com/Textualize/textual/issues/1434
+- Clock color in the `Header` widget now matches the header color https://github.com/Textualize/textual/issues/1459
 
 ### Fixed
 
 - The styles `scrollbar-background-active` and `scrollbar-color-hover` are no longer ignored https://github.com/Textualize/textual/pull/1480
 - The widget `Placeholder` can now have its width set to `auto` https://github.com/Textualize/textual/pull/1508
+- Behavior of widget `Input` when rendering after programmatic value change and related scenarios https://github.com/Textualize/textual/issues/1477 https://github.com/Textualize/textual/issues/1443
 
 ## [0.9.1] - 2022-12-30
 
