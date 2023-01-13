@@ -111,6 +111,24 @@ class Reactive(Generic[ReactiveType]):
         """
         return cls(default, layout=False, repaint=False, init=True)
 
+    def _initialize_reactive(self, obj: Reactable, name: str) -> None:
+        internal_name = f"_reactive_{name}"
+        if hasattr(obj, internal_name):
+            # Attribute already has a value
+            return
+        if self._is_compute:
+            default = getattr(obj, f"compute_{name}")()
+        else:
+            default_or_callable = self._default
+            default = (
+                default_or_callable()
+                if callable(default_or_callable)
+                else default_or_callable
+            )
+        setattr(obj, internal_name, default)
+        if self._init:
+            self._check_watchers(obj, name, default)
+
     @classmethod
     def _initialize_object(cls, obj: Reactable) -> None:
         """Set defaults and call any watchers / computes for the first time.
@@ -118,24 +136,31 @@ class Reactive(Generic[ReactiveType]):
         Args:
             obj (Reactable): An object with Reactive descriptors
         """
-        return
-        if not getattr(obj, "__reactive_initialized", False):
-            startswith = str.startswith
-            watchers = []
-            for key in obj.__class__.__dict__:
-                if startswith(key, "_default_"):
-                    name = key[9:]
-                    internal_name = f"_reactive_{name}"
-                    # Check defaults
-                    if internal_name not in obj.__dict__:
-                        # Attribute has no value yet
-                        default = getattr(obj, key)
-                        default_value = default() if callable(default) else default
-                        # Set the default vale (calls `__set__`)
-                        obj.__dict__[internal_name] = default_value
-                        watchers.append((name, default_value))
+        reactives = getattr(obj, "__reactives", {})
+        for name, reactive in reactives.items():
+            reactive._initialize_reactive(obj, name)
 
-        setattr(obj, "__reactive_initialized", True)
+        # startswith = str.startswith
+        # watchers = []
+        # reactives = getattr(obj, "__reactives", [])
+
+        # print(reactives)
+        # for name in reactives.keys():
+        #     internal_name = f"_reactive_{name}"
+        #     # Check defaults
+        #     if internal_name not in obj.__dict__:
+        #         # Attribute has no value yet
+
+        #         for k in obj.__dict__:
+        #             if k.startswith("_default"):
+        #                 print(k)
+
+        #         default = getattr(obj, f"_default_{name}")
+        #         default_value = default() if callable(default) else default
+        #         # Set the default vale (calls `__set__`)
+        #         obj.__dict__[internal_name] = None
+        #         setattr(obj, name, default_value)
+        #         # watchers.append((name, default_value))
 
     @classmethod
     def _reset_object(cls, obj: object) -> None:
@@ -148,6 +173,9 @@ class Reactive(Generic[ReactiveType]):
         getattr(obj, "__computes", []).clear()
 
     def __set_name__(self, owner: Type[MessageTarget], name: str) -> None:
+        reactives = getattr(owner, "__reactives", {})
+        reactives[name] = self
+        setattr(owner, "__reactives", reactives)
 
         # Check for compute method
         if hasattr(owner, f"compute_{name}"):
@@ -170,32 +198,38 @@ class Reactive(Generic[ReactiveType]):
     def __get__(self, obj: Reactable, obj_type: type[object]) -> ReactiveType:
         _rich_traceback_omit = True
 
+        self._initialize_reactive(obj, self.name)
+
         value: _NotSet | ReactiveType
         if self._is_compute:
             value = getattr(obj, f"compute_{self.name}")()
         else:
             value = getattr(obj, self.internal_name, _NOT_SET)
 
-        if isinstance(value, _NotSet):
-            # No value present, we need to set the default
-            init_name = f"_default_{self.name}"
-            default = getattr(obj, init_name)
-            default_value = default() if callable(default) else default
-            # Set and return the value
-            setattr(obj, self.internal_name, default_value)
+        if not self._no_compute:
+            self._compute(obj)
 
-            if self._init:
-                print("CHECK WATCHERS")
-                self._check_watchers(obj, self.name, default_value)
+        # if isinstance(value, _NotSet):
+        #     # No value present, we need to set the default
+        #     init_name = f"_default_{self.name}"
+        #     default = getattr(obj, init_name)
+        #     default_value = default() if callable(default) else default
+        #     # Set and return the value
+        #     setattr(obj, self.internal_name, default_value)
 
-            if not self._no_compute:
-                self._compute(obj)
-            value = getattr(obj, self.internal_name)
+        #     if self._init:
+        #         self._check_watchers(obj, self.name, default_value)
+
+        #     if not self._no_compute:
+        #         self._compute(obj)
+        #     value = getattr(obj, self.internal_name)
         return value
 
     def __set__(self, obj: Reactable, value: ReactiveType) -> None:
         _rich_traceback_omit = True
         # Reactive._initialize_object(obj)
+
+        self._initialize_reactive(obj, self.name)
         name = self.name
         current_value = getattr(obj, name)
         # Check for validate function

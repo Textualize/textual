@@ -159,7 +159,7 @@ async def test_reactive_with_callable_default():
     Textual will call it in order to retrieve the default value."""
     called_with_app = None
 
-    def set_called(app: App) -> int:
+    def set_called() -> int:
         nonlocal called_with_app
         called_with_app = app
         return OLD_VALUE
