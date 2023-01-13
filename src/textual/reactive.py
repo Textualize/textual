@@ -123,7 +123,7 @@ class Reactive(Generic[ReactiveType]):
         """
         return cls(default, layout=False, repaint=False, init=False)
 
-    def _initialize_reactive(self, obj: Reactable, name: str) -> bool:
+    def _initialize_reactive(self, obj: Reactable, name: str) -> None:
         internal_name = f"_reactive_{name}"
         if hasattr(obj, internal_name):
             # Attribute already has a value
