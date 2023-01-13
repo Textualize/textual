@@ -218,7 +218,6 @@ async def test_validate_init_true_set_before_dom_ready():
         assert validator_call_count == 1
 
 
-# @pytest.mark.xfail(reason="Compute methods not called when init=True [issue#1227]")
 async def test_reactive_compute_first_time_set():
     class ReactiveComputeFirstTimeSet(App):
         number = reactive(1)
