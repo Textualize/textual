@@ -249,9 +249,9 @@ class App(Generic[ReturnType], DOMNode):
         Binding("shift+tab", "focus_previous", "Focus Previous", show=False),
     ]
 
-    title: Reactive[str] = Reactive("", no_compute=True)
-    sub_title: Reactive[str] = Reactive("", no_compute=True)
-    dark: Reactive[bool] = Reactive(True, no_compute=True)
+    title: Reactive[str] = Reactive("", compute=False)
+    sub_title: Reactive[str] = Reactive("", compute=False)
+    dark: Reactive[bool] = Reactive(True, compute=False)
 
     def __init__(
         self,

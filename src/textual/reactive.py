@@ -47,7 +47,7 @@ class Reactive(Generic[ReactiveType]):
         repaint (bool, optional): Perform a repaint on change. Defaults to True.
         init (bool, optional): Call watchers on initialize (post mount). Defaults to False.
         always_update (bool, optional): Call watchers even when the new value equals the old value. Defaults to False.
-        no_compute (bool, optional): Don't run compute methods when attribute is changed. Defaults to False.
+        compute (bool, optional): Don't run compute methods when attribute is changed. Defaults to True.
     """
 
     _reactives: TypeVar[dict[str, object]] = {}
@@ -60,15 +60,14 @@ class Reactive(Generic[ReactiveType]):
         repaint: bool = True,
         init: bool = False,
         always_update: bool = False,
-        no_compute: bool = False,
+        compute: bool = True,
     ) -> None:
         self._default = default
         self._layout = layout
         self._repaint = repaint
         self._init = init
         self._always_update = always_update
-        self._no_compute = no_compute
-        self._is_compute = False
+        self._run_compute = compute
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._default
@@ -76,7 +75,7 @@ class Reactive(Generic[ReactiveType]):
         yield "repaint", self._repaint
         yield "init", self._init
         yield "always_update", self._always_update
-        yield "no_compute", self._no_compute
+        yield "compute", self._run_compute
 
     @classmethod
     def init(
@@ -86,7 +85,7 @@ class Reactive(Generic[ReactiveType]):
         layout: bool = False,
         repaint: bool = True,
         always_update: bool = False,
-        no_compute: bool = False,
+        compute: bool = True,
     ) -> Reactive:
         """A reactive variable that calls watchers and compute on initialize (post mount).
 
@@ -95,7 +94,7 @@ class Reactive(Generic[ReactiveType]):
             layout (bool, optional): Perform a layout on change. Defaults to False.
             repaint (bool, optional): Perform a repaint on change. Defaults to True.
             always_update (bool, optional): Call watchers even when the new value equals the old value. Defaults to False.
-            no_compute (bool, optional): Don't run compute methods when attribute is changed. Defaults to False.
+            compute (bool, optional): Don't run compute methods when attribute is changed. Defaults to False.
 
         Returns:
             Reactive: A Reactive instance which calls watchers or initialize.
@@ -106,7 +105,7 @@ class Reactive(Generic[ReactiveType]):
             repaint=repaint,
             init=True,
             always_update=always_update,
-            no_compute=no_compute,
+            compute=compute,
         )
 
     @classmethod
@@ -122,7 +121,7 @@ class Reactive(Generic[ReactiveType]):
         Returns:
             Reactive: A Reactive descriptor.
         """
-        return cls(default, layout=False, repaint=False, init=True)
+        return cls(default, layout=False, repaint=False, init=False)
 
     def _initialize_reactive(self, obj: Reactable, name: str) -> bool:
         internal_name = f"_reactive_{name}"
@@ -169,7 +168,6 @@ class Reactive(Generic[ReactiveType]):
         # Check for compute method
         if hasattr(owner, f"compute_{name}"):
             # Compute methods are stored in a list called `__computes`
-            self._is_compute = True
             try:
                 computes = getattr(owner, "__computes")
             except AttributeError:
@@ -187,38 +185,18 @@ class Reactive(Generic[ReactiveType]):
     def __get__(self, obj: Reactable, obj_type: type[object]) -> ReactiveType:
         _rich_traceback_omit = True
 
-        # Reactive._initialize_object(obj)
         self._initialize_reactive(obj, self.name)
 
-        value: _NotSet | ReactiveType
+        value: ReactiveType
         compute_method = getattr(self, f"compute_{self.name}", None)
         if compute_method is not None:
             value = getattr(obj, f"compute_{self.name}")()
         else:
             value = getattr(obj, self.internal_name)
-
-        # if not self._no_compute:
-        #     self._compute(obj)
-
-        # if isinstance(value, _NotSet):
-        #     # No value present, we need to set the default
-        #     init_name = f"_default_{self.name}"
-        #     default = getattr(obj, init_name)
-        #     default_value = default() if callable(default) else default
-        #     # Set and return the value
-        #     setattr(obj, self.internal_name, default_value)
-
-        #     if self._init:
-        #         self._check_watchers(obj, self.name, default_value)
-
-        #     if not self._no_compute:
-        #         self._compute(obj)
-        #     value = getattr(obj, self.internal_name)
         return value
 
     def __set__(self, obj: Reactable, value: ReactiveType) -> None:
         _rich_traceback_omit = True
-        # Reactive._initialize_object(obj)
 
         self._initialize_reactive(obj, self.name)
         name = self.name
@@ -236,7 +214,7 @@ class Reactive(Generic[ReactiveType]):
             # Check all watchers
             self._check_watchers(obj, name, current_value)
 
-            if not self._no_compute:
+            if self._run_compute:
                 self._compute(obj)
 
             # Refresh according to descriptor flags
