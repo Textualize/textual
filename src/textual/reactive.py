@@ -196,7 +196,10 @@ class Reactive(Generic[ReactiveType]):
         value: ReactiveType
         compute_method = getattr(self, f"compute_{self.name}", None)
         if compute_method is not None:
+            old_value = getattr(obj, self.internal_name)
             value = getattr(obj, f"compute_{self.name}")()
+            setattr(obj, self.internal_name, value)
+            self._check_watchers(obj, self.name, old_value)
         else:
             value = getattr(obj, self.internal_name)
         return value
@@ -298,14 +301,16 @@ class Reactive(Generic[ReactiveType]):
             obj (Reactable): Reactable object.
         """
         _rich_traceback_guard = True
-        computes = getattr(obj, "__computes", [])
-        for compute in computes:
+        for compute in obj._reactives.keys():
             try:
                 compute_method = getattr(obj, f"compute_{compute}")
             except AttributeError:
                 continue
+            current_value = getattr(obj, f"_reactive_{compute}")
             value = compute_method()
             setattr(obj, f"_reactive_{compute}", value)
+            if value != current_value:
+                cls._check_watchers(obj, compute, current_value)
 
 
 class reactive(Reactive[ReactiveType]):
@@ -346,9 +351,16 @@ class var(Reactive[ReactiveType]):
     """
 
     def __init__(
-        self, default: ReactiveType | Callable[[], ReactiveType], init: bool = True
+        self,
+        default: ReactiveType | Callable[[], ReactiveType],
+        init: bool = True,
     ) -> None:
-        super().__init__(default, layout=False, repaint=False, init=init)
+        super().__init__(
+            default,
+            layout=False,
+            repaint=False,
+            init=init,
+        )
 
 
 def watch(
@@ -376,5 +388,3 @@ def watch(
     if init:
         current_value = getattr(obj, attribute_name, None)
         Reactive._check_watchers(obj, attribute_name, current_value)
-    print(obj, attribute_name)
-    print(watchers)
