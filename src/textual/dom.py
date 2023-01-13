@@ -108,6 +108,8 @@ class DOMNode(MessagePump):
     # Generated list of bindings
     _merged_bindings: ClassVar[Bindings] | None = None
 
+    _reactives: ClassVar[dict[str, Reactive]]
+
     def __init__(
         self,
         *,
@@ -164,6 +166,17 @@ class DOMNode(MessagePump):
         cls, inherit_css: bool = True, inherit_bindings: bool = True
     ) -> None:
         super().__init_subclass__()
+
+        reactives = cls._reactives = {}
+        for base in reversed(cls.__mro__):
+            reactives.update(
+                {
+                    name: reactive
+                    for name, reactive in base.__dict__.items()
+                    if isinstance(reactive, Reactive)
+                }
+            )
+
         cls._inherit_css = inherit_css
         cls._inherit_bindings = inherit_bindings
         css_type_names: set[str] = set()

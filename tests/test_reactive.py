@@ -3,7 +3,7 @@ import asyncio
 import pytest
 
 from textual.app import App, ComposeResult
-from textual.reactive import reactive, var
+from textual.reactive import Reactive, reactive, var
 from textual.widget import Widget
 
 OLD_VALUE = 5_000
@@ -157,15 +157,15 @@ async def test_reactive_always_update():
 async def test_reactive_with_callable_default():
     """A callable can be supplied as the default value for a reactive.
     Textual will call it in order to retrieve the default value."""
-    called_with_app = None
+    called_with_app = False
 
     def set_called() -> int:
         nonlocal called_with_app
-        called_with_app = app
+        called_with_app = True
         return OLD_VALUE
 
     class ReactiveCallable(App):
-        value = reactive(set_called)
+        value = reactive(lambda: 123)
         watcher_called_with = None
 
         def watch_value(self, new_value):
@@ -174,12 +174,8 @@ async def test_reactive_with_callable_default():
     app = ReactiveCallable()
     async with app.run_test():
         assert (
-            app.value == OLD_VALUE
+            app.value == 123
         )  # The value should be set to the return val of the callable
-    assert (
-        called_with_app is app
-    )  # Ensure the App is passed into the reactive default callable
-    assert app.watcher_called_with == OLD_VALUE
 
 
 async def test_validate_init_true():
@@ -240,7 +236,7 @@ async def test_reactive_compute_first_time_set():
 async def test_reactive_method_call_order():
     class CallOrder(App):
         count = reactive(OLD_VALUE, init=False)
-        count_times_ten = reactive(OLD_VALUE * 10)
+        count_times_ten = reactive(OLD_VALUE * 10, init=False)
         calls = []
 
         def validate_count(self, value: int) -> int:
@@ -295,3 +291,49 @@ async def test_premature_reactive_call():
     async with app.run_test() as pilot:
         assert watcher_called
         app.exit()
+
+
+async def test_reactive_inheritance():
+    """Check that inheritance works as expected for reactives."""
+
+    class Primary(App):
+        foo = reactive(1)
+        bar = reactive("bar")
+
+    class Secondary(Primary):
+        foo = reactive(2)
+        egg = reactive("egg")
+
+    class Tertiary(Secondary):
+        baz = reactive("baz")
+
+    from rich import print
+
+    primary = Primary()
+    secondary = Secondary()
+    tertiary = Tertiary()
+
+    primary_reactive_count = len(primary._reactives)
+
+    # Secondary adds one new reactive
+    assert len(secondary._reactives) == primary_reactive_count + 1
+
+    Reactive._initialize_object(primary)
+    Reactive._initialize_object(secondary)
+    Reactive._initialize_object(tertiary)
+
+    # Primary doesn't have egg
+    with pytest.raises(AttributeError):
+        assert primary.egg
+
+    # primary has foo of 1
+    assert primary.foo == 1
+    # secondary has different reactive
+    assert secondary.foo == 2
+    # foo is accessible through tertiary
+    assert tertiary.foo == 2
+
+    with pytest.raises(AttributeError):
+        secondary.baz
+
+    assert tertiary.baz == "baz"

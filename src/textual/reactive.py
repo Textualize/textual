@@ -13,6 +13,8 @@ from typing import (
     Union,
 )
 
+import rich.repr
+
 from . import events
 from ._callback import count_parameters, invoke
 from ._types import MessageTarget
@@ -35,6 +37,7 @@ _NOT_SET = _NotSet()
 T = TypeVar("T")
 
 
+@rich.repr.auto
 class Reactive(Generic[ReactiveType]):
     """Reactive descriptor.
 
@@ -46,6 +49,8 @@ class Reactive(Generic[ReactiveType]):
         always_update (bool, optional): Call watchers even when the new value equals the old value. Defaults to False.
         no_compute (bool, optional): Don't run compute methods when attribute is changed. Defaults to False.
     """
+
+    _reactives: TypeVar[dict[str, object]] = {}
 
     def __init__(
         self,
@@ -64,6 +69,14 @@ class Reactive(Generic[ReactiveType]):
         self._always_update = always_update
         self._no_compute = no_compute
         self._is_compute = False
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield self._default
+        yield "layout", self._layout
+        yield "repaint", self._repaint
+        yield "init", self._init
+        yield "always_update", self._always_update
+        yield "no_compute", self._no_compute
 
     @classmethod
     def init(
@@ -111,12 +124,13 @@ class Reactive(Generic[ReactiveType]):
         """
         return cls(default, layout=False, repaint=False, init=True)
 
-    def _initialize_reactive(self, obj: Reactable, name: str) -> None:
+    def _initialize_reactive(self, obj: Reactable, name: str) -> bool:
         internal_name = f"_reactive_{name}"
         if hasattr(obj, internal_name):
             # Attribute already has a value
             return
-        if self._is_compute:
+        compute_method = getattr(obj, f"compute_{name}", None)
+        if compute_method is not None and self._init:
             default = getattr(obj, f"compute_{name}")()
         else:
             default_or_callable = self._default
@@ -136,31 +150,9 @@ class Reactive(Generic[ReactiveType]):
         Args:
             obj (Reactable): An object with Reactive descriptors
         """
-        reactives = getattr(obj, "__reactives", {})
-        for name, reactive in reactives.items():
+
+        for name, reactive in obj._reactives.items():
             reactive._initialize_reactive(obj, name)
-
-        # startswith = str.startswith
-        # watchers = []
-        # reactives = getattr(obj, "__reactives", [])
-
-        # print(reactives)
-        # for name in reactives.keys():
-        #     internal_name = f"_reactive_{name}"
-        #     # Check defaults
-        #     if internal_name not in obj.__dict__:
-        #         # Attribute has no value yet
-
-        #         for k in obj.__dict__:
-        #             if k.startswith("_default"):
-        #                 print(k)
-
-        #         default = getattr(obj, f"_default_{name}")
-        #         default_value = default() if callable(default) else default
-        #         # Set the default vale (calls `__set__`)
-        #         obj.__dict__[internal_name] = None
-        #         setattr(obj, name, default_value)
-        #         # watchers.append((name, default_value))
 
     @classmethod
     def _reset_object(cls, obj: object) -> None:
@@ -173,9 +165,6 @@ class Reactive(Generic[ReactiveType]):
         getattr(obj, "__computes", []).clear()
 
     def __set_name__(self, owner: Type[MessageTarget], name: str) -> None:
-        reactives = getattr(owner, "__reactives", {})
-        reactives[name] = self
-        setattr(owner, "__reactives", reactives)
 
         # Check for compute method
         if hasattr(owner, f"compute_{name}"):
@@ -198,16 +187,18 @@ class Reactive(Generic[ReactiveType]):
     def __get__(self, obj: Reactable, obj_type: type[object]) -> ReactiveType:
         _rich_traceback_omit = True
 
+        # Reactive._initialize_object(obj)
         self._initialize_reactive(obj, self.name)
 
         value: _NotSet | ReactiveType
-        if self._is_compute:
+        compute_method = getattr(self, f"compute_{self.name}", None)
+        if compute_method is not None:
             value = getattr(obj, f"compute_{self.name}")()
         else:
-            value = getattr(obj, self.internal_name, _NOT_SET)
+            value = getattr(obj, self.internal_name)
 
-        if not self._no_compute:
-            self._compute(obj)
+        # if not self._no_compute:
+        #     self._compute(obj)
 
         # if isinstance(value, _NotSet):
         #     # No value present, we need to set the default
@@ -307,8 +298,6 @@ class Reactive(Generic[ReactiveType]):
             else:
                 return True
 
-        # Compute is only required if a watcher runs immediately, not if they were posted.
-        require_compute = False
         watch_function = getattr(obj, f"watch_{name}", None)
         if callable(watch_function):
             invoke_watcher(watch_function, old_value, value)
