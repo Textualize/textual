@@ -47,7 +47,7 @@ class Reactive(Generic[ReactiveType]):
         repaint (bool, optional): Perform a repaint on change. Defaults to True.
         init (bool, optional): Call watchers on initialize (post mount). Defaults to False.
         always_update (bool, optional): Call watchers even when the new value equals the old value. Defaults to False.
-        compute (bool, optional): Don't run compute methods when attribute is changed. Defaults to True.
+        compute (bool, optional): Run compute methods when attribute is changed. Defaults to True.
     """
 
     _reactives: TypeVar[dict[str, object]] = {}
@@ -94,7 +94,7 @@ class Reactive(Generic[ReactiveType]):
             layout (bool, optional): Perform a layout on change. Defaults to False.
             repaint (bool, optional): Perform a repaint on change. Defaults to True.
             always_update (bool, optional): Call watchers even when the new value equals the old value. Defaults to False.
-            compute (bool, optional): Don't run compute methods when attribute is changed. Defaults to False.
+            compute (bool, optional): Run compute methods when attribute is changed. Defaults to True.
 
         Returns:
             Reactive: A Reactive instance which calls watchers or initialize.
