@@ -337,3 +337,35 @@ async def test_reactive_inheritance():
         secondary.baz
 
     assert tertiary.baz == "baz"
+
+
+async def test_watch_compute():
+    """Check that watching a computed attribute works."""
+
+    watch_called: list[bool] = []
+
+    class Calculator(App):
+
+        numbers = var("0")
+        show_ac = var(True)
+        value = var("")
+
+        def compute_show_ac(self) -> bool:
+            return self.value in ("", "0") and self.numbers == "0"
+
+        def watch_show_ac(self, show_ac: bool) -> None:
+            """Called when show_ac changes."""
+            watch_called.append(show_ac)
+
+    app = Calculator()
+
+    async with app.run_test() as pilot:
+        assert app.show_ac is True
+        app.value = "1"
+        assert app.show_ac is False
+        app.value = "0"
+        assert app.show_ac is True
+        app.numbers = "123"
+        assert app.show_ac is False
+
+    assert watch_called == [True, False, True, False]
