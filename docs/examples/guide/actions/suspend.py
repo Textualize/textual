@@ -1,4 +1,5 @@
-from code import InteractiveConsole
+import subprocess
+import sys
 
 from textual.app import App, ComposeResult
 from textual.widgets import Footer, Static
@@ -17,8 +18,7 @@ class SuspendApp(App):
 
     def action_open_repl(self):
         with self.suspend():
-            repl = InteractiveConsole()
-            repl.interact()
+            subprocess.run(sys.executable)
 
 
 if __name__ == "__main__":
