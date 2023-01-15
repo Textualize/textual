@@ -969,6 +969,14 @@ class App(Generic[ReturnType], DOMNode):
         if driver is not None:
             driver.stop_application_mode()
             with redirect_stdout(sys.__stdout__), redirect_stderr(sys.__stderr__):
+                # This sleep seems to help avoid timing problems.
+                # Without it, if you do something like
+                #
+                #   with app.suspend():
+                #       print("hi")
+                #
+                # The print will sometimes not go to sys.__stdout__ as expected.
+                time.sleep(0.025)
                 yield
             driver.start_application_mode()
 
