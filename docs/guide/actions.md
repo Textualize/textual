@@ -141,19 +141,14 @@ that wants to control the terminal or read input from the user,
 such as a text editor.
 
 To support this, Textual provides the [`suspend`][textual.app.App.suspend] method on the app,
-which returns a context manager that temporarily suspends "application mode".
+which returns a context manager that temporarily stops Textual from controlling the terminal.
 
-In the example below, we use `suspend` to start Python's [built-in REPL](https://docs.python.org/3/tutorial/interpreter.html)
+In the example below, we use `suspend` to start Python's [REPL](https://docs.python.org/3/tutorial/interpreter.html)
 when you press `r`, which runs the `open_repl` action.
-[`InteractiveConsole.interact`][code.InteractiveConsole.interact] returns when the REPL exits (e.g., by running `quit()`),
-at which point we exit the `with self.suspend()` block,
-resuming the Textual application.
+[`subprocess.run`][subprocess.run] returns when the REPL exits (e.g., by running `quit()`),
+at which point the `with self.suspend()` block ends,
+resuming the Textual application's control over the terminal.
 
 ```python title="suspend.py" hl_lines="19-22"
 --8<-- "docs/examples/guide/actions/suspend.py"
 ```
-
-!!! tip "Readline support on Unix"
-
-    On Unix systems you can [`import readline`](https://docs.python.org/3/library/readline.html)
-    to enable Readline support in the REPL.
