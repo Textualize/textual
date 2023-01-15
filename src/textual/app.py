@@ -249,9 +249,9 @@ class App(Generic[ReturnType], DOMNode):
         Binding("shift+tab", "focus_previous", "Focus Previous", show=False),
     ]
 
-    title: Reactive[str] = Reactive("")
-    sub_title: Reactive[str] = Reactive("")
-    dark: Reactive[bool] = Reactive(True)
+    title: Reactive[str] = Reactive("", compute=False)
+    sub_title: Reactive[str] = Reactive("", compute=False)
+    dark: Reactive[bool] = Reactive(True, compute=False)
 
     def __init__(
         self,
@@ -1687,7 +1687,7 @@ class App(Generic[ReturnType], DOMNode):
         """Close all message pumps."""
 
         # Close all screens on the stack
-        for screen in self._screen_stack:
+        for screen in reversed(self._screen_stack):
             if screen._running:
                 await self._prune_node(screen)
 
@@ -2051,8 +2051,9 @@ class App(Generic[ReturnType], DOMNode):
 
         while stack:
             widget = pop()
-            if widget.children:
-                yield [*widget.children, *widget._get_virtual_dom()]
+            children = [*widget.children, *widget._get_virtual_dom()]
+            if children:
+                yield children
             for child in widget.children:
                 push(child)
 
@@ -2121,7 +2122,7 @@ class App(Generic[ReturnType], DOMNode):
                 for child in children:
                     self._unregister(child)
 
-        await root._close_messages(wait=False)
+        await root._close_messages(wait=True)
         self._unregister(root)
 
     async def action_check_bindings(self, key: str) -> None:

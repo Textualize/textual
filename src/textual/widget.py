@@ -935,8 +935,11 @@ class Widget(DOMNode):
 
         self.show_horizontal_scrollbar = show_horizontal
         self.show_vertical_scrollbar = show_vertical
-        self.horizontal_scrollbar.display = show_horizontal
-        self.vertical_scrollbar.display = show_vertical
+
+        if self._horizontal_scrollbar is not None or show_horizontal:
+            self.horizontal_scrollbar.display = show_horizontal
+        if self._vertical_scrollbar is not None or show_vertical:
+            self.vertical_scrollbar.display = show_vertical
 
     @property
     def scrollbars_enabled(self) -> tuple[bool, bool]:

@@ -233,6 +233,7 @@ class DOMQuery(Generic[QueryType]):
 
         Raises:
             WrongType: If the wrong type was found.
+            NoMatches: If no node matches the query.
             TooManyMatches: If there is more than one matching node in the query.
 
         Returns:

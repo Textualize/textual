@@ -108,6 +108,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     @property
     def is_running(self) -> bool:
+        """bool: Is the message pump running (potentially processing messages)."""
         return self._running
 
     @property
@@ -326,6 +327,8 @@ class MessagePump(metaclass=MessagePumpMeta):
         try:
             await self._dispatch_message(events.Compose(sender=self))
             await self._dispatch_message(events.Mount(sender=self))
+        except Exception as error:
+            self.app._handle_exception(error)
         finally:
             # This is critical, mount may be waiting
             self._mounted_event.set()

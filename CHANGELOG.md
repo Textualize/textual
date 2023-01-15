@@ -25,6 +25,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `events.Paste` now bubbles https://github.com/Textualize/textual/issues/1434
 - Clock color in the `Header` widget now matches the header color https://github.com/Textualize/textual/issues/1459
 - `COMPONENT_CLASSES` are now inherited from base classes https://github.com/Textualize/textual/issues/1399
+- Watch methods may now take no parameters
+- Added `compute` parameter to reactive
 
 ### Fixed
 
