@@ -108,7 +108,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     @property
     def is_running(self) -> bool:
-        """bool: Check if the message pump is running (potentially processing messages)"""
+        """bool: Is the message pump running (potentially processing messages)."""
         return self._running
 
     @property
