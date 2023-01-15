@@ -10,7 +10,7 @@ async def test_suspend(capfd: CaptureFixture[str]) -> None:
         with pilot.app.suspend():
             _ = capfd.readouterr()  # clear existing buffer
 
-            print("foo", flush=True)
-            print("bar", file=sys.stderr, flush=True)
+            print("foo", end="", flush=True)
+            print("bar", file=sys.stderr, end="", flush=True)
 
-            assert ("foo\n", "bar\n") == capfd.readouterr()
+            assert ("foo", "bar") == capfd.readouterr()
