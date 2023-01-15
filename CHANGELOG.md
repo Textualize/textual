@@ -24,11 +24,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `events.Paste` now bubbles https://github.com/Textualize/textual/issues/1434
 - Clock color in the `Header` widget now matches the header color https://github.com/Textualize/textual/issues/1459
 - Programmatic calls to scroll now optionally scroll even if overflow styling says otherwise (introduces a new `force` parameter to all the `scroll_*` methods) https://github.com/Textualize/textual/issues/1201
+- Watch methods may now take no parameters
+- Added `compute` parameter to reactive
 
 ### Fixed
 
 - The styles `scrollbar-background-active` and `scrollbar-color-hover` are no longer ignored https://github.com/Textualize/textual/pull/1480
 - The widget `Placeholder` can now have its width set to `auto` https://github.com/Textualize/textual/pull/1508
+- Behavior of widget `Input` when rendering after programmatic value change and related scenarios https://github.com/Textualize/textual/issues/1477 https://github.com/Textualize/textual/issues/1443
 
 ## [0.9.1] - 2022-12-30
 
