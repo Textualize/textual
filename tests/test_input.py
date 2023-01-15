@@ -42,8 +42,8 @@ async def test_input_value_visible_if_mounted_later():
     class MyApp(App):
         BINDINGS = [("a", "add_input", "add_input")]
 
-        def action_add_input(self):
-            self.mount(Input(value="value"))
+        async def action_add_input(self):
+            await self.mount(Input(value="value"))
 
     app = MyApp()
     async with app.run_test() as pilot:
@@ -60,9 +60,9 @@ async def test_input_value_visible_if_mounted_later_and_focused():
     class MyApp(App):
         BINDINGS = [("a", "add_input", "add_input")]
 
-        def action_add_input(self):
+        async def action_add_input(self):
             inp = Input(value="value")
-            self.mount(inp)
+            await self.mount(inp)
             inp.focus()
 
     app = MyApp()
@@ -83,8 +83,8 @@ async def test_input_value_visible_if_mounted_later_and_assigned_after():
             ("v", "set_value", "set_value"),
         ]
 
-        def action_add_input(self):
-            self.mount(Input())
+        async def action_add_input(self):
+            await self.mount(Input())
 
         def action_set_value(self):
             self.query_one(Input).value = "value"
