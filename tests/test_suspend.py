@@ -13,7 +13,4 @@ async def test_suspend(capfd: CaptureFixture[str]) -> None:
             print("foo")
             print("bar", file=sys.stderr)
 
-            out, err = capfd.readouterr()
-
-            assert out == "foo\n"
-            assert err == "bar\n"
+            assert ("foo\n", "bar\n") == capfd.readouterr()
