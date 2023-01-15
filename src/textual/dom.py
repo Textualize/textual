@@ -759,12 +759,17 @@ class DOMNode(MessagePump):
         selector: str | type[ExpectType],
         expect_type: type[ExpectType] | None = None,
     ) -> ExpectType | Widget:
-        """Get the first Widget matching the given selector or selector type.
+        """Get a single Widget matching the given selector or selector type.
 
         Args:
             selector (str | type): A selector.
             expect_type (type | None, optional): Require the object be of the supplied type, or None for any type.
                 Defaults to None.
+
+        Raises:
+            WrongType: If the wrong type was found.
+            NoMatches: If no node matches the query.
+            TooManyMatches: If there is more than one matching node in the query.
 
         Returns:
             Widget | ExpectType: A widget matching the selector.
