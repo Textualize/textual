@@ -695,7 +695,7 @@ class Widget(DOMNode):
             app (App): App instance.
         """
         # Parse the Widget's CSS
-        for path, css, tie_breaker in self.get_default_css():
+        for path, css, tie_breaker in self._get_default_css():
             self.app.stylesheet.add_source(
                 css, path=path, is_default_css=True, tie_breaker=tie_breaker
             )

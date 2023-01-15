@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added read-only public access to the children of a `TreeNode` via `TreeNode.children` https://github.com/Textualize/textual/issues/1398
 - Added `Tree.get_node_by_id` to allow getting a node by its ID https://github.com/Textualize/textual/pull/1535
 - Added a `Tree.NodeHighlighted` message, giving a `on_tree_node_highlighted` event handler https://github.com/Textualize/textual/issues/1400
+- Added a `inherit_component_classes` subclassing parameter to control whether or not component classes are inherited from base classes https://github.com/Textualize/textual/issues/1399
 - Added `diagnose` as a `textual` command https://github.com/Textualize/textual/issues/1542
 
 ### Changed
@@ -23,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added Widget._refresh_scroll to avoid expensive layout when scrolling https://github.com/Textualize/textual/pull/1524
 - `events.Paste` now bubbles https://github.com/Textualize/textual/issues/1434
 - Clock color in the `Header` widget now matches the header color https://github.com/Textualize/textual/issues/1459
+- `COMPONENT_CLASSES` are now inherited from base classes https://github.com/Textualize/textual/issues/1399
 - Watch methods may now take no parameters
 - Added `compute` parameter to reactive
 
