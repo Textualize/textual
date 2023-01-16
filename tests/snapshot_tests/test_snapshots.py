@@ -89,7 +89,7 @@ def test_placeholder_render(snap_compare):
 
 
 def test_datatable_render(snap_compare):
-    press = ["tab", "down", "down", "right", "up", "left"]
+    press = ["tab", "down", "down", "right", "up", "left", "_"]
     assert snap_compare(WIDGET_EXAMPLES_DIR / "data_table.py", press=press)
 
 
