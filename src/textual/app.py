@@ -262,21 +262,7 @@ class App(Generic[ReturnType], DOMNode):
     ]
 
     title: Reactive[str] = Reactive("", compute=False)
-    """Reactive[str]: The title for the application.
-
-    The initial value in a running application will be that set in `TITLE`
-    (if one is set). Assign new values to this instance attribute to change
-    the title.
-    """
-
     sub_title: Reactive[str] = Reactive("", compute=False)
-    """Reactive[str]: The sub-title for the application.
-
-    The initial value in a running application will be that set in `SUB_TITLE`
-    (if one is set). Assign new values to this instance attribute to change
-    the sub-title.
-    """
-
     dark: Reactive[bool] = Reactive(True, compute=False)
 
     def __init__(
@@ -329,10 +315,24 @@ class App(Generic[ReturnType], DOMNode):
         self._animator = Animator(self)
         self._animate = self._animator.bind(self)
         self.mouse_position = Offset(0, 0)
+
         self.title = (
             self.TITLE if self.TITLE is not None else f"{self.__class__.__name__}"
         )
+        """The title for the application.
+
+        The initial value in a running application will be that set in `TITLE`
+        (if one is set). Assign new values to this instance attribute to change
+        the title.
+        """
+
         self.sub_title = self.SUB_TITLE if self.SUB_TITLE is not None else ""
+        """The sub-title for the application.
+
+        The initial value in a running application will be that set in `SUB_TITLE`
+        (if one is set). Assign new values to this instance attribute to change
+        the sub-title.
+        """
 
         self._logger = Logger(self._log)
 
