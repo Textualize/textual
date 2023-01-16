@@ -57,9 +57,6 @@ class Checkbox(Widget, can_focus=True):
         "checkbox--switch",
     }
 
-    value = reactive(False, init=False)
-    slider_pos = reactive(0.0)
-
     def __init__(
         self,
         value: bool = False,
@@ -83,6 +80,12 @@ class Checkbox(Widget, can_focus=True):
             self.slider_pos = 1.0
             self._reactive_value = value
         self._should_animate = animate
+
+    value = reactive(False, init=False)
+    """The value of the checkbox; `True` for on and `False` for off."""
+
+    slider_pos = reactive(0.0)
+    """The position of the slider."""
 
     def watch_value(self, value: bool) -> None:
         target_slider_pos = 1.0 if value else 0.0
