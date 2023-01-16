@@ -1004,16 +1004,31 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         cursor_type is set to `"column"`.
 
         Attributes:
-            sender (DataTable): The DataTable the column was selected in.
-            column_index (int): The index of the column that was selected.
+            sender (DataTable): The DataTable the column was highlighted in.
+            cursor_column (int): The x-coordinate of the column that was highlighted.
         """
+
+        def __init__(self, sender: DataTable, cursor_column: int) -> None:
+            self.cursor_column = cursor_column
+            super().__init__(sender)
+
+        def __rich_repr__(self) -> rich.repr.Result:
+            yield "sender", self.sender
+            yield "cursor_column", self.cursor_column
 
     class ColumnSelected(Message, bubble=True):
-        """Emitted when a row is selected. This message is only emitted when the
-        cursor_type is set to `"row"`.
+        """Emitted when a column is selected. This message is only emitted when the
+        cursor_type is set to `"column"`.
 
         Attributes:
-            sender (DataTable): The DataTable the row was selected in.
-            values (list[CellType]): A reference to the list of values in the selected row.
-            row_index (int): The index of the row that was selected.
+            sender (DataTable): The DataTable the column was selected in.
+            cursor_column (int): The x-coordinate of the column that was selected.
         """
+
+        def __init__(self, sender: DataTable, cursor_column: int) -> None:
+            self.cursor_column = cursor_column
+            super().__init__(sender)
+
+        def __rich_repr__(self) -> rich.repr.Result:
+            yield "sender", self.sender
+            yield "cursor_column", self.cursor_column
