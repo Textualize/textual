@@ -113,6 +113,17 @@ class Input(Widget, can_focus=True):
         id: str | None = None,
         classes: str | None = None,
     ) -> None:
+        """Initialise the `Input` widget.
+
+        Args:
+            value (str | None, optional): An optional default value for the input.
+            placeholder (str, optional): Optional placeholder text for the input.
+            highlighter (Highlighter | None, optional): An optional highlighter for the input.
+            password (bool, optional): Flag to say if the field should obfuscate its content. Default is `False`.
+            name (str | None, optional): Optional name for the input widget.
+            id (str | None): Optional ID for the widget.
+            classes (str | None): Optional initial classes for the widget.
+        """
         super().__init__(name=name, id=id, classes=classes)
         if value is not None:
             self.value = value
