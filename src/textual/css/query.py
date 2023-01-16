@@ -233,6 +233,7 @@ class DOMQuery(Generic[QueryType]):
 
         Raises:
             WrongType: If the wrong type was found.
+            NoMatches: If no node matches the query.
             TooManyMatches: If there is more than one matching node in the query.
 
         Returns:
@@ -246,7 +247,7 @@ class DOMQuery(Generic[QueryType]):
             # should *not* be anything there, so we *should* get an
             # IndexError. We *could* have just checked the length of the
             # query, but the idea here is to do the check as cheaply as
-            # possible.
+            # possible. "There can be only one!" -- Kurgan et al.
             _ = self.nodes[1]
             raise TooManyMatches(
                 "Call to only_one resulted in more than one matched node"

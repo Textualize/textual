@@ -10,6 +10,7 @@ from rich.style import Style
 
 from ._cache import FIFOCache
 from ._filter import LineFilter
+from ._segment_tools import index_to_cell_position
 
 
 @rich.repr.auto
@@ -67,6 +68,19 @@ class Strip:
             list[Strip]: List of strips.
         """
         return [cls(segments, cell_length) for segments in lines]
+
+    def index_to_cell_position(self, index: int) -> int:
+        """Given a character index, return the cell position of that character.
+        This is the sum of the cell lengths of all the characters *before* the character
+        at `index`.
+
+        Args:
+            index (int): The index to convert.
+
+        Returns:
+            int: The cell position of the character at `index`.
+        """
+        return index_to_cell_position(self._segments, index)
 
     @property
     def cell_length(self) -> int:

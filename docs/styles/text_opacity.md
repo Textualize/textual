@@ -4,20 +4,23 @@ The `text-opacity` blends the color of the content of a widget with the color of
 
 ## Syntax
 
-```
-text-opacity: <FRACTIONAL>;
-```
+--8<-- "docs/snippets/syntax_block_start.md"
+text-opacity: <a href="../../css_types/number">&lt;number&gt;</a> | <a href="../../css_types/percentage">&lt;percentage&gt;</a>;
+--8<-- "docs/snippets/syntax_block_end.md"
 
-### Values
-
-As a fractional property, `text-opacity` can be set to either a float (between 0 and 1),
-or a percentage, e.g. `45%`.
-Float values will be clamped between 0 and 1.
-Percentage values will be clamped between 0% and 100%.
+The text opacity can be set as a [`<number>`](../css_types/number.md) or a [`<percentage>`](../css_types/percentage.md).
+`0`/`0%` means no opacity, which is equivalent to full transparency.
+Conversely, `1`/`100%` means full opacity, which is equivalent to no transparency.
+Values outside of these ranges will be clamped.
 
 ## Example
 
-This example shows, from top to bottom, increasing text-opacity values.
+This example shows, from top to bottom, increasing `text-opacity` values.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/text_opacity.py"}
+    ```
 
 === "text_opacity.py"
 
@@ -27,22 +30,15 @@ This example shows, from top to bottom, increasing text-opacity values.
 
 === "text_opacity.css"
 
-    ```css
+    ```sass hl_lines="2 6 10 14 18"
     --8<-- "docs/examples/styles/text_opacity.css"
-    ```
-
-=== "Output"
-
-    ```{.textual path="docs/examples/styles/text_opacity.py"}
     ```
 
 ## CSS
 
 ```sass
 /* Set the text to be "half-faded" against the background of the widget */
-Widget {
-    text-opacity: 50%;
-}
+text-opacity: 50%;
 ```
 
 ## Python
@@ -51,3 +47,7 @@ Widget {
 # Set the text to be "half-faded" against the background of the widget
 widget.styles.text_opacity = "50%"
 ```
+
+## See also
+
+ - [`opacity`](./opacity.md) to specify the transparency of a whole widget.

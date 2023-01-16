@@ -1,0 +1,71 @@
+#ascii {
+    border: ascii $accent;
+}
+
+#blank {
+    border: blank $accent;
+}
+
+#dashed {
+    border: dashed $accent;
+}
+
+#double {
+    border: double $accent;
+}
+
+#heavy {
+    border: heavy $accent;
+}
+
+#hidden {
+    border: hidden $accent;
+}
+
+#hkey {
+    border: hkey $accent;
+}
+
+#inner {
+    border: inner $accent;
+}
+
+#none {
+    border: none $accent;
+}
+
+#outer {
+    border: outer $accent;
+}
+
+#round {
+    border: round $accent;
+}
+
+#solid {
+    border: solid $accent;
+}
+
+#tall {
+    border: tall $accent;
+}
+
+#vkey {
+    border: vkey $accent;
+}
+
+#wide {
+    border: wide $accent;
+}
+
+Grid {
+    grid-size: 3 5;
+    align: center middle;
+    grid-gutter: 1 2;
+}
+
+Label {
+    width: 20;
+    height: 3;
+    content-align: center middle;
+}

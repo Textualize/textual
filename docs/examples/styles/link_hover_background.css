@@ -1,0 +1,11 @@
+#lbl1, #lbl2 {
+    link-hover-background: red;  /* (1)! */
+}
+
+#lbl3 {
+    link-hover-background: hsl(60,100%,50%) 50%;
+}
+
+#lbl4 {
+    /* Empty to show the default hover background */ /* (2)! */
+}

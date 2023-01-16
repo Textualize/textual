@@ -344,7 +344,7 @@ The `#dialog Button` selector matches all buttons that are below the widget with
 
 As with all selectors, you can combine as many as you wish. The following will match a `Button` that is under a `Horizontal` widget _and_ under a widget with an id of `"dialog"`:
 
-```css
+```sass
 #dialog Horizontal Button {
   text-style: bold;
 }
@@ -400,14 +400,14 @@ You can define variables to reduce repetition and encourage consistency in your 
 Variables in Textual CSS are prefixed with `$`.
 Here's an example of how you might define a variable called `$border`:
 
-```scss
+```sass
 $border: wide green;
 ```
 
 With our variable assigned, we can write `$border` and it will be substituted with `wide green`.
 Consider the following snippet:
 
-```scss
+```sass
 #foo {
   border: $border;
 }
@@ -415,7 +415,7 @@ Consider the following snippet:
 
 This will be translated into:
 
-```scss
+```sass
 #foo {
   border: wide green;
 }

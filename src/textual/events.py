@@ -481,7 +481,7 @@ class DescendantBlur(Event, bubble=True, verbose=True):
 
 
 @rich.repr.auto
-class Paste(Event, bubble=False):
+class Paste(Event, bubble=True):
     """Event containing text that was pasted into the Textual application.
     This event will only appear when running in a terminal emulator that supports
     bracketed paste mode. Textual will enable bracketed pastes when an app starts,

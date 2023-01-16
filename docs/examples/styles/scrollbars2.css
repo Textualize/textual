@@ -1,0 +1,8 @@
+Screen {
+    scrollbar-background: blue;
+    scrollbar-background-active: red;
+    scrollbar-background-hover: purple;
+    scrollbar-color: cyan;
+    scrollbar-color-active: yellow;
+    scrollbar-color-hover: pink;
+}

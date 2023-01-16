@@ -1,0 +1,26 @@
+Horizontal {
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+}
+
+Placeholder {
+    width: 1fr;
+    height: 50%;
+}
+
+#p1 {
+    min-height: 25%;  /* (1)! */
+}
+
+#p2 {
+    min-height: 75%;
+}
+
+#p3 {
+    min-height: 30;
+}
+
+#p4 {
+    min-height: 40w;
+}

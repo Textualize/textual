@@ -1,24 +1,29 @@
 #one {
-  text-align: left;
-  background: lightblue;
-
+    text-align: left;
+    background: lightblue;
 }
 
 #two {
-  text-align: center;
-  background: indianred;
+    text-align: center;
+    background: indianred;
 }
 
 #three {
-  text-align: right;
-  background: palegreen;
+    text-align: right;
+    background: palegreen;
 }
 
 #four {
-  text-align: justify;
-  background: palevioletred;
+    text-align: justify;
+    background: palevioletred;
 }
 
-Static {
-  padding: 1;
+Label {
+    padding: 1 2;
+    height: 100%;
+    color: auto;
+}
+
+Grid {
+    grid-size: 2 2;
 }

@@ -2,8 +2,10 @@ Screen {
     background: white;
     color: black;
 }
-Static {
+
+Label {
     margin: 4 8;
     background: green 20%;
     outline: wide green;
+    width: 100%;
 }

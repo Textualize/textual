@@ -103,7 +103,7 @@ def test_header_render(snap_compare):
 
 def test_list_view(snap_compare):
     assert snap_compare(
-        WIDGET_EXAMPLES_DIR / "list_view.py", press=["tab", "down", "down", "up"]
+        WIDGET_EXAMPLES_DIR / "list_view.py", press=["tab", "down", "down", "up", "_"]
     )
 
 
@@ -137,6 +137,7 @@ PATHS = [
 @pytest.mark.parametrize("file_name", PATHS)
 def test_css_property(file_name, snap_compare):
     path_to_app = STYLES_EXAMPLES_DIR / file_name
+    Placeholder.reset_color_cycle()
     assert snap_compare(path_to_app)
 
 

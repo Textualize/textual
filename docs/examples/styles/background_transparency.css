@@ -1,0 +1,49 @@
+#t10 {
+    background: red 10%;
+}
+
+#t20 {
+    background: red 20%;
+}
+
+#t30 {
+    background: red 30%;
+}
+
+#t40 {
+    background: red 40%;
+}
+
+#t50 {
+    background: red 50%;
+}
+
+#t60 {
+    background: red 60%;
+}
+
+#t70 {
+    background: red 70%;
+}
+
+#t80 {
+    background: red 80%;
+}
+
+#t90 {
+    background: red 90%;
+}
+
+#t100 {
+    background: red 100%;
+}
+
+Screen {
+    layout: horizontal;
+}
+
+Static {
+    height: 100%;
+    width: 1fr;
+    content-align: center middle;
+}

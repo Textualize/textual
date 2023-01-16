@@ -1,0 +1,11 @@
+Grid {
+    grid-size: 2 4;
+    grid-gutter: 1 2;  /* (1)! */
+}
+
+Label {
+    border: round white;
+    content-align: center middle;
+    width: 100%;
+    height: 100%;
+}

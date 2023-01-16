@@ -1,0 +1,11 @@
+Grid {
+    grid-size: 5 2;
+    grid-columns: 1fr 16 2fr;
+}
+
+Label {
+    border: round white;
+    content-align-horizontal: center;
+    width: 100%;
+    height: 100%;
+}

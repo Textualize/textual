@@ -12,15 +12,27 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `TreeNode.parent` -- a read-only property for accessing a node's parent https://github.com/Textualize/textual/issues/1397
 - Added public `TreeNode` label access via `TreeNode.label` https://github.com/Textualize/textual/issues/1396
 - Added read-only public access to the children of a `TreeNode` via `TreeNode.children` https://github.com/Textualize/textual/issues/1398
+- Added `Tree.get_node_by_id` to allow getting a node by its ID https://github.com/Textualize/textual/pull/1535
+- Added a `Tree.NodeHighlighted` message, giving a `on_tree_node_highlighted` event handler https://github.com/Textualize/textual/issues/1400
+- Added a `inherit_component_classes` subclassing parameter to control whether or not component classes are inherited from base classes https://github.com/Textualize/textual/issues/1399
+- Added `diagnose` as a `textual` command https://github.com/Textualize/textual/issues/1542
 
 ### Changed
 
 - `MouseScrollUp` and `MouseScrollDown` now inherit from `MouseEvent` and have attached modifier keys. https://github.com/Textualize/textual/pull/1458
 - Fail-fast and print pretty tracebacks for Widget compose errors https://github.com/Textualize/textual/pull/1505
+- Added Widget._refresh_scroll to avoid expensive layout when scrolling https://github.com/Textualize/textual/pull/1524
+- `events.Paste` now bubbles https://github.com/Textualize/textual/issues/1434
+- Clock color in the `Header` widget now matches the header color https://github.com/Textualize/textual/issues/1459
+- `COMPONENT_CLASSES` are now inherited from base classes https://github.com/Textualize/textual/issues/1399
+- Watch methods may now take no parameters
+- Added `compute` parameter to reactive
 
 ### Fixed
 
 - The styles `scrollbar-background-active` and `scrollbar-color-hover` are no longer ignored https://github.com/Textualize/textual/pull/1480
+- The widget `Placeholder` can now have its width set to `auto` https://github.com/Textualize/textual/pull/1508
+- Behavior of widget `Input` when rendering after programmatic value change and related scenarios https://github.com/Textualize/textual/issues/1477 https://github.com/Textualize/textual/issues/1443
 
 ## [0.9.1] - 2022-12-30
 

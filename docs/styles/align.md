@@ -4,33 +4,32 @@ The `align` style aligns children within a container.
 
 ## Syntax
 
-```
-align: <HORIZONTAL> <VERTICAL>;
-align-horizontal: <HORIZONTAL>;
-align-vertical: <VERTICAL>;
-```
+--8<-- "docs/snippets/syntax_block_start.md"
+align: <a href="../../css_types/horizontal">&lt;horizontal&gt;</a> <a href="../../css_types/vertical">&lt;vertical&gt;</a>;
 
+align-horizontal: <a href="../../css_types/horizontal">&lt;horizontal&gt;</a>;
+align-vertical: <a href="../../css_types/vertical">&lt;vertical&gt;</a>;
+--8<-- "docs/snippets/syntax_block_end.md"
 
-### Values
+The style `align` takes a [`<horizontal>`](../../css_types/horizontal) followed by a [`<vertical>`](../../css_types/vertical).
 
-#### `HORIZONTAL`
+You can specify the alignment of children on both the horizontal and vertical axes at the same time,
+or on each of the axis separately.
+To specify alignment on a single axis, use the respective style and type:
 
-| Value            | Description                                        |
-| ---------------- | -------------------------------------------------- |
-| `left` (default) | Align content on the left of the horizontal axis   |
-| `center`         | Align content in the center of the horizontal axis |
-| `right`          | Align content on the right of the horizontal axis  |
+ - `align-horizontal` takes a [`<horizontal>`](../../css_types/horizontal) and does alignment along the horizontal axis; and
+ - `align-vertical` takes a [`<vertical>`](../../css_types/vertical) and does alignment along the vertical axis.
 
-#### `VERTICAL`
+## Examples
 
-| Value           | Description                                      |
-| --------------- | ------------------------------------------------ |
-| `top` (default) | Align content at the top of the vertical axis    |
-| `middle`        | Align content in the middle of the vertical axis |
-| `bottom`        | Align content at the bottom of the vertical axis |
+### Basic usage
 
+This example contains a simple app with two labels centered on the screen with `align: center middle;`:
 
-## Example
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/align.py"}
+    ```
 
 === "align.py"
 
@@ -40,14 +39,30 @@ align-vertical: <VERTICAL>;
 
 === "align.css"
 
-    ```scss hl_lines="2"
+    ```sass hl_lines="2"
     --8<-- "docs/examples/styles/align.css"
     ```
 
+### All alignments
+
+The next example shows a 3 by 3 grid of containers with text labels.
+Each label has been aligned differently inside its container, and its text shows its `align: ...` value.
+
 === "Output"
 
-    ```{.textual path="docs/examples/styles/align.py"}
+    ```{.textual path="docs/examples/styles/align_all.py"}
+    ```
 
+=== "align_all.py"
+
+    ```python
+    --8<-- "docs/examples/styles/align_all.py"
+    ```
+
+=== "align_all.css"
+
+    ```sass hl_lines="2 6 10 14 18 22 26 30 34"
+    --8<-- "docs/examples/styles/align_all.css"
     ```
 
 ## CSS
@@ -55,8 +70,13 @@ align-vertical: <VERTICAL>;
 ```sass
 /* Align child widgets to the center. */
 align: center middle;
-/* Align child widget to th top right */
+/* Align child widget to the top right */
 align: right top;
+
+/* Change the horizontal alignment of the children of a widget */
+align-horizontal: right;
+/* Change the vertical alignment of the children of a widget */
+align-vertical: middle;
 ```
 
 ## Python
@@ -65,4 +85,14 @@ align: right top;
 widget.styles.align = ("center", "middle")
 # Align child widgets to the top right
 widget.styles.align = ("right", "top")
+
+# Change the horizontal alignment of the children of a widget
+widget.styles.align_horizontal = "right"
+# Change the vertical alignment of the children of a widget
+widget.styles.align_vertical = "middle"
 ```
+
+## See also
+
+ - [`content-align`](./content_align.md) to set the alignment of content inside a widget.
+ - [`text-align`](./text_align.md) to set the alignment of text in a widget.

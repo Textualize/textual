@@ -1,0 +1,25 @@
+Horizontal {
+    height: 100%;
+    width: 100%;
+}
+
+Placeholder {
+    width: 100%;
+    height: 1fr;
+}
+
+#p1 {
+    max-width: 50h;
+}
+
+#p2 {
+    max-width: 999;  /* (1)! */
+}
+
+#p3 {
+    max-width: 50%;
+}
+
+#p4 {
+    max-width: 30;
+}

@@ -4,6 +4,15 @@ Welcome to the Textual Reference.
 
 <div class="grid cards" markdown>
 
+-   :octicons-book-16:{ .lg .middle } __CSS Types__
+
+    ---
+
+    CSS Types are the data types that CSS [styles](../styles/index.md) accept in their rules.
+
+    :octicons-arrow-right-24: [CSS Types Reference](../css_types/index.md)
+
+
 -   :octicons-book-16:{ .lg .middle } __Events__
 
     ---

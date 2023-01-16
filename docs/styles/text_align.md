@@ -1,27 +1,27 @@
 # Text-align
 
-The `text-align` rule aligns text within a widget.
+The `text-align` rule sets the text alignment in a widget.
 
 ## Syntax
 
-```
-text-align: [left|start|center|right|end|justify];
-```
+--8<-- "docs/snippets/syntax_block_start.md"
+text-align: <a href="../../css_types/text_align">&lt;text-align&gt;</a>;
+--8<-- "docs/snippets/syntax_block_end.md"
 
-### Values
+The `text-align` rule accepts a value of the type [`<text-align>`](../css_types/text_align.md) that defines how text is aligned inside the widget.
 
-| Value     | Description                      |
-|-----------|----------------------------------|
-| `left`    | Left aligns text in the widget   |
-| `start`   | Left aligns text in the widget   |
-| `center`  | Center aligns text in the widget |
-| `right`   | Right aligns text in the widget  |
-| `end`     | Right aligns text in the widget  |
-| `justify` | Justifies text in the widget     |
+### Defaults
+
+The default value is `start`.
 
 ## Example
 
 This example shows, from top to bottom: `left`, `center`, `right`, and `justify` text alignments.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/text_align.py"}
+    ```
 
 === "text_align.py"
 
@@ -31,22 +31,17 @@ This example shows, from top to bottom: `left`, `center`, `right`, and `justify`
 
 === "text_align.css"
 
-    ```css
+    ```sass hl_lines="2 7 12 17"
     --8<-- "docs/examples/styles/text_align.css"
     ```
 
-=== "Output"
-
-    ```{.textual path="docs/examples/styles/text_align.py"}
-    ```
+[//]: # (TODO: Add an example that shows how `start` and `end` change when RTL support is added.)
 
 ## CSS
 
 ```sass
-/* Set text in all Widgets to be right aligned */
-Widget {
-    text-align: right;
-}
+/* Set text in the widget to be right aligned */
+text-align: right;
 ```
 
 ## Python
@@ -55,3 +50,8 @@ Widget {
 # Set text in the widget to be right aligned
 widget.styles.text_align = "right"
 ```
+
+## See also
+
+ - [`align`](./align.md) to set the alignment of children widgets inside a container.
+ - [`content-align`](./content_align.md) to set the alignment of content inside a widget.

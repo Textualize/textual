@@ -31,6 +31,7 @@ from .css.parse import parse_declarations
 from .css.styles import RenderStyles, Styles
 from .css.tokenize import IDENTIFIER
 from .message_pump import MessagePump
+from .reactive import Reactive
 from .timer import Timer
 from .walk import walk_breadth_first, walk_depth_first
 
@@ -98,6 +99,9 @@ class DOMNode(MessagePump):
     # True if this node inherits the CSS from the base class.
     _inherit_css: ClassVar[bool] = True
 
+    # True if this node inherits the component classes from the base class.
+    _inherit_component_classes: ClassVar[bool] = True
+
     # True to inherit bindings from base class
     _inherit_bindings: ClassVar[bool] = True
 
@@ -106,6 +110,8 @@ class DOMNode(MessagePump):
 
     # Generated list of bindings
     _merged_bindings: ClassVar[Bindings] | None = None
+
+    _reactives: ClassVar[dict[str, Reactive]]
 
     def __init__(
         self,
@@ -160,11 +166,26 @@ class DOMNode(MessagePump):
         self.refresh()
 
     def __init_subclass__(
-        cls, inherit_css: bool = True, inherit_bindings: bool = True
+        cls,
+        inherit_css: bool = True,
+        inherit_bindings: bool = True,
+        inherit_component_classes: bool = True,
     ) -> None:
         super().__init_subclass__()
+
+        reactives = cls._reactives = {}
+        for base in reversed(cls.__mro__):
+            reactives.update(
+                {
+                    name: reactive
+                    for name, reactive in base.__dict__.items()
+                    if isinstance(reactive, Reactive)
+                }
+            )
+
         cls._inherit_css = inherit_css
         cls._inherit_bindings = inherit_bindings
+        cls._inherit_component_classes = inherit_component_classes
         css_type_names: set[str] = set()
         for base in cls._css_bases(cls):
             css_type_names.add(base.__name__)
@@ -255,8 +276,11 @@ class DOMNode(MessagePump):
         if self._classes:
             yield "classes", " ".join(self._classes)
 
-    def get_default_css(self) -> list[tuple[str, str, int]]:
+    def _get_default_css(self) -> list[tuple[str, str, int]]:
         """Gets the CSS for this class and inherited from bases.
+
+        Default CSS is inherited from base classes, unless `inherit_css` is set to
+        `False` when subclassing.
 
         Returns:
             list[tuple[str, str]]: a list of tuples containing (PATH, SOURCE) for this
@@ -278,6 +302,24 @@ class DOMNode(MessagePump):
                 css_stack.append((get_path(base), css, -tie_breaker))
 
         return css_stack
+
+    def _get_component_classes(self) -> set[str]:
+        """Gets the component classes for this class and inherited from bases.
+
+        Component classes are inherited from base classes, unless
+        `inherit_component_classes` is set to `False` when subclassing.
+
+        Returns:
+            set[str]: a set with all the component classes available.
+        """
+
+        component_classes: set[str] = set()
+        for base in self._node_bases:
+            component_classes.update(base.__dict__.get("COMPONENT_CLASSES", set()))
+            if not base.__dict__.get("_inherit_component_classes", True):
+                break
+
+        return component_classes
 
     @property
     def parent(self) -> DOMNode | None:
@@ -745,12 +787,17 @@ class DOMNode(MessagePump):
         selector: str | type[ExpectType],
         expect_type: type[ExpectType] | None = None,
     ) -> ExpectType | Widget:
-        """Get the first Widget matching the given selector or selector type.
+        """Get a single Widget matching the given selector or selector type.
 
         Args:
             selector (str | type): A selector.
             expect_type (type | None, optional): Require the object be of the supplied type, or None for any type.
                 Defaults to None.
+
+        Raises:
+            WrongType: If the wrong type was found.
+            NoMatches: If no node matches the query.
+            TooManyMatches: If there is more than one matching node in the query.
 
         Returns:
             Widget | ExpectType: A widget matching the selector.

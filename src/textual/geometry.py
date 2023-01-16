@@ -684,6 +684,7 @@ class Region(NamedTuple):
         )
         return new_region
 
+    @lru_cache(maxsize=4096)
     def grow(self, margin: tuple[int, int, int, int]) -> Region:
         """Grow a region by adding spacing.
 
@@ -704,6 +705,7 @@ class Region(NamedTuple):
             height=max(0, height + top + bottom),
         )
 
+    @lru_cache(maxsize=4096)
     def shrink(self, margin: tuple[int, int, int, int]) -> Region:
         """Shrink a region by subtracting spacing.
 
@@ -713,7 +715,8 @@ class Region(NamedTuple):
         Returns:
             Region: The new, smaller region.
         """
-
+        if not any(margin):
+            return self
         top, right, bottom, left = margin
         x, y, width, height = self
         return Region(

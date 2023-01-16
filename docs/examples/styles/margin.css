@@ -3,8 +3,9 @@ Screen {
     color: black;
 }
 
-Static {
-    margin: 4 8;  
-    background: blue 20%;  
+Label {
+    margin: 4 8;
+    background: blue 20%;
     border: blue wide;
-}    
+    width: 100%;
+}

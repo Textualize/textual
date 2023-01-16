@@ -253,8 +253,8 @@ class Compositor:
         # Keep a copy of the old map because we're going to compare it with the update
         old_map = self.map.copy()
         old_widgets = old_map.keys()
-        map, widgets = self._arrange_root(parent, size)
 
+        map, widgets = self._arrange_root(parent, size)
         new_widgets = map.keys()
 
         # Newly visible widgets
@@ -266,20 +266,21 @@ class Compositor:
         self.map = map
         self.widgets = widgets
 
-        screen = size.region
+        # Contains widgets + geometry for every widget that changed (added, removed, or updated)
+        changes = map.items() ^ old_map.items()
+
+        # Widgets in both new and old
+        common_widgets = old_widgets & new_widgets
 
         # Widgets with changed size
         resized_widgets = {
             widget
-            for widget, (region, *_) in map.items()
-            if widget in old_widgets and old_map[widget].region.size != region.size
+            for widget, (region, *_) in changes
+            if (widget in common_widgets and old_map[widget].region[2:] != region[2:])
         }
 
-        # Gets pairs of tuples of (Widget, MapGeometry) which have changed
-        # i.e. if something is moved / deleted / added
-
-        if screen not in self._dirty_regions:
-            changes = map.items() ^ old_map.items()
+        screen_region = size.region
+        if screen_region not in self._dirty_regions:
             regions = {
                 region
                 for region in (
@@ -346,6 +347,7 @@ class Compositor:
             layer_order: int,
             clip: Region,
             visible: bool,
+            _MapGeometry=MapGeometry,
         ) -> None:
             """Called recursively to place a widget and its children in the map.
 
@@ -392,50 +394,57 @@ class Compositor:
                     )
                     widgets.update(arranged_widgets)
 
-                    # An offset added to all placements
-                    placement_offset = container_region.offset
-                    placement_scroll_offset = placement_offset - widget.scroll_offset
+                    if placements:
+                        # An offset added to all placements
+                        placement_offset = container_region.offset
+                        placement_scroll_offset = (
+                            placement_offset - widget.scroll_offset
+                        )
 
-                    _layers = widget.layers
-                    layers_to_index = {
-                        layer_name: index for index, layer_name in enumerate(_layers)
-                    }
-                    get_layer_index = layers_to_index.get
+                        _layers = widget.layers
+                        layers_to_index = {
+                            layer_name: index
+                            for index, layer_name in enumerate(_layers)
+                        }
+                        get_layer_index = layers_to_index.get
 
-                    # Add all the widgets
-                    for sub_region, margin, sub_widget, z, fixed in reversed(
-                        placements
-                    ):
-                        # Combine regions with children to calculate the "virtual size"
-                        if fixed:
-                            widget_region = sub_region + placement_offset
-                        else:
-                            total_region = total_region.union(
-                                sub_region.grow(spacing + margin)
+                        # Add all the widgets
+                        for sub_region, margin, sub_widget, z, fixed in reversed(
+                            placements
+                        ):
+                            # Combine regions with children to calculate the "virtual size"
+                            if fixed:
+                                widget_region = sub_region + placement_offset
+                            else:
+                                total_region = total_region.union(
+                                    sub_region.grow(spacing + margin)
+                                )
+                                widget_region = sub_region + placement_scroll_offset
+
+                            widget_order = (
+                                *order,
+                                get_layer_index(sub_widget.layer, 0),
+                                z,
+                                layer_order,
                             )
-                            widget_region = sub_region + placement_scroll_offset
 
-                        widget_order = order + (
-                            (get_layer_index(sub_widget.layer, 0), z, layer_order),
-                        )
-
-                        add_widget(
-                            sub_widget,
-                            sub_region,
-                            widget_region,
-                            widget_order,
-                            layer_order,
-                            sub_clip,
-                            visible,
-                        )
-                        layer_order -= 1
+                            add_widget(
+                                sub_widget,
+                                sub_region,
+                                widget_region,
+                                widget_order,
+                                layer_order,
+                                sub_clip,
+                                visible,
+                            )
+                            layer_order -= 1
 
                 if visible:
                     # Add any scrollbars
                     for chrome_widget, chrome_region in widget._arrange_scrollbars(
                         container_region
                     ):
-                        map[chrome_widget] = MapGeometry(
+                        map[chrome_widget] = _MapGeometry(
                             chrome_region + layout_offset,
                             order,
                             clip,
@@ -444,7 +453,7 @@ class Compositor:
                             chrome_region,
                         )
 
-                    map[widget] = MapGeometry(
+                    map[widget] = _MapGeometry(
                         region + layout_offset,
                         order,
                         clip,
@@ -455,7 +464,7 @@ class Compositor:
 
             elif visible:
                 # Add the widget to the map
-                map[widget] = MapGeometry(
+                map[widget] = _MapGeometry(
                     region + layout_offset,
                     order,
                     clip,

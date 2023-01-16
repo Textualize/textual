@@ -11,8 +11,8 @@ Static {
 }
 
 #box1 {
-    background: darkcyan;
     layer: above;
+    background: darkcyan;
 }
 
 #box2 {

@@ -27,7 +27,7 @@ The example below shows each placeholder variant.
 
 === "placeholder.css"
 
-    ```css
+    ```sass
     --8<-- "docs/examples/widgets/placeholder.css"
     ```
 

@@ -140,7 +140,7 @@ Build your own or use the builtin widgets.
 - **Button** Clickable button with a number of styles.
 - **Checkbox** A checkbox to toggle between states.
 - **DataTable** A spreadsheet-like widget for navigating data. Cells may contain text or Rich renderables.
-- **TreeControl** An generic tree with expandable nodes.
+- **Tree** An generic tree with expandable nodes.
 - **DirectoryTree** A tree of file and folders.
 - *... many more planned ...*
 

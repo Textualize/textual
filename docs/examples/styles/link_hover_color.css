@@ -1,0 +1,11 @@
+#lbl1, #lbl2 {
+    link-hover-color: red;  /* (1)! */
+}
+
+#lbl3 {
+    link-hover-color: hsl(60,100%,50%) 50%;
+}
+
+#lbl4 {
+    link-hover-color: black;
+}

@@ -4,14 +4,13 @@ from dataclasses import dataclass
 from typing import ClassVar, Generic, NewType, TypeVar
 
 import rich.repr
-from rich.segment import Segment
 from rich.style import NULL_STYLE, Style
 from rich.text import Text, TextType
 
 from .. import events
 from .._cache import LRUCache
 from .._loop import loop_last
-from .._segment_tools import line_crop, line_pad
+from .._segment_tools import line_pad
 from .._types import MessageTarget
 from .._typing import TypeAlias
 from .._immutable_sequence_view import ImmutableSequenceView
@@ -331,44 +330,46 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         ),
     }
 
-    class NodeSelected(Generic[EventTreeDataType], Message, bubble=True):
+    class NodeMessage(Generic[EventTreeDataType], Message, bubble=True):
+        """Base class for events sent when something happens with a node.
+
+        Attributes:
+            TreeNode[EventTreeDataType]: The node involved in the event.
+        """
+
+        def __init__(
+            self, sender: MessageTarget, node: TreeNode[EventTreeDataType]
+        ) -> None:
+            self.node = node
+            super().__init__(sender)
+
+    class NodeSelected(NodeMessage[EventTreeDataType]):
         """Event sent when a node is selected.
 
         Attributes:
             TreeNode[EventTreeDataType]: The node that was selected.
         """
 
-        def __init__(
-            self, sender: MessageTarget, node: TreeNode[EventTreeDataType]
-        ) -> None:
-            self.node = node
-            super().__init__(sender)
-
-    class NodeExpanded(Generic[EventTreeDataType], Message, bubble=True):
+    class NodeExpanded(NodeMessage[EventTreeDataType]):
         """Event sent when a node is expanded.
 
         Attributes:
             TreeNode[EventTreeDataType]: The node that was expanded.
         """
 
-        def __init__(
-            self, sender: MessageTarget, node: TreeNode[EventTreeDataType]
-        ) -> None:
-            self.node = node
-            super().__init__(sender)
-
-    class NodeCollapsed(Generic[EventTreeDataType], Message, bubble=True):
+    class NodeCollapsed(NodeMessage[EventTreeDataType]):
         """Event sent when a node is collapsed.
 
         Attributes:
             TreeNode[EventTreeDataType]: The node that was collapsed.
         """
 
-        def __init__(
-            self, sender: MessageTarget, node: TreeNode[EventTreeDataType]
-        ) -> None:
-            self.node = node
-            super().__init__(sender)
+    class NodeHighlighted(NodeMessage[EventTreeDataType]):
+        """Event sent when a node is highlighted.
+
+        Attributes:
+            TreeNode[EventTreeDataType]: The node that was collapsed.
+        """
 
     def __init__(
         self,
@@ -514,6 +515,26 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         else:
             return line.node
 
+    class UnknownNodeID(Exception):
+        """Exception raised when referring to an unknown `TreeNode` ID."""
+
+    def get_node_by_id(self, node_id: NodeID) -> TreeNode[TreeDataType]:
+        """Get a tree node by its ID.
+
+        Args:
+            node_id (NodeID): The ID of the node to get.
+
+        Returns:
+            TreeNode[TreeDataType]: The node associated with that ID.
+
+        Raises:
+            Tree.UnknownID: Raised if the `TreeNode` ID is unknown.
+        """
+        try:
+            return self._nodes[node_id]
+        except KeyError:
+            raise self.UnknownNodeID(f"Unknown NodeID ({node_id}) in tree") from None
+
     def validate_cursor_line(self, value: int) -> int:
         """Prevent cursor line from going outside of range."""
         return clamp(value, 0, len(self._tree_lines) - 1)
@@ -555,6 +576,27 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         else:
             return tree_line.node
 
+    def _get_label_region(self, line: int) -> Region | None:
+        """Returns the region occupied by the label of the node at line `line`.
+
+        This can be used, e.g., when scrolling to that line such that the label
+        is visible after the scroll.
+
+        Args:
+            line (int): A line number.
+
+        Returns:
+            Region | None: the region occupied by the label, or `None` if the
+            line is not in the tree.
+        """
+        try:
+            tree_line = self._tree_lines[line]
+        except IndexError:
+            return None
+        region_x = tree_line._get_guide_width(self.guide_depth, self.show_root)
+        region_width = self.get_label_width(tree_line.node)
+        return Region(region_x, line, region_width, 1)
+
     def watch_hover_line(self, previous_hover_line: int, hover_line: int) -> None:
         previous_node = self._get_node(previous_hover_line)
         if previous_node is not None:
@@ -578,6 +620,8 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             self._refresh_node(node)
             node._selected = True
             self._cursor_node = node
+            if previous_node != node:
+                self.post_message_no_wait(self.NodeHighlighted(self, node))
 
     def watch_guide_depth(self, guide_depth: int) -> None:
         self._invalidate()
@@ -592,7 +636,9 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         Args:
             line (int): A line number.
         """
-        self.scroll_to_region(Region(0, line, self.size.width, 1))
+        region = self._get_label_region(line)
+        if region is not None:
+            self.scroll_to_region(region)
 
     def scroll_to_node(self, node: TreeNode[TreeDataType]) -> None:
         """Scroll to the given node.

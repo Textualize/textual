@@ -5,16 +5,19 @@ from textual.widget import Widget, WidgetError, MountError
 from textual.widgets import Static
 from textual.css.query import TooManyMatches
 
+
 class SelfOwn(Widget):
     """Test a widget that tries to own itself."""
+
     def __init__(self) -> None:
         super().__init__(self)
+
 
 async def test_mount_via_app() -> None:
     """Perform mount tests via the app."""
 
     # Make a background set of widgets.
-    widgets = [Static(id=f"starter-{n}") for n in range( 10 )]
+    widgets = [Static(id=f"starter-{n}") for n in range(10)]
 
     async with App().run_test() as pilot:
         with pytest.raises(WidgetError):

@@ -1,0 +1,18 @@
+Container {
+    width: 1fr;
+}
+
+#v1 {
+    scrollbar-size: 5 1;
+    background: red 20%;
+}
+
+#v2 {
+    scrollbar-size-vertical: 1;
+    background: green 20%;
+}
+
+#v3 {
+    scrollbar-size-horizontal: 5;
+    background: blue 20%;
+}
