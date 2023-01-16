@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from itertools import chain, zip_longest
 from typing import ClassVar, Generic, Iterable, NamedTuple, TypeVar, cast
 
+import rich.repr
 from rich.console import RenderableType
 from rich.padding import Padding
 from rich.protocol import is_renderable
@@ -262,6 +263,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def cursor_column(self) -> int:
         return self.cursor_cell.column
 
+    def get_cell_value(self, coordinate: Coord) -> CellType:
+        row, column = coordinate
+        return self.data[row][column]
+
     def _clear_caches(self) -> None:
         self._row_render_cache.clear()
         self._cell_render_cache.clear()
@@ -294,16 +299,22 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.refresh_cell(*old)
         self.refresh_cell(*value)
 
-    def watch_cursor_cell(self, old: Coord, value: Coord) -> None:
+    def watch_cursor_cell(self, old_coordinate: Coord, new_coordinate: Coord) -> None:
         if self.cursor_type == "cell":
-            self.refresh_cell(*old)
-            self.refresh_cell(*value)
+            self.refresh_cell(*old_coordinate)
+            self.refresh_cell(*new_coordinate)
         elif self.cursor_type == "row":
-            self.refresh_row(old.row)
-            self.refresh_row(value.row)
+            self.refresh_row(old_coordinate.row)
+            self.refresh_row(new_coordinate.row)
         elif self.cursor_type == "column":
-            self.refresh_column(old.column)
-            self.refresh_column(value.column)
+            self.refresh_column(old_coordinate.column)
+            self.refresh_column(new_coordinate.column)
+
+        if old_coordinate != new_coordinate:
+            cell_value = self.get_cell_value(new_coordinate)
+            self.emit_no_wait(
+                DataTable.CellHighlighted(self, cell_value, new_coordinate)
+            )
 
     def validate_cursor_cell(self, value: Coord) -> Coord:
         return self._clamp_cursor_cell(value)
@@ -839,21 +850,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     def on_click(self, event: events.Click) -> None:
         self._set_hover_cursor(True)
-        if self.cursor_type != "none" and self.show_cursor:
+        if self.show_cursor and self.cursor_type != "none":
+            self._select_highlighted_cell()
             meta = self.get_style_at(event.x, event.y).meta
             if meta:
                 self.cursor_cell = Coord(meta["row"], meta["column"])
                 self._scroll_cursor_into_view(animate=True)
                 event.stop()
-
-    def action_cursor_down(self):
-        self._set_hover_cursor(False)
-        cursor_type = self.cursor_type
-        if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
-            self.cursor_cell = self.cursor_cell.down()
-            self._scroll_cursor_into_view()
-        else:
-            super().action_scroll_down()
 
     def action_cursor_up(self):
         self._set_hover_cursor(False)
@@ -863,6 +866,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self._scroll_cursor_into_view()
         else:
             super().action_scroll_up()
+
+    def action_cursor_down(self):
+        self._set_hover_cursor(False)
+        cursor_type = self.cursor_type
+        if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
+            self.cursor_cell = self.cursor_cell.down()
+            self._scroll_cursor_into_view()
+        else:
+            super().action_scroll_down()
 
     def action_cursor_right(self):
         self._set_hover_cursor(False)
@@ -882,31 +894,62 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         else:
             super().action_scroll_left()
 
+    def action_select_cursor(self):
+        self._set_hover_cursor(False)
+        if self.show_cursor and self.cursor_type != "none":
+            self._select_highlighted_cell()
+
+    def _select_highlighted_cell(self):
+        cursor_cell = self.cursor_cell
+        self.emit_no_wait(
+            DataTable.CellSelected(
+                self,
+                self.get_cell_value(cursor_cell),
+                cursor_cell,
+            )
+        )
+
     class CellHighlighted(Message, bubble=True):
         """Emitted when the cursor moves to a new cell.
 
         Attributes:
-            value (object): The value in the highlighted cell.
+            sender (DataTable): The DataTable the cell was highlighted in.
+            value (CellType): The value in the highlighted cell.
             coordinate (Coord): The coordinate of the highlighted cell.
         """
 
-        def __init__(self, sender: DataTable, value: object, coordinate: Coord) -> None:
-            super().__init__(sender)
+        def __init__(
+            self, sender: DataTable, value: CellType, coordinate: Coord
+        ) -> None:
             self.value = value
             self.coordinate = coordinate
+            super().__init__(sender)
+
+        def __rich_repr__(self) -> rich.repr.Result:
+            yield "sender", self.sender
+            yield "value", self.value
+            yield "coordinate", self.coordinate
 
     class CellSelected(Message, bubble=True):
         """Emitted when a cell is selected.
 
         Attributes:
-            value (object): The value in the cell that was selected.
+            sender (DataTable): The DataTable the cell was selected in.
+            value (CellType): The value in the cell that was selected.
             coordinate (Coord): The coordinate of the cell that was selected.
         """
 
-        def __init__(self, sender: DataTable, value: object, coordinate: Coord) -> None:
-            super().__init__(sender)
+        def __init__(
+            self, sender: DataTable, value: CellType, coordinate: Coord
+        ) -> None:
             self.value = value
             self.coordinate = coordinate
+            super().__init__(sender)
+
+        def __rich_repr__(self) -> rich.repr.Result:
+            yield "sender", self.sender
+            yield "value", self.value
+            yield "coordinate", self.coordinate
 
     class RowHighlighted(Message, bubble=True):
         pass
