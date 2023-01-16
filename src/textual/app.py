@@ -262,6 +262,13 @@ class App(Generic[ReturnType], DOMNode):
     ]
 
     title: Reactive[str] = Reactive("", compute=False)
+    """Reactive[str]: The title for the application.
+
+    The initial value in a running application will be that set in `TITLE`
+    (if one is set). Assign new values to this instance attribute to change
+    the title.
+    """
+
     sub_title: Reactive[str] = Reactive("", compute=False)
     dark: Reactive[bool] = Reactive(True, compute=False)
 
