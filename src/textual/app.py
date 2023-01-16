@@ -240,7 +240,14 @@ class App(Generic[ReturnType], DOMNode):
     SCREENS: dict[str, Screen | Callable[[], Screen]] = {}
     _BASE_PATH: str | None = None
     CSS_PATH: CSSPathType = None
+
     TITLE: str | None = None
+    """str | None: The default title for the application.
+
+    If set to a string, this sets the default title for the application. See
+    also the `title` attribute.
+    """
+
     SUB_TITLE: str | None = None
 
     BINDINGS = [
