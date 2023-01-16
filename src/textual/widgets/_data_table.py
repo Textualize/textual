@@ -882,20 +882,40 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         else:
             super().action_scroll_left()
 
-    class CellHighlighted(Message):
+    class CellHighlighted(Message, bubble=True):
+        """Emitted when the cursor moves to a new cell.
+
+        Attributes:
+            value (object): The value in the highlighted cell.
+            coordinate (Coord): The coordinate of the highlighted cell.
+        """
+
+        def __init__(self, sender: DataTable, value: object, coordinate: Coord) -> None:
+            super().__init__(sender)
+            self.value = value
+            self.coordinate = coordinate
+
+    class CellSelected(Message, bubble=True):
+        """Emitted when a cell is selected.
+
+        Attributes:
+            value (object): The value in the cell that was selected.
+            coordinate (Coord): The coordinate of the cell that was selected.
+        """
+
+        def __init__(self, sender: DataTable, value: object, coordinate: Coord) -> None:
+            super().__init__(sender)
+            self.value = value
+            self.coordinate = coordinate
+
+    class RowHighlighted(Message, bubble=True):
         pass
 
-    class CellActivated(Message):
+    class RowSelected(Message, bubble=True):
         pass
 
-    class RowHighlighted(Message):
+    class ColumnHighlighted(Message, bubble=True):
         pass
 
-    class RowActivated(Message):
-        pass
-
-    class ColumnHighlighted(Message):
-        pass
-
-    class ColumnActivated(Message):
+    class ColumnSelected(Message, bubble=True):
         pass
