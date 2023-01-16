@@ -292,7 +292,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     def watch_show_cursor(self, show_cursor: bool) -> None:
         self._clear_caches()
-        self._scroll_cursor_into_view(animate=False)
+        if show_cursor and self.cursor_type != "none":
+            self._scroll_cursor_into_view(animate=False)
+            if self.cursor_type == "cell":
+                self._highlight_cell(self.cursor_cell)
+            elif self.cursor_type == "row":
+                self._highlight_row(self.cursor_row)
+            elif self.cursor_type == "column":
+                self._highlight_column(self.cursor_column)
 
     def watch_show_header(self, show_header: bool) -> None:
         self._clear_caches()
@@ -311,20 +318,26 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if old_coordinate != new_coordinate:
             if self.cursor_type == "cell":
                 self.refresh_cell(*old_coordinate)
-                self.refresh_cell(*new_coordinate)
-                cell_value = self.get_cell_value(new_coordinate)
-                self.emit_no_wait(
-                    DataTable.CellHighlighted(self, cell_value, new_coordinate)
-                )
+                self._highlight_cell(new_coordinate)
             elif self.cursor_type == "row":
                 self.refresh_row(old_coordinate.row)
-                self.refresh_row(new_coordinate.row)
-                row_index, _ = self.cursor_cell
-                row_values = self.data[row_index]
-                self.emit_no_wait(DataTable.RowHighlighted(self, row_index))
+                self._highlight_row(new_coordinate.row)
             elif self.cursor_type == "column":
                 self.refresh_column(old_coordinate.column)
-                self.refresh_column(new_coordinate.column)
+                self._highlight_column(new_coordinate.column)
+
+    def _highlight_cell(self, coordinate: Coord) -> None:
+        self.refresh_cell(*coordinate)
+        cell_value = self.get_cell_value(coordinate)
+        self.emit_no_wait(DataTable.CellHighlighted(self, cell_value, coordinate))
+
+    def _highlight_row(self, row_index: int) -> None:
+        self.refresh_row(row_index)
+        self.emit_no_wait(DataTable.RowHighlighted(self, row_index))
+
+    def _highlight_column(self, column_index: int) -> None:
+        self.refresh_column(column_index)
+        self.emit_no_wait(DataTable.ColumnHighlighted(self, column_index))
 
     def validate_cursor_cell(self, value: Coord) -> Coord:
         return self._clamp_cursor_cell(value)
