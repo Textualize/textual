@@ -321,7 +321,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 self.refresh_row(new_coordinate.row)
                 row_index, _ = self.cursor_cell
                 row_values = self.data[row_index]
-                self.emit_no_wait(DataTable.RowHighlighted(self, row_values, row_index))
+                self.emit_no_wait(DataTable.RowHighlighted(self, row_index))
             elif self.cursor_type == "column":
                 self.refresh_column(old_coordinate.column)
                 self.refresh_column(new_coordinate.column)
@@ -971,21 +971,16 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         Attributes:
             sender (DataTable): The DataTable the row was highlighted in.
-            values (list[CellType]): A reference to the list of values in the highlighted row.
-            row_index (int): The index of the row that was highlighted.
+            cursor_row (int): The y-coordinate of the cursor that highlighted the row.
         """
 
-        def __init__(
-            self, sender: DataTable, values: list[CellType], row_index: int
-        ) -> None:
-            self.values = values
-            self.row_index = row_index
+        def __init__(self, sender: DataTable, cursor_row: int) -> None:
+            self.cursor_row = cursor_row
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
             yield "sender", self.sender
-            yield "values", self.values
-            yield "row_index", self.row_index
+            yield "cursor_row", self.cursor_row
 
     class RowSelected(Message, bubble=True):
         """Emitted when a row is selected. This message is only emitted when the
@@ -993,21 +988,16 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         Attributes:
             sender (DataTable): The DataTable the row was selected in.
-            values (list[CellType]): A reference to the list of values in the selected row.
-            row_index (int): The index of the row that was selected.
+            cursor_row (int): The y-coordinate of the cursor that made the selection.
         """
 
-        def __init__(
-            self, sender: DataTable, values: list[CellType], row_index: int
-        ) -> None:
-            self.values = values
-            self.row_index = row_index
+        def __init__(self, sender: DataTable, cursor_row: int) -> None:
+            self.cursor_row = cursor_row
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
             yield "sender", self.sender
-            yield "values", self.values
-            yield "row_index", self.row_index
+            yield "cursor_row", self.cursor_row
 
     class ColumnHighlighted(Message, bubble=True):
         """Emitted when a column is highlighted. This message is only emitted when the
