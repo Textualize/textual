@@ -26,9 +26,9 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
     """
 
     BINDINGS = [
-        Binding("down", "cursor_down", "Down", show=False),
-        Binding("up", "cursor_up", "Up", show=False),
         Binding("enter", "select_cursor", "Select", show=False),
+        Binding("up", "cursor_up", "Cursor Up", show=False),
+        Binding("down", "cursor_down", "Cursor Down", show=False),
     ]
 
     index = reactive(0, always_update=True)

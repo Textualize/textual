@@ -1868,7 +1868,7 @@ class App(Generic[ReturnType], DOMNode):
             )
         except SkipAction:
             # The action method raised this to explicitly not handle the action
-            log("<action> {action_name!r} skipped.")
+            log(f"<action> {action_name!r} skipped.")
         return False
 
     async def _broker_event(

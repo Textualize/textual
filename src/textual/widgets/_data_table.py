@@ -15,7 +15,8 @@ from .. import events, messages
 from .._cache import LRUCache
 from .._segment_tools import line_crop
 from .._types import SegmentLines
-from ..geometry import Region, Size, Spacing, clamp, Offset
+from ..binding import Binding
+from ..geometry import Region, Size, Spacing, clamp
 from ..message import Message
 from ..reactive import Reactive
 from ..render import measure
@@ -187,6 +188,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         "datatable--highlight",
         "datatable--cursor",
     }
+
+    BINDINGS = [
+        Binding("enter", "select_cursor", "Select", show=False),
+        Binding("up", "cursor_up", "Cursor Up", show=False),
+        Binding("down", "cursor_down", "Cursor Down", show=False),
+        Binding("right", "cursor_right", "Cursor Right", show=False),
+        Binding("left", "cursor_left", "Cursor Left", show=False),
+    ]
 
     show_header = Reactive(True)
     fixed_rows = Reactive(0)
@@ -837,41 +846,41 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 self._scroll_cursor_into_view(animate=True)
                 event.stop()
 
-    def key_down(self, event: events.Key):
+    def action_cursor_down(self):
         self._set_hover_cursor(False)
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
             self.cursor_cell = self.cursor_cell.down()
-            event.stop()
-            event.prevent_default()
             self._scroll_cursor_into_view()
+        else:
+            super().action_scroll_down()
 
-    def key_up(self, event: events.Key):
+    def action_cursor_up(self):
         self._set_hover_cursor(False)
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
             self.cursor_cell = self.cursor_cell.up()
-            event.stop()
-            event.prevent_default()
             self._scroll_cursor_into_view()
+        else:
+            super().action_scroll_up()
 
-    def key_right(self, event: events.Key):
+    def action_cursor_right(self):
         self._set_hover_cursor(False)
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "column"):
             self.cursor_cell = self.cursor_cell.right()
-            event.stop()
-            event.prevent_default()
             self._scroll_cursor_into_view(animate=True)
+        else:
+            super().action_scroll_right()
 
-    def key_left(self, event: events.Key):
+    def action_cursor_left(self):
         self._set_hover_cursor(False)
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "column"):
             self.cursor_cell = self.cursor_cell.left()
-            event.stop()
-            event.prevent_default()
             self._scroll_cursor_into_view(animate=True)
+        else:
+            super().action_scroll_left()
 
     class CellHighlighted(Message):
         pass
