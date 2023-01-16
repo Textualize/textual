@@ -396,11 +396,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if column_index < 0 or column_index >= len(columns):
             return Region(0, 0, 0, 0)
 
-        # TODO: We probably don't want to refresh the entire column region
-        #  each time we move the cursor. Moving the cursor won't result in
-        #  a change of the contents, so it seems quite wasteful.
-        #  If we do that we'd need to ensure that we re-apply the cursor/hover
-        #  effects if any scrolling happens.
         x = sum(column.render_width for column in self.columns[:column_index])
         width = columns[column_index].render_width
         header_height = self.header_height if self.show_header else 0
@@ -1015,7 +1010,20 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             yield "row_index", self.row_index
 
     class ColumnHighlighted(Message, bubble=True):
-        pass
+        """Emitted when a column is highlighted. This message is only emitted when the
+        cursor_type is set to `"column"`.
+
+        Attributes:
+            sender (DataTable): The DataTable the column was selected in.
+            column_index (int): The index of the column that was selected.
+        """
 
     class ColumnSelected(Message, bubble=True):
-        pass
+        """Emitted when a row is selected. This message is only emitted when the
+        cursor_type is set to `"row"`.
+
+        Attributes:
+            sender (DataTable): The DataTable the row was selected in.
+            values (list[CellType]): A reference to the list of values in the selected row.
+            row_index (int): The index of the row that was selected.
+        """
