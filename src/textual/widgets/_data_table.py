@@ -264,6 +264,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return self.cursor_cell.column
 
     def get_cell_value(self, coordinate: Coord) -> CellType:
+        """Get the value from the cell at the given coordinate.
+
+        Args:
+            coordinate (Coord): The coordinate to retrieve the value from.
+
+        Returns:
+            CellType: The value of the cell.
+        """
         row, column = coordinate
         return self.data[row][column]
 
@@ -910,7 +918,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         )
 
     class CellHighlighted(Message, bubble=True):
-        """Emitted when the cursor moves to a new cell.
+        """Emitted when the cursor moves to a new cell. This message is only emitted when the
+        cursor_type is set to `"cell"`.
 
         Attributes:
             sender (DataTable): The DataTable the cell was highlighted in.
@@ -931,7 +940,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             yield "coordinate", self.coordinate
 
     class CellSelected(Message, bubble=True):
-        """Emitted when a cell is selected.
+        """Emitted when a cell is selected. This message is only emitted when the
+        cursor_type is set to `"cell"`.
 
         Attributes:
             sender (DataTable): The DataTable the cell was selected in.
