@@ -467,10 +467,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         self._new_rows.add(row_index)
         self._require_update_dimensions = True
-
-        # TODO - I want to set this here, but that will trigger the validator
-        #  again which is pointless - since I know the value is valid...
-        #  Don't think we have a means of doing this yet.
         self.cursor_cell = self.cursor_cell
         self.check_idle()
 

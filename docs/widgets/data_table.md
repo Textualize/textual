@@ -23,14 +23,17 @@ The example below populates a table with CSV data.
 
 ## Reactive Attributes
 
-| Name            | Type   | Default | Description                        |
-| --------------- | ------ | ------- | ---------------------------------- |
-| `show_header`   | `bool` | `True`  | Show the table header              |
-| `fixed_rows`    | `int`  | `0`     | Number of fixed rows               |
-| `fixed_columns` | `int`  | `0`     | Number of fixed columns            |
-| `zebra_stripes` | `bool` | `False` | Display alternating colors on rows |
-| `header_height` | `int`  | `1`     | Height of header row               |
-| `show_cursor`   | `bool` | `True`  | Show a cell cursor                 |
+| Name            | Type    | Default       | Description                                           |
+|-----------------|---------|---------------|-------------------------------------------------------|
+| `show_header`   | `bool`  | `True`        | Show the table header                                 |
+| `fixed_rows`    | `int`   | `0`           | Number of fixed rows (rows which do not scroll)       |
+| `fixed_columns` | `int`   | `0`           | Number of fixed columns (columns which do not scroll) |
+| `zebra_stripes` | `bool`  | `False`       | Display alternating colors on rows                    |
+| `header_height` | `int`   | `1`           | Height of header row                                  |
+| `show_cursor`   | `bool`  | `True`        | Show the cursor                                       |
+| `cursor_type`   | `str`   | `"cell"`      | One of `"cell"`, `"row"`, `"column"`, or `"none"`     |
+| `cursor_cell`   | `Coord` | `Coord(0, 0)` | The cell the cursor is on                             |
+| `hover_cell`    | `Coord` | `Coord(0, 0)` | The cell currently hovered over by the mouse cursor   |
 
 
 ## See Also
