@@ -195,8 +195,13 @@ class Button(Static, can_focus=True):
         self.variant = self.validate_variant(variant)
 
     label: Reactive[RenderableType] = Reactive("")
+    """The text label that appears within the button."""
+
     variant = Reactive.init("default")
+    """The variant name for the button."""
+
     disabled = Reactive(False)
+    """The disabled state of the button; `True` if disabled, `False` if not."""
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield from super().__rich_repr__()
