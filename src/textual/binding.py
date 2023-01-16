@@ -28,17 +28,17 @@ class Binding:
     """The configuration of a key binding."""
 
     key: str
-    """str: Key to bind. This can also be a comma-separated list of keys to map multiple keys to a single action."""
+    """Key to bind. This can also be a comma-separated list of keys to map multiple keys to a single action."""
     action: str
-    """str: Action to bind to."""
+    """Action to bind to."""
     description: str
-    """str: Description of action."""
+    """Description of action."""
     show: bool = True
-    """bool: Show the action in Footer, or False to hide."""
+    """Show the action in Footer, or False to hide."""
     key_display: str | None = None
-    """str | None: How the key should be shown in footer."""
+    """How the key should be shown in footer."""
     priority: bool = False
-    """bool: Enable priority binding for this key."""
+    """Enable priority binding for this key."""
 
 
 @rich.repr.auto
