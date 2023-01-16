@@ -144,10 +144,9 @@ async def test_reactive_always_update():
         # Value is the same, but always_update=True, so watcher called...
         app.first_name = "Darren"
         assert calls == ["first_name Darren"]
-        # TODO: Commented out below due to issue#1230, should work after issue fixed
         # Value is the same, and always_update=False, so watcher NOT called...
-        # app.last_name = "Burns"
-        # assert calls == ["first_name Darren"]
+        app.last_name = "Burns"
+        assert calls == ["first_name Darren"]
         # Values changed, watch method always called regardless of always_update
         app.first_name = "abc"
         app.last_name = "def"
@@ -157,12 +156,6 @@ async def test_reactive_always_update():
 async def test_reactive_with_callable_default():
     """A callable can be supplied as the default value for a reactive.
     Textual will call it in order to retrieve the default value."""
-    called_with_app = False
-
-    def set_called() -> int:
-        nonlocal called_with_app
-        called_with_app = True
-        return OLD_VALUE
 
     class ReactiveCallable(App):
         value = reactive(lambda: 123)
@@ -173,9 +166,8 @@ async def test_reactive_with_callable_default():
 
     app = ReactiveCallable()
     async with app.run_test():
-        assert (
-            app.value == 123
-        )  # The value should be set to the return val of the callable
+        assert app.value == 123
+        assert app.watcher_called_with == 123
 
 
 async def test_validate_init_true():
