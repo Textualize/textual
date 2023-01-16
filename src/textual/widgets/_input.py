@@ -138,7 +138,7 @@ class Input(Widget, can_focus=True):
 
     @property
     def _cursor_offset(self) -> int:
-        """Get the cell offset of the cursor."""
+        """The cell offset of the cursor."""
         offset = self._position_to_cell(self.cursor_position)
         if self._cursor_at_end:
             offset += 1
@@ -146,7 +146,7 @@ class Input(Widget, can_focus=True):
 
     @property
     def _cursor_at_end(self) -> bool:
-        """Check if the cursor is at the end"""
+        """Flag to indicate if the cursor is at the end"""
         return self.cursor_position >= len(self.value)
 
     def validate_cursor_position(self, cursor_position: int) -> int:
@@ -181,7 +181,7 @@ class Input(Widget, can_focus=True):
 
     @property
     def cursor_width(self) -> int:
-        """Get the width of the input (with extra space for cursor at the end)."""
+        """The width of the input (with extra space for cursor at the end)."""
         if self.placeholder and not self.value:
             return cell_len(self.placeholder)
         return self._position_to_cell(len(self.value)) + 1
