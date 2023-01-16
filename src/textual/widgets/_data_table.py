@@ -77,13 +77,6 @@ class Row:
     cell_renderables: list[RenderableType] = field(default_factory=list)
 
 
-@dataclass
-class Cell:
-    """Table cell."""
-
-    value: object
-
-
 class Coord(NamedTuple):
     """An object to represent the coordinate of a cell within the data table."""
 
