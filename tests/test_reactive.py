@@ -228,7 +228,6 @@ async def test_reactive_compute_first_time_set():
 
     app = ReactiveComputeFirstTimeSet()
     async with app.run_test():
-        await asyncio.sleep(0.2)  # TODO: We sleep here while issue#1218 is open
         assert app.double_number == 2
 
 
