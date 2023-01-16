@@ -19,12 +19,6 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         index: The index in the list that's currently highlighted.
     """
 
-    DEFAULT_CSS = """
-    ListView {
-        scrollbar-size-vertical: 2;
-    }
-    """
-
     BINDINGS = [
         Binding("enter", "select_cursor", "Select", show=False),
         Binding("up", "cursor_up", "Cursor Up", show=False),
