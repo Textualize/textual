@@ -909,14 +909,20 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     def _emit_selected_message(self):
         cursor_cell = self.cursor_cell
-        # TODO: Decide which type of event to emit based on cursor type
-        self.emit_no_wait(
-            DataTable.CellSelected(
-                self,
-                self.get_cell_value(cursor_cell),
-                cursor_cell,
+        cursor_type = self.cursor_type
+        if cursor_type == "cell":
+            self.emit_no_wait(
+                DataTable.CellSelected(
+                    self,
+                    self.get_cell_value(cursor_cell),
+                    cursor_cell,
+                )
             )
-        )
+        elif cursor_type == "row":
+            row, column = cursor_cell
+            self.emit_no_wait(DataTable.RowSelected(self, self.data[row], row))
+        elif cursor_type == "column":
+            pass  # TODO
 
     class CellHighlighted(Message, bubble=True):
         """Emitted when the cursor moves to a new cell. This message is only emitted when the
