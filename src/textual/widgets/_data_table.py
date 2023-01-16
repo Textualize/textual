@@ -308,21 +308,23 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.refresh_cell(*value)
 
     def watch_cursor_cell(self, old_coordinate: Coord, new_coordinate: Coord) -> None:
-        if self.cursor_type == "cell":
-            self.refresh_cell(*old_coordinate)
-            self.refresh_cell(*new_coordinate)
-        elif self.cursor_type == "row":
-            self.refresh_row(old_coordinate.row)
-            self.refresh_row(new_coordinate.row)
-        elif self.cursor_type == "column":
-            self.refresh_column(old_coordinate.column)
-            self.refresh_column(new_coordinate.column)
-
         if old_coordinate != new_coordinate:
-            cell_value = self.get_cell_value(new_coordinate)
-            self.emit_no_wait(
-                DataTable.CellHighlighted(self, cell_value, new_coordinate)
-            )
+            if self.cursor_type == "cell":
+                self.refresh_cell(*old_coordinate)
+                self.refresh_cell(*new_coordinate)
+                cell_value = self.get_cell_value(new_coordinate)
+                self.emit_no_wait(
+                    DataTable.CellHighlighted(self, cell_value, new_coordinate)
+                )
+            elif self.cursor_type == "row":
+                self.refresh_row(old_coordinate.row)
+                self.refresh_row(new_coordinate.row)
+                row_index, _ = self.cursor_cell
+                row_values = self.data[row_index]
+                self.emit_no_wait(DataTable.RowHighlighted(self, row_values, row_index))
+            elif self.cursor_type == "column":
+                self.refresh_column(old_coordinate.column)
+                self.refresh_column(new_coordinate.column)
 
     def validate_cursor_cell(self, value: Coord) -> Coord:
         return self._clamp_cursor_cell(value)
