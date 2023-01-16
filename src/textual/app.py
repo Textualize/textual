@@ -270,6 +270,13 @@ class App(Generic[ReturnType], DOMNode):
     """
 
     sub_title: Reactive[str] = Reactive("", compute=False)
+    """Reactive[str]: The sub-title for the application.
+
+    The initial value in a running application will be that set in `SUB_TITLE`
+    (if one is set). Assign new values to this instance attribute to change
+    the sub-title.
+    """
+
     dark: Reactive[bool] = Reactive(True, compute=False)
 
     def __init__(
