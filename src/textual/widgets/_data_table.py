@@ -859,7 +859,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def on_click(self, event: events.Click) -> None:
         self._set_hover_cursor(True)
         if self.show_cursor and self.cursor_type != "none":
-            self._select_highlighted_cell()
+            self._emit_selected_message()
             meta = self.get_style_at(event.x, event.y).meta
             if meta:
                 self.cursor_cell = Coord(meta["row"], meta["column"])
@@ -905,10 +905,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def action_select_cursor(self):
         self._set_hover_cursor(False)
         if self.show_cursor and self.cursor_type != "none":
-            self._select_highlighted_cell()
+            self._emit_selected_message()
 
-    def _select_highlighted_cell(self):
+    def _emit_selected_message(self):
         cursor_cell = self.cursor_cell
+        # TODO: Decide which type of event to emit based on cursor type
         self.emit_no_wait(
             DataTable.CellSelected(
                 self,
@@ -962,10 +963,48 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             yield "coordinate", self.coordinate
 
     class RowHighlighted(Message, bubble=True):
-        pass
+        """Emitted when a row is highlighted. This message is only emitted when the
+        cursor_type is set to `"row"`.
+
+        Attributes:
+            sender (DataTable): The DataTable the row was highlighted in.
+            values (list[CellType]): A reference to the list of values in the highlighted row.
+            row_index (int): The index of the row that was highlighted.
+        """
+
+        def __init__(
+            self, sender: DataTable, values: list[CellType], row_index: int
+        ) -> None:
+            self.values = values
+            self.row_index = row_index
+            super().__init__(sender)
+
+        def __rich_repr__(self) -> rich.repr.Result:
+            yield "sender", self.sender
+            yield "values", self.values
+            yield "row_index", self.row_index
 
     class RowSelected(Message, bubble=True):
-        pass
+        """Emitted when a row is selected. This message is only emitted when the
+        cursor_type is set to `"row"`.
+
+        Attributes:
+            sender (DataTable): The DataTable the row was selected in.
+            values (list[CellType]): A reference to the list of values in the selected row.
+            row_index (int): The index of the row that was selected.
+        """
+
+        def __init__(
+            self, sender: DataTable, values: list[CellType], row_index: int
+        ) -> None:
+            self.values = values
+            self.row_index = row_index
+            super().__init__(sender)
+
+        def __rich_repr__(self) -> rich.repr.Result:
+            yield "sender", self.sender
+            yield "values", self.values
+            yield "row_index", self.row_index
 
     class ColumnHighlighted(Message, bubble=True):
         pass
