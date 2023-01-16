@@ -196,7 +196,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     show_cursor = Reactive(True)
     cursor_type = Reactive(CELL)
 
-    cursor_cell: Reactive[Coord] = Reactive(Coord(0, 0), repaint=False)
+    cursor_cell: Reactive[Coord] = Reactive(
+        Coord(0, 0), repaint=False, always_update=True
+    )
     hover_cell: Reactive[Coord] = Reactive(Coord(0, 0), repaint=False)
 
     def __init__(
@@ -460,7 +462,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         # TODO - I want to set this here, but that will trigger the validator
         #  again which is pointless - since I know the value is valid...
         #  Don't think we have a means of doing this yet.
-        self.cursor_cell = self._clamp_cursor_cell(self.cursor_cell)
+        self.cursor_cell = self.cursor_cell
         self.check_idle()
 
     def add_rows(self, rows: Iterable[Iterable[CellType]]) -> None:
@@ -832,7 +834,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             meta = self.get_style_at(event.x, event.y).meta
             if meta:
                 self.cursor_cell = Coord(meta["row"], meta["column"])
-                self._scroll_cursor_into_view()
+                self._scroll_cursor_into_view(animate=True)
                 event.stop()
 
     def key_down(self, event: events.Key):
