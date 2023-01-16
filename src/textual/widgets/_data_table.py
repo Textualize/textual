@@ -577,18 +577,21 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             Lines: A list of segments per line.
         """
         is_header_row = row_index == -1
+
+        # The header row *and* fixed columns both have a different style (blue bg)
+        is_fixed_style = is_header_row or column_index < self.fixed_columns
         show_cursor = self.show_cursor
 
         if hover and show_cursor and self._show_hover_cursor:
             style += self.get_component_styles("datatable--highlight").rich_style
-            if is_header_row:
+            if is_fixed_style:
                 style += self.get_component_styles(
                     "datatable--highlight-fixed"
                 ).rich_style
 
         if cursor and show_cursor:
             style += self.get_component_styles("datatable--cursor").rich_style
-            if is_header_row:
+            if is_fixed_style:
                 style += self.get_component_styles("datatable--cursor-fixed").rich_style
 
         cell_key = (row_index, column_index, style, cursor, hover)
@@ -626,7 +629,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """
         cursor_type = self.cursor_type
         show_cursor = self.show_cursor
-
         cache_key = (
             row_index,
             line_no,
@@ -642,29 +644,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             return self._row_render_cache[cache_key]
 
         render_cell = self._render_cell
-
-        if self.fixed_columns:
-            fixed_style = self.get_component_styles("datatable--fixed").rich_style
-            fixed_style += Style.from_meta({"fixed": True})
-            fixed_row = [
-                render_cell(row_index, column.index, fixed_style, column.render_width)[
-                    line_no
-                ]
-                for column in self.columns[: self.fixed_columns]
-            ]
-        else:
-            fixed_row = []
-
-        if row_index == -1:
-            row_style = self.get_component_styles("datatable--header").rich_style
-        else:
-            if self.zebra_stripes:
-                component_row_style = (
-                    "datatable--odd-row" if row_index % 2 else "datatable--even-row"
-                )
-                row_style = self.get_component_styles(component_row_style).rich_style
-            else:
-                row_style = base_style
 
         def _should_highlight(
             cursor_location: Coord,
@@ -686,6 +665,37 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 return cursor_column == cell_column
             else:
                 return False
+
+        if self.fixed_columns:
+            fixed_style = self.get_component_styles("datatable--fixed").rich_style
+            fixed_style += Style.from_meta({"fixed": True})
+            fixed_row = []
+            for column in self.columns[: self.fixed_columns]:
+                cell_location = Coord(row_index, column.index)
+                fixed_cell_lines = render_cell(
+                    row_index,
+                    column.index,
+                    fixed_style,
+                    column.render_width,
+                    cursor=_should_highlight(
+                        cursor_location, cell_location, cursor_type
+                    ),
+                    hover=_should_highlight(hover_location, cell_location, cursor_type),
+                )[line_no]
+                fixed_row.append(fixed_cell_lines)
+        else:
+            fixed_row = []
+
+        if row_index == -1:
+            row_style = self.get_component_styles("datatable--header").rich_style
+        else:
+            if self.zebra_stripes:
+                component_row_style = (
+                    "datatable--odd-row" if row_index % 2 else "datatable--even-row"
+                )
+                row_style = self.get_component_styles(component_row_style).rich_style
+            else:
+                row_style = base_style
 
         scrollable_row = []
         for column in self.columns:
