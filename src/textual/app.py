@@ -249,6 +249,11 @@ class App(Generic[ReturnType], DOMNode):
     """
 
     SUB_TITLE: str | None = None
+    """str | None: The default sub-title for the application.
+
+    If set to a string, this sets the default sub-title for the application. See
+    also the `sub_title` attribute.
+    """
 
     BINDINGS = [
         Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
