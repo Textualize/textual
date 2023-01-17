@@ -9,6 +9,9 @@ from rich.style import Style
 from . import errors, events, messages
 from ._callback import invoke
 from ._compositor import Compositor, MapGeometry
+from .css.match import match
+from .css.parse import parse_selectors
+from .dom import DOMNode
 from .timer import Timer
 from ._types import CallbackType
 from .geometry import Offset, Region, Size
@@ -178,7 +181,66 @@ class Screen(Widget):
 
         return widgets
 
-    def _move_focus(self, direction: int = 0) -> Widget | None:
+    def _move_focus(
+        self, direction: int = 0, selector: str | type[DOMNode.ExpectType] = "*"
+    ) -> Widget | None:
+        """Move the focus in the given direction.
+
+        Args:
+            direction (int, optional): 1 to move forward, -1 to move backward, or
+                0 to keep the current focus.
+            selector (str | type[DOMNode.ExpectType], optional): CSS selector to filter
+                what nodes can be focused.
+
+        Returns:
+            Widget | None: Newly focused widget, or None for no focus. If the return
+                is not `None`, then it is guaranteed that the widget returned matches
+                the CSS selectors given in the argument.
+        """
+        if not isinstance(selector, str):
+            selector = selector.__name__
+        selector_set = parse_selectors(selector)
+        focus_chain = self.focus_chain
+        filtered_focus_chain = (
+            node for node in focus_chain if match(selector_set, node)
+        )
+
+        if not focus_chain:
+            # Nothing focusable, so nothing to do
+            return self.focused
+        if self.focused is None:
+            # Nothing currently focused, so focus the first one.
+            to_focus = next(filtered_focus_chain, None)
+            self.set_focus(to_focus)
+            return self.focused
+
+        # Ensure focus will be in a node that matches the selectors.
+        if not direction and not match(selector_set, self.focused):
+            direction = 1
+
+        try:
+            # Find the index of the currently focused widget
+            current_index = focus_chain.index(self.focused)
+        except ValueError:
+            # Focused widget was removed in the interim, start again
+            self.set_focus(next(filtered_focus_chain, None))
+        else:
+            # Only move the focus if we are currently showing the focus
+            if direction:
+                to_focus: Widget | None = None
+                chain_length = len(focus_chain)
+                for step in range(1, len(focus_chain) + 1):
+                    node = focus_chain[
+                        (current_index + direction * step) % chain_length
+                    ]
+                    if match(selector_set, node):
+                        to_focus = node
+                        break
+                self.set_focus(to_focus)
+
+        return self.focused
+
+    def __move_focus(self, direction: int = 0) -> Widget | None:
         """Move the focus in the given direction.
 
         Args:
@@ -211,21 +273,25 @@ class Screen(Widget):
 
         return self.focused
 
-    def focus_next(self) -> Widget | None:
+    def focus_next(
+        self, selector: str | type[DOMNode.ExpectType] = "*"
+    ) -> Widget | None:
         """Focus the next widget.
 
         Returns:
             Widget | None: Newly focused widget, or None for no focus.
         """
-        return self._move_focus(1)
+        return self._move_focus(1, selector)
 
-    def focus_previous(self) -> Widget | None:
+    def focus_previous(
+        self, selector: str | type[DOMNode.ExpectType] = "*"
+    ) -> Widget | None:
         """Focus the previous widget.
 
         Returns:
             Widget | None: Newly focused widget, or None for no focus.
         """
-        return self._move_focus(-1)
+        return self._move_focus(-1, selector)
 
     def _reset_focus(
         self, widget: Widget, avoiding: list[Widget] | None = None
