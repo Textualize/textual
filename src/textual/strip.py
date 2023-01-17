@@ -64,7 +64,7 @@ class Strip:
 
         Args:
             lines (list[list[Segment]]): List of lines, where a line is a list of segments.
-            cell_length (int | None): Cell length of lines (must be same). Defaults to None.
+            cell_length (int | None): Cell length of lines (must be same) or None if not known. Defaults to None.
 
         Returns:
             list[Strip]: List of strips.
