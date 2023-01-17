@@ -12,7 +12,7 @@ from textual.widgets import Button, Header, TextLog
 INSTRUCTIONS = """\
 [u]Press some keys![/]
 
-To quit the app press [b]ctrl+c[/b] [i]twice[i] or press the Quit button below.\
+To quit the app press [b]ctrl+c[/b] [i]twice[/i] or press the Quit button below.\
 """
 
 
