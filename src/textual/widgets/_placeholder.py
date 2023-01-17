@@ -91,14 +91,14 @@ class Placeholder(Widget):
         """Create a Placeholder widget.
 
         Args:
-            label (str | None, optional): The label to identify the placeholder.
+            label: The label to identify the placeholder.
                 If no label is present, uses the placeholder ID instead. Defaults to None.
-            variant (PlaceholderVariant, optional): The variant of the placeholder.
+            variant: The variant of the placeholder.
                 Defaults to "default".
-            name (str | None, optional): The name of the placeholder. Defaults to None.
-            id (str | None, optional): The ID of the placeholder in the DOM.
+            name: The name of the placeholder. Defaults to None.
+            id: The ID of the placeholder in the DOM.
                 Defaults to None.
-            classes (str | None, optional): A space separated string with the CSS classes
+            classes: A space separated string with the CSS classes
                 of the placeholder, if any. Defaults to None.
         """
         # Create and cache renderables for all the variants.

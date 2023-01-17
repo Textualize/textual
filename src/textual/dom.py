@@ -57,11 +57,11 @@ def check_identifiers(description: str, *names: str) -> None:
     """Validate identifier and raise an error if it fails.
 
     Args:
-        description (str): Description of where identifier is used for error message.
-        names (list[str]): Identifiers to check.
+        description: Description of where identifier is used for error message.
+        names: Identifiers to check.
 
     Returns:
-        bool: True if the name is valid.
+        True if the name is valid.
     """
     match = _re_identifier.match
     for name in names:
@@ -196,13 +196,13 @@ class DOMNode(MessagePump):
         """Get a "component" styles object (must be defined in COMPONENT_CLASSES classvar).
 
         Args:
-            name (str): Name of the component.
+            name: Name of the component.
 
         Raises:
             KeyError: If the component class doesn't exist.
 
         Returns:
-            RenderStyles: A Styles object.
+            A Styles object.
         """
         if name not in self._component_styles:
             raise KeyError(f"No {name!r} key in COMPONENT_CLASSES")
@@ -220,10 +220,10 @@ class DOMNode(MessagePump):
         """Get the DOMNode base classes, which inherit CSS.
 
         Args:
-            base (Type[DOMNode]): A DOMNode class
+            base: A DOMNode class
 
         Returns:
-            Iterator[Type[DOMNode]]: An iterable of DOMNode classes.
+            An iterable of DOMNode classes.
         """
         _class = base
         while True:
@@ -242,7 +242,7 @@ class DOMNode(MessagePump):
         """Merge bindings from base classes.
 
         Returns:
-            Bindings: Merged bindings.
+            Merged bindings.
         """
         bindings: list[Bindings] = []
 
@@ -267,7 +267,7 @@ class DOMNode(MessagePump):
         """Called when the widget is registered
 
         Args:
-            app (App): Parent application.
+            app: Parent application.
         """
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -283,7 +283,7 @@ class DOMNode(MessagePump):
         `False` when subclassing.
 
         Returns:
-            list[tuple[str, str]]: a list of tuples containing (PATH, SOURCE) for this
+            A list of tuples containing (PATH, SOURCE) for this
                 and inherited from base classes.
         """
 
@@ -310,7 +310,7 @@ class DOMNode(MessagePump):
         `inherit_component_classes` is set to `False` when subclassing.
 
         Returns:
-            set[str]: a set with all the component classes available.
+            A set with all the component classes available.
         """
 
         component_classes: set[str] = set()
@@ -354,7 +354,7 @@ class DOMNode(MessagePump):
         """Sets the ID (may only be done once).
 
         Args:
-            new_id (str): ID for this node.
+            new_id: ID for this node.
 
         Raises:
             ValueError: If the ID has already been set.
@@ -423,7 +423,7 @@ class DOMNode(MessagePump):
         """Get a set of selectors applicable to this widget.
 
         Returns:
-            set[str]: Set of selector names.
+            Set of selector names.
         """
         selectors: list[str] = [
             "*",
@@ -441,7 +441,7 @@ class DOMNode(MessagePump):
         Check if this widget should display or not.
 
         Returns:
-            bool: ``True`` if this DOMNode is displayed (``display != "none"``) otherwise ``False`` .
+            ``True`` if this DOMNode is displayed (``display != "none"``) otherwise ``False`` .
         """
         return self.styles.display != "none" and not (self._closing or self._closed)
 
@@ -449,7 +449,7 @@ class DOMNode(MessagePump):
     def display(self, new_val: bool | str) -> None:
         """
         Args:
-            new_val (bool | str): Shortcut to set the ``display`` CSS property.
+            new_val: Shortcut to set the ``display`` CSS property.
                 ``False`` will set ``display: none``. ``True`` will set ``display: block``.
                 A ``False`` value will prevent the DOMNode from consuming space in the layout.
         """
@@ -471,7 +471,7 @@ class DOMNode(MessagePump):
         """Check if the node is visible or None.
 
         Returns:
-            bool: True if the node is visible.
+            True if the node is visible.
         """
         return self.styles.visibility != "hidden"
 
@@ -492,7 +492,7 @@ class DOMNode(MessagePump):
         """Get a Rich tree object which will recursively render the structure of the node tree.
 
         Returns:
-            Tree: A Rich object which may be printed.
+            A Rich object which may be printed.
         """
         from rich.columns import Columns
         from rich.console import Group
@@ -547,7 +547,7 @@ class DOMNode(MessagePump):
         the child will also be bold.
 
         Returns:
-            Style: Rich Style object.
+            Rich Style object.
         """
         return Style.combine(
             node.styles.text_style for node in reversed(self.ancestors_with_self)
@@ -579,7 +579,7 @@ class DOMNode(MessagePump):
         """Get the background color and the color of the parent's background.
 
         Returns:
-            tuple[Color, Color]: Tuple of (base background, background)
+            Tuple of (base background, background)
 
         """
         base_background = background = BLACK
@@ -595,7 +595,7 @@ class DOMNode(MessagePump):
         """Gets the Widgets foreground and background colors, and its parent's (base) colors.
 
         Returns:
-            tuple[Color, Color, Color, Color]: Tuple of (base background, base color, background, color)
+            Tuple of (base background, base color, background, color)
         """
         base_background = background = WHITE
         base_color = color = BLACK
@@ -637,7 +637,7 @@ class DOMNode(MessagePump):
         """The children which don't have display: none set.
 
         Returns:
-            list[DOMNode]: Children of this widget which will be displayed.
+            Children of this widget which will be displayed.
 
         """
         return [child for child in self.children if child.display]
@@ -646,7 +646,7 @@ class DOMNode(MessagePump):
         """Get any pseudo classes applicable to this Node, e.g. hover, focus.
 
         Returns:
-            Iterable[str]: Iterable of strings, such as a generator.
+            Iterable of strings, such as a generator.
         """
         return ()
 
@@ -664,7 +664,7 @@ class DOMNode(MessagePump):
         """Add a new child node.
 
         Args:
-            node (DOMNode): A DOM node.
+            node: A DOM node.
         """
         self.children._append(node)
         node._attach(self)
@@ -673,7 +673,7 @@ class DOMNode(MessagePump):
         """Add multiple children to this node.
 
         Args:
-            *nodes (DOMNode): Positional args should be new DOM nodes.
+            *nodes: Positional args should be new DOM nodes.
         """
         _append = self.children._append
         for node in nodes:
@@ -714,14 +714,14 @@ class DOMNode(MessagePump):
         """Walk the subtree rooted at this node, and return every descendant encountered in a list.
 
         Args:
-            filter_type (type[WalkType] | None, optional): Filter only this type, or None for no filter.
+            filter_type: Filter only this type, or None for no filter.
                 Defaults to None.
-            with_self (bool, optional): Also yield self in addition to descendants. Defaults to False.
-            method (Literal["breadth", "depth"], optional): One of "depth" or "breadth". Defaults to "depth".
-            reverse (bool, optional): Reverse the order (bottom up). Defaults to False.
+            with_self: Also yield self in addition to descendants. Defaults to False.
+            method: One of "depth" or "breadth". Defaults to "depth".
+            reverse: Reverse the order (bottom up). Defaults to False.
 
         Returns:
-            list[DOMNode] | list[WalkType]: A list of nodes.
+            A list of nodes.
 
         """
         check_type = filter_type or DOMNode
@@ -755,10 +755,10 @@ class DOMNode(MessagePump):
         """Get a DOM query matching a selector.
 
         Args:
-            selector (str | type | None, optional): A CSS selector or `None` for all nodes. Defaults to None.
+            selector: A CSS selector or `None` for all nodes. Defaults to None.
 
         Returns:
-            DOMQuery: A query object.
+            A query object.
         """
         from .css.query import DOMQuery
 
@@ -790,8 +790,8 @@ class DOMNode(MessagePump):
         """Get a single Widget matching the given selector or selector type.
 
         Args:
-            selector (str | type): A selector.
-            expect_type (type | None, optional): Require the object be of the supplied type, or None for any type.
+            selector: A selector.
+            expect_type: Require the object be of the supplied type, or None for any type.
                 Defaults to None.
 
         Raises:
@@ -800,7 +800,7 @@ class DOMNode(MessagePump):
             TooManyMatches: If there is more than one matching node in the query.
 
         Returns:
-            Widget | ExpectType: A widget matching the selector.
+            A widget matching the selector.
         """
         from .css.query import DOMQuery
 
@@ -831,10 +831,10 @@ class DOMNode(MessagePump):
         """Check if the Node has all the given class names.
 
         Args:
-            *class_names (str): CSS class names to check.
+            *class_names: CSS class names to check.
 
         Returns:
-            bool: ``True`` if the node has all the given class names, otherwise ``False``.
+            ``True`` if the node has all the given class names, otherwise ``False``.
         """
         return self._classes.issuperset(class_names)
 
@@ -842,7 +842,7 @@ class DOMNode(MessagePump):
         """Add or remove class(es) based on a condition.
 
         Args:
-            add (bool):  Add the classes if True, otherwise remove them.
+            add: Add the classes if True, otherwise remove them.
         """
         if add:
             self.add_class(*class_names)
@@ -853,7 +853,7 @@ class DOMNode(MessagePump):
         """Add class names to this Node.
 
         Args:
-            *class_names (str): CSS class names to add.
+            *class_names: CSS class names to add.
 
         """
         check_identifiers("class name", *class_names)
@@ -870,7 +870,7 @@ class DOMNode(MessagePump):
         """Remove class names from this Node.
 
         Args:
-            *class_names (str): CSS class names to remove.
+            *class_names: CSS class names to remove.
 
         """
         check_identifiers("class name", *class_names)
@@ -887,7 +887,7 @@ class DOMNode(MessagePump):
         """Toggle class names on this Node.
 
         Args:
-            *class_names (str): CSS class names to toggle.
+            *class_names: CSS class names to toggle.
 
         """
         check_identifiers("class name", *class_names)

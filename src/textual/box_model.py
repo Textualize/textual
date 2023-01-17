@@ -28,16 +28,16 @@ def get_box_model(
     """Resolve the box model for this Styles.
 
     Args:
-        styles (StylesBase): Styles object.
-        container (Size): The size of the widget container.
-        viewport (Size): The viewport size.
-        width_fraction (Fraction): A fraction used for 1 `fr` unit on the width dimension.
-        height_fraction (Fraction):A fraction used for 1 `fr` unit on the height dimension.
-        get_content_width (Callable[[Size, Size], int]): A callable which accepts container size and parent size and returns a width.
-        get_content_height (Callable[[Size, Size, int], int]): A callable which accepts container size and parent size and returns a height.
+        styles: Styles object.
+        container: The size of the widget container.
+        viewport: The viewport size.
+        width_fraction: A fraction used for 1 `fr` unit on the width dimension.
+        height_fraction: A fraction used for 1 `fr` unit on the height dimension.
+        get_content_width: A callable which accepts container size and parent size and returns a width.
+        get_content_height: A callable which accepts container size and parent size and returns a height.
 
     Returns:
-        BoxModel: A tuple with the size of the content area and margin.
+        A tuple with the size of the content area and margin.
     """
     _content_width, _content_height = container
     content_width = Fraction(_content_width)

@@ -125,8 +125,8 @@ class ColorParseError(Exception):
     """A color failed to parse.
 
     Args:
-        message (str): the error message
-        suggested_color (str | None): a close color we can suggest. Defaults to None.
+        message: The error message
+        suggested_color: A close color we can suggest. Defaults to None.
     """
 
     def __init__(self, message: str, suggested_color: str | None = None):
@@ -152,10 +152,10 @@ class Color(NamedTuple):
         """Create a new color from Rich's Color class.
 
         Args:
-            rich_color (RichColor): An instance of rich.color.Color.
+            rich_color: An instance of rich.color.Color.
 
         Returns:
-            Color: A new Color.
+            A new Color.
         """
         r, g, b = rich_color.get_truecolor()
         return cls(r, g, b)
@@ -165,12 +165,12 @@ class Color(NamedTuple):
         """Create a color from HLS components.
 
         Args:
-            h (float): Hue.
-            l (float): Lightness.
-            s (float): Saturation.
+            h: Hue.
+            l: Lightness.
+            s: Saturation.
 
         Returns:
-            Color: A new color.
+            A new color.
         """
         r, g, b = hls_to_rgb(h, l, s)
         return cls(int(r * 255 + 0.5), int(g * 255 + 0.5), int(b * 255 + 0.5))
@@ -195,7 +195,7 @@ class Color(NamedTuple):
         """Check if the color is transparent, i.e. has 0 alpha.
 
         Returns:
-            bool: True if transparent, otherwise False.
+            True if transparent, otherwise False.
 
         """
         return self.a == 0
@@ -205,7 +205,7 @@ class Color(NamedTuple):
         """Get a color with all components saturated to maximum and minimum values.
 
         Returns:
-            Color: A color object.
+            A color object.
 
         """
         r, g, b, a = self
@@ -223,7 +223,7 @@ class Color(NamedTuple):
         """This color encoded in Rich's Color class.
 
         Returns:
-            RichColor: A color object as used by Rich.
+            A color object as used by Rich.
         """
         r, g, b, _a = self
         return RichColor(
@@ -235,7 +235,7 @@ class Color(NamedTuple):
         """A tuple of the color components normalized to between 0 and 1.
 
         Returns:
-            tuple[float, float, float]: Normalized components.
+            Normalized components.
 
         """
         r, g, b, _a = self
@@ -246,7 +246,7 @@ class Color(NamedTuple):
         """Get just the red, green, and blue components.
 
         Returns:
-            tuple[int, int, int]: Color components
+            Color components
         """
         r, g, b, _ = self
         return (r, g, b)
@@ -256,7 +256,7 @@ class Color(NamedTuple):
         """Get the color as HSL.
 
         Returns:
-            HSL: Color in HSL format.
+            Color in HSL format.
         """
         r, g, b = self.normalized
         h, l, s = rgb_to_hls(r, g, b)
@@ -267,7 +267,7 @@ class Color(NamedTuple):
         """Get the human perceptual brightness.
 
         Returns:
-            float: Brightness value (0-1).
+            Brightness value (0-1).
 
         """
         r, g, b = self.normalized
@@ -279,7 +279,7 @@ class Color(NamedTuple):
         """The color in CSS hex form, with 6 digits for RGB, and 8 digits for RGBA.
 
         Returns:
-            str: A CSS hex-style color, e.g. `"#46b3de"` or `"#3342457f"`
+            A CSS hex-style color, e.g. `"#46b3de"` or `"#3342457f"`
 
         """
         r, g, b, a = self.clamped
@@ -294,7 +294,7 @@ class Color(NamedTuple):
         """The color in CSS hex form, with 6 digits for RGB. Alpha is ignored.
 
         Returns:
-            str: A CSS hex-style color, e.g. "#46b3de"
+            A CSS hex-style color, e.g. "#46b3de"
 
         """
         r, g, b, a = self.clamped
@@ -305,7 +305,7 @@ class Color(NamedTuple):
         """The color in CSS rgb or rgba form.
 
         Returns:
-            str: A CSS style color, e.g. `"rgb(10,20,30)"` or `"rgb(50,70,80,0.5)"`
+            A CSS style color, e.g. `"rgb(10,20,30)"` or `"rgb(50,70,80,0.5)"`
 
         """
         r, g, b, a = self
@@ -316,7 +316,7 @@ class Color(NamedTuple):
         """Get a monochrome version of this color.
 
         Returns:
-            Color: A new monochrome color.
+            A new monochrome color.
         """
         r, g, b, a = self
         gray = round(r * 0.2126 + g * 0.7152 + b * 0.0722)
@@ -333,10 +333,10 @@ class Color(NamedTuple):
         """Create a new color with the given alpha.
 
         Args:
-            alpha (float): New value for alpha.
+            alpha: New value for alpha.
 
         Returns:
-            Color: A new color.
+            A new color.
         """
         r, g, b, _ = self
         return Color(r, g, b, alpha)
@@ -347,12 +347,12 @@ class Color(NamedTuple):
         """Generate a new color between two colors.
 
         Args:
-            destination (Color): Another color.
-            factor (float): A blend factor, 0 -> 1.
-            alpha (float | None): New alpha for result. Defaults to None.
+            destination: Another color.
+            factor: A blend factor, 0 -> 1.
+            alpha: New alpha for result. Defaults to None.
 
         Returns:
-            Color: A new color.
+            A new color.
         """
         if factor == 0:
             return self
@@ -411,14 +411,14 @@ class Color(NamedTuple):
         Any other formats will raise a `ColorParseError`.
 
         Args:
-            color_text (str | Color): Text with a valid color format. Color objects will
+            color_text: Text with a valid color format. Color objects will
                 be returned unmodified.
 
         Raises:
             ColorParseError: If the color is not encoded correctly.
 
         Returns:
-            Color: Instance encoding the color specified by the argument.
+            Instance encoding the color specified by the argument.
         """
         if isinstance(color_text, Color):
             return color_text
@@ -498,11 +498,11 @@ class Color(NamedTuple):
         """Darken the color by a given amount.
 
         Args:
-            amount (float): Value between 0-1 to reduce luminance by.
-            alpha (float | None, optional): Alpha component for new color or None to copy alpha. Defaults to None.
+            amount: Value between 0-1 to reduce luminance by.
+            alpha: Alpha component for new color or None to copy alpha. Defaults to None.
 
         Returns:
-            Color: New color.
+            New color.
         """
         l, a, b = rgb_to_lab(self)
         l -= amount * 100
@@ -512,11 +512,11 @@ class Color(NamedTuple):
         """Lighten the color by a given amount.
 
         Args:
-            amount (float): Value between 0-1 to increase luminance by.
-            alpha (float | None, optional): Alpha component for new color or None to copy alpha. Defaults to None.
+            amount: Value between 0-1 to increase luminance by.
+            alpha: Alpha component for new color or None to copy alpha. Defaults to None.
 
         Returns:
-            Color: New color.
+            New color.
         """
         return self.darken(-amount, alpha)
 
@@ -525,11 +525,11 @@ class Color(NamedTuple):
         """Get a light or dark color that best contrasts this color, for use with text.
 
         Args:
-            alpha (float, optional): An alpha value to adjust the pure white / black by.
+            alpha: An alpha value to adjust the pure white / black by.
                 Defaults to 0.95.
 
         Returns:
-            Color: A new color, either an off-white or off-black
+            A new color, either an off-white or off-black
         """
         brightness = self.brightness
         white_contrast = abs(brightness - WHITE.brightness)

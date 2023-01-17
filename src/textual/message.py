@@ -18,7 +18,7 @@ class Message:
     """Base class for a message.
 
     Args:
-        sender (MessageTarget): The sender of the message / event.
+        sender: The sender of the message / event.
 
     """
 
@@ -87,10 +87,10 @@ class Message:
         """Check if another message may supersede this one.
 
         Args:
-            message (Message): Another message.
+            message: Another message.
 
         Returns:
-            bool: True if this message may replace the given message
+            True if this message may replace the given message
         """
         return False
 
@@ -99,7 +99,7 @@ class Message:
         from being called.
 
         Args:
-            prevent (bool, optional): True if the default action should be suppressed,
+            prevent: True if the default action should be suppressed,
                 or False if the default actions should be performed. Defaults to True.
         """
         self._no_default_action = prevent
@@ -109,7 +109,7 @@ class Message:
         """Stop propagation of the message to parent.
 
         Args:
-            stop (bool, optional): The stop flag. Defaults to True.
+            stop: The stop flag. Defaults to True.
         """
         self._stop_propagation = stop
         return self
@@ -118,6 +118,6 @@ class Message:
         """Bubble to a widget (typically the parent).
 
         Args:
-            widget (Widget): Target of bubble.
+            widget: Target of bubble.
         """
         await widget.post_message(self)

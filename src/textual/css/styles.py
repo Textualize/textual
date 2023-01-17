@@ -349,7 +349,7 @@ class StylesBase(ABC):
         """Get space around widget.
 
         Returns:
-            Spacing: Space around widget content.
+            Space around widget content.
         """
         return self.padding + self.border.spacing
 
@@ -366,10 +366,10 @@ class StylesBase(ABC):
         """Check if a rule is set on this Styles object.
 
         Args:
-            rule (str): Rule name.
+            rule: Rule name.
 
         Returns:
-            bool: ``True`` if the rules is present, otherwise ``False``.
+            ``True`` if the rules is present, otherwise ``False``.
         """
 
     @abstractmethod
@@ -377,10 +377,10 @@ class StylesBase(ABC):
         """Removes the rule from the Styles object, as if it had never been set.
 
         Args:
-            rule (str): Rule name.
+            rule: Rule name.
 
         Returns:
-            bool: ``True`` if a rule was cleared, or ``False`` if the rule is already not set.
+            ``True`` if a rule was cleared, or ``False`` if the rule is already not set.
         """
 
     @abstractmethod
@@ -388,7 +388,7 @@ class StylesBase(ABC):
         """Get the rules in a mapping.
 
         Returns:
-            RulesMap: A TypedDict of the rules.
+            A TypedDict of the rules.
         """
 
     @abstractmethod
@@ -396,11 +396,11 @@ class StylesBase(ABC):
         """Set a rule.
 
         Args:
-            rule (str): Rule name.
-            value (object | None): New rule value.
+            rule: Rule name.
+            value: New rule value.
 
         Returns:
-            bool: ``True`` if the rule changed, otherwise ``False``.
+            ``True`` if the rule changed, otherwise ``False``.
         """
 
     @abstractmethod
@@ -408,11 +408,11 @@ class StylesBase(ABC):
         """Get an individual rule.
 
         Args:
-            rule (str): Name of rule.
-            default (object, optional): Default if rule does not exists. Defaults to None.
+            rule: Name of rule.
+            default: Default if rule does not exists. Defaults to None.
 
         Returns:
-            object: Rule value or default.
+            Rule value or default.
         """
 
     @abstractmethod
@@ -420,8 +420,8 @@ class StylesBase(ABC):
         """Mark the styles as requiring a refresh.
 
         Args:
-            layout (bool, optional): Also require a layout. Defaults to False.
-            children (bool, optional): Also refresh children. Defaults to False.
+            layout: Also require a layout. Defaults to False.
+            children: Also refresh children. Defaults to False.
         """
 
     @abstractmethod
@@ -433,7 +433,7 @@ class StylesBase(ABC):
         """Merge values from another Styles.
 
         Args:
-            other (Styles): A Styles object.
+            other: A Styles object.
         """
 
     @abstractmethod
@@ -441,7 +441,7 @@ class StylesBase(ABC):
         """Merge rules in to Styles.
 
         Args:
-            rules (RulesMap): A mapping of rules.
+            rules: A mapping of rules.
         """
 
     def get_render_rules(self) -> RulesMap:
@@ -455,10 +455,10 @@ class StylesBase(ABC):
         """Check if a given rule may be animated.
 
         Args:
-            rule (str): Name of the rule.
+            rule: Name of the rule.
 
         Returns:
-            bool: ``True`` if the rule may be animated, otherwise ``False``.
+            ``True`` if the rule may be animated, otherwise ``False``.
         """
         return rule in cls.ANIMATABLE
 
@@ -468,12 +468,12 @@ class StylesBase(ABC):
         """Parse CSS and return a Styles object.
 
         Args:
-            css (str): Textual CSS.
-            path (str): Path or string indicating source of CSS.
-            node (DOMNode, optional): Node to associate with the Styles. Defaults to None.
+            css: Textual CSS.
+            path: Path or string indicating source of CSS.
+            node: Node to associate with the Styles. Defaults to None.
 
         Returns:
-            Styles: A Styles instance containing result of parsing CSS.
+            A Styles instance containing result of parsing CSS.
         """
         from .parse import parse_declarations
 
@@ -485,10 +485,10 @@ class StylesBase(ABC):
         """Get a transition.
 
         Args:
-            key (str): Transition key.
+            key: Transition key.
 
         Returns:
-            Transition | None: Transition object or None it no transition exists.
+            Transition object or None it no transition exists.
         """
         if key in self.ANIMATABLE:
             return self.transitions.get(key, None)
@@ -499,11 +499,11 @@ class StylesBase(ABC):
         """Align the width dimension.
 
         Args:
-            width (int): Width of the content.
-            parent_width (int): Width of the parent container.
+            width: Width of the content.
+            parent_width: Width of the parent container.
 
         Returns:
-            int: An offset to add to the X coordinate.
+            An offset to add to the X coordinate.
         """
         offset_x = 0
         align_horizontal = self.align_horizontal
@@ -518,11 +518,11 @@ class StylesBase(ABC):
         """Align the height dimensions
 
         Args:
-            height (int): Height of the content.
-            parent_height (int): Height of the parent container.
+            height: Height of the content.
+            parent_height: Height of the parent container.
 
         Returns:
-            int: An offset to add to the Y coordinate.
+            An offset to add to the Y coordinate.
         """
         offset_y = 0
         align_vertical = self.align_vertical
@@ -537,11 +537,11 @@ class StylesBase(ABC):
         """Align a size according to alignment rules.
 
         Args:
-            child (tuple[int, int]): The size of the child (width, height)
-            parent (tuple[int, int]): The size of the parent (width, height)
+            child: The size of the child (width, height)
+            parent: The size of the parent (width, height)
 
         Returns:
-            Offset: Offset required to align the child.
+            Offset required to align the child.
         """
         width, height = child
         parent_width, parent_height = parent
@@ -555,7 +555,7 @@ class StylesBase(ABC):
         """Get the style properties associated with this node only (not including parents in the DOM).
 
         Returns:
-            Style: Rich Style object.
+            Rich Style object.
         """
         style = Style(
             color=(self.color.rich_color if self.has_rule("color") else None),
@@ -588,10 +588,10 @@ class Styles(StylesBase):
         """Removes the rule from the Styles object, as if it had never been set.
 
         Args:
-            rule (str): Rule name.
+            rule: Rule name.
 
         Returns:
-            bool: ``True`` if a rule was cleared, or ``False`` if it was already not set.
+            ``True`` if a rule was cleared, or ``False`` if it was already not set.
         """
         changed = self._rules.pop(rule, None) is not None
         if changed:
@@ -605,11 +605,11 @@ class Styles(StylesBase):
         """Set a rule.
 
         Args:
-            rule (str): Rule name.
-            value (object | None): New rule value.
+            rule: Rule name.
+            value: New rule value.
 
         Returns:
-            bool: ``True`` if the rule changed, otherwise ``False``.
+            ``True`` if the rule changed, otherwise ``False``.
         """
         if value is None:
             changed = self._rules.pop(rule, None) is not None
@@ -642,7 +642,7 @@ class Styles(StylesBase):
         """Merge values from another Styles.
 
         Args:
-            other (Styles): A Styles object.
+            other: A Styles object.
         """
         self._updates += 1
         self._rules.update(other._rules)
@@ -661,12 +661,12 @@ class Styles(StylesBase):
         well as higher specificity of user CSS vs widget CSS.
 
         Args:
-            specificity (Specificity3): A node specificity.
-            is_default_rules (bool): True if the rules we're extracting are
+            specificity: A node specificity.
+            is_default_rules: True if the rules we're extracting are
                 default (i.e. in Widget.DEFAULT_CSS) rules. False if they're from user defined CSS.
 
         Returns:
-            list[tuple[str, Specificity6, Any]]]: A list containing a tuple of <RULE NAME>, <SPECIFICITY> <RULE VALUE>.
+            A list containing a tuple of <RULE NAME>, <SPECIFICITY> <RULE VALUE>.
         """
         is_important = self.important.__contains__
         rules = [
@@ -698,11 +698,11 @@ class Styles(StylesBase):
         """Get pairs of strings containing <RULE NAME>, <RULE VALUE> for border css declarations.
 
         Args:
-            rules (RulesMap): A rules map.
-            name (str): Name of rules (border or outline)
+            rules: A rules map.
+            name: Name of rules (border or outline)
 
         Returns:
-            Iterable[tuple[str, str]]: An iterable of CSS declarations.
+            An iterable of CSS declarations.
 
         """
 
@@ -965,7 +965,7 @@ class RenderStyles(StylesBase):
         """A key key, that changes when any style is changed.
 
         Returns:
-            int: An opaque integer.
+            An opaque integer.
         """
         return self._updates + self._base_styles._updates + self._inline_styles._updates
 
@@ -990,7 +990,7 @@ class RenderStyles(StylesBase):
         """Get space around widget.
 
         Returns:
-            Spacing: Space around widget content.
+            Space around widget content.
         """
         # This is (surprisingly) a bit of a bottleneck
         if self._gutter is not None:
@@ -1016,14 +1016,14 @@ class RenderStyles(StylesBase):
         """Animate an attribute.
 
         Args:
-            attribute (str): Name of the attribute to animate.
-            value (float | Animatable): The value to animate to.
-            final_value (object, optional): The final value of the animation. Defaults to `value` if not set.
-            duration (float | None, optional): The duration of the animate. Defaults to None.
-            speed (float | None, optional): The speed of the animation. Defaults to None.
-            delay (float, optional): A delay (in seconds) before the animation starts. Defaults to 0.0.
-            easing (EasingFunction | str, optional): An easing method. Defaults to "in_out_cubic".
-            on_complete (CallbackType | None, optional): A callable to invoke when the animation is finished. Defaults to None.
+            attribute: Name of the attribute to animate.
+            value: The value to animate to.
+            final_value: The final value of the animation. Defaults to `value` if not set.
+            duration: The duration of the animate. Defaults to None.
+            speed: The speed of the animation. Defaults to None.
+            delay: A delay (in seconds) before the animation starts. Defaults to 0.0.
+            easing: An easing method. Defaults to "in_out_cubic".
+            on_complete: A callable to invoke when the animation is finished. Defaults to None.
 
         """
         if self._animate is None:
@@ -1053,7 +1053,7 @@ class RenderStyles(StylesBase):
         """Merge values from another Styles.
 
         Args:
-            other (Styles): A Styles object.
+            other: A Styles object.
         """
         self._inline_styles.merge(other)
 

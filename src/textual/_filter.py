@@ -32,10 +32,10 @@ class Monochrome(LineFilter):
         """Convert colors in a style to monochrome.
 
         Args:
-            style (Style): A Rich Style.
+            style: A Rich Style.
 
         Returns:
-            Style: A new Rich style.
+            A new Rich style.
         """
         style_color = style.color
         style_background = style.bgcolor

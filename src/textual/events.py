@@ -84,10 +84,10 @@ class Action(Event):
 class Resize(Event, bubble=False):
     """Sent when the app or widget has been resized.
     Args:
-        sender (MessageTarget): The sender of the event (the Screen).
-        size (Size): The new size of the Widget.
-        virtual_size (Size): The virtual size (scrollable size) of the Widget.
-        container_size (Size | None, optional): The size of the Widget's container widget. Defaults to None.
+        sender: The sender of the event (the Screen).
+        size: The new size of the Widget.
+        virtual_size: The virtual size (scrollable size) of the Widget.
+        container_size: The size of the Widget's container widget. Defaults to None.
 
     """
 
@@ -151,8 +151,8 @@ class MouseCapture(Event, bubble=False):
 
 
     Args:
-        sender (MessageTarget): The sender of the event, (in this case the app).
-        mouse_position (Point): The position of the mouse when captured.
+        sender: The sender of the event, (in this case the app).
+        mouse_position: The position of the mouse when captured.
 
     """
 
@@ -169,8 +169,8 @@ class MouseRelease(Event, bubble=False):
     """Mouse has been released.
 
     Args:
-        sender (MessageTarget): The sender of the event, (in this case the app).
-        mouse_position (Point): The position of the mouse when released.
+        sender: The sender of the event, (in this case the app).
+        mouse_position: The position of the mouse when released.
     """
 
     def __init__(self, sender: MessageTarget, mouse_position: Offset) -> None:
@@ -190,13 +190,15 @@ class Key(InputEvent):
     """Sent when the user hits a key on the keyboard.
 
     Args:
-        sender (MessageTarget): The sender of the event (always the App).
-        key (str): The key that was pressed.
-        character (str | None, optional): A printable character or ``None`` if it is not printable.
+        sender: The sender of the event (always the App).
+        key: The key that was pressed.
+        character: A printable character or ``None`` if it is not printable.
 
     Attributes:
-        aliases (list[str]): The aliases for the key, including the key itself.
+        aliases: The aliases for the key, including the key itself.
     """
+
+    aliases: list[str]
 
     __slots__ = ["key", "character", "aliases"]
 
@@ -230,7 +232,7 @@ class Key(InputEvent):
         """Check if the key is printable (produces a unicode character).
 
         Returns:
-            bool: True if the key is printable.
+            True if the key is printable.
         """
         return False if self.character is None else self.character.isprintable()
 
@@ -247,18 +249,18 @@ class MouseEvent(InputEvent, bubble=True):
     """Sent in response to a mouse event.
 
     Args:
-        sender (MessageTarget): The sender of the event.
-        x (int): The relative x coordinate.
-        y (int): The relative y coordinate.
-        delta_x (int): Change in x since the last message.
-        delta_y (int): Change in y since the last message.
-        button (int): Indexed of the pressed button.
-        shift (bool): True if the shift key is pressed.
-        meta (bool): True if the meta key is pressed.
-        ctrl (bool): True if the ctrl key is pressed.
-        screen_x (int, optional): The absolute x coordinate.
-        screen_y (int, optional): The absolute y coordinate.
-        style (Style, optional): The Rich Style under the mouse cursor.
+        sender: The sender of the event.
+        x: The relative x coordinate.
+        y: The relative y coordinate.
+        delta_x: Change in x since the last message.
+        delta_y: Change in y since the last message.
+        button: Indexed of the pressed button.
+        shift: True if the shift key is pressed.
+        meta: True if the meta key is pressed.
+        ctrl: True if the ctrl key is pressed.
+        screen_x: The absolute x coordinate.
+        screen_y: The absolute y coordinate.
+        style: The Rich Style under the mouse cursor.
 
     """
 
@@ -341,7 +343,7 @@ class MouseEvent(InputEvent, bubble=True):
         """The mouse coordinate as an offset.
 
         Returns:
-            Offset: Mouse coordinate.
+            Mouse coordinate.
 
         """
         return Offset(self.x, self.y)
@@ -351,7 +353,7 @@ class MouseEvent(InputEvent, bubble=True):
         """Mouse coordinate relative to the screen.
 
         Returns:
-            Offset: Mouse coordinate.
+            Mouse coordinate.
         """
         return Offset(self.screen_x, self.screen_y)
 
@@ -360,7 +362,7 @@ class MouseEvent(InputEvent, bubble=True):
         """Mouse coordinate delta (change since last event).
 
         Returns:
-            Offset: Mouse coordinate.
+            Mouse coordinate.
 
         """
         return Offset(self.delta_x, self.delta_y)
@@ -378,10 +380,10 @@ class MouseEvent(InputEvent, bubble=True):
         """Get offset within a widget's content area, or None if offset is not in content (i.e. padding or border).
 
         Args:
-            widget (Widget): Widget receiving the event.
+            widget: Widget receiving the event.
 
         Returns:
-            Offset | None: An offset where the origin is at the top left of the content area.
+            An offset where the origin is at the top left of the content area.
         """
         if self.screen_offset not in widget.content_region:
             return None
@@ -488,7 +490,7 @@ class Paste(Event, bubble=True):
     and disable it when the app shuts down.
 
     Args:
-        sender (MessageTarget): The sender of the event, (in this case the app).
+        sender: The sender of the event, (in this case the app).
         text: The text that has been pasted.
     """
 

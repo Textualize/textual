@@ -33,7 +33,7 @@ class GridLayout(Layout):
             """Iterate over table coordinates ad infinitum.
 
             Args:
-                column_count (int): Number of columns
+                column_count: Number of columns
 
             """
             row = 0
@@ -48,13 +48,13 @@ class GridLayout(Layout):
             """Get coords occupied by a cell.
 
             Args:
-                column_start (int): Start column.
-                row_start (int): Start_row.
-                columns (int): Number of columns.
-                rows (int): Number of rows.
+                column_start: Start column.
+                row_start: Start_row.
+                columns: Number of columns.
+                rows: Number of rows.
 
             Returns:
-                set[tuple[int, int]]: Set of coords.
+                Set of coords.
             """
             return {
                 (column, row)
@@ -67,11 +67,11 @@ class GridLayout(Layout):
             a list of `count` values.
 
             Args:
-                scalars (Iterable[T]): Iterable of values.
-                count (int): Number of values to return.
+                scalars: Iterable of values.
+                count: Number of values to return.
 
             Returns:
-                list[T]: A list of values.
+                A list of values.
             """
             limited_values = list(scalars)[:]
             while len(limited_values) < count:

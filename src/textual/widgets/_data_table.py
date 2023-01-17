@@ -31,10 +31,10 @@ def default_cell_formatter(obj: object) -> RenderableType | None:
     """Format a cell in to a renderable.
 
     Args:
-        obj (object): Data for a cell.
+        obj: Data for a cell.
 
     Returns:
-        RenderableType | None: A renderable or None if the object could not be rendered.
+        A renderable or None if the object could not be rendered.
     """
     if isinstance(obj, str):
         return Text.from_markup(obj)
@@ -92,7 +92,7 @@ class Coord(NamedTuple):
         """Get coordinate to the left.
 
         Returns:
-            Coord: The coordinate.
+            The coordinate.
         """
         row, column = self
         return Coord(row, column - 1)
@@ -101,7 +101,7 @@ class Coord(NamedTuple):
         """Get coordinate to the right.
 
         Returns:
-            Coord: The coordinate.
+            The coordinate.
         """
         row, column = self
         return Coord(row, column + 1)
@@ -110,7 +110,7 @@ class Coord(NamedTuple):
         """Get coordinate above.
 
         Returns:
-            Coord: The coordinate.
+            The coordinate.
         """
         row, column = self
         return Coord(row - 1, column)
@@ -119,7 +119,7 @@ class Coord(NamedTuple):
         """Get coordinate below.
 
         Returns:
-            Coord: The coordinate.
+            The coordinate.
         """
         row, column = self
         return Coord(row + 1, column)
@@ -317,7 +317,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Clear the table.
 
         Args:
-            columns (bool, optional): Also clear the columns. Defaults to False.
+            columns: Also clear the columns. Defaults to False.
         """
         self.row_count = 0
         self._clear_caches()
@@ -344,8 +344,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Add a column to the table.
 
         Args:
-            label (TextType): A str or Text object containing the label (shown top of column).
-            width (int, optional): Width of the column in cells or None to fit content. Defaults to None.
+            label: A str or Text object containing the label (shown top of column).
+            width: Width of the column in cells or None to fit content. Defaults to None.
         """
         text_label = Text.from_markup(label) if isinstance(label, str) else label
 
@@ -372,7 +372,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         Args:
             *cells: Positional arguments should contain cell data.
-            height (int, optional): The height of a row (in lines). Defaults to 1.
+            height: The height of a row (in lines). Defaults to 1.
         """
         row_index = self.row_count
 
@@ -393,7 +393,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Add a number of rows.
 
         Args:
-            rows (Iterable[Iterable[CellType]]): Iterable of rows. A row is an iterable of cells.
+            rows: Iterable of rows. A row is an iterable of cells.
         """
         for row in rows:
             self.add_row(*row)
@@ -410,8 +410,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Refresh a cell.
 
         Args:
-            row_index (int): Row index.
-            column_index (int): Column index.
+            row_index: Row index.
+            column_index: Column index.
         """
         if row_index < 0 or column_index < 0:
             return
@@ -425,10 +425,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Get renderables for the given row.
 
         Args:
-            row_index (int): Index of the row.
+            row_index: Index of the row.
 
         Returns:
-            list[RenderableType]: List of renderables
+            List of renderables
         """
 
         if row_index == -1:
@@ -457,13 +457,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Render the given cell.
 
         Args:
-            row_index (int): Index of the row.
-            column_index (int): Index of the column.
-            style (Style): Style to apply.
-            width (int): Width of the cell.
+            row_index: Index of the row.
+            column_index: Index of the column.
+            style: Style to apply.
+            width: Width of the cell.
 
         Returns:
-            Lines: A list of segments per line.
+            A list of segments per line.
         """
         if hover:
             style += self.get_component_styles("datatable--highlight").rich_style
@@ -495,12 +495,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Render a row in to lines for each cell.
 
         Args:
-            row_index (int): Index of the row.
-            line_no (int): Line number (on screen, 0 is top)
-            base_style (Style): Base style of row.
+            row_index: Index of the row.
+            line_no: Line number (on screen, 0 is top)
+            base_style: Base style of row.
 
         Returns:
-            tuple[Lines, Lines]: Lines for fixed cells, and Lines for scrollable cells.
+            Lines for fixed cells, and Lines for scrollable cells.
         """
 
         cache_key = (row_index, line_no, base_style, cursor_column, hover_column)
@@ -553,10 +553,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Get row number and line offset for a given line.
 
         Args:
-            y (int): Y coordinate relative to screen top.
+            y: Y coordinate relative to screen top.
 
         Returns:
-            tuple[int, int]: Line number and line offset within cell.
+            Line number and line offset within cell.
         """
         if self.show_header:
             if y < self.header_height:
@@ -570,13 +570,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Render a line in to a list of segments.
 
         Args:
-            y (int): Y coordinate of line
-            x1 (int): X start crop.
-            x2 (int): X end crop (exclusive).
-            base_style (Style): Style to apply to line.
+            y: Y coordinate of line
+            x1: X start crop.
+            x2: X end crop (exclusive).
+            base_style: Style to apply to line.
 
         Returns:
-            list[Segment]: List of segments for rendering.
+            List of segments for rendering.
         """
 
         width = self.size.width

@@ -65,7 +65,7 @@ def take_svg_screenshot(
         terminal_size: A pair of integers (rows, columns), representing terminal size.
 
     Returns:
-        str: An SVG string, showing the content of the terminal window at the time
+        An SVG string, showing the content of the terminal window at the time
             the screenshot was taken.
 
     """

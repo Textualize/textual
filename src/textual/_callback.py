@@ -16,10 +16,10 @@ async def invoke(callback: Callable, *params: object) -> Any:
     """Invoke a callback with an arbitrary number of parameters.
 
     Args:
-        callback (Callable): [description]
+        callback: The callable to be invoked.
 
     Returns:
-        Any: [description]
+        The return value of the invoked callable.
     """
     _rich_traceback_guard = True
     parameter_count = count_parameters(callback)

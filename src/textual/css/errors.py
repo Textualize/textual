@@ -27,9 +27,11 @@ class StyleValueError(ValueError):
     """Raised when the value of a style property is not valid
 
     Attributes:
-        help_text (HelpText | None): Optional HelpText to be rendered when this
+        help_text: Optional HelpText to be rendered when this
             error is raised.
     """
+
+    help_text: HelpText | None
 
     def __init__(self, *args: object, help_text: HelpText | None = None):
         super().__init__(*args)

@@ -42,12 +42,12 @@ class Reactive(Generic[ReactiveType]):
     """Reactive descriptor.
 
     Args:
-        default (ReactiveType | Callable[[], ReactiveType]): A default value or callable that returns a default.
-        layout (bool, optional): Perform a layout on change. Defaults to False.
-        repaint (bool, optional): Perform a repaint on change. Defaults to True.
-        init (bool, optional): Call watchers on initialize (post mount). Defaults to False.
-        always_update (bool, optional): Call watchers even when the new value equals the old value. Defaults to False.
-        compute (bool, optional): Run compute methods when attribute is changed. Defaults to True.
+        default: A default value or callable that returns a default.
+        layout: Perform a layout on change. Defaults to False.
+        repaint: Perform a repaint on change. Defaults to True.
+        init: Call watchers on initialize (post mount). Defaults to False.
+        always_update: Call watchers even when the new value equals the old value. Defaults to False.
+        compute: Run compute methods when attribute is changed. Defaults to True.
     """
 
     _reactives: TypeVar[dict[str, object]] = {}
@@ -90,14 +90,14 @@ class Reactive(Generic[ReactiveType]):
         """A reactive variable that calls watchers and compute on initialize (post mount).
 
         Args:
-            default (ReactiveType | Callable[[], ReactiveType]): A default value or callable that returns a default.
-            layout (bool, optional): Perform a layout on change. Defaults to False.
-            repaint (bool, optional): Perform a repaint on change. Defaults to True.
-            always_update (bool, optional): Call watchers even when the new value equals the old value. Defaults to False.
-            compute (bool, optional): Run compute methods when attribute is changed. Defaults to True.
+            default: A default value or callable that returns a default.
+            layout: Perform a layout on change. Defaults to False.
+            repaint: Perform a repaint on change. Defaults to True.
+            always_update: Call watchers even when the new value equals the old value. Defaults to False.
+            compute: Run compute methods when attribute is changed. Defaults to True.
 
         Returns:
-            Reactive: A Reactive instance which calls watchers or initialize.
+            A Reactive instance which calls watchers or initialize.
         """
         return cls(
             default,
@@ -116,10 +116,10 @@ class Reactive(Generic[ReactiveType]):
         """A reactive variable that doesn't update or layout.
 
         Args:
-            default (ReactiveType | Callable[[], ReactiveType]):  A default value or callable that returns a default.
+            default: A default value or callable that returns a default.
 
         Returns:
-            Reactive: A Reactive descriptor.
+            A Reactive descriptor.
         """
         return cls(default, layout=False, repaint=False, init=False)
 
@@ -127,8 +127,8 @@ class Reactive(Generic[ReactiveType]):
         """Initialized a reactive attribute on an object.
 
         Args:
-            obj (Reactable): An object with reactive attributes.
-            name (str): name of attribute.
+            obj: An object with reactive attributes.
+            name: Name of attribute.
         """
         internal_name = f"_reactive_{name}"
         if hasattr(obj, internal_name):
@@ -153,7 +153,7 @@ class Reactive(Generic[ReactiveType]):
         """Set defaults and call any watchers / computes for the first time.
 
         Args:
-            obj (Reactable): An object with Reactive descriptors
+            obj: An object with Reactive descriptors
         """
 
         for name, reactive in obj._reactives.items():
@@ -164,7 +164,7 @@ class Reactive(Generic[ReactiveType]):
         """Reset reactive structures on object (to avoid reference cycles).
 
         Args:
-            obj (object): A reactive object.
+            obj: A reactive object.
         """
         getattr(obj, "__watchers", {}).clear()
         getattr(obj, "__computes", []).clear()
@@ -235,9 +235,9 @@ class Reactive(Generic[ReactiveType]):
         """Check watchers, and call watch methods / computes
 
         Args:
-            obj (Reactable): The reactable object.
-            name (str): Attribute name.
-            old_value (Any): The old (previous) value of the attribute.
+            obj: The reactable object.
+            name: Attribute name.
+            old_value: The old (previous) value of the attribute.
         """
         _rich_traceback_omit = True
         # Get the current value.
@@ -259,12 +259,12 @@ class Reactive(Generic[ReactiveType]):
             """Invoke a watch function.
 
             Args:
-                watch_function (Callable): A watch function, which may be sync or async.
-                old_value (object): The old value of the attribute.
-                value (object): The new value of the attribute.
+                watch_function: A watch function, which may be sync or async.
+                old_value: The old value of the attribute.
+                value: The new value of the attribute.
 
             Returns:
-                bool: True if the watcher was run, or False if it was posted.
+                True if the watcher was run, or False if it was posted.
             """
             _rich_traceback_omit = True
             param_count = count_parameters(watch_function)
@@ -298,7 +298,7 @@ class Reactive(Generic[ReactiveType]):
         """Invoke all computes.
 
         Args:
-            obj (Reactable): Reactable object.
+            obj: Reactable object.
         """
         _rich_traceback_guard = True
         for compute in obj._reactives.keys():
@@ -317,11 +317,11 @@ class reactive(Reactive[ReactiveType]):
     """Create a reactive attribute.
 
     Args:
-        default (ReactiveType | Callable[[], ReactiveType]): A default value or callable that returns a default.
-        layout (bool, optional): Perform a layout on change. Defaults to False.
-        repaint (bool, optional): Perform a repaint on change. Defaults to True.
-        init (bool, optional): Call watchers on initialize (post mount). Defaults to True.
-        always_update (bool, optional): Call watchers even when the new value equals the old value. Defaults to False.
+        default: A default value or callable that returns a default.
+        layout: Perform a layout on change. Defaults to False.
+        repaint: Perform a repaint on change. Defaults to True.
+        init: Call watchers on initialize (post mount). Defaults to True.
+        always_update: Call watchers even when the new value equals the old value. Defaults to False.
     """
 
     def __init__(
@@ -346,8 +346,8 @@ class var(Reactive[ReactiveType]):
     """Create a reactive attribute (with no auto-refresh).
 
     Args:
-        default (ReactiveType | Callable[[], ReactiveType]): A default value or callable that returns a default.
-        init (bool, optional): Call watchers on initialize (post mount). Defaults to True.
+        default: A default value or callable that returns a default.
+        init: Call watchers on initialize (post mount). Defaults to True.
     """
 
     def __init__(
@@ -372,10 +372,10 @@ def watch(
     """Watch a reactive variable on an object.
 
     Args:
-        obj (Reactable): The parent object.
-        attribute_name (str): The attribute to watch.
-        callback (Callable[[Any], object]): A callable to call when the attribute changes.
-        init (bool, optional): True to call watcher initialization. Defaults to True.
+        obj: The parent object.
+        attribute_name: The attribute to watch.
+        callback: A callable to call when the attribute changes.
+        init: True to call watcher initialization. Defaults to True.
     """
 
     if not hasattr(obj, "__watchers"):

@@ -116,13 +116,13 @@ class Input(Widget, can_focus=True):
         """Initialise the `Input` widget.
 
         Args:
-            value (str | None, optional): An optional default value for the input.
-            placeholder (str, optional): Optional placeholder text for the input.
-            highlighter (Highlighter | None, optional): An optional highlighter for the input.
-            password (bool, optional): Flag to say if the field should obfuscate its content. Default is `False`.
-            name (str | None, optional): Optional name for the input widget.
-            id (str | None): Optional ID for the widget.
-            classes (str | None): Optional initial classes for the widget.
+            value: An optional default value for the input.
+            placeholder: Optional placeholder text for the input.
+            highlighter: An optional highlighter for the input.
+            password: Flag to say if the field should obfuscate its content. Default is `False`.
+            name: Optional name for the input widget.
+            id: Optional ID for the widget.
+            classes: Optional initial classes for the widget.
         """
         super().__init__(name=name, id=id, classes=classes)
         if value is not None:
@@ -277,7 +277,7 @@ class Input(Widget, can_focus=True):
         """Insert new text at the cursor, move the cursor to the end of the new text.
 
         Args:
-            text (str): new text to insert.
+            text: New text to insert.
         """
         if self.cursor_position > len(self.value):
             self.value += text
@@ -333,9 +333,12 @@ class Input(Widget, can_focus=True):
         """Value was changed.
 
         Attributes:
-            value (str): The value that the input was changed to.
-            input (Input): The `Input` widget that was changed.
+            value: The value that the input was changed to.
+            input: The `Input` widget that was changed.
         """
+
+        value: str
+        input: Input
 
         def __init__(self, sender: Input, value: str) -> None:
             super().__init__(sender)
@@ -346,9 +349,12 @@ class Input(Widget, can_focus=True):
         """Sent when the enter key is pressed within an `Input`.
 
         Attributes:
-            value (str): The value of the `Input` being submitted..
-            input (Input): The `Input` widget that is being submitted.
+            value: The value of the `Input` being submitted..
+            input: The `Input` widget that is being submitted.
         """
+
+        value: str
+        input: Input
 
         def __init__(self, sender: Input, value: str) -> None:
             super().__init__(sender)

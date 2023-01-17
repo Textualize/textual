@@ -30,11 +30,11 @@ def make_blank(width, style: Style) -> Segment:
     """Make a blank segment.
 
     Args:
-        width (_type_): Width of blank.
-        style (Style): Style of blank.
+        width: Width of blank.
+        style: Style of blank.
 
     Returns:
-        Segment: A single segment
+        A single segment
     """
     return Segment(intern(" " * width), style)
 
@@ -82,10 +82,10 @@ class StylesCache:
         """Check if a given line is dirty (needs to be rendered again).
 
         Args:
-            y (int): Y coordinate of line.
+            y: Y coordinate of line.
 
         Returns:
-            bool: True if line requires a render, False if can be cached.
+            True if line requires a render, False if can be cached.
         """
         return y in self._dirty_lines
 
@@ -98,11 +98,11 @@ class StylesCache:
         """Render the content for a widget.
 
         Args:
-            widget (Widget): A widget.
-            region (Region): A region of the widget to render.
+            widget: A widget.
+            region: A region of the widget to render.
 
         Returns:
-            Lines: Rendered lines.
+            Rendered lines.
         """
         base_background, background = widget.background_colors
         styles = widget.styles
@@ -149,17 +149,17 @@ class StylesCache:
         """Render a widget content plus CSS styles.
 
         Args:
-            styles (StylesBase): CSS Styles object.
-            size (Size): Size of widget.
-            base_background (Color): Background color beneath widget.
-            background (Color): Background color of widget.
-            render_content_line (RenderLineCallback): Callback to render content line.
-            content_size (Size | None, optional): Size of content or None to assume full size. Defaults to None.
-            padding (Spacing | None, optional): Override padding from Styles, or None to use styles.padding. Defaults to None.
-            crop (Region | None, optional): Region to crop to. Defaults to None.
+            styles: CSS Styles object.
+            size: Size of widget.
+            base_background: Background color beneath widget.
+            background: Background color of widget.
+            render_content_line: Callback to render content line.
+            content_size: Size of content or None to assume full size. Defaults to None.
+            padding: Override padding from Styles, or None to use styles.padding. Defaults to None.
+            crop: Region to crop to. Defaults to None.
 
         Returns:
-            Lines: Rendered lines.
+            Rendered lines.
         """
         if content_size is None:
             content_size = size
@@ -217,17 +217,17 @@ class StylesCache:
         """Render a styled line.
 
         Args:
-            styles (StylesBase): Styles object.
-            y (int): The y coordinate of the line (relative to widget screen offset).
-            size (Size): Size of the widget.
-            content_size (Size): Size of the content area.
-            padding (Spacing): Padding.
-            base_background (Color): Background color of widget beneath this line.
-            background (Color): Background color of widget.
-            render_content_line (RenderLineCallback): Callback to render a line of content.
+            styles: Styles object.
+            y: The y coordinate of the line (relative to widget screen offset).
+            size: Size of the widget.
+            content_size: Size of the content area.
+            padding: Padding.
+            base_background: Background color of widget beneath this line.
+            background: Background color of widget.
+            render_content_line: Callback to render a line of content.
 
         Returns:
-            list[Segment]: A line of segments.
+            A line of segments.
         """
 
         gutter = styles.gutter
@@ -259,10 +259,10 @@ class StylesCache:
             """Post process segments to apply opacity and tint.
 
             Args:
-                segments (Iterable[Segment]): Iterable of segments.
+                segments: Iterable of segments.
 
             Returns:
-                list[Segment]: New list of segments
+                New list of segments
             """
             if styles.text_opacity != 1.0:
                 segments = TextOpacity.process_segments(segments, styles.text_opacity)

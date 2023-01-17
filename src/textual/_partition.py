@@ -13,11 +13,11 @@ def partition(
     the values where the predicate is False, the second list will contain the remaining values.
 
     Args:
-        pred (Callable[[T], object]): A callable that returns True or False for a given value.
-        iterable (Iterable[T]): In Iterable of values.
+        pred: A callable that returns True or False for a given value.
+        iterable: In Iterable of values.
 
     Returns:
-        tuple[list[T], list[T]]: A list of values where the predicate is False, and a list
+        A list of values where the predicate is False, and a list
             where the predicate is True.
     """
 

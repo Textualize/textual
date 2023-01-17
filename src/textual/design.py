@@ -96,13 +96,13 @@ class ColorSystem:
         """Generate a mapping of color name on to a CSS color.
 
         Args:
-            dark (bool, optional): Enable dark mode. Defaults to False.
-            luminosity_spread (float, optional): Amount of luminosity to subtract and add to generate
+            dark: Enable dark mode. Defaults to False.
+            luminosity_spread: Amount of luminosity to subtract and add to generate
                 shades. Defaults to 0.2.
-            text_alpha (float, optional): Alpha value for text. Defaults to 0.9.
+            text_alpha: Alpha value for text. Defaults to 0.9.
 
         Returns:
-            dict[str, str]: A mapping of color name on to a CSS-style encoded color
+            A mapping of color name on to a CSS-style encoded color
 
         """
 
@@ -198,11 +198,11 @@ def show_design(light: ColorSystem, dark: ColorSystem) -> Table:
     """Generate a renderable to show color systems.
 
     Args:
-        light (ColorSystem): Light ColorSystem.
-        dark (ColorSystem): Dark ColorSystem
+        light: Light ColorSystem.
+        dark: Dark ColorSystem
 
     Returns:
-        Table: Table showing all colors.
+        Table showing all colors.
 
     """
 

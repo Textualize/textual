@@ -11,7 +11,7 @@ class AwaitRemove:
         """Initialise the instance of ``AwaitRemove``.
 
         Args:
-            finished_flag (asyncio.Event): The asyncio event to wait on.
+            finished_flag: The asyncio event to wait on.
         """
         self.finished_flag = finished_flag
 

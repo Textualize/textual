@@ -239,10 +239,10 @@ class XTermParser(Parser[events.Event]):
         """Map a sequence of code points on to a sequence of keys.
 
         Args:
-            sequence (str): Sequence of code points.
+            sequence: Sequence of code points.
 
         Returns:
-            Iterable[events.Key]: keys
+            Keys
 
         """
         keys = ANSI_SEQUENCES_KEYS.get(sequence)

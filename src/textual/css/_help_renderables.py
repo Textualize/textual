@@ -17,10 +17,10 @@ def _markup_and_highlight(text: str) -> Text:
     a styled Text object.
 
     Args:
-        text (str): The text to highlight and markup.
+        text: The text to highlight and markup.
 
     Returns:
-        Text: The Text, with highlighting and markup applied.
+        The Text, with highlighting and markup applied.
     """
     return _highlighter(render(text))
 
@@ -30,8 +30,10 @@ class Example:
     the help text.
 
     Attributes:
-        markup (str): The markup to display for this example
+        markup: The markup to display for this example
     """
+
+    markup: str
 
     def __init__(self, markup: str) -> None:
         self.markup = markup
@@ -48,10 +50,13 @@ class Bullet:
         pertaining to that information.
 
     Attributes:
-        markup (str): The markup to display
-        examples (Iterable[Example] | None): An optional list of examples
+        markup: The markup to display
+        examples: An optional list of examples
             to display below this bullet.
     """
+
+    markup: str
+    examples: Iterable[Example] | None
 
     def __init__(self, markup: str, examples: Iterable[Example] | None = None) -> None:
         self.markup = markup
@@ -71,10 +76,13 @@ class HelpText:
     value).
 
     Attributes:
-        summary (str): A succinct summary of the issue.
-        bullets (Iterable[Bullet] | None): Bullet points which provide additional
+        summary: A succinct summary of the issue.
+        bullets: Bullet points which provide additional
             context around the issue. These are rendered below the summary. Defaults to None.
     """
+
+    summary: str
+    bullets: Iterable[Bullet] | None
 
     def __init__(self, summary: str, *, bullets: Iterable[Bullet] = None) -> None:
         self.summary = summary

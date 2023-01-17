@@ -24,7 +24,7 @@ if WINDOWS:
         """Sleep for a given number of seconds.
 
         Args:
-            secs (float): Number of seconds to sleep for.
+            secs: Number of seconds to sleep for.
         """
         await get_running_loop().run_in_executor(None, win_sleep, secs)
 
@@ -34,7 +34,7 @@ else:
         """Sleep for a given number of seconds.
 
         Args:
-            secs (float): Number of seconds to sleep for.
+            secs: Number of seconds to sleep for.
         """
         # From practical experiments, asyncio.sleep sleeps for at least half a millisecond too much
         # Presumably there is overhead asyncio itself which accounts for this
