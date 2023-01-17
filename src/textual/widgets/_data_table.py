@@ -899,10 +899,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Emitted when the cursor moves to highlight a new cell.
         It's only relevant when the `cursor_type` is `"cell"`.
         It's also emitted when the cell cursor is re-enabled (by setting `show_cursor=True`),
-        and when the cursor type is changed to `"cell"`.
-
-        Handler:
-            on_data_table_cell_highlighted
+        and when the cursor type is changed to `"cell"`. Can be handled using
+        `on_data_table_cell_highlighted` in a subclass of `DataTable` or in a parent
+        widget in the DOM.
 
         Attributes:
             sender (DataTable): The DataTable the cell was highlighted in.
@@ -924,7 +923,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     class CellSelected(Message, bubble=True):
         """Emitted by the `DataTable` widget when a cell is selected.
-        It's only relevant when the `cursor_type` is `"cell"`.
+        It's only relevant when the `cursor_type` is `"cell"`. Can be handled using
+        `on_data_table_cell_selected` in a subclass of `DataTable` or in a parent
+        widget in the DOM.
 
         Attributes:
             sender (DataTable): The DataTable the cell was selected in.
@@ -946,7 +947,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     class RowHighlighted(Message, bubble=True):
         """Emitted when a row is highlighted. This message is only emitted when the
-        `cursor_type` is set to `"row"`.
+        `cursor_type` is set to `"row"`. Can be handled using `on_data_table_row_highlighted`
+        in a subclass of `DataTable` or in a parent widget in the DOM.
 
         Attributes:
             sender (DataTable): The DataTable the row was highlighted in.
@@ -963,7 +965,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     class RowSelected(Message, bubble=True):
         """Emitted when a row is selected. This message is only emitted when the
-        `cursor_type` is set to `"row"`.
+        `cursor_type` is set to `"row"`. Can be handled using
+        `on_data_table_row_selected` in a subclass of `DataTable` or in a parent
+        widget in the DOM.
 
         Attributes:
             sender (DataTable): The DataTable the row was selected in.
@@ -980,7 +984,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     class ColumnHighlighted(Message, bubble=True):
         """Emitted when a column is highlighted. This message is only emitted when the
-        `cursor_type` is set to `"column"`.
+        `cursor_type` is set to `"column"`. Can be handled using
+        `on_data_table_column_highlighted` in a subclass of `DataTable` or in a parent
+        widget in the DOM.
 
         Attributes:
             sender (DataTable): The DataTable the column was highlighted in.
@@ -997,7 +1003,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     class ColumnSelected(Message, bubble=True):
         """Emitted when a column is selected. This message is only emitted when the
-        `cursor_type` is set to `"column"`.
+        `cursor_type` is set to `"column"`. Can be handled using
+        `on_data_table_column_selected` in a subclass of `DataTable` or in a parent
+        widget in the DOM.
 
         Attributes:
             sender (DataTable): The DataTable the column was selected in.
