@@ -1,15 +1,18 @@
 from rich.panel import Panel
 
+from rich.text import Text
+
 from textual.app import App, ComposeResult
+from textual.reactive import var, Reactive
 from textual import events
 from textual.containers import Horizontal
 from textual.widgets import Button, Header, TextLog
 
 
 INSTRUCTIONS = """\
-Press some keys!    
+[u]Press some keys![/]
 
-Because we want to display all the keys, ctrl+C won't quit this example. Use the Quit button below to exit the app.\
+To quit the app press [b]ctrl+c[/b] [i]twice[i] or press the Quit button below.\
 """
 
 
@@ -32,6 +35,8 @@ class KeysApp(App, inherit_bindings=False):
     }
     """
 
+    last_key: Reactive[str | None] = var(None)
+
     def compose(self) -> ComposeResult:
         yield Header()
         yield Horizontal(
@@ -42,10 +47,13 @@ class KeysApp(App, inherit_bindings=False):
         yield KeyLog()
 
     def on_ready(self) -> None:
-        self.query_one(KeyLog).write(Panel(INSTRUCTIONS), expand=True)
+        self.query_one(KeyLog).write(Panel(Text.from_markup(INSTRUCTIONS)), expand=True)
 
     def on_key(self, event: events.Key) -> None:
         self.query_one(KeyLog).write(event)
+        if event.key == "ctrl+c" and self.last_key == "ctrl+c":
+            self.exit()
+        self.last_key = event.key
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "quit":
