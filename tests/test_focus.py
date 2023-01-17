@@ -152,22 +152,22 @@ def test_focus_next_and_previous_with_type_selector_without_self():
     screen = app.screen
 
     from textual.containers import Horizontal, Vertical
-    from textual.widgets import Input, Label, Static
+    from textual.widgets import Button, Checkbox, Input
 
     screen._add_children(
         Vertical(
             Horizontal(
                 Input(id="w3"),
-                Label(id="w4"),
+                Checkbox(id="w4"),
                 Input(id="w5"),
-                Static(id="w6"),
-                Label(id="w7"),
+                Button(id="w6"),
+                Checkbox(id="w7"),
                 id="w2",
             ),
             Horizontal(
-                Static(id="w9"),
-                Label(id="w10"),
-                Static(id="w11"),
+                Button(id="w9"),
+                Checkbox(id="w10"),
+                Button(id="w11"),
                 Input(id="w12"),
                 Input(id="w13"),
                 id="w8",
@@ -179,13 +179,13 @@ def test_focus_next_and_previous_with_type_selector_without_self():
     screen.set_focus(screen.query_one("#w3"))
     assert screen.focused.id == "w3"
 
-    assert screen.focus_next(Static).id == "w6"
-    assert screen.focus_next(Label).id == "w7"
+    assert screen.focus_next(Button).id == "w6"
+    assert screen.focus_next(Checkbox).id == "w7"
     assert screen.focus_next(Input).id == "w12"
 
-    assert screen.focus_previous(Static).id == "w11"
-    assert screen.focus_previous(Label).id == "w10"
-    assert screen.focus_previous(Static).id == "w9"
+    assert screen.focus_previous(Button).id == "w11"
+    assert screen.focus_previous(Checkbox).id == "w10"
+    assert screen.focus_previous(Button).id == "w9"
     assert screen.focus_previous(Input).id == "w5"
 
 
