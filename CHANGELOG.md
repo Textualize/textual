@@ -14,8 +14,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added read-only public access to the children of a `TreeNode` via `TreeNode.children` https://github.com/Textualize/textual/issues/1398
 - Added `Tree.get_node_by_id` to allow getting a node by its ID https://github.com/Textualize/textual/pull/1535
 - Added a `Tree.NodeHighlighted` message, giving a `on_tree_node_highlighted` event handler https://github.com/Textualize/textual/issues/1400
-- Added a `inherit_component_classes` subclassing parameter to control whether or not component classes are inherited from base classes https://github.com/Textualize/textual/issues/1399
+- Added a `inherit_component_classes` subclassing parameter to control whether component classes are inherited from base classes https://github.com/Textualize/textual/issues/1399
 - Added `diagnose` as a `textual` command https://github.com/Textualize/textual/issues/1542
+- Added `row` and `column` cursors to `DataTable` https://github.com/Textualize/textual/pull/1547
 
 ### Changed
 
@@ -33,6 +34,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - The styles `scrollbar-background-active` and `scrollbar-color-hover` are no longer ignored https://github.com/Textualize/textual/pull/1480
 - The widget `Placeholder` can now have its width set to `auto` https://github.com/Textualize/textual/pull/1508
 - Behavior of widget `Input` when rendering after programmatic value change and related scenarios https://github.com/Textualize/textual/issues/1477 https://github.com/Textualize/textual/issues/1443
+- `DataTable.show_cursor` now correctly allows cursor toggling https://github.com/Textualize/textual/pull/1547
+- Fixed cursor not being visible on `DataTable` mount when `fixed_columns` were used https://github.com/Textualize/textual/pull/1547
 
 ## [0.9.1] - 2022-12-30
 
