@@ -901,6 +901,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         It's also emitted when the cell cursor is re-enabled (by setting `show_cursor=True`),
         and when the cursor type is changed to `"cell"`.
 
+        Handler:
+            on_data_table_cell_highlighted
+
         Attributes:
             sender (DataTable): The DataTable the cell was highlighted in.
             value (CellType): The value in the highlighted cell.
@@ -943,7 +946,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     class RowHighlighted(Message, bubble=True):
         """Emitted when a row is highlighted. This message is only emitted when the
-        cursor_type is set to `"row"`.
+        `cursor_type` is set to `"row"`.
 
         Attributes:
             sender (DataTable): The DataTable the row was highlighted in.
@@ -960,7 +963,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     class RowSelected(Message, bubble=True):
         """Emitted when a row is selected. This message is only emitted when the
-        cursor_type is set to `"row"`.
+        `cursor_type` is set to `"row"`.
 
         Attributes:
             sender (DataTable): The DataTable the row was selected in.
@@ -977,7 +980,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     class ColumnHighlighted(Message, bubble=True):
         """Emitted when a column is highlighted. This message is only emitted when the
-        cursor_type is set to `"column"`.
+        `cursor_type` is set to `"column"`.
 
         Attributes:
             sender (DataTable): The DataTable the column was highlighted in.
@@ -994,7 +997,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     class ColumnSelected(Message, bubble=True):
         """Emitted when a column is selected. This message is only emitted when the
-        cursor_type is set to `"column"`.
+        `cursor_type` is set to `"column"`.
 
         Attributes:
             sender (DataTable): The DataTable the column was selected in.
