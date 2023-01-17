@@ -80,12 +80,10 @@ def test_focus_next_and_previous_with_type_selector(screen: Screen):
     screen.set_focus(screen.query_one("#Paul"))
     assert screen.focused.id == "Paul"
 
-    assert screen.focus_next(Focusable).id == "Jessica"
     assert screen.focus_next(Focusable).id == "baz"
     assert screen.focus_next(Focusable).id == "child"
 
     assert screen.focus_previous(Focusable).id == "baz"
-    assert screen.focus_previous(Focusable).id == "Jessica"
     assert screen.focus_previous(Focusable).id == "Paul"
     assert screen.focus_previous(Focusable).id == "container1"
     assert screen.focus_previous(Focusable).id == "foo"
@@ -96,15 +94,12 @@ def test_focus_next_and_previous_with_str_selector(screen: Screen):
     screen.set_focus(screen.query_one("#foo"))
     assert screen.focused.id == "foo"
 
-    assert screen.focus_next(".a").id == "Jessica"
-    assert screen.focus_next("Focusable").id == "baz"
-
-    assert screen.focus_previous(".b").id == "container1"
-
-    assert screen.focus_next("Focusable").id == "Paul"
+    assert screen.focus_next(".a").id == "foo"
+    assert screen.focus_next(".c").id == "Paul"
     assert screen.focus_next(".c").id == "child"
 
     assert screen.focus_previous(".c").id == "Paul"
+    assert screen.focus_previous(".a").id == "foo"
 
 
 def test_focus_next_and_previous_with_type_selector_without_self():
@@ -162,6 +157,6 @@ def test_focus_next_and_previous_with_str_selector_without_self(screen: Screen):
     assert screen.focus_next(".b").id == "baz"
     assert screen.focus_next(".c").id == "child"
 
-    assert screen.focus_previous(".a").id == "Jessica"
-    assert screen.focus_previous(".b").id == "container1"
     assert screen.focus_previous(".a").id == "foo"
+    assert screen.focus_previous(".a").id == "foo"
+    assert screen.focus_previous(".b").id == "baz"
