@@ -240,43 +240,14 @@ class Screen(Widget):
 
         return self.focused
 
-    def __move_focus(self, direction: int = 0) -> Widget | None:
-        """Move the focus in the given direction.
-
-        Args:
-            direction (int, optional): 1 to move forward, -1 to move backward, or
-                0 to keep the current focus.
-
-        Returns:
-            Widget | None: Newly focused widget, or None for no focus.
-        """
-        focusable_widgets = self.focus_chain
-
-        if not focusable_widgets:
-            # Nothing focusable, so nothing to do
-            return self.focused
-        if self.focused is None:
-            # Nothing currently focused, so focus the first one
-            self.set_focus(focusable_widgets[0])
-        else:
-            try:
-                # Find the index of the currently focused widget
-                current_index = focusable_widgets.index(self.focused)
-            except ValueError:
-                # Focused widget was removed in the interim, start again
-                self.set_focus(focusable_widgets[0])
-            else:
-                # Only move the focus if we are currently showing the focus
-                if direction:
-                    current_index = (current_index + direction) % len(focusable_widgets)
-                    self.set_focus(focusable_widgets[current_index])
-
-        return self.focused
-
     def focus_next(
         self, selector: str | type[DOMNode.ExpectType] = "*"
     ) -> Widget | None:
         """Focus the next widget.
+
+        Args:
+            selector (str | type[DOMNode.ExpectType], optional): CSS selector to filter
+                what nodes can be focused.
 
         Returns:
             Widget | None: Newly focused widget, or None for no focus.
@@ -287,6 +258,10 @@ class Screen(Widget):
         self, selector: str | type[DOMNode.ExpectType] = "*"
     ) -> Widget | None:
         """Focus the previous widget.
+
+        Args:
+            selector (str | type[DOMNode.ExpectType], optional): CSS selector to filter
+                what nodes can be focused.
 
         Returns:
             Widget | None: Newly focused widget, or None for no focus.
