@@ -1,6 +1,6 @@
 # DataTable
 
-A data table widget.
+A table widget optimized for displaying a lot of data.
 
 - [x] Focusable
 - [ ] Container
@@ -19,7 +19,6 @@ The example below populates a table with CSV data.
     ```python
     --8<-- "docs/examples/widgets/data_table.py"
     ```
-
 
 ## Reactive Attributes
 
