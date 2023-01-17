@@ -35,7 +35,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - The widget `Placeholder` can now have its width set to `auto` https://github.com/Textualize/textual/pull/1508
 - Behavior of widget `Input` when rendering after programmatic value change and related scenarios https://github.com/Textualize/textual/issues/1477 https://github.com/Textualize/textual/issues/1443
 - Fixed TextLog wrapping issue https://github.com/Textualize/textual/issues/1554
-- Fixed issue with TextLog not writing anything before layout
+- Fixed issue with TextLog not writing anything before layout https://github.com/Textualize/textual/issues/1498
 
 ## [0.9.1] - 2022-12-30
 
