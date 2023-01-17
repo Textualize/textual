@@ -912,7 +912,7 @@ class StyleFlagsProperty:
                     )
             try:
                 style = Style.parse(style_flags)
-            except rich.errors.StyleSyntaxError as exc:
+            except rich.errors.StyleSyntaxError as error:
                 if "none" in words and len(words) > 1:
                     raise StyleValueError(
                         "cannot mix 'none' with other style flags",
@@ -920,7 +920,7 @@ class StyleFlagsProperty:
                             self.name, " ".join(words), context="inline"
                         ),
                     ) from None
-                raise exc from None
+                raise error from None
             if obj.set_rule(self.name, style):
                 obj.refresh()
 
