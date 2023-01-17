@@ -57,12 +57,14 @@ class Strip:
         return cls([Segment(" " * cell_length, style)], cell_length)
 
     @classmethod
-    def from_lines(cls, lines: list[list[Segment]], cell_length: int) -> list[Strip]:
+    def from_lines(
+        cls, lines: list[list[Segment]], cell_length: int | None = None
+    ) -> list[Strip]:
         """Convert lines (lists of segments) to a list of Strips.
 
         Args:
             lines (list[list[Segment]]): List of lines, where a line is a list of segments.
-            cell_length (int): Cell length of lines (must be same).
+            cell_length (int | None): Cell length of lines (must be same). Defaults to None.
 
         Returns:
             list[Strip]: List of strips.
