@@ -291,15 +291,18 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 self._highlight_column(new_coordinate.column)
 
     def _highlight_cell(self, coordinate: Coordinate) -> None:
+        """Apply highlighting to the cell at the coordinate, and emit event."""
         self.refresh_cell(*coordinate)
         cell_value = self.get_cell_value(coordinate)
         self.emit_no_wait(DataTable.CellHighlighted(self, cell_value, coordinate))
 
     def _highlight_row(self, row_index: int) -> None:
+        """Apply highlighting to the row at the given index, and emit event."""
         self.refresh_row(row_index)
         self.emit_no_wait(DataTable.RowHighlighted(self, row_index))
 
     def _highlight_column(self, column_index: int) -> None:
+        """Apply highlighting to the column at the given index, and emit event."""
         self.refresh_column(column_index)
         self.emit_no_wait(DataTable.ColumnHighlighted(self, column_index))
 
