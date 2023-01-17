@@ -2395,7 +2395,7 @@ class Widget(DOMNode):
         except TypeError as error:
             raise TypeError(
                 f"{self!r} compose() returned an invalid response; {error}"
-            ) from None
+            ) from error
         except Exception:
             self.app.panic(Traceback())
         else:
