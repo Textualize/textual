@@ -7,7 +7,7 @@ from rich.style import Style
 
 from ._types import MessageTarget
 from .geometry import Offset, Size
-from .keys import _get_key_aliases
+from .keys import _get_key_aliases, _get_key_display
 from .message import Message
 
 MouseEventT = TypeVar("MouseEventT", bound="MouseEvent")
