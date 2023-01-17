@@ -186,6 +186,9 @@ class Screen(Widget):
     ) -> Widget | None:
         """Move the focus in the given direction.
 
+        If no widget is currently focused, this will focus the first focusable widget.
+        If no focusable widget matches the given CSS selector, focus is set to `None`.
+
         Args:
             direction (int, optional): 1 to move forward, -1 to move backward, or
                 0 to keep the current focus.
@@ -243,28 +246,38 @@ class Screen(Widget):
     def focus_next(
         self, selector: str | type[DOMNode.ExpectType] = "*"
     ) -> Widget | None:
-        """Focus the next widget.
+        """Focus the next widget, optionally filtered by a CSS selector.
+
+        If no widget is currently focused, this will focus the first focusable widget.
+        If no focusable widget matches the given CSS selector, focus is set to `None`.
 
         Args:
             selector (str | type[DOMNode.ExpectType], optional): CSS selector to filter
                 what nodes can be focused.
 
         Returns:
-            Widget | None: Newly focused widget, or None for no focus.
+            Widget | None: Newly focused widget, or None for no focus. If the return
+                is not `None`, then it is guaranteed that the widget returned matches
+                the CSS selectors given in the argument.
         """
         return self._move_focus(1, selector)
 
     def focus_previous(
         self, selector: str | type[DOMNode.ExpectType] = "*"
     ) -> Widget | None:
-        """Focus the previous widget.
+        """Focus the previous widget, optionally filtered by a CSS selector.
+
+        If no widget is currently focused, this will focus the first focusable widget.
+        If no focusable widget matches the given CSS selector, focus is set to `None`.
 
         Args:
             selector (str | type[DOMNode.ExpectType], optional): CSS selector to filter
                 what nodes can be focused.
 
         Returns:
-            Widget | None: Newly focused widget, or None for no focus.
+            Widget | None: Newly focused widget, or None for no focus. If the return
+                is not `None`, then it is guaranteed that the widget returned matches
+                the CSS selectors given in the argument.
         """
         return self._move_focus(-1, selector)
 
