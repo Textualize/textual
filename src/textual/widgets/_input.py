@@ -113,6 +113,17 @@ class Input(Widget, can_focus=True):
         id: str | None = None,
         classes: str | None = None,
     ) -> None:
+        """Initialise the `Input` widget.
+
+        Args:
+            value (str | None, optional): An optional default value for the input.
+            placeholder (str, optional): Optional placeholder text for the input.
+            highlighter (Highlighter | None, optional): An optional highlighter for the input.
+            password (bool, optional): Flag to say if the field should obfuscate its content. Default is `False`.
+            name (str | None, optional): Optional name for the input widget.
+            id (str | None): Optional ID for the widget.
+            classes (str | None): Optional initial classes for the widget.
+        """
         super().__init__(name=name, id=id, classes=classes)
         if value is not None:
             self.value = value
@@ -127,7 +138,7 @@ class Input(Widget, can_focus=True):
 
     @property
     def _cursor_offset(self) -> int:
-        """Get the cell offset of the cursor."""
+        """The cell offset of the cursor."""
         offset = self._position_to_cell(self.cursor_position)
         if self._cursor_at_end:
             offset += 1
@@ -135,7 +146,7 @@ class Input(Widget, can_focus=True):
 
     @property
     def _cursor_at_end(self) -> bool:
-        """Check if the cursor is at the end"""
+        """Flag to indicate if the cursor is at the end"""
         return self.cursor_position >= len(self.value)
 
     def validate_cursor_position(self, cursor_position: int) -> int:
@@ -170,7 +181,7 @@ class Input(Widget, can_focus=True):
 
     @property
     def cursor_width(self) -> int:
-        """Get the width of the input (with extra space for cursor at the end)."""
+        """The width of the input (with extra space for cursor at the end)."""
         if self.placeholder and not self.value:
             return cell_len(self.placeholder)
         return self._position_to_cell(len(self.value)) + 1

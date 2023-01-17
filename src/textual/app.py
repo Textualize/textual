@@ -240,8 +240,20 @@ class App(Generic[ReturnType], DOMNode):
     SCREENS: dict[str, Screen | Callable[[], Screen]] = {}
     _BASE_PATH: str | None = None
     CSS_PATH: CSSPathType = None
+
     TITLE: str | None = None
+    """str | None: The default title for the application.
+
+    If set to a string, this sets the default title for the application. See
+    also the `title` attribute.
+    """
+
     SUB_TITLE: str | None = None
+    """str | None: The default sub-title for the application.
+
+    If set to a string, this sets the default sub-title for the application. See
+    also the `sub_title` attribute.
+    """
 
     BINDINGS = [
         Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
@@ -303,10 +315,24 @@ class App(Generic[ReturnType], DOMNode):
         self._animator = Animator(self)
         self._animate = self._animator.bind(self)
         self.mouse_position = Offset(0, 0)
+
         self.title = (
             self.TITLE if self.TITLE is not None else f"{self.__class__.__name__}"
         )
+        """The title for the application.
+
+        The initial value in a running application will be that set in `TITLE`
+        (if one is set). Assign new values to this instance attribute to change
+        the title.
+        """
+
         self.sub_title = self.SUB_TITLE if self.SUB_TITLE is not None else ""
+        """The sub-title for the application.
+
+        The initial value in a running application will be that set in `SUB_TITLE`
+        (if one is set). Assign new values to this instance attribute to change
+        the sub-title.
+        """
 
         self._logger = Logger(self._log)
 

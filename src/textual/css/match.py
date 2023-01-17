@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 
 def match(selector_sets: Iterable[SelectorSet], node: DOMNode) -> bool:
-    """Check if a given selector matches any of the given selector sets.
+    """Check if a given node matches any of the given selector sets.
 
     Args:
         selector_sets (Iterable[SelectorSet]): Iterable of selector sets.

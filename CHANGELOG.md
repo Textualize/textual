@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added Widget._refresh_scroll to avoid expensive layout when scrolling https://github.com/Textualize/textual/pull/1524
 - `events.Paste` now bubbles https://github.com/Textualize/textual/issues/1434
 - Clock color in the `Header` widget now matches the header color https://github.com/Textualize/textual/issues/1459
+- Programmatic calls to scroll now optionally scroll even if overflow styling says otherwise (introduces a new `force` parameter to all the `scroll_*` methods) https://github.com/Textualize/textual/issues/1201
 - `COMPONENT_CLASSES` are now inherited from base classes https://github.com/Textualize/textual/issues/1399
 - Watch methods may now take no parameters
 - Added `compute` parameter to reactive
@@ -36,6 +37,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Behavior of widget `Input` when rendering after programmatic value change and related scenarios https://github.com/Textualize/textual/issues/1477 https://github.com/Textualize/textual/issues/1443
 - `DataTable.show_cursor` now correctly allows cursor toggling https://github.com/Textualize/textual/pull/1547
 - Fixed cursor not being visible on `DataTable` mount when `fixed_columns` were used https://github.com/Textualize/textual/pull/1547
+- Fixed TextLog wrapping issue https://github.com/Textualize/textual/issues/1554
+- Fixed issue with TextLog not writing anything before layout https://github.com/Textualize/textual/issues/1498
 
 ## [0.9.1] - 2022-12-30
 
