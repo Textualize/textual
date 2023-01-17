@@ -1,7 +1,7 @@
 import pytest
 
 from textual.app import App
-from textual.keys import _character_to_key
+from textual.keys import _character_to_key, _get_key_display
 
 
 @pytest.mark.parametrize(
@@ -48,3 +48,7 @@ async def test_character_bindings():
         await pilot.press("x")
         await pilot.pause()
         assert counter == 3
+
+
+def test_get_key_display():
+    assert _get_key_display("minus") == "-"
