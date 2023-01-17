@@ -251,6 +251,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def watch_show_cursor(self, show_cursor: bool) -> None:
         self._clear_caches()
         if show_cursor and self.cursor_type != "none":
+            # When we re-enable the cursor, apply highlighting and
+            # emit the appropriate [Row|Column|Cell]Highlighted event.
             self._scroll_cursor_into_view(animate=False)
             if self.cursor_type == "cell":
                 self._highlight_cell(self.cursor_cell)
@@ -276,6 +278,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self, old_coordinate: Coordinate, new_coordinate: Coordinate
     ) -> None:
         if old_coordinate != new_coordinate:
+            # Refresh the old and the new cell, and emit the appropriate
+            # message to tell users of the newly highlighted row/cell/column.
             if self.cursor_type == "cell":
                 self.refresh_cell(*old_coordinate)
                 self._highlight_cell(new_coordinate)
@@ -308,16 +312,27 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         column = clamp(column, self.fixed_columns, len(self.columns) - 1)
         return Coordinate(row, column)
 
-    def watch_cursor_type(self, old: str, value: str) -> None:
+    def watch_cursor_type(self, old: str, new: str) -> None:
         self._set_hover_cursor(False)
         row_index, column_index = self.cursor_cell
-        cursor_types = (old, value)
-        if "cell" in cursor_types:
+
+        # Apply the highlighting to the newly relevant cells
+        if new == "cell":
+            self._highlight_cell(self.cursor_cell)
+        elif new == "row":
+            self._highlight_row(row_index)
+        elif new == "column":
+            self._highlight_column(column_index)
+
+        # Refresh cells that were previously impacted by the cursor
+        # but may no longer be.
+        if old == "cell":
             self.refresh_cell(row_index, column_index)
-        elif "row" in cursor_types:
+        elif old == "row":
             self.refresh_row(row_index)
-        elif "column" in cursor_types:
+        elif old == "column":
             self.refresh_column(column_index)
+
         self._scroll_cursor_into_view()
 
     def _update_dimensions(self, new_rows: Iterable[int]) -> None:
@@ -338,6 +353,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         )
 
     def _get_cell_region(self, row_index: int, column_index: int) -> Region:
+        """Get the region of the cell at the given coordinate (row_index, column_index)"""
         if row_index not in self.rows:
             return Region(0, 0, 0, 0)
         row = self.rows[row_index]
@@ -398,7 +414,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         Args:
             *labels: Column headers.
-
         """
         for label in labels:
             self.add_column(label, width=None)
@@ -507,7 +522,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._refresh_region(region)
 
     def _refresh_region(self, region: Region) -> None:
-        """Refresh a region of the DataTable, if its visible within
+        """Refresh a region of the DataTable, if it's visible within
         the window. This method will translate the region to account
         for scrolling."""
         if not self.window_region.overlaps(region):
@@ -555,6 +570,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             column_index (int): Index of the column.
             style (Style): Style to apply.
             width (int): Width of the cell.
+            cursor (bool): Is this cell affected by cursor highlighting?
+            hover (bool): Is this cell affected by hover cursor highlighting?
 
         Returns:
             Lines: A list of segments per line.
@@ -568,6 +585,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if hover and show_cursor and self._show_hover_cursor:
             style += self.get_component_styles("datatable--highlight").rich_style
             if is_fixed_style:
+                # Apply subtle variation in style for the fixed (blue background by default)
+                # rows and columns affected by the cursor, to ensure we can still differentiate
+                # between the labels and the data.
                 style += self.get_component_styles(
                     "datatable--highlight-fixed"
                 ).rich_style
@@ -606,6 +626,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             row_index (int): Index of the row.
             line_no (int): Line number (on screen, 0 is top)
             base_style (Style): Base style of row.
+            cursor_location (Coordinate): The location of the cursor in the DataTable.
+            hover_location (Coordinate): The location of the hover cursor in the DataTable.
 
         Returns:
             tuple[Lines, Lines]: Lines for fixed cells, and Lines for scrollable cells.
@@ -816,7 +838,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         self.scroll_to_region(region, animate=animate, spacing=fixed_offset)
 
-    def _set_hover_cursor(self, active: bool):
+    def _set_hover_cursor(self, active: bool) -> None:
+        """Set whether the hover cursor (the faint cursor you see when you
+        hover the mouse cursor over a cell) is visible or not. Typically,
+        when you interact with the keyboard, you want to switch the hover
+        cursor off.
+
+        Args:
+            active (bool): Display the hover cursor.
+        """
         self._show_hover_cursor = active
         cursor_type = self.cursor_type
         if cursor_type == "column":
@@ -829,6 +859,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def on_click(self, event: events.Click) -> None:
         self._set_hover_cursor(True)
         if self.show_cursor and self.cursor_type != "none":
+            # Only emit selection events if there is a visible row/col/cell cursor.
             self._emit_selected_message()
             meta = self.get_style_at(event.x, event.y).meta
             if meta:
@@ -836,16 +867,18 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 self._scroll_cursor_into_view(animate=True)
                 event.stop()
 
-    def action_cursor_up(self):
+    def action_cursor_up(self) -> None:
         self._set_hover_cursor(False)
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
             self.cursor_cell = self.cursor_cell.up()
             self._scroll_cursor_into_view()
         else:
+            # If the cursor doesn't move up (e.g. column cursor can't go up),
+            # then ensure that we instead scroll the DataTable.
             super().action_scroll_up()
 
-    def action_cursor_down(self):
+    def action_cursor_down(self) -> None:
         self._set_hover_cursor(False)
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
@@ -854,7 +887,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         else:
             super().action_scroll_down()
 
-    def action_cursor_right(self):
+    def action_cursor_right(self) -> None:
         self._set_hover_cursor(False)
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "column"):
@@ -863,7 +896,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         else:
             super().action_scroll_right()
 
-    def action_cursor_left(self):
+    def action_cursor_left(self) -> None:
         self._set_hover_cursor(False)
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "column"):
@@ -872,12 +905,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         else:
             super().action_scroll_left()
 
-    def action_select_cursor(self):
+    def action_select_cursor(self) -> None:
         self._set_hover_cursor(False)
         if self.show_cursor and self.cursor_type != "none":
             self._emit_selected_message()
 
     def _emit_selected_message(self):
+        """Emit the appropriate message for a selection based on the `cursor_type`."""
         cursor_cell = self.cursor_cell
         cursor_type = self.cursor_type
         if cursor_type == "cell":
