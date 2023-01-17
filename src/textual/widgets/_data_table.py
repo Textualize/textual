@@ -896,8 +896,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self.emit_no_wait(DataTable.ColumnSelected(self, column))
 
     class CellHighlighted(Message, bubble=True):
-        """Emitted when the cursor moves to a new cell. This message is only emitted when the
-        cursor_type is set to `"cell"`.
+        """Emitted when the cursor moves to highlight a new cell.
+        It's only relevant when the `cursor_type` is `"cell"`.
+        It's also emitted when the cell cursor is re-enabled (by setting `show_cursor=True`),
+        and when the cursor type is changed to `"cell"`.
 
         Attributes:
             sender (DataTable): The DataTable the cell was highlighted in.
@@ -918,8 +920,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             yield "coordinate", self.coordinate
 
     class CellSelected(Message, bubble=True):
-        """Emitted when a cell is selected. This message is only emitted when the
-        cursor_type is set to `"cell"`.
+        """Emitted by the `DataTable` widget when a cell is selected.
+        It's only relevant when the `cursor_type` is `"cell"`.
 
         Attributes:
             sender (DataTable): The DataTable the cell was selected in.
