@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from itertools import chain, zip_longest
-from typing import ClassVar, Generic, Iterable, NamedTuple, TypeVar, cast
+from typing import ClassVar, Generic, Iterable, TypeVar, cast
 
 import rich.repr
 from rich.console import RenderableType
@@ -14,6 +14,7 @@ from rich.text import Text, TextType
 
 from .. import events, messages
 from .._cache import LRUCache
+from ..coordinate import Coordinate
 from .._segment_tools import line_crop
 from .._types import SegmentLines
 from ..binding import Binding
@@ -76,49 +77,6 @@ class Row:
     height: int
     y: int
     cell_renderables: list[RenderableType] = field(default_factory=list)
-
-
-class Coord(NamedTuple):
-    """An object to represent the coordinate of a cell within the data table."""
-
-    row: int
-    column: int
-
-    def left(self) -> Coord:
-        """Get coordinate to the left.
-
-        Returns:
-            Coord: The coordinate.
-        """
-        row, column = self
-        return Coord(row, column - 1)
-
-    def right(self) -> Coord:
-        """Get coordinate to the right.
-
-        Returns:
-            Coord: The coordinate.
-        """
-        row, column = self
-        return Coord(row, column + 1)
-
-    def up(self) -> Coord:
-        """Get coordinate above.
-
-        Returns:
-            Coord: The coordinate.
-        """
-        row, column = self
-        return Coord(row - 1, column)
-
-    def down(self) -> Coord:
-        """Get coordinate below.
-
-        Returns:
-            Coord: The coordinate.
-        """
-        row, column = self
-        return Coord(row + 1, column)
 
 
 class DataTable(ScrollView, Generic[CellType], can_focus=True):
@@ -199,10 +157,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     show_cursor = Reactive(True)
     cursor_type = Reactive(CELL)
 
-    cursor_cell: Reactive[Coord] = Reactive(
-        Coord(0, 0), repaint=False, always_update=True
+    cursor_cell: Reactive[Coordinate] = Reactive(
+        Coordinate(0, 0), repaint=False, always_update=True
     )
-    hover_cell: Reactive[Coord] = Reactive(Coord(0, 0), repaint=False)
+    hover_cell: Reactive[Coordinate] = Reactive(Coordinate(0, 0), repaint=False)
 
     def __init__(
         self,
@@ -263,11 +221,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def cursor_column(self) -> int:
         return self.cursor_cell.column
 
-    def get_cell_value(self, coordinate: Coord) -> CellType:
+    def get_cell_value(self, coordinate: Coordinate) -> CellType:
         """Get the value from the cell at the given coordinate.
 
         Args:
-            coordinate (Coord): The coordinate to retrieve the value from.
+            coordinate (Coordinate): The coordinate to retrieve the value from.
 
         Returns:
             CellType: The value of the cell.
@@ -310,11 +268,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def watch_zebra_stripes(self, zebra_stripes: bool) -> None:
         self._clear_caches()
 
-    def watch_hover_cell(self, old: Coord, value: Coord) -> None:
+    def watch_hover_cell(self, old: Coordinate, value: Coordinate) -> None:
         self.refresh_cell(*old)
         self.refresh_cell(*value)
 
-    def watch_cursor_cell(self, old_coordinate: Coord, new_coordinate: Coord) -> None:
+    def watch_cursor_cell(
+        self, old_coordinate: Coordinate, new_coordinate: Coordinate
+    ) -> None:
         if old_coordinate != new_coordinate:
             if self.cursor_type == "cell":
                 self.refresh_cell(*old_coordinate)
@@ -326,7 +286,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 self.refresh_column(old_coordinate.column)
                 self._highlight_column(new_coordinate.column)
 
-    def _highlight_cell(self, coordinate: Coord) -> None:
+    def _highlight_cell(self, coordinate: Coordinate) -> None:
         self.refresh_cell(*coordinate)
         cell_value = self.get_cell_value(coordinate)
         self.emit_no_wait(DataTable.CellHighlighted(self, cell_value, coordinate))
@@ -339,14 +299,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.refresh_column(column_index)
         self.emit_no_wait(DataTable.ColumnHighlighted(self, column_index))
 
-    def validate_cursor_cell(self, value: Coord) -> Coord:
+    def validate_cursor_cell(self, value: Coordinate) -> Coordinate:
         return self._clamp_cursor_cell(value)
 
-    def _clamp_cursor_cell(self, cursor_cell: Coord) -> Coord:
+    def _clamp_cursor_cell(self, cursor_cell: Coordinate) -> Coordinate:
         row, column = cursor_cell
         row = clamp(row, 0, self.row_count - 1)
         column = clamp(column, self.fixed_columns, len(self.columns) - 1)
-        return Coord(row, column)
+        return Coordinate(row, column)
 
     def watch_cursor_type(self, old: str, value: str) -> None:
         self._set_hover_cursor(False)
@@ -637,8 +597,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         row_index: int,
         line_no: int,
         base_style: Style,
-        cursor_location: Coord,
-        hover_location: Coord,
+        cursor_location: Coordinate,
+        hover_location: Coordinate,
     ) -> tuple[SegmentLines, SegmentLines]:
         """Render a row in to lines for each cell.
 
@@ -669,8 +629,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         render_cell = self._render_cell
 
         def _should_highlight(
-            cursor_location: Coord,
-            cell_location: Coord,
+            cursor_location: Coordinate,
+            cell_location: Coordinate,
             cursor_type: CursorType,
         ) -> bool:
             """Determine whether we should highlight a cell given the location
@@ -694,7 +654,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             fixed_style += Style.from_meta({"fixed": True})
             fixed_row = []
             for column in self.columns[: self.fixed_columns]:
-                cell_location = Coord(row_index, column.index)
+                cell_location = Coordinate(row_index, column.index)
                 fixed_cell_lines = render_cell(
                     row_index,
                     column.index,
@@ -722,7 +682,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         scrollable_row = []
         for column in self.columns:
-            cell_location = Coord(row_index, column.index)
+            cell_location = Coordinate(row_index, column.index)
             cell_lines = render_cell(
                 row_index,
                 column.index,
@@ -827,7 +787,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         meta = event.style.meta
         if meta and self.show_cursor and self.cursor_type != "none":
             try:
-                self.hover_cell = Coord(meta["row"], meta["column"])
+                self.hover_cell = Coordinate(meta["row"], meta["column"])
             except KeyError:
                 pass
 
@@ -872,7 +832,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self._emit_selected_message()
             meta = self.get_style_at(event.x, event.y).meta
             if meta:
-                self.cursor_cell = Coord(meta["row"], meta["column"])
+                self.cursor_cell = Coordinate(meta["row"], meta["column"])
                 self._scroll_cursor_into_view(animate=True)
                 event.stop()
 
@@ -942,11 +902,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Attributes:
             sender (DataTable): The DataTable the cell was highlighted in.
             value (CellType): The value in the highlighted cell.
-            coordinate (Coord): The coordinate of the highlighted cell.
+            coordinate (Coordinate): The coordinate of the highlighted cell.
         """
 
         def __init__(
-            self, sender: DataTable, value: CellType, coordinate: Coord
+            self, sender: DataTable, value: CellType, coordinate: Coordinate
         ) -> None:
             self.value = value
             self.coordinate = coordinate
@@ -964,11 +924,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Attributes:
             sender (DataTable): The DataTable the cell was selected in.
             value (CellType): The value in the cell that was selected.
-            coordinate (Coord): The coordinate of the cell that was selected.
+            coordinate (Coordinate): The coordinate of the cell that was selected.
         """
 
         def __init__(
-            self, sender: DataTable, value: CellType, coordinate: Coord
+            self, sender: DataTable, value: CellType, coordinate: Coordinate
         ) -> None:
             self.value = value
             self.coordinate = coordinate
