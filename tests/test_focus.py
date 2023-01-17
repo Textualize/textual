@@ -75,6 +75,47 @@ def test_focus_next_and_previous(screen: Screen):
     assert screen.focus_previous().id == "foo"
 
 
+def test_focus_next_wrap_around(screen: Screen):
+    """Ensure focusing the next widget wraps around the focus chain."""
+    screen.set_focus(screen.query_one("#child"))
+    assert screen.focused.id == "child"
+
+    assert screen.focus_next().id == "foo"
+
+
+def test_focus_previous_wrap_around(screen: Screen):
+    """Ensure focusing the previous widget wraps around the focus chain."""
+    screen.set_focus(screen.query_one("#foo"))
+    assert screen.focused.id == "foo"
+
+    assert screen.focus_previous().id == "child"
+
+
+def test_wrap_around_selector(screen: Screen):
+    """Ensure moving focus in both directions wraps around the focus chain."""
+    screen.set_focus(screen.query_one("#foo"))
+    assert screen.focused.id == "foo"
+
+    assert screen.focus_previous("#Paul").id == "Paul"
+    assert screen.focus_next("#foo").id == "foo"
+
+
+def test_no_focus_empty_selector(screen: Screen):
+    """Ensure focus is cleared when selector matches nothing."""
+    assert screen.focus_next("#bananas") is None
+    assert screen.focus_previous("#bananas") is None
+
+    screen.set_focus(screen.query_one("#foo"))
+    assert screen.focused is not None
+    assert screen.focus_next("bananas") is None
+    assert screen.focused is None
+
+    screen.set_focus(screen.query_one("#foo"))
+    assert screen.focused is not None
+    assert screen.focus_previous("bananas") is None
+    assert screen.focused is None
+
+
 def test_focus_next_and_previous_with_type_selector(screen: Screen):
     """Move focus with a selector that matches the currently focused node."""
     screen.set_focus(screen.query_one("#Paul"))
