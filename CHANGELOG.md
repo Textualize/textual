@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added a `Tree.NodeHighlighted` message, giving a `on_tree_node_highlighted` event handler https://github.com/Textualize/textual/issues/1400
 - Added a `inherit_component_classes` subclassing parameter to control whether or not component classes are inherited from base classes https://github.com/Textualize/textual/issues/1399
 - Added `diagnose` as a `textual` command https://github.com/Textualize/textual/issues/1542
+- Added an optional parameter `selector` to the methods `Screen.focus_next` and `Screen.focus_previous` that enable using a CSS selector to narrow down which widgets can get focus https://github.com/Textualize/textual/issues/1196
 
 ### Changed
 
