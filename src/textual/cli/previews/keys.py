@@ -51,8 +51,12 @@ class KeysApp(App, inherit_bindings=False):
 
     def on_key(self, event: events.Key) -> None:
         self.query_one(KeyLog).write(event)
-        if event.key == "ctrl+c" and self.last_key == "ctrl+c":
-            self.exit()
+        if event.key == "ctrl+c":
+            if self.last_key == "ctrl+c":
+                self.exit()
+            else:
+                self.query_one(KeyLog).write("Press Ctrl+C again to quit")
+
         self.last_key = event.key
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
