@@ -1800,8 +1800,8 @@ class App(Generic[ReturnType], DOMNode):
         """Get the widget under the given coordinates.
 
         Args:
-            x: X Coord.
-            y: Y Coord.
+            x: X coordinate.
+            y: Y coordinate.
 
         Returns:
             The widget and the widget's screen region.
@@ -1952,7 +1952,7 @@ class App(Generic[ReturnType], DOMNode):
             )
         except SkipAction:
             # The action method raised this to explicitly not handle the action
-            log("<action> {action_name!r} skipped.")
+            log(f"<action> {action_name!r} skipped.")
         return False
 
     async def _broker_event(
