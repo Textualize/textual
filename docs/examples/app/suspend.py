@@ -16,7 +16,7 @@ class SuspendApp(App):
         )
         yield Footer()
 
-    def action_open_repl(self):
+    def action_open_repl(self) -> None:
         with self.suspend():
             subprocess.run(sys.executable)
 
