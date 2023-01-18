@@ -4651,6 +4651,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -4842,6 +4844,32 @@
     
   
     Containers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/coordinate/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Coordinate
   
 
     
@@ -7216,7 +7244,7 @@
 <h4 id="units">Units<a class="headerlink" href="#units" title="Permanent link">&para;</a></h4>
 <p>Textual offers a few different <em>units</em> which allow you to specify dimensions relative to the screen or container. Relative units can better make use of available space if the user resizes the terminal.</p>
 <ul>
-<li>Percentage units are given as a string containing a number followed by a percentage symbol, e.g. <code>"50%"</code>. Setting a dimension to a percentage unit will cause it to fit in that percentage of the available space. For instance, setting width to <code>"50%"</code> will cause the width of the widget to be half the available space.</li>
+<li>Percentage units are given as a number followed by a percent (<code>%</code>) symbol and will set a dimension to a proportion of the widget's <em>parent</em> size. For instance, setting width to <code>"50%"</code> will cause a widget to be half the width of its parent.</li>
 <li>View units are similar to percentage units, but explicitly reference a dimension. The <code>vw</code> unit sets a dimension to a percentage of the terminal <em>width</em>, and <code>vh</code> sets a dimension to a percentage of the terminal <em>height</em>.</li>
 <li>The <code>w</code> unit sets a dimension to a percentage of the available width (which may be smaller than the terminal size if the widget is within another widget).</li>
 <li>The <code>h</code> unit sets a dimension to a percentage of the available height.</li>
@@ -9231,7 +9259,7 @@ The second widget sets <code>box_sizing</code> to <code>"content-box"</code>.</p
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.tabs.sticky", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.f236eb64.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.tabs.sticky", "content.code.annotate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.f236eb64.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.b5a861c9.min.js"></script>

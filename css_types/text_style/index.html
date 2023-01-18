@@ -4509,6 +4509,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -4700,6 +4702,32 @@
     
   
     Containers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/coordinate/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Coordinate
   
 
     
@@ -5792,7 +5820,8 @@
 <p>Not to be confused with the <a href="../../styles/text_style/"><code>text-style</code></a> CSS rule that sets the style of text in a widget.</p>
 </div>
 <h2 id="syntax">Syntax<a class="headerlink" href="#syntax" title="Permanent link">&para;</a></h2>
-<p>A <a href="/css_types/text_style"><code>&lt;text-style&gt;</code></a> can be any <em>space-separated</em> combination of the following values:</p>
+<p>A <a href="/css_types/text_style"><code>&lt;text-style&gt;</code></a> can be the value <code>none</code> for plain text with no styling,
+or any <em>space-separated</em> combination of the following values:</p>
 <table>
 <thead>
 <tr>
@@ -5808,10 +5837,6 @@
 <tr>
 <td><code>italic</code></td>
 <td><em>Italic text.</em></td>
-</tr>
-<tr>
-<td><code>none</code></td>
-<td>Plain text with no styling.</td>
 </tr>
 <tr>
 <td><code>reverse</code></td>
@@ -5844,7 +5869,7 @@
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">widget</span><span class="o">.</span><span class="n">styles</span><span class="o">.</span><span class="n">text_style</span> <span class="o">=</span> <span class="s2">&quot;strike&quot;</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># You can also combine multiple values</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">widget</span><span class="o">.</span><span class="n">styles</span><span class="o">.</span><span class="n">text_style</span> <span class="o">=</span> <span class="s2">&quot;bold underline italic&quot;</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">widget</span><span class="o">.</span><span class="n">styles</span><span class="o">.</span><span class="n">text_style</span> <span class="o">=</span> <span class="s2">&quot;strike bold italic reverse</span>
 </code></pre></div>
 
 
@@ -5911,7 +5936,7 @@
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.tabs.sticky", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.f236eb64.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.tabs.sticky", "content.code.annotate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.f236eb64.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.b5a861c9.min.js"></script>

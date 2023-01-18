@@ -4411,6 +4411,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
@@ -4602,6 +4604,32 @@
     
   
     Containers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../coordinate/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Coordinate
   
 
     
@@ -5198,14 +5226,15 @@
   <a href="#textual.timer" class="md-nav__link">
     <span class="md-ellipsis">
       
-        textual.timer
+        timer
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
+    <nav class="md-nav" aria-label="timer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#textual.timer.Timer" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5280,6 +5309,11 @@
       
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -5755,14 +5789,15 @@
   <a href="#textual.timer" class="md-nav__link">
     <span class="md-ellipsis">
       
-        textual.timer
+        timer
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
+    <nav class="md-nav" aria-label="timer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#textual.timer.Timer" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5844,6 +5879,11 @@
     </nav>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
     </ul>
   
@@ -5870,7 +5910,13 @@
 <div class="doc doc-object doc-module">
 
 
-<a id="textual.timer"></a>
+
+<h2 id="textual.timer" class="doc doc-heading">
+          <code>timer</code>
+
+
+<a href="#textual.timer" class="headerlink" title="Permanent link">&para;</a></h2>
+
   <div class="doc doc-contents first">
   
       <p>Timer objects are created by <a class="autorefs autorefs-internal" href="../message_pump/#textual.message_pump.MessagePump.set_interval">set_interval</a> or
@@ -5891,11 +5937,11 @@
 
 
 
-<h2 id="textual.timer.Timer" class="doc doc-heading">
+<h3 id="textual.timer.Timer" class="doc doc-heading">
         <code>Timer</code>
 
 
-<a href="#textual.timer.Timer" class="headerlink" title="Permanent link">&para;</a></h2>
+<a href="#textual.timer.Timer" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
@@ -6015,10 +6061,10 @@
 
 
 
-<h3 id="textual.timer.Timer.pause" class="doc doc-heading">
+<h4 id="textual.timer.Timer.pause" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">pause</span><span class="p">()</span></code>
 
-<a href="#textual.timer.Timer.pause" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#textual.timer.Timer.pause" class="headerlink" title="Permanent link">&para;</a></h4>
 
 
   <div class="doc doc-contents ">
@@ -6034,10 +6080,10 @@
 
 
 
-<h3 id="textual.timer.Timer.reset" class="doc doc-heading">
+<h4 id="textual.timer.Timer.reset" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">reset</span><span class="p">()</span></code>
 
-<a href="#textual.timer.Timer.reset" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#textual.timer.Timer.reset" class="headerlink" title="Permanent link">&para;</a></h4>
 
 
   <div class="doc doc-contents ">
@@ -6052,10 +6098,10 @@
 
 
 
-<h3 id="textual.timer.Timer.resume" class="doc doc-heading">
+<h4 id="textual.timer.Timer.resume" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">resume</span><span class="p">()</span></code>
 
-<a href="#textual.timer.Timer.resume" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#textual.timer.Timer.resume" class="headerlink" title="Permanent link">&para;</a></h4>
 
 
   <div class="doc doc-contents ">
@@ -6070,10 +6116,10 @@
 
 
 
-<h3 id="textual.timer.Timer.start" class="doc doc-heading">
+<h4 id="textual.timer.Timer.start" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">start</span><span class="p">()</span></code>
 
-<a href="#textual.timer.Timer.start" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#textual.timer.Timer.start" class="headerlink" title="Permanent link">&para;</a></h4>
 
 
   <div class="doc doc-contents ">
@@ -6106,14 +6152,14 @@
 
 
 
-<h3 id="textual.timer.Timer.stop" class="doc doc-heading">
+<h4 id="textual.timer.Timer.stop" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">stop</span><span class="p">()</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
   </span>
 
-<a href="#textual.timer.Timer.stop" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#textual.timer.Timer.stop" class="headerlink" title="Permanent link">&para;</a></h4>
 
 
   <div class="doc doc-contents ">
@@ -6128,10 +6174,10 @@
 
 
 
-<h3 id="textual.timer.Timer.stop_no_wait" class="doc doc-heading">
+<h4 id="textual.timer.Timer.stop_no_wait" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">stop_no_wait</span><span class="p">()</span></code>
 
-<a href="#textual.timer.Timer.stop_no_wait" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#textual.timer.Timer.stop_no_wait" class="headerlink" title="Permanent link">&para;</a></h4>
 
 
   <div class="doc doc-contents ">
@@ -6223,7 +6269,7 @@
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.tabs.sticky", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.f236eb64.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.tabs.sticky", "content.code.annotate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.f236eb64.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.b5a861c9.min.js"></script>
