@@ -13,7 +13,7 @@ class Coordinate(NamedTuple):
         """Get the coordinate to the left.
 
         Returns:
-            Coordinate: The coordinate to the left.
+            The coordinate to the left.
         """
         row, column = self
         return Coordinate(row, column - 1)
@@ -22,7 +22,7 @@ class Coordinate(NamedTuple):
         """Get the coordinate to the right.
 
         Returns:
-            Coordinate: The coordinate to the right.
+            The coordinate to the right.
         """
         row, column = self
         return Coordinate(row, column + 1)
@@ -31,7 +31,7 @@ class Coordinate(NamedTuple):
         """Get the coordinate above.
 
         Returns:
-            Coordinate: The coordinate above.
+            The coordinate above.
         """
         row, column = self
         return Coordinate(row - 1, column)
@@ -40,7 +40,7 @@ class Coordinate(NamedTuple):
         """Get the coordinate below.
 
         Returns:
-            Coordinate: The coordinate below.
+            The coordinate below.
         """
         row, column = self
         return Coordinate(row + 1, column)

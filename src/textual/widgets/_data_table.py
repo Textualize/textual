@@ -225,10 +225,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Get the value from the cell at the given coordinate.
 
         Args:
-            coordinate (Coordinate): The coordinate to retrieve the value from.
+            coordinate: The coordinate to retrieve the value from.
 
         Returns:
-            CellType: The value of the cell.
+            The value of the cell.
         """
         row, column = coordinate
         return self.data[row][column]
@@ -504,7 +504,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Refresh the row at the given index.
 
         Args:
-            row_index (int): The index of the row to refresh.
+            row_index: The index of the row to refresh.
         """
         if row_index < 0 or row_index >= len(self.rows):
             return
@@ -516,7 +516,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Refresh the column at the given index.
 
         Args:
-            column_index (int): The index of the column to refresh.
+            column_index: The index of the column to refresh.
         """
         if column_index < 0 or column_index >= len(self.columns):
             return
@@ -848,7 +848,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         cursor off.
 
         Args:
-            active (bool): Display the hover cursor.
+            active: Display the hover cursor.
         """
         self._show_hover_cursor = active
         cursor_type = self.cursor_type
