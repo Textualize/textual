@@ -194,6 +194,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             tuple[int, int, Style, bool, bool], SegmentLines
         ]
         self._cell_render_cache = LRUCache(10000)
+
+        # Record cell coordinates which have been invalidated and cannot be trusted
+        # TODO: Clear when caches cleared
+        self._dirty_coordinates: set[Coordinate] = set()
+
         self._line_cache: LRUCache[tuple[int, int, int, int, int, int, Style], Strip]
         self._line_cache = LRUCache(1000)
 
@@ -243,6 +248,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         except KeyError:
             raise CellDoesntExist(f"No cell exists at {coordinate!r}")
         return cell_value
+
+    def update_cell(self, coordinate: Coordinate, value: CellType) -> None:
+        _ = self.get_cell_value(coordinate)  # Confirm cell is valid
+        row, column = coordinate
+        self.data[row][column] = value
+        self._dirty_coordinates.add(coordinate)
 
     def _clear_caches(self) -> None:
         self._row_render_cache.clear()
@@ -623,9 +634,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if hover and show_cursor and self._show_hover_cursor:
             style += self.get_component_styles("datatable--highlight").rich_style
             if is_fixed_style:
-                # Apply subtle variation in style for the fixed (blue background by default)
-                # rows and columns affected by the cursor, to ensure we can still differentiate
-                # between the labels and the data.
+                # Apply subtle variation in style for the fixed (blue background by
+                # default) rows and columns affected by the cursor, to ensure we can
+                # still differentiate between the labels and the data.
                 style += self.get_component_styles(
                     "datatable--highlight-fixed"
                 ).rich_style
@@ -636,7 +647,18 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 style += self.get_component_styles("datatable--cursor-fixed").rich_style
 
         cell_key = (row_index, column_index, style, cursor, hover)
-        if cell_key not in self._cell_render_cache:
+
+        if cell_key in self._cell_render_cache:
+            # TODO - See notes in Notion
+            # TODO: We've found the value in the cache, but do we trust this value?
+            #  If this cell has been invalidated due to an update, then we cannot trust it at all
+            coordinate = Coordinate(row_index, column_index)
+            if coordinate in self._dirty_coordinates:
+                # The cell at this coordinate has been modified. Cached values
+                # for it therefore cannot be trusted.
+                pass
+
+        else:
             style += Style.from_meta({"row": row_index, "column": column_index})
             height = (
                 self.header_height if is_header_row else self.rows[row_index].height
@@ -648,7 +670,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 style=style,
             )
             self._cell_render_cache[cell_key] = lines
-        return self._cell_render_cache[cell_key]
+            return_lines = lines
+
+        return return_lines
 
     def _render_row(
         self,
