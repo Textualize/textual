@@ -68,6 +68,7 @@ async def test_input_value_visible_if_mounted_later_and_focused():
     app = MyApp()
     async with app.run_test() as pilot:
         await pilot.press("a")
+        await pilot.pause()
         console = Console(width=5)
         with console.capture() as capture:
             console.print(app.query_one(Input).render())
