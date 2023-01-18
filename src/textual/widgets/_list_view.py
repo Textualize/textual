@@ -50,16 +50,11 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
             classes: The CSS classes of the widget.
         """
         super().__init__(*children, name=name, id=id, classes=classes)
-        self.index = initial_index
+        self._index = initial_index
 
     def on_mount(self) -> None:
         """Ensure the ListView is fully-settled after mounting."""
-        # If someone inherits from ListView, they might be populating it
-        # from Widget.compose rather than from passing the ListItems to the
-        # initialisation call. Given that watch_index does all the work,
-        # let's just tickle it again after the DOM has been spun up and all
-        # children of this widget will have been mounted.
-        self.index = self.index or 0
+        self.index = self._index
 
     @property
     def highlighted_child(self) -> ListItem | None:
