@@ -280,10 +280,10 @@ class StylesBase(ABC):
     grid_rows = ScalarListProperty()
     grid_columns = ScalarListProperty()
 
-    grid_size_columns = IntegerProperty(default=1, layout=True)
-    grid_size_rows = IntegerProperty(default=0, layout=True)
-    grid_gutter_horizontal = IntegerProperty(default=0, layout=True)
-    grid_gutter_vertical = IntegerProperty(default=0, layout=True)
+    grid_size_columns = IntegerProperty(default=1, layout=True, children=True)
+    grid_size_rows = IntegerProperty(default=0, layout=True, children=True)
+    grid_gutter_horizontal = IntegerProperty(default=0, layout=True, children=True)
+    grid_gutter_vertical = IntegerProperty(default=0, layout=True, children=True)
 
     row_span = IntegerProperty(default=1, layout=True)
     column_span = IntegerProperty(default=1, layout=True)

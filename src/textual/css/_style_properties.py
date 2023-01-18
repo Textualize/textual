@@ -60,9 +60,20 @@ PropertySetType = TypeVar("PropertySetType")
 
 
 class GenericProperty(Generic[PropertyGetType, PropertySetType]):
-    def __init__(self, default: PropertyGetType, layout: bool = False) -> None:
+    """Generic property to be inherited by other style properties.
+
+    Args:
+        default: The default value (or a factory thereof) of the property.
+        layout: Whether to refresh the node layout on value change.
+        children: Whether to refresh the node children on value change.
+    """
+
+    def __init__(
+        self, default: PropertyGetType, layout: bool = False, children: bool = False
+    ) -> None:
         self.default = default
         self.layout = layout
+        self.children = children
 
     def validate_value(self, value: object) -> PropertyGetType:
         """Validate the setter value.
@@ -88,11 +99,11 @@ class GenericProperty(Generic[PropertyGetType, PropertySetType]):
         _rich_traceback_omit = True
         if value is None:
             obj.clear_rule(self.name)
-            obj.refresh(layout=self.layout)
+            obj.refresh(layout=self.layout, children=self.children)
             return
         new_value = self.validate_value(value)
         if obj.set_rule(self.name, new_value):
-            obj.refresh(layout=self.layout)
+            obj.refresh(layout=self.layout, children=self.children)
 
 
 class IntegerProperty(GenericProperty[int, int]):
