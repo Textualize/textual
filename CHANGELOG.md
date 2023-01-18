@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Behavior of widget `Input` when rendering after programmatic value change and related scenarios https://github.com/Textualize/textual/issues/1477 https://github.com/Textualize/textual/issues/1443
 - Fixed TextLog wrapping issue https://github.com/Textualize/textual/issues/1554
 - Fixed issue with TextLog not writing anything before layout https://github.com/Textualize/textual/issues/1498
+- Fixed an exception when populating a child class of `ListView` purely from `compose` https://github.com/Textualize/textual/issues/1588
 
 ## [0.9.1] - 2022-12-30
 
