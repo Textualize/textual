@@ -16,6 +16,7 @@ LogCallable: TypeAlias = "Callable"
 
 
 def __getattr__(name: str) -> str:
+    """Lazily get the version from whatever API is available."""
     if name == "__version__":
         try:
             from importlib.metadata import version
