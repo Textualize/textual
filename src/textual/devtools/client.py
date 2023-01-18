@@ -33,10 +33,10 @@ class DevtoolsLog(NamedTuple):
     """A devtools log message.
 
     Attributes:
-        objects_or_string (tuple[Any, ...]): Corresponds to the data that will
+        objects_or_string: Corresponds to the data that will
             ultimately be passed to Console.print in order to generate the log
             Segments.
-        caller (inspect.FrameInfo): Information about where this log message was
+        caller: Information about where this log message was
             created. In other words, where did the user call `print` or `App.log`
             from. Used to display line number and file name in the devtools window.
     """
@@ -54,7 +54,7 @@ class DevtoolsConsole(Console):
         """Return the list of Segments that have be printed using this console
 
         Returns:
-            list[Segment]: The list of Segments that have been printed using this console
+            The list of Segments that have been printed using this console
         """
         with self._record_buffer_lock:
             segments = self._record_buffer[:]
@@ -94,8 +94,8 @@ class DevtoolsClient:
     ```
 
     Args:
-        host (str): The host the devtools server is running on, defaults to "127.0.0.1"
-        port (int): The port the devtools server is accessed via, defaults to 8081
+        host: The host the devtools server is running on, defaults to "127.0.0.1"
+        port: The port the devtools server is accessed via, defaults to 8081
     """
 
     def __init__(self, host: str = "127.0.0.1", port: int = DEVTOOLS_PORT) -> None:
@@ -197,7 +197,7 @@ class DevtoolsClient:
         """Checks connection to devtools server.
 
         Returns:
-            bool: True if this host is connected to the server. False otherwise.
+            True if this host is connected to the server. False otherwise.
         """
         if not self.session or not self.websocket:
             return False
@@ -212,7 +212,7 @@ class DevtoolsClient:
         """Queue a log to be sent to the devtools server for display.
 
         Args:
-            log (DevtoolsLog): The log to write to devtools
+            log: The log to write to devtools
         """
         if isinstance(log.objects_or_string, str):
             self.console.print(log.objects_or_string)
@@ -260,10 +260,10 @@ class DevtoolsClient:
         """Pickle a list of Segments
 
         Args:
-            segments (list[Segment]): A list of Segments to encode
+            segments: A list of Segments to encode
 
         Returns:
-            bytes: The Segment list pickled with the latest protocol.
+            The Segment list pickled with the latest protocol.
         """
         pickled = pickle.dumps(segments, protocol=4)
         return pickled

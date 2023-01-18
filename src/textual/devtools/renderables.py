@@ -51,10 +51,10 @@ class DevConsoleLog:
     """Renderable representing a single log message
 
     Args:
-        segments (Iterable[Segment]): The segments to display
-        path (str): The path of the file on the client that the log call was made from
-        line_number (int): The line number of the file on the client the log call was made from
-        unix_timestamp (int): Seconds since January 1st 1970
+        segments: The segments to display
+        path: The path of the file on the client that the log call was made from
+        line_number: The line number of the file on the client the log call was made from
+        unix_timestamp: Seconds since January 1st 1970
     """
 
     def __init__(
@@ -114,8 +114,8 @@ class DevConsoleNotice:
     """Renderable for messages written by the devtools console itself
 
     Args:
-        message (str): The message to display
-        level (DevtoolsMessageLevel): The message level ("info", "warning", or "error").
+        message: The message to display
+        level: The message level ("info", "warning", or "error").
             Determines colors used to render the message and the perceived importance.
     """
 

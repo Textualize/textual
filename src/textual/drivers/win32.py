@@ -124,11 +124,11 @@ def _set_console_mode(file: IO, mode: int) -> bool:
     """Set the console mode for a given file (stdout or stdin).
 
     Args:
-        file (IO): A file like object.
-        mode (int): New mode.
+        file: A file like object.
+        mode: New mode.
 
     Returns:
-        bool: True on success, otherwise False.
+        True on success, otherwise False.
     """
     windows_filehandle = msvcrt.get_osfhandle(file.fileno())
     success = KERNEL32.SetConsoleMode(windows_filehandle, mode)
@@ -139,10 +139,10 @@ def _get_console_mode(file: IO) -> int:
     """Get the console mode for a given file (stdout or stdin)
 
     Args:
-        file (IO): A file-like object.
+        file: A file-like object.
 
     Returns:
-        int: The current console mode.
+        The current console mode.
     """
     windows_filehandle = msvcrt.get_osfhandle(file.fileno())
     mode = wintypes.DWORD()
@@ -154,7 +154,7 @@ def enable_application_mode() -> Callable[[], None]:
     """Enable application mode.
 
     Returns:
-        Callable[[], None]: A callable that will restore terminal to previous state.
+        A callable that will restore terminal to previous state.
     """
 
     terminal_in = sys.stdin

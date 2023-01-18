@@ -222,6 +222,7 @@ theme:
     - navigation.indexes
     - navigation.tabs.sticky
     - content.code.annotate
+    - content.code.copy
   palette:
   - media: "(prefers-color-scheme: light)"
     scheme: default

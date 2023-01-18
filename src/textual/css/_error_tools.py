@@ -12,11 +12,11 @@ def friendly_list(
     "'foo', 'bar', or 'baz'"
 
     Args:
-        words (Iterable[str]): A list of words.
-        joiner (str, optional): The last joiner word. Defaults to "or".
+        words: A list of words.
+        joiner: The last joiner word. Defaults to "or".
 
     Returns:
-        str: List as prose.
+        List as prose.
     """
     words = [
         repr(word) for word in sorted(words, key=str.lower) if word or not omit_empty

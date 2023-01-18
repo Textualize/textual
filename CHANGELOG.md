@@ -31,7 +31,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `COMPONENT_CLASSES` are now inherited from base classes https://github.com/Textualize/textual/issues/1399
 - Watch methods may now take no parameters
 - Added `compute` parameter to reactive
-- A `TypeError` raised during `compose` now carries the full traceback.
+- A `TypeError` raised during `compose` now carries the full traceback
+- Removed base class `NodeMessage` from which all node-related `Tree` events inherited
 
 ### Fixed
 
@@ -43,6 +44,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `DataTable` cursors not resetting to origin on `clear()` https://github.com/Textualize/textual/pull/1601
 - Fixed TextLog wrapping issue https://github.com/Textualize/textual/issues/1554
 - Fixed issue with TextLog not writing anything before layout https://github.com/Textualize/textual/issues/1498
+- Fixed an exception when populating a child class of `ListView` purely from `compose` https://github.com/Textualize/textual/issues/1588
 
 ## [0.9.1] - 2022-12-30
 

@@ -44,10 +44,10 @@ class _TreeLine(Generic[TreeDataType]):
         """Get the cell width of the line as rendered.
 
         Args:
-            guide_depth (int): The guide depth (cells in the indentation).
+            guide_depth: The guide depth (cells in the indentation).
 
         Returns:
-            int: Width in cells.
+            Width in cells.
         """
         guides = max(0, len(self.path) - (1 if show_root else 2)) * guide_depth
         return guides
@@ -190,7 +190,7 @@ class TreeNode(Generic[TreeDataType]):
         """Set a new label for the node.
 
         Args:
-            label (TextType): A str or Text object with the new label.
+            label: A str or Text object with the new label.
         """
         self._updates += 1
         text_label = self._tree.process_label(label)
@@ -207,13 +207,13 @@ class TreeNode(Generic[TreeDataType]):
         """Add a node to the sub-tree.
 
         Args:
-            label (TextType): The new node's label.
-            data (TreeDataType): Data associated with the new node.
-            expand (bool, optional): Node should be expanded. Defaults to True.
-            allow_expand (bool, optional): Allow use to expand the node via keyboard or mouse. Defaults to True.
+            label: The new node's label.
+            data: Data associated with the new node.
+            expand: Node should be expanded. Defaults to True.
+            allow_expand: Allow use to expand the node via keyboard or mouse. Defaults to True.
 
         Returns:
-            TreeNode[TreeDataType]: A new Tree node
+            A new Tree node
         """
         text_label = self._tree.process_label(label)
         node = self._tree._add_node(self, text_label, data)
@@ -230,11 +230,11 @@ class TreeNode(Generic[TreeDataType]):
         """Add a 'leaf' node (a node that can not expand).
 
         Args:
-            label (TextType): Label for the node.
-            data (TreeDataType | None, optional): Optional data. Defaults to None.
+            label: Label for the node.
+            data: Optional data. Defaults to None.
 
         Returns:
-            TreeNode[TreeDataType]: New node.
+            New node.
         """
         node = self.add(label, data, expand=False, allow_expand=False)
         return node
@@ -330,46 +330,57 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         ),
     }
 
-    class NodeMessage(Generic[EventTreeDataType], Message, bubble=True):
-        """Base class for events sent when something happens with a node.
+    class NodeSelected(Generic[EventTreeDataType], Message, bubble=True):
+        """Event sent when a node is selected.
 
         Attributes:
-            TreeNode[EventTreeDataType]: The node involved in the event.
+            node: The node that was selected.
         """
 
         def __init__(
             self, sender: MessageTarget, node: TreeNode[EventTreeDataType]
         ) -> None:
-            self.node = node
+            self.node: TreeNode[EventTreeDataType] = node
             super().__init__(sender)
 
-    class NodeSelected(NodeMessage[EventTreeDataType]):
-        """Event sent when a node is selected.
-
-        Attributes:
-            TreeNode[EventTreeDataType]: The node that was selected.
-        """
-
-    class NodeExpanded(NodeMessage[EventTreeDataType]):
+    class NodeExpanded(Generic[EventTreeDataType], Message, bubble=True):
         """Event sent when a node is expanded.
 
         Attributes:
-            TreeNode[EventTreeDataType]: The node that was expanded.
+            node: The node that was expanded.
         """
 
-    class NodeCollapsed(NodeMessage[EventTreeDataType]):
+        def __init__(
+            self, sender: MessageTarget, node: TreeNode[EventTreeDataType]
+        ) -> None:
+            self.node: TreeNode[EventTreeDataType] = node
+            super().__init__(sender)
+
+    class NodeCollapsed(Generic[EventTreeDataType], Message, bubble=True):
         """Event sent when a node is collapsed.
 
         Attributes:
-            TreeNode[EventTreeDataType]: The node that was collapsed.
+            node: The node that was collapsed.
         """
 
-    class NodeHighlighted(NodeMessage[EventTreeDataType]):
+        def __init__(
+            self, sender: MessageTarget, node: TreeNode[EventTreeDataType]
+        ) -> None:
+            self.node: TreeNode[EventTreeDataType] = node
+            super().__init__(sender)
+
+    class NodeHighlighted(Generic[EventTreeDataType], Message, bubble=True):
         """Event sent when a node is highlighted.
 
         Attributes:
-            TreeNode[EventTreeDataType]: The node that was collapsed.
+            node: The node that was highlighted.
         """
+
+        def __init__(
+            self, sender: MessageTarget, node: TreeNode[EventTreeDataType]
+        ) -> None:
+            self.node: TreeNode[EventTreeDataType] = node
+            super().__init__(sender)
 
     def __init__(
         self,
@@ -407,10 +418,10 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         """Process a str or Text in to a label. Maybe overridden in a subclass to change modify how labels are rendered.
 
         Args:
-            label (TextType): Label.
+            label: Label.
 
         Returns:
-            Text: A Rich Text object.
+            A Rich Text object.
         """
         if isinstance(label, str):
             text_label = Text.from_markup(label)
@@ -437,12 +448,12 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         """Render a label for the given node. Override this to modify how labels are rendered.
 
         Args:
-            node (TreeNode[TreeDataType]): A tree node.
-            base_style (Style): The base style of the widget.
-            style (Style): The additional style for the label.
+            node: A tree node.
+            base_style: The base style of the widget.
+            style: The additional style for the label.
 
         Returns:
-            Text: A Rich Text object containing the label.
+            A Rich Text object containing the label.
         """
         node_label = node._label.copy()
         node_label.stylize(style)
@@ -465,10 +476,10 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         overridden in a sub-class if it can be done more efficiently.
 
         Args:
-            node (TreeNode[TreeDataType]): A node.
+            node: A node.
 
         Returns:
-            int: Width in cells.
+            Width in cells.
         """
         label = self.render_label(node, NULL_STYLE, NULL_STYLE)
         return label.cell_len
@@ -495,7 +506,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         """Move the cursor to the given node, or reset cursor.
 
         Args:
-            node (TreeNode[TreeDataType] | None): A tree node, or None to reset cursor.
+            node: A tree node, or None to reset cursor.
         """
         self.cursor_line = -1 if node is None else node._line
 
@@ -503,10 +514,10 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         """Get the node for a given line.
 
         Args:
-            line_no (int): A line number.
+            line_no: A line number.
 
         Returns:
-            TreeNode[TreeDataType] | None: A tree node, or ``None`` if there is no node at that line.
+            A tree node, or ``None`` if there is no node at that line.
         """
         try:
             line = self._tree_lines[line_no]
@@ -522,10 +533,10 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         """Get a tree node by its ID.
 
         Args:
-            node_id (NodeID): The ID of the node to get.
+            node_id: The ID of the node to get.
 
         Returns:
-            TreeNode[TreeDataType]: The node associated with that ID.
+            The node associated with that ID.
 
         Raises:
             Tree.UnknownID: Raised if the `TreeNode` ID is unknown.
@@ -562,7 +573,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         """Create a new node ID.
 
         Returns:
-            NodeID: A unique node ID.
+            A unique node ID.
         """
         id = self._current_id
         self._current_id += 1
@@ -583,10 +594,10 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         is visible after the scroll.
 
         Args:
-            line (int): A line number.
+            line: A line number.
 
         Returns:
-            Region | None: the region occupied by the label, or `None` if the
+            The region occupied by the label, or `None` if the
             line is not in the tree.
         """
         try:
@@ -634,7 +645,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         """Scroll to the given line.
 
         Args:
-            line (int): A line number.
+            line: A line number.
         """
         region = self._get_label_region(line)
         if region is not None:
@@ -644,7 +655,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         """Scroll to the given node.
 
         Args:
-            node (TreeNode[TreeDataType]): Node to scroll in to view.
+            node: Node to scroll in to view.
         """
         line = node._line
         if line != -1:
@@ -654,7 +665,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         """Refresh (repaint) a given line in the tree.
 
         Args:
-            line (int): Line number.
+            line: Line number.
         """
         region = Region(0, line - self.scroll_offset.y, self.size.width, 1)
         self.refresh(region)
@@ -668,7 +679,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         """Refresh a node and all its children.
 
         Args:
-            node (TreeNode[TreeDataType]): A tree node.
+            node: A tree node.
         """
         scroll_y = self.scroll_offset.y
         height = self.size.height
@@ -787,10 +798,10 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 """Get the guide strings for a given style.
 
                 Args:
-                    style (Style): A Style object.
+                    style: A Style object.
 
                 Returns:
-                    tuple[str, str, str, str]: Strings for space, vertical, terminator and cross.
+                    Strings for space, vertical, terminator and cross.
                 """
                 if self.show_guides:
                     lines = self.LINES["default"]

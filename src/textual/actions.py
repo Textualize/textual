@@ -19,13 +19,13 @@ def parse(action: str) -> tuple[str, tuple[object, ...]]:
     """Parses an action string.
 
     Args:
-        action (str): String containing action.
+        action: String containing action.
 
     Raises:
         ActionError: If the action has invalid syntax.
 
     Returns:
-        tuple[str, tuple[object, ...]]: Action name and parameters
+        Action name and parameters
     """
     params_match = re_action_params.match(action)
     if params_match is not None:
