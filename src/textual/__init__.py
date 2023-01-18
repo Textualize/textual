@@ -9,7 +9,7 @@ from ._context import active_app
 from ._log import LogGroup, LogVerbosity
 from ._typing import TypeAlias
 
-__all__ = ["log", "panic"]
+__all__ = ["log", "panic", "__version__"]  # type: ignore
 
 
 LogCallable: TypeAlias = "Callable"
