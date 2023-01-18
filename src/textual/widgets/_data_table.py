@@ -31,7 +31,7 @@ CELL: CursorType = "cell"
 CellType = TypeVar("CellType")
 
 
-class CellDoesntExist(Exception):
+class CellDoesNotExist(Exception):
     pass
 
 
@@ -240,13 +240,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             The value of the cell.
 
         Raises:
-            CellDoesntExist: If there is no cell with the given coordinate.
+            CellDoesNotExist: If there is no cell with the given coordinate.
         """
         row, column = coordinate
         try:
             cell_value = self.data[row][column]
         except KeyError:
-            raise CellDoesntExist(f"No cell exists at {coordinate!r}")
+            raise CellDoesNotExist(f"No cell exists at {coordinate!r}")
         return cell_value
 
     def update_cell(self, coordinate: Coordinate, value: CellType) -> None:
@@ -317,7 +317,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.refresh_cell(*coordinate)
         try:
             cell_value = self.get_cell_value(coordinate)
-        except CellDoesntExist:
+        except CellDoesNotExist:
             # The cell may not exist e.g. when the table is cleared.
             # In that case, there's nothing for us to do here.
             return
