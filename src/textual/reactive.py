@@ -8,7 +8,6 @@ from typing import (
     Awaitable,
     Callable,
     Generic,
-    Type,
     TypeVar,
     Union,
 )
@@ -16,8 +15,7 @@ from typing import (
 import rich.repr
 
 from . import events
-from ._callback import count_parameters, invoke
-from ._types import MessageTarget
+from ._callback import count_parameters
 
 if TYPE_CHECKING:
     from .app import App
@@ -27,12 +25,6 @@ if TYPE_CHECKING:
 
 ReactiveType = TypeVar("ReactiveType")
 
-
-class _NotSet:
-    pass
-
-
-_NOT_SET = _NotSet()
 
 T = TypeVar("T")
 
@@ -49,8 +41,6 @@ class Reactive(Generic[ReactiveType]):
         always_update: Call watchers even when the new value equals the old value. Defaults to False.
         compute: Run compute methods when attribute is changed. Defaults to True.
     """
-
-    _reactives: TypeVar[dict[str, object]] = {}
 
     def __init__(
         self,
@@ -124,7 +114,7 @@ class Reactive(Generic[ReactiveType]):
         return cls(default, layout=False, repaint=False, init=False)
 
     def _initialize_reactive(self, obj: Reactable, name: str) -> None:
-        """Initialized a reactive attribute on an object.
+        """Initialize a reactive attribute on an object.
 
         Args:
             obj: An object with reactive attributes.
@@ -169,53 +159,41 @@ class Reactive(Generic[ReactiveType]):
         getattr(obj, "__watchers", {}).clear()
         getattr(obj, "__computes", []).clear()
 
-    def __set_name__(self, owner: Type[MessageTarget], name: str) -> None:
-
+    def __set_name__(self, owner: Reactable, name: str) -> None:
         # Check for compute method
         if hasattr(owner, f"compute_{name}"):
             # Compute methods are stored in a list called `__computes`
-            try:
-                computes = getattr(owner, "__computes")
-            except AttributeError:
+            if not hasattr(owner, "__computes"):
                 computes = []
                 setattr(owner, "__computes", computes)
+            else:
+                computes = getattr(owner, "__computes")
             computes.append(name)
 
         # The name of the attribute
         self.name = name
         # The internal name where the attribute's value is stored
         self.internal_name = f"_reactive_{name}"
-        default = self._default
-        setattr(owner, f"_default_{name}", default)
 
     def __get__(self, obj: Reactable, obj_type: type[object]) -> ReactiveType:
         _rich_traceback_omit = True
 
         self._initialize_reactive(obj, self.name)
-
-        value: ReactiveType
-        compute_method = getattr(self, f"compute_{self.name}", None)
-        if compute_method is not None:
-            old_value = getattr(obj, self.internal_name)
-            value = getattr(obj, f"compute_{self.name}")()
-            setattr(obj, self.internal_name, value)
-            self._check_watchers(obj, self.name, old_value)
-        else:
-            value = getattr(obj, self.internal_name)
+        value: ReactiveType = getattr(obj, self.internal_name)
         return value
 
     def __set__(self, obj: Reactable, value: ReactiveType) -> None:
         _rich_traceback_omit = True
 
         self._initialize_reactive(obj, self.name)
+        current_value = getattr(obj, self.internal_name)
         name = self.name
-        current_value = getattr(obj, name)
         # Check for validate function
         validate_function = getattr(obj, f"validate_{name}", None)
         # Call validate
         if callable(validate_function):
             value = validate_function(value)
-        # If the value has changed, or this is the first time setting the value
+        # If the value has changed, or "always_update" is set
         if current_value != value or self._always_update:
             # Store the internal value
             setattr(obj, self.internal_name, value)
@@ -231,7 +209,7 @@ class Reactive(Generic[ReactiveType]):
                 obj.refresh(repaint=self._repaint, layout=self._layout)
 
     @classmethod
-    def _check_watchers(cls, obj: Reactable, name: str, old_value: Any):
+    def _check_watchers(cls, obj: Reactable, name: str, old_value: Any) -> None:
         """Check watchers, and call watch methods / computes
 
         Args:
@@ -255,16 +233,13 @@ class Reactive(Generic[ReactiveType]):
 
         def invoke_watcher(
             watch_function: Callable, old_value: object, value: object
-        ) -> bool:
+        ) -> None:
             """Invoke a watch function.
 
             Args:
                 watch_function: A watch function, which may be sync or async.
                 old_value: The old value of the attribute.
                 value: The new value of the attribute.
-
-            Returns:
-                True if the watcher was run, or False if it was posted.
             """
             _rich_traceback_omit = True
             param_count = count_parameters(watch_function)
@@ -281,9 +256,6 @@ class Reactive(Generic[ReactiveType]):
                         sender=obj, callback=partial(await_watcher, watch_result)
                     )
                 )
-                return False
-            else:
-                return True
 
         watch_function = getattr(obj, f"watch_{name}", None)
         if callable(watch_function):
@@ -301,16 +273,18 @@ class Reactive(Generic[ReactiveType]):
             obj: Reactable object.
         """
         _rich_traceback_guard = True
-        for compute in obj._reactives.keys():
+        for name, reactive in obj._reactives.items():
+            if not reactive._run_compute:
+                continue
             try:
-                compute_method = getattr(obj, f"compute_{compute}")
+                compute_method = getattr(obj, f"compute_{name}")
             except AttributeError:
                 continue
-            current_value = getattr(obj, f"_reactive_{compute}")
+            current_value = getattr(obj, f"_reactive_{name}")
             value = compute_method()
-            setattr(obj, f"_reactive_{compute}", value)
-            if value != current_value:
-                cls._check_watchers(obj, compute, current_value)
+            setattr(obj, f"_reactive_{name}", value)
+            if value != current_value or reactive._always_update:
+                cls._check_watchers(obj, name, current_value)
 
 
 class reactive(Reactive[ReactiveType]):
