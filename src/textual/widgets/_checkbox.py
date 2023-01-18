@@ -133,10 +133,7 @@ class Checkbox(Widget, can_focus=True):
             input: The `Checkbox` widget that was changed.
         """
 
-        value: bool
-        input: Checkbox
-
         def __init__(self, sender: Checkbox, value: bool) -> None:
             super().__init__(sender)
-            self.value = value
-            self.input = sender
+            self.value: bool = value
+            self.input: Checkbox = sender

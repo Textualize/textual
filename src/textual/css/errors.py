@@ -31,11 +31,9 @@ class StyleValueError(ValueError):
             error is raised.
     """
 
-    help_text: HelpText | None
-
     def __init__(self, *args: object, help_text: HelpText | None = None):
         super().__init__(*args)
-        self.help_text = help_text
+        self.help_text: HelpText | None = help_text
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions

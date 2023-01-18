@@ -941,16 +941,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         widget in the DOM.
 
         Attributes:
-            sender (DataTable): The DataTable the cell was highlighted in.
-            value (CellType): The value in the highlighted cell.
-            coordinate (Coordinate): The coordinate of the highlighted cell.
+            value: The value in the highlighted cell.
+            coordinate: The coordinate of the highlighted cell.
         """
 
         def __init__(
             self, sender: DataTable, value: CellType, coordinate: Coordinate
         ) -> None:
-            self.value = value
-            self.coordinate = coordinate
+            self.value: CellType = value
+            self.coordinate: Coordinate = coordinate
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
@@ -965,16 +964,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         widget in the DOM.
 
         Attributes:
-            sender (DataTable): The DataTable the cell was selected in.
-            value (CellType): The value in the cell that was selected.
-            coordinate (Coordinate): The coordinate of the cell that was selected.
+            value: The value in the cell that was selected.
+            coordinate: The coordinate of the cell that was selected.
         """
 
         def __init__(
             self, sender: DataTable, value: CellType, coordinate: Coordinate
         ) -> None:
-            self.value = value
-            self.coordinate = coordinate
+            self.value: CellType = value
+            self.coordinate: Coordinate = coordinate
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
@@ -988,12 +986,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         in a subclass of `DataTable` or in a parent widget in the DOM.
 
         Attributes:
-            sender (DataTable): The DataTable the row was highlighted in.
-            cursor_row (int): The y-coordinate of the cursor that highlighted the row.
+            cursor_row: The y-coordinate of the cursor that highlighted the row.
         """
 
         def __init__(self, sender: DataTable, cursor_row: int) -> None:
-            self.cursor_row = cursor_row
+            self.cursor_row: int = cursor_row
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
@@ -1007,12 +1004,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         widget in the DOM.
 
         Attributes:
-            sender (DataTable): The DataTable the row was selected in.
-            cursor_row (int): The y-coordinate of the cursor that made the selection.
+            cursor_row: The y-coordinate of the cursor that made the selection.
         """
 
         def __init__(self, sender: DataTable, cursor_row: int) -> None:
-            self.cursor_row = cursor_row
+            self.cursor_row: int = cursor_row
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
@@ -1026,12 +1022,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         widget in the DOM.
 
         Attributes:
-            sender (DataTable): The DataTable the column was highlighted in.
-            cursor_column (int): The x-coordinate of the column that was highlighted.
+            cursor_column: The x-coordinate of the column that was highlighted.
         """
 
         def __init__(self, sender: DataTable, cursor_column: int) -> None:
-            self.cursor_column = cursor_column
+            self.cursor_column: int = cursor_column
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
@@ -1045,12 +1040,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         widget in the DOM.
 
         Attributes:
-            sender (DataTable): The DataTable the column was selected in.
-            cursor_column (int): The x-coordinate of the column that was selected.
+            cursor_column: The x-coordinate of the column that was selected.
         """
 
         def __init__(self, sender: DataTable, cursor_column: int) -> None:
-            self.cursor_column = cursor_column
+            self.cursor_column: int = cursor_column
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:

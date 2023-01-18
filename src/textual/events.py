@@ -198,8 +198,6 @@ class Key(InputEvent):
         aliases: The aliases for the key, including the key itself.
     """
 
-    aliases: list[str]
-
     __slots__ = ["key", "character", "aliases"]
 
     def __init__(self, sender: MessageTarget, key: str, character: str | None) -> None:
@@ -208,7 +206,7 @@ class Key(InputEvent):
         self.character = (
             (key if len(key) == 1 else None) if character is None else character
         )
-        self.aliases = _get_key_aliases(key)
+        self.aliases: list[str] = _get_key_aliases(key)
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "key", self.key

@@ -143,11 +143,9 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
             item: The highlighted item, if there is one highlighted.
         """
 
-        item: ListItem | None
-
         def __init__(self, sender: ListView, item: ListItem | None) -> None:
             super().__init__(sender)
-            self.item = item
+            self.item: ListItem | None = item
 
     class Selected(Message, bubble=True):
         """Emitted when a list item is selected, e.g. when you press the enter key on it
@@ -156,8 +154,6 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
             item: The selected item.
         """
 
-        item: ListItem
-
         def __init__(self, sender: ListView, item: ListItem) -> None:
             super().__init__(sender)
-            self.item = item
+            self.item: ListItem = item

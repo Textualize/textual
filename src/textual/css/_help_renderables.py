@@ -33,10 +33,8 @@ class Example:
         markup: The markup to display for this example
     """
 
-    markup: str
-
     def __init__(self, markup: str) -> None:
-        self.markup = markup
+        self.markup: str = markup
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -55,12 +53,9 @@ class Bullet:
             to display below this bullet.
     """
 
-    markup: str
-    examples: Iterable[Example] | None
-
     def __init__(self, markup: str, examples: Iterable[Example] | None = None) -> None:
-        self.markup = markup
-        self.examples = [] if examples is None else examples
+        self.markup: str = markup
+        self.examples: Iterable[Example] | None = [] if examples is None else examples
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -81,12 +76,9 @@ class HelpText:
             context around the issue. These are rendered below the summary. Defaults to None.
     """
 
-    summary: str
-    bullets: Iterable[Bullet] | None
-
     def __init__(self, summary: str, *, bullets: Iterable[Bullet] = None) -> None:
-        self.summary = summary
-        self.bullets = bullets or []
+        self.summary: str = summary
+        self.bullets: Iterable[Bullet] | None = bullets or []
 
     def __str__(self) -> str:
         return self.summary

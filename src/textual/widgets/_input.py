@@ -337,13 +337,10 @@ class Input(Widget, can_focus=True):
             input: The `Input` widget that was changed.
         """
 
-        value: str
-        input: Input
-
         def __init__(self, sender: Input, value: str) -> None:
             super().__init__(sender)
-            self.value = value
-            self.input = sender
+            self.value: str = value
+            self.input: Input = sender
 
     class Submitted(Message, bubble=True):
         """Sent when the enter key is pressed within an `Input`.
@@ -353,10 +350,7 @@ class Input(Widget, can_focus=True):
             input: The `Input` widget that is being submitted.
         """
 
-        value: str
-        input: Input
-
         def __init__(self, sender: Input, value: str) -> None:
             super().__init__(sender)
-            self.value = value
-            self.input = sender
+            self.value: str = value
+            self.input: Input = sender
