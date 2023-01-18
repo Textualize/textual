@@ -336,18 +336,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     def watch_cursor_type(self, old: str, new: str) -> None:
         self._set_hover_cursor(False)
-        row_index, column_index = self.cursor_cell
-
-        # Apply the highlighting to the newly relevant cells
-        if new == "cell":
-            self._highlight_cell(self.cursor_cell)
-        elif new == "row":
-            self._highlight_row(row_index)
-        elif new == "column":
-            self._highlight_column(column_index)
+        if self.show_cursor:
+            self._highlight_cursor()
 
         # Refresh cells that were previously impacted by the cursor
         # but may no longer be.
+        row_index, column_index = self.cursor_cell
         if old == "cell":
             self.refresh_cell(row_index, column_index)
         elif old == "row":
@@ -356,6 +350,17 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self.refresh_column(column_index)
 
         self._scroll_cursor_into_view()
+
+    def _highlight_cursor(self) -> None:
+        row_index, column_index = self.cursor_cell
+        cursor_type = self.cursor_type
+        # Apply the highlighting to the newly relevant cells
+        if cursor_type == "cell":
+            self._highlight_cell(self.cursor_cell)
+        elif cursor_type == "row":
+            self._highlight_row(row_index)
+        elif cursor_type == "column":
+            self._highlight_column(column_index)
 
     def _update_dimensions(self, new_rows: Iterable[int]) -> None:
         """Called to recalculate the virtual (scrollable) size."""
@@ -491,6 +496,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._require_update_dimensions = True
         self.cursor_cell = self.cursor_cell
         self.check_idle()
+
+        # If a position has opened for the cursor to appear, where it previously
+        # could not (e.g. when there's no data in the table), then a highlighted
+        # event is emitted, since there's now a highlighted cell when there wasn't
+        # before.
+        cell_now_available = self.row_count == 1 and len(self.columns) > 0
+        visible_cursor = self.show_cursor and self.cursor_type != "none"
+        if cell_now_available and visible_cursor:
+            self._highlight_cursor()
 
     def add_rows(self, rows: Iterable[Iterable[CellType]]) -> None:
         """Add a number of rows.
