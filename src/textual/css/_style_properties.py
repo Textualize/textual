@@ -60,7 +60,7 @@ PropertySetType = TypeVar("PropertySetType")
 
 
 class GenericProperty(Generic[PropertyGetType, PropertySetType]):
-    """Generic property to be inherited by other style properties.
+    """Descriptor that abstracts away common machinery for other style descriptors.
 
     Args:
         default: The default value (or a factory thereof) of the property.
@@ -213,6 +213,15 @@ class ScalarProperty:
 
 
 class ScalarListProperty:
+    """Descriptor for lists of scalars.
+
+    Args:
+        children: Whether to refresh the node children on value change.
+    """
+
+    def __init__(self, children: bool = False) -> None:
+        self.children = children
+
     def __set_name__(self, owner: Styles, name: str) -> None:
         self.name = name
 
@@ -226,7 +235,7 @@ class ScalarListProperty:
     ) -> None:
         if value is None:
             obj.clear_rule(self.name)
-            obj.refresh(layout=True)
+            obj.refresh(layout=True, children=self.children)
             return
         parse_values: Iterable[str | float]
         if isinstance(value, str):
@@ -245,7 +254,7 @@ class ScalarListProperty:
                     else parse_value
                 )
         if obj.set_rule(self.name, tuple(scalars)):
-            obj.refresh(layout=True)
+            obj.refresh(layout=True, children=self.children)
 
 
 class BoxProperty:

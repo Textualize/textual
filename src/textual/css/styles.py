@@ -277,8 +277,8 @@ class StylesBase(ABC):
     content_align_vertical = StringEnumProperty(VALID_ALIGN_VERTICAL, "top")
     content_align = AlignProperty()
 
-    grid_rows = ScalarListProperty()
-    grid_columns = ScalarListProperty()
+    grid_rows = ScalarListProperty(children=True)
+    grid_columns = ScalarListProperty(children=True)
 
     grid_size_columns = IntegerProperty(default=1, layout=True, children=True)
     grid_size_rows = IntegerProperty(default=0, layout=True, children=True)
