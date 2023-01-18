@@ -155,7 +155,7 @@ If you run this you will see the height of the widget now grows to accommodate t
 
 Textual offers a few different *units* which allow you to specify dimensions relative to the screen or container. Relative units can better make use of available space if the user resizes the terminal.
 
-- Percentage units are given as a string containing a number followed by a percentage symbol, e.g. `"50%"`. Setting a dimension to a percentage unit will size that dimension to that percentage of the *parent's* size in that dimension. For instance, setting width to `"50%"` will cause the width of the widget to be half the width of its parent.
+- Percentage units are given as a number followed by a percent (`%`) symbol and will set a dimension to a proportion of the widget's *parent* size. For instance, setting width to `"50%"` will cause a widget to be half the width of its parent.
 - View units are similar to percentage units, but explicitly reference a dimension. The `vw` unit sets a dimension to a percentage of the terminal *width*, and `vh` sets a dimension to a percentage of the terminal *height*.
 - The `w` unit sets a dimension to a percentage of the available width (which may be smaller than the terminal size if the widget is within another widget).
 - The `h` unit sets a dimension to a percentage of the available height.
