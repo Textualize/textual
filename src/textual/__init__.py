@@ -70,10 +70,10 @@ class Logger:
         """Get a new logger with selective verbosity.
 
         Args:
-            verbose (bool): True to use HIGH verbosity, otherwise NORMAL.
+            verbose: True to use HIGH verbosity, otherwise NORMAL.
 
         Returns:
-            Logger: New logger.
+            New logger.
         """
         verbosity = LogVerbosity.HIGH if verbose else LogVerbosity.NORMAL
         return Logger(self._log, self._group, verbosity)

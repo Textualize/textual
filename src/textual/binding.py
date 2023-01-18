@@ -52,7 +52,7 @@ class Bindings:
         """Initialise a collection of bindings.
 
         Args:
-            bindings (Iterable[BindingType] | None, optional): An optional set of initial bindings.
+            bindings: An optional set of initial bindings.
 
         Note:
             The iterable of bindings can contain either a `Binding`
@@ -104,10 +104,10 @@ class Bindings:
         """Merge a bindings. Subsequent bound keys override initial keys.
 
         Args:
-            bindings (Iterable[Bindings]): A number of bindings.
+            bindings: A number of bindings.
 
         Returns:
-            Bindings: New bindings.
+            New bindings.
         """
         keys: dict[str, Binding] = {}
         for _bindings in bindings:
@@ -119,7 +119,7 @@ class Bindings:
         """A list of bindings for shown keys.
 
         Returns:
-            list[Binding]: Shown bindings.
+            Shown bindings.
         """
         keys = [binding for binding in self.keys.values() if binding.show]
         return keys
@@ -136,12 +136,12 @@ class Bindings:
         """Bind keys to an action.
 
         Args:
-            keys (str): The keys to bind. Can be a comma-separated list of keys.
-            action (str): The action to bind the keys to.
-            description (str, optional): An optional description for the binding.
-            show (bool, optional): A flag to say if the binding should appear in the footer.
-            key_display (str | None, optional): Optional string to display in the footer for the key.
-            priority (bool, optional): Is this a priority binding, checked form app down to focused widget?
+            keys: The keys to bind. Can be a comma-separated list of keys.
+            action: The action to bind the keys to.
+            description: An optional description for the binding.
+            show: A flag to say if the binding should appear in the footer.
+            key_display: Optional string to display in the footer for the key.
+            priority: Is this a priority binding, checked form app down to focused widget?
         """
         all_keys = [key.strip() for key in keys.split(",")]
         for key in all_keys:
@@ -158,13 +158,13 @@ class Bindings:
         """Get a binding if it exists.
 
         Args:
-            key (str): Key to look up.
+            key: Key to look up.
 
         Raises:
             NoBinding: If the binding does not exist.
 
         Returns:
-            Binding: A binding object for the key,
+            A binding object for the key,
         """
         try:
             return self.keys[key]

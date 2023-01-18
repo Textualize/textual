@@ -95,10 +95,10 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         """Append a new ListItem to the end of the ListView.
 
         Args:
-            item (ListItem): The ListItem to append.
+            item: The ListItem to append.
 
         Returns:
-            AwaitMount: An awaitable that yields control to the event loop
+            An awaitable that yields control to the event loop
                 until the DOM has been updated with the new child item.
         """
         await_mount = self.mount(item)
@@ -110,7 +110,7 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         """Clear all items from the ListView.
 
         Returns:
-            AwaitRemove: An awaitable that yields control to the event loop until
+            An awaitable that yields control to the event loop until
                 the DOM has been updated to reflect all children being removed.
         """
         await_remove = self.query("ListView > ListItem").remove()
@@ -144,20 +144,20 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         """Emitted when the highlighted item changes. Highlighted item is controlled using up/down keys.
 
         Attributes:
-            item (ListItem | None): The highlighted item, if there is one highlighted.
+            item: The highlighted item, if there is one highlighted.
         """
 
         def __init__(self, sender: ListView, item: ListItem | None) -> None:
             super().__init__(sender)
-            self.item = item
+            self.item: ListItem | None = item
 
     class Selected(Message, bubble=True):
         """Emitted when a list item is selected, e.g. when you press the enter key on it
 
         Attributes:
-            item (ListItem): The selected item.
+            item: The selected item.
         """
 
         def __init__(self, sender: ListView, item: ListItem) -> None:
             super().__init__(sender)
-            self.item = item
+            self.item: ListItem = item

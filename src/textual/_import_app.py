@@ -20,10 +20,10 @@ def shebang_python(candidate: Path) -> bool:
     """Does the given file look like it's run with Python?
 
     Args:
-        candidate (Path): The candidate file to check.
+        candidate: The candidate file to check.
 
     Returns:
-        bool: ``True`` if it looks to #! python, ``False`` if not.
+        ``True`` if it looks to #! python, ``False`` if not.
     """
     try:
         with candidate.open("rb") as source:
@@ -37,13 +37,13 @@ def import_app(import_name: str) -> App:
     """Import an app from a path or import name.
 
     Args:
-        import_name (str): A name to import, such as `foo.bar`, or a path ending with .py.
+        import_name: A name to import, such as `foo.bar`, or a path ending with .py.
 
     Raises:
         AppFail: If the app could not be found for any reason.
 
     Returns:
-        App: A Textual application
+        A Textual application
     """
 
     import inspect

@@ -35,10 +35,10 @@ def default_cell_formatter(obj: object) -> RenderableType | None:
     """Format a cell in to a renderable.
 
     Args:
-        obj (object): Data for a cell.
+        obj: Data for a cell.
 
     Returns:
-        RenderableType | None: A renderable or None if the object could not be rendered.
+        A renderable or None if the object could not be rendered.
     """
     if isinstance(obj, str):
         return Text.from_markup(obj)
@@ -225,10 +225,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Get the value from the cell at the given coordinate.
 
         Args:
-            coordinate (Coordinate): The coordinate to retrieve the value from.
+            coordinate: The coordinate to retrieve the value from.
 
         Returns:
-            CellType: The value of the cell.
+            The value of the cell.
         """
         row, column = coordinate
         return self.data[row][column]
@@ -399,7 +399,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Clear the table.
 
         Args:
-            columns (bool, optional): Also clear the columns. Defaults to False.
+            columns: Also clear the columns. Defaults to False.
         """
         self.row_count = 0
         self._clear_caches()
@@ -425,8 +425,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Add a column to the table.
 
         Args:
-            label (TextType): A str or Text object containing the label (shown top of column).
-            width (int, optional): Width of the column in cells or None to fit content. Defaults to None.
+            label: A str or Text object containing the label (shown top of column).
+            width: Width of the column in cells or None to fit content. Defaults to None.
         """
         text_label = Text.from_markup(label) if isinstance(label, str) else label
 
@@ -453,7 +453,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         Args:
             *cells: Positional arguments should contain cell data.
-            height (int, optional): The height of a row (in lines). Defaults to 1.
+            height: The height of a row (in lines). Defaults to 1.
         """
         row_index = self.row_count
 
@@ -475,7 +475,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Add a number of rows.
 
         Args:
-            rows (Iterable[Iterable[CellType]]): Iterable of rows. A row is an iterable of cells.
+            rows: Iterable of rows. A row is an iterable of cells.
         """
         for row in rows:
             self.add_row(*row)
@@ -492,8 +492,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Refresh a cell.
 
         Args:
-            row_index (int): Row index.
-            column_index (int): Column index.
+            row_index: Row index.
+            column_index: Column index.
         """
         if row_index < 0 or column_index < 0:
             return
@@ -504,7 +504,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Refresh the row at the given index.
 
         Args:
-            row_index (int): The index of the row to refresh.
+            row_index: The index of the row to refresh.
         """
         if row_index < 0 or row_index >= len(self.rows):
             return
@@ -516,7 +516,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Refresh the column at the given index.
 
         Args:
-            column_index (int): The index of the column to refresh.
+            column_index: The index of the column to refresh.
         """
         if column_index < 0 or column_index >= len(self.columns):
             return
@@ -537,10 +537,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Get renderables for the given row.
 
         Args:
-            row_index (int): Index of the row.
+            row_index: Index of the row.
 
         Returns:
-            list[RenderableType]: List of renderables
+            List of renderables
         """
 
         if row_index == -1:
@@ -569,15 +569,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Render the given cell.
 
         Args:
-            row_index (int): Index of the row.
-            column_index (int): Index of the column.
-            style (Style): Style to apply.
-            width (int): Width of the cell.
-            cursor (bool): Is this cell affected by cursor highlighting?
-            hover (bool): Is this cell affected by hover cursor highlighting?
+            row_index: Index of the row.
+            column_index: Index of the column.
+            style: Style to apply.
+            width: Width of the cell.
+            cursor: Is this cell affected by cursor highlighting?
+            hover: Is this cell affected by hover cursor highlighting?
 
         Returns:
-            Lines: A list of segments per line.
+            A list of segments per line.
         """
         is_header_row = row_index == -1
 
@@ -626,14 +626,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Render a row in to lines for each cell.
 
         Args:
-            row_index (int): Index of the row.
-            line_no (int): Line number (on screen, 0 is top)
-            base_style (Style): Base style of row.
-            cursor_location (Coordinate): The location of the cursor in the DataTable.
-            hover_location (Coordinate): The location of the hover cursor in the DataTable.
+            row_index: Index of the row.
+            line_no: Line number (on screen, 0 is top)
+            base_style: Base style of row.
+            cursor_location: The location of the cursor in the DataTable.
+            hover_location: The location of the hover cursor in the DataTable.
 
         Returns:
-            tuple[Lines, Lines]: Lines for fixed cells, and Lines for scrollable cells.
+            Lines for fixed cells, and Lines for scrollable cells.
         """
         cursor_type = self.cursor_type
         show_cursor = self.show_cursor
@@ -726,10 +726,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Get row number and line offset for a given line.
 
         Args:
-            y (int): Y coordinate relative to screen top.
+            y: Y coordinate relative to screen top.
 
         Returns:
-            tuple[int, int]: Line number and line offset within cell.
+            Line number and line offset within cell.
         """
         if self.show_header:
             if y < self.header_height:
@@ -743,13 +743,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Render a line in to a list of segments.
 
         Args:
-            y (int): Y coordinate of line
-            x1 (int): X start crop.
-            x2 (int): X end crop (exclusive).
-            base_style (Style): Style to apply to line.
+            y: Y coordinate of line
+            x1: X start crop.
+            x2: X end crop (exclusive).
+            base_style: Style to apply to line.
 
         Returns:
-            list[Segment]: List of segments for rendering.
+            List of segments for rendering.
         """
 
         width = self.size.width
@@ -848,7 +848,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         cursor off.
 
         Args:
-            active (bool): Display the hover cursor.
+            active: Display the hover cursor.
         """
         self._show_hover_cursor = active
         cursor_type = self.cursor_type
@@ -941,16 +941,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         widget in the DOM.
 
         Attributes:
-            sender (DataTable): The DataTable the cell was highlighted in.
-            value (CellType): The value in the highlighted cell.
-            coordinate (Coordinate): The coordinate of the highlighted cell.
+            value: The value in the highlighted cell.
+            coordinate: The coordinate of the highlighted cell.
         """
 
         def __init__(
             self, sender: DataTable, value: CellType, coordinate: Coordinate
         ) -> None:
-            self.value = value
-            self.coordinate = coordinate
+            self.value: CellType = value
+            self.coordinate: Coordinate = coordinate
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
@@ -965,16 +964,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         widget in the DOM.
 
         Attributes:
-            sender (DataTable): The DataTable the cell was selected in.
-            value (CellType): The value in the cell that was selected.
-            coordinate (Coordinate): The coordinate of the cell that was selected.
+            value: The value in the cell that was selected.
+            coordinate: The coordinate of the cell that was selected.
         """
 
         def __init__(
             self, sender: DataTable, value: CellType, coordinate: Coordinate
         ) -> None:
-            self.value = value
-            self.coordinate = coordinate
+            self.value: CellType = value
+            self.coordinate: Coordinate = coordinate
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
@@ -988,12 +986,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         in a subclass of `DataTable` or in a parent widget in the DOM.
 
         Attributes:
-            sender (DataTable): The DataTable the row was highlighted in.
-            cursor_row (int): The y-coordinate of the cursor that highlighted the row.
+            cursor_row: The y-coordinate of the cursor that highlighted the row.
         """
 
         def __init__(self, sender: DataTable, cursor_row: int) -> None:
-            self.cursor_row = cursor_row
+            self.cursor_row: int = cursor_row
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
@@ -1007,12 +1004,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         widget in the DOM.
 
         Attributes:
-            sender (DataTable): The DataTable the row was selected in.
-            cursor_row (int): The y-coordinate of the cursor that made the selection.
+            cursor_row: The y-coordinate of the cursor that made the selection.
         """
 
         def __init__(self, sender: DataTable, cursor_row: int) -> None:
-            self.cursor_row = cursor_row
+            self.cursor_row: int = cursor_row
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
@@ -1026,12 +1022,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         widget in the DOM.
 
         Attributes:
-            sender (DataTable): The DataTable the column was highlighted in.
-            cursor_column (int): The x-coordinate of the column that was highlighted.
+            cursor_column: The x-coordinate of the column that was highlighted.
         """
 
         def __init__(self, sender: DataTable, cursor_column: int) -> None:
-            self.cursor_column = cursor_column
+            self.cursor_column: int = cursor_column
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
@@ -1045,12 +1040,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         widget in the DOM.
 
         Attributes:
-            sender (DataTable): The DataTable the column was selected in.
-            cursor_column (int): The x-coordinate of the column that was selected.
+            cursor_column: The x-coordinate of the column that was selected.
         """
 
         def __init__(self, sender: DataTable, cursor_column: int) -> None:
-            self.cursor_column = cursor_column
+            self.cursor_column: int = cursor_column
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:

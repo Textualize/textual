@@ -54,10 +54,10 @@ class NodeList(Sequence["Widget"]):
         """Return the index of the given widget.
 
         Args:
-            widget (Widget): The widget to find in the node list.
+            widget: The widget to find in the node list.
 
         Returns:
-            int: The index of the widget in the node list.
+            The index of the widget in the node list.
 
         Raises:
             ValueError: If the widget is not in the node list.
@@ -72,7 +72,7 @@ class NodeList(Sequence["Widget"]):
         """Append a Widget.
 
         Args:
-            widget (Widget): A widget.
+            widget: A widget.
         """
         if widget not in self._nodes_set:
             self._nodes.append(widget)
@@ -87,7 +87,7 @@ class NodeList(Sequence["Widget"]):
         """Insert a Widget.
 
         Args:
-            widget (Widget): A widget.
+            widget: A widget.
         """
         if widget not in self._nodes_set:
             self._nodes.insert(index, widget)
@@ -112,7 +112,7 @@ class NodeList(Sequence["Widget"]):
         Removing a widget not in the list is a null-op.
 
         Args:
-            widget (Widget): A Widget in the list.
+            widget: A Widget in the list.
         """
         if widget in self._nodes_set:
             del self._nodes[self._nodes.index(widget)]

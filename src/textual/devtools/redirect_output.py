@@ -21,8 +21,8 @@ class StdoutRedirector:
     def __init__(self, devtools: DevtoolsClient) -> None:
         """
         Args:
-            devtools (DevtoolsClient): The running Textual app instance.
-            log_file (TextIOWrapper): The log file for the Textual App.
+            devtools: The running Textual app instance.
+            log_file: The log file for the Textual App.
         """
         self.devtools = devtools
         self._buffer: list[DevtoolsLog] = []
@@ -33,7 +33,7 @@ class StdoutRedirector:
         buffer will be flushed immediately after.
 
         Args:
-            string (str): The string to write to the buffer.
+            string: The string to write to the buffer.
         """
 
         if not self.devtools.is_connected:
@@ -91,7 +91,7 @@ class StdoutRedirector:
         logs being displayed.
 
         Args:
-            log_batch (list[DevtoolsLog]): A batch of logs to send to the
+            log_batch: A batch of logs to send to the
                 devtools server as one. Log content will be joined together.
         """
 

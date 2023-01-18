@@ -22,12 +22,12 @@ def arrange(
     """Arrange widgets by applying docks and calling layouts
 
     Args:
-        widget (Widget): The parent (container) widget.
-        size (Size): The size of the available area.
-        viewport (Size): The size of the viewport (terminal).
+        widget: The parent (container) widget.
+        size: The size of the available area.
+        viewport: The size of the viewport (terminal).
 
     Returns:
-        tuple[list[WidgetPlacement], set[Widget], Spacing]: Widget arrangement information.
+        Widget arrangement information.
     """
 
     arrange_widgets: set[Widget] = set()

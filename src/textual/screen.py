@@ -99,10 +99,10 @@ class Screen(Widget):
         """Get the absolute offset of a given Widget.
 
         Args:
-            widget (Widget): A widget
+            widget: A widget
 
         Returns:
-            Offset: The widget's offset relative to the top left of the terminal.
+            The widget's offset relative to the top left of the terminal.
         """
         return self._compositor.get_offset(widget)
 
@@ -110,11 +110,11 @@ class Screen(Widget):
         """Get the widget at a given coordinate.
 
         Args:
-            x (int): X Coordinate.
-            y (int): Y Coordinate.
+            x: X Coordinate.
+            y: Y Coordinate.
 
         Returns:
-            tuple[Widget, Region]: Widget and screen region.
+            Widget and screen region.
         """
         return self._compositor.get_widget_at(x, y)
 
@@ -122,11 +122,11 @@ class Screen(Widget):
         """Get all widgets under a given coordinate.
 
         Args:
-            x (int): X coordinate.
-            y (int): Y coordinate.
+            x: X coordinate.
+            y: Y coordinate.
 
         Returns:
-            Iterable[tuple[Widget, Region]]: Sequence of (WIDGET, REGION) tuples.
+            Sequence of (WIDGET, REGION) tuples.
         """
         return self._compositor.get_widgets_at(x, y)
 
@@ -134,11 +134,11 @@ class Screen(Widget):
         """Get the style under a given coordinate.
 
         Args:
-            x (int): X Coordinate.
-            y (int): Y Coordinate.
+            x: X Coordinate.
+            y: Y Coordinate.
 
         Returns:
-            Style: Rich Style object
+            Rich Style object
         """
         return self._compositor.get_style_at(x, y)
 
@@ -146,10 +146,10 @@ class Screen(Widget):
         """Get the screen region of a Widget.
 
         Args:
-            widget (Widget): A Widget within the composition.
+            widget: A Widget within the composition.
 
         Returns:
-            Region: Region relative to screen.
+            Region relative to screen.
 
         Raises:
             NoWidget: If the widget could not be found in this screen.
@@ -161,7 +161,7 @@ class Screen(Widget):
         """Get widgets that may receive focus, in focus order.
 
         Returns:
-            list[Widget]: List of Widgets in focus order.
+            List of Widgets in focus order.
         """
         widgets: list[Widget] = []
         add_widget = widgets.append
@@ -190,13 +190,13 @@ class Screen(Widget):
         If no focusable widget matches the given CSS selector, focus is set to `None`.
 
         Args:
-            direction (int, optional): 1 to move forward, -1 to move backward, or
+            direction: 1 to move forward, -1 to move backward, or
                 0 to keep the current focus.
-            selector (str | type[DOMNode.ExpectType], optional): CSS selector to filter
+            selector: CSS selector to filter
                 what nodes can be focused.
 
         Returns:
-            Widget | None: Newly focused widget, or None for no focus. If the return
+            Newly focused widget, or None for no focus. If the return
                 is not `None`, then it is guaranteed that the widget returned matches
                 the CSS selectors given in the argument.
         """
@@ -252,11 +252,11 @@ class Screen(Widget):
         If no focusable widget matches the given CSS selector, focus is set to `None`.
 
         Args:
-            selector (str | type[DOMNode.ExpectType], optional): CSS selector to filter
+            selector: CSS selector to filter
                 what nodes can be focused.
 
         Returns:
-            Widget | None: Newly focused widget, or None for no focus. If the return
+            Newly focused widget, or None for no focus. If the return
                 is not `None`, then it is guaranteed that the widget returned matches
                 the CSS selectors given in the argument.
         """
@@ -271,11 +271,11 @@ class Screen(Widget):
         If no focusable widget matches the given CSS selector, focus is set to `None`.
 
         Args:
-            selector (str | type[DOMNode.ExpectType], optional): CSS selector to filter
+            selector: CSS selector to filter
                 what nodes can be focused.
 
         Returns:
-            Widget | None: Newly focused widget, or None for no focus. If the return
+            Newly focused widget, or None for no focus. If the return
                 is not `None`, then it is guaranteed that the widget returned matches
                 the CSS selectors given in the argument.
         """
@@ -287,8 +287,8 @@ class Screen(Widget):
         """Reset the focus when a widget is removed
 
         Args:
-            widget (Widget): A widget that is removed.
-            avoiding (list[DOMNode] | None, optional): Optional list of nodes to avoid.
+            widget: A widget that is removed.
+            avoiding: Optional list of nodes to avoid.
         """
 
         avoiding = avoiding or []
@@ -337,8 +337,8 @@ class Screen(Widget):
         """Focus (or un-focus) a widget. A focused widget will receive key events first.
 
         Args:
-            widget (Widget | None): Widget to focus, or None to un-focus.
-            scroll_visible (bool, optional): Scroll widget in to view.
+            widget: Widget to focus, or None to un-focus.
+            scroll_visible: Scroll widget in to view.
         """
         if widget is self.focused:
             # Widget is already focused
@@ -415,7 +415,7 @@ class Screen(Widget):
         """Enqueue a callback to be invoked after the screen is repainted.
 
         Args:
-            callback (CallbackType): A callback.
+            callback: A callback.
         """
 
         self._callbacks.append(callback)

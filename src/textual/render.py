@@ -6,12 +6,12 @@ def measure(console: Console, renderable: RenderableType, default: int) -> int:
     """Measure a rich renderable.
 
     Args:
-        console (Console): A console object.
-        renderable (RenderableType): Rich renderable.
-        default (int): Default width to use if renderable does not expose dimensions.
+        console: A console object.
+        renderable: Rich renderable.
+        default: Default width to use if renderable does not expose dimensions.
 
     Returns:
-        int: Width in cells
+        Width in cells
     """
     width = default
     renderable = rich_cast(renderable)

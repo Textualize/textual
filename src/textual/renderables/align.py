@@ -22,11 +22,11 @@ class Align:
         """Align a child renderable
 
         Args:
-            renderable (RenderableType): Renderable to align.
-            size (Size): Size of container.
-            style (Style): Style of any padding.
-            horizontal (AlignHorizontal): Horizontal alignment.
-            vertical (AlignVertical): Vertical alignment.
+            renderable: Renderable to align.
+            size: Size of container.
+            style: Style of any padding.
+            horizontal: Horizontal alignment.
+            vertical: Vertical alignment.
         """
         self.renderable = renderable
         self.size = size

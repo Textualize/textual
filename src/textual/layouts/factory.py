@@ -20,13 +20,13 @@ def get_layout(name: str) -> Layout:
     """Get a named layout object.
 
     Args:
-        name (str): Name of the layout.
+        name: Name of the layout.
 
     Raises:
         MissingLayout: If the named layout doesn't exist.
 
     Returns:
-        Layout: A layout object.
+        A layout object.
     """
 
     layout_class = LAYOUT_MAP.get(name)

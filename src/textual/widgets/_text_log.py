@@ -71,10 +71,10 @@ class TextLog(ScrollView, can_focus=True):
         """Write text or a rich renderable.
 
         Args:
-            content (RenderableType): Rich renderable (or text).
-            width (int): Width to render or None to use optimal width. Defaults to `None`.
-            expand (bool): Enable expand to widget width, or False to use `width`. Defaults to `False`.
-            shrink (bool): Enable shrinking of content to fit width. Defaults to `True`.
+            content: Rich renderable (or text).
+            width: Width to render or None to use optimal width. Defaults to `None`.
+            expand: Enable expand to widget width, or False to use `width`. Defaults to `False`.
+            shrink: Enable shrinking of content to fit width. Defaults to `True`.
         """
 
         renderable: RenderableType
@@ -151,10 +151,10 @@ class TextLog(ScrollView, can_focus=True):
         """Render the widget in to lines.
 
         Args:
-            crop (Region): Region within visible area to.
+            crop: Region within visible area to.
 
         Returns:
-            Lines: A list of list of segments
+            A list of list of segments
         """
         lines = self._styles_cache.render_widget(self, crop)
         return lines

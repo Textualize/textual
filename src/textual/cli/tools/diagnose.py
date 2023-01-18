@@ -13,8 +13,8 @@ def _section(title: str, values: dict[str, str]) -> None:
     """Print a collection of named values within a titled section.
 
     Args:
-        title (str): The title for the section.
-        values (dict[str, str]): The values to print out.
+        title: The title for the section.
+        values: The values to print out.
     """
     max_name = max(map(len, values.keys()))
     max_value = max(map(len, values.values()))
@@ -60,7 +60,7 @@ def _guess_term() -> str:
     """Try and guess which terminal is being used.
 
     Returns:
-        str: The best guess at the name of the terminal.
+        The best guess at the name of the terminal.
     """
 
     # First obvious place to look is in $TERM_PROGRAM.
@@ -95,10 +95,10 @@ def _env(var_name: str) -> str:
     """Get a representation of an environment variable.
 
     Args:
-        var_name (str): The name of the variable to get.
+        var_name: The name of the variable to get.
 
     Returns:
-        str: The value, or an indication that it isn't set.
+        The value, or an indication that it isn't set.
     """
     return os.environ.get(var_name, "*Not set*")
 
@@ -122,10 +122,10 @@ def _str_rich(value: Any) -> str:
     """Convert a rich console option to a string.
 
     Args:
-        value (Any): The value to convert to a string.
+        value: The value to convert to a string.
 
     Returns:
-        str: The string version of the value for output
+        The string version of the value for output
     """
     return str(value)
 

@@ -39,10 +39,10 @@ class DevtoolsService:
     ) -> None:
         """
         Args:
-            update_frequency (float): The number of seconds to wait between
+            update_frequency: The number of seconds to wait between
                 sending updates of the console size to connected clients.
-            verbose (bool): Enable verbose logging on client.
-            exclude (list[str]): List of log groups to exclude from output.
+            verbose: Enable verbose logging on client.
+            exclude: List of log groups to exclude from output.
         """
         self.update_frequency = update_frequency
         self.verbose = verbose
@@ -94,7 +94,7 @@ class DevtoolsService:
         a connected client.
 
         Args:
-            client_handler (ClientHandler): The client to send information to
+            client_handler: The client to send information to
         """
         await client_handler.send_message(
             {
@@ -138,8 +138,8 @@ class ClientHandler:
     def __init__(self, request: Request, service: DevtoolsService) -> None:
         """
         Args:
-            request (Request): The aiohttp.Request associated with this client
-            service (DevtoolsService): The parent DevtoolsService which is responsible
+            request: The aiohttp.Request associated with this client
+            service: The parent DevtoolsService which is responsible
                 for the handling of this client.
         """
         self.request = request
@@ -150,7 +150,7 @@ class ClientHandler:
         """Send a message to a client
 
         Args:
-            message (dict[str, object]): The dict which will be sent
+            message: The dict which will be sent
                 to the client.
         """
         await self.outgoing_queue.put(message)
@@ -217,7 +217,7 @@ class ClientHandler:
         read messages from the queues.
 
         Returns:
-            WebSocketResponse: The WebSocketResponse associated with this client.
+            The WebSocketResponse associated with this client.
         """
 
         await self.websocket.prepare(self.request)

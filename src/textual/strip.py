@@ -20,8 +20,8 @@ class Strip:
     A Strip is like an immutable list of Segments. The immutability allows for effective caching.
 
     Args:
-        segments (Iterable[Segment]): An iterable of segments.
-        cell_length (int | None, optional): The cell length if known, or None to calculate on demand. Defaults to None.
+        segments: An iterable of segments.
+        cell_length: The cell length if known, or None to calculate on demand. Defaults to None.
     """
 
     __slots__ = [
@@ -48,11 +48,11 @@ class Strip:
         """Create a blank strip.
 
         Args:
-            cell_length (int): Desired cell length.
-            style (Style | None): Style of blank.
+            cell_length: Desired cell length.
+            style: Style of blank.
 
         Returns:
-            Strip: New strip.
+            New strip.
         """
         return cls([Segment(" " * cell_length, style)], cell_length)
 
@@ -63,11 +63,11 @@ class Strip:
         """Convert lines (lists of segments) to a list of Strips.
 
         Args:
-            lines (list[list[Segment]]): List of lines, where a line is a list of segments.
-            cell_length (int | None): Cell length of lines (must be same) or None if not known. Defaults to None.
+            lines: List of lines, where a line is a list of segments.
+            cell_length: Cell length of lines (must be same) or None if not known. Defaults to None.
 
         Returns:
-            list[Strip]: List of strips.
+            List of strips.
         """
         return [cls(segments, cell_length) for segments in lines]
 
@@ -77,10 +77,10 @@ class Strip:
         at `index`.
 
         Args:
-            index (int): The index to convert.
+            index: The index to convert.
 
         Returns:
-            int: The cell position of the character at `index`.
+            The cell position of the character at `index`.
         """
         return index_to_cell_position(self._segments, index)
 
@@ -97,10 +97,10 @@ class Strip:
         """Join a number of strips in to one.
 
         Args:
-            strips (Iterable[Strip]): An iterable of Strips.
+            strips: An iterable of Strips.
 
         Returns:
-            Strip: A new combined strip.
+            A new combined strip.
         """
 
         segments: list[list[Segment]] = []
@@ -134,11 +134,11 @@ class Strip:
         """Adjust the cell length, possibly truncating or extending.
 
         Args:
-            cell_length (int): New desired cell length.
-            style (Style | None): Style when extending, or `None`. Defaults to `None`.
+            cell_length: New desired cell length.
+            style: Style when extending, or `None`. Defaults to `None`.
 
         Returns:
-            Strip: A new strip with the supplied cell length.
+            A new strip with the supplied cell length.
         """
 
         new_line: list[Segment]
@@ -178,7 +178,7 @@ class Strip:
         """Simplify the segments (join segments with same style)
 
         Returns:
-            Strip: New strip.
+            New strip.
         """
         line = Strip(
             Segment.simplify(self._segments),
@@ -190,10 +190,10 @@ class Strip:
         """Apply a filter to all segments in the strip.
 
         Args:
-            filter (LineFilter): A line filter object.
+            filter: A line filter object.
 
         Returns:
-            Strip: A new Strip.
+            A new Strip.
         """
         return Strip(filter.apply(self._segments), self._cell_length)
 
@@ -201,11 +201,11 @@ class Strip:
         """Apply a style to Segments with the given link_id.
 
         Args:
-            link_id (str): A link id.
-            link_style (Style): Style to apply.
+            link_id: A link id.
+            link_style: Style to apply.
 
         Returns:
-            Strip: New strip (or same Strip if no changes).
+            New strip (or same Strip if no changes).
         """
         _Segment = Segment
         if not any(
@@ -230,11 +230,11 @@ class Strip:
         """Crop a strip between two cell positions.
 
         Args:
-            start (int): The start cell position (inclusive).
-            end (int): The end cell position (exclusive).
+            start: The start cell position (inclusive).
+            end: The end cell position (exclusive).
 
         Returns:
-            Strip: A new Strip.
+            A new Strip.
         """
         if start == 0 and end == self.cell_length:
             return self
@@ -283,10 +283,10 @@ class Strip:
         """Divide the strip in to multiple smaller strips by cutting at given (cell) indices.
 
         Args:
-            cuts (Iterable[int]): An iterable of cell positions as ints.
+            cuts: An iterable of cell positions as ints.
 
         Returns:
-            list[Strip]: A new list of strips.
+            A new list of strips.
         """
 
         pos = 0

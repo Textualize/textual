@@ -32,7 +32,7 @@ else:
         specified time. This is generally not an issue for Textual's use case.
 
         Args:
-            secs (float): Seconds to sleep for.
+            secs: Seconds to sleep for.
         """
 
         # Subtract a millisecond to account for overhead

@@ -12,11 +12,11 @@ def match(selector_sets: Iterable[SelectorSet], node: DOMNode) -> bool:
     """Check if a given node matches any of the given selector sets.
 
     Args:
-        selector_sets (Iterable[SelectorSet]): Iterable of selector sets.
-        node (DOMNode): DOM node.
+        selector_sets: Iterable of selector sets.
+        node: DOM node.
 
     Returns:
-        bool: True if the node matches the selector, otherwise False.
+        True if the node matches the selector, otherwise False.
     """
     return any(
         _check_selectors(selector_set.selectors, node.css_path_nodes)
@@ -28,11 +28,11 @@ def _check_selectors(selectors: list[Selector], css_path_nodes: list[DOMNode]) -
     """Match a list of selectors against DOM nodes.
 
     Args:
-        selectors (list[Selector]): A list of selectors.
-        css_path_nodes (list[DOMNode]): The DOM nodes to check the selectors against.
+        selectors: A list of selectors.
+        css_path_nodes: The DOM nodes to check the selectors against.
 
     Returns:
-        bool: True if any node in css_path_nodes matches a selector.
+        True if any node in css_path_nodes matches a selector.
     """
 
     DESCENDENT = CombinatorType.DESCENDENT
