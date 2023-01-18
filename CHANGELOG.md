@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed cursor not being visible on `DataTable` mount when `fixed_columns` were used https://github.com/Textualize/textual/pull/1547
 - Fixed TextLog wrapping issue https://github.com/Textualize/textual/issues/1554
 - Fixed issue with TextLog not writing anything before layout https://github.com/Textualize/textual/issues/1498
+- Fixed an exception when populating a child class of `ListView` purely from `compose` https://github.com/Textualize/textual/issues/1588
 
 ## [0.9.1] - 2022-12-30
 

@@ -44,7 +44,11 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
             classes: The CSS classes of the widget.
         """
         super().__init__(*children, name=name, id=id, classes=classes)
-        self.index = initial_index
+        self._index = initial_index
+
+    def on_mount(self) -> None:
+        """Ensure the ListView is fully-settled after mounting."""
+        self.index = self._index
 
     @property
     def highlighted_child(self) -> ListItem | None:
