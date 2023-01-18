@@ -264,13 +264,19 @@ class StylesBase(ABC):
     scrollbar_background_hover = ColorProperty("#444444")
     scrollbar_background_active = ColorProperty("black")
 
-    scrollbar_gutter = StringEnumProperty(VALID_SCROLLBAR_GUTTER, "auto")
+    scrollbar_gutter = StringEnumProperty(
+        VALID_SCROLLBAR_GUTTER, "auto", layout=True, children=True
+    )
 
     scrollbar_size_vertical = IntegerProperty(default=1, layout=True)
     scrollbar_size_horizontal = IntegerProperty(default=1, layout=True)
 
-    align_horizontal = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "left")
-    align_vertical = StringEnumProperty(VALID_ALIGN_VERTICAL, "top")
+    align_horizontal = StringEnumProperty(
+        VALID_ALIGN_HORIZONTAL, "left", layout=True, children=True
+    )
+    align_vertical = StringEnumProperty(
+        VALID_ALIGN_VERTICAL, "top", layout=True, children=True
+    )
     align = AlignProperty()
 
     content_align_horizontal = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "left")

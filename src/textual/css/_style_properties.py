@@ -699,12 +699,25 @@ class OffsetProperty:
 class StringEnumProperty:
     """Descriptor for getting and setting string properties and ensuring that the set
     value belongs in the set of valid values.
+
+    Args:
+        valid_values: The set of valid values that the descriptor can take.
+        default: The default value (or a factory thereof) of the property.
+        layout: Whether to refresh the node layout on value change.
+        children: Whether to refresh the node children on value change.
     """
 
-    def __init__(self, valid_values: set[str], default: str, layout=False) -> None:
+    def __init__(
+        self,
+        valid_values: set[str],
+        default: str,
+        layout: bool = False,
+        children: bool = False,
+    ) -> None:
         self._valid_values = valid_values
         self._default = default
         self._layout = layout
+        self._children = children
 
     def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
@@ -734,7 +747,7 @@ class StringEnumProperty:
         _rich_traceback_omit = True
         if value is None:
             if obj.clear_rule(self.name):
-                obj.refresh(layout=self._layout)
+                obj.refresh(layout=self._layout, children=self._children)
         else:
             if value not in self._valid_values:
                 raise StyleValueError(
@@ -746,7 +759,7 @@ class StringEnumProperty:
                     ),
                 )
             if obj.set_rule(self.name, value):
-                obj.refresh(layout=self._layout)
+                obj.refresh(layout=self._layout, children=self._children)
 
 
 class NameProperty:
