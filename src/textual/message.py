@@ -20,6 +20,9 @@ class Message:
     Args:
         sender: The sender of the message / event.
 
+    Attributes:
+        sender: The sender of the message.
+        time: The time when the message was sent.
     """
 
     __slots__ = [
@@ -38,9 +41,9 @@ class Message:
     namespace: ClassVar[str] = ""  # Namespace to disambiguate messages
 
     def __init__(self, sender: MessageTarget) -> None:
-        self.sender = sender
+        self.sender: MessageTarget = sender
 
-        self.time = _clock.get_time_no_wait()
+        self.time: float = _clock.get_time_no_wait()
         self._forwarded = False
         self._no_default_action = False
         self._stop_propagation = False
