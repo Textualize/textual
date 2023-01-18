@@ -14,21 +14,25 @@ from rich.text import Text, TextType
 
 from .. import events, messages
 from .._cache import LRUCache
-from ..coordinate import Coordinate
 from .._segment_tools import line_crop
 from .._types import SegmentLines
+from .._typing import Literal
 from ..binding import Binding
+from ..coordinate import Coordinate
 from ..geometry import Region, Size, Spacing, clamp
 from ..message import Message
 from ..reactive import Reactive
 from ..render import measure
 from ..scroll_view import ScrollView
 from ..strip import Strip
-from .._typing import Literal
 
 CursorType = Literal["cell", "row", "column", "none"]
 CELL: CursorType = "cell"
 CellType = TypeVar("CellType")
+
+
+class CellDoesntExist(Exception):
+    pass
 
 
 def default_cell_formatter(obj: object) -> RenderableType | None:
@@ -229,9 +233,16 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         Returns:
             CellType: The value of the cell.
+
+        Raises:
+            CellDoesntExist: If there is no cell with the given coordinate.
         """
         row, column = coordinate
-        return self.data[row][column]
+        try:
+            cell_value = self.data[row][column]
+        except KeyError:
+            raise CellDoesntExist(f"No cell exists at {coordinate!r}")
+        return cell_value
 
     def _clear_caches(self) -> None:
         self._row_render_cache.clear()
@@ -293,18 +304,26 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def _highlight_cell(self, coordinate: Coordinate) -> None:
         """Apply highlighting to the cell at the coordinate, and emit event."""
         self.refresh_cell(*coordinate)
-        cell_value = self.get_cell_value(coordinate)
-        self.emit_no_wait(DataTable.CellHighlighted(self, cell_value, coordinate))
+        try:
+            cell_value = self.get_cell_value(coordinate)
+        except CellDoesntExist:
+            # The cell may not exist e.g. when the table is cleared.
+            # In that case, there's nothing for us to do here.
+            return
+        else:
+            self.emit_no_wait(DataTable.CellHighlighted(self, cell_value, coordinate))
 
     def _highlight_row(self, row_index: int) -> None:
         """Apply highlighting to the row at the given index, and emit event."""
         self.refresh_row(row_index)
-        self.emit_no_wait(DataTable.RowHighlighted(self, row_index))
+        if row_index in self.data:
+            self.emit_no_wait(DataTable.RowHighlighted(self, row_index))
 
     def _highlight_column(self, column_index: int) -> None:
         """Apply highlighting to the column at the given index, and emit event."""
         self.refresh_column(column_index)
-        self.emit_no_wait(DataTable.ColumnHighlighted(self, column_index))
+        if column_index < len(self.columns):
+            self.emit_no_wait(DataTable.ColumnHighlighted(self, column_index))
 
     def validate_cursor_cell(self, value: Coordinate) -> Coordinate:
         return self._clamp_cursor_cell(value)
@@ -410,6 +429,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self.columns.clear()
         self._line_no = 0
         self._require_update_dimensions = True
+        self.cursor_cell = Coordinate(0, 0)
+        self.hover_cell = Coordinate(0, 0)
         self.refresh()
 
     def add_columns(self, *labels: TextType) -> None:
