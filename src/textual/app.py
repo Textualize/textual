@@ -1489,7 +1489,7 @@ class App(Generic[ReturnType], DOMNode):
                 finally:
                     self._mounted_event.set()
 
-                Reactive._initialize_object(self)
+                Reactive._initialize_reactable_object(self)
 
                 self.stylesheet.update(self)
                 self.refresh()

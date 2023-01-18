@@ -19,11 +19,11 @@ from ._asyncio import create_task
 from ._callback import invoke
 from ._context import NoActiveAppError, active_app, active_message_pump
 from ._time import time
+from ._types import CallbackType
 from .case import camel_to_snake
 from .errors import DuplicateKeyHandlers
 from .events import Event
 from .message import Message
-from .reactive import Reactive
 from .timer import Timer, TimerCallback
 
 if TYPE_CHECKING:
@@ -310,7 +310,6 @@ class MessagePump(metaclass=MessagePumpMeta):
             await timer.stop()
         self._timers.clear()
         await self._message_queue.put(events.Unmount(sender=self))
-        Reactive._reset_object(self)
         await self._message_queue.put(None)
         if wait and self._task is not None and asyncio.current_task() != self._task:
             try:
@@ -358,7 +357,6 @@ class MessagePump(metaclass=MessagePumpMeta):
         finally:
             # This is critical, mount may be waiting
             self._mounted_event.set()
-        Reactive._initialize_object(self)
 
     async def _process_messages_loop(self) -> None:
         """Process messages until the queue is closed."""

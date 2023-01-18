@@ -4,6 +4,7 @@ import re
 from inspect import getfile
 from typing import (
     TYPE_CHECKING,
+    Any,
     ClassVar,
     Iterable,
     Iterator,
@@ -111,7 +112,7 @@ class DOMNode(MessagePump):
     # Generated list of bindings
     _merged_bindings: ClassVar[Bindings] | None = None
 
-    _reactives: ClassVar[dict[str, Reactive]]
+    _reactives: ClassVar[dict[str, Reactive[Any]]]
 
     def __init__(
         self,
@@ -173,15 +174,12 @@ class DOMNode(MessagePump):
     ) -> None:
         super().__init_subclass__()
 
-        reactives = cls._reactives = {}
-        for base in reversed(cls.__mro__):
-            reactives.update(
-                {
-                    name: reactive
-                    for name, reactive in base.__dict__.items()
-                    if isinstance(reactive, Reactive)
-                }
-            )
+        cls._reactives = {
+            name: reactive
+            for base in reversed(cls.__mro__)
+            for name, reactive in base.__dict__.items()
+            if isinstance(reactive, Reactive)
+        }
 
         cls._inherit_css = inherit_css
         cls._inherit_bindings = inherit_bindings
@@ -191,6 +189,14 @@ class DOMNode(MessagePump):
             css_type_names.add(base.__name__)
         cls._merged_bindings = cls._merge_bindings()
         cls._css_type_names = frozenset(css_type_names)
+
+    async def _pre_process(self) -> None:
+        await super()._pre_process()
+        Reactive._initialize_reactable_object(self)
+
+    async def _close_messages(self, wait: bool = True) -> None:
+        await super()._close_messages(wait)
+        Reactive._reset_reactable_object(self)
 
     def get_component_styles(self, name: str) -> RenderStyles:
         """Get a "component" styles object (must be defined in COMPONENT_CLASSES classvar).

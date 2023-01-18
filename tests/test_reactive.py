@@ -308,9 +308,9 @@ async def test_reactive_inheritance():
     # Secondary adds one new reactive
     assert len(secondary._reactives) == primary_reactive_count + 1
 
-    Reactive._initialize_object(primary)
-    Reactive._initialize_object(secondary)
-    Reactive._initialize_object(tertiary)
+    Reactive._initialize_reactable_object(primary)
+    Reactive._initialize_reactable_object(secondary)
+    Reactive._initialize_reactable_object(tertiary)
 
     # Primary doesn't have egg
     with pytest.raises(AttributeError):

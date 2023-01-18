@@ -10,7 +10,7 @@ from rich.text import Text, TextType
 from .. import events
 from ..css._error_tools import friendly_list
 from ..message import Message
-from ..reactive import Reactive
+from ..reactive import Reactive, init
 from ..widgets import Static
 from .._typing import Literal
 
@@ -197,7 +197,7 @@ class Button(Static, can_focus=True):
     label: Reactive[RenderableType] = Reactive("")
     """The text label that appears within the button."""
 
-    variant = Reactive.init("default")
+    variant = init("default")
     """The variant name for the button."""
 
     disabled = Reactive(False)

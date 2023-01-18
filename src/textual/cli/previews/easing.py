@@ -5,7 +5,7 @@ from textual._easing import EASING
 from textual.app import App, ComposeResult
 from textual.cli.previews.borders import TEXT
 from textual.containers import Container, Horizontal, Vertical
-from textual.reactive import Reactive
+from textual.reactive import Reactive, var, init
 from textual.scrollbar import ScrollBarRender
 from textual.widget import Widget
 from textual.widgets import Button, Footer, Label, Input
@@ -23,7 +23,7 @@ class EasingButtons(Widget):
 
 
 class Bar(Widget):
-    position = Reactive.init(START_POSITION)
+    position = init(START_POSITION)
     animation_running = Reactive(False)
 
     DEFAULT_CSS = """
@@ -53,8 +53,8 @@ class Bar(Widget):
 
 
 class EasingApp(App):
-    position = Reactive.init(START_POSITION)
-    duration = Reactive.var(1.0)
+    position = init(START_POSITION)
+    duration = var(1.0, init=False)
 
     def on_load(self):
         self.bind(
