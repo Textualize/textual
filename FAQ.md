@@ -4,6 +4,7 @@
 - [How can I fix ImportError cannot import name ComposeResult from textual.app ?](#how-can-i-fix-importerror-cannot-import-name-composeresult-from-textualapp-)
 - [How do I center a widget in a screen?](#how-do-i-center-a-widget-in-a-screen)
 - [How do I pass arguments to an app?](#how-do-i-pass-arguments-to-an-app)
+- [Why doesn't Textual support ANSI themes?](#why-doesn't-textual-support-ansi-themes)
 
 <a name="does-textual-support-images"></a>
 ## Does Textual support images?
@@ -86,6 +87,18 @@ Greetings(to_greet="davep").run()
 # Running with both positional arguments.
 Greetings("Well hello", "there").run()
 ```
+
+<a name="why-doesn't-textual-support-ansi-themes"></a>
+## Why doesn't Textual support ANSI themes?
+
+Textual will not generate escape sequences for the 16 themeable *ANSI* colors.
+
+This is an intentional design decision we took for for the following reasons:
+
+- Not everyone has a carefully chosen ANSI color theme. Color combinations which may look fine on your system, may be unreadable on another machine. There is very little an app author or Textual can do to resolve this. Asking users to simply pick a better theme is not a good solution, since not all users will know how.
+- ANSI colors can't be manipulated in the way Textual can do with other colors. Textual can blend colors with alpha transparency and produce light and dark shades from an original color. This is not possible when generating ANSI colors.
+
+Textual has a design system which guarantees colors will be readable on all platforms and terminals. There is currently light and dark version of the design system, but more are planned. It will also be possible for users to customize the source colors on a per-app or per-system basis. This means that in the future if it is really important to you that Textual apps blend in with your terminal, you will be able to get very close.
 
 <hr>
 
