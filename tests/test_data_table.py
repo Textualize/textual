@@ -46,45 +46,45 @@ async def test_datatable_message_emission():
         # therefore no highlighted cells), but then a row was added, and
         # so the cell at (0, 0) became highlighted.
         expected_messages.append("CellHighlighted")
-        await pilot.pause(1 / 100)
+        await pilot.pause(2 / 100)
         assert messages == expected_messages
 
         # Pressing Enter when the cursor is on a cell emits a CellSelected
         await pilot.press("enter")
         expected_messages.append("CellSelected")
-        await pilot.pause(1 / 100)
+        await pilot.pause(2 / 100)
         assert messages == expected_messages
 
         # Moving the cursor left and up when the cursor is at origin
         # emits no events, since the cursor doesn't move at all.
         await pilot.press("left", "up")
-        await pilot.pause(1 / 100)
+        await pilot.pause(2 / 100)
         assert messages == expected_messages
 
         # ROW CURSOR
         # Switch over to the row cursor... should emit a `RowHighlighted`
         table.cursor_type = "row"
         expected_messages.append("RowHighlighted")
-        await pilot.pause(1 / 100)
+        await pilot.pause(2 / 100)
         assert messages == expected_messages
 
         # Select the row...
         await pilot.press("enter")
         expected_messages.append("RowSelected")
-        await pilot.pause(1 / 100)
+        await pilot.pause(2 / 100)
         assert messages == expected_messages
 
         # COLUMN CURSOR
         # Switching to the column cursor emits a `ColumnHighlighted`
         table.cursor_type = "column"
         expected_messages.append("ColumnHighlighted")
-        await pilot.pause(1 / 100)
+        await pilot.pause(2 / 100)
         assert messages == expected_messages
 
         # Select the column...
         await pilot.press("enter")
         expected_messages.append("ColumnSelected")
-        await pilot.pause(1 / 100)
+        await pilot.pause(2 / 100)
         assert messages == expected_messages
 
         # NONE CURSOR
@@ -109,7 +109,7 @@ async def test_datatable_message_emission():
         # message should be emitted for highlighting the cell.
         table.show_cursor = True
         expected_messages.append("CellHighlighted")
-        await pilot.pause(1 / 100)
+        await pilot.pause(2 / 100)
         assert messages == expected_messages
 
         # Likewise, if the cursor_type is "none", and we change the
