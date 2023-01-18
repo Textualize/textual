@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added a `inherit_component_classes` subclassing parameter to control whether component classes are inherited from base classes https://github.com/Textualize/textual/issues/1399
 - Added `diagnose` as a `textual` command https://github.com/Textualize/textual/issues/1542
 - Added `row` and `column` cursors to `DataTable` https://github.com/Textualize/textual/pull/1547
+- Added an optional parameter `selector` to the methods `Screen.focus_next` and `Screen.focus_previous` that enable using a CSS selector to narrow down which widgets can get focus https://github.com/Textualize/textual/issues/1196
 
 ### Changed
 
@@ -24,11 +25,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fail-fast and print pretty tracebacks for Widget compose errors https://github.com/Textualize/textual/pull/1505
 - Added Widget._refresh_scroll to avoid expensive layout when scrolling https://github.com/Textualize/textual/pull/1524
 - `events.Paste` now bubbles https://github.com/Textualize/textual/issues/1434
+- Improved error message when style flag `none` is mixed with other flags (e.g., when setting `text-style`) https://github.com/Textualize/textual/issues/1420
 - Clock color in the `Header` widget now matches the header color https://github.com/Textualize/textual/issues/1459
 - Programmatic calls to scroll now optionally scroll even if overflow styling says otherwise (introduces a new `force` parameter to all the `scroll_*` methods) https://github.com/Textualize/textual/issues/1201
 - `COMPONENT_CLASSES` are now inherited from base classes https://github.com/Textualize/textual/issues/1399
 - Watch methods may now take no parameters
 - Added `compute` parameter to reactive
+- A `TypeError` raised during `compose` now carries the full traceback.
 
 ### Fixed
 

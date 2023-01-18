@@ -1569,7 +1569,7 @@ class App(Generic[ReturnType], DOMNode):
         except TypeError as error:
             raise TypeError(
                 f"{self!r} compose() returned an invalid response; {error}"
-            ) from None
+            ) from error
         await self.mount_all(widgets)
 
     def _on_idle(self) -> None:
