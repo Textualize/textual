@@ -163,6 +163,10 @@ class _WriterThread(threading.Thread):
         self._queue: Queue[str | None] = Queue(MAX_QUEUED_WRITES)
         self._file = sys.__stdout__
 
+        self._flushed = threading.Event()
+        self._resume = threading.Event()
+        self._resume.set()
+
     def write(self, text: str) -> None:
         """Write text. Text will be enqueued for writing.
 
@@ -207,6 +211,16 @@ class _WriterThread(threading.Thread):
             write(text)
             if empty:
                 flush()
+                self._flushed.set()
+                self._resume.wait()
+                self._flushed.clear()
+
+    @contextmanager
+    def paused(self) -> Iterator[None]:
+        self._resume.clear()
+        self._flushed.wait()
+        yield
+        self._resume.set()
 
     def stop(self) -> None:
         """Stop the thread, and block until it finished."""
@@ -968,8 +982,12 @@ class App(Generic[ReturnType], DOMNode):
         driver = self._driver
         if driver is not None:
             driver.stop_application_mode()
-            with redirect_stdout(sys.__stdout__), redirect_stderr(sys.__stderr__):
+
+            with self._writer_thread.paused(), redirect_stdout(
+                sys.__stdout__
+            ), redirect_stderr(sys.__stderr__):
                 yield
+
             driver.start_application_mode()
 
     async def _on_css_change(self) -> None:
