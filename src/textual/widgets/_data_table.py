@@ -65,6 +65,7 @@ def default_cell_formatter(obj: object) -> RenderableType | None:
 class Column:
     """Table column."""
 
+    key: Key
     label: Text
     width: int = 0
     visible: bool = False
@@ -87,6 +88,7 @@ class Column:
 class Row:
     """Table row."""
 
+    key: Key
     index: int
     height: int
     y: int
@@ -460,9 +462,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """
         text_label = Text.from_markup(label) if isinstance(label, str) else label
 
+        column_key = Key(key)
         content_width = measure(self.app.console, text_label, 1)
         if width is None:
             column = Column(
+                column_key,
                 text_label,
                 content_width,
                 index=len(self.columns),
@@ -471,7 +475,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             )
         else:
             column = Column(
-                text_label, width, content_width=content_width, index=len(self.columns)
+                column_key,
+                text_label,
+                width,
+                content_width=content_width,
+                index=len(self.columns),
             )
 
         self.columns.append(column)
@@ -489,9 +497,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             key: A key which uniquely identifies this row. If None, it will be generated for you. Defaults to None.
         """
         row_index = self.row_count
+        row_key = Key(key)
 
         self.data[row_index] = list(cells)
-        self.rows[row_index] = Row(row_index, height, self._line_no)
+        self.rows[row_index] = Row(row_key, row_index, height, self._line_no)
 
         for line_no in range(height):
             self._y_offsets.append((row_index, line_no))
