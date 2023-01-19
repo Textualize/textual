@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added Strip.text property https://github.com/Textualize/textual/issues/1620
 
+### Changed
+
+- The default filename for screenshots uses a datetime format similar to ISO8601, but with reserved characters replaced by underscores https://github.com/Textualize/textual/pull/1518
+
+
 ## [0.10.0] - 2023-01-19
 
 ### Added

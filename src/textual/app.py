@@ -722,7 +722,7 @@ class App(Generic[ReturnType], DOMNode):
         self,
         filename: str | None = None,
         path: str = "./",
-        time_format: str = "%Y%m%d %H%M%S %f",
+        time_format: str | None = None,
     ) -> str:
         """Save an SVG screenshot of the current screen.
 
@@ -730,17 +730,21 @@ class App(Generic[ReturnType], DOMNode):
             filename: Filename of SVG screenshot, or None to auto-generate
                 a filename with the date and time. Defaults to None.
             path: Path to directory for output. Defaults to current working directory.
-            time_format: Time format to use if filename is None. Defaults to "%Y-%m-%d %X %f".
+            time_format: Date and time format to use if filename is None.
+                Defaults to a format like ISO 8601 with some reserved characters replaced with underscores.
 
         Returns:
             Filename of screenshot.
         """
         if filename is None:
-            svg_filename = (
-                f"{self.title.lower()} {datetime.now().strftime(time_format)}.svg"
-            )
-            for reserved in '<>:"/\\|?*':
-                svg_filename = svg_filename.replace(reserved, "_")
+            if time_format is None:
+                dt = datetime.now().isoformat()
+            else:
+                dt = datetime.now().strftime(time_format)
+            svg_filename_stem = f"{self.title.lower()} {dt}"
+            for reserved in ' <>:"/\\|?*.':
+                svg_filename_stem = svg_filename_stem.replace(reserved, "_")
+                svg_filename = svg_filename_stem + ".svg"
         else:
             svg_filename = filename
         svg_path = os.path.expanduser(os.path.join(path, svg_filename))
