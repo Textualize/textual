@@ -653,7 +653,7 @@ class App(Generic[ReturnType], DOMNode):
                 a filename with the date and time. Defaults to None.
             path (str, optional): Path to directory for output. Defaults to current working directory.
             time_format (str | None, optional): Date and time format to use if filename is None.
-                Defaults to ISO 8601 format. Colons are replaced with underscores.
+                Defaults to a format like ISO 8601 with some reserved characters replaced with underscores.
 
         Returns:
             str: Filename of screenshot.
