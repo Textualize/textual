@@ -241,7 +241,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         try:
             cell_value = self.data[row][column]
         except KeyError:
-            raise CellDoesNotExist(f"No cell exists at {coordinate!r}")
+            raise CellDoesNotExist(f"No cell exists at {coordinate!r}") from None
         return cell_value
 
     def _clear_caches(self) -> None:
