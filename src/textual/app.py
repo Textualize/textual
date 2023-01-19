@@ -663,9 +663,10 @@ class App(Generic[ReturnType], DOMNode):
                 dt = datetime.now().isoformat()
             else:
                 dt = datetime.now().strftime(time_format)
-            svg_filename = f"{self.title.lower()} {dt}.svg"
-            for reserved in ' <>:"/\\|?*':
-                svg_filename = svg_filename.replace(reserved, "_")
+            svg_filename_stem = f"{self.title.lower()} {dt}"
+            for reserved in ' <>:"/\\|?*.':
+                svg_filename_stem = svg_filename_stem.replace(reserved, "_")
+                svg_filename = svg_filename_stem + ".svg"
         else:
             svg_filename = filename
         svg_path = os.path.expanduser(os.path.join(path, svg_filename))
