@@ -43,6 +43,11 @@ class Strip:
         yield self._segments
         yield self.cell_length
 
+    @property
+    def text(self) -> str:
+        """Segment text."""
+        return "".join(segment.text for segment in self._segments)
+
     @classmethod
     def blank(cls, cell_length: int, style: Style | None) -> Strip:
         """Create a blank strip.
