@@ -1651,10 +1651,11 @@ class App(Generic[ReturnType], DOMNode):
 
         """
 
-        if not widgets or not self._running:
+        if not widgets:
             return []
 
         new_widgets = list(widgets)
+
         if before is not None or after is not None:
             # There's a before or after, which means there's going to be an
             # insertion, so make it easier to get the new things in the
@@ -1670,6 +1671,11 @@ class App(Generic[ReturnType], DOMNode):
                 if widget.children:
                     self._register(widget, *widget.children)
                 apply_stylesheet(widget)
+
+        if not self._running:
+            # If the app is not running, prevent awaiting of the widget tasks
+            return []
+
         return list(widgets)
 
     def _unregister(self, widget: Widget) -> None:
