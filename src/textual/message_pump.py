@@ -304,7 +304,9 @@ class MessagePump(metaclass=MessagePumpMeta):
     def _start_messages(self) -> None:
         """Start messages task."""
         if self.app._running:
-            self._task = asyncio.create_task(self._process_messages())
+            self._task = asyncio.create_task(
+                self._process_messages(), name=f"message pump {self}"
+            )
 
     async def _process_messages(self) -> None:
         self._running = True

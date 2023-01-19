@@ -94,7 +94,7 @@ class AwaitMount:
         async def await_mount() -> None:
             if self._widgets:
                 aws = [
-                    create_task(widget._mounted_event.wait())
+                    create_task(widget._mounted_event.wait(), name="await mount")
                     for widget in self._widgets
                 ]
                 if aws:

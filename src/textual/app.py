@@ -859,7 +859,7 @@ class App(Generic[ReturnType], DOMNode):
             )
 
         # Launch the app in the "background"
-        app_task = asyncio.create_task(run_app(app))
+        app_task = asyncio.create_task(run_app(app), name=f"run_test {app}")
 
         # Wait until the app has performed all startup routines.
         await app_ready_event.wait()
@@ -914,7 +914,9 @@ class App(Generic[ReturnType], DOMNode):
                         raise
 
                 pilot = Pilot(app)
-                auto_pilot_task = asyncio.create_task(run_auto_pilot(auto_pilot, pilot))
+                auto_pilot_task = asyncio.create_task(
+                    run_auto_pilot(auto_pilot, pilot), name=repr(pilot)
+                )
 
         try:
             await app._process_messages(
@@ -1649,7 +1651,7 @@ class App(Generic[ReturnType], DOMNode):
 
         """
 
-        if not widgets:
+        if not widgets or not self._running:
             return []
 
         new_widgets = list(widgets)
@@ -2111,7 +2113,9 @@ class App(Generic[ReturnType], DOMNode):
         removed_widgets = self._detach_from_dom(widgets)
 
         finished_event = asyncio.Event()
-        asyncio.create_task(prune_widgets_task(removed_widgets, finished_event))
+        asyncio.create_task(
+            prune_widgets_task(removed_widgets, finished_event), name="prune nodes"
+        )
 
         return AwaitRemove(finished_event)
 

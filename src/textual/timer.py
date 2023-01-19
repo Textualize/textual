@@ -89,7 +89,7 @@ class Timer:
         Returns:
             A Task instance for the timer.
         """
-        self._task = asyncio.create_task(self._run_timer())
+        self._task = asyncio.create_task(self._run_timer(), name=self.name)
         return self._task
 
     def stop_no_wait(self) -> None:
