@@ -35,7 +35,6 @@ class CellDoesNotExist(Exception):
     pass
 
 
-# TODO: Revisit?
 class StringKey(NamedTuple):
     value: str | None
 
