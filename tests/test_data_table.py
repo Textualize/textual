@@ -2,7 +2,7 @@ from textual.app import App
 from textual.coordinate import Coordinate
 from textual.message import Message
 from textual.widgets import DataTable
-from textual.widgets._data_table import Key
+from textual.widgets._data_table import StringKey
 
 
 class DataTableApp(App):
@@ -152,13 +152,13 @@ async def test_clear():
 
 def test_key_equals_equivalent_string():
     text = "Hello"
-    key = Key(text)
+    key = StringKey(text)
     assert key == text
     assert hash(key) == hash(text)
 
 
 def test_key_doesnt_match_non_equal_string():
-    key = Key("123")
+    key = StringKey("123")
     text = "laksjdlaskjd"
     assert key != text
     assert hash(key) != hash(text)
@@ -169,9 +169,9 @@ def test_key_string_lookup():
     # in tests how we intend for the keys to work for cache lookups.
     dictionary = {
         "foo": "bar",
-        Key("hello"): "world",
+        StringKey("hello"): "world",
     }
     assert dictionary["foo"] == "bar"
-    assert dictionary[Key("foo")] == "bar"
+    assert dictionary[StringKey("foo")] == "bar"
     assert dictionary["hello"] == "world"
-    assert dictionary[Key("hello")] == "world"
+    assert dictionary[StringKey("hello")] == "world"

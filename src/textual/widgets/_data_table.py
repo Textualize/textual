@@ -36,7 +36,7 @@ class CellDoesNotExist(Exception):
 
 
 # TODO: Revisit?
-class Key(NamedTuple):
+class StringKey(NamedTuple):
     value: str | None
 
     def __hash__(self):
@@ -70,7 +70,7 @@ def default_cell_formatter(obj: object) -> RenderableType | None:
 class Column:
     """Table column."""
 
-    key: Key
+    key: StringKey
     label: Text
     width: int = 0
     visible: bool = False
@@ -93,7 +93,7 @@ class Column:
 class Row:
     """Table row."""
 
-    key: Key
+    key: StringKey
     index: int
     height: int
     y: int
@@ -467,7 +467,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """
         text_label = Text.from_markup(label) if isinstance(label, str) else label
 
-        column_key = Key(key)
+        column_key = StringKey(key)
         content_width = measure(self.app.console, text_label, 1)
         if width is None:
             column = Column(
@@ -502,7 +502,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             key: A key which uniquely identifies this row. If None, it will be generated for you. Defaults to None.
         """
         row_index = self.row_count
-        row_key = Key(key)
+        row_key = StringKey(key)
 
         self.data[row_index] = list(cells)
         self.rows[row_index] = Row(row_key, row_index, height, self._line_no)
