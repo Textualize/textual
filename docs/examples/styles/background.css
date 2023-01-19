@@ -1,14 +1,18 @@
-Static {
+Label {
+    width: 100%;
     height: 1fr;
     content-align: center middle;
     color: white;
-}    
+}
+
 #static1 {
     background: red;
 }
+
 #static2 {
     background: rgb(0, 255, 0);
 }
+
 #static3 {
     background: hsl(240, 100%, 50%);
 }

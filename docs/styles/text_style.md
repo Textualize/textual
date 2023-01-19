@@ -1,29 +1,25 @@
 # Text-style
 
-The `text-style` rule enables a number of different ways of displaying text.
-
-Text styles may be set in combination.
-For example `bold underline` or `reverse underline strike`.
+The `text-style` sets the style for the text in a widget.
 
 ## Syntax
 
-```
-text-style: <TEXT STYLE> ...;
-```
+--8<-- "docs/snippets/syntax_block_start.md"
+text-style: <a href="../../css_types/text_style">&lt;text-style&gt;</a>;
+--8<-- "docs/snippets/syntax_block_end.md"
 
-### Values
+`text-style` will take all the values specified and will apply that styling combination to the text in the widget.
 
-| Value       | Description                                                    |
-|-------------|----------------------------------------------------------------|
-| `bold`      | **bold text**                                                  |
-| `italic`    | _italic text_                                                  |
-| `reverse`   | reverse video text (foreground and background colors reversed) |
-| `underline` | <u>underline text</u>                                          |
-| `strike`    | <s>strikethrough text</s>                                      |
+## Examples
 
-## Example
+### Basic usage
 
-Each of the three text panels has a different text style.
+Each of the three text panels has a different text style, respectively `bold`, `italic`, and `reverse`, from left to right.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/text_style.py" lines=14}
+    ```
 
 === "text_style.py"
 
@@ -33,13 +29,29 @@ Each of the three text panels has a different text style.
 
 === "text_style.css"
 
-    ```css
+    ```sass hl_lines="9 13 17"
     --8<-- "docs/examples/styles/text_style.css"
     ```
 
+### All text styles
+
+The next example shows all different styles on their own, as well as some combinations of styles in a single widget.
+
 === "Output"
 
-    ```{.textual path="docs/examples/styles/text_style.py"}
+    ```{.textual path="docs/examples/styles/text_style_all.py"}
+    ```
+
+=== "text_style_all.py"
+
+    ```python
+    --8<-- "docs/examples/styles/text_style_all.py"
+    ```
+
+=== "text_style_all.css"
+
+    ```sass hl_lines="2 6 10 14 18 22 26 30"
+    --8<-- "docs/examples/styles/text_style_all.css"
     ```
 
 ## CSS

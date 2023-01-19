@@ -3,10 +3,10 @@ Screen {
     color: black;
     layout: horizontal;
 }
-Static {             
+Label {
     width: 20;
     height: 10;
-    content-align: center middle; 
+    content-align: center middle;
 }
 
 .paul {
@@ -24,7 +24,7 @@ Static {
 }
 
 .chani {
-    offset: 0 5;
+    offset: 0 -3;
     background: blue 20%;
     border: outer blue;
     color: blue;

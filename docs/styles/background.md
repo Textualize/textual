@@ -1,16 +1,25 @@
 # Background
 
-The `background` rule sets the background color of the widget.
+The `background` rule sets the background color of a widget.
 
 ## Syntax
 
-```
-background: <COLOR> [<PERCENTAGE>];
-```
+--8<-- "docs/snippets/syntax_block_start.md"
+background: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
+--8<-- "docs/snippets/syntax_block_end.md"
 
-## Example
+The style `background` needs a [`<color>`](../../css_types/color) followed by an optional [`<percentage>`](../../css_types/percentage) to specify the color transparency (clamped between `0%` and `100%`).
+
+## Examples
+
+### Basic usage
 
 This example creates three widgets and applies a different background to each.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/background.py"}
+    ```
 
 === "background.py"
 
@@ -20,13 +29,29 @@ This example creates three widgets and applies a different background to each.
 
 === "background.css"
 
-    ```sass
+    ```sass hl_lines="9 13 17"
     --8<-- "docs/examples/styles/background.css"
     ```
 
+### Different transparency settings
+
+The next example creates ten widgets layed out side by side to show the effect of setting different percentages for the transparency of the background color.
+
 === "Output"
 
-    ```{.textual path="docs/examples/styles/background.py"}
+    ```{.textual path="docs/examples/styles/background_transparency.py"}
+    ```
+
+=== "background_transparency.py"
+
+    ```python
+    --8<-- "docs/examples/styles/background_transparency.py"
+    ```
+
+=== "background_transparency.css"
+
+    ```sass hl_lines="2 6 10 14 18 22 26 30 34 38"
+    --8<-- "docs/examples/styles/background_transparency.css"
     ```
 
 ## CSS
@@ -39,7 +64,10 @@ background: blue;
 background: red 20%;
 
 /* RGB color */
-background: rgb(100,120,200);
+background: rgb(100, 120, 200);
+
+/* HSL color */
+background: hsl(290, 70%, 80%);
 ```
 
 ## Python
@@ -49,9 +77,17 @@ You can use the same syntax as CSS, or explicitly set a `Color` object for finer
 ```python
 # Set blue background
 widget.styles.background = "blue"
+# Set through HSL model
+widget.styles.background = "hsl(351,32%,89%)"
 
 from textual.color import Color
-# Set with a color object
+# Set with a color object by parsing a string
 widget.styles.background = Color.parse("pink")
+widget.styles.background = Color.parse("#FF00FF")
+# Set with a color object instantiated directly
 widget.styles.background = Color(120, 60, 100)
 ```
+
+## See also
+
+ - [`color`](./color.md) to set the color of text in a widget.

@@ -89,8 +89,18 @@ def test_placeholder_render(snap_compare):
 
 
 def test_datatable_render(snap_compare):
-    press = ["tab", "down", "down", "right", "up", "left"]
+    press = ["tab", "down", "down", "right", "up", "left", "_"]
     assert snap_compare(WIDGET_EXAMPLES_DIR / "data_table.py", press=press)
+
+
+def test_datatable_row_cursor_render(snap_compare):
+    press = ["up", "left", "right", "down", "down", "_"]
+    assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_row_cursor.py", press=press)
+
+
+def test_datatable_column_cursor_render(snap_compare):
+    press = ["left", "up", "down", "right", "right", "_"]
+    assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_column_cursor.py", press=press)
 
 
 def test_footer_render(snap_compare):
@@ -103,7 +113,7 @@ def test_header_render(snap_compare):
 
 def test_list_view(snap_compare):
     assert snap_compare(
-        WIDGET_EXAMPLES_DIR / "list_view.py", press=["tab", "down", "down", "up"]
+        WIDGET_EXAMPLES_DIR / "list_view.py", press=["tab", "down", "down", "up", "_"]
     )
 
 
@@ -137,6 +147,7 @@ PATHS = [
 @pytest.mark.parametrize("file_name", PATHS)
 def test_css_property(file_name, snap_compare):
     path_to_app = STYLES_EXAMPLES_DIR / file_name
+    Placeholder.reset_color_cycle()
     assert snap_compare(path_to_app)
 
 
@@ -146,11 +157,11 @@ def test_multiple_css(snap_compare):
 
 
 def test_order_independence(snap_compare):
-    assert snap_compare("snapshot_apps/order_independence.py")
+    assert snap_compare("snapshot_apps/layer_order_independence.py")
 
 
 def test_order_independence_toggle(snap_compare):
-    assert snap_compare("snapshot_apps/order_independence.py", press="t,_")
+    assert snap_compare("snapshot_apps/layer_order_independence.py", press="t,_")
 
 
 def test_columns_height(snap_compare):

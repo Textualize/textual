@@ -154,7 +154,7 @@ class Button(Static, can_focus=True):
         """Event sent when a `Button` is pressed.
 
         Attributes:
-            button (Button): The button that was pressed.
+            button: The button that was pressed.
         """
 
         @property
@@ -174,12 +174,12 @@ class Button(Static, can_focus=True):
         """Create a Button widget.
 
         Args:
-            label (str, optional): The text that appears within the button.
-            disabled (bool, optional): Whether the button is disabled or not.
-            variant (ButtonVariant, optional): The variant of the button.
-            name (str | None, optional): The name of the button.
-            id (str | None, optional): The ID of the button in the DOM.
-            classes (str | None, optional): The CSS classes of the button.
+            label: The text that appears within the button.
+            disabled: Whether the button is disabled or not.
+            variant: The variant of the button.
+            name: The name of the button.
+            id: The ID of the button in the DOM.
+            classes: The CSS classes of the button.
         """
         super().__init__(name=name, id=id, classes=classes)
 
@@ -195,8 +195,13 @@ class Button(Static, can_focus=True):
         self.variant = self.validate_variant(variant)
 
     label: Reactive[RenderableType] = Reactive("")
+    """The text label that appears within the button."""
+
     variant = Reactive.init("default")
+    """The variant name for the button."""
+
     disabled = Reactive(False)
+    """The disabled state of the button; `True` if disabled, `False` if not."""
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield from super().__rich_repr__()
@@ -273,14 +278,14 @@ class Button(Static, can_focus=True):
         """Utility constructor for creating a success Button variant.
 
         Args:
-            label (str, optional): The text that appears within the button.
-            disabled (bool, optional): Whether the button is disabled or not.
-            name (str | None, optional): The name of the button.
-            id (str | None, optional): The ID of the button in the DOM.
-            classes(str | None, optional): The CSS classes of the button.
+            label: The text that appears within the button.
+            disabled: Whether the button is disabled or not.
+            name: The name of the button.
+            id: The ID of the button in the DOM.
+            classes: The CSS classes of the button.
 
         Returns:
-            Button: A Button widget of the 'success' variant.
+            A Button widget of the 'success' variant.
         """
         return Button(
             label=label,
@@ -304,14 +309,14 @@ class Button(Static, can_focus=True):
         """Utility constructor for creating a warning Button variant.
 
         Args:
-            label (str, optional): The text that appears within the button.
-            disabled (bool, optional): Whether the button is disabled or not.
-            name (str | None, optional): The name of the button.
-            id (str | None, optional): The ID of the button in the DOM.
-            classes (str | None, optional): The CSS classes of the button.
+            label: The text that appears within the button.
+            disabled: Whether the button is disabled or not.
+            name: The name of the button.
+            id: The ID of the button in the DOM.
+            classes: The CSS classes of the button.
 
         Returns:
-            Button: A Button widget of the 'warning' variant.
+            A Button widget of the 'warning' variant.
         """
         return Button(
             label=label,
@@ -335,14 +340,14 @@ class Button(Static, can_focus=True):
         """Utility constructor for creating an error Button variant.
 
         Args:
-            label (str, optional): The text that appears within the button.
-            disabled (bool, optional): Whether the button is disabled or not.
-            name (str | None, optional): The name of the button.
-            id (str | None, optional): The ID of the button in the DOM.
-            classes (str | None, optional): The CSS classes of the button.
+            label: The text that appears within the button.
+            disabled: Whether the button is disabled or not.
+            name: The name of the button.
+            id: The ID of the button in the DOM.
+            classes: The CSS classes of the button.
 
         Returns:
-            Button: A Button widget of the 'error' variant.
+            A Button widget of the 'error' variant.
         """
         return Button(
             label=label,

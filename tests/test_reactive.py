@@ -2,8 +2,9 @@ import asyncio
 
 import pytest
 
-from textual.app import App
-from textual.reactive import reactive, var
+from textual.app import App, ComposeResult
+from textual.reactive import Reactive, reactive, var
+from textual.widget import Widget
 
 OLD_VALUE = 5_000
 NEW_VALUE = 1_000_000
@@ -81,7 +82,8 @@ async def test_watch_async_init_true():
             await asyncio.wait_for(app.watcher_called_event.wait(), timeout=0.05)
         except TimeoutError:
             pytest.fail(
-                "Async watcher wasn't called within timeout when reactive init = True")
+                "Async watcher wasn't called within timeout when reactive init = True"
+            )
 
     assert app.count == OLD_VALUE
     assert app.watcher_old_value == OLD_VALUE
@@ -142,10 +144,9 @@ async def test_reactive_always_update():
         # Value is the same, but always_update=True, so watcher called...
         app.first_name = "Darren"
         assert calls == ["first_name Darren"]
-        # TODO: Commented out below due to issue#1230, should work after issue fixed
         # Value is the same, and always_update=False, so watcher NOT called...
-        # app.last_name = "Burns"
-        # assert calls == ["first_name Darren"]
+        app.last_name = "Burns"
+        assert calls == ["first_name Darren"]
         # Values changed, watch method always called regardless of always_update
         app.first_name = "abc"
         app.last_name = "def"
@@ -155,15 +156,9 @@ async def test_reactive_always_update():
 async def test_reactive_with_callable_default():
     """A callable can be supplied as the default value for a reactive.
     Textual will call it in order to retrieve the default value."""
-    called_with_app = None
-
-    def set_called(app: App) -> int:
-        nonlocal called_with_app
-        called_with_app = app
-        return OLD_VALUE
 
     class ReactiveCallable(App):
-        value = reactive(set_called)
+        value = reactive(lambda: 123)
         watcher_called_with = None
 
         def watch_value(self, new_value):
@@ -171,9 +166,8 @@ async def test_reactive_with_callable_default():
 
     app = ReactiveCallable()
     async with app.run_test():
-        assert app.value == OLD_VALUE  # The value should be set to the return val of the callable
-    assert called_with_app is app  # Ensure the App is passed into the reactive default callable
-    assert app.watcher_called_with == OLD_VALUE
+        assert app.value == 123
+        assert app.watcher_called_with == 123
 
 
 async def test_validate_init_true():
@@ -216,8 +210,6 @@ async def test_validate_init_true_set_before_dom_ready():
         assert validator_call_count == 1
 
 
-
-@pytest.mark.xfail(reason="Compute methods not called when init=True [issue#1227]")
 async def test_reactive_compute_first_time_set():
     class ReactiveComputeFirstTimeSet(App):
         number = reactive(1)
@@ -228,15 +220,13 @@ async def test_reactive_compute_first_time_set():
 
     app = ReactiveComputeFirstTimeSet()
     async with app.run_test():
-        await asyncio.sleep(.2)  # TODO: We sleep here while issue#1218 is open
         assert app.double_number == 2
 
 
-@pytest.mark.xfail(reason="Compute methods not called immediately [issue#1218]")
 async def test_reactive_method_call_order():
     class CallOrder(App):
         count = reactive(OLD_VALUE, init=False)
-        count_times_ten = reactive(OLD_VALUE * 10)
+        count_times_ten = reactive(OLD_VALUE * 10, init=False)
         calls = []
 
         def validate_count(self, value: int) -> int:
@@ -266,3 +256,106 @@ async def test_reactive_method_call_order():
         ]
         assert app.count == NEW_VALUE + 1
         assert app.count_times_ten == (NEW_VALUE + 1) * 10
+
+
+async def test_premature_reactive_call():
+
+    watcher_called = False
+
+    class BrokenWidget(Widget):
+        foo = reactive(1)
+
+        def __init__(self) -> None:
+            super().__init__()
+            self.foo = "bar"
+
+        async def watch_foo(self) -> None:
+            nonlocal watcher_called
+            watcher_called = True
+
+    class PrematureApp(App):
+        def compose(self) -> ComposeResult:
+            yield BrokenWidget()
+
+    app = PrematureApp()
+    async with app.run_test() as pilot:
+        assert watcher_called
+        app.exit()
+
+
+async def test_reactive_inheritance():
+    """Check that inheritance works as expected for reactives."""
+
+    class Primary(App):
+        foo = reactive(1)
+        bar = reactive("bar")
+
+    class Secondary(Primary):
+        foo = reactive(2)
+        egg = reactive("egg")
+
+    class Tertiary(Secondary):
+        baz = reactive("baz")
+
+    from rich import print
+
+    primary = Primary()
+    secondary = Secondary()
+    tertiary = Tertiary()
+
+    primary_reactive_count = len(primary._reactives)
+
+    # Secondary adds one new reactive
+    assert len(secondary._reactives) == primary_reactive_count + 1
+
+    Reactive._initialize_object(primary)
+    Reactive._initialize_object(secondary)
+    Reactive._initialize_object(tertiary)
+
+    # Primary doesn't have egg
+    with pytest.raises(AttributeError):
+        assert primary.egg
+
+    # primary has foo of 1
+    assert primary.foo == 1
+    # secondary has different reactive
+    assert secondary.foo == 2
+    # foo is accessible through tertiary
+    assert tertiary.foo == 2
+
+    with pytest.raises(AttributeError):
+        secondary.baz
+
+    assert tertiary.baz == "baz"
+
+
+async def test_watch_compute():
+    """Check that watching a computed attribute works."""
+
+    watch_called: list[bool] = []
+
+    class Calculator(App):
+
+        numbers = var("0")
+        show_ac = var(True)
+        value = var("")
+
+        def compute_show_ac(self) -> bool:
+            return self.value in ("", "0") and self.numbers == "0"
+
+        def watch_show_ac(self, show_ac: bool) -> None:
+            """Called when show_ac changes."""
+            watch_called.append(show_ac)
+
+    app = Calculator()
+
+    async with app.run_test() as pilot:
+        assert app.show_ac is True
+        app.value = "1"
+        assert app.show_ac is False
+        app.value = "0"
+        assert app.show_ac is True
+        app.numbers = "123"
+        assert app.show_ac is False
+
+    assert watch_called == [True, False, True, False]

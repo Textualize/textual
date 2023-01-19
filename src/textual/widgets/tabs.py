@@ -26,8 +26,8 @@ class Tab:
     """Data container representing a single tab.
 
     Attributes:
-        label (str): The user-facing label that will appear inside the tab.
-        name (str, optional): A unique string key that will identify the tab. If None, it will default to the label.
+        label: The user-facing label that will appear inside the tab.
+        name: A unique string key that will identify the tab. If None, it will default to the label.
             If the name is not unique within a single list of tabs, only the final Tab will be displayed.
     """
 
@@ -175,18 +175,18 @@ class Tabs(Widget):
     """Widget which displays a set of horizontal tabs.
 
     Args:
-        tabs (list[Tab]): A list of Tab objects defining the tabs which should be rendered.
-        active_tab (str, optional): The name of the tab that should be active on first render.
-        active_tab_style (StyleType, optional): Style to apply to the label of the active tab.
-        active_bar_style (StyleType, optional): Style to apply to the underline of the active tab.
-        inactive_tab_style (StyleType, optional): Style to apply to the label of inactive tabs.
-        inactive_bar_style (StyleType, optional): Style to apply to the underline of inactive tabs.
-        inactive_text_opacity (float, optional): Opacity of the text labels of inactive tabs.
-        animation_duration (float, optional): The duration of the tab change animation, in seconds.
-        animation_function (str, optional): The easing function to use for the tab change animation.
-        tab_padding (int, optional): The padding at the side of each tab. If None, tabs will
+        tabs: A list of Tab objects defining the tabs which should be rendered.
+        active_tab: The name of the tab that should be active on first render.
+        active_tab_style: Style to apply to the label of the active tab.
+        active_bar_style: Style to apply to the underline of the active tab.
+        inactive_tab_style: Style to apply to the label of inactive tabs.
+        inactive_bar_style: Style to apply to the underline of inactive tabs.
+        inactive_text_opacity: Opacity of the text labels of inactive tabs.
+        animation_duration: The duration of the tab change animation, in seconds.
+        animation_function: The easing function to use for the tab change animation.
+        tab_padding: The padding at the side of each tab. If None, tabs will
             automatically be padded such that they fit the  available horizontal space.
-        search_by_first_character (bool, optional): If True, entering a character on your keyboard
+        search_by_first_character: If True, entering a character on your keyboard
             will activate the next tab (in left-to-right order) with a label starting with
             that character.
     """
@@ -236,7 +236,7 @@ class Tabs(Widget):
         to cycle through tabs with labels beginning with that character.
 
         Args:
-            event (events.Key): The Key event being handled
+            event: The Key event being handled
         """
         if not self.tabs:
             event.prevent_default()
@@ -273,7 +273,7 @@ class Tabs(Widget):
         """Activate the next tab that begins with the character
 
         Args:
-            char (str): The character to search for
+            char: The character to search for
         """
 
         def find_next_matching_tab(
@@ -297,7 +297,7 @@ class Tabs(Widget):
         """Activate a tab using the tab number.
 
         Args:
-            tab_number (int): The number of the tab.
+            tab_number: The number of the tab.
                 The leftmost tab is number 1, the next is 2, and so on. 0 represents the 10th tab.
         """
         if tab_number > len(self.tabs):
@@ -324,7 +324,7 @@ class Tabs(Widget):
         """Return the index of the first tab with a certain name
 
         Args:
-            tab_name (str): The name to search for.
+            tab_name: The name to search for.
         """
         return next((i for i, tab in enumerate(self.tabs) if tab.name == tab_name), 0)
 

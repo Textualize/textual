@@ -99,9 +99,9 @@ class ChopsUpdate:
         """A renderable which updates chops (fragments of lines).
 
         Args:
-            chops (list[dict[int, list[Segment]  |  None]]): A mapping of offsets to list of segments, per line.
-            crop (Region): Region to restrict update to.
-            chop_ends (list[list[int]]): A list of the end offsets for each line
+            chops: A mapping of offsets to list of segments, per line.
+            crop: Region to restrict update to.
+            chop_ends: A list of the end offsets for each line
         """
         self.chops = chops
         self.spans = spans
@@ -199,10 +199,10 @@ class Compositor:
         or are contiguous to produce optimal non-overlapping spans.
 
         Args:
-            regions (Iterable[Region]): An iterable of Regions.
+            regions: An iterable of Regions.
 
         Returns:
-            Iterable[tuple[int, int, int]]: Yields tuples of (Y, X1, X2)
+            Yields tuples of (Y, X1, X2).
         """
         inline_ranges: dict[int, list[tuple[int, int]]] = {}
         setdefault = inline_ranges.setdefault
@@ -237,11 +237,11 @@ class Compositor:
         """Reflow (layout) widget and its children.
 
         Args:
-            parent (Widget): The root widget.
-            size (Size): Size of the area to be filled.
+            parent: The root widget.
+            size: Size of the area to be filled.
 
         Returns:
-            ReflowResult: Hidden shown and resized widgets
+            Hidden shown and resized widgets.
         """
         self._cuts = None
         self._layers = None
@@ -253,8 +253,8 @@ class Compositor:
         # Keep a copy of the old map because we're going to compare it with the update
         old_map = self.map.copy()
         old_widgets = old_map.keys()
-        map, widgets = self._arrange_root(parent, size)
 
+        map, widgets = self._arrange_root(parent, size)
         new_widgets = map.keys()
 
         # Newly visible widgets
@@ -266,20 +266,21 @@ class Compositor:
         self.map = map
         self.widgets = widgets
 
-        screen = size.region
+        # Contains widgets + geometry for every widget that changed (added, removed, or updated)
+        changes = map.items() ^ old_map.items()
+
+        # Widgets in both new and old
+        common_widgets = old_widgets & new_widgets
 
         # Widgets with changed size
         resized_widgets = {
             widget
-            for widget, (region, *_) in map.items()
-            if widget in old_widgets and old_map[widget].region.size != region.size
+            for widget, (region, *_) in changes
+            if (widget in common_widgets and old_map[widget].region[2:] != region[2:])
         }
 
-        # Gets pairs of tuples of (Widget, MapGeometry) which have changed
-        # i.e. if something is moved / deleted / added
-
-        if screen not in self._dirty_regions:
-            changes = map.items() ^ old_map.items()
+        screen_region = size.region
+        if screen_region not in self._dirty_regions:
             regions = {
                 region
                 for region in (
@@ -301,7 +302,7 @@ class Compositor:
         """Get a mapping of widgets on to region and clip.
 
         Returns:
-            dict[Widget, tuple[Region, Region]]: visible widget mapping.
+            Visible widget mapping.
         """
         if self._visible_widgets is None:
             screen = self.size.region
@@ -326,10 +327,10 @@ class Compositor:
         """Arrange a widgets children based on its layout attribute.
 
         Args:
-            root (Widget): Top level widget.
+            root: Top level widget.
 
         Returns:
-            tuple[CompositorMap, set[Widget]]: Compositor map and set of widgets.
+            Compositor map and set of widgets.
         """
 
         ORIGIN = NULL_OFFSET
@@ -346,14 +347,15 @@ class Compositor:
             layer_order: int,
             clip: Region,
             visible: bool,
+            _MapGeometry=MapGeometry,
         ) -> None:
             """Called recursively to place a widget and its children in the map.
 
             Args:
-                widget (Widget): The widget to add.
-                region (Region): The region the widget will occupy.
-                order (tuple[int, ...]): A tuple of ints to define the order.
-                clip (Region): The clipping region (i.e. the viewport which contains it).
+                widget: The widget to add.
+                region: The region the widget will occupy.
+                order: A tuple of ints to define the order.
+                clip: The clipping region (i.e. the viewport which contains it).
             """
             visibility = widget.styles.get_rule("visibility")
             if visibility is not None:
@@ -392,50 +394,57 @@ class Compositor:
                     )
                     widgets.update(arranged_widgets)
 
-                    # An offset added to all placements
-                    placement_offset = container_region.offset
-                    placement_scroll_offset = placement_offset - widget.scroll_offset
+                    if placements:
+                        # An offset added to all placements
+                        placement_offset = container_region.offset
+                        placement_scroll_offset = (
+                            placement_offset - widget.scroll_offset
+                        )
 
-                    _layers = widget.layers
-                    layers_to_index = {
-                        layer_name: index for index, layer_name in enumerate(_layers)
-                    }
-                    get_layer_index = layers_to_index.get
+                        _layers = widget.layers
+                        layers_to_index = {
+                            layer_name: index
+                            for index, layer_name in enumerate(_layers)
+                        }
+                        get_layer_index = layers_to_index.get
 
-                    # Add all the widgets
-                    for sub_region, margin, sub_widget, z, fixed in reversed(
-                        placements
-                    ):
-                        # Combine regions with children to calculate the "virtual size"
-                        if fixed:
-                            widget_region = sub_region + placement_offset
-                        else:
-                            total_region = total_region.union(
-                                sub_region.grow(spacing + margin)
+                        # Add all the widgets
+                        for sub_region, margin, sub_widget, z, fixed in reversed(
+                            placements
+                        ):
+                            # Combine regions with children to calculate the "virtual size"
+                            if fixed:
+                                widget_region = sub_region + placement_offset
+                            else:
+                                total_region = total_region.union(
+                                    sub_region.grow(spacing + margin)
+                                )
+                                widget_region = sub_region + placement_scroll_offset
+
+                            widget_order = (
+                                *order,
+                                get_layer_index(sub_widget.layer, 0),
+                                z,
+                                layer_order,
                             )
-                            widget_region = sub_region + placement_scroll_offset
 
-                        widget_order = order + (
-                            (get_layer_index(sub_widget.layer, 0), z, layer_order),
-                        )
-
-                        add_widget(
-                            sub_widget,
-                            sub_region,
-                            widget_region,
-                            widget_order,
-                            layer_order,
-                            sub_clip,
-                            visible,
-                        )
-                        layer_order -= 1
+                            add_widget(
+                                sub_widget,
+                                sub_region,
+                                widget_region,
+                                widget_order,
+                                layer_order,
+                                sub_clip,
+                                visible,
+                            )
+                            layer_order -= 1
 
                 if visible:
                     # Add any scrollbars
                     for chrome_widget, chrome_region in widget._arrange_scrollbars(
                         container_region
                     ):
-                        map[chrome_widget] = MapGeometry(
+                        map[chrome_widget] = _MapGeometry(
                             chrome_region + layout_offset,
                             order,
                             clip,
@@ -444,7 +453,7 @@ class Compositor:
                             chrome_region,
                         )
 
-                    map[widget] = MapGeometry(
+                    map[widget] = _MapGeometry(
                         region + layout_offset,
                         order,
                         clip,
@@ -455,7 +464,7 @@ class Compositor:
 
             elif visible:
                 # Add the widget to the map
-                map[widget] = MapGeometry(
+                map[widget] = _MapGeometry(
                     region + layout_offset,
                     order,
                     clip,
@@ -516,14 +525,14 @@ class Compositor:
         """Get the widget under a given coordinate.
 
         Args:
-            x (int): X Coordinate.
-            y (int): Y Coordinate.
+            x: X Coordinate.
+            y: Y Coordinate.
 
         Raises:
             errors.NoWidget: If there is not widget underneath (x, y).
 
         Returns:
-            tuple[Widget, Region]: A tuple of the widget and its region.
+            A tuple of the widget and its region.
         """
 
         contains = Region.contains
@@ -537,11 +546,11 @@ class Compositor:
         """Get all widgets under a given coordinate.
 
         Args:
-            x (int): X coordinate.
-            y (int): Y coordinate.
+            x: X coordinate.
+            y: Y coordinate.
 
         Returns:
-            Iterable[tuple[Widget, Region]]: Sequence of (WIDGET, REGION) tuples.
+            Sequence of (WIDGET, REGION) tuples.
         """
         contains = Region.contains
         for widget, cropped_region, region in self.layers_visible[y]:
@@ -552,11 +561,11 @@ class Compositor:
         """Get the Style at the given cell or Style.null()
 
         Args:
-            x (int): X position within the Layout
-            y (int): Y position within the Layout
+            x: X position within the Layout
+            y: Y position within the Layout
 
         Returns:
-            Style: The Style at the cell (x, y) within the Layout
+            The Style at the cell (x, y) within the Layout
         """
         try:
             widget, region = self.get_widget_at(x, y)
@@ -583,13 +592,13 @@ class Compositor:
         """Get information regarding the relative position of a widget in the Compositor.
 
         Args:
-            widget (Widget): The Widget in this layout you wish to know the Region of.
+            widget: The Widget in this layout you wish to know the Region of.
 
         Raises:
             NoWidget: If the Widget is not contained in this Layout.
 
         Returns:
-            MapGeometry: Widget's composition information.
+            Widget's composition information.
 
         """
         try:
@@ -606,7 +615,7 @@ class Compositor:
         A cut is every point on a line where a widget starts or ends.
 
         Returns:
-            list[list[int]]: A list of cuts for every line.
+            A list of cuts for every line.
         """
         if self._cuts is not None:
             return self._cuts
@@ -637,7 +646,7 @@ class Compositor:
         """Get rendered widgets (lists of segments) in the composition.
 
         Returns:
-            Iterable[tuple[Region, Region, Strips]]: An iterable of <region>, <clip region>, and <strips>
+            An iterable of <region>, <clip region>, and <strips>
         """
         # If a renderable throws an error while rendering, the user likely doesn't care about the traceback
         # up to this point.
@@ -687,7 +696,7 @@ class Compositor:
         """Render a layout.
 
         Returns:
-            SegmentLines: A renderable
+            A renderable
         """
 
         width, height = self.size
@@ -775,8 +784,8 @@ class Compositor:
         """Update a given widget in the composition.
 
         Args:
-            console (Console): Console instance.
-            widget (Widget): Widget to update.
+            console: Console instance.
+            widget: Widget to update.
 
         """
         regions: list[Region] = []

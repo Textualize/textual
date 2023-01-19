@@ -1,0 +1,11 @@
+#lbl1, #lbl2 {
+    link-background: red;  /* (1)! */
+}
+
+#lbl3 {
+    link-background: hsl(60,100%,50%) 50%;
+}
+
+#lbl4 {
+    link-background: $accent;
+}

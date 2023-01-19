@@ -5,7 +5,7 @@ from ._time import time
 
 """
 A module that serves as the single source of truth for everything time-related in a Textual app.
-Having this logic centralised makes it easier to simulate time in integration tests, 
+Having this logic centralised makes it easier to simulate time in integration tests,
 by mocking the few functions exposed by this module.
 """
 
@@ -32,7 +32,7 @@ def get_time_no_wait() -> float:
     Get the current wall clock time.
 
     Returns:
-        float: the value (in fractional seconds) of a monotonic clock, i.e. a clock that cannot go backwards.
+        The value (in fractional seconds) of a monotonic clock, i.e. a clock that cannot go backwards.
     """
     return _clock.get_time_no_wait()
 
@@ -43,7 +43,7 @@ async def get_time() -> float:
     able to "do things" elsewhere right before we fetch the time.
 
     Returns:
-        float: the value (in fractional seconds) of a monotonic clock, i.e. a clock that cannot go backwards.
+        The value (in fractional seconds) of a monotonic clock, i.e. a clock that cannot go backwards.
     """
     return await _clock.get_time()
 
@@ -53,6 +53,6 @@ async def sleep(seconds: float) -> None:
     Coroutine that completes after a given time (in seconds).
 
     Args:
-        seconds (float): the duration we should wait for before unblocking the awaiter
+        seconds: The duration we should wait for before unblocking the awaiter
     """
     return await _clock.sleep(seconds)

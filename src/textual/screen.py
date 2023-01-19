@@ -9,6 +9,9 @@ from rich.style import Style
 from . import errors, events, messages
 from ._callback import invoke
 from ._compositor import Compositor, MapGeometry
+from .css.match import match
+from .css.parse import parse_selectors
+from .dom import DOMNode
 from .timer import Timer
 from ._types import CallbackType
 from .geometry import Offset, Region, Size
@@ -96,10 +99,10 @@ class Screen(Widget):
         """Get the absolute offset of a given Widget.
 
         Args:
-            widget (Widget): A widget
+            widget: A widget
 
         Returns:
-            Offset: The widget's offset relative to the top left of the terminal.
+            The widget's offset relative to the top left of the terminal.
         """
         return self._compositor.get_offset(widget)
 
@@ -107,11 +110,11 @@ class Screen(Widget):
         """Get the widget at a given coordinate.
 
         Args:
-            x (int): X Coordinate.
-            y (int): Y Coordinate.
+            x: X Coordinate.
+            y: Y Coordinate.
 
         Returns:
-            tuple[Widget, Region]: Widget and screen region.
+            Widget and screen region.
         """
         return self._compositor.get_widget_at(x, y)
 
@@ -119,11 +122,11 @@ class Screen(Widget):
         """Get all widgets under a given coordinate.
 
         Args:
-            x (int): X coordinate.
-            y (int): Y coordinate.
+            x: X coordinate.
+            y: Y coordinate.
 
         Returns:
-            Iterable[tuple[Widget, Region]]: Sequence of (WIDGET, REGION) tuples.
+            Sequence of (WIDGET, REGION) tuples.
         """
         return self._compositor.get_widgets_at(x, y)
 
@@ -131,11 +134,11 @@ class Screen(Widget):
         """Get the style under a given coordinate.
 
         Args:
-            x (int): X Coordinate.
-            y (int): Y Coordinate.
+            x: X Coordinate.
+            y: Y Coordinate.
 
         Returns:
-            Style: Rich Style object
+            Rich Style object
         """
         return self._compositor.get_style_at(x, y)
 
@@ -143,10 +146,10 @@ class Screen(Widget):
         """Get the screen region of a Widget.
 
         Args:
-            widget (Widget): A Widget within the composition.
+            widget: A Widget within the composition.
 
         Returns:
-            Region: Region relative to screen.
+            Region relative to screen.
 
         Raises:
             NoWidget: If the widget could not be found in this screen.
@@ -158,7 +161,7 @@ class Screen(Widget):
         """Get widgets that may receive focus, in focus order.
 
         Returns:
-            list[Widget]: List of Widgets in focus order.
+            List of Widgets in focus order.
         """
         widgets: list[Widget] = []
         add_widget = widgets.append
@@ -178,54 +181,105 @@ class Screen(Widget):
 
         return widgets
 
-    def _move_focus(self, direction: int = 0) -> Widget | None:
+    def _move_focus(
+        self, direction: int = 0, selector: str | type[DOMNode.ExpectType] = "*"
+    ) -> Widget | None:
         """Move the focus in the given direction.
 
+        If no widget is currently focused, this will focus the first focusable widget.
+        If no focusable widget matches the given CSS selector, focus is set to `None`.
+
         Args:
-            direction (int, optional): 1 to move forward, -1 to move backward, or
+            direction: 1 to move forward, -1 to move backward, or
                 0 to keep the current focus.
+            selector: CSS selector to filter
+                what nodes can be focused.
 
         Returns:
-            Widget | None: Newly focused widget, or None for no focus.
+            Newly focused widget, or None for no focus. If the return
+                is not `None`, then it is guaranteed that the widget returned matches
+                the CSS selectors given in the argument.
         """
-        focusable_widgets = self.focus_chain
+        if not isinstance(selector, str):
+            selector = selector.__name__
+        selector_set = parse_selectors(selector)
+        focus_chain = self.focus_chain
+        filtered_focus_chain = (
+            node for node in focus_chain if match(selector_set, node)
+        )
 
-        if not focusable_widgets:
+        if not focus_chain:
             # Nothing focusable, so nothing to do
             return self.focused
         if self.focused is None:
-            # Nothing currently focused, so focus the first one
-            self.set_focus(focusable_widgets[0])
+            # Nothing currently focused, so focus the first one.
+            to_focus = next(filtered_focus_chain, None)
+            self.set_focus(to_focus)
+            return self.focused
+
+        # Ensure focus will be in a node that matches the selectors.
+        if not direction and not match(selector_set, self.focused):
+            direction = 1
+
+        try:
+            # Find the index of the currently focused widget
+            current_index = focus_chain.index(self.focused)
+        except ValueError:
+            # Focused widget was removed in the interim, start again
+            self.set_focus(next(filtered_focus_chain, None))
         else:
-            try:
-                # Find the index of the currently focused widget
-                current_index = focusable_widgets.index(self.focused)
-            except ValueError:
-                # Focused widget was removed in the interim, start again
-                self.set_focus(focusable_widgets[0])
-            else:
-                # Only move the focus if we are currently showing the focus
-                if direction:
-                    current_index = (current_index + direction) % len(focusable_widgets)
-                    self.set_focus(focusable_widgets[current_index])
+            # Only move the focus if we are currently showing the focus
+            if direction:
+                to_focus: Widget | None = None
+                chain_length = len(focus_chain)
+                for step in range(1, len(focus_chain) + 1):
+                    node = focus_chain[
+                        (current_index + direction * step) % chain_length
+                    ]
+                    if match(selector_set, node):
+                        to_focus = node
+                        break
+                self.set_focus(to_focus)
 
         return self.focused
 
-    def focus_next(self) -> Widget | None:
-        """Focus the next widget.
+    def focus_next(
+        self, selector: str | type[DOMNode.ExpectType] = "*"
+    ) -> Widget | None:
+        """Focus the next widget, optionally filtered by a CSS selector.
+
+        If no widget is currently focused, this will focus the first focusable widget.
+        If no focusable widget matches the given CSS selector, focus is set to `None`.
+
+        Args:
+            selector: CSS selector to filter
+                what nodes can be focused.
 
         Returns:
-            Widget | None: Newly focused widget, or None for no focus.
+            Newly focused widget, or None for no focus. If the return
+                is not `None`, then it is guaranteed that the widget returned matches
+                the CSS selectors given in the argument.
         """
-        return self._move_focus(1)
+        return self._move_focus(1, selector)
 
-    def focus_previous(self) -> Widget | None:
-        """Focus the previous widget.
+    def focus_previous(
+        self, selector: str | type[DOMNode.ExpectType] = "*"
+    ) -> Widget | None:
+        """Focus the previous widget, optionally filtered by a CSS selector.
+
+        If no widget is currently focused, this will focus the first focusable widget.
+        If no focusable widget matches the given CSS selector, focus is set to `None`.
+
+        Args:
+            selector: CSS selector to filter
+                what nodes can be focused.
 
         Returns:
-            Widget | None: Newly focused widget, or None for no focus.
+            Newly focused widget, or None for no focus. If the return
+                is not `None`, then it is guaranteed that the widget returned matches
+                the CSS selectors given in the argument.
         """
-        return self._move_focus(-1)
+        return self._move_focus(-1, selector)
 
     def _reset_focus(
         self, widget: Widget, avoiding: list[Widget] | None = None
@@ -233,8 +287,8 @@ class Screen(Widget):
         """Reset the focus when a widget is removed
 
         Args:
-            widget (Widget): A widget that is removed.
-            avoiding (list[DOMNode] | None, optional): Optional list of nodes to avoid.
+            widget: A widget that is removed.
+            avoiding: Optional list of nodes to avoid.
         """
 
         avoiding = avoiding or []
@@ -283,8 +337,8 @@ class Screen(Widget):
         """Focus (or un-focus) a widget. A focused widget will receive key events first.
 
         Args:
-            widget (Widget | None): Widget to focus, or None to un-focus.
-            scroll_visible (bool, optional): Scroll widget in to view.
+            widget: Widget to focus, or None to un-focus.
+            scroll_visible: Scroll widget in to view.
         """
         if widget is self.focused:
             # Widget is already focused
@@ -361,7 +415,7 @@ class Screen(Widget):
         """Enqueue a callback to be invoked after the screen is repainted.
 
         Args:
-            callback (CallbackType): A callback.
+            callback: A callback.
         """
 
         self._callbacks.append(callback)

@@ -1,15 +1,19 @@
 # Layers
 
 The `layers` property allows you to define an ordered set of layers.
-These `layers` can later be referenced using the `layer` property.
-Layers control the order in which widgets are painted on screen.
-More information on layers can be found in the [guide](../guide/layout.md#layers).
 
 ## Syntax
 
-```
-layers: <STRING> ...;
-```
+--8<-- "docs/snippets/syntax_block_start.md"
+layers: <a href="../../css_types/name">&lt;name&gt;</a>+;
+--8<-- "docs/snippets/syntax_block_end.md"
+
+The `layers` rule accepts one or more [`<name>`](../../css_types/name) that define the layers that the widget is aware of, and the order in which they will be painted on the screen.
+
+The values used here can later be referenced using the [`layer`](../layer) property.
+The layers defined first in the list are drawn under the layers that are defined later in the list.
+
+More information on layers can be found in the [guide](../guide/layout.md#layers).
 
 ## Example
 
@@ -31,7 +35,7 @@ However, since `#box1` is on the higher layer, it is drawn on top of `#box2`.
 
 === "layers.css"
 
-    ```sass hl_lines="3 15 19"
+    ```sass hl_lines="3 14 19"
     --8<-- "docs/examples/guide/layout/layers.css"
     ```
 
@@ -46,5 +50,10 @@ layers: below above;
 
 ```python
 # Bottom layer is called 'below', layer above it is called 'above'
-widget.layers = ("below", "above")
+widget.style.layers = ("below", "above")
 ```
+
+## See also
+
+ - The [layout guide](../guide/layout.md#layers) section on layers.
+ - [`layer`](./layer.md) to set the layer a widget belongs to.

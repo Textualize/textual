@@ -57,9 +57,6 @@ class Checkbox(Widget, can_focus=True):
         "checkbox--switch",
     }
 
-    value = reactive(False, init=False)
-    slider_pos = reactive(0.0)
-
     def __init__(
         self,
         value: bool = False,
@@ -72,17 +69,23 @@ class Checkbox(Widget, can_focus=True):
         """Initialise the checkbox.
 
         Args:
-            value (bool, optional): The initial value of the checkbox. Defaults to False.
-            animate (bool, optional): True if the checkbox should animate when toggled. Defaults to True.
-            name (str | None, optional): The name of the checkbox.
-            id (str | None, optional): The ID of the checkbox in the DOM.
-            classes (str | None, optional): The CSS classes of the checkbox.
+            value: The initial value of the checkbox. Defaults to False.
+            animate: True if the checkbox should animate when toggled. Defaults to True.
+            name: The name of the checkbox.
+            id: The ID of the checkbox in the DOM.
+            classes: The CSS classes of the checkbox.
         """
         super().__init__(name=name, id=id, classes=classes)
         if value:
             self.slider_pos = 1.0
             self._reactive_value = value
         self._should_animate = animate
+
+    value = reactive(False, init=False)
+    """The value of the checkbox; `True` for on and `False` for off."""
+
+    slider_pos = reactive(0.0)
+    """The position of the slider."""
 
     def watch_value(self, value: bool) -> None:
         target_slider_pos = 1.0 if value else 0.0
@@ -126,11 +129,11 @@ class Checkbox(Widget, can_focus=True):
         """Checkbox was toggled.
 
         Attributes:
-            value (bool): The value that the checkbox was changed to.
-            input (Checkbox): The `Checkbox` widget that was changed.
+            value: The value that the checkbox was changed to.
+            input: The `Checkbox` widget that was changed.
         """
 
         def __init__(self, sender: Checkbox, value: bool) -> None:
             super().__init__(sender)
-            self.value = value
-            self.input = sender
+            self.value: bool = value
+            self.input: Checkbox = sender

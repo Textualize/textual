@@ -1,0 +1,53 @@
+#left-top {
+    /* align: left top; this is the default value and is implied. */
+}
+
+#center-top {
+    align: center top;
+}
+
+#right-top {
+    align: right top;
+}
+
+#left-middle {
+    align: left middle;
+}
+
+#center-middle {
+    align: center middle;
+}
+
+#right-middle {
+    align: right middle;
+}
+
+#left-bottom {
+    align: left bottom;
+}
+
+#center-bottom {
+    align: center bottom;
+}
+
+#right-bottom {
+    align: right bottom;
+}
+
+Screen {
+    layout: grid;
+    grid-size: 3 3;
+    grid-gutter: 1;
+}
+
+Container {
+    background: $boost;
+    border: solid gray;
+    height: 100%;
+}
+
+Label {
+    width: auto;
+    height: 1;
+    background: $accent;
+}

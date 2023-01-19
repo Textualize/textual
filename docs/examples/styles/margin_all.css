@@ -1,0 +1,54 @@
+Screen {
+    background: $background;
+}
+
+Grid {
+    grid-size: 4;
+    grid-gutter: 1 2;
+}
+
+Placeholder {
+    width: 100%;
+    height: 100%;
+}
+
+Container {
+    width: 100%;
+    height: 100%;
+}
+
+.bordered {
+    border: white round;
+}
+
+#p1 {
+    /* default is no margin */
+}
+
+#p2 {
+    margin: 1;
+}
+
+#p3 {
+    margin: 1 5;
+}
+
+#p4 {
+    margin: 1 1 2 6;
+}
+
+#p5 {
+    margin-top: 4;
+}
+
+#p6 {
+    margin-right: 3;
+}
+
+#p7 {
+    margin-bottom: 4;
+}
+
+#p8 {
+    margin-left: 3;
+}

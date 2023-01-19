@@ -1,12 +1,15 @@
 Screen {
     background: green;
 }
-Static {             
-    height: 5;        
-    background: white;        
-    color: blue;   
-    border: heavy blue;     
+
+Label {
+    height: 5;
+    width: 100%;
+    background: white;
+    color: blue;
+    border: heavy blue;
 }
-Static.invisible {
+
+Label.invisible {
     visibility: hidden;
 }

@@ -19,11 +19,11 @@ class Sparkline(Generic[T]):
     """A sparkline representing a series of data.
 
     Args:
-        data (Sequence[T]): The sequence of data to render.
-        width (int, optional): The width of the sparkline/the number of buckets to partition the data into.
-        min_color (Color, optional): The color of values equal to the min value in data.
-        max_color (Color, optional): The color of values equal to the max value in data.
-        summary_function (Callable[list[T]]): Function that will be applied to each bucket.
+        data: The sequence of data to render.
+        width: The width of the sparkline/the number of buckets to partition the data into.
+        min_color: The color of values equal to the min value in data.
+        max_color: The color of values equal to the max value in data.
+        summary_function: Function that will be applied to each bucket.
     """
 
     BARS = "▁▂▃▄▅▆▇█"
@@ -49,8 +49,8 @@ class Sparkline(Generic[T]):
         [1, 2, 3, 4] partitioned into 2 buckets is [[1, 2], [3, 4]].
 
         Args:
-            data (Sequence[T]): The data to partition.
-            num_buckets (int): The number of buckets to partition the data into.
+            data: The data to partition.
+            num_buckets: The number of buckets to partition the data into.
         """
         num_steps, remainder = divmod(len(data), num_buckets)
         for i in range(num_buckets):

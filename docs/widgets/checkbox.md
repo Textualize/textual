@@ -22,7 +22,7 @@ The example below shows checkboxes in various states.
 
 === "checkbox.css"
 
-    ```css
+    ```sass
     --8<-- "docs/examples/widgets/checkbox.css"
     ```
 

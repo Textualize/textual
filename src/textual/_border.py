@@ -82,13 +82,13 @@ def get_box(
     """Get segments used to render a box.
 
     Args:
-        name (str): Name of the box type.
-        inner_style (Style): The inner style (widget background)
-        outer_style (Style): The outer style (parent background)
-        style (Style): Widget style
+        name: Name of the box type.
+        inner_style: The inner style (widget background)
+        outer_style: The outer style (parent background)
+        style: Widget style
 
     Returns:
-        tuple: A tuple of 3 Segment triplets.
+        A tuple of 3 Segment triplets.
     """
     _Segment = Segment
     (
@@ -137,13 +137,13 @@ def render_row(
     """Render a top, or bottom border row.
 
     Args:
-        box_row (tuple[Segment, Segment, Segment]): Corners and side segments.
-        width (int): Total width of resulting line.
-        left (bool): Render left corner.
-        right (bool): Render right corner.
+        box_row: Corners and side segments.
+        width: Total width of resulting line.
+        left: Render left corner.
+        right: Render right corner.
 
     Returns:
-        list[Segment]: A list of segments.
+        A list of segments.
     """
     box1, box2, box3 = box_row
     if left and right:

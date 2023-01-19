@@ -503,7 +503,7 @@ However, in this case, both `#box1` and `#box2` are assigned to layers which def
 
 === "layers.css"
 
-    ```sass hl_lines="3 15 19"
+    ```sass hl_lines="3 14 19"
     --8<-- "docs/examples/guide/layout/layers.css"
     ```
 

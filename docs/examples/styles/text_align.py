@@ -1,7 +1,6 @@
-from __future__ import annotations
-
-from textual.app import App, ComposeResult
-from textual.widgets import Static
+from textual.app import App
+from textual.containers import Grid
+from textual.widgets import Label
 
 TEXT = (
     "I must not fear. Fear is the mind-killer. Fear is the little-death that "
@@ -11,18 +10,13 @@ TEXT = (
 
 
 class TextAlign(App):
-    def compose(self) -> ComposeResult:
-        left = Static("[b]Left aligned[/]\n" + TEXT, id="one")
-        yield left
-
-        right = Static("[b]Center aligned[/]\n" + TEXT, id="two")
-        yield right
-
-        center = Static("[b]Right aligned[/]\n" + TEXT, id="three")
-        yield center
-
-        full = Static("[b]Justified[/]\n" + TEXT, id="four")
-        yield full
+    def compose(self):
+        yield Grid(
+            Label("[b]Left aligned[/]\n" + TEXT, id="one"),
+            Label("[b]Center aligned[/]\n" + TEXT, id="two"),
+            Label("[b]Right aligned[/]\n" + TEXT, id="three"),
+            Label("[b]Justified[/]\n" + TEXT, id="four"),
+        )
 
 
 app = TextAlign(css_path="text_align.css")

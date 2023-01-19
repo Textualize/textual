@@ -1,0 +1,11 @@
+#lbl1, #lbl2 {
+    link-hover-style: bold italic;  /* (1)! */
+}
+
+#lbl3 {
+    link-hover-style: reverse strike;
+}
+
+#lbl4 {
+    link-hover-style: bold;
+}

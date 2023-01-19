@@ -1,0 +1,39 @@
+#left-top {
+    /* content-align: left top; this is the default implied value. */
+}
+#center-top {
+    content-align: center top;
+}
+#right-top {
+    content-align: right top;
+}
+#left-middle {
+    content-align: left middle;
+}
+#center-middle {
+    content-align: center middle;
+}
+#right-middle {
+    content-align: right middle;
+}
+#left-bottom {
+    content-align: left bottom;
+}
+#center-bottom {
+    content-align: center bottom;
+}
+#right-bottom {
+    content-align: right bottom;
+}
+
+Screen {
+    layout: grid;
+    grid-size: 3 3;
+    grid-gutter: 1;
+}
+
+Label {
+    width: 100%;
+    height: 100%;
+    background: $primary;
+}

@@ -131,3 +131,11 @@ def keys():
     from textual.cli.previews import keys
 
     keys.app.run()
+
+
+@run.command("diagnose")
+def run_diagnose():
+    """Print information about the Textual environment"""
+    from textual.cli.tools.diagnose import diagnose
+
+    diagnose()

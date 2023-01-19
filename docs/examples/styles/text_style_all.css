@@ -1,0 +1,42 @@
+#lbl1 {
+    text-style: none;
+}
+
+#lbl2 {
+    text-style: bold;
+}
+
+#lbl3 {
+    text-style: italic;
+}
+
+#lbl4 {
+    text-style: reverse;
+}
+
+#lbl5 {
+    text-style: strike;
+}
+
+#lbl6 {
+    text-style: underline;
+}
+
+#lbl7 {
+    text-style: bold italic;
+}
+
+#lbl8 {
+    text-style: reverse strike;
+}
+
+Grid {
+    grid-size: 4;
+    grid-gutter: 1 2;
+    margin: 1 2;
+    height: 100%;
+}
+
+Label {
+    height: 100%;
+}

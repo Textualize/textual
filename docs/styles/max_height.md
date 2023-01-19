@@ -4,18 +4,44 @@ The `max-height` rule sets a maximum height for a widget.
 
 ## Syntax
 
-```
-max-height: <SCALAR>;
-```
+--8<-- "docs/snippets/syntax_block_start.md"
+max-height: <a href="../../css_types/scalar">&lt;scalar&gt;</a>;
+--8<-- "docs/snippets/syntax_block_end.md"
+
+The `max-height` rule accepts a [`<scalar>`](../../css_types/scalar) that defines an upper bound for the [`height`](./height) of a widget.
+That is, the height of a widget is never allowed to exceed `max-height`.
+
+## Example
+
+The example below shows some placeholders that were defined to span vertically from the top edge of the terminal to the bottom edge.
+Then, we set `max-height` individually on each placeholder.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/styles/max_height.py"}
+    ```
+
+=== "max_height.py"
+
+    ```py
+    --8<-- "docs/examples/styles/max_height.py"
+    ```
+
+=== "max_height.css"
+
+    ```sass hl_lines="12 16 20 24"
+    --8<-- "docs/examples/styles/max_height.css"
+    ```
+
+    1. This won't affect the placeholder because its height is less than the maximum height.
 
 ## CSS
 
 ```sass
-
-/* Set a maximum height of 10 rows */
+/* Set the maximum height to 10 rows */
 max-height: 10;
 
-/* Set a maximum height of 25% of the screen height */
+/* Set the maximum height to 25% of the viewport height */
 max-height: 25vh;
 ```
 
@@ -25,7 +51,11 @@ max-height: 25vh;
 # Set the maximum height to 10 rows
 widget.styles.max_height = 10
 
-# Set the maximum height to 25% of the screen height
+# Set the maximum height to 25% of the viewport height
 widget.styles.max_height = "25vh"
-
 ```
+
+## See also
+
+ - [`min-height`](./min_height.md) to set a lower bound on the height of a widget.
+ - [`height`](./height.md) to set the height of a widget.

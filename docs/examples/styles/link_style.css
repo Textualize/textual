@@ -1,0 +1,11 @@
+#lbl1, #lbl2 {
+    link-style: bold italic;  /* (1)! */
+}
+
+#lbl3 {
+    link-style: reverse strike;
+}
+
+#lbl4 {
+    link-style: bold;
+}

@@ -12,7 +12,7 @@ from textual.widgets import Static, Input
 
 
 class DictionaryApp(App):
-    """Searches ab dictionary API as-you-type."""
+    """Searches a dictionary API as-you-type."""
 
     CSS_PATH = "dictionary.css"
 

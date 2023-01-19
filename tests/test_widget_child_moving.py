@@ -3,6 +3,7 @@ import pytest
 from textual.app import App
 from textual.widget import Widget, WidgetError
 
+
 async def test_widget_move_child() -> None:
     """Test moving a widget in a child list."""
 
@@ -35,29 +36,24 @@ async def test_widget_move_child() -> None:
             pilot.app.screen.move_child(child, before=Widget())
 
     # Make a background set of widgets.
-    widgets = [Widget(id=f"widget-{n}") for n in range( 10 )]
+    widgets = [Widget(id=f"widget-{n}") for n in range(10)]
 
     # Test attempting to move past the end of the child list.
     async with App().run_test() as pilot:
         container = Widget(*widgets)
         await pilot.app.mount(container)
         with pytest.raises(WidgetError):
-            container.move_child(widgets[0], before=len(widgets)+10)
+            container.move_child(widgets[0], before=len(widgets) + 10)
 
     # Test attempting to move before the end of the child list.
     async with App().run_test() as pilot:
         container = Widget(*widgets)
         await pilot.app.mount(container)
         with pytest.raises(WidgetError):
-            container.move_child(widgets[0], before=-(len(widgets)+10))
+            container.move_child(widgets[0], before=-(len(widgets) + 10))
 
     # Test the different permutations of moving one widget before another.
-    perms = (
-        ( 1, 0 ),
-        ( widgets[1], 0 ),
-        ( 1, widgets[ 0 ] ),
-        ( widgets[ 1 ], widgets[ 0 ])
-    )
+    perms = ((1, 0), (widgets[1], 0), (1, widgets[0]), (widgets[1], widgets[0]))
     for child, target in perms:
         async with App().run_test() as pilot:
             container = Widget(*widgets)
@@ -68,12 +64,7 @@ async def test_widget_move_child() -> None:
             assert container.children[2].id == "widget-2"
 
     # Test the different permutations of moving one widget after another.
-    perms = (
-        ( 0, 1 ),
-        ( widgets[0], 1 ),
-        ( 0, widgets[ 1 ] ),
-        ( widgets[ 0 ], widgets[ 1 ])
-    )
+    perms = ((0, 1), (widgets[0], 1), (0, widgets[1]), (widgets[0], widgets[1]))
     for child, target in perms:
         async with App().run_test() as pilot:
             container = Widget(*widgets)

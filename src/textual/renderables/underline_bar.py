@@ -9,10 +9,10 @@ class UnderlineBar:
     """Thin horizontal bar with a portion highlighted.
 
     Args:
-        highlight_range (tuple[float, float]): The range to highlight. Defaults to ``(0, 0)`` (no highlight)
-        highlight_style (StyleType): The style of the highlighted range of the bar.
-        background_style (StyleType): The style of the non-highlighted range(s) of the bar.
-        width (int, optional): The width of the bar, or ``None`` to fill available width.
+        highlight_range: The range to highlight. Defaults to ``(0, 0)`` (no highlight)
+        highlight_style: The style of the highlighted range of the bar.
+        background_style: The style of the non-highlighted range(s) of the bar.
+        width: The width of the bar, or ``None`` to fill available width.
     """
 
     def __init__(

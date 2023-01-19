@@ -1,0 +1,71 @@
+#ascii {
+    outline: ascii $accent;
+}
+
+#blank {
+    outline: blank $accent;
+}
+
+#dashed {
+    outline: dashed $accent;
+}
+
+#double {
+    outline: double $accent;
+}
+
+#heavy {
+    outline: heavy $accent;
+}
+
+#hidden {
+    outline: hidden $accent;
+}
+
+#hkey {
+    outline: hkey $accent;
+}
+
+#inner {
+    outline: inner $accent;
+}
+
+#none {
+    outline: none $accent;
+}
+
+#outer {
+    outline: outer $accent;
+}
+
+#round {
+    outline: round $accent;
+}
+
+#solid {
+    outline: solid $accent;
+}
+
+#tall {
+    outline: tall $accent;
+}
+
+#vkey {
+    outline: vkey $accent;
+}
+
+#wide {
+    outline: wide $accent;
+}
+
+Grid {
+    grid-size: 3 5;
+    align: center middle;
+    grid-gutter: 1 2;
+}
+
+Label {
+    width: 20;
+    height: 3;
+    content-align: center middle;
+}
