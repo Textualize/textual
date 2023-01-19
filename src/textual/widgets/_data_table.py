@@ -49,6 +49,11 @@ class StringKey(NamedTuple):
         return hash(self) == hash(other)
 
 
+class CellKey(NamedTuple):
+    row_key: StringKey
+    column_key: StringKey
+
+
 def default_cell_formatter(obj: object) -> RenderableType | None:
     """Format a cell in to a renderable.
 
