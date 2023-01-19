@@ -165,10 +165,13 @@ def test_key_doesnt_match_non_equal_string():
 
 
 def test_key_string_lookup():
-    # Indirectly covered by other tests, but let's explicitly show how
-    # we intend for the keys to work for cache lookups.
+    # Indirectly covered by other tests, but let's explicitly document
+    # in tests how we intend for the keys to work for cache lookups.
     dictionary = {
-        "hello": "world",
+        "foo": "bar",
+        Key("hello"): "world",
     }
+    assert dictionary["foo"] == "bar"
+    assert dictionary[Key("foo")] == "bar"
     assert dictionary["hello"] == "world"
     assert dictionary[Key("hello")] == "world"
