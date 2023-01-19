@@ -468,6 +468,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             label: A str or Text object containing the label (shown top of column).
             width: Width of the column in cells or None to fit content. Defaults to None.
             key: A key which uniquely identifies this column. If None, it will be generated for you. Defaults to None.
+
+        Returns:
+            StringKey: Uniquely identifies this column. Can be used to retrieve this column regardless
+                of its current location in the DataTable (it could have moved after being added
+                due to sorting or insertion/deletion of other columns).
         """
         text_label = Text.from_markup(label) if isinstance(label, str) else label
 
@@ -506,6 +511,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             *cells: Positional arguments should contain cell data.
             height: The height of a row (in lines). Defaults to 1.
             key: A key which uniquely identifies this row. If None, it will be generated for you. Defaults to None.
+
+        Returns:
+            StringKey: Uniquely identifies this row. Can be used to retrieve this row regardless
+                of its current location in the DataTable (it could have moved after being added
+                due to sorting or insertion/deletion of other rows).
         """
         row_index = self.row_count
         row_key = StringKey(key)
@@ -535,23 +545,39 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         return row_key
 
-    def add_columns(self, *labels: TextType) -> None:
+    def add_columns(self, *labels: TextType) -> list[StringKey]:
         """Add a number of columns.
 
         Args:
             *labels: Column headers.
-        """
-        for label in labels:
-            self.add_column(label, width=None)
 
-    def add_rows(self, rows: Iterable[Iterable[CellType]]) -> None:
+        Returns:
+            A list of the keys for the columns that were added. See
+            the `add_column` method docstring for more information on how
+            these keys are used.
+        """
+        column_keys = []
+        for label in labels:
+            column_key = self.add_column(label, width=None)
+            column_keys.append(column_key)
+        return column_keys
+
+    def add_rows(self, rows: Iterable[Iterable[CellType]]) -> list[StringKey]:
         """Add a number of rows at the bottom of the DataTable.
 
         Args:
             rows: Iterable of rows. A row is an iterable of cells.
+
+        Returns:
+            A list of the keys for the rows that were added. See
+            the `add_row` method docstring for more information on how
+            these keys are used.
         """
+        row_keys = []
         for row in rows:
-            self.add_row(*row)
+            row_key = self.add_row(*row)
+            row_keys.append(row_key)
+        return row_keys
 
     def on_idle(self) -> None:
         if self._require_update_dimensions:
