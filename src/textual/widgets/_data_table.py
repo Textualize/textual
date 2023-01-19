@@ -461,7 +461,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     def add_column(
         self, label: TextType, *, width: int | None = None, key: str | None = None
-    ) -> None:
+    ) -> StringKey:
         """Add a column to the table.
 
         Args:
@@ -495,9 +495,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._require_update_dimensions = True
         self.check_idle()
 
+        return column_key
+
     def add_row(
         self, *cells: CellType, height: int = 1, key: str | None = None
-    ) -> None:
+    ) -> StringKey:
         """Add a row at the bottom of the DataTable.
 
         Args:
@@ -530,6 +532,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         visible_cursor = self.show_cursor and self.cursor_type != "none"
         if cell_now_available and visible_cursor:
             self._highlight_cursor()
+
+        return row_key
 
     def add_columns(self, *labels: TextType) -> None:
         """Add a number of columns.
