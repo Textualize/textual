@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from itertools import chain, zip_longest
-from typing import ClassVar, Generic, Iterable, TypeVar, cast
+from typing import ClassVar, Generic, Iterable, TypeVar, cast, NamedTuple
 
 import rich.repr
 from rich.console import RenderableType
@@ -33,6 +33,16 @@ CellType = TypeVar("CellType")
 
 class CellDoesNotExist(Exception):
     pass
+
+
+class Key(NamedTuple):
+    value: str | None
+
+    def __hash__(self):
+        # TODO: Revisit
+        # If a string is supplied, we use the hash of the string.
+        # If no string was supplied, we use the default hash to ensure uniqueness amongst instances.
+        return hash(self.value) if self.value is not None else super().__hash__(self)
 
 
 def default_cell_formatter(obj: object) -> RenderableType | None:
@@ -438,21 +448,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.hover_cell = Coordinate(0, 0)
         self.refresh()
 
-    def add_columns(self, *labels: TextType) -> None:
-        """Add a number of columns.
-
-        Args:
-            *labels: Column headers.
-        """
-        for label in labels:
-            self.add_column(label, width=None)
-
-    def add_column(self, label: TextType, *, width: int | None = None) -> None:
+    def add_column(
+        self, label: TextType, *, width: int | None = None, key: str | None = None
+    ) -> None:
         """Add a column to the table.
 
         Args:
             label: A str or Text object containing the label (shown top of column).
             width: Width of the column in cells or None to fit content. Defaults to None.
+            key: A key which uniquely identifies this column. If None, it will be generated for you. Defaults to None.
         """
         text_label = Text.from_markup(label) if isinstance(label, str) else label
 
@@ -474,12 +478,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._require_update_dimensions = True
         self.check_idle()
 
-    def add_row(self, *cells: CellType, height: int = 1) -> None:
-        """Add a row.
+    def add_row(
+        self, *cells: CellType, height: int = 1, key: str | None = None
+    ) -> None:
+        """Add a row at the bottom of the DataTable.
 
         Args:
             *cells: Positional arguments should contain cell data.
             height: The height of a row (in lines). Defaults to 1.
+            key: A key which uniquely identifies this row. If None, it will be generated for you. Defaults to None.
         """
         row_index = self.row_count
 
@@ -506,8 +513,17 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if cell_now_available and visible_cursor:
             self._highlight_cursor()
 
+    def add_columns(self, *labels: TextType) -> None:
+        """Add a number of columns.
+
+        Args:
+            *labels: Column headers.
+        """
+        for label in labels:
+            self.add_column(label, width=None)
+
     def add_rows(self, rows: Iterable[Iterable[CellType]]) -> None:
-        """Add a number of rows.
+        """Add a number of rows at the bottom of the DataTable.
 
         Args:
             rows: Iterable of rows. A row is an iterable of cells.
