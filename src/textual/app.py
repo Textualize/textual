@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-from concurrent.futures import Future
-from functools import partial
 import inspect
 import io
 import os
@@ -12,8 +10,10 @@ import threading
 import unicodedata
 import warnings
 from asyncio import Task
+from concurrent.futures import Future
 from contextlib import asynccontextmanager, redirect_stderr, redirect_stdout
 from datetime import datetime
+from functools import partial
 from pathlib import Path, PurePath
 from queue import Queue
 from time import perf_counter
@@ -41,9 +41,10 @@ from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
 from rich.traceback import Traceback
 
-from . import actions, Logger, LogGroup, LogVerbosity, events, log, messages
+from . import Logger, LogGroup, LogVerbosity, actions, events, log, messages
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
+from ._asyncio import create_task
 from ._callback import invoke
 from ._context import active_app
 from ._event_broker import NoHandler, extract_handler_actions
@@ -68,7 +69,6 @@ from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import Screen
 from .widget import AwaitMount, Widget
-
 
 if TYPE_CHECKING:
     from .devtools.client import DevtoolsClient
@@ -859,7 +859,7 @@ class App(Generic[ReturnType], DOMNode):
             )
 
         # Launch the app in the "background"
-        app_task = asyncio.create_task(run_app(app), name=f"run_test {app}")
+        app_task = create_task(run_app(app), name=f"run_test {app}")
 
         # Wait until the app has performed all startup routines.
         await app_ready_event.wait()
@@ -914,7 +914,7 @@ class App(Generic[ReturnType], DOMNode):
                         raise
 
                 pilot = Pilot(app)
-                auto_pilot_task = asyncio.create_task(
+                auto_pilot_task = create_task(
                     run_auto_pilot(auto_pilot, pilot), name=repr(pilot)
                 )
 
@@ -2119,7 +2119,7 @@ class App(Generic[ReturnType], DOMNode):
         removed_widgets = self._detach_from_dom(widgets)
 
         finished_event = asyncio.Event()
-        asyncio.create_task(
+        create_task(
             prune_widgets_task(removed_widgets, finished_event), name="prune nodes"
         )
 
