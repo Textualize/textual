@@ -14,11 +14,8 @@ class MyScreen(Screen):
 
 class MyApp(App):
     def on_mount(self):
-        try:
-            self.install_screen(MyScreen(), "myscreen")
-            self.push_screen("myscreen")
-        except Exception as error:
-            print(error)
+        self.install_screen(MyScreen(), "myscreen")
+        self.push_screen("myscreen")
 
 
 async def test_freeze():
