@@ -246,8 +246,12 @@ class StylesBase(ABC):
 
     dock = DockProperty()
 
-    overflow_x = StringEnumProperty(VALID_OVERFLOW, "hidden")
-    overflow_y = StringEnumProperty(VALID_OVERFLOW, "hidden")
+    overflow_x = StringEnumProperty(
+        VALID_OVERFLOW, "hidden", layout=True, children=True
+    )
+    overflow_y = StringEnumProperty(
+        VALID_OVERFLOW, "hidden", layout=True, children=True
+    )
 
     layer = NameProperty()
     layers = NameListProperty()
