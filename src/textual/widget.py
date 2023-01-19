@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from asyncio import Event as AsyncEvent
 from asyncio import Lock, create_task, wait
 from collections import Counter
 from fractions import Fraction
