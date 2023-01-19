@@ -7,7 +7,6 @@ Timer objects are created by [set_interval][textual.message_pump.MessagePump.set
 
 from __future__ import annotations
 
-import asyncio
 import weakref
 from asyncio import CancelledError, Event, Task
 from typing import Awaitable, Callable, Union
@@ -15,6 +14,7 @@ from typing import Awaitable, Callable, Union
 from rich.repr import Result, rich_repr
 
 from . import _clock, events
+from ._asyncio import create_task
 from ._callback import invoke
 from ._context import active_app
 from ._time import sleep
@@ -89,7 +89,7 @@ class Timer:
         Returns:
             A Task instance for the timer.
         """
-        self._task = asyncio.create_task(self._run_timer(), name=self.name)
+        self._task = create_task(self._run_timer(), name=self.name)
         return self._task
 
     def stop_no_wait(self) -> None:
