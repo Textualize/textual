@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from asyncio import Lock, wait
 from asyncio import Lock, create_task, wait
 from collections import Counter
 from fractions import Fraction
@@ -35,6 +36,7 @@ from rich.text import Text
 from rich.traceback import Traceback
 
 from . import errors, events, messages
+from ._asyncio import create_task
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
 from ._context import active_app
@@ -93,7 +95,7 @@ class AwaitMount:
         async def await_mount() -> None:
             if self._widgets:
                 aws = [
-                    create_task(widget._mounted_event.wait())
+                    create_task(widget._mounted_event.wait(), name="await mount")
                     for widget in self._widgets
                 ]
                 if aws:
