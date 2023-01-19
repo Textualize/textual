@@ -35,14 +35,19 @@ class CellDoesNotExist(Exception):
     pass
 
 
+# TODO: Revisit?
 class Key(NamedTuple):
     value: str | None
 
     def __hash__(self):
-        # TODO: Revisit
         # If a string is supplied, we use the hash of the string.
         # If no string was supplied, we use the default hash to ensure uniqueness amongst instances.
         return hash(self.value) if self.value is not None else super().__hash__(self)
+
+    def __eq__(self, other: object) -> bool:
+        # Strings will match Keys containing the same string value.
+        # Otherwise, you'll need to supply the exact same key object.
+        return hash(self) == hash(other)
 
 
 def default_cell_formatter(obj: object) -> RenderableType | None:
