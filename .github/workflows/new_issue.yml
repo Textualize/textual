@@ -4,6 +4,7 @@ on:
     types: [opened]
 jobs:
   add-comment:
+    if: ${{ !contains( 'willmcgugan,darrenburns,davep,rodrigogiraoserrao', github.actor ) }}
     runs-on: ubuntu-latest
     permissions:
       issues: write
