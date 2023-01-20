@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from asyncio import Lock, wait
-from asyncio import Lock, create_task, wait
 from collections import Counter
 from fractions import Fraction
 from itertools import islice
@@ -908,7 +907,7 @@ class Widget(DOMNode):
         show_horizontal = self.show_horizontal_scrollbar
         if overflow_x == "hidden":
             show_horizontal = False
-        if overflow_x == "scroll":
+        elif overflow_x == "scroll":
             show_horizontal = True
         elif overflow_x == "auto":
             show_horizontal = self.virtual_size.width > width
