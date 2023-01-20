@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed `textual diagnose` crash on older supported Python versions. https://github.com/Textualize/textual/issues/1622
+- Programmatically setting `overflow_x`/`overflow_y` refreshes the layout correctly https://github.com/Textualize/textual/issues/1616
 
 ### Changed
 
