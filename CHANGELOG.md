@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed `textual diagnose` crash on older supported Python versions. https://github.com/Textualize/textual/issues/1622
+- Fixed programmatic style changes not refreshing children layouts when parent widget did not change size https://github.com/Textualize/textual/issues/1607
 
 ### Changed
 
