@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.10.1] - 2023-01-20
 
 ### Added
 
@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed `textual diagnose` crash on older supported Python versions.
+- Fixed `textual diagnose` crash on older supported Python versions. https://github.com/Textualize/textual/issues/1622
 
 ### Changed
 
