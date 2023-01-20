@@ -173,3 +173,9 @@ def test_index_cell_position_index_too_large():
     strip = Strip([Segment("abcdef"), Segment("ghi")])
     with pytest.raises(NoCellPositionForIndex):
         strip.index_to_cell_position(100)
+
+
+def test_text():
+    assert Strip([]).text == ""
+    assert Strip([Segment("foo")]).text == "foo"
+    assert Strip([Segment("foo"), Segment("bar")]).text == "foobar"

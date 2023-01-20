@@ -15,6 +15,7 @@ from typing import TYPE_CHECKING, Any, Awaitable, Callable, Iterable
 from weakref import WeakSet
 
 from . import Logger, events, log, messages
+from ._asyncio import create_task
 from ._callback import invoke
 from ._context import NoActiveAppError, active_app
 from ._time import time
@@ -304,7 +305,12 @@ class MessagePump(metaclass=MessagePumpMeta):
     def _start_messages(self) -> None:
         """Start messages task."""
         if self.app._running:
-            self._task = asyncio.create_task(self._process_messages())
+            self._task = create_task(
+                self._process_messages(), name=f"message pump {self}"
+            )
+        else:
+            self._closing = True
+            self._closed = True
 
     async def _process_messages(self) -> None:
         self._running = True
