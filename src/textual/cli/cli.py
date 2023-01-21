@@ -1,7 +1,13 @@
 from __future__ import annotations
 
+import sys
 
-import click
+try:
+    import click
+except ImportError:
+    print("Please install 'textual[dev]' to use the 'textual' command")
+    sys.exit(1)
+
 from importlib_metadata import version
 
 from textual.pilot import Pilot
