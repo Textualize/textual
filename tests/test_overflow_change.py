@@ -6,9 +6,6 @@ from textual.app import App
 from textual.containers import Vertical
 
 
-@pytest.mark.xfail(
-    reason="Needs #1610 so that overflow changes trigger layout recomputation."
-)
 async def test_overflow_change_updates_virtual_size_appropriately():
     class MyApp(App):
         def compose(self):
