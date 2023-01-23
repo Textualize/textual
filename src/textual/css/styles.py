@@ -26,6 +26,7 @@ from ._style_properties import (
     NameListProperty,
     NameProperty,
     OffsetProperty,
+    OverflowProperty,
     ScalarListProperty,
     ScalarProperty,
     SpacingProperty,
@@ -246,8 +247,8 @@ class StylesBase(ABC):
 
     dock = DockProperty()
 
-    overflow_x = StringEnumProperty(VALID_OVERFLOW, "hidden")
-    overflow_y = StringEnumProperty(VALID_OVERFLOW, "hidden")
+    overflow_x = OverflowProperty(VALID_OVERFLOW, "hidden")
+    overflow_y = OverflowProperty(VALID_OVERFLOW, "hidden")
 
     layer = NameProperty()
     layers = NameListProperty()

@@ -701,6 +701,9 @@ class StringEnumProperty:
         """
         return obj.get_rule(self.name, self._default)
 
+    def _before_refresh(self, obj: StylesBase, value: str | None) -> None:
+        """Do any housekeeping before asking for a layout refresh after a value change."""
+
     def __set__(self, obj: StylesBase, value: str | None = None):
         """Set the string property and ensure it is in the set of allowed values.
 
@@ -714,6 +717,7 @@ class StringEnumProperty:
         _rich_traceback_omit = True
         if value is None:
             if obj.clear_rule(self.name):
+                self._before_refresh(obj, value)
                 obj.refresh(layout=self._layout)
         else:
             if value not in self._valid_values:
@@ -726,7 +730,18 @@ class StringEnumProperty:
                     ),
                 )
             if obj.set_rule(self.name, value):
+                self._before_refresh(obj, value)
                 obj.refresh(layout=self._layout)
+
+
+class OverflowProperty(StringEnumProperty):
+    """Descriptor for overflow styles that forces widgets to refresh scrollbars."""
+
+    def _before_refresh(self, obj: StylesBase, value: str | None) -> None:
+        from ..widget import Widget  # Avoid circular import
+
+        if isinstance(obj.node, Widget):
+            obj.node._refresh_scrollbars()
 
 
 class NameProperty:
