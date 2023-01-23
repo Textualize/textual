@@ -280,6 +280,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Raises:
             CellDoesNotExist: If there is no cell with the given coordinate.
         """
+        # TODO: Rename to get_value_at()?
+        #  We need to clearly distinguish between coordinates and cell keys
         row, column = coordinate
         try:
             cell_value = self.data[row][column]
@@ -762,8 +764,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         Args:
             row_index: Index of the row.
-            line_no: Line number (y-coordinate) within row. 0 is top strip of terminal
-                cells, 1 is the next, and so on...
+            line_no: Line number (y-coordinate) within row. 0 is the first strip of
+                cells in the row, line_no=1 is the next, and so on...
             base_style: Base style of row.
             cursor_location: The location of the cursor in the DataTable.
             hover_location: The location of the hover cursor in the DataTable.
