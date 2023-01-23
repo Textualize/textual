@@ -169,7 +169,7 @@ class TreeNode(Generic[TreeDataType]):
         self._updates += 1
         if expand_all:
             for child in self.children:
-                child._expand(expand_all=True)
+                child._expand(expand_all)
 
     def expand(self, *, expand_all: bool = False) -> None:
         """Expand a node (show its children).
@@ -189,7 +189,7 @@ class TreeNode(Generic[TreeDataType]):
         self._expanded = False
         if collapse_all:
             for child in self.children:
-                child._collapse(collapse_all=True)
+                child._collapse(collapse_all)
         self._updates += 1
 
     def collapse(self, *, collapse_all: bool = True) -> None:
@@ -210,7 +210,7 @@ class TreeNode(Generic[TreeDataType]):
         self._expanded = not self._expanded
         if toggle_all:
             for child in self.children:
-                child._toggle(toggle_all=True)
+                child._toggle(toggle_all)
         self._updates += 1
 
     def toggle(self, *, toggle_all: bool = True) -> None:
