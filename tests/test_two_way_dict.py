@@ -1,11 +1,11 @@
 import pytest
 
-from textual._two_way_mapping import TwoWayMapping
+from textual._two_way_dict import TwoWayDict
 
 
 @pytest.fixture
 def map():
-    return TwoWayMapping(
+    return TwoWayDict(
         {
             1: 10,
             2: 20,

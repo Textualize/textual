@@ -6,7 +6,7 @@ Key = TypeVar("Key")
 Value = TypeVar("Value")
 
 
-class TwoWayMapping(Generic[Key, Value]):
+class TwoWayDict(Generic[Key, Value]):
     """
     Wraps two dictionaries and uses them to provide efficient access to
     both values (given keys) and keys (given values).
