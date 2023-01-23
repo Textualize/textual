@@ -159,7 +159,7 @@ class TreeNode(Generic[TreeDataType]):
         self._allow_expand = allow_expand
         self._updates += 1
 
-    def _expand(self, expand_all) -> None:
+    def _expand(self, expand_all: bool) -> None:
         """Mark a node as expanded (its children are shown).
 
         Args:
