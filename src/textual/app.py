@@ -1191,9 +1191,13 @@ class App(Generic[ReturnType], DOMNode):
         _screen = self.get_screen(screen)
         if not _screen.is_running:
             widgets = self._register(self, _screen)
-            return (_screen, AwaitMount(_screen, widgets))
+            await_mount = AwaitMount(_screen, widgets)
+            self.call_next(await_mount)
+            return (_screen, await_mount)
         else:
-            return (_screen, AwaitMount(_screen, []))
+            await_mount = AwaitMount(_screen, [])
+            self.call_next(await_mount)
+            return (_screen, await_mount)
 
     def _replace_screen(self, screen: Screen) -> Screen:
         """Handle the replaced screen.
