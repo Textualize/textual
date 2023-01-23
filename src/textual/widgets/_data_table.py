@@ -35,8 +35,11 @@ class CellDoesNotExist(Exception):
     pass
 
 
-class StringKey(NamedTuple):
+class StringKey:
     value: str | None
+
+    def __init__(self, value: str | None = None):
+        self.value = value
 
     def __hash__(self):
         # If a string is supplied, we use the hash of the string.
