@@ -15,6 +15,7 @@ from rich.text import Text, TextType
 from .. import events, messages
 from .._cache import LRUCache
 from .._segment_tools import line_crop
+from .._two_way_mapping import TwoWayMapping
 from .._types import SegmentLines
 from .._typing import Literal
 from ..binding import Binding
@@ -217,6 +218,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.rows: dict[int, Row] = {}
         self.data: dict[int, list[CellType]] = {}
         self.row_count = 0
+
+        # Keep tracking of key -> index for rows/cols.
+        # For a given key, what is the current location of the corresponding row/col?
+        self._column_locations: TwoWayMapping[ColumnKey, int] = TwoWayMapping({})
+        self._row_locations: TwoWayMapping[RowKey, int] = TwoWayMapping({})
 
         # Maps y-coordinate (from top of table) to (row_index, y-coord within row) pairs
         self._y_offsets: list[tuple[RowKey, int]] = []
