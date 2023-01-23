@@ -51,6 +51,7 @@ async def invoke(callback: Callable, *params: object) -> Any:
     try:
         app = active_app.get()
     except LookupError:
+        # May occur if this method is called outside of an app context (i.e. in a unit test)
         app = None
 
     if app is not None and "debug" in app.features:
