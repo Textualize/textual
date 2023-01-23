@@ -470,7 +470,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             key: A key which uniquely identifies this column. If None, it will be generated for you. Defaults to None.
 
         Returns:
-            StringKey: Uniquely identifies this column. Can be used to retrieve this column regardless
+            Uniquely identifies this column. Can be used to retrieve this column regardless
                 of its current location in the DataTable (it could have moved after being added
                 due to sorting or insertion/deletion of other columns).
         """
@@ -513,7 +513,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             key: A key which uniquely identifies this row. If None, it will be generated for you. Defaults to None.
 
         Returns:
-            StringKey: Uniquely identifies this row. Can be used to retrieve this row regardless
+            Uniquely identifies this row. Can be used to retrieve this row regardless
                 of its current location in the DataTable (it could have moved after being added
                 due to sorting or insertion/deletion of other rows).
         """
