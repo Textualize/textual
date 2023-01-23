@@ -15,6 +15,7 @@ from typing import TYPE_CHECKING, Any, Awaitable, Callable, Iterable
 from weakref import WeakSet
 
 from . import Logger, events, log, messages
+from ._asyncio import create_task
 from ._callback import invoke
 from ._context import NoActiveAppError, active_app
 from ._time import time
@@ -90,7 +91,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         Get the current app.
 
         Returns:
-            App: The current app.
+            The current app.
 
         Raises:
             NoActiveAppError: if no active app could be found for the current asyncio context
@@ -108,6 +109,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     @property
     def is_running(self) -> bool:
+        """bool: Is the message pump running (potentially processing messages)."""
         return self._running
 
     @property
@@ -115,7 +117,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         """Get a logger for this object.
 
         Returns:
-            Logger: A logger.
+            A logger.
         """
         return self.app._logger
 
@@ -123,7 +125,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         """Set the parent, and therefore attach this node to the tree.
 
         Args:
-            parent (MessagePump): Parent node.
+            parent: Parent node.
         """
         self._parent = parent
 
@@ -146,7 +148,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         """Get the next event on the queue, or None if queue is closed.
 
         Returns:
-            Optional[Event]: Event object or None.
+            Event object or None.
         """
         if self._closed:
             raise MessagePumpClosed("The message pump is closed")
@@ -168,7 +170,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         or return None if the queue is empty.
 
         Returns:
-            Optional[Message]: The message or None.
+            The message or None.
         """
         if self._pending_message is None:
             try:
@@ -196,13 +198,13 @@ class MessagePump(metaclass=MessagePumpMeta):
         """Make a function call after a delay.
 
         Args:
-            delay (float): Time to wait before invoking callback.
-            callback (TimerCallback | None, optional): Callback to call after time has expired. Defaults to None.
-            name (str | None, optional): Name of the timer (for debug). Defaults to None.
-            pause (bool, optional): Start timer paused. Defaults to False.
+            delay: Time to wait before invoking callback.
+            callback: Callback to call after time has expired. Defaults to None.
+            name: Name of the timer (for debug). Defaults to None.
+            pause: Start timer paused. Defaults to False.
 
         Returns:
-            Timer: A timer object.
+            A timer object.
         """
         timer = Timer(
             self,
@@ -229,14 +231,14 @@ class MessagePump(metaclass=MessagePumpMeta):
         """Call a function at periodic intervals.
 
         Args:
-            interval (float): Time between calls.
-            callback (TimerCallback | None, optional): Function to call. Defaults to None.
-            name (str | None, optional): Name of the timer object. Defaults to None.
-            repeat (int, optional): Number of times to repeat the call or 0 for continuous. Defaults to 0.
-            pause (bool, optional): Start the timer paused. Defaults to False.
+            interval: Time between calls.
+            callback: Function to call. Defaults to None.
+            name: Name of the timer object. Defaults to None.
+            repeat: Number of times to repeat the call or 0 for continuous. Defaults to 0.
+            pause: Start the timer paused. Defaults to False.
 
         Returns:
-            Timer: A timer object.
+            A timer object.
         """
         timer = Timer(
             self,
@@ -256,7 +258,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         has been refreshed. Positional and keyword arguments are passed to the callable.
 
         Args:
-            callback (Callable): A callable.
+            callback: A callable.
         """
         # We send the InvokeLater message to ourselves first, to ensure we've cleared
         # out anything already pending in our own queue.
@@ -268,7 +270,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         Positional and keywords arguments are passed to the callable.
 
         Args:
-            callback (Callable): Callable to call next.
+            callback: Callable to call next.
         """
         message = events.Callback(self, callback=partial(callback, *args, **kwargs))
         self.post_message_no_wait(message)
@@ -303,7 +305,12 @@ class MessagePump(metaclass=MessagePumpMeta):
     def _start_messages(self) -> None:
         """Start messages task."""
         if self.app._running:
-            self._task = asyncio.create_task(self._process_messages())
+            self._task = create_task(
+                self._process_messages(), name=f"message pump {self}"
+            )
+        else:
+            self._closing = True
+            self._closed = True
 
     async def _process_messages(self) -> None:
         self._running = True
@@ -326,6 +333,8 @@ class MessagePump(metaclass=MessagePumpMeta):
         try:
             await self._dispatch_message(events.Compose(sender=self))
             await self._dispatch_message(events.Mount(sender=self))
+        except Exception as error:
+            self.app._handle_exception(error)
         finally:
             # This is critical, mount may be waiting
             self._mounted_event.set()
@@ -392,7 +401,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         """Dispatch a message received from the message queue.
 
         Args:
-            message (Message): A message object
+            message: A message object
         """
         _rich_traceback_guard = True
         if message.no_dispatch:
@@ -410,8 +419,8 @@ class MessagePump(metaclass=MessagePumpMeta):
         """Gets handlers from the MRO
 
         Args:
-            method_name (str): Handler method name.
-            message (Message): Message object.
+            method_name: Handler method name.
+            message: Message object.
 
         """
         private_method = f"_{method_name}"
@@ -426,7 +435,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         """Called to process an event.
 
         Args:
-            event (events.Event): An Event object.
+            event: An Event object.
         """
         await self._on_message(event)
 
@@ -434,7 +443,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         """Called to process a message.
 
         Args:
-            message (Message): A Message object.
+            message: A Message object.
         """
         _rich_traceback_guard = True
         handler_name = message._handler_name
@@ -470,10 +479,10 @@ class MessagePump(metaclass=MessagePumpMeta):
         """Post a message or an event to this message pump.
 
         Args:
-            message (Message): A message object.
+            message: A message object.
 
         Returns:
-            bool: True if the messages was posted successfully, False if the message was not posted
+            True if the messages was posted successfully, False if the message was not posted
                 (because the message pump was in the process of closing).
         """
 
@@ -493,10 +502,10 @@ class MessagePump(metaclass=MessagePumpMeta):
         timer messages to skip the queue, so that they can be more regular.
 
         Args:
-            message (Message): A message.
+            message: A message.
 
         Returns:
-            bool: True if the messages was processed, False if it wasn't.
+            True if the messages was processed, False if it wasn't.
         """
         # TODO: Allow priority messages to jump the queue
         if self._closing or self._closed:
@@ -510,10 +519,10 @@ class MessagePump(metaclass=MessagePumpMeta):
         """Posts a message on the queue.
 
         Args:
-            message (Message): A message (or Event).
+            message: A message (or Event).
 
         Returns:
-            bool: True if the messages was processed, False if it wasn't.
+            True if the messages was processed, False if it wasn't.
         """
         if self._closing or self._closed:
             return False
@@ -539,10 +548,10 @@ class MessagePump(metaclass=MessagePumpMeta):
         """Send a message to the _parent_, non async version.
 
         Args:
-            message (Message): A message object.
+            message: A message object.
 
         Returns:
-            bool: True if the message was posted successfully.
+            True if the message was posted successfully.
         """
         if self._parent:
             return self._parent._post_message_from_child_no_wait(message)
@@ -553,10 +562,10 @@ class MessagePump(metaclass=MessagePumpMeta):
         """Send a message to the _parent_.
 
         Args:
-            message (Message): A message object.
+            message: A message object.
 
         Returns:
-            bool: True if the message was posted successfully.
+            True if the message was posted successfully.
         """
         if self._parent:
             return await self._parent._post_message_from_child(message)
@@ -572,10 +581,10 @@ class MessagePump(metaclass=MessagePumpMeta):
         If multiple handlers exist that match the key, an exception is raised.
 
         Args:
-            event (events.Key): A key event.
+            event: A key event.
 
         Returns:
-            bool: True if key was handled, otherwise False.
+            True if key was handled, otherwise False.
 
         Raises:
             DuplicateKeyHandlers: When there's more than 1 handler that could handle this key.

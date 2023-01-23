@@ -38,23 +38,23 @@ class Layout(ABC):
         """Generate a layout map that defines where on the screen the widgets will be drawn.
 
         Args:
-            parent (Widget): Parent widget.
-            size (Size): Size of container.
+            parent: Parent widget.
+            size: Size of container.
 
         Returns:
-            Iterable[WidgetPlacement]: An iterable of widget location
+            An iterable of widget location
         """
 
     def get_content_width(self, widget: Widget, container: Size, viewport: Size) -> int:
         """Get the optimal content width by arranging children.
 
         Args:
-            widget (Widget): The container widget.
-            container (Size): The container size.
-            viewport (Size): The viewport size.
+            widget: The container widget.
+            container: The container size.
+            viewport: The viewport size.
 
         Returns:
-            int: Width of the content.
+            Width of the content.
         """
         if not widget.children:
             width = 0
@@ -76,13 +76,13 @@ class Layout(ABC):
         """Get the content height.
 
         Args:
-            widget (Widget): The container widget.
-            container (Size): The container size.
-            viewport (Size): The viewport.
-            width (int): The content width.
+            widget: The container widget.
+            container: The container size.
+            viewport: The viewport.
+            width: The content width.
 
         Returns:
-            int: Content height (in lines).
+            Content height (in lines).
         """
         if not widget.children:
             height = 0

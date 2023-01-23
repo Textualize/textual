@@ -10,11 +10,11 @@ def _make_path_object_relative(path: str | PurePath, obj: object) -> Path:
     Used, for example, to return the path of a CSS file relative to a Textual App instance.
 
     Args:
-        path (str | Path): A path.
-        obj (object): A Python object to resolve the path relative to.
+        path: A path.
+        obj: A Python object to resolve the path relative to.
 
     Returns:
-        Path: A resolved Path object, relative to obj
+        A resolved Path object, relative to obj
     """
     path = Path(path)
 

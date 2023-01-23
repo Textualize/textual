@@ -29,14 +29,14 @@ def resolve(
     """Resolve a list of dimensions.
 
     Args:
-        dimensions (Sequence[Scalar]): Scalars for column / row sizes.
-        total (int): Total space to divide.
-        gutter (int): Gutter between rows / columns.
-        size (Size): Size of container.
-        viewport (Size): Size of viewport.
+        dimensions: Scalars for column / row sizes.
+        total: Total space to divide.
+        gutter: Gutter between rows / columns.
+        size: Size of container.
+        viewport: Size of viewport.
 
     Returns:
-        list[tuple[int, int]]: List of (<OFFSET>, <LENGTH>)
+        List of (<OFFSET>, <LENGTH>)
     """
 
     resolved: list[tuple[Scalar, Fraction | None]] = [
@@ -94,14 +94,14 @@ def resolve_box_models(
     """Resolve box models for a list of dimensions
 
     Args:
-        dimensions (list[Scalar  |  None]): A list of Scalars or Nones for each dimension.
-        widgets (list[Widget]): Widgets in resolve.
-        size (Size): size of container.
-        parent_size (Size): Size of parent.
-        dimensions (Literal["width", "height"]): Which dimension to resolve.
+        dimensions: A list of Scalars or Nones for each dimension.
+        widgets: Widgets in resolve.
+        size: Size of container.
+        parent_size: Size of parent.
+        dimensions: Which dimension to resolve.
 
     Returns:
-        list[BoxModel]: List of resolved box models.
+        List of resolved box models.
     """
 
     fraction_width = Fraction(size.width)

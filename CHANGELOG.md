@@ -5,7 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.10.0] - Unreleased
+## [0.10.2] - Unreleased
+
+- Added `App.suspend()`, which returns a context manager that temporarily suspends the application https://github.com/Textualize/textual/pull/1541
+
+## [0.10.1] - 2023-01-20
+
+### Added
+
+- Added Strip.text property https://github.com/Textualize/textual/issues/1620
+
+### Fixed
+
+- Fixed `textual diagnose` crash on older supported Python versions. https://github.com/Textualize/textual/issues/1622
+
+### Changed
+
+- The default filename for screenshots uses a datetime format similar to ISO8601, but with reserved characters replaced by underscores https://github.com/Textualize/textual/pull/1518
+
+
+## [0.10.0] - 2023-01-19
 
 ### Added
 
@@ -14,8 +33,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added read-only public access to the children of a `TreeNode` via `TreeNode.children` https://github.com/Textualize/textual/issues/1398
 - Added `Tree.get_node_by_id` to allow getting a node by its ID https://github.com/Textualize/textual/pull/1535
 - Added a `Tree.NodeHighlighted` message, giving a `on_tree_node_highlighted` event handler https://github.com/Textualize/textual/issues/1400
+- Added a `inherit_component_classes` subclassing parameter to control whether component classes are inherited from base classes https://github.com/Textualize/textual/issues/1399
 - Added `diagnose` as a `textual` command https://github.com/Textualize/textual/issues/1542
-- Added `App.suspend()`, which returns a context manager that temporarily suspends the application https://github.com/Textualize/textual/pull/1541
+- Added `row` and `column` cursors to `DataTable` https://github.com/Textualize/textual/pull/1547
+- Added an optional parameter `selector` to the methods `Screen.focus_next` and `Screen.focus_previous` that enable using a CSS selector to narrow down which widgets can get focus https://github.com/Textualize/textual/issues/1196
 
 ### Changed
 
@@ -23,13 +44,27 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fail-fast and print pretty tracebacks for Widget compose errors https://github.com/Textualize/textual/pull/1505
 - Added Widget._refresh_scroll to avoid expensive layout when scrolling https://github.com/Textualize/textual/pull/1524
 - `events.Paste` now bubbles https://github.com/Textualize/textual/issues/1434
+- Improved error message when style flag `none` is mixed with other flags (e.g., when setting `text-style`) https://github.com/Textualize/textual/issues/1420
 - Clock color in the `Header` widget now matches the header color https://github.com/Textualize/textual/issues/1459
+- Programmatic calls to scroll now optionally scroll even if overflow styling says otherwise (introduces a new `force` parameter to all the `scroll_*` methods) https://github.com/Textualize/textual/issues/1201
+- `COMPONENT_CLASSES` are now inherited from base classes https://github.com/Textualize/textual/issues/1399
+- Watch methods may now take no parameters
+- Added `compute` parameter to reactive
+- A `TypeError` raised during `compose` now carries the full traceback
+- Removed base class `NodeMessage` from which all node-related `Tree` events inherited
 
 ### Fixed
 
 - The styles `scrollbar-background-active` and `scrollbar-color-hover` are no longer ignored https://github.com/Textualize/textual/pull/1480
 - The widget `Placeholder` can now have its width set to `auto` https://github.com/Textualize/textual/pull/1508
 - Behavior of widget `Input` when rendering after programmatic value change and related scenarios https://github.com/Textualize/textual/issues/1477 https://github.com/Textualize/textual/issues/1443
+- `DataTable.show_cursor` now correctly allows cursor toggling https://github.com/Textualize/textual/pull/1547
+- Fixed cursor not being visible on `DataTable` mount when `fixed_columns` were used https://github.com/Textualize/textual/pull/1547
+- Fixed `DataTable` cursors not resetting to origin on `clear()` https://github.com/Textualize/textual/pull/1601
+- Fixed TextLog wrapping issue https://github.com/Textualize/textual/issues/1554
+- Fixed issue with TextLog not writing anything before layout https://github.com/Textualize/textual/issues/1498
+- Fixed an exception when populating a child class of `ListView` purely from `compose` https://github.com/Textualize/textual/issues/1588
+- Fixed freeze in tests https://github.com/Textualize/textual/issues/1608
 
 ## [0.9.1] - 2022-12-30
 
@@ -348,6 +383,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.10.0]: https://github.com/Textualize/textual/compare/v0.9.1...v0.10.0
 [0.9.1]: https://github.com/Textualize/textual/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/Textualize/textual/compare/v0.8.2...v0.9.0
 [0.8.2]: https://github.com/Textualize/textual/compare/v0.8.1...v0.8.2

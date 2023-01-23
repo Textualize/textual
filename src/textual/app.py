@@ -1,9 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-import time
-from concurrent.futures import Future
-from functools import partial
 import inspect
 import io
 import os
@@ -13,6 +10,7 @@ import threading
 import unicodedata
 import warnings
 from asyncio import Task
+from concurrent.futures import Future
 from contextlib import (
     asynccontextmanager,
     contextmanager,
@@ -20,6 +18,7 @@ from contextlib import (
     redirect_stdout,
 )
 from datetime import datetime
+from functools import partial
 from pathlib import Path, PurePath
 from queue import Queue
 from time import perf_counter
@@ -48,9 +47,10 @@ from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
 from rich.traceback import Traceback
 
-from . import actions, Logger, LogGroup, LogVerbosity, events, log, messages
+from . import Logger, LogGroup, LogVerbosity, actions, events, log, messages
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
+from ._asyncio import create_task
 from ._callback import invoke
 from ._context import active_app
 from ._event_broker import NoHandler, extract_handler_actions
@@ -75,7 +75,6 @@ from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import Screen
 from .widget import AwaitMount, Widget
-
 
 if TYPE_CHECKING:
     from .devtools.client import DevtoolsClient
@@ -171,7 +170,7 @@ class _WriterThread(threading.Thread):
         """Write text. Text will be enqueued for writing.
 
         Args:
-            text (str): Text to write to the file.
+            text: Text to write to the file.
         """
         self._queue.put(text)
 
@@ -179,7 +178,7 @@ class _WriterThread(threading.Thread):
         """Pretend to be a terminal.
 
         Returns:
-            bool: True if this is a tty.
+            True if this is a tty.
         """
         return True
 
@@ -187,7 +186,7 @@ class _WriterThread(threading.Thread):
         """Get file handle number.
 
         Returns:
-            int: File number of proxied file.
+            File number of proxied file.
         """
         return self._file.fileno()
 
@@ -237,10 +236,10 @@ CallThreadReturnType = TypeVar("CallThreadReturnType")
 class App(Generic[ReturnType], DOMNode):
     """The base class for Textual Applications.
     Args:
-        driver_class (Type[Driver] | None, optional): Driver class or ``None`` to auto-detect. Defaults to None.
-        css_path (str | PurePath | list[str | PurePath] | None, optional): Path to CSS or ``None`` for no CSS file.
+        driver_class: Driver class or ``None`` to auto-detect. Defaults to None.
+        css_path: Path to CSS or ``None`` for no CSS file.
             Defaults to None. To load multiple CSS files, pass a list of strings or paths which will be loaded in order.
-        watch_css (bool, optional): Watch CSS for changes. Defaults to False.
+        watch_css: Watch CSS for changes. Defaults to False.
 
     Raises:
         CssPathError: When the supplied CSS path(s) are an unexpected type.
@@ -261,8 +260,20 @@ class App(Generic[ReturnType], DOMNode):
     SCREENS: dict[str, Screen | Callable[[], Screen]] = {}
     _BASE_PATH: str | None = None
     CSS_PATH: CSSPathType = None
+
     TITLE: str | None = None
+    """str | None: The default title for the application.
+
+    If set to a string, this sets the default title for the application. See
+    also the `title` attribute.
+    """
+
     SUB_TITLE: str | None = None
+    """str | None: The default sub-title for the application.
+
+    If set to a string, this sets the default sub-title for the application. See
+    also the `sub_title` attribute.
+    """
 
     BINDINGS = [
         Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
@@ -270,9 +281,9 @@ class App(Generic[ReturnType], DOMNode):
         Binding("shift+tab", "focus_previous", "Focus Previous", show=False),
     ]
 
-    title: Reactive[str] = Reactive("")
-    sub_title: Reactive[str] = Reactive("")
-    dark: Reactive[bool] = Reactive(True)
+    title: Reactive[str] = Reactive("", compute=False)
+    sub_title: Reactive[str] = Reactive("", compute=False)
+    dark: Reactive[bool] = Reactive(True, compute=False)
 
     def __init__(
         self,
@@ -324,10 +335,24 @@ class App(Generic[ReturnType], DOMNode):
         self._animator = Animator(self)
         self._animate = self._animator.bind(self)
         self.mouse_position = Offset(0, 0)
+
         self.title = (
             self.TITLE if self.TITLE is not None else f"{self.__class__.__name__}"
         )
+        """The title for the application.
+
+        The initial value in a running application will be that set in `TITLE`
+        (if one is set). Assign new values to this instance attribute to change
+        the title.
+        """
+
         self.sub_title = self.SUB_TITLE if self.SUB_TITLE is not None else ""
+        """The sub-title for the application.
+
+        The initial value in a running application will be that set in `SUB_TITLE`
+        (if one is set). Assign new values to this instance attribute to change
+        the sub-title.
+        """
 
         self._logger = Logger(self._log)
 
@@ -414,14 +439,14 @@ class App(Generic[ReturnType], DOMNode):
         """Animate an attribute.
 
         Args:
-            attribute (str): Name of the attribute to animate.
-            value (float | Animatable): The value to animate to.
-            final_value (object, optional): The final value of the animation. Defaults to `value` if not set.
-            duration (float | None, optional): The duration of the animate. Defaults to None.
-            speed (float | None, optional): The speed of the animation. Defaults to None.
-            delay (float, optional): A delay (in seconds) before the animation starts. Defaults to 0.0.
-            easing (EasingFunction | str, optional): An easing method. Defaults to "in_out_cubic".
-            on_complete (CallbackType | None, optional): A callable to invoke when the animation is finished. Defaults to None.
+            attribute: Name of the attribute to animate.
+            value: The value to animate to.
+            final_value: The final value of the animation. Defaults to `value` if not set.
+            duration: The duration of the animate. Defaults to None.
+            speed: The speed of the animation. Defaults to None.
+            delay: A delay (in seconds) before the animation starts. Defaults to 0.0.
+            easing: An easing method. Defaults to "in_out_cubic".
+            on_complete: A callable to invoke when the animation is finished. Defaults to None.
 
         """
         self._animate(
@@ -456,8 +481,8 @@ class App(Generic[ReturnType], DOMNode):
         """Exit the app, and return the supplied result.
 
         Args:
-            result (ReturnType | None, optional): Return value. Defaults to None.
-            message (RenderableType | None): Optional message to display on exit.
+            result: Return value. Defaults to None.
+            message: Optional message to display on exit.
         """
         self._exit = True
         self._return_value = result
@@ -495,7 +520,7 @@ class App(Generic[ReturnType], DOMNode):
         """Get a mapping of variables used to pre-populate CSS.
 
         Returns:
-            dict[str, str]: A mapping of variable name to value.
+            A mapping of variable name to value.
         """
         variables = self.design["dark" if self.dark else "light"].generate()
         return variables
@@ -519,7 +544,7 @@ class App(Generic[ReturnType], DOMNode):
         Called by the constructor.
 
         Returns:
-            Driver: A Driver class which manages input and display.
+            A Driver class which manages input and display.
         """
         driver_class: Type[Driver]
         if WINDOWS:
@@ -598,7 +623,7 @@ class App(Generic[ReturnType], DOMNode):
             ```
 
         Args:
-            verbosity (int, optional): Verbosity level 0-3. Defaults to 1.
+            verbosity: Verbosity level 0-3. Defaults to 1.
         """
 
         devtools = self.devtools
@@ -646,7 +671,7 @@ class App(Generic[ReturnType], DOMNode):
         This method will ensure that your code is ran within the correct context.
 
         Args:
-            callback (Callable): A callable to run.
+            callback: A callable to run.
             *args: Arguments to the callback.
             **kwargs: Keyword arguments for the callback.
 
@@ -685,8 +710,8 @@ class App(Generic[ReturnType], DOMNode):
         """Save an SVG "screenshot". This action will save an SVG file containing the current contents of the screen.
 
         Args:
-            filename (str | None, optional): Filename of screenshot, or None to auto-generate. Defaults to None.
-            path (str, optional): Path to directory. Defaults to current working directory.
+            filename: Filename of screenshot, or None to auto-generate. Defaults to None.
+            path: Path to directory. Defaults to current working directory.
         """
         self.save_screenshot(filename, path)
 
@@ -694,7 +719,7 @@ class App(Generic[ReturnType], DOMNode):
         """Export an SVG screenshot of the current screen.
 
         Args:
-            title (str | None, optional): The title of the exported screenshot or None
+            title: The title of the exported screenshot or None
                 to use app title. Defaults to None.
 
         """
@@ -717,25 +742,29 @@ class App(Generic[ReturnType], DOMNode):
         self,
         filename: str | None = None,
         path: str = "./",
-        time_format: str = "%Y%m%d %H%M%S %f",
+        time_format: str | None = None,
     ) -> str:
         """Save an SVG screenshot of the current screen.
 
         Args:
-            filename (str | None, optional): Filename of SVG screenshot, or None to auto-generate
+            filename: Filename of SVG screenshot, or None to auto-generate
                 a filename with the date and time. Defaults to None.
-            path (str, optional): Path to directory for output. Defaults to current working directory.
-            time_format (str, optional): Time format to use if filename is None. Defaults to "%Y-%m-%d %X %f".
+            path: Path to directory for output. Defaults to current working directory.
+            time_format: Date and time format to use if filename is None.
+                Defaults to a format like ISO 8601 with some reserved characters replaced with underscores.
 
         Returns:
-            str: Filename of screenshot.
+            Filename of screenshot.
         """
         if filename is None:
-            svg_filename = (
-                f"{self.title.lower()} {datetime.now().strftime(time_format)}.svg"
-            )
-            for reserved in '<>:"/\\|?*':
-                svg_filename = svg_filename.replace(reserved, "_")
+            if time_format is None:
+                dt = datetime.now().isoformat()
+            else:
+                dt = datetime.now().strftime(time_format)
+            svg_filename_stem = f"{self.title.lower()} {dt}"
+            for reserved in ' <>:"/\\|?*.':
+                svg_filename_stem = svg_filename_stem.replace(reserved, "_")
+                svg_filename = svg_filename_stem + ".svg"
         else:
             svg_filename = filename
         svg_path = os.path.expanduser(os.path.join(path, svg_filename))
@@ -756,11 +785,11 @@ class App(Generic[ReturnType], DOMNode):
         """Bind a key to an action.
 
         Args:
-            keys (str): A comma separated list of keys, i.e.
-            action (str): Action to bind to.
-            description (str, optional): Short description of action. Defaults to "".
-            show (bool, optional): Show key in UI. Defaults to True.
-            key_display (str, optional): Replacement text for key, or None to use default. Defaults to None.
+            keys: A comma separated list of keys, i.e.
+            action: Action to bind to.
+            description: Short description of action. Defaults to "".
+            show: Show key in UI. Defaults to True.
+            key_display: Replacement text for key, or None to use default. Defaults to None.
         """
         self._bindings.bind(
             keys, action, description, show=show, key_display=key_display
@@ -775,10 +804,10 @@ class App(Generic[ReturnType], DOMNode):
         needing to add a key_display to every binding.
 
         Args:
-            key (str): The binding key string.
+            key: The binding key string.
 
         Returns:
-            str: The display string for the input key.
+            The display string for the input key.
         """
         return _get_key_display(key)
 
@@ -832,8 +861,8 @@ class App(Generic[ReturnType], DOMNode):
         """An asynchronous context manager for testing app.
 
         Args:
-            headless (bool, optional): Run in headless mode (no output or input). Defaults to True.
-            size (tuple[int, int] | None, optional): Force terminal size to `(WIDTH, HEIGHT)`,
+            headless: Run in headless mode (no output or input). Defaults to True.
+            size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect. Defaults to None.
 
         """
@@ -854,7 +883,7 @@ class App(Generic[ReturnType], DOMNode):
             )
 
         # Launch the app in the "background"
-        app_task = asyncio.create_task(run_app(app))
+        app_task = create_task(run_app(app), name=f"run_test {app}")
 
         # Wait until the app has performed all startup routines.
         await app_ready_event.wait()
@@ -880,13 +909,13 @@ class App(Generic[ReturnType], DOMNode):
         """Run the app asynchronously.
 
         Args:
-            headless (bool, optional): Run in headless mode (no output). Defaults to False.
-            size (tuple[int, int] | None, optional): Force terminal size to `(WIDTH, HEIGHT)`,
+            headless: Run in headless mode (no output). Defaults to False.
+            size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect. Defaults to None.
-            auto_pilot (AutopilotCallbackType): An auto pilot coroutine.
+            auto_pilot: An auto pilot coroutine.
 
         Returns:
-            ReturnType | None: App return value.
+            App return value.
         """
         from .pilot import Pilot
 
@@ -909,7 +938,9 @@ class App(Generic[ReturnType], DOMNode):
                         raise
 
                 pilot = Pilot(app)
-                auto_pilot_task = asyncio.create_task(run_auto_pilot(auto_pilot, pilot))
+                auto_pilot_task = create_task(
+                    run_auto_pilot(auto_pilot, pilot), name=repr(pilot)
+                )
 
         try:
             await app._process_messages(
@@ -936,13 +967,13 @@ class App(Generic[ReturnType], DOMNode):
         """Run the app.
 
         Args:
-            headless (bool, optional): Run in headless mode (no output). Defaults to False.
-            size (tuple[int, int] | None, optional): Force terminal size to `(WIDTH, HEIGHT)`,
+            headless: Run in headless mode (no output). Defaults to False.
+            size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect. Defaults to None.
-            auto_pilot (AutopilotCallbackType): An auto pilot coroutine.
+            auto_pilot: An auto pilot coroutine.
 
         Returns:
-            ReturnType | None: App return value.
+            App return value.
         """
 
         async def run_app() -> None:
@@ -1034,12 +1065,12 @@ class App(Generic[ReturnType], DOMNode):
         with the given ID.
 
         Args:
-            id (str): The ID of the node to search for.
-            expect_type (type | None, optional): Require the object be of the supplied type, or None for any type.
+            id: The ID of the node to search for.
+            expect_type: Require the object be of the supplied type, or None for any type.
                 Defaults to None.
 
         Returns:
-            ExpectType | Widget: The first child of this node with the specified ID.
+            The first child of this node with the specified ID.
 
         Raises:
             NoMatches: if no children could be found for this ID
@@ -1070,12 +1101,12 @@ class App(Generic[ReturnType], DOMNode):
         To get the screen, use `self.screen`.
 
         Args:
-            id (str): The ID to search for in the subtree
-            expect_type (type | None, optional): Require the object be of the supplied type, or None for any type.
+            id: The ID to search for in the subtree
+            expect_type: Require the object be of the supplied type, or None for any type.
                 Defaults to None.
 
         Returns:
-            ExpectType | Widget: The first descendant encountered with this ID.
+            The first descendant encountered with this ID.
 
         Raises:
             NoMatches: if no children could be found for this ID
@@ -1105,12 +1136,12 @@ class App(Generic[ReturnType], DOMNode):
         """Mount the given widgets relative to the app's screen.
 
         Args:
-            *widgets (Widget): The widget(s) to mount.
-            before (int | str | Widget, optional): Optional location to mount before.
-            after (int | str | Widget, optional): Optional location to mount after.
+            *widgets: The widget(s) to mount.
+            before: Optional location to mount before.
+            after: Optional location to mount after.
 
         Returns:
-            AwaitMount: An awaitable object that waits for widgets to be mounted.
+            An awaitable object that waits for widgets to be mounted.
 
         Raises:
             MountError: If there is a problem with the mount request.
@@ -1130,12 +1161,12 @@ class App(Generic[ReturnType], DOMNode):
         """Mount widgets from an iterable.
 
         Args:
-            widgets (Iterable[Widget]): An iterable of widgets.
-            before (int | str | Widget, optional): Optional location to mount before.
-            after (int | str | Widget, optional): Optional location to mount after.
+            widgets: An iterable of widgets.
+            before: Optional location to mount before.
+            after: Optional location to mount after.
 
         Returns:
-            AwaitMount: An awaitable object that waits for widgets to be mounted.
+            An awaitable object that waits for widgets to be mounted.
 
         Raises:
             MountError: If there is a problem with the mount request.
@@ -1150,10 +1181,10 @@ class App(Generic[ReturnType], DOMNode):
         """Check if a given screen has been installed.
 
         Args:
-            screen (Screen | str): Either a Screen object or screen name (the `name` argument when installed).
+            screen: Either a Screen object or screen name (the `name` argument when installed).
 
         Returns:
-            bool: True if the screen is currently installed,
+            True if the screen is currently installed,
         """
         if isinstance(screen, str):
             return screen in self._installed_screens
@@ -1164,13 +1195,13 @@ class App(Generic[ReturnType], DOMNode):
         """Get an installed screen.
 
         Args:
-            screen (Screen | str): Either a Screen object or screen name (the `name` argument when installed).
+            screen: Either a Screen object or screen name (the `name` argument when installed).
 
         Raises:
             KeyError: If the named screen doesn't exist.
 
         Returns:
-            Screen: A screen instance.
+            A screen instance.
         """
         if isinstance(screen, str):
             try:
@@ -1190,13 +1221,13 @@ class App(Generic[ReturnType], DOMNode):
         If the screen isn't running, it will be registered before it is run.
 
         Args:
-            screen (Screen | str): Either a Screen object or screen name (the `name` argument when installed).
+            screen: Either a Screen object or screen name (the `name` argument when installed).
 
         Raises:
             KeyError: If the named screen doesn't exist.
 
         Returns:
-            tuple[Screen, AwaitMount]: A screen instance and an awaitable that awaits the children mounting.
+            A screen instance and an awaitable that awaits the children mounting.
 
         """
         _screen = self.get_screen(screen)
@@ -1210,10 +1241,10 @@ class App(Generic[ReturnType], DOMNode):
         """Handle the replaced screen.
 
         Args:
-            screen (Screen): A screen object.
+            screen: A screen object.
 
         Returns:
-            Screen: The screen that was replaced.
+            The screen that was replaced.
 
         """
         screen.post_message_no_wait(events.ScreenSuspend(self))
@@ -1227,7 +1258,7 @@ class App(Generic[ReturnType], DOMNode):
         """Push a new screen on the screen stack.
 
         Args:
-            screen (Screen | str): A Screen instance or the name of an installed screen.
+            screen: A Screen instance or the name of an installed screen.
 
         """
         next_screen, await_mount = self._get_screen(screen)
@@ -1240,7 +1271,7 @@ class App(Generic[ReturnType], DOMNode):
         """Switch to another screen by replacing the top of the screen stack with a new screen.
 
         Args:
-            screen (Screen | str): Either a Screen object or screen name (the `name` argument when installed).
+            screen: Either a Screen object or screen name (the `name` argument when installed).
 
         """
         if self.screen is not screen:
@@ -1256,15 +1287,15 @@ class App(Generic[ReturnType], DOMNode):
         """Install a screen.
 
         Args:
-            screen (Screen): Screen to install.
-            name (str | None, optional): Unique name of screen or None to auto-generate.
+            screen: Screen to install.
+            name: Unique name of screen or None to auto-generate.
                 Defaults to None.
 
         Raises:
             ScreenError: If the screen can't be installed.
 
         Returns:
-            AwaitMount: An awaitable that awaits the mounting of the screen and its children.
+            An awaitable that awaits the mounting of the screen and its children.
         """
         if name is None:
             name = nanoid.generate()
@@ -1284,10 +1315,10 @@ class App(Generic[ReturnType], DOMNode):
         method is a null-op.
 
         Args:
-            screen (Screen | str): The screen to uninstall or the name of a installed screen.
+            screen: The screen to uninstall or the name of a installed screen.
 
         Returns:
-            str | None: The name of the screen that was uninstalled, or None if no screen was uninstalled.
+            The name of the screen that was uninstalled, or None if no screen was uninstalled.
         """
         if isinstance(screen, str):
             if screen not in self._installed_screens:
@@ -1312,7 +1343,7 @@ class App(Generic[ReturnType], DOMNode):
         """Pop the current screen from the stack, and switch to the previous screen.
 
         Returns:
-            Screen: The screen that was replaced.
+            The screen that was replaced.
         """
         screen_stack = self._screen_stack
         if len(screen_stack) <= 1:
@@ -1329,8 +1360,8 @@ class App(Generic[ReturnType], DOMNode):
         """Focus (or unfocus) a widget. A focused widget will receive key events first.
 
         Args:
-            widget (Widget): Widget to focus.
-            scroll_visible (bool, optional): Scroll widget in to view.
+            widget: Widget to focus.
+            scroll_visible: Scroll widget in to view.
         """
         self.screen.set_focus(widget, scroll_visible)
 
@@ -1338,7 +1369,7 @@ class App(Generic[ReturnType], DOMNode):
         """Called when the mouse is over another widget.
 
         Args:
-            widget (Widget | None): Widget under mouse, or None for no widgets.
+            widget: Widget under mouse, or None for no widgets.
         """
         if widget is None:
             if self.mouse_over is not None:
@@ -1360,7 +1391,7 @@ class App(Generic[ReturnType], DOMNode):
         """Send all mouse events to the given widget, disable mouse capture.
 
         Args:
-            widget (Widget | None): If a widget, capture mouse event, or None to end mouse capture.
+            widget: If a widget, capture mouse event, or None to end mouse capture.
         """
         if widget == self.mouse_captured:
             return
@@ -1376,7 +1407,7 @@ class App(Generic[ReturnType], DOMNode):
         """Exits the app then displays a message.
 
         Args:
-            *renderables (RenderableType, optional): Rich renderables to display on exit.
+            *renderables: Rich renderables to display on exit.
         """
 
         assert all(
@@ -1396,7 +1427,7 @@ class App(Generic[ReturnType], DOMNode):
         """Called with an unhandled exception.
 
         Args:
-            error (Exception): An exception instance.
+            error: An exception instance.
         """
 
         if hasattr(error, "__rich__"):
@@ -1448,7 +1479,7 @@ class App(Generic[ReturnType], DOMNode):
         try:
             if self.css_path:
                 self.stylesheet.read_all(self.css_path)
-            for path, css, tie_breaker in self.get_default_css():
+            for path, css, tie_breaker in self._get_default_css():
                 self.stylesheet.add_source(
                     css, path=path, is_default_css=True, tie_breaker=tie_breaker
                 )
@@ -1586,7 +1617,7 @@ class App(Generic[ReturnType], DOMNode):
         except TypeError as error:
             raise TypeError(
                 f"{self!r} compose() returned an invalid response; {error}"
-            ) from None
+            ) from error
         await self.mount_all(widgets)
 
     def _on_idle(self) -> None:
@@ -1606,11 +1637,11 @@ class App(Generic[ReturnType], DOMNode):
         """Register a widget as a child of another.
 
         Args:
-            parent (DOMNode): Parent node.
-            child (Widget): The child widget to register.
+            parent: Parent node.
+            child: The child widget to register.
             widgets: The widget to register.
-            before (int, optional): A location to mount before.
-            after (int, option): A location to mount after.
+            before: A location to mount before.
+            after: A location to mount after.
         """
 
         # Let's be 100% sure that we've not been asked to do a before and an
@@ -1657,12 +1688,12 @@ class App(Generic[ReturnType], DOMNode):
         """Register widget(s) so they may receive events.
 
         Args:
-            parent (DOMNode): Parent node.
+            parent: Parent node.
             *widgets: The widget(s) to register.
-            before (int, optional): A location to mount before.
-            after (int, option): A location to mount after.
+            before: A location to mount before.
+            after: A location to mount after.
         Returns:
-            list[Widget]: List of modified widgets.
+            List of modified widgets.
 
         """
 
@@ -1670,6 +1701,7 @@ class App(Generic[ReturnType], DOMNode):
             return []
 
         new_widgets = list(widgets)
+
         if before is not None or after is not None:
             # There's a before or after, which means there's going to be an
             # insertion, so make it easier to get the new things in the
@@ -1685,13 +1717,18 @@ class App(Generic[ReturnType], DOMNode):
                 if widget.children:
                     self._register(widget, *widget.children)
                 apply_stylesheet(widget)
+
+        if not self._running:
+            # If the app is not running, prevent awaiting of the widget tasks
+            return []
+
         return list(widgets)
 
     def _unregister(self, widget: Widget) -> None:
         """Unregister a widget.
 
         Args:
-            widget (Widget): A Widget to unregister
+            widget: A Widget to unregister
         """
         widget.reset_focus()
         if isinstance(widget._parent, Widget):
@@ -1707,8 +1744,8 @@ class App(Generic[ReturnType], DOMNode):
         """Start a widget (run it's task) so that it can receive messages.
 
         Args:
-            parent (Widget): The parent of the Widget.
-            widget (Widget): The Widget to start.
+            parent: The parent of the Widget.
+            widget: The Widget to start.
         """
 
         widget._attach(parent)
@@ -1719,10 +1756,10 @@ class App(Generic[ReturnType], DOMNode):
         """Check if a widget is mounted.
 
         Args:
-            widget (Widget): A widget.
+            widget: A widget.
 
         Returns:
-            bool: True of the widget is mounted.
+            True of the widget is mounted.
         """
         return widget in self._registry
 
@@ -1730,7 +1767,7 @@ class App(Generic[ReturnType], DOMNode):
         """Close all message pumps."""
 
         # Close all screens on the stack
-        for screen in self._screen_stack:
+        for screen in reversed(self._screen_stack):
             if screen._running:
                 await self._prune_node(screen)
 
@@ -1776,7 +1813,7 @@ class App(Generic[ReturnType], DOMNode):
         """Refresh CSS.
 
         Args:
-            animate (bool, optional): Also execute CSS animations. Defaults to True.
+            animate: Also execute CSS animations. Defaults to True.
         """
         stylesheet = self.app.stylesheet
         stylesheet.set_variables(self.get_css_variables())
@@ -1788,8 +1825,8 @@ class App(Generic[ReturnType], DOMNode):
         """Display a renderable within a sync.
 
         Args:
-            screen (Screen): Screen instance
-            renderable (RenderableType): A Rich renderable.
+            screen: Screen instance
+            renderable: A Rich renderable.
         """
 
         try:
@@ -1817,11 +1854,11 @@ class App(Generic[ReturnType], DOMNode):
         """Get the widget under the given coordinates.
 
         Args:
-            x (int): X Coord.
-            y (int): Y Coord.
+            x: X coordinate.
+            y: Y coordinate.
 
         Returns:
-            tuple[Widget, Region]: The widget and the widget's screen region.
+            The widget and the widget's screen region.
         """
         return self.screen.get_widget_at(x, y)
 
@@ -1835,7 +1872,7 @@ class App(Generic[ReturnType], DOMNode):
         """Get a chain of nodes and bindings to consider. If no widget is focused, returns the bindings from both the screen and the app level bindings. Otherwise, combines all the bindings from the currently focused node up the DOM to the root App.
 
         Returns:
-            list[tuple[DOMNode, Bindings]]: List of DOM nodes and their bindings.
+            List of DOM nodes and their bindings.
         """
         focused = self.focused
         namespace_bindings: list[tuple[DOMNode, Bindings]]
@@ -1854,11 +1891,11 @@ class App(Generic[ReturnType], DOMNode):
         """Handle a key press.
 
         Args:
-            key (str): A key.
-            priority (bool): If `True` check from `App` down, otherwise from focused up.
+            key: A key.
+            priority: If `True` check from `App` down, otherwise from focused up.
 
         Returns:
-            bool: True if the key was handled by a binding, otherwise False
+            True if the key was handled by a binding, otherwise False
         """
         for namespace, bindings in (
             reversed(self._binding_chain) if priority else self._binding_chain
@@ -1904,12 +1941,12 @@ class App(Generic[ReturnType], DOMNode):
         """Perform an action.
 
         Args:
-            action (str): Action encoded in a string.
-            default_namespace (object | None): Namespace to use if not provided in the action,
+            action: Action encoded in a string.
+            default_namespace: Namespace to use if not provided in the action,
                 or None to use app. Defaults to None.
 
         Returns:
-            bool: True if the event has handled.
+            True if the event has handled.
         """
         print("ACTION", action, default_namespace)
         if isinstance(action, str):
@@ -1938,12 +1975,12 @@ class App(Generic[ReturnType], DOMNode):
         """Dispatch an action to an action method.
 
         Args:
-            namespace (object): Namespace (object) of action.
-            action_name (str): Name of the action.
-            params (Any): Action parameters.
+            namespace: Namespace (object) of action.
+            action_name: Name of the action.
+            params: Action parameters.
 
         Returns:
-            bool: True if handled, otherwise False.
+            True if handled, otherwise False.
         """
         _rich_traceback_guard = True
 
@@ -1969,7 +2006,7 @@ class App(Generic[ReturnType], DOMNode):
             )
         except SkipAction:
             # The action method raised this to explicitly not handle the action
-            log("<action> {action_name!r} skipped.")
+            log(f"<action> {action_name!r} skipped.")
         return False
 
     async def _broker_event(
@@ -1978,12 +2015,12 @@ class App(Generic[ReturnType], DOMNode):
         """Allow the app an opportunity to dispatch events to action system.
 
         Args:
-            event_name (str): _description_
-            event (events.Event): An event object.
-            default_namespace (object | None): The default namespace, where one isn't supplied.
+            event_name: _description_
+            event: An event object.
+            default_namespace: The default namespace, where one isn't supplied.
 
         Returns:
-            bool: True if an action was processed.
+            True if an action was processed.
         """
         try:
             style = getattr(event, "style")
@@ -2025,10 +2062,10 @@ class App(Generic[ReturnType], DOMNode):
         """Detach a list of widgets from the DOM.
 
         Args:
-            widgets (list[Widget]): The list of widgets to detach from the DOM.
+            widgets: The list of widgets to detach from the DOM.
 
         Returns:
-            list[Widget]: The list of widgets that should be pruned.
+            The list of widgets that should be pruned.
 
         Note:
             A side-effect of calling this function is that each parent of
@@ -2085,7 +2122,7 @@ class App(Generic[ReturnType], DOMNode):
         """Walk children depth first, generating widgets and a list of their siblings.
 
         Returns:
-            Iterable[list[Widget]]: The child widgets of root.
+            The child widgets of root.
 
         """
         stack: list[Widget] = [root]
@@ -2094,8 +2131,9 @@ class App(Generic[ReturnType], DOMNode):
 
         while stack:
             widget = pop()
-            if widget.children:
-                yield [*widget.children, *widget._get_virtual_dom()]
+            children = [*widget.children, *widget._get_virtual_dom()]
+            if children:
+                yield children
             for child in widget.children:
                 push(child)
 
@@ -2103,10 +2141,10 @@ class App(Generic[ReturnType], DOMNode):
         """Remove nodes from DOM, and return an awaitable that awaits cleanup.
 
         Args:
-            widgets (list[Widget]): List of nodes to remvoe.
+            widgets: List of nodes to remvoe.
 
         Returns:
-            AwaitRemove: Awaitable that returns when the nodes have been fully removed.
+            Awaitable that returns when the nodes have been fully removed.
         """
 
         async def prune_widgets_task(
@@ -2115,8 +2153,8 @@ class App(Generic[ReturnType], DOMNode):
             """Prune widgets as a background task.
 
             Args:
-                widgets (list[Widget]): Widgets to prune.
-                finished_event (asyncio.Event): Event to set when complete.
+                widgets: Widgets to prune.
+                finished_event: Event to set when complete.
             """
             try:
                 await self._prune_nodes(widgets)
@@ -2127,7 +2165,9 @@ class App(Generic[ReturnType], DOMNode):
         removed_widgets = self._detach_from_dom(widgets)
 
         finished_event = asyncio.Event()
-        asyncio.create_task(prune_widgets_task(removed_widgets, finished_event))
+        create_task(
+            prune_widgets_task(removed_widgets, finished_event), name="prune nodes"
+        )
 
         return AwaitRemove(finished_event)
 
@@ -2135,7 +2175,7 @@ class App(Generic[ReturnType], DOMNode):
         """Remove nodes and children.
 
         Args:
-            widgets (Widget): _description_
+            widgets: _description_
         """
         async with self._dom_lock:
             for widget in widgets:
@@ -2145,7 +2185,7 @@ class App(Generic[ReturnType], DOMNode):
         """Remove a node and its children. Children are removed before parents.
 
         Args:
-            root (Widget): Node to remove.
+            root: Node to remove.
         """
         # Pruning a node that has been removed is a no-op
         if root not in self._registry:
@@ -2164,7 +2204,7 @@ class App(Generic[ReturnType], DOMNode):
                 for child in children:
                     self._unregister(child)
 
-        await root._close_messages(wait=False)
+        await root._close_messages(wait=True)
         self._unregister(root)
 
     async def action_check_bindings(self, key: str) -> None:
@@ -2186,7 +2226,7 @@ class App(Generic[ReturnType], DOMNode):
         """Focus the given widget.
 
         Args:
-            widget_id (str): ID of widget to focus.
+            widget_id: ID of widget to focus.
         """
         try:
             node = self.query(f"#{widget_id}").first()
@@ -2200,7 +2240,7 @@ class App(Generic[ReturnType], DOMNode):
         """Switches to another screen.
 
         Args:
-            screen (str): Name of the screen.
+            screen: Name of the screen.
         """
         self.switch_screen(screen)
 
@@ -2208,7 +2248,7 @@ class App(Generic[ReturnType], DOMNode):
         """Pushes a screen on to the screen stack and makes it active.
 
         Args:
-            screen (str): Name of the screen.
+            screen: Name of the screen.
         """
         self.push_screen(screen)
 

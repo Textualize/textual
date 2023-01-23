@@ -17,10 +17,10 @@ async def websocket_handler(request: Request) -> WebSocketResponse:
     """aiohttp websocket handler for sending data between devtools client and server
 
     Args:
-        request (Request): The request to the websocket endpoint
+        request: The request to the websocket endpoint
 
     Returns:
-        WebSocketResponse: The websocket response
+        The websocket response
     """
     service: DevtoolsService = request.app["service"]
     return await service.handle(request)

@@ -46,10 +46,10 @@ class Animation(ABC):
         """Call the animation, return a boolean indicating whether animation is in-progress or complete.
 
         Args:
-            time (float): The current timestamp
+            time: The current timestamp
 
         Returns:
-            bool: True if the animation has finished, otherwise False.
+            True if the animation has finished, otherwise False.
         """
         raise NotImplementedError("")
 
@@ -135,14 +135,14 @@ class BoundAnimator:
         """Animate an attribute.
 
         Args:
-            attribute (str): Name of the attribute to animate.
-            value (float | Animatable): The value to animate to.
-            final_value (object, optional): The final value of the animation. Defaults to `value` if not set.
-            duration (float | None, optional): The duration of the animate. Defaults to None.
-            speed (float | None, optional): The speed of the animation. Defaults to None.
-            delay (float, optional): A delay (in seconds) before the animation starts. Defaults to 0.0.
-            easing (EasingFunction | str, optional): An easing method. Defaults to "in_out_cubic".
-            on_complete (CallbackType | None, optional): A callable to invoke when the animation is finished. Defaults to None.
+            attribute: Name of the attribute to animate.
+            value: The value to animate to.
+            final_value: The final value of the animation. Defaults to `value` if not set.
+            duration: The duration of the animate. Defaults to None.
+            speed: The speed of the animation. Defaults to None.
+            delay: A delay (in seconds) before the animation starts. Defaults to 0.0.
+            easing: An easing method. Defaults to "in_out_cubic".
+            on_complete: A callable to invoke when the animation is finished. Defaults to None.
 
         """
         start_value = getattr(self._obj, attribute)
@@ -215,15 +215,15 @@ class Animator:
         """Animate an attribute to a new value.
 
         Args:
-            obj (object): The object containing the attribute.
-            attribute (str): The name of the attribute.
-            value (Any): The destination value of the attribute.
-            final_value (Any, optional): The final value, or ellipsis if it is the same as ``value``. Defaults to Ellipsis/
-            duration (float | None, optional): The duration of the animation, or ``None`` to use speed. Defaults to ``None``.
-            speed (float | None, optional): The speed of the animation. Defaults to None.
-            easing (EasingFunction | str, optional): An easing function. Defaults to DEFAULT_EASING.
-            delay (float, optional): Number of seconds to delay the start of the animation by. Defaults to 0.
-            on_complete (CallbackType | None, optional): Callback to run after the animation completes.
+            obj: The object containing the attribute.
+            attribute: The name of the attribute.
+            value: The destination value of the attribute.
+            final_value: The final value, or ellipsis if it is the same as ``value``. Defaults to Ellipsis/
+            duration: The duration of the animation, or ``None`` to use speed. Defaults to ``None``.
+            speed: The speed of the animation. Defaults to None.
+            easing: An easing function. Defaults to DEFAULT_EASING.
+            delay: Number of seconds to delay the start of the animation by. Defaults to 0.
+            on_complete: Callback to run after the animation completes.
         """
         animate_callback = partial(
             self._animate,
@@ -256,14 +256,14 @@ class Animator:
         """Animate an attribute to a new value.
 
         Args:
-            obj (object): The object containing the attribute.
-            attribute (str): The name of the attribute.
-            value (Any): The destination value of the attribute.
-            final_value (Any, optional): The final value, or ellipsis if it is the same as ``value``. Defaults to ....
-            duration (float | None, optional): The duration of the animation, or ``None`` to use speed. Defaults to ``None``.
-            speed (float | None, optional): The speed of the animation. Defaults to None.
-            easing (EasingFunction | str, optional): An easing function. Defaults to DEFAULT_EASING.
-            on_complete (CallbackType | None, optional): Callback to run after the animation completes.
+            obj: The object containing the attribute.
+            attribute: The name of the attribute.
+            value: The destination value of the attribute.
+            final_value: The final value, or ellipsis if it is the same as ``value``. Defaults to ....
+            duration: The duration of the animation, or ``None`` to use speed. Defaults to ``None``.
+            speed: The speed of the animation. Defaults to None.
+            easing: An easing function. Defaults to DEFAULT_EASING.
+            on_complete: Callback to run after the animation completes.
         """
         if not hasattr(obj, attribute):
             raise AttributeError(

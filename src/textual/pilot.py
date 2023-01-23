@@ -37,7 +37,7 @@ class Pilot(Generic[ReturnType]):
         """Insert a pause.
 
         Args:
-            delay (float, optional): Seconds to pause. Defaults to 50ms.
+            delay: Seconds to pause. Defaults to 50ms.
         """
         # These sleep zeros, are to force asyncio to give up a time-slice,
         await asyncio.sleep(delay)
@@ -50,6 +50,6 @@ class Pilot(Generic[ReturnType]):
         """Exit the app with the given result.
 
         Args:
-            result (object): The app result returned by `run` or `run_async`.
+            result: The app result returned by `run` or `run_async`.
         """
         self.app.exit(result)

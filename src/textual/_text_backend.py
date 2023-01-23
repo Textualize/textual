@@ -14,7 +14,7 @@ class TextEditorBackend:
         """Set the content of the editor
 
         Args:
-            text (str): The text to set as the content
+            text: The text to set as the content
         """
         self.content = text
 
@@ -24,7 +24,7 @@ class TextEditorBackend:
         return False.
 
         Returns:
-            bool: True if the text content was modified. False otherwise.
+            True if the text content was modified. False otherwise.
         """
         if self.cursor_index == 0:
             return False
@@ -40,7 +40,7 @@ class TextEditorBackend:
         """Delete the character in front of the cursor without moving the cursor.
 
         Returns:
-            bool: True if the text content was modified. False otherwise.
+            True if the text content was modified. False otherwise.
         """
         if self.cursor_index == len(self.content):
             return False
@@ -55,7 +55,7 @@ class TextEditorBackend:
         """Move the cursor 1 character left in the text. Is a noop if cursor is at start.
 
         Returns:
-            bool: True if the cursor moved. False otherwise.
+            True if the cursor moved. False otherwise.
         """
         previous_index = self.cursor_index
         new_index = max(0, previous_index - 1)
@@ -66,7 +66,7 @@ class TextEditorBackend:
         """Move the cursor 1 character right in the text. Is a noop if the cursor is at end.
 
         Returns:
-            bool: True if the cursor moved. False otherwise.
+            True if the cursor moved. False otherwise.
         """
         previous_index = self.cursor_index
         new_index = min(len(self.content), previous_index + 1)
@@ -77,7 +77,7 @@ class TextEditorBackend:
         """Check if the cursor can move 1 codepoint left in the text.
 
         Returns:
-            bool: True if the cursor can move left. False otherwise.
+            True if the cursor can move left. False otherwise.
         """
         previous_index = self.cursor_index
         new_index = max(0, previous_index - 1)
@@ -89,7 +89,7 @@ class TextEditorBackend:
         exist (e.g. we're at the end), then return None
 
         Returns:
-            str: The codepoint to the right of the cursor if it exists, otherwise None.
+            The codepoint to the right of the cursor if it exists, otherwise None.
         """
         previous_index = self.cursor_index
         new_index = min(len(self.content), previous_index + 1)
@@ -103,7 +103,7 @@ class TextEditorBackend:
         """Move the cursor to the start of the text
 
         Returns:
-            bool: True if the cursor moved. False otherwise.
+            True if the cursor moved. False otherwise.
         """
         if self.cursor_index == 0:
             return False
@@ -115,7 +115,7 @@ class TextEditorBackend:
         """Move the cursor to the end of the text
 
         Returns:
-            bool: True if the cursor moved. False otherwise.
+            True if the cursor moved. False otherwise.
         """
         text_length = len(self.content)
         if self.cursor_index == text_length:
@@ -132,7 +132,7 @@ class TextEditorBackend:
             text: The text to insert
 
         Returns:
-            bool: Always returns True since text should be insertable regardless of cursor location
+            Always returns True since text should be insertable regardless of cursor location
         """
         new_text = (
             self.content[: self.cursor_index] + text + self.content[self.cursor_index :]
@@ -146,11 +146,11 @@ class TextEditorBackend:
         a subset of the content e.g. scrollable single-line input fields
 
         Args:
-            start (int): The starting index to return text from (inclusive)
-            end (int): The index to return text up to (exclusive)
+            start: The starting index to return text from (inclusive)
+            end: The index to return text up to (exclusive)
 
         Returns:
-            str: The sliced string between start and end.
+            The sliced string between start and end.
         """
         return self.content[start:end]
 

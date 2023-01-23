@@ -19,10 +19,10 @@ from ..strip import Strip
 
 
 class TextLog(ScrollView, can_focus=True):
-    DEFAULT_CSS = """    
+    DEFAULT_CSS = """
     TextLog{
         background: $surface;
-        color: $text;       
+        color: $text;
         overflow-y: scroll;
     }
     """
@@ -71,10 +71,10 @@ class TextLog(ScrollView, can_focus=True):
         """Write text or a rich renderable.
 
         Args:
-            content (RenderableType): Rich renderable (or text).
-            width (int): Width to render or None to use optimal width. Defaults to `None`.
-            expand (bool): Enable expand to widget width, or False to use `width`. Defaults to `False`.
-            shrink (bool): Enable shrinking of content to fit width. Defaults to `True`.
+            content: Rich renderable (or text).
+            width: Width to render or None to use optimal width. Defaults to `None`.
+            expand: Enable expand to widget width, or False to use `width`. Defaults to `False`.
+            shrink: Enable shrinking of content to fit width. Defaults to `True`.
         """
 
         renderable: RenderableType
@@ -103,11 +103,11 @@ class TextLog(ScrollView, can_focus=True):
         container_width = (
             self.scrollable_content_region.width if width is None else width
         )
-
-        if expand and render_width < container_width:
-            render_width = container_width
-        if shrink and render_width > container_width:
-            render_width = container_width
+        if container_width:
+            if expand and render_width < container_width:
+                render_width = container_width
+            if shrink and render_width > container_width:
+                render_width = container_width
 
         segments = self.app.console.render(
             renderable, render_options.update_width(render_width)
@@ -120,7 +120,9 @@ class TextLog(ScrollView, can_focus=True):
             self.max_width,
             max(sum(segment.cell_length for segment in _line) for _line in lines),
         )
-        strips = Strip.from_lines(lines, render_width)
+        strips = Strip.from_lines(lines)
+        for strip in strips:
+            strip.adjust_cell_length(render_width)
         self.lines.extend(strips)
 
         if self.max_lines is not None and len(self.lines) > self.max_lines:
@@ -149,10 +151,10 @@ class TextLog(ScrollView, can_focus=True):
         """Render the widget in to lines.
 
         Args:
-            crop (Region): Region within visible area to.
+            crop: Region within visible area to.
 
         Returns:
-            Lines: A list of list of segments
+            A list of list of segments
         """
         lines = self._styles_cache.render_widget(self, crop)
         return lines

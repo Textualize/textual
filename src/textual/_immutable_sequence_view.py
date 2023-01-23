@@ -14,7 +14,7 @@ class ImmutableSequenceView(Generic[T]):
         """Initialise the immutable sequence.
 
         Args:
-            wrap (Sequence[T]): The sequence being wrapped.
+            wrap: The sequence being wrapped.
         """
         self._wrap = wrap
 
@@ -52,12 +52,12 @@ class ImmutableSequenceView(Generic[T]):
         """Return the index of the given item.
 
         Args:
-            item (T): The item to find in the sequence.
-            start (int, optional): Optional start location.
-            stop (int, optional): Optional stop location.
+            item: The item to find in the sequence.
+            start: Optional start location.
+            stop: Optional stop location.
 
         Returns:
-            T: The index of the item in the sequence.
+            The index of the item in the sequence.
 
         Raises:
             ValueError: If the item is not in the sequence.

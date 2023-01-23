@@ -13,7 +13,7 @@ def _check_renderable(renderable: object):
     (https://rich.readthedocs.io/en/latest/protocol.html)
 
     Args:
-        renderable (object): A potentially renderable object.
+        renderable: A potentially renderable object.
 
     Raises:
         RenderError: If the object can not be rendered.
@@ -28,14 +28,14 @@ class Static(Widget, inherit_bindings=False):
     """A widget to display simple static content, or use as a base class for more complex widgets.
 
     Args:
-        renderable (RenderableType, optional): A Rich renderable, or string containing console markup.
+        renderable: A Rich renderable, or string containing console markup.
             Defaults to "".
-        expand (bool, optional): Expand content if required to fill container. Defaults to False.
-        shrink (bool, optional): Shrink content if required to fill container. Defaults to False.
-        markup (bool, optional): True if markup should be parsed and rendered. Defaults to True.
-        name (str | None, optional): Name of widget. Defaults to None.
-        id (str | None, optional): ID of Widget. Defaults to None.
-        classes (str | None, optional): Space separated list of class names. Defaults to None.
+        expand: Expand content if required to fill container. Defaults to False.
+        shrink: Shrink content if required to fill container. Defaults to False.
+        markup: True if markup should be parsed and rendered. Defaults to True.
+        name: Name of widget. Defaults to None.
+        id: ID of Widget. Defaults to None.
+        classes: Space separated list of class names. Defaults to None.
     """
 
     DEFAULT_CSS = """
@@ -83,7 +83,7 @@ class Static(Widget, inherit_bindings=False):
         """Get a rich renderable for the widget's content.
 
         Returns:
-            RenderableType: A rich renderable.
+            A rich renderable.
         """
         return self._renderable
 
@@ -91,7 +91,7 @@ class Static(Widget, inherit_bindings=False):
         """Update the widget's content area with new text or Rich renderable.
 
         Args:
-            renderable (RenderableType, optional): A new rich renderable. Defaults to empty renderable;
+            renderable: A new rich renderable. Defaults to empty renderable;
         """
         _check_renderable(renderable)
         self.renderable = renderable

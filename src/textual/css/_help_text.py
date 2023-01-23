@@ -29,8 +29,8 @@ issue with inline styles."""
 class ContextSpecificBullets:
     """
     Args:
-        inline (Iterable[Bullet]): Information only relevant to users who are using inline styling.
-        css (Iterable[Bullet]): Information only relevant to users who are using CSS.
+        inline: Information only relevant to users who are using inline styling.
+        css: Information only relevant to users who are using CSS.
     """
 
     inline: Sequence[Bullet]
@@ -40,7 +40,7 @@ class ContextSpecificBullets:
         """Get the information associated with the given context
 
         Args:
-            context (StylingContext | None): The context to retrieve info for.
+            context: The context to retrieve info for.
         """
         if context == "inline":
             return list(self.inline)
@@ -52,10 +52,10 @@ def _python_name(property_name: str) -> str:
     """Convert a CSS property name to the corresponding Python attribute name
 
     Args:
-        property_name (str): The CSS property name
+        property_name: The CSS property name
 
     Returns:
-        str: The Python attribute name as found on the Styles object
+        The Python attribute name as found on the Styles object
     """
     return property_name.replace("-", "_")
 
@@ -64,10 +64,10 @@ def _css_name(property_name: str) -> str:
     """Convert a Python style attribute name to the corresponding CSS property name
 
     Args:
-        property_name (str): The Python property name
+        property_name: The Python property name
 
     Returns:
-        str: The CSS property name
+        The CSS property name
     """
     return property_name.replace("_", "-")
 
@@ -80,11 +80,11 @@ def _contextualize_property_name(
         '-' with '_' or vice-versa
 
     Args:
-        property_name (str): The name of the property
-        context (StylingContext): The context the property is being used in.
+        property_name: The name of the property
+        context: The context the property is being used in.
 
     Returns:
-        str: The property name converted to the given context.
+        The property name converted to the given context.
     """
     return _css_name(property_name) if context == "css" else _python_name(property_name)
 
@@ -131,13 +131,13 @@ def property_invalid_value_help_text(
     property.
 
     Args:
-        property_name (str): The name of the property
-        context (StylingContext | None): The context the spacing property is being used in.
+        property_name: The name of the property.
+        context: The context the spacing property is being used in.
     Keyword Args:
-        suggested_property_name (str | None): A suggested name for the property (e.g. "width" for "wdth"). Defaults to None.
+        suggested_property_name: A suggested name for the property (e.g. "width" for "wdth").
 
     Returns:
-        HelpText: Renderable for displaying the help text for this property
+        Renderable for displaying the help text for this property.
     """
     property_name = _contextualize_property_name(property_name, context)
     summary = f"Invalid CSS property {property_name!r}"
@@ -158,12 +158,12 @@ def spacing_wrong_number_of_values_help_text(
     for a spacing property (e.g. padding or margin).
 
     Args:
-        property_name (str): The name of the property
-        num_values_supplied (int): The number of values the user supplied (a number other than 1, 2 or 4).
-        context (StylingContext | None): The context the spacing property is being used in.
+        property_name: The name of the property.
+        num_values_supplied: The number of values the user supplied (a number other than 1, 2 or 4).
+        context: The context the spacing property is being used in.
 
     Returns:
-        HelpText: Renderable for displaying the help text for this property
+        Renderable for displaying the help text for this property.
     """
     property_name = _contextualize_property_name(property_name, context)
     return HelpText(
@@ -188,11 +188,11 @@ def spacing_invalid_value_help_text(
     property.
 
     Args:
-        property_name (str): The name of the property
-        context (StylingContext | None): The context the spacing property is being used in.
+        property_name: The name of the property.
+        context: The context the spacing property is being used in.
 
     Returns:
-        HelpText: Renderable for displaying the help text for this property
+        Renderable for displaying the help text for this property.
     """
     property_name = _contextualize_property_name(property_name, context)
     return HelpText(
@@ -209,12 +209,12 @@ def scalar_help_text(
     a scalar property.
 
     Args:
-        property_name (str): The name of the property
-        num_values_supplied (int): The number of values the user supplied (a number other than 1, 2 or 4).
-        context (StylingContext | None): The context the scalar property is being used in.
+        property_name: The name of the property.
+        num_values_supplied: The number of values the user supplied (a number other than 1, 2 or 4).
+        context: The context the scalar property is being used in.
 
     Returns:
-        HelpText: Renderable for displaying the help text for this property
+        Renderable for displaying the help text for this property.
     """
     property_name = _contextualize_property_name(property_name, context)
     return HelpText(
@@ -258,12 +258,12 @@ def string_enum_help_text(
     enum property.
 
     Args:
-        property_name (str): The name of the property
-        valid_values (list[str]): A list of the values that are considered valid.
-        context (StylingContext | None): The context the property is being used in.
+        property_name: The name of the property.
+        valid_values: A list of the values that are considered valid.
+        context: The context the property is being used in.
 
     Returns:
-        HelpText: Renderable for displaying the help text for this property
+        Renderable for displaying the help text for this property.
     """
     property_name = _contextualize_property_name(property_name, context)
     return HelpText(
@@ -306,12 +306,12 @@ def color_property_help_text(
     property. For example, an unparseable color string.
 
     Args:
-        property_name (str): The name of the property
-        context (StylingContext | None): The context the property is being used in.
-        error (ColorParseError | None): The error that caused this help text to be displayed. Defaults to None.
+        property_name: The name of the property.
+        context: The context the property is being used in.
+        error: The error that caused this help text to be displayed.
 
     Returns:
-        HelpText: Renderable for displaying the help text for this property
+        Renderable for displaying the help text for this property.
     """
     property_name = _contextualize_property_name(property_name, context)
     summary = f"Invalid value for the [i]{property_name}[/] property"
@@ -360,14 +360,14 @@ def color_property_help_text(
 
 def border_property_help_text(property_name: str, context: StylingContext) -> HelpText:
     """Help text to show when the user supplies an invalid value for a border
-    property (such as border, border-right, outline)
+    property (such as border, border-right, outline).
 
     Args:
-        property_name (str): The name of the property
-        context (StylingContext | None): The context the property is being used in.
+        property_name: The name of the property.
+        context: The context the property is being used in.
 
     Returns:
-        HelpText: Renderable for displaying the help text for this property
+        Renderable for displaying the help text for this property.
     """
     property_name = _contextualize_property_name(property_name, context)
     return HelpText(
@@ -421,11 +421,11 @@ def layout_property_help_text(property_name: str, context: StylingContext) -> He
     for a layout property.
 
     Args:
-        property_name (str): The name of the property
-        context (StylingContext | None): The context the property is being used in.
+        property_name: The name of the property.
+        context: The context the property is being used in.
 
     Returns:
-        HelpText: Renderable for displaying the help text for this property
+        Renderable for displaying the help text for this property.
     """
     property_name = _contextualize_property_name(property_name, context)
     return HelpText(
@@ -442,11 +442,11 @@ def dock_property_help_text(property_name: str, context: StylingContext) -> Help
     """Help text to show when the user supplies an invalid value for dock.
 
     Args:
-        property_name (str): The name of the property
-        context (StylingContext | None): The context the property is being used in.
+        property_name: The name of the property.
+        context: The context the property is being used in.
 
     Returns:
-        HelpText: Renderable for displaying the help text for this property
+        Renderable for displaying the help text for this property.
     """
     property_name = _contextualize_property_name(property_name, context)
     return HelpText(
@@ -477,11 +477,11 @@ def fractional_property_help_text(
     """Help text to show when the user supplies an invalid value for a fractional property.
 
     Args:
-        property_name (str): The name of the property
-        context (StylingContext | None): The context the property is being used in.
+        property_name: The name of the property.
+        context: The context the property is being used in.
 
     Returns:
-        HelpText: Renderable for displaying the help text for this property
+        Renderable for displaying the help text for this property.
     """
     property_name = _contextualize_property_name(property_name, context)
     return HelpText(
@@ -515,10 +515,10 @@ def offset_property_help_text(context: StylingContext) -> HelpText:
     """Help text to show when the user supplies an invalid value for the offset property.
 
     Args:
-        context (StylingContext | None): The context the property is being used in.
+        context: The context the property is being used in.
 
     Returns:
-        HelpText: Renderable for displaying the help text for this property
+        Renderable for displaying the help text for this property.
     """
     return HelpText(
         summary="Invalid value for [i]offset[/] property",
@@ -555,10 +555,10 @@ def scrollbar_size_property_help_text(context: StylingContext) -> HelpText:
     """Help text to show when the user supplies an invalid value for the scrollbar-size property.
 
     Args:
-        context (StylingContext | None): The context the property is being used in.
+        context: The context the property is being used in.
 
     Returns:
-        HelpText: Renderable for displaying the help text for this property
+        Renderable for displaying the help text for this property.
     """
     return HelpText(
         summary="Invalid value for [i]scrollbar-size[/] property",
@@ -594,10 +594,10 @@ def scrollbar_size_single_axis_help_text(property_name: str) -> HelpText:
     """Help text to show when the user supplies an invalid value for a scrollbar-size-* property.
 
     Args:
-        property_name (str): The name of the property
+        property_name: The name of the property.
 
     Returns:
-        HelpText: Renderable for displaying the help text for this property
+        Renderable for displaying the help text for this property.
     """
     return HelpText(
         summary=f"Invalid value for [i]{property_name}[/]",
@@ -616,10 +616,10 @@ def integer_help_text(property_name: str) -> HelpText:
     """Help text to show when the user supplies an invalid integer value.
 
     Args:
-        property_name (str): The name of the property
+        property_name: The name of the property.
 
     Returns:
-        HelpText: Renderable for displaying the help text for this property
+        Renderable for displaying the help text for this property.
     """
     return HelpText(
         summary=f"Invalid value for [i]{property_name}[/]",
@@ -638,7 +638,7 @@ def align_help_text() -> HelpText:
     """Help text to show when the user supplies an invalid value for a `align`.
 
     Returns:
-        HelpText: Renderable for displaying the help text for this property
+        Renderable for displaying the help text for this property.
     """
     return HelpText(
         summary="Invalid value for [i]align[/] property",
@@ -666,10 +666,10 @@ def align_help_text() -> HelpText:
 
 
 def text_align_help_text() -> HelpText:
-    """Help text to show when the user supplies an invalid value for the text-align property
+    """Help text to show when the user supplies an invalid value for the text-align property.
 
     Returns:
-        HelpText: Renderable for displaying the help text for this property.
+        Renderable for displaying the help text for this property.
     """
     return HelpText(
         summary="Invalid value for the [i]text-align[/] property.",
@@ -689,10 +689,10 @@ def offset_single_axis_help_text(property_name: str) -> HelpText:
     """Help text to show when the user supplies an invalid value for an offset-* property.
 
     Args:
-        property_name (str): The name of the property
+        property_name: The name of the property.
 
     Returns:
-        HelpText: Renderable for displaying the help text for this property
+        Renderable for displaying the help text for this property.
     """
     return HelpText(
         summary=f"Invalid value for [i]{property_name}[/]",
@@ -715,11 +715,11 @@ def style_flags_property_help_text(
     """Help text to show when the user supplies an invalid value for a style flags property.
 
     Args:
-        property_name (str): The name of the property
-        context (StylingContext | None): The context the property is being used in.
+        property_name: The name of the property.
+        context: The context the property is being used in.
 
     Returns:
-        HelpText: Renderable for displaying the help text for this property
+        Renderable for displaying the help text for this property.
     """
     property_name = _contextualize_property_name(property_name, context)
     return HelpText(
@@ -729,6 +729,7 @@ def style_flags_property_help_text(
                 f"Style flag values such as [i]{property_name}[/] expect space-separated values"
             ),
             Bullet(f"Permitted values are {friendly_list(VALID_STYLE_FLAGS)}"),
+            Bullet("The value 'none' cannot be mixed with others"),
             *ContextSpecificBullets(
                 inline=[
                     Bullet(

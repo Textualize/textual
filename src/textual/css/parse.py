@@ -174,11 +174,11 @@ def parse_declarations(css: str, path: str) -> Styles:
     """Parse declarations and return a Styles object.
 
     Args:
-        css (str): String containing CSS.
-        path (str): Path to the CSS, or something else to identify the location.
+        css: String containing CSS.
+        path: Path to the CSS, or something else to identify the location.
 
     Returns:
-        Styles: A styles object.
+        A styles object.
     """
 
     tokens = iter(tokenize_declarations(css, path))
@@ -223,9 +223,9 @@ def _unresolved(variable_name: str, variables: Iterable[str], token: Token) -> N
     """Raise a TokenError regarding an unresolved variable.
 
     Args:
-        variable_name (str): A variable name.
-        variables (Iterable[str]): Possible choices used to generate suggestion.
-        token (Token): The Token.
+        variable_name: A variable name.
+        variables: Possible choices used to generate suggestion.
+        token: The Token.
 
     Raises:
         UnresolvedVariableError: Always raises a TokenError.
@@ -252,11 +252,11 @@ def substitute_references(
     tokens with the tokens representing their values.
 
     Args:
-        tokens (Iterable[Token]): Iterator of Tokens which may contain tokens
+        tokens: Iterator of Tokens which may contain tokens
             with the name "variable_ref".
 
     Returns:
-        Iterable[Token]: Yields Tokens such that any variable references (tokens where
+        Yields Tokens such that any variable references (tokens where
             token.name == "variable_ref") have been replaced with the tokens representing
             the value. In other words, an Iterable of Tokens similar to the original input,
             but with variables resolved. Substituted tokens will have their referenced_by
@@ -343,10 +343,10 @@ def parse(
     and generating rule sets from it.
 
     Args:
-        css (str): The input CSS
-        path (str): Path to the CSS
-        variables (dict[str, str]): Substitution variables to substitute tokens for.
-        is_default_rules (bool): True if the rules we're extracting are
+        css: The input CSS
+        path: Path to the CSS
+        variables: Substitution variables to substitute tokens for.
+        is_default_rules: True if the rules we're extracting are
             default (i.e. in Widget.DEFAULT_CSS) rules. False if they're from user defined CSS.
     """
 

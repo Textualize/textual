@@ -148,6 +148,7 @@ nav:
     - "api/checkbox.md"
     - "api/color.md"
     - "api/containers.md"
+    - "api/coordinate.md"
     - "api/data_table.md"
     - "api/directory_tree.md"
     - "api/dom_node.md"
@@ -221,6 +222,7 @@ theme:
     - navigation.indexes
     - navigation.tabs.sticky
     - content.code.annotate
+    - content.code.copy
   palette:
   - media: "(prefers-color-scheme: light)"
     scheme: default
@@ -253,6 +255,8 @@ plugins:
     handlers:
         python:
           options:
+            show_root_heading: true
+            show_root_full_path: false
             show_source: false
             filters:
               - "!^_"

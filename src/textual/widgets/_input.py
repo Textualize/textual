@@ -113,6 +113,17 @@ class Input(Widget, can_focus=True):
         id: str | None = None,
         classes: str | None = None,
     ) -> None:
+        """Initialise the `Input` widget.
+
+        Args:
+            value: An optional default value for the input.
+            placeholder: Optional placeholder text for the input.
+            highlighter: An optional highlighter for the input.
+            password: Flag to say if the field should obfuscate its content. Default is `False`.
+            name: Optional name for the input widget.
+            id: Optional ID for the widget.
+            classes: Optional initial classes for the widget.
+        """
         super().__init__(name=name, id=id, classes=classes)
         if value is not None:
             self.value = value
@@ -127,7 +138,7 @@ class Input(Widget, can_focus=True):
 
     @property
     def _cursor_offset(self) -> int:
-        """Get the cell offset of the cursor."""
+        """The cell offset of the cursor."""
         offset = self._position_to_cell(self.cursor_position)
         if self._cursor_at_end:
             offset += 1
@@ -135,7 +146,7 @@ class Input(Widget, can_focus=True):
 
     @property
     def _cursor_at_end(self) -> bool:
-        """Check if the cursor is at the end"""
+        """Flag to indicate if the cursor is at the end"""
         return self.cursor_position >= len(self.value)
 
     def validate_cursor_position(self, cursor_position: int) -> int:
@@ -170,7 +181,7 @@ class Input(Widget, can_focus=True):
 
     @property
     def cursor_width(self) -> int:
-        """Get the width of the input (with extra space for cursor at the end)."""
+        """The width of the input (with extra space for cursor at the end)."""
         if self.placeholder and not self.value:
             return cell_len(self.placeholder)
         return self._position_to_cell(len(self.value)) + 1
@@ -266,7 +277,7 @@ class Input(Widget, can_focus=True):
         """Insert new text at the cursor, move the cursor to the end of the new text.
 
         Args:
-            text (str): new text to insert.
+            text: New text to insert.
         """
         if self.cursor_position > len(self.value):
             self.value += text
@@ -322,24 +333,24 @@ class Input(Widget, can_focus=True):
         """Value was changed.
 
         Attributes:
-            value (str): The value that the input was changed to.
-            input (Input): The `Input` widget that was changed.
+            value: The value that the input was changed to.
+            input: The `Input` widget that was changed.
         """
 
         def __init__(self, sender: Input, value: str) -> None:
             super().__init__(sender)
-            self.value = value
-            self.input = sender
+            self.value: str = value
+            self.input: Input = sender
 
     class Submitted(Message, bubble=True):
         """Sent when the enter key is pressed within an `Input`.
 
         Attributes:
-            value (str): The value of the `Input` being submitted..
-            input (Input): The `Input` widget that is being submitted.
+            value: The value of the `Input` being submitted..
+            input: The `Input` widget that is being submitted.
         """
 
         def __init__(self, sender: Input, value: str) -> None:
             super().__init__(sender)
-            self.value = value
-            self.input = sender
+            self.value: str = value
+            self.input: Input = sender

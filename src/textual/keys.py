@@ -228,6 +228,7 @@ KEY_DISPLAY_ALIASES = {
     "backspace": "⌫",
     "escape": "ESC",
     "enter": "⏎",
+    "minus": "-",
 }
 
 

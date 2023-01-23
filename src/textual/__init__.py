@@ -1,20 +1,32 @@
 from __future__ import annotations
 
 import inspect
-from typing import Callable
 
 import rich.repr
 from rich.console import RenderableType
-
-__all__ = ["log", "panic"]
-
 
 from ._context import active_app
 from ._log import LogGroup, LogVerbosity
 from ._typing import TypeAlias
 
+__all__ = ["log", "panic", "__version__"]  # type: ignore
+
 
 LogCallable: TypeAlias = "Callable"
+
+
+def __getattr__(name: str) -> str:
+    """Lazily get the version from whatever API is available."""
+    if name == "__version__":
+        try:
+            from importlib.metadata import version
+        except ImportError:
+            import pkg_resources
+
+            return pkg_resources.get_distribution("textual").version
+        else:
+            return version("textual")
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
 class LoggerError(Exception):
@@ -70,10 +82,10 @@ class Logger:
         """Get a new logger with selective verbosity.
 
         Args:
-            verbose (bool): True to use HIGH verbosity, otherwise NORMAL.
+            verbose: True to use HIGH verbosity, otherwise NORMAL.
 
         Returns:
-            Logger: New logger.
+            New logger.
         """
         verbosity = LogVerbosity.HIGH if verbose else LogVerbosity.NORMAL
         return Logger(self._log, self._group, verbosity)
