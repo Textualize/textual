@@ -729,7 +729,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         Args:
             row_index: Index of the row.
-            line_no: Line number (on screen, 0 is top)
+            line_no: Line number (y-coordinate) within row. 0 is top strip of terminal
+                cells, 1 is the next, and so on...
             base_style: Base style of row.
             cursor_location: The location of the cursor in the DataTable.
             hover_location: The location of the hover cursor in the DataTable.
