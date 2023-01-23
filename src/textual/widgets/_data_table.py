@@ -45,7 +45,7 @@ class StringKey:
     def __hash__(self):
         # If a string is supplied, we use the hash of the string. If no string was
         # supplied, we use the default hash to ensure uniqueness amongst instances.
-        return hash(self.value) if self.value is not None else super().__hash__(self)
+        return hash(self.value) if self.value is not None else id(self)
 
     def __eq__(self, other: object) -> bool:
         # Strings will match Keys containing the same string value.
@@ -225,7 +225,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._row_locations: TwoWayMapping[RowKey, int] = TwoWayMapping({})
 
         # Maps y-coordinate (from top of table) to (row_index, y-coord within row) pairs
-        self._y_offsets: list[tuple[RowKey, int]] = []
+        # TODO: Update types
+        self._y_offsets: list[tuple[int, int]] = []
         self._row_render_cache: LRUCache[
             tuple[RowKey, int, Style, int, int], tuple[SegmentLines, SegmentLines]
         ]
@@ -538,6 +539,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """
         row_index = self.row_count
         row_key = RowKey(key)
+
+        # Map the key of this row to its current index
+        self._row_locations[row_key] = row_index
 
         self.data[row_index] = list(cells)
         self.rows[row_index] = Row(row_key, row_index, height, self._line_no)
