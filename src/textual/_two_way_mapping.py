@@ -1,22 +1,53 @@
+from __future__ import annotations
+
 from typing import TypeVar, Generic
 
-Left = TypeVar("Left")
-Right = TypeVar("Right")
+Key = TypeVar("Key")
+Value = TypeVar("Value")
 
 
-class TwoWayMapping(Generic[Left, Right]):
-    def __init__(self, initial: dict[Left, Right]) -> None:
-        self._forward: dict[Left, Right] = initial
-        self._reverse: dict[Right, Left] = {value: key for key, value in initial}
+class TwoWayMapping(Generic[Key, Value]):
+    """
+    Wraps two dictionaries and uses them to provide efficient access to
+    both values (given keys) and keys (given values).
+    """
 
-    def __setitem__(self, left: Left, right: Right) -> None:
-        self._forward.__setitem__(left, right)
-        self._reverse.__setitem__(right, left)
+    def __init__(self, initial: dict[Key, Value]) -> None:
+        self._forward: dict[Key, Value] = initial
+        self._reverse: dict[Value, Key] = {value: key for key, value in initial}
 
-    def __delitem__(self, left: Left) -> None:
-        right = self._forward[left]
-        self._forward.__delitem__(left)
-        self._reverse.__delitem__(right)
+    def __setitem__(self, key: Key, value: Value) -> None:
+        self._forward.__setitem__(key, value)
+        self._reverse.__setitem__(value, key)
+
+    def __delitem__(self, key: Key) -> None:
+        value = self._forward[key]
+        self._forward.__delitem__(key)
+        self._reverse.__delitem__(value)
+
+    def get(self, key: Key, default: Value | None = None) -> Value:
+        """Given a key, efficiently lookup and return the associated value.
+
+        Args:
+            key: The key
+            default: The default return value if not found. Defaults to None.
+
+        Returns:
+            The value
+        """
+        return self._forward.get(key, default)
+
+    def get_key(self, value: Value, default: Key | None = None) -> Key:
+        """Given a value, efficiently lookup and return the associated key.
+
+        Args:
+            value: The value
+            default: The default return value if not found. Defaults to None.
+
+        Returns:
+            The key
+        """
+        return self._reverse.get(value, default)
 
     def __len__(self):
         return len(self._forward)
