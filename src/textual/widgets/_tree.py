@@ -163,7 +163,7 @@ class TreeNode(Generic[TreeDataType]):
         """Mark a node as expanded (its children are shown).
 
         Args:
-            expand_all: If `True` expand the all offspring at all depths.
+            expand_all: If `True` expand all offspring at all depths.
         """
         self._expanded = True
         self._updates += 1
@@ -175,7 +175,7 @@ class TreeNode(Generic[TreeDataType]):
         """Expand a node (show its children).
 
         Args:
-            expand_all: If `True` expand the all offspring at all depths.
+            expand_all: If `True` expand all offspring at all depths.
         """
         self._expand(expand_all)
         self._tree._invalidate()
@@ -184,7 +184,7 @@ class TreeNode(Generic[TreeDataType]):
         """Mark a node as collapsed (its children are hidden).
 
         Args:
-            collapse_all: If `True` collapse the all offspring at all depths.
+            collapse_all: If `True` collapse all offspring at all depths.
         """
         self._expanded = False
         if collapse_all:
@@ -196,7 +196,7 @@ class TreeNode(Generic[TreeDataType]):
         """Collapse the node (hide children).
 
         Args:
-            collapse_all: If `True` collapse the all offspring at all depths.
+            collapse_all: If `True` collapse all offspring at all depths.
         """
         self._collapse(collapse_all)
         self._tree._invalidate()
@@ -205,7 +205,7 @@ class TreeNode(Generic[TreeDataType]):
         """Toggle the expanded state of the node.
 
         Args:
-            toggle_all: If `True` toggle the all offspring at all depths.
+            toggle_all: If `True` toggle all offspring at all depths.
         """
         self._expanded = not self._expanded
         if toggle_all:
@@ -217,7 +217,7 @@ class TreeNode(Generic[TreeDataType]):
         """Toggle the expanded state.
 
         Args:
-            toggle_all: If `True` toggle the all offspring at all depths.
+            toggle_all: If `True` toggle all offspring at all depths.
         """
         self._toggle(toggle_all)
         self._tree._invalidate()
