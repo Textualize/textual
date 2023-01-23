@@ -1,8 +1,12 @@
+import pytest
+
 from textual.app import App
 from textual.coordinate import Coordinate
 from textual.message import Message
 from textual.widgets import DataTable
-from textual.widgets._data_table import StringKey
+from textual.widgets._data_table import StringKey, CellDoesNotExist
+
+ROWS = [["0/0", "0/1"], ["1/0", "1/1"], ["2/0", "2/1"]]
 
 
 class DataTableApp(App):
@@ -41,7 +45,7 @@ async def test_datatable_message_emission():
         assert messages == expected_messages
 
         table.add_columns("Column0", "Column1")
-        table.add_rows([["0/0", "0/1"], ["1/0", "1/1"], ["2/0", "2/1"]])
+        table.add_rows(ROWS)
 
         # A CellHighlighted is emitted because there were no rows (and
         # therefore no highlighted cells), but then a row was added, and
@@ -148,6 +152,28 @@ async def test_clear():
         # Clearing the columns too
         table.clear(columns=True)
         assert len(table.columns) == 0
+
+
+def test_add_rows_generates_keys():
+    table = DataTable()
+    keys = table.add_rows(ROWS)
+
+    # Ensure the keys are returned in order, and there's one for each row
+    for key, row in zip(keys, range(len(ROWS))):
+        assert table.rows[key].index == row
+
+
+def test_get_cell_value_returns_value_at_cell():
+    table = DataTable()
+    table.add_rows(ROWS)
+    assert table.get_cell_value(Coordinate(0, 0)) == "0/0"
+
+
+def test_get_cell_value_exception():
+    table = DataTable()
+    table.add_rows(ROWS)
+    with pytest.raises(CellDoesNotExist):
+        table.get_cell_value(Coordinate(9999, 0))
 
 
 def test_key_equals_equivalent_string():
