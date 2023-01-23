@@ -367,19 +367,20 @@ class Screen(Widget):
         # Check for any widgets marked as 'dirty' (needs a repaint)
         event.prevent_default()
 
-        async with self.app._dom_lock:
-            if self.is_current:
-                if self._layout_required:
-                    self._refresh_layout()
-                    self._layout_required = False
-                    self._dirty_widgets.clear()
-                if self._repaint_required:
-                    self._dirty_widgets.clear()
-                    self._dirty_widgets.add(self)
-                    self._repaint_required = False
+        if self.is_current:
+            async with self.app._dom_lock:
+                if self.is_current:
+                    if self._layout_required:
+                        self._refresh_layout()
+                        self._layout_required = False
+                        self._dirty_widgets.clear()
+                    if self._repaint_required:
+                        self._dirty_widgets.clear()
+                        self._dirty_widgets.add(self)
+                        self._repaint_required = False
 
-                if self._dirty_widgets:
-                    self.update_timer.resume()
+                    if self._dirty_widgets:
+                        self.update_timer.resume()
 
         # The Screen is idle - a good opportunity to invoke the scheduled callbacks
         await self._invoke_and_clear_callbacks()
