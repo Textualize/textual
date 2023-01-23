@@ -618,8 +618,8 @@ class Widget(DOMNode):
 
         Args:
             child: The child widget to move.
-            before: (int | Widget, optional): Optional location to move before.
-            after: (int | Widget, optional): Optional location to move after.
+            before: Optional location to move before.
+            after: Optional location to move after.
 
         Raises:
             WidgetError: If there is a problem with the child or target.
