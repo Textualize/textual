@@ -424,7 +424,6 @@ class Screen(Widget):
 
     def _refresh_layout(self, size: Size | None = None, full: bool = False) -> None:
         """Refresh the layout (can change size and positions of widgets)."""
-        print("Screen._refresh_layout", size, full)
         size = self.outer_size if size is None else size
         if not size:
             return

@@ -92,6 +92,7 @@ class AwaitMount:
         self._widgets = widgets
 
     async def __call__(self) -> None:
+        """Allows awaiting via a call operation."""
         await self
 
     def __await__(self) -> Generator[None, None, None]:
