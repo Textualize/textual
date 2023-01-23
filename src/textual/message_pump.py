@@ -64,7 +64,7 @@ class MessagePumpMeta(type):
 class MessagePump(metaclass=MessagePumpMeta):
     def __init__(self, parent: MessagePump | None = None) -> None:
         self._message_queue: Queue[Message | None] = Queue()
-        self._active_nessage: Message | None = None
+        self._active_message: Message | None = None
         self._parent = parent
         self._running: bool = False
         self._closing: bool = False
