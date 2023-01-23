@@ -1,9 +1,17 @@
 from __future__ import annotations
 
+import asyncio
 from functools import lru_cache
-
 from inspect import signature, isawaitable
-from typing import Any, Callable
+from typing import Any, Callable, TYPE_CHECKING
+
+from . import active_app
+
+if TYPE_CHECKING:
+    from .app import App
+
+# Maximum seconds before warning about a slow callback
+INVOKE_TIMEOUT_WARNING = 3
 
 
 @lru_cache(maxsize=2048)
@@ -12,7 +20,7 @@ def count_parameters(func: Callable) -> int:
     return len(signature(func).parameters)
 
 
-async def invoke(callback: Callable, *params: object) -> Any:
+async def _invoke(callback: Callable, *params: object) -> Any:
     """Invoke a callback with an arbitrary number of parameters.
 
     Args:
@@ -27,3 +35,38 @@ async def invoke(callback: Callable, *params: object) -> Any:
     if isawaitable(result):
         result = await result
     return result
+
+
+async def invoke(callback: Callable, *params: object) -> Any:
+    """Invoke a callback with an arbitrary number of parameters.
+
+    Args:
+        callback: The callable to be invoked.
+
+    Returns:
+        The return value of the invoked callable.
+    """
+
+    app: App | None
+    try:
+        app = active_app.get()
+    except LookupError:
+        app = None
+
+    if app is not None and "debug" in app.features:
+        # In debug mode we will warn about callbacks that may be stuck
+        def log_slow() -> None:
+            """Log a message regarding a slow callback."""
+            app.log.warning(
+                f"Callback {callback} is still pending after {INVOKE_TIMEOUT_WARNING} seconds"
+            )
+
+        call_later_handle = asyncio.get_running_loop().call_later(
+            INVOKE_TIMEOUT_WARNING, log_slow
+        )
+        try:
+            return await _invoke(callback, *params)
+        finally:
+            call_later_handle.cancel()
+    else:
+        return await _invoke(callback, *params)

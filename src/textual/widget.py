@@ -91,6 +91,9 @@ class AwaitMount:
         self._parent = parent
         self._widgets = widgets
 
+    async def __call__(self) -> None:
+        await self
+
     def __await__(self) -> Generator[None, None, None]:
         async def await_mount() -> None:
             if self._widgets:
@@ -606,7 +609,9 @@ class Widget(DOMNode):
             parent, *widgets, before=insert_before, after=insert_after
         )
 
-        return AwaitMount(self, mounted)
+        await_mount = AwaitMount(self, mounted)
+        self.call_next(await_mount)
+        return await_mount
 
     def move_child(
         self,

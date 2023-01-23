@@ -367,19 +367,20 @@ class Screen(Widget):
         # Check for any widgets marked as 'dirty' (needs a repaint)
         event.prevent_default()
 
-        async with self.app._dom_lock:
-            if self.is_current:
-                if self._layout_required:
-                    self._refresh_layout()
-                    self._layout_required = False
-                    self._dirty_widgets.clear()
-                if self._repaint_required:
-                    self._dirty_widgets.clear()
-                    self._dirty_widgets.add(self)
-                    self._repaint_required = False
+        if self.is_current:
+            async with self.app._dom_lock:
+                if self.is_current:
+                    if self._layout_required:
+                        self._refresh_layout()
+                        self._layout_required = False
+                        self._dirty_widgets.clear()
+                    if self._repaint_required:
+                        self._dirty_widgets.clear()
+                        self._dirty_widgets.add(self)
+                        self._repaint_required = False
 
-                if self._dirty_widgets:
-                    self.update_timer.resume()
+                    if self._dirty_widgets:
+                        self.update_timer.resume()
 
         # The Screen is idle - a good opportunity to invoke the scheduled callbacks
         await self._invoke_and_clear_callbacks()
@@ -423,6 +424,7 @@ class Screen(Widget):
 
     def _refresh_layout(self, size: Size | None = None, full: bool = False) -> None:
         """Refresh the layout (can change size and positions of widgets)."""
+        print("Screen._refresh_layout", size, full)
         size = self.outer_size if size is None else size
         if not size:
             return
