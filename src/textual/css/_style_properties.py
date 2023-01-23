@@ -220,9 +220,9 @@ class ScalarListProperty:
         percent_unit: The dimension to which percentage scalars will be relative to.
     """
 
-    def __init__(self, children: bool = False, percent_unit: Unit) -> None:
-        self.children = children
+    def __init__(self, percent_unit: Unit, children: bool = False) -> None:
         self.percent_unit = percent_unit
+        self.children = children
 
     def __set_name__(self, owner: Styles, name: str) -> None:
         self.name = name
