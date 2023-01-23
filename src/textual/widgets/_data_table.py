@@ -42,8 +42,8 @@ class StringKey:
         self.value = value
 
     def __hash__(self):
-        # If a string is supplied, we use the hash of the string.
-        # If no string was supplied, we use the default hash to ensure uniqueness amongst instances.
+        # If a string is supplied, we use the hash of the string. If no string was
+        # supplied, we use the default hash to ensure uniqueness amongst instances.
         return hash(self.value) if self.value is not None else super().__hash__(self)
 
     def __eq__(self, other: object) -> bool:
