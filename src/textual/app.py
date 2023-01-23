@@ -2017,12 +2017,6 @@ class App(Generic[ReturnType], DOMNode):
         await self._close_messages()
 
     async def _on_resize(self, event: events.Resize) -> None:
-        # print(self.screen, self._screen_stack)
-        # print(self.screen.size)
-        # print(self.screen.is_running)
-        # print((self.screen._message_queue))
-        # print(self.screen._active_message)
-        # print(self.screen._task)
         event.stop()
         await self.screen.post_message(event)
 
