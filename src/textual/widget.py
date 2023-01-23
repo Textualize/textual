@@ -1959,13 +1959,14 @@ class Widget(DOMNode):
         """
         show_vertical_scrollbar, show_horizontal_scrollbar = self.scrollbars_enabled
 
-        scrollbar_size_horizontal = self.styles.scrollbar_size_horizontal
-        scrollbar_size_vertical = self.styles.scrollbar_size_vertical
+        styles = self.styles
+        scrollbar_size_horizontal = styles.scrollbar_size_horizontal
+        scrollbar_size_vertical = styles.scrollbar_size_vertical
 
-        if self.styles.scrollbar_gutter == "stable":
+        if styles.scrollbar_gutter == "stable":
             # Let's _always_ reserve some space, whether the scrollbar is actually displayed or not:
             show_vertical_scrollbar = True
-            scrollbar_size_vertical = self.styles.scrollbar_size_vertical
+            scrollbar_size_vertical = styles.scrollbar_size_vertical
 
         if show_horizontal_scrollbar and show_vertical_scrollbar:
             (region, _, _, _) = region.split(
