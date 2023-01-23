@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed stuck screen  https://github.com/Textualize/textual/issues/1632
+- Fixed programmatic style changes not refreshing children layouts when parent widget did not change size https://github.com/Textualize/textual/issues/1607
 - Fixed relative units in `grid-rows` and `grid-columns` being computed with respect to the wrong dimension https://github.com/Textualize/textual/issues/1406
 
 ## [0.10.1] - 2023-01-20
@@ -21,7 +22,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed `textual diagnose` crash on older supported Python versions. https://github.com/Textualize/textual/issues/1622
-- Fixed programmatic style changes not refreshing children layouts when parent widget did not change size https://github.com/Textualize/textual/issues/1607
 
 ### Changed
 
