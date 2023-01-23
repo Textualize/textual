@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.11.0] - Unreleased
 
+### Added
+
+- Added an optional `expand_all` parameter to `TreeNode.expand` https://github.com/Textualize/textual/issues/1430
+- Added an optional `collapse_all` parameter to `TreeNode.collapse` https://github.com/Textualize/textual/issues/1430
+- Added an optional `toggle_all` parameter to `TreeNode.toggle` https://github.com/Textualize/textual/issues/1430
+
 ### Fixed
 
 - Fixed stuck screen  https://github.com/Textualize/textual/issues/1632
