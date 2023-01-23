@@ -55,6 +55,7 @@ class Footer(Widget):
     async def watch_highlight_key(self, value) -> None:
         """If highlight key changes we need to regenerate the text."""
         self._key_text = None
+        self.refresh()
 
     def on_mount(self) -> None:
         watch(self.screen, "focused", self._focus_changed)

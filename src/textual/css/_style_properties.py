@@ -202,6 +202,9 @@ class ScalarProperty:
 
 
 class ScalarListProperty:
+    def __init__(self, percent_unit: Unit) -> None:
+        self.percent_unit = percent_unit
+
     def __set_name__(self, owner: Styles, name: str) -> None:
         self.name = name
 
@@ -229,7 +232,7 @@ class ScalarListProperty:
                 scalars.append(Scalar.from_number(parse_value))
             else:
                 scalars.append(
-                    Scalar.parse(parse_value)
+                    Scalar.parse(parse_value, self.percent_unit)
                     if isinstance(parse_value, str)
                     else parse_value
                 )

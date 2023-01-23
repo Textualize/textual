@@ -865,16 +865,12 @@ class StylesBuilder:
 
     def _process_grid_rows_or_columns(self, name: str, tokens: list[Token]) -> None:
         scalars: list[Scalar] = []
+        percent_unit = Unit.WIDTH if name == "grid-columns" else Unit.HEIGHT
         for token in tokens:
             if token.name == "number":
                 scalars.append(Scalar.from_number(float(token.value)))
             elif token.name == "scalar":
-                scalars.append(
-                    Scalar.parse(
-                        token.value,
-                        percent_unit=Unit.WIDTH if name == "rows" else Unit.HEIGHT,
-                    )
-                )
+                scalars.append(Scalar.parse(token.value, percent_unit=percent_unit))
             else:
                 self.error(
                     name,
