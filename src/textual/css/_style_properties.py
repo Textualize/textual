@@ -217,10 +217,12 @@ class ScalarListProperty:
 
     Args:
         children: Whether to refresh the node children on value change.
+        percent_unit: The dimension to which percentage scalars will be relative to.
     """
 
-    def __init__(self, children: bool = False) -> None:
+    def __init__(self, children: bool = False, percent_unit: Unit) -> None:
         self.children = children
+        self.percent_unit = percent_unit
 
     def __set_name__(self, owner: Styles, name: str) -> None:
         self.name = name
@@ -249,7 +251,7 @@ class ScalarListProperty:
                 scalars.append(Scalar.from_number(parse_value))
             else:
                 scalars.append(
-                    Scalar.parse(parse_value)
+                    Scalar.parse(parse_value, self.percent_unit)
                     if isinstance(parse_value, str)
                     else parse_value
                 )
