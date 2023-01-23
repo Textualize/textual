@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import ClassVar, Generic, NewType, TypeVar
+from typing import ClassVar, Generic, Iterator, NewType, TypeVar
 
 import rich.repr
 from rich.style import NULL_STYLE, Style
@@ -159,22 +159,67 @@ class TreeNode(Generic[TreeDataType]):
         self._allow_expand = allow_expand
         self._updates += 1
 
-    def expand(self) -> None:
-        """Expand a node (show its children)."""
+    def _expand(self, expand_all) -> None:
+        """Mark a node as expanded (its children are shown).
+
+        Args:
+            expand_all: If `True` expand the all offspring at all depths.
+        """
         self._expanded = True
         self._updates += 1
+        if expand_all:
+            for child in self.children:
+                child._expand(expand_all=True)
+
+    def expand(self, expand_all: bool = False) -> None:
+        """Expand a node (show its children).
+
+        Args:
+            expand_all: If `True` expand the all offspring at all depths.
+        """
+        self._expand(expand_all)
         self._tree._invalidate()
 
-    def collapse(self) -> None:
-        """Collapse the node (hide children)."""
+    def _collapse(self, collapse_all: bool) -> None:
+        """Mark a node as collapsed (its children are hidden).
+
+        Args:
+            collapse_all: If `True` collapse the all offspring at all depths.
+        """
         self._expanded = False
+        if collapse_all:
+            for child in self.children:
+                child._collapse(collapse_all=True)
         self._updates += 1
+
+    def collapse(self, collapse_all: bool = True) -> None:
+        """Collapse the node (hide children).
+
+        Args:
+            collapse_all: If `True` collapse the all offspring at all depths.
+        """
+        self._collapse(collapse_all)
         self._tree._invalidate()
 
-    def toggle(self) -> None:
-        """Toggle the expanded state."""
+    def _toggle(self, toggle_all: bool) -> None:
+        """Toggle the expanded state of the node.
+
+        Args:
+            toggle_all: If `True` toggle the all offspring at all depths.
+        """
         self._expanded = not self._expanded
+        if toggle_all:
+            for child in self.children:
+                child._toggle(toggle_all=True)
         self._updates += 1
+
+    def toggle(self, toggle_all: bool = True) -> None:
+        """Toggle the expanded state.
+
+        Args:
+            toggle_all: If `True` toggle the all offspring at all depths.
+        """
+        self._toggle(toggle_all)
         self._tree._invalidate()
 
     @property
