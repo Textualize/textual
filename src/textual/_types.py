@@ -7,7 +7,6 @@ from ._typing import Protocol
 
 if TYPE_CHECKING:
     from .message import Message
-    from .strip import Strip
 
 
 class MessageTarget(Protocol):

@@ -52,9 +52,17 @@ class StringKey:
         return hash(self) == hash(other)
 
 
+class RowKey(StringKey):
+    pass
+
+
+class ColumnKey(StringKey):
+    pass
+
+
 class CellKey(NamedTuple):
-    row_key: StringKey
-    column_key: StringKey
+    row_key: RowKey
+    column_key: ColumnKey
 
 
 def default_cell_formatter(obj: object) -> RenderableType | None:
@@ -77,7 +85,7 @@ def default_cell_formatter(obj: object) -> RenderableType | None:
 class Column:
     """Table column."""
 
-    key: StringKey
+    key: ColumnKey
     label: Text
     width: int = 0
     visible: bool = False
@@ -100,7 +108,7 @@ class Column:
 class Row:
     """Table row."""
 
-    key: StringKey
+    key: RowKey
     index: int
     height: int
     y: int
@@ -209,9 +217,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.rows: dict[int, Row] = {}
         self.data: dict[int, list[CellType]] = {}
         self.row_count = 0
-        self._y_offsets: list[tuple[int, int]] = []
+
+        # Maps y-coordinate (from top of table) to (row_index, y-coord within row) pairs
+        self._y_offsets: list[tuple[RowKey, int]] = []
         self._row_render_cache: LRUCache[
-            tuple[int, int, Style, int, int], tuple[SegmentLines, SegmentLines]
+            tuple[RowKey, int, Style, int, int], tuple[SegmentLines, SegmentLines]
         ]
         self._row_render_cache = LRUCache(1000)
         self._cell_render_cache: LRUCache[
@@ -464,7 +474,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     def add_column(
         self, label: TextType, *, width: int | None = None, key: str | None = None
-    ) -> StringKey:
+    ) -> ColumnKey:
         """Add a column to the table.
 
         Args:
@@ -479,7 +489,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """
         text_label = Text.from_markup(label) if isinstance(label, str) else label
 
-        column_key = StringKey(key)
+        column_key = ColumnKey(key)
         content_width = measure(self.app.console, text_label, 1)
         if width is None:
             column = Column(
@@ -507,7 +517,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     def add_row(
         self, *cells: CellType, height: int = 1, key: str | None = None
-    ) -> StringKey:
+    ) -> RowKey:
         """Add a row at the bottom of the DataTable.
 
         Args:
@@ -521,7 +531,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 due to sorting or insertion/deletion of other rows).
         """
         row_index = self.row_count
-        row_key = StringKey(key)
+        row_key = RowKey(key)
 
         self.data[row_index] = list(cells)
         self.rows[row_index] = Row(row_key, row_index, height, self._line_no)
@@ -548,7 +558,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         return row_key
 
-    def add_columns(self, *labels: TextType) -> list[StringKey]:
+    def add_columns(self, *labels: TextType) -> list[ColumnKey]:
         """Add a number of columns.
 
         Args:
@@ -565,7 +575,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             column_keys.append(column_key)
         return column_keys
 
-    def add_rows(self, rows: Iterable[Iterable[CellType]]) -> list[StringKey]:
+    def add_rows(self, rows: Iterable[Iterable[CellType]]) -> list[RowKey]:
         """Add a number of rows at the bottom of the DataTable.
 
         Args:
@@ -690,9 +700,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if hover and show_cursor and self._show_hover_cursor:
             style += self.get_component_styles("datatable--highlight").rich_style
             if is_fixed_style:
-                # Apply subtle variation in style for the fixed (blue background by default)
-                # rows and columns affected by the cursor, to ensure we can still differentiate
-                # between the labels and the data.
+                # Apply subtle variation in style for the fixed (blue background by
+                # default) rows and columns affected by the cursor, to ensure we can
+                # still differentiate between the labels and the data.
                 style += self.get_component_styles(
                     "datatable--highlight-fixed"
                 ).rich_style
@@ -717,7 +727,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self._cell_render_cache[cell_key] = lines
         return self._cell_render_cache[cell_key]
 
-    def _render_row(
+    def _render_line_in_row(
         self,
         row_index: int,
         line_no: int,
@@ -740,6 +750,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """
         cursor_type = self.cursor_type
         show_cursor = self.show_cursor
+
         cache_key = (
             row_index,
             line_no,
@@ -829,7 +840,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Get row number and line offset for a given line.
 
         Args:
-            y: Y coordinate relative to screen top.
+            y: Y coordinate relative to DataTable top.
 
         Returns:
             Line number and line offset within cell.
@@ -876,7 +887,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if cache_key in self._line_cache:
             return self._line_cache[cache_key]
 
-        fixed, scrollable = self._render_row(
+        fixed, scrollable = self._render_line_in_row(
             row_index,
             line_no,
             base_style,
