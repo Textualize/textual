@@ -273,6 +273,24 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def row_count(self) -> int:
         return len(self.rows)
 
+    def update_cell(
+        self, row_key: RowKey | str, column_key: ColumnKey | str, value: CellType
+    ) -> None:
+        self.data[row_key][column_key] = value
+        self._update_count += 1
+
+        row_index = self._row_locations.get(row_key)
+        column_index = self._column_locations.get(column_key)
+        self.refresh_cell(row_index, column_index)
+
+    def update_coordinate(self, coordinate: Coordinate, value: CellType) -> None:
+        row, column = coordinate
+        row_key = self._row_locations.get_key(row)
+        column_key = self._column_locations.get_key(column)
+        self.data[row_key][column_key] = value
+        self._update_count += 1
+        self.refresh_cell(row, column)
+
     def get_cell_value(self, coordinate: Coordinate) -> CellType:
         """Get the value from the cell at the given coordinate.
 
@@ -777,7 +795,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         #  then just pass it through to here instead of the row_index.
         row_key = self._row_locations.get_key(row_index)
         column_key = self._column_locations.get_key(column_index)
-        cell_cache_key = (row_key, column_key, style, cursor, hover)
+        cell_cache_key = (row_key, column_key, style, cursor, hover, self._update_count)
         if cell_cache_key not in self._cell_render_cache:
             style += Style.from_meta({"row": row_index, "column": column_index})
             height = self.header_height if is_header_row else self.rows[row_key].height
