@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import ClassVar, Generic, Iterator, NewType, TypeVar
+from typing import ClassVar, Generic, NewType, TypeVar
 
 import rich.repr
 from rich.style import NULL_STYLE, Style
