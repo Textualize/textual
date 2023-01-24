@@ -19,9 +19,9 @@ async def test_table_clear() -> None:
         table = app.query_one(DataTable)
         table.add_columns("foo", "bar")
         assert table.row_count == 0
-        table.add_row("Hello", "World!")
+        row_key = table.add_row("Hello", "World!")
         assert [col.label for col in table.columns] == [Text("foo"), Text("bar")]
-        assert table.data == {0: ["Hello", "World!"]}
+        assert table.data == {row_key: ["Hello", "World!"]}
         assert table.row_count == 1
         table.clear()
         assert [col.label for col in table.columns] == [Text("foo"), Text("bar")]
@@ -37,14 +37,15 @@ async def test_table_clear_with_columns() -> None:
         table = app.query_one(DataTable)
         table.add_columns("foo", "bar")
         assert table.row_count == 0
-        table.add_row("Hello", "World!")
+        row_key = table.add_row("Hello", "World!")
         assert [col.label for col in table.columns] == [Text("foo"), Text("bar")]
-        assert table.data == {0: ["Hello", "World!"]}
+        assert table.data == {row_key: ["Hello", "World!"]}
         assert table.row_count == 1
         table.clear(columns=True)
         assert [col.label for col in table.columns] == []
         assert table.data == {}
         assert table.row_count == 0
+
 
 async def test_table_add_row() -> None:
 

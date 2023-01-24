@@ -216,7 +216,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         self.columns: list[Column] = []
         self.rows: dict[RowKey, Row] = {}
-        self.data: dict[int, list[CellType]] = {}
+        self.data: dict[RowKey, list[CellType]] = {}
         self.row_count = 0
 
         # Keep tracking of key -> index for rows/cols.
@@ -285,9 +285,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """
         # TODO: Rename to get_value_at()?
         #  We need to clearly distinguish between coordinates and cell keys
-        row, column = coordinate
+        row_index, column_index = coordinate
+        row_key = self._row_locations.get_key(row_index)
         try:
-            cell_value = self.data[row][column]
+            cell_value = self.data[row_key][column_index]
         except KeyError:
             raise CellDoesNotExist(f"No cell exists at {coordinate!r}") from None
         return cell_value
@@ -366,7 +367,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def _highlight_row(self, row_index: int) -> None:
         """Apply highlighting to the row at the given index, and emit event."""
         self.refresh_row(row_index)
-        if row_index in self.data:
+        is_valid_row = row_index < len(self.data)
+        if is_valid_row:
             self.emit_no_wait(DataTable.RowHighlighted(self, row_index))
 
     def _highlight_column(self, column_index: int) -> None:
@@ -560,7 +562,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         # Map the key of this row to its current index
         self._row_locations[row_key] = row_index
 
-        self.data[row_index] = list(cells)
+        self.data[row_key] = list(cells)
         self.rows[row_key] = Row(row_key, row_index, height, self._line_no)
 
         for line_no in range(height):
@@ -686,7 +688,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             row = [column.label for column in self.columns]
             return row
 
-        data = self.data.get(row_index)
+        row_key = self._row_locations.get_key(row_index)
+        data = self.data.get(row_key)
         empty = Text()
         if data is None:
             return [empty for _ in self.columns]
