@@ -440,16 +440,20 @@ class MessagePump(metaclass=MessagePumpMeta):
         Args:
             message: A message object
         """
-        _rich_traceback_guard = True
-        if message.no_dispatch:
-            return
+        context_token = active_message_pump.set(self)
+        try:
+            _rich_traceback_guard = True
+            if message.no_dispatch:
+                return
 
-        # Allow apps to treat events and messages separately
-        if isinstance(message, Event):
-            await self.on_event(message)
-        else:
-            await self._on_message(message)
-        await self._flush_next_callbacks()
+            # Allow apps to treat events and messages separately
+            if isinstance(message, Event):
+                await self.on_event(message)
+            else:
+                await self._on_message(message)
+            await self._flush_next_callbacks()
+        finally:
+            active_message_pump.reset(context_token)
 
     def _get_dispatch_methods(
         self, method_name: str, message: Message
