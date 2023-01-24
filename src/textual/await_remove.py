@@ -12,6 +12,7 @@ class AwaitRemove:
 
         Args:
             finished_flag: The asyncio event to wait on.
+            task: The task which does the remove (required to keep a reference).
         """
         self.finished_flag = finished_flag
         self._task = task
