@@ -2230,7 +2230,8 @@ class App(Generic[ReturnType], DOMNode):
             non-operation.
         """
         if not WINDOWS:
-            os.kill(os.getpid(), signal.SIGTSTP)
+            with self.suspend():
+                os.kill(os.getpid(), signal.SIGTSTP)
 
     async def action_bang(self) -> None:
         1 / 0
