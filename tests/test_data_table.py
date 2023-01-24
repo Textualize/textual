@@ -58,6 +58,7 @@ async def test_datatable_message_emission():
         # therefore no highlighted cells), but then a row was added, and
         # so the cell at (0, 0) became highlighted.
         expected_messages.append("CellHighlighted")
+        await pilot.pause(2 / 100)
         assert messages == expected_messages
 
         # Pressing Enter when the cursor is on a cell emits a CellSelected
@@ -74,6 +75,7 @@ async def test_datatable_message_emission():
         # Switch over to the row cursor... should emit a `RowHighlighted`
         table.cursor_type = "row"
         expected_messages.append("RowHighlighted")
+        await pilot.pause(2 / 100)
         assert messages == expected_messages
 
         # Select the row...
@@ -85,6 +87,7 @@ async def test_datatable_message_emission():
         # Switching to the column cursor emits a `ColumnHighlighted`
         table.cursor_type = "column"
         expected_messages.append("ColumnHighlighted")
+        await pilot.pause(2 / 100)
         assert messages == expected_messages
 
         # Select the column...
@@ -112,6 +115,7 @@ async def test_datatable_message_emission():
         # message should be emitted for highlighting the cell.
         table.show_cursor = True
         expected_messages.append("CellHighlighted")
+        await pilot.pause(2 / 100)
         assert messages == expected_messages
 
         # Likewise, if the cursor_type is "none", and we change the
@@ -213,26 +217,28 @@ async def test_column_labels() -> None:
     async with app.run_test():
         table = app.query_one(DataTable)
         table.add_columns("1", "2", "3")
-        assert [col.label for col in table.columns] == [Text("1"), Text("2"), Text("3")]
+        actual_labels = [col.label for col in table.columns.values()]
+        expected_labels = [Text("1"), Text("2"), Text("3")]
+        assert actual_labels == expected_labels
 
 
 async def test_column_widths() -> None:
     app = DataTableApp()
     async with app.run_test() as pilot:
         table = app.query_one(DataTable)
-        table.add_columns("foo", "bar")
+        foo, bar = table.add_columns("foo", "bar")
 
-        assert table.columns[0].width == 3
-        assert table.columns[1].width == 3
+        assert table.columns[foo].width == 3
+        assert table.columns[bar].width == 3
         table.add_row("Hello", "World!")
         await pilot.pause()
-        assert table.columns[0].content_width == 5
-        assert table.columns[1].content_width == 6
+        assert table.columns[foo].content_width == 5
+        assert table.columns[bar].content_width == 6
 
         table.add_row("Hello World!!!", "fo")
         await pilot.pause()
-        assert table.columns[0].content_width == 14
-        assert table.columns[1].content_width == 6
+        assert table.columns[foo].content_width == 14
+        assert table.columns[bar].content_width == 6
 
 
 def test_get_cell_value_returns_value_at_cell():
