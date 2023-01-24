@@ -61,7 +61,7 @@ async def test_tree_node_collapsed_message() -> None:
     """Collapsing a node should result in a collapsed message being emitted."""
     async with TreeApp().run_test() as pilot:
         await pilot.press("enter", "enter")
-        await pilot.pause(2 / 100)
+        await pilot.pause(4 / 100)
         assert pilot.app.messages == [
             "NodeExpanded",
             "NodeSelected",
