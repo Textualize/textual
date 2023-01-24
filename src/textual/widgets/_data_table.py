@@ -691,7 +691,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return ordered_columns
 
     def _get_row_renderables(self, row_index: int) -> list[RenderableType]:
-        """Get renderables for the given row.
+        """Get renderables for the row currently at the given row index.
 
         Args:
             row_index: Index of the row.
@@ -761,8 +761,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         # TODO: We can hoist `row_key` lookup waaay up to do it inside `_get_offsets`
         #  then just pass it through to here instead of the row_index.
         row_key = self._row_locations.get_key(row_index)
-        cell_key = (row_key, column_index, style, cursor, hover)
-        if cell_key not in self._cell_render_cache:
+        column_key = self._column_locations.get_key(column_index)
+        cell_cache_key = (row_key, column_key, style, cursor, hover)
+        if cell_cache_key not in self._cell_render_cache:
             style += Style.from_meta({"row": row_index, "column": column_index})
             height = self.header_height if is_header_row else self.rows[row_key].height
             cell = self._get_row_renderables(row_index)[column_index]
@@ -771,8 +772,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 self.app.console.options.update_dimensions(width, height),
                 style=style,
             )
-            self._cell_render_cache[cell_key] = lines
-        return self._cell_render_cache[cell_key]
+            self._cell_render_cache[cell_cache_key] = lines
+        return self._cell_render_cache[cell_cache_key]
 
     def _render_line_in_row(
         self,
@@ -813,8 +814,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if cache_key in self._row_render_cache:
             return self._row_render_cache[cache_key]
 
-        render_cell = self._render_cell
-
         def _should_highlight(
             cursor_location: Coordinate,
             cell_location: Coordinate,
@@ -837,6 +836,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 return False
 
         row_index = self._row_locations.get(row_key, -1)
+        render_cell = self._render_cell
         if self.fixed_columns:
             fixed_style = self.get_component_styles("datatable--fixed").rich_style
             fixed_style += Style.from_meta({"fixed": True})
