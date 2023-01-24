@@ -190,11 +190,15 @@ class Animator:
             callback=self,
             pause=True,
         )
+        # Flag if no animations are currently taking place.
         self._idle_event = asyncio.Event()
+        # Flag if no animations are currently taking place and none are scheduled.
+        self._fully_idle_event = asyncio.Event()
 
     async def start(self) -> None:
         """Start the animator task."""
         self._idle_event.set()
+        self._fully_idle_event.set()
         self._timer.start()
 
     async def stop(self) -> None:
@@ -205,6 +209,7 @@ class Animator:
             pass
         finally:
             self._idle_event.set()
+            self._fully_idle_event.set()
 
     def bind(self, obj: object) -> BoundAnimator:
         """Bind the animator to a given object."""
@@ -254,6 +259,7 @@ class Animator:
         )
         if delay:
             self._scheduled.add((id(obj), attribute))
+            self._fully_idle_event.clear()
             self.app.set_timer(delay, animate_callback)
         else:
             animate_callback()
@@ -360,11 +366,14 @@ class Animator:
         self._animations[animation_key] = animation
         self._timer.resume()
         self._idle_event.clear()
+        self._fully_idle_event.clear()
 
     async def __call__(self) -> None:
         if not self._animations:
             self._timer.pause()
             self._idle_event.set()
+            if not self._scheduled:
+                self._fully_idle_event.set()
         else:
             animation_time = self._get_time()
             animation_keys = list(self._animations.keys())
@@ -386,3 +395,7 @@ class Animator:
     async def wait_for_idle(self) -> None:
         """Wait for any animations to complete."""
         await self._idle_event.wait()
+
+    async def wait_for_fully_idle(self) -> None:
+        """Wait for any current and scheduled animations to complete."""
+        await self._fully_idle_event.wait()
