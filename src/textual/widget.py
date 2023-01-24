@@ -629,8 +629,12 @@ class Widget(DOMNode):
 
         Args:
             widgets: An iterable of widgets.
-            before: Optional location to mount before.
-            after: Optional location to mount after.
+            before: Optional location to mount before. An `int` is the index
+                of the child to mount before, a `str` is a `query_one` query to
+                find the widget to mount before.
+            after: Optional location to mount after. An `int` is the index
+                of the child to mount after, a `str` is a `query_one` query to
+                find the widget to mount after.
 
         Returns:
             An awaitable object that waits for widgets to be mounted.
