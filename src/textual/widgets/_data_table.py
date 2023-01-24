@@ -252,6 +252,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.show_cursor = show_cursor
         self._show_hover_cursor = False
 
+        # TODO: Could track "updates above row_index" instead - better cache efficiency
+        self._update_count = 0
+
     @property
     def hover_row(self) -> int:
         return self.hover_cell.row
@@ -785,6 +788,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             cursor_type,
             show_cursor,
             self._show_hover_cursor,
+            self._update_count,
         )
 
         if cache_key in self._row_render_cache:
@@ -913,6 +917,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             base_style,
             self.cursor_type,
             self._show_hover_cursor,
+            self._update_count,
         )
         if cache_key in self._line_cache:
             return self._line_cache[cache_key]

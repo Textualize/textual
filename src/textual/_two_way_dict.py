@@ -17,6 +17,8 @@ class TwoWayDict(Generic[Key, Value]):
         self._reverse: dict[Value, Key] = {value: key for key, value in initial.items()}
 
     def __setitem__(self, key: Key, value: Value) -> None:
+        # TODO: Duplicate values need to be managed to ensure consistency,
+        #  decide on best approach.
         self._forward.__setitem__(key, value)
         self._reverse.__setitem__(value, key)
 
