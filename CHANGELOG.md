@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed stuck screen  https://github.com/Textualize/textual/issues/1632
 - Fixed relative units in `grid-rows` and `grid-columns` being computed with respect to the wrong dimension https://github.com/Textualize/textual/issues/1406
 
+### Added
+
+- Added `App.suspend()`, which returns a context manager that temporarily suspends the application https://github.com/Textualize/textual/pull/1541
+
 ## [0.10.1] - 2023-01-20
 
 ### Added

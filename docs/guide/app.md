@@ -182,6 +182,27 @@ Here's the question app with classvar CSS:
 --8<-- "docs/examples/app/question03.py"
 ```
 
+## Temporarily suspending the application
+
+You may find yourself wanting to use an action to temporarily stop your application from running
+so that you can run some other Python code (or even another program)
+that wants to control the terminal or read input from the user,
+such as a text editor.
+
+To support this, Textual provides the [`suspend`][textual.app.App.suspend] method on the app,
+which returns a context manager that temporarily stops Textual from controlling the terminal.
+
+In the example below, we use `suspend` to start Python's [REPL](https://docs.python.org/3/tutorial/interpreter.html)
+when you press `r`, which runs the `open_repl` action.
+[`subprocess.run`][subprocess.run] returns when the REPL exits (e.g., by running `quit()`),
+at which point the `with self.suspend()` block ends,
+resuming the Textual application's control over the terminal.
+
+```python title="suspend.py" hl_lines="19-21"
+--8<-- "docs/examples/app/suspend.py"
+```
+
+
 ## What's next
 
 In the following chapter we will learn more about how to apply styles to your widgets and app.
