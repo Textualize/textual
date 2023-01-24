@@ -22,6 +22,8 @@ if TYPE_CHECKING:
     from textual.app import App
 
 EasingFunction = Callable[[float], float]
+AnimationKey = tuple[int, str]
+"""Animation keys are the id of the object and the attribute being animated."""
 
 
 class AnimationError(Exception):
@@ -166,10 +168,19 @@ class BoundAnimator:
 
 
 class Animator:
-    """An object to manage updates to a given attribute over a period of time."""
+    """An object to manage updates to a given attribute over a period of time.
+
+    Attrs:
+        _animations: Dictionary that maps animation keys to the corresponding animation
+            instances.
+        _scheduled: Keys corresponding to animations that have been scheduled but not yet
+            started.
+        app: The app that owns the animator object.
+    """
 
     def __init__(self, app: App, frames_per_second: int = 60) -> None:
-        self._animations: dict[tuple[object, str], Animation] = {}
+        self._animations: dict[AnimationKey, Animation] = {}
+        self._scheduled: set[AnimationKey] = set()
         self.app = app
         self._timer = Timer(
             app,
@@ -196,7 +207,7 @@ class Animator:
             self._idle_event.set()
 
     def bind(self, obj: object) -> BoundAnimator:
-        """Bind the animator to a given objects."""
+        """Bind the animator to a given object."""
         return BoundAnimator(self, obj)
 
     def animate(
@@ -237,6 +248,7 @@ class Animator:
             on_complete=on_complete,
         )
         if delay:
+            self._scheduled.add((id(obj), attribute))
             self.app.set_timer(delay, animate_callback)
         else:
             animate_callback()
@@ -273,12 +285,13 @@ class Animator:
             duration is None and speed is not None
         ), "An Animation should have a duration OR a speed"
 
+        animation_key = (id(obj), attribute)
+        self._scheduled.discard(animation_key)
+
         if final_value is ...:
             final_value = value
 
         start_time = self._get_time()
-
-        animation_key = (id(obj), attribute)
 
         easing_function = EASING[easing] if isinstance(easing, str) else easing
 
