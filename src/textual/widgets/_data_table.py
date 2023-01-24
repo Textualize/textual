@@ -226,7 +226,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         # Maps y-coordinate (from top of table) to (row_index, y-coord within row) pairs
         # TODO: Update types
-        self._y_offsets: list[tuple[int, int]] = []
+        self._y_offsets: list[tuple[RowKey, int]] = []
         self._row_render_cache: LRUCache[
             tuple[RowKey, int, Style, int, int], tuple[SegmentLines, SegmentLines]
         ]
@@ -561,7 +561,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.rows[row_key] = Row(row_key, row_index, height, self._line_no)
 
         for line_no in range(height):
-            self._y_offsets.append((row_index, line_no))
+            self._y_offsets.append((row_key, line_no))
 
         self.row_count += 1
         self._line_no += height
@@ -870,13 +870,18 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Returns:
             Line number and line offset within cell.
         """
+        header_height = self.header_height
+        y_offsets = self._y_offsets
         if self.show_header:
-            if y < self.header_height:
-                return (-1, y)
-            y -= self.header_height
-        if y > len(self._y_offsets):
+            if y < header_height:
+                return -1, y
+            y -= header_height
+        if y > len(y_offsets):
             raise LookupError("Y coord {y!r} is greater than total height")
-        return self._y_offsets[y]
+
+        row_key, y_offset_in_row = y_offsets[y]
+        row_index = self._row_locations.get(row_key)
+        return row_index, y_offset_in_row
 
     def _render_line(self, y: int, x1: int, x2: int, base_style: Style) -> Strip:
         """Render a line in to a list of segments.
