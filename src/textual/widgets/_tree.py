@@ -205,7 +205,8 @@ class TreeNode(Generic[TreeDataType]):
         """Toggle the expanded state.
 
         Args:
-            toggle_all: If `True` toggle all offspring at all depths.
+            toggle_all: If `True` set the expanded state of all offspring
+                nodes at all depths to match this node's toggled state.
         """
         if self._expanded:
             self.collapse(collapse_all=toggle_all)
