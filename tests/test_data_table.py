@@ -165,6 +165,15 @@ async def test_add_rows_user_defined_keys():
         assert table.rows["algernon"] == first_row
 
 
+async def test_add_columns():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        column_keys = table.add_columns("1", "2", "3")
+        assert len(column_keys) == 3
+        assert len(table.columns) == 3
+
+
 async def test_clear():
     app = DataTableApp()
     async with app.run_test():
@@ -202,7 +211,7 @@ async def test_column_labels() -> None:
         assert [col.label for col in table.columns] == [Text("1"), Text("2"), Text("3")]
 
 
-async def test_row_widths() -> None:
+async def test_column_widths() -> None:
     app = DataTableApp()
     async with app.run_test() as pilot:
         table = app.query_one(DataTable)
