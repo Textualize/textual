@@ -143,7 +143,7 @@ async def test_add_rows():
             assert table.rows[key].index == row
 
 
-async def test_add_data_user_defined_keys():
+async def test_add_rows_user_defined_keys():
     app = DataTableApp()
     async with app.run_test():
         table = app.query_one(DataTable)
