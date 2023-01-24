@@ -217,7 +217,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.columns: list[Column] = []
         self.rows: dict[RowKey, Row] = {}
         self.data: dict[RowKey, list[CellType]] = {}
-        self.row_count = 0
 
         # Keep tracking of key -> index for rows/cols.
         # For a given key, what is the current location of the corresponding row/col?
@@ -270,6 +269,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     @property
     def cursor_column(self) -> int:
         return self.cursor_cell.column
+
+    @property
+    def row_count(self) -> int:
+        return len(self.rows)
 
     def get_cell_value(self, coordinate: Coordinate) -> CellType:
         """Get the value from the cell at the given coordinate.
@@ -485,7 +488,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Args:
             columns: Also clear the columns. Defaults to False.
         """
-        self.row_count = 0
         self._clear_caches()
         self._y_offsets.clear()
         self.data.clear()
@@ -568,7 +570,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         for line_no in range(height):
             self._y_offsets.append((row_key, line_no))
 
-        self.row_count += 1
         self._line_no += height
 
         self._new_rows.add(row_index)
