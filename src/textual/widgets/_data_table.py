@@ -216,7 +216,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         self.columns: dict[ColumnKey, Column] = {}
         self.rows: dict[RowKey, Row] = {}
-        self.data: dict[RowKey, list[CellType]] = {}
+        self.data: dict[RowKey, dict[ColumnKey, CellType]] = {}
 
         # Keep tracking of key -> index for rows/cols.
         # For a given key, what is the current location of the corresponding row/col?
@@ -289,8 +289,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         #  We need to clearly distinguish between coordinates and cell keys
         row_index, column_index = coordinate
         row_key = self._row_locations.get_key(row_index)
+        column_key = self._column_locations.get_key(column_index)
         try:
-            cell_value = self.data[row_key][column_index]
+            cell_value = self.data[row_key][column_key]
         except KeyError:
             raise CellDoesNotExist(f"No cell exists at {coordinate!r}") from None
         return cell_value
@@ -570,7 +571,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         # Map the key of this row to its current index
         self._row_locations[row_key] = row_index
 
-        self.data[row_key] = list(cells)
+        self.data[row_key] = {
+            column.key: cell for column, cell in zip(self._ordered_columns, cells)
+        }
         self.rows[row_key] = Row(row_key, row_index, height, self._line_no)
 
         for line_no in range(height):
@@ -700,19 +703,26 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             List of renderables
         """
 
+        ordered_columns = self._ordered_columns
         if row_index == -1:
-            row = [column.label for column in self._ordered_columns]
+            row = [column.label for column in ordered_columns]
             return row
 
+        # Ensure we order the cells in the row based on current column ordering
         row_key = self._row_locations.get_key(row_index)
-        row = self.data.get(row_key)
+        cell_mapping: dict[ColumnKey, CellType] = self.data.get(row_key)
+        ordered_row: list[CellType] = []
+        for column in ordered_columns:
+            cell = cell_mapping[column.key]
+            ordered_row.append(cell)
+
         empty = Text()
-        if row is None:
+        if ordered_row is None:
             return [empty for _ in self.columns]
         else:
             return [
                 Text() if datum is None else default_cell_formatter(datum) or empty
-                for datum, _ in zip_longest(row, range(len(self.columns)))
+                for datum, _ in zip_longest(ordered_row, range(len(self.columns)))
             ]
 
     def _render_cell(
