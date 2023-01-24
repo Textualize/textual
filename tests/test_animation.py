@@ -120,7 +120,7 @@ async def test_reverse_animations() -> None:
         await pilot.wait_for_animation()
         assert styles.background.rgb == (0, 0, 0)
 
-        # Now, the actual test is to make sure we go back to black if scheduling both at once.
+        # Now, the actual test is to make sure we go back to black if creating both at once.
         styles.animate("background", "white", duration=0.01)
         styles.animate("background", "black", duration=0.01)
         await pilot.wait_for_animation()

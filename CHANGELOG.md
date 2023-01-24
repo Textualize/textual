@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added the coroutines `Animator.wait_for_fully_idle` and `pilot.wait_for_scheduled_animations` that allow waiting for all current and scheduled animations https://github.com/Textualize/textual/issues/1658
+- Added the method `Animator.is_being_animated` that checks if an attribute of an object is being animated or is scheduled for animation
 
 ### Fixed
 
