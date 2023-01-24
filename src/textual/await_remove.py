@@ -1,19 +1,20 @@
 """Provides the type of an awaitable remove."""
 
-from asyncio import Event
+from asyncio import Event, Task
 from typing import Generator
 
 
 class AwaitRemove:
     """An awaitable returned by App.remove and DOMQuery.remove."""
 
-    def __init__(self, finished_flag: Event) -> None:
+    def __init__(self, finished_flag: Event, task: Task) -> None:
         """Initialise the instance of ``AwaitRemove``.
 
         Args:
             finished_flag: The asyncio event to wait on.
         """
         self.finished_flag = finished_flag
+        self._task = task
 
     async def __call__(self) -> None:
         return await self

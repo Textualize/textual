@@ -170,7 +170,7 @@ async def test_remove():
 
     class RemoveApp(App):
         def compose(self) -> ComposeResult:
-            yield Container(RemoveMeLabel(), RemoveMeLabel())
+            yield Container(RemoveMeLabel())
 
         async def action_remove_all(self) -> None:
             await self.query_one(Container).clear()

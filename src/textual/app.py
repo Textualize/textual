@@ -2128,11 +2128,11 @@ class App(Generic[ReturnType], DOMNode):
         removed_widgets = self._detach_from_dom(widgets)
 
         finished_event = asyncio.Event()
-        create_task(
+        remove_task = create_task(
             prune_widgets_task(removed_widgets, finished_event), name="prune nodes"
         )
 
-        await_remove = AwaitRemove(finished_event)
+        await_remove = AwaitRemove(finished_event, remove_task)
         self.call_next(await_remove)
         return await_remove
 
