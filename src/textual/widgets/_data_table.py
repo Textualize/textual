@@ -571,8 +571,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         # Map the key of this row to its current index
         self._row_locations[row_key] = row_index
 
+        # TODO: If there are no columns, do we generate them here?
+        #  If we don't do this, users will be required to call add_column(s)
+        #  Before they call add_row.
+
         self.data[row_key] = {
-            column.key: cell for column, cell in zip(self._ordered_columns, cells)
+            column.key: cell
+            for column, cell in zip_longest(self._ordered_columns, cells)
         }
         self.rows[row_key] = Row(row_key, row_index, height, self._line_no)
 

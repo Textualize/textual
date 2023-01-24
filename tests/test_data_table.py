@@ -130,6 +130,7 @@ async def test_add_rows():
     app = DataTableApp()
     async with app.run_test():
         table = app.query_one(DataTable)
+        table.add_columns("A", "B")
         row_keys = table.add_rows(ROWS)
         # We're given a key for each row
         assert len(row_keys) == len(ROWS)
@@ -146,6 +147,7 @@ async def test_add_rows_user_defined_keys():
     app = DataTableApp()
     async with app.run_test():
         table = app.query_one(DataTable)
+        key_a, key_b = table.add_columns("A", "B")
         algernon_key = table.add_row(*ROWS[0], key="algernon")
         table.add_row(*ROWS[1], key="charlie")
         auto_key = table.add_row(*ROWS[2])
@@ -154,10 +156,17 @@ async def test_add_rows_user_defined_keys():
         # We get a RowKey object back, but we can use our own string *or* this object
         # to find the row we're looking for, they're considered equivalent for lookups.
         assert isinstance(algernon_key, RowKey)
-        assert table.data[algernon_key] == ROWS[0]
-        assert table.data["algernon"] == ROWS[0]
-        assert table.data["charlie"] == ROWS[1]
-        assert table.data[auto_key] == ROWS[2]
+
+        # Ensure the data in the table is mapped as expected
+        first_row = {key_a: ROWS[0][0], key_b: ROWS[0][1]}
+        assert table.data[algernon_key] == first_row
+        assert table.data["algernon"] == first_row
+
+        second_row = {key_a: ROWS[1][0], key_b: ROWS[1][1]}
+        assert table.data["charlie"] == second_row
+
+        third_row = {key_a: ROWS[2][0], key_b: ROWS[2][1]}
+        assert table.data[auto_key] == third_row
 
         first_row = Row(algernon_key, index=0, height=1, y=0)
         assert table.rows[algernon_key] == first_row
@@ -241,17 +250,23 @@ async def test_column_widths() -> None:
         assert table.columns[bar].content_width == 6
 
 
-def test_get_cell_value_returns_value_at_cell():
-    table = DataTable()
-    table.add_rows(ROWS)
-    assert table.get_cell_value(Coordinate(0, 0)) == "0/0"
+async def test_get_cell_value_returns_value_at_cell():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_columns("A", "B")
+        table.add_rows(ROWS)
+        assert table.get_cell_value(Coordinate(0, 0)) == "0/0"
 
 
-def test_get_cell_value_exception():
-    table = DataTable()
-    table.add_rows(ROWS)
-    with pytest.raises(CellDoesNotExist):
-        table.get_cell_value(Coordinate(9999, 0))
+async def test_get_cell_value_exception():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_columns("A", "B")
+        table.add_rows(ROWS)
+        with pytest.raises(CellDoesNotExist):
+            table.get_cell_value(Coordinate(9999, 0))
 
 
 def test_key_equals_equivalent_string():
