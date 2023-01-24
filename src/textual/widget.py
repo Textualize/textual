@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from asyncio import Lock, wait
 from asyncio import Lock, create_task, wait
 from collections import Counter
 from fractions import Fraction
@@ -35,6 +36,7 @@ from rich.text import Text
 from rich.traceback import Traceback
 
 from . import errors, events, messages
+from ._asyncio import create_task
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
 from ._context import active_app
@@ -89,11 +91,15 @@ class AwaitMount:
         self._parent = parent
         self._widgets = widgets
 
+    async def __call__(self) -> None:
+        """Allows awaiting via a call operation."""
+        await self
+
     def __await__(self) -> Generator[None, None, None]:
         async def await_mount() -> None:
             if self._widgets:
                 aws = [
-                    create_task(widget._mounted_event.wait())
+                    create_task(widget._mounted_event.wait(), name="await mount")
                     for widget in self._widgets
                 ]
                 if aws:
@@ -555,8 +561,12 @@ class Widget(DOMNode):
 
         Args:
             *widgets: The widget(s) to mount.
-            before: Optional location to mount before.
-            after: Optional location to mount after.
+            before: Optional location to mount before. An `int` is the index
+                of the child to mount before, a `str` is a `query_one` query to
+                find the widget to mount before.
+            after: Optional location to mount after. An `int` is the index
+                of the child to mount after, a `str` is a `query_one` query to
+                find the widget to mount after.
 
         Returns:
             An awaitable object that waits for widgets to be mounted.
@@ -604,7 +614,9 @@ class Widget(DOMNode):
             parent, *widgets, before=insert_before, after=insert_after
         )
 
-        return AwaitMount(self, mounted)
+        await_mount = AwaitMount(self, mounted)
+        self.call_next(await_mount)
+        return await_mount
 
     def move_child(
         self,
@@ -616,8 +628,12 @@ class Widget(DOMNode):
 
         Args:
             child: The child widget to move.
-            before: (int | Widget, optional): Optional location to move before.
-            after: (int | Widget, optional): Optional location to move after.
+            before: Optional location to move before. An `int` is the index
+                of the child to move before, a `str` is a `query_one` query to
+                find the widget to move before.
+            after: Optional location to move after. An `int` is the index
+                of the child to move after, a `str` is a `query_one` query to
+                find the widget to move after.
 
         Raises:
             WidgetError: If there is a problem with the child or target.

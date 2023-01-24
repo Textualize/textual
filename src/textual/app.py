@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-from concurrent.futures import Future
-from functools import partial
 import inspect
 import io
 import os
@@ -12,8 +10,10 @@ import threading
 import unicodedata
 import warnings
 from asyncio import Task
+from concurrent.futures import Future
 from contextlib import asynccontextmanager, redirect_stderr, redirect_stdout
 from datetime import datetime
+from functools import partial
 from pathlib import Path, PurePath
 from queue import Queue
 from time import perf_counter
@@ -41,9 +41,10 @@ from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
 from rich.traceback import Traceback
 
-from . import actions, Logger, LogGroup, LogVerbosity, events, log, messages
+from . import Logger, LogGroup, LogVerbosity, actions, events, log, messages
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
+from ._asyncio import create_task
 from ._callback import invoke
 from ._context import active_app
 from ._event_broker import NoHandler, extract_handler_actions
@@ -68,7 +69,6 @@ from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import Screen
 from .widget import AwaitMount, Widget
-
 
 if TYPE_CHECKING:
     from .devtools.client import DevtoolsClient
@@ -722,7 +722,7 @@ class App(Generic[ReturnType], DOMNode):
         self,
         filename: str | None = None,
         path: str = "./",
-        time_format: str = "%Y%m%d %H%M%S %f",
+        time_format: str | None = None,
     ) -> str:
         """Save an SVG screenshot of the current screen.
 
@@ -730,17 +730,21 @@ class App(Generic[ReturnType], DOMNode):
             filename: Filename of SVG screenshot, or None to auto-generate
                 a filename with the date and time. Defaults to None.
             path: Path to directory for output. Defaults to current working directory.
-            time_format: Time format to use if filename is None. Defaults to "%Y-%m-%d %X %f".
+            time_format: Date and time format to use if filename is None.
+                Defaults to a format like ISO 8601 with some reserved characters replaced with underscores.
 
         Returns:
             Filename of screenshot.
         """
         if filename is None:
-            svg_filename = (
-                f"{self.title.lower()} {datetime.now().strftime(time_format)}.svg"
-            )
-            for reserved in '<>:"/\\|?*':
-                svg_filename = svg_filename.replace(reserved, "_")
+            if time_format is None:
+                dt = datetime.now().isoformat()
+            else:
+                dt = datetime.now().strftime(time_format)
+            svg_filename_stem = f"{self.title.lower()} {dt}"
+            for reserved in ' <>:"/\\|?*.':
+                svg_filename_stem = svg_filename_stem.replace(reserved, "_")
+                svg_filename = svg_filename_stem + ".svg"
         else:
             svg_filename = filename
         svg_path = os.path.expanduser(os.path.join(path, svg_filename))
@@ -859,7 +863,7 @@ class App(Generic[ReturnType], DOMNode):
             )
 
         # Launch the app in the "background"
-        app_task = asyncio.create_task(run_app(app))
+        app_task = create_task(run_app(app), name=f"run_test {app}")
 
         # Wait until the app has performed all startup routines.
         await app_ready_event.wait()
@@ -914,7 +918,9 @@ class App(Generic[ReturnType], DOMNode):
                         raise
 
                 pilot = Pilot(app)
-                auto_pilot_task = asyncio.create_task(run_auto_pilot(auto_pilot, pilot))
+                auto_pilot_task = create_task(
+                    run_auto_pilot(auto_pilot, pilot), name=repr(pilot)
+                )
 
         try:
             await app._process_messages(
@@ -1185,9 +1191,13 @@ class App(Generic[ReturnType], DOMNode):
         _screen = self.get_screen(screen)
         if not _screen.is_running:
             widgets = self._register(self, _screen)
-            return (_screen, AwaitMount(_screen, widgets))
+            await_mount = AwaitMount(_screen, widgets)
+            self.call_next(await_mount)
+            return (_screen, await_mount)
         else:
-            return (_screen, AwaitMount(_screen, []))
+            await_mount = AwaitMount(_screen, [])
+            self.call_next(await_mount)
+            return (_screen, await_mount)
 
     def _replace_screen(self, screen: Screen) -> Screen:
         """Handle the replaced screen.
@@ -1653,6 +1663,7 @@ class App(Generic[ReturnType], DOMNode):
             return []
 
         new_widgets = list(widgets)
+
         if before is not None or after is not None:
             # There's a before or after, which means there's going to be an
             # insertion, so make it easier to get the new things in the
@@ -1668,6 +1679,11 @@ class App(Generic[ReturnType], DOMNode):
                 if widget.children:
                     self._register(widget, *widget.children)
                 apply_stylesheet(widget)
+
+        if not self._running:
+            # If the app is not running, prevent awaiting of the widget tasks
+            return []
+
         return list(widgets)
 
     def _unregister(self, widget: Widget) -> None:
@@ -2111,7 +2127,9 @@ class App(Generic[ReturnType], DOMNode):
         removed_widgets = self._detach_from_dom(widgets)
 
         finished_event = asyncio.Event()
-        asyncio.create_task(prune_widgets_task(removed_widgets, finished_event))
+        create_task(
+            prune_widgets_task(removed_widgets, finished_event), name="prune nodes"
+        )
 
         return AwaitRemove(finished_event)
 

@@ -5,7 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.10.0] - Unreleased
+## [0.11.0] - Unreleased
+
+### Fixed
+
+- Fixed stuck screen  https://github.com/Textualize/textual/issues/1632
+- Fixed relative units in `grid-rows` and `grid-columns` being computed with respect to the wrong dimension https://github.com/Textualize/textual/issues/1406
+
+## [0.10.1] - 2023-01-20
+
+### Added
+
+- Added Strip.text property https://github.com/Textualize/textual/issues/1620
+
+### Fixed
+
+- Fixed `textual diagnose` crash on older supported Python versions. https://github.com/Textualize/textual/issues/1622
+
+### Changed
+
+- The default filename for screenshots uses a datetime format similar to ISO8601, but with reserved characters replaced by underscores https://github.com/Textualize/textual/pull/1518
+
+
+## [0.10.0] - 2023-01-19
 
 ### Added
 
@@ -45,6 +67,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed TextLog wrapping issue https://github.com/Textualize/textual/issues/1554
 - Fixed issue with TextLog not writing anything before layout https://github.com/Textualize/textual/issues/1498
 - Fixed an exception when populating a child class of `ListView` purely from `compose` https://github.com/Textualize/textual/issues/1588
+- Fixed freeze in tests https://github.com/Textualize/textual/issues/1608
 
 ## [0.9.1] - 2022-12-30
 
@@ -363,6 +386,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.10.0]: https://github.com/Textualize/textual/compare/v0.9.1...v0.10.0
 [0.9.1]: https://github.com/Textualize/textual/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/Textualize/textual/compare/v0.8.2...v0.9.0
 [0.8.2]: https://github.com/Textualize/textual/compare/v0.8.1...v0.8.2
