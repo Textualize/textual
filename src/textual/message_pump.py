@@ -17,7 +17,7 @@ from weakref import WeakSet
 from . import Logger, events, log, messages
 from ._asyncio import create_task
 from ._callback import invoke
-from ._context import NoActiveAppError, active_app
+from ._context import NoActiveAppError, active_app, active_message_pump
 from ._time import time
 from .case import camel_to_snake
 from .errors import DuplicateKeyHandlers
@@ -313,8 +313,13 @@ class MessagePump(metaclass=MessagePumpMeta):
         Reactive._reset_object(self)
         await self._message_queue.put(None)
         if wait and self._task is not None and asyncio.current_task() != self._task:
-            # Ensure everything is closed before returning
-            await self._task
+            try:
+                running_widget = active_message_pump.get()
+            except LookupError:
+                await self._task
+            else:
+                if running_widget is not self:
+                    await self._task
 
     def _start_messages(self) -> None:
         """Start messages task."""
@@ -382,7 +387,7 @@ class MessagePump(metaclass=MessagePumpMeta):
                     break
 
             self._active_message = message
-
+            context_token = active_message_pump.set(self)
             try:
                 try:
                     await self._dispatch_message(message)
@@ -415,6 +420,7 @@ class MessagePump(metaclass=MessagePumpMeta):
                                     self.app._handle_exception(error)
                                     break
             finally:
+                active_message_pump.reset(context_token)
                 self._active_message = None
 
     async def _flush_next_callbacks(self) -> None:

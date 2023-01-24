@@ -15,6 +15,9 @@ class AwaitRemove:
         """
         self.finished_flag = finished_flag
 
+    async def __call__(self) -> None:
+        return await self
+
     def __await__(self) -> Generator[None, None, None]:
         async def await_prune() -> None:
             """Wait for the prune operation to finish."""

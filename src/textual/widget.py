@@ -618,6 +618,33 @@ class Widget(DOMNode):
         self.call_next(await_mount)
         return await_mount
 
+    def mount_all(
+        self,
+        widgets: Iterable[Widget],
+        *,
+        before: int | str | Widget | None = None,
+        after: int | str | Widget | None = None,
+    ) -> AwaitMount:
+        """Mount widgets from an iterable.
+
+        Args:
+            widgets: An iterable of widgets.
+            before: Optional location to mount before.
+            after: Optional location to mount after.
+
+        Returns:
+            An awaitable object that waits for widgets to be mounted.
+
+        Raises:
+            MountError: If there is a problem with the mount request.
+
+        Note:
+            Only one of ``before`` or ``after`` can be provided. If both are
+            provided a ``MountError`` will be raised.
+        """
+        await_mount = self.mount(*widgets, before=before, after=after)
+        return await_mount
+
     def move_child(
         self,
         child: int | Widget,
