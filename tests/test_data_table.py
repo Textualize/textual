@@ -5,7 +5,13 @@ from textual.app import App
 from textual.coordinate import Coordinate
 from textual.message import Message
 from textual.widgets import DataTable
-from textual.widgets._data_table import StringKey, CellDoesNotExist, RowKey, Row
+from textual.widgets._data_table import (
+    StringKey,
+    CellDoesNotExist,
+    RowKey,
+    Row,
+    ColumnKey,
+)
 
 ROWS = [["0/0", "0/1"], ["1/0", "1/1"], ["2/0", "2/1"]]
 
@@ -174,6 +180,16 @@ async def test_add_columns():
         assert len(table.columns) == 3
 
 
+# TODO: Ensure we can use the key to retrieve the column.
+async def test_add_columns_user_defined_keys():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        key = table.add_column("Column", key="donut")
+        assert key == "donut"
+        assert key == key
+
+
 async def test_clear():
     app = DataTableApp()
     async with app.run_test():
@@ -255,6 +271,14 @@ def test_key_doesnt_match_non_equal_string():
     text = "laksjdlaskjd"
     assert key != text
     assert hash(key) != hash(text)
+
+
+def test_key_equals_self():
+    row_key = RowKey()
+    column_key = ColumnKey()
+    assert row_key == row_key
+    assert column_key == column_key
+    assert row_key != column_key
 
 
 def test_key_string_lookup():
