@@ -9,6 +9,7 @@ import sys
 import threading
 import unicodedata
 import warnings
+import signal
 from asyncio import Task
 from concurrent.futures import Future
 from contextlib import asynccontextmanager, redirect_stderr, redirect_stdout
@@ -257,6 +258,7 @@ class App(Generic[ReturnType], DOMNode):
 
     BINDINGS = [
         Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
+        Binding("ctrl+z", "suspend_process", "Suspend", show=False, priority=True),
         Binding("tab", "focus_next", "Focus Next", show=False),
         Binding("shift+tab", "focus_previous", "Focus Previous", show=False),
     ]
@@ -2176,6 +2178,17 @@ class App(Generic[ReturnType], DOMNode):
     async def action_quit(self) -> None:
         """Quit the app as soon as possible."""
         self.exit()
+
+    def action_suspend_process(self) -> None:
+        """Suspend the process into the background.
+
+        Note:
+            On Unix and Unix-like systems a `SIGTSTP` is sent to the
+            application's process. Currently on Windows this is a
+            non-operation.
+        """
+        if not WINDOWS:
+            os.kill(os.getpid(), signal.SIGTSTP)
 
     async def action_bang(self) -> None:
         1 / 0
