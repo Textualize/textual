@@ -192,7 +192,7 @@ class TreeNode(Generic[TreeDataType]):
                 child._collapse(collapse_all)
         self._updates += 1
 
-    def collapse(self, *, collapse_all: bool = True) -> None:
+    def collapse(self, *, collapse_all: bool = False) -> None:
         """Collapse the node (hide children).
 
         Args:
@@ -213,7 +213,7 @@ class TreeNode(Generic[TreeDataType]):
                 child._toggle(toggle_all)
         self._updates += 1
 
-    def toggle(self, *, toggle_all: bool = True) -> None:
+    def toggle(self, *, toggle_all: bool = False) -> None:
         """Toggle the expanded state.
 
         Args:
