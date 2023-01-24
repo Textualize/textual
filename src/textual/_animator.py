@@ -210,6 +210,11 @@ class Animator:
         """Bind the animator to a given object."""
         return BoundAnimator(self, obj)
 
+    def is_being_animated(self, obj: object, attribute: str) -> bool:
+        """Does the object/attribute pair have an ongoing or scheduled animation?"""
+        key = (id(obj), attribute)
+        return key in self._animations or key in self._scheduled
+
     def animate(
         self,
         obj: object,
