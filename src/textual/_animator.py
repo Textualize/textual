@@ -21,9 +21,10 @@ else:  # pragma: no cover
 if TYPE_CHECKING:
     from textual.app import App
 
+    AnimationKey = tuple[int, str]
+    """Animation keys are the id of the object and the attribute being animated."""
+
 EasingFunction = Callable[[float], float]
-AnimationKey = tuple[int, str]
-"""Animation keys are the id of the object and the attribute being animated."""
 
 
 class AnimationError(Exception):
