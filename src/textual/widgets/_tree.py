@@ -201,26 +201,16 @@ class TreeNode(Generic[TreeDataType]):
         self._collapse(collapse_all)
         self._tree._invalidate()
 
-    def _toggle(self, toggle_all: bool) -> None:
-        """Toggle the expanded state of the node.
-
-        Args:
-            toggle_all: If `True` toggle all offspring at all depths.
-        """
-        self._expanded = not self._expanded
-        if toggle_all:
-            for child in self.children:
-                child._toggle(toggle_all)
-        self._updates += 1
-
     def toggle(self, *, toggle_all: bool = False) -> None:
         """Toggle the expanded state.
 
         Args:
             toggle_all: If `True` toggle all offspring at all depths.
         """
-        self._toggle(toggle_all)
-        self._tree._invalidate()
+        if self._expanded:
+            self.collapse(collapse_all=toggle_all)
+        else:
+            self.expand(expand_all=toggle_all)
 
     @property
     def label(self) -> TextType:
