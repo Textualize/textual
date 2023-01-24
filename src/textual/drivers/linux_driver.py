@@ -145,6 +145,12 @@ class LinuxDriver(Driver):
         self._request_terminal_sync_mode_support()
         self._enable_bracketed_paste()
 
+        def on_resume(signum: int, _) -> None:
+            log(f"Signal, {signal.strsignal(signum)}, restarting application mode")
+            self.start_application_mode()
+
+        signal.signal(signal.SIGCONT, on_resume)
+
     def _request_terminal_sync_mode_support(self):
         self.console.file.write("\033[?2026$p")
         self.console.file.flush()
