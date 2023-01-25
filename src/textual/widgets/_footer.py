@@ -7,7 +7,6 @@ from rich.console import RenderableType
 from rich.text import Text
 
 from .. import events
-from ..keys import _get_key_display
 from ..reactive import Reactive, watch
 from ..widget import Widget
 
