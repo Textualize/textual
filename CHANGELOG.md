@@ -9,14 +9,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added an optional `expand_all` parameter to `TreeNode.expand` https://github.com/Textualize/textual/issues/1430
-- Added an optional `collapse_all` parameter to `TreeNode.collapse` https://github.com/Textualize/textual/issues/1430
-- Added an optional `toggle_all` parameter to `TreeNode.toggle` https://github.com/Textualize/textual/issues/1430
+- Added optional `TreeNode.expand_all` https://github.com/Textualize/textual/issues/1430
+- Added optional `TreeNode.collapse_all` https://github.com/Textualize/textual/issues/1430
+- Added optional `TreeNode.toggle_all` https://github.com/Textualize/textual/issues/1430
 
 ### Changed
 
 - Breaking change: `TreeNode` can no longer be imported from `textual.widgets`; it is now available via `from textual.widgets.tree import TreeNode`. https://github.com/Textualize/textual/pull/1637
-
 
 ### Fixed
 
