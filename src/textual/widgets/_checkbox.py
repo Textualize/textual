@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from rich.console import RenderableType
 
-from ..binding import Binding
+from ..binding import Binding, BindingType
 from ..geometry import Size
 from ..message import Message
 from ..reactive import reactive
@@ -21,8 +21,25 @@ class Checkbox(Widget, can_focus=True):
     that enable more customization.
     """
 
-    DEFAULT_CSS = """
+    BINDINGS: ClassVar[list[BindingType]] = [
+        Binding("enter,space", "toggle", "Toggle", show=False),
+    ]
+    """
+    | Key(s) | Action | Description |
+    | :- | :- | :- |
+    | enter,space | [toggle][textual.widgets.Checkbox.toggle] | Toggle |
+    """
 
+    COMPONENT_CLASSES: ClassVar[set[str]] = {
+        "checkbox--switch",
+    }
+    """
+    | Class | Description |
+    | :- | :- |
+    | `checkbox--switch` | Targets the switch of the checkbox. |
+    """
+
+    DEFAULT_CSS = """
     Checkbox {
         border: tall transparent;
         background: $panel;
@@ -52,19 +69,6 @@ class Checkbox(Widget, can_focus=True):
         color: $success;
     }
     """
-
-    BINDINGS: list[Binding] = [
-        Binding("enter,space", "toggle", "Toggle the checkbox status.", show=False),
-    ]
-    """
-    | Key(s) | Action | Description |
-    | :- | :- | :- |
-    | enter,space | [toggle][textual.widgets.Checkbox.toggle] | Toggle the checkbox status. |
-    """
-
-    COMPONENT_CLASSES: ClassVar[set[str]] = {
-        "checkbox--switch",
-    }
 
     def __init__(
         self,

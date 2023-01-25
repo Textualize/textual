@@ -17,7 +17,7 @@ from .._cache import LRUCache
 from .._segment_tools import line_crop
 from .._types import SegmentLines
 from .._typing import Literal
-from ..binding import Binding
+from ..binding import Binding, BindingType
 from ..coordinate import Coordinate
 from ..geometry import Region, Size, Spacing, clamp
 from ..message import Message
@@ -84,6 +84,48 @@ class Row:
 
 
 class DataTable(ScrollView, Generic[CellType], can_focus=True):
+    """A tabular widget that contains data."""
+
+    BINDINGS: ClassVar[list[BindingType]] = [
+        Binding("enter", "select_cursor", "Select", show=False),
+        Binding("up", "cursor_up", "Cursor Up", show=False),
+        Binding("down", "cursor_down", "Cursor Down", show=False),
+        Binding("right", "cursor_right", "Cursor Right", show=False),
+        Binding("left", "cursor_left", "Cursor Left", show=False),
+    ]
+    """
+    | Key(s) | Action | Description |
+    | :- | :- | :- |
+    | enter | [select_cursor][textual.widgets.DataTable.select_cursor] | Select cells under the cursor. |
+    | up | [cursor_up][textual.widgets.DataTable.cursor_up] | Move the cursor up. |
+    | down | [cursor_down][textual.widgets.DataTable.cursor_down] | Move the cursor down. |
+    | right | [cursor_right][textual.widgets.DataTable.cursor_right] | Move the cursor right. |
+    | left | [cursor_left][textual.widgets.DataTable.cursor_left] | Move the cursor left. |
+    """
+
+    COMPONENT_CLASSES: ClassVar[set[str]] = {
+        "datatable--header",
+        "datatable--cursor-fixed",
+        "datatable--highlight-fixed",
+        "datatable--fixed",
+        "datatable--odd-row",
+        "datatable--even-row",
+        "datatable--highlight",
+        "datatable--cursor",
+    }
+    """
+    | Class | Description |
+    | :- | :- |
+    | `datatable--cursor` | Target the cursor. |
+    | `datatable--cursor-fixed` | Target fixed columns or header under the cursor. |
+    | `datatable--even-row` | Target even rows (row indices start at 0). |
+    | `datatable--fixed` | Target fixed columns or header. |
+    | `datatable--header` | Target the header of the data table. |
+    | `datatable--highlight` | Target the highlighted cell(s). |
+    | `datatable--highlight-fixed` | Target highlighted and fixed columns or header. |
+    | `datatable--odd-row` | Target odd rows (row indices start at 0). |
+    """
+
     DEFAULT_CSS = """
     App.-dark DataTable {
         background:;
@@ -133,26 +175,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         background: $secondary 20%;
     }
     """
-
-    COMPONENT_CLASSES: ClassVar[set[str]] = {
-        "datatable--header",
-        "datatable--cursor-fixed",
-        "datatable--highlight-fixed",
-        "datatable--fixed",
-        "datatable--odd-row",
-        "datatable--even-row",
-        "datatable--highlight",
-        "datatable--cursor",
-    }
-    """This is now documented."""
-
-    BINDINGS = [
-        Binding("enter", "select_cursor", "Select", show=False),
-        Binding("up", "cursor_up", "Cursor Up", show=False),
-        Binding("down", "cursor_down", "Cursor Down", show=False),
-        Binding("right", "cursor_right", "Cursor Right", show=False),
-        Binding("left", "cursor_left", "Cursor Left", show=False),
-    ]
 
     show_header = Reactive(True)
     fixed_rows = Reactive(0)

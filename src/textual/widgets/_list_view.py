@@ -1,8 +1,9 @@
 from __future__ import annotations
+from typing import ClassVar
 
 from textual import events
 from textual.await_remove import AwaitRemove
-from textual.binding import Binding
+from textual.binding import Binding, BindingType
 from textual.containers import Vertical
 from textual.geometry import clamp
 from textual.message import Message
@@ -19,11 +20,18 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         index: The index in the list that's currently highlighted.
     """
 
-    BINDINGS = [
+    BINDINGS: ClassVar[list[BindingType]] = [
         Binding("enter", "select_cursor", "Select", show=False),
         Binding("up", "cursor_up", "Cursor Up", show=False),
         Binding("down", "cursor_down", "Cursor Down", show=False),
     ]
+    """
+    | Key(s) | Action | Description |
+    | :- | :- | :- |
+    | enter | [select_cursor][textual.widgets.ListView.select_cursor] | Select the current item. |
+    | up | [cursor_up][textual.widgets.ListView.cursor_up] | Move the cursor up. |
+    | down | [cursor_down][textual.widgets.ListView.cursor_down] | Move the cursor down. |
+    """
 
     index = reactive(0, always_update=True)
 

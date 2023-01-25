@@ -37,6 +37,16 @@ class DirectoryTree(Tree[DirEntry]):
         "directory-tree--extension",
         "directory-tree--hidden",
     }
+    """
+    | Class | Description |
+    | :- | :- |
+    | `directory-tree--extension` | Target the extension of a file name. |
+    | `directory-tree--file` | Target files in the directory structure. |
+    | `directory-tree--folder` | Target folders in the directory structure. |
+    | `directory-tree--hidden` | Target hidden items in the directory structure. |
+
+    See also the [component classes for `Tree`][textual.widgets.Tree.COMPONENT_CLASSES].
+    """
 
     DEFAULT_CSS = """
     DirectoryTree > .directory-tree--folder {

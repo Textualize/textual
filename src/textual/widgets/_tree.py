@@ -14,7 +14,7 @@ from .._segment_tools import line_pad
 from .._types import MessageTarget
 from .._typing import TypeAlias
 from .._immutable_sequence_view import ImmutableSequenceView
-from ..binding import Binding
+from ..binding import Binding, BindingType
 from ..geometry import Region, Size, clamp
 from ..message import Message
 from ..reactive import reactive, var
@@ -242,11 +242,39 @@ class TreeNode(Generic[TreeDataType]):
 
 class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
-    BINDINGS = [
+    BINDINGS: ClassVar[list[BindingType]] = [
         Binding("enter", "select_cursor", "Select", show=False),
         Binding("up", "cursor_up", "Cursor Up", show=False),
         Binding("down", "cursor_down", "Cursor Down", show=False),
     ]
+    """
+    | Key(s) | Action | Description |
+    | :- | :- | :- |
+    | enter | [select_cursor][textual.widgets.Tree.select_cursor] | Select the current item. |
+    | up | [cursor_up][textual.widgets.Tree.cursor_up] | Move the cursor up. |
+    | down | [cursor_down][textual.widgets.Tree.cursor_down] | Move the cursor down. |
+    """
+
+    COMPONENT_CLASSES: ClassVar[set[str]] = {
+        "tree--label",
+        "tree--guides",
+        "tree--guides-hover",
+        "tree--guides-selected",
+        "tree--cursor",
+        "tree--highlight",
+        "tree--highlight-line",
+    }
+    """
+    | Class | Description |
+    | :- | :- |
+    | `tree--cursor` | Targets the cursor. |
+    | `tree--guides` | Targets the indentation guides. |
+    | `tree--guides-hover` | Targets the indentation guides under the cursor. |
+    | `tree--guides-selected` | Targets the indentation guides that are selected. |
+    | `tree--highlight` | Targets the highlighted items. |
+    | `tree--highlight-line` | Targets the lines under the cursor. |
+    | `tree--label` | Targets the (text) labels of the items. |
+    """
 
     DEFAULT_CSS = """
     Tree {
@@ -285,16 +313,6 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     }
 
     """
-
-    COMPONENT_CLASSES: ClassVar[set[str]] = {
-        "tree--label",
-        "tree--guides",
-        "tree--guides-hover",
-        "tree--guides-selected",
-        "tree--cursor",
-        "tree--highlight",
-        "tree--highlight-line",
-    }
 
     show_root = reactive(True)
     """bool: Show the root of the tree."""

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import ClassVar
 
 from rich.cells import cell_len, get_character_cell_size
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
@@ -8,7 +9,7 @@ from rich.text import Text
 
 from .. import events
 from .._segment_tools import line_crop
-from ..binding import Binding
+from ..binding import Binding, BindingType
 from ..geometry import Size
 from ..message import Message
 from ..reactive import reactive
@@ -53,6 +54,35 @@ class _InputRenderable:
 class Input(Widget, can_focus=True):
     """A text input widget."""
 
+    BINDINGS: ClassVar[list[BindingType]] = [
+        Binding("left", "cursor_left", "cursor left", show=False),
+        Binding("right", "cursor_right", "cursor right", show=False),
+        Binding("backspace", "delete_left", "delete left", show=False),
+        Binding("home", "home", "home", show=False),
+        Binding("end", "end", "end", show=False),
+        Binding("ctrl+d", "delete_right", "delete right", show=False),
+        Binding("enter", "submit", "submit", show=False),
+    ]
+    """
+    | Key(s) | Action | Description |
+    | :- | :- | :- |
+    | left | [cursor_left][textual.widgets.Input.cursor_left] | Move the cursor left. |
+    | right | [cursor_right][textual.widgets.Input.cursor_right] | Move the cursor right. |
+    | backspace | [delete_left][textual.widgets.Input.delete_left] | Delete the character to the left of the cursor. |
+    | home | [home][textual.widgets.Input.home] | Go to the beginning of the input. |
+    | end | [end][textual.widgets.Input.end] | Go to the end of the input. |
+    | ctrl+d | [delete_right][textual.widgets.Input.delete_right] | Delete the character to the right of the cursor. |
+    | enter | [submit][textual.widgets.Input.submit] | Submit the current value of the input. |
+    """
+
+    COMPONENT_CLASSES: ClassVar[set[str]] = {"input--cursor", "input--placeholder"}
+    """
+    | Class | Description |
+    | :- | :- |
+    | `input--cursor` | Target the cursor. |
+    | `input--placeholder` | Target the placeholder text (when it exists). |
+    """
+
     DEFAULT_CSS = """
     Input {
         background: $boost;
@@ -78,18 +108,6 @@ class Input(Widget, can_focus=True):
         color: $text-disabled;
     }
     """
-
-    BINDINGS = [
-        Binding("left", "cursor_left", "cursor left", show=False),
-        Binding("right", "cursor_right", "cursor right", show=False),
-        Binding("backspace", "delete_left", "delete left", show=False),
-        Binding("home", "home", "home", show=False),
-        Binding("end", "end", "end", show=False),
-        Binding("ctrl+d", "delete_right", "delete right", show=False),
-        Binding("enter", "submit", "submit", show=False),
-    ]
-
-    COMPONENT_CLASSES = {"input--cursor", "input--placeholder"}
 
     cursor_blink = reactive(True)
     value = reactive("", layout=True, init=False)
