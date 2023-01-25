@@ -13,8 +13,12 @@ from ..scrollbar import ScrollBarRender
 
 
 class Checkbox(Widget, can_focus=True):
-    """A checkbox widget. Represents a boolean value. Can be toggled by clicking
-    on it or by pressing the enter key or space bar while it has focus.
+    """A checkbox widget that represents a boolean value.
+
+    Can be toggled by clicking on it or through its [bindings][textual.widgets.Checkbox.BINDINGS].
+
+    The checkbox widget also contains [component classes][textual.widgets.Checkbox.COMPONENT_CLASSES]
+    that enable more customization.
     """
 
     DEFAULT_CSS = """
@@ -49,9 +53,14 @@ class Checkbox(Widget, can_focus=True):
     }
     """
 
-    BINDINGS = [
-        Binding("enter,space", "toggle", "toggle", show=False),
+    BINDINGS: list[Binding] = [
+        Binding("enter,space", "toggle", "Toggle the checkbox status.", show=False),
     ]
+    """
+    | Key(s) | Action | Description |
+    | :- | :- | :- |
+    | enter,space | [toggle][textual.widgets.Checkbox.toggle] | Toggle the checkbox status. |
+    """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
         "checkbox--switch",

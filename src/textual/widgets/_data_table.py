@@ -144,6 +144,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         "datatable--highlight",
         "datatable--cursor",
     }
+    """This is now documented."""
 
     BINDINGS = [
         Binding("enter", "select_cursor", "Select", show=False),
