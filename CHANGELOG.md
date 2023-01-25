@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed stuck screen  https://github.com/Textualize/textual/issues/1632
 - Fixed relative units in `grid-rows` and `grid-columns` being computed with respect to the wrong dimension https://github.com/Textualize/textual/issues/1406
 - Programmatically setting `overflow_x`/`overflow_y` refreshes the layout correctly https://github.com/Textualize/textual/issues/1616
+- Fixed double-paste into `Input` https://github.com/Textualize/textual/issues/1657
 
 ## [0.10.1] - 2023-01-20
 
