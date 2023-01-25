@@ -25,9 +25,9 @@ class Checkbox(Widget, can_focus=True):
         Binding("enter,space", "toggle", "Toggle", show=False),
     ]
     """
-    | Key(s) | Action | Description |
-    | :- | :- | :- |
-    | enter,space | [toggle][textual.widgets.Checkbox.toggle] | Toggle |
+    | Key(s) | Description |
+    | :- | :- |
+    | enter,space | Toggle the checkbox status. |
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {

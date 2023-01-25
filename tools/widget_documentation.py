@@ -24,13 +24,11 @@ def print_bindings(widget: str, bindings: list[Binding]) -> None:
     if bindings:
         print("BINDINGS")
         print('"""')
-        print("| Key(s) | Action | Description |")
-        print("| :- | :- | :- |")
+        print("| Key(s) | Description |")
+        print("| :- | :- |")
 
     for binding in bindings:
-        print(
-            f"| {binding.key} | [{binding.action}][textual.widgets.{widget}.{binding.action}] | {binding.description} |"
-        )
+        print(f"| {binding.key} | {binding.description} |")
 
     if bindings:
         print('"""')

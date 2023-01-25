@@ -94,13 +94,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Binding("left", "cursor_left", "Cursor Left", show=False),
     ]
     """
-    | Key(s) | Action | Description |
-    | :- | :- | :- |
-    | enter | [select_cursor][textual.widgets.DataTable.select_cursor] | Select cells under the cursor. |
-    | up | [cursor_up][textual.widgets.DataTable.cursor_up] | Move the cursor up. |
-    | down | [cursor_down][textual.widgets.DataTable.cursor_down] | Move the cursor down. |
-    | right | [cursor_right][textual.widgets.DataTable.cursor_right] | Move the cursor right. |
-    | left | [cursor_left][textual.widgets.DataTable.cursor_left] | Move the cursor left. |
+    | Key(s) | Description |
+    | :- | :- |
+    | enter | Select cells under the cursor. |
+    | up | Move the cursor up. |
+    | down | Move the cursor down. |
+    | right | Move the cursor right. |
+    | left | Move the cursor left. |
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {

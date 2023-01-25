@@ -64,15 +64,15 @@ class Input(Widget, can_focus=True):
         Binding("enter", "submit", "submit", show=False),
     ]
     """
-    | Key(s) | Action | Description |
-    | :- | :- | :- |
-    | left | [cursor_left][textual.widgets.Input.cursor_left] | Move the cursor left. |
-    | right | [cursor_right][textual.widgets.Input.cursor_right] | Move the cursor right. |
-    | backspace | [delete_left][textual.widgets.Input.delete_left] | Delete the character to the left of the cursor. |
-    | home | [home][textual.widgets.Input.home] | Go to the beginning of the input. |
-    | end | [end][textual.widgets.Input.end] | Go to the end of the input. |
-    | ctrl+d | [delete_right][textual.widgets.Input.delete_right] | Delete the character to the right of the cursor. |
-    | enter | [submit][textual.widgets.Input.submit] | Submit the current value of the input. |
+    | Key(s) | Description |
+    | :- | :- |
+    | left | Move the cursor left. |
+    | right | Move the cursor right. |
+    | backspace | Delete the character to the left of the cursor. |
+    | home | Go to the beginning of the input. |
+    | end | Go to the end of the input. |
+    | ctrl+d | Delete the character to the right of the cursor. |
+    | enter | Submit the current value of the input. |
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {"input--cursor", "input--placeholder"}

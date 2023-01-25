@@ -26,11 +26,11 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         Binding("down", "cursor_down", "Cursor Down", show=False),
     ]
     """
-    | Key(s) | Action | Description |
-    | :- | :- | :- |
-    | enter | [select_cursor][textual.widgets.ListView.select_cursor] | Select the current item. |
-    | up | [cursor_up][textual.widgets.ListView.cursor_up] | Move the cursor up. |
-    | down | [cursor_down][textual.widgets.ListView.cursor_down] | Move the cursor down. |
+    | Key(s) | Description |
+    | :- | :- |
+    | enter | Select the current item. |
+    | up | Move the cursor up. |
+    | down | Move the cursor down. |
     """
 
     index = reactive(0, always_update=True)

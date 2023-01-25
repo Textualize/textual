@@ -248,11 +248,11 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         Binding("down", "cursor_down", "Cursor Down", show=False),
     ]
     """
-    | Key(s) | Action | Description |
-    | :- | :- | :- |
-    | enter | [select_cursor][textual.widgets.Tree.select_cursor] | Select the current item. |
-    | up | [cursor_up][textual.widgets.Tree.cursor_up] | Move the cursor up. |
-    | down | [cursor_down][textual.widgets.Tree.cursor_down] | Move the cursor down. |
+    | Key(s) | Description |
+    | :- | :- |
+    | enter | Select the current item. |
+    | up | Move the cursor up. |
+    | down | Move the cursor down. |
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
