@@ -32,13 +32,6 @@ class DirectoryTree(Tree[DirEntry]):
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
-        "tree--label",
-        "tree--guides",
-        "tree--guides-hover",
-        "tree--guides-selected",
-        "tree--cursor",
-        "tree--highlight",
-        "tree--highlight-line",
         "directory-tree--folder",
         "directory-tree--file",
         "directory-tree--extension",
