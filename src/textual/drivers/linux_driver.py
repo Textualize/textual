@@ -146,7 +146,7 @@ class LinuxDriver(Driver):
         self._enable_bracketed_paste()
 
     def _request_terminal_sync_mode_support(self):
-        if self.console._environ.get("TERM", "") != "iTerm.app":
+        if self.console._environ.get("TERM_PROGRAM", "") != "Apple_Terminal":
             self.console.file.write("\033[?2026$p")
             self.console.file.flush()
 
