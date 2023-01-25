@@ -146,8 +146,9 @@ class LinuxDriver(Driver):
         self._enable_bracketed_paste()
 
     def _request_terminal_sync_mode_support(self):
-        self.console.file.write("\033[?2026$p")
-        self.console.file.flush()
+        if self.console._environ.get("TERM", "") != "iTerm.app":
+            self.console.file.write("\033[?2026$p")
+            self.console.file.flush()
 
     @classmethod
     def _patch_lflag(cls, attrs: int) -> int:
