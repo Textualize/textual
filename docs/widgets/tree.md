@@ -71,8 +71,23 @@ The `Tree.NodeCollapsed` message is sent when the user expands a node in the tre
 | --------- | ------------------------------------ | --------------- |
 | `node`    | [TreeNode][textual.widgets.TreeNode] | Collapsed node. |
 
+## Bindings
 
+The tree widget defines directly the following bindings:
 
+::: textual.widgets.Tree.BINDINGS
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
+
+## Component Classes
+
+The tree widget provides the following component classes:
+
+::: textual.widgets.Tree.COMPONENT_CLASSES
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
 
 ## See Also
 

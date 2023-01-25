@@ -36,6 +36,14 @@ The `DirectoryTree.FileSelected` message is sent when the user selects a file in
 | `show_guides` | `bool` | `True`  | Show guide lines between levels.                |
 | `guide_depth` | `int`  | `4`     | Amount of indentation between parent and child. |
 
+## Component Classes
+
+The directory tree widget provides the following component classes:
+
+::: textual.widgets.DirectoryTree.COMPONENT_CLASSES
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
 
 ## See Also
 

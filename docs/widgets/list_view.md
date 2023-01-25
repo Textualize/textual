@@ -63,6 +63,14 @@ or by clicking on it.
 | --------- | ---------- | --------------------------- |
 | `item`    | `ListItem` | The item that was selected. |
 
+## Bindings
+
+The list view widget defines directly the following bindings:
+
+::: textual.widgets.ListView.BINDINGS
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
 
 ## See Also
 

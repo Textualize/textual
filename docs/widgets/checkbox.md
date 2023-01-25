@@ -46,11 +46,27 @@ The `Checkbox.Changed` message is sent when the checkbox is toggled.
 | --------- | ------ | ------------------------------ |
 | `value`   | `bool` | The new value of the checkbox. |
 
+## Bindings
+
+The checkbox widget defines directly the following bindings:
+
+::: textual.widgets.Checkbox.BINDINGS
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
+
+## Component Classes
+
+The checkbox widget provides the following component classes:
+
+::: textual.widgets.Checkbox.COMPONENT_CLASSES
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
+
 ## Additional Notes
 
 - To remove the spacing around a checkbox, set `border: none;` and `padding: 0;`.
-- The `.checkbox--switch` component class can be used to change the color and background of the switch.
-- When focused, the ++enter++ or ++space++ keys can be used to toggle the checkbox.
 
 ## See Also
 

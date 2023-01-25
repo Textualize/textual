@@ -32,6 +32,15 @@ widget. Notice how the `Footer` automatically displays the keybinding.
 
 This widget sends no messages.
 
+## Component Classes
+
+The footer widget provides the following component classes:
+
+::: textual.widgets.Footer.COMPONENT_CLASSES
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
+
 ## Additional Notes
 
 * You can prevent keybindings from appearing in the footer by setting the `show` argument of the `Binding` to `False`.

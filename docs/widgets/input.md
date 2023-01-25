@@ -57,6 +57,23 @@ The `Input.Submitted` message is sent when you press ++enter++ with the text fie
 | --------- | ----- | -------------------------------- |
 | `value`   | `str` | The new value in the text input. |
 
+## Bindings
+
+The input widget defines directly the following bindings:
+
+::: textual.widgets.Input.BINDINGS
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
+
+## Component Classes
+
+The input widget provides the following component classes:
+
+::: textual.widgets.Input.COMPONENT_CLASSES
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
 
 ## Additional Notes
 
