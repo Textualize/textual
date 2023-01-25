@@ -13,10 +13,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added an optional `collapse_all` parameter to `TreeNode.collapse` https://github.com/Textualize/textual/issues/1430
 - Added an optional `toggle_all` parameter to `TreeNode.toggle` https://github.com/Textualize/textual/issues/1430
 
+### Changed
+
+- Breaking change: `TreeNode` can no longer be imported from `textual.widgets`; it is now available via `from textual.widgets.tree import TreeNode`. https://github.com/Textualize/textual/pull/1637
+
+
 ### Fixed
 
 - Fixed stuck screen  https://github.com/Textualize/textual/issues/1632
 - Fixed relative units in `grid-rows` and `grid-columns` being computed with respect to the wrong dimension https://github.com/Textualize/textual/issues/1406
+- Programmatically setting `overflow_x`/`overflow_y` refreshes the layout correctly https://github.com/Textualize/textual/issues/1616
+- Fixed double-paste into `Input` https://github.com/Textualize/textual/issues/1657
 
 ## [0.10.1] - 2023-01-20
 
