@@ -120,7 +120,7 @@ class XTermParser(Parser[events.Event]):
                 pasted_text = "".join(paste_buffer[:-1])
                 # Note the removal of NUL characters: https://github.com/Textualize/textual/issues/1661
                 on_token(
-                    events.Paste(self.sender, text=pasted_text.replace("\x000", ""))
+                    events.Paste(self.sender, text=pasted_text.replace("\x00", ""))
                 )
                 paste_buffer.clear()
 
