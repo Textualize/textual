@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import functools
 from dataclasses import dataclass, field
 from itertools import chain, zip_longest
-from typing import ClassVar, Generic, Iterable, TypeVar, cast, NamedTuple
+from typing import ClassVar, Generic, Iterable, TypeVar, cast, NamedTuple, Callable
 
 import rich.repr
 from rich.console import RenderableType
@@ -36,6 +37,7 @@ class CellDoesNotExist(Exception):
     pass
 
 
+@functools.total_ordering
 class StringKey:
     value: str | None
 
@@ -51,6 +53,11 @@ class StringKey:
         # Strings will match Keys containing the same string value.
         # Otherwise, you'll need to supply the exact same key object.
         return hash(self) == hash(other)
+
+    def __lt__(self, other):
+        if isinstance(other, str):
+            return self.value < other
+        return self.value < other.value
 
 
 class RowKey(StringKey):
@@ -364,7 +371,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             # Refresh the old and the new cell, and emit the appropriate
             # message to tell users of the newly highlighted row/cell/column.
             if self.cursor_type == "cell":
+                print(f"refreshing {old_coordinate}")
                 self.refresh_cell(*old_coordinate)
+                print(f"highlighting {new_coordinate}")
                 self._highlight_cell(new_coordinate)
             elif self.cursor_type == "row":
                 self.refresh_row(old_coordinate.row)
@@ -797,7 +806,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         column_key = self._column_locations.get_key(column_index)
         cell_cache_key = (row_key, column_key, style, cursor, hover, self._update_count)
         if cell_cache_key not in self._cell_render_cache:
-            style += Style.from_meta({"row": row_index, "column": column_index})
+            if not is_header_row:
+                style += Style.from_meta(
+                    {"row_key": row_key.value, "column_key": column_key.value}
+                )
             height = self.header_height if is_header_row else self.rows[row_key].height
             cell = self._get_row_renderables(row_index)[column_index]
             lines = self.app.console.render_lines(
@@ -1019,7 +1031,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         meta = event.style.meta
         if meta and self.show_cursor and self.cursor_type != "none":
             try:
-                self.hover_cell = Coordinate(meta["row"], meta["column"])
+                row_key = meta["row_key"]
+                row_index = self._row_locations.get(row_key)
+                column_key = meta["column_key"]
+                column_index = self._column_locations.get(column_key)
+                # print(row_key, column_key, row_index, column_index)
+                self.hover_cell = Coordinate(row_index, column_index)
             except KeyError:
                 pass
 
@@ -1035,6 +1052,20 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             for column in self._ordered_columns[: self.fixed_columns]
         )
         return Spacing(top, 0, 0, left)
+
+    def sort_columns(
+        self, key: Callable[[ColumnKey | str], str] = None, reverse: bool = False
+    ) -> None:
+        ordered_keys = sorted(self.columns.keys(), key=key, reverse=reverse)
+        self.cursor_cell = Coordinate(0, 0)
+        self.hover_cell = Coordinate(0, 0)
+        self.columns = {key: self.columns.get(key) for key in ordered_keys}
+        self._column_locations = TwoWayDict(
+            {key: new_index for new_index, key in enumerate(ordered_keys)}
+        )
+        self._update_count += 1
+        self._clear_caches()
+        self.refresh()
 
     def _scroll_cursor_into_view(self, animate: bool = False) -> None:
         fixed_offset = self._get_fixed_offset()
@@ -1076,7 +1107,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self._emit_selected_message()
             meta = self.get_style_at(event.x, event.y).meta
             if meta:
-                self.cursor_cell = Coordinate(meta["row"], meta["column"])
+                row_key = meta["row_key"]
+                row_index = self._row_locations.get(row_key)
+                column_key = meta["column_key"]
+                column_index = self._column_locations.get(column_key)
+                self.cursor_cell = Coordinate(row_index, column_index)
                 self._scroll_cursor_into_view(animate=True)
                 event.stop()
 
@@ -1105,6 +1140,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "column"):
             self.cursor_cell = self.cursor_cell.right()
+            print(self.cursor_cell)
             self._scroll_cursor_into_view(animate=True)
         else:
             super().action_scroll_right()
