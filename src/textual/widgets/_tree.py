@@ -171,13 +171,13 @@ class TreeNode(Generic[TreeDataType]):
             for child in self.children:
                 child._expand(expand_all)
 
-    def expand(self, *, expand_all: bool = False) -> None:
+    def expand(self, *, all: bool = False) -> None:
         """Expand a node (show its children).
 
         Args:
-            expand_all: If `True` expand all offspring at all depths.
+            all: If `True` expand all offspring at all depths.
         """
-        self._expand(expand_all)
+        self._expand(all)
         self._tree._invalidate()
 
     def _collapse(self, collapse_all: bool) -> None:
@@ -192,26 +192,26 @@ class TreeNode(Generic[TreeDataType]):
                 child._collapse(collapse_all)
         self._updates += 1
 
-    def collapse(self, *, collapse_all: bool = False) -> None:
+    def collapse(self, *, all: bool = False) -> None:
         """Collapse the node (hide children).
 
         Args:
-            collapse_all: If `True` collapse all offspring at all depths.
+            all: If `True` collapse all offspring at all depths.
         """
-        self._collapse(collapse_all)
+        self._collapse(all)
         self._tree._invalidate()
 
-    def toggle(self, *, toggle_all: bool = False) -> None:
+    def toggle(self, *, all: bool = False) -> None:
         """Toggle the expanded state.
 
         Args:
-            toggle_all: If `True` set the expanded state of all offspring
+            all: If `True` set the expanded state of all offspring
                 nodes at all depths to match this node's toggled state.
         """
         if self._expanded:
-            self.collapse(collapse_all=toggle_all)
+            self.collapse(all=all)
         else:
-            self.expand(expand_all=toggle_all)
+            self.expand(all=all)
 
     @property
     def label(self) -> TextType:
