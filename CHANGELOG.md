@@ -9,9 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added optional `TreeNode.expand_all` https://github.com/Textualize/textual/issues/1430
-- Added optional `TreeNode.collapse_all` https://github.com/Textualize/textual/issues/1430
-- Added optional `TreeNode.toggle_all` https://github.com/Textualize/textual/issues/1430
+- Added `TreeNode.expand_all` https://github.com/Textualize/textual/issues/1430
+- Added `TreeNode.collapse_all` https://github.com/Textualize/textual/issues/1430
+- Added `TreeNode.toggle_all` https://github.com/Textualize/textual/issues/1430
 
 ### Changed
 
