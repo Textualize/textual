@@ -1,13 +1,12 @@
 import pytest
-import rich
 
 from textual._node_list import DuplicateIds
 from textual.app import App, ComposeResult
 from textual.css.errors import StyleValueError
 from textual.css.query import NoMatches
-from textual.dom import DOMNode
 from textual.geometry import Size
 from textual.widget import Widget, MountError
+from textual.widgets import Label
 
 
 @pytest.mark.parametrize(
@@ -157,3 +156,28 @@ def test_widget_mount_ids_must_be_unique_mounting_multiple_calls(parent):
     parent.mount(widget1)
     with pytest.raises(DuplicateIds):
         parent.mount(widget2)
+
+
+# Regression test for https://github.com/Textualize/textual/issues/1634
+async def test_remove():
+    class RemoveMeLabel(Label):
+        async def on_mount(self) -> None:
+            await self.action("app.remove_all")
+
+    class Container(Widget):
+        async def clear(self) -> None:
+            await self.query("*").remove()
+
+    class RemoveApp(App):
+        def compose(self) -> ComposeResult:
+            yield Container(RemoveMeLabel())
+
+        async def action_remove_all(self) -> None:
+            await self.query_one(Container).clear()
+            self.exit(123)
+
+    app = RemoveApp()
+    async with app.run_test() as pilot:
+        await pilot.press("r")
+        await pilot.pause()
+    assert app.return_value == 123
