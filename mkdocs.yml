@@ -251,6 +251,7 @@ plugins:
 - search:
 - autorefs:
 - mkdocstrings:
+    custom_templates: docs/_templates
     default_handler: python
     handlers:
         python:
