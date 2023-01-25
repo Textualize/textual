@@ -315,7 +315,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         row_index, column_index = coordinate
         row_key = self._row_locations.get_key(row_index)
         column_key = self._column_locations.get_key(column_index)
-        print(column_index, column_key)
         try:
             cell_value = self.data[row_key][column_key]
         except KeyError:
@@ -372,9 +371,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             # Refresh the old and the new cell, and emit the appropriate
             # message to tell users of the newly highlighted row/cell/column.
             if self.cursor_type == "cell":
-                print(f"refreshing {old_coordinate}")
                 self.refresh_cell(*old_coordinate)
-                print(f"highlighting {new_coordinate}")
                 self._highlight_cell(new_coordinate)
             elif self.cursor_type == "row":
                 self.refresh_row(old_coordinate.row)
@@ -388,7 +385,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.refresh_cell(*coordinate)
         try:
             cell_value = self.get_cell_value(coordinate)
-            print(f"got cell_value = {cell_value}")
         except CellDoesNotExist:
             # The cell may not exist e.g. when the table is cleared.
             # In that case, there's nothing for us to do here.
@@ -450,7 +446,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Called to recalculate the virtual (scrollable) size."""
         for row_index in new_rows:
             for column, renderable in zip(
-                self.columns.values(), self._get_row_renderables(row_index)
+                self._ordered_columns, self._get_row_renderables(row_index)
             ):
                 content_width = measure(self.app.console, renderable, 1)
                 column.content_width = max(column.content_width, content_width)
@@ -475,12 +471,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         row = self.rows[row_key]
 
         # The x-coordinate of a cell is the sum of widths of cells to the left.
-        print(self._ordered_columns)
         x = sum(column.render_width for column in self._ordered_columns[:column_index])
         column_key = self._column_locations.get_key(column_index)
         width = self.columns[column_key].render_width
         height = row.height
-        y = row.y
+        y = row.y  # TODO: This value cannot be trusted since we can sort the rows
         if self.show_header:
             y += self.header_height
         cell_region = Region(x, y, width, height)
@@ -496,7 +491,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         row_key = self._row_locations.get_key(row_index)
         row = rows[row_key]
         row_width = sum(column.render_width for column in self.columns.values())
-        y = row.y
+        y = row.y  # TODO: This value cannot be trusted since we can sort the rows
         if self.show_header:
             y += self.header_height
         row_region = Region(0, y, row_width, row.height)
@@ -684,7 +679,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if row_index < 0 or column_index < 0:
             return
         region = self._get_cell_region(row_index, column_index)
-        print(f"cell_region = {region}")
         self._refresh_region(region)
 
     def refresh_row(self, row_index: int) -> None:
@@ -739,6 +733,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             List of renderables
         """
 
+        # TODO:  We have quite a few back and forward key/index conversions, could probably reduce them
         ordered_columns = self._ordered_columns
         if row_index == -1:
             row = [column.label for column in ordered_columns]
@@ -747,6 +742,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         # Ensure we order the cells in the row based on current column ordering
         row_key = self._row_locations.get_key(row_index)
         cell_mapping: dict[ColumnKey, CellType] = self.data.get(row_key)
+        print(row_index, cell_mapping.values())
+
         ordered_row: list[CellType] = []
         for column in ordered_columns:
             cell = cell_mapping[column.key]
@@ -814,6 +811,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 style += Style.from_meta({"row": row_index, "column": column_index})
             height = self.header_height if is_header_row else self.rows[row_key].height
             cell = self._get_row_renderables(row_index)[column_index]
+            print(f"CELL = {cell}")
             lines = self.app.console.render_lines(
                 Padding(cell, (0, 1)),
                 self.app.console.options.update_dimensions(width, height),
@@ -1056,14 +1054,20 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self, key: Callable[[ColumnKey | str], str] = None, reverse: bool = False
     ) -> None:
         ordered_keys = sorted(self.columns.keys(), key=key, reverse=reverse)
-        self.cursor_cell = Coordinate(0, 0)
-        self.hover_cell = Coordinate(0, 0)
-        self.columns = {key: self.columns.get(key) for key in ordered_keys}
         self._column_locations = TwoWayDict(
             {key: new_index for new_index, key in enumerate(ordered_keys)}
         )
         self._update_count += 1
-        self._clear_caches()
+        self.refresh()
+
+    def sort_rows(
+        self, key: Callable[[RowKey | str], str] = None, reverse: bool = False
+    ):
+        ordered_keys = sorted(self.rows.keys(), key=key, reverse=reverse)
+        self._row_locations = TwoWayDict(
+            {key: new_index for new_index, key in enumerate(ordered_keys)}
+        )
+        self._update_count += 1
         self.refresh()
 
     def _scroll_cursor_into_view(self, animate: bool = False) -> None:
@@ -1135,7 +1139,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "column"):
             self.cursor_cell = self.cursor_cell.right()
-            print(self.cursor_cell)
             self._scroll_cursor_into_view(animate=True)
         else:
             super().action_scroll_right()
