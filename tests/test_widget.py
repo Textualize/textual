@@ -181,4 +181,3 @@ async def test_remove():
         await pilot.press("r")
         await pilot.pause()
     assert app.return_value == 123
-    assert True
