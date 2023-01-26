@@ -826,6 +826,7 @@ class App(Generic[ReturnType], DOMNode):
                 await wait_for_idle(0)
 
         await app._animator.wait_for_idle()
+        await wait_for_idle(0)
 
     @asynccontextmanager
     async def run_test(
