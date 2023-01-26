@@ -34,14 +34,17 @@ class Pilot(Generic[ReturnType]):
         if keys:
             await self._app._press_keys(keys)
 
-    async def pause(self, delay: float = 50 / 1000) -> None:
+    async def pause(self, delay: float | None = None) -> None:
         """Insert a pause.
 
         Args:
-            delay: Seconds to pause. Defaults to 50ms.
+            delay: Seconds to pause, or None to wait for cpu idle. Defaults to None.
         """
         # These sleep zeros, are to force asyncio to give up a time-slice,
-        await asyncio.sleep(delay)
+        if delay is None:
+            await wait_for_idle(0)
+        else:
+            await asyncio.sleep(delay)
 
     async def wait_for_animation(self) -> None:
         """Wait for any animation to complete."""
