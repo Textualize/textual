@@ -117,7 +117,6 @@ class Row:
 
     key: RowKey
     height: int
-    y: int
     cell_renderables: list[RenderableType] = field(default_factory=list)
 
 
@@ -606,13 +605,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             column.key: cell
             for column, cell in zip_longest(self._ordered_columns, cells)
         }
-        self.rows[row_key] = Row(row_key, height, self._line_no)
-
-        # for line_no in range(height):
-        #     self._y_offsets.append((row_key, line_no))
-
-        self._line_no += height
-
+        self.rows[row_key] = Row(row_key, height)
         self._new_rows.add(row_index)
         self._require_update_dimensions = True
         self.cursor_cell = self.cursor_cell
@@ -754,7 +747,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         # Ensure we order the cells in the row based on current column ordering
         row_key = self._row_locations.get_key(row_index)
         cell_mapping: dict[ColumnKey, CellType] = self.data.get(row_key)
-        print(row_index, cell_mapping.values())
 
         ordered_row: list[CellType] = []
         for column in ordered_columns:
@@ -823,7 +815,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 style += Style.from_meta({"row": row_index, "column": column_index})
             height = self.header_height if is_header_row else self.rows[row_key].height
             cell = self._get_row_renderables(row_index)[column_index]
-            print(f"CELL = {cell}")
             lines = self.app.console.render_lines(
                 Padding(cell, (0, 1)),
                 self.app.console.options.update_dimensions(width, height),

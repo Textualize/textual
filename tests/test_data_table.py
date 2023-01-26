@@ -165,7 +165,7 @@ async def test_add_rows_user_defined_keys():
         third_row = {key_a: ROWS[2][0], key_b: ROWS[2][1]}
         assert table.data[auto_key] == third_row
 
-        first_row = Row(algernon_key, height=1, y=0)
+        first_row = Row(algernon_key, height=1)
         assert table.rows[algernon_key] == first_row
         assert table.rows["algernon"] == first_row
 
