@@ -297,20 +297,25 @@ class Input(Widget, can_focus=True):
             self.cursor_position += len(text)
 
     def action_cursor_left(self) -> None:
+        """Move the cursor one position to the left."""
         self.cursor_position -= 1
 
     def action_cursor_right(self) -> None:
+        """Move the cursor one position to the right."""
         self.cursor_position += 1
 
     def action_home(self) -> None:
+        """Move the cursor to the start of the input."""
         self.cursor_position = 0
 
     def action_end(self) -> None:
+        """Move the cursor to the end of the input."""
         self.cursor_position = len(self.value)
 
     _WORD_START = re.compile(r"(?<=\W)\w")
 
     def action_cursor_left_word(self) -> None:
+        """Move the cursor left to the start of a word."""
         try:
             *_, hit = re.finditer(self._WORD_START, self.value[: self.cursor_position])
         except ValueError:
@@ -319,11 +324,13 @@ class Input(Widget, can_focus=True):
             self.cursor_position = hit.start()
 
     def action_cursor_right_word(self) -> None:
+        """Move the cursor right to the start of a word."""
         hit = re.search(self._WORD_START, self.value[self.cursor_position :])
         if hit is not None:
             self.cursor_position += hit.start()
 
     def action_delete_right(self) -> None:
+        """Delete one character at the current cursor position."""
         value = self.value
         delete_position = self.cursor_position
         before = value[:delete_position]
@@ -332,10 +339,11 @@ class Input(Widget, can_focus=True):
         self.cursor_position = delete_position
 
     def action_delete_right_all(self) -> None:
-        """Delete from the cursor location to the end of input."""
+        """Delete the current character and all characters to the right of the cursor position."""
         self.value = self.value[: self.cursor_position]
 
     def action_delete_left(self) -> None:
+        """Delete one character to the left of the current cursor position."""
         if self.cursor_position <= 0:
             # Cursor at the start, so nothing to delete
             return
@@ -353,7 +361,7 @@ class Input(Widget, can_focus=True):
             self.cursor_position = delete_position
 
     def action_delete_left_all(self) -> None:
-        """Delete from the cursor location to the start of input."""
+        """Delete all characters to the left of the cursor position."""
         if self.cursor_position > 0:
             self.value = self.value[self.cursor_position :]
             self.cursor_position = 0
