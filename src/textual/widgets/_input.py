@@ -306,6 +306,7 @@ class Input(Widget, can_focus=True):
     def on_paste(self, event: events.Paste) -> None:
         line = event.text.splitlines()[0]
         self.insert_text_at_cursor(line)
+        event.stop()
 
     def on_click(self, event: events.Click) -> None:
         offset = event.get_content_offset(self)

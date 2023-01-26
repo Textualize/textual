@@ -23,7 +23,6 @@ if typing.TYPE_CHECKING:
     from ._static import Static
     from ._text_log import TextLog
     from ._tree import Tree
-    from ._tree_node import TreeNode
     from ._welcome import Welcome
     from ..widget import Widget
 
@@ -44,7 +43,6 @@ __all__ = [
     "Static",
     "TextLog",
     "Tree",
-    "TreeNode",
     "Welcome",
 ]
 
