@@ -1,4 +1,5 @@
-from textual.widgets import Tree, TreeNode
+from textual.widgets import Tree
+from textual.widgets.tree import TreeNode
 from rich.text import Text
 
 
