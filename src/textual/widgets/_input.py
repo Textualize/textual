@@ -83,8 +83,8 @@ class Input(Widget, can_focus=True):
         Binding("left", "cursor_left", "cursor left", show=False),
         Binding("right", "cursor_right", "cursor right", show=False),
         Binding("backspace", "delete_left", "delete left", show=False),
-        Binding("home", "home", "home", show=False),
-        Binding("end", "end", "end", show=False),
+        Binding("home,ctrl+a", "home", "home", show=False),
+        Binding("end,ctrl+e", "end", "end", show=False),
         Binding("ctrl+d", "delete_right", "delete right", show=False),
         Binding("enter", "submit", "submit", show=False),
     ]
