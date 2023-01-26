@@ -1,6 +1,6 @@
 # Introduction
 
-Welcome to the [Textual](https://github.com/Textualize/textual) framework documentation. Built with ❤️ by [Textualize.io](https://www.textualize.io)
+Welcome to the [Textual](https://github.com/Textualize/textual) framework documentation.
 
 !!! tip
 
@@ -13,7 +13,7 @@ Welcome to the [Textual](https://github.com/Textualize/textual) framework docume
 
 ## What is Textual?
 
-Textual is a *Rapid Application Development* framework for Python.
+Textual is a *Rapid Application Development* framework for Python, built by [Textualize.io](https://www.textualize.io).
 
 
 Build sophisticated user interfaces with a simple Python API. Run your apps in the terminal and (*coming soon*) a web browser.
