@@ -95,6 +95,9 @@ class Input(Widget, can_focus=True):
         ),
         Binding("ctrl+u", "delete_left_all", "delete all to the left", show=False),
         Binding("delete,ctrl+d", "delete_right", "delete right", show=False),
+        Binding(
+            "ctrl+f", "delete_right_word", "delete right to start of word", show=False
+        ),
         Binding("ctrl+k", "delete_right_all", "delete all to the right", show=False),
     ]
 
@@ -340,6 +343,15 @@ class Input(Widget, can_focus=True):
         after = value[delete_position + 1 :]
         self.value = f"{before}{after}"
         self.cursor_position = delete_position
+
+    def action_delete_right_word(self) -> None:
+        """Delete the current character and all rightward to the start of the next word."""
+        after = self.value[self.cursor_position :]
+        hit = re.search(self._WORD_START, after)
+        if hit is None:
+            self.value = self.value[: self.cursor_position]
+        else:
+            self.value = f"{self.value[: self.cursor_position]}{after[hit.end()-1 :]}"
 
     def action_delete_right_all(self) -> None:
         """Delete the current character and all characters to the right of the cursor position."""
