@@ -121,6 +121,32 @@ class Input(Widget, can_focus=True):
     password = reactive(False)
     max_size: reactive[int | None] = reactive(None)
 
+    class Changed(Message, bubble=True):
+        """Value was changed.
+
+        Attributes:
+            value: The value that the input was changed to.
+            input: The `Input` widget that was changed.
+        """
+
+        def __init__(self, sender: Input, value: str) -> None:
+            super().__init__(sender)
+            self.value: str = value
+            self.input: Input = sender
+
+    class Submitted(Message, bubble=True):
+        """Sent when the enter key is pressed within an `Input`.
+
+        Attributes:
+            value: The value of the `Input` being submitted..
+            input: The `Input` widget that is being submitted.
+        """
+
+        def __init__(self, sender: Input, value: str) -> None:
+            super().__init__(sender)
+            self.value: str = value
+            self.input: Input = sender
+
     def __init__(
         self,
         value: str | None = None,
@@ -346,29 +372,3 @@ class Input(Widget, can_focus=True):
 
     async def action_submit(self) -> None:
         await self.emit(self.Submitted(self, self.value))
-
-    class Changed(Message, bubble=True):
-        """Value was changed.
-
-        Attributes:
-            value: The value that the input was changed to.
-            input: The `Input` widget that was changed.
-        """
-
-        def __init__(self, sender: Input, value: str) -> None:
-            super().__init__(sender)
-            self.value: str = value
-            self.input: Input = sender
-
-    class Submitted(Message, bubble=True):
-        """Sent when the enter key is pressed within an `Input`.
-
-        Attributes:
-            value: The value of the `Input` being submitted..
-            input: The `Input` widget that is being submitted.
-        """
-
-        def __init__(self, sender: Input, value: str) -> None:
-            super().__init__(sender)
-            self.value: str = value
-            self.input: Input = sender

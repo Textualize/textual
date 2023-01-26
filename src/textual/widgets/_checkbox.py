@@ -70,6 +70,25 @@ class Checkbox(Widget, can_focus=True):
     }
     """
 
+    value = reactive(False, init=False)
+    """The value of the checkbox; `True` for on and `False` for off."""
+
+    slider_pos = reactive(0.0)
+    """The position of the slider."""
+
+    class Changed(Message, bubble=True):
+        """Checkbox was toggled.
+
+        Attributes:
+            value: The value that the checkbox was changed to.
+            input: The `Checkbox` widget that was changed.
+        """
+
+        def __init__(self, sender: Checkbox, value: bool) -> None:
+            super().__init__(sender)
+            self.value: bool = value
+            self.input: Checkbox = sender
+
     def __init__(
         self,
         value: bool = False,
@@ -93,12 +112,6 @@ class Checkbox(Widget, can_focus=True):
             self.slider_pos = 1.0
             self._reactive_value = value
         self._should_animate = animate
-
-    value = reactive(False, init=False)
-    """The value of the checkbox; `True` for on and `False` for off."""
-
-    slider_pos = reactive(0.0)
-    """The position of the slider."""
 
     def watch_value(self, value: bool) -> None:
         target_slider_pos = 1.0 if value else 0.0
@@ -137,16 +150,3 @@ class Checkbox(Widget, can_focus=True):
         """Toggle the checkbox value. As a result of the value changing,
         a Checkbox.Changed message will be emitted."""
         self.value = not self.value
-
-    class Changed(Message, bubble=True):
-        """Checkbox was toggled.
-
-        Attributes:
-            value: The value that the checkbox was changed to.
-            input: The `Checkbox` widget that was changed.
-        """
-
-        def __init__(self, sender: Checkbox, value: bool) -> None:
-            super().__init__(sender)
-            self.value: bool = value
-            self.input: Checkbox = sender
