@@ -87,6 +87,7 @@ class Input(Widget, can_focus=True):
         Binding("end,ctrl+e", "end", "end", show=False),
         Binding("ctrl+d,delete", "delete_right", "delete right", show=False),
         Binding("enter", "submit", "submit", show=False),
+        Binding("ctrl+k", "delete_to_end", "delete to end", show=False),
     ]
 
     COMPONENT_CLASSES = {"input--cursor", "input--placeholder"}
@@ -326,6 +327,10 @@ class Input(Widget, can_focus=True):
             after = value[delete_position + 1 :]
             self.value = f"{before}{after}"
             self.cursor_position = delete_position
+
+    def action_delete_to_end(self) -> None:
+        """Delete from the cursor location to the end of input."""
+        self.value = self.value[: self.cursor_position]
 
     async def action_submit(self) -> None:
         await self.emit(self.Submitted(self, self.value))
