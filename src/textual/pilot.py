@@ -6,6 +6,7 @@ import asyncio
 from typing import Generic
 
 from .app import App, ReturnType
+from ._wait import wait_for_idle
 
 
 @rich.repr.auto(angular=True)
@@ -52,4 +53,5 @@ class Pilot(Generic[ReturnType]):
         Args:
             result: The app result returned by `run` or `run_async`.
         """
+        await wait_for_idle()
         self.app.exit(result)

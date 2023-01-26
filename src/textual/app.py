@@ -68,6 +68,7 @@ from .messages import CallbackType
 from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import Screen
+from ._wait import wait_for_idle
 from .widget import AwaitMount, Widget
 
 if TYPE_CHECKING:
@@ -796,11 +797,11 @@ class App(Generic[ReturnType], DOMNode):
         app = self
         driver = app._driver
         assert driver is not None
-        await asyncio.sleep(0.02)
+        # await asyncio.sleep(0.02)
+        await wait_for_idle(0)
         for key in keys:
             if key == "_":
-                print("(pause 50ms)")
-                await asyncio.sleep(0.05)
+                continue
             elif key.startswith("wait:"):
                 _, wait_ms = key.split(":")
                 print(f"(pause {wait_ms}ms)")
@@ -822,13 +823,8 @@ class App(Generic[ReturnType], DOMNode):
                 print(f"press {key!r} (char={char!r})")
                 key_event = events.Key(app, key, char)
                 driver.send_event(key_event)
-                # TODO: A bit of a fudge - extra sleep after tabbing to help guard against race
-                #  condition between widget-level key handling and app/screen level handling.
-                #  More information here: https://github.com/Textualize/textual/issues/1009
-                #  This conditional sleep can be removed after that issue is closed.
-                if key == "tab":
-                    await asyncio.sleep(0.05)
-                await asyncio.sleep(0.025)
+                await wait_for_idle(0)
+
         await app._animator.wait_for_idle()
 
     @asynccontextmanager
