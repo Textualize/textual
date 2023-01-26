@@ -162,6 +162,9 @@ class Button(Static, can_focus=True):
     class Pressed(Message, bubble=True):
         """Event sent when a `Button` is pressed.
 
+        Can be handled using `on_button_pressed` in a subclass of `Button` or
+        in a parent widget in the DOM.
+
         Attributes:
             button: The button that was pressed.
         """

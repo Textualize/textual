@@ -122,7 +122,10 @@ class Input(Widget, can_focus=True):
     max_size: reactive[int | None] = reactive(None)
 
     class Changed(Message, bubble=True):
-        """Value was changed.
+        """Emitted when the value changes.
+
+        Can be handled using `on_input_changed` in a subclass of `Input` or in a parent
+        widget in the DOM.
 
         Attributes:
             value: The value that the input was changed to.
@@ -135,10 +138,13 @@ class Input(Widget, can_focus=True):
             self.input: Input = sender
 
     class Submitted(Message, bubble=True):
-        """Sent when the enter key is pressed within an `Input`.
+        """Emitted when the enter key is pressed within an `Input`.
+
+        Can be handled using `on_input_submitted` in a subclass of `Input` or in a
+        parent widget in the DOM.
 
         Attributes:
-            value: The value of the `Input` being submitted..
+            value: The value of the `Input` being submitted.
             input: The `Input` widget that is being submitted.
         """
 

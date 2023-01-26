@@ -4,7 +4,7 @@ import typing
 
 from ..case import camel_to_snake
 
-# ⚠️For any new built-in Widget we create, not only do we have to import them here and add them to `__all__`,
+# For any new built-in Widget we create, not only do we have to import them here and add them to `__all__`,
 # but also to the `__init__.pyi` file in this same folder - otherwise text editors and type checkers won't
 # be able to "see" them.
 if typing.TYPE_CHECKING:

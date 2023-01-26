@@ -77,7 +77,10 @@ class Checkbox(Widget, can_focus=True):
     """The position of the slider."""
 
     class Changed(Message, bubble=True):
-        """Checkbox was toggled.
+        """Emitted when the status of the checkbox changes.
+
+        Can be handled using `on_checkbox_changed` in a subclass of `Checkbox`
+        or in a parent widget in the DOM.
 
         Attributes:
             value: The value that the checkbox was changed to.

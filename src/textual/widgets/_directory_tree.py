@@ -67,8 +67,17 @@ class DirectoryTree(Tree[DirEntry]):
     """
 
     class FileSelected(Message, bubble=True):
+        """Emitted when a file is selected.
+
+        Can be handled using `on_directory_tree_file_selected` in a subclass of
+        `DirectoryTree` or in a parent widget in the DOM.
+
+        Attributes:
+            path: The path of the file that was selected.
+        """
+
         def __init__(self, sender: MessageTarget, path: str) -> None:
-            self.path = path
+            self.path: str = path
             super().__init__(sender)
 
     def __init__(
