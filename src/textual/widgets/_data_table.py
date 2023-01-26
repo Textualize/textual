@@ -97,7 +97,6 @@ class Column:
     label: Text
     width: int = 0
     visible: bool = False
-    index: int = 0
 
     content_width: int = 0
     auto_width: bool = False
@@ -482,7 +481,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         column_key = self._column_locations.get_key(column_index)
         width = self.columns[column_key].render_width
         height = row.height
-        y = row.y  # TODO: This value cannot be trusted since we can sort the rows
+        y = sum(ordered_row.height for ordered_row in self._ordered_rows[:row_index])
         if self.show_header:
             y += self.header_height
         cell_region = Region(x, y, width, height)
@@ -498,7 +497,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         row_key = self._row_locations.get_key(row_index)
         row = rows[row_key]
         row_width = sum(column.render_width for column in self.columns.values())
-        y = row.y  # TODO: This value cannot be trusted since we can sort the rows
+        y = sum(ordered_row.height for ordered_row in self._ordered_rows[:row_index])
         if self.show_header:
             y += self.header_height
         row_region = Region(0, y, row_width, row.height)
@@ -562,7 +561,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 column_key,
                 text_label,
                 content_width,
-                index=column_index,
                 content_width=content_width,
                 auto_width=True,
             )
@@ -572,7 +570,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 text_label,
                 width,
                 content_width=content_width,
-                index=column_index,
             )
 
         self.columns[column_key] = column
