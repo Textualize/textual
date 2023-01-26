@@ -60,7 +60,7 @@ Build sophisticated user interfaces with a simple Python API. Run your apps in t
 
 
 
--   :material-scale-balance:{ .lg .middle } __Open Source, MIT__
+-   :material-scale-balance:{ .lg .middle } __Open Source__
 
     ---
 
