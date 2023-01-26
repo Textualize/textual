@@ -21,7 +21,7 @@ The example below creates a simple tree.
     --8<-- "docs/examples/widgets/tree.py"
     ```
 
-A each tree widget has a "root" attribute which is an instance of a [TreeNode][textual.widgets.tree.TreeNode]. Call [add()][textual.widgets.tree.TreeNode.add] or [add_leaf()][textual.widgets.tree,TreeNode.add_leaf] to add new nodes underneath the root. Both these methods return a TreeNode for the child, so you can add more levels.
+Tree widgets have a "root" attribute which is an instance of a [TreeNode][textual.widgets.tree.TreeNode]. Call [add()][textual.widgets.tree.TreeNode.add] or [add_leaf()][textual.widgets.tree,TreeNode.add_leaf] to add new nodes underneath the root. Both these methods return a TreeNode for the child which you can use to add additional levels.
 
 
 ## Reactive Attributes
