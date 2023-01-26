@@ -33,7 +33,7 @@ Build sophisticated user interfaces with a simple Python API. Run your apps in t
 
     ---
 
-    Low system requirements. Run Textual on a single board computer if you want to.
+    Run Textual on a single board computer if you want to.
 
 
 
