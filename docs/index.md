@@ -2,16 +2,23 @@
 
 Welcome to the [Textual](https://github.com/Textualize/textual) framework documentation. Built with ❤️ by [Textualize.io](https://www.textualize.io)
 
+!!! tip
 
-## In a hurry?
+    See the navigation links in the header or side-bars. Click the :octicons-three-bars-16: button (top left) on mobile.
 
-See the navigation links in the header or side-bars. Click the :octicons-three-bars-16: button (top left) on mobile.
 
-[Get started](./getting_started.md){ .md-button .md-button--primary } or [Tutorial](./tutorial.md){ .md-button .md-button--secondary }
+[Get started](./getting_started.md){ .md-button .md-button--primary } or go straight to the [Tutorial](./tutorial.md)
+
+
 
 ## What is Textual?
 
-Textual is a framework for building applications that run within your terminal. Text User Interfaces (TUIs) have a number of advantages over web and desktop apps.
+Textual is a *Rapid Application Development* framework for Python.
+
+
+Build sophisticated user interfaces with a simple Python API. Run your apps in the terminal and (*coming soon*) a web browser.
+
+
 
 <div class="grid cards" markdown>
 

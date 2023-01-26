@@ -21,7 +21,7 @@ The example below creates a simple tree.
     --8<-- "docs/examples/widgets/tree.py"
     ```
 
-A each tree widget has a "root" attribute which is an instance of a [TreeNode][textual.widgets.TreeNode]. Call [add()][textual.widgets.TreeNode.add] or [add_leaf()][textual.widgets.TreeNode.add_leaf] to add new nodes underneath the root. Both these methods return a TreeNode for the child, so you can add more levels.
+A each tree widget has a "root" attribute which is an instance of a [TreeNode][textual.widgets.tree.TreeNode]. Call [add()][textual.widgets.tree.TreeNode.add] or [add_leaf()][textual.widgets.tree,TreeNode.add_leaf] to add new nodes underneath the root. Both these methods return a TreeNode for the child, so you can add more levels.
 
 
 ## Reactive Attributes
@@ -43,9 +43,9 @@ The `Tree.NodeSelected` message is sent when the user selects a tree node.
 
 #### Attributes
 
-| attribute | type                                 | purpose        |
-| --------- | ------------------------------------ | -------------- |
-| `node`    | [TreeNode][textual.widgets.TreeNode] | Selected node. |
+| attribute | type                                      | purpose        |
+| --------- | ----------------------------------------- | -------------- |
+| `node`    | [TreeNode][textual.widgets.tree.TreeNode] | Selected node. |
 
 
 ### NodeExpanded
@@ -54,9 +54,9 @@ The `Tree.NodeExpanded` message is sent when the user expands a node in the tree
 
 #### Attributes
 
-| attribute | type                                 | purpose        |
-| --------- | ------------------------------------ | -------------- |
-| `node`    | [TreeNode][textual.widgets.TreeNode] | Expanded node. |
+| attribute | type                                      | purpose        |
+| --------- | ----------------------------------------- | -------------- |
+| `node`    | [TreeNode][textual.widgets.tree.TreeNode] | Expanded node. |
 
 
 ### NodeCollapsed
@@ -67,9 +67,9 @@ The `Tree.NodeCollapsed` message is sent when the user expands a node in the tre
 
 #### Attributes
 
-| attribute | type                                 | purpose         |
-| --------- | ------------------------------------ | --------------- |
-| `node`    | [TreeNode][textual.widgets.TreeNode] | Collapsed node. |
+| attribute | type                                      | purpose         |
+| --------- | ----------------------------------------- | --------------- |
+| `node`    | [TreeNode][textual.widgets.tree.TreeNode] | Collapsed node. |
 
 
 
@@ -77,4 +77,4 @@ The `Tree.NodeCollapsed` message is sent when the user expands a node in the tre
 ## See Also
 
 * [Tree][textual.widgets.Tree] code reference
-* [TreeNode][textual.widgets.TreeNode] code reference
+* [TreeNode][textual.widgets.tree.TreeNode] code reference
