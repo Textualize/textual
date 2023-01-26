@@ -90,6 +90,9 @@ class Input(Widget, can_focus=True):
         Binding("end,ctrl+e", "end", "end", show=False),
         Binding("enter", "submit", "submit", show=False),
         Binding("backspace", "delete_left", "delete left", show=False),
+        Binding(
+            "ctrl+w", "delete_left_word", "delete left to start of word", show=False
+        ),
         Binding("ctrl+u", "delete_left_all", "delete all to the left", show=False),
         Binding("delete,ctrl+d", "delete_right", "delete right", show=False),
         Binding("ctrl+k", "delete_right_all", "delete all to the right", show=False),
@@ -359,6 +362,19 @@ class Input(Widget, can_focus=True):
             after = value[delete_position + 1 :]
             self.value = f"{before}{after}"
             self.cursor_position = delete_position
+
+    def action_delete_left_word(self) -> None:
+        """Delete leftward of the cursor position to the start of a word."""
+        if self.cursor_position <= 0:
+            return
+        after = self.value[self.cursor_position :]
+        try:
+            *_, hit = re.finditer(self._WORD_START, self.value[: self.cursor_position])
+        except ValueError:
+            self.cursor_position = 0
+        else:
+            self.cursor_position = hit.start()
+        self.value = f"{self.value[: self.cursor_position]}{after}"
 
     def action_delete_left_all(self) -> None:
         """Delete all characters to the left of the cursor position."""
