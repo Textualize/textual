@@ -138,9 +138,6 @@ async def test_add_rows():
         assert table.row_count == len(ROWS)
         # Each key can be used to fetch a row from the DataTable
         assert all(key in table.data for key in row_keys)
-        # Ensure the keys are returned *in order*, and there's one for each row
-        for key, row in zip(row_keys, range(len(ROWS))):
-            assert table.rows[key].index == row
 
 
 async def test_add_rows_user_defined_keys():
@@ -168,7 +165,7 @@ async def test_add_rows_user_defined_keys():
         third_row = {key_a: ROWS[2][0], key_b: ROWS[2][1]}
         assert table.data[auto_key] == third_row
 
-        first_row = Row(algernon_key, index=0, height=1, y=0)
+        first_row = Row(algernon_key, height=1, y=0)
         assert table.rows[algernon_key] == first_row
         assert table.rows["algernon"] == first_row
 

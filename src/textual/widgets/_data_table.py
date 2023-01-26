@@ -116,7 +116,6 @@ class Row:
     """Table row."""
 
     key: RowKey
-    index: int
     height: int
     y: int
     cell_renderables: list[RenderableType] = field(default_factory=list)
@@ -607,7 +606,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             column.key: cell
             for column, cell in zip_longest(self._ordered_columns, cells)
         }
-        self.rows[row_key] = Row(row_key, row_index, height, self._line_no)
+        self.rows[row_key] = Row(row_key, height, self._line_no)
 
         # for line_no in range(height):
         #     self._y_offsets.append((row_key, line_no))
