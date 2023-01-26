@@ -320,8 +320,8 @@ class Input(Widget, can_focus=True):
             *_, hit = re.finditer(self._WORD_START, self.value[: self.cursor_position])
         except ValueError:
             self.cursor_position = 0
-            return
-        self.cursor_position = hit.start()
+        else:
+            self.cursor_position = hit.start()
 
     def action_delete_right(self) -> None:
         value = self.value
