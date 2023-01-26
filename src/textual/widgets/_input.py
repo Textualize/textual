@@ -308,7 +308,7 @@ class Input(Widget, can_focus=True):
     def action_end(self) -> None:
         self.cursor_position = len(self.value)
 
-    _WORD_START = re.compile(r"(?<=\s)\w")
+    _WORD_START = re.compile(r"(?<=\W)\w")
 
     def action_next_word(self) -> None:
         hit = re.search(self._WORD_START, self.value[self.cursor_position :])
