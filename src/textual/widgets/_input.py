@@ -311,8 +311,7 @@ class Input(Widget, can_focus=True):
     _WORD_START = re.compile(r"(?<=\s)\w")
 
     def action_next_word(self) -> None:
-        rest = self.value[self.cursor_position :]
-        hit = re.search(self._WORD_START, rest)
+        hit = re.search(self._WORD_START, self.value[self.cursor_position :])
         if hit is not None:
             self.cursor_position += hit.start()
 
