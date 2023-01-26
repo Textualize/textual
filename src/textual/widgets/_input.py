@@ -332,7 +332,9 @@ class Input(Widget, can_focus=True):
     def action_cursor_right_word(self) -> None:
         """Move the cursor right to the start of a word."""
         hit = re.search(self._WORD_START, self.value[self.cursor_position :])
-        if hit is not None:
+        if hit is None:
+            self.cursor_position = len(self.value)
+        else:
             self.cursor_position += hit.start()
 
     def action_delete_right(self) -> None:
