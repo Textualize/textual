@@ -221,6 +221,7 @@ theme:
     - navigation.tabs
     - navigation.indexes
     - navigation.tabs.sticky
+    - navigation.footer
     - content.code.annotate
     - content.code.copy
   palette:

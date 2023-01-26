@@ -4,7 +4,8 @@ from pathlib import Path
 from rich.text import Text
 
 from textual.app import App, ComposeResult
-from textual.widgets import Header, Footer, Tree, TreeNode
+from textual.widgets import Header, Footer, Tree
+from textual.widgets.tree import TreeNode
 
 
 class TreeApp(App):

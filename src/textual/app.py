@@ -46,7 +46,7 @@ from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
 from ._asyncio import create_task
 from ._callback import invoke
-from ._context import active_app
+from ._context import active_app, active_message_pump
 from ._event_broker import NoHandler, extract_handler_actions
 from ._filter import LineFilter, Monochrome
 from ._path import _make_path_object_relative
@@ -1095,8 +1095,12 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             *widgets: The widget(s) to mount.
-            before: Optional location to mount before.
-            after: Optional location to mount after.
+            before: Optional location to mount before. An `int` is the index
+                of the child to mount before, a `str` is a `query_one` query to
+                find the widget to mount before.
+            after: Optional location to mount after. An `int` is the index
+                of the child to mount after, a `str` is a `query_one` query to
+                find the widget to mount after.
 
         Returns:
             An awaitable object that waits for widgets to be mounted.
@@ -1113,6 +1117,7 @@ class App(Generic[ReturnType], DOMNode):
     def mount_all(
         self,
         widgets: Iterable[Widget],
+        *,
         before: int | str | Widget | None = None,
         after: int | str | Widget | None = None,
     ) -> AwaitMount:
@@ -1120,8 +1125,12 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             widgets: An iterable of widgets.
-            before: Optional location to mount before.
-            after: Optional location to mount after.
+            before: Optional location to mount before. An `int` is the index
+                of the child to mount before, a `str` is a `query_one` query to
+                find the widget to mount before.
+            after: Optional location to mount after. An `int` is the index
+                of the child to mount after, a `str` is a `query_one` query to
+                find the widget to mount after.
 
         Returns:
             An awaitable object that waits for widgets to be mounted.
@@ -2103,7 +2112,7 @@ class App(Generic[ReturnType], DOMNode):
         """Remove nodes from DOM, and return an awaitable that awaits cleanup.
 
         Args:
-            widgets: List of nodes to remvoe.
+            widgets: List of nodes to remove.
 
         Returns:
             Awaitable that returns when the nodes have been fully removed.
@@ -2127,17 +2136,19 @@ class App(Generic[ReturnType], DOMNode):
         removed_widgets = self._detach_from_dom(widgets)
 
         finished_event = asyncio.Event()
-        create_task(
+        remove_task = create_task(
             prune_widgets_task(removed_widgets, finished_event), name="prune nodes"
         )
 
-        return AwaitRemove(finished_event)
+        await_remove = AwaitRemove(finished_event, remove_task)
+        self.call_next(await_remove)
+        return await_remove
 
     async def _prune_nodes(self, widgets: list[Widget]) -> None:
         """Remove nodes and children.
 
         Args:
-            widgets: _description_
+            widgets: Widgets to remove.
         """
         async with self._dom_lock:
             for widget in widgets:

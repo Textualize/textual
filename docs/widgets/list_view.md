@@ -64,21 +64,6 @@ or by clicking on it.
 | `item`    | `ListItem` | The item that was selected. |
 
 
-### ChildrenUpdated
-
-The `ListView.ChildrenUpdated` message is emitted when the elements in the `ListView`
-are changed (e.g. a child is added, or the list is cleared).
-
-- [x] Bubbles
-
-#### Attributes
-
-| attribute  | type             | purpose                   |
-| ---------- | ---------------- | ------------------------- |
-| `children` | `list[ListItem]` | The new ListView children |
-
-
-
 ## See Also
 
 * [ListView](../api/list_view.md) code reference
