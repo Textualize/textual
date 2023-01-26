@@ -231,7 +231,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._row_locations: TwoWayDict[RowKey, int] = TwoWayDict({})
 
         # Maps y-coordinate (from top of table) to (row_index, y-coord within row) pairs
-        self._y_offsets: list[tuple[RowKey, int]] = []
+        # self._y_offsets: list[tuple[RowKey, int]] = []
         self._row_render_cache: LRUCache[
             tuple[RowKey, int, Style, int, int], tuple[SegmentLines, SegmentLines]
         ]
@@ -256,8 +256,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.header_height = header_height
         self.show_cursor = show_cursor
         self._show_hover_cursor = False
-
-        # TODO: Could track "updates above row_index" instead - better cache efficiency
         self._update_count = 0
 
     @property
@@ -279,6 +277,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     @property
     def row_count(self) -> int:
         return len(self.rows)
+
+    @property
+    def _y_offsets(self) -> list[tuple[RowKey, int]]:
+        y_offsets: list[tuple[RowKey, int]] = []
+        for row in self._ordered_rows:
+            row_key = row.key
+            row_height = row.height
+            y_offsets += [(row_key, y) for y in range(row_height)]
+        return y_offsets
 
     def update_cell(
         self, row_key: RowKey | str, column_key: ColumnKey | str, value: CellType
@@ -593,21 +600,20 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         row_index = self.row_count
         row_key = RowKey(key)
 
-        # Map the key of this row to its current index
-        self._row_locations[row_key] = row_index
-
         # TODO: If there are no columns, do we generate them here?
         #  If we don't do this, users will be required to call add_column(s)
         #  Before they call add_row.
 
+        # Map the key of this row to its current index
+        self._row_locations[row_key] = row_index
         self.data[row_key] = {
             column.key: cell
             for column, cell in zip_longest(self._ordered_columns, cells)
         }
         self.rows[row_key] = Row(row_key, row_index, height, self._line_no)
 
-        for line_no in range(height):
-            self._y_offsets.append((row_key, line_no))
+        # for line_no in range(height):
+        #     self._y_offsets.append((row_key, line_no))
 
         self._line_no += height
 
@@ -722,6 +728,16 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         ]
         ordered_columns = [self.columns.get(key) for key in column_keys]
         return ordered_columns
+
+    @property
+    def _ordered_rows(self) -> list[Row]:
+        row_indices = range(self.row_count)
+        ordered_rows = []
+        for row_index in row_indices:
+            row_key = self._row_locations.get_key(row_index)
+            row = self.rows.get(row_key)
+            ordered_rows.append(row)
+        return ordered_rows
 
     def _get_row_renderables(self, row_index: int) -> list[RenderableType]:
         """Get renderables for the row currently at the given row index.
@@ -941,6 +957,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Returns:
             Row key and line (y) offset within cell.
         """
+
+        # TODO - the row sorting issue is here, since when we sort rows we never update the
+        #  y-offsets - lets make those offsets dynamic.
+
         header_height = self.header_height
         y_offsets = self._y_offsets
         if self.show_header:
