@@ -16,17 +16,7 @@ The example below creates a simple tree to navigate the current working director
 
 ## Messages
 
-### FileSelected
-
-The `DirectoryTree.FileSelected` message is sent when the user selects a file in the tree
-
-- [x] Bubbles
-
-#### Attributes
-
-| attribute | type  | purpose           |
-| --------- | ----- | ----------------- |
-| `path`    | `str` | Path of the file. |
+### ::: textual.widgets.DirectoryTree.FileSelected
 
 ## Reactive Attributes
 

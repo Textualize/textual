@@ -35,33 +35,9 @@ The example below shows an app with a simple `ListView`.
 
 ## Messages
 
-### Highlighted
+### ::: textual.widgets.ListView.Highlighted
 
-The `ListView.Highlighted` message is emitted when the highlight changes.
-This happens when you use the arrow keys on your keyboard and when you
-click on a list item.
-
-- [x] Bubbles
-
-#### Attributes
-
-| attribute | type       | purpose                        |
-| --------- | ---------- | ------------------------------ |
-| `item`    | `ListItem` | The item that was highlighted. |
-
-### Selected
-
-The `ListView.Selected` message is emitted when a list item is selected.
-You can select a list item by pressing ++enter++ while it is highlighted,
-or by clicking on it.
-
-- [x] Bubbles
-
-#### Attributes
-
-| attribute | type       | purpose                     |
-| --------- | ---------- | --------------------------- |
-| `item`    | `ListItem` | The item that was selected. |
+### ::: textual.widgets.ListView.Selected
 
 ## Bindings
 

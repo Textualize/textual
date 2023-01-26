@@ -32,30 +32,9 @@ The example below shows how you might create a simple form using two `Input` wid
 
 ## Messages
 
-### Changed
+### ::: textual.widgets.Input.Changed
 
-The `Input.Changed` message is sent when the value in the text input changes.
-
-- [x] Bubbles
-
-#### Attributes
-
-| attribute | type  | purpose                          |
-| --------- | ----- | -------------------------------- |
-| `value`   | `str` | The new value in the text input. |
-
-
-### Submitted
-
-The `Input.Submitted` message is sent when you press ++enter++ with the text field submitted.
-
-- [x] Bubbles
-
-#### Attributes
-
-| attribute | type  | purpose                          |
-| --------- | ----- | -------------------------------- |
-| `value`   | `str` | The new value in the text input. |
+### ::: textual.widgets.Input.Submitted
 
 ## Bindings
 

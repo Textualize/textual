@@ -32,44 +32,15 @@ A each tree widget has a "root" attribute which is an instance of a [TreeNode][t
 | `show_guides` | `bool` | `True`  | Show guide lines between levels.                |
 | `guide_depth` | `int`  | `4`     | Amount of indentation between parent and child. |
 
-
-
 ## Messages
 
-### NodeSelected
+### ::: textual.widgets.Tree.NodeCollapsed
 
-The `Tree.NodeSelected` message is sent when the user selects a tree node.
+### ::: textual.widgets.Tree.NodeExpanded
 
+### ::: textual.widgets.Tree.NodeHighlighted
 
-#### Attributes
-
-| attribute | type                                 | purpose        |
-| --------- | ------------------------------------ | -------------- |
-| `node`    | [TreeNode][textual.widgets.TreeNode] | Selected node. |
-
-
-### NodeExpanded
-
-The `Tree.NodeExpanded` message is sent when the user expands a node in the tree.
-
-#### Attributes
-
-| attribute | type                                 | purpose        |
-| --------- | ------------------------------------ | -------------- |
-| `node`    | [TreeNode][textual.widgets.TreeNode] | Expanded node. |
-
-
-### NodeCollapsed
-
-
-The `Tree.NodeCollapsed` message is sent when the user expands a node in the tree.
-
-
-#### Attributes
-
-| attribute | type                                 | purpose         |
-| --------- | ------------------------------------ | --------------- |
-| `node`    | [TreeNode][textual.widgets.TreeNode] | Collapsed node. |
+### ::: textual.widgets.Tree.NodeSelected
 
 ## Bindings
 

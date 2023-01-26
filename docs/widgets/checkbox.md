@@ -32,20 +32,6 @@ The example below shows checkboxes in various states.
 | ------- | ------ | ------- | ---------------------------------- |
 | `value` | `bool` | `False` | The default value of the checkbox. |
 
-## Messages
-
-### Pressed
-
-The `Checkbox.Changed` message is sent when the checkbox is toggled.
-
-- [x] Bubbles
-
-#### Attributes
-
-| attribute | type   | purpose                        |
-| --------- | ------ | ------------------------------ |
-| `value`   | `bool` | The new value of the checkbox. |
-
 ## Bindings
 
 The checkbox widget defines directly the following bindings:
@@ -63,6 +49,10 @@ The checkbox widget provides the following component classes:
     options:
       show_root_heading: false
       show_root_toc_entry: false
+
+## Messages
+
+### ::: textual.widgets.Checkbox.Changed
 
 ## Additional Notes
 
