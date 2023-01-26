@@ -83,16 +83,16 @@ class Input(Widget, can_focus=True):
 
     BINDINGS = [
         Binding("left", "cursor_left", "cursor left", show=False),
+        Binding("ctrl+left", "cursor_left_word", "cursor left word", show=False),
         Binding("right", "cursor_right", "cursor right", show=False),
+        Binding("ctrl+right", "cursor_right_word", "cursor right word", show=False),
         Binding("home,ctrl+a", "home", "home", show=False),
         Binding("end,ctrl+e", "end", "end", show=False),
-        Binding("ctrl+right", "next_word", "next word", show=False),
-        Binding("ctrl+left", "previous_word", "previous word", show=False),
         Binding("enter", "submit", "submit", show=False),
         Binding("backspace", "delete_left", "delete left", show=False),
+        Binding("ctrl+u", "delete_left_all", "delete all to the left", show=False),
         Binding("delete,ctrl+d", "delete_right", "delete right", show=False),
-        Binding("ctrl+k", "delete_to_end", "delete to end", show=False),
-        Binding("ctrl+u", "delete_to_start", "delete to start", show=False),
+        Binding("ctrl+k", "delete_right_all", "delete all to the right", show=False),
     ]
 
     COMPONENT_CLASSES = {"input--cursor", "input--placeholder"}
@@ -310,18 +310,18 @@ class Input(Widget, can_focus=True):
 
     _WORD_START = re.compile(r"(?<=\W)\w")
 
-    def action_next_word(self) -> None:
-        hit = re.search(self._WORD_START, self.value[self.cursor_position :])
-        if hit is not None:
-            self.cursor_position += hit.start()
-
-    def action_previous_word(self) -> None:
+    def action_cursor_left_word(self) -> None:
         try:
             *_, hit = re.finditer(self._WORD_START, self.value[: self.cursor_position])
         except ValueError:
             self.cursor_position = 0
         else:
             self.cursor_position = hit.start()
+
+    def action_cursor_right_word(self) -> None:
+        hit = re.search(self._WORD_START, self.value[self.cursor_position :])
+        if hit is not None:
+            self.cursor_position += hit.start()
 
     def action_delete_right(self) -> None:
         value = self.value
@@ -330,6 +330,10 @@ class Input(Widget, can_focus=True):
         after = value[delete_position + 1 :]
         self.value = f"{before}{after}"
         self.cursor_position = delete_position
+
+    def action_delete_right_all(self) -> None:
+        """Delete from the cursor location to the end of input."""
+        self.value = self.value[: self.cursor_position]
 
     def action_delete_left(self) -> None:
         if self.cursor_position <= 0:
@@ -348,11 +352,7 @@ class Input(Widget, can_focus=True):
             self.value = f"{before}{after}"
             self.cursor_position = delete_position
 
-    def action_delete_to_end(self) -> None:
-        """Delete from the cursor location to the end of input."""
-        self.value = self.value[: self.cursor_position]
-
-    def action_delete_to_start(self) -> None:
+    def action_delete_left_all(self) -> None:
         """Delete from the cursor location to the start of input."""
         if self.cursor_position > 0:
             self.value = self.value[self.cursor_position :]
