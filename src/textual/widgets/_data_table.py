@@ -3,7 +3,16 @@ from __future__ import annotations
 import functools
 from dataclasses import dataclass, field
 from itertools import chain, zip_longest
-from typing import ClassVar, Generic, Iterable, TypeVar, cast, NamedTuple, Callable
+from typing import (
+    ClassVar,
+    Generic,
+    Iterable,
+    TypeVar,
+    cast,
+    NamedTuple,
+    Callable,
+    TypeAlias,
+)
 
 import rich.repr
 from rich.console import RenderableType
@@ -28,6 +37,13 @@ from ..render import measure
 from ..scroll_view import ScrollView
 from ..strip import Strip
 
+CellCacheKey: TypeAlias = "tuple[RowKey, ColumnKey, Style, bool, bool, int]"
+LineCacheKey: TypeAlias = (
+    "tuple[int, int, int, int, Coordinate, Coordinate, Style, CursorType, bool, int]"
+)
+RowCacheKey: TypeAlias = (
+    "tuple[RowKey, int, Style, int, int, CursorType, bool, bool, int]"
+)
 CursorType = Literal["cell", "row", "column", "none"]
 CELL: CursorType = "cell"
 CellType = TypeVar("CellType")
@@ -217,28 +233,23 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         classes: str | None = None,
     ) -> None:
         super().__init__(name=name, id=id, classes=classes)
-
-        self.columns: dict[ColumnKey, Column] = {}
-        self.rows: dict[RowKey, Row] = {}
         self.data: dict[RowKey, dict[ColumnKey, CellType]] = {}
 
-        # Keep tracking of key -> index for rows/cols.
-        # For a given key, what is the current location of the corresponding row/col?
+        # Metadata on rows and columns in the table
+        self.columns: dict[ColumnKey, Column] = {}
+        self.rows: dict[RowKey, Row] = {}
+
+        # Keep tracking of key -> index for rows/cols. These allow us to retrieve,
+        # given a row or column key, the index that row or column is currently present at,
+        # and mean that rows and columns are location independent - they can move around.
         self._column_locations: TwoWayDict[ColumnKey, int] = TwoWayDict({})
         self._row_locations: TwoWayDict[RowKey, int] = TwoWayDict({})
 
-        # Maps y-coordinate (from top of table) to (row_index, y-coord within row) pairs
-        # self._y_offsets: list[tuple[RowKey, int]] = []
         self._row_render_cache: LRUCache[
-            tuple[RowKey, int, Style, int, int], tuple[SegmentLines, SegmentLines]
-        ]
-        self._row_render_cache = LRUCache(1000)
-        self._cell_render_cache: LRUCache[
-            tuple[int, int, Style, bool, bool], SegmentLines
-        ]
-        self._cell_render_cache = LRUCache(10000)
-        self._line_cache: LRUCache[tuple[int, int, int, int, int, int, Style], Strip]
-        self._line_cache = LRUCache(1000)
+            RowCacheKey, tuple[SegmentLines, SegmentLines]
+        ] = LRUCache(1000)
+        self._cell_render_cache: LRUCache[CellCacheKey, SegmentLines] = LRUCache(10000)
+        self._line_cache: LRUCache[LineCacheKey, Strip] = LRUCache(1000)
 
         self._line_no = 0
         self._require_update_dimensions: bool = False
