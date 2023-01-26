@@ -263,9 +263,11 @@ plugins:
               - "!^_"
               - "^__init__$"
               - "!^can_replace$"
-
     watch:
       - src/textual
+- exclude:
+    glob:
+      - "**/_template.md"
 
 
 extra_css:
