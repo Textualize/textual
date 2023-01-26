@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import re
+
 from rich.cells import cell_len, get_character_cell_size
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.highlighter import Highlighter
@@ -84,6 +86,7 @@ class Input(Widget, can_focus=True):
         Binding("right", "cursor_right", "cursor right", show=False),
         Binding("home,ctrl+a", "home", "home", show=False),
         Binding("end,ctrl+e", "end", "end", show=False),
+        Binding("ctrl+right", "next_word", "next word", show=False),
         Binding("enter", "submit", "submit", show=False),
         Binding("backspace", "delete_left", "delete left", show=False),
         Binding("delete,ctrl+d", "delete_right", "delete right", show=False),
@@ -303,6 +306,14 @@ class Input(Widget, can_focus=True):
 
     def action_end(self) -> None:
         self.cursor_position = len(self.value)
+
+    _WORD_START = re.compile(r"(?<=\s)\w")
+
+    def action_next_word(self) -> None:
+        rest = self.value[self.cursor_position :]
+        hit = re.search(self._WORD_START, rest)
+        if hit is not None:
+            self.cursor_position += hit.start()
 
     def action_delete_right(self) -> None:
         value = self.value
