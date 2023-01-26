@@ -87,6 +87,7 @@ class Input(Widget, can_focus=True):
         Binding("home,ctrl+a", "home", "home", show=False),
         Binding("end,ctrl+e", "end", "end", show=False),
         Binding("ctrl+right", "next_word", "next word", show=False),
+        Binding("ctrl+left", "previous_word", "previous word", show=False),
         Binding("enter", "submit", "submit", show=False),
         Binding("backspace", "delete_left", "delete left", show=False),
         Binding("delete,ctrl+d", "delete_right", "delete right", show=False),
@@ -314,6 +315,14 @@ class Input(Widget, can_focus=True):
         hit = re.search(self._WORD_START, rest)
         if hit is not None:
             self.cursor_position += hit.start()
+
+    def action_previous_word(self) -> None:
+        try:
+            *_, hit = re.finditer(self._WORD_START, self.value[: self.cursor_position])
+        except ValueError:
+            self.cursor_position = 0
+            return
+        self.cursor_position = hit.start()
 
     def action_delete_right(self) -> None:
         value = self.value
