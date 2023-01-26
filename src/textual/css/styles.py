@@ -247,8 +247,8 @@ class StylesBase(ABC):
 
     dock = DockProperty()
 
-    overflow_x = OverflowProperty(VALID_OVERFLOW, "hidden", layout=True, children=True)
-    overflow_y = OverflowProperty(VALID_OVERFLOW, "hidden", layout=True, children=True)
+    overflow_x = OverflowProperty(VALID_OVERFLOW, "hidden")
+    overflow_y = OverflowProperty(VALID_OVERFLOW, "hidden")
 
     layer = NameProperty()
     layers = NameListProperty()

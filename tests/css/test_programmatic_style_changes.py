@@ -27,8 +27,6 @@ class _Label(Label):
         ("grid_gutter_horizontal", 1),
         ("grid_rows", "1fr 3fr"),
         ("grid_columns", "1fr 3fr"),
-        ("overflow_x", "scroll"),
-        ("overflow_y", "scroll"),
         ("scrollbar_gutter", "stable"),
         ("align_horizontal", "right"),
         ("align_vertical", "bottom"),
