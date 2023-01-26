@@ -2,7 +2,7 @@ from asyncio import sleep
 from time import process_time, time
 
 
-SLEEP_GRANULARITY: float = 1 / 50
+SLEEP_GRANULARITY: float = 1 / 100
 SLEEP_IDLE: float = SLEEP_GRANULARITY / 2.0
 
 
