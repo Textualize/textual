@@ -797,7 +797,6 @@ class App(Generic[ReturnType], DOMNode):
         app = self
         driver = app._driver
         assert driver is not None
-        # await asyncio.sleep(0.02)
         await wait_for_idle(0)
         for key in keys:
             if key == "_":
