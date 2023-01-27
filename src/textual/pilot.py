@@ -43,8 +43,12 @@ class Pilot(Generic[ReturnType]):
         await asyncio.sleep(delay)
 
     async def wait_for_animation(self) -> None:
-        """Wait for any animation to complete."""
+        """Wait for any current animation to complete."""
         await self._app.animator.wait_for_idle()
+
+    async def wait_for_scheduled_animations(self) -> None:
+        """Wait for any current and scheduled animations to complete."""
+        await self._app.animator.wait_until_complete()
 
     async def exit(self, result: ReturnType) -> None:
         """Exit the app with the given result.
