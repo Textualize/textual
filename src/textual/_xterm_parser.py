@@ -118,7 +118,10 @@ class XTermParser(Parser[events.Event]):
                 # ESC from the closing bracket, since at that point we didn't know what
                 # the full escape code was.
                 pasted_text = "".join(paste_buffer[:-1])
-                on_token(events.Paste(self.sender, text=pasted_text))
+                # Note the removal of NUL characters: https://github.com/Textualize/textual/issues/1661
+                on_token(
+                    events.Paste(self.sender, text=pasted_text.replace("\x00", ""))
+                )
                 paste_buffer.clear()
 
             character = ESC if use_prior_escape else (yield read1())

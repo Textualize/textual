@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `TreeNode.expand_all` https://github.com/Textualize/textual/issues/1430
 - Added `TreeNode.collapse_all` https://github.com/Textualize/textual/issues/1430
 - Added `TreeNode.toggle_all` https://github.com/Textualize/textual/issues/1430
+- Added the coroutines `Animator.wait_until_complete` and `pilot.wait_for_scheduled_animations` that allow waiting for all current and scheduled animations https://github.com/Textualize/textual/issues/1658
+- Added the method `Animator.is_being_animated` that checks if an attribute of an object is being animated or is scheduled for animation
 
 ### Changed
 
@@ -21,8 +23,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed stuck screen  https://github.com/Textualize/textual/issues/1632
 - Fixed relative units in `grid-rows` and `grid-columns` being computed with respect to the wrong dimension https://github.com/Textualize/textual/issues/1406
+- Fixed bug with animations that were triggered back to back, where the second one wouldn't start https://github.com/Textualize/textual/issues/1372
+- Fixed bug with animations that were scheduled where all but the first would be skipped https://github.com/Textualize/textual/issues/1372
 - Programmatically setting `overflow_x`/`overflow_y` refreshes the layout correctly https://github.com/Textualize/textual/issues/1616
 - Fixed double-paste into `Input` https://github.com/Textualize/textual/issues/1657
+- Added a workaround for an apparent Windows Terminal paste issue https://github.com/Textualize/textual/issues/1661
 
 ## [0.10.1] - 2023-01-20
 

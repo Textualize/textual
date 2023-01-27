@@ -449,6 +449,8 @@ class Stylesheet:
         get_new_render_rule = new_render_rules.get
 
         if animate:
+            animator = node.app.animator
+            base = node.styles.base
             for key in modified_rule_keys:
                 # Get old and new render rules
                 old_render_value = get_current_render_rule(key)
@@ -456,13 +458,18 @@ class Stylesheet:
                 # Get new rule value (may be None)
                 new_value = rules.get(key)
 
-                # Check if this can / should be animated
-                if is_animatable(key) and new_render_value != old_render_value:
+                # Check if this can / should be animated. It doesn't suffice to check
+                # if the current and target values are different because a previous
+                # animation may have been scheduled but may have not started yet.
+                if is_animatable(key) and (
+                    new_render_value != old_render_value
+                    or animator.is_being_animated(base, key)
+                ):
                     transition = new_styles._get_transition(key)
                     if transition is not None:
                         duration, easing, delay = transition
-                        node.app.animator.animate(
-                            node.styles.base,
+                        animator.animate(
+                            base,
                             key,
                             new_render_value,
                             final_value=new_value,
