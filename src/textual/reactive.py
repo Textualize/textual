@@ -8,6 +8,7 @@ from typing import (
     Awaitable,
     Callable,
     Generic,
+    Type,
     TypeVar,
     Union,
 )
@@ -24,9 +25,6 @@ if TYPE_CHECKING:
     Reactable = Union[Widget, App]
 
 ReactiveType = TypeVar("ReactiveType")
-
-
-T = TypeVar("T")
 
 
 @rich.repr.auto
@@ -159,15 +157,15 @@ class Reactive(Generic[ReactiveType]):
         getattr(obj, "__watchers", {}).clear()
         getattr(obj, "__computes", []).clear()
 
-    def __set_name__(self, owner: Reactable, name: str) -> None:
+    def __set_name__(self, owner: Type[Reactable], name: str) -> None:
         # Check for compute method
         if hasattr(owner, f"compute_{name}"):
             # Compute methods are stored in a list called `__computes`
-            if not hasattr(owner, "__computes"):
+            try:
+                computes = getattr(owner, "__computes")
+            except AttributeError:
                 computes = []
                 setattr(owner, "__computes", computes)
-            else:
-                computes = getattr(owner, "__computes")
             computes.append(name)
 
         # The name of the attribute
@@ -193,7 +191,7 @@ class Reactive(Generic[ReactiveType]):
         # Call validate
         if callable(validate_function):
             value = validate_function(value)
-        # If the value has changed, or "always_update" is set
+
         if current_value != value or self._always_update:
             # Store the internal value
             setattr(obj, self.internal_name, value)
@@ -274,8 +272,6 @@ class Reactive(Generic[ReactiveType]):
         """
         _rich_traceback_guard = True
         for name, reactive in obj._reactives.items():
-            if not reactive._run_compute:
-                continue
             try:
                 compute_method = getattr(obj, f"compute_{name}")
             except AttributeError:
