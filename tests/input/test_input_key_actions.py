@@ -108,7 +108,7 @@ async def test_input_right_word_from_start() -> None:
             assert input.cursor_position == expected_at[input.id]
 
 
-async def test_input_right_word_from_home() -> None:
+async def test_input_right_word_from_end() -> None:
     """Going right one word from the end should do nothing."""
     async with InputTester().run_test() as pilot:
         for input in pilot.app.query(Input):
