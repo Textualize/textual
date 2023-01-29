@@ -69,4 +69,12 @@ async def test_input_left_from_end() -> None:
             assert input.cursor_position == (len(input.value) - 1 if input.value else 0)
 
 
+async def test_input_left_word_from_home() -> None:
+    """Going left one word from the start should do nothing."""
+    async with InputTester().run_test() as pilot:
+        for input in pilot.app.query(Input):
+            input.action_cursor_left_word()
+            assert input.cursor_position == 0
+
+
 # TODO: more tests.
