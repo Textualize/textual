@@ -77,4 +77,20 @@ async def test_input_left_word_from_home() -> None:
             assert input.cursor_position == 0
 
 
+async def test_input_left_word_from_end() -> None:
+    """Going left one word from the end should land correctly.."""
+    async with InputTester().run_test() as pilot:
+        expected_at: dict[str | None, int] = {
+            "empty": 0,
+            "single-word": 0,
+            "multi-no-punctuation": 33,
+            "multi-punctuation": 47,
+            "multi-and-hyphenated": 26,
+        }
+        for input in pilot.app.query(Input):
+            input.action_end()
+            input.action_cursor_left_word()
+            assert input.cursor_position == expected_at[input.id]
+
+
 # TODO: more tests.
