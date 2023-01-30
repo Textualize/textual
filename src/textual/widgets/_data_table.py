@@ -324,16 +324,17 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             column.auto_width = True
             console = self.app.console
             label_width = measure(console, column.label, 1)
-            content_width = max(column.content_width, label_width)
-            new_content_width = max(measure(console, value, 1), label_width)
+            content_width = column.content_width
+            new_content_width = measure(console, value, 1)
+            print(value, type(value), new_content_width)
 
             if new_content_width < content_width:
                 cells_in_column = self._get_cells_in_column(column_key)
-                column.content_width = max(
-                    measure(console, cell, 1) for cell in cells_in_column
-                )
+                cell_widths = [measure(console, cell, 1) for cell in cells_in_column]
+                print(cell_widths)
+                column.content_width = max(*[*cell_widths, label_width])
             else:
-                column.content_width = new_content_width
+                column.content_width = max(new_content_width, label_width)
 
         self._require_update_dimensions = True
         # TODO: Refresh right
@@ -343,6 +344,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         row, column = coordinate
         row_key = self._row_locations.get_key(row)
         column_key = self._column_locations.get_key(column)
+        value = Text.from_markup(value) if isinstance(value, str) else value
         self.data[row_key][column_key] = value
         self._update_count += 1
         self.refresh_cell(row, column)
@@ -652,7 +654,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         # Map the key of this row to its current index
         self._row_locations[row_key] = row_index
         self.data[row_key] = {
-            column.key: cell
+            column.key: Text(cell) if isinstance(cell, str) else cell
             for column, cell in zip_longest(self._ordered_columns, cells)
         }
         self.rows[row_key] = Row(row_key, height)
