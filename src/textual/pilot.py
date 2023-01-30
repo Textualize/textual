@@ -38,7 +38,7 @@ class Pilot(Generic[ReturnType]):
         """Insert a pause.
 
         Args:
-            delay: Seconds to pause, or None to wait for cpu idle. Defaults to None.
+            delay: Seconds to pause, or None to wait for cpu idle.
         """
         # These sleep zeros, are to force asyncio to give up a time-slice,
         if delay is None:

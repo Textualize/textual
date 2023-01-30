@@ -11,8 +11,8 @@ async def wait_for_idle(
     """Wait until the cpu isn't working very hard.
 
     Args:
-        min_sleep: Minimum time to wait. Defaults to 1/50.
-        max_sleep: Maximum time to wait. Defaults to 1.
+        min_sleep: Minimum time to wait.
+        max_sleep: Maximum time to wait.
     """
     start_time = monotonic()
 
