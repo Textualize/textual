@@ -179,6 +179,16 @@ def test_nested_auto_heights(snap_compare):
     assert snap_compare("snapshot_apps/nested_auto_heights.py", press=["1", "2", "_"])
 
 
+def test_programmatic_scrollbar_gutter_change(snap_compare):
+    """Regression test for #1607 https://github.com/Textualize/textual/issues/1607
+
+    See also tests/css/test_programmatic_style_changes.py for other related regression tests.
+    """
+    assert snap_compare(
+        "snapshot_apps/programmatic_scrollbar_gutter_change.py", press=["s"]
+    )
+
+
 # --- Other ---
 
 
