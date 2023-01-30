@@ -370,7 +370,7 @@ class App(Generic[ReturnType], DOMNode):
         self._registry: WeakSet[DOMNode] = WeakSet()
 
         self.scroll_sensitivity_x: float = 4.0
-        """Number of lines to scroll in the X direction with wheel or trackpad."""
+        """Number of columns to scroll in the X direction with wheel or trackpad."""
         self.scroll_sensitivity_y: float = 2.0
         """Number of lines to scroll in the Y direction with wheel or trackpad."""
 
