@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from rich.console import Console, RenderableType
 from rich.protocol import rich_cast
 
@@ -7,7 +9,7 @@ def measure(
     renderable: RenderableType,
     default: int,
     *,
-    container_width: int | None = None
+    container_width: int | None = None,
 ) -> int:
     """Measure a rich renderable.
 
