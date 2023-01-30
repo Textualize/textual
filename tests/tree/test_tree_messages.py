@@ -46,7 +46,6 @@ async def test_tree_node_selected_message() -> None:
     """Selecting a node should result in a selected message being emitted."""
     async with TreeApp().run_test() as pilot:
         await pilot.press("enter")
-        await pilot.pause(2 / 100)
         assert pilot.app.messages == ["NodeExpanded", "NodeSelected"]
 
 
@@ -54,7 +53,6 @@ async def test_tree_node_expanded_message() -> None:
     """Expanding a node should result in an expanded message being emitted."""
     async with TreeApp().run_test() as pilot:
         await pilot.press("enter")
-        await pilot.pause(2 / 100)
         assert pilot.app.messages == ["NodeExpanded", "NodeSelected"]
 
 
@@ -62,7 +60,6 @@ async def test_tree_node_collapsed_message() -> None:
     """Collapsing a node should result in a collapsed message being emitted."""
     async with TreeApp().run_test() as pilot:
         await pilot.press("enter", "enter")
-        await pilot.pause(4 / 100)
         assert pilot.app.messages == [
             "NodeExpanded",
             "NodeSelected",
@@ -75,5 +72,4 @@ async def test_tree_node_highlighted_message() -> None:
     """Highlighting a node should result in a highlighted message being emitted."""
     async with TreeApp().run_test() as pilot:
         await pilot.press("enter", "down")
-        await pilot.pause(2 / 100)
         assert pilot.app.messages == ["NodeExpanded", "NodeSelected", "NodeHighlighted"]

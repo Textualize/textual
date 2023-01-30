@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import re
+
 from rich.cells import cell_len, get_character_cell_size
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.highlighter import Highlighter
@@ -81,12 +83,22 @@ class Input(Widget, can_focus=True):
 
     BINDINGS = [
         Binding("left", "cursor_left", "cursor left", show=False),
+        Binding("ctrl+left", "cursor_left_word", "cursor left word", show=False),
         Binding("right", "cursor_right", "cursor right", show=False),
-        Binding("backspace", "delete_left", "delete left", show=False),
-        Binding("home", "home", "home", show=False),
-        Binding("end", "end", "end", show=False),
-        Binding("ctrl+d", "delete_right", "delete right", show=False),
+        Binding("ctrl+right", "cursor_right_word", "cursor right word", show=False),
+        Binding("home,ctrl+a", "home", "home", show=False),
+        Binding("end,ctrl+e", "end", "end", show=False),
         Binding("enter", "submit", "submit", show=False),
+        Binding("backspace", "delete_left", "delete left", show=False),
+        Binding(
+            "ctrl+w", "delete_left_word", "delete left to start of word", show=False
+        ),
+        Binding("ctrl+u", "delete_left_all", "delete all to the left", show=False),
+        Binding("delete,ctrl+d", "delete_right", "delete right", show=False),
+        Binding(
+            "ctrl+f", "delete_right_word", "delete right to start of word", show=False
+        ),
+        Binding("ctrl+k", "delete_right_all", "delete all to the right", show=False),
     ]
 
     COMPONENT_CLASSES = {"input--cursor", "input--placeholder"}
@@ -291,18 +303,42 @@ class Input(Widget, can_focus=True):
             self.cursor_position += len(text)
 
     def action_cursor_left(self) -> None:
+        """Move the cursor one position to the left."""
         self.cursor_position -= 1
 
     def action_cursor_right(self) -> None:
+        """Move the cursor one position to the right."""
         self.cursor_position += 1
 
     def action_home(self) -> None:
+        """Move the cursor to the start of the input."""
         self.cursor_position = 0
 
     def action_end(self) -> None:
+        """Move the cursor to the end of the input."""
         self.cursor_position = len(self.value)
 
+    _WORD_START = re.compile(r"(?<=\W)\w")
+
+    def action_cursor_left_word(self) -> None:
+        """Move the cursor left to the start of a word."""
+        try:
+            *_, hit = re.finditer(self._WORD_START, self.value[: self.cursor_position])
+        except ValueError:
+            self.cursor_position = 0
+        else:
+            self.cursor_position = hit.start()
+
+    def action_cursor_right_word(self) -> None:
+        """Move the cursor right to the start of a word."""
+        hit = re.search(self._WORD_START, self.value[self.cursor_position :])
+        if hit is None:
+            self.cursor_position = len(self.value)
+        else:
+            self.cursor_position += hit.start()
+
     def action_delete_right(self) -> None:
+        """Delete one character at the current cursor position."""
         value = self.value
         delete_position = self.cursor_position
         before = value[:delete_position]
@@ -310,7 +346,21 @@ class Input(Widget, can_focus=True):
         self.value = f"{before}{after}"
         self.cursor_position = delete_position
 
+    def action_delete_right_word(self) -> None:
+        """Delete the current character and all rightward to the start of the next word."""
+        after = self.value[self.cursor_position :]
+        hit = re.search(self._WORD_START, after)
+        if hit is None:
+            self.value = self.value[: self.cursor_position]
+        else:
+            self.value = f"{self.value[: self.cursor_position]}{after[hit.end()-1 :]}"
+
+    def action_delete_right_all(self) -> None:
+        """Delete the current character and all characters to the right of the cursor position."""
+        self.value = self.value[: self.cursor_position]
+
     def action_delete_left(self) -> None:
+        """Delete one character to the left of the current cursor position."""
         if self.cursor_position <= 0:
             # Cursor at the start, so nothing to delete
             return
@@ -326,6 +376,25 @@ class Input(Widget, can_focus=True):
             after = value[delete_position + 1 :]
             self.value = f"{before}{after}"
             self.cursor_position = delete_position
+
+    def action_delete_left_word(self) -> None:
+        """Delete leftward of the cursor position to the start of a word."""
+        if self.cursor_position <= 0:
+            return
+        after = self.value[self.cursor_position :]
+        try:
+            *_, hit = re.finditer(self._WORD_START, self.value[: self.cursor_position])
+        except ValueError:
+            self.cursor_position = 0
+        else:
+            self.cursor_position = hit.start()
+        self.value = f"{self.value[: self.cursor_position]}{after}"
+
+    def action_delete_left_all(self) -> None:
+        """Delete all characters to the left of the cursor position."""
+        if self.cursor_position > 0:
+            self.value = self.value[self.cursor_position :]
+            self.cursor_position = 0
 
     async def action_submit(self) -> None:
         await self.emit(self.Submitted(self, self.value))

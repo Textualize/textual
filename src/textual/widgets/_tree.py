@@ -159,23 +159,63 @@ class TreeNode(Generic[TreeDataType]):
         self._allow_expand = allow_expand
         self._updates += 1
 
-    def expand(self) -> None:
-        """Expand a node (show its children)."""
+    def _expand(self, expand_all: bool) -> None:
+        """Mark the node as expanded (its children are shown).
+
+        Args:
+            expand_all: If `True` expand all offspring at all depths.
+        """
         self._expanded = True
         self._updates += 1
+        if expand_all:
+            for child in self.children:
+                child._expand(expand_all)
+
+    def expand(self) -> None:
+        """Expand the node (show its children)."""
+        self._expand(False)
         self._tree._invalidate()
 
-    def collapse(self) -> None:
-        """Collapse the node (hide children)."""
+    def expand_all(self) -> None:
+        """Expand the node (show its children) and all those below it."""
+        self._expand(True)
+        self._tree._invalidate()
+
+    def _collapse(self, collapse_all: bool) -> None:
+        """Mark the node as collapsed (its children are hidden).
+
+        Args:
+            collapse_all: If `True` collapse all offspring at all depths.
+        """
         self._expanded = False
         self._updates += 1
+        if collapse_all:
+            for child in self.children:
+                child._collapse(collapse_all)
+
+    def collapse(self) -> None:
+        """Collapse the node (hide its children)."""
+        self._collapse(False)
+        self._tree._invalidate()
+
+    def collapse_all(self) -> None:
+        """Collapse the node (hide its children) and all those below it."""
+        self._collapse(True)
         self._tree._invalidate()
 
     def toggle(self) -> None:
-        """Toggle the expanded state."""
-        self._expanded = not self._expanded
-        self._updates += 1
-        self._tree._invalidate()
+        """Toggle the node's expanded state."""
+        if self._expanded:
+            self.collapse()
+        else:
+            self.expand()
+
+    def toggle_all(self) -> None:
+        """Toggle the node's expanded state and make all those below it match."""
+        if self._expanded:
+            self.collapse_all()
+        else:
+            self.expand_all()
 
     @property
     def label(self) -> TextType:
