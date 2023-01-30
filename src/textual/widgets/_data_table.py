@@ -297,6 +297,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def update_cell(
         self, row_key: RowKey | str, column_key: ColumnKey | str, value: CellType
     ) -> None:
+        """Update the content inside the cell with the specified row key
+        and column key.
+
+        Args:
+            row_key: The key identifying the row.
+            column_key: The key identifying the row.
+            value: The new value to put inside the cell.
+        """
         self.data[row_key][column_key] = value
         self._update_count += 1
 
