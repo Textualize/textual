@@ -795,7 +795,9 @@ class Widget(DOMNode):
         console = self.app.console
         renderable = self._render()
 
-        width = measure(console, renderable, container.width)
+        width = measure(
+            console, renderable, container.width, container_width=container.width
+        )
         if self.expand:
             width = max(container.width, width)
         if self.shrink:
