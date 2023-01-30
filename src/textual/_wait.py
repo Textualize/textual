@@ -8,7 +8,14 @@ SLEEP_IDLE: float = SLEEP_GRANULARITY / 2.0
 async def wait_for_idle(
     min_sleep: float = SLEEP_GRANULARITY, max_sleep: float = 1
 ) -> None:
-    """Wait until the cpu isn't working very hard.
+    """Wait until the process isn't working very hard.
+
+    This will compare wall clock time with process time, if the process time
+    is not advancing the same as wall clock time it means the process is in a
+    sleep state or waiting for idle.
+
+    When the process is idle it suggests that input has been processes and the state
+    is predictable enough to test.
 
     Args:
         min_sleep: Minimum time to wait.
@@ -18,10 +25,17 @@ async def wait_for_idle(
 
     while True:
         cpu_time = process_time()
+        # asyncio will pause the coroutine for a brief period
         await sleep(SLEEP_GRANULARITY)
+        # Calculate the wall clock elapsed time and the process elapsed time
         cpu_elapsed = process_time() - cpu_time
         elapsed_time = monotonic() - start_time
+
+        # If we have slept the maximum, we can break
         if elapsed_time >= max_sleep:
             break
+
+        # If we have slept the minimum and the cpu elapsed is significantly less
+        # than wall clock, then we can assume the process has finished working for now
         if elapsed_time > min_sleep and cpu_elapsed < SLEEP_IDLE:
             break
