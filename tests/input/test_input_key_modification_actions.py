@@ -30,7 +30,7 @@ async def test_delete_left_from_home() -> None:
 
 
 async def test_delete_left_from_end() -> None:
-    """Deleting left from home should do remove the last character (if there is one)."""
+    """Deleting left from end should remove the last character (if there is one)."""
     async with InputTester().run_test() as pilot:
         for input in pilot.app.query(Input):
             input.action_end()
