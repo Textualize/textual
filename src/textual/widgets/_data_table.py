@@ -296,7 +296,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return y_offsets
 
     def update_cell(
-        self, row_key: RowKey | str, column_key: ColumnKey | str, value: CellType
+        self,
+        row_key: RowKey | str,
+        column_key: ColumnKey | str,
+        value: CellType,
+        *,
+        update_width: bool = False,
     ) -> None:
         """Update the content inside the cell with the specified row key
         and column key.
@@ -305,13 +310,34 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             row_key: The key identifying the row.
             column_key: The key identifying the column.
             value: The new value to put inside the cell.
+            update_width: Whether to resize the column width to accommodate
+                for the new cell content.
         """
+        value = Text.from_markup(value) if isinstance(value, str) else value
+
         self.data[row_key][column_key] = value
         self._update_count += 1
 
-        row_index = self._row_locations.get(row_key)
-        column_index = self._column_locations.get(column_key)
-        self.refresh_cell(row_index, column_index)
+        # Recalculate widths if necessary
+        column = self.columns.get(column_key)
+        if update_width:
+            column.auto_width = True
+            console = self.app.console
+            label_width = measure(console, column.label, 1)
+            content_width = max(column.content_width, label_width)
+            new_content_width = max(measure(console, value, 1), label_width)
+
+            if new_content_width < content_width:
+                cells_in_column = self._get_cells_in_column(column_key)
+                column.content_width = max(
+                    measure(console, cell, 1) for cell in cells_in_column
+                )
+            else:
+                column.content_width = new_content_width
+
+        self._require_update_dimensions = True
+        # TODO: Refresh right
+        self.refresh()
 
     def update_coordinate(self, coordinate: Coordinate, value: CellType) -> None:
         row, column = coordinate
@@ -320,6 +346,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.data[row_key][column_key] = value
         self._update_count += 1
         self.refresh_cell(row, column)
+
+    def _get_cells_in_column(self, column_key: ColumnKey) -> Iterable[CellType]:
+        """For a given column key, return the cells in that column in order"""
+        for row_metadata in self._ordered_rows:
+            row_key = row_metadata.key
+            row = self.data.get(row_key)
+            yield row.get(column_key)
 
     def get_cell_value(self, coordinate: Coordinate) -> CellType:
         """Get the value from the cell at the given coordinate.
