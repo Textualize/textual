@@ -1,1 +1,1 @@
-::: textual.widgets.TreeNode
+::: textual.widgets.tree.TreeNode
