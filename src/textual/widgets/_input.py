@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import ClassVar
 
 import re
 
@@ -10,7 +11,7 @@ from rich.text import Text
 
 from .. import events
 from .._segment_tools import line_crop
-from ..binding import Binding
+from ..binding import Binding, BindingType
 from ..geometry import Size
 from ..message import Message
 from ..reactive import reactive
@@ -55,6 +56,51 @@ class _InputRenderable:
 class Input(Widget, can_focus=True):
     """A text input widget."""
 
+    BINDINGS: ClassVar[list[BindingType]] = [
+        Binding("left", "cursor_left", "cursor left", show=False),
+        Binding("ctrl+left", "cursor_left_word", "cursor left word", show=False),
+        Binding("right", "cursor_right", "cursor right", show=False),
+        Binding("ctrl+right", "cursor_right_word", "cursor right word", show=False),
+        Binding("backspace", "delete_left", "delete left", show=False),
+        Binding("home,ctrl+a", "home", "home", show=False),
+        Binding("end,ctrl+e", "end", "end", show=False),
+        Binding("delete,ctrl+d", "delete_right", "delete right", show=False),
+        Binding("enter", "submit", "submit", show=False),
+        Binding(
+            "ctrl+w", "delete_left_word", "delete left to start of word", show=False
+        ),
+        Binding("ctrl+u", "delete_left_all", "delete all to the left", show=False),
+        Binding(
+            "ctrl+f", "delete_right_word", "delete right to start of word", show=False
+        ),
+        Binding("ctrl+k", "delete_right_all", "delete all to the right", show=False),
+    ]
+    """
+    | Key(s) | Description |
+    | :- | :- |
+    | left | Move the cursor left. |
+    | ctrl+left | Move the cursor one word to the left. |
+    | right | Move the cursor right. |
+    | ctrl+right | Move the cursor one word to the right. |
+    | backspace | Delete the character to the left of the cursor. |
+    | home,ctrl+a | Go to the beginning of the input. |
+    | end,ctrl+e | Go to the end of the input. |
+    | delete,ctrl+d | Delete the character to the right of the cursor. |
+    | enter | Submit the current value of the input. |
+    | ctrl+w | Delete the word to the left of the cursor. |
+    | ctrl+u | Delete everything to the left of the cursor. |
+    | ctrl+f | Delete the word to the right of the cursor. |
+    | ctrl+k | Delete everything to the right of the cursor. |
+    """
+
+    COMPONENT_CLASSES: ClassVar[set[str]] = {"input--cursor", "input--placeholder"}
+    """
+    | Class | Description |
+    | :- | :- |
+    | `input--cursor` | Target the cursor. |
+    | `input--placeholder` | Target the placeholder text (when it exists). |
+    """
+
     DEFAULT_CSS = """
     Input {
         background: $boost;
@@ -81,28 +127,6 @@ class Input(Widget, can_focus=True):
     }
     """
 
-    BINDINGS = [
-        Binding("left", "cursor_left", "cursor left", show=False),
-        Binding("ctrl+left", "cursor_left_word", "cursor left word", show=False),
-        Binding("right", "cursor_right", "cursor right", show=False),
-        Binding("ctrl+right", "cursor_right_word", "cursor right word", show=False),
-        Binding("home,ctrl+a", "home", "home", show=False),
-        Binding("end,ctrl+e", "end", "end", show=False),
-        Binding("enter", "submit", "submit", show=False),
-        Binding("backspace", "delete_left", "delete left", show=False),
-        Binding(
-            "ctrl+w", "delete_left_word", "delete left to start of word", show=False
-        ),
-        Binding("ctrl+u", "delete_left_all", "delete all to the left", show=False),
-        Binding("delete,ctrl+d", "delete_right", "delete right", show=False),
-        Binding(
-            "ctrl+f", "delete_right_word", "delete right to start of word", show=False
-        ),
-        Binding("ctrl+k", "delete_right_all", "delete all to the right", show=False),
-    ]
-
-    COMPONENT_CLASSES = {"input--cursor", "input--placeholder"}
-
     cursor_blink = reactive(True)
     value = reactive("", layout=True, init=False)
     input_scroll_offset = reactive(0)
@@ -114,6 +138,38 @@ class Input(Widget, can_focus=True):
     _cursor_visible = reactive(True)
     password = reactive(False)
     max_size: reactive[int | None] = reactive(None)
+
+    class Changed(Message, bubble=True):
+        """Emitted when the value changes.
+
+        Can be handled using `on_input_changed` in a subclass of `Input` or in a parent
+        widget in the DOM.
+
+        Attributes:
+            value: The value that the input was changed to.
+            input: The `Input` widget that was changed.
+        """
+
+        def __init__(self, sender: Input, value: str) -> None:
+            super().__init__(sender)
+            self.value: str = value
+            self.input: Input = sender
+
+    class Submitted(Message, bubble=True):
+        """Emitted when the enter key is pressed within an `Input`.
+
+        Can be handled using `on_input_submitted` in a subclass of `Input` or in a
+        parent widget in the DOM.
+
+        Attributes:
+            value: The value of the `Input` being submitted.
+            input: The `Input` widget that is being submitted.
+        """
+
+        def __init__(self, sender: Input, value: str) -> None:
+            super().__init__(sender)
+            self.value: str = value
+            self.input: Input = sender
 
     def __init__(
         self,
@@ -398,29 +454,3 @@ class Input(Widget, can_focus=True):
 
     async def action_submit(self) -> None:
         await self.emit(self.Submitted(self, self.value))
-
-    class Changed(Message, bubble=True):
-        """Value was changed.
-
-        Attributes:
-            value: The value that the input was changed to.
-            input: The `Input` widget that was changed.
-        """
-
-        def __init__(self, sender: Input, value: str) -> None:
-            super().__init__(sender)
-            self.value: str = value
-            self.input: Input = sender
-
-    class Submitted(Message, bubble=True):
-        """Sent when the enter key is pressed within an `Input`.
-
-        Attributes:
-            value: The value of the `Input` being submitted..
-            input: The `Input` widget that is being submitted.
-        """
-
-        def __init__(self, sender: Input, value: str) -> None:
-            super().__init__(sender)
-            self.value: str = value
-            self.input: Input = sender

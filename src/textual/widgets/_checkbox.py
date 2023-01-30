@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from rich.console import RenderableType
 
-from ..binding import Binding
+from ..binding import Binding, BindingType
 from ..geometry import Size
 from ..message import Message
 from ..reactive import reactive
@@ -13,12 +13,33 @@ from ..scrollbar import ScrollBarRender
 
 
 class Checkbox(Widget, can_focus=True):
-    """A checkbox widget. Represents a boolean value. Can be toggled by clicking
-    on it or by pressing the enter key or space bar while it has focus.
+    """A checkbox widget that represents a boolean value.
+
+    Can be toggled by clicking on it or through its [bindings][textual.widgets.Checkbox.BINDINGS].
+
+    The checkbox widget also contains [component classes][textual.widgets.Checkbox.COMPONENT_CLASSES]
+    that enable more customization.
+    """
+
+    BINDINGS: ClassVar[list[BindingType]] = [
+        Binding("enter,space", "toggle", "Toggle", show=False),
+    ]
+    """
+    | Key(s) | Description |
+    | :- | :- |
+    | enter,space | Toggle the checkbox status. |
+    """
+
+    COMPONENT_CLASSES: ClassVar[set[str]] = {
+        "checkbox--switch",
+    }
+    """
+    | Class | Description |
+    | :- | :- |
+    | `checkbox--switch` | Targets the switch of the checkbox. |
     """
 
     DEFAULT_CSS = """
-
     Checkbox {
         border: tall transparent;
         background: $panel;
@@ -49,13 +70,27 @@ class Checkbox(Widget, can_focus=True):
     }
     """
 
-    BINDINGS = [
-        Binding("enter,space", "toggle", "toggle", show=False),
-    ]
+    value = reactive(False, init=False)
+    """The value of the checkbox; `True` for on and `False` for off."""
 
-    COMPONENT_CLASSES: ClassVar[set[str]] = {
-        "checkbox--switch",
-    }
+    slider_pos = reactive(0.0)
+    """The position of the slider."""
+
+    class Changed(Message, bubble=True):
+        """Emitted when the status of the checkbox changes.
+
+        Can be handled using `on_checkbox_changed` in a subclass of `Checkbox`
+        or in a parent widget in the DOM.
+
+        Attributes:
+            value: The value that the checkbox was changed to.
+            input: The `Checkbox` widget that was changed.
+        """
+
+        def __init__(self, sender: Checkbox, value: bool) -> None:
+            super().__init__(sender)
+            self.value: bool = value
+            self.input: Checkbox = sender
 
     def __init__(
         self,
@@ -80,12 +115,6 @@ class Checkbox(Widget, can_focus=True):
             self.slider_pos = 1.0
             self._reactive_value = value
         self._should_animate = animate
-
-    value = reactive(False, init=False)
-    """The value of the checkbox; `True` for on and `False` for off."""
-
-    slider_pos = reactive(0.0)
-    """The position of the slider."""
 
     def watch_value(self, value: bool) -> None:
         target_slider_pos = 1.0 if value else 0.0
@@ -124,16 +153,3 @@ class Checkbox(Widget, can_focus=True):
         """Toggle the checkbox value. As a result of the value changing,
         a Checkbox.Changed message will be emitted."""
         self.value = not self.value
-
-    class Changed(Message, bubble=True):
-        """Checkbox was toggled.
-
-        Attributes:
-            value: The value that the checkbox was changed to.
-            input: The `Checkbox` widget that was changed.
-        """
-
-        def __init__(self, sender: Checkbox, value: bool) -> None:
-            super().__init__(sender)
-            self.value: bool = value
-            self.input: Checkbox = sender
