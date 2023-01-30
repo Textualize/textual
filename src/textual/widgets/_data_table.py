@@ -326,13 +326,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             label_width = measure(console, column.label, 1)
             content_width = column.content_width
             new_content_width = measure(console, value, 1)
-            print(value, type(value), new_content_width)
 
             if new_content_width < content_width:
                 cells_in_column = self._get_cells_in_column(column_key)
                 cell_widths = [measure(console, cell, 1) for cell in cells_in_column]
-                print(cell_widths)
-                column.content_width = max(*[*cell_widths, label_width])
+                column.content_width = max([*cell_widths, label_width])
             else:
                 column.content_width = max(new_content_width, label_width)
 
