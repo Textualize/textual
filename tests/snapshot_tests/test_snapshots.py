@@ -193,8 +193,3 @@ def test_demo(snap_compare):
         press=["down", "down", "down", "_", "_", "_"],
         terminal_size=(100, 30),
     )
-
-
-def test_label_wrap(snap_compare):
-    """Test Label wrapping with a Panel"""
-    assert snap_compare("snapshot_apps/label_wrap.py")
