@@ -40,5 +40,4 @@ async def test_toggle_dark_in_action() -> None:
     """It should be possible to toggle dark mode with an action."""
     async with OnMountDarkSwitch().run_test() as pilot:
         await pilot.press("d")
-        await pilot.pause(2 / 100)
         assert not pilot.app.dark

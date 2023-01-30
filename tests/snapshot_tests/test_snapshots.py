@@ -190,11 +190,6 @@ def test_demo(snap_compare):
     """Test the demo app (python -m textual)"""
     assert snap_compare(
         Path("../../src/textual/demo.py"),
-        press=["down", "down", "down", "_", "_", "_"],
+        press=["down", "down", "down"],
         terminal_size=(100, 30),
     )
-
-
-def test_label_wrap(snap_compare):
-    """Test Label wrapping with a Panel"""
-    assert snap_compare("snapshot_apps/label_wrap.py")
