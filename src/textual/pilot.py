@@ -6,6 +6,7 @@ import asyncio
 from typing import Generic
 
 from .app import App, ReturnType
+from ._wait import wait_for_idle
 
 
 @rich.repr.auto(angular=True)
@@ -33,18 +34,25 @@ class Pilot(Generic[ReturnType]):
         if keys:
             await self._app._press_keys(keys)
 
-    async def pause(self, delay: float = 50 / 1000) -> None:
+    async def pause(self, delay: float | None = None) -> None:
         """Insert a pause.
 
         Args:
-            delay: Seconds to pause. Defaults to 50ms.
+            delay: Seconds to pause, or None to wait for cpu idle.
         """
         # These sleep zeros, are to force asyncio to give up a time-slice,
-        await asyncio.sleep(delay)
+        if delay is None:
+            await wait_for_idle(0)
+        else:
+            await asyncio.sleep(delay)
 
     async def wait_for_animation(self) -> None:
-        """Wait for any animation to complete."""
+        """Wait for any current animation to complete."""
         await self._app.animator.wait_for_idle()
+
+    async def wait_for_scheduled_animations(self) -> None:
+        """Wait for any current and scheduled animations to complete."""
+        await self._app.animator.wait_until_complete()
 
     async def exit(self, result: ReturnType) -> None:
         """Exit the app with the given result.
@@ -52,4 +60,5 @@ class Pilot(Generic[ReturnType]):
         Args:
             result: The app result returned by `run` or `run_async`.
         """
+        await wait_for_idle()
         self.app.exit(result)
