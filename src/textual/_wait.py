@@ -10,11 +10,11 @@ async def wait_for_idle(
 ) -> None:
     """Wait until the process isn't working very hard.
 
-    This will compare wall clock time with process time, if the process time
-    is not advancing the same as wall clock time it means the process is in a
-    sleep state or waiting for input.
+    This will compare wall clock time with process time. If the process time
+    is not advancing at the same rate as wall clock time it means the process is
+    idle (i.e. sleeping or waiting for input).
 
-    When the process is idle it suggests that input has been processes and the state
+    When the process is idle it suggests that input has been processed and the state
     is predictable enough to test.
 
     Args:
