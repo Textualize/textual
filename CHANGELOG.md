@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.11.0] - Unreleased
 
+### Added
+
+- Added more keyboard actions and related bindings to `Input` https://github.com/Textualize/textual/pull/1676
+
 ### Changed
 
 - Breaking change: `TreeNode` can no longer be imported from `textual.widgets`; it is now available via `from textual.widgets.tree import TreeNode`. https://github.com/Textualize/textual/pull/1637
