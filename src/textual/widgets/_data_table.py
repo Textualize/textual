@@ -13,6 +13,8 @@ from typing import (
     NamedTuple,
     Callable,
     Sequence,
+    Type,
+    Optional,
 )
 
 import rich.repr
@@ -255,7 +257,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._line_no = 0
         self._require_update_dimensions: bool = False
 
-        # TODO: Check what this is used for and if it needs updated to use keys
+        # TODO: This should be updated to use row keys, since sorting could
+        #  occur before code runs on idle.
         self._new_rows: set[int] = set()
 
         self.show_header = show_header
@@ -661,7 +664,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._new_rows.add(row_index)
         self._require_update_dimensions = True
         self.cursor_cell = self.cursor_cell
-        self.check_idle()
 
         # If a position has opened for the cursor to appear, where it previously
         # could not (e.g. when there's no data in the table), then a highlighted
@@ -672,6 +674,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if cell_now_available and visible_cursor:
             self._highlight_cursor()
 
+        self.check_idle()
         return row_key
 
     def add_columns(self, *labels: TextType) -> list[ColumnKey]:
@@ -996,10 +999,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Returns:
             Row key and line (y) offset within cell.
         """
-
-        # TODO - the row sorting issue is here, since when we sort rows we never update the
-        #  y-offsets - lets make those offsets dynamic.
-
         header_height = self.header_height
         y_offsets = self._y_offsets
         if self.show_header:
