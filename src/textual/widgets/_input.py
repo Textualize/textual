@@ -378,20 +378,32 @@ class Input(Widget, can_focus=True):
 
     def action_cursor_left_word(self) -> None:
         """Move the cursor left to the start of a word."""
-        try:
-            *_, hit = re.finditer(self._WORD_START, self.value[: self.cursor_position])
-        except ValueError:
-            self.cursor_position = 0
+        if self.password:
+            # This is a password field so don't give any hints about word
+            # boundaries, even during movement.
+            self.action_home()
         else:
-            self.cursor_position = hit.start()
+            try:
+                *_, hit = re.finditer(
+                    self._WORD_START, self.value[: self.cursor_position]
+                )
+            except ValueError:
+                self.cursor_position = 0
+            else:
+                self.cursor_position = hit.start()
 
     def action_cursor_right_word(self) -> None:
         """Move the cursor right to the start of a word."""
-        hit = re.search(self._WORD_START, self.value[self.cursor_position :])
-        if hit is None:
-            self.cursor_position = len(self.value)
+        if self.password:
+            # This is a password field so don't give any hints about word
+            # boundaries, even during movement.
+            self.action_end()
         else:
-            self.cursor_position += hit.start()
+            hit = re.search(self._WORD_START, self.value[self.cursor_position :])
+            if hit is None:
+                self.cursor_position = len(self.value)
+            else:
+                self.cursor_position += hit.start()
 
     def action_delete_right(self) -> None:
         """Delete one character at the current cursor position."""
@@ -404,12 +416,19 @@ class Input(Widget, can_focus=True):
 
     def action_delete_right_word(self) -> None:
         """Delete the current character and all rightward to the start of the next word."""
-        after = self.value[self.cursor_position :]
-        hit = re.search(self._WORD_START, after)
-        if hit is None:
-            self.value = self.value[: self.cursor_position]
+        if self.password:
+            # This is a password field so don't give any hints about word
+            # boundaries, even during deletion.
+            self.action_delete_right_all()
         else:
-            self.value = f"{self.value[: self.cursor_position]}{after[hit.end()-1 :]}"
+            after = self.value[self.cursor_position :]
+            hit = re.search(self._WORD_START, after)
+            if hit is None:
+                self.value = self.value[: self.cursor_position]
+            else:
+                self.value = (
+                    f"{self.value[: self.cursor_position]}{after[hit.end()-1 :]}"
+                )
 
     def action_delete_right_all(self) -> None:
         """Delete the current character and all characters to the right of the cursor position."""
@@ -437,14 +456,21 @@ class Input(Widget, can_focus=True):
         """Delete leftward of the cursor position to the start of a word."""
         if self.cursor_position <= 0:
             return
-        after = self.value[self.cursor_position :]
-        try:
-            *_, hit = re.finditer(self._WORD_START, self.value[: self.cursor_position])
-        except ValueError:
-            self.cursor_position = 0
+        if self.password:
+            # This is a password field so don't give any hints about word
+            # boundaries, even during deletion.
+            self.action_delete_left_all()
         else:
-            self.cursor_position = hit.start()
-        self.value = f"{self.value[: self.cursor_position]}{after}"
+            after = self.value[self.cursor_position :]
+            try:
+                *_, hit = re.finditer(
+                    self._WORD_START, self.value[: self.cursor_position]
+                )
+            except ValueError:
+                self.cursor_position = 0
+            else:
+                self.cursor_position = hit.start()
+                self.value = f"{self.value[: self.cursor_position]}{after}"
 
     def action_delete_left_all(self) -> None:
         """Delete all characters to the left of the cursor position."""
