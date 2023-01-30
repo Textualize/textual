@@ -41,7 +41,7 @@ LineCacheKey: TypeAlias = (
     "tuple[int, int, int, int, Coordinate, Coordinate, Style, CursorType, bool, int]"
 )
 RowCacheKey: TypeAlias = (
-    "tuple[RowKey, int, Style, int, int, CursorType, bool, bool, int]"
+    "tuple[RowKey, int, Style, Coordinate, Coordinate, CursorType, bool, bool, int]"
 )
 CursorType = Literal["cell", "row", "column", "none"]
 CELL: CursorType = "cell"
