@@ -14,7 +14,6 @@ def test_auto_pilot() -> None:
     async def auto_pilot(pilot: Pilot) -> None:
 
         await pilot.press("tab", *"foo")
-        await pilot.pause(1 / 100)
         await pilot.exit("bar")
 
     app = TestApp()
