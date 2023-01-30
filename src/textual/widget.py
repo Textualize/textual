@@ -1575,7 +1575,7 @@ class Widget(DOMNode):
 
         """
         return self.scroll_to(
-            x=self.scroll_target_x - self.app.scroll_sensitivity,
+            x=self.scroll_target_x - self.app.scroll_sensitivity_x,
             animate=animate,
             speed=speed,
             duration=duration,
@@ -1607,7 +1607,7 @@ class Widget(DOMNode):
 
         """
         return self.scroll_to(
-            x=self.scroll_target_x + self.app.scroll_sensitivity,
+            x=self.scroll_target_x + self.app.scroll_sensitivity_x,
             animate=animate,
             speed=speed,
             duration=duration,
@@ -1639,7 +1639,7 @@ class Widget(DOMNode):
 
         """
         return self.scroll_to(
-            y=self.scroll_target_y + self.app.scroll_sensitivity,
+            y=self.scroll_target_y + self.app.scroll_sensitivity_y,
             animate=animate,
             speed=speed,
             duration=duration,
@@ -1671,7 +1671,7 @@ class Widget(DOMNode):
 
         """
         return self.scroll_to(
-            y=self.scroll_target_y - +self.app.scroll_sensitivity,
+            y=self.scroll_target_y - +self.app.scroll_sensitivity_y,
             animate=animate,
             speed=speed,
             duration=duration,

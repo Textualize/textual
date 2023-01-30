@@ -369,7 +369,8 @@ class App(Generic[ReturnType], DOMNode):
         self.css_path = css_paths
         self._registry: WeakSet[DOMNode] = WeakSet()
 
-        self.scroll_sensitivity: float = 3
+        self.scroll_sensitivity_x: float = 4
+        self.scroll_sensitivity_y: float = 2
 
         self._installed_screens: WeakValueDictionary[
             str, Screen | Callable[[], Screen]
