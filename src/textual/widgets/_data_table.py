@@ -264,6 +264,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.show_cursor = show_cursor
         self._show_hover_cursor = False
         self._update_count = 0
+        self._header_row_key = RowKey()
 
     @property
     def hover_row(self) -> int:
@@ -302,7 +303,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         Args:
             row_key: The key identifying the row.
-            column_key: The key identifying the row.
+            column_key: The key identifying the column.
             value: The new value to put inside the cell.
         """
         self.data[row_key][column_key] = value
@@ -349,10 +350,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._line_cache.clear()
         self._styles_cache.clear()
 
-    def get_row_height(self, row_key: int | RowKey) -> int:
-        # TODO: Update to generate header key ourselves instead of -1,
-        #  and remember to update type signature
-        if row_key == -1:
+    def get_row_height(self, row_key: RowKey) -> int:
+        if row_key is self._header_row_key:
             return self.header_height
         return self.rows[row_key].height
 
@@ -1046,7 +1045,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self.get_row_height(row_key) for row_key in fixed_row_keys
         )
         if self.show_header:
-            fixed_rows_height += self.get_row_height(-1)
+            fixed_rows_height += self.get_row_height(self._header_row_key)
 
         if y >= fixed_rows_height:
             y += scroll_y
