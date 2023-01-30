@@ -1575,7 +1575,7 @@ class Widget(DOMNode):
 
         """
         return self.scroll_to(
-            x=self.scroll_target_x - 1,
+            x=self.scroll_target_x - self.app.scroll_sensitivity,
             animate=animate,
             speed=speed,
             duration=duration,
@@ -1607,7 +1607,7 @@ class Widget(DOMNode):
 
         """
         return self.scroll_to(
-            x=self.scroll_target_x + 1,
+            x=self.scroll_target_x + self.app.scroll_sensitivity,
             animate=animate,
             speed=speed,
             duration=duration,
@@ -1639,7 +1639,7 @@ class Widget(DOMNode):
 
         """
         return self.scroll_to(
-            y=self.scroll_target_y + 1,
+            y=self.scroll_target_y + self.app.scroll_sensitivity,
             animate=animate,
             speed=speed,
             duration=duration,
@@ -1671,7 +1671,7 @@ class Widget(DOMNode):
 
         """
         return self.scroll_to(
-            y=self.scroll_target_y - 1,
+            y=self.scroll_target_y - +self.app.scroll_sensitivity,
             animate=animate,
             speed=speed,
             duration=duration,
@@ -2478,15 +2478,25 @@ class Widget(DOMNode):
         if self._has_focus_within:
             self.app.update_styles(self)
 
-    def _on_mouse_scroll_down(self, event) -> None:
-        if self.allow_vertical_scroll:
-            if self.scroll_down(animate=False):
-                event.stop()
+    def _on_mouse_scroll_down(self, event: events.MouseScrollDown) -> None:
+        if event.ctrl or event.shift:
+            if self.allow_horizontal_scroll:
+                if self.scroll_right(animate=False):
+                    event.stop()
+        else:
+            if self.allow_vertical_scroll:
+                if self.scroll_down(animate=False):
+                    event.stop()
 
-    def _on_mouse_scroll_up(self, event) -> None:
-        if self.allow_vertical_scroll:
-            if self.scroll_up(animate=False):
-                event.stop()
+    def _on_mouse_scroll_up(self, event: events.MouseScrollUp) -> None:
+        if event.ctrl or event.shift:
+            if self.allow_horizontal_scroll:
+                if self.scroll_left(animate=False):
+                    event.stop()
+        else:
+            if self.allow_vertical_scroll:
+                if self.scroll_up(animate=False):
+                    event.stop()
 
     def _on_scroll_to(self, message: ScrollTo) -> None:
         if self._allow_scroll:
