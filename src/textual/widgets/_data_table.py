@@ -3,6 +3,7 @@ from __future__ import annotations
 import functools
 from dataclasses import dataclass, field
 from itertools import chain, zip_longest
+from operator import itemgetter
 from typing import (
     ClassVar,
     Generic,
@@ -11,6 +12,7 @@ from typing import (
     cast,
     NamedTuple,
     Callable,
+    Sequence,
 )
 
 import rich.repr
@@ -1106,6 +1108,21 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             for column in self._ordered_columns[: self.fixed_columns]
         )
         return Spacing(top, 0, 0, left)
+
+    def sort(
+        self,
+        column: str | ColumnKey | Sequence[str] | Sequence[ColumnKey],
+        reverse: bool = False,
+    ) -> None:
+        if isinstance(column, (str, ColumnKey)):
+            column = (column,)
+        indices = [self._column_locations.get(key) for key in column]
+        ordered_keys = sorted(self.rows, key=itemgetter(*indices), reverse=reverse)
+        self._row_locations = TwoWayDict(
+            {key: new_index for new_index, key in enumerate(ordered_keys)}
+        )
+        self._update_count += 1
+        self.refresh()
 
     def sort_columns(
         self, key: Callable[[ColumnKey | str], str] = None, reverse: bool = False
