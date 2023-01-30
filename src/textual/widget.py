@@ -5,6 +5,7 @@ from collections import Counter
 from fractions import Fraction
 from itertools import islice
 from operator import attrgetter
+from time import monotonic
 from typing import (
     TYPE_CHECKING,
     ClassVar,
@@ -76,6 +77,8 @@ _JUSTIFY_MAP: dict[str, JustifyMethod] = {
     "end": "right",
     "justify": "full",
 }
+
+SCROLL_RATE_WINDOW = 1
 
 
 class AwaitMount:
@@ -259,6 +262,8 @@ class Widget(DOMNode):
         self._arrangement_cache_key: tuple[Size, int] = (Size(), -1)
         self._cached_arrangement: DockArrangeResult | None = None
 
+        self._wheel_scroll_times: list[float] = []
+
         self._styles_cache = StylesCache()
         self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
         self._stabilized_scrollbar_size: Size | None = None
@@ -436,6 +441,30 @@ class Widget(DOMNode):
                     f" got {type(child)}"
                 ) from exc
         raise NoMatches(f"No descendant found with id={id!r}")
+
+    @property
+    def scroll_rate_x(self) -> float:
+        window_start_time = monotonic() - SCROLL_RATE_WINDOW
+        rate = (
+            min(
+                sum(1 for time in self._wheel_scroll_times if time > window_start_time),
+                30.0,
+            )
+            / 30
+        )
+        return 1 + (rate * rate) * (self.app.scroll_sensitivity_x - 1)
+
+    @property
+    def scroll_rate_y(self) -> float:
+        window_start_time = monotonic() - SCROLL_RATE_WINDOW
+        rate = (
+            min(
+                sum(1 for time in self._wheel_scroll_times if time > window_start_time),
+                30.0,
+            )
+            / 30
+        )
+        return 1 + (rate * rate) * (self.app.scroll_sensitivity_y - 1)
 
     def get_component_rich_style(self, name: str, *, partial: bool = False) -> Style:
         """Get a *Rich* style for a component.
@@ -1577,7 +1606,7 @@ class Widget(DOMNode):
 
         """
         return self.scroll_to(
-            x=self.scroll_target_x - self.app.scroll_sensitivity_x,
+            x=self.scroll_target_x - self.scroll_rate_x,
             animate=animate,
             speed=speed,
             duration=duration,
@@ -1609,7 +1638,7 @@ class Widget(DOMNode):
 
         """
         return self.scroll_to(
-            x=self.scroll_target_x + self.app.scroll_sensitivity_x,
+            x=self.scroll_target_x + self.scroll_rate_x,
             animate=animate,
             speed=speed,
             duration=duration,
@@ -1640,8 +1669,9 @@ class Widget(DOMNode):
             True if any scrolling was done.
 
         """
+        print(self.scroll_rate_y)
         return self.scroll_to(
-            y=self.scroll_target_y + self.app.scroll_sensitivity_y,
+            y=self.scroll_target_y + self.scroll_rate_y,
             animate=animate,
             speed=speed,
             duration=duration,
@@ -1672,8 +1702,9 @@ class Widget(DOMNode):
             True if any scrolling was done.
 
         """
+        print(self.scroll_rate_y)
         return self.scroll_to(
-            y=self.scroll_target_y - +self.app.scroll_sensitivity_y,
+            y=self.scroll_target_y - self.scroll_rate_y,
             animate=animate,
             speed=speed,
             duration=duration,
@@ -2480,6 +2511,16 @@ class Widget(DOMNode):
         if self._has_focus_within:
             self.app.update_styles(self)
 
+    def _update_scroll_rate(self) -> None:
+        time = monotonic()
+        wheel_scroll_window_start = time - SCROLL_RATE_WINDOW
+        self._wheel_scroll_times[:] = [
+            time
+            for time in self._wheel_scroll_times
+            if time >= wheel_scroll_window_start
+        ]
+        self._wheel_scroll_times.append(monotonic())
+
     def _on_mouse_scroll_down(self, event: events.MouseScrollDown) -> None:
         if event.ctrl or event.shift:
             if self.allow_horizontal_scroll:
@@ -2489,6 +2530,7 @@ class Widget(DOMNode):
             if self.allow_vertical_scroll:
                 if self.scroll_down(animate=False):
                     event.stop()
+        self._update_scroll_rate()
 
     def _on_mouse_scroll_up(self, event: events.MouseScrollUp) -> None:
         if event.ctrl or event.shift:
@@ -2499,6 +2541,7 @@ class Widget(DOMNode):
             if self.allow_vertical_scroll:
                 if self.scroll_up(animate=False):
                     event.stop()
+        self._update_scroll_rate()
 
     def _on_scroll_to(self, message: ScrollTo) -> None:
         if self._allow_scroll:

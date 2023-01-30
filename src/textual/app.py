@@ -372,9 +372,9 @@ class App(Generic[ReturnType], DOMNode):
 
         # Sensitivity on X is double the sensitivity on Y to account for
         # cells being twice as tall as wide
-        self.scroll_sensitivity_x: float = 4.0
+        self.scroll_sensitivity_x: float = 6.0
         """Number of columns to scroll in the X direction with wheel or trackpad."""
-        self.scroll_sensitivity_y: float = 2.0
+        self.scroll_sensitivity_y: float = 3.0
         """Number of lines to scroll in the Y direction with wheel or trackpad."""
 
         self._installed_screens: WeakValueDictionary[
