@@ -259,7 +259,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         # TODO: This should be updated to use row keys, since sorting could
         #  occur before code runs on idle.
-        self._new_rows: set[int] = set()
+        self._new_rows: set[RowKey] = set()
 
         self.show_header = show_header
         self.fixed_rows = fixed_rows
@@ -501,9 +501,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         elif cursor_type == "column":
             self._highlight_column(column_index)
 
-    def _update_dimensions(self, new_rows: Iterable[int]) -> None:
+    def _update_dimensions(self, new_rows: Iterable[RowKey]) -> None:
         """Called to recalculate the virtual (scrollable) size."""
-        for row_index in new_rows:
+        for row_key in new_rows:
+            row_index = self._row_locations.get(row_key)
+            if row_index is None:
+                continue
             for column, renderable in zip(
                 self._ordered_columns, self._get_row_renderables(row_index)
             ):
@@ -661,7 +664,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             for column, cell in zip_longest(self._ordered_columns, cells)
         }
         self.rows[row_key] = Row(row_key, height)
-        self._new_rows.add(row_index)
+        self._new_rows.add(row_key)
         self._require_update_dimensions = True
         self.cursor_cell = self.cursor_cell
 
