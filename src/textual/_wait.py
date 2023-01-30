@@ -12,7 +12,7 @@ async def wait_for_idle(
 
     This will compare wall clock time with process time, if the process time
     is not advancing the same as wall clock time it means the process is in a
-    sleep state or waiting for idle.
+    sleep state or waiting for input.
 
     When the process is idle it suggests that input has been processes and the state
     is predictable enough to test.
@@ -25,7 +25,7 @@ async def wait_for_idle(
 
     while True:
         cpu_time = process_time()
-        # asyncio will pause the coroutine for a brief period
+        # Sleep for a predetermined amount of time
         await sleep(SLEEP_GRANULARITY)
         # Calculate the wall clock elapsed time and the process elapsed time
         cpu_elapsed = process_time() - cpu_time
@@ -35,7 +35,7 @@ async def wait_for_idle(
         if elapsed_time >= max_sleep:
             break
 
-        # If we have slept the minimum and the cpu elapsed is significantly less
+        # If we have slept at least the minimum and the cpu elapsed is significantly less
         # than wall clock, then we can assume the process has finished working for now
         if elapsed_time > min_sleep and cpu_elapsed < SLEEP_IDLE:
             break
