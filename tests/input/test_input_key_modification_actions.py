@@ -81,3 +81,66 @@ async def test_delete_left_all_from_end() -> None:
             input.action_delete_left_all()
             assert input.cursor_position == 0
             assert input.value == ""
+
+
+async def test_delete_right_from_home() -> None:
+    """Deleting right from home should delete one character (if there is any to delete)."""
+    async with InputTester().run_test() as pilot:
+        for input in pilot.app.query(Input):
+            input.action_delete_right()
+            assert input.cursor_position == 0
+            assert input.value == TEST_INPUTS[input.id][1:]
+
+
+async def test_delete_right_from_end() -> None:
+    """Deleting right from end should not change the input's value."""
+    async with InputTester().run_test() as pilot:
+        for input in pilot.app.query(Input):
+            input.action_end()
+            input.action_delete_right()
+            assert input.cursor_position == len(input.value)
+            assert input.value == TEST_INPUTS[input.id]
+
+
+async def test_delete_right_word_from_home() -> None:
+    """Deleting word right from home should delete one word (if there is one)."""
+    async with InputTester().run_test() as pilot:
+        expected: dict[str | None, str] = {
+            "empty": "",
+            "multi-no-punctuation": "your sudden but inevitable betrayal",
+            "multi-punctuation": "have done the impossible, and that makes us mighty.",
+            "multi-and-hyphenated": "as she does it quiet-like",
+        }
+        for input in pilot.app.query(Input):
+            input.action_delete_right_word()
+            assert input.cursor_position == 0
+            assert input.value == expected[input.id]
+
+
+async def test_delete_right_word_from_end() -> None:
+    """Deleting word right from end should not change the input's value."""
+    async with InputTester().run_test() as pilot:
+        for input in pilot.app.query(Input):
+            input.action_end()
+            input.action_delete_right_word()
+            assert input.cursor_position == len(input.value)
+            assert input.value == TEST_INPUTS[input.id]
+
+
+async def test_delete_right_all_from_home() -> None:
+    """Deleting all right home should remove everything in the input."""
+    async with InputTester().run_test() as pilot:
+        for input in pilot.app.query(Input):
+            input.action_delete_right_all()
+            assert input.cursor_position == 0
+            assert input.value == ""
+
+
+async def test_delete_right_all_from_end() -> None:
+    """Deleting all right from end should not change the input's value."""
+    async with InputTester().run_test() as pilot:
+        for input in pilot.app.query(Input):
+            input.action_end()
+            input.action_delete_right_all()
+            assert input.cursor_position == len(input.value)
+            assert input.value == TEST_INPUTS[input.id]
