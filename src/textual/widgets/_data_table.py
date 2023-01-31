@@ -258,7 +258,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._require_update_dimensions: bool = False
 
         self._new_rows: set[RowKey] = set()
-        self._updated_columns: set[ColumnKey] = set()
+        self._updated_cells: set[CellKey] = set()
         """Track which cells were updated, so that we can refresh them once on idle"""
 
         self.show_header = show_header
@@ -325,19 +325,18 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         # Recalculate widths if necessary
         if update_width:
-            self._updated_columns.add(column_key)
+            self._updated_cells.add(CellKey(row_key, column_key))
+            self._require_update_dimensions = True
 
-        self._require_update_dimensions = True
         self.refresh()
 
-    def update_coordinate(self, coordinate: Coordinate, value: CellType) -> None:
+    def update_coordinate(
+        self, coordinate: Coordinate, value: CellType, *, update_width: bool = False
+    ) -> None:
         row, column = coordinate
         row_key = self._row_locations.get_key(row)
         column_key = self._column_locations.get_key(column)
-        value = Text.from_markup(value) if isinstance(value, str) else value
-        self.data[row_key][column_key] = value
-        self._update_count += 1
-        self.refresh_cell(row, column)
+        self.update_cell(row_key, column_key, value, update_width=update_width)
 
     def _get_cells_in_column(self, column_key: ColumnKey) -> Iterable[CellType]:
         """For a given column key, return the cells in that column in order"""
@@ -488,13 +487,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         elif cursor_type == "column":
             self._highlight_column(column_index)
 
-    def _update_column_widths(self, column_keys: set[ColumnKey]) -> None:
-        for column_key in column_keys:
+    def _update_column_widths(self, updated_cells: set[CellKey]) -> None:
+        for row_key, column_key in updated_cells:
             column = self.columns.get(column_key)
             console = self.app.console
             label_width = measure(console, column.label, 1)
             content_width = column.content_width
-            new_content_width = measure(console, value, 1)
+            cell_value = self.data[row_key][column_key]
+            new_content_width = measure(console, cell_value, 1)
 
             if new_content_width < content_width:
                 cells_in_column = self._get_cells_in_column(column_key)
@@ -724,9 +724,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             # Add the new rows *before* updating the column widths, since
             # cells in a new row may influence the final width of a column
             self._update_dimensions(new_rows)
-            if self._updated_columns:
-                updated_columns = self._updated_columns.copy()
-                self._updated_columns.clear()
+            if self._updated_cells:
+                updated_columns = self._updated_cells.copy()
+                self._updated_cells.clear()
                 self._update_column_widths(updated_columns)
             self.refresh()
 
