@@ -1003,6 +1003,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         self.scroll_to_line(self.cursor_line)
 
     def action_scroll_home(self) -> None:
+        """Move the cursor to the top of the tree."""
         self.cursor_line = 0
         self.scroll_to_line(self.cursor_line)
 
