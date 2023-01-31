@@ -1011,7 +1011,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         """Move the cursor to the bottom of the tree.
 
         Note:
-            Here button means vertically, not branch depth.
+            Here bottom means vertically, not branch depth.
         """
         self.cursor_line = self.last_line
         self.scroll_to_line(self.cursor_line)
