@@ -466,7 +466,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     @property
     def _y_offsets(self) -> list[tuple[RowKey, int]]:
         y_offsets: list[tuple[RowKey, int]] = []
-        for row in self._ordered_rows:
+        for row in self.ordered_rows:
             row_key = row.key
             row_height = row.height
             y_offsets += [(row_key, y) for y in range(row_height)]
@@ -518,7 +518,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     def _get_cells_in_column(self, column_key: ColumnKey) -> Iterable[CellType]:
         """For a given column key, return the cells in that column in order"""
-        for row_metadata in self._ordered_rows:
+        for row_metadata in self.ordered_rows:
             row_key = row_metadata.key
             row = self.data.get(row_key)
             yield row.get(column_key)
@@ -703,7 +703,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             if row_index is None:
                 continue
             for column, renderable in zip(
-                self._ordered_columns, self._get_row_renderables(row_index)
+                self.ordered_columns, self._get_row_renderables(row_index)
             ):
                 content_width = measure(self.app.console, renderable, 1)
                 column.content_width = max(column.content_width, content_width)
@@ -728,11 +728,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         row = self.rows[row_key]
 
         # The x-coordinate of a cell is the sum of widths of cells to the left.
-        x = sum(column.render_width for column in self._ordered_columns[:column_index])
+        x = sum(column.render_width for column in self.ordered_columns[:column_index])
         column_key = self._column_locations.get_key(column_index)
         width = self.columns[column_key].render_width
         height = row.height
-        y = sum(ordered_row.height for ordered_row in self._ordered_rows[:row_index])
+        y = sum(ordered_row.height for ordered_row in self.ordered_rows[:row_index])
         if self.show_header:
             y += self.header_height
         cell_region = Region(x, y, width, height)
@@ -748,7 +748,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         row_key = self._row_locations.get_key(row_index)
         row = rows[row_key]
         row_width = sum(column.render_width for column in self.columns.values())
-        y = sum(ordered_row.height for ordered_row in self._ordered_rows[:row_index])
+        y = sum(ordered_row.height for ordered_row in self.ordered_rows[:row_index])
         if self.show_header:
             y += self.header_height
         row_region = Region(0, y, row_width, row.height)
@@ -761,7 +761,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if not valid_column:
             return Region(0, 0, 0, 0)
 
-        x = sum(column.render_width for column in self._ordered_columns[:column_index])
+        x = sum(column.render_width for column in self.ordered_columns[:column_index])
         column_key = self._column_locations.get_key(column_index)
         width = columns[column_key].render_width
         header_height = self.header_height if self.show_header else 0
@@ -855,7 +855,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._row_locations[row_key] = row_index
         self.data[row_key] = {
             column.key: Text(cell) if isinstance(cell, str) else cell
-            for column, cell in zip_longest(self._ordered_columns, cells)
+            for column, cell in zip_longest(self.ordered_columns, cells)
         }
         self.rows[row_key] = Row(row_key, height)
         self._new_rows.add(row_key)
@@ -970,7 +970,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.refresh(region)
 
     @property
-    def _ordered_columns(self) -> list[Column]:
+    def ordered_columns(self) -> list[Column]:
         column_indices = range(len(self.columns))
         column_keys = [
             self._column_locations.get_key(index) for index in column_indices
@@ -979,7 +979,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return ordered_columns
 
     @property
-    def _ordered_rows(self) -> list[Row]:
+    def ordered_rows(self) -> list[Row]:
         row_indices = range(self.row_count)
         ordered_rows = []
         for row_index in row_indices:
@@ -999,7 +999,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """
 
         # TODO:  We have quite a few back and forward key/index conversions, could probably reduce them
-        ordered_columns = self._ordered_columns
+        ordered_columns = self.ordered_columns
         if row_index == -1:
             row = [column.label for column in ordered_columns]
             return row
@@ -1150,7 +1150,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             fixed_style += Style.from_meta({"fixed": True})
             fixed_row = []
             for column_index, column in enumerate(
-                self._ordered_columns[: self.fixed_columns]
+                self.ordered_columns[: self.fixed_columns]
             ):
                 cell_location = Coordinate(row_index, column_index)
                 fixed_cell_lines = render_cell(
@@ -1179,7 +1179,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 row_style = base_style
 
         scrollable_row = []
-        for column_index, column in enumerate(self._ordered_columns):
+        for column_index, column in enumerate(self.ordered_columns):
             cell_location = Coordinate(row_index, column_index)
             cell_lines = render_cell(
                 row_index,
@@ -1258,8 +1258,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             hover_location=self.hover_coordinate,
         )
         fixed_width = sum(
-            column.render_width
-            for column in self._ordered_columns[: self.fixed_columns]
+            column.render_width for column in self.ordered_columns[: self.fixed_columns]
         )
 
         fixed_line: list[Segment] = list(chain.from_iterable(fixed)) if fixed else []
@@ -1308,8 +1307,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             if row_index in self.rows
         )
         left = sum(
-            column.render_width
-            for column in self._ordered_columns[: self.fixed_columns]
+            column.render_width for column in self.ordered_columns[: self.fixed_columns]
         )
         return Spacing(top, 0, 0, left)
 
