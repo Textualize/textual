@@ -255,13 +255,19 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Attributes:
             value: The value in the highlighted cell.
             coordinate: The coordinate of the highlighted cell.
+            cell_key: The key for the highlighted cell.
         """
 
         def __init__(
-            self, sender: DataTable, value: CellType, coordinate: Coordinate
+            self,
+            sender: DataTable,
+            value: CellType,
+            coordinate: Coordinate,
+            cell_key: CellKey,
         ) -> None:
             self.value: CellType = value
             self.coordinate: Coordinate = coordinate
+            self.cell_key: CellKey = cell_key
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
@@ -576,7 +582,26 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             # In that case, there's nothing for us to do here.
             return
         else:
-            self.emit_no_wait(DataTable.CellHighlighted(self, cell_value, coordinate))
+            cell_key = self.coordinate_to_cell_key(coordinate)
+            self.emit_no_wait(
+                DataTable.CellHighlighted(
+                    self, cell_value, coordinate=coordinate, cell_key=cell_key
+                )
+            )
+
+    def coordinate_to_cell_key(self, coordinate: Coordinate) -> CellKey:
+        """Return the key for the cell currently occupying this coordinate in the DataTable
+
+        Args:
+            coordinate: The coordinate to exam the current cell key of.
+
+        Returns:
+            The key of the cell currently occupying this coordinate.
+        """
+        row_index, column_index = coordinate
+        row_key = self._row_locations.get_key(row_index)
+        column_key = self._column_locations.get_key(column_index)
+        return CellKey(row_key, column_key)
 
     def _highlight_row(self, row_index: int) -> None:
         """Apply highlighting to the row at the given index, and emit event."""
