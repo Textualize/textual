@@ -556,11 +556,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def watch_zebra_stripes(self, zebra_stripes: bool) -> None:
         self._clear_caches()
 
-    def watch_hover_cell(self, old: Coordinate, value: Coordinate) -> None:
+    def watch_hover_coordinate(self, old: Coordinate, value: Coordinate) -> None:
         self.refresh_cell(*old)
         self.refresh_cell(*value)
 
-    def watch_cursor_cell(
+    def watch_cursor_coordinate(
         self, old_coordinate: Coordinate, new_coordinate: Coordinate
     ) -> None:
         if old_coordinate != new_coordinate:
@@ -620,11 +620,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if column_index < len(self.columns):
             self.emit_no_wait(DataTable.ColumnHighlighted(self, column_index))
 
-    def validate_cursor_cell(self, value: Coordinate) -> Coordinate:
-        return self._clamp_cursor_cell(value)
+    def validate_cursor_coordinate(self, value: Coordinate) -> Coordinate:
+        return self._clamp_cursor_coordinate(value)
 
-    def _clamp_cursor_cell(self, cursor_cell: Coordinate) -> Coordinate:
-        row, column = cursor_cell
+    def _clamp_cursor_coordinate(self, coordinate: Coordinate) -> Coordinate:
+        row, column = coordinate
         row = clamp(row, 0, self.row_count - 1)
         column = clamp(column, self.fixed_columns, len(self.columns) - 1)
         return Coordinate(row, column)
