@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Programmatically setting `overflow_x`/`overflow_y` refreshes the layout correctly https://github.com/Textualize/textual/issues/1616
 - Fixed double-paste into `Input` https://github.com/Textualize/textual/issues/1657
 - Added a workaround for an apparent Windows Terminal paste issue https://github.com/Textualize/textual/issues/1661
-- Fixes issue with renderable width calculation https://github.com/Textualize/textual/issues/1685
+- Fixed issue with renderable width calculation https://github.com/Textualize/textual/issues/1685
 - Fixed issue with app not processing Paste event https://github.com/Textualize/textual/issues/1666
 - Fixed glitch with view position with auto width inputs https://github.com/Textualize/textual/issues/1693
 
