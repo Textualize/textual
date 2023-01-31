@@ -198,3 +198,9 @@ def test_demo(snap_compare):
 def test_label_widths(snap_compare):
     """Test renderable widths are calculate correctly."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "label_widths.py")
+
+
+def test_auto_width_input(snap_compare):
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "auto_width_input.py", press=["tab", *"Hello"]
+    )
