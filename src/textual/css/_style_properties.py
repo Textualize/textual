@@ -60,9 +60,23 @@ PropertySetType = TypeVar("PropertySetType")
 
 
 class GenericProperty(Generic[PropertyGetType, PropertySetType]):
-    def __init__(self, default: PropertyGetType, layout: bool = False) -> None:
+    """Descriptor that abstracts away common machinery for other style descriptors.
+
+    Args:
+        default: The default value (or a factory thereof) of the property.
+        layout: Whether to refresh the node layout on value change.
+        refresh_children: Whether to refresh the node children on value change.
+    """
+
+    def __init__(
+        self,
+        default: PropertyGetType,
+        layout: bool = False,
+        refresh_children: bool = False,
+    ) -> None:
         self.default = default
         self.layout = layout
+        self.refresh_children = refresh_children
 
     def validate_value(self, value: object) -> PropertyGetType:
         """Validate the setter value.
@@ -88,11 +102,11 @@ class GenericProperty(Generic[PropertyGetType, PropertySetType]):
         _rich_traceback_omit = True
         if value is None:
             obj.clear_rule(self.name)
-            obj.refresh(layout=self.layout)
+            obj.refresh(layout=self.layout, children=self.refresh_children)
             return
         new_value = self.validate_value(value)
         if obj.set_rule(self.name, new_value):
-            obj.refresh(layout=self.layout)
+            obj.refresh(layout=self.layout, children=self.refresh_children)
 
 
 class IntegerProperty(GenericProperty[int, int]):
@@ -202,8 +216,16 @@ class ScalarProperty:
 
 
 class ScalarListProperty:
-    def __init__(self, percent_unit: Unit) -> None:
+    """Descriptor for lists of scalars.
+
+    Args:
+        percent_unit: The dimension to which percentage scalars will be relative to.
+        refresh_children: Whether to refresh the node children on value change.
+    """
+
+    def __init__(self, percent_unit: Unit, refresh_children: bool = False) -> None:
         self.percent_unit = percent_unit
+        self.refresh_children = refresh_children
 
     def __set_name__(self, owner: Styles, name: str) -> None:
         self.name = name
@@ -218,7 +240,7 @@ class ScalarListProperty:
     ) -> None:
         if value is None:
             obj.clear_rule(self.name)
-            obj.refresh(layout=True)
+            obj.refresh(layout=True, children=self.refresh_children)
             return
         parse_values: Iterable[str | float]
         if isinstance(value, str):
@@ -237,7 +259,7 @@ class ScalarListProperty:
                     else parse_value
                 )
         if obj.set_rule(self.name, tuple(scalars)):
-            obj.refresh(layout=True)
+            obj.refresh(layout=True, children=self.refresh_children)
 
 
 class BoxProperty:
@@ -682,12 +704,25 @@ class OffsetProperty:
 class StringEnumProperty:
     """Descriptor for getting and setting string properties and ensuring that the set
     value belongs in the set of valid values.
+
+    Args:
+        valid_values: The set of valid values that the descriptor can take.
+        default: The default value (or a factory thereof) of the property.
+        layout: Whether to refresh the node layout on value change.
+        refresh_children: Whether to refresh the node children on value change.
     """
 
-    def __init__(self, valid_values: set[str], default: str, layout=False) -> None:
+    def __init__(
+        self,
+        valid_values: set[str],
+        default: str,
+        layout: bool = False,
+        refresh_children: bool = False,
+    ) -> None:
         self._valid_values = valid_values
         self._default = default
         self._layout = layout
+        self._refresh_children = refresh_children
 
     def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
@@ -721,7 +756,7 @@ class StringEnumProperty:
         if value is None:
             if obj.clear_rule(self.name):
                 self._before_refresh(obj, value)
-                obj.refresh(layout=self._layout)
+                obj.refresh(layout=self._layout, children=self._refresh_children)
         else:
             if value not in self._valid_values:
                 raise StyleValueError(
@@ -734,7 +769,7 @@ class StringEnumProperty:
                 )
             if obj.set_rule(self.name, value):
                 self._before_refresh(obj, value)
-                obj.refresh(layout=self._layout)
+                obj.refresh(layout=self._layout, children=self._refresh_children)
 
 
 class OverflowProperty(StringEnumProperty):
