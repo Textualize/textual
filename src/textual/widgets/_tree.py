@@ -341,9 +341,13 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     }
 
     Tree > .tree--cursor {
-        background: $secondary;
+        background: $secondary-darken-2;
         color: $text;
         text-style: bold;
+    }
+
+    Tree:focus > .tree--cursor {
+        background: $secondary;
     }
 
     Tree > .tree--highlight {
@@ -925,7 +929,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 label_style += self.get_component_rich_style(
                     "tree--highlight", partial=True
                 )
-            if self.cursor_line == y and self.has_focus:
+            if self.cursor_line == y:
                 label_style += self.get_component_rich_style(
                     "tree--cursor", partial=False
                 )
