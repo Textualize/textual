@@ -239,10 +239,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     show_cursor = Reactive(True)
     cursor_type = Reactive(CELL)
 
-    cursor_cell: Reactive[Coordinate] = Reactive(
+    cursor_coordinate: Reactive[Coordinate] = Reactive(
         Coordinate(0, 0), repaint=False, always_update=True
     )
-    hover_cell: Reactive[Coordinate] = Reactive(Coordinate(0, 0), repaint=False)
+    hover_coordinate: Reactive[Coordinate] = Reactive(Coordinate(0, 0), repaint=False)
 
     class CellHighlighted(Message, bubble=True):
         """Emitted when the cursor moves to highlight a new cell.
@@ -274,6 +274,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             yield "sender", self.sender
             yield "value", self.value
             yield "coordinate", self.coordinate
+            yield "cell_key", self.cell_key
 
     class CellSelected(Message, bubble=True):
         """Emitted by the `DataTable` widget when a cell is selected.
@@ -284,19 +285,26 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Attributes:
             value: The value in the cell that was selected.
             coordinate: The coordinate of the cell that was selected.
+            cell_key: The key for the selected cell.
         """
 
         def __init__(
-            self, sender: DataTable, value: CellType, coordinate: Coordinate
+            self,
+            sender: DataTable,
+            value: CellType,
+            coordinate: Coordinate,
+            cell_key: CellKey,
         ) -> None:
             self.value: CellType = value
             self.coordinate: Coordinate = coordinate
+            self.cell_key: CellKey = cell_key
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
             yield "sender", self.sender
             yield "value", self.value
             yield "coordinate", self.coordinate
+            yield "cell_key", self.cell_key
 
     class RowHighlighted(Message, bubble=True):
         """Emitted when a row is highlighted. This message is only emitted when the
@@ -420,19 +428,19 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     @property
     def hover_row(self) -> int:
-        return self.hover_cell.row
+        return self.hover_coordinate.row
 
     @property
     def hover_column(self) -> int:
-        return self.hover_cell.column
+        return self.hover_coordinate.column
 
     @property
     def cursor_row(self) -> int:
-        return self.cursor_cell.row
+        return self.cursor_coordinate.row
 
     @property
     def cursor_column(self) -> int:
-        return self.cursor_cell.column
+        return self.cursor_coordinate.column
 
     @property
     def row_count(self) -> int:
@@ -492,8 +500,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             row = self.data.get(row_key)
             yield row.get(column_key)
 
-    def get_cell_value(self, coordinate: Coordinate) -> CellType:
-        """Get the value from the cell at the given coordinate.
+    def get_value_at(self, coordinate: Coordinate) -> CellType:
+        """Get the value from the cell occupying the given coordinate.
 
         Args:
             coordinate: The coordinate to retrieve the value from.
@@ -504,11 +512,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Raises:
             CellDoesNotExist: If there is no cell with the given coordinate.
         """
-        # TODO: Rename to get_value_at()?
-        #  We need to clearly distinguish between coordinates and cell keys
-        row_index, column_index = coordinate
-        row_key = self._row_locations.get_key(row_index)
-        column_key = self._column_locations.get_key(column_index)
+        row_key, column_key = self.coordinate_to_cell_key(coordinate)
         try:
             cell_value = self.data[row_key][column_key]
         except KeyError:
@@ -537,7 +541,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             # emit the appropriate [Row|Column|Cell]Highlighted event.
             self._scroll_cursor_into_view(animate=False)
             if self.cursor_type == "cell":
-                self._highlight_cell(self.cursor_cell)
+                self._highlight_cell(self.cursor_coordinate)
             elif self.cursor_type == "row":
                 self._highlight_row(self.cursor_row)
             elif self.cursor_type == "column":
@@ -576,7 +580,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Apply highlighting to the cell at the coordinate, and emit event."""
         self.refresh_cell(*coordinate)
         try:
-            cell_value = self.get_cell_value(coordinate)
+            cell_value = self.get_value_at(coordinate)
         except CellDoesNotExist:
             # The cell may not exist e.g. when the table is cleared.
             # In that case, there's nothing for us to do here.
@@ -632,7 +636,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         # Refresh cells that were previously impacted by the cursor
         # but may no longer be.
-        row_index, column_index = self.cursor_cell
+        row_index, column_index = self.cursor_coordinate
         if old == "cell":
             self.refresh_cell(row_index, column_index)
         elif old == "row":
@@ -643,11 +647,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._scroll_cursor_into_view()
 
     def _highlight_cursor(self) -> None:
-        row_index, column_index = self.cursor_cell
+        row_index, column_index = self.cursor_coordinate
         cursor_type = self.cursor_type
         # Apply the highlighting to the newly relevant cells
         if cursor_type == "cell":
-            self._highlight_cell(self.cursor_cell)
+            self._highlight_cell(self.cursor_coordinate)
         elif cursor_type == "row":
             self._highlight_row(row_index)
         elif cursor_type == "column":
@@ -756,8 +760,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self.columns.clear()
         self._line_no = 0
         self._require_update_dimensions = True
-        self.cursor_cell = Coordinate(0, 0)
-        self.hover_cell = Coordinate(0, 0)
+        self.cursor_coordinate = Coordinate(0, 0)
+        self.hover_coordinate = Coordinate(0, 0)
         self.refresh()
 
     def add_column(
@@ -834,7 +838,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.rows[row_key] = Row(row_key, height)
         self._new_rows.add(row_key)
         self._require_update_dimensions = True
-        self.cursor_cell = self.cursor_cell
+        self.cursor_coordinate = self.cursor_coordinate
 
         # If a position has opened for the cursor to appear, where it previously
         # could not (e.g. when there's no data in the table), then a highlighted
@@ -1212,8 +1216,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             x1,
             x2,
             width,
-            self.cursor_cell,
-            self.hover_cell,
+            self.cursor_coordinate,
+            self.hover_coordinate,
             base_style,
             self.cursor_type,
             self._show_hover_cursor,
@@ -1226,8 +1230,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             row_key,
             y_offset_in_row,
             base_style,
-            cursor_location=self.cursor_cell,
-            hover_location=self.hover_cell,
+            cursor_location=self.cursor_coordinate,
+            hover_location=self.hover_coordinate,
         )
         fixed_width = sum(
             column.render_width
@@ -1268,7 +1272,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         meta = event.style.meta
         if meta and self.show_cursor and self.cursor_type != "none":
             try:
-                self.hover_cell = Coordinate(meta["row"], meta["column"])
+                self.hover_coordinate = Coordinate(meta["row"], meta["column"])
             except KeyError:
                 pass
 
@@ -1351,7 +1355,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         elif cursor_type == "row":
             self.refresh_row(self.hover_row)
         elif cursor_type == "cell":
-            self.refresh_cell(*self.hover_cell)
+            self.refresh_cell(*self.hover_coordinate)
 
     def on_click(self, event: events.Click) -> None:
         self._set_hover_cursor(True)
@@ -1360,7 +1364,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self._emit_selected_message()
             meta = self.get_style_at(event.x, event.y).meta
             if meta:
-                self.cursor_cell = Coordinate(meta["row"], meta["column"])
+                self.cursor_coordinate = Coordinate(meta["row"], meta["column"])
                 self._scroll_cursor_into_view(animate=True)
                 event.stop()
 
@@ -1368,7 +1372,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._set_hover_cursor(False)
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
-            self.cursor_cell = self.cursor_cell.up()
+            self.cursor_coordinate = self.cursor_coordinate.up()
             self._scroll_cursor_into_view()
         else:
             # If the cursor doesn't move up (e.g. column cursor can't go up),
@@ -1379,7 +1383,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._set_hover_cursor(False)
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
-            self.cursor_cell = self.cursor_cell.down()
+            self.cursor_coordinate = self.cursor_coordinate.down()
             self._scroll_cursor_into_view()
         else:
             super().action_scroll_down()
@@ -1388,7 +1392,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._set_hover_cursor(False)
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "column"):
-            self.cursor_cell = self.cursor_cell.right()
+            self.cursor_coordinate = self.cursor_coordinate.right()
             self._scroll_cursor_into_view(animate=True)
         else:
             super().action_scroll_right()
@@ -1397,7 +1401,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._set_hover_cursor(False)
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "column"):
-            self.cursor_cell = self.cursor_cell.left()
+            self.cursor_coordinate = self.cursor_coordinate.left()
             self._scroll_cursor_into_view(animate=True)
         else:
             super().action_scroll_left()
@@ -1409,19 +1413,20 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     def _emit_selected_message(self):
         """Emit the appropriate message for a selection based on the `cursor_type`."""
-        cursor_cell = self.cursor_cell
+        cursor_coordinate = self.cursor_coordinate
         cursor_type = self.cursor_type
         if cursor_type == "cell":
             self.emit_no_wait(
                 DataTable.CellSelected(
                     self,
-                    self.get_cell_value(cursor_cell),
-                    cursor_cell,
+                    self.get_value_at(cursor_coordinate),
+                    coordinate=cursor_coordinate,
+                    cell_key=self.coordinate_to_cell_key(cursor_coordinate),
                 )
             )
         elif cursor_type == "row":
-            row, _ = cursor_cell
+            row, _ = cursor_coordinate
             self.emit_no_wait(DataTable.RowSelected(self, row))
         elif cursor_type == "column":
-            _, column = cursor_cell
+            _, column = cursor_coordinate
             self.emit_no_wait(DataTable.ColumnSelected(self, column))

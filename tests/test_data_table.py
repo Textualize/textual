@@ -193,19 +193,19 @@ async def test_clear():
     app = DataTableApp()
     async with app.run_test():
         table = app.query_one(DataTable)
-        assert table.cursor_cell == Coordinate(0, 0)
-        assert table.hover_cell == Coordinate(0, 0)
+        assert table.cursor_coordinate == Coordinate(0, 0)
+        assert table.hover_coordinate == Coordinate(0, 0)
 
         # Add some data and update cursor positions
         table.add_column("Column0")
         table.add_rows([["Row0"], ["Row1"], ["Row2"]])
-        table.cursor_cell = Coordinate(1, 0)
-        table.hover_cell = Coordinate(2, 0)
+        table.cursor_coordinate = Coordinate(1, 0)
+        table.hover_coordinate = Coordinate(2, 0)
 
         # Ensure the cursor positions are reset to origin on clear()
         table.clear()
-        assert table.cursor_cell == Coordinate(0, 0)
-        assert table.hover_cell == Coordinate(0, 0)
+        assert table.cursor_coordinate == Coordinate(0, 0)
+        assert table.hover_coordinate == Coordinate(0, 0)
 
         # Ensure that the table has been cleared
         assert table.data == {}
@@ -253,7 +253,7 @@ async def test_get_cell_value_returns_value_at_cell():
         table = app.query_one(DataTable)
         table.add_columns("A", "B")
         table.add_rows(ROWS)
-        assert table.get_cell_value(Coordinate(0, 0)) == Text("0/0")
+        assert table.get_value_at(Coordinate(0, 0)) == Text("0/0")
 
 
 async def test_get_cell_value_exception():
@@ -263,7 +263,7 @@ async def test_get_cell_value_exception():
         table.add_columns("A", "B")
         table.add_rows(ROWS)
         with pytest.raises(CellDoesNotExist):
-            table.get_cell_value(Coordinate(9999, 0))
+            table.get_value_at(Coordinate(9999, 0))
 
 
 def test_key_equals_equivalent_string():
