@@ -470,7 +470,7 @@ class Input(Widget, can_focus=True):
                 self.cursor_position = 0
             else:
                 self.cursor_position = hit.start()
-                self.value = f"{self.value[: self.cursor_position]}{after}"
+            self.value = f"{self.value[: self.cursor_position]}{after}"
 
     def action_delete_left_all(self) -> None:
         """Delete all characters to the left of the cursor position."""
