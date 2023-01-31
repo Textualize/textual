@@ -6,14 +6,10 @@ from textual.widgets import Header, Footer, Label, Input
 class InputWidthAutoApp(App[None]):
 
     CSS = """
-    Screen {
-        align: center middle;
-    }
     Input.auto {
         width: auto;
         max-width: 100%;
     }
-
     """
 
     def compose(self) -> ComposeResult:
