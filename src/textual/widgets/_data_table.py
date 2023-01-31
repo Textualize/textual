@@ -530,16 +530,30 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             coordinate: The coordinate to retrieve the value from.
 
         Returns:
-            The value of the cell.
+            The value of the cell at the coordinate.
 
         Raises:
             CellDoesNotExist: If there is no cell with the given coordinate.
         """
         row_key, column_key = self.coordinate_to_cell_key(coordinate)
+        return self.get_cell_value(row_key, column_key)
+
+    def get_cell_value(self, row_key: RowKey, column_key: ColumnKey) -> CellType:
+        """Given a row key and column key, return the value of the corresponding cell.
+
+        Args:
+            row_key: The row key of the cell.
+            column_key: The column key of the cell.
+
+        Returns:
+            The value of the cell identified by the row and column keys.
+        """
         try:
             cell_value = self.data[row_key][column_key]
         except KeyError:
-            raise CellDoesNotExist(f"No cell exists at {coordinate!r}") from None
+            raise CellDoesNotExist(
+                f"No cell exists for row_key={row_key!r}, column_key={column_key!r}."
+            )
         return cell_value
 
     def _clear_caches(self) -> None:
@@ -549,6 +563,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._styles_cache.clear()
 
     def get_row_height(self, row_key: RowKey) -> int:
+        """Given a row key, return the height of that row in terminal cells.
+
+        Args:
+            row_key: The key of the row.
+
+        Returns:
+            The height of the row, measured in terminal character cells.
+        """
         if row_key is self._header_row_key:
             return self.header_height
         return self.rows[row_key].height
@@ -1216,7 +1238,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return y_offsets[y]
 
     def _render_line(self, y: int, x1: int, x2: int, base_style: Style) -> Strip:
-        """Render a line in to a list of segments.
+        """Render a (possibly cropped) line in to a Strip (a list of segments
+            representing a horizontal line).
 
         Args:
             y: Y coordinate of line
@@ -1225,7 +1248,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             base_style: Style to apply to line.
 
         Returns:
-            List of segments for rendering.
+            The Strip which represents this cropped line.
         """
 
         width = self.size.width
