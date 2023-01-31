@@ -32,31 +32,27 @@ The example below shows how you might create a simple form using two `Input` wid
 
 ## Messages
 
-### Changed
+### ::: textual.widgets.Input.Changed
 
-The `Input.Changed` message is sent when the value in the text input changes.
+### ::: textual.widgets.Input.Submitted
 
-- [x] Bubbles
+## Bindings
 
-#### Attributes
+The input widget defines directly the following bindings:
 
-| attribute | type  | purpose                          |
-| --------- | ----- | -------------------------------- |
-| `value`   | `str` | The new value in the text input. |
+::: textual.widgets.Input.BINDINGS
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
 
+## Component Classes
 
-### Submitted
+The input widget provides the following component classes:
 
-The `Input.Submitted` message is sent when you press ++enter++ with the text field submitted.
-
-- [x] Bubbles
-
-#### Attributes
-
-| attribute | type  | purpose                          |
-| --------- | ----- | -------------------------------- |
-| `value`   | `str` | The new value in the text input. |
-
+::: textual.widgets.Input.COMPONENT_CLASSES
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
 
 ## Additional Notes
 

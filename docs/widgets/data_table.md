@@ -48,6 +48,24 @@ The example below populates a table with CSV data.
 
 ### ::: textual.widgets.DataTable.ColumnSelected
 
+## Bindings
+
+The data table widget defines directly the following bindings:
+
+::: textual.widgets.DataTable.BINDINGS
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
+
+## Component Classes
+
+The data table widget provides the following component classes:
+
+::: textual.widgets.DataTable.COMPONENT_CLASSES
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
+
 ## See Also
 
 * [DataTable][textual.widgets.DataTable] code reference

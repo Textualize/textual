@@ -40,6 +40,7 @@ aiohttp = { version = ">=3.8.1", optional = true }
 click = {version = ">=8.1.2", optional = true}
 msgpack = { version = ">=1.0.3", optional = true }
 nanoid = ">=2.0.0"
+mkdocs-exclude = "^1.0.2"
 
 [tool.poetry.extras]
 dev = ["aiohttp", "click", "msgpack"]
