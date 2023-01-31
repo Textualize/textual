@@ -38,6 +38,7 @@ If you hit ++ctrl+c++ Textual will exit application mode and return you to the c
 
     A side effect of application mode is that you may no longer be able to select and copy text in the usual way. Terminals typically offer a way to bypass this limit with a key modifier. On iTerm you can select text if you hold the ++option++ key. See the documentation for your terminal software for how to select text in application mode.
 
+
 ## Events
 
 Textual has an event system you can use to respond to key presses, mouse actions, and internal state changes. Event handlers are methods prefixed with `on_` followed by the name of the event.
@@ -147,7 +148,39 @@ The addition of `[str]` tells mypy that `run()` is expected to return a string. 
 
     Type annotations are entirely optional (but recommended) with Textual.
 
-## CSS
+## Customising your app
+
+### Setting the title and subtitle
+
+By default, the title of your application matches the name of the application class and the subtitle is empty.
+However, you can override those defaults by setting the class attributes `TITLE` and `SUB_TITLE`, as shown below.
+We also make use of the built-in widget `Header` to make the title and the subtitle visible in our app.
+
+```py title="question_title01.py" hl_lines="6-7 10"
+--8<-- "docs/examples/app/question_title01.py"
+```
+
+The app title and subtitle are displayed at the top of the application in the header:
+
+```{.textual path="docs/examples/app/question_title01.py"}
+```
+
+On top of being able to define a default title and a default subtitle for a given application class, each _instance_ of your application class has two attributes `title` and `sub_title` that can be used to modify the title and subtitle of said instance application.
+
+For example, the application shown below changes its title and subtitle as soon as the application is instantiated.
+
+```py title="question_title02.py" hl_lines="19-21"
+--8<-- "docs/examples/app/question_title02.py"
+```
+
+If you run the app shown above and if you press a key, the title and subtitle update accordingly.
+
+For example, if you press `t`, your application will look as shown below:
+
+```{.textual path="docs/examples/app/question_title02.py" press="t"}
+```
+
+### CSS
 
 Textual apps can reference [CSS](CSS.md) files which define how your app and widgets will look, while keeping your Python code free of display related code (which tends to be messy).
 
@@ -170,6 +203,7 @@ When `"question02.py"` runs it will load `"question02.css"` and update the app a
 ```{.textual path="docs/examples/app/question02.py"}
 ```
 
+
 ### Classvar CSS
 
 While external CSS files are recommended for most applications, and enable some cool features like *live editing*, you can also specify the CSS directly within the Python code.
@@ -181,6 +215,7 @@ Here's the question app with classvar CSS:
 ```python title="question03.py" hl_lines="6-24"
 --8<-- "docs/examples/app/question03.py"
 ```
+
 
 ## What's next
 
