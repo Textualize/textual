@@ -266,17 +266,17 @@ class StylesBase(ABC):
     scrollbar_background_active = ColorProperty("black")
 
     scrollbar_gutter = StringEnumProperty(
-        VALID_SCROLLBAR_GUTTER, "auto", layout=True, children=True
+        VALID_SCROLLBAR_GUTTER, "auto", layout=True, refresh_children=True
     )
 
     scrollbar_size_vertical = IntegerProperty(default=1, layout=True)
     scrollbar_size_horizontal = IntegerProperty(default=1, layout=True)
 
     align_horizontal = StringEnumProperty(
-        VALID_ALIGN_HORIZONTAL, "left", layout=True, children=True
+        VALID_ALIGN_HORIZONTAL, "left", layout=True, refresh_children=True
     )
     align_vertical = StringEnumProperty(
-        VALID_ALIGN_VERTICAL, "top", layout=True, children=True
+        VALID_ALIGN_VERTICAL, "top", layout=True, refresh_children=True
     )
     align = AlignProperty()
 
@@ -284,13 +284,17 @@ class StylesBase(ABC):
     content_align_vertical = StringEnumProperty(VALID_ALIGN_VERTICAL, "top")
     content_align = AlignProperty()
 
-    grid_rows = ScalarListProperty(percent_unit=Unit.HEIGHT, children=True)
-    grid_columns = ScalarListProperty(percent_unit=Unit.WIDTH, children=True)
+    grid_rows = ScalarListProperty(percent_unit=Unit.HEIGHT, refresh_children=True)
+    grid_columns = ScalarListProperty(percent_unit=Unit.WIDTH, refresh_children=True)
 
-    grid_size_columns = IntegerProperty(default=1, layout=True, children=True)
-    grid_size_rows = IntegerProperty(default=0, layout=True, children=True)
-    grid_gutter_horizontal = IntegerProperty(default=0, layout=True, children=True)
-    grid_gutter_vertical = IntegerProperty(default=0, layout=True, children=True)
+    grid_size_columns = IntegerProperty(default=1, layout=True, refresh_children=True)
+    grid_size_rows = IntegerProperty(default=0, layout=True, refresh_children=True)
+    grid_gutter_horizontal = IntegerProperty(
+        default=0, layout=True, refresh_children=True
+    )
+    grid_gutter_vertical = IntegerProperty(
+        default=0, layout=True, refresh_children=True
+    )
 
     row_span = IntegerProperty(default=1, layout=True)
     column_span = IntegerProperty(default=1, layout=True)
