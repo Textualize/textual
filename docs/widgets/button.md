@@ -39,15 +39,7 @@ Clicking any of the non-disabled buttons in the example app below will result th
 
 ## Messages
 
-### Pressed
-
-The `Button.Pressed` message is sent when the button is pressed.
-
-- [x] Bubbles
-
-#### Attributes
-
-_No other attributes_
+### ::: textual.widgets.Button.Pressed
 
 ## Additional Notes
 

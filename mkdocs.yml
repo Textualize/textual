@@ -128,17 +128,17 @@ nav:
       - "widgets/button.md"
       - "widgets/checkbox.md"
       - "widgets/data_table.md"
-      - "widgets/text_log.md"
       - "widgets/directory_tree.md"
       - "widgets/footer.md"
       - "widgets/header.md"
       - "widgets/index.md"
       - "widgets/input.md"
       - "widgets/label.md"
-      - "widgets/list_view.md"
       - "widgets/list_item.md"
+      - "widgets/list_view.md"
       - "widgets/placeholder.md"
       - "widgets/static.md"
+      - "widgets/text_log.md"
       - "widgets/tree.md"
   - API:
     - "api/index.md"
@@ -252,6 +252,7 @@ plugins:
 - search:
 - autorefs:
 - mkdocstrings:
+    custom_templates: docs/_templates
     default_handler: python
     handlers:
         python:
@@ -263,9 +264,11 @@ plugins:
               - "!^_"
               - "^__init__$"
               - "!^can_replace$"
-
     watch:
       - src/textual
+- exclude:
+    glob:
+      - "**/_template.md"
 
 
 extra_css:

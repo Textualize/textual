@@ -1,8 +1,9 @@
 from __future__ import annotations
+from typing import ClassVar
 
 from textual import events
 from textual.await_remove import AwaitRemove
-from textual.binding import Binding
+from textual.binding import Binding, BindingType
 from textual.containers import Vertical
 from textual.geometry import clamp
 from textual.message import Message
@@ -19,13 +20,49 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         index: The index in the list that's currently highlighted.
     """
 
-    BINDINGS = [
+    BINDINGS: ClassVar[list[BindingType]] = [
         Binding("enter", "select_cursor", "Select", show=False),
         Binding("up", "cursor_up", "Cursor Up", show=False),
         Binding("down", "cursor_down", "Cursor Down", show=False),
     ]
+    """
+    | Key(s) | Description |
+    | :- | :- |
+    | enter | Select the current item. |
+    | up | Move the cursor up. |
+    | down | Move the cursor down. |
+    """
 
     index = reactive(0, always_update=True)
+
+    class Highlighted(Message, bubble=True):
+        """Emitted when the highlighted item changes.
+
+        Highlighted item is controlled using up/down keys.
+        Can be handled using `on_list_view_highlighted` in a subclass of `ListView`
+        or in a parent widget in the DOM.
+
+        Attributes:
+            item: The highlighted item, if there is one highlighted.
+        """
+
+        def __init__(self, sender: ListView, item: ListItem | None) -> None:
+            super().__init__(sender)
+            self.item: ListItem | None = item
+
+    class Selected(Message, bubble=True):
+        """Emitted when a list item is selected, e.g. when you press the enter key on it.
+
+        Can be handled using `on_list_view_selected` in a subclass of `ListView` or in
+        a parent widget in the DOM.
+
+        Attributes:
+            item: The selected item.
+        """
+
+        def __init__(self, sender: ListView, item: ListItem) -> None:
+            super().__init__(sender)
+            self.item: ListItem = item
 
     def __init__(
         self,
@@ -139,25 +176,3 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
 
     def __len__(self):
         return len(self.children)
-
-    class Highlighted(Message, bubble=True):
-        """Emitted when the highlighted item changes. Highlighted item is controlled using up/down keys.
-
-        Attributes:
-            item: The highlighted item, if there is one highlighted.
-        """
-
-        def __init__(self, sender: ListView, item: ListItem | None) -> None:
-            super().__init__(sender)
-            self.item: ListItem | None = item
-
-    class Selected(Message, bubble=True):
-        """Emitted when a list item is selected, e.g. when you press the enter key on it
-
-        Attributes:
-            item: The selected item.
-        """
-
-        def __init__(self, sender: ListView, item: ListItem) -> None:
-            super().__init__(sender)
-            self.item: ListItem = item

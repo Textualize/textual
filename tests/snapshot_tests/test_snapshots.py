@@ -193,3 +193,8 @@ def test_demo(snap_compare):
         press=["down", "down", "down"],
         terminal_size=(100, 30),
     )
+
+
+def test_label_widths(snap_compare):
+    """Test renderable widths are calculate correctly."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "label_widths.py")

@@ -150,8 +150,20 @@ class Button(Static, can_focus=True):
     ACTIVE_EFFECT_DURATION = 0.3
     """When buttons are clicked they get the `-active` class for this duration (in seconds)"""
 
+    label: Reactive[RenderableType] = Reactive("")
+    """The text label that appears within the button."""
+
+    variant = Reactive.init("default")
+    """The variant name for the button."""
+
+    disabled = Reactive(False)
+    """The disabled state of the button; `True` if disabled, `False` if not."""
+
     class Pressed(Message, bubble=True):
         """Event sent when a `Button` is pressed.
+
+        Can be handled using `on_button_pressed` in a subclass of `Button` or
+        in a parent widget in the DOM.
 
         Attributes:
             button: The button that was pressed.
@@ -193,15 +205,6 @@ class Button(Static, can_focus=True):
             self.add_class("-disabled")
 
         self.variant = self.validate_variant(variant)
-
-    label: Reactive[RenderableType] = Reactive("")
-    """The text label that appears within the button."""
-
-    variant = Reactive.init("default")
-    """The variant name for the button."""
-
-    disabled = Reactive(False)
-    """The disabled state of the button; `True` if disabled, `False` if not."""
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield from super().__rich_repr__()
