@@ -1015,6 +1015,13 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             self._toggle_node(line.path[-1])
 
     def action_select_cursor(self) -> None:
+        """Cause a select event for the target node.
+
+        Note:
+            If `auto_expand` is `True` use of this action on a non-leaf node
+            will cause both an expand/collapse event to occour, as well as a
+            selected event.
+        """
         try:
             line = self._tree_lines[self.cursor_line]
         except IndexError:
