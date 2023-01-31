@@ -255,6 +255,7 @@ class Input(Widget, can_focus=True):
         return self._position_to_cell(len(self.value)) + 1
 
     def render(self) -> RenderableType:
+        self.view_position = self.view_position
         if not self.value:
             placeholder = Text(self.placeholder, justify="left")
             placeholder.stylize(self.get_component_rich_style("input--placeholder"))
