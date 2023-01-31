@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed double-paste into `Input` https://github.com/Textualize/textual/issues/1657
 - Added a workaround for an apparent Windows Terminal paste issue https://github.com/Textualize/textual/issues/1661
 - Fixes issue with renderable width calculation https://github.com/Textualize/textual/issues/1685
+- Fixed issue with app not processing Paste event https://github.com/Textualize/textual/issues/1666
 
 ## [0.10.1] - 2023-01-20
 

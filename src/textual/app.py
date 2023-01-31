@@ -1901,9 +1901,11 @@ class App(Generic[ReturnType], DOMNode):
             else:
                 await self.screen._forward_event(event)
 
-        elif isinstance(event, events.Paste):
+        elif isinstance(event, events.Paste) and not event.is_forwarded:
             if self.focused is not None:
                 await self.focused._forward_event(event)
+            else:
+                await self.screen._forward_event(event)
         else:
             await super().on_event(event)
 
