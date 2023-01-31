@@ -284,6 +284,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("enter", "select_cursor", "Select", show=False),
+        Binding("space", "toggle_node", "Toggle", show=False),
         Binding("up", "cursor_up", "Cursor Up", show=False),
         Binding("down", "cursor_down", "Cursor Down", show=False),
     ]
@@ -291,6 +292,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     | Key(s) | Description |
     | :- | :- |
     | enter | Select the current item. |
+    | space | Toggle the expand/collapsed space of the current item. |
     | up | Move the cursor up. |
     | down | Move the cursor down. |
     """
@@ -1003,6 +1005,14 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     def action_scroll_end(self) -> None:
         self.cursor_line = self.last_line
         self.scroll_to_line(self.cursor_line)
+
+    def action_toggle_node(self) -> None:
+        try:
+            line = self._tree_lines[self.cursor_line]
+        except IndexError:
+            pass
+        else:
+            self._toggle_node(line.path[-1])
 
     def action_select_cursor(self) -> None:
         try:
