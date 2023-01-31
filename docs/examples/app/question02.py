@@ -1,12 +1,12 @@
 from textual.app import App, ComposeResult
-from textual.widgets import Static, Button
+from textual.widgets import Label, Button
 
 
 class QuestionApp(App[str]):
     CSS_PATH = "question02.css"
 
     def compose(self) -> ComposeResult:
-        yield Static("Do you love Textual?", id="question")
+        yield Label("Do you love Textual?", id="question")
         yield Button("Yes", id="yes", variant="primary")
         yield Button("No", id="no", variant="error")
 
