@@ -996,6 +996,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         self.scroll_to_line(self.cursor_line)
 
     def action_page_up(self) -> None:
+        """Move the cursor up a page's-worth of nodes."""
         if self.cursor_line == -1:
             self.cursor_line = self.last_line
         self.cursor_line -= self.scrollable_content_region.height - 1
