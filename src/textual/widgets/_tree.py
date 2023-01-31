@@ -981,6 +981,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         self.scroll_to_line(self.cursor_line)
 
     def action_cursor_down(self) -> None:
+        """Move the cursor down one node."""
         if self.cursor_line == -1:
             self.cursor_line = 0
         else:
