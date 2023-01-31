@@ -392,16 +392,24 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     ) -> None:
         super().__init__(name=name, id=id, classes=classes)
         self.data: dict[RowKey, dict[ColumnKey, CellType]] = {}
+        """Contains the cells of the table, indexed by row key and column key.
+        The final positioning of a cell on screen cannot be determined solely by this
+        structure. Instead, we must check _row_locations and _column_locations to find
+        where each cell currently resides in space."""
 
-        # Metadata on rows and columns in the table
         self.columns: dict[ColumnKey, Column] = {}
+        """Metadata about the columns of the table, indexed by their key."""
         self.rows: dict[RowKey, Row] = {}
+        """Metadata about the rows of the table, indexed by their key."""
 
         # Keep tracking of key -> index for rows/cols. These allow us to retrieve,
         # given a row or column key, the index that row or column is currently present at,
-        # and mean that rows and columns are location independent - they can move around.
-        self._column_locations: TwoWayDict[ColumnKey, int] = TwoWayDict({})
+        # and mean that rows and columns are location independent - they can move around
+        # without requiring us to modify the underlying data.
         self._row_locations: TwoWayDict[RowKey, int] = TwoWayDict({})
+        """Maps row keys to row indices which represent row order."""
+        self._column_locations: TwoWayDict[ColumnKey, int] = TwoWayDict({})
+        """Maps column keys to column indices which represent column order."""
 
         self._row_render_cache: LRUCache[
             RowCacheKey, tuple[SegmentLines, SegmentLines]
@@ -409,22 +417,31 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._cell_render_cache: LRUCache[CellCacheKey, SegmentLines] = LRUCache(10000)
         self._line_cache: LRUCache[LineCacheKey, Strip] = LRUCache(1000)
 
-        self._line_no = 0
         self._require_update_dimensions: bool = False
-
+        """Set to re-calculate dimensions on idle."""
         self._new_rows: set[RowKey] = set()
+        """Tracking newly added rows to be used in re-calculation of dimensions on idle."""
         self._updated_cells: set[CellKey] = set()
-        """Track which cells were updated, so that we can refresh them once on idle"""
+        """Track which cells were updated, so that we can refresh them once on idle."""
 
         self.show_header = show_header
-        self.fixed_rows = fixed_rows
-        self.fixed_columns = fixed_columns
-        self.zebra_stripes = zebra_stripes
+        """Show/hide the header row (the row of column labels)."""
         self.header_height = header_height
+        """The height of the header row (the row of column labels)."""
+        self.fixed_rows = fixed_rows
+        """The number of rows to fix (prevented from scrolling)."""
+        self.fixed_columns = fixed_columns
+        """The number of columns to fix (prevented from scrolling)."""
+        self.zebra_stripes = zebra_stripes
+        """Apply zebra-stripe effect on row backgrounds (light, dark, light, dark, ...)."""
         self.show_cursor = show_cursor
+        """Show/hide both the keyboard and hover cursor."""
         self._show_hover_cursor = False
+        """Used to hide the mouse hover cursor when the user uses the keyboard."""
         self._update_count = 0
+        """The number of update operations that have occurred. Used for cache invalidation."""
         self._header_row_key = RowKey()
+        """The header is a special row which is not part of the data. This key is used to retrieve it."""
 
     @property
     def hover_row(self) -> int:
@@ -488,9 +505,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def update_coordinate(
         self, coordinate: Coordinate, value: CellType, *, update_width: bool = False
     ) -> None:
-        row, column = coordinate
-        row_key = self._row_locations.get_key(row)
-        column_key = self._column_locations.get_key(column)
+        """Update the content inside the cell currently occupying the given coordinate.
+
+        Args:
+            coordinate: The coordinate to update the cell at.
+            value: The new value to place inside the cell.
+            update_width: Whether to resize the column width to accommodate
+                for the new cell content.
+        """
+        row_key, column_key = self.coordinate_to_cell_key(coordinate)
         self.update_cell(row_key, column_key, value, update_width=update_width)
 
     def _get_cells_in_column(self, column_key: ColumnKey) -> Iterable[CellType]:
@@ -758,7 +781,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.rows.clear()
         if columns:
             self.columns.clear()
-        self._line_no = 0
         self._require_update_dimensions = True
         self.cursor_coordinate = Coordinate(0, 0)
         self.hover_coordinate = Coordinate(0, 0)
@@ -887,18 +909,20 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return row_keys
 
     def on_idle(self) -> None:
+        # Add the new rows *before* updating the column widths, since
+        # cells in a new row may influence the final width of a column
         if self._require_update_dimensions:
             self._require_update_dimensions = False
             new_rows = self._new_rows.copy()
             self._new_rows.clear()
-            # Add the new rows *before* updating the column widths, since
-            # cells in a new row may influence the final width of a column
             self._update_dimensions(new_rows)
-            if self._updated_cells:
-                updated_columns = self._updated_cells.copy()
-                self._updated_cells.clear()
-                self._update_column_widths(updated_columns)
-            self.refresh()
+
+        if self._updated_cells:
+            # Cell contents have already been updated at this point.
+            # Now we only need to worry about measuring column widths.
+            updated_columns = self._updated_cells.copy()
+            self._updated_cells.clear()
+            self._update_column_widths(updated_columns)
 
     def refresh_cell(self, row_index: int, column_index: int) -> None:
         """Refresh a cell.
