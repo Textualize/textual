@@ -1007,6 +1007,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         self.scroll_to_line(self.cursor_line)
 
     def action_toggle_node(self) -> None:
+        """Toggle the expanded state of the target node."""
         try:
             line = self._tree_lines[self.cursor_line]
         except IndexError:
