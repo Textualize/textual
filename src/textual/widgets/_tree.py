@@ -973,6 +973,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         self._invalidate()
 
     def action_cursor_up(self) -> None:
+        """Move the cursor up one node."""
         if self.cursor_line == -1:
             self.cursor_line = self.last_line
         else:
