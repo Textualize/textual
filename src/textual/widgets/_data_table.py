@@ -13,8 +13,6 @@ from typing import (
     NamedTuple,
     Callable,
     Sequence,
-    Type,
-    Optional,
 )
 
 import rich.repr
@@ -30,9 +28,8 @@ from .._cache import LRUCache
 from .._segment_tools import line_crop
 from .._two_way_dict import TwoWayDict
 from .._types import SegmentLines
-from .._typing import Literal, TypeAlias
-from ..binding import Binding
 from .._typing import Literal
+from .._typing import TypeAlias
 from ..binding import Binding, BindingType
 from ..coordinate import Coordinate
 from ..geometry import Region, Size, Spacing, clamp
