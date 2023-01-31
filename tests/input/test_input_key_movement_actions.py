@@ -97,6 +97,16 @@ async def test_input_left_word_from_end() -> None:
             assert input.cursor_position == expected_at[input.id]
 
 
+async def test_password_input_left_word_from_end() -> None:
+    """Going left one word from the end in a password field should land at home."""
+    async with InputTester().run_test() as pilot:
+        for input in pilot.app.query(Input):
+            input.action_end()
+            input.password = True
+            input.action_cursor_left_word()
+            assert input.cursor_position == 0
+
+
 async def test_input_right_word_from_home() -> None:
     """Going right one word from the start should land correctly.."""
     async with InputTester().run_test() as pilot:
@@ -110,6 +120,15 @@ async def test_input_right_word_from_home() -> None:
         for input in pilot.app.query(Input):
             input.action_cursor_right_word()
             assert input.cursor_position == expected_at[input.id]
+
+
+async def test_password_input_right_word_from_home() -> None:
+    """Going right one word from the start of a password input should go to the end."""
+    async with InputTester().run_test() as pilot:
+        for input in pilot.app.query(Input):
+            input.password = True
+            input.action_cursor_right_word()
+            assert input.cursor_position == len(input.value)
 
 
 async def test_input_right_word_from_end() -> None:
