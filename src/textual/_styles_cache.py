@@ -10,7 +10,7 @@ from rich.style import Style
 from ._border import get_box, render_row
 from ._filter import LineFilter
 from ._opacity import _apply_opacity
-from ._segment_tools import line_crop, line_pad, line_trim
+from ._segment_tools import line_pad, line_trim
 from ._typing import TypeAlias
 from .color import Color
 from .geometry import Region, Size, Spacing
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from .css.styles import StylesBase
     from .widget import Widget
 
-RenderLineCallback: TypeAlias = Callable[[int], List[Segment]]
+RenderLineCallback: TypeAlias = Callable[[int], Strip]
 
 
 @lru_cache(1024 * 8)
@@ -313,6 +313,7 @@ class StylesCache:
             content_y = y - gutter.top
             if content_y < content_height:
                 line = render_content_line(y - gutter.top)
+                line = line.adjust_cell_length(content_width)
             else:
                 line = [make_blank(content_width, inner)]
             if inner:

@@ -14,7 +14,6 @@ from ..reactive import var
 from ..geometry import Size, Region
 from ..scroll_view import ScrollView
 from .._cache import LRUCache
-from .._segment_tools import line_crop
 from ..strip import Strip
 
 
