@@ -188,37 +188,33 @@ Here's the question app with classvar CSS:
 
 ## Title and subtitle
 
-Textual applications have a `title` attribute that represents the name of your application and a `sub_title` attribute that gives additional context for it.
-These attributes can be displayed to the user if your application has a widget `Header` and there are two ways in which you can customize them if you don't want to run with the default values.
-
-By default, the title of your application matches the name of the application class and the subtitle is empty.
-However, you can override those defaults by setting the class attributes `TITLE` and `SUB_TITLE`, as shown below.
-Remember that you need the built-in widget `Header` to make the title and the subtitle visible in our app.
+Textual apps have a `title` attribute which is typically the name of your application, and an optional `sub_title` attribute which adds additional context (such as the file your are working on).
+By default, `title` will be set to they name of your App class, and `sub-title` is empty.
+You can change these defaults by defining `TITLE` and `SUB_TITLE` class variables. Here's an example of that:
 
 ```py title="question_title01.py" hl_lines="6-7 10"
 --8<-- "docs/examples/app/question_title01.py"
 ```
 
-The app title and subtitle are displayed at the top of the application in the header:
+Note the title and subtitle are displayed by the builtin [Header](./../widgets/header.md) widget at the top of the screen:
 
 ```{.textual path="docs/examples/app/question_title01.py"}
 ```
 
-On top of being able to define a default title and a default subtitle for a given application class, each _instance_ of your application class has two attributes `title` and `sub_title` that can be used to modify the title and subtitle of said instance application.
-
-For example, the application shown below changes its title and subtitle as soon as the application is instantiated.
+You can also set the title attributes dynamically within a method of your app. The following example sets the title and subtitle in response to a key press:
 
 ```py title="question_title02.py" hl_lines="19-21"
 --8<-- "docs/examples/app/question_title02.py"
 ```
 
-If you run the app shown above and if you press a key, the title and subtitle update accordingly.
-
-For example, if you press ++t++, your application will look as shown below:
+If you run this app and press the ++t++ key, you should see the header update accordingly:
 
 ```{.textual path="docs/examples/app/question_title02.py" press="t"}
 ```
 
+!!! tip
+
+    Note that there is no need to explicitly refresh the screen when setting the title attributes. This is an example of [reactivity](./reactivity.md), which we will cover later in the guide.
 
 ## What's next
 
