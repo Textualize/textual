@@ -919,7 +919,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         # Map the key of this row to its current index
         self._row_locations[row_key] = row_index
         self.data[row_key] = {
-            column.key: Text(cell) if isinstance(cell, str) else cell
+            column.key: cell
             for column, cell in zip_longest(self.ordered_columns, cells)
         }
         self.rows[row_key] = Row(row_key, height)

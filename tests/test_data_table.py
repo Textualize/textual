@@ -155,14 +155,14 @@ async def test_add_rows_user_defined_keys():
         assert isinstance(algernon_key, RowKey)
 
         # Ensure the data in the table is mapped as expected
-        first_row = {key_a: Text(ROWS[0][0]), key_b: Text(ROWS[0][1])}
+        first_row = {key_a: ROWS[0][0], key_b: ROWS[0][1]}
         assert table.data[algernon_key] == first_row
         assert table.data["algernon"] == first_row
 
-        second_row = {key_a: Text(ROWS[1][0]), key_b: Text(ROWS[1][1])}
+        second_row = {key_a: ROWS[1][0], key_b: ROWS[1][1]}
         assert table.data["charlie"] == second_row
 
-        third_row = {key_a: Text(ROWS[2][0]), key_b: Text(ROWS[2][1])}
+        third_row = {key_a: ROWS[2][0], key_b: ROWS[2][1]}
         assert table.data[auto_key] == third_row
 
         first_row = Row(algernon_key, height=1)
@@ -253,7 +253,7 @@ async def test_get_cell_value_returns_value_at_cell():
         table = app.query_one(DataTable)
         table.add_columns("A", "B")
         table.add_rows(ROWS)
-        assert table.get_value_at(Coordinate(0, 0)) == Text("0/0")
+        assert table.get_value_at(Coordinate(0, 0)) == "0/0"
 
 
 async def test_get_cell_value_exception():
