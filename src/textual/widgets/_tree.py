@@ -560,20 +560,13 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         label = self.render_label(node, NULL_STYLE, NULL_STYLE)
         return label.cell_len
 
-    def clear(self, label: TextType | None = None, data: TreeDataType = ...) -> None:
-        """Clear all nodes under root.
-
-        Args:
-            label: An optional new label for the root node. If not provided
-                the current root node's label will be used.
-            data: Optional new data for the root node. If not provided the
-                current root node's data will be used.
-        """
+    def clear(self) -> None:
+        """Clear all nodes under root."""
         self._line_cache.clear()
         self._tree_lines_cached = None
         self._current_id = 0
-        root_label = self.root._label if label is None else label
-        root_data = self.root.data if data is ... else data
+        root_label = self.root._label
+        root_data = self.root.data
         self.root = TreeNode(
             self,
             None,
@@ -584,6 +577,17 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         )
         self._updates += 1
         self.refresh()
+
+    def reset(self, label: TextType, data: TreeDataType | None = None) -> None:
+        """Clear the tree and reset the root node.
+
+        Args:
+            label: The label for the root node.
+            data: Optional data for the root node.
+        """
+        self.clear()
+        self.root.label = label
+        self.root.data = data
 
     def select_node(self, node: TreeNode[TreeDataType] | None) -> None:
         """Move the cursor to the given node, or reset cursor.
