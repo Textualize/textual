@@ -1,9 +1,13 @@
 from textual.app import App, ComposeResult
-from textual.widgets import Label, Button
+from textual.widgets import Button, Header, Label
 
 
-class QuestionApp(App[str]):
+class MyApp(App[str]):
+    TITLE = "A Question App"
+    SUB_TITLE = "The most important question"
+
     def compose(self) -> ComposeResult:
+        yield Header()
         yield Label("Do you love Textual?")
         yield Button("Yes", id="yes", variant="primary")
         yield Button("No", id="no", variant="error")
@@ -13,6 +17,6 @@ class QuestionApp(App[str]):
 
 
 if __name__ == "__main__":
-    app = QuestionApp()
+    app = MyApp()
     reply = app.run()
     print(reply)
