@@ -212,7 +212,7 @@ If you run this app and press the ++t++ key, you should see the header update ac
 ```{.textual path="docs/examples/app/question_title02.py" press="t"}
 ```
 
-!!! tip
+!!! info
 
     Note that there is no need to explicitly refresh the screen when setting the title attributes. This is an example of [reactivity](./reactivity.md), which we will cover later in the guide.
 
