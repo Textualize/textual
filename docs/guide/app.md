@@ -214,7 +214,7 @@ For example, the application shown below changes its title and subtitle as soon 
 
 If you run the app shown above and if you press a key, the title and subtitle update accordingly.
 
-For example, if you press `t`, your application will look as shown below:
+For example, if you press ++t++, your application will look as shown below:
 
 ```{.textual path="docs/examples/app/question_title02.py" press="t"}
 ```
