@@ -196,7 +196,7 @@ You can change these defaults by defining `TITLE` and `SUB_TITLE` class variable
 --8<-- "docs/examples/app/question_title01.py"
 ```
 
-Note the title and subtitle are displayed by the builtin [Header](./../widgets/header.md) widget at the top of the screen:
+Note that the title and subtitle are displayed by the builtin [Header](./../widgets/header.md) widget at the top of the screen:
 
 ```{.textual path="docs/examples/app/question_title01.py"}
 ```
