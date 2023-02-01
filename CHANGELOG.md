@@ -17,22 +17,26 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added more keyboard actions and related bindings to `Input` https://github.com/Textualize/textual/pull/1676
 - Added App.scroll_sensitivity_x and App.scroll_sensitivity_y to adjust how many lines the scroll wheel moves the scroll position https://github.com/Textualize/textual/issues/928
 - Added Shift+scroll wheel and ctrl+scroll wheel to scroll horizontally
+- Added `Tree.action_toggle_node` to toggle a node without selecting, and bound it to <kbd>Space</kbd> https://github.com/Textualize/textual/issues/1433
 
 ### Changed
 
 - Breaking change: `TreeNode` can no longer be imported from `textual.widgets`; it is now available via `from textual.widgets.tree import TreeNode`. https://github.com/Textualize/textual/pull/1637
+- `Tree` now shows a (subdued) cursor for a highlighted node when focus has moved elsewhere https://github.com/Textualize/textual/issues/1471
 
 ### Fixed
 
 - Fixed stuck screen  https://github.com/Textualize/textual/issues/1632
+- Fixed programmatic style changes not refreshing children layouts when parent widget did not change size https://github.com/Textualize/textual/issues/1607
 - Fixed relative units in `grid-rows` and `grid-columns` being computed with respect to the wrong dimension https://github.com/Textualize/textual/issues/1406
 - Fixed bug with animations that were triggered back to back, where the second one wouldn't start https://github.com/Textualize/textual/issues/1372
 - Fixed bug with animations that were scheduled where all but the first would be skipped https://github.com/Textualize/textual/issues/1372
 - Programmatically setting `overflow_x`/`overflow_y` refreshes the layout correctly https://github.com/Textualize/textual/issues/1616
 - Fixed double-paste into `Input` https://github.com/Textualize/textual/issues/1657
 - Added a workaround for an apparent Windows Terminal paste issue https://github.com/Textualize/textual/issues/1661
-- Fixes issue with renderable width calculation https://github.com/Textualize/textual/issues/1685
+- Fixed issue with renderable width calculation https://github.com/Textualize/textual/issues/1685
 - Fixed issue with app not processing Paste event https://github.com/Textualize/textual/issues/1666
+- Fixed glitch with view position with auto width inputs https://github.com/Textualize/textual/issues/1693
 
 ## [0.10.1] - 2023-01-20
 

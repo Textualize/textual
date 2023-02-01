@@ -284,6 +284,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("enter", "select_cursor", "Select", show=False),
+        Binding("space", "toggle_node", "Toggle", show=False),
         Binding("up", "cursor_up", "Cursor Up", show=False),
         Binding("down", "cursor_down", "Cursor Down", show=False),
     ]
@@ -291,6 +292,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     | Key(s) | Description |
     | :- | :- |
     | enter | Select the current item. |
+    | space | Toggle the expand/collapsed space of the current item. |
     | up | Move the cursor up. |
     | down | Move the cursor down. |
     """
@@ -339,9 +341,13 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     }
 
     Tree > .tree--cursor {
-        background: $secondary;
+        background: $secondary-darken-2;
         color: $text;
         text-style: bold;
+    }
+
+    Tree:focus > .tree--cursor {
+        background: $secondary;
     }
 
     Tree > .tree--highlight {
@@ -923,7 +929,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 label_style += self.get_component_rich_style(
                     "tree--highlight", partial=True
                 )
-            if self.cursor_line == y and self.has_focus:
+            if self.cursor_line == y:
                 label_style += self.get_component_rich_style(
                     "tree--cursor", partial=False
                 )
@@ -971,6 +977,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         self._invalidate()
 
     def action_cursor_up(self) -> None:
+        """Move the cursor up one node."""
         if self.cursor_line == -1:
             self.cursor_line = self.last_line
         else:
@@ -978,6 +985,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         self.scroll_to_line(self.cursor_line)
 
     def action_cursor_down(self) -> None:
+        """Move the cursor down one node."""
         if self.cursor_line == -1:
             self.cursor_line = 0
         else:
@@ -985,26 +993,50 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         self.scroll_to_line(self.cursor_line)
 
     def action_page_down(self) -> None:
+        """Move the cursor down a page's-worth of nodes."""
         if self.cursor_line == -1:
             self.cursor_line = 0
         self.cursor_line += self.scrollable_content_region.height - 1
         self.scroll_to_line(self.cursor_line)
 
     def action_page_up(self) -> None:
+        """Move the cursor up a page's-worth of nodes."""
         if self.cursor_line == -1:
             self.cursor_line = self.last_line
         self.cursor_line -= self.scrollable_content_region.height - 1
         self.scroll_to_line(self.cursor_line)
 
     def action_scroll_home(self) -> None:
+        """Move the cursor to the top of the tree."""
         self.cursor_line = 0
         self.scroll_to_line(self.cursor_line)
 
     def action_scroll_end(self) -> None:
+        """Move the cursor to the bottom of the tree.
+
+        Note:
+            Here bottom means vertically, not branch depth.
+        """
         self.cursor_line = self.last_line
         self.scroll_to_line(self.cursor_line)
 
+    def action_toggle_node(self) -> None:
+        """Toggle the expanded state of the target node."""
+        try:
+            line = self._tree_lines[self.cursor_line]
+        except IndexError:
+            pass
+        else:
+            self._toggle_node(line.path[-1])
+
     def action_select_cursor(self) -> None:
+        """Cause a select event for the target node.
+
+        Note:
+            If `auto_expand` is `True` use of this action on a non-leaf node
+            will cause both an expand/collapse event to occour, as well as a
+            selected event.
+        """
         try:
             line = self._tree_lines[self.cursor_line]
         except IndexError:
