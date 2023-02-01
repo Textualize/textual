@@ -416,8 +416,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._row_render_cache: LRUCache[
             RowCacheKey, tuple[SegmentLines, SegmentLines]
         ] = LRUCache(1000)
+        """For each row (a row can have a height of multiple lines), we maintain a cache
+        of the fixed and scrollable lines within that row to minimise how often we need to
+        re-render it."""
         self._cell_render_cache: LRUCache[CellCacheKey, SegmentLines] = LRUCache(10000)
+        """Cache for individual cells."""
         self._line_cache: LRUCache[LineCacheKey, Strip] = LRUCache(1000)
+        """Cache for lines within rows."""
 
         self._require_update_dimensions: bool = False
         """Set to re-calculate dimensions on idle."""
@@ -673,7 +678,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.refresh_row(row_index)
         is_valid_row = row_index < len(self.data)
         if is_valid_row:
-            self.emit_no_wait(DataTable.RowHighlighted(self, row_index))
+            row_key = self._row_locations.get_key(row_index)
+            self.emit_no_wait(DataTable.RowHighlighted(self, row_index, row_key))
 
     def _highlight_column(self, column_index: int) -> None:
         """Apply highlighting to the column at the given index, and emit event."""
