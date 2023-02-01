@@ -315,13 +315,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             cursor_row: The y-coordinate of the cursor that highlighted the row.
         """
 
-        def __init__(self, sender: DataTable, cursor_row: int) -> None:
+        def __init__(self, sender: DataTable, cursor_row: int, row_key: RowKey) -> None:
             self.cursor_row: int = cursor_row
+            self.row_key: RowKey = row_key
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
             yield "sender", self.sender
             yield "cursor_row", self.cursor_row
+            yield "row_key", self.row_key
 
     class RowSelected(Message, bubble=True):
         """Emitted when a row is selected. This message is only emitted when the
