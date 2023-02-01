@@ -947,8 +947,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         Returns:
             A list of the keys for the columns that were added. See
-            the `add_column` method docstring for more information on how
-            these keys are used.
+                the `add_column` method docstring for more information on how
+                these keys are used.
         """
         column_keys = []
         for label in labels:
@@ -964,8 +964,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         Returns:
             A list of the keys for the rows that were added. See
-            the `add_row` method docstring for more information on how
-            these keys are used.
+                the `add_row` method docstring for more information on how
+                these keys are used.
         """
         row_keys = []
         for row in rows:
