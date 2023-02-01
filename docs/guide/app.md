@@ -150,11 +150,14 @@ The addition of `[str]` tells mypy that `run()` is expected to return a string. 
 
 ## Customising your app
 
-### Setting the title and subtitle
+### Title and subtitle
+
+Textual applications have a `title` attribute that represents the name of your application and a `sub_title` attribute that gives additional context for it.
+These attributes can be displayed to the user if your application has a widget `Header` and there are two ways in which you can customize them if you don't want to run with the default values.
 
 By default, the title of your application matches the name of the application class and the subtitle is empty.
 However, you can override those defaults by setting the class attributes `TITLE` and `SUB_TITLE`, as shown below.
-We also make use of the built-in widget `Header` to make the title and the subtitle visible in our app.
+Remember that you need the built-in widget `Header` to make the title and the subtitle visible in our app.
 
 ```py title="question_title01.py" hl_lines="6-7 10"
 --8<-- "docs/examples/app/question_title01.py"
