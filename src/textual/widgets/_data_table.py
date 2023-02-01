@@ -470,12 +470,21 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     @property
     def _y_offsets(self) -> list[tuple[RowKey, int]]:
+        """Contains a 2-tuple for each line (not row!) of the DataTable. Given a y-coordinate,
+        we can index into this list to find which row that y-coordinate lands on, and the
+        y-offset *within* that row. The length of the returned list is therefore the total
+        height of all rows within the DataTable."""
         y_offsets: list[tuple[RowKey, int]] = []
         for row in self.ordered_rows:
             row_key = row.key
             row_height = row.height
             y_offsets += [(row_key, y) for y in range(row_height)]
         return y_offsets
+
+    @property
+    def _total_row_height(self) -> int:
+        """The total height of all rows within the DataTable"""
+        return len(self._y_offsets)
 
     def update_cell(
         self,
@@ -744,7 +753,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         header_height = self.header_height if self.show_header else 0
         self.virtual_size = Size(
             total_width,
-            len(self._y_offsets) + header_height,
+            self._total_row_height + header_height,
         )
 
     def _get_cell_region(self, row_index: int, column_index: int) -> Region:
@@ -796,7 +805,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         column_key = self._column_locations.get_key(column_index)
         width = columns[column_key].render_width
         header_height = self.header_height if self.show_header else 0
-        height = len(self._y_offsets) + header_height
+        height = self._total_row_height + header_height
         full_column_region = Region(x, 0, width, height)
         return full_column_region
 
