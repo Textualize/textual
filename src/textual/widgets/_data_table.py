@@ -1138,8 +1138,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             if is_fixed_style:
                 style += self.get_component_styles("datatable--cursor-fixed").rich_style
 
-        # TODO: We can hoist `row_key` lookup waaay up to do it inside `_get_offsets`
-        #  then just pass it through to here instead of the row_index.
         row_key = self._row_locations.get_key(row_index)
         column_key = self._column_locations.get_key(column_index)
         cell_cache_key = (row_key, column_key, style, cursor, hover, self._update_count)
@@ -1240,7 +1238,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         else:
             fixed_row = []
 
-        if row_key is None:
+        is_header_row = row_key is self._header_row_key
+        if is_header_row:
             row_style = self.get_component_styles("datatable--header").rich_style
         else:
             if self.zebra_stripes:
@@ -1268,7 +1267,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._row_render_cache[cache_key] = row_pair
         return row_pair
 
-    def _get_offsets(self, y: int) -> tuple[RowKey | None, int]:
+    def _get_offsets(self, y: int) -> tuple[RowKey, int]:
         """Get row key and line offset for a given line.
 
         Args:
@@ -1281,7 +1280,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         y_offsets = self._y_offsets
         if self.show_header:
             if y < header_height:
-                return None, y
+                return self._header_row_key, y
             y -= header_height
         if y > len(y_offsets):
             raise LookupError("Y coord {y!r} is greater than total height")
