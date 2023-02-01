@@ -189,7 +189,7 @@ Here's the question app with classvar CSS:
 ## Title and subtitle
 
 Textual apps have a `title` attribute which is typically the name of your application, and an optional `sub_title` attribute which adds additional context (such as the file your are working on).
-By default, `title` will be set to they name of your App class, and `sub-title` is empty.
+By default, `title` will be set to the name of your App class, and `sub_title` is empty.
 You can change these defaults by defining `TITLE` and `SUB_TITLE` class variables. Here's an example of that:
 
 ```py title="question_title01.py" hl_lines="6-7 10"
