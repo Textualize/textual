@@ -1,0 +1,67 @@
+{{ log.debug("Rendering " + attribute.path) }}
+
+<div class="doc doc-object doc-attribute">
+{% with html_id = attribute.path %}
+
+  {% if root %}
+    {% set show_full_path = config.show_root_full_path %}
+    {% set root_members = True %}
+  {% elif root_members %}
+    {% set show_full_path = config.show_root_members_full_path or config.show_object_full_path %}
+    {% set root_members = False %}
+  {% else %}
+    {% set show_full_path = config.show_object_full_path %}
+  {% endif %}
+
+  {% if not root or config.show_root_heading %}
+
+    {% filter heading(heading_level,
+        role="data" if attribute.parent.kind.value == "module" else "attr",
+        id=html_id,
+        class="doc doc-heading",
+        toc_label=attribute.name) %}
+
+      {% if config.separate_signature %}
+        <span class="doc doc-object-name doc-attribute-name">{% if show_full_path %}{{ attribute.path }}{% else %}{{ attribute.name }}{% endif %}</span>
+      {% else %}
+        {% filter highlight(language="python", inline=True) %}
+          {% if show_full_path %}{{ attribute.path }}{% else %}{{ attribute.name }}{% endif %}
+          {% if attribute.annotation %}: {{ attribute.annotation }}{% endif %}
+        {% endfilter %}
+      {% endif %}
+
+      {% with labels = attribute.labels %}
+        {% include "labels.html" with context %}
+      {% endwith %}
+
+    {% endfilter %}
+
+    {% if config.separate_signature %}
+      {% filter highlight(language="python", inline=False) %}
+        {% filter format_code(config.line_length) %}
+          {% if show_full_path %}{{ attribute.path }}{% else %}{{ attribute.name }}{% endif %}
+          {% if attribute.annotation %}: {{ attribute.annotation|safe }}{% endif %}
+        {% endfilter %}
+      {% endfilter %}
+    {% endif %}
+
+  {% else %}
+    {% if config.show_root_toc_entry %}
+      {% filter heading(heading_level,
+          role="data" if attribute.parent.kind.value == "module" else "attr",
+          id=html_id,
+          toc_label=attribute.path if config.show_root_full_path else attribute.name,
+          hidden=True) %}
+      {% endfilter %}
+    {% endif %}
+    {% set heading_level = heading_level - 1 %}
+  {% endif %}
+
+  <div class="doc doc-contents {% if root %}first{% endif %}">
+    {% with docstring_sections = attribute.docstring.parsed %}
+      {% include "docstring.html" with context %}
+    {% endwith %}
+  </div>
+
+{% endwith %}
+</div>
