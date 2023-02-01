@@ -25,6 +25,7 @@ nav:
     - "guide/widgets.md"
     - "guide/animation.md"
     - "guide/screens.md"
+    - "guide/compound.md"
   - "roadmap.md"
   - Reference:
     - "reference/index.md"
