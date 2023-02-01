@@ -5,8 +5,7 @@ from textual.app import App
 from textual.coordinate import Coordinate
 from textual.message import Message
 from textual.widgets import DataTable
-from textual.widgets._data_table import (
-    StringKey,
+from textual.widgets.data_table import (
     CellDoesNotExist,
     RowKey,
     Row,
@@ -251,12 +250,41 @@ async def test_get_cell_value_returns_value_at_cell():
     app = DataTableApp()
     async with app.run_test():
         table = app.query_one(DataTable)
+        table.add_column("Column1", key="C1")
+        table.add_row("TargetValue", key="R1")
+        assert table.get_cell_value("R1", "C1") == "TargetValue"
+
+
+async def test_get_cell_value_invalid_row_key():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("Column1", key="C1")
+        table.add_row("TargetValue", key="R1")
+        with pytest.raises(CellDoesNotExist):
+            table.get_cell_value("INVALID_ROW", "C1")
+
+
+async def test_get_cell_value_invalid_column_key():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("Column1", key="C1")
+        table.add_row("TargetValue", key="R1")
+        with pytest.raises(CellDoesNotExist):
+            table.get_cell_value("R1", "INVALID_COLUMN")
+
+
+async def test_get_value_at_returns_value_at_cell():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
         table.add_columns("A", "B")
         table.add_rows(ROWS)
         assert table.get_value_at(Coordinate(0, 0)) == "0/0"
 
 
-async def test_get_cell_value_exception():
+async def test_get_value_at_exception():
     app = DataTableApp()
     async with app.run_test():
         table = app.query_one(DataTable)
@@ -266,15 +294,24 @@ async def test_get_cell_value_exception():
             table.get_value_at(Coordinate(9999, 0))
 
 
+# async def test_update_cell_cell_exists():
+#     app = DataTableApp()
+#     async with app.run_test():
+#         table = app.query_one(DataTable)
+#         table.add_column("A", key="A")
+#         table.add_row("1", key="1")
+#         assert table.get_cell_value()
+
+
 def test_key_equals_equivalent_string():
     text = "Hello"
-    key = StringKey(text)
+    key = RowKey(text)
     assert key == text
     assert hash(key) == hash(text)
 
 
 def test_key_doesnt_match_non_equal_string():
-    key = StringKey("123")
+    key = ColumnKey("123")
     text = "laksjdlaskjd"
     assert key != text
     assert hash(key) != hash(text)
@@ -293,9 +330,9 @@ def test_key_string_lookup():
     # in tests how we intend for the keys to work for cache lookups.
     dictionary = {
         "foo": "bar",
-        StringKey("hello"): "world",
+        RowKey("hello"): "world",
     }
     assert dictionary["foo"] == "bar"
-    assert dictionary[StringKey("foo")] == "bar"
+    assert dictionary[RowKey("foo")] == "bar"
     assert dictionary["hello"] == "world"
-    assert dictionary[StringKey("hello")] == "world"
+    assert dictionary[RowKey("hello")] == "world"
