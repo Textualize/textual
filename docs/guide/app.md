@@ -192,7 +192,7 @@ Textual apps have a `title` attribute which is typically the name of your applic
 By default, `title` will be set to the name of your App class, and `sub_title` is empty.
 You can change these defaults by defining `TITLE` and `SUB_TITLE` class variables. Here's an example of that:
 
-```py title="question_title01.py" hl_lines="6-7 10"
+```py title="question_title01.py" hl_lines="7-8 11"
 --8<-- "docs/examples/app/question_title01.py"
 ```
 
@@ -203,7 +203,7 @@ Note that the title and subtitle are displayed by the builtin [Header](./../widg
 
 You can also set the title attributes dynamically within a method of your app. The following example sets the title and subtitle in response to a key press:
 
-```py title="question_title02.py" hl_lines="19-21"
+```py title="question_title02.py" hl_lines="20-22"
 --8<-- "docs/examples/app/question_title02.py"
 ```
 
