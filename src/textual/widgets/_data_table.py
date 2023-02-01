@@ -39,15 +39,14 @@ from ..render import measure
 from ..scroll_view import ScrollView
 from ..strip import Strip
 
-CellCacheKey: TypeAlias = "tuple[RowKey, ColumnKey, Style, bool, bool, int]"
-LineCacheKey: TypeAlias = (
+_CellCacheKey: TypeAlias = "tuple[RowKey, ColumnKey, Style, bool, bool, int]"
+_LineCacheKey: TypeAlias = (
     "tuple[int, int, int, int, Coordinate, Coordinate, Style, CursorType, bool, int]"
 )
-RowCacheKey: TypeAlias = (
+_RowCacheKey: TypeAlias = (
     "tuple[RowKey, int, Style, Coordinate, Coordinate, CursorType, bool, bool, int]"
 )
 CursorType = Literal["cell", "row", "column", "none"]
-CELL: CursorType = "cell"
 CellType = TypeVar("CellType")
 
 
@@ -237,7 +236,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     zebra_stripes = Reactive(False)
     header_height = Reactive(1)
     show_cursor = Reactive(True)
-    cursor_type = Reactive(CELL)
+    cursor_type = Reactive("cell")
 
     cursor_coordinate: Reactive[Coordinate] = Reactive(
         Coordinate(0, 0), repaint=False, always_update=True
@@ -428,14 +427,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Maps column keys to column indices which represent column order."""
 
         self._row_render_cache: LRUCache[
-            RowCacheKey, tuple[SegmentLines, SegmentLines]
+            _RowCacheKey, tuple[SegmentLines, SegmentLines]
         ] = LRUCache(1000)
         """For each row (a row can have a height of multiple lines), we maintain a cache
         of the fixed and scrollable lines within that row to minimise how often we need to
         re-render it."""
-        self._cell_render_cache: LRUCache[CellCacheKey, SegmentLines] = LRUCache(10000)
+        self._cell_render_cache: LRUCache[_CellCacheKey, SegmentLines] = LRUCache(10000)
         """Cache for individual cells."""
-        self._line_cache: LRUCache[LineCacheKey, Strip] = LRUCache(1000)
+        self._line_cache: LRUCache[_LineCacheKey, Strip] = LRUCache(1000)
         """Cache for lines within rows."""
 
         self._require_update_dimensions: bool = False
