@@ -39,11 +39,11 @@ from ..render import measure
 from ..scroll_view import ScrollView
 from ..strip import Strip
 
-_CellCacheKey: TypeAlias = "tuple[RowKey, ColumnKey, Style, bool, bool, int]"
-_LineCacheKey: TypeAlias = (
+CellCacheKey: TypeAlias = "tuple[RowKey, ColumnKey, Style, bool, bool, int]"
+LineCacheKey: TypeAlias = (
     "tuple[int, int, int, int, Coordinate, Coordinate, Style, CursorType, bool, int]"
 )
-_RowCacheKey: TypeAlias = (
+RowCacheKey: TypeAlias = (
     "tuple[RowKey, int, Style, Coordinate, Coordinate, CursorType, bool, bool, int]"
 )
 CursorType = Literal["cell", "row", "column", "none"]
@@ -427,14 +427,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Maps column keys to column indices which represent column order."""
 
         self._row_render_cache: LRUCache[
-            _RowCacheKey, tuple[SegmentLines, SegmentLines]
+            RowCacheKey, tuple[SegmentLines, SegmentLines]
         ] = LRUCache(1000)
         """For each row (a row can have a height of multiple lines), we maintain a cache
         of the fixed and scrollable lines within that row to minimise how often we need to
         re-render it."""
-        self._cell_render_cache: LRUCache[_CellCacheKey, SegmentLines] = LRUCache(10000)
+        self._cell_render_cache: LRUCache[CellCacheKey, SegmentLines] = LRUCache(10000)
         """Cache for individual cells."""
-        self._line_cache: LRUCache[_LineCacheKey, Strip] = LRUCache(1000)
+        self._line_cache: LRUCache[LineCacheKey, Strip] = LRUCache(1000)
         """Cache for lines within rows."""
 
         self._require_update_dimensions: bool = False
@@ -974,7 +974,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return row_keys
 
     def on_idle(self) -> None:
-        """Runs when the message pump is empty, and so we use this for
+        """Runs when the message pump is empty. We use this for
         some expensive calculations like re-computing dimensions of the
         whole DataTable and re-computing column widths after some cells
         have been updated. This is more efficient in the case of high
