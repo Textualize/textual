@@ -12,17 +12,12 @@ class CheckerBoard(ScrollView):
     COMPONENT_CLASSES = {
         "checkerboard--white-square",
         "checkerboard--black-square",
-        "checkerboard--void",
     }
 
     DEFAULT_CSS = """
     CheckerBoard {
         background: $primary;
     }
-    CheckerBoard .checkerboard--void {
-        background: $background;
-    }
-
     CheckerBoard .checkerboard--white-square {
         background: $foreground 70%;
     }
@@ -43,10 +38,9 @@ class CheckerBoard(ScrollView):
 
         white = self.get_component_rich_style("checkerboard--white-square")
         black = self.get_component_rich_style("checkerboard--black-square")
-        void = self.get_component_rich_style("checkerboard--void")
 
         if row_index >= 8:
-            return Strip.blank(self.size.width, void)
+            return Strip.blank(self.size.width)
 
         is_odd = row_index % 2
 
@@ -55,7 +49,6 @@ class CheckerBoard(ScrollView):
             for column in range(8)
         ]
         strip = Strip(segments, 8 * 8)
-        strip = strip.extend_cell_length(self.size.width, void)
         strip = strip.crop(scroll_x, scroll_x + self.size.width)
         return strip
 
