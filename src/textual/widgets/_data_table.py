@@ -524,8 +524,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             update_width: Whether to resize the column width to accommodate
                 for the new cell content.
         """
-        value = Text.from_markup(value) if isinstance(value, str) else value
-
         self.data[row_key][column_key] = value
         self._update_count += 1
 
@@ -752,6 +750,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             label_width = measure(console, column.label, 1)
             content_width = column.content_width
             cell_value = self.data[row_key][column_key]
+
             new_content_width = measure(console, cell_value, 1)
 
             if new_content_width < content_width:
@@ -866,15 +865,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 of its current location in the DataTable (it could have moved after being added
                 due to sorting or insertion/deletion of other columns).
         """
-        text_label = Text.from_markup(label) if isinstance(label, str) else label
-
         column_key = ColumnKey(key)
         column_index = len(self.columns)
-        content_width = measure(self.app.console, text_label, 1)
+        content_width = measure(self.app.console, label, 1)
         if width is None:
             column = Column(
                 column_key,
-                text_label,
+                label,
                 content_width,
                 content_width=content_width,
                 auto_width=True,
@@ -882,7 +879,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         else:
             column = Column(
                 column_key,
-                text_label,
+                label,
                 width,
                 content_width=content_width,
             )

@@ -178,7 +178,6 @@ async def test_add_columns():
         assert len(table.columns) == 3
 
 
-# TODO: Ensure we can use the key to retrieve the column.
 async def test_add_columns_user_defined_keys():
     app = DataTableApp()
     async with app.run_test():
@@ -223,7 +222,7 @@ async def test_column_labels() -> None:
         table = app.query_one(DataTable)
         table.add_columns("1", "2", "3")
         actual_labels = [col.label for col in table.columns.values()]
-        expected_labels = [Text("1"), Text("2"), Text("3")]
+        expected_labels = ["1", "2", "3"]
         assert actual_labels == expected_labels
 
 
@@ -294,13 +293,17 @@ async def test_get_value_at_exception():
             table.get_value_at(Coordinate(9999, 0))
 
 
-# async def test_update_cell_cell_exists():
-#     app = DataTableApp()
-#     async with app.run_test():
-#         table = app.query_one(DataTable)
-#         table.add_column("A", key="A")
-#         table.add_row("1", key="1")
-#         assert table.get_cell_value()
+async def test_update_cell_cell_exists():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("A", key="A")
+        table.add_row("1", key="1")
+        table.update_cell("1", "A", "NEW_VALUE")
+        assert table.get_cell_value("1", "A") == "NEW_VALUE"
+
+
+# TODO: Test update coordinate
 
 
 def test_key_equals_equivalent_string():
