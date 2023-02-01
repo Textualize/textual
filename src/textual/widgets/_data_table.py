@@ -313,6 +313,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         Attributes:
             cursor_row: The y-coordinate of the cursor that highlighted the row.
+            row_key: The key of the row that was highlighted.
         """
 
         def __init__(self, sender: DataTable, cursor_row: int, row_key: RowKey) -> None:
@@ -333,15 +334,18 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         Attributes:
             cursor_row: The y-coordinate of the cursor that made the selection.
+            row_key: The key of the row that was selected.
         """
 
-        def __init__(self, sender: DataTable, cursor_row: int) -> None:
+        def __init__(self, sender: DataTable, cursor_row: int, row_key: RowKey) -> None:
             self.cursor_row: int = cursor_row
+            self.row_key: RowKey = row_key
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
             yield "sender", self.sender
             yield "cursor_row", self.cursor_row
+            yield "row_key", self.row_key
 
     class ColumnHighlighted(Message, bubble=True):
         """Emitted when a column is highlighted. This message is only emitted when the
@@ -351,15 +355,20 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         Attributes:
             cursor_column: The x-coordinate of the column that was highlighted.
+            column_key: The key of the column that was highlighted.
         """
 
-        def __init__(self, sender: DataTable, cursor_column: int) -> None:
+        def __init__(
+            self, sender: DataTable, cursor_column: int, column_key: ColumnKey
+        ) -> None:
             self.cursor_column: int = cursor_column
+            self.column_key = column_key
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
             yield "sender", self.sender
             yield "cursor_column", self.cursor_column
+            yield "column_key", self.column_key
 
     class ColumnSelected(Message, bubble=True):
         """Emitted when a column is selected. This message is only emitted when the
@@ -369,15 +378,20 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         Attributes:
             cursor_column: The x-coordinate of the column that was selected.
+            column_key: The key of the column that was selected.
         """
 
-        def __init__(self, sender: DataTable, cursor_column: int) -> None:
+        def __init__(
+            self, sender: DataTable, cursor_column: int, column_key: ColumnKey
+        ) -> None:
             self.cursor_column: int = cursor_column
+            self.column_key = column_key
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
             yield "sender", self.sender
             yield "cursor_column", self.cursor_column
+            yield "column_key", self.column_key
 
     def __init__(
         self,
@@ -685,7 +699,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Apply highlighting to the column at the given index, and emit event."""
         self.refresh_column(column_index)
         if column_index < len(self.columns):
-            self.emit_no_wait(DataTable.ColumnHighlighted(self, column_index))
+            column_key = self._column_locations.get_key(column_index)
+            self.emit_no_wait(
+                DataTable.ColumnHighlighted(self, column_index, column_key)
+            )
 
     def validate_cursor_coordinate(self, value: Coordinate) -> Coordinate:
         return self._clamp_cursor_coordinate(value)
@@ -1500,18 +1517,21 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Emit the appropriate message for a selection based on the `cursor_type`."""
         cursor_coordinate = self.cursor_coordinate
         cursor_type = self.cursor_type
+        cell_key = self.coordinate_to_cell_key(cursor_coordinate)
         if cursor_type == "cell":
             self.emit_no_wait(
                 DataTable.CellSelected(
                     self,
                     self.get_value_at(cursor_coordinate),
                     coordinate=cursor_coordinate,
-                    cell_key=self.coordinate_to_cell_key(cursor_coordinate),
+                    cell_key=cell_key,
                 )
             )
         elif cursor_type == "row":
-            row, _ = cursor_coordinate
-            self.emit_no_wait(DataTable.RowSelected(self, row))
+            row_index, _ = cursor_coordinate
+            row_key, _ = cell_key
+            self.emit_no_wait(DataTable.RowSelected(self, row_index, row_key))
         elif cursor_type == "column":
-            _, column = cursor_coordinate
-            self.emit_no_wait(DataTable.ColumnSelected(self, column))
+            _, column_index = cursor_coordinate
+            _, column_key = cell_key
+            self.emit_no_wait(DataTable.ColumnSelected(self, column_index, column_key))
