@@ -578,6 +578,17 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         self._updates += 1
         self.refresh()
 
+    def reset(self, label: TextType, data: TreeDataType | None = None) -> None:
+        """Clear the tree and reset the root node.
+
+        Args:
+            label: The label for the root node.
+            data: Optional data for the root node.
+        """
+        self.clear()
+        self.root.label = label
+        self.root.data = data
+
     def select_node(self, node: TreeNode[TreeDataType] | None) -> None:
         """Move the cursor to the given node, or reset cursor.
 
