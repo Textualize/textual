@@ -56,7 +56,29 @@ async def test_tree_new_label_clear() -> None:
     async with TreeClearApp().run_test() as pilot:
         tree = pilot.app.query_one(VerseTree)
         assert len(tree.root.children) > 1
-        pilot.app.query_one(VerseTree).clear("Jiangyin")
+        pilot.app.query_one(VerseTree).clear(label="Jiangyin")
         assert len(tree.root.children) == 0
         assert str(tree.root.label) == "Jiangyin"
         assert isinstance(tree.root.data, VerseStar)
+
+
+async def test_tree_new_data_clear() -> None:
+    """Clearing a tree with data should keep the old label and use the new data."""
+    async with TreeClearApp().run_test() as pilot:
+        tree = pilot.app.query_one(VerseTree)
+        assert len(tree.root.children) > 1
+        pilot.app.query_one(VerseTree).clear(data=VersePlanet())
+        assert len(tree.root.children) == 0
+        assert str(tree.root.label) == "White Sun"
+        assert isinstance(tree.root.data, VersePlanet)
+
+
+async def test_tree_new_labal_and_data_clear() -> None:
+    """Clearing a tree with label and data should replace the label and data."""
+    async with TreeClearApp().run_test() as pilot:
+        tree = pilot.app.query_one(VerseTree)
+        assert len(tree.root.children) > 1
+        pilot.app.query_one(VerseTree).clear(label="Jiangyin", data=VersePlanet())
+        assert len(tree.root.children) == 0
+        assert str(tree.root.label) == "Jiangyin"
+        assert isinstance(tree.root.data, VersePlanet)

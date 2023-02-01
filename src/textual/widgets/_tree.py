@@ -560,18 +560,20 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         label = self.render_label(node, NULL_STYLE, NULL_STYLE)
         return label.cell_len
 
-    def clear(self, label: TextType | None = None) -> None:
+    def clear(self, label: TextType | None = None, data: TreeDataType = ...) -> None:
         """Clear all nodes under root.
 
         Args:
             label: An optional new label for the root node. If not provided
                 the current root node's label will be used.
+            data: Optional new data for the root node. If not provided the
+                current root node's data will be used.
         """
         self._line_cache.clear()
         self._tree_lines_cached = None
         self._current_id = 0
         root_label = self.root._label if label is None else label
-        root_data = self.root.data
+        root_data = self.root.data if data is ... else data
         self.root = TreeNode(
             self,
             None,
