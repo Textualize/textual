@@ -552,7 +552,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.update_cell(row_key, column_key, value, update_width=update_width)
 
     def _get_cells_in_column(self, column_key: ColumnKey) -> Iterable[CellType]:
-        """For a given column key, return the cells in that column in order"""
+        """For a given column key, return the cells in that column in the
+        order they currently appear on screen."""
         for row_metadata in self.ordered_rows:
             row_key = row_metadata.key
             row = self.data.get(row_key)
