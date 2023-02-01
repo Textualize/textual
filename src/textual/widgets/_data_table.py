@@ -445,22 +445,27 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     @property
     def hover_row(self) -> int:
+        """The index of the row that the mouse cursor is currently hovering above."""
         return self.hover_coordinate.row
 
     @property
     def hover_column(self) -> int:
+        """The index of the column that the mouse cursor is currently hovering above."""
         return self.hover_coordinate.column
 
     @property
     def cursor_row(self) -> int:
+        """The index of the row that the DataTable cursor is currently on."""
         return self.cursor_coordinate.row
 
     @property
     def cursor_column(self) -> int:
+        """The index of the column that the DataTable cursor is currently on."""
         return self.cursor_coordinate.column
 
     @property
     def row_count(self) -> int:
+        """The number of rows currently present in the DataTable."""
         return len(self.rows)
 
     @property
@@ -586,7 +591,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             # emit the appropriate [Row|Column|Cell]Highlighted event.
             self._scroll_cursor_into_view(animate=False)
             if self.cursor_type == "cell":
-                self._highlight_cell(self.cursor_coordinate)
+                self._highlight_coordinate(self.cursor_coordinate)
             elif self.cursor_type == "row":
                 self._highlight_row(self.cursor_row)
             elif self.cursor_type == "column":
@@ -613,7 +618,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             # message to tell users of the newly highlighted row/cell/column.
             if self.cursor_type == "cell":
                 self.refresh_cell(*old_coordinate)
-                self._highlight_cell(new_coordinate)
+                self._highlight_coordinate(new_coordinate)
             elif self.cursor_type == "row":
                 self.refresh_row(old_coordinate.row)
                 self._highlight_row(new_coordinate.row)
@@ -621,7 +626,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 self.refresh_column(old_coordinate.column)
                 self._highlight_column(new_coordinate.column)
 
-    def _highlight_cell(self, coordinate: Coordinate) -> None:
+    def _highlight_coordinate(self, coordinate: Coordinate) -> None:
         """Apply highlighting to the cell at the coordinate, and emit event."""
         self.refresh_cell(*coordinate)
         try:
@@ -669,6 +674,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return self._clamp_cursor_coordinate(value)
 
     def _clamp_cursor_coordinate(self, coordinate: Coordinate) -> Coordinate:
+        """Clamp a coordinate such that it falls within the boundaries of the table."""
         row, column = coordinate
         row = clamp(row, 0, self.row_count - 1)
         column = clamp(column, self.fixed_columns, len(self.columns) - 1)
@@ -692,11 +698,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._scroll_cursor_into_view()
 
     def _highlight_cursor(self) -> None:
+        """Applies the appropriate highlighting and raises the appropriate
+        [Row|Column|Cell]Highlighted event for the given cursor coordinate
+        and cursor type."""
         row_index, column_index = self.cursor_coordinate
         cursor_type = self.cursor_type
         # Apply the highlighting to the newly relevant cells
         if cursor_type == "cell":
-            self._highlight_cell(self.cursor_coordinate)
+            self._highlight_coordinate(self.cursor_coordinate)
         elif cursor_type == "row":
             self._highlight_row(row_index)
         elif cursor_type == "column":
@@ -931,9 +940,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return row_keys
 
     def on_idle(self) -> None:
-        # Add the new rows *before* updating the column widths, since
-        # cells in a new row may influence the final width of a column
+        """Runs when the message pump is empty, and so we use this for
+        some expensive calculations like re-computing dimensions of the
+        whole DataTable and re-computing column widths after some cells
+        have been updated. This is more efficient in the case of high
+        frequency updates, ensuring we only do expensive computations once."""
         if self._require_update_dimensions:
+            # Add the new rows *before* updating the column widths, since
+            # cells in a new row may influence the final width of a column
             self._require_update_dimensions = False
             new_rows = self._new_rows.copy()
             self._new_rows.clear()
@@ -993,6 +1007,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     @property
     def ordered_columns(self) -> list[Column]:
+        """The list of Columns in the DataTable, ordered as they currently appear on screen."""
         column_indices = range(len(self.columns))
         column_keys = [
             self._column_locations.get_key(index) for index in column_indices
@@ -1002,6 +1017,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     @property
     def ordered_rows(self) -> list[Row]:
+        """The list of Rows in the DataTable, ordered as they currently appear on screen."""
         row_indices = range(self.row_count)
         ordered_rows = []
         for row_index in row_indices:
@@ -1113,12 +1129,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         cursor_location: Coordinate,
         hover_location: Coordinate,
     ) -> tuple[SegmentLines, SegmentLines]:
-        """Render a row in to lines for each cell.
+        """Render a single line from a row in the DataTable.
 
         Args:
             row_key: The identifying key for this row.
             line_no: Line number (y-coordinate) within row. 0 is the first strip of
-                cells in the row, line_no=1 is the next, and so on...
+                cells in the row, line_no=1 is the next line in the row, and so on...
             base_style: Base style of row.
             cursor_location: The location of the cursor in the DataTable.
             hover_location: The location of the hover cursor in the DataTable.
@@ -1314,6 +1330,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return self._render_line(y, scroll_x, scroll_x + width, self.rich_style)
 
     def on_mouse_move(self, event: events.MouseMove):
+        """If the hover cursor is visible, display it by extracting the row
+        and column metadata from the segments present in the cells."""
         self._set_hover_cursor(True)
         meta = event.style.meta
         if meta and self.show_cursor and self.cursor_type != "none":
@@ -1323,6 +1341,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 pass
 
     def _get_fixed_offset(self) -> Spacing:
+        """Calculate the "fixed offset", that is the space to the top and left
+        that is occupied by fixed rows and columns respectively. Fixed rows and columns
+        are rows and columns that do not participate in scrolling."""
         top = self.header_height if self.show_header else 0
         top += sum(
             self.rows[self._row_locations.get_key(row_index)].height
@@ -1370,6 +1391,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.refresh()
 
     def _scroll_cursor_into_view(self, animate: bool = False) -> None:
+        """When the cursor is at a boundary of the DataTable and moves out
+        of view, this method handles scrolling to ensure it remains visible."""
         fixed_offset = self._get_fixed_offset()
         top, _, _, left = fixed_offset
 
