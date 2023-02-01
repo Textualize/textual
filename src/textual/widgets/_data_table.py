@@ -523,8 +523,17 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             value: The new value to put inside the cell.
             update_width: Whether to resize the column width to accommodate
                 for the new cell content.
+
+        Raises:
+            CellDoesNotExist: When the supplied `row_key` and `column_key`
+                cannot be found in the table.
         """
-        self.data[row_key][column_key] = value
+        try:
+            self.data[row_key][column_key] = value
+        except KeyError:
+            raise CellDoesNotExist(
+                f"No cell exists for row_key={row_key!r}, column_key={column_key!r}."
+            ) from None
         self._update_count += 1
 
         # Recalculate widths if necessary
@@ -545,6 +554,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             update_width: Whether to resize the column width to accommodate
                 for the new cell content.
         """
+        # TODO: Validate coordinate and raise exception
         row_key, column_key = self.coordinate_to_cell_key(coordinate)
         self.update_cell(row_key, column_key, value, update_width=update_width)
 

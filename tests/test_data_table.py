@@ -303,6 +303,16 @@ async def test_update_cell_cell_exists():
         assert table.get_cell_value("1", "A") == "NEW_VALUE"
 
 
+async def test_update_cell_cell_doesnt_exist():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("A", key="A")
+        table.add_row("1", key="1")
+        with pytest.raises(CellDoesNotExist):
+            table.update_cell("INVALID", "CELL", "Value")
+
+
 # TODO: Test update coordinate
 
 
