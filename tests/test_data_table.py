@@ -1,6 +1,9 @@
+import asyncio
+
 import pytest
 from rich.text import Text
 
+from textual._wait import wait_for_idle
 from textual.app import App
 from textual.coordinate import Coordinate
 from textual.message import Message
@@ -226,21 +229,21 @@ async def test_column_labels() -> None:
         assert actual_labels == expected_labels
 
 
-async def test_column_widths() -> None:
+async def test_initial_column_widths() -> None:
     app = DataTableApp()
-    async with app.run_test() as pilot:
+    async with app.run_test():
         table = app.query_one(DataTable)
         foo, bar = table.add_columns("foo", "bar")
 
         assert table.columns[foo].width == 3
         assert table.columns[bar].width == 3
         table.add_row("Hello", "World!")
-        await pilot.pause()
+        await wait_for_idle()
         assert table.columns[foo].content_width == 5
         assert table.columns[bar].content_width == 6
 
         table.add_row("Hello World!!!", "fo")
-        await pilot.pause()
+        await wait_for_idle()
         assert table.columns[foo].content_width == 14
         assert table.columns[bar].content_width == 6
 
@@ -319,6 +322,10 @@ async def test_update_coordinate_coordinate_exists():
         table = app.query_one(DataTable)
         column_0, column_1 = table.add_columns("A", "B")
         row_0, *_ = table.add_rows(ROWS)
+
+        columns = table.columns
+        column = columns.get(column_1)
+
         table.update_coordinate(Coordinate(0, 1), "newvalue")
         assert table.get_cell_value(row_0, column_1) == "newvalue"
 
@@ -331,6 +338,31 @@ async def test_update_coordinate_coordinate_doesnt_exist():
         table.add_rows(ROWS)
         with pytest.raises(CellDoesNotExist):
             table.update_coordinate(Coordinate(999, 999), "newvalue")
+
+
+@pytest.mark.parametrize(
+    "label,new_value,new_content_width",
+    [
+        # We update the value of a cell to a value longer than the initial value,
+        # but shorter than the column label. The column label width should be used.
+        ("1234567", "1234", 7),
+        # We update the value of a cell to a value larger than the initial value,
+        # so the width of the column should be increased to accommodate on idle.
+        ("1234567", "123456789", 9),
+    ],
+)
+async def test_update_coordinate_column_width(label, new_value, new_content_width):
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        key, _ = table.add_columns(label, "Column2")
+        table.add_rows(ROWS)
+        first_column = table.columns.get(key)
+
+        table.update_coordinate(Coordinate(0, 0), new_value, update_width=True)
+        await wait_for_idle()
+        assert first_column.content_width == new_content_width
+        assert first_column.render_width == new_content_width + 2
 
 
 def test_key_equals_equivalent_string():
