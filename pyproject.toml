@@ -22,7 +22,9 @@ classifiers = [
     "Typing :: Typed",
 ]
 include = [
-    "src/textual/py.typed"
+    "src/textual/py.typed",
+    { path = "docs/examples", format = "sdist" },
+    { path = "tests", format = "sdist" }
 ]
 
 [tool.poetry.scripts]
