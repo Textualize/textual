@@ -379,6 +379,14 @@ async def test_coordinate_to_cell_key():
         assert cell_key == CellKey(row_key, column_key)
 
 
+async def test_coordinate_to_cell_key_invalid_coordinate():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        with pytest.raises(CellDoesNotExist):
+            table.coordinate_to_cell_key(Coordinate(9999, 9999))
+
+
 def test_key_equals_equivalent_string():
     text = "Hello"
     key = RowKey(text)
