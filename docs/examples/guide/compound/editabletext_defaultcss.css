@@ -1,0 +1,32 @@
+EditableText {
+    layout: horizontal;
+    width: 1fr;
+    height: 3;
+}
+
+.editabletext--input {
+    width: 1fr;
+}
+
+.editabletext--label {
+    width: 1fr;
+    height: 3;
+    padding-left: 2;
+    border: round $primary;
+}
+
+.editabletext--edit {
+    box-sizing: border-box;
+    min-width: 0;
+    width: 4;
+}
+
+.editabletext--confirm {
+    box-sizing: border-box;
+    min-width: 0;
+    width: 4;
+}
+
+EditableText .ethidden {
+    display: none;
+}

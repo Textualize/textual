@@ -1,16 +1,10 @@
-from typing import Any
-
 from textual.app import App, ComposeResult
-from textual.containers import Horizontal
-from textual.message import Message
-from textual.widgets import Button, Input, Label, Static, TextLog
-
-
-class _EditableTextButtonContainer(Horizontal):
-    pass
+from textual.widgets import Button, Input, Label, Static
 
 
 class EditableText(Static):
+    """Custom widget to show (editable) static text."""
+
     DEFAULT_CSS = """
     EditableText {
         layout: horizontal;
@@ -27,12 +21,6 @@ class EditableText(Static):
         width: 1fr;
         height: 3;
         border: round $primary;
-    }
-
-    _EditableTextButtonContainer {
-        padding-left: 1;
-        padding-right: 1;
-        width: auto;
     }
 
     .editabletext--edit {
@@ -59,46 +47,31 @@ class EditableText(Static):
     _label: Label
     """The label that displays the text."""
 
-    class Edit(Message):
-        """Sent when the user starts editing text."""
-
-    class Display(Message):
-        """Sent when the user starts displaying text."""
-
     def compose(self) -> ComposeResult:
         self._input = Input(
             placeholder="Type something...", classes="editabletext--input ethidden"
         )
         self._label = Label("", classes="editabletext--label")
-        self._edit_button = Button(
-            "📝",
-            classes="editabletext--edit etbutton",
-        )
+        self._edit_button = Button("📝", classes="editabletext--edit")
         self._confirm_button = Button(
-            "✅",
-            classes="editabletext--confirm etbutton",
-            disabled=True,
+            "✅", classes="editabletext--confirm", disabled=True
         )
 
         yield self._input
         yield self._label
-        yield _EditableTextButtonContainer(
-            self._edit_button,
-            self._confirm_button,
-        )
+        yield self._edit_button
+        yield self._confirm_button
 
     @property
-    def is_editing(self) -> bool:
+    def is_editing(self) -> bool:  # (1)!
         """Is the text being edited?"""
         return not self._input.has_class("ethidden")
 
-    def on_button_pressed(self, event: Button.Pressed) -> None:
+    def on_button_pressed(self) -> None:  # (2)!
         if self.is_editing:
             self.switch_to_display_mode()
         else:
             self.switch_to_editing_mode()
-
-        event.stop()
 
     def switch_to_editing_mode(self) -> None:
         if self.is_editing:
@@ -112,8 +85,6 @@ class EditableText(Static):
         self._edit_button.disabled = True
         self._confirm_button.disabled = False
 
-        self.emit_no_wait(self.Edit(self))
-
     def switch_to_display_mode(self) -> None:
         if not self.is_editing:
             return
@@ -125,38 +96,3 @@ class EditableText(Static):
 
         self._confirm_button.disabled = True
         self._edit_button.disabled = False
-
-        self.emit_no_wait(self.Display(self))
-
-
-class EditableTextApp(App[None]):
-
-    text_log: TextLog
-
-    def compose(self) -> ComposeResult:
-        self.text_log = TextLog()
-
-        yield Label("Hey, there!")
-        yield EditableText()
-        yield EditableText()
-        yield Label("Bye")
-        yield EditableText()
-        yield Button()
-        yield self.text_log
-
-    def on_editable_text_edit(self, event: EditableText.Edit) -> None:
-        self.text_log.write(f"Editing {id(event.sender)}.")
-
-    def on_editable_text_display(self, event: EditableText.Display) -> None:
-        self.text_log.write(f"Displaying {id(event.sender)}.")
-
-    def on_button_pressed(self) -> None:
-        for editabletext in self.query(EditableText):
-            editabletext.switch_to_editing_mode()
-
-
-app = EditableTextApp()
-
-
-if __name__ == "__main__":
-    app.run()
