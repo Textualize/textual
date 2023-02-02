@@ -323,9 +323,6 @@ async def test_update_coordinate_coordinate_exists():
         column_0, column_1 = table.add_columns("A", "B")
         row_0, *_ = table.add_rows(ROWS)
 
-        columns = table.columns
-        column = columns.get(column_1)
-
         table.update_coordinate(Coordinate(0, 1), "newvalue")
         assert table.get_cell_value(row_0, column_1) == "newvalue"
 
@@ -343,8 +340,6 @@ async def test_update_coordinate_coordinate_doesnt_exist():
 @pytest.mark.parametrize(
     "label,new_value,new_content_width",
     [
-        # Initial cell values are length 3. Let's update cell content and ensure
-        # that the width of the column is calculated given the new cell width.
         # Shorter than initial cell value, larger than label => width remains same
         ("A", "BB", 3),
         # Larger than initial cell value, shorter than label => width remains that of label
@@ -356,6 +351,9 @@ async def test_update_coordinate_coordinate_doesnt_exist():
     ],
 )
 async def test_update_coordinate_column_width(label, new_value, new_content_width):
+    # Initial cell values are length 3. Let's update cell content and ensure
+    # that the width of the column is correct given the new cell content widths
+    # and the label of the column the cell is in.
     app = DataTableApp()
     async with app.run_test():
         table = app.query_one(DataTable)
