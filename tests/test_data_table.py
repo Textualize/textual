@@ -343,12 +343,16 @@ async def test_update_coordinate_coordinate_doesnt_exist():
 @pytest.mark.parametrize(
     "label,new_value,new_content_width",
     [
-        # We update the value of a cell to a value longer than the initial value,
-        # but shorter than the column label. The column label width should be used.
+        # Initial cell values are length 3. Let's update cell content and ensure
+        # that the width of the column is calculated given the new cell width.
+        # Shorter than initial cell value, larger than label => width remains same
+        ("A", "BB", 3),
+        # Larger than initial cell value, shorter than label => width remains that of label
         ("1234567", "1234", 7),
-        # We update the value of a cell to a value larger than the initial value,
-        # so the width of the column should be increased to accommodate on idle.
-        ("1234567", "123456789", 9),
+        # Shorter than initial cell value, shorter than label => width remains same
+        ("12345", "123", 5),
+        # Larger than initial cell value, larger than label => width updates to new cell value
+        ("12345", "123456789", 9),
     ],
 )
 async def test_update_coordinate_column_width(label, new_value, new_content_width):
