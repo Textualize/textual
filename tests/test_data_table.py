@@ -8,6 +8,7 @@ from textual.app import App
 from textual.coordinate import Coordinate
 from textual.message import Message
 from textual.widgets import DataTable
+from textual.widgets._data_table import CellKey
 from textual.widgets.data_table import (
     CellDoesNotExist,
     RowKey,
@@ -365,6 +366,17 @@ async def test_update_coordinate_column_width(label, new_value, new_content_widt
         await wait_for_idle()
         assert first_column.content_width == new_content_width
         assert first_column.render_width == new_content_width + 2
+
+
+async def test_coordinate_to_cell_key():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        column_key, _ = table.add_columns("Column0", "Column1")
+        row_key = table.add_row("A", "B")
+
+        cell_key = table.coordinate_to_cell_key(Coordinate(0, 0))
+        assert cell_key == CellKey(row_key, column_key)
 
 
 def test_key_equals_equivalent_string():
