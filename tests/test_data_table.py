@@ -313,7 +313,24 @@ async def test_update_cell_cell_doesnt_exist():
             table.update_cell("INVALID", "CELL", "Value")
 
 
-# TODO: Test update coordinate
+async def test_update_coordinate_coordinate_exists():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        column_0, column_1 = table.add_columns("A", "B")
+        row_0, *_ = table.add_rows(ROWS)
+        table.update_coordinate(Coordinate(0, 1), "newvalue")
+        assert table.get_cell_value(row_0, column_1) == "newvalue"
+
+
+async def test_update_coordinate_coordinate_doesnt_exist():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_columns("A", "B")
+        table.add_rows(ROWS)
+        with pytest.raises(CellDoesNotExist):
+            table.update_coordinate(Coordinate(999, 999), "newvalue")
 
 
 def test_key_equals_equivalent_string():
