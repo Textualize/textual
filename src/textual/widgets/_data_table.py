@@ -693,7 +693,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             The key of the cell currently occupying this coordinate.
         """
         if not self.is_valid_coordinate(coordinate):
-            raise CellDoesNotExist()
+            raise CellDoesNotExist(f"No cell exists at {coordinate!r}.")
         row_index, column_index = coordinate
         row_key = self._row_locations.get_key(row_index)
         column_key = self._column_locations.get_key(column_index)
