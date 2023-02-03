@@ -24,12 +24,6 @@ class CheckerBoard(Widget):
     }
     """
 
-    def get_content_width(self, container: Size, viewport: Size) -> int:
-        return 64
-
-    def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
-        return 32
-
     def render_line(self, y: int) -> Strip:
         """Render a line of the widget. y is relative to the top of the widget."""
 

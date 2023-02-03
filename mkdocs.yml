@@ -167,6 +167,7 @@ nav:
     - "api/query.md"
     - "api/reactive.md"
     - "api/screen.md"
+    - "api/scroll_view.md"
     - "api/static.md"
     - "api/strip.md"
     - "api/text_log.md"

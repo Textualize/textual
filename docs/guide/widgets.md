@@ -200,30 +200,28 @@ TODO: Explanation of compound widgets
 
 ## Line API
 
-Working with Rich renderables allows you to build sophisticated widgets with minimal effort, but there is a downside to widgets that return renderables.
-When you resize a widget or update its state, Textual has to refresh the widget's content in its entirety, which may be expensive.
-You are unlikely to notice this if the widget fits within the screen but large widgets that scroll may slow down your application.
+A downside of widgets that return Rich renderables is that Textual will redraw the entire widget when its state is updated or it changes size.
+If a widget is large enough to require scrolling or updates frequently then this redrawing can make your app feel less responsive.
+Textual offers an alternative API which reduces the amount of work required refresh a widget, and makes it possible to update portions of a widget (as small as a single character) without a full redraw. This is known as the *line API*.
 
-Textual offers an alternative API which reduces the amount of work Textual needs to do to refresh a widget, and makes it possible to update portions of a widget (as small as a single character). This is known as the *line API*.
+!!! note
 
-!!! info
-
-    The [DataTable](./../widgets/data_table.md) widget uses the Line API, which can support thousands or even millions of rows without a reduction in render times.
+    The Line API requires a little more work that typical Rich renderables, but can produce very power widgets such as the builtin [DataTable](./../widgets/data_table.md) which can handle thousands or even millions of rows.
 
 ### Render Line method
 
-To build an widget with the line API, implement a `render_line` method rather than a `render` method. The `render_line` method takes a single integer argument `y` which is an offset from the top of the widget, and should return a [Strip][textual.strip.Strip] object which contains that line's content.
-Textual will call this method as required to to get the content for every line.
+To build a widget with the line API, implement a `render_line` method rather than a `render` method. The `render_line` method takes a single integer argument `y` which is an offset from the top of the widget, and should return a [Strip][textual.strip.Strip] object containing that line's content.
+Textual will call this method as required to to get content for every row of characters in the widget.
 
 <div class="excalidraw">
 --8<-- "docs/images/render_line.excalidraw.svg"
 </div>
 
-Let's look at an example before we go in to the details. The following Textual app implements a widget with the line API that renders a checkerboard pattern. This might form the basis of a chess / checkers app. Here's the code:
+Let's look at an example before we go in to the details. The following Textual app implements a widget with the line API that renders a checkerboard pattern. This might form the basis of a chess / checkers game. Here's the code:
 
 === "checker01.py"
 
-    ```python title="checker01.py" hl_lines="12-30"
+    ```python title="checker01.py" hl_lines="12-31"
     --8<-- "docs/examples/guide/widgets/checker01.py"
     ```
 
@@ -233,11 +231,13 @@ Let's look at an example before we go in to the details. The following Textual a
     ```
 
 
-The `render_line` method above calculates a `Strip` for every row of characters in the widget. Each strip contains alternating black and white space characters which form the squares in the checkerboard. You may have noticed that the checkerboard widget makes use of some objects we haven't covered before. Let's explore those.
+The `render_line` method above calculates a `Strip` for every row of characters in the widget. Each strip contains alternating black and white space characters which form the squares in the checkerboard.
+
+You may have noticed that the checkerboard widget makes use of some objects we haven't covered before. Let's explore those.
 
 #### Segment and Style
 
-A [Segment](https://rich.readthedocs.io/en/latest/protocol.html#low-level-render) is a class borrowed from the [Rich](https://github.com/Textualize/rich) project. It is small object (actually a named tuple) which bundles text and a [Style](https://rich.readthedocs.io/en/latest/style.html) which tells Textual how the text should be displayed.
+A [Segment](https://rich.readthedocs.io/en/latest/protocol.html#low-level-render) is a class borrowed from the [Rich](https://github.com/Textualize/rich) project. It is small object (actually a named tuple) which bundles a string to be displayed and a [Style](https://rich.readthedocs.io/en/latest/style.html) which tells Textual how the text should look (color, bold, italic etc).
 
 Lets look at a simple segment which would produce the text "Hello, World!" in bold.
 
@@ -251,27 +251,86 @@ This would create the following object:
 --8<-- "docs/images/segment.excalidraw.svg"
 </div>
 
-Both Rich and Textual work with segments to generate content. A Textual app is the result of processing hundreds, or perhaps thousands of segments.
+Both Rich and Textual work with segments to generate content. When you run a Textual app you are seeing hundreds or perhaps thousands of segments combined together.
 
 #### Strips
 
-A [Strip][textual.strip.Strip] is a container for a number of segments which define the content for a single *line* (or row) in the Widget. A Strip only requires a single segment, but will likely contain many more.
+A [Strip][textual.strip.Strip] is a container for a number of segments covering a single *line* (or row) in the Widget. A Strip will at least one segment, but often many more.
 
-You construct a strip with a list of segments. Here's now you might construct a strip that ultimately displays the text "Hello, World!", but with the second word in bold:
+A `Strip` is constructed from a list of Segment objects. Here's now you might construct a strip that displays the text "Hello, World!", but with the second word in bold:
 
 ```python
 segments = [
     Segment("Hello, "),
-    Segment("World", Style(bold=Trip)),
+    Segment("World", Style(bold=True)),
     Segment("!")
 ]
 strip = Strip(segments)
 ```
 
-The `Strip` constructor has a second optional constructor, which should be the length of the strip. In the code above, the length of the strip is 13, so we could have constructed it like this:
+The first and third strip omit a style, which results in the widgets default style being used. The second segment has a style object which applies bold to the text "World". If this were part of a Strip it would produce the text: <code>Hello, **World**!</code>
+
+The `Strip` constructor has an optional second parameter, which should be the *cell length* of the strip. In the code above, the length of the strip is 13, so we could have constructed it like this:
 
 ```python
 strip = Strip(segments, 13)
 ```
 
-Note that the length parameter is _not_ the total number of characters in the string. It is the number of terminal "cells". Some characters (such as Asian language characters and certain emoji) take up the space of two Western alphabet characters. If you don't know in advance the number of cells your segments will occupy, it is best to leave the length parameter blank.
+Note that the cell length parameter is _not_ the total number of characters in the string. It is the number of terminal "cells". Some characters (such as Asian language characters and certain emoji) take up the space of two Western alphabet characters. If you don't know in advance the number of cells your segments will occupy, it is best to leave the length parameter blank.
+
+### Component classes
+
+When applying styles to widgets we can use CSS to select the child widgets. Widgets rendered with the line API don't have children per-se, but we can still use CSS to apply styles to parts of our widget by defining *component classes*. Component classes are associated with a widget by defining a `COMPONENT_CLASSES` class variable which should be a set of strings containing CSS class names.
+
+In the checkerboard example above we hard-coded the color of the squares to "white" and "black". But what if we want to create a checkerboard with different colors? We can do this by defining two component classes, one for the "white" squares and one for the "dark" squares. This will allow us to change the colors with CSS.
+
+The following example replaces our hard-coded colors with component classes.
+
+=== "checker02.py"
+
+    ```python title="checker02.py" hl_lines="13-15 18-25 37-38"
+    --8<-- "docs/examples/guide/widgets/checker02.py"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/widgets/checker02.py"}
+    ```
+
+The `COMPONENT_CLASSES` class variable above adds two class names: `checkerboard--white-square` and `checkerboard--black-square`. These are set in the `DEFAULT_CSS` but can modified int he apps `CSS` class variable or external CSS.
+
+!!! tip
+
+    Component classes typically begin with the name of the widget followed by *two* hyphens. This is a convention to avoid potential name clashes.
+
+The `render_line` method calls [get_component_rich_style][textual.widget.Widget.get_component_rich_style] to get `Style` object from the CSS, which we apply to the segments to create a more colorful looking checkerboard.
+
+### Scrolling
+
+Line API widgets require a little more more work to handle scrolling.
+
+A Line API widget can be made to scroll by extending the [ScrollView][textual.scroll_view.ScrollView] class. We also need to manage the following details:
+
+1. The ScrollView requires a *virtual size* which is the size of the scrollable content, and should be set via the `virtual_size` property. If this is larger than the widget then Textual will add scrollbars.
+2. We need to update the `render_line` method to compensate for the current position of the scrollbars.
+
+Lets add scrolling to our checkerboard example. A standard 8 x 8 board isn't really sufficient to demonstrate scrolling so we will also make the size of the board configurable, and set it to 100 x 100, for a total of 10,000 squares.
+
+=== "checker03.py"
+
+    ```python title="checker03.py" hl_lines="26-30 35-36 52-53"
+    --8<-- "docs/examples/guide/widgets/checker03.py"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/widgets/checker03.py"}
+    ```
+
+The virtual size is set in the constructor to match the total size of the board, which will enable scrollbars (unless you have your terminal zoomed out very far).
+
+The `render_line` method gets the scroll offset via the `scroll_offset` property. This attribute is an [Offset][textual.geometry.Offset] that indicates the position of the scroll bars. It starts at `(0, 0)` but will change if you move any of the scrollbars.
+
+<div class="excalidraw">
+--8<-- "docs/images/scroll_view.excalidraw.svg"
+</div>
