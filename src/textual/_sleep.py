@@ -38,7 +38,6 @@ class Sleeper(Thread):
 
 
 async def check_sleeps() -> None:
-
     sleeper = Sleeper()
     sleeper.start()
 

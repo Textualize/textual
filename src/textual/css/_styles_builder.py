@@ -434,7 +434,6 @@ class StylesBuilder:
     process_padding_left = _process_space_partial
 
     def _parse_border(self, name: str, tokens: list[Token]) -> BorderValue:
-
         border_type: EdgeType = "solid"
         border_color = Color(0, 255, 0)
 

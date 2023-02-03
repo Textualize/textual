@@ -200,4 +200,78 @@ TODO: Explanation of compound widgets
 
 ## Line API
 
-TODO: Explanation of line API
+Working with Rich renderables allows you to build sophisticated widgets with minimal effort, but there is a downside to widgets that return renderables.
+When you resize a widget or update its state, Textual has to refresh the widget's content in its entirety, which may be expensive.
+You are unlikely to notice this if the widget fits within the screen but large widgets that scroll may slow down your application.
+
+Textual offers an alternative API which reduces the amount of work Textual needs to do to refresh a widget, and makes it possible to update portions of a widget (as small as a single character). This is known as the *line API*.
+
+!!! info
+
+    The [DataTable](./../widgets/data_table.md) widget uses the Line API, which can support thousands or even millions of rows without a reduction in render times.
+
+### Render Line method
+
+To build an widget with the line API, implement a `render_line` method rather than a `render` method. The `render_line` method takes a single integer argument `y` which is an offset from the top of the widget, and should return a [Strip][textual.strip.Strip] object which contains that line's content.
+Textual will call this method as required to to get the content for every line.
+
+<div class="excalidraw">
+--8<-- "docs/images/render_line.excalidraw.svg"
+</div>
+
+Let's look at an example before we go in to the details. The following Textual app implements a widget with the line API that renders a checkerboard pattern. This might form the basis of a chess / checkers app. Here's the code:
+
+=== "checker01.py"
+
+    ```python title="checker01.py" hl_lines="12-30"
+    --8<-- "docs/examples/guide/widgets/checker01.py"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/widgets/checker01.py"}
+    ```
+
+
+The `render_line` method above calculates a `Strip` for every row of characters in the widget. Each strip contains alternating black and white space characters which form the squares in the checkerboard. You may have noticed that the checkerboard widget makes use of some objects we haven't covered before. Let's explore those.
+
+#### Segment and Style
+
+A [Segment](https://rich.readthedocs.io/en/latest/protocol.html#low-level-render) is a class borrowed from the [Rich](https://github.com/Textualize/rich) project. It is small object (actually a named tuple) which bundles text and a [Style](https://rich.readthedocs.io/en/latest/style.html) which tells Textual how the text should be displayed.
+
+Lets look at a simple segment which would produce the text "Hello, World!" in bold.
+
+```python
+greeting = Segment("Hello, World!", Style(bold=True))
+```
+
+This would create the following object:
+
+<div class="excalidraw">
+--8<-- "docs/images/segment.excalidraw.svg"
+</div>
+
+Both Rich and Textual work with segments to generate content. A Textual app is the result of processing hundreds, or perhaps thousands of segments.
+
+#### Strips
+
+A [Strip][textual.strip.Strip] is a container for a number of segments which define the content for a single *line* (or row) in the Widget. A Strip only requires a single segment, but will likely contain many more.
+
+You construct a strip with a list of segments. Here's now you might construct a strip that ultimately displays the text "Hello, World!", but with the second word in bold:
+
+```python
+segments = [
+    Segment("Hello, "),
+    Segment("World", Style(bold=Trip)),
+    Segment("!")
+]
+strip = Strip(segments)
+```
+
+The `Strip` constructor has a second optional constructor, which should be the length of the strip. In the code above, the length of the strip is 13, so we could have constructed it like this:
+
+```python
+strip = Strip(segments, 13)
+```
+
+Note that the length parameter is _not_ the total number of characters in the string. It is the number of terminal "cells". Some characters (such as Asian language characters and certain emoji) take up the space of two Western alphabet characters. If you don't know in advance the number of cells your segments will occupy, it is best to leave the length parameter blank.

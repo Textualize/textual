@@ -159,7 +159,6 @@ class TextLog(ScrollView, can_focus=True):
         return lines
 
     def _render_line(self, y: int, scroll_x: int, width: int) -> Strip:
-
         if y >= len(self.lines):
             return Strip.blank(width, self.rich_style)
 

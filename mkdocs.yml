@@ -168,6 +168,7 @@ nav:
     - "api/reactive.md"
     - "api/screen.md"
     - "api/static.md"
+    - "api/strip.md"
     - "api/text_log.md"
     - "api/timer.md"
     - "api/tree.md"

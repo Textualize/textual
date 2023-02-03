@@ -236,7 +236,6 @@ class ClientHandler:
                 message = cast(WSMessage, message)
 
                 if message.type in (WSMsgType.TEXT, WSMsgType.BINARY):
-
                     try:
                         if isinstance(message.data, bytes):
                             message = msgpack.unpackb(message.data)

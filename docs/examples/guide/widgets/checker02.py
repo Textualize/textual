@@ -1,59 +1,59 @@
-from __future__ import annotations
+from rich.segment import Segment
+from rich.style import Style
 
 from textual.app import App, ComposeResult
 from textual.geometry import Size
 from textual.strip import Strip
-from textual.scroll_view import ScrollView
-
-from rich.segment import Segment
+from textual.widget import Widget
 
 
-class CheckerBoard(ScrollView):
+class CheckerBoard(Widget):
+    """Render an 8x8 checkerboard."""
+
     COMPONENT_CLASSES = {
         "checkerboard--white-square",
         "checkerboard--black-square",
     }
 
     DEFAULT_CSS = """
-    CheckerBoard {
-        background: $primary;
-    }
     CheckerBoard .checkerboard--white-square {
-        background: $foreground 70%;
+        background: #A5BAC9;
     }
     CheckerBoard .checkerboard--black-square {
-        background: $primary;
+        background: #004578;
     }
     """
 
-    def on_mount(self) -> None:
-        self.virtual_size = Size(64, 32)
+    def get_content_width(self, container: Size, viewport: Size) -> int:
+        return 64
+
+    def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
+        return 32
 
     def render_line(self, y: int) -> Strip:
         """Render a line of the widget. y is relative to the top of the widget."""
 
-        scroll_x, scroll_y = self.scroll_offset
-        y += scroll_y
         row_index = y // 4  # four lines per row
-
-        white = self.get_component_rich_style("checkerboard--white-square")
-        black = self.get_component_rich_style("checkerboard--black-square")
 
         if row_index >= 8:
             return Strip.blank(self.size.width)
 
         is_odd = row_index % 2
 
+        white = self.get_component_rich_style("checkerboard--white-square")
+        black = self.get_component_rich_style("checkerboard--black-square")
+
         segments = [
             Segment(" " * 8, black if (column + is_odd) % 2 else white)
             for column in range(8)
         ]
         strip = Strip(segments, 8 * 8)
-        strip = strip.crop(scroll_x, scroll_x + self.size.width)
         return strip
 
 
 class BoardApp(App):
+    """A simple app to show our widget."""
+
     def compose(self) -> ComposeResult:
         yield CheckerBoard()
 
