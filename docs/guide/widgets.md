@@ -310,10 +310,10 @@ The `render_line` method calls [get_component_rich_style][textual.widget.Widget.
 A Line API widget can be made to scroll by extending the [ScrollView][textual.scroll_view.ScrollView] class (rather than `Widget`).
 The `ScrollView` class will do most of the work, but we will need to manage the following details:
 
-1. The ScrollView class requires a *virtual size* which is the size of the scrollable content, and should be set via the `virtual_size` property. If this is larger than the widget then Textual will add scrollbars.
-2. We need to update the `render_line` method to generate strips according to the current position of the scrollbars.
+1. The ScrollView class requires a *virtual size*, which is the size of the scrollable content and should be set via the `virtual_size` property. If this is larger than the widget then Textual will add scrollbars.
+2. We need to update the `render_line` method to generate strips for the visible area of the widget, taking in to account the current position of the scrollbars.
 
-Lets add scrolling to our checkerboard example. A standard 8 x 8 board isn't really sufficient to demonstrate scrolling so we will make the size of the board configurable and set it to 100 x 100, for a total of 10,000 squares.
+Lets add scrolling to our checkerboard example. A standard 8 x 8 board isn't sufficient to demonstrate scrolling so we will make the size of the board configurable and set it to 100 x 100, for a total of 10,000 squares.
 
 === "checker03.py"
 
@@ -326,9 +326,9 @@ Lets add scrolling to our checkerboard example. A standard 8 x 8 board isn't rea
     ```{.textual path="docs/examples/guide/widgets/checker03.py"}
     ```
 
-The virtual size is set in the constructor to match the total size of the board, which will enable scrollbars (unless you have your terminal zoomed out very far). You can update the `virtual_size` attribute dynamically as required, but our checkerboard isn't going to change size.
+The virtual size is set in the constructor to match the total size of the board, which will enable scrollbars (unless you have your terminal zoomed out very far). You can update the `virtual_size` attribute dynamically as required, but our checkerboard isn't going to change size so we only need to set it once.
 
-The `render_line` method gets the *scroll offset* which us an [Offset][textual.geometry.Offset] containing the current position of the scrollbars. We add `scroll_offset.y` to the `y` argument because `y` is relative to the top of the widget, and we need the line relative to the scrollable content.
+The `render_line` method gets the *scroll offset* which is an [Offset][textual.geometry.Offset] containing the current position of the scrollbars. We add `scroll_offset.y` to the `y` argument because `y` is relative to the top of the widget, and we need a Y coordinate relative to the scrollable content.
 
 We also need to compensate for the position of the horizontal scrollbar. This is done in the call to `strip.crop` which *crops* the strip to the visible area between `scroll_x` and `scroll_x + self.size.width`.
 
@@ -342,7 +342,6 @@ We also need to compensate for the position of the horizontal scrollbar. This is
 
 ### Region updates
 
-When you call the [refresh][textual.widget.Widget.refresh] method it will refresh the entire widget.
 The Line API makes it possible to refresh parts of a widget, as small as a single character.
 Refreshing smaller regions makes updates more efficient, and keeps your widget feeling responsive.
 
@@ -360,14 +359,15 @@ Here's the code:
     ```{.textual path="docs/examples/guide/widgets/checker04.py"}
     ```
 
-We've added a style to the checkerboard which is the color of the highlighted square, with a default of "darkred". We will need this when we come to render the highlighted square.
+We've added a style to the checkerboard which is the color of the highlighted square, with a default of "darkred".
+We will need this when we come to render the highlighted square.
 
 We've also added a reactive variable called `cursor_square` which will hold the coordinate of the square underneath the mouse. Note that we have used [var][textual.reactive.var] which gives as reactive superpowers but won't automatically refresh the whole widget, because we want to update only the squares under the cursor.
 
 The `on_mouse_move` handler takes the mouse coordinates from the [MouseMove][textual.events.MouseMove] object and calculates the coordinate of the square underneath the mouse. There's a little math here, so let's break it down.
 
 - The event contains the coordinates of the mouse relative to the top left of the widget, but we need the coordinate relative to the top left of board which depends on the position of the scrollbars.
-We can make this conversion by adding `event.offset` to `self.scroll_offset`.
+We can perform this conversion by adding `self.scroll_offset` to `event.offset`.
 - Once we have the board coordinate underneath the mouse we divide the x coordinate by 8 and divide the y coordinate by 4 to give us the coordinate of a square.
 
 If the cursor square coordinate calculated in `on_mouse_move` changes, Textual will call `watch_cursor_square` with the previous coordinate and new coordinate of the square. This method works out the regions of the widget to update and essentially does the reverse of the steps we took to go from mouse coordinates to square coordinates.
@@ -380,3 +380,11 @@ The `get_square_region` function calculates a [Region][textual.geometry.Region] 
 The final step is to update the `render_line` method to use the cursor style when rendering the square underneath the mouse.
 
 You should find that if you move the mouse over the widget now, it will highlight the square underneath the mouse pointer in red.
+
+### Line API examples
+
+The following builtin widgets use the Line API. If you are building advanced widgets, it may be worth looking through the code for inspiration!
+
+- [DataTable](https://github.com/Textualize/textual/blob/main/src/textual/widgets/_data_table.py)
+- [TextLog](https://github.com/Textualize/textual/blob/main/src/textual/widgets/_text_log.py)
+- [Tree](https://github.com/Textualize/textual/blob/main/src/textual/widgets/_tree.py)
