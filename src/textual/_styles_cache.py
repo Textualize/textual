@@ -212,7 +212,7 @@ class StylesCache:
         padding: Spacing,
         base_background: Color,
         background: Color,
-        render_content_line: RenderLineCallback,
+        render_content_line: Callable[[int], Strip],
     ) -> Strip:
         """Render a styled line.
 

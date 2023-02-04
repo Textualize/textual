@@ -227,12 +227,13 @@ def test_dirty_cache() -> None:
         Color.parse("blue"),
         Color.parse("green"),
         get_content_line,
+        Size(3, 3),
     )
     assert rendered_lines == [0, 1, 2]
     del rendered_lines[:]
 
     text_content = _extract_content(lines)
-    print(text_content)
+
     expected_text = [
         "┏━━━━━┓",
         "┃     ┃",
