@@ -206,7 +206,7 @@ Textual offers an alternative API which reduces the amount of work required refr
 
 !!! note
 
-    The Line API requires a little more work that typical Rich renderables, but can produce very power widgets such as the builtin [DataTable](./../widgets/data_table.md) which can handle thousands or even millions of rows.
+    The Line API requires a little more work that typical Rich renderables, but can produce powerful widgets such as the builtin [DataTable](./../widgets/data_table.md) which can handle thousands or even millions of rows.
 
 ### Render Line method
 
@@ -251,11 +251,11 @@ This would create the following object:
 --8<-- "docs/images/segment.excalidraw.svg"
 </div>
 
-Both Rich and Textual work with segments to generate content. When you run a Textual app you are seeing hundreds or perhaps thousands of segments combined together.
+Both Rich and Textual work with segments to generate content. A Textual app is the result of combining hundreds, or perhaps thousands, of segments,
 
 #### Strips
 
-A [Strip][textual.strip.Strip] is a container for a number of segments covering a single *line* (or row) in the Widget. A Strip will at least one segment, but often many more.
+A [Strip][textual.strip.Strip] is a container for a number of segments covering a single *line* (or row) in the Widget. A Strip will contain at least one segment, but often many more.
 
 A `Strip` is constructed from a list of Segment objects. Here's now you might construct a strip that displays the text "Hello, World!", but with the second word in bold:
 
@@ -268,15 +268,15 @@ segments = [
 strip = Strip(segments)
 ```
 
-The first and third strip omit a style, which results in the widgets default style being used. The second segment has a style object which applies bold to the text "World". If this were part of a Strip it would produce the text: <code>Hello, **World**!</code>
+The first and third Segment omit a style, which results in the widgets default style being used. The second segment has a style object which applies bold to the text "World". If this were part of a widget it would produce the text: <code>Hello, **World**!</code>
 
-The `Strip` constructor has an optional second parameter, which should be the *cell length* of the strip. In the code above, the length of the strip is 13, so we could have constructed it like this:
+The `Strip` constructor has an optional second parameter, which should be the *cell length* of the strip. The strip above has a length of 13, so we could have constructed it like this:
 
 ```python
 strip = Strip(segments, 13)
 ```
 
-Note that the cell length parameter is _not_ the total number of characters in the string. It is the number of terminal "cells". Some characters (such as Asian language characters and certain emoji) take up the space of two Western alphabet characters. If you don't know in advance the number of cells your segments will occupy, it is best to leave the length parameter blank.
+Note that the cell length parameter is _not_ the total number of characters in the string. It is the number of terminal "cells". Some characters (such as Asian language characters and certain emoji) take up the space of two Western alphabet characters. If you don't know in advance the number of cells your segments will occupy, it is best to leave the length parameter blank so that Textual calculates it automatically.
 
 ### Component classes
 
@@ -297,24 +297,23 @@ The following example replaces our hard-coded colors with component classes.
     ```{.textual path="docs/examples/guide/widgets/checker02.py"}
     ```
 
-The `COMPONENT_CLASSES` class variable above adds two class names: `checkerboard--white-square` and `checkerboard--black-square`. These are set in the `DEFAULT_CSS` but can modified int he apps `CSS` class variable or external CSS.
+The `COMPONENT_CLASSES` class variable above adds two class names: `checkerboard--white-square` and `checkerboard--black-square`. These are set in the `DEFAULT_CSS` but can modified in the app's `CSS` class variable or external CSS.
 
 !!! tip
 
     Component classes typically begin with the name of the widget followed by *two* hyphens. This is a convention to avoid potential name clashes.
 
-The `render_line` method calls [get_component_rich_style][textual.widget.Widget.get_component_rich_style] to get `Style` object from the CSS, which we apply to the segments to create a more colorful looking checkerboard.
+The `render_line` method calls [get_component_rich_style][textual.widget.Widget.get_component_rich_style] to get `Style` objects from the CSS, which we apply to the segments to create a more colorful looking checkerboard.
 
 ### Scrolling
 
-Line API widgets require a little more more work to handle scrolling.
+A Line API widget can be made to scroll by extending the [ScrollView][textual.scroll_view.ScrollView] class (rather than `Widget`).
+The `ScrollView` class will do most of the work, but we will need to manage the following details:
 
-A Line API widget can be made to scroll by extending the [ScrollView][textual.scroll_view.ScrollView] class. We also need to manage the following details:
+1. The ScrollView class requires a *virtual size* which is the size of the scrollable content, and should be set via the `virtual_size` property. If this is larger than the widget then Textual will add scrollbars.
+2. We need to update the `render_line` method to generate strips according to the current position of the scrollbars.
 
-1. The ScrollView requires a *virtual size* which is the size of the scrollable content, and should be set via the `virtual_size` property. If this is larger than the widget then Textual will add scrollbars.
-2. We need to update the `render_line` method to compensate for the current position of the scrollbars.
-
-Lets add scrolling to our checkerboard example. A standard 8 x 8 board isn't really sufficient to demonstrate scrolling so we will also make the size of the board configurable, and set it to 100 x 100, for a total of 10,000 squares.
+Lets add scrolling to our checkerboard example. A standard 8 x 8 board isn't really sufficient to demonstrate scrolling so we will make the size of the board configurable and set it to 100 x 100, for a total of 10,000 squares.
 
 === "checker03.py"
 
@@ -327,9 +326,15 @@ Lets add scrolling to our checkerboard example. A standard 8 x 8 board isn't rea
     ```{.textual path="docs/examples/guide/widgets/checker03.py"}
     ```
 
-The virtual size is set in the constructor to match the total size of the board, which will enable scrollbars (unless you have your terminal zoomed out very far).
+The virtual size is set in the constructor to match the total size of the board, which will enable scrollbars (unless you have your terminal zoomed out very far). You can update the `virtual_size` attribute dynamically as required, but our checkerboard isn't going to change size.
 
-The `render_line` method gets the scroll offset via the `scroll_offset` property. This attribute is an [Offset][textual.geometry.Offset] that indicates the position of the scroll bars. It starts at `(0, 0)` but will change if you move any of the scrollbars.
+The `render_line` method gets the *scroll offset* which us an [Offset][textual.geometry.Offset] containing the current position of the scrollbars. We add `scroll_offset.y` to the `y` argument because `y` is relative to the top of the widget, and we need the line relative to the scrollable content.
+
+We also need to compensate for the position of the horizontal scrollbar. This is done in the call to `strip.crop` which *crops* the strip to the visible area between `scroll_x` and `scroll_x + self.size.width`.
+
+!!! tip
+
+    [Strip][textual.strip.Strip] objects are immutable, so methods will return a new Strip rather than modifying the original.
 
 <div class="excalidraw">
 --8<-- "docs/images/scroll_view.excalidraw.svg"
