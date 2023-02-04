@@ -26,11 +26,11 @@ class CheckerBoard(ScrollView):
         background: #004578;
     }
     CheckerBoard > .checkerboard--cursor-square {
-        background: darkred
+        background: darkred;
     }
     """
 
-    cursor_square: var[Offset | None] = var(None)
+    cursor_square = var(Offset(0, 0))
 
     def __init__(self, board_size: int) -> None:
         super().__init__()
@@ -44,7 +44,7 @@ class CheckerBoard(ScrollView):
         self.cursor_square = Offset(mouse_position.x // 8, mouse_position.y // 4)
 
     def watch_cursor_square(
-        self, previous_square: Offset | None, cursor_square: Offset | None
+        self, previous_square: Offset, cursor_square: Offset
     ) -> None:
         """Called when the cursor square changes."""
 
@@ -57,12 +57,10 @@ class CheckerBoard(ScrollView):
             return region
 
         # Refresh the previous cursor square
-        if previous_square is not None:
-            self.refresh(get_square_region(previous_square))
+        self.refresh(get_square_region(previous_square))
 
         # Refresh the new cursor square
-        if cursor_square is not None:
-            self.refresh(get_square_region(cursor_square))
+        self.refresh(get_square_region(cursor_square))
 
     def render_line(self, y: int) -> Strip:
         """Render a line of the widget. y is relative to the top of the widget."""

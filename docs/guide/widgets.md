@@ -339,3 +339,44 @@ We also need to compensate for the position of the horizontal scrollbar. This is
 <div class="excalidraw">
 --8<-- "docs/images/scroll_view.excalidraw.svg"
 </div>
+
+### Region updates
+
+When you call the [refresh][textual.widget.Widget.refresh] method it will refresh the entire widget.
+The Line API makes it possible to refresh parts of a widget, as small as a single character.
+Refreshing smaller regions makes updates more efficient, and keeps your widget feeling responsive.
+
+To demonstrate this we will update the checkerboard to highlight the square under the mouse pointer.
+Here's the code:
+
+=== "checker04.py"
+
+    ```python title="checker04.py" hl_lines="18 28-30 33 41-44 46-63 74 81-92"
+    --8<-- "docs/examples/guide/widgets/checker04.py"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/widgets/checker04.py"}
+    ```
+
+We've added a style to the checkerboard which is the color of the highlighted square, with a default of "darkred". We will need this when we come to render the highlighted square.
+
+We've also added a reactive variable called `cursor_square` which will hold the coordinate of the square underneath the mouse. Note that we have used [var][textual.reactive.var] which gives as reactive superpowers but won't automatically refresh the whole widget, because we want to update only the squares under the cursor.
+
+The `on_mouse_move` handler takes the mouse coordinates from the [MouseMove][textual.events.MouseMove] object and calculates the coordinate of the square underneath the mouse. There's a little math here, so let's break it down.
+
+- The event contains the coordinates of the mouse relative to the top left of the widget, but we need the coordinate relative to the top left of board which depends on the position of the scrollbars.
+We can make this conversion by adding `event.offset` to `self.scroll_offset`.
+- Once we have the board coordinate underneath the mouse we divide the x coordinate by 8 and divide the y coordinate by 4 to give us the coordinate of a square.
+
+If the cursor square coordinate calculated in `on_mouse_move` changes, Textual will call `watch_cursor_square` with the previous coordinate and new coordinate of the square. This method works out the regions of the widget to update and essentially does the reverse of the steps we took to go from mouse coordinates to square coordinates.
+The `get_square_region` function calculates a [Region][textual.geometry.Region] object for each square and uses them as a positional argument in a call to [refresh][textual.widget.Widget.refresh]. Passing Regions to `refresh` tells Textual to update only the cells underneath those regions, and not the entire region.
+
+!!! note
+
+    Textual is smart about performing updates. If you refresh multiple regions (even if they overlap), Textual will combine them in to as few non-overlapping regions as possible.
+
+The final step is to update the `render_line` method to use the cursor style when rendering the square underneath the mouse.
+
+You should find that if you move the mouse over the widget now, it will highlight the square underneath the mouse pointer in red.
