@@ -201,8 +201,8 @@ TODO: Explanation of compound widgets
 ## Line API
 
 A downside of widgets that return Rich renderables is that Textual will redraw the entire widget when its state is updated or it changes size.
-If a widget is large enough to require scrolling or updates frequently then this redrawing can make your app feel less responsive.
-Textual offers an alternative API which reduces the amount of work required refresh a widget, and makes it possible to update portions of a widget (as small as a single character) without a full redraw. This is known as the *line API*.
+If a widget is large enough to require scrolling, or updates frequently, then this redrawing can make your app feel less responsive.
+Textual offers an alternative API which reduces the amount of work required to refresh a widget, and makes it possible to update portions of a widget (as small as a single character) without a full redraw. This is known as the *line API*.
 
 !!! note
 
@@ -211,7 +211,7 @@ Textual offers an alternative API which reduces the amount of work required refr
 ### Render Line method
 
 To build a widget with the line API, implement a `render_line` method rather than a `render` method. The `render_line` method takes a single integer argument `y` which is an offset from the top of the widget, and should return a [Strip][textual.strip.Strip] object containing that line's content.
-Textual will call this method as required to to get content for every row of characters in the widget.
+Textual will call this method as required to get content for every row of characters in the widget.
 
 <div class="excalidraw">
 --8<-- "docs/images/render_line.excalidraw.svg"
@@ -239,7 +239,7 @@ You may have noticed that the checkerboard widget makes use of some objects we h
 
 A [Segment](https://rich.readthedocs.io/en/latest/protocol.html#low-level-render) is a class borrowed from the [Rich](https://github.com/Textualize/rich) project. It is small object (actually a named tuple) which bundles a string to be displayed and a [Style](https://rich.readthedocs.io/en/latest/style.html) which tells Textual how the text should look (color, bold, italic etc).
 
-Lets look at a simple segment which would produce the text "Hello, World!" in bold.
+Let's look at a simple segment which would produce the text "Hello, World!" in bold.
 
 ```python
 greeting = Segment("Hello, World!", Style(bold=True))
@@ -257,7 +257,7 @@ Both Rich and Textual work with segments to generate content. A Textual app is t
 
 A [Strip][textual.strip.Strip] is a container for a number of segments covering a single *line* (or row) in the Widget. A Strip will contain at least one segment, but often many more.
 
-A `Strip` is constructed from a list of Segment objects. Here's now you might construct a strip that displays the text "Hello, World!", but with the second word in bold:
+A `Strip` is constructed from a list of `Segment` objects. Here's now you might construct a strip that displays the text "Hello, World!", but with the second word in bold:
 
 ```python
 segments = [
@@ -268,7 +268,7 @@ segments = [
 strip = Strip(segments)
 ```
 
-The first and third Segment omit a style, which results in the widgets default style being used. The second segment has a style object which applies bold to the text "World". If this were part of a widget it would produce the text: <code>Hello, **World**!</code>
+The first and third `Segment` omit a style, which results in the widgets default style being used. The second segment has a style object which applies bold to the text "World". If this were part of a widget it would produce the text: <code>Hello, **World**!</code>
 
 The `Strip` constructor has an optional second parameter, which should be the *cell length* of the strip. The strip above has a length of 13, so we could have constructed it like this:
 
@@ -276,7 +276,7 @@ The `Strip` constructor has an optional second parameter, which should be the *c
 strip = Strip(segments, 13)
 ```
 
-Note that the cell length parameter is _not_ the total number of characters in the string. It is the number of terminal "cells". Some characters (such as Asian language characters and certain emoji) take up the space of two Western alphabet characters. If you don't know in advance the number of cells your segments will occupy, it is best to leave the length parameter blank so that Textual calculates it automatically.
+Note that the cell length parameter is _not_ the total number of characters in the string. It is the number of terminal "cells". Some characters (such as Asian language characters and certain emoji) take up the space of two Western alphabet characters. If you don't know in advance the number of cells your segments will occupy, it is best to omit the length parameter so that Textual calculates it automatically.
 
 ### Component classes
 
@@ -310,10 +310,10 @@ The `render_line` method calls [get_component_rich_style][textual.widget.Widget.
 A Line API widget can be made to scroll by extending the [ScrollView][textual.scroll_view.ScrollView] class (rather than `Widget`).
 The `ScrollView` class will do most of the work, but we will need to manage the following details:
 
-1. The ScrollView class requires a *virtual size*, which is the size of the scrollable content and should be set via the `virtual_size` property. If this is larger than the widget then Textual will add scrollbars.
-2. We need to update the `render_line` method to generate strips for the visible area of the widget, taking in to account the current position of the scrollbars.
+1. The `ScrollView` class requires a *virtual size*, which is the size of the scrollable content and should be set via the `virtual_size` property. If this is larger than the widget then Textual will add scrollbars.
+2. We need to update the `render_line` method to generate strips for the visible area of the widget, taking into account the current position of the scrollbars.
 
-Lets add scrolling to our checkerboard example. A standard 8 x 8 board isn't sufficient to demonstrate scrolling so we will make the size of the board configurable and set it to 100 x 100, for a total of 10,000 squares.
+Let's add scrolling to our checkerboard example. A standard 8 x 8 board isn't sufficient to demonstrate scrolling so we will make the size of the board configurable and set it to 100 x 100, for a total of 10,000 squares.
 
 === "checker03.py"
 
@@ -362,7 +362,7 @@ Here's the code:
 We've added a style to the checkerboard which is the color of the highlighted square, with a default of "darkred".
 We will need this when we come to render the highlighted square.
 
-We've also added a reactive variable called `cursor_square` which will hold the coordinate of the square underneath the mouse. Note that we have used [var][textual.reactive.var] which gives as reactive superpowers but won't automatically refresh the whole widget, because we want to update only the squares under the cursor.
+We've also added a [reactive variable](./reactivity.md) called `cursor_square` which will hold the coordinate of the square underneath the mouse. Note that we have used [var][textual.reactive.var] which gives as reactive superpowers but won't automatically refresh the whole widget, because we want to update only the squares under the cursor.
 
 The `on_mouse_move` handler takes the mouse coordinates from the [MouseMove][textual.events.MouseMove] object and calculates the coordinate of the square underneath the mouse. There's a little math here, so let's break it down.
 
