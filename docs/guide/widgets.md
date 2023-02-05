@@ -362,7 +362,7 @@ Here's the code:
 We've added a style to the checkerboard which is the color of the highlighted square, with a default of "darkred".
 We will need this when we come to render the highlighted square.
 
-We've also added a [reactive variable](./reactivity.md) called `cursor_square` which will hold the coordinate of the square underneath the mouse. Note that we have used [var][textual.reactive.var] which gives as reactive superpowers but won't automatically refresh the whole widget, because we want to update only the squares under the cursor.
+We've also added a [reactive variable](./reactivity.md) called `cursor_square` which will hold the coordinate of the square underneath the mouse. Note that we have used [var][textual.reactive.var] which gives us reactive superpowers but won't automatically refresh the whole widget, because we want to update only the squares under the cursor.
 
 The `on_mouse_move` handler takes the mouse coordinates from the [MouseMove][textual.events.MouseMove] object and calculates the coordinate of the square underneath the mouse. There's a little math here, so let's break it down.
 
