@@ -1,7 +1,6 @@
 site_name: Textual
-site_url: https://textual.textualize.io/
+
 repo_url: https://github.com/textualize/textual/
-edit_uri: edit/main/docs/
 
 markdown_extensions:
   - attr_list
@@ -64,7 +63,6 @@ theme:
 
 plugins:
 
-- search:
 - autorefs:
 - mkdocstrings:
     custom_templates: docs/_templates

@@ -1,6 +1,10 @@
 INHERIT: mkdocs-common.yml
 
+site_url: https://textual.textualize.io/
+edit_uri: edit/main/docs/
+
 plugins:
+  - search:
   - blog:
   - rss:
       match_path: blog/posts/.*
