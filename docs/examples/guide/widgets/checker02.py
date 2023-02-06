@@ -1,8 +1,6 @@
 from rich.segment import Segment
-from rich.style import Style
 
 from textual.app import App, ComposeResult
-from textual.geometry import Size
 from textual.strip import Strip
 from textual.widget import Widget
 

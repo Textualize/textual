@@ -268,7 +268,7 @@ segments = [
 strip = Strip(segments)
 ```
 
-The first and third `Segment` omit a style, which results in the widgets default style being used. The second segment has a style object which applies bold to the text "World". If this were part of a widget it would produce the text: <code>Hello, **World**!</code>
+The first and third `Segment` omit a style, which results in the widget's default style being used. The second segment has a style object which applies bold to the text "World". If this were part of a widget it would produce the text: <code>Hello, **World**!</code>
 
 The `Strip` constructor has an optional second parameter, which should be the *cell length* of the strip. The strip above has a length of 13, so we could have constructed it like this:
 
@@ -280,7 +280,7 @@ Note that the cell length parameter is _not_ the total number of characters in t
 
 ### Component classes
 
-When applying styles to widgets we can use CSS to select the child widgets. Widgets rendered with the line API don't have children per-se, but we can still use CSS to apply styles to parts of our widget by defining *component classes*. Component classes are associated with a widget by defining a `COMPONENT_CLASSES` class variable which should be a set of strings containing CSS class names.
+When applying styles to widgets we can use CSS to select the child widgets. Widgets rendered with the line API don't have children per-se, but we can still use CSS to apply styles to parts of our widget by defining *component classes*. Component classes are associated with a widget by defining a `COMPONENT_CLASSES` class variable which should be a `set` of strings containing CSS class names.
 
 In the checkerboard example above we hard-coded the color of the squares to "white" and "black". But what if we want to create a checkerboard with different colors? We can do this by defining two component classes, one for the "white" squares and one for the "dark" squares. This will allow us to change the colors with CSS.
 
@@ -288,7 +288,7 @@ The following example replaces our hard-coded colors with component classes.
 
 === "checker02.py"
 
-    ```python title="checker02.py" hl_lines="13-15 18-25 37-38"
+    ```python title="checker02.py" hl_lines="11-13 16-23 35-36"
     --8<-- "docs/examples/guide/widgets/checker02.py"
     ```
 
@@ -317,7 +317,7 @@ Let's add scrolling to our checkerboard example. A standard 8 x 8 board isn't su
 
 === "checker03.py"
 
-    ```python title="checker03.py" hl_lines="26-30 35-36 52-53"
+    ```python title="checker03.py" hl_lines="4 26-30 35-36 52-53"
     --8<-- "docs/examples/guide/widgets/checker03.py"
     ```
 
