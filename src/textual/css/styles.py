@@ -327,7 +327,6 @@ class StylesBase(ABC):
 
         # Check we are animating a Scalar or Scalar offset
         if isinstance(start_value, (Scalar, ScalarOffset)):
-
             # If destination is a number, we can convert that to a scalar
             if isinstance(value, (int, float)):
                 value = Scalar(value, Unit.CELLS, Unit.CELLS)

@@ -30,7 +30,6 @@ class Content(Vertical):
 
 class ColorsView(Vertical):
     def compose(self) -> ComposeResult:
-
         LEVELS = [
             "darken-3",
             "darken-2",
@@ -42,7 +41,6 @@ class ColorsView(Vertical):
         ]
 
         for color_name in ColorSystem.COLOR_NAMES:
-
             items: list[Widget] = [Label(f'"{color_name}"')]
             for level in LEVELS:
                 color = f"{color_name}-{level}" if level else color_name

@@ -28,7 +28,6 @@ class _InputRenderable:
     def __rich_console__(
         self, console: "Console", options: "ConsoleOptions"
     ) -> "RenderResult":
-
         input = self.input
         result = input._value
         if input._cursor_at_end:

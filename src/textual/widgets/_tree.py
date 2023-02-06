@@ -281,7 +281,6 @@ class TreeNode(Generic[TreeDataType]):
 
 
 class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
-
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("enter", "select_cursor", "Select", show=False),
         Binding("space", "toggle_node", "Toggle", show=False),

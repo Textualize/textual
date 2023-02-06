@@ -36,7 +36,6 @@ SELECTOR_MAP: dict[str, tuple[SelectorType, Specificity3]] = {
 
 @lru_cache(maxsize=1024)
 def parse_selectors(css_selectors: str) -> tuple[SelectorSet, ...]:
-
     if not css_selectors.strip():
         return ()
 

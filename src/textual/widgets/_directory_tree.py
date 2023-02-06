@@ -88,7 +88,6 @@ class DirectoryTree(Tree[DirEntry]):
         id: str | None = None,
         classes: str | None = None,
     ) -> None:
-
         self.path = path
         super().__init__(
             path,

@@ -72,7 +72,6 @@ class DOMQuery(Generic[QueryType]):
         exclude: str | None = None,
         parent: DOMQuery | None = None,
     ) -> None:
-
         self._node = node
         self._nodes: list[QueryType] | None = None
         self._filters: list[tuple[SelectorSet, ...]] = (

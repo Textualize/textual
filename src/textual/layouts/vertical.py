@@ -19,7 +19,6 @@ class VerticalLayout(Layout):
     def arrange(
         self, parent: Widget, children: list[Widget], size: Size
     ) -> ArrangeResult:
-
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
         parent_size = parent.outer_size

@@ -83,6 +83,14 @@ def test_adjust_cell_length():
         )
 
 
+def test_extend_cell_length():
+    strip = Strip([Segment("foo"), Segment("bar")])
+    assert strip.extend_cell_length(3).text == "foobar"
+    assert strip.extend_cell_length(6).text == "foobar"
+    assert strip.extend_cell_length(7).text == "foobar "
+    assert strip.extend_cell_length(9).text == "foobar   "
+
+
 def test_simplify():
     assert Strip([Segment("foo"), Segment("bar")]).simplify() == Strip(
         [Segment("foobar")]

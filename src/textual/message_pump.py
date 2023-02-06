@@ -398,7 +398,6 @@ class MessagePump(metaclass=MessagePumpMeta):
                     self.app._handle_exception(error)
                     break
                 finally:
-
                     self._message_queue.task_done()
 
                     current_time = time()
