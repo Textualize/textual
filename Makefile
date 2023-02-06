@@ -15,6 +15,8 @@ docs-serve:
 	mkdocs serve
 docs-build:
 	mkdocs build
+docs-local-build:
+	mkdocs build --config-file mkdocs-local.yml
 docs-deploy:
 	rm -rf .screenshot_cache
 	mkdocs gh-deploy
