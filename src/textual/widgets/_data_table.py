@@ -31,7 +31,7 @@ from .._segment_tools import line_crop
 from .._two_way_dict import TwoWayDict
 from .._types import SegmentLines
 from .._typing import Literal, TypeAlias
-from ..binding import Binding
+from ..binding import Binding, BindingType
 from ..coordinate import Coordinate
 from ..geometry import Region, Size, Spacing, clamp
 from ..message import Message
@@ -140,6 +140,48 @@ class Row:
 
 
 class DataTable(ScrollView, Generic[CellType], can_focus=True):
+    """A tabular widget that contains data."""
+
+    BINDINGS: ClassVar[list[BindingType]] = [
+        Binding("enter", "select_cursor", "Select", show=False),
+        Binding("up", "cursor_up", "Cursor Up", show=False),
+        Binding("down", "cursor_down", "Cursor Down", show=False),
+        Binding("right", "cursor_right", "Cursor Right", show=False),
+        Binding("left", "cursor_left", "Cursor Left", show=False),
+    ]
+    """
+    | Key(s) | Description |
+    | :- | :- |
+    | enter | Select cells under the cursor. |
+    | up | Move the cursor up. |
+    | down | Move the cursor down. |
+    | right | Move the cursor right. |
+    | left | Move the cursor left. |
+    """
+
+    COMPONENT_CLASSES: ClassVar[set[str]] = {
+        "datatable--header",
+        "datatable--cursor-fixed",
+        "datatable--highlight-fixed",
+        "datatable--fixed",
+        "datatable--odd-row",
+        "datatable--even-row",
+        "datatable--highlight",
+        "datatable--cursor",
+    }
+    """
+    | Class | Description |
+    | :- | :- |
+    | `datatable--cursor` | Target the cursor. |
+    | `datatable--cursor-fixed` | Target fixed columns or header under the cursor. |
+    | `datatable--even-row` | Target even rows (row indices start at 0). |
+    | `datatable--fixed` | Target fixed columns or header. |
+    | `datatable--header` | Target the header of the data table. |
+    | `datatable--highlight` | Target the highlighted cell(s). |
+    | `datatable--highlight-fixed` | Target highlighted and fixed columns or header. |
+    | `datatable--odd-row` | Target odd rows (row indices start at 0). |
+    """
+
     DEFAULT_CSS = """
     App.-dark DataTable {
         background:;
@@ -190,25 +232,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     }
     """
 
-    COMPONENT_CLASSES: ClassVar[set[str]] = {
-        "datatable--header",
-        "datatable--cursor-fixed",
-        "datatable--highlight-fixed",
-        "datatable--fixed",
-        "datatable--odd-row",
-        "datatable--even-row",
-        "datatable--highlight",
-        "datatable--cursor",
-    }
-
-    BINDINGS = [
-        Binding("enter", "select_cursor", "Select", show=False),
-        Binding("up", "cursor_up", "Cursor Up", show=False),
-        Binding("down", "cursor_down", "Cursor Down", show=False),
-        Binding("right", "cursor_right", "Cursor Right", show=False),
-        Binding("left", "cursor_left", "Cursor Left", show=False),
-    ]
-
     show_header = Reactive(True)
     fixed_rows = Reactive(0)
     fixed_columns = Reactive(0)
@@ -221,6 +244,125 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Coordinate(0, 0), repaint=False, always_update=True
     )
     hover_cell: Reactive[Coordinate] = Reactive(Coordinate(0, 0), repaint=False)
+
+    class CellHighlighted(Message, bubble=True):
+        """Emitted when the cursor moves to highlight a new cell.
+        It's only relevant when the `cursor_type` is `"cell"`.
+        It's also emitted when the cell cursor is re-enabled (by setting `show_cursor=True`),
+        and when the cursor type is changed to `"cell"`. Can be handled using
+        `on_data_table_cell_highlighted` in a subclass of `DataTable` or in a parent
+        widget in the DOM.
+
+        Attributes:
+            value: The value in the highlighted cell.
+            coordinate: The coordinate of the highlighted cell.
+        """
+
+        def __init__(
+            self, sender: DataTable, value: CellType, coordinate: Coordinate
+        ) -> None:
+            self.value: CellType = value
+            self.coordinate: Coordinate = coordinate
+            super().__init__(sender)
+
+        def __rich_repr__(self) -> rich.repr.Result:
+            yield "sender", self.sender
+            yield "value", self.value
+            yield "coordinate", self.coordinate
+
+    class CellSelected(Message, bubble=True):
+        """Emitted by the `DataTable` widget when a cell is selected.
+        It's only relevant when the `cursor_type` is `"cell"`. Can be handled using
+        `on_data_table_cell_selected` in a subclass of `DataTable` or in a parent
+        widget in the DOM.
+
+        Attributes:
+            value: The value in the cell that was selected.
+            coordinate: The coordinate of the cell that was selected.
+        """
+
+        def __init__(
+            self, sender: DataTable, value: CellType, coordinate: Coordinate
+        ) -> None:
+            self.value: CellType = value
+            self.coordinate: Coordinate = coordinate
+            super().__init__(sender)
+
+        def __rich_repr__(self) -> rich.repr.Result:
+            yield "sender", self.sender
+            yield "value", self.value
+            yield "coordinate", self.coordinate
+
+    class RowHighlighted(Message, bubble=True):
+        """Emitted when a row is highlighted. This message is only emitted when the
+        `cursor_type` is set to `"row"`. Can be handled using `on_data_table_row_highlighted`
+        in a subclass of `DataTable` or in a parent widget in the DOM.
+
+        Attributes:
+            cursor_row: The y-coordinate of the cursor that highlighted the row.
+        """
+
+        def __init__(self, sender: DataTable, cursor_row: int) -> None:
+            self.cursor_row: int = cursor_row
+            super().__init__(sender)
+
+        def __rich_repr__(self) -> rich.repr.Result:
+            yield "sender", self.sender
+            yield "cursor_row", self.cursor_row
+
+    class RowSelected(Message, bubble=True):
+        """Emitted when a row is selected. This message is only emitted when the
+        `cursor_type` is set to `"row"`. Can be handled using
+        `on_data_table_row_selected` in a subclass of `DataTable` or in a parent
+        widget in the DOM.
+
+        Attributes:
+            cursor_row: The y-coordinate of the cursor that made the selection.
+        """
+
+        def __init__(self, sender: DataTable, cursor_row: int) -> None:
+            self.cursor_row: int = cursor_row
+            super().__init__(sender)
+
+        def __rich_repr__(self) -> rich.repr.Result:
+            yield "sender", self.sender
+            yield "cursor_row", self.cursor_row
+
+    class ColumnHighlighted(Message, bubble=True):
+        """Emitted when a column is highlighted. This message is only emitted when the
+        `cursor_type` is set to `"column"`. Can be handled using
+        `on_data_table_column_highlighted` in a subclass of `DataTable` or in a parent
+        widget in the DOM.
+
+        Attributes:
+            cursor_column: The x-coordinate of the column that was highlighted.
+        """
+
+        def __init__(self, sender: DataTable, cursor_column: int) -> None:
+            self.cursor_column: int = cursor_column
+            super().__init__(sender)
+
+        def __rich_repr__(self) -> rich.repr.Result:
+            yield "sender", self.sender
+            yield "cursor_column", self.cursor_column
+
+    class ColumnSelected(Message, bubble=True):
+        """Emitted when a column is selected. This message is only emitted when the
+        `cursor_type` is set to `"column"`. Can be handled using
+        `on_data_table_column_selected` in a subclass of `DataTable` or in a parent
+        widget in the DOM.
+
+        Attributes:
+            cursor_column: The x-coordinate of the column that was selected.
+        """
+
+        def __init__(self, sender: DataTable, cursor_column: int) -> None:
+            self.cursor_column: int = cursor_column
+            super().__init__(sender)
+
+        def __rich_repr__(self) -> rich.repr.Result:
+            yield "sender", self.sender
+            yield "cursor_column", self.cursor_column
 
     def __init__(
         self,
@@ -1259,122 +1401,3 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         elif cursor_type == "column":
             _, column = cursor_cell
             self.emit_no_wait(DataTable.ColumnSelected(self, column))
-
-    class CellHighlighted(Message, bubble=True):
-        """Emitted when the cursor moves to highlight a new cell.
-        It's only relevant when the `cursor_type` is `"cell"`.
-        It's also emitted when the cell cursor is re-enabled (by setting `show_cursor=True`),
-        and when the cursor type is changed to `"cell"`. Can be handled using
-        `on_data_table_cell_highlighted` in a subclass of `DataTable` or in a parent
-        widget in the DOM.
-
-        Attributes:
-            value: The value in the highlighted cell.
-            coordinate: The coordinate of the highlighted cell.
-        """
-
-        def __init__(
-            self, sender: DataTable, value: CellType, coordinate: Coordinate
-        ) -> None:
-            self.value: CellType = value
-            self.coordinate: Coordinate = coordinate
-            super().__init__(sender)
-
-        def __rich_repr__(self) -> rich.repr.Result:
-            yield "sender", self.sender
-            yield "value", self.value
-            yield "coordinate", self.coordinate
-
-    class CellSelected(Message, bubble=True):
-        """Emitted by the `DataTable` widget when a cell is selected.
-        It's only relevant when the `cursor_type` is `"cell"`. Can be handled using
-        `on_data_table_cell_selected` in a subclass of `DataTable` or in a parent
-        widget in the DOM.
-
-        Attributes:
-            value: The value in the cell that was selected.
-            coordinate: The coordinate of the cell that was selected.
-        """
-
-        def __init__(
-            self, sender: DataTable, value: CellType, coordinate: Coordinate
-        ) -> None:
-            self.value: CellType = value
-            self.coordinate: Coordinate = coordinate
-            super().__init__(sender)
-
-        def __rich_repr__(self) -> rich.repr.Result:
-            yield "sender", self.sender
-            yield "value", self.value
-            yield "coordinate", self.coordinate
-
-    class RowHighlighted(Message, bubble=True):
-        """Emitted when a row is highlighted. This message is only emitted when the
-        `cursor_type` is set to `"row"`. Can be handled using `on_data_table_row_highlighted`
-        in a subclass of `DataTable` or in a parent widget in the DOM.
-
-        Attributes:
-            cursor_row: The y-coordinate of the cursor that highlighted the row.
-        """
-
-        def __init__(self, sender: DataTable, cursor_row: int) -> None:
-            self.cursor_row: int = cursor_row
-            super().__init__(sender)
-
-        def __rich_repr__(self) -> rich.repr.Result:
-            yield "sender", self.sender
-            yield "cursor_row", self.cursor_row
-
-    class RowSelected(Message, bubble=True):
-        """Emitted when a row is selected. This message is only emitted when the
-        `cursor_type` is set to `"row"`. Can be handled using
-        `on_data_table_row_selected` in a subclass of `DataTable` or in a parent
-        widget in the DOM.
-
-        Attributes:
-            cursor_row: The y-coordinate of the cursor that made the selection.
-        """
-
-        def __init__(self, sender: DataTable, cursor_row: int) -> None:
-            self.cursor_row: int = cursor_row
-            super().__init__(sender)
-
-        def __rich_repr__(self) -> rich.repr.Result:
-            yield "sender", self.sender
-            yield "cursor_row", self.cursor_row
-
-    class ColumnHighlighted(Message, bubble=True):
-        """Emitted when a column is highlighted. This message is only emitted when the
-        `cursor_type` is set to `"column"`. Can be handled using
-        `on_data_table_column_highlighted` in a subclass of `DataTable` or in a parent
-        widget in the DOM.
-
-        Attributes:
-            cursor_column: The x-coordinate of the column that was highlighted.
-        """
-
-        def __init__(self, sender: DataTable, cursor_column: int) -> None:
-            self.cursor_column: int = cursor_column
-            super().__init__(sender)
-
-        def __rich_repr__(self) -> rich.repr.Result:
-            yield "sender", self.sender
-            yield "cursor_column", self.cursor_column
-
-    class ColumnSelected(Message, bubble=True):
-        """Emitted when a column is selected. This message is only emitted when the
-        `cursor_type` is set to `"column"`. Can be handled using
-        `on_data_table_column_selected` in a subclass of `DataTable` or in a parent
-        widget in the DOM.
-
-        Attributes:
-            cursor_column: The x-coordinate of the column that was selected.
-        """
-
-        def __init__(self, sender: DataTable, cursor_column: int) -> None:
-            self.cursor_column: int = cursor_column
-            super().__init__(sender)
-
-        def __rich_repr__(self) -> rich.repr.Result:
-            yield "sender", self.sender
-            yield "cursor_column", self.cursor_column

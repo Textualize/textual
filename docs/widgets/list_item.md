@@ -27,13 +27,6 @@ of multiple `ListItem`s. The arrow keys can be used to navigate the list.
 |---------------|--------|---------|--------------------------------------|
 | `highlighted` | `bool` | `False` | True if this ListItem is highlighted |
 
-## Messages
-
-### Selected
-
-The `ListItem.Selected` message is sent when the item is selected.
-
- - [x] Bubbles
 
 #### Attributes
 

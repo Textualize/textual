@@ -265,26 +265,36 @@ class StylesBase(ABC):
     scrollbar_background_hover = ColorProperty("#444444")
     scrollbar_background_active = ColorProperty("black")
 
-    scrollbar_gutter = StringEnumProperty(VALID_SCROLLBAR_GUTTER, "auto")
+    scrollbar_gutter = StringEnumProperty(
+        VALID_SCROLLBAR_GUTTER, "auto", layout=True, refresh_children=True
+    )
 
     scrollbar_size_vertical = IntegerProperty(default=1, layout=True)
     scrollbar_size_horizontal = IntegerProperty(default=1, layout=True)
 
-    align_horizontal = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "left")
-    align_vertical = StringEnumProperty(VALID_ALIGN_VERTICAL, "top")
+    align_horizontal = StringEnumProperty(
+        VALID_ALIGN_HORIZONTAL, "left", layout=True, refresh_children=True
+    )
+    align_vertical = StringEnumProperty(
+        VALID_ALIGN_VERTICAL, "top", layout=True, refresh_children=True
+    )
     align = AlignProperty()
 
     content_align_horizontal = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "left")
     content_align_vertical = StringEnumProperty(VALID_ALIGN_VERTICAL, "top")
     content_align = AlignProperty()
 
-    grid_rows = ScalarListProperty(percent_unit=Unit.HEIGHT)
-    grid_columns = ScalarListProperty(percent_unit=Unit.WIDTH)
+    grid_rows = ScalarListProperty(percent_unit=Unit.HEIGHT, refresh_children=True)
+    grid_columns = ScalarListProperty(percent_unit=Unit.WIDTH, refresh_children=True)
 
-    grid_size_columns = IntegerProperty(default=1, layout=True)
-    grid_size_rows = IntegerProperty(default=0, layout=True)
-    grid_gutter_horizontal = IntegerProperty(default=0, layout=True)
-    grid_gutter_vertical = IntegerProperty(default=0, layout=True)
+    grid_size_columns = IntegerProperty(default=1, layout=True, refresh_children=True)
+    grid_size_rows = IntegerProperty(default=0, layout=True, refresh_children=True)
+    grid_gutter_horizontal = IntegerProperty(
+        default=0, layout=True, refresh_children=True
+    )
+    grid_gutter_vertical = IntegerProperty(
+        default=0, layout=True, refresh_children=True
+    )
 
     row_span = IntegerProperty(default=1, layout=True)
     column_span = IntegerProperty(default=1, layout=True)
@@ -317,7 +327,6 @@ class StylesBase(ABC):
 
         # Check we are animating a Scalar or Scalar offset
         if isinstance(start_value, (Scalar, ScalarOffset)):
-
             # If destination is a number, we can convert that to a scalar
             if isinstance(value, (int, float)):
                 value = Scalar(value, Unit.CELLS, Unit.CELLS)

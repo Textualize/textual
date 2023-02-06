@@ -32,47 +32,33 @@ Tree widgets have a "root" attribute which is an instance of a [TreeNode][textua
 | `show_guides` | `bool` | `True`  | Show guide lines between levels.                |
 | `guide_depth` | `int`  | `4`     | Amount of indentation between parent and child. |
 
-
-
 ## Messages
 
-### NodeSelected
+### ::: textual.widgets.Tree.NodeCollapsed
 
-The `Tree.NodeSelected` message is sent when the user selects a tree node.
+### ::: textual.widgets.Tree.NodeExpanded
 
+### ::: textual.widgets.Tree.NodeHighlighted
 
-#### Attributes
+### ::: textual.widgets.Tree.NodeSelected
 
-| attribute | type                                      | purpose        |
-| --------- | ----------------------------------------- | -------------- |
-| `node`    | [TreeNode][textual.widgets.tree.TreeNode] | Selected node. |
+## Bindings
 
+The tree widget defines directly the following bindings:
 
-### NodeExpanded
+::: textual.widgets.Tree.BINDINGS
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
 
-The `Tree.NodeExpanded` message is sent when the user expands a node in the tree.
+## Component Classes
 
-#### Attributes
+The tree widget provides the following component classes:
 
-| attribute | type                                      | purpose        |
-| --------- | ----------------------------------------- | -------------- |
-| `node`    | [TreeNode][textual.widgets.tree.TreeNode] | Expanded node. |
-
-
-### NodeCollapsed
-
-
-The `Tree.NodeCollapsed` message is sent when the user expands a node in the tree.
-
-
-#### Attributes
-
-| attribute | type                                      | purpose         |
-| --------- | ----------------------------------------- | --------------- |
-| `node`    | [TreeNode][textual.widgets.tree.TreeNode] | Collapsed node. |
-
-
-
+::: textual.widgets.Tree.COMPONENT_CLASSES
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
 
 ## See Also
 

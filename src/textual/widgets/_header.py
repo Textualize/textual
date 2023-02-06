@@ -100,9 +100,9 @@ class Header(Widget):
     }
     """
 
-    tall = Reactive(False)
-
     DEFAULT_CLASSES = ""
+
+    tall = Reactive(False)
 
     def __init__(
         self,

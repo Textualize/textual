@@ -322,7 +322,6 @@ class Animator:
             )
 
         if animation is None:
-
             if not isinstance(value, (int, float)) and not isinstance(
                 value, Animatable
             ):

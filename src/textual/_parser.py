@@ -79,7 +79,6 @@ class Parser(Generic[T]):
         self._awaiting = next(self._gen)
 
     def feed(self, data: str) -> Iterable[T]:
-
         if self._eof:
             raise ParseError("end of file reached") from None
         if not data:
@@ -104,7 +103,6 @@ class Parser(Generic[T]):
             yield popleft()
 
         while pos < data_size or isinstance(self._awaiting, _PeekBuffer):
-
             _awaiting = self._awaiting
             if isinstance(_awaiting, _Read1):
                 self._awaiting = self._gen.send(data[pos : pos + 1])

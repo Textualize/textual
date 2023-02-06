@@ -92,7 +92,6 @@ class LinuxDriver(Driver):
         self.console.file.flush()
 
     def start_application_mode(self):
-
         loop = asyncio.get_running_loop()
 
         def send_size_event():
@@ -123,7 +122,6 @@ class LinuxDriver(Driver):
         except termios.error:
             pass
         else:
-
             newattr[tty.LFLAG] = self._patch_lflag(newattr[tty.LFLAG])
             newattr[tty.IFLAG] = self._patch_iflag(newattr[tty.IFLAG])
 
@@ -208,7 +206,6 @@ class LinuxDriver(Driver):
             pass  # TODO: log
 
     def _run_input_thread(self, loop) -> None:
-
         selector = selectors.DefaultSelector()
         selector.register(self.fileno, selectors.EVENT_READ)
 

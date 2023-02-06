@@ -14,7 +14,6 @@ from ..reactive import var
 from ..geometry import Size, Region
 from ..scroll_view import ScrollView
 from .._cache import LRUCache
-from .._segment_tools import line_crop
 from ..strip import Strip
 
 
@@ -160,7 +159,6 @@ class TextLog(ScrollView, can_focus=True):
         return lines
 
     def _render_line(self, y: int, scroll_x: int, width: int) -> Strip:
-
         if y >= len(self.lines):
             return Strip.blank(width, self.rich_style)
 

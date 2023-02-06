@@ -179,6 +179,16 @@ def test_nested_auto_heights(snap_compare):
     assert snap_compare("snapshot_apps/nested_auto_heights.py", press=["1", "2", "_"])
 
 
+def test_programmatic_scrollbar_gutter_change(snap_compare):
+    """Regression test for #1607 https://github.com/Textualize/textual/issues/1607
+
+    See also tests/css/test_programmatic_style_changes.py for other related regression tests.
+    """
+    assert snap_compare(
+        "snapshot_apps/programmatic_scrollbar_gutter_change.py", press=["s"]
+    )
+
+
 # --- Other ---
 
 
@@ -192,4 +202,15 @@ def test_demo(snap_compare):
         Path("../../src/textual/demo.py"),
         press=["down", "down", "down"],
         terminal_size=(100, 30),
+    )
+
+
+def test_label_widths(snap_compare):
+    """Test renderable widths are calculate correctly."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "label_widths.py")
+
+
+def test_auto_width_input(snap_compare):
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "auto_width_input.py", press=["tab", *"Hello"]
     )

@@ -170,7 +170,6 @@ class Reactive(Generic[ReactiveType]):
         getattr(obj, "__computes", []).clear()
 
     def __set_name__(self, owner: Type[MessageTarget], name: str) -> None:
-
         # Check for compute method
         if hasattr(owner, f"compute_{name}"):
             # Compute methods are stored in a list called `__computes`

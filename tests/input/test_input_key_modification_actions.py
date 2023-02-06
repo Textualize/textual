@@ -66,6 +66,17 @@ async def test_delete_left_word_from_end() -> None:
             assert input.value == expected[input.id]
 
 
+async def test_password_delete_left_word_from_end() -> None:
+    """Deleting word left from end of a password input should delete everything."""
+    async with InputTester().run_test() as pilot:
+        for input in pilot.app.query(Input):
+            input.action_end()
+            input.password = True
+            input.action_delete_left_word()
+            assert input.cursor_position == 0
+            assert input.value == ""
+
+
 async def test_delete_left_all_from_home() -> None:
     """Deleting all left from home should do nothing."""
     async with InputTester().run_test() as pilot:
@@ -117,6 +128,16 @@ async def test_delete_right_word_from_home() -> None:
             input.action_delete_right_word()
             assert input.cursor_position == 0
             assert input.value == expected[input.id]
+
+
+async def test_password_delete_right_word_from_home() -> None:
+    """Deleting word right from home of a password input should delete everything."""
+    async with InputTester().run_test() as pilot:
+        for input in pilot.app.query(Input):
+            input.password = True
+            input.action_delete_right_word()
+            assert input.cursor_position == 0
+            assert input.value == ""
 
 
 async def test_delete_right_word_from_end() -> None:
