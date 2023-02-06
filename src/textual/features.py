@@ -1,7 +1,9 @@
 from __future__ import annotations
 
-from typing import cast
-from textual._typing import Final, Literal
+from typing import TYPE_CHECKING, cast
+
+if TYPE_CHECKING:
+    from typing import Final, Literal
 
 FEATURES: Final = {"devtools", "debug", "headless"}
 

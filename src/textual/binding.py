@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Iterable, MutableMapping
+from typing import TYPE_CHECKING, Iterable, MutableMapping
 
 import rich.repr
 
-from textual.keys import _character_to_key
-from textual._typing import TypeAlias
+from .keys import _character_to_key
+
+if TYPE_CHECKING:
+    from typing import TypeAlias
 
 BindingType: TypeAlias = "Binding | tuple[str, str, str]"
 

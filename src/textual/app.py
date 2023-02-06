@@ -50,7 +50,7 @@ from ._context import active_app, active_message_pump
 from ._event_broker import NoHandler, extract_handler_actions
 from ._filter import LineFilter, Monochrome
 from ._path import _make_path_object_relative
-from ._typing import Final, TypeAlias
+from ._typing import Final
 from ._wait import wait_for_idle
 from .actions import SkipAction
 from .await_remove import AwaitRemove
@@ -72,6 +72,8 @@ from .screen import Screen
 from .widget import AwaitMount, Widget
 
 if TYPE_CHECKING:
+    from typing import Coroutine, TypeAlias
+
     from .devtools.client import DevtoolsClient
     from .pilot import Pilot
 

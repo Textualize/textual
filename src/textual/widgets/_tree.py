@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import ClassVar, Generic, NewType, TypeVar
+from typing import TYPE_CHECKING, ClassVar, Generic, NewType, TypeVar
 
 import rich.repr
 from rich.style import NULL_STYLE, Style
@@ -9,17 +9,19 @@ from rich.text import Text, TextType
 
 from .. import events
 from .._cache import LRUCache
+from .._immutable_sequence_view import ImmutableSequenceView
 from .._loop import loop_last
 from .._segment_tools import line_pad
 from .._types import MessageTarget
-from .._typing import TypeAlias
-from .._immutable_sequence_view import ImmutableSequenceView
 from ..binding import Binding, BindingType
 from ..geometry import Region, Size, clamp
 from ..message import Message
 from ..reactive import reactive, var
 from ..scroll_view import ScrollView
 from ..strip import Strip
+
+if TYPE_CHECKING:
+    from typing import TypeAlias
 
 NodeID = NewType("NodeID", int)
 TreeDataType = TypeVar("TreeDataType")
