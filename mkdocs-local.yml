@@ -1,6 +1,7 @@
 INHERIT: mkdocs-common.yml
 
 site_dir: docs-local
+use_directory_urls: false
 
 nav:
   - Introduction:
