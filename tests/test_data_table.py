@@ -1,12 +1,15 @@
+import asyncio
+
 import pytest
 from rich.text import Text
 
+from textual._wait import wait_for_idle
 from textual.app import App
 from textual.coordinate import Coordinate
 from textual.message import Message
 from textual.widgets import DataTable
-from textual.widgets._data_table import (
-    StringKey,
+from textual.widgets._data_table import CellKey
+from textual.widgets.data_table import (
     CellDoesNotExist,
     RowKey,
     Row,
@@ -155,14 +158,14 @@ async def test_add_rows_user_defined_keys():
         assert isinstance(algernon_key, RowKey)
 
         # Ensure the data in the table is mapped as expected
-        first_row = {key_a: Text(ROWS[0][0]), key_b: Text(ROWS[0][1])}
+        first_row = {key_a: ROWS[0][0], key_b: ROWS[0][1]}
         assert table.data[algernon_key] == first_row
         assert table.data["algernon"] == first_row
 
-        second_row = {key_a: Text(ROWS[1][0]), key_b: Text(ROWS[1][1])}
+        second_row = {key_a: ROWS[1][0], key_b: ROWS[1][1]}
         assert table.data["charlie"] == second_row
 
-        third_row = {key_a: Text(ROWS[2][0]), key_b: Text(ROWS[2][1])}
+        third_row = {key_a: ROWS[2][0], key_b: ROWS[2][1]}
         assert table.data[auto_key] == third_row
 
         first_row = Row(algernon_key, height=1)
@@ -179,7 +182,6 @@ async def test_add_columns():
         assert len(table.columns) == 3
 
 
-# TODO: Ensure we can use the key to retrieve the column.
 async def test_add_columns_user_defined_keys():
     app = DataTableApp()
     async with app.run_test():
@@ -193,19 +195,19 @@ async def test_clear():
     app = DataTableApp()
     async with app.run_test():
         table = app.query_one(DataTable)
-        assert table.cursor_cell == Coordinate(0, 0)
-        assert table.hover_cell == Coordinate(0, 0)
+        assert table.cursor_coordinate == Coordinate(0, 0)
+        assert table.hover_coordinate == Coordinate(0, 0)
 
         # Add some data and update cursor positions
         table.add_column("Column0")
         table.add_rows([["Row0"], ["Row1"], ["Row2"]])
-        table.cursor_cell = Coordinate(1, 0)
-        table.hover_cell = Coordinate(2, 0)
+        table.cursor_coordinate = Coordinate(1, 0)
+        table.hover_coordinate = Coordinate(2, 0)
 
         # Ensure the cursor positions are reset to origin on clear()
         table.clear()
-        assert table.cursor_cell == Coordinate(0, 0)
-        assert table.hover_cell == Coordinate(0, 0)
+        assert table.cursor_coordinate == Coordinate(0, 0)
+        assert table.hover_coordinate == Coordinate(0, 0)
 
         # Ensure that the table has been cleared
         assert table.data == {}
@@ -224,25 +226,25 @@ async def test_column_labels() -> None:
         table = app.query_one(DataTable)
         table.add_columns("1", "2", "3")
         actual_labels = [col.label for col in table.columns.values()]
-        expected_labels = [Text("1"), Text("2"), Text("3")]
+        expected_labels = ["1", "2", "3"]
         assert actual_labels == expected_labels
 
 
-async def test_column_widths() -> None:
+async def test_initial_column_widths() -> None:
     app = DataTableApp()
-    async with app.run_test() as pilot:
+    async with app.run_test():
         table = app.query_one(DataTable)
         foo, bar = table.add_columns("foo", "bar")
 
         assert table.columns[foo].width == 3
         assert table.columns[bar].width == 3
         table.add_row("Hello", "World!")
-        await pilot.pause()
+        await wait_for_idle()
         assert table.columns[foo].content_width == 5
         assert table.columns[bar].content_width == 6
 
         table.add_row("Hello World!!!", "fo")
-        await pilot.pause()
+        await wait_for_idle()
         assert table.columns[foo].content_width == 14
         assert table.columns[bar].content_width == 6
 
@@ -251,30 +253,149 @@ async def test_get_cell_value_returns_value_at_cell():
     app = DataTableApp()
     async with app.run_test():
         table = app.query_one(DataTable)
+        table.add_column("Column1", key="C1")
+        table.add_row("TargetValue", key="R1")
+        assert table.get_cell_value("R1", "C1") == "TargetValue"
+
+
+async def test_get_cell_value_invalid_row_key():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("Column1", key="C1")
+        table.add_row("TargetValue", key="R1")
+        with pytest.raises(CellDoesNotExist):
+            table.get_cell_value("INVALID_ROW", "C1")
+
+
+async def test_get_cell_value_invalid_column_key():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("Column1", key="C1")
+        table.add_row("TargetValue", key="R1")
+        with pytest.raises(CellDoesNotExist):
+            table.get_cell_value("R1", "INVALID_COLUMN")
+
+
+async def test_get_value_at_returns_value_at_cell():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
         table.add_columns("A", "B")
         table.add_rows(ROWS)
-        assert table.get_cell_value(Coordinate(0, 0)) == Text("0/0")
+        assert table.get_value_at(Coordinate(0, 0)) == "0/0"
 
 
-async def test_get_cell_value_exception():
+async def test_get_value_at_exception():
     app = DataTableApp()
     async with app.run_test():
         table = app.query_one(DataTable)
         table.add_columns("A", "B")
         table.add_rows(ROWS)
         with pytest.raises(CellDoesNotExist):
-            table.get_cell_value(Coordinate(9999, 0))
+            table.get_value_at(Coordinate(9999, 0))
+
+
+async def test_update_cell_cell_exists():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("A", key="A")
+        table.add_row("1", key="1")
+        table.update_cell("1", "A", "NEW_VALUE")
+        assert table.get_cell_value("1", "A") == "NEW_VALUE"
+
+
+async def test_update_cell_cell_doesnt_exist():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("A", key="A")
+        table.add_row("1", key="1")
+        with pytest.raises(CellDoesNotExist):
+            table.update_cell("INVALID", "CELL", "Value")
+
+
+async def test_update_coordinate_coordinate_exists():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        column_0, column_1 = table.add_columns("A", "B")
+        row_0, *_ = table.add_rows(ROWS)
+
+        table.update_coordinate(Coordinate(0, 1), "newvalue")
+        assert table.get_cell_value(row_0, column_1) == "newvalue"
+
+
+async def test_update_coordinate_coordinate_doesnt_exist():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_columns("A", "B")
+        table.add_rows(ROWS)
+        with pytest.raises(CellDoesNotExist):
+            table.update_coordinate(Coordinate(999, 999), "newvalue")
+
+
+@pytest.mark.parametrize(
+    "label,new_value,new_content_width",
+    [
+        # Shorter than initial cell value, larger than label => width remains same
+        ("A", "BB", 3),
+        # Larger than initial cell value, shorter than label => width remains that of label
+        ("1234567", "1234", 7),
+        # Shorter than initial cell value, shorter than label => width remains same
+        ("12345", "123", 5),
+        # Larger than initial cell value, larger than label => width updates to new cell value
+        ("12345", "123456789", 9),
+    ],
+)
+async def test_update_coordinate_column_width(label, new_value, new_content_width):
+    # Initial cell values are length 3. Let's update cell content and ensure
+    # that the width of the column is correct given the new cell content widths
+    # and the label of the column the cell is in.
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        key, _ = table.add_columns(label, "Column2")
+        table.add_rows(ROWS)
+        first_column = table.columns.get(key)
+
+        table.update_coordinate(Coordinate(0, 0), new_value, update_width=True)
+        await wait_for_idle()
+        assert first_column.content_width == new_content_width
+        assert first_column.render_width == new_content_width + 2
+
+
+async def test_coordinate_to_cell_key():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        column_key, _ = table.add_columns("Column0", "Column1")
+        row_key = table.add_row("A", "B")
+
+        cell_key = table.coordinate_to_cell_key(Coordinate(0, 0))
+        assert cell_key == CellKey(row_key, column_key)
+
+
+async def test_coordinate_to_cell_key_invalid_coordinate():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        with pytest.raises(CellDoesNotExist):
+            table.coordinate_to_cell_key(Coordinate(9999, 9999))
 
 
 def test_key_equals_equivalent_string():
     text = "Hello"
-    key = StringKey(text)
+    key = RowKey(text)
     assert key == text
     assert hash(key) == hash(text)
 
 
 def test_key_doesnt_match_non_equal_string():
-    key = StringKey("123")
+    key = ColumnKey("123")
     text = "laksjdlaskjd"
     assert key != text
     assert hash(key) != hash(text)
@@ -293,9 +414,9 @@ def test_key_string_lookup():
     # in tests how we intend for the keys to work for cache lookups.
     dictionary = {
         "foo": "bar",
-        StringKey("hello"): "world",
+        RowKey("hello"): "world",
     }
     assert dictionary["foo"] == "bar"
-    assert dictionary[StringKey("foo")] == "bar"
+    assert dictionary[RowKey("foo")] == "bar"
     assert dictionary["hello"] == "world"
-    assert dictionary[StringKey("hello")] == "world"
+    assert dictionary[RowKey("hello")] == "world"
