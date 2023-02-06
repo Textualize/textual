@@ -1,22 +1,16 @@
 from __future__ import annotations
 
-import sys
 from fractions import Fraction
 from itertools import accumulate
-from typing import cast, Sequence, TYPE_CHECKING
+from typing import TYPE_CHECKING, Sequence, cast
 
+from ._typing import Literal
 from .box_model import BoxModel
 from .css.scalar import Scalar
 from .geometry import Size
 
 if TYPE_CHECKING:
     from .widget import Widget
-
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
 
 
 def resolve(

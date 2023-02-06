@@ -11,12 +11,8 @@ from . import _clock
 from ._callback import invoke
 from ._easing import DEFAULT_EASING, EASING
 from ._types import CallbackType
+from ._typing import Protocol, runtime_checkable
 from .timer import Timer
-
-if sys.version_info >= (3, 8):
-    from typing import Protocol, runtime_checkable
-else:  # pragma: no cover
-    from typing_extensions import Protocol, runtime_checkable
 
 if TYPE_CHECKING:
     from textual.app import App

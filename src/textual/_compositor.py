@@ -59,7 +59,7 @@ class MapGeometry(NamedTuple):
 
 
 # Maps a widget on to its geometry (information that describes its position in the composition)
-CompositorMap: TypeAlias = "dict[Widget, MapGeometry]"
+CompositorMap: TypeAlias = dict[Widget, MapGeometry]
 
 
 @rich.repr.auto(angular=True)

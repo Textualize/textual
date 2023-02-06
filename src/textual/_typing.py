@@ -6,8 +6,15 @@ else:  # pragma: no cover
     from typing_extensions import TypeAlias
 
 if sys.version_info >= (3, 8):
-    from typing import Final, Literal, Protocol, TypedDict
+    from typing import Final, Literal, Protocol, TypedDict, runtime_checkable
 else:
-    from typing_extensions import Final, Literal, Protocol, TypedDict
+    from typing_extensions import Final, Literal, Protocol, TypedDict, runtime_checkable
 
-__all__ = ["TypeAlias", "Final", "Literal", "Protocol", "TypedDict"]
+__all__ = [
+    "Final",
+    "Literal",
+    "Protocol",
+    "runtime_checkable",
+    "TypeAlias",
+    "TypedDict",
+]

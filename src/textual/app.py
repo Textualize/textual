@@ -51,6 +51,7 @@ from ._event_broker import NoHandler, extract_handler_actions
 from ._filter import LineFilter, Monochrome
 from ._path import _make_path_object_relative
 from ._typing import Final, TypeAlias
+from ._wait import wait_for_idle
 from .actions import SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding, Bindings
@@ -68,7 +69,6 @@ from .messages import CallbackType
 from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import Screen
-from ._wait import wait_for_idle
 from .widget import AwaitMount, Widget
 
 if TYPE_CHECKING:
