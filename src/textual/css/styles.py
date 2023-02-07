@@ -5,10 +5,11 @@ from dataclasses import dataclass, field
 from functools import lru_cache
 from operator import attrgetter
 from typing import Iterable, cast
-from typing import TYPE_CHECKING, Any, NamedTuple, TypedDict
+from typing import TYPE_CHECKING, Any, NamedTuple
 
 import rich.repr
 from rich.style import Style
+from typing_extensions import TypedDict
 
 from .._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from .._types import CallbackType
