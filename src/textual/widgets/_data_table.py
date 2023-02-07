@@ -1113,8 +1113,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Returns:
             List of renderables
         """
-
-        # TODO:  We have quite a few back and forward key/index conversions, could probably reduce them
         ordered_columns = self.ordered_columns
         if row_index == -1:
             row = [column.label for column in ordered_columns]
@@ -1438,7 +1436,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             row: tuple[RowKey, dict[ColumnKey | str, CellType]]
         ) -> Any:
             _, row_data = row
-            return itemgetter(*columns)(row_data)
+            result = itemgetter(*columns)(row_data)
+            return result
 
         ordered_rows = sorted(
             self.data.items(), key=sort_by_column_keys, reverse=reverse
