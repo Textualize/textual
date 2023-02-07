@@ -88,19 +88,21 @@ class CellKey(NamedTuple):
     column_key: ColumnKey | str
 
 
-def default_cell_formatter(obj: object) -> RenderableType | None:
+def default_cell_formatter(obj: object) -> RenderableType:
     """Format a cell in to a renderable.
 
     Args:
         obj: Data for a cell.
 
     Returns:
-        A renderable or None if the object could not be rendered.
+        A renderable to be displayed which represents the data.
     """
     if isinstance(obj, str):
         return Text.from_markup(obj)
+    if isinstance(obj, float):
+        return f"{obj:.2f}"
     if not is_renderable(obj):
-        return None
+        return str(obj)
     return cast(RenderableType, obj)
 
 
