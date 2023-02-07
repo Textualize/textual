@@ -1,7 +1,7 @@
 INHERIT: mkdocs-common.yml
 
 plugins:
-  - offline
+  offline:
 
 site_dir: docs-offline
 

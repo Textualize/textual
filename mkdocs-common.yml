@@ -62,26 +62,26 @@ theme:
       name: Switch to light mode
 
 plugins:
-  - search:
-  - autorefs:
-  - mkdocstrings:
-      custom_templates: docs/_templates
-      default_handler: python
-      handlers:
-        python:
-          options:
-            show_root_heading: true
-            show_root_full_path: false
-            show_source: false
-            filters:
-              - "!^_"
-              - "^__init__$"
-              - "!^can_replace$"
+  search:
+  autorefs:
+  mkdocstrings:
+    custom_templates: docs/_templates
+    default_handler: python
+    handlers:
+      python:
+        options:
+          show_root_heading: true
+          show_root_full_path: false
+          show_source: false
+          filters:
+            - "!^_"
+            - "^__init__$"
+            - "!^can_replace$"
     watch:
       - src/textual
-  - exclude:
-      glob:
-        - "**/_template.md"
+  exclude:
+    glob:
+      - "**/_template.md"
 
 
 extra_css:
