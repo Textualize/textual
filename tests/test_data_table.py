@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import pytest
+from rich.style import Style
 
 from textual._wait import wait_for_idle
 from textual.app import App
 from textual.coordinate import Coordinate
-from textual.events import Click
+from textual.events import Click, MouseMove
 from textual.message import Message
 from textual.message_pump import MessagePump
 from textual.widgets import DataTable
@@ -421,7 +422,7 @@ async def test_coordinate_to_cell_key_invalid_coordinate():
             table.coordinate_to_cell_key(Coordinate(9999, 9999))
 
 
-def click_in_app(sender: MessagePump):
+def make_click_event(sender: MessagePump):
     return Click(
         sender=sender,
         x=1,
@@ -436,11 +437,13 @@ def click_in_app(sender: MessagePump):
 
 
 async def test_datatable_on_click_cell_cursor():
-    # Regression test for https://github.com/Textualize/textual/issues/1723
+    """When the cell cursor is used, and we click, we emit a CellHighlighted
+    *and* a CellSelected message for the cell that was clicked.
+    Regression test for https://github.com/Textualize/textual/issues/1723"""
     app = DataTableApp()
     async with app.run_test():
         table = app.query_one(DataTable)
-        click = click_in_app(app)
+        click = make_click_event(app)
         column_key = table.add_column("ABC")
         table.add_row("123")
         row_key = table.add_row("456")
@@ -467,11 +470,13 @@ async def test_datatable_on_click_cell_cursor():
 
 
 async def test_datatable_on_click_row_cursor():
+    """When the row cursor is used, and we click, we emit a RowHighlighted
+    *and* a RowSelected message for the row that was clicked."""
     app = DataTableApp()
     async with app.run_test():
         table = app.query_one(DataTable)
         table.cursor_type = "row"
-        click = click_in_app(app)
+        click = make_click_event(app)
         table.add_column("ABC")
         table.add_row("123")
         row_key = table.add_row("456")
@@ -491,14 +496,16 @@ async def test_datatable_on_click_row_cursor():
 
 
 async def test_datatable_on_click_column_cursor():
+    """When the column cursor is used, and we click, we emit a ColumnHighlighted
+    *and* a ColumnSelected message for the column that was clicked."""
     app = DataTableApp()
     async with app.run_test():
         table = app.query_one(DataTable)
         table.cursor_type = "column"
-        click = click_in_app(app)
         column_key = table.add_column("ABC")
         table.add_row("123")
-        table.add_row("123")
+        table.add_row("456")
+        click = make_click_event(app)
         table.on_click(event=click)
         await wait_for_idle(0)
         assert app.message_names == [
@@ -515,6 +522,33 @@ async def test_datatable_on_click_column_cursor():
         assert column_selected.sender is table
         assert column_selected.column_key == column_key
         assert column_highlighted.cursor_column == 0
+
+
+async def test_datatable_hover_coordinate():
+    """Ensure that the hover_coordinate reactive is updated as expected."""
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("ABC")
+        table.add_row("123")
+        table.add_row("456")
+        assert table.hover_coordinate == Coordinate(0, 0)
+
+        mouse_move = MouseMove(
+            sender=app,
+            x=1,
+            y=2,
+            delta_x=0,
+            delta_y=0,
+            button=0,
+            shift=False,
+            meta=False,
+            ctrl=False,
+            style=Style(meta={"row": 1, "column": 2}),
+        )
+        table.on_mouse_move(mouse_move)
+        await wait_for_idle(0)
+        assert table.hover_coordinate == Coordinate(1, 2)
 
 
 def test_key_equals_equivalent_string():

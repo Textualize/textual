@@ -1128,13 +1128,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             ordered_row.append(cell)
 
         empty = Text()
-        if ordered_row is None:
-            return [empty for _ in self.columns]
-        else:
-            return [
-                Text() if datum is None else default_cell_formatter(datum) or empty
-                for datum, _ in zip_longest(ordered_row, range(len(self.columns)))
-            ]
+        return [
+            Text() if datum is None else default_cell_formatter(datum) or empty
+            for datum, _ in zip_longest(ordered_row, range(len(self.columns)))
+        ]
 
     def _render_cell(
         self,
