@@ -16,7 +16,7 @@ if sys.version_info >= (3, 8):
 else:
     import asyncio
     from asyncio import create_task as _create_task
-    from typing import Awaitable
+    from typing_extensions import Awaitable
 
     def create_task(coroutine: Awaitable, *, name: str | None = None) -> asyncio.Task:
         """Schedule the execution of a coroutine object in a spawn task."""

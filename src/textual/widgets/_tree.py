@@ -21,7 +21,7 @@ from ..scroll_view import ScrollView
 from ..strip import Strip
 
 if TYPE_CHECKING:
-    from typing import TypeAlias
+    from typing_extensions import TypeAlias
 
 NodeID = NewType("NodeID", int)
 TreeDataType = TypeVar("TreeDataType")

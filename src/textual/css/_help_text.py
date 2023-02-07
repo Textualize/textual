@@ -3,10 +3,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Iterable, Sequence
 
-from textual._typing import Literal
-from textual.color import ColorParseError
-from textual.css._help_renderables import Example, Bullet, HelpText
-from textual.css.constants import (
+from typing import Literal
+
+from ..color import ColorParseError
+from ._help_renderables import Example, Bullet, HelpText
+from .constants import (
     VALID_BORDER,
     VALID_LAYOUT,
     VALID_ALIGN_HORIZONTAL,

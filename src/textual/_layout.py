@@ -6,7 +6,7 @@ from typing import ClassVar, NamedTuple, TYPE_CHECKING
 from .geometry import Region, Size, Spacing
 
 if TYPE_CHECKING:
-    from typing import TypeAlias
+    from typing_extensions import TypeAlias
     from .widget import Widget
 
 ArrangeResult: TypeAlias = "tuple[list[WidgetPlacement], set[Widget]]"

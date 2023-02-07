@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from fractions import Fraction
 from typing import Sequence, cast
 
-from ._typing import Protocol
+from typing_extensions import Protocol
 
 
 class EdgeProtocol(Protocol):

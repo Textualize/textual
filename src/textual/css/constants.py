@@ -4,7 +4,7 @@ import typing
 from ..geometry import Spacing
 
 if typing.TYPE_CHECKING:
-    from typing import Final
+    from typing_extensions import Final
     from .types import EdgeType
 
 VALID_VISIBILITY: Final = {"visible", "hidden"}

@@ -20,7 +20,7 @@ from .renderables.blank import Blank
 from .widget import Widget
 
 if TYPE_CHECKING:
-    from typing import Final
+    from typing_extensions import Final
 
 # Screen updates will be batched so that they don't happen more often than 120 times per second:
 UPDATE_PERIOD: Final[float] = 1 / 120

@@ -5,13 +5,20 @@ import sys
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from functools import partial
-from typing import TYPE_CHECKING, Any, Callable, TypeVar
+
+from typing import Callable
+from typing_extensions import (
+    TYPE_CHECKING,
+    Any,
+    Protocol,
+    TypeVar,
+    runtime_checkable,
+)
 
 from . import _clock
 from ._callback import invoke
 from ._easing import DEFAULT_EASING, EASING
 from ._types import CallbackType
-from ._typing import Protocol, runtime_checkable
 from .timer import Timer
 
 if TYPE_CHECKING:

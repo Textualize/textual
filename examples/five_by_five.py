@@ -1,7 +1,7 @@
 """Simple version of 5x5, developed for/with Textual."""
 
 from pathlib import Path
-from typing import TYPE_CHECKING, cast
+from typing_extensions import TYPE_CHECKING, cast
 
 from rich.markdown import Markdown
 
@@ -15,7 +15,7 @@ from textual.widget import Widget
 from textual.widgets import Button, Footer, Label
 
 if TYPE_CHECKING:
-    from typing import Final
+    from typing_extensions import Final
 
 
 class Help(Screen):

@@ -20,7 +20,7 @@ from typing import (
 )
 
 if TYPE_CHECKING:
-    from typing import TypeAlias
+    from typing_extensions import TypeAlias
 
 
 SpacingDimensions: TypeAlias = Union[

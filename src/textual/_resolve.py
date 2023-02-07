@@ -2,9 +2,10 @@ from __future__ import annotations
 
 from fractions import Fraction
 from itertools import accumulate
-from typing import TYPE_CHECKING, Sequence, cast
+from typing import Sequence, cast, TYPE_CHECKING
 
-from ._typing import Literal
+from typing_extensions import Literal
+
 from .box_model import BoxModel
 from .css.scalar import Scalar
 from .geometry import Size

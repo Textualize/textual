@@ -8,7 +8,7 @@ import rich.repr
 from .keys import _character_to_key
 
 if TYPE_CHECKING:
-    from typing import TypeAlias
+    from typing_extensions import TypeAlias
 
 BindingType: TypeAlias = "Binding | tuple[str, str, str]"
 

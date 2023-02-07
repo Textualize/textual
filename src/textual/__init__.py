@@ -4,14 +4,14 @@ import inspect
 
 import rich.repr
 from rich.console import RenderableType
-from typing import TYPE_CHECKING
+from typing import Callable, TYPE_CHECKING
 
 from ._context import active_app
 from ._log import LogGroup, LogVerbosity
 
 
 if TYPE_CHECKING:
-    from typing import Callable, TypeAlias
+    from typing_extensions import TypeAlias
 
 __all__ = ["log", "panic", "__version__"]  # type: ignore
 

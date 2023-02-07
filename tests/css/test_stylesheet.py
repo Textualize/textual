@@ -1,5 +1,5 @@
 from contextlib import nullcontext as does_not_raise
-from typing import Any
+from typing_extensions import Any
 
 import pytest
 

@@ -4,7 +4,8 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from functools import lru_cache
 from operator import attrgetter
-from typing import TYPE_CHECKING, Any, Iterable, NamedTuple, cast
+from typing import Iterable, cast
+from typing import TYPE_CHECKING, Any, NamedTuple, TypedDict
 
 import rich.repr
 from rich.style import Style
@@ -62,8 +63,6 @@ from .types import (
 )
 
 if TYPE_CHECKING:
-    from typing import TypedDict
-
     from .._layout import Layout
     from ..dom import DOMNode
 

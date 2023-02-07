@@ -31,7 +31,7 @@ from .geometry import NULL_OFFSET, Offset, Region, Size
 
 if TYPE_CHECKING:
     from .widget import Widget
-    from typing import TypeAlias
+    from typing_extensions import TypeAlias
 
 
 class ReflowResult(NamedTuple):
