@@ -1,15 +1,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-import sys
 from fractions import Fraction
-from typing import cast, Sequence
+from typing import Sequence, cast
 
-
-if sys.version_info >= (3, 8):
-    from typing import Protocol
-else:
-    from typing_extensions import Protocol  # pragma: no cover
+from typing_extensions import Protocol
 
 
 class EdgeProtocol(Protocol):

@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from itertools import chain, zip_longest
-from typing import ClassVar, Generic, Iterable, TypeVar, cast
+from typing import Generic, Iterable, cast
+from typing_extensions import ClassVar, TypeVar, Literal
 
 import rich.repr
 from rich.console import RenderableType
@@ -16,7 +17,6 @@ from .. import events, messages
 from .._cache import LRUCache
 from .._segment_tools import line_crop
 from .._types import SegmentLines
-from .._typing import Literal
 from ..binding import Binding, BindingType
 from ..coordinate import Coordinate
 from ..geometry import Region, Size, Spacing, clamp
