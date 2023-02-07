@@ -19,6 +19,5 @@ __all__ = [
     "Literal",
     "Protocol",
     "runtime_checkable",
-    "TypeAlias",
     "TypedDict",
 ]

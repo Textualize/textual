@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterable, Iterator
+from typing import Iterable, Iterator, TYPE_CHECKING
 
 import rich.repr
 from rich.console import RenderableType
@@ -15,11 +15,12 @@ from .dom import DOMNode
 from .timer import Timer
 from ._types import CallbackType
 from .geometry import Offset, Region, Size
-from ._typing import Final
 from .reactive import Reactive
 from .renderables.blank import Blank
 from .widget import Widget
 
+if TYPE_CHECKING:
+    from typing import Final
 
 # Screen updates will be batched so that they don't happen more often than 120 times per second:
 UPDATE_PERIOD: Final[float] = 1 / 120
