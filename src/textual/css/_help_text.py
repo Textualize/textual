@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Iterable, Sequence
 
-from typing import Literal
+from typing_extensions import Literal
 
 from ..color import ColorParseError
 from ._help_renderables import Example, Bullet, HelpText

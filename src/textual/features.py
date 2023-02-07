@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Literal, cast
+from typing import TYPE_CHECKING, cast
+
+from typing_extensions import Literal
 
 if TYPE_CHECKING:
     from typing_extensions import Final
