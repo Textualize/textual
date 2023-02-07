@@ -2,7 +2,7 @@ from __future__ import annotations
 
 
 from time import sleep, perf_counter
-from asyncio import get_running_loop
+from asyncio import get_running_loop, Future
 from threading import Thread, Event
 
 
@@ -13,7 +13,7 @@ class Sleeper(Thread):
         self._exit = False
         self._sleep_time = 0.0
         self._event = Event()
-        self.future = None
+        self.future: Future | None = None
         self._loop = get_running_loop()
         super().__init__(daemon=True)
 
@@ -25,6 +25,7 @@ class Sleeper(Thread):
             sleep(self._sleep_time)
             self._event.clear()
             # self.future.set_result(None)
+            assert self.future is not None
             self._loop.call_soon_threadsafe(self.future.set_result, None)
 
     async def sleep(self, sleep_time: float) -> None:
@@ -32,9 +33,6 @@ class Sleeper(Thread):
         self._sleep_time = sleep_time
         self._event.set()
         await future
-
-        # await self._async_event.wait()
-        # self._async_event.clear()
 
 
 async def check_sleeps() -> None:
@@ -46,7 +44,6 @@ async def check_sleeps() -> None:
 
         while perf_counter() - start < sleep_for:
             sleep(0)
-        # await sleeper.sleep(sleep_for)
         elapsed = perf_counter() - start
         return elapsed
 
