@@ -89,7 +89,8 @@ class CellKey(NamedTuple):
 
 
 def default_cell_formatter(obj: object) -> RenderableType:
-    """Format a cell in to a renderable.
+    """Given an object stored in a DataTable cell, return a Rich
+    renderable type which displays that object.
 
     Args:
         obj: Data for a cell.
