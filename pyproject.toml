@@ -62,7 +62,7 @@ Jinja2 = "<3.1.0"
 syrupy = "^3.0.0"
 mkdocs-rss-plugin = "^1.5.0"
 httpx = "^0.23.1"
-msgpack-types = ""
+msgpack-types = "^0.2.0"
 
 [tool.black]
 includes = "src"
