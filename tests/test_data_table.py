@@ -7,6 +7,7 @@ from textual.app import App
 from textual.coordinate import Coordinate
 from textual.events import Click
 from textual.message import Message
+from textual.message_pump import MessagePump
 from textual.widgets import DataTable
 from textual.widgets._data_table import CellKey
 from textual.widgets.data_table import (
@@ -420,26 +421,99 @@ async def test_coordinate_to_cell_key_invalid_coordinate():
             table.coordinate_to_cell_key(Coordinate(9999, 9999))
 
 
+def click_in_app(sender: MessagePump):
+    return Click(
+        sender=sender,
+        x=1,
+        y=2,
+        delta_x=0,
+        delta_y=0,
+        button=0,
+        shift=False,
+        meta=False,
+        ctrl=False,
+    )
+
+
 async def test_datatable_on_click_cell_cursor():
     app = DataTableApp()
     async with app.run_test():
         table = app.query_one(DataTable)
-        click = Click(
-            sender=app,
-            x=1,
-            y=1,
-            delta_x=3,
-            delta_y=3,
-            button=0,
-            shift=False,
-            meta=False,
-            ctrl=False,
-        )
+        click = click_in_app(app)
+        column_key = table.add_column("ABC")
+        table.add_row("123")
+        row_key = table.add_row("456")
+        table.on_click(event=click)
+        await wait_for_idle(0)
+        # There's two CellHighlighted events since a cell is highlighted on initial load,
+        # then when we click, another cell is highlighted (and selected).
+        assert app.message_names == [
+            "CellHighlighted",
+            "CellHighlighted",
+            "CellSelected",
+        ]
+        cell_highlighted_event: DataTable.CellHighlighted = app.messages[1]
+        assert cell_highlighted_event.sender is table
+        assert cell_highlighted_event.value == "456"
+        assert cell_highlighted_event.cell_key == CellKey(row_key, column_key)
+        assert cell_highlighted_event.coordinate == Coordinate(1, 0)
+
+        cell_selected_event: DataTable.CellSelected = app.messages[2]
+        assert cell_selected_event.sender is table
+        assert cell_selected_event.value == "456"
+        assert cell_selected_event.cell_key == CellKey(row_key, column_key)
+        assert cell_selected_event.coordinate == Coordinate(1, 0)
+
+
+async def test_datatable_on_click_row_cursor():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.cursor_type = "row"
+        click = click_in_app(app)
         table.add_column("ABC")
+        table.add_row("123")
+        row_key = table.add_row("456")
+        table.on_click(event=click)
+        await wait_for_idle(0)
+        assert app.message_names == ["RowHighlighted", "RowHighlighted", "RowSelected"]
+
+        row_highlighted: DataTable.RowHighlighted = app.messages[1]
+        assert row_highlighted.sender is table
+        assert row_highlighted.row_key == row_key
+        assert row_highlighted.cursor_row == 1
+
+        row_selected: DataTable.RowSelected = app.messages[2]
+        assert row_selected.sender is table
+        assert row_selected.row_key == row_key
+        assert row_highlighted.cursor_row == 1
+
+
+async def test_datatable_on_click_column_cursor():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.cursor_type = "column"
+        click = click_in_app(app)
+        column_key = table.add_column("ABC")
+        table.add_row("123")
         table.add_row("123")
         table.on_click(event=click)
         await wait_for_idle(0)
-        assert app.message_names == ["CellHighlighted", "CellSelected"]
+        assert app.message_names == [
+            "ColumnHighlighted",
+            "ColumnHighlighted",
+            "ColumnSelected",
+        ]
+        column_highlighted: DataTable.ColumnHighlighted = app.messages[1]
+        assert column_highlighted.sender is table
+        assert column_highlighted.column_key == column_key
+        assert column_highlighted.cursor_column == 0
+
+        column_selected: DataTable.ColumnSelected = app.messages[2]
+        assert column_selected.sender is table
+        assert column_selected.column_key == column_key
+        assert column_highlighted.cursor_column == 0
 
 
 def test_key_equals_equivalent_string():

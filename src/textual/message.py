@@ -9,7 +9,6 @@ from .case import camel_to_snake
 from ._types import MessageTarget as MessageTarget
 
 if TYPE_CHECKING:
-    from .widget import Widget
     from .message_pump import MessagePump
 
 
