@@ -1,9 +1,8 @@
-from typing import Callable, List, Union
-from typing import Awaitable, TYPE_CHECKING
-
+from typing import TYPE_CHECKING, Awaitable, Callable, List, Union
 
 from typing_extensions import Protocol
 
+from rich.segment import Segment
 
 if TYPE_CHECKING:
     from .message import Message
