@@ -1,11 +1,10 @@
 from contextlib import nullcontext as does_not_raise
-from typing_extensions import Any
+from typing import Any
 
 import pytest
 
 from textual.color import Color
-from textual.css._help_renderables import HelpText
-from textual.css.stylesheet import Stylesheet, StylesheetParseError, CssSource
+from textual.css.stylesheet import CssSource, Stylesheet, StylesheetParseError
 from textual.css.tokenizer import TokenError
 from textual.dom import DOMNode
 from textual.geometry import Spacing
