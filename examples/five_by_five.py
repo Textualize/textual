@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Simple version of 5x5, developed for/with Textual."""
 
 from pathlib import Path
