@@ -1,11 +1,11 @@
-import asyncio
+from __future__ import annotations
 
 import pytest
-from rich.text import Text
 
 from textual._wait import wait_for_idle
 from textual.app import App
 from textual.coordinate import Coordinate
+from textual.events import Click
 from textual.message import Message
 from textual.widgets import DataTable
 from textual.widgets._data_table import CellKey
@@ -20,7 +20,6 @@ ROWS = [["0/0", "0/1"], ["1/0", "1/1"], ["2/0", "2/1"]]
 
 
 class DataTableApp(App):
-    messages = []
     messages_to_record = {
         "CellHighlighted",
         "CellSelected",
@@ -30,6 +29,10 @@ class DataTableApp(App):
         "ColumnSelected",
     }
 
+    def __init__(self):
+        super().__init__()
+        self.messages = []
+
     def compose(self):
         table = DataTable()
         table.focus()
@@ -38,7 +41,11 @@ class DataTableApp(App):
     def record_data_table_event(self, message: Message) -> None:
         name = message.__class__.__name__
         if name in self.messages_to_record:
-            self.messages.append(name)
+            self.messages.append(message)
+
+    @property
+    def message_names(self) -> list[str]:
+        return [message.__class__.__name__ for message in self.messages]
 
     async def _on_message(self, message: Message) -> None:
         await super()._on_message(message)
@@ -47,12 +54,11 @@ class DataTableApp(App):
 
 async def test_datatable_message_emission():
     app = DataTableApp()
-    messages = app.messages
     expected_messages = []
     async with app.run_test() as pilot:
         table = app.query_one(DataTable)
 
-        assert messages == expected_messages
+        assert app.message_names == expected_messages
 
         table.add_columns("Column0", "Column1")
         table.add_rows(ROWS)
@@ -62,48 +68,48 @@ async def test_datatable_message_emission():
         # so the cell at (0, 0) became highlighted.
         expected_messages.append("CellHighlighted")
         await pilot.pause(2 / 100)
-        assert messages == expected_messages
+        assert app.message_names == expected_messages
 
         # Pressing Enter when the cursor is on a cell emits a CellSelected
         await pilot.press("enter")
         expected_messages.append("CellSelected")
-        assert messages == expected_messages
+        assert app.message_names == expected_messages
 
         # Moving the cursor left and up when the cursor is at origin
         # emits no events, since the cursor doesn't move at all.
         await pilot.press("left", "up")
-        assert messages == expected_messages
+        assert app.message_names == expected_messages
 
         # ROW CURSOR
         # Switch over to the row cursor... should emit a `RowHighlighted`
         table.cursor_type = "row"
         expected_messages.append("RowHighlighted")
         await pilot.pause(2 / 100)
-        assert messages == expected_messages
+        assert app.message_names == expected_messages
 
         # Select the row...
         await pilot.press("enter")
         expected_messages.append("RowSelected")
-        assert messages == expected_messages
+        assert app.message_names == expected_messages
 
         # COLUMN CURSOR
         # Switching to the column cursor emits a `ColumnHighlighted`
         table.cursor_type = "column"
         expected_messages.append("ColumnHighlighted")
         await pilot.pause(2 / 100)
-        assert messages == expected_messages
+        assert app.message_names == expected_messages
 
         # Select the column...
         await pilot.press("enter")
         expected_messages.append("ColumnSelected")
-        assert messages == expected_messages
+        assert app.message_names == expected_messages
 
         # NONE CURSOR
         # No messages get emitted at all...
         table.cursor_type = "none"
         await pilot.press("up", "down", "left", "right", "enter")
         # No new messages since cursor not visible
-        assert messages == expected_messages
+        assert app.message_names == expected_messages
 
         # Edge case - if show_cursor is False, and the cursor type
         # is changed back to a visible type, then no messages should
@@ -112,21 +118,37 @@ async def test_datatable_message_emission():
         table.cursor_type = "cell"
         await pilot.press("up", "down", "left", "right", "enter")
         # No new messages since show_cursor = False
-        assert messages == expected_messages
+        assert app.message_names == expected_messages
 
         # Now when show_cursor is set back to True, the appropriate
         # message should be emitted for highlighting the cell.
         table.show_cursor = True
         expected_messages.append("CellHighlighted")
         await pilot.pause(2 / 100)
-        assert messages == expected_messages
+        assert app.message_names == expected_messages
+
+        # Similarly for showing the cursor again when row or column
+        # cursor was active before the cursor was hidden.
+        table.show_cursor = False
+        table.cursor_type = "row"
+        table.show_cursor = True
+        expected_messages.append("RowHighlighted")
+        await pilot.pause(2 / 100)
+        assert app.message_names == expected_messages
+
+        table.show_cursor = False
+        table.cursor_type = "column"
+        table.show_cursor = True
+        expected_messages.append("ColumnHighlighted")
+        await pilot.pause(2 / 100)
+        assert app.message_names == expected_messages
 
         # Likewise, if the cursor_type is "none", and we change the
         # show_cursor to True, then no events should be raised since
         # the cursor is still not visible to the user.
         table.cursor_type = "none"
         await pilot.press("up", "down", "left", "right", "enter")
-        assert messages == expected_messages
+        assert app.message_names == expected_messages
 
 
 async def test_add_rows():
@@ -171,6 +193,17 @@ async def test_add_rows_user_defined_keys():
         first_row = Row(algernon_key, height=1)
         assert table.rows[algernon_key] == first_row
         assert table.rows["algernon"] == first_row
+
+
+async def test_add_column_with_width():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        column = table.add_column("ABC", width=10, key="ABC")
+        row = table.add_row("123")
+        assert table.get_cell_value(row, column) == "123"
+        assert table.columns[column].width == 10
+        assert table.columns[column].render_width == 12  # 10 + (2 padding)
 
 
 async def test_add_columns():
@@ -385,6 +418,28 @@ async def test_coordinate_to_cell_key_invalid_coordinate():
         table = app.query_one(DataTable)
         with pytest.raises(CellDoesNotExist):
             table.coordinate_to_cell_key(Coordinate(9999, 9999))
+
+
+async def test_datatable_on_click_cell_cursor():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        click = Click(
+            sender=app,
+            x=1,
+            y=1,
+            delta_x=3,
+            delta_y=3,
+            button=0,
+            shift=False,
+            meta=False,
+            ctrl=False,
+        )
+        table.add_column("ABC")
+        table.add_row("123")
+        table.on_click(event=click)
+        await wait_for_idle(0)
+        assert app.message_names == ["CellHighlighted", "CellSelected"]
 
 
 def test_key_equals_equivalent_string():
