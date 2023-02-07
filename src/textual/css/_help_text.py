@@ -126,7 +126,10 @@ def _spacing_examples(property_name: str) -> ContextSpecificBullets:
 
 
 def property_invalid_value_help_text(
-    property_name: str, context: StylingContext, *, suggested_property_name: str = None
+    property_name: str,
+    context: StylingContext,
+    *,
+    suggested_property_name: str | None = None,
 ) -> HelpText:
     """Help text to show when the user supplies an invalid value for CSS property
     property.
@@ -301,7 +304,7 @@ def color_property_help_text(
     property_name: str,
     context: StylingContext,
     *,
-    error: Exception = None,
+    error: Exception | None = None,
 ) -> HelpText:
     """Help text to show when the user supplies an invalid value for a color
     property. For example, an unparseable color string.
