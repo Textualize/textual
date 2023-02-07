@@ -41,3 +41,7 @@ docs-build-offline:
 .PHONY: docs-deploy
 docs-deploy: clean-screenshot-cache
 	mkdocs gh-deploy
+
+.PHONY: build
+build: docs-build-offline
+	poetry build

@@ -24,6 +24,7 @@ classifiers = [
 include = [
     "src/textual/py.typed",
     { path = "docs/examples", format = "sdist" },
+    { path = "docs-offline/**/*", format = "sdist" },
     { path = "tests", format = "sdist" }
 ]
 
