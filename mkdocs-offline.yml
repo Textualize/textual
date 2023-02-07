@@ -2,6 +2,7 @@ INHERIT: mkdocs-common.yml
 
 plugins:
   offline:
+  privacy:
 
 site_dir: docs-offline
 
