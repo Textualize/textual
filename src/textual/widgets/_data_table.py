@@ -13,6 +13,7 @@ from typing import (
     NamedTuple,
     Callable,
     Sequence,
+    Any,
 )
 
 import rich.repr
@@ -1429,35 +1430,20 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     def sort(
         self,
-        column: str | ColumnKey | Sequence[str] | Sequence[ColumnKey],
+        *columns: ColumnKey | str,
         reverse: bool = False,
     ) -> None:
-        if isinstance(column, (str, ColumnKey)):
-            column = (column,)
-        indices = [self._column_locations.get(key) for key in column]
-        ordered_keys = sorted(self.rows, key=itemgetter(*indices), reverse=reverse)
-        self._row_locations = TwoWayDict(
-            {key: new_index for new_index, key in enumerate(ordered_keys)}
-        )
-        self._update_count += 1
-        self.refresh()
+        def sort_by_column_keys(
+            row: tuple[RowKey, dict[ColumnKey | str, CellType]]
+        ) -> Any:
+            _, row_data = row
+            return itemgetter(*columns)(row_data)
 
-    def sort_columns(
-        self, key: Callable[[ColumnKey | str], str] = None, reverse: bool = False
-    ) -> None:
-        ordered_keys = sorted(self.columns.keys(), key=key, reverse=reverse)
-        self._column_locations = TwoWayDict(
-            {key: new_index for new_index, key in enumerate(ordered_keys)}
+        ordered_rows = sorted(
+            self.data.items(), key=sort_by_column_keys, reverse=reverse
         )
-        self._update_count += 1
-        self.refresh()
-
-    def sort_rows(
-        self, key: Callable[[RowKey | str], str] = None, reverse: bool = False
-    ):
-        ordered_keys = sorted(self.rows.keys(), key=key, reverse=reverse)
         self._row_locations = TwoWayDict(
-            {key: new_index for new_index, key in enumerate(ordered_keys)}
+            {key: new_index for new_index, (key, _) in enumerate(ordered_rows)}
         )
         self._update_count += 1
         self.refresh()
