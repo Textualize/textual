@@ -22,7 +22,7 @@ BORDER_CHARS: dict[
     # Three tuples for the top, middle, and bottom rows.
     # The sub-tuples are the characters for the left, center, and right borders.
     "": (
-        (" ", " ", "  "),
+        (" ", " ", " "),
         (" ", " ", " "),
         (" ", " ", " "),
     ),
