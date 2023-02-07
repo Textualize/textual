@@ -1,7 +1,18 @@
 INHERIT: mkdocs-common.yml
 
-site_dir: docs-local
-use_directory_urls: false
+site_url: https://textual.textualize.io/
+edit_uri: edit/main/docs/
+
+plugins:
+  - blog:
+  - rss:
+      match_path: blog/posts/.*
+      date_from_meta:
+        as_creation: date
+      categories:
+        - categories
+        - release
+        - tags
 
 nav:
   - Introduction:
@@ -174,3 +185,5 @@ nav:
     - "api/tree_node.md"
     - "api/walk.md"
     - "api/widget.md"
+  - "Blog":
+    - blog/index.md

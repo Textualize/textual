@@ -62,12 +62,12 @@ theme:
       name: Switch to light mode
 
 plugins:
-
-- autorefs:
-- mkdocstrings:
-    custom_templates: docs/_templates
-    default_handler: python
-    handlers:
+  - search:
+  - autorefs:
+  - mkdocstrings:
+      custom_templates: docs/_templates
+      default_handler: python
+      handlers:
         python:
           options:
             show_root_heading: true
@@ -79,9 +79,9 @@ plugins:
               - "!^can_replace$"
     watch:
       - src/textual
-- exclude:
-    glob:
-      - "**/_template.md"
+  - exclude:
+      glob:
+        - "**/_template.md"
 
 
 extra_css:

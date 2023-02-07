@@ -12,11 +12,11 @@ format-check:
 	black --check src
 docs-serve:
 	rm -rf .screenshot_cache
-	mkdocs serve
+	mkdocs serve --config-file mkdocs-online.yml
 docs-build:
-	mkdocs build
-docs-local-build:
-	mkdocs build --config-file mkdocs-local.yml
+	mkdocs build --config-file mkdocs-online.yml
+docs-build-offline:
+	mkdocs build --config-file mkdocs-offline.yml
 docs-deploy:
 	rm -rf .screenshot_cache
 	mkdocs gh-deploy
