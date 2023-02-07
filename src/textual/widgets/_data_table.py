@@ -21,13 +21,13 @@ from rich.protocol import is_renderable
 from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text, TextType
+from typing_extensions import TypeAlias, Literal
 
 from .. import events, messages
 from .._cache import LRUCache
 from .._segment_tools import line_crop
 from .._two_way_dict import TwoWayDict
 from .._types import SegmentLines
-from .._typing import Literal, TypeAlias
 from ..binding import Binding, BindingType
 from ..coordinate import Coordinate
 from ..geometry import Region, Size, Spacing, clamp
