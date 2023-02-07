@@ -1,7 +1,7 @@
 """Simple version of 5x5, developed for/with Textual."""
 
 from pathlib import Path
-from typing_extensions import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, cast
 
 from rich.markdown import Markdown
 
