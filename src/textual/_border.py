@@ -19,10 +19,8 @@ OUTER = 2
 BORDER_CHARS: dict[
     EdgeType, tuple[tuple[str, str, str], tuple[str, str, str], tuple[str, str, str]]
 ] = {
-    # Each string of the tuple represents a sub-tuple itself:
-    #  - 1st string represents (top1, top2, top3)
-    #  - 2nd string represents (mid1, mid2, mid3)
-    #  - 3rd string represents (bottom1, bottom2, bottom3)
+    # Three tuples for the top, middle, and bottom rows.
+    # The sub-tuples are the characters for the left, center, and right borders.
     "": ((" ", " ", "  "), (" ", " ", " "), (" ", " ", " ")),
     "ascii": (("+", "-", "+"), ("|", " ", "|"), ("+", "-", "+")),
     "none": ((" ", " ", " "), (" ", " ", " "), (" ", " ", " ")),
