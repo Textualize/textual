@@ -11,8 +11,6 @@ from typing import (
     TypeVar,
     cast,
     NamedTuple,
-    Callable,
-    Sequence,
     Any,
 )
 

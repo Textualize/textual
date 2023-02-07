@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import ClassVar
 
-from textual import events
 from textual.await_remove import AwaitRemove
 from textual.binding import Binding, BindingType
 from textual.containers import Vertical

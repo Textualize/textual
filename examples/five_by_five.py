@@ -1,24 +1,23 @@
+from __future__ import annotations
+
 """Simple version of 5x5, developed for/with Textual."""
 
 from pathlib import Path
-from typing import cast
-import sys
-
-if sys.version_info >= (3, 8):
-    from typing import Final
-else:
-    from typing_extensions import Final
-
-from textual.containers import Horizontal
-from textual.app import App, ComposeResult
-from textual.screen import Screen
-from textual.widget import Widget
-from textual.widgets import Footer, Button, Label
-from textual.css.query import DOMQuery
-from textual.reactive import reactive
-from textual.binding import Binding
+from typing import TYPE_CHECKING, cast
 
 from rich.markdown import Markdown
+
+from textual.app import App, ComposeResult
+from textual.binding import Binding
+from textual.containers import Horizontal
+from textual.css.query import DOMQuery
+from textual.reactive import reactive
+from textual.screen import Screen
+from textual.widget import Widget
+from textual.widgets import Button, Footer, Label
+
+if TYPE_CHECKING:
+    from typing_extensions import Final
 
 
 class Help(Screen):

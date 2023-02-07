@@ -2,14 +2,13 @@ from __future__ import annotations
 import typing
 
 from ..geometry import Spacing
-from .._typing import Final
 
 if typing.TYPE_CHECKING:
-    from .types import EdgeType
+    from typing_extensions import Final
 
 VALID_VISIBILITY: Final = {"visible", "hidden"}
 VALID_DISPLAY: Final = {"block", "none"}
-VALID_BORDER: Final[set[EdgeType]] = {
+VALID_BORDER: Final = {
     "none",
     "hidden",
     "ascii",
@@ -33,7 +32,14 @@ VALID_BOX_SIZING: Final = {"border-box", "content-box"}
 VALID_OVERFLOW: Final = {"scroll", "hidden", "auto"}
 VALID_ALIGN_HORIZONTAL: Final = {"left", "center", "right"}
 VALID_ALIGN_VERTICAL: Final = {"top", "middle", "bottom"}
-VALID_TEXT_ALIGN: Final = {"start", "end", "left", "right", "center", "justify"}
+VALID_TEXT_ALIGN: Final = {
+    "start",
+    "end",
+    "left",
+    "right",
+    "center",
+    "justify",
+}
 VALID_SCROLLBAR_GUTTER: Final = {"auto", "stable"}
 VALID_STYLE_FLAGS: Final = {
     "b",
@@ -52,5 +58,6 @@ VALID_STYLE_FLAGS: Final = {
     "underline",
     "uu",
 }
+
 
 NULL_SPACING: Final = Spacing.all(0)

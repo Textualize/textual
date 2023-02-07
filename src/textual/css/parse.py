@@ -4,8 +4,6 @@ from functools import lru_cache
 from pathlib import PurePath
 from typing import Iterator, Iterable, NoReturn
 
-from rich import print
-
 from .errors import UnresolvedVariableError
 from .types import Specificity3
 from ._styles_builder import StylesBuilder, DeclarationError

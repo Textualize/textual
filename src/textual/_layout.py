@@ -4,13 +4,13 @@ from abc import ABC, abstractmethod
 from typing import ClassVar, NamedTuple, TYPE_CHECKING
 
 from .geometry import Region, Size, Spacing
-from ._typing import TypeAlias
 
 if TYPE_CHECKING:
+    from typing_extensions import TypeAlias
     from .widget import Widget
 
 ArrangeResult: TypeAlias = "tuple[list[WidgetPlacement], set[Widget]]"
-DockArrangeResult: TypeAlias = "tuple[list[WidgetPlacement], set[Widget], Spacing]]"
+DockArrangeResult: TypeAlias = "tuple[list[WidgetPlacement], set[Widget], Spacing]"
 
 
 class WidgetPlacement(NamedTuple):

@@ -2,13 +2,16 @@ from __future__ import annotations
 
 from functools import lru_cache
 from typing import cast, Tuple, Union
+from typing import TYPE_CHECKING
 
 from rich.segment import Segment
 from rich.style import Style
 
 from .color import Color
 from .css.types import EdgeStyle, EdgeType
-from ._typing import TypeAlias
+
+if TYPE_CHECKING:
+    from typing_extensions import TypeAlias
 
 INNER = 1
 OUTER = 2
