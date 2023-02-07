@@ -436,6 +436,7 @@ def click_in_app(sender: MessagePump):
 
 
 async def test_datatable_on_click_cell_cursor():
+    # Regression test for https://github.com/Textualize/textual/issues/1723
     app = DataTableApp()
     async with app.run_test():
         table = app.query_one(DataTable)
