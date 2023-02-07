@@ -1,19 +1,12 @@
 from __future__ import annotations
 
 import asyncio
-import sys
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from functools import partial
+from typing import TYPE_CHECKING, Any, Callable, TypeVar
 
-from typing import Callable
-from typing_extensions import (
-    TYPE_CHECKING,
-    Any,
-    Protocol,
-    TypeVar,
-    runtime_checkable,
-)
+from typing_extensions import Protocol, runtime_checkable
 
 from . import _clock
 from ._callback import invoke
