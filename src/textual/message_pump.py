@@ -581,7 +581,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         await invoke(event.callback)
 
     def emit_no_wait(self, message: Message) -> bool:
-        """Send a message to the _parent_, non async version.
+        """Send a message to self, non-async version.
 
         Args:
             message: A message object.
@@ -589,13 +589,10 @@ class MessagePump(metaclass=MessagePumpMeta):
         Returns:
             True if the message was posted successfully.
         """
-        if self._parent:
-            return self._parent._post_message_from_child_no_wait(message)
-        else:
-            return False
+        return self.post_message_no_wait(message)
 
     async def emit(self, message: Message) -> bool:
-        """Send a message to the _parent_.
+        """Send a message to self.
 
         Args:
             message: A message object.
@@ -603,10 +600,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         Returns:
             True if the message was posted successfully.
         """
-        if self._parent:
-            return await self._parent._post_message_from_child(message)
-        else:
-            return False
+        return await self.post_message(message)
 
     # TODO: Does dispatch_key belong on message pump?
     async def dispatch_key(self, event: events.Key) -> bool:
