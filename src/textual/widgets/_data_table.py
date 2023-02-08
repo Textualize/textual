@@ -1498,7 +1498,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def on_click(self, event: events.Click) -> None:
         self._set_hover_cursor(True)
         if self.show_cursor and self.cursor_type != "none":
-            # Only emit selection events if there is a visible row/col/cell cursor.
+            # Only post selection events if there is a visible row/col/cell cursor.
             meta = self.get_style_at(event.x, event.y).meta
             if meta:
                 self.cursor_coordinate = Coordinate(meta["row"], meta["column"])
