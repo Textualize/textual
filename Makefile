@@ -49,3 +49,6 @@ docs-deploy: clean-screenshot-cache
 .PHONY: build
 build: docs-build-offline
 	poetry build
+
+.PHONY: clean
+clean: clean-screenshot-cache clean-offline-docs
