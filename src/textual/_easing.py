@@ -4,6 +4,7 @@ Taken from https://easings.net/ and translated from JavaScript.
 """
 
 from math import pi, cos, sin, sqrt
+from typing import Callable
 
 
 def _in_out_expo(x: float) -> float:
@@ -91,6 +92,21 @@ def _in_out_bounce(x: float) -> float:
         return (1 + _out_bounce(2 * x - 1)) / 2
 
 
+def make_flash(repeat: int) -> Callable[[float], float]:
+    """Make a flash easing.
+
+    Args:
+        repeat: Number of times to flash.
+
+    """
+
+    def flash(x: float) -> float:
+        """Flash easing."""
+        return 1.0 if (repeat * x - 0.25) % 1 > 0.5 else 0.0
+
+    return flash
+
+
 EASING = {
     "none": lambda x: 1.0,
     "round": lambda x: 0.0 if x < 0.5 else 1.0,
@@ -125,6 +141,9 @@ EASING = {
     "in_bounce": _in_bounce,
     "in_out_bounce": _in_out_bounce,
     "out_bounce": _out_bounce,
+    "flash": make_flash(1),
+    "flash2": make_flash(2),
+    "flash3": make_flash(3),
 }
 
 DEFAULT_EASING = "in_out_cubic"

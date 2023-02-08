@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing_extensions import TYPE_CHECKING
+
+import rich.repr
 
 from .scalar import ScalarOffset, Scalar
 from .._animator import Animation
@@ -10,14 +12,15 @@ from .._types import CallbackType
 
 if TYPE_CHECKING:
     from ..dom import DOMNode
-
+    from ..widget import Widget
     from .styles import StylesBase
 
 
+@rich.repr.auto
 class ScalarAnimation(Animation):
     def __init__(
         self,
-        widget: DOMNode,
+        widget: Widget,
         styles: StylesBase,
         start_time: float,
         attribute: str,
@@ -35,23 +38,42 @@ class ScalarAnimation(Animation):
         self.start_time = start_time
         self.attribute = attribute
         self.final_value = value
+        self._duration = duration
+        self.speed = speed
         self.easing = easing
         self.on_complete = on_complete
+        self._started = False
 
-        size = widget.outer_size
-        viewport = widget.app.size
+    def _start_animation(self) -> None:
+        size = self.widget.outer_size
+        viewport = self.widget.app.size
 
-        self.start = getattr(styles, attribute).resolve(size, viewport)
-        self.destination = value.resolve(size, viewport)
+        self.start = getattr(self.styles, self.attribute).resolve(size, viewport)
+        self.destination = self.final_value.resolve(size, viewport)
 
-        if speed is not None:
+        if self.speed is not None:
             distance = self.start.get_distance_to(self.destination)
-            self.duration = distance / speed
+            self.duration = distance / self.speed
         else:
-            assert duration is not None, "Duration expected to be non-None"
-            self.duration = duration
+            assert self._duration is not None
+            self.duration = self._duration
+        self._started = True
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield self.widget
+        yield "styles", self.styles
+        yield "start_time", self.start_time
+        yield "attribute", self.attribute
+        yield "final_value", self.final_value
+        yield "easing", self.easing
+        yield "on_complete", self.on_complete
 
     def __call__(self, time: float) -> bool:
+        if not self._started:
+            if self.widget.display and self.widget.region:
+                self._start_animation()
+            else:
+                return False
         factor = min(1.0, (time - self.start_time) / self.duration)
         eased_factor = self.easing(factor)
 
