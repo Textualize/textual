@@ -136,6 +136,7 @@ class DevtoolsClient:
             change, it will update its own Console to ensure it renders at
             the correct width for server-side display.
             """
+            assert self.websocket is not None
             async for message in self.websocket:
                 if message.type == aiohttp.WSMsgType.TEXT:
                     message_json = json.loads(message.data)
