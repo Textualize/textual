@@ -11,12 +11,12 @@ from textual.events import Click, MouseMove
 from textual.message import Message
 from textual.message_pump import MessagePump
 from textual.widgets import DataTable
-from textual.widgets._data_table import CellKey
 from textual.widgets.data_table import (
-    CellDoesNotExist,
-    RowKey,
-    Row,
     ColumnKey,
+    CellDoesNotExist,
+    CellKey,
+    Row,
+    RowKey,
 )
 
 ROWS = [["0/0", "0/1"], ["1/0", "1/1"], ["2/0", "2/1"]]
