@@ -39,6 +39,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed issue with app not processing Paste event https://github.com/Textualize/textual/issues/1666
 - Fixed glitch with view position with auto width inputs https://github.com/Textualize/textual/issues/1693
 
+### Removed
+
+- Methods `MessagePump.emit` and `MessagePump.emit_no_wait` https://github.com/Textualize/textual/pull/1738
+
 ## [0.10.1] - 2023-01-20
 
 ### Added
