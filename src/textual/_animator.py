@@ -57,6 +57,29 @@ class Animation(ABC):
 
 
 @dataclass
+class EnumAnimation(Animation):
+    obj: object
+    attribute: str
+    start_time: float
+    duration: float
+    start_value: str
+    end_value: str
+    final_value: str
+    easing: EasingFunction
+    on_complete: CallbackType | None = None
+
+    def __call__(self, time: float) -> bool:
+        if self.duration == 0:
+            setattr(self.obj, self.attribute, self.final_value)
+            return True
+        factor = min(1.0, (time - self.start_time) / self.duration)
+        eased_factor = self.easing(factor)
+        value = self.start_value if eased_factor < 0.5 else self.end_value
+        setattr(self.obj, self.attribute, value)
+        return factor >= 1
+
+
+@dataclass
 class SimpleAnimation(Animation):
     obj: object
     attribute: str
@@ -318,7 +341,7 @@ class Animator:
             )
 
         if animation is None:
-            if not isinstance(value, (int, float)) and not isinstance(
+            if not isinstance(value, (int, float, str)) and not isinstance(
                 value, Animatable
             ):
                 raise AnimationError(
@@ -342,17 +365,31 @@ class Animator:
                 else:
                     animation_duration = abs(value - start_value) / (speed or 50)
 
-            animation = SimpleAnimation(
-                obj,
-                attribute=attribute,
-                start_time=start_time,
-                duration=animation_duration,
-                start_value=start_value,
-                end_value=value,
-                final_value=final_value,
-                easing=easing_function,
-                on_complete=on_complete,
-            )
+            if isinstance(value, str):
+                animation = EnumAnimation(
+                    obj,
+                    attribute=attribute,
+                    start_time=start_time,
+                    duration=animation_duration,
+                    start_value=start_value,
+                    end_value=value,
+                    final_value=final_value,
+                    easing=easing_function,
+                    on_complete=on_complete,
+                )
+            else:
+                animation = SimpleAnimation(
+                    obj,
+                    attribute=attribute,
+                    start_time=start_time,
+                    duration=animation_duration,
+                    start_value=start_value,
+                    end_value=value,
+                    final_value=final_value,
+                    easing=easing_function,
+                    on_complete=on_complete,
+                )
+
         assert animation is not None, "animation expected to be non-None"
 
         current_animation = self._animations.get(animation_key)

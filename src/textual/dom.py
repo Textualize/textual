@@ -477,7 +477,7 @@ class DOMNode(MessagePump):
         return self.styles.visibility != "hidden"
 
     @visible.setter
-    def visible(self, new_value: bool) -> None:
+    def visible(self, new_value: bool | str) -> None:
         if isinstance(new_value, bool):
             self.styles.visibility = "visible" if new_value else "hidden"
         elif new_value in VALID_VISIBILITY:

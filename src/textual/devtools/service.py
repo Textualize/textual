@@ -49,6 +49,7 @@ class DevtoolsService:
         self.console = Console()
         self.shutdown_event = asyncio.Event()
         self.clients: list[ClientHandler] = []
+        self.console.set_window_title("Textual Console")
 
     async def start(self):
         """Starts devtools tasks"""
