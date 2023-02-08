@@ -580,6 +580,35 @@ async def test_sort_coordinate_and_key_access():
         assert table.get_value_at(Coordinate(2, 0)) == 3
 
 
+async def test_sort_reverse_coordinate_and_key_access():
+    """Ensure that, after sorting, that coordinates and cell keys
+    can still be used to retrieve the correct cell."""
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        column = table.add_column("number")
+        row_three = table.add_row(3)
+        row_one = table.add_row(1)
+        row_two = table.add_row(2)
+
+        # Items inserted in correct initial positions (before sort)
+        assert table.get_value_at(Coordinate(0, 0)) == 3
+        assert table.get_value_at(Coordinate(1, 0)) == 1
+        assert table.get_value_at(Coordinate(2, 0)) == 2
+
+        table.sort(column, reverse=True)
+
+        # The keys still refer to the same cells...
+        assert table.get_cell_value(row_one, column) == 1
+        assert table.get_cell_value(row_two, column) == 2
+        assert table.get_cell_value(row_three, column) == 3
+
+        # ...even though the values under the coordinates have changed...
+        assert table.get_value_at(Coordinate(0, 0)) == 3
+        assert table.get_value_at(Coordinate(1, 0)) == 2
+        assert table.get_value_at(Coordinate(2, 0)) == 1
+
+
 def test_key_equals_equivalent_string():
     text = "Hello"
     key = RowKey(text)
