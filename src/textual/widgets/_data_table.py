@@ -248,12 +248,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     hover_coordinate: Reactive[Coordinate] = Reactive(Coordinate(0, 0), repaint=False)
 
     class CellHighlighted(Message, bubble=True):
-        """Posted when the cursor moves to highlight a new cell.
-        It's only relevant when the `cursor_type` is `"cell"`.
-        It's also posted when the cell cursor is re-enabled (by setting `show_cursor=True`),
-        and when the cursor type is changed to `"cell"`. Can be handled using
-        `on_data_table_cell_highlighted` in a subclass of `DataTable` or in a parent
-        widget in the DOM.
+        """Posted when the cursor moves to highlight a new cell. It's only relevant
+        when the `cursor_type` is `"cell"`. It's also posted when the cell cursor is
+        re-enabled (by setting `show_cursor=True`), and when the cursor type is
+        changed to `"cell"`. Can be handled using `on_data_table_cell_highlighted` in
+        a subclass of `DataTable` or in a parent widget in the DOM.
 
         Attributes:
             value: The value in the highlighted cell.
@@ -311,8 +310,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     class RowHighlighted(Message, bubble=True):
         """Posted when a row is highlighted. This message is only posted when the
-        `cursor_type` is set to `"row"`. Can be handled using `on_data_table_row_highlighted`
-        in a subclass of `DataTable` or in a parent widget in the DOM.
+        `cursor_type` is set to `"row"`. Can be handled using
+        `on_data_table_row_highlighted` in a subclass of `DataTable` or in a parent
+        widget in the DOM.
 
         Attributes:
             cursor_row: The y-coordinate of the cursor that highlighted the row.
@@ -422,9 +422,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Metadata about the rows of the table, indexed by their key."""
 
         # Keep tracking of key -> index for rows/cols. These allow us to retrieve,
-        # given a row or column key, the index that row or column is currently present at,
-        # and mean that rows and columns are location independent - they can move around
-        # without requiring us to modify the underlying data.
+        # given a row or column key, the index that row or column is currently
+        # present at, and mean that rows and columns are location independent - they
+        # can move around without requiring us to modify the underlying data.
         self._row_locations: TwoWayDict[RowKey, int] = TwoWayDict({})
         """Maps row keys to row indices which represent row order."""
         self._column_locations: TwoWayDict[ColumnKey, int] = TwoWayDict({})
@@ -433,9 +433,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._row_render_cache: LRUCache[
             RowCacheKey, tuple[SegmentLines, SegmentLines]
         ] = LRUCache(1000)
-        """For each row (a row can have a height of multiple lines), we maintain a cache
-        of the fixed and scrollable lines within that row to minimise how often we need to
-        re-render it."""
+        """For each row (a row can have a height of multiple lines), we maintain a
+        cache of the fixed and scrollable lines within that row to minimise how often
+        we need to re-render it. """
         self._cell_render_cache: LRUCache[CellCacheKey, SegmentLines] = LRUCache(10000)
         """Cache for individual cells."""
         self._line_cache: LRUCache[LineCacheKey, Strip] = LRUCache(1000)
@@ -444,7 +444,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._require_update_dimensions: bool = False
         """Set to re-calculate dimensions on idle."""
         self._new_rows: set[RowKey] = set()
-        """Tracking newly added rows to be used in re-calculation of dimensions on idle."""
+        """Tracking newly added rows to be used in calculation of dimensions on idle."""
         self._updated_cells: set[CellKey] = set()
         """Track which cells were updated, so that we can refresh them once on idle."""
 
@@ -457,15 +457,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.fixed_columns = fixed_columns
         """The number of columns to fix (prevented from scrolling)."""
         self.zebra_stripes = zebra_stripes
-        """Apply zebra-stripe effect on row backgrounds (light, dark, light, dark, ...)."""
+        """Apply zebra effect on row backgrounds (light, dark, light, dark, ...)."""
         self.show_cursor = show_cursor
         """Show/hide both the keyboard and hover cursor."""
         self._show_hover_cursor = False
         """Used to hide the mouse hover cursor when the user uses the keyboard."""
         self._update_count = 0
-        """The number of update operations that have occurred. Used for cache invalidation."""
+        """Number of update operations so far. Used for cache invalidation."""
         self._header_row_key = RowKey()
-        """The header is a special row which is not part of the data. This key is used to retrieve it."""
+        """The header is a special row - not part of the data. Retrieve via this key."""
 
     @property
     def hover_row(self) -> int:
@@ -494,10 +494,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     @property
     def _y_offsets(self) -> list[tuple[RowKey, int]]:
-        """Contains a 2-tuple for each line (not row!) of the DataTable. Given a y-coordinate,
-        we can index into this list to find which row that y-coordinate lands on, and the
-        y-offset *within* that row. The length of the returned list is therefore the total
-        height of all rows within the DataTable."""
+        """Contains a 2-tuple for each line (not row!) of the DataTable. Given a
+        y-coordinate, we can index into this list to find which row that y-coordinate
+        lands on, and the y-offset *within* that row. The length of the returned list
+        is therefore the total height of all rows within the DataTable."""
         y_offsets: list[tuple[RowKey, int]] = []
         for row in self.ordered_rows:
             row_key = row.key
@@ -629,7 +629,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             return self.header_height
         return self.rows[row_key].height
 
-    async def on_styles_updated(self, message: messages.StylesUpdated) -> None:
+    async def on_styles_updated(self, _: messages.StylesUpdated) -> None:
         self._clear_caches()
         self.refresh()
 
@@ -646,13 +646,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             elif self.cursor_type == "column":
                 self._highlight_column(self.cursor_column)
 
-    def watch_show_header(self, show_header: bool) -> None:
+    def watch_show_header(self) -> None:
         self._clear_caches()
 
-    def watch_fixed_rows(self, fixed_rows: int) -> None:
+    def watch_fixed_rows(self) -> None:
         self._clear_caches()
 
-    def watch_zebra_stripes(self, zebra_stripes: bool) -> None:
+    def watch_zebra_stripes(self) -> None:
         self._clear_caches()
 
     def watch_hover_coordinate(self, old: Coordinate, value: Coordinate) -> None:
@@ -693,7 +693,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             )
 
     def coordinate_to_cell_key(self, coordinate: Coordinate) -> CellKey:
-        """Return the key for the cell currently occupying this coordinate in the DataTable
+        """Return the key for the cell currently occupying this coordinate in the
+        DataTable
 
         Args:
             coordinate: The coordinate to exam the current cell key of.
@@ -740,7 +741,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         column = clamp(column, self.fixed_columns, len(self.columns) - 1)
         return Coordinate(row, column)
 
-    def watch_cursor_type(self, old: str, new: str) -> None:
+    def watch_cursor_type(self, old: str, _: str) -> None:
         self._set_hover_cursor(False)
         if self.show_cursor:
             self._highlight_cursor()
@@ -882,13 +883,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         Args:
             label: A str or Text object containing the label (shown top of column).
-            width: Width of the column in cells or None to fit content. Defaults to None.
-            key: A key which uniquely identifies this column. If None, it will be generated for you. Defaults to None.
+            width: Width of the column in cells or None to fit content.
+            key: A key which uniquely identifies this column.
+                If None, it will be generated for you.
 
         Returns:
-            Uniquely identifies this column. Can be used to retrieve this column regardless
-                of its current location in the DataTable (it could have moved after being added
-                due to sorting or insertion/deletion of other columns).
+            Uniquely identifies this column. Can be used to retrieve this column
+                regardless of its current location in the DataTable (it could have moved
+                after being added due to sorting/insertion/deletion of other columns).
         """
         column_key = ColumnKey(key)
         column_index = len(self.columns)
@@ -923,13 +925,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         Args:
             *cells: Positional arguments should contain cell data.
-            height: The height of a row (in lines). Defaults to 1.
-            key: A key which uniquely identifies this row. If None, it will be generated for you. Defaults to None.
+            height: The height of a row (in lines).
+            key: A key which uniquely identifies this row. If None, it will be generated
+                for you and returned.
 
         Returns:
             Uniquely identifies this row. Can be used to retrieve this row regardless
-                of its current location in the DataTable (it could have moved after being added
-                due to sorting or insertion/deletion of other rows).
+                of its current location in the DataTable (it could have moved after
+                being added due to sorting or insertion/deletion of other rows).
         """
         row_index = self.row_count
         row_key = RowKey(key)
@@ -1083,7 +1086,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return 0 <= column_index < len(self.columns)
 
     def is_valid_coordinate(self, coordinate: Coordinate) -> bool:
-        """Return a boolean indicating whether the given coordinate is within table bounds.
+        """Return a boolean indicating whether the given coordinate is within table
+        bounds.
 
         Args:
             coordinate: The coordinate to validate.
@@ -1098,7 +1102,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     @property
     def ordered_columns(self) -> list[Column]:
-        """The list of Columns in the DataTable, ordered as they currently appear on screen."""
+        """The list of Columns in the DataTable, ordered as they appear on screen."""
         column_indices = range(len(self.columns))
         column_keys = [
             self._column_locations.get_key(index) for index in column_indices
@@ -1108,7 +1112,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     @property
     def ordered_rows(self) -> list[Row]:
-        """The list of Rows in the DataTable, ordered as they currently appear on screen."""
+        """The list of Rows in the DataTable, ordered as they appear on screen."""
         row_indices = range(self.row_count)
         ordered_rows = []
         for row_index in row_indices:
@@ -1245,22 +1249,22 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             return self._row_render_cache[cache_key]
 
         def _should_highlight(
-            cursor_location: Coordinate,
-            cell_location: Coordinate,
-            cursor_type: CursorType,
+            cursor: Coordinate,
+            target_cell: Coordinate,
+            type_of_cursor: CursorType,
         ) -> bool:
             """Determine whether we should highlight a cell given the location
             of the cursor, the location of the cell, and the type of cursor that
             is currently active."""
-            if cursor_type == "cell":
-                return cursor_location == cell_location
-            elif cursor_type == "row":
-                cursor_row, _ = cursor_location
-                cell_row, _ = cell_location
+            if type_of_cursor == "cell":
+                return cursor == target_cell
+            elif type_of_cursor == "row":
+                cursor_row, _ = cursor
+                cell_row, _ = target_cell
                 return cursor_row == cell_row
-            elif cursor_type == "column":
-                _, cursor_column = cursor_location
-                _, cell_column = cell_location
+            elif type_of_cursor == "column":
+                _, cursor_column = cursor
+                _, cell_column = target_cell
                 return cursor_column == cell_column
             else:
                 return False
