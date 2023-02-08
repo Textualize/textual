@@ -4,6 +4,7 @@ import pytest
 from rich.style import Style
 
 from textual._wait import wait_for_idle
+from textual.actions import SkipAction
 from textual.app import App
 from textual.coordinate import Coordinate
 from textual.events import Click, MouseMove
@@ -647,6 +648,41 @@ async def test_cell_cursor_highlight_events():
         latest_message = table.app.messages[-1]
         assert latest_message.coordinate == Coordinate(1, 1)
         assert latest_message.cell_key == CellKey(row_two_key, column_two_key)
+
+
+async def test_row_cursor_highlight_events():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.cursor_type = "row"
+        column_one_key, column_two_key = table.add_columns("A", "B")
+        row_one_key = table.add_row(0, 1)
+        row_two_key = table.add_row(2, 3)
+
+        # Since initial position is row_index=0, the following actions do nothing.
+        with pytest.raises(SkipAction):
+            table.action_cursor_up()
+            table.action_cursor_left()
+            table.action_cursor_right()
+
+        await wait_for_idle(0)
+        assert table.app.message_names == ["RowHighlighted"]  # Initial highlight
+
+        # Move the row cursor from row 0 to row 1, check the highlighted event posted
+        table.action_cursor_down()
+        await wait_for_idle(0)
+        assert len(table.app.messages) == 2
+        latest_message: DataTable.RowHighlighted = table.app.messages[-1]
+        assert latest_message.row_key == row_two_key
+        assert latest_message.cursor_row == 1
+
+        # Move the row cursor back up to row 0, check the highlighted event posted
+        table.action_cursor_up()
+        await wait_for_idle(0)
+        assert len(table.app.messages) == 3
+        latest_message = table.app.messages[-1]
+        assert latest_message.row_key == row_one_key
+        assert latest_message.cursor_row == 0
 
 
 def test_key_equals_equivalent_string():
