@@ -288,7 +288,7 @@ So, thanks to this bit of code in my `Activity` widget...
             parent.move_child(
                 self, before=parent.children.index( self ) - 1
             )
-            self.emit_no_wait( self.Moved( self ) )
+            self.post_messa_no_wait( self.Moved( self ) )
             self.scroll_visible( top=True )
 ```
 
