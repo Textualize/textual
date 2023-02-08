@@ -371,7 +371,7 @@ We can perform this conversion by adding `self.scroll_offset` to `event.offset`.
 - Once we have the board coordinate underneath the mouse we divide the x coordinate by 8 and divide the y coordinate by 4 to give us the coordinate of a square.
 
 If the cursor square coordinate calculated in `on_mouse_move` changes, Textual will call `watch_cursor_square` with the previous coordinate and new coordinate of the square. This method works out the regions of the widget to update and essentially does the reverse of the steps we took to go from mouse coordinates to square coordinates.
-The `get_square_region` function calculates a [Region][textual.geometry.Region] object for each square and uses them as a positional argument in a call to [refresh][textual.widget.Widget.refresh]. Passing Region object to `refresh` tells Textual to update only the cells underneath those regions, and not the entire widget.
+The `get_square_region` function calculates a [Region][textual.geometry.Region] object for each square and uses them as a positional argument in a call to [refresh][textual.widget.Widget.refresh]. Passing Region objects to `refresh` tells Textual to update only the cells underneath those regions, and not the entire widget.
 
 !!! note
 
