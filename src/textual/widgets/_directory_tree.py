@@ -67,7 +67,7 @@ class DirectoryTree(Tree[DirEntry]):
     """
 
     class FileSelected(Message, bubble=True):
-        """Emitted when a file is selected.
+        """Posted when a file is selected.
 
         Can be handled using `on_directory_tree_file_selected` in a subclass of
         `DirectoryTree` or in a parent widget in the DOM.
@@ -173,7 +173,7 @@ class DirectoryTree(Tree[DirEntry]):
             if not dir_entry.loaded:
                 self.load_directory(event.node)
         else:
-            self.emit_no_wait(self.FileSelected(self, dir_entry.path))
+            self.post_message_no_wait(self.FileSelected(self, dir_entry.path))
 
     def on_tree_node_selected(self, event: Tree.NodeSelected) -> None:
         event.stop()
@@ -181,4 +181,4 @@ class DirectoryTree(Tree[DirEntry]):
         if dir_entry is None:
             return
         if not dir_entry.is_dir:
-            self.emit_no_wait(self.FileSelected(self, dir_entry.path))
+            self.post_message_no_wait(self.FileSelected(self, dir_entry.path))

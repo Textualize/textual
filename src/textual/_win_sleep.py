@@ -20,7 +20,7 @@ try:
     import ctypes
     from ctypes.wintypes import LARGE_INTEGER
 
-    kernel32 = ctypes.windll.kernel32
+    kernel32 = ctypes.windll.kernel32  # type: ignore[attr-defined]
 except Exception:
     sleep = time_sleep
 else:

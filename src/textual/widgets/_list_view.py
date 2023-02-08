@@ -35,7 +35,7 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
     index = reactive(0, always_update=True)
 
     class Highlighted(Message, bubble=True):
-        """Emitted when the highlighted item changes.
+        """Posted when the highlighted item changes.
 
         Highlighted item is controlled using up/down keys.
         Can be handled using `on_list_view_highlighted` in a subclass of `ListView`
@@ -50,7 +50,7 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
             self.item: ListItem | None = item
 
     class Selected(Message, bubble=True):
-        """Emitted when a list item is selected, e.g. when you press the enter key on it.
+        """Posted when a list item is selected, e.g. when you press the enter key on it.
 
         Can be handled using `on_list_view_selected` in a subclass of `ListView` or in
         a parent widget in the DOM.
@@ -125,7 +125,7 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
             new_child = None
 
         self._scroll_highlighted_region()
-        self.emit_no_wait(self.Highlighted(self, new_child))
+        self.post_message_no_wait(self.Highlighted(self, new_child))
 
     def append(self, item: ListItem) -> AwaitMount:
         """Append a new ListItem to the end of the ListView.
@@ -155,7 +155,7 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
 
     def action_select_cursor(self) -> None:
         selected_child = self.highlighted_child
-        self.emit_no_wait(self.Selected(self, selected_child))
+        self.post_message_no_wait(self.Selected(self, selected_child))
 
     def action_cursor_down(self) -> None:
         self.index += 1
@@ -166,7 +166,7 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
     def on_list_item__child_clicked(self, event: ListItem._ChildClicked) -> None:
         self.focus()
         self.index = self.children.index(event.sender)
-        self.emit_no_wait(self.Selected(self, event.sender))
+        self.post_message_no_wait(self.Selected(self, event.sender))
 
     def _scroll_highlighted_region(self) -> None:
         """Used to keep the highlighted index within vision"""
