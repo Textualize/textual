@@ -58,8 +58,9 @@ clean-offline-docs:
 	rm -rf docs-offline
 
 .PHONY: docs-deploy
-docs-deploy: clean-screenshot-cache
-	$(run) mkdocs gh-deploy
+docs-deploy: clean-screenshot-cache docs-online-nav
+	$(run) mkdocs gh-deploy --config-file mkdocs-nav-online.yml
+	rm -f mkdocs-nav-online.yml
 
 .PHONY: build
 build: docs-build-offline
