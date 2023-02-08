@@ -1499,7 +1499,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             meta = self.get_style_at(event.x, event.y).meta
             if meta:
                 self.cursor_coordinate = Coordinate(meta["row"], meta["column"])
-                self._emit_selected_message()
+                self._post_selected_message()
                 self._scroll_cursor_into_view(animate=True)
                 event.stop()
 

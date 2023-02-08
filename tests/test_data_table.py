@@ -579,6 +579,10 @@ async def test_sort_coordinate_and_key_access():
         assert table.get_value_at(Coordinate(1, 0)) == 2
         assert table.get_value_at(Coordinate(2, 0)) == 3
 
+        assert table.ordered_rows[0].key == row_one
+        assert table.ordered_rows[1].key == row_two
+        assert table.ordered_rows[2].key == row_three
+
 
 async def test_sort_reverse_coordinate_and_key_access():
     """Ensure that, after sorting, that coordinates and cell keys
@@ -607,6 +611,10 @@ async def test_sort_reverse_coordinate_and_key_access():
         assert table.get_value_at(Coordinate(0, 0)) == 3
         assert table.get_value_at(Coordinate(1, 0)) == 2
         assert table.get_value_at(Coordinate(2, 0)) == 1
+
+        assert table.ordered_rows[0].key == row_three
+        assert table.ordered_rows[1].key == row_two
+        assert table.ordered_rows[2].key == row_one
 
 
 def test_key_equals_equivalent_string():
