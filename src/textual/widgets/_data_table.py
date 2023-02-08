@@ -574,8 +574,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         order they currently appear on screen."""
         for row_metadata in self.ordered_rows:
             row_key = row_metadata.key
-            row = self.data.get(row_key)
-            yield row.get(column_key)
+            row = self.data[row_key]
+            yield row[column_key]
 
     def get_value_at(self, coordinate: Coordinate) -> CellType:
         """Get the value from the cell occupying the given coordinate.
