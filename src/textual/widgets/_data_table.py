@@ -532,6 +532,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             CellDoesNotExist: When the supplied `row_key` and `column_key`
                 cannot be found in the table.
         """
+        if isinstance(row_key, str):
+            row_key = RowKey(row_key)
+        if isinstance(column_key, str):
+            column_key = ColumnKey(column_key)
+
         try:
             self.data[row_key][column_key] = value
         except KeyError:
