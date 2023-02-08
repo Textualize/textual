@@ -469,7 +469,7 @@ async def test_datatable_on_click_cell_cursor():
         assert cell_selected_event.coordinate == Coordinate(1, 0)
 
 
-async def test_datatable_on_click_row_cursor():
+async def test_on_click_row_cursor():
     """When the row cursor is used, and we click, we emit a RowHighlighted
     *and* a RowSelected message for the row that was clicked."""
     app = DataTableApp()
@@ -495,7 +495,7 @@ async def test_datatable_on_click_row_cursor():
         assert row_highlighted.cursor_row == 1
 
 
-async def test_datatable_on_click_column_cursor():
+async def test_on_click_column_cursor():
     """When the column cursor is used, and we click, we emit a ColumnHighlighted
     *and* a ColumnSelected message for the column that was clicked."""
     app = DataTableApp()
@@ -524,7 +524,7 @@ async def test_datatable_on_click_column_cursor():
         assert column_highlighted.cursor_column == 0
 
 
-async def test_datatable_hover_coordinate():
+async def test_hover_coordinate():
     """Ensure that the hover_coordinate reactive is updated as expected."""
     app = DataTableApp()
     async with app.run_test():
@@ -549,6 +549,35 @@ async def test_datatable_hover_coordinate():
         table.on_mouse_move(mouse_move)
         await wait_for_idle(0)
         assert table.hover_coordinate == Coordinate(1, 2)
+
+
+async def test_sort_coordinate_and_key_access():
+    """Ensure that, after sorting, that coordinates and cell keys
+    can still be used to retrieve the correct cell."""
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        column = table.add_column("number")
+        row_three = table.add_row(3)
+        row_one = table.add_row(1)
+        row_two = table.add_row(2)
+
+        # Items inserted in correct initial positions (before sort)
+        assert table.get_value_at(Coordinate(0, 0)) == 3
+        assert table.get_value_at(Coordinate(1, 0)) == 1
+        assert table.get_value_at(Coordinate(2, 0)) == 2
+
+        table.sort(column)
+
+        # The keys still refer to the same cells...
+        assert table.get_cell_value(row_one, column) == 1
+        assert table.get_cell_value(row_two, column) == 2
+        assert table.get_cell_value(row_three, column) == 3
+
+        # ...even though the values under the coordinates have changed...
+        assert table.get_value_at(Coordinate(0, 0)) == 1
+        assert table.get_value_at(Coordinate(1, 0)) == 2
+        assert table.get_value_at(Coordinate(2, 0)) == 3
 
 
 def test_key_equals_equivalent_string():
