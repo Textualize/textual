@@ -110,7 +110,7 @@ The message class is defined within the widget class itself. This is not strictl
 
 ## Sending events
 
-In the previous example we used [emit()][textual.message_pump.MessagePump.emit] to send an event to its parent. We could also have used [emit_no_wait()][textual.message_pump.MessagePump.emit_no_wait] for non async code. Sending messages in this way allows you to write custom widgets without needing to know in what context they will be used.
+In the previous example we used [post_message()][textual.message_pump.MessagePump.post_message] to send an event to its parent. We could also have used [post_message_no_wait()][textual.message_pump.MessagePump.post_message_no_wait] for non async code. Sending messages in this way allows you to write custom widgets without needing to know in what context they will be used.
 
 There are other ways of sending (posting) messages, which you may need to use less frequently.
 

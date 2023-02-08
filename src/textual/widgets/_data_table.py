@@ -190,9 +190,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     hover_cell: Reactive[Coordinate] = Reactive(Coordinate(0, 0), repaint=False)
 
     class CellHighlighted(Message, bubble=True):
-        """Emitted when the cursor moves to highlight a new cell.
+        """Posted when the cursor moves to highlight a new cell.
         It's only relevant when the `cursor_type` is `"cell"`.
-        It's also emitted when the cell cursor is re-enabled (by setting `show_cursor=True`),
+        It's also posted when the cell cursor is re-enabled (by setting `show_cursor=True`),
         and when the cursor type is changed to `"cell"`. Can be handled using
         `on_data_table_cell_highlighted` in a subclass of `DataTable` or in a parent
         widget in the DOM.
@@ -215,7 +215,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             yield "coordinate", self.coordinate
 
     class CellSelected(Message, bubble=True):
-        """Emitted by the `DataTable` widget when a cell is selected.
+        """Posted by the `DataTable` widget when a cell is selected.
         It's only relevant when the `cursor_type` is `"cell"`. Can be handled using
         `on_data_table_cell_selected` in a subclass of `DataTable` or in a parent
         widget in the DOM.
@@ -238,7 +238,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             yield "coordinate", self.coordinate
 
     class RowHighlighted(Message, bubble=True):
-        """Emitted when a row is highlighted. This message is only emitted when the
+        """Posted when a row is highlighted. This message is only posted when the
         `cursor_type` is set to `"row"`. Can be handled using `on_data_table_row_highlighted`
         in a subclass of `DataTable` or in a parent widget in the DOM.
 
@@ -255,7 +255,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             yield "cursor_row", self.cursor_row
 
     class RowSelected(Message, bubble=True):
-        """Emitted when a row is selected. This message is only emitted when the
+        """Posted when a row is selected. This message is only posted when the
         `cursor_type` is set to `"row"`. Can be handled using
         `on_data_table_row_selected` in a subclass of `DataTable` or in a parent
         widget in the DOM.
@@ -273,7 +273,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             yield "cursor_row", self.cursor_row
 
     class ColumnHighlighted(Message, bubble=True):
-        """Emitted when a column is highlighted. This message is only emitted when the
+        """Posted when a column is highlighted. This message is only posted when the
         `cursor_type` is set to `"column"`. Can be handled using
         `on_data_table_column_highlighted` in a subclass of `DataTable` or in a parent
         widget in the DOM.
@@ -291,7 +291,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             yield "cursor_column", self.cursor_column
 
     class ColumnSelected(Message, bubble=True):
-        """Emitted when a column is selected. This message is only emitted when the
+        """Posted when a column is selected. This message is only posted when the
         `cursor_type` is set to `"column"`. Can be handled using
         `on_data_table_column_selected` in a subclass of `DataTable` or in a parent
         widget in the DOM.
@@ -405,7 +405,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._clear_caches()
         if show_cursor and self.cursor_type != "none":
             # When we re-enable the cursor, apply highlighting and
-            # emit the appropriate [Row|Column|Cell]Highlighted event.
+            # post the appropriate [Row|Column|Cell]Highlighted event.
             self._scroll_cursor_into_view(animate=False)
             if self.cursor_type == "cell":
                 self._highlight_cell(self.cursor_cell)
@@ -431,7 +431,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self, old_coordinate: Coordinate, new_coordinate: Coordinate
     ) -> None:
         if old_coordinate != new_coordinate:
-            # Refresh the old and the new cell, and emit the appropriate
+            # Refresh the old and the new cell, and post the appropriate
             # message to tell users of the newly highlighted row/cell/column.
             if self.cursor_type == "cell":
                 self.refresh_cell(*old_coordinate)
@@ -444,7 +444,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 self._highlight_column(new_coordinate.column)
 
     def _highlight_cell(self, coordinate: Coordinate) -> None:
-        """Apply highlighting to the cell at the coordinate, and emit event."""
+        """Apply highlighting to the cell at the coordinate, and post event."""
         self.refresh_cell(*coordinate)
         try:
             cell_value = self.get_cell_value(coordinate)
@@ -453,19 +453,21 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             # In that case, there's nothing for us to do here.
             return
         else:
-            self.emit_no_wait(DataTable.CellHighlighted(self, cell_value, coordinate))
+            self.post_message_no_wait(
+                DataTable.CellHighlighted(self, cell_value, coordinate)
+            )
 
     def _highlight_row(self, row_index: int) -> None:
-        """Apply highlighting to the row at the given index, and emit event."""
+        """Apply highlighting to the row at the given index, and post event."""
         self.refresh_row(row_index)
         if row_index in self.data:
-            self.emit_no_wait(DataTable.RowHighlighted(self, row_index))
+            self.post_message_no_wait(DataTable.RowHighlighted(self, row_index))
 
     def _highlight_column(self, column_index: int) -> None:
-        """Apply highlighting to the column at the given index, and emit event."""
+        """Apply highlighting to the column at the given index, and post event."""
         self.refresh_column(column_index)
         if column_index < len(self.columns):
-            self.emit_no_wait(DataTable.ColumnHighlighted(self, column_index))
+            self.post_message_no_wait(DataTable.ColumnHighlighted(self, column_index))
 
     def validate_cursor_cell(self, value: Coordinate) -> Coordinate:
         return self._clamp_cursor_cell(value)
@@ -641,7 +643,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         # If a position has opened for the cursor to appear, where it previously
         # could not (e.g. when there's no data in the table), then a highlighted
-        # event is emitted, since there's now a highlighted cell when there wasn't
+        # event is posted, since there's now a highlighted cell when there wasn't
         # before.
         cell_now_available = self.row_count == 1 and len(self.columns) > 0
         visible_cursor = self.show_cursor and self.cursor_type != "none"
@@ -1039,8 +1041,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def on_click(self, event: events.Click) -> None:
         self._set_hover_cursor(True)
         if self.show_cursor and self.cursor_type != "none":
-            # Only emit selection events if there is a visible row/col/cell cursor.
-            self._emit_selected_message()
+            # Only post selection events if there is a visible row/col/cell cursor.
+            self._post_message_selected_message()
             meta = self.get_style_at(event.x, event.y).meta
             if meta:
                 self.cursor_cell = Coordinate(meta["row"], meta["column"])
@@ -1088,14 +1090,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def action_select_cursor(self) -> None:
         self._set_hover_cursor(False)
         if self.show_cursor and self.cursor_type != "none":
-            self._emit_selected_message()
+            self._post_selected_message()
 
-    def _emit_selected_message(self):
-        """Emit the appropriate message for a selection based on the `cursor_type`."""
+    def _post_selected_message(self):
+        """Post the appropriate message for a selection based on the `cursor_type`."""
         cursor_cell = self.cursor_cell
         cursor_type = self.cursor_type
         if cursor_type == "cell":
-            self.emit_no_wait(
+            self.post_message_no_wait(
                 DataTable.CellSelected(
                     self,
                     self.get_cell_value(cursor_cell),
@@ -1104,7 +1106,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             )
         elif cursor_type == "row":
             row, _ = cursor_cell
-            self.emit_no_wait(DataTable.RowSelected(self, row))
+            self.post_message_no_wait(DataTable.RowSelected(self, row))
         elif cursor_type == "column":
             _, column = cursor_cell
-            self.emit_no_wait(DataTable.ColumnSelected(self, column))
+            self.post_message_no_wait(DataTable.ColumnSelected(self, column))
