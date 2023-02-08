@@ -3,6 +3,10 @@ INHERIT: mkdocs-common.yml
 plugins:
   offline:
   privacy:
+  exclude:
+    glob:
+      - "**/_template.md"
+      - blog/*
 
 site_dir: docs-offline
 
