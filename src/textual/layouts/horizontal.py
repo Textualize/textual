@@ -18,7 +18,6 @@ class HorizontalLayout(Layout):
     def arrange(
         self, parent: Widget, children: list[Widget], size: Size
     ) -> ArrangeResult:
-
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
         x = max_height = Fraction(0)

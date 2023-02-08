@@ -10,7 +10,14 @@ when setting and getting.
 from __future__ import annotations
 
 from operator import attrgetter
-from typing import TYPE_CHECKING, Generic, Iterable, NamedTuple, TypeVar, cast
+from typing import (
+    TYPE_CHECKING,
+    Generic,
+    Iterable,
+    NamedTuple,
+    TypeVar,
+    cast,
+)
 
 import rich.errors
 import rich.repr

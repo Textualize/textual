@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from functools import partial
 from typing import cast
+from typing_extensions import Literal
 
 import rich.repr
 from rich.console import RenderableType
@@ -12,7 +13,7 @@ from ..css._error_tools import friendly_list
 from ..message import Message
 from ..reactive import Reactive
 from ..widgets import Static
-from .._typing import Literal
+
 
 ButtonVariant = Literal["default", "primary", "success", "warning", "error"]
 _VALID_BUTTON_VARIANTS = {"default", "primary", "success", "warning", "error"}
@@ -254,7 +255,7 @@ class Button(Static, can_focus=True):
         # Manage the "active" effect:
         self._start_active_affect()
         # ...and let other components know that we've just been clicked:
-        self.emit_no_wait(Button.Pressed(self))
+        self.post_message_no_wait(Button.Pressed(self))
 
     def _start_active_affect(self) -> None:
         """Start a small animation to show the button was clicked."""
@@ -266,7 +267,7 @@ class Button(Static, can_focus=True):
     async def _on_key(self, event: events.Key) -> None:
         if event.key == "enter" and not self.disabled:
             self._start_active_affect()
-            await self.emit(Button.Pressed(self))
+            await self.post_message(Button.Pressed(self))
 
     @classmethod
     def success(

@@ -46,11 +46,12 @@ from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
 from ._asyncio import create_task
 from ._callback import invoke
-from ._context import active_app, active_message_pump
+from ._context import active_app
 from ._event_broker import NoHandler, extract_handler_actions
 from ._filter import LineFilter, Monochrome
 from ._path import _make_path_object_relative
-from ._typing import Final, TypeAlias
+
+from ._wait import wait_for_idle
 from .actions import SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding, Bindings
@@ -68,10 +69,11 @@ from .messages import CallbackType
 from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import Screen
-from ._wait import wait_for_idle
 from .widget import AwaitMount, Widget
 
 if TYPE_CHECKING:
+    from typing_extensions import Coroutine, Final, TypeAlias
+
     from .devtools.client import DevtoolsClient
     from .pilot import Pilot
 

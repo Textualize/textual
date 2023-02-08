@@ -4,13 +4,15 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from functools import lru_cache
 from operator import attrgetter
-from typing import TYPE_CHECKING, Any, Iterable, NamedTuple, cast
+from typing import Iterable, cast
+from typing import TYPE_CHECKING, Any, NamedTuple
 
 import rich.repr
 from rich.style import Style
+from typing_extensions import TypedDict
 
+from .._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from .._types import CallbackType
-from .._animator import BoundAnimator, DEFAULT_EASING, Animatable, EasingFunction
 from ..color import Color
 from ..geometry import Offset, Spacing
 from ._style_properties import (
@@ -41,8 +43,8 @@ from .constants import (
     VALID_DISPLAY,
     VALID_OVERFLOW,
     VALID_SCROLLBAR_GUTTER,
-    VALID_VISIBILITY,
     VALID_TEXT_ALIGN,
+    VALID_VISIBILITY,
 )
 from .scalar import Scalar, ScalarOffset, Unit
 from .scalar_animation import ScalarAnimation
@@ -57,10 +59,9 @@ from .types import (
     ScrollbarGutter,
     Specificity3,
     Specificity6,
-    Visibility,
     TextAlign,
+    Visibility,
 )
-from .._typing import TypedDict
 
 if TYPE_CHECKING:
     from .._layout import Layout
@@ -327,7 +328,6 @@ class StylesBase(ABC):
 
         # Check we are animating a Scalar or Scalar offset
         if isinstance(start_value, (Scalar, ScalarOffset)):
-
             # If destination is a number, we can convert that to a scalar
             if isinstance(value, (int, float)):
                 value = Scalar(value, Unit.CELLS, Unit.CELLS)

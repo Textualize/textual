@@ -398,7 +398,6 @@ class MessagePump(metaclass=MessagePumpMeta):
                     self.app._handle_exception(error)
                     break
                 finally:
-
                     self._message_queue.task_done()
 
                     current_time = time()
@@ -580,34 +579,6 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     async def on_callback(self, event: events.Callback) -> None:
         await invoke(event.callback)
-
-    def emit_no_wait(self, message: Message) -> bool:
-        """Send a message to the _parent_, non async version.
-
-        Args:
-            message: A message object.
-
-        Returns:
-            True if the message was posted successfully.
-        """
-        if self._parent:
-            return self._parent._post_message_from_child_no_wait(message)
-        else:
-            return False
-
-    async def emit(self, message: Message) -> bool:
-        """Send a message to the _parent_.
-
-        Args:
-            message: A message object.
-
-        Returns:
-            True if the message was posted successfully.
-        """
-        if self._parent:
-            return await self._parent._post_message_from_child(message)
-        else:
-            return False
 
     # TODO: Does dispatch_key belong on message pump?
     async def dispatch_key(self, event: events.Key) -> bool:

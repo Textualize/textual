@@ -92,7 +92,6 @@ class ScrollBarRender:
         back_color: Color = Color.parse("#555555"),
         bar_color: Color = Color.parse("bright_magenta"),
     ) -> Segments:
-
         if vertical:
             bars = ["▁", "▂", "▃", "▄", "▅", "▆", "▇", " "]
         else:
@@ -190,7 +189,6 @@ class ScrollBarRender:
 
 @rich.repr.auto
 class ScrollBar(Widget):
-
     renderer: ClassVar[Type[ScrollBarRender]] = ScrollBarRender
     """The class used for rendering scrollbars.
     This can be overriden and set to a ScrollBarRender-derived class
@@ -282,10 +280,12 @@ class ScrollBar(Widget):
         self.mouse_over = False
 
     async def action_scroll_down(self) -> None:
-        await self.emit(ScrollDown(self) if self.vertical else ScrollRight(self))
+        await self.post_message(
+            ScrollDown(self) if self.vertical else ScrollRight(self)
+        )
 
     async def action_scroll_up(self) -> None:
-        await self.emit(ScrollUp(self) if self.vertical else ScrollLeft(self))
+        await self.post_message(ScrollUp(self) if self.vertical else ScrollLeft(self))
 
     def action_grab(self) -> None:
         self.capture_mouse()
@@ -326,7 +326,7 @@ class ScrollBar(Widget):
                         * (self.window_virtual_size / self.window_size)
                     )
                 )
-            await self.emit(ScrollTo(self, x=x, y=y))
+            await self.post_message(ScrollTo(self, x=x, y=y))
         event.stop()
 
     async def _on_click(self, event: events.Click) -> None:

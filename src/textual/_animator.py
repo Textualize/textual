@@ -1,22 +1,18 @@
 from __future__ import annotations
 
 import asyncio
-import sys
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from functools import partial
 from typing import TYPE_CHECKING, Any, Callable, TypeVar
+
+from typing_extensions import Protocol, runtime_checkable
 
 from . import _clock
 from ._callback import invoke
 from ._easing import DEFAULT_EASING, EASING
 from ._types import CallbackType
 from .timer import Timer
-
-if sys.version_info >= (3, 8):
-    from typing import Protocol, runtime_checkable
-else:  # pragma: no cover
-    from typing_extensions import Protocol, runtime_checkable
 
 if TYPE_CHECKING:
     from textual.app import App
@@ -322,7 +318,6 @@ class Animator:
             )
 
         if animation is None:
-
             if not isinstance(value, (int, float)) and not isinstance(
                 value, Animatable
             ):

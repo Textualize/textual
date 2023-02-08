@@ -28,7 +28,6 @@ class _InputRenderable:
     def __rich_console__(
         self, console: "Console", options: "ConsoleOptions"
     ) -> "RenderResult":
-
         input = self.input
         result = input._value
         if input._cursor_at_end:
@@ -140,7 +139,7 @@ class Input(Widget, can_focus=True):
     max_size: reactive[int | None] = reactive(None)
 
     class Changed(Message, bubble=True):
-        """Emitted when the value changes.
+        """Posted when the value changes.
 
         Can be handled using `on_input_changed` in a subclass of `Input` or in a parent
         widget in the DOM.
@@ -156,7 +155,7 @@ class Input(Widget, can_focus=True):
             self.input: Input = sender
 
     class Submitted(Message, bubble=True):
-        """Emitted when the enter key is pressed within an `Input`.
+        """Posted when the enter key is pressed within an `Input`.
 
         Can be handled using `on_input_submitted` in a subclass of `Input` or in a
         parent widget in the DOM.
@@ -245,7 +244,7 @@ class Input(Widget, can_focus=True):
     async def watch_value(self, value: str) -> None:
         if self.styles.auto_dimensions:
             self.refresh(layout=True)
-        await self.emit(self.Changed(self, value))
+        await self.post_message(self.Changed(self, value))
 
     @property
     def cursor_width(self) -> int:
@@ -480,4 +479,4 @@ class Input(Widget, can_focus=True):
             self.cursor_position = 0
 
     async def action_submit(self) -> None:
-        await self.emit(self.Submitted(self, self.value))
+        await self.post_message(self.Submitted(self, self.value))

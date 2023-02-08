@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-COLOR_NAME_TO_RGB: dict[str, tuple[int, int, int] | tuple[int, int, int, float]] = {
+COLOR_NAME_TO_RGB: dict[str, tuple[int, int, int] | tuple[int, int, int, int]] = {
     # Let's start with a specific pseudo-color::
     "transparent": (0, 0, 0, 0),
     # Then, the 16 common ANSI colors:

@@ -40,8 +40,9 @@ if TYPE_CHECKING:
     from .css.query import DOMQuery
     from .screen import Screen
     from .widget import Widget
+    from typing_extensions import TypeAlias
 
-from textual._typing import Literal, TypeAlias
+from typing_extensions import Literal
 
 _re_identifier = re.compile(IDENTIFIER)
 

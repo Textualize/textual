@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added App.scroll_sensitivity_x and App.scroll_sensitivity_y to adjust how many lines the scroll wheel moves the scroll position https://github.com/Textualize/textual/issues/928
 - Added Shift+scroll wheel and ctrl+scroll wheel to scroll horizontally
 - Added `Tree.action_toggle_node` to toggle a node without selecting, and bound it to <kbd>Space</kbd> https://github.com/Textualize/textual/issues/1433
+- Added `Tree.reset` to fully reset a `Tree` https://github.com/Textualize/textual/issues/1437
 
 ### Changed
 
@@ -37,6 +38,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed issue with renderable width calculation https://github.com/Textualize/textual/issues/1685
 - Fixed issue with app not processing Paste event https://github.com/Textualize/textual/issues/1666
 - Fixed glitch with view position with auto width inputs https://github.com/Textualize/textual/issues/1693
+
+### Removed
+
+- Methods `MessagePump.emit` and `MessagePump.emit_no_wait` https://github.com/Textualize/textual/pull/1738
 
 ## [0.10.1] - 2023-01-20
 

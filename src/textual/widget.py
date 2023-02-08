@@ -2465,12 +2465,12 @@ class Widget(DOMNode):
     def _on_focus(self, event: events.Focus) -> None:
         self.has_focus = True
         self.refresh()
-        self.emit_no_wait(events.DescendantFocus(self))
+        self.post_message_no_wait(events.DescendantFocus(self))
 
     def _on_blur(self, event: events.Blur) -> None:
         self.has_focus = False
         self.refresh()
-        self.emit_no_wait(events.DescendantBlur(self))
+        self.post_message_no_wait(events.DescendantBlur(self))
 
     def _on_descendant_blur(self, event: events.DescendantBlur) -> None:
         if self._has_focus_within:

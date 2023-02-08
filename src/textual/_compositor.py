@@ -26,12 +26,12 @@ from . import errors
 from ._cells import cell_len
 from ._loop import loop_last
 from .strip import Strip
-from ._typing import TypeAlias
 from .geometry import NULL_OFFSET, Offset, Region, Size
 
 
 if TYPE_CHECKING:
     from .widget import Widget
+    from typing_extensions import TypeAlias
 
 
 class ReflowResult(NamedTuple):

@@ -25,8 +25,8 @@ class ColorButton(Static):
         self.styles.border = ("tall", self.color)
 
     async def on_click(self) -> None:
-        # The emit method sends an event to a widget's parent
-        await self.emit(self.Selected(self, self.color))
+        # The post_message method sends an event to be handled in the DOM
+        await self.post_message(self.Selected(self, self.color))
 
     def render(self) -> str:
         return str(self.color)
