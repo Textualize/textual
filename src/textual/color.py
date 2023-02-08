@@ -431,7 +431,9 @@ class Color(NamedTuple):
             suggested_color = None
             if not color_text.startswith(("#", "rgb", "hsl")):
                 # Seems like we tried to use a color name: let's try to find one that is close enough:
-                suggested_color = get_suggestion(color_text, COLOR_NAME_TO_RGB.keys())
+                suggested_color = get_suggestion(
+                    color_text, list(COLOR_NAME_TO_RGB.keys())
+                )
                 if suggested_color:
                     error_message += f"; did you mean '{suggested_color}'?"
             raise ColorParseError(error_message, suggested_color)
@@ -447,10 +449,10 @@ class Color(NamedTuple):
         ) = color_match.groups()
 
         if rgb_hex_triple is not None:
-            r, g, b = rgb_hex_triple
+            r, g, b = rgb_hex_triple  # type: ignore[misc]
             color = cls(int(f"{r}{r}", 16), int(f"{g}{g}", 16), int(f"{b}{b}", 16))
         elif rgb_hex_quad is not None:
-            r, g, b, a = rgb_hex_quad
+            r, g, b, a = rgb_hex_quad  # type: ignore[misc]
             color = cls(
                 int(f"{r}{r}", 16),
                 int(f"{g}{g}", 16),

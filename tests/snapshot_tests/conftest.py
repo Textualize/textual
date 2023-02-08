@@ -118,7 +118,6 @@ def pytest_sessionfinish(
     diffs: List[SvgSnapshotDiff] = []
     num_snapshots_passing = 0
     for item in session.items:
-
         # Grab the data our fixture attached to the pytest node
         num_snapshots_passing += int(item.stash.get(TEXTUAL_SNAPSHOT_PASS, False))
         snapshot_svg = item.stash.get(TEXTUAL_SNAPSHOT_SVG_KEY, None)

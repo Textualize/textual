@@ -92,7 +92,6 @@ class ScrollBarRender:
         back_color: Color = Color.parse("#555555"),
         bar_color: Color = Color.parse("bright_magenta"),
     ) -> Segments:
-
         if vertical:
             bars = ["▁", "▂", "▃", "▄", "▅", "▆", "▇", " "]
         else:
@@ -190,7 +189,6 @@ class ScrollBarRender:
 
 @rich.repr.auto
 class ScrollBar(Widget):
-
     renderer: ClassVar[Type[ScrollBarRender]] = ScrollBarRender
     """The class used for rendering scrollbars.
     This can be overriden and set to a ScrollBarRender-derived class

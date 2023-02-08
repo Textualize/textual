@@ -3,10 +3,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Iterable, Sequence
 
-from textual._typing import Literal
-from textual.color import ColorParseError
-from textual.css._help_renderables import Example, Bullet, HelpText
-from textual.css.constants import (
+from typing_extensions import Literal
+
+from ..color import ColorParseError
+from ._help_renderables import Example, Bullet, HelpText
+from .constants import (
     VALID_BORDER,
     VALID_LAYOUT,
     VALID_ALIGN_HORIZONTAL,
@@ -125,7 +126,10 @@ def _spacing_examples(property_name: str) -> ContextSpecificBullets:
 
 
 def property_invalid_value_help_text(
-    property_name: str, context: StylingContext, *, suggested_property_name: str = None
+    property_name: str,
+    context: StylingContext,
+    *,
+    suggested_property_name: str | None = None,
 ) -> HelpText:
     """Help text to show when the user supplies an invalid value for CSS property
     property.
@@ -300,7 +304,7 @@ def color_property_help_text(
     property_name: str,
     context: StylingContext,
     *,
-    error: Exception = None,
+    error: Exception | None = None,
 ) -> HelpText:
     """Help text to show when the user supplies an invalid value for a color
     property. For example, an unparseable color string.

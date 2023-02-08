@@ -92,7 +92,6 @@ class XTermParser(Parser[events.Event]):
         return None
 
     def parse(self, on_token: TokenCallback) -> Generator[Awaitable, str, None]:
-
         ESC = "\x1b"
         read1 = self.read1
         sequence_to_key_events = self._sequence_to_key_events
@@ -161,7 +160,6 @@ class XTermParser(Parser[events.Event]):
 
                 # Look ahead through the suspected escape sequence for a match
                 while True:
-
                     # If we run into another ESC at this point, then we've failed
                     # to find a match, and should issue everything we've seen within
                     # the suspected sequence as Key events instead.

@@ -6,7 +6,7 @@ from typing import Iterable, Iterator
 import rich.repr
 from rich.cells import cell_len, set_cell_size
 from rich.segment import Segment
-from rich.style import Style
+from rich.style import Style, StyleType
 
 from ._cache import FIFOCache
 from ._filter import LineFilter
@@ -49,7 +49,7 @@ class Strip:
         return "".join(segment.text for segment in self._segments)
 
     @classmethod
-    def blank(cls, cell_length: int, style: Style | None) -> Strip:
+    def blank(cls, cell_length: int, style: StyleType | None = None) -> Strip:
         """Create a blank strip.
 
         Args:
@@ -59,7 +59,8 @@ class Strip:
         Returns:
             New strip.
         """
-        return cls([Segment(" " * cell_length, style)], cell_length)
+        segment_style = Style.parse(style) if isinstance(style, str) else style
+        return cls([Segment(" " * cell_length, segment_style)], cell_length)
 
     @classmethod
     def from_lines(
@@ -134,6 +135,23 @@ class Strip:
         return isinstance(strip, Strip) and (
             self._segments == strip._segments and self.cell_length == strip.cell_length
         )
+
+    def extend_cell_length(self, cell_length: int, style: Style | None = None) -> Strip:
+        """Extend the cell length if it is less than the given value.
+
+        Args:
+            cell_length: Required minimum cell length.
+            style: Style for padding if the cell length is extended.
+
+        Returns:
+            A new Strip.
+        """
+        if self.cell_length < cell_length:
+            missing_space = cell_length - self.cell_length
+            segments = self._segments + [Segment(" " * missing_space, style)]
+            return Strip(segments, cell_length)
+        else:
+            return self
 
     def adjust_cell_length(self, cell_length: int, style: Style | None = None) -> Strip:
         """Adjust the cell length, possibly truncating or extending.
