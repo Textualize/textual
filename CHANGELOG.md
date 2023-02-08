@@ -24,7 +24,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Breaking change: `TreeNode` can no longer be imported from `textual.widgets`; it is now available via `from textual.widgets.tree import TreeNode`. https://github.com/Textualize/textual/pull/1637
 - `Tree` now shows a (subdued) cursor for a highlighted node when focus has moved elsewhere https://github.com/Textualize/textual/issues/1471
-- `MessagePump.emit` and `MessagePump.emit_no_wait` now emit events to self instead of to the parent
 
 ### Fixed
 
@@ -39,6 +38,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed issue with renderable width calculation https://github.com/Textualize/textual/issues/1685
 - Fixed issue with app not processing Paste event https://github.com/Textualize/textual/issues/1666
 - Fixed glitch with view position with auto width inputs https://github.com/Textualize/textual/issues/1693
+
+### Removed
+
+- Methods `MessagePump.emit` and `MessagePump.emit_no_wait` https://github.com/Textualize/textual/pull/1738
 
 ## [0.10.1] - 2023-01-20
 
