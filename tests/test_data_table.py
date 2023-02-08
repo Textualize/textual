@@ -378,11 +378,11 @@ async def test_update_coordinate_coordinate_doesnt_exist():
     [
         # Shorter than initial cell value, larger than label => width remains same
         ("A", "BB", 3),
-        # Larger than initial cell value, shorter than label => width remains that of label
+        # Larger than cell value, shorter than label => width remains that of label
         ("1234567", "1234", 7),
-        # Shorter than initial cell value, shorter than label => width remains same
+        # Shorter than cell value, shorter than label => width remains same
         ("12345", "123", 5),
-        # Larger than initial cell value, larger than label => width updates to new cell value
+        # Larger than cell value, larger than label => width updates to new cell value
         ("12345", "123456789", 9),
     ],
 )
