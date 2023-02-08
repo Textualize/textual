@@ -631,17 +631,21 @@ async def test_cell_cursor_highlight_events():
         table.action_cursor_left()
 
         await wait_for_idle(0)
-        assert table.app.message_names == ["CellHighlighted"]
+        assert table.app.message_names == [
+            "CellHighlighted"
+        ]  # Initial highlight on load
 
+        # Move the cursor one cell down, and check the highlighted event posted
         table.action_cursor_down()
         await wait_for_idle(0)
         assert len(table.app.messages) == 2
         latest_message: DataTable.CellHighlighted = table.app.messages[-1]
+        assert isinstance(latest_message, DataTable.CellHighlighted)
         assert latest_message.value == 2
         assert latest_message.coordinate == Coordinate(1, 0)
-
         assert latest_message.cell_key == CellKey(row_two_key, column_one_key)
 
+        # Now move the cursor to the right, and check highlighted event posted
         table.action_cursor_right()
         await wait_for_idle(0)
         assert len(table.app.messages) == 3
@@ -655,7 +659,7 @@ async def test_row_cursor_highlight_events():
     async with app.run_test():
         table = app.query_one(DataTable)
         table.cursor_type = "row"
-        column_one_key, column_two_key = table.add_columns("A", "B")
+        table.add_columns("A", "B")
         row_one_key = table.add_row(0, 1)
         row_two_key = table.add_row(2, 3)
 
@@ -673,6 +677,7 @@ async def test_row_cursor_highlight_events():
         await wait_for_idle(0)
         assert len(table.app.messages) == 2
         latest_message: DataTable.RowHighlighted = table.app.messages[-1]
+        assert isinstance(latest_message, DataTable.RowHighlighted)
         assert latest_message.row_key == row_two_key
         assert latest_message.cursor_row == 1
 
@@ -683,6 +688,44 @@ async def test_row_cursor_highlight_events():
         latest_message = table.app.messages[-1]
         assert latest_message.row_key == row_one_key
         assert latest_message.cursor_row == 0
+
+
+async def test_column_cursor_highlight_events():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.cursor_type = "column"
+        column_one_key, column_two_key = table.add_columns("A", "B")
+        table.add_row(0, 1)
+        table.add_row(2, 3)
+
+        # Since initial position is column_index=0, the following actions do nothing.
+        with pytest.raises(SkipAction):
+            table.action_cursor_left()
+            table.action_cursor_up()
+            table.action_cursor_down()
+
+        await wait_for_idle(0)
+        assert table.app.message_names == ["ColumnHighlighted"]  # Initial highlight
+
+        # Move the column cursor from column 0 to column 1,
+        # check the highlighted event posted
+        table.action_cursor_right()
+        await wait_for_idle(0)
+        assert len(table.app.messages) == 2
+        latest_message: DataTable.ColumnHighlighted = table.app.messages[-1]
+        assert isinstance(latest_message, DataTable.ColumnHighlighted)
+        assert latest_message.column_key == column_two_key
+        assert latest_message.cursor_column == 1
+
+        # Move the column cursor left, back to column 0,
+        # check the highlighted event posted again.
+        table.action_cursor_left()
+        await wait_for_idle(0)
+        assert len(table.app.messages) == 3
+        latest_message = table.app.messages[-1]
+        assert latest_message.column_key == column_one_key
+        assert latest_message.cursor_column == 0
 
 
 def test_key_equals_equivalent_string():
