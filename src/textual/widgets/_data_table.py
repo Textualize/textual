@@ -67,7 +67,10 @@ class StringKey:
     def __eq__(self, other: object) -> bool:
         # Strings will match Keys containing the same string value.
         # Otherwise, you'll need to supply the exact same key object.
-        return hash(self) == hash(other)
+        try:
+            return hash(self) == hash(other)
+        except TypeError:
+            return False
 
     def __lt__(self, other):
         if isinstance(other, str):

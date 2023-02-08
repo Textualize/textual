@@ -617,6 +617,38 @@ async def test_sort_reverse_coordinate_and_key_access():
         assert table.ordered_rows[2].key == row_one
 
 
+async def test_cell_cursor_highlight_events():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        column_one_key, column_two_key = table.add_columns("A", "B")
+        _ = table.add_row(0, 1)
+        row_two_key = table.add_row(2, 3)
+
+        # Since initial position is (0, 0), cursor doesn't move so no event posted
+        table.action_cursor_up()
+        table.action_cursor_left()
+
+        await wait_for_idle(0)
+        assert table.app.message_names == ["CellHighlighted"]
+
+        table.action_cursor_down()
+        await wait_for_idle(0)
+        assert len(table.app.messages) == 2
+        latest_message: DataTable.CellHighlighted = table.app.messages[-1]
+        assert latest_message.value == 2
+        assert latest_message.coordinate == Coordinate(1, 0)
+
+        assert latest_message.cell_key == CellKey(row_two_key, column_one_key)
+
+        table.action_cursor_right()
+        await wait_for_idle(0)
+        assert len(table.app.messages) == 3
+        latest_message = table.app.messages[-1]
+        assert latest_message.coordinate == Coordinate(1, 1)
+        assert latest_message.cell_key == CellKey(row_two_key, column_two_key)
+
+
 def test_key_equals_equivalent_string():
     text = "Hello"
     key = RowKey(text)
