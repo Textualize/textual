@@ -375,7 +375,7 @@ The `get_square_region` function calculates a [Region][textual.geometry.Region] 
 
 !!! note
 
-    Textual is smart about performing updates. If you refresh multiple regions, Textual will combine them in to as few non-overlapping regions as possible.
+    Textual is smart about performing updates. If you refresh multiple regions, Textual will combine them into as few non-overlapping regions as possible.
 
 The final step is to update the `render_line` method to use the cursor style when rendering the square underneath the mouse.
 
