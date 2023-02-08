@@ -38,6 +38,10 @@ docs-build:
 docs-build-offline:
 	mkdocs build --config-file mkdocs-offline.yml
 
+.PHONY: clean-offline-docs
+clean-offline-docs:
+	rm -rf docs-offline
+
 .PHONY: docs-deploy
 docs-deploy: clean-screenshot-cache
 	mkdocs gh-deploy
