@@ -1,7 +1,5 @@
 site_name: Textual
 
-repo_url: https://github.com/textualize/textual/
-
 markdown_extensions:
   - attr_list
   - pymdownx.emoji:

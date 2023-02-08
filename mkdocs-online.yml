@@ -1,5 +1,6 @@
 INHERIT: mkdocs-common.yml
 
+repo_url: https://github.com/textualize/textual/
 site_url: https://textual.textualize.io/
 edit_uri: edit/main/docs/
 
