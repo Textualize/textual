@@ -144,6 +144,7 @@ EASING = {
     "flash": make_flash(1),
     "flash2": make_flash(2),
     "flash3": make_flash(3),
+    "flash4": make_flash(3),
 }
 
 DEFAULT_EASING = "in_out_cubic"

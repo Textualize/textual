@@ -390,7 +390,6 @@ class Animator:
                     on_complete=on_complete,
                 )
 
-        obj.node.log(animation)
         assert animation is not None, "animation expected to be non-None"
 
         current_animation = self._animations.get(animation_key)
