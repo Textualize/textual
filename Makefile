@@ -28,17 +28,30 @@ format-check:
 clean-screenshot-cache:
 	rm -rf .screenshot_cache
 
+.PHONY: docs-offline-nav
+docs-offline-nav:
+	echo "INHERIT: mkdocs-offline.yml" > mkdocs-nav-offline.yml
+	grep -v "\- \"*[Bb]log" mkdocs-nav.yml >> mkdocs-nav-offline.yml
+
+.PHONY: docs-online-nav
+docs-online-nav:
+	echo "INHERIT: mkdocs-online.yml" > mkdocs-nav-online.yml
+	cat mkdocs-nav.yml >> mkdocs-nav-online.yml
+
 .PHONY: docs-serve
-docs-serve: clean-screenshot-cache
-	$(run) mkdocs serve --config-file mkdocs-online.yml
+docs-serve: clean-screenshot-cache docs-online-nav
+	$(run) mkdocs serve --config-file mkdocs-nav-online.yml
+	rm -f mkdocs-nav-online.yml
 
 .PHONY: docs-build
-docs-build:
-	$(run) mkdocs build --config-file mkdocs-online.yml
+docs-build: docs-online-nav
+	$(run) mkdocs build --config-file mkdocs-nav-online.yml
+	rm -f mkdocs-nav-online.yml
 
 .PHONY: docs-build-offline
-docs-build-offline:
-	$(run) mkdocs build --config-file mkdocs-offline.yml
+docs-build-offline: docs-offline-nav
+	$(run) mkdocs build --config-file mkdocs-nav-offline.yml
+	rm -f mkdocs-nav-offline.yml
 
 .PHONY: clean-offline-docs
 clean-offline-docs:

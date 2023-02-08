@@ -111,6 +111,8 @@ venv.bak/
 # mkdocs documentation
 /site
 /docs-offline
+/mkdocs-nav-online.yml
+/mkdocs-nav-offline.yml
 
 # mypy
 .mypy_cache/
