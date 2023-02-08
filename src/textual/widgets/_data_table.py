@@ -1432,6 +1432,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         *columns: ColumnKey | str,
         reverse: bool = False,
     ) -> None:
+        """Sort the rows in the DataTable by one or more column keys.
+
+        Args:
+            columns: One or more columns to sort by the values in.
+            reverse: If True, the sort order will be reversed.
+        """
+
         def sort_by_column_keys(
             row: tuple[RowKey, dict[ColumnKey | str, CellType]]
         ) -> Any:
