@@ -31,12 +31,12 @@ class Switch(Widget, can_focus=True):
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
-        "switch--switch",
+        "switch--slider",
     }
     """
     | Class | Description |
     | :- | :- |
-    | `switch--switch` | Targets the switch of the switch. |
+    | `switch--slider` | Targets the slider of the switch. |
     """
 
     DEFAULT_CSS = """
@@ -48,7 +48,7 @@ class Switch(Widget, can_focus=True):
         padding: 0 2;
     }
 
-    Switch > .switch--switch {
+    Switch > .switch--slider {
         background: $panel-darken-2;
         color: $panel-lighten-2;
     }
@@ -65,7 +65,7 @@ class Switch(Widget, can_focus=True):
 
     }
 
-    Switch.-on > .switch--switch {
+    Switch.-on > .switch--slider {
         color: $success;
     }
     """
@@ -128,7 +128,7 @@ class Switch(Widget, can_focus=True):
         self.set_class(slider_pos == 1, "-on")
 
     def render(self) -> RenderableType:
-        style = self.get_component_rich_style("switch--switch")
+        style = self.get_component_rich_style("switch--slider")
         return ScrollBarRender(
             virtual_size=100,
             window_size=50,
