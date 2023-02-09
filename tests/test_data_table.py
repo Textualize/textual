@@ -11,13 +11,7 @@ from textual.events import Click, MouseMove
 from textual.message import Message
 from textual.message_pump import MessagePump
 from textual.widgets import DataTable
-from textual.widgets.data_table import (
-    ColumnKey,
-    CellDoesNotExist,
-    CellKey,
-    Row,
-    RowKey,
-)
+from textual.widgets.data_table import CellDoesNotExist, CellKey, ColumnKey, Row, RowKey
 
 ROWS = [["0/0", "0/1"], ["1/0", "1/1"], ["2/0", "2/1"]]
 
@@ -204,7 +198,7 @@ async def test_add_column_with_width():
         table = app.query_one(DataTable)
         column = table.add_column("ABC", width=10, key="ABC")
         row = table.add_row("123")
-        assert table.get_cell_value(row, column) == "123"
+        assert table.get_cell(row, column) == "123"
         assert table.columns[column].width == 10
         assert table.columns[column].render_width == 12  # 10 + (2 padding)
 
@@ -285,52 +279,52 @@ async def test_initial_column_widths() -> None:
         assert table.columns[bar].content_width == 6
 
 
-async def test_get_cell_value_returns_value_at_cell():
+async def test_get_cell_returns_value_at_cell():
     app = DataTableApp()
     async with app.run_test():
         table = app.query_one(DataTable)
         table.add_column("Column1", key="C1")
         table.add_row("TargetValue", key="R1")
-        assert table.get_cell_value("R1", "C1") == "TargetValue"
+        assert table.get_cell("R1", "C1") == "TargetValue"
 
 
-async def test_get_cell_value_invalid_row_key():
-    app = DataTableApp()
-    async with app.run_test():
-        table = app.query_one(DataTable)
-        table.add_column("Column1", key="C1")
-        table.add_row("TargetValue", key="R1")
-        with pytest.raises(CellDoesNotExist):
-            table.get_cell_value("INVALID_ROW", "C1")
-
-
-async def test_get_cell_value_invalid_column_key():
+async def test_get_cell_invalid_row_key():
     app = DataTableApp()
     async with app.run_test():
         table = app.query_one(DataTable)
         table.add_column("Column1", key="C1")
         table.add_row("TargetValue", key="R1")
         with pytest.raises(CellDoesNotExist):
-            table.get_cell_value("R1", "INVALID_COLUMN")
+            table.get_cell("INVALID_ROW", "C1")
 
 
-async def test_get_value_at_returns_value_at_cell():
+async def test_get_cell_invalid_column_key():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("Column1", key="C1")
+        table.add_row("TargetValue", key="R1")
+        with pytest.raises(CellDoesNotExist):
+            table.get_cell("R1", "INVALID_COLUMN")
+
+
+async def test_get_cell_at_returns_value_at_cell():
     app = DataTableApp()
     async with app.run_test():
         table = app.query_one(DataTable)
         table.add_columns("A", "B")
         table.add_rows(ROWS)
-        assert table.get_value_at(Coordinate(0, 0)) == "0/0"
+        assert table.get_cell_at(Coordinate(0, 0)) == "0/0"
 
 
-async def test_get_value_at_exception():
+async def test_get_cell_at_exception():
     app = DataTableApp()
     async with app.run_test():
         table = app.query_one(DataTable)
         table.add_columns("A", "B")
         table.add_rows(ROWS)
         with pytest.raises(CellDoesNotExist):
-            table.get_value_at(Coordinate(9999, 0))
+            table.get_cell_at(Coordinate(9999, 0))
 
 
 async def test_update_cell_cell_exists():
@@ -340,7 +334,7 @@ async def test_update_cell_cell_exists():
         table.add_column("A", key="A")
         table.add_row("1", key="1")
         table.update_cell("1", "A", "NEW_VALUE")
-        assert table.get_cell_value("1", "A") == "NEW_VALUE"
+        assert table.get_cell("1", "A") == "NEW_VALUE"
 
 
 async def test_update_cell_cell_doesnt_exist():
@@ -353,25 +347,25 @@ async def test_update_cell_cell_doesnt_exist():
             table.update_cell("INVALID", "CELL", "Value")
 
 
-async def test_update_coordinate_coordinate_exists():
+async def test_update_cell_at_coordinate_exists():
     app = DataTableApp()
     async with app.run_test():
         table = app.query_one(DataTable)
         column_0, column_1 = table.add_columns("A", "B")
         row_0, *_ = table.add_rows(ROWS)
 
-        table.update_coordinate(Coordinate(0, 1), "newvalue")
-        assert table.get_cell_value(row_0, column_1) == "newvalue"
+        table.update_cell_at(Coordinate(0, 1), "newvalue")
+        assert table.get_cell(row_0, column_1) == "newvalue"
 
 
-async def test_update_coordinate_coordinate_doesnt_exist():
+async def test_update_cell_at_coordinate_doesnt_exist():
     app = DataTableApp()
     async with app.run_test():
         table = app.query_one(DataTable)
         table.add_columns("A", "B")
         table.add_rows(ROWS)
         with pytest.raises(CellDoesNotExist):
-            table.update_coordinate(Coordinate(999, 999), "newvalue")
+            table.update_cell_at(Coordinate(999, 999), "newvalue")
 
 
 @pytest.mark.parametrize(
@@ -387,7 +381,7 @@ async def test_update_coordinate_coordinate_doesnt_exist():
         ("12345", "123456789", 9),
     ],
 )
-async def test_update_coordinate_column_width(label, new_value, new_content_width):
+async def test_update_cell_at_column_width(label, new_value, new_content_width):
     # Initial cell values are length 3. Let's update cell content and ensure
     # that the width of the column is correct given the new cell content widths
     # and the label of the column the cell is in.
@@ -398,7 +392,7 @@ async def test_update_coordinate_column_width(label, new_value, new_content_widt
         table.add_rows(ROWS)
         first_column = table.columns.get(key)
 
-        table.update_coordinate(Coordinate(0, 0), new_value, update_width=True)
+        table.update_cell_at(Coordinate(0, 0), new_value, update_width=True)
         await wait_for_idle()
         assert first_column.content_width == new_content_width
         assert first_column.render_width == new_content_width + 2
@@ -564,21 +558,21 @@ async def test_sort_coordinate_and_key_access():
         row_two = table.add_row(2)
 
         # Items inserted in correct initial positions (before sort)
-        assert table.get_value_at(Coordinate(0, 0)) == 3
-        assert table.get_value_at(Coordinate(1, 0)) == 1
-        assert table.get_value_at(Coordinate(2, 0)) == 2
+        assert table.get_cell_at(Coordinate(0, 0)) == 3
+        assert table.get_cell_at(Coordinate(1, 0)) == 1
+        assert table.get_cell_at(Coordinate(2, 0)) == 2
 
         table.sort(column)
 
         # The keys still refer to the same cells...
-        assert table.get_cell_value(row_one, column) == 1
-        assert table.get_cell_value(row_two, column) == 2
-        assert table.get_cell_value(row_three, column) == 3
+        assert table.get_cell(row_one, column) == 1
+        assert table.get_cell(row_two, column) == 2
+        assert table.get_cell(row_three, column) == 3
 
         # ...even though the values under the coordinates have changed...
-        assert table.get_value_at(Coordinate(0, 0)) == 1
-        assert table.get_value_at(Coordinate(1, 0)) == 2
-        assert table.get_value_at(Coordinate(2, 0)) == 3
+        assert table.get_cell_at(Coordinate(0, 0)) == 1
+        assert table.get_cell_at(Coordinate(1, 0)) == 2
+        assert table.get_cell_at(Coordinate(2, 0)) == 3
 
         assert table.ordered_rows[0].key == row_one
         assert table.ordered_rows[1].key == row_two
@@ -597,21 +591,21 @@ async def test_sort_reverse_coordinate_and_key_access():
         row_two = table.add_row(2)
 
         # Items inserted in correct initial positions (before sort)
-        assert table.get_value_at(Coordinate(0, 0)) == 3
-        assert table.get_value_at(Coordinate(1, 0)) == 1
-        assert table.get_value_at(Coordinate(2, 0)) == 2
+        assert table.get_cell_at(Coordinate(0, 0)) == 3
+        assert table.get_cell_at(Coordinate(1, 0)) == 1
+        assert table.get_cell_at(Coordinate(2, 0)) == 2
 
         table.sort(column, reverse=True)
 
         # The keys still refer to the same cells...
-        assert table.get_cell_value(row_one, column) == 1
-        assert table.get_cell_value(row_two, column) == 2
-        assert table.get_cell_value(row_three, column) == 3
+        assert table.get_cell(row_one, column) == 1
+        assert table.get_cell(row_two, column) == 2
+        assert table.get_cell(row_three, column) == 3
 
         # ...even though the values under the coordinates have changed...
-        assert table.get_value_at(Coordinate(0, 0)) == 3
-        assert table.get_value_at(Coordinate(1, 0)) == 2
-        assert table.get_value_at(Coordinate(2, 0)) == 1
+        assert table.get_cell_at(Coordinate(0, 0)) == 3
+        assert table.get_cell_at(Coordinate(1, 0)) == 2
+        assert table.get_cell_at(Coordinate(2, 0)) == 1
 
         assert table.ordered_rows[0].key == row_three
         assert table.ordered_rows[1].key == row_two

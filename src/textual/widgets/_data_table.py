@@ -465,7 +465,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._show_hover_cursor = False
         """Used to hide the mouse hover cursor when the user uses the keyboard."""
         self._update_count = 0
-        """Number of update operations so far. Used for cache invalidation."""
+        """Number of update (INCLUDING SORT) operations so far. Used for cache invalidation."""
         self._header_row_key = RowKey()
         """The header is a special row - not part of the data. Retrieve via this key."""
 
@@ -554,7 +554,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         self.refresh()
 
-    def update_coordinate(
+    def update_cell_at(
         self, coordinate: Coordinate, value: CellType, *, update_width: bool = False
     ) -> None:
         """Update the content inside the cell currently occupying the given coordinate.
@@ -579,22 +579,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             row = self.data[row_key]
             yield row[column_key]
 
-    def get_value_at(self, coordinate: Coordinate) -> CellType:
-        """Get the value from the cell occupying the given coordinate.
-
-        Args:
-            coordinate: The coordinate to retrieve the value from.
-
-        Returns:
-            The value of the cell at the coordinate.
-
-        Raises:
-            CellDoesNotExist: If there is no cell with the given coordinate.
-        """
-        row_key, column_key = self.coordinate_to_cell_key(coordinate)
-        return self.get_cell_value(row_key, column_key)
-
-    def get_cell_value(self, row_key: RowKey, column_key: ColumnKey) -> CellType:
+    def get_cell(self, row_key: RowKey, column_key: ColumnKey) -> CellType:
         """Given a row key and column key, return the value of the corresponding cell.
 
         Args:
@@ -611,6 +596,21 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 f"No cell exists for row_key={row_key!r}, column_key={column_key!r}."
             )
         return cell_value
+
+    def get_cell_at(self, coordinate: Coordinate) -> CellType:
+        """Get the value from the cell occupying the given coordinate.
+
+        Args:
+            coordinate: The coordinate to retrieve the value from.
+
+        Returns:
+            The value of the cell at the coordinate.
+
+        Raises:
+            CellDoesNotExist: If there is no cell with the given coordinate.
+        """
+        row_key, column_key = self.coordinate_to_cell_key(coordinate)
+        return self.get_cell(row_key, column_key)
 
     def _clear_caches(self) -> None:
         self._row_render_cache.clear()
@@ -681,7 +681,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Apply highlighting to the cell at the coordinate, and post event."""
         self.refresh_coordinate(coordinate)
         try:
-            cell_value = self.get_value_at(coordinate)
+            cell_value = self.get_cell_at(coordinate)
         except CellDoesNotExist:
             # The cell may not exist e.g. when the table is cleared.
             # In that case, there's nothing for us to do here.
@@ -1586,7 +1586,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self.post_message_no_wait(
                 DataTable.CellSelected(
                     self,
-                    self.get_value_at(cursor_coordinate),
+                    self.get_cell_at(cursor_coordinate),
                     coordinate=cursor_coordinate,
                     cell_key=cell_key,
                 )
