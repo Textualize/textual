@@ -119,7 +119,7 @@ DarkSwitch .label {
     color: $text-muted;
 }
 
-DarkSwitch Checkbox {
+DarkSwitch Switch {
     background: $boost;
     dock: left;
 }
