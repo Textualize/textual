@@ -69,6 +69,7 @@ syrupy = "^3.0.0"
 mkdocs-rss-plugin = "^1.5.0"
 httpx = "^0.23.1"
 msgpack-types = "^0.2.0"
+types-setuptools = "^67.2.0.1"
 
 [tool.black]
 includes = "src"

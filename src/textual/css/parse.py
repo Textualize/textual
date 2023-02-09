@@ -5,6 +5,7 @@ from pathlib import PurePath
 from typing import Iterable, Iterator, NoReturn
 
 from ..suggestions import get_suggestion
+from ._help_renderables import HelpText
 from ._styles_builder import DeclarationError, StylesBuilder
 from .errors import UnresolvedVariableError
 from .model import (
@@ -130,7 +131,7 @@ def parse_rule_set(
 
     declaration = Declaration(token, "")
 
-    errors: list[tuple[Token, str]] = []
+    errors: list[tuple[Token, str | HelpText]] = []
 
     while True:
         token = next(tokens)

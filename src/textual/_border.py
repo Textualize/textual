@@ -191,7 +191,7 @@ BORDER_LOCATIONS: dict[
 
 INVISIBLE_EDGE_TYPES = cast("frozenset[EdgeType]", frozenset(("", "none", "hidden")))
 
-BorderValue: TypeAlias = Tuple[EdgeType, Union[str, Color, Style]]
+BorderValue: TypeAlias = Tuple[EdgeType, Color]
 
 BoxSegments: TypeAlias = Tuple[
     Tuple[Segment, Segment, Segment],

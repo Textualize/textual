@@ -367,8 +367,8 @@ class StylesBase(ABC):
     def auto_dimensions(self) -> bool:
         """Check if width or height are set to 'auto'."""
         has_rule = self.has_rule
-        return (has_rule("width") and self.width.is_auto) or (
-            has_rule("height") and self.height.is_auto
+        return (has_rule("width") and self.width.is_auto) or (  # type: ignore
+            has_rule("height") and self.height.is_auto  # type: ignore
         )
 
     @abstractmethod
@@ -603,7 +603,7 @@ class Styles(StylesBase):
         Returns:
             ``True`` if a rule was cleared, or ``False`` if it was already not set.
         """
-        changed = self._rules.pop(rule, None) is not None
+        changed = self._rules.pop(rule, None) is not None  # type: ignore
         if changed:
             self._updates += 1
         return changed
@@ -622,12 +622,12 @@ class Styles(StylesBase):
             ``True`` if the rule changed, otherwise ``False``.
         """
         if value is None:
-            changed = self._rules.pop(rule, None) is not None
+            changed = self._rules.pop(rule, None) is not None  # type: ignore
             if changed:
                 self._updates += 1
             return changed
         current = self._rules.get(rule)
-        self._rules[rule] = value
+        self._rules[rule] = value  # type: ignore
         changed = current != value
         if changed:
             self._updates += 1
@@ -646,7 +646,7 @@ class Styles(StylesBase):
     def reset(self) -> None:
         """Reset the rules to initial state."""
         self._updates += 1
-        self._rules.clear()
+        self._rules.clear()  # type: ignore
 
     def merge(self, other: Styles) -> None:
         """Merge values from another Styles.
@@ -736,25 +736,25 @@ class Styles(StylesBase):
             left = get_rule(f"{name}_left")
 
             if top == right and right == bottom and bottom == left:
-                border_type, border_color = rules[f"{name}_top"]
+                border_type, border_color = rules[f"{name}_top"]  # type: ignore
                 yield name, f"{border_type} {border_color.hex}"
                 return
 
         # Check for edges
         if has_top:
-            border_type, border_color = rules[f"{name}_top"]
+            border_type, border_color = rules[f"{name}_top"]  # type: ignore
             yield f"{name}-top", f"{border_type} {border_color.hex}"
 
         if has_right:
-            border_type, border_color = rules[f"{name}_right"]
+            border_type, border_color = rules[f"{name}_right"]  # type: ignore
             yield f"{name}-right", f"{border_type} {border_color.hex}"
 
         if has_bottom:
-            border_type, border_color = rules[f"{name}_bottom"]
+            border_type, border_color = rules[f"{name}_bottom"]  # type: ignore
             yield f"{name}-bottom", f"{border_type} {border_color.hex}"
 
         if has_left:
-            border_type, border_color = rules[f"{name}_left"]
+            border_type, border_color = rules[f"{name}_left"]  # type: ignore
             yield f"{name}-left", f"{border_type} {border_color.hex}"
 
     @property
@@ -770,15 +770,14 @@ class Styles(StylesBase):
 
         rules = self.get_rules()
         get_rule = rules.get
-        has_rule = rules.__contains__
 
-        if has_rule("display"):
+        if "display" in rules:
             append_declaration("display", rules["display"])
-        if has_rule("visibility"):
+        if "visibility" in rules:
             append_declaration("visibility", rules["visibility"])
-        if has_rule("padding"):
+        if "padding" in rules:
             append_declaration("padding", rules["padding"].css)
-        if has_rule("margin"):
+        if "margin" in rules:
             append_declaration("margin", rules["margin"].css)
 
         for name, rule in self._get_border_css_lines(rules, "border"):
@@ -787,90 +786,90 @@ class Styles(StylesBase):
         for name, rule in self._get_border_css_lines(rules, "outline"):
             append_declaration(name, rule)
 
-        if has_rule("offset"):
+        if "offset" in rules:
             x, y = self.offset
             append_declaration("offset", f"{x} {y}")
-        if has_rule("dock"):
+        if "dock" in rules:
             append_declaration("dock", rules["dock"])
-        if has_rule("layers"):
+        if "layers" in rules:
             append_declaration("layers", " ".join(self.layers))
-        if has_rule("layer"):
+        if "layer" in rules:
             append_declaration("layer", self.layer)
-        if has_rule("layout"):
+        if "layout" in rules:
             assert self.layout is not None
             append_declaration("layout", self.layout.name)
 
-        if has_rule("color"):
+        if "color" in rules:
             append_declaration("color", self.color.hex)
-        if has_rule("background"):
+        if "background" in rules:
             append_declaration("background", self.background.hex)
-        if has_rule("text_style"):
+        if "text_style" in rules:
             append_declaration("text-style", str(get_rule("text_style")))
-        if has_rule("tint"):
+        if "tint" in rules:
             append_declaration("tint", self.tint.css)
 
-        if has_rule("overflow_x"):
+        if "overflow_x" in rules:
             append_declaration("overflow-x", self.overflow_x)
-        if has_rule("overflow_y"):
+        if "overflow_y" in rules:
             append_declaration("overflow-y", self.overflow_y)
 
-        if has_rule("scrollbar_color"):
+        if "scrollbar_color" in rules:
             append_declaration("scrollbar-color", self.scrollbar_color.css)
-        if has_rule("scrollbar_color_hover"):
+        if "scrollbar_color_hover" in rules:
             append_declaration("scrollbar-color-hover", self.scrollbar_color_hover.css)
-        if has_rule("scrollbar_color_active"):
+        if "scrollbar_color_active" in rules:
             append_declaration(
                 "scrollbar-color-active", self.scrollbar_color_active.css
             )
 
-        if has_rule("scrollbar_corner_color"):
+        if "scrollbar_corner_color" in rules:
             append_declaration(
                 "scrollbar-corner-color", self.scrollbar_corner_color.css
             )
 
-        if has_rule("scrollbar_background"):
+        if "scrollbar_background" in rules:
             append_declaration("scrollbar-background", self.scrollbar_background.css)
-        if has_rule("scrollbar_background_hover"):
+        if "scrollbar_background_hover" in rules:
             append_declaration(
                 "scrollbar-background-hover", self.scrollbar_background_hover.css
             )
-        if has_rule("scrollbar_background_active"):
+        if "scrollbar_background_active" in rules:
             append_declaration(
                 "scrollbar-background-active", self.scrollbar_background_active.css
             )
 
-        if has_rule("scrollbar_gutter"):
+        if "scrollbar_gutter" in rules:
             append_declaration("scrollbar-gutter", self.scrollbar_gutter)
-        if has_rule("scrollbar_size"):
+        if "scrollbar_size" in rules:
             append_declaration(
                 "scrollbar-size",
                 f"{self.scrollbar_size_horizontal} {self.scrollbar_size_vertical}",
             )
         else:
-            if has_rule("scrollbar_size_horizontal"):
+            if "scrollbar_size_horizontal" in rules:
                 append_declaration(
                     "scrollbar-size-horizontal", str(self.scrollbar_size_horizontal)
                 )
-            if has_rule("scrollbar_size_vertical"):
+            if "scrollbar_size_vertical" in rules:
                 append_declaration(
                     "scrollbar-size-vertical", str(self.scrollbar_size_vertical)
                 )
 
-        if has_rule("box_sizing"):
+        if "box_sizing" in rules:
             append_declaration("box-sizing", self.box_sizing)
-        if has_rule("width"):
+        if "width" in rules:
             append_declaration("width", str(self.width))
-        if has_rule("height"):
+        if "height" in rules:
             append_declaration("height", str(self.height))
-        if has_rule("min_width"):
+        if "min_width" in rules:
             append_declaration("min-width", str(self.min_width))
-        if has_rule("min_height"):
+        if "min_height" in rules:
             append_declaration("min-height", str(self.min_height))
-        if has_rule("max_width"):
+        if "max_width" in rules:
             append_declaration("max-width", str(self.min_width))
-        if has_rule("max_height"):
+        if "max_height" in rules:
             append_declaration("max-height", str(self.min_height))
-        if has_rule("transitions"):
+        if "transitions" in rules:
             append_declaration(
                 "transition",
                 ", ".join(
@@ -879,74 +878,74 @@ class Styles(StylesBase):
                 ),
             )
 
-        if has_rule("align_horizontal") and has_rule("align_vertical"):
+        if "align_horizontal" in rules and "align_vertical" in rules:
             append_declaration(
                 "align", f"{self.align_horizontal} {self.align_vertical}"
             )
-        elif has_rule("align_horizontal"):
+        elif "align_horizontal" in rules:
             append_declaration("align-horizontal", self.align_horizontal)
-        elif has_rule("align_vertical"):
+        elif "align_vertical" in rules:
             append_declaration("align-vertical", self.align_vertical)
 
-        if has_rule("content_align_horizontal") and has_rule("content_align_vertical"):
+        if "content_align_horizontal" in rules and "content_align_vertical" in rules:
             append_declaration(
                 "content-align",
                 f"{self.content_align_horizontal} {self.content_align_vertical}",
             )
-        elif has_rule("content_align_horizontal"):
+        elif "content_align_horizontal" in rules:
             append_declaration(
                 "content-align-horizontal", self.content_align_horizontal
             )
-        elif has_rule("content_align_vertical"):
+        elif "content_align_vertical" in rules:
             append_declaration("content-align-vertical", self.content_align_vertical)
 
-        if has_rule("text_align"):
+        if "text_align" in rules:
             append_declaration("text-align", self.text_align)
 
-        if has_rule("opacity"):
+        if "opacity" in rules:
             append_declaration("opacity", str(self.opacity))
-        if has_rule("text_opacity"):
+        if "text_opacity" in rules:
             append_declaration("text-opacity", str(self.text_opacity))
 
-        if has_rule("grid_columns"):
+        if "grid_columns" in rules:
             append_declaration(
                 "grid-columns",
                 " ".join(str(scalar) for scalar in self.grid_columns or ()),
             )
-        if has_rule("grid_rows"):
+        if "grid_rows" in rules:
             append_declaration(
                 "grid-rows",
                 " ".join(str(scalar) for scalar in self.grid_rows or ()),
             )
-        if has_rule("grid_size_columns"):
+        if "grid_size_columns" in rules:
             append_declaration("grid-size-columns", str(self.grid_size_columns))
-        if has_rule("grid_size_rows"):
+        if "grid_size_rows" in rules:
             append_declaration("grid-size-rows", str(self.grid_size_rows))
 
-        if has_rule("grid_gutter_horizontal"):
+        if "grid_gutter_horizontal" in rules:
             append_declaration(
                 "grid-gutter-horizontal", str(self.grid_gutter_horizontal)
             )
-        if has_rule("grid_gutter_vertical"):
+        if "grid_gutter_vertical" in rules:
             append_declaration("grid-gutter-vertical", str(self.grid_gutter_vertical))
 
-        if has_rule("row_span"):
+        if "row_span" in rules:
             append_declaration("row-span", str(self.row_span))
-        if has_rule("column_span"):
+        if "column_span" in rules:
             append_declaration("column-span", str(self.column_span))
 
-        if has_rule("link_color"):
+        if "link_color" in rules:
             append_declaration("link-color", self.link_color.css)
-        if has_rule("link_background"):
+        if "link_background" in rules:
             append_declaration("link-background", self.link_background.css)
-        if has_rule("link_style"):
+        if "link_style" in rules:
             append_declaration("link-style", str(self.link_style))
 
-        if has_rule("link_hover_color"):
+        if "link_hover_color" in rules:
             append_declaration("link-hover-color", self.link_hover_color.css)
-        if has_rule("link_hover_background"):
+        if "link_hover_background" in rules:
             append_declaration("link-hover-background", self.link_hover_background.css)
-        if has_rule("link_hover_style"):
+        if "link_hover_style" in rules:
             append_declaration("link-hover-style", str(self.link_hover_style))
 
         lines.sort()
