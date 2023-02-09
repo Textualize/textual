@@ -1,9 +1,9 @@
 from __future__ import annotations
 
+import re
 from enum import Enum, unique
 from fractions import Fraction
 from functools import lru_cache
-import re
 from typing import Iterable, NamedTuple
 
 import rich.repr

@@ -1,11 +1,13 @@
 """Textual CLI command code to print diagnostic information."""
 
 from __future__ import annotations
+
 import os
-import sys
 import platform
-from typing import Any
+import sys
 from functools import singledispatch
+from typing import Any
+
 from importlib_metadata import version
 from rich.console import Console, ConsoleDimensions
 

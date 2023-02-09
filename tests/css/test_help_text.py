@@ -2,17 +2,17 @@ import pytest
 
 from tests.utilities.render import render
 from textual.css._help_text import (
-    spacing_wrong_number_of_values_help_text,
-    spacing_invalid_value_help_text,
-    scalar_help_text,
-    string_enum_help_text,
-    color_property_help_text,
-    border_property_help_text,
-    layout_property_help_text,
-    fractional_property_help_text,
-    offset_property_help_text,
     align_help_text,
+    border_property_help_text,
+    color_property_help_text,
+    fractional_property_help_text,
+    layout_property_help_text,
+    offset_property_help_text,
     offset_single_axis_help_text,
+    scalar_help_text,
+    spacing_invalid_value_help_text,
+    spacing_wrong_number_of_values_help_text,
+    string_enum_help_text,
     style_flags_property_help_text,
 )
 

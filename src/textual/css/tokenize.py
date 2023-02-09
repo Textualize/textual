@@ -4,7 +4,7 @@ import re
 from pathlib import PurePath
 from typing import Iterable
 
-from textual.css.tokenizer import Expect, Tokenizer, Token
+from textual.css.tokenizer import Expect, Token, Tokenizer
 
 PERCENT = r"-?\d+\.?\d*%"
 DECIMAL = r"-?\d+\.?\d*"

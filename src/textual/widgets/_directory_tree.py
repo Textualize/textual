@@ -7,9 +7,9 @@ from typing import ClassVar
 from rich.style import Style
 from rich.text import Text, TextType
 
-from ..message import Message
-from ._tree import Tree, TreeNode, TOGGLE_STYLE
 from .._types import MessageTarget
+from ..message import Message
+from ._tree import TOGGLE_STYLE, Tree, TreeNode
 
 
 @dataclass

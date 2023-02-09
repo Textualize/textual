@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from rich.console import RenderableType
+
 from textual._easing import EASING
 from textual.app import App, ComposeResult
 from textual.cli.previews.borders import TEXT
@@ -8,7 +9,7 @@ from textual.containers import Container, Horizontal, Vertical
 from textual.reactive import reactive, var
 from textual.scrollbar import ScrollBarRender
 from textual.widget import Widget
-from textual.widgets import Button, Footer, Label, Input
+from textual.widgets import Button, Footer, Input, Label
 
 VIRTUAL_SIZE = 100
 WINDOW_SIZE = 10

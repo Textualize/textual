@@ -3,7 +3,7 @@ Define a series of easing functions for more natural-looking animations.
 Taken from https://easings.net/ and translated from JavaScript.
 """
 
-from math import pi, cos, sin, sqrt
+from math import cos, pi, sin, sqrt
 
 
 def _in_out_expo(x: float) -> float:

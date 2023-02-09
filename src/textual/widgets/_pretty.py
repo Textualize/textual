@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any
+
 from rich.pretty import Pretty as PrettyRenderable
 
 from ..widget import Widget

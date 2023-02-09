@@ -9,6 +9,7 @@ from __future__ import annotations
 from functools import lru_cache
 from operator import attrgetter, itemgetter
 from typing import (
+    TYPE_CHECKING,
     Any,
     Collection,
     NamedTuple,
@@ -16,7 +17,6 @@ from typing import (
     TypeVar,
     Union,
     cast,
-    TYPE_CHECKING,
 )
 
 if TYPE_CHECKING:

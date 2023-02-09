@@ -17,7 +17,7 @@ import rich.repr
 
 from . import events
 from ._callback import count_parameters
-from ._types import MessageTarget, CallbackType
+from ._types import CallbackType, MessageTarget
 
 if TYPE_CHECKING:
     from .dom import DOMNode

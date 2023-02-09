@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import statistics
-from typing import Generic, Sequence, Iterable, Callable, TypeVar
+from typing import Callable, Generic, Iterable, Sequence, TypeVar
 
 from rich.color import Color
-from rich.console import ConsoleOptions, Console, RenderResult
+from rich.console import Console, ConsoleOptions, RenderResult
 from rich.segment import Segment
 from rich.style import Style
 

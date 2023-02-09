@@ -4,8 +4,8 @@ from datetime import datetime
 
 from rich.text import Text
 
-from ..widget import Widget
 from ..reactive import Reactive
+from ..widget import Widget
 
 
 class HeaderIcon(Widget):

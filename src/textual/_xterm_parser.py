@@ -1,16 +1,14 @@
 from __future__ import annotations
 
-import unicodedata
 import re
+import unicodedata
 from typing import Any, Callable, Generator, Iterable
 
-from . import events
-from . import messages
+from . import events, messages
 from ._ansi_sequences import ANSI_SEQUENCES_KEYS
 from ._parser import Awaitable, Parser, TokenCallback
 from ._types import MessageTarget
 from .keys import KEY_NAME_REPLACEMENTS
-
 
 # When trying to determine whether the current sequence is a supported/valid
 # escape sequence, at which length should we give up and consider our search

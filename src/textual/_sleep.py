@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-
-from time import sleep, perf_counter
-from asyncio import get_running_loop, Future
-from threading import Thread, Event
+from asyncio import Future, get_running_loop
+from threading import Event, Thread
+from time import perf_counter, sleep
 
 
 class Sleeper(Thread):

@@ -1,16 +1,16 @@
 from __future__ import annotations
 
-from typing import ClassVar, TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar
 
 import rich.repr
 
 from . import _clock
-from .case import camel_to_snake
 from ._types import MessageTarget as MessageTarget
+from .case import camel_to_snake
 
 if TYPE_CHECKING:
-    from .widget import Widget
     from .message_pump import MessagePump
+    from .widget import Widget
 
 
 @rich.repr.auto

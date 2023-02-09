@@ -1,6 +1,6 @@
 import pytest
 
-from textual.geometry import clamp, Offset, Size, Region, Spacing
+from textual.geometry import Offset, Region, Size, Spacing, clamp
 
 
 def test_dimensions_region():
@@ -298,6 +298,7 @@ def test_size_sub():
 def test_size_line_range():
     assert Size(20, 0).line_range == range(0)
     assert Size(0, 20).line_range == range(20)
+
 
 def test_region_x_extents():
     assert Region(5, 10, 20, 30).column_span == (5, 25)

@@ -4,11 +4,11 @@ import re
 from pathlib import PurePath
 from typing import NamedTuple
 
+import rich.repr
 from rich.console import Group, RenderableType
 from rich.highlighter import ReprHighlighter
 from rich.padding import Padding
 from rich.panel import Panel
-import rich.repr
 from rich.syntax import Syntax
 from rich.text import Text
 

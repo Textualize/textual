@@ -1,8 +1,9 @@
 import asyncio
+
 from textual.app import App
-from textual.widget import Widget
-from textual.widgets import Static, Button
 from textual.containers import Container
+from textual.widget import Widget
+from textual.widgets import Button, Static
 
 
 async def test_remove_single_widget():

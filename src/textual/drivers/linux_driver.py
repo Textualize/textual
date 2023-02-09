@@ -2,27 +2,26 @@ from __future__ import annotations
 
 import asyncio
 import os
-from codecs import getincrementaldecoder
 import selectors
 import signal
 import sys
 import termios
 import tty
-from typing import Any, TYPE_CHECKING
+from codecs import getincrementaldecoder
 from threading import Event, Thread
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from rich.console import Console
 
 import rich.repr
 
-from .. import log
-from ..driver import Driver
-from ..geometry import Size
+from .. import events, log
+from .._profile import timer
 from .._types import MessageTarget
 from .._xterm_parser import XTermParser
-from .._profile import timer
-from .. import events
+from ..driver import Driver
+from ..geometry import Size
 
 
 @rich.repr.auto

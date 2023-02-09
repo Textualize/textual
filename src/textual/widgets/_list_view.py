@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from typing import ClassVar
 
 from textual.await_remove import AwaitRemove

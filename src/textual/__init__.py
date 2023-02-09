@@ -1,14 +1,13 @@
 from __future__ import annotations
 
 import inspect
+from typing import TYPE_CHECKING, Callable
 
 import rich.repr
 from rich.console import RenderableType
-from typing import Callable, TYPE_CHECKING
 
 from ._context import active_app
 from ._log import LogGroup, LogVerbosity
-
 
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias

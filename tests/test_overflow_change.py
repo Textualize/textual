@@ -1,7 +1,6 @@
 """Regression test for #1616 https://github.com/Textualize/textual/issues/1616"""
 import pytest
 
-
 from textual.app import App
 from textual.containers import Vertical
 

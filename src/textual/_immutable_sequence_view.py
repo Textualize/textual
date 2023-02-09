@@ -1,8 +1,9 @@
 """Provides an immutable sequence view class."""
 
 from __future__ import annotations
+
 from sys import maxsize
-from typing import Generic, TypeVar, Iterator, overload, Sequence
+from typing import Generic, Iterator, Sequence, TypeVar, overload
 
 T = TypeVar("T")
 
