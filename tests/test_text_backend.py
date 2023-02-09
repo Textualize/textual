@@ -113,20 +113,24 @@ def test_query_cursor_right_cursor_at_end_returns_false():
     editor = TextEditorBackend(CONTENT, len(CONTENT))
     assert not editor.query_cursor_right()
 
+
 def test_cursor_text_start_cursor_already_at_start():
     editor = TextEditorBackend(CONTENT)
     assert not editor.cursor_text_start()
     assert editor.cursor_index == 0
+
 
 def test_cursor_text_start_cursor_in_middle():
     editor = TextEditorBackend(CONTENT, 6)
     assert editor.cursor_text_start()
     assert editor.cursor_index == 0
 
+
 def test_cursor_text_end_cursor_already_at_end():
     editor = TextEditorBackend(CONTENT, len(CONTENT))
     assert not editor.cursor_text_end()
     assert editor.cursor_index == len(CONTENT)
+
 
 def test_cursor_text_end_cursor_in_middle():
     editor = TextEditorBackend(CONTENT, len(CONTENT))
@@ -139,6 +143,7 @@ def test_insert_at_cursor_cursor_at_start():
     assert editor.insert("ABC")
     assert editor.content == "ABC" + CONTENT
     assert editor.cursor_index == len("ABC")
+
 
 def test_insert_at_cursor_cursor_in_middle():
     start_cursor_index = 6
@@ -153,6 +158,7 @@ def test_insert_at_cursor_cursor_at_end():
     assert editor.insert("ABC")
     assert editor.content == CONTENT + "ABC"
     assert editor.cursor_index == len(editor.content)
+
 
 def test_get_range():
     editor = TextEditorBackend(CONTENT)

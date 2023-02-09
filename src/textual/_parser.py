@@ -1,16 +1,8 @@
 from __future__ import annotations
 
-from collections import deque
 import io
-from typing import (
-    Callable,
-    Deque,
-    Generator,
-    TypeVar,
-    Generic,
-    Union,
-    Iterable,
-)
+from collections import deque
+from typing import Callable, Deque, Generator, Generic, Iterable, TypeVar, Union
 
 
 class ParseError(Exception):

@@ -8,8 +8,8 @@ from ..binding import Binding, BindingType
 from ..geometry import Size
 from ..message import Message
 from ..reactive import reactive
-from ..widget import Widget
 from ..scrollbar import ScrollBarRender
+from ..widget import Widget
 
 
 class Checkbox(Widget, can_focus=True):

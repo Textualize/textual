@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-
-import rich.repr
-
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Iterable, TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterable
+
+import rich.repr
 
 from .styles import Styles
 from .tokenize import Token

@@ -1,6 +1,6 @@
 import pytest
 
-from textual.layouts.factory import get_layout, MissingLayout
+from textual.layouts.factory import MissingLayout, get_layout
 from textual.layouts.vertical import VerticalLayout
 
 

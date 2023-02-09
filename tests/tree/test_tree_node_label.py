@@ -1,6 +1,7 @@
+from rich.text import Text
+
 from textual.widgets import Tree
 from textual.widgets.tree import TreeNode
-from rich.text import Text
 
 
 def test_tree_node_label() -> None:

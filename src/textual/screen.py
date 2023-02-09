@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterable, Iterator, TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterable, Iterator
 
 import rich.repr
 from rich.console import RenderableType
@@ -9,14 +9,14 @@ from rich.style import Style
 from . import errors, events, messages
 from ._callback import invoke
 from ._compositor import Compositor, MapGeometry
+from ._types import CallbackType
 from .css.match import match
 from .css.parse import parse_selectors
 from .dom import DOMNode
-from .timer import Timer
-from ._types import CallbackType
 from .geometry import Offset, Region, Size
 from .reactive import Reactive
 from .renderables.blank import Blank
+from .timer import Timer
 from .widget import Widget
 
 if TYPE_CHECKING:

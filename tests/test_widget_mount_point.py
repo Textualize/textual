@@ -1,6 +1,6 @@
 import pytest
 
-from textual.widget import Widget, MountError
+from textual.widget import MountError, Widget
 
 
 class Content(Widget):
@@ -12,7 +12,6 @@ class Body(Widget):
 
 
 def test_find_dom_spot():
-
     # Build up a "fake" DOM for an application.
     screen = Widget(name="Screen")
     header = Widget(name="Header", id="header")

@@ -43,7 +43,6 @@ def test_rgb():
 
 
 def test_hls():
-
     red = Color(200, 20, 32)
     print(red.hsl)
     assert red.hsl == pytest.approx(

@@ -1,13 +1,12 @@
 from decimal import Decimal
 
 import pytest
-
 from rich.style import Style
 
 from textual.color import Color
 from textual.css.errors import StyleValueError
 from textual.css.scalar import Scalar, Unit
-from textual.css.styles import Styles, RenderStyles
+from textual.css.styles import RenderStyles, Styles
 from textual.dom import DOMNode
 from textual.widget import Widget
 

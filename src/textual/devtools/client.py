@@ -9,20 +9,13 @@ from io import StringIO
 from time import time
 from typing import Any, NamedTuple, Type
 
+import aiohttp
+import msgpack
+from aiohttp import ClientConnectorError, ClientResponseError, ClientWebSocketResponse
 from rich.console import Console
 from rich.segment import Segment
 
 from .._log import LogGroup, LogVerbosity
-
-
-import aiohttp
-import msgpack
-from aiohttp import (
-    ClientConnectorError,
-    ClientResponseError,
-    ClientWebSocketResponse,
-)
-
 
 DEVTOOLS_PORT = 8081
 WEBSOCKET_CONNECT_TIMEOUT = 3

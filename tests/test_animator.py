@@ -6,7 +6,7 @@ from unittest.mock import Mock
 import pytest
 
 from textual._animator import Animator, SimpleAnimation
-from textual._easing import EASING, DEFAULT_EASING
+from textual._easing import DEFAULT_EASING, EASING
 
 
 class Animatable:
