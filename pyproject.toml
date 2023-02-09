@@ -27,7 +27,7 @@ include = [
     { path = "tests", format = "sdist" },
     # The reason for the slightly convoluted path specification here is that
     # poetry populates the exclude list with the content of .gitignore, and
-    # it also seems like exclude tumps include. So here we specify that we
+    # it also seems like exclude trumps include. So here we specify that we
     # want to package up the content of the docs-offline directory in a way
     # that works around that.
     { path = "docs-offline/**/*", format = "sdist" }
