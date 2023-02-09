@@ -22,7 +22,7 @@ Switch {
     background: darkslategrey;
 }
 
-#custom-design > .switch--switch {
+#custom-design > .switch--slider {
     color: dodgerblue;
     background: darkslateblue;
 }
