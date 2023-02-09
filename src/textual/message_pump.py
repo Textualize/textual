@@ -358,7 +358,10 @@ class MessagePump(metaclass=MessagePumpMeta):
         finally:
             # This is critical, mount may be waiting
             self._mounted_event.set()
-        Reactive._initialize_object(self)
+        self._post_mount()
+
+    def _post_mount(self):
+        """Called after the object has been mounted."""
 
     async def _process_messages_loop(self) -> None:
         """Process messages until the queue is closed."""
