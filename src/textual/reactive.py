@@ -325,10 +325,12 @@ class var(Reactive[ReactiveType]):
         )
 
 
-def watch(
+def _watch(
+    node: DOMNode,
     obj: Reactable,
     attribute_name: str,
     callback: Callable[[Any], object],
+    *,
     init: bool = True,
 ) -> None:
     """Watch a reactive variable on an object.
@@ -346,7 +348,7 @@ def watch(
     watcher_list = watchers.setdefault(attribute_name, [])
     if callback in watcher_list:
         return
-    watcher_list.append((obj, callback))
+    watcher_list.append((node, callback))
     if init:
         current_value = getattr(obj, attribute_name, None)
         Reactive._check_watchers(obj, attribute_name, current_value)

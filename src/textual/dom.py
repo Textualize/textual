@@ -4,6 +4,7 @@ import re
 from inspect import getfile
 from typing import (
     TYPE_CHECKING,
+    Callable,
     ClassVar,
     Iterable,
     Iterator,
@@ -31,7 +32,7 @@ from .css.parse import parse_declarations
 from .css.styles import RenderStyles, Styles
 from .css.tokenize import IDENTIFIER
 from .message_pump import MessagePump
-from .reactive import Reactive
+from .reactive import Reactive, _watch
 from .timer import Timer
 from .walk import walk_breadth_first, walk_depth_first
 
@@ -646,6 +647,19 @@ class DOMNode(MessagePump):
 
         """
         return [child for child in self.children if child.display]
+
+    def watch(
+        self, obj: DOMNode, attribute_name: str, callback: Callable, init: bool = True
+    ) -> None:
+        """Watches for modifications to reactive attributes on another object.
+
+        Args:
+            obj: Object containing attribute to watch.
+            attribute_name: Attribute to watch.
+            callback: A callback to run when attribute changes.
+            init: Check watchers on first call.
+        """
+        _watch(self, obj, attribute_name, callback, init=init)
 
     def get_pseudo_classes(self) -> Iterable[str]:
         """Get any pseudo classes applicable to this Node, e.g. hover, focus.

@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added Shift+scroll wheel and ctrl+scroll wheel to scroll horizontally
 - Added `Tree.action_toggle_node` to toggle a node without selecting, and bound it to <kbd>Space</kbd> https://github.com/Textualize/textual/issues/1433
 - Added `Tree.reset` to fully reset a `Tree` https://github.com/Textualize/textual/issues/1437
+- Added DOMNode.watch method https://github.com/Textualize/textual/pull/1750
 
 ### Changed
 
