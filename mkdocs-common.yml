@@ -1,0 +1,100 @@
+site_name: Textual
+
+markdown_extensions:
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - md_in_html
+  - admonition
+  - def_list
+  - meta
+
+  - toc:
+      permalink: true
+      baselevel: 1
+  - pymdownx.keys
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: textual
+          class: textual
+          format: !!python/name:textual._doc.format_svg
+        - name: rich
+          class: rich
+          format: !!python/name:textual._doc.rich
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.snippets
+  - markdown.extensions.attr_list
+
+theme:
+  name: material
+  custom_dir: docs/custom_theme
+  features:
+    - navigation.tabs
+    - navigation.indexes
+    - navigation.tabs.sticky
+    - navigation.footer
+    - content.code.annotate
+    - content.code.copy
+  palette:
+  - media: "(prefers-color-scheme: light)"
+    scheme: default
+    accent: purple
+    toggle:
+      icon: material/weather-sunny
+      name: Switch to dark mode
+  - media: "(prefers-color-scheme: dark)"
+    scheme: slate
+    primary: black
+    toggle:
+      icon: material/weather-night
+      name: Switch to light mode
+
+plugins:
+  search:
+  autorefs:
+  mkdocstrings:
+    custom_templates: docs/_templates
+    default_handler: python
+    handlers:
+      python:
+        options:
+          show_root_heading: true
+          show_root_full_path: false
+          show_source: false
+          filters:
+            - "!^_"
+            - "^__init__$"
+            - "!^can_replace$"
+    watch:
+      - src/textual
+  exclude:
+    glob:
+      - "**/_template.md"
+
+
+extra_css:
+  - stylesheets/custom.css
+
+
+extra:
+  social:
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/textualizeio
+      name: textualizeio on Twitter
+    - icon: fontawesome/brands/github
+      link: https://github.com/textualize/textual/
+      name: Textual on Github
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/Enf6Z3qhVr
+      name: Textual Discord server
+copyright: Copyright &copy; Textualize, Inc
