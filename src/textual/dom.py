@@ -210,6 +210,10 @@ class DOMNode(MessagePump):
         styles = self._component_styles[name]
         return styles
 
+    def _post_mount(self):
+        """Called after the object has been mounted."""
+        Reactive._initialize_object(self)
+
     @property
     def _node_bases(self) -> Iterator[Type[DOMNode]]:
         """Iterator[Type[DOMNode]]: The DOMNode bases classes (including self.__class__)"""

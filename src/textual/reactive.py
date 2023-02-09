@@ -11,7 +11,6 @@ from typing import (
     Generic,
     Type,
     TypeVar,
-    Union,
 )
 
 import rich.repr
@@ -21,10 +20,9 @@ from ._callback import count_parameters
 from ._types import MessageTarget
 
 if TYPE_CHECKING:
-    from .app import App
-    from .widget import Widget
+    from .dom import DOMNode
 
-    Reactable = Union[Widget, App]
+    Reactable = DOMNode
 
 ReactiveType = TypeVar("ReactiveType")
 
