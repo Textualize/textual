@@ -7,6 +7,7 @@ from typing import (
     Any,
     Awaitable,
     Callable,
+    ClassVar,
     Generic,
     Type,
     TypeVar,
@@ -16,7 +17,7 @@ from typing import (
 import rich.repr
 
 from . import events
-from ._callback import count_parameters, invoke
+from ._callback import count_parameters
 from ._types import MessageTarget
 
 if TYPE_CHECKING:
@@ -26,15 +27,6 @@ if TYPE_CHECKING:
     Reactable = Union[Widget, App]
 
 ReactiveType = TypeVar("ReactiveType")
-
-
-class _NotSet:
-    pass
-
-
-_NOT_SET = _NotSet()
-
-T = TypeVar("T")
 
 
 @rich.repr.auto
@@ -50,7 +42,7 @@ class Reactive(Generic[ReactiveType]):
         compute: Run compute methods when attribute is changed. Defaults to True.
     """
 
-    _reactives: TypeVar[dict[str, object]] = {}
+    _reactives: ClassVar[dict[str, object]] = {}
 
     def __init__(
         self,
@@ -76,37 +68,6 @@ class Reactive(Generic[ReactiveType]):
         yield "init", self._init
         yield "always_update", self._always_update
         yield "compute", self._run_compute
-
-    @classmethod
-    def init(
-        cls,
-        default: ReactiveType | Callable[[], ReactiveType],
-        *,
-        layout: bool = False,
-        repaint: bool = True,
-        always_update: bool = False,
-        compute: bool = True,
-    ) -> Reactive:
-        """A reactive variable that calls watchers and compute on initialize (post mount).
-
-        Args:
-            default: A default value or callable that returns a default.
-            layout: Perform a layout on change. Defaults to False.
-            repaint: Perform a repaint on change. Defaults to True.
-            always_update: Call watchers even when the new value equals the old value. Defaults to False.
-            compute: Run compute methods when attribute is changed. Defaults to True.
-
-        Returns:
-            A Reactive instance which calls watchers or initialize.
-        """
-        return cls(
-            default,
-            layout=layout,
-            repaint=repaint,
-            init=True,
-            always_update=always_update,
-            compute=compute,
-        )
 
     @classmethod
     def var(

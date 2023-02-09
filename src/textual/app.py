@@ -414,6 +414,10 @@ class App(Generic[ReturnType], DOMNode):
         """ReturnType | None: The return type of the app."""
         return self._return_value
 
+    def _post_mount(self):
+        """Called after the object has been mounted."""
+        Reactive._initialize_object(self)
+
     def animate(
         self,
         attribute: str,

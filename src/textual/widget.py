@@ -360,6 +360,10 @@ class Widget(DOMNode):
     def offset(self, offset: Offset) -> None:
         self.styles.offset = ScalarOffset.from_offset(offset)
 
+    def _post_mount(self):
+        """Called after the object has been mounted."""
+        Reactive._initialize_object(self)
+
     ExpectType = TypeVar("ExpectType", bound="Widget")
 
     @overload
