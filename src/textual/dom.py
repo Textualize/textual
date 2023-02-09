@@ -132,10 +132,12 @@ class DOMNode(MessagePump):
         check_identifiers("class name", *_classes)
         self._classes.update(_classes)
 
-        self.children = NodeList()
+        self.children: NodeList = NodeList()
         self._css_styles: Styles = Styles(self)
         self._inline_styles: Styles = Styles(self)
-        self.styles = RenderStyles(self, self._css_styles, self._inline_styles)
+        self.styles: RenderStyles = RenderStyles(
+            self, self._css_styles, self._inline_styles
+        )
         # A mapping of class names to Styles set in COMPONENT_CLASSES
         self._component_styles: dict[str, RenderStyles] = {}
 

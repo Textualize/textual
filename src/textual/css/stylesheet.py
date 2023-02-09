@@ -4,7 +4,7 @@ import os
 from collections import defaultdict
 from operator import itemgetter
 from pathlib import Path, PurePath
-from typing import Iterable, NamedTuple, cast
+from typing import Iterable, NamedTuple, Sequence, cast
 
 import rich.repr
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
@@ -248,7 +248,7 @@ class Stylesheet:
         self.source[str(path)] = CssSource(css, False, 0)
         self._require_parse = True
 
-    def read_all(self, paths: list[PurePath]) -> None:
+    def read_all(self, paths: Sequence[PurePath]) -> None:
         """Read multiple CSS files, in order.
 
         Args:

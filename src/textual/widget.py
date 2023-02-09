@@ -117,7 +117,7 @@ class _Styled:
     """
 
     def __init__(
-        self, renderable: "RenderableType", style: Style, link_style: Style | None
+        self, renderable: "ConsoleRenderable", style: Style, link_style: Style | None
     ) -> None:
         self.renderable = renderable
         self.style = style
@@ -133,7 +133,7 @@ class _Styled:
         if style:
             apply = style.__add__
             result_segments = (
-                _Segment(text, apply(_style), control)
+                _Segment(text, apply(_style), None)
                 for text, _style, control in result_segments
             )
         link_style = self.link_style
@@ -141,19 +141,22 @@ class _Styled:
             result_segments = (
                 _Segment(
                     text,
-                    style
-                    if style._meta is None
-                    else (style + link_style if "@click" in style.meta else style),
+                    (
+                        style
+                        if style._meta is None
+                        else (style + link_style if "@click" in style.meta else style)
+                    ),
                     control,
                 )
                 for text, style, control in result_segments
+                if style is not None
             )
         return result_segments
 
     def __rich_measure__(
         self, console: "Console", options: "ConsoleOptions"
     ) -> Measurement:
-        return self.renderable.__rich_measure__(console, options)
+        return Measurement.get(console, options, self.renderable)
 
 
 class RenderCache(NamedTuple):
@@ -1414,6 +1417,7 @@ class Widget(DOMNode):
                 easing = DEFAULT_SCROLL_EASING
 
             if maybe_scroll_x:
+                assert x is not None
                 self.scroll_target_x = x
                 if x != self.scroll_x:
                     self.animate(
@@ -1425,6 +1429,7 @@ class Widget(DOMNode):
                     )
                     scrolled_x = True
             if maybe_scroll_y:
+                assert y is not None
                 self.scroll_target_y = y
                 if y != self.scroll_y:
                     self.animate(
@@ -1438,10 +1443,12 @@ class Widget(DOMNode):
 
         else:
             if maybe_scroll_x:
+                assert x is not None
                 scroll_x = self.scroll_x
                 self.scroll_target_x = self.scroll_x = x
                 scrolled_x = scroll_x != self.scroll_x
             if maybe_scroll_y:
+                assert y is not None
                 scroll_y = self.scroll_y
                 self.scroll_target_y = self.scroll_y = y
                 scrolled_y = scroll_y != self.scroll_y

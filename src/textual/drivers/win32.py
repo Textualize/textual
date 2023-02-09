@@ -7,12 +7,12 @@ from ctypes import Structure, Union, byref, wintypes
 from ctypes.wintypes import BOOL, CHAR, DWORD, HANDLE, SHORT, UINT, WCHAR, WORD
 from typing import IO, Callable, List, Optional
 
-from .._types import EventTarget
+from .._types import MessageTarget
 from .._xterm_parser import XTermParser
 from ..events import Event, Resize
 from ..geometry import Size
 
-KERNEL32 = ctypes.WinDLL("kernel32", use_last_error=True)
+KERNEL32 = ctypes.WinDLL("kernel32", use_last_error=True)  # type: ignore
 
 # Console input modes
 ENABLE_ECHO_INPUT = 0x0004
@@ -130,7 +130,7 @@ def _set_console_mode(file: IO, mode: int) -> bool:
     Returns:
         True on success, otherwise False.
     """
-    windows_filehandle = msvcrt.get_osfhandle(file.fileno())
+    windows_filehandle = msvcrt.get_osfhandle(file.fileno())  # type: ignore
     success = KERNEL32.SetConsoleMode(windows_filehandle, mode)
     return success
 
@@ -144,7 +144,7 @@ def _get_console_mode(file: IO) -> int:
     Returns:
         The current console mode.
     """
-    windows_filehandle = msvcrt.get_osfhandle(file.fileno())
+    windows_filehandle = msvcrt.get_osfhandle(file.fileno())  # type: ignore
     mode = wintypes.DWORD()
     KERNEL32.GetConsoleMode(windows_filehandle, ctypes.byref(mode))
     return mode.value
@@ -211,7 +211,7 @@ class EventMonitor(threading.Thread):
         self,
         loop: AbstractEventLoop,
         app,
-        target: EventTarget,
+        target: MessageTarget,
         exit_event: threading.Event,
         process_event: Callable[[Event], None],
     ) -> None:

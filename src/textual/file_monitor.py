@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 from pathlib import PurePath
-from typing import Callable
+from typing import Callable, Sequence
 
 import rich.repr
 
@@ -13,7 +13,7 @@ from ._callback import invoke
 class FileMonitor:
     """Monitors files for changes and invokes a callback when it does."""
 
-    def __init__(self, paths: list[PurePath], callback: Callable) -> None:
+    def __init__(self, paths: Sequence[PurePath], callback: Callable) -> None:
         self.paths = paths
         self.callback = callback
         self._modified = self._get_last_modified_time()

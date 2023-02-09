@@ -113,7 +113,6 @@ class StylesBuilder:
                     suggested_property_name=suggested_property_name,
                 ),
             )
-            return
 
         tokens = declaration.tokens
 
@@ -182,7 +181,13 @@ class StylesBuilder:
         """
 
         if len(tokens) != 1:
-            string_enum_help_text(name, valid_values=list(valid_values), context="css"),
+            self.error(
+                name,
+                tokens[0],
+                string_enum_help_text(
+                    name, valid_values=list(valid_values), context="css"
+                ),
+            )
 
         token = tokens[0]
         token_name, value, _, _, location, _ = token
@@ -239,7 +244,7 @@ class StylesBuilder:
             return
         if len(tokens) == 1:
             try:
-                self.styles._rules[name.replace("-", "_")] = Scalar.parse(
+                self.styles._rules[name.replace("-", "_")] = Scalar.parse(  # type: ignore
                     tokens[0].value
                 )
             except ScalarParseError:
@@ -390,7 +395,7 @@ class StylesBuilder:
                     name, num_values_supplied=len(space), context="css"
                 ),
             )
-        self.styles._rules[name] = Spacing.unpack(cast(SpacingDimensions, tuple(space)))
+        self.styles._rules[name] = Spacing.unpack(cast(SpacingDimensions, tuple(space)))  # type: ignore
 
     def _process_space_partial(self, name: str, tokens: list[Token]) -> None:
         """Process granular margin / padding declarations."""
@@ -418,7 +423,7 @@ class StylesBuilder:
         spacing_list = list(current_spacing)
         spacing_list[_EDGE_SPACING_MAP[edge]] = space
 
-        self.styles._rules[style_name] = Spacing(*spacing_list)
+        self.styles._rules[style_name] = Spacing(*spacing_list)  # type: ignore
 
     process_padding = _process_space
     process_margin = _process_space
@@ -444,7 +449,7 @@ class StylesBuilder:
             token_name, value, _, _, _, _ = token
             if token_name == "token":
                 if value in VALID_BORDER:
-                    border_type = value
+                    border_type = value  # type: ignore
                 else:
                     try:
                         border_color = Color.parse(value)
@@ -464,7 +469,7 @@ class StylesBuilder:
 
     def _process_border_edge(self, edge: str, name: str, tokens: list[Token]) -> None:
         border = self._parse_border(name, tokens)
-        self.styles._rules[f"border_{edge}"] = border
+        self.styles._rules[f"border_{edge}"] = border  # type: ignore
 
     def process_border(self, name: str, tokens: list[Token]) -> None:
         border = self._parse_border(name, tokens)
@@ -486,7 +491,7 @@ class StylesBuilder:
 
     def _process_outline(self, edge: str, name: str, tokens: list[Token]) -> None:
         border = self._parse_border(name, tokens)
-        self.styles._rules[f"outline_{edge}"] = border
+        self.styles._rules[f"outline_{edge}"] = border  # type: ignore
 
     def process_outline(self, name: str, tokens: list[Token]) -> None:
         border = self._parse_border(name, tokens)
@@ -579,14 +584,14 @@ class StylesBuilder:
         color: Color | None = None
         alpha: float | None = None
 
-        self.styles._rules[f"auto_{name}"] = False
+        self.styles._rules[f"auto_{name}"] = False  # type: ignore
         for token in tokens:
             if (
                 "background" not in name
                 and token.name == "token"
                 and token.value == "auto"
             ):
-                self.styles._rules[f"auto_{name}"] = True
+                self.styles._rules[f"auto_{name}"] = True  # type: ignore
             elif token.name == "scalar":
                 alpha_scalar = Scalar.parse(token.value)
                 if alpha_scalar.unit != Unit.PERCENT:
@@ -608,7 +613,7 @@ class StylesBuilder:
         if color is not None or alpha is not None:
             if alpha is not None:
                 color = (color or Color(255, 255, 255)).with_alpha(alpha)
-            self.styles._rules[name] = color
+            self.styles._rules[name] = color  # type: ignore
 
     process_tint = process_color
     process_background = process_color
@@ -636,7 +641,7 @@ class StylesBuilder:
                 )
 
         style_definition = " ".join(token.value for token in tokens)
-        self.styles._rules[name.replace("-", "_")] = style_definition
+        self.styles._rules[name.replace("-", "_")] = style_definition  # type: ignore
 
     process_link_style = process_text_style
     process_link_hover_style = process_text_style
@@ -653,7 +658,7 @@ class StylesBuilder:
                 text_align_help_text(),
             )
 
-        self.styles._rules["text_align"] = tokens[0].value
+        self.styles._rules["text_align"] = tokens[0].value  # type: ignore
 
     def process_dock(self, name: str, tokens: list[Token]) -> None:
         if not tokens:
@@ -766,8 +771,8 @@ class StylesBuilder:
             align_error(name, token_horizontal)
 
         name = name.replace("-", "_")
-        self.styles._rules[f"{name}_horizontal"] = token_horizontal.value
-        self.styles._rules[f"{name}_vertical"] = token_vertical.value
+        self.styles._rules[f"{name}_horizontal"] = token_horizontal.value  # type: ignore
+        self.styles._rules[f"{name}_vertical"] = token_vertical.value  # type: ignore
 
     def process_align_horizontal(self, name: str, tokens: list[Token]) -> None:
         try:
@@ -779,7 +784,7 @@ class StylesBuilder:
                 string_enum_help_text(name, VALID_ALIGN_HORIZONTAL, context="css"),
             )
         else:
-            self.styles._rules[name.replace("-", "_")] = value
+            self.styles._rules[name.replace("-", "_")] = value  # type: ignore
 
     def process_align_vertical(self, name: str, tokens: list[Token]) -> None:
         try:
@@ -791,7 +796,7 @@ class StylesBuilder:
                 string_enum_help_text(name, VALID_ALIGN_VERTICAL, context="css"),
             )
         else:
-            self.styles._rules[name.replace("-", "_")] = value
+            self.styles._rules[name.replace("-", "_")] = value  # type: ignore
 
     process_content_align = process_align
     process_content_align_horizontal = process_align_horizontal
@@ -807,7 +812,7 @@ class StylesBuilder:
                 string_enum_help_text(name, VALID_SCROLLBAR_GUTTER, context="css"),
             )
         else:
-            self.styles._rules[name.replace("-", "_")] = value
+            self.styles._rules[name.replace("-", "_")] = value  # type: ignore
 
     def process_scrollbar_size(self, name: str, tokens: list[Token]) -> None:
         def scrollbar_size_error(name: str, token: Token) -> None:
@@ -876,7 +881,7 @@ class StylesBuilder:
                     token,
                     table_rows_or_columns_help_text(name, token.value, context="css"),
                 )
-        self.styles._rules[name.replace("-", "_")] = scalars
+        self.styles._rules[name.replace("-", "_")] = scalars  # type: ignore
 
     process_grid_rows = _process_grid_rows_or_columns
     process_grid_columns = _process_grid_rows_or_columns
@@ -893,7 +898,7 @@ class StylesBuilder:
             value = int(token.value)
             if value == 0:
                 self.error(name, token, integer_help_text(name))
-            self.styles._rules[name.replace("-", "_")] = value
+            self.styles._rules[name.replace("-", "_")] = value  # type: ignore
 
     process_grid_gutter_horizontal = _process_integer
     process_grid_gutter_vertical = _process_integer
