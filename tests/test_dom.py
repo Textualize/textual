@@ -1,7 +1,7 @@
 import pytest
 
 from textual.css.errors import StyleValueError
-from textual.dom import DOMNode, BadIdentifier
+from textual.dom import BadIdentifier, DOMNode
 
 
 def test_display_default():

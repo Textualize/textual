@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-import rich.repr
-
 import asyncio
 from typing import Generic
 
-from .app import App, ReturnType
+import rich.repr
+
 from ._wait import wait_for_idle
+from .app import App, ReturnType
 
 
 @rich.repr.auto(angular=True)
@@ -53,6 +53,7 @@ class Pilot(Generic[ReturnType]):
     async def wait_for_scheduled_animations(self) -> None:
         """Wait for any current and scheduled animations to complete."""
         await self._app.animator.wait_until_complete()
+        await wait_for_idle(0)
 
     async def exit(self, result: ReturnType) -> None:
         """Exit the app with the given result.

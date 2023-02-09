@@ -1,9 +1,9 @@
 import pytest
 
 from textual.app import App
-from textual.widget import Widget, WidgetError, MountError
-from textual.widgets import Static
 from textual.css.query import TooManyMatches
+from textual.widget import MountError, Widget, WidgetError
+from textual.widgets import Static
 
 
 class SelfOwn(Widget):

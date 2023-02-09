@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+
 from aiohttp.web import run_app
 from aiohttp.web_app import Application
 from aiohttp.web_request import Request

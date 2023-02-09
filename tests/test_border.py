@@ -5,7 +5,6 @@ from textual._border import render_row
 
 
 def test_border_render_row():
-
     style = Style.parse("red")
     row = (Segment("┏", style), Segment("━", style), Segment("┓", style))
 

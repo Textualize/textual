@@ -35,9 +35,9 @@ from rich.text import Text
 from rich.traceback import Traceback
 
 from . import errors, events, messages
-from ._asyncio import create_task
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
+from ._asyncio import create_task
 from ._context import active_app
 from ._easing import DEFAULT_SCROLL_EASING
 from ._layout import Layout

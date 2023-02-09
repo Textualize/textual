@@ -1,7 +1,7 @@
 from __future__ import annotations
-from typing import ClassVar
 
 import re
+from typing import ClassVar
 
 from rich.cells import cell_len, get_character_cell_size
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult

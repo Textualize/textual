@@ -52,8 +52,8 @@ def test_dock_layout_sidebar(snap_compare):
 # from these examples which test rendering and simple interactions with it.
 
 
-def test_checkboxes(snap_compare):
-    """Tests checkboxes but also acts a regression test for using
+def test_switches(snap_compare):
+    """Tests switches but also acts a regression test for using
     width: auto in a Horizontal layout context."""
     press = [
         "shift+tab",
@@ -63,7 +63,7 @@ def test_checkboxes(snap_compare):
         "enter",  # toggle on
         "wait:20",
     ]
-    assert snap_compare(WIDGET_EXAMPLES_DIR / "checkbox.py", press=press)
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "switch.py", press=press)
 
 
 def test_input_and_focus(snap_compare):
@@ -219,3 +219,7 @@ def test_auto_width_input(snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "auto_width_input.py", press=["tab", *"Hello"]
     )
+
+
+def test_screen_switch(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "screen_switch.py", press=["a", "b"])

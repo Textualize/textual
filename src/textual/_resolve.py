@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from fractions import Fraction
 from itertools import accumulate
-from typing import Sequence, cast, TYPE_CHECKING
+from typing import TYPE_CHECKING, Sequence, cast
 
 from typing_extensions import Literal
 

@@ -48,9 +48,7 @@ from ._asyncio import create_task
 from ._callback import invoke
 from ._context import active_app
 from ._event_broker import NoHandler, extract_handler_actions
-from .filter import LineFilter, Monochrome
 from ._path import _make_path_object_relative
-
 from ._wait import wait_for_idle
 from .actions import SkipAction
 from .await_remove import AwaitRemove
@@ -63,6 +61,7 @@ from .driver import Driver
 from .drivers.headless_driver import HeadlessDriver
 from .features import FeatureFlag, parse_features
 from .file_monitor import FileMonitor
+from .filter import LineFilter, Monochrome
 from .geometry import Offset, Region, Size
 from .keys import REPLACED_KEYS, _get_key_display
 from .messages import CallbackType

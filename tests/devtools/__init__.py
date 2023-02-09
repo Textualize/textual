@@ -11,6 +11,4 @@ _WINDOWS = sys.platform == "win32"
 # and the error messages suggest the event loop is being shutdown before async fixture
 # teardown code has finished running. These are very rare, but are much more of an issue on
 # CI since they can delay builds that have passed locally.
-pytestmark = pytest.mark.skipif(
-    _MACOS_CI or _WINDOWS, reason="Issue #411"
-)
+pytestmark = pytest.mark.skipif(_MACOS_CI or _WINDOWS, reason="Issue #411")

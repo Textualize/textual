@@ -15,7 +15,7 @@ from rich.style import Style
 from rich.text import Text, TextType
 from typing_extensions import Literal, TypeAlias
 
-from .. import events, messages
+from .. import events
 from .._cache import LRUCache
 from .._segment_tools import line_crop
 from .._two_way_dict import TwoWayDict

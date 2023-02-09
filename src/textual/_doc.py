@@ -2,14 +2,13 @@ from __future__ import annotations
 
 import hashlib
 import os
-from pathlib import Path
 import shlex
+from pathlib import Path
 from typing import Iterable
 
+from textual._import_app import import_app
 from textual.app import App
 from textual.pilot import Pilot
-from textual._import_app import import_app
-
 
 SCREENSHOT_CACHE = ".screenshot_cache"
 

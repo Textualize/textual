@@ -10,8 +10,8 @@ except ImportError:
 
 from importlib_metadata import version
 
+from textual._import_app import AppFail, import_app
 from textual.pilot import Pilot
-from textual._import_app import import_app, AppFail
 
 
 @click.group()
@@ -26,6 +26,7 @@ def run():
 def console(verbose: bool, exclude: list[str]) -> None:
     """Launch the textual console."""
     from rich.console import Console
+
     from textual.devtools.server import _run_devtools
 
     console = Console()

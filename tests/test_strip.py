@@ -3,8 +3,8 @@ from rich.segment import Segment
 from rich.style import Style
 
 from textual._segment_tools import NoCellPositionForIndex
-from textual.strip import Strip
 from textual.filter import Monochrome
+from textual.strip import Strip
 
 
 def test_cell_length() -> None:

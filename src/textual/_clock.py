@@ -2,7 +2,6 @@ import asyncio
 
 from ._time import time
 
-
 """
 A module that serves as the single source of truth for everything time-related in a Textual app.
 Having this logic centralised makes it easier to simulate time in integration tests,
