@@ -7,7 +7,7 @@ Screen {
     width: auto;
 }
 
-Checkbox {
+Switch {
     height: auto;
     width: auto;
 }
@@ -22,7 +22,7 @@ Checkbox {
     background: darkslategrey;
 }
 
-#custom-design > .checkbox--switch {
+#custom-design > .switch--switch {
     color: dodgerblue;
     background: darkslateblue;
 }

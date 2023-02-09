@@ -53,6 +53,7 @@ class Pilot(Generic[ReturnType]):
     async def wait_for_scheduled_animations(self) -> None:
         """Wait for any current and scheduled animations to complete."""
         await self._app.animator.wait_until_complete()
+        await wait_for_idle(0)
 
     async def exit(self, result: ReturnType) -> None:
         """Exit the app with the given result.

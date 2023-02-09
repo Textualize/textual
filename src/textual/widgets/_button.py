@@ -11,7 +11,7 @@ from rich.text import Text, TextType
 from .. import events
 from ..css._error_tools import friendly_list
 from ..message import Message
-from ..reactive import Reactive
+from ..reactive import reactive
 from ..widgets import Static
 
 
@@ -151,13 +151,13 @@ class Button(Static, can_focus=True):
     ACTIVE_EFFECT_DURATION = 0.3
     """When buttons are clicked they get the `-active` class for this duration (in seconds)"""
 
-    label: Reactive[RenderableType] = Reactive("")
+    label: reactive[RenderableType] = reactive("")
     """The text label that appears within the button."""
 
-    variant = Reactive.init("default")
+    variant = reactive("default")
     """The variant name for the button."""
 
-    disabled = Reactive(False)
+    disabled = reactive(False)
     """The disabled state of the button; `True` if disabled, `False` if not."""
 
     class Pressed(Message, bubble=True):

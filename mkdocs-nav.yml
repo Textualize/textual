@@ -121,7 +121,6 @@ nav:
       - "styles/width.md"
     - Widgets:
       - "widgets/button.md"
-      - "widgets/checkbox.md"
       - "widgets/data_table.md"
       - "widgets/directory_tree.md"
       - "widgets/footer.md"
@@ -133,6 +132,7 @@ nav:
       - "widgets/list_view.md"
       - "widgets/placeholder.md"
       - "widgets/static.md"
+      - "widgets/switch.md"
       - "widgets/text_log.md"
       - "widgets/tree.md"
   - API:
@@ -140,7 +140,6 @@ nav:
     - "api/app.md"
     - "api/binding.md"
     - "api/button.md"
-    - "api/checkbox.md"
     - "api/color.md"
     - "api/containers.md"
     - "api/coordinate.md"
@@ -165,6 +164,7 @@ nav:
     - "api/scroll_view.md"
     - "api/static.md"
     - "api/strip.md"
+    - "api/switch.md"
     - "api/text_log.md"
     - "api/timer.md"
     - "api/tree.md"

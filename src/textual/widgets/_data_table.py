@@ -1042,7 +1042,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._set_hover_cursor(True)
         if self.show_cursor and self.cursor_type != "none":
             # Only post selection events if there is a visible row/col/cell cursor.
-            self._post_message_selected_message()
+            self._post_selected_message()
             meta = self.get_style_at(event.x, event.y).meta
             if meta:
                 self.cursor_cell = Coordinate(meta["row"], meta["column"])

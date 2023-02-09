@@ -19,11 +19,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added Shift+scroll wheel and ctrl+scroll wheel to scroll horizontally
 - Added `Tree.action_toggle_node` to toggle a node without selecting, and bound it to <kbd>Space</kbd> https://github.com/Textualize/textual/issues/1433
 - Added `Tree.reset` to fully reset a `Tree` https://github.com/Textualize/textual/issues/1437
+- Added DOMNode.watch and DOMNode.is_attached methods  https://github.com/Textualize/textual/pull/1750
 
 ### Changed
 
 - Breaking change: `TreeNode` can no longer be imported from `textual.widgets`; it is now available via `from textual.widgets.tree import TreeNode`. https://github.com/Textualize/textual/pull/1637
 - `Tree` now shows a (subdued) cursor for a highlighted node when focus has moved elsewhere https://github.com/Textualize/textual/issues/1471
+- Breaking change: renamed `Checkbox` to `Switch`.
 
 ### Fixed
 
@@ -42,6 +44,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 - Methods `MessagePump.emit` and `MessagePump.emit_no_wait` https://github.com/Textualize/textual/pull/1738
+- Removed `reactive.watch` in favor of DOMNode.watch.
 
 ## [0.10.1] - 2023-01-20
 
