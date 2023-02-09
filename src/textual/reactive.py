@@ -7,34 +7,24 @@ from typing import (
     Any,
     Awaitable,
     Callable,
+    ClassVar,
     Generic,
     Type,
     TypeVar,
-    Union,
 )
 
 import rich.repr
 
 from . import events
-from ._callback import count_parameters, invoke
-from ._types import MessageTarget
+from ._callback import count_parameters
+from ._types import MessageTarget, CallbackType
 
 if TYPE_CHECKING:
-    from .app import App
-    from .widget import Widget
+    from .dom import DOMNode
 
-    Reactable = Union[Widget, App]
+    Reactable = DOMNode
 
 ReactiveType = TypeVar("ReactiveType")
-
-
-class _NotSet:
-    pass
-
-
-_NOT_SET = _NotSet()
-
-T = TypeVar("T")
 
 
 @rich.repr.auto
@@ -50,7 +40,7 @@ class Reactive(Generic[ReactiveType]):
         compute: Run compute methods when attribute is changed. Defaults to True.
     """
 
-    _reactives: TypeVar[dict[str, object]] = {}
+    _reactives: ClassVar[dict[str, object]] = {}
 
     def __init__(
         self,
@@ -76,37 +66,6 @@ class Reactive(Generic[ReactiveType]):
         yield "init", self._init
         yield "always_update", self._always_update
         yield "compute", self._run_compute
-
-    @classmethod
-    def init(
-        cls,
-        default: ReactiveType | Callable[[], ReactiveType],
-        *,
-        layout: bool = False,
-        repaint: bool = True,
-        always_update: bool = False,
-        compute: bool = True,
-    ) -> Reactive:
-        """A reactive variable that calls watchers and compute on initialize (post mount).
-
-        Args:
-            default: A default value or callable that returns a default.
-            layout: Perform a layout on change. Defaults to False.
-            repaint: Perform a repaint on change. Defaults to True.
-            always_update: Call watchers even when the new value equals the old value. Defaults to False.
-            compute: Run compute methods when attribute is changed. Defaults to True.
-
-        Returns:
-            A Reactive instance which calls watchers or initialize.
-        """
-        return cls(
-            default,
-            layout=layout,
-            repaint=repaint,
-            init=True,
-            always_update=always_update,
-            compute=compute,
-        )
 
     @classmethod
     def var(
@@ -254,7 +213,7 @@ class Reactive(Generic[ReactiveType]):
 
         def invoke_watcher(
             watch_function: Callable, old_value: object, value: object
-        ) -> bool:
+        ) -> None:
             """Invoke a watch function.
 
             Args:
@@ -262,8 +221,6 @@ class Reactive(Generic[ReactiveType]):
                 old_value: The old value of the attribute.
                 value: The new value of the attribute.
 
-            Returns:
-                True if the watcher was run, or False if it was posted.
             """
             _rich_traceback_omit = True
             param_count = count_parameters(watch_function)
@@ -280,17 +237,23 @@ class Reactive(Generic[ReactiveType]):
                         sender=obj, callback=partial(await_watcher, watch_result)
                     )
                 )
-                return False
-            else:
-                return True
 
         watch_function = getattr(obj, f"watch_{name}", None)
         if callable(watch_function):
             invoke_watcher(watch_function, old_value, value)
 
-        watchers: list[Callable] = getattr(obj, "__watchers", {}).get(name, [])
-        for watcher in watchers:
-            invoke_watcher(watcher, old_value, value)
+        # Process "global" watchers
+        watchers: list[tuple[Reactable, Callable]]
+        watchers = getattr(obj, "__watchers", {}).get(name, [])
+        # Remove any watchers for reactables that have since closed
+        if watchers:
+            watchers[:] = [
+                (reactable, callback)
+                for reactable, callback in watchers
+                if reactable.is_attached and not reactable._closing
+            ]
+            for _, callback in watchers:
+                invoke_watcher(callback, old_value, value)
 
     @classmethod
     def _compute(cls, obj: Reactable) -> None:
@@ -362,10 +325,12 @@ class var(Reactive[ReactiveType]):
         )
 
 
-def watch(
+def _watch(
+    node: DOMNode,
     obj: Reactable,
     attribute_name: str,
-    callback: Callable[[Any], object],
+    callback: CallbackType,
+    *,
     init: bool = True,
 ) -> None:
     """Watch a reactive variable on an object.
@@ -379,11 +344,11 @@ def watch(
 
     if not hasattr(obj, "__watchers"):
         setattr(obj, "__watchers", {})
-    watchers: dict[str, list[Callable]] = getattr(obj, "__watchers")
+    watchers: dict[str, list[tuple[Reactable, Callable]]] = getattr(obj, "__watchers")
     watcher_list = watchers.setdefault(attribute_name, [])
     if callback in watcher_list:
         return
-    watcher_list.append(callback)
+    watcher_list.append((node, callback))
     if init:
         current_value = getattr(obj, attribute_name, None)
         Reactive._check_watchers(obj, attribute_name, current_value)

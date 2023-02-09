@@ -123,6 +123,19 @@ class MessagePump(metaclass=MessagePumpMeta):
         """
         return self.app._logger
 
+    @property
+    def is_attached(self) -> bool:
+        """Is the node is attached to the app via the DOM."""
+        from .app import App
+
+        node = self
+
+        while not isinstance(node, App):
+            if node._parent is None:
+                return False
+            node = node._parent
+        return True
+
     def _attach(self, parent: MessagePump) -> None:
         """Set the parent, and therefore attach this node to the tree.
 
@@ -358,7 +371,10 @@ class MessagePump(metaclass=MessagePumpMeta):
         finally:
             # This is critical, mount may be waiting
             self._mounted_event.set()
-        Reactive._initialize_object(self)
+        self._post_mount()
+
+    def _post_mount(self):
+        """Called after the object has been mounted."""
 
     async def _process_messages_loop(self) -> None:
         """Process messages until the queue is closed."""
