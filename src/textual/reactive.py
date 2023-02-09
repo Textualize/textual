@@ -215,7 +215,7 @@ class Reactive(Generic[ReactiveType]):
 
         def invoke_watcher(
             watch_function: Callable, old_value: object, value: object
-        ) -> bool:
+        ) -> None:
             """Invoke a watch function.
 
             Args:
@@ -223,8 +223,6 @@ class Reactive(Generic[ReactiveType]):
                 old_value: The old value of the attribute.
                 value: The new value of the attribute.
 
-            Returns:
-                True if the watcher was run, or False if it was posted.
             """
             _rich_traceback_omit = True
             param_count = count_parameters(watch_function)
@@ -241,9 +239,6 @@ class Reactive(Generic[ReactiveType]):
                         sender=obj, callback=partial(await_watcher, watch_result)
                     )
                 )
-                return False
-            else:
-                return True
 
         watch_function = getattr(obj, f"watch_{name}", None)
         if callable(watch_function):
