@@ -17,7 +17,7 @@ import rich.repr
 
 from . import events
 from ._callback import count_parameters
-from ._types import MessageTarget
+from ._types import MessageTarget, CallbackType
 
 if TYPE_CHECKING:
     from .dom import DOMNode
@@ -329,7 +329,7 @@ def _watch(
     node: DOMNode,
     obj: Reactable,
     attribute_name: str,
-    callback: Callable[[Any], object],
+    callback: CallbackType,
     *,
     init: bool = True,
 ) -> None:
