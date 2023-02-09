@@ -27,29 +27,38 @@ class TwoWayDict(Generic[Key, Value]):
         self._forward.__delitem__(key)
         self._reverse.__delitem__(value)
 
-    def get(self, key: Key, default: Value | None = None) -> Value:
+    def get(self, key: Key) -> Value:
         """Given a key, efficiently lookup and return the associated value.
 
         Args:
             key: The key
-            default: The default return value if not found. Defaults to None.
 
         Returns:
             The value
         """
-        return self._forward.get(key, default)
+        return self._forward.get(key)
 
-    def get_key(self, value: Value, default: Key | None = None) -> Key:
+    def get_key(self, value: Value) -> Key:
         """Given a value, efficiently lookup and return the associated key.
 
         Args:
             value: The value
-            default: The default return value if not found. Defaults to None.
 
         Returns:
             The key
         """
-        return self._reverse.get(value, default)
+        return self._reverse.get(value)
+
+    def contains_value(self, value: Value) -> bool:
+        """Check if `value` is a value within this TwoWayDict.
+
+        Args:
+            value: The value to check.
+
+        Returns:
+            True if the value is within the values of this dict.
+        """
+        return value in self._reverse
 
     def __len__(self):
         return len(self._forward)

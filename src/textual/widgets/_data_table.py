@@ -1113,7 +1113,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         column_keys = [
             self._column_locations.get_key(index) for index in column_indices
         ]
-        ordered_columns = [self.columns.get(key) for key in column_keys]
+        ordered_columns = [self.columns[key] for key in column_keys]
         return ordered_columns
 
     @property
@@ -1123,7 +1123,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         ordered_rows = []
         for row_index in row_indices:
             row_key = self._row_locations.get_key(row_index)
-            row = self.rows.get(row_key)
+            row = self.rows[row_key]
             ordered_rows.append(row)
         return ordered_rows
 
@@ -1279,7 +1279,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             else:
                 return False
 
-        row_index = self._row_locations.get(row_key, -1)
+        if row_key in self._row_locations:
+            row_index = self._row_locations.get(row_key)
+        else:
+            row_index = -1
+
         render_cell = self._render_cell
         if self.fixed_columns:
             fixed_style = self.get_component_styles("datatable--fixed").rich_style
