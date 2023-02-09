@@ -144,12 +144,17 @@ class Switch(Widget, can_focus=True):
         return 1
 
     def on_click(self) -> None:
+        """Toggle the state of the switch."""
         self.toggle()
 
     def action_toggle(self) -> None:
+        """Toggle the state of the switch."""
         self.toggle()
 
     def toggle(self) -> None:
-        """Toggle the switch value. As a result of the value changing,
-        a Switch.Changed message will be posted."""
+        """Toggle the switch value.
+
+        As a result of the value changing, a `Switch.Changed` message will
+        be posted.
+        """
         self.value = not self.value
