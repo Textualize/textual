@@ -442,6 +442,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Cache for individual cells."""
         self._line_cache: LRUCache[LineCacheKey, Strip] = LRUCache(1000)
         """Cache for lines within rows."""
+        self._offset_cache: LRUCache[int, list[[tuple[RowKey, int]]]] = LRUCache(1)
+        """Cached y_offset - key is update_count - see y_offsets property for more information"""
 
         self._require_update_dimensions: bool = False
         """Set to re-calculate dimensions on idle."""
@@ -501,10 +503,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         lands on, and the y-offset *within* that row. The length of the returned list
         is therefore the total height of all rows within the DataTable."""
         y_offsets: list[tuple[RowKey, int]] = []
-        for row in self.ordered_rows:
-            row_key = row.key
-            row_height = row.height
-            y_offsets += [(row_key, y) for y in range(row_height)]
+        if self._update_count in self._offset_cache:
+            y_offsets = self._offset_cache[self._update_count]
+        else:
+            for row in self.ordered_rows:
+                row_key = row.key
+                row_height = row.height
+                y_offsets += [(row_key, y) for y in range(row_height)]
+            self._offset_cache = y_offsets
         return y_offsets
 
     @property
