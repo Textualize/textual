@@ -53,3 +53,6 @@ class TwoWayDict(Generic[Key, Value]):
 
     def __len__(self):
         return len(self._forward)
+
+    def __contains__(self, item: Key) -> bool:
+        return item in self._forward

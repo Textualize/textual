@@ -87,8 +87,8 @@ class ColumnKey(StringKey):
 
 
 class CellKey(NamedTuple):
-    row_key: RowKey | str
-    column_key: ColumnKey | str
+    row_key: RowKey
+    column_key: ColumnKey
 
 
 def default_cell_formatter(obj: object) -> RenderableType:
@@ -741,7 +741,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         column = clamp(column, self.fixed_columns, len(self.columns) - 1)
         return Coordinate(row, column)
 
-    def watch_cursor_type(self, old: str, _: str) -> None:
+    def watch_cursor_type(self, old: str, new: str) -> None:
         self._set_hover_cursor(False)
         if self.show_cursor:
             self._highlight_cursor()
@@ -776,16 +776,21 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def _update_column_widths(self, updated_cells: set[CellKey]) -> None:
         for row_key, column_key in updated_cells:
             column = self.columns.get(column_key)
+            if column is None:
+                continue
             console = self.app.console
             label_width = measure(console, column.label, 1)
             content_width = column.content_width
             cell_value = self.data[row_key][column_key]
 
-            new_content_width = measure(console, cell_value, 1)
+            new_content_width = measure(console, default_cell_formatter(cell_value), 1)
 
             if new_content_width < content_width:
                 cells_in_column = self._get_cells_in_column(column_key)
-                cell_widths = [measure(console, cell, 1) for cell in cells_in_column]
+                cell_widths = [
+                    measure(console, default_cell_formatter(cell), 1)
+                    for cell in cells_in_column
+                ]
                 column.content_width = max([*cell_widths, label_width])
             else:
                 column.content_width = max(new_content_width, label_width)
@@ -894,6 +899,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """
         column_key = ColumnKey(key)
         column_index = len(self.columns)
+        label = Text.from_markup(label) if isinstance(label, str) else label
         content_width = measure(self.app.console, label, 1)
         if width is None:
             column = Column(
@@ -1193,7 +1199,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             if is_fixed_style:
                 style += self.get_component_styles("datatable--cursor-fixed").rich_style
 
-        row_key = self._row_locations.get_key(row_index)
+        if is_header_row:
+            row_key = self._header_row_key
+        else:
+            row_key = self._row_locations.get_key(row_index)
+
         column_key = self._column_locations.get_key(column_index)
         cell_cache_key = (row_key, column_key, style, cursor, hover, self._update_count)
         if cell_cache_key not in self._cell_render_cache:
