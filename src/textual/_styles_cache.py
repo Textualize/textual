@@ -8,7 +8,7 @@ from rich.segment import Segment
 from rich.style import Style
 
 from ._border import get_box, render_row
-from ._filter import LineFilter
+from .filter import LineFilter
 from ._opacity import _apply_opacity
 from ._segment_tools import line_pad, line_trim
 from .color import Color

@@ -9,7 +9,7 @@ from rich.segment import Segment
 from rich.style import Style, StyleType
 
 from ._cache import FIFOCache
-from ._filter import LineFilter
+from .filter import LineFilter
 from ._segment_tools import index_to_cell_position
 
 
