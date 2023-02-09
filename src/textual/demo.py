@@ -18,12 +18,12 @@ from textual.containers import Container, Horizontal
 from textual.reactive import reactive, watch
 from textual.widgets import (
     Button,
-    Switch,
     DataTable,
     Footer,
     Header,
     Input,
     Static,
+    Switch,
     TextLog,
 )
 

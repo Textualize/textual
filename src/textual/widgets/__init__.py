@@ -9,7 +9,6 @@ from ..case import camel_to_snake
 # be able to "see" them.
 if typing.TYPE_CHECKING:
     from ._button import Button
-    from ._switch import Switch
     from ._data_table import DataTable
     from ._directory_tree import DirectoryTree
     from ._footer import Footer
@@ -21,6 +20,7 @@ if typing.TYPE_CHECKING:
     from ._placeholder import Placeholder
     from ._pretty import Pretty
     from ._static import Static
+    from ._switch import Switch
     from ._text_log import TextLog
     from ._tree import Tree
     from ._welcome import Welcome
