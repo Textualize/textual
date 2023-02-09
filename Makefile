@@ -68,3 +68,11 @@ build: docs-build-offline
 
 .PHONY: clean
 clean: clean-screenshot-cache clean-offline-docs
+
+.PHONY: setup
+setup:
+	poetry install --extras dev
+
+.PHONY: update
+update:
+	poetry update
