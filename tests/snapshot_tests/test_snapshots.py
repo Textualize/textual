@@ -214,3 +214,7 @@ def test_auto_width_input(snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "auto_width_input.py", press=["tab", *"Hello"]
     )
+
+
+def test_screen_switch(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "screen_switch.py", press=["a", "b"])
