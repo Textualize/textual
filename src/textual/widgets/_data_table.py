@@ -50,11 +50,18 @@ CellType = TypeVar("CellType")
 
 
 class CellDoesNotExist(Exception):
+    """Raised when the user supplies coordinates or cell keys which
+    do not exist in the DataTable."""
+
     pass
 
 
 @functools.total_ordering
 class StringKey:
+    """An object used as a key in a mapping. It can optionally wrap a string,
+    and lookups into a map using the object behave the same as lookups using
+    the string itself."""
+
     value: str | None
 
     def __init__(self, value: str | None = None):
@@ -80,14 +87,26 @@ class StringKey:
 
 
 class RowKey(StringKey):
+    """Uniquely identifies a row in the DataTable. Even if the visual location
+    of the row changes due to sorting or other modifications, a key will always
+    refer to the same row."""
+
     pass
 
 
 class ColumnKey(StringKey):
+    """Uniquely identifies a column in the DataTable. Even if the visual location
+    of the column changes due to sorting or other modifications, a key will always
+    refer to the same column."""
+
     pass
 
 
 class CellKey(NamedTuple):
+    """A unique identifier for a cell in the DataTable. Even if the cell changes
+    visual location (i.e. moves to a different coordinate in the table), this key
+    can still be used to retrieve it, regardless of where it currently is."""
+
     row_key: RowKey
     column_key: ColumnKey
 
@@ -113,13 +132,11 @@ def default_cell_formatter(obj: object) -> RenderableType:
 
 @dataclass
 class Column:
-    """Table column."""
+    """Metadata for a column in the DataTable."""
 
     key: ColumnKey
     label: Text
     width: int = 0
-    visible: bool = False
-
     content_width: int = 0
     auto_width: bool = False
 
@@ -135,11 +152,10 @@ class Column:
 
 @dataclass
 class Row:
-    """Table row."""
+    """Metadata for a row in the DataTable."""
 
     key: RowKey
     height: int
-    cell_renderables: list[RenderableType] = field(default_factory=list)
 
 
 class DataTable(ScrollView, Generic[CellType], can_focus=True):
