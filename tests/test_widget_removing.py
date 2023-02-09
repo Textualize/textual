@@ -8,9 +8,13 @@ from textual.containers import Container
 async def test_remove_single_widget():
     """It should be possible to the only widget on a screen."""
     async with App().run_test() as pilot:
-        await pilot.app.mount(Static())
+        widget = Static()
+        assert not widget.is_attached
+        await pilot.app.mount(widget)
+        assert widget.is_attached
         assert len(pilot.app.screen.children) == 1
         await pilot.app.query_one(Static).remove()
+        assert not widget.is_attached
         assert len(pilot.app.screen.children) == 0
 
 

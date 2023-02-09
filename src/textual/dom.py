@@ -22,6 +22,7 @@ from rich.tree import Tree
 
 from ._context import NoActiveAppError
 from ._node_list import NodeList
+from ._types import CallbackType
 from .binding import Bindings, BindingType
 from .color import BLACK, WHITE, Color
 from .css._error_tools import friendly_list
@@ -31,7 +32,7 @@ from .css.parse import parse_declarations
 from .css.styles import RenderStyles, Styles
 from .css.tokenize import IDENTIFIER
 from .message_pump import MessagePump
-from .reactive import Reactive
+from .reactive import Reactive, _watch
 from .timer import Timer
 from .walk import walk_breadth_first, walk_depth_first
 
@@ -646,6 +647,23 @@ class DOMNode(MessagePump):
 
         """
         return [child for child in self.children if child.display]
+
+    def watch(
+        self,
+        obj: DOMNode,
+        attribute_name: str,
+        callback: CallbackType,
+        init: bool = True,
+    ) -> None:
+        """Watches for modifications to reactive attributes on another object.
+
+        Args:
+            obj: Object containing attribute to watch.
+            attribute_name: Attribute to watch.
+            callback: A callback to run when attribute changes.
+            init: Check watchers on first call.
+        """
+        _watch(self, obj, attribute_name, callback, init=init)
 
     def get_pseudo_classes(self) -> Iterable[str]:
         """Get any pseudo classes applicable to this Node, e.g. hover, focus.

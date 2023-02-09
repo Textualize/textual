@@ -17,7 +17,7 @@ import rich.repr
 
 from . import events
 from ._callback import count_parameters
-from ._types import MessageTarget
+from ._types import MessageTarget, CallbackType
 
 if TYPE_CHECKING:
     from .dom import DOMNode
@@ -242,9 +242,18 @@ class Reactive(Generic[ReactiveType]):
         if callable(watch_function):
             invoke_watcher(watch_function, old_value, value)
 
-        watchers: list[Callable] = getattr(obj, "__watchers", {}).get(name, [])
-        for watcher in watchers:
-            invoke_watcher(watcher, old_value, value)
+        # Process "global" watchers
+        watchers: list[tuple[Reactable, Callable]]
+        watchers = getattr(obj, "__watchers", {}).get(name, [])
+        # Remove any watchers for reactables that have since closed
+        if watchers:
+            watchers[:] = [
+                (reactable, callback)
+                for reactable, callback in watchers
+                if reactable.is_attached and not reactable._closing
+            ]
+            for _, callback in watchers:
+                invoke_watcher(callback, old_value, value)
 
     @classmethod
     def _compute(cls, obj: Reactable) -> None:
@@ -316,10 +325,12 @@ class var(Reactive[ReactiveType]):
         )
 
 
-def watch(
+def _watch(
+    node: DOMNode,
     obj: Reactable,
     attribute_name: str,
-    callback: Callable[[Any], object],
+    callback: CallbackType,
+    *,
     init: bool = True,
 ) -> None:
     """Watch a reactive variable on an object.
@@ -333,11 +344,11 @@ def watch(
 
     if not hasattr(obj, "__watchers"):
         setattr(obj, "__watchers", {})
-    watchers: dict[str, list[Callable]] = getattr(obj, "__watchers")
+    watchers: dict[str, list[tuple[Reactable, Callable]]] = getattr(obj, "__watchers")
     watcher_list = watchers.setdefault(attribute_name, [])
     if callback in watcher_list:
         return
-    watcher_list.append(callback)
+    watcher_list.append((node, callback))
     if init:
         current_value = getattr(obj, attribute_name, None)
         Reactive._check_watchers(obj, attribute_name, current_value)
