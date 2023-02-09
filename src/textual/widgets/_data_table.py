@@ -1,19 +1,10 @@
 from __future__ import annotations
 
 import functools
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from itertools import chain, zip_longest
 from operator import itemgetter
-from typing import (
-    ClassVar,
-    Generic,
-    Iterable,
-    TypeVar,
-    cast,
-    NamedTuple,
-    Any,
-    Sequence,
-)
+from typing import Any, ClassVar, Generic, Iterable, NamedTuple, TypeVar, cast
 
 import rich.repr
 from rich.console import RenderableType
@@ -22,7 +13,7 @@ from rich.protocol import is_renderable
 from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text, TextType
-from typing_extensions import TypeAlias, Literal
+from typing_extensions import Literal, TypeAlias
 
 from .. import events, messages
 from .._cache import LRUCache
@@ -960,7 +951,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         row_index = self.row_count
         row_key = RowKey(key)
 
-        # TODO: If there are no columns, do we generate them here?
+        # TODO: If there are no columns: do we generate them here?
         #  If we don't do this, users will be required to call add_column(s)
         #  Before they call add_row.
 
