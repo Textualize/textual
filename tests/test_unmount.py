@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from textual.app import App, ComposeResult
 from textual import events
+from textual.app import App, ComposeResult
 from textual.containers import Container
 from textual.screen import Screen
 

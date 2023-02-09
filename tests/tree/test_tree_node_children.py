@@ -1,4 +1,5 @@
 import pytest
+
 from textual.widgets import Tree
 from textual.widgets.tree import TreeNode
 

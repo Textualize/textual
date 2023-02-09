@@ -7,7 +7,6 @@ This should only be imported on Windows.
 
 from time import sleep as time_sleep
 
-
 __all__ = ["sleep"]
 
 

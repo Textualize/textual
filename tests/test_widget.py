@@ -5,7 +5,7 @@ from textual.app import App, ComposeResult
 from textual.css.errors import StyleValueError
 from textual.css.query import NoMatches
 from textual.geometry import Size
-from textual.widget import Widget, MountError
+from textual.widget import MountError, Widget
 from textual.widgets import Label
 
 

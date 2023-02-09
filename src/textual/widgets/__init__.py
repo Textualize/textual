@@ -1,6 +1,7 @@
 from __future__ import annotations
-from importlib import import_module
+
 import typing
+from importlib import import_module
 
 from ..case import camel_to_snake
 
@@ -8,6 +9,7 @@ from ..case import camel_to_snake
 # but also to the `__init__.pyi` file in this same folder - otherwise text editors and type checkers won't
 # be able to "see" them.
 if typing.TYPE_CHECKING:
+    from ..widget import Widget
     from ._button import Button
     from ._data_table import DataTable
     from ._directory_tree import DirectoryTree
@@ -24,7 +26,6 @@ if typing.TYPE_CHECKING:
     from ._text_log import TextLog
     from ._tree import Tree
     from ._welcome import Welcome
-    from ..widget import Widget
 
 
 __all__ = [

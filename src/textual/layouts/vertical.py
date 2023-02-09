@@ -3,9 +3,9 @@ from __future__ import annotations
 from fractions import Fraction
 from typing import TYPE_CHECKING
 
+from .._layout import ArrangeResult, Layout, WidgetPlacement
 from .._resolve import resolve_box_models
 from ..geometry import Region, Size
-from .._layout import ArrangeResult, Layout, WidgetPlacement
 
 if TYPE_CHECKING:
     from ..widget import Widget

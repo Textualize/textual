@@ -1,4 +1,5 @@
 from rich.console import Console
+
 from textual.app import App
 from textual.widgets import Input
 

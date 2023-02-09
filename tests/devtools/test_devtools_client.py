@@ -30,7 +30,6 @@ async def test_devtools_client_is_connected(devtools):
 
 @time_machine.travel(datetime.utcfromtimestamp(TIMESTAMP))
 async def test_devtools_log_places_encodes_and_queues_message(devtools):
-
     await devtools._stop_log_queue_processing()
     devtools.log(DevtoolsLog("Hello, world!", CALLER))
     queued_log = await devtools.log_queue.get()

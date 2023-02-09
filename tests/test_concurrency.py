@@ -1,6 +1,7 @@
+from threading import Thread
+
 import pytest
 
-from threading import Thread
 from textual.app import App, ComposeResult
 from textual.widgets import TextLog
 

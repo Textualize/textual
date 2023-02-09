@@ -10,14 +10,7 @@ when setting and getting.
 from __future__ import annotations
 
 from operator import attrgetter
-from typing import (
-    TYPE_CHECKING,
-    Generic,
-    Iterable,
-    NamedTuple,
-    TypeVar,
-    cast,
-)
+from typing import TYPE_CHECKING, Generic, Iterable, NamedTuple, TypeVar, cast
 
 import rich.errors
 import rich.repr
@@ -611,11 +604,8 @@ class LayoutProperty:
                 or a ``Layout`` object.
         """
 
-        from ..layouts.factory import (
-            Layout,  # Prevents circular import
-            MissingLayout,
-            get_layout,
-        )
+        from ..layouts.factory import Layout  # Prevents circular import
+        from ..layouts.factory import MissingLayout, get_layout
 
         _rich_traceback_omit = True
         if layout is None:

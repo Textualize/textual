@@ -1,7 +1,7 @@
 import pytest
 
-from textual.widget import Widget
 from textual._node_list import NodeList
+from textual.widget import Widget
 
 
 def test_empty_list():

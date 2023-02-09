@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.widgets import ListView, ListItem, Label
+from textual.widgets import Label, ListItem, ListView
 
 
 class MyListView(ListView):

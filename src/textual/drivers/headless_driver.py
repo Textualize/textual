@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import asyncio
+
+from .. import events
 from ..driver import Driver
 from ..geometry import Size
-from .. import events
 
 
 class HeadlessDriver(Driver):

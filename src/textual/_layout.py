@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import ClassVar, NamedTuple, TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar, NamedTuple
 
 from .geometry import Region, Size, Spacing
 
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
+
     from .widget import Widget
 
 ArrangeResult: TypeAlias = "tuple[list[WidgetPlacement], set[Widget]]"

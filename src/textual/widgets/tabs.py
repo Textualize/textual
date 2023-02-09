@@ -7,11 +7,11 @@ from typing import Iterable
 from rich.cells import cell_len
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.segment import Segment
-from rich.style import StyleType, Style
+from rich.style import Style, StyleType
 from rich.text import Text
 
 from textual import events
-from textual._layout_resolve import layout_resolve, Edge
+from textual._layout_resolve import Edge, layout_resolve
 from textual.keys import Keys
 from textual.reactive import Reactive
 from textual.renderables.text_opacity import TextOpacity

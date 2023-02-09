@@ -1,5 +1,7 @@
-import pytest
 from typing import cast
+
+import pytest
+
 from textual.widgets import Tree
 from textual.widgets._tree import NodeID
 

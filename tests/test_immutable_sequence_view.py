@@ -1,6 +1,7 @@
+from typing import Sequence
+
 import pytest
 
-from typing import Sequence
 from textual._immutable_sequence_view import ImmutableSequenceView
 
 

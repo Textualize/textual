@@ -4,8 +4,8 @@ Timer context manager, only used in debug.
 """
 
 import contextlib
-from typing import Generator
 from time import perf_counter
+from typing import Generator
 
 from . import log
 

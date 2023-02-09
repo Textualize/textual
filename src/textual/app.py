@@ -50,7 +50,6 @@ from ._context import active_app
 from ._event_broker import NoHandler, extract_handler_actions
 from ._filter import LineFilter, Monochrome
 from ._path import _make_path_object_relative
-
 from ._wait import wait_for_idle
 from .actions import SkipAction
 from .await_remove import AwaitRemove
