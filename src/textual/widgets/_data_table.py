@@ -44,8 +44,6 @@ class CellDoesNotExist(Exception):
     """Raised when the user supplies coordinates or cell keys which
     do not exist in the DataTable."""
 
-    pass
-
 
 @functools.total_ordering
 class StringKey:
@@ -66,10 +64,10 @@ class StringKey:
     def __eq__(self, other: object) -> bool:
         # Strings will match Keys containing the same string value.
         # Otherwise, you'll need to supply the exact same key object.
-        try:
+        if isinstance(other, (str, StringKey)):
             return hash(self) == hash(other)
-        except TypeError:
-            return False
+        else:
+            raise NotImplemented
 
     def __lt__(self, other):
         if isinstance(other, str):
@@ -82,15 +80,11 @@ class RowKey(StringKey):
     of the row changes due to sorting or other modifications, a key will always
     refer to the same row."""
 
-    pass
-
 
 class ColumnKey(StringKey):
     """Uniquely identifies a column in the DataTable. Even if the visual location
     of the column changes due to sorting or other modifications, a key will always
     refer to the same column."""
-
-    pass
 
 
 class CellKey(NamedTuple):
@@ -637,7 +631,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             return self.header_height
         return self.rows[row_key].height
 
-    async def on_styles_updated(self, _: messages.StylesUpdated) -> None:
+    async def on_styles_updated(self) -> None:
         self._clear_caches()
         self.refresh()
 
