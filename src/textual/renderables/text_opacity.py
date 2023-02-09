@@ -3,7 +3,7 @@ from typing import Iterable, Tuple, cast
 
 from rich.cells import cell_len
 from rich.color import Color
-from rich.console import ConsoleOptions, Console, RenderResult, RenderableType
+from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.segment import Segment
 from rich.style import Style
 

@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from functools import lru_cache
-from typing import cast, Tuple, Union
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Tuple, Union, cast
 
 from rich.segment import Segment
 from rich.style import Style
@@ -192,7 +191,7 @@ BORDER_LOCATIONS: dict[
 
 INVISIBLE_EDGE_TYPES = cast("frozenset[EdgeType]", frozenset(("", "none", "hidden")))
 
-BorderValue: TypeAlias = Tuple[EdgeType, Union[str, Color, Style]]
+BorderValue: TypeAlias = Tuple[EdgeType, Color]
 
 BoxSegments: TypeAlias = Tuple[
     Tuple[Segment, Segment, Segment],

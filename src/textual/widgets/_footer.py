@@ -8,7 +8,7 @@ from rich.console import RenderableType
 from rich.text import Text
 
 from .. import events
-from ..reactive import Reactive, watch
+from ..reactive import Reactive
 from ..widget import Widget
 
 
@@ -66,7 +66,7 @@ class Footer(Widget):
         self.refresh()
 
     def on_mount(self) -> None:
-        watch(self.screen, "focused", self._focus_changed)
+        self.watch(self.screen, "focused", self._focus_changed)
 
     def _focus_changed(self, focused: Widget | None) -> None:
         self._key_text = None

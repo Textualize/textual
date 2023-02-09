@@ -14,7 +14,7 @@ def text():
 
 def test_simple_text_opacity(text):
     blended_red_on_green = "\x1b[38;2;127;127;0;48;2;0;255;0m"
-    assert render(TextOpacity(text, opacity=.5)) == (
+    assert render(TextOpacity(text, opacity=0.5)) == (
         f"{blended_red_on_green}Hello, world!{STOP}"
     )
 
@@ -31,19 +31,21 @@ def test_text_opacity_value_of_one_noop(text):
 
 def test_ansi_colors_noop():
     ansi_colored_text = Text("Hello, world!", style="red on green", end="")
-    assert render(TextOpacity(ansi_colored_text, opacity=.5)) == render(ansi_colored_text)
+    assert render(TextOpacity(ansi_colored_text, opacity=0.5)) == render(
+        ansi_colored_text
+    )
 
 
 def test_text_opacity_no_style_noop():
     text_no_style = Text("Hello, world!", end="")
-    assert render(TextOpacity(text_no_style, opacity=.2)) == render(text_no_style)
+    assert render(TextOpacity(text_no_style, opacity=0.2)) == render(text_no_style)
 
 
 def test_text_opacity_only_fg_noop():
     text_only_fg = Text("Hello, world!", style="#ff0000", end="")
-    assert render(TextOpacity(text_only_fg, opacity=.5)) == render(text_only_fg)
+    assert render(TextOpacity(text_only_fg, opacity=0.5)) == render(text_only_fg)
 
 
 def test_text_opacity_only_bg_noop():
     text_only_bg = Text("Hello, world!", style="on #ff0000", end="")
-    assert render(TextOpacity(text_only_bg, opacity=.5)) == render(text_only_bg)
+    assert render(TextOpacity(text_only_bg, opacity=0.5)) == render(text_only_bg)

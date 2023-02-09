@@ -1,8 +1,7 @@
 from textual.app import App, ComposeResult
 from textual.constants import BORDERS
-from textual.widgets import Button, Label
 from textual.containers import Vertical
-
+from textual.widgets import Button, Label
 
 TEXT = """I must not fear.
 Fear is the mind-killer.

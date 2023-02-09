@@ -259,7 +259,6 @@ async def test_reactive_method_call_order():
 
 
 async def test_premature_reactive_call():
-
     watcher_called = False
 
     class BrokenWidget(Widget):
@@ -335,7 +334,6 @@ async def test_watch_compute():
     watch_called: list[bool] = []
 
     class Calculator(App):
-
         numbers = var("0")
         show_ac = var(True)
         value = var("")

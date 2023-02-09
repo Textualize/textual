@@ -1,12 +1,12 @@
 from __future__ import annotations
 
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import TYPE_CHECKING, Iterable
 
 import rich.repr
 
-from dataclasses import dataclass, field
-from enum import Enum
-from typing import Iterable, TYPE_CHECKING
-
+from ._help_renderables import HelpText
 from .styles import Styles
 from .tokenize import Token
 from .types import Specificity3
@@ -156,7 +156,7 @@ class SelectorSet:
 class RuleSet:
     selector_set: list[SelectorSet] = field(default_factory=list)
     styles: Styles = field(default_factory=Styles)
-    errors: list[tuple[Token, str]] = field(default_factory=list)
+    errors: list[tuple[Token, str | HelpText]] = field(default_factory=list)
 
     is_default_rules: bool = False
     tie_breaker: int = 0

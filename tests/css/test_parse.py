@@ -8,7 +8,7 @@ from textual.css.parse import substitute_references
 from textual.css.scalar import Scalar, Unit
 from textual.css.stylesheet import Stylesheet, StylesheetParseError
 from textual.css.tokenize import tokenize
-from textual.css.tokenizer import Token, ReferencedBy
+from textual.css.tokenizer import ReferencedBy, Token
 from textual.css.transition import Transition
 from textual.geometry import Spacing
 from textual.layouts.vertical import VerticalLayout

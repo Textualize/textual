@@ -1,12 +1,12 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 import rich.repr
 
-from .geometry import Region
 from ._types import CallbackType
+from .geometry import Region
 from .message import Message
-
 
 if TYPE_CHECKING:
     from .message_pump import MessagePump

@@ -22,6 +22,7 @@ from rich.tree import Tree
 
 from ._context import NoActiveAppError
 from ._node_list import NodeList
+from ._types import CallbackType
 from .binding import Bindings, BindingType
 from .color import BLACK, WHITE, Color
 from .css._error_tools import friendly_list
@@ -31,7 +32,7 @@ from .css.parse import parse_declarations
 from .css.styles import RenderStyles, Styles
 from .css.tokenize import IDENTIFIER
 from .message_pump import MessagePump
-from .reactive import Reactive
+from .reactive import Reactive, _watch
 from .timer import Timer
 from .walk import walk_breadth_first, walk_depth_first
 
@@ -131,10 +132,12 @@ class DOMNode(MessagePump):
         check_identifiers("class name", *_classes)
         self._classes.update(_classes)
 
-        self.children = NodeList()
+        self.children: NodeList = NodeList()
         self._css_styles: Styles = Styles(self)
         self._inline_styles: Styles = Styles(self)
-        self.styles = RenderStyles(self, self._css_styles, self._inline_styles)
+        self.styles: RenderStyles = RenderStyles(
+            self, self._css_styles, self._inline_styles
+        )
         # A mapping of class names to Styles set in COMPONENT_CLASSES
         self._component_styles: dict[str, RenderStyles] = {}
 
@@ -209,6 +212,10 @@ class DOMNode(MessagePump):
             raise KeyError(f"No {name!r} key in COMPONENT_CLASSES")
         styles = self._component_styles[name]
         return styles
+
+    def _post_mount(self):
+        """Called after the object has been mounted."""
+        Reactive._initialize_object(self)
 
     @property
     def _node_bases(self) -> Iterator[Type[DOMNode]]:
@@ -642,6 +649,23 @@ class DOMNode(MessagePump):
 
         """
         return [child for child in self.children if child.display]
+
+    def watch(
+        self,
+        obj: DOMNode,
+        attribute_name: str,
+        callback: CallbackType,
+        init: bool = True,
+    ) -> None:
+        """Watches for modifications to reactive attributes on another object.
+
+        Args:
+            obj: Object containing attribute to watch.
+            attribute_name: Attribute to watch.
+            callback: A callback to run when attribute changes.
+            init: Check watchers on first call.
+        """
+        _watch(self, obj, attribute_name, callback, init=init)
 
     def get_pseudo_classes(self) -> Iterable[str]:
         """Get any pseudo classes applicable to this Node, e.g. hover, focus.

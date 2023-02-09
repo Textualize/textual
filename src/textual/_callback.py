@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import asyncio
 from functools import lru_cache
-from inspect import signature, isawaitable
-from typing import Any, Callable, TYPE_CHECKING
+from inspect import isawaitable, signature
+from typing import TYPE_CHECKING, Any, Callable
 
 from . import active_app
 

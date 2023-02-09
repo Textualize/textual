@@ -3,7 +3,6 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from itertools import chain, zip_longest
 from typing import Generic, Iterable, cast
-from typing_extensions import ClassVar, TypeVar, Literal
 
 import rich.repr
 from rich.console import RenderableType
@@ -12,6 +11,7 @@ from rich.protocol import is_renderable
 from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text, TextType
+from typing_extensions import ClassVar, Literal, TypeVar
 
 from .. import events, messages
 from .._cache import LRUCache
@@ -1042,7 +1042,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._set_hover_cursor(True)
         if self.show_cursor and self.cursor_type != "none":
             # Only post selection events if there is a visible row/col/cell cursor.
-            self._post_message_selected_message()
+            self._post_selected_message()
             meta = self.get_style_at(event.x, event.y).meta
             if meta:
                 self.cursor_cell = Coordinate(meta["row"], meta["column"])

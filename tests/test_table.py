@@ -46,8 +46,8 @@ async def test_table_clear_with_columns() -> None:
         assert table.data == {}
         assert table.row_count == 0
 
-async def test_table_add_row() -> None:
 
+async def test_table_add_row() -> None:
     app = TableApp()
     async with app.run_test():
         table = app.query_one(DataTable)

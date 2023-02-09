@@ -2,23 +2,24 @@ from __future__ import annotations
 
 from functools import lru_cache
 from pathlib import PurePath
-from typing import Iterator, Iterable, NoReturn
+from typing import Iterable, Iterator, NoReturn
 
+from ..suggestions import get_suggestion
+from ._help_renderables import HelpText
+from ._styles_builder import DeclarationError, StylesBuilder
 from .errors import UnresolvedVariableError
-from .types import Specificity3
-from ._styles_builder import StylesBuilder, DeclarationError
 from .model import (
+    CombinatorType,
     Declaration,
     RuleSet,
     Selector,
-    CombinatorType,
     SelectorSet,
     SelectorType,
 )
 from .styles import Styles
-from ..suggestions import get_suggestion
-from .tokenize import tokenize, tokenize_declarations, Token, tokenize_values
+from .tokenize import Token, tokenize, tokenize_declarations, tokenize_values
 from .tokenizer import EOFError, ReferencedBy
+from .types import Specificity3
 
 SELECTOR_MAP: dict[str, tuple[SelectorType, Specificity3]] = {
     "selector": (SelectorType.TYPE, (0, 0, 1)),
@@ -130,7 +131,7 @@ def parse_rule_set(
 
     declaration = Declaration(token, "")
 
-    errors: list[tuple[Token, str]] = []
+    errors: list[tuple[Token, str | HelpText]] = []
 
     while True:
         token = next(tokens)

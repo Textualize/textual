@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from rich.console import ConsoleOptions, Console, RenderResult
+from rich.console import Console, ConsoleOptions, RenderResult
 from rich.style import StyleType
 from rich.text import Text
 
@@ -99,6 +99,7 @@ class UnderlineBar:
 if __name__ == "__main__":
     import random
     from time import sleep
+
     from rich.color import ANSI_COLOR_NAMES
 
     console = Console()

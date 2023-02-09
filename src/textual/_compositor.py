@@ -25,13 +25,13 @@ from rich.style import Style
 from . import errors
 from ._cells import cell_len
 from ._loop import loop_last
-from .strip import Strip
 from .geometry import NULL_OFFSET, Offset, Region, Size
-
+from .strip import Strip
 
 if TYPE_CHECKING:
-    from .widget import Widget
     from typing_extensions import TypeAlias
+
+    from .widget import Widget
 
 
 class ReflowResult(NamedTuple):

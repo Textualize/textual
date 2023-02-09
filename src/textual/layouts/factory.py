@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 from .._layout import Layout
-from .horizontal import HorizontalLayout
 from .grid import GridLayout
+from .horizontal import HorizontalLayout
 from .vertical import VerticalLayout
 
 LAYOUT_MAP: dict[str, type[Layout]] = {

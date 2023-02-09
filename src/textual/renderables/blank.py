@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from rich.console import ConsoleOptions, Console, RenderResult
+from rich.console import Console, ConsoleOptions, RenderResult
 from rich.segment import Segment
 from rich.style import Style
 

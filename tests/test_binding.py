@@ -3,7 +3,7 @@ from string import ascii_lowercase
 import pytest
 
 from textual.app import App
-from textual.binding import Bindings, Binding, BindingError, NoBinding, InvalidBinding
+from textual.binding import Binding, BindingError, Bindings, InvalidBinding, NoBinding
 
 BINDING1 = Binding("a,b", action="action1", description="description1")
 BINDING2 = Binding("c", action="action2", description="description2")

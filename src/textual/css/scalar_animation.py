@@ -2,15 +2,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from .scalar import ScalarOffset, Scalar
-from .._animator import Animation
-from .._animator import EasingFunction
+from .._animator import Animation, EasingFunction
 from .._types import CallbackType
-
+from .scalar import Scalar, ScalarOffset
 
 if TYPE_CHECKING:
     from ..dom import DOMNode
-
     from .styles import StylesBase
 
 

@@ -7,19 +7,19 @@ import pickle
 from json import JSONDecodeError
 from typing import Any, cast
 
+import msgpack
 from aiohttp import WSMessage, WSMsgType
 from aiohttp.abc import Request
 from aiohttp.web_ws import WebSocketResponse
 from rich.console import Console
 from rich.markup import escape
-import msgpack
 
 from textual._log import LogGroup
 from textual._time import time
 from textual.devtools.renderables import (
+    DevConsoleHeader,
     DevConsoleLog,
     DevConsoleNotice,
-    DevConsoleHeader,
 )
 
 QUEUEABLE_TYPES = {"client_log", "client_spillover"}

@@ -5,19 +5,19 @@ from typing import Iterable, Sequence
 
 from typing_extensions import Literal
 
+from textual.css._error_tools import friendly_list
+from textual.css.scalar import SYMBOL_UNIT
+
 from ..color import ColorParseError
-from ._help_renderables import Example, Bullet, HelpText
+from ._help_renderables import Bullet, Example, HelpText
 from .constants import (
-    VALID_BORDER,
-    VALID_LAYOUT,
     VALID_ALIGN_HORIZONTAL,
     VALID_ALIGN_VERTICAL,
+    VALID_BORDER,
+    VALID_LAYOUT,
     VALID_STYLE_FLAGS,
     VALID_TEXT_ALIGN,
 )
-
-from textual.css._error_tools import friendly_list
-from textual.css.scalar import SYMBOL_UNIT
 
 StylingContext = Literal["inline", "css"]
 """The type of styling the user was using when the error was encountered.

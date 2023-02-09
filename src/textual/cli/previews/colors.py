@@ -2,7 +2,7 @@ from textual.app import App, ComposeResult
 from textual.containers import Horizontal, Vertical
 from textual.design import ColorSystem
 from textual.widget import Widget
-from textual.widgets import Button, Footer, Static, Label
+from textual.widgets import Button, Footer, Label, Static
 
 
 class ColorButtons(Vertical):
