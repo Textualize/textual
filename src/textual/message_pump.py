@@ -125,7 +125,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     @property
     def is_attached(self) -> bool:
-        """Check the node is attached to the app via the DOM."""
+        """Is the node is attached to the app via the DOM."""
         from .app import App
 
         node = self
