@@ -18,7 +18,7 @@ from textual.containers import Container, Horizontal
 from textual.reactive import reactive, watch
 from textual.widgets import (
     Button,
-    Checkbox,
+    Switch,
     DataTable,
     Footer,
     Header,
@@ -138,7 +138,7 @@ Build your own or use the builtin widgets.
 
 - **Input** Text / Password input.
 - **Button** Clickable button with a number of styles.
-- **Checkbox** A checkbox to toggle between states.
+- **Switch** A switch to toggle between states.
 - **DataTable** A spreadsheet-like widget for navigating data. Cells may contain text or Rich renderables.
 - **Tree** An generic tree with expandable nodes.
 - **DirectoryTree** A tree of file and folders.
@@ -199,16 +199,16 @@ class Title(Static):
 
 class DarkSwitch(Horizontal):
     def compose(self) -> ComposeResult:
-        yield Checkbox(value=self.app.dark)
+        yield Switch(value=self.app.dark)
         yield Static("Dark mode toggle", classes="label")
 
     def on_mount(self) -> None:
         watch(self.app, "dark", self.on_dark_change, init=False)
 
     def on_dark_change(self, dark: bool) -> None:
-        self.query_one(Checkbox).value = self.app.dark
+        self.query_one(Switch).value = self.app.dark
 
-    def on_checkbox_changed(self, event: Checkbox.Changed) -> None:
+    def on_switch_changed(self, event: Switch.Changed) -> None:
         self.app.dark = event.value
 
 

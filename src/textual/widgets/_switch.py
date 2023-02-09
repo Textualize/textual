@@ -12,12 +12,12 @@ from ..widget import Widget
 from ..scrollbar import ScrollBarRender
 
 
-class Checkbox(Widget, can_focus=True):
-    """A checkbox widget that represents a boolean value.
+class Switch(Widget, can_focus=True):
+    """A switch widget that represents a boolean value.
 
-    Can be toggled by clicking on it or through its [bindings][textual.widgets.Checkbox.BINDINGS].
+    Can be toggled by clicking on it or through its [bindings][textual.widgets.Switch.BINDINGS].
 
-    The checkbox widget also contains [component classes][textual.widgets.Checkbox.COMPONENT_CLASSES]
+    The switch widget also contains [component classes][textual.widgets.Switch.COMPONENT_CLASSES]
     that enable more customization.
     """
 
@@ -27,20 +27,20 @@ class Checkbox(Widget, can_focus=True):
     """
     | Key(s) | Description |
     | :- | :- |
-    | enter,space | Toggle the checkbox status. |
+    | enter,space | Toggle the switch state. |
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
-        "checkbox--switch",
+        "switch--switch",
     }
     """
     | Class | Description |
     | :- | :- |
-    | `checkbox--switch` | Targets the switch of the checkbox. |
+    | `switch--switch` | Targets the switch of the switch. |
     """
 
     DEFAULT_CSS = """
-    Checkbox {
+    Switch {
         border: tall transparent;
         background: $panel;
         height: auto;
@@ -48,49 +48,49 @@ class Checkbox(Widget, can_focus=True):
         padding: 0 2;
     }
 
-    Checkbox > .checkbox--switch {
+    Switch > .switch--switch {
         background: $panel-darken-2;
         color: $panel-lighten-2;
     }
 
-    Checkbox:hover {
+    Switch:hover {
         border: tall $background;
     }
 
-    Checkbox:focus {
+    Switch:focus {
         border: tall $accent;
     }
 
-    Checkbox.-on {
+    Switch.-on {
 
     }
 
-    Checkbox.-on > .checkbox--switch {
+    Switch.-on > .switch--switch {
         color: $success;
     }
     """
 
     value = reactive(False, init=False)
-    """The value of the checkbox; `True` for on and `False` for off."""
+    """The value of the switch; `True` for on and `False` for off."""
 
     slider_pos = reactive(0.0)
     """The position of the slider."""
 
     class Changed(Message, bubble=True):
-        """Posted when the status of the checkbox changes.
+        """Posted when the status of the switch changes.
 
-        Can be handled using `on_checkbox_changed` in a subclass of `Checkbox`
+        Can be handled using `on_switch_changed` in a subclass of `Switch`
         or in a parent widget in the DOM.
 
         Attributes:
-            value: The value that the checkbox was changed to.
-            input: The `Checkbox` widget that was changed.
+            value: The value that the switch was changed to.
+            input: The `Switch` widget that was changed.
         """
 
-        def __init__(self, sender: Checkbox, value: bool) -> None:
+        def __init__(self, sender: Switch, value: bool) -> None:
             super().__init__(sender)
             self.value: bool = value
-            self.input: Checkbox = sender
+            self.input: Switch = sender
 
     def __init__(
         self,
@@ -101,14 +101,14 @@ class Checkbox(Widget, can_focus=True):
         id: str | None = None,
         classes: str | None = None,
     ):
-        """Initialise the checkbox.
+        """Initialise the switch.
 
         Args:
-            value: The initial value of the checkbox. Defaults to False.
-            animate: True if the checkbox should animate when toggled. Defaults to True.
-            name: The name of the checkbox.
-            id: The ID of the checkbox in the DOM.
-            classes: The CSS classes of the checkbox.
+            value: The initial value of the switch. Defaults to False.
+            animate: True if the switch should animate when toggled. Defaults to True.
+            name: The name of the switch.
+            id: The ID of the switch in the DOM.
+            classes: The CSS classes of the switch.
         """
         super().__init__(name=name, id=id, classes=classes)
         if value:
@@ -128,7 +128,7 @@ class Checkbox(Widget, can_focus=True):
         self.set_class(slider_pos == 1, "-on")
 
     def render(self) -> RenderableType:
-        style = self.get_component_rich_style("checkbox--switch")
+        style = self.get_component_rich_style("switch--switch")
         return ScrollBarRender(
             virtual_size=100,
             window_size=50,
@@ -150,6 +150,6 @@ class Checkbox(Widget, can_focus=True):
         self.toggle()
 
     def toggle(self) -> None:
-        """Toggle the checkbox value. As a result of the value changing,
-        a Checkbox.Changed message will be posted."""
+        """Toggle the switch value. As a result of the value changing,
+        a Switch.Changed message will be posted."""
         self.value = not self.value
