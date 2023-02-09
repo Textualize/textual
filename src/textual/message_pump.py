@@ -123,6 +123,11 @@ class MessagePump(metaclass=MessagePumpMeta):
         """
         return self.app._logger
 
+    @property
+    def is_attached(self) -> bool:
+        """Check the node is attached to the DOM"""
+        return self._parent is not None
+
     def _attach(self, parent: MessagePump) -> None:
         """Set the parent, and therefore attach this node to the tree.
 
