@@ -12,6 +12,7 @@ from typing import (
     cast,
     NamedTuple,
     Any,
+    Sequence,
 )
 
 import rich.repr
@@ -1138,12 +1139,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """
         ordered_columns = self.ordered_columns
         if row_index == -1:
-            row = [column.label for column in ordered_columns]
+            row: list[RenderableType] = [column.label for column in ordered_columns]
             return row
 
         # Ensure we order the cells in the row based on current column ordering
         row_key = self._row_locations.get_key(row_index)
-        cell_mapping: dict[ColumnKey, CellType] = self.data.get(row_key)
+        cell_mapping: dict[ColumnKey, CellType] = self.data.get(row_key, {})
 
         ordered_row: list[CellType] = []
         for column in ordered_columns:

@@ -261,7 +261,7 @@ async def test_column_labels() -> None:
     async with app.run_test():
         table = app.query_one(DataTable)
         table.add_columns("1", "2", "3")
-        actual_labels = [col.label for col in table.columns.values()]
+        actual_labels = [col.label.plain for col in table.columns.values()]
         expected_labels = ["1", "2", "3"]
         assert actual_labels == expected_labels
 
