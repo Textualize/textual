@@ -183,7 +183,7 @@ def parse_declarations(css: str, path: str) -> Styles:
     styles_builder = StylesBuilder()
 
     declaration: Declaration | None = None
-    errors: list[tuple[Token, str]] = []
+    errors: list[tuple[Token, str | HelpText]] = []
 
     while True:
         token = next(tokens, None)

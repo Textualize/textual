@@ -111,7 +111,7 @@ class DOMNode(MessagePump):
     _css_type_names: ClassVar[frozenset[str]] = frozenset()
 
     # Generated list of bindings
-    _merged_bindings: ClassVar[Bindings] | None = None
+    _merged_bindings: ClassVar[Bindings | None] = None
 
     _reactives: ClassVar[dict[str, Reactive]]
 
