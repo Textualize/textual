@@ -70,19 +70,93 @@ Build sophisticated user interfaces with a simple Python API. Run your apps in t
 </div>
 
 
+## Example Apps
 
-```{.textual path="examples/calculator.py" columns=100 lines=41 press="3,.,1,4,5,9,2,_,_,_,_,_,_,_,_"}
-```
+CalculatorApp is a working 'desktop' calculator which demonstrates Textual [grid layouts](./guide/layout.md#grid).
 
-```{.textual path="examples/pride.py"}
-```
+=== "Output"
 
-```{.textual path="docs/examples/tutorial/stopwatch.py" columns="100" lines="30" press="d,tab,enter,_,_"}
-```
+    ```{.textual path="examples/calculator.py" columns=100 lines=41 press="3,.,1,4,5,9,2,_,_,_,_,_,_,_,_"}
+    ```
 
+=== "calculator.py"
 
-```{.textual path="docs/examples/guide/layout/combining_layouts.py" columns="100", lines="30"}
-```
+    ```python
+    --8<-- "examples/calculator.py"
+    ```
 
-```{.textual path="docs/examples/app/widgets01.py"}
-```
+=== "calculator.css"
+
+    ```sass
+    --8<-- "examples/calculator.css"
+    ```
+
+PrideApp which displays a pride flag.
+
+=== "Output"
+
+    ```{.textual path="examples/pride.py"}
+    ```
+
+=== "pride.py"
+
+    ```python
+    --8<-- "examples/pride.py"
+    ```
+
+StopwatchApp which you will learn to build by following the [Tutorial](./tutorial.md).
+
+=== "Output"
+
+    ```{.textual path="docs/examples/tutorial/stopwatch.py" columns="100" lines="30" press="d,tab,enter,_,_"}
+    ```
+
+=== "stopwatch.py"
+
+    ```python
+    --8<-- "docs/examples/tutorial/stopwatch.py"
+    ```
+
+=== "stopwatch.css"
+
+    ```sass
+    --8<-- "docs/examples/tutorial/stopwatch.css"
+    ```
+
+DictionaryApp looks up word definitions from an [api](https://dictionaryapi.dev/) as you type using [Async handlers](./guide/events.md#asyc-handlers).
+
+=== "Output"
+
+    ```{.textual path="examples/dictionary.py"}
+    ```
+
+=== "dictionary.py"
+
+    ```python
+    --8<-- "examples/dictionary.py"
+    ```
+
+=== "dictionary.css"
+
+    ```sass
+    --8<-- "examples/dictionary.css"
+    ```
+
+CombinedLayoutsExample shows how an advanced layout can be built by combining the various techniques described in the [Layout](./guide/layout.md) guide.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/layout/combining_layouts.py"}
+    ```
+
+=== "combining_layouts.py"
+
+    ```python
+    --8<-- "docs/examples/guide/layout/combining_layouts.py"
+    ```
+
+=== "combining_layouts.css"
+
+    ```sass
+    --8<-- "docs/examples/guide/layout/combining_layouts.css"
+    ```
