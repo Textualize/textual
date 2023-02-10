@@ -231,7 +231,7 @@ class Screen(Widget):
         else:
             # Only move the focus if we are currently showing the focus
             if direction:
-                to_focus: Widget | None = None
+                to_focus = None
                 chain_length = len(focus_chain)
                 for step in range(1, len(focus_chain) + 1):
                     node = focus_chain[

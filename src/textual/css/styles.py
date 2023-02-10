@@ -474,7 +474,7 @@ class StylesBase(ABC):
 
     @classmethod
     @lru_cache(maxsize=1024)
-    def parse(cls, css: str, path: str, *, node: DOMNode = None) -> Styles:
+    def parse(cls, css: str, path: str, *, node: DOMNode | None = None) -> Styles:
         """Parse CSS and return a Styles object.
 
         Args:
