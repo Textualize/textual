@@ -21,7 +21,7 @@ This behavior is [well documented](https://docs.python.org/3/library/asyncio-tas
 
 ![create task](../images/async-create-task.jpeg)
 
-But who reads all the docs? And who has perfect recall if they do? A search on GitHub indicates that there are a [lot of projects](https://github.com/search?q=%22asyncio.create_task%28%22&type=code) where this bug is waiting just for the right moment to ruin somebody's day.
+But who reads all the docs? And who has perfect recall if they do? A search on GitHub indicates that there are a [lot of projects](https://github.com/search?q=%22asyncio.create_task%28%22&type=code) where this bug is waiting for just the right moment to ruin somebody's day.
 
 I suspect the reason this mistake is so common is that tasks are a lot like threads (conceptually at least). With threads you can just launch them and forget. Unless you mark them as "daemon" threads they will exist for the lifetime of your app. Not so with Tasks.
 
