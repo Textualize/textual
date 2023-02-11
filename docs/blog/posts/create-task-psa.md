@@ -9,7 +9,7 @@ authors:
 
 # The Heisenbug lurking in your async code
 
-I'm taking a brief break from blogging about [Textual](https://github.com/Textualize/textual) to bring you this brief PSA for Python developers who work with async code. I wanted to expand a little on this [tweet](https://twitter.com/Mtrl_Scientist/status/1624439847174676480).
+I'm taking a brief break from blogging about [Textual](https://github.com/Textualize/textual) to bring you this brief PSA for Python developers who work with async code. I wanted to expand a little on this [tweet](https://twitter.com/willmcgugan/status/1624419352211603461).
 
 <!-- more -->
 
