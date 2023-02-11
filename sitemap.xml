@@ -216,6 +216,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://textual.textualize.io/blog/2023/02/11/the-heisenbug-lurking-in-your-async-code/</loc>
+         <lastmod>2023-02-11</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://textual.textualize.io/blog/2022/12/20/a-year-of-building-for-the-terminal/</loc>
          <lastmod>2023-02-11</lastmod>
          <changefreq>daily</changefreq>

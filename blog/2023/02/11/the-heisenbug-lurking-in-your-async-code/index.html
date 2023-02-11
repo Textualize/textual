@@ -8,13 +8,11 @@
       
       
       
-        <link rel="canonical" href="https://textual.textualize.io/blog/2023/01/09/so-youre-looking-for-a-wee-bit-of-textual-help/">
+        <link rel="canonical" href="https://textual.textualize.io/blog/2023/02/11/the-heisenbug-lurking-in-your-async-code/">
       
       
-        <link rel="prev" href="../../../../2022/12/30/a-better-asyncio-sleep-for-windows-to-fix-animation/">
+        <link rel="prev" href="../../../01/09/so-youre-looking-for-a-wee-bit-of-textual-help/">
       
-      
-        <link rel="next" href="../../../02/11/the-heisenbug-lurking-in-your-async-code/">
       
       
         
@@ -28,7 +26,7 @@
     
     
       
-        <title>So you're looking for a wee bit of Textual help... - Textual</title>
+        <title>The Heisenbug lurking in your async code - Textual</title>
       
     
     
@@ -71,9 +69,9 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@textualizeio">
 <meta name="twitter:creator" content="@willmcgugan">
-<meta property="og:title" content="Textual - So you're looking for a wee bit of Textual help...">
+<meta property="og:title" content="Textual - The Heisenbug lurking in your async code">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://textual.textualize.io/blog/2023/01/09/so-youre-looking-for-a-wee-bit-of-textual-help/">
+<meta property="og:url" content="https://textual.textualize.io/blog/2023/02/11/the-heisenbug-lurking-in-your-async-code/">
 <meta property="og:site_name" content="Textual Documentation">
 <meta property="og:description" content="Textual is a TUI framework for Python, inspired by modern web development.">
 <meta property="og:image" content="https://raw.githubusercontent.com/Textualize/textual/main/imgs/textual.png">
@@ -98,7 +96,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#so-youre-looking-for-a-wee-bit-of-textual-help" class="md-skip">
+        <a href="#the-heisenbug-lurking-in-your-async-code" class="md-skip">
           Skip to content
         </a>
       
@@ -133,7 +131,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              So you're looking for a wee bit of Textual help...
+              The Heisenbug lurking in your async code
             
           </span>
         </div>
@@ -5699,258 +5697,6 @@
     
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#introduction" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Introduction
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#where-to-go-for-help" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Where to go for help
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Where to go for help">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#discord" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Discord
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#github" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        GitHub
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#the-dos-and-donts-of-getting-help" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        The dos and don'ts of getting help
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="The dos and don'ts of getting help">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#do" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Do...
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Do...">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#be-clear-and-detailed" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Be clear and detailed
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#say-what-resources-youve-used-already" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Say what resources you've used already
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#be-polite" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Be polite
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#fully-consider-the-replies" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Fully consider the replies
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#entertain-what-might-seem-like-odd-questions" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Entertain what might seem like odd questions
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#allow-for-language-differences" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Allow for language differences
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#acknowledge-the-answer" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Acknowledge the answer
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#accept-that-textual-is-zero-point-software-right-now" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Accept that Textual is zero-point software (right now)
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dont" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Don't...
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Don't...">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#lack-patience" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Lack patience
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#unnecessarily-tag-individuals" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Unnecessarily tag individuals
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#seek-personal-support" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Seek personal support
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#doubt-your-ability-or-skill-level" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Doubt your ability or skill level
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#conclusion" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Conclusion
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -5978,11 +5724,11 @@
                 
                   <div class="md-profile md-post__profile">
                     <span class="md-author md-author--long">
-                      <img src="https://github.com/davep.png" alt="Dave Pearson">
+                      <img src="https://github.com/willmcgugan.png" alt="Will McGugan">
                     </span>
                     <span class="md-profile__description">
-                      <strong>Dave Pearson</strong><br>
-                      Code-monkey
+                      <strong>Will McGugan</strong><br>
+                      CEO / code-monkey
                     </span>
                   </div>
                 
@@ -5999,7 +5745,7 @@
               <li class="md-nav__item">
                 <div class="md-nav__link">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5v-5Z"/></svg>
-                  <time datetime="2023-01-09 00:00:00" class="md-ellipsis">January 9, 2023</time>
+                  <time datetime="2023-02-11 00:00:00" class="md-ellipsis">February 11, 2023</time>
                 </div>
               </li>
               
@@ -6020,7 +5766,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8m0-18a10 10 0 0 1 10 10 10 10 0 0 1-10 10C6.47 22 2 17.5 2 12A10 10 0 0 1 12 2m.5 5v5.25l4.5 2.67-.75 1.23L11 13V7h1.5Z"/></svg>
                     <span class="md-ellipsis">
                       
-                        11 min read
+                        2 min read
                       
                     </span>
                   </div>
@@ -6042,261 +5788,16 @@
 
 
 
-<h1 id="so-youre-looking-for-a-wee-bit-of-textual-help">So you're looking for a wee bit of Textual help...<a class="headerlink" href="#so-youre-looking-for-a-wee-bit-of-textual-help" title="Permanent link">&para;</a></h1>
-<h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h2>
-<div class="admonition quote">
-<p class="admonition-title">Quote</p>
-<p>Patience, Highlander. You have done well. But it'll take time. You are
-generations being born and dying. You are at one with all living things.
-Each man's thoughts and dreams are yours to know. You have power beyond
-imagination. Use it well, my friend. Don't lose your head.</p>
-<p><cite>Juan Sánchez Villalobos Ramírez, Chief metallurgist to King Charles V of Spain</cite></p>
-</div>
-<p>As of the time of writing, I'm a couple or so days off having been with
-Textualize for 3 months. It's been fun, and educational, and every bit as
-engaging as I'd hoped, and more. One thing I hadn't quite prepared for
-though, but which I really love, is how so many other people are learning
-Textual along with me.</p>
+<h1 id="the-heisenbug-lurking-in-your-async-code">The Heisenbug lurking in your async code<a class="headerlink" href="#the-heisenbug-lurking-in-your-async-code" title="Permanent link">&para;</a></h1>
+<p>I'm taking a brief break from blogging about <a href="https://github.com/Textualize/textual">Textual</a> to bring you this brief PSA for Python developers who work with async code. I wanted to expand a little on this <a href="https://twitter.com/Mtrl_Scientist/status/1624439847174676480">tweet</a>.</p>
 <!-- more -->
 
-<p>Even in those three months the library has changed and expanded quite a lot,
-and it continues to do so. Meanwhile, more people are turning up and using
-the framework; you can see this online in social media, blogs and of course
-<a href="https://github.com/Textualize/textual/network/dependents">in the ever-growing list of projects on GitHub which depend on
-Textual</a>.</p>
-<p>This inevitably means there's a lot of people getting to grips with a new
-tool, and one that is still a bit of a moving target. This in turn means
-lots of people are coming to us to get help.</p>
-<p>As I've watched this happen I've noticed a few patterns emerging. Some of
-these good or neutral, some... let's just say not really beneficial to those
-seeking the help, or to those trying to provide the help. So I wanted to
-write a little bit about the different ways you can get help with Textual
-and your Textual-based projects, and to also try and encourage people to
-take the most helpful and positive approach to getting that help.</p>
-<p>Now, before I go on, I want to make something <em>very</em> clear: I'm writing this
-as an individual. This is my own personal view, and my own advice from me to
-anyone who wishes to take it. It's not Textual (the project) or Textualize
-(the company) policy, rules or guidelines. This is just some ageing hacker's
-take on how best to go about asking for help, informed by years of asking
-for and also providing help in email, on Usenet, on forums, etc.</p>
-<p>Or, put another way: if what you read in here seems sensible to you, I
-figure we'll likely have already hit it off <a href="https://github.com/Textualize/textual">over on
-GitHub</a> or in <a href="https://discord.gg/Enf6Z3qhVr">the Discord
-server</a>. ;-)</p>
-<h2 id="where-to-go-for-help">Where to go for help<a class="headerlink" href="#where-to-go-for-help" title="Permanent link">&para;</a></h2>
-<p>At this point this is almost a bit of an FAQ itself, so I thought I'd
-address it here: where's the best place to ask for help about Textual, and
-what's the difference between GitHub Issues, Discussions and our Discord
-server?</p>
-<p>I'd suggest thinking of them like this:</p>
-<h3 id="discord">Discord<a class="headerlink" href="#discord" title="Permanent link">&para;</a></h3>
-<p>You have a question, or need help with something, and perhaps you could do
-with a reply as soon as possible. But, and this is the <strong>really important
-part</strong>, it doesn't matter if you don't get a response. If you're in this
-situation then the Discord server is possibly a good place to start. If
-you're lucky someone will be hanging about who can help out.</p>
-<p>I can't speak for anyone else, but keep this in mind: when I look in on
-Discord I tend not to go scrolling back much to see if anything has been
-missed. If something catches my eye, I'll try and reply, but if it
-doesn't... well, it's mostly an instant chat thing so I don't dive too
-deeply back in time.</p>
-<div class="admonition tip inline end">
-<p class="admonition-title">Going from Discord to a GitHub issue</p>
-<p>As a slight aside here: sometimes people will pop up in Discord, ask a
-question about something that turns out looking like a bug, and that's
-the last we hear of it. Please, please, <strong>please</strong>, if this happens, the
-most helpful thing you can do is go raise an issue for us. It'll help us
-to keep track of problems, it'll help get your problem fixed, it'll mean
-everyone benefits.</p>
-</div>
-<p>My own advice would be to treat Discord as an ephemeral resource. It happens
-in the moment but fades away pretty quickly. It's like knocking on a
-friend's door to see if they're in. If they're not in, you might leave them
-a note, which is sort of like going to...</p>
-<h3 id="github">GitHub<a class="headerlink" href="#github" title="Permanent link">&para;</a></h3>
-<p>On the other hand, if you have a question or need some help or something
-where you want to stand a good chance of the Textual developers (amongst
-others) seeing it and responding, I'd recommend that GitHub is the place to
-go. Dropping something into the discussions there, or leaving an issue,
-ensures it'll get seen. It won't get lost.</p>
-<p>As for which you should use -- a discussion or an issue -- I'd suggest this:
-if you need help with something, or you want to check your understanding of
-something, or you just want to be sure something is a problem before taking
-it further, a discussion might be the best thing. On the other hand, if
-you've got a clear bug or feature request on your hands, an issue makes a
-lot of sense.</p>
-<p>Don't worry if you're not sure which camp your question or whatever falls
-into though; go with what you think is right. There's no harm done either
-way (I may move an issue to a discussion first before replying, if it's
-really just a request for help -- but that's mostly so everyone can benefit
-from finding it in the right place later on down the line).</p>
-<h2 id="the-dos-and-donts-of-getting-help">The dos and don'ts of getting help<a class="headerlink" href="#the-dos-and-donts-of-getting-help" title="Permanent link">&para;</a></h2>
-<p>Now on to the fun part. This is where I get a bit preachy. Ish. Kinda. A
-little bit. Again, please remember, this isn't a set of rules, this isn't a
-set of official guidelines, this is just a bunch of <em>"if you want my advice,
-and I know you didn't ask but you've read this far so you actually sort of
-did don't say I didn't warn you!"</em> waffle.</p>
-<p>This isn't going to be an exhaustive collection, far from it. But I feel
-these are some important highlights.</p>
-<h3 id="do">Do...<a class="headerlink" href="#do" title="Permanent link">&para;</a></h3>
-<p>When looking for help, in any of the locations mentioned above, I'd totally
-encourage:</p>
-<h4 id="be-clear-and-detailed">Be clear and detailed<a class="headerlink" href="#be-clear-and-detailed" title="Permanent link">&para;</a></h4>
-<p>Too much detail is almost always way better than not enough. <em>"My program
-didn't run"</em>, often even with some of the code supplied, is so much harder
-to help than <em>"I ran this code I'm posting here, and I expected this
-particular outcome, and I expected it because I'd read this particular thing
-in the docs and had comprehended it to mean this, but instead the outcome
-was this exception here, and I'm a bit stuck -- can someone offer some
-pointers?"</em></p>
-<p>The former approach means there often ends up having to be a back and forth
-which can last a long time, and which can sometimes be frustrating for the
-person asking. Manage frustration: be clear, tell us everything you can.</p>
-<h4 id="say-what-resources-youve-used-already">Say what resources you've used already<a class="headerlink" href="#say-what-resources-youve-used-already" title="Permanent link">&para;</a></h4>
-<p>If you've read the potions of the documentation that relate to what you're
-trying to do, it's going to be really helpful if you say so. If you don't,
-it might be assumed you haven't and you may end up being pointed at them.</p>
-<p>So, please, if you've checked the documentation, looked in the FAQ, done a
-search of past issues or discussions or perhaps even done a search on the
-Discord server... please say so.</p>
-<h4 id="be-polite">Be polite<a class="headerlink" href="#be-polite" title="Permanent link">&para;</a></h4>
-<p>This one can go a long way when looking for help. Look, I get it,
-programming is bloody frustrating at times. We've all rage-quit some code at
-some point, I'm sure. It's likely going to be your moment of greatest
-frustration when you go looking for help. But if you turn up looking for
-help acting all grumpy and stuff it's not going to come over well. Folk are
-less likely to be motivated to lend a hand to someone who seems rather
-annoyed.</p>
-<p>If you throw in a please and thank-you here and there that makes it all the
-better.</p>
-<h4 id="fully-consider-the-replies">Fully consider the replies<a class="headerlink" href="#fully-consider-the-replies" title="Permanent link">&para;</a></h4>
-<p>You could find yourself getting a reply that you're sure won't help at all.
-That's fair. But be sure to fully consider it first. Perhaps you missed the
-obvious along the way and this is 100% the course correction you'd
-unknowingly come looking for in the first place. Sure, the person replying
-might have totally misunderstood what was being asked, or might be giving a
-wrong answer (it me! I've totally done that and will again!), but even then
-a reply along the lines of <em>"I'm not sure that's what I'm looking for,
-because..."</em> gets everyone to the solution faster than <em>"lol nah"</em>.</p>
-<h4 id="entertain-what-might-seem-like-odd-questions">Entertain what might seem like odd questions<a class="headerlink" href="#entertain-what-might-seem-like-odd-questions" title="Permanent link">&para;</a></h4>
-<p>Aye, I get it, being asked questions when you're looking for an <em>answer</em> can
-be a bit frustrating. But if you find yourself on the receiving end of a
-small series of questions about your question, keep this in mind: Textual is
-still rather new and still developing and it's possible that what you're
-trying to do isn't the correct way to do that thing. To the person looking
-to help you it may seem to them you have an <a href="https://en.wikipedia.org/wiki/XY_problem">XY
-problem</a>.</p>
-<p>Entertaining those questions might just get you to the real solution to your
-problem.</p>
-<h4 id="allow-for-language-differences">Allow for language differences<a class="headerlink" href="#allow-for-language-differences" title="Permanent link">&para;</a></h4>
-<p>You don't need me to tell you that a project such as Textual has a global
-audience. With that rather obvious fact comes the other fact that we don't
-all share the same first language. So, please, as much as possible, try and
-allow for that. If someone is trying to help you out, and they make it clear
-they're struggling to follow you, keep this in mind.</p>
-<h4 id="acknowledge-the-answer">Acknowledge the answer<a class="headerlink" href="#acknowledge-the-answer" title="Permanent link">&para;</a></h4>
-<p>I suppose this is a variation on "be polite" (really, a thanks can go a long
-way), but there's more to this than a friendly acknowledgement. If someone
-has gone to the trouble of offering some help, it's helpful to everyone who
-comes after you to acknowledge if it worked or not. That way a future
-help-seeker will know if the answer they're reading stands a chance of being
-the right one.</p>
-<h4 id="accept-that-textual-is-zero-point-software-right-now">Accept that Textual is zero-point software (right now)<a class="headerlink" href="#accept-that-textual-is-zero-point-software-right-now" title="Permanent link">&para;</a></h4>
-<p>Of course the aim is to have every release of Textual be stable and useful,
-but things will break. So, please, do keep in mind things like:</p>
-<ul>
-<li>Textual likely doesn't have your feature of choice just yet.</li>
-<li>We might accidentally break something (perhaps pinning Textual and testing
-  each release is a good plan here?).</li>
-<li>We might deliberately break something because we've decided to take a
-  particular feature or way of doing things in a better direction.</li>
-</ul>
-<p>Of course it can be a bit frustrating a times, but overall the aim is to
-have the best framework possible in the long run.</p>
-<h3 id="dont">Don't...<a class="headerlink" href="#dont" title="Permanent link">&para;</a></h3>
-<p>Okay, now for a bit of old-hacker finger-wagging. Here's a few things I'd
-personally discourage:</p>
-<h4 id="lack-patience">Lack patience<a class="headerlink" href="#lack-patience" title="Permanent link">&para;</a></h4>
-<p>Sure, it can be annoying. You're in your flow, you've got a neat idea for a
-thing you want to build, you're stuck on one particular thing and you really
-need help right now! Thing is, that's unlikely to happen. Badgering
-individuals, or a whole resource, to reply right now, or complaining that
-it's been <code>$TIME_PERIOD</code> since you asked and nobody has replied... that's
-just going to make people less likely to reply.</p>
-<h4 id="unnecessarily-tag-individuals">Unnecessarily tag individuals<a class="headerlink" href="#unnecessarily-tag-individuals" title="Permanent link">&para;</a></h4>
-<p>This one often goes hand in hand with the "lack patience" thing: Be it
-asking on Discord, or in GitHub issues, discussions or even PRs,
-unnecessarily tagging individuals is a bit rude. Speaking for myself and
-only myself: I <em>love</em> helping folk with Textual. If I could help everyone
-all the time the moment they have a problem, I would. But it doesn't work
-like that. There's any number of reasons I might not be responding to a
-particular request, including but not limited to (here I'm talking
-personally because I don't want to speak for anyone else, but I'm sure I'm
-not alone here):</p>
-<ul>
-<li>I have a job. Sure, my job is (in part) Textual, but there's more to it
-  than that particular issue. I might be doing other stuff.</li>
-<li>I have my own projects to work on too. I like coding for fun as well (or
-  writing preaching old dude blog posts like this I guess, but you get the
-  idea).</li>
-<li>I actually have other interests outside of work hours so I might actually
-  be out doing a 10k in the local glen, or battling headcrabs in VR, or
-  something.</li>
-<li>Housework. :-/</li>
-</ul>
-<p>You get the idea though. So while I'm off having a well-rounded life, it's
-not good to get unnecessarily intrusive alerts to something that either a)
-doesn't actually directly involve me or b) could wait.</p>
-<h4 id="seek-personal-support">Seek personal support<a class="headerlink" href="#seek-personal-support" title="Permanent link">&para;</a></h4>
-<p>Again, I'm going to speak totally for myself here, but I also feel the
-general case is polite for all: there's a lot of good support resources
-available already; sending DMs on Discord or Twitter or in the Fediverse,
-looking for direct personal support, isn't really the best way to get help.
-Using the public/collective resources is absolutely the <em>best</em> way to get
-that help. Why's it a bad idea to dive into DMs? Here's some reasons I think
-it's not a good idea:</p>
-<ul>
-<li>It's a variation on "unnecessarily tagging individuals".</li>
-<li>You're short-changing yourself when it comes to getting help. If you ask
-  somewhere more public you're asking a much bigger audience, who
-  collectively have more time, more knowledge and more experience than a
-  single individual.</li>
-<li>Following on from that, any answers can be (politely) fact-checked or
-  enhanced by that audience, resulting in a better chance of getting the
-  best help possible.</li>
-<li>The next seeker-of-help gets to miss out on your question and the answer.
-  If asked and answered in public, it's a record that can help someone else
-  in the future.</li>
-</ul>
-<h4 id="doubt-your-ability-or-skill-level">Doubt your ability or skill level<a class="headerlink" href="#doubt-your-ability-or-skill-level" title="Permanent link">&para;</a></h4>
-<p>I suppose this should really be phrased as a do rather than a don't, as here
-I want to encourage something positive. A few times I've helped people out
-who have been very apologetic about their questions being "noob" questions,
-or about how they're fairly new to Python, or programming in general.
-Really, please, don't feel the need to apologise and don't be ashamed of
-where you're at.</p>
-<p>If you've asked something that's obviously answered in the documentation,
-that's not a problem; you'll likely get pointed at the docs and it's what
-happens next that's the key bit. If the attitude is <em>"oh, cool, that's
-exactly what I needed to be reading, thanks!"</em> that's a really positive
-thing. The only time it's a problem is when there's a real reluctance to use
-the available resources. We've all seen that person somewhere at some point,
-right? ;-)</p>
-<p>Not knowing things <a href="https://xkcd.com/1053/">is totally cool</a>.</p>
-<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
-<p>So, that's my waffle over. As I said at the start: this is my own personal
-thoughts on how to get help with Textual, both as someone whose job it is to
-work on Textual and help people with Textual, and also as a FOSS advocate
-and supporter who can normally be found helping Textual users when he's not
-"on the clock" too.</p>
-<p>What I've written here isn't exhaustive. Neither is it novel. Plenty has
-been written on the general subject in the past, and I'm sure more will be
-written on the subject in the future. I do, however, feel that these are the
-most common things I notice. I'd say those dos and don'ts cover 90% of <em>"can
-I get some help?"</em> interactions; perhaps closer to 99%.</p>
-<p>Finally, and I think this is the most important thing to remember, the next
-time you are battling some issue while working with Textual: <a href="https://www.youtube.com/watch?v=KdYvKF9O7Y8">don't lose
-your head</a>!</p>
+<p>If you have ever used <code>asyncio.create_task</code> you may have created a bug for yourself that is challenging (read <em>almost impossible</em>) to reproduce. If it occurs, your code will likely fail in unpredictable ways.</p>
+<p>The root cause of this <a href="Heisenbug">Heisenbug</a> is that if you don't hold a reference to the task object returned by <code>create_task</code> then the task may simply disappear, without warning, when Python runs garbage collection. This behavior is <a href="https://docs.python.org/3/library/asyncio-task.html#asyncio.create_task">well documented</a>, as you can see from this excerpt (emphasis mine):</p>
+<p><img alt="create task" src="../../../../images/async-create-task.jpeg" /></p>
+<p>But who reads all the docs? And who has perfect recall if they do? A search on GitHub indicates that there are a <a href="https://github.com/search?q=%22asyncio.create_task%28%22&amp;type=code">lot of projects</a> where this bug is waiting just for the right moment to ruin somebody's day.</p>
+<p>I suspect the reason this mistake is so common is that tasks are a lot like threads (conceptually at least). With threads you can just launch them and forget. Unless you mark them as "daemon" threads they will exist for the lifetime of your app. Not so with Tasks.</p>
+<p>The solution recommended in the docs is to keep a reference to the task for as long as you need it to live. On modern Python you could use <a href="https://docs.python.org/3/library/asyncio-task.html#task-groups">TaskGroups</a> which will keep references to your tasks. As long as all the tasks you spin up are in TaskGroups, you should be fine.</p>
 
   
   
@@ -6327,7 +5828,7 @@ your head</a>!</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../../../../2022/12/30/a-better-asyncio-sleep-for-windows-to-fix-animation/" class="md-footer__link md-footer__link--prev" aria-label="Previous: A better asyncio sleep for Windows to fix animation" rel="prev">
+          <a href="../../../01/09/so-youre-looking-for-a-wee-bit-of-textual-help/" class="md-footer__link md-footer__link--prev" aria-label="Previous: So you&#39;re looking for a wee bit of Textual help..." rel="prev">
             <div class="md-footer__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
             </div>
@@ -6336,26 +5837,11 @@ your head</a>!</p>
                 <span class="md-footer__direction">
                   Previous
                 </span>
-                A better asyncio sleep for Windows to fix animation
+                So you're looking for a wee bit of Textual help...
               </div>
             </div>
           </a>
         
-        
-          
-          <a href="../../../02/11/the-heisenbug-lurking-in-your-async-code/" class="md-footer__link md-footer__link--next" aria-label="Next: The Heisenbug lurking in your async code" rel="next">
-            <div class="md-footer__title">
-              <div class="md-ellipsis">
-                <span class="md-footer__direction">
-                  Next
-                </span>
-                The Heisenbug lurking in your async code
-              </div>
-            </div>
-            <div class="md-footer__button md-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
-            </div>
-          </a>
         
       </nav>
     
