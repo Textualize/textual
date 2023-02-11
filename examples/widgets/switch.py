@@ -1,35 +1,35 @@
 from textual.app import App, ComposeResult
 from textual.containers import Horizontal
-from textual.widgets import Checkbox, Static
+from textual.widgets import Switch, Static
 
 
-class CheckboxApp(App):
+class SwitchApp(App):
     def compose(self) -> ComposeResult:
-        yield Static("[b]Example checkboxes\n", classes="label")
+        yield Static("[b]Example switches\n", classes="label")
         yield Horizontal(
             Static("off:     ", classes="label"),
-            Checkbox(animate=False),
+            Switch(animate=False),
             classes="container",
         )
         yield Horizontal(
             Static("on:      ", classes="label"),
-            Checkbox(value=True),
+            Switch(value=True),
             classes="container",
         )
 
-        focused_checkbox = Checkbox()
-        focused_checkbox.focus()
+        focused_switch = Switch()
+        focused_switch.focus()
         yield Horizontal(
-            Static("focused: ", classes="label"), focused_checkbox, classes="container"
+            Static("focused: ", classes="label"), focused_switch, classes="container"
         )
 
         yield Horizontal(
             Static("custom:  ", classes="label"),
-            Checkbox(id="custom-design"),
+            Switch(id="custom-design"),
             classes="container",
         )
 
 
-app = CheckboxApp(css_path="checkbox.css")
+app = SwitchApp(css_path="switch.css")
 if __name__ == "__main__":
     app.run()

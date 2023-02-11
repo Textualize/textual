@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://textual.textualize.io/widgets/checkbox/">
+        <link rel="canonical" href="https://textual.textualize.io/api/switch/">
       
       
-        <link rel="prev" href="../button/">
+        <link rel="prev" href="../strip/">
       
       
-        <link rel="next" href="../data_table/">
+        <link rel="next" href="../text_log/">
       
       
         
@@ -24,15 +24,15 @@
         <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../feed_rss_updated.xml">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.6+insiders-4.29.0">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.11+insiders-4.30.0">
     
     
       
-        <title>Checkbox - Textual</title>
+        <title>Switch - Textual</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.c97aee8c.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.b6d2c4d8.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.2505c338.min.css">
@@ -71,9 +71,9 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@textualizeio">
 <meta name="twitter:creator" content="@willmcgugan">
-<meta property="og:title" content="Textual - Checkbox">
+<meta property="og:title" content="Textual - Switch">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://textual.textualize.io/widgets/checkbox/">
+<meta property="og:url" content="https://textual.textualize.io/api/switch/">
 <meta property="og:site_name" content="Textual Documentation">
 <meta property="og:description" content="Textual is a TUI framework for Python, inspired by modern web development.">
 <meta property="og:image" content="https://raw.githubusercontent.com/Textualize/textual/main/imgs/textual.png">
@@ -98,7 +98,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#checkbox" class="md-skip">
+        <a href="#textual.widgets.Switch" class="md-skip">
           Skip to content
         </a>
       
@@ -133,7 +133,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Checkbox
+              Switch
             
           </span>
         </div>
@@ -292,13 +292,11 @@
         
   
   
-    
-  
   
     
     
       <li class="md-tabs__item">
-        <a href="../../reference/" class="md-tabs__link md-tabs__link--active">
+        <a href="../../reference/" class="md-tabs__link">
           
   
     
@@ -314,11 +312,13 @@
         
   
   
+    
+  
   
     
     
       <li class="md-tabs__item">
-        <a href="../../api/" class="md-tabs__link">
+        <a href="../" class="md-tabs__link md-tabs__link--active">
           
   
     
@@ -426,7 +426,7 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_1" type="checkbox" id="__nav_1" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
         
           
           
@@ -453,7 +453,7 @@
             
           </div>
         
-        <nav class="md-nav" aria-label="Introduction" data-md-level="1">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_1">
             <span class="md-nav__icon md-icon"></span>
             
@@ -598,7 +598,7 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
           
@@ -625,7 +625,7 @@
             
           </div>
         
-        <nav class="md-nav" aria-label="Guide" data-md-level="1">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1038,8 +1038,6 @@
       
   
   
-    
-  
   
     
     
@@ -1058,13 +1056,13 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
         
         
-        <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_5" type="checkbox" id="__nav_5" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
           
@@ -1091,7 +1089,7 @@
             
           </div>
         
-        <nav class="md-nav" aria-label="Reference" data-md-level="1">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1148,7 +1146,7 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_5_2" type="checkbox" id="__nav_5_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
         
           
           
@@ -1175,7 +1173,7 @@
             
           </div>
         
-        <nav class="md-nav" aria-label="CSS Types" data-md-level="2">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1574,7 +1572,7 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" >
         
           
           
@@ -1601,7 +1599,7 @@
             
           </div>
         
-        <nav class="md-nav" aria-label="Events" data-md-level="2">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2306,7 +2304,7 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_5_4" type="checkbox" id="__nav_5_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" >
         
           
           
@@ -2333,7 +2331,7 @@
             
           </div>
         
-        <nav class="md-nav" aria-label="Styles" data-md-level="2">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2586,7 +2584,7 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_5_4_10" type="checkbox" id="__nav_5_4_10" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4_10" >
         
           
           
@@ -2613,7 +2611,7 @@
             
           </div>
         
-        <nav class="md-nav" aria-label="Grid" data-md-level="3">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_4_10_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5_4_10">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2926,7 +2924,7 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_5_4_15" type="checkbox" id="__nav_5_4_15" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4_15" >
         
           
           
@@ -2953,7 +2951,7 @@
             
           </div>
         
-        <nav class="md-nav" aria-label="Links" data-md-level="3">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_4_15_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5_4_15">
             <span class="md-nav__icon md-icon"></span>
             
@@ -3424,7 +3422,7 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_5_4_26" type="checkbox" id="__nav_5_4_26" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4_26" >
         
           
           
@@ -3451,7 +3449,7 @@
             
           </div>
         
-        <nav class="md-nav" aria-label="Scrollbar colors" data-md-level="3">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_4_26_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5_4_26">
             <span class="md-nav__icon md-icon"></span>
             
@@ -3874,13 +3872,9 @@
                 
   
   
-    
-  
   
     
     
-      
-        
       
         
       
@@ -3894,6 +3888,517 @@
       
         
           
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../widgets/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    
+  
+    Widgets
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              <label class="md-nav__link " for="__nav_5_5">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Widgets
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/button/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Button
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/data_table/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    DataTable
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/directory_tree/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    DirectoryTree
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/footer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Footer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/header/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Header
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/input/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Input
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/label/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Label
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/list_item/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    List Item
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/list_view/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    List View
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/placeholder/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Placeholder
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/static/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Static
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/switch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Switch
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/text_log/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    TextLog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/tree/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Tree
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
         
       
         
@@ -3920,7 +4425,7 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_5_5" type="checkbox" id="__nav_5_5" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
         
           
           
@@ -3931,7 +4436,7 @@
   <span class="md-ellipsis">
     
   
-    Widgets
+    API
   
 
     
@@ -3941,22 +4446,76 @@
 
             </a>
             
-              <label class="md-nav__link " for="__nav_5_5">
+              <label class="md-nav__link " for="__nav_6">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" aria-label="Widgets" data-md-level="2">
-          <label class="md-nav__title" for="__nav_5_5">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
   
-    Widgets
+    API
   
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    App
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../binding/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Binding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -3988,41 +4547,15 @@
                 
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    
-  
-    Checkbox
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../color/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     
   
-    Checkbox
+    Color
   
 
     
@@ -4031,120 +4564,58 @@
   
 
       </a>
-      
-        
+    </li>
+  
 
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+              
+            
+              
+                
   
   
   
+    <li class="md-nav__item">
+      <a href="../containers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
     
   
+    Containers
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#example" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Example
-      
-    </span>
-  </a>
+
+    
+  </span>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#reactive-attributes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Reactive Attributes
-      
-    </span>
-  </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#bindings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Bindings
-      
-    </span>
-  </a>
+
+      </a>
+    </li>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#component-classes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Component Classes
-      
-    </span>
-  </a>
+
+              
+            
+              
+                
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#messages" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Messages
-      
-    </span>
-  </a>
   
-    <nav class="md-nav" aria-label="Messages">
-      <ul class="md-nav__list">
+  
+    <li class="md-nav__item">
+      <a href="../coordinate/" class="md-nav__link">
         
-          <li class="md-nav__item">
-  <a href="#textual.widgets._checkbox.Checkbox.Changed" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Changed
-      
-    </span>
-  </a>
   
-</li>
-        
-      </ul>
-    </nav>
+  <span class="md-ellipsis">
+    
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#additional-notes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Additional Notes
-      
-    </span>
-  </a>
+    Coordinate
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#see-also" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        See Also
-      
-    </span>
-  </a>
+
+    
+  </span>
   
-</li>
-      
-    </ul>
   
-</nav>
-      
+
+      </a>
     </li>
   
 
@@ -4162,7 +4633,7 @@
   <span class="md-ellipsis">
     
   
-    DataTable
+    Data table
   
 
     
@@ -4188,7 +4659,59 @@
   <span class="md-ellipsis">
     
   
-    DirectoryTree
+    Directory tree
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dom_node/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Dom node
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../events/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Events
   
 
     
@@ -4234,6 +4757,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../geometry/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Geometry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../header/" class="md-nav__link">
         
   
@@ -4252,8 +4801,6 @@
     </li>
   
 
-              
-            
               
             
               
@@ -4314,13 +4861,13 @@
   
   
     <li class="md-nav__item">
-      <a href="../list_item/" class="md-nav__link">
+      <a href="../list_view/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     
   
-    List Item
+    List view
   
 
     
@@ -4340,13 +4887,91 @@
   
   
     <li class="md-nav__item">
-      <a href="../list_view/" class="md-nav__link">
+      <a href="../list_item/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     
   
-    List View
+    List item
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../message_pump/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Message pump
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../message/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Message
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pilot/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Pilot
   
 
     
@@ -4392,6 +5017,110 @@
   
   
     <li class="md-nav__item">
+      <a href="../query/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Query
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reactive/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Reactive
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../screen/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Screen
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scroll_view/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Scroll view
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../static/" class="md-nav__link">
         
   
@@ -4418,13 +5147,249 @@
   
   
     <li class="md-nav__item">
+      <a href="../strip/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Strip
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    
+  
+    Switch
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Switch
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widgets.Switch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Switch
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Switch">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._switch.Switch.BINDINGS" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BINDINGS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._switch.Switch.COMPONENT_CLASSES" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COMPONENT_CLASSES
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._switch.Switch.slider_pos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        slider_pos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._switch.Switch.value" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        value
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._switch.Switch.Changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._switch.Switch.__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._switch.Switch.action_toggle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        action_toggle()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._switch.Switch.on_click" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        on_click()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._switch.Switch.toggle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        toggle()
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../text_log/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     
   
-    TextLog
+    Text log
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../timer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Timer
   
 
     
@@ -4464,962 +5429,13 @@
 
               
             
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        
-        
-        <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
-        
-          
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../api/" class="md-nav__link ">
-              
-  
-  <span class="md-ellipsis">
-    
-  
-    API
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              <label class="md-nav__link " for="__nav_6">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" aria-label="API" data-md-level="1">
-          <label class="md-nav__title" for="__nav_6">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    API
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
               
                 
   
   
   
     <li class="md-nav__item">
-      <a href="../../api/app/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    App
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/binding/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Binding
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/button/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Button
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/checkbox/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Checkbox
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/color/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Color
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/containers/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Containers
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/coordinate/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Coordinate
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/data_table/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Data table
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/directory_tree/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Directory tree
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/dom_node/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Dom node
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/events/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Events
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/footer/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Footer
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/geometry/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Geometry
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/header/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Header
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/input/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Input
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/label/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Label
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/list_view/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    List view
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/list_item/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    List item
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/message_pump/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Message pump
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/message/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Message
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/pilot/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Pilot
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/placeholder/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Placeholder
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/query/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Query
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/reactive/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Reactive
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/screen/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Screen
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/scroll_view/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Scroll view
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/static/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Static
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/strip/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Strip
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/text_log/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Text log
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/timer/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Timer
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/tree/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Tree
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/tree_node/" class="md-nav__link">
+      <a href="../tree_node/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5445,7 +5461,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/walk/" class="md-nav__link">
+      <a href="../walk/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5471,7 +5487,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/widget/" class="md-nav__link">
+      <a href="../widget/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5522,7 +5538,7 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_7" type="checkbox" id="__nav_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
           
@@ -5549,7 +5565,7 @@
             
           </div>
         
-        <nav class="md-nav" aria-label="Blog" data-md-level="1">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -5582,9 +5598,9 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_7_2" type="checkbox" id="__nav_7_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
         
-          <label class="md-nav__link" for="__nav_7_2" tabindex="0" aria-expanded="false">
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -5601,7 +5617,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" aria-label="Archive" data-md-level="2">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -5694,9 +5710,9 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_7_3" type="checkbox" id="__nav_7_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_3" >
         
-          <label class="md-nav__link" for="__nav_7_3" tabindex="0" aria-expanded="false">
+          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -5713,7 +5729,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" aria-label="Categories" data-md-level="2">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -5834,8 +5850,6 @@
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -5844,63 +5858,63 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#example" class="md-nav__link">
+  <a href="#textual.widgets.Switch" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Example
+        Switch
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#reactive-attributes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Reactive Attributes
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#bindings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Bindings
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#component-classes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Component Classes
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#messages" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Messages
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Messages">
+    <nav class="md-nav" aria-label="Switch">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#textual.widgets._checkbox.Checkbox.Changed" class="md-nav__link">
+  <a href="#textual.widgets._switch.Switch.BINDINGS" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BINDINGS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._switch.Switch.COMPONENT_CLASSES" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        COMPONENT_CLASSES
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._switch.Switch.slider_pos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        slider_pos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._switch.Switch.value" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        value
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._switch.Switch.Changed" class="md-nav__link">
     <span class="md-ellipsis">
       
         Changed
@@ -5910,30 +5924,52 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#textual.widgets._switch.Switch.__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._switch.Switch.action_toggle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        action_toggle()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._switch.Switch.on_click" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        on_click()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._switch.Switch.toggle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        toggle()
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#additional-notes" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Additional Notes
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#see-also" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        See Also
-      
-    </span>
-  </a>
   
 </li>
       
@@ -5957,272 +5993,56 @@
 
 
 
-<h1 id="checkbox">Checkbox<a class="headerlink" href="#checkbox" title="Permanent link">&para;</a></h1>
-<p>A simple checkbox widget which stores a boolean value.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Focusable</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Container</li>
-</ul>
-<h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h2>
-<p>The example below shows checkboxes in various states.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Output</label><label for="__tabbed_1_2">checkbox.py</label><label for="__tabbed_1_3">checkbox.css</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<p><svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
-    <!-- Generated with Rich https://www.textualize.io -->
-    <style>
+  <h1>Switch</h1>
 
-    @font-face {
-        font-family: "Fira Code";
-        src: local("FiraCode-Regular"),
-                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Regular.woff2") format("woff2"),
-                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Regular.woff") format("woff");
-        font-style: normal;
-        font-weight: 400;
-    }
-    @font-face {
-        font-family: "Fira Code";
-        src: local("FiraCode-Bold"),
-                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Bold.woff2") format("woff2"),
-                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Bold.woff") format("woff");
-        font-style: bold;
-        font-weight: 700;
-    }
+<div class="doc doc-object doc-class">
 
-    .terminal-3586171268-matrix {
-        font-family: Fira Code, monospace;
-        font-size: 20px;
-        line-height: 24.4px;
-        font-variant-east-asian: full-width;
-    }
 
-    .terminal-3586171268-title {
-        font-size: 18px;
-        font-weight: bold;
-        font-family: arial;
-    }
 
-    .terminal-3586171268-r1 { fill: #e1e1e1 }
-.terminal-3586171268-r2 { fill: #c5c8c6 }
-.terminal-3586171268-r3 { fill: #e1e1e1;font-weight: bold }
-.terminal-3586171268-r4 { fill: #1e1e1e }
-.terminal-3586171268-r5 { fill: #e2e3e3 }
-.terminal-3586171268-r6 { fill: #e3e8e8 }
-    </style>
+<h2 id="textual.widgets.Switch" class="doc doc-heading">
+        <code>Switch</code>
 
-    <defs>
-    <clipPath id="terminal-3586171268-clip-terminal">
-      <rect x="0" y="0" width="975.0" height="584.5999999999999" />
-    </clipPath>
-    <clipPath id="terminal-3586171268-line-0">
-    <rect x="0" y="1.5" width="976" height="24.65"/>
-            </clipPath>
-<clipPath id="terminal-3586171268-line-1">
-    <rect x="0" y="25.9" width="976" height="24.65"/>
-            </clipPath>
-<clipPath id="terminal-3586171268-line-2">
-    <rect x="0" y="50.3" width="976" height="24.65"/>
-            </clipPath>
-<clipPath id="terminal-3586171268-line-3">
-    <rect x="0" y="74.7" width="976" height="24.65"/>
-            </clipPath>
-<clipPath id="terminal-3586171268-line-4">
-    <rect x="0" y="99.1" width="976" height="24.65"/>
-            </clipPath>
-<clipPath id="terminal-3586171268-line-5">
-    <rect x="0" y="123.5" width="976" height="24.65"/>
-            </clipPath>
-<clipPath id="terminal-3586171268-line-6">
-    <rect x="0" y="147.9" width="976" height="24.65"/>
-            </clipPath>
-<clipPath id="terminal-3586171268-line-7">
-    <rect x="0" y="172.3" width="976" height="24.65"/>
-            </clipPath>
-<clipPath id="terminal-3586171268-line-8">
-    <rect x="0" y="196.7" width="976" height="24.65"/>
-            </clipPath>
-<clipPath id="terminal-3586171268-line-9">
-    <rect x="0" y="221.1" width="976" height="24.65"/>
-            </clipPath>
-<clipPath id="terminal-3586171268-line-10">
-    <rect x="0" y="245.5" width="976" height="24.65"/>
-            </clipPath>
-<clipPath id="terminal-3586171268-line-11">
-    <rect x="0" y="269.9" width="976" height="24.65"/>
-            </clipPath>
-<clipPath id="terminal-3586171268-line-12">
-    <rect x="0" y="294.3" width="976" height="24.65"/>
-            </clipPath>
-<clipPath id="terminal-3586171268-line-13">
-    <rect x="0" y="318.7" width="976" height="24.65"/>
-            </clipPath>
-<clipPath id="terminal-3586171268-line-14">
-    <rect x="0" y="343.1" width="976" height="24.65"/>
-            </clipPath>
-<clipPath id="terminal-3586171268-line-15">
-    <rect x="0" y="367.5" width="976" height="24.65"/>
-            </clipPath>
-<clipPath id="terminal-3586171268-line-16">
-    <rect x="0" y="391.9" width="976" height="24.65"/>
-            </clipPath>
-<clipPath id="terminal-3586171268-line-17">
-    <rect x="0" y="416.3" width="976" height="24.65"/>
-            </clipPath>
-<clipPath id="terminal-3586171268-line-18">
-    <rect x="0" y="440.7" width="976" height="24.65"/>
-            </clipPath>
-<clipPath id="terminal-3586171268-line-19">
-    <rect x="0" y="465.1" width="976" height="24.65"/>
-            </clipPath>
-<clipPath id="terminal-3586171268-line-20">
-    <rect x="0" y="489.5" width="976" height="24.65"/>
-            </clipPath>
-<clipPath id="terminal-3586171268-line-21">
-    <rect x="0" y="513.9" width="976" height="24.65"/>
-            </clipPath>
-<clipPath id="terminal-3586171268-line-22">
-    <rect x="0" y="538.3" width="976" height="24.65"/>
-            </clipPath>
-    </defs>
 
-    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-3586171268-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">CheckboxApp</text>
-            <g transform="translate(26,22)">
-            <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
-            <circle cx="22" cy="0" r="7" fill="#febc2e"/>
-            <circle cx="44" cy="0" r="7" fill="#28c840"/>
-            </g>
-        
-    <g transform="translate(9, 41)" clip-path="url(#terminal-3586171268-clip-terminal)">
-    <rect fill="#1e1e1e" x="0" y="1.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="25.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="50.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="74.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="99.1" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="366" y="99.1" width="0" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="366" y="99.1" width="219.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="585.6" y="99.1" width="390.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="123.5" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="366" y="123.5" width="0" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="366" y="123.5" width="219.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="585.6" y="123.5" width="390.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="147.9" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="366" y="147.9" width="219.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="585.6" y="147.9" width="390.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="172.3" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="366" y="172.3" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="475.8" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="488" y="172.3" width="97.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="585.6" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="172.3" width="378.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="196.7" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="366" y="196.7" width="0" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="366" y="196.7" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="475.8" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="488" y="196.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#454a50" x="512.4" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#454a50" x="524.6" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#00050f" x="536.8" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#00050f" x="549" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="561.2" y="196.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="585.6" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="196.7" width="378.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="221.1" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="366" y="221.1" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="475.8" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="488" y="221.1" width="97.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="585.6" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="221.1" width="378.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="245.5" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="366" y="245.5" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="475.8" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="488" y="245.5" width="97.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="585.6" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="245.5" width="378.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="269.9" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="366" y="269.9" width="0" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="366" y="269.9" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="475.8" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="488" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#00050f" x="512.4" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#00050f" x="524.6" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#4ebf71" x="536.8" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#4ebf71" x="549" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="561.2" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="585.6" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="269.9" width="378.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="294.3" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="366" y="294.3" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="475.8" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="488" y="294.3" width="97.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="585.6" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="294.3" width="378.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="318.7" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="366" y="318.7" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="475.8" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="488" y="318.7" width="97.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="585.6" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="318.7" width="378.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="343.1" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="366" y="343.1" width="0" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="366" y="343.1" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="475.8" y="343.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="488" y="343.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#454a50" x="512.4" y="343.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#454a50" x="524.6" y="343.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#00050f" x="536.8" y="343.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#00050f" x="549" y="343.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="561.2" y="343.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="585.6" y="343.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="343.1" width="378.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="367.5" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="366" y="367.5" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="475.8" y="367.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="488" y="367.5" width="97.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="585.6" y="367.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="367.5" width="378.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="391.9" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="366" y="391.9" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="475.8" y="391.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#2f4f4f" x="488" y="391.9" width="97.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="585.6" y="391.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="391.9" width="378.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="416.3" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="366" y="416.3" width="0" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="366" y="416.3" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="475.8" y="416.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#2f4f4f" x="488" y="416.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e90ff" x="512.4" y="416.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e90ff" x="524.6" y="416.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#483d8b" x="536.8" y="416.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#483d8b" x="549" y="416.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#2f4f4f" x="561.2" y="416.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="585.6" y="416.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="416.3" width="378.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="440.7" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="366" y="440.7" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="475.8" y="440.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#2f4f4f" x="488" y="440.7" width="97.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="585.6" y="440.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="440.7" width="378.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="465.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="489.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="513.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="538.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="562.7" width="976" height="24.65" shape-rendering="crispEdges"/>
-    <g class="terminal-3586171268-matrix">
-    <text class="terminal-3586171268-r2" x="976" y="20" textLength="12.2" clip-path="url(#terminal-3586171268-line-0)">
-</text><text class="terminal-3586171268-r2" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-3586171268-line-1)">
-</text><text class="terminal-3586171268-r2" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-3586171268-line-2)">
-</text><text class="terminal-3586171268-r2" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-3586171268-line-3)">
-</text><text class="terminal-3586171268-r3" x="366" y="117.6" textLength="219.6" clip-path="url(#terminal-3586171268-line-4)">Example&#160;checkboxes</text><text class="terminal-3586171268-r2" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-3586171268-line-4)">
-</text><text class="terminal-3586171268-r2" x="976" y="142" textLength="12.2" clip-path="url(#terminal-3586171268-line-5)">
-</text><text class="terminal-3586171268-r2" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-3586171268-line-6)">
-</text><text class="terminal-3586171268-r4" x="475.8" y="190.8" textLength="12.2" clip-path="url(#terminal-3586171268-line-7)">▊</text><text class="terminal-3586171268-r4" x="488" y="190.8" textLength="97.6" clip-path="url(#terminal-3586171268-line-7)">▔▔▔▔▔▔▔▔</text><text class="terminal-3586171268-r4" x="585.6" y="190.8" textLength="12.2" clip-path="url(#terminal-3586171268-line-7)">▎</text><text class="terminal-3586171268-r2" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-3586171268-line-7)">
-</text><text class="terminal-3586171268-r1" x="366" y="215.2" textLength="109.8" clip-path="url(#terminal-3586171268-line-8)">off:&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-3586171268-r4" x="475.8" y="215.2" textLength="12.2" clip-path="url(#terminal-3586171268-line-8)">▊</text><text class="terminal-3586171268-r4" x="585.6" y="215.2" textLength="12.2" clip-path="url(#terminal-3586171268-line-8)">▎</text><text class="terminal-3586171268-r2" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-3586171268-line-8)">
-</text><text class="terminal-3586171268-r4" x="475.8" y="239.6" textLength="12.2" clip-path="url(#terminal-3586171268-line-9)">▊</text><text class="terminal-3586171268-r4" x="488" y="239.6" textLength="97.6" clip-path="url(#terminal-3586171268-line-9)">▁▁▁▁▁▁▁▁</text><text class="terminal-3586171268-r4" x="585.6" y="239.6" textLength="12.2" clip-path="url(#terminal-3586171268-line-9)">▎</text><text class="terminal-3586171268-r2" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-3586171268-line-9)">
-</text><text class="terminal-3586171268-r4" x="475.8" y="264" textLength="12.2" clip-path="url(#terminal-3586171268-line-10)">▊</text><text class="terminal-3586171268-r4" x="488" y="264" textLength="97.6" clip-path="url(#terminal-3586171268-line-10)">▔▔▔▔▔▔▔▔</text><text class="terminal-3586171268-r4" x="585.6" y="264" textLength="12.2" clip-path="url(#terminal-3586171268-line-10)">▎</text><text class="terminal-3586171268-r2" x="976" y="264" textLength="12.2" clip-path="url(#terminal-3586171268-line-10)">
-</text><text class="terminal-3586171268-r1" x="366" y="288.4" textLength="109.8" clip-path="url(#terminal-3586171268-line-11)">on:&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-3586171268-r4" x="475.8" y="288.4" textLength="12.2" clip-path="url(#terminal-3586171268-line-11)">▊</text><text class="terminal-3586171268-r4" x="585.6" y="288.4" textLength="12.2" clip-path="url(#terminal-3586171268-line-11)">▎</text><text class="terminal-3586171268-r2" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-3586171268-line-11)">
-</text><text class="terminal-3586171268-r4" x="475.8" y="312.8" textLength="12.2" clip-path="url(#terminal-3586171268-line-12)">▊</text><text class="terminal-3586171268-r4" x="488" y="312.8" textLength="97.6" clip-path="url(#terminal-3586171268-line-12)">▁▁▁▁▁▁▁▁</text><text class="terminal-3586171268-r4" x="585.6" y="312.8" textLength="12.2" clip-path="url(#terminal-3586171268-line-12)">▎</text><text class="terminal-3586171268-r2" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-3586171268-line-12)">
-</text><text class="terminal-3586171268-r4" x="475.8" y="337.2" textLength="12.2" clip-path="url(#terminal-3586171268-line-13)">▊</text><text class="terminal-3586171268-r4" x="488" y="337.2" textLength="97.6" clip-path="url(#terminal-3586171268-line-13)">▔▔▔▔▔▔▔▔</text><text class="terminal-3586171268-r4" x="585.6" y="337.2" textLength="12.2" clip-path="url(#terminal-3586171268-line-13)">▎</text><text class="terminal-3586171268-r2" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-3586171268-line-13)">
-</text><text class="terminal-3586171268-r1" x="366" y="361.6" textLength="109.8" clip-path="url(#terminal-3586171268-line-14)">focused:&#160;</text><text class="terminal-3586171268-r4" x="475.8" y="361.6" textLength="12.2" clip-path="url(#terminal-3586171268-line-14)">▊</text><text class="terminal-3586171268-r4" x="585.6" y="361.6" textLength="12.2" clip-path="url(#terminal-3586171268-line-14)">▎</text><text class="terminal-3586171268-r2" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-3586171268-line-14)">
-</text><text class="terminal-3586171268-r4" x="475.8" y="386" textLength="12.2" clip-path="url(#terminal-3586171268-line-15)">▊</text><text class="terminal-3586171268-r4" x="488" y="386" textLength="97.6" clip-path="url(#terminal-3586171268-line-15)">▁▁▁▁▁▁▁▁</text><text class="terminal-3586171268-r4" x="585.6" y="386" textLength="12.2" clip-path="url(#terminal-3586171268-line-15)">▎</text><text class="terminal-3586171268-r2" x="976" y="386" textLength="12.2" clip-path="url(#terminal-3586171268-line-15)">
-</text><text class="terminal-3586171268-r4" x="475.8" y="410.4" textLength="12.2" clip-path="url(#terminal-3586171268-line-16)">▊</text><text class="terminal-3586171268-r4" x="488" y="410.4" textLength="97.6" clip-path="url(#terminal-3586171268-line-16)">▔▔▔▔▔▔▔▔</text><text class="terminal-3586171268-r4" x="585.6" y="410.4" textLength="12.2" clip-path="url(#terminal-3586171268-line-16)">▎</text><text class="terminal-3586171268-r2" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-3586171268-line-16)">
-</text><text class="terminal-3586171268-r1" x="366" y="434.8" textLength="109.8" clip-path="url(#terminal-3586171268-line-17)">custom:&#160;&#160;</text><text class="terminal-3586171268-r4" x="475.8" y="434.8" textLength="12.2" clip-path="url(#terminal-3586171268-line-17)">▊</text><text class="terminal-3586171268-r4" x="585.6" y="434.8" textLength="12.2" clip-path="url(#terminal-3586171268-line-17)">▎</text><text class="terminal-3586171268-r2" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-3586171268-line-17)">
-</text><text class="terminal-3586171268-r4" x="475.8" y="459.2" textLength="12.2" clip-path="url(#terminal-3586171268-line-18)">▊</text><text class="terminal-3586171268-r4" x="488" y="459.2" textLength="97.6" clip-path="url(#terminal-3586171268-line-18)">▁▁▁▁▁▁▁▁</text><text class="terminal-3586171268-r4" x="585.6" y="459.2" textLength="12.2" clip-path="url(#terminal-3586171268-line-18)">▎</text><text class="terminal-3586171268-r2" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-3586171268-line-18)">
-</text><text class="terminal-3586171268-r2" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-3586171268-line-19)">
-</text><text class="terminal-3586171268-r2" x="976" y="508" textLength="12.2" clip-path="url(#terminal-3586171268-line-20)">
-</text><text class="terminal-3586171268-r2" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-3586171268-line-21)">
-</text><text class="terminal-3586171268-r2" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-3586171268-line-22)">
-</text>
-    </g>
-    </g>
-</svg>
-</p>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span> <span class="nn">textual.containers</span> <span class="kn">import</span> <span class="n">Horizontal</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Checkbox</span><span class="p">,</span> <span class="n">Static</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="k">class</span> <span class="nc">CheckboxApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        <span class="k">yield</span> <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;[b]Example checkboxes</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">classes</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>        <span class="k">yield</span> <span class="n">Horizontal</span><span class="p">(</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>            <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;off:     &quot;</span><span class="p">,</span> <span class="n">classes</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">),</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>            <span class="n">Checkbox</span><span class="p">(</span><span class="n">animate</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>            <span class="n">classes</span><span class="o">=</span><span class="s2">&quot;container&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>        <span class="p">)</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>        <span class="k">yield</span> <span class="n">Horizontal</span><span class="p">(</span>
-<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>            <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;on:      &quot;</span><span class="p">,</span> <span class="n">classes</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">),</span>
-<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>            <span class="n">Checkbox</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>            <span class="n">classes</span><span class="o">=</span><span class="s2">&quot;container&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>        <span class="p">)</span>
-<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>
-<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>        <span class="n">focused_checkbox</span> <span class="o">=</span> <span class="n">Checkbox</span><span class="p">()</span>
-<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>        <span class="n">focused_checkbox</span><span class="o">.</span><span class="n">focus</span><span class="p">()</span>
-<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>        <span class="k">yield</span> <span class="n">Horizontal</span><span class="p">(</span>
-<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>            <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;focused: &quot;</span><span class="p">,</span> <span class="n">classes</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">),</span> <span class="n">focused_checkbox</span><span class="p">,</span> <span class="n">classes</span><span class="o">=</span><span class="s2">&quot;container&quot;</span>
-<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>        <span class="p">)</span>
-<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>
-<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>        <span class="k">yield</span> <span class="n">Horizontal</span><span class="p">(</span>
-<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>            <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;custom:  &quot;</span><span class="p">,</span> <span class="n">classes</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">),</span>
-<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>            <span class="n">Checkbox</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;custom-design&quot;</span><span class="p">),</span>
-<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a>            <span class="n">classes</span><span class="o">=</span><span class="s2">&quot;container&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a>        <span class="p">)</span>
-<a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a>
-<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a>
-<a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a><span class="n">app</span> <span class="o">=</span> <span class="n">CheckboxApp</span><span class="p">(</span><span class="n">css_path</span><span class="o">=</span><span class="s2">&quot;checkbox.css&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-<a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-</code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">Screen</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="na">align</span><span class="o">:</span><span class="w"> </span><span class="no">center</span><span class="w"> </span><span class="no">middle</span><span class="err">;</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="err">}</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="nc">.container</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="na">height</span><span class="o">:</span><span class="w"> </span><span class="no">auto</span><span class="err">;</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="na">width</span><span class="o">:</span><span class="w"> </span><span class="no">auto</span><span class="err">;</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="err">}</span>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="nt">Checkbox</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span><span class="na">height</span><span class="o">:</span><span class="w"> </span><span class="no">auto</span><span class="err">;</span>
-<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">    </span><span class="na">width</span><span class="o">:</span><span class="w"> </span><span class="no">auto</span><span class="err">;</span>
-<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="err">}</span>
-<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>
-<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="nc">.label</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">    </span><span class="na">height</span><span class="o">:</span><span class="w"> </span><span class="mi">3</span><span class="err">;</span>
-<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">    </span><span class="na">content-align</span><span class="o">:</span><span class="w"> </span><span class="no">center</span><span class="w"> </span><span class="no">middle</span><span class="err">;</span>
-<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">    </span><span class="na">width</span><span class="o">:</span><span class="w"> </span><span class="no">auto</span><span class="err">;</span>
-<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="err">}</span>
-<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>
-<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="nn">#custom-design</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="w">    </span><span class="na">background</span><span class="o">:</span><span class="w"> </span><span class="ni">darkslategrey</span><span class="err">;</span>
-<a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="err">}</span>
-<a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a>
-<a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a><span class="nn">#custom-design</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="nc">.checkbox--switch</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a><span class="w">    </span><span class="na">color</span><span class="o">:</span><span class="w"> </span><span class="ni">dodgerblue</span><span class="err">;</span>
-<a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a><span class="w">    </span><span class="na">background</span><span class="o">:</span><span class="w"> </span><span class="ni">darkslateblue</span><span class="err">;</span>
-<a id="__codelineno-1-28" name="__codelineno-1-28" href="#__codelineno-1-28"></a><span class="err">}</span>
-</code></pre></div>
-</div>
-</div>
-</div>
-<h2 id="reactive-attributes">Reactive Attributes<a class="headerlink" href="#reactive-attributes" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Type</th>
-<th>Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>value</code></td>
-<td><code>bool</code></td>
-<td><code>False</code></td>
-<td>The default value of the checkbox.</td>
-</tr>
-</tbody>
-</table>
-<h2 id="bindings">Bindings<a class="headerlink" href="#bindings" title="Permanent link">&para;</a></h2>
-<p>The checkbox widget defines directly the following bindings:</p>
+<a href="#textual.widgets.Switch" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents first">
+      <p class="doc doc-class-bases">
+        Bases: <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code></p>
+
+  
+      <p>A switch widget that represents a boolean value.</p>
+<p>Can be toggled by clicking on it or through its <a class="autorefs autorefs-internal" href="#textual.widgets._switch.Switch.BINDINGS">bindings</a>.</p>
+<p>The switch widget also contains <a class="autorefs autorefs-internal" href="#textual.widgets._switch.Switch.COMPONENT_CLASSES">component classes</a>
+that enable more customization.</p>
+
+
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
 
 
 <div class="doc doc-object doc-attribute">
 
 
 
-  <div class="doc doc-contents first">
+<h3 id="textual.widgets._switch.Switch.BINDINGS" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">BINDINGS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">BindingType</span><span class="p">]]</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+  </span>
+
+<a href="#textual.widgets._switch.Switch.BINDINGS" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
   
       <table>
 <thead>
@@ -6234,21 +6054,29 @@
 <tbody>
 <tr>
 <td align="left">enter,space</td>
-<td align="left">Toggle the checkbox status.</td>
+<td align="left">Toggle the switch state.</td>
 </tr>
 </tbody>
 </table>
   </div>
 
-</div><h2 id="component-classes">Component Classes<a class="headerlink" href="#component-classes" title="Permanent link">&para;</a></h2>
-<p>The checkbox widget provides the following component classes:</p>
-
+</div>
 
 <div class="doc doc-object doc-attribute">
 
 
 
-  <div class="doc doc-contents first">
+<h3 id="textual.widgets._switch.Switch.COMPONENT_CLASSES" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">COMPONENT_CLASSES</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+  </span>
+
+<a href="#textual.widgets._switch.Switch.COMPONENT_CLASSES" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
   
       <table>
 <thead>
@@ -6259,34 +6087,76 @@
 </thead>
 <tbody>
 <tr>
-<td align="left"><code>checkbox--switch</code></td>
-<td align="left">Targets the switch of the checkbox.</td>
+<td align="left"><code>switch--slider</code></td>
+<td align="left">Targets the slider of the switch.</td>
 </tr>
 </tbody>
 </table>
   </div>
 
-</div><h2 id="messages">Messages<a class="headerlink" href="#messages" title="Permanent link">&para;</a></h2>
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.widgets._switch.Switch.slider_pos" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">slider_pos</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+  </span>
+
+<a href="#textual.widgets._switch.Switch.slider_pos" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>The position of the slider.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.widgets._switch.Switch.value" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">value</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+  </span>
+
+<a href="#textual.widgets._switch.Switch.value" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>The value of the switch; <code>True</code> for on and <code>False</code> for off.</p>
+  </div>
+
+</div>
 
 
 <div class="doc doc-object doc-class">
 
 
 
-<h3 id="textual.widgets._checkbox.Checkbox.Changed" class="doc doc-heading">
+<h3 id="textual.widgets._switch.Switch.Changed" class="doc doc-heading">
         <code>Changed</code>
 
 
-<a href="#textual.widgets._checkbox.Checkbox.Changed" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#textual.widgets._switch.Switch.Changed" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
-  <div class="doc doc-contents first">
+  <div class="doc doc-contents ">
       <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.message.Message" href="../../api/message/#textual.message.Message">Message</a></code></p>
+        Bases: <code><a class="autorefs autorefs-internal" title="textual.message.Message" href="../message/#textual.message.Message">Message</a></code></p>
 
   
-      <p>Emitted when the status of the checkbox changes.</p>
-<p>Can be handled using <code>on_checkbox_changed</code> in a subclass of <code>Checkbox</code>
+      <p>Posted when the status of the switch changes.</p>
+<p>Can be handled using <code>on_switch_changed</code> in a subclass of <code>Switch</code>
 or in a parent widget in the DOM.</p>
 
   <p><strong>Attributes:</strong></p>
@@ -6304,14 +6174,14 @@ or in a parent widget in the DOM.</p>
           <td>
                 <code>bool</code>
           </td>
-          <td><p>The value that the checkbox was changed to.</p></td>
+          <td><p>The value that the switch was changed to.</p></td>
         </tr>
         <tr>
           <td><code>input</code></td>
           <td>
-                <code><a class="autorefs autorefs-internal" title="textual.widgets._checkbox.Checkbox" href="../../api/checkbox/#textual.widgets.Checkbox">Checkbox</a></code>
+                <code><a class="autorefs autorefs-internal" title="textual.widgets._switch.Switch" href="#textual.widgets.Switch">Switch</a></code>
           </td>
-          <td><p>The <code>Checkbox</code> widget that was changed.</p></td>
+          <td><p>The <code>Switch</code> widget that was changed.</p></td>
         </tr>
     </tbody>
   </table>
@@ -6336,14 +6206,154 @@ or in a parent widget in the DOM.</p>
 
   </div>
 
-</div><h2 id="additional-notes">Additional Notes<a class="headerlink" href="#additional-notes" title="Permanent link">&para;</a></h2>
-<ul>
-<li>To remove the spacing around a checkbox, set <code>border: none;</code> and <code>padding: 0;</code>.</li>
-</ul>
-<h2 id="see-also">See Also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="../../api/checkbox/">Checkbox</a> code reference</li>
-</ul>
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._switch.Switch.__init__" class="doc doc-heading">
+<code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">animate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">classes</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#textual.widgets._switch.Switch.__init__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Initialise the switch.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>value</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>The initial value of the switch. Defaults to False.</p></td>
+          <td>
+                <code>False</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>animate</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>True if the switch should animate when toggled. Defaults to True.</p></td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>name</code></td>
+          <td>
+                <code>str | None</code>
+          </td>
+          <td><p>The name of the switch.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>id</code></td>
+          <td>
+                <code>str | None</code>
+          </td>
+          <td><p>The ID of the switch in the DOM.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>classes</code></td>
+          <td>
+                <code>str | None</code>
+          </td>
+          <td><p>The CSS classes of the switch.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._switch.Switch.action_toggle" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">action_toggle</span><span class="p">()</span></code>
+
+<a href="#textual.widgets._switch.Switch.action_toggle" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Toggle the state of the switch.</p>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._switch.Switch.on_click" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">on_click</span><span class="p">()</span></code>
+
+<a href="#textual.widgets._switch.Switch.on_click" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Toggle the state of the switch.</p>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._switch.Switch.toggle" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">toggle</span><span class="p">()</span></code>
+
+<a href="#textual.widgets._switch.Switch.toggle" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Toggle the switch value.</p>
+<p>As a result of the value changing, a <code>Switch.Changed</code> message will
+be posted.</p>
+
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
 
 
 
@@ -6367,7 +6377,7 @@ or in a parent widget in the DOM.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../button/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Button" rel="prev">
+          <a href="../strip/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Strip" rel="prev">
             <div class="md-footer__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
             </div>
@@ -6376,20 +6386,20 @@ or in a parent widget in the DOM.</p>
                 <span class="md-footer__direction">
                   Previous
                 </span>
-                Button
+                Strip
               </div>
             </div>
           </a>
         
         
           
-          <a href="../data_table/" class="md-footer__link md-footer__link--next" aria-label="Next: DataTable" rel="next">
+          <a href="../text_log/" class="md-footer__link md-footer__link--next" aria-label="Next: Text log" rel="next">
             <div class="md-footer__title">
               <div class="md-ellipsis">
                 <span class="md-footer__direction">
                   Next
                 </span>
-                DataTable
+                Text log
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -6420,16 +6430,22 @@ or in a parent widget in the DOM.</p>
   
     
     
+    
+    
     <a href="https://twitter.com/textualizeio" target="_blank" rel="noopener" title="textualizeio on Twitter" class="md-social__link">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
     </a>
   
     
     
+    
+    
     <a href="https://github.com/textualize/textual/" target="_blank" rel="noopener" title="Textual on Github" class="md-social__link">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
     </a>
   
+    
+    
     
     
     <a href="https://discord.gg/Enf6Z3qhVr" target="_blank" rel="noopener" title="Textual Discord server" class="md-social__link">
@@ -6447,10 +6463,10 @@ or in a parent widget in the DOM.</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.tabs.sticky", "navigation.footer", "content.code.annotate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.f236eb64.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.tabs.sticky", "navigation.footer", "content.code.annotate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.6c7302c4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.b5a861c9.min.js"></script>
+      <script src="../../assets/javascripts/bundle.7ce0e818.min.js"></script>
       
     
   </body>
