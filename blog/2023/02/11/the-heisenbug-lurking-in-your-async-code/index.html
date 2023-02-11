@@ -5793,7 +5793,8 @@
 <!-- more -->
 
 <p>If you have ever used <code>asyncio.create_task</code> you may have created a bug for yourself that is challenging (read <em>almost impossible</em>) to reproduce. If it occurs, your code will likely fail in unpredictable ways.</p>
-<p>The root cause of this <a href="Heisenbug">Heisenbug</a> is that if you don't hold a reference to the task object returned by <code>create_task</code> then the task may simply disappear, without warning, when Python runs garbage collection. This behavior is <a href="https://docs.python.org/3/library/asyncio-task.html#asyncio.create_task">well documented</a>, as you can see from this excerpt (emphasis mine):</p>
+<p>The root cause of this <a href="Heisenbug">Heisenbug</a> is that if you don't hold a reference to the task object returned by <code>create_task</code> then the task may disappear without warning, when Python runs garbage collection. In other words the code in your task will stop running with no obvious indication why.</p>
+<p>This behavior is <a href="https://docs.python.org/3/library/asyncio-task.html#asyncio.create_task">well documented</a>, as you can see from this excerpt (emphasis mine):</p>
 <p><img alt="create task" src="../../../../images/async-create-task.jpeg" /></p>
 <p>But who reads all the docs? And who has perfect recall if they do? A search on GitHub indicates that there are a <a href="https://github.com/search?q=%22asyncio.create_task%28%22&amp;type=code">lot of projects</a> where this bug is waiting just for the right moment to ruin somebody's day.</p>
 <p>I suspect the reason this mistake is so common is that tasks are a lot like threads (conceptually at least). With threads you can just launch them and forget. Unless you mark them as "daemon" threads they will exist for the lifetime of your app. Not so with Tasks.</p>
