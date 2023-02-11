@@ -23,4 +23,4 @@ But who reads all the docs? And who has perfect recall if they do? A search on G
 
 I suspect the reason this mistake is so common is that tasks are a lot like threads (conceptually at least). With threads you can just launch them and forget. Unless you mark them as "daemon" threads they will exist for the lifetime of your app. Not so with Tasks.
 
-The solution recommended in the docs is to keep a reference to the task for as long as you need it to live. On modern Pythons you could use [TaskGroups](https://docs.python.org/3/library/asyncio-task.html#task-groups) which will keep references to your tasks. As long as all the tasks you spin up are in TaskGroups, you should be fine.
+The solution recommended in the docs is to keep a reference to the task for as long as you need it to live. On modern Python you could use [TaskGroups](https://docs.python.org/3/library/asyncio-task.html#task-groups) which will keep references to your tasks. As long as all the tasks you spin up are in TaskGroups, you should be fine.
