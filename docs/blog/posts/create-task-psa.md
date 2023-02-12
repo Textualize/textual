@@ -15,7 +15,7 @@ I'm taking a brief break from blogging about [Textual](https://github.com/Textua
 
 If you have ever used `asyncio.create_task` you may have created a bug for yourself that is challenging (read *almost impossible*) to reproduce. If it occurs, your code will likely fail in unpredictable ways.
 
-The root cause of this [Heisenbug](https://en.wikipedia.org/wiki/Heisenbug) is that if you don't hold a reference to the task object returned by `create_task` then the task may disappear without warning when Python runs garbage collection. In other words the code in your task will stop running with no obvious indication why.
+The root cause of this [Heisenbug](https://en.wikipedia.org/wiki/Heisenbug) is that if you don't hold a reference to the task object returned by `create_task` then the task may disappear without warning when Python runs garbage collection. In other words, the code in your task will stop running with no obvious indication why.
 
 This behavior is [well documented](https://docs.python.org/3/library/asyncio-task.html#asyncio.create_task), as you can see from this excerpt (emphasis mine):
 
