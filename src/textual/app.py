@@ -657,7 +657,7 @@ class App(Generic[ReturnType], DOMNode):
         Like asyncio apps in general, Textual apps are not thread-safe. If you call methods
         or set attributes on Textual objects from a thread, you may get unpredictable results.
 
-        This method will ensure that your code is ran within the correct context.
+        This method will ensure that your code runs within the correct context.
 
         Args:
             callback: A callable to run.
@@ -753,7 +753,7 @@ class App(Generic[ReturnType], DOMNode):
             svg_filename_stem = f"{self.title.lower()} {dt}"
             for reserved in ' <>:"/\\|?*.':
                 svg_filename_stem = svg_filename_stem.replace(reserved, "_")
-                svg_filename = svg_filename_stem + ".svg"
+            svg_filename = svg_filename_stem + ".svg"
         else:
             svg_filename = filename
         svg_path = os.path.expanduser(os.path.join(path, svg_filename))
@@ -832,7 +832,7 @@ class App(Generic[ReturnType], DOMNode):
                 driver.send_event(key_event)
                 await wait_for_idle(0)
 
-        await app._animator.wait_for_idle()
+        await app._animator.wait_until_complete()
         await wait_for_idle(0)
 
     @asynccontextmanager
@@ -1230,7 +1230,7 @@ class App(Generic[ReturnType], DOMNode):
         return screen
 
     def push_screen(self, screen: Screen | str) -> AwaitMount:
-        """Push a new screen on the screen stack.
+        """Push a new screen on the screen stack, making it the current screen.
 
         Args:
             screen: A Screen instance or the name of an installed screen.
@@ -1259,7 +1259,8 @@ class App(Generic[ReturnType], DOMNode):
         return AwaitMount(self.screen, [])
 
     def install_screen(self, screen: Screen, name: str | None = None) -> AwaitMount:
-        """Install a screen.
+        """Install a screen. Installing a screen prevents Textual from destroying it when it
+        is no longer on the screen stack.
 
         Args:
             screen: Screen to install.
