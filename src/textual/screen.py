@@ -63,7 +63,7 @@ class Screen(Widget):
 
     @property
     def is_current(self) -> bool:
-        """Check if this screen is current (i.e. visible to user)."""
+        """Is current (i.e. visible to user)."""
         from .app import ScreenStackError
 
         try:
