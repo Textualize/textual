@@ -209,7 +209,11 @@ class _WriterThread(threading.Thread):
         self.join()
 
 
-CSSPathType = Union[str, PurePath, List[Union[str, PurePath]], None]
+CSSPathType = Union[
+    str,
+    PurePath,
+    List[Union[str, PurePath]],
+]
 
 CallThreadReturnType = TypeVar("CallThreadReturnType")
 
@@ -241,7 +245,7 @@ class App(Generic[ReturnType], DOMNode):
 
     SCREENS: dict[str, Screen | Callable[[], Screen]] = {}
     _BASE_PATH: str | None = None
-    CSS_PATH: CSSPathType = None
+    CSS_PATH: CSSPathType | None = None
 
     TITLE: str | None = None
     """str | None: The default title for the application.
@@ -270,7 +274,7 @@ class App(Generic[ReturnType], DOMNode):
     def __init__(
         self,
         driver_class: Type[Driver] | None = None,
-        css_path: CSSPathType = None,
+        css_path: CSSPathType | None = None,
         watch_css: bool = False,
     ):
         # N.B. This must be done *before* we call the parent constructor, because MessagePump's
@@ -348,6 +352,7 @@ class App(Generic[ReturnType], DOMNode):
         css_path = css_path or self.CSS_PATH
         if css_path is not None:
             # When value(s) are supplied for CSS_PATH, we normalise them to a list of Paths.
+            css_paths: List[PurePath]
             if isinstance(css_path, str):
                 css_paths = [Path(css_path)]
             elif isinstance(css_path, PurePath):
@@ -355,7 +360,9 @@ class App(Generic[ReturnType], DOMNode):
             elif isinstance(css_path, list):
                 css_paths = []
                 for path in css_path:
-                    css_paths.append(Path(path) if isinstance(path, str) else path)
+                    css_paths.append(
+                        Path(path) if isinstance(path, str) else path,
+                    )
             else:
                 raise CssPathError(
                     "Expected a str, Path or list[str | Path] for the CSS_PATH."
