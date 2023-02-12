@@ -229,6 +229,7 @@ KEY_DISPLAY_ALIASES = {
     "escape": "ESC",
     "enter": "⏎",
     "minus": "-",
+    "space": "SPACE",
 }
 
 
