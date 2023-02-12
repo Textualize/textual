@@ -1266,8 +1266,9 @@ class App(Generic[ReturnType], DOMNode):
         return AwaitMount(self.screen, [])
 
     def install_screen(self, screen: Screen, name: str | None = None) -> AwaitMount:
-        """Install a screen. Installing a screen prevents Textual from destroying it when it
-        is no longer on the screen stack.
+        """Install a screen.
+
+        Installing a screen prevents Textual from destroying it when it is no longer on the screen stack.
 
         Args:
             screen: Screen to install.
