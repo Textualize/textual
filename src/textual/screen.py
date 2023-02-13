@@ -159,11 +159,7 @@ class Screen(Widget):
 
     @property
     def focus_chain(self) -> list[Widget]:
-        """Get widgets that may receive focus, in focus order.
-
-        Returns:
-            List of Widgets in focus order.
-        """
+        """A list of widgets that may receive focus, in focus order."""
         widgets: list[Widget] = []
         add_widget = widgets.append
         stack: list[Iterator[Widget]] = [iter(self.focusable_children)]
