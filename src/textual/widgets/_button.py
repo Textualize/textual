@@ -220,10 +220,6 @@ class Button(Static, can_focus=True):
         self.remove_class(f"-{old_variant}")
         self.add_class(f"-{variant}")
 
-    # def watch_disabled(self, disabled: bool) -> None:
-    #     self.set_class(disabled, "-disabled")
-    #     self.can_focus = not disabled
-
     def validate_label(self, label: RenderableType) -> RenderableType:
         """Parse markup for self.label"""
         if isinstance(label, str):
