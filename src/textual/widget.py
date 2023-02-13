@@ -2141,7 +2141,6 @@ class Widget(DOMNode):
         self._update_styles()
 
     def watch_disabled(self) -> None:
-        # self.can_focus = not self.disabled
         self._update_styles()
 
     def _size_updated(
