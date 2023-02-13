@@ -1152,7 +1152,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         cache_key = (num_rows, update_count)
         if cache_key in self._ordered_row_cache:
             ordered_rows = self._ordered_row_cache[cache_key]
-            print("from cache:")
         else:
             row_indices = range(num_rows)
             ordered_rows = []
@@ -1161,8 +1160,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 row = self.rows[row_key]
                 ordered_rows.append(row)
             self._ordered_row_cache[cache_key] = ordered_rows
-            print("computed:")
-        print(ordered_rows)
         return ordered_rows
 
     def _get_row_renderables(self, row_index: int) -> list[RenderableType]:
