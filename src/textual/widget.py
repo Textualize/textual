@@ -226,7 +226,7 @@ class Widget(DOMNode):
     auto_links = Reactive(True)
     """Widget will highlight links automatically."""
     disabled = Reactive(False)
-    """The disabled state of the widget. `True` if disabled, `False if not."""
+    """The disabled state of the widget. `True` if disabled, `False` if not."""
 
     hover_style: Reactive[Style] = Reactive(Style, repaint=False)
     highlight_link_id: Reactive[str] = Reactive("")
