@@ -1281,6 +1281,7 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             screen: Screen to install.
             name: Unique name to identify the screen.
+
         Raises:
             ScreenError: If the screen can't be installed.
 
@@ -1301,7 +1302,10 @@ class App(Generic[ReturnType], DOMNode):
 
         If the screen was not previously installed then this method is a null-op.
         Uninstalling a screen allows Textual to delete it when it is popped or switched.
-        Note that you
+        Note that uninstalling a screen is only required if you have previously installed it
+        with [install_screen][textual.app.App.install_screen].
+        Textual will also uninstall screens automatically on exit.
+
 
         Args:
             screen: The screen to uninstall or the name of a installed screen.
