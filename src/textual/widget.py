@@ -2084,6 +2084,7 @@ class Widget(DOMNode):
             Names of the pseudo classes.
 
         """
+        yield "disabled" if self.disabled else "enabled"
         if self.mouse_over:
             yield "hover"
         if self.has_focus:
