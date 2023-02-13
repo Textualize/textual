@@ -4582,6 +4582,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.children" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        children
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.debug" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6548,6 +6559,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.children" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        children
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.debug" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7326,7 +7348,7 @@
         <tr>
           <td><code>css_path</code></td>
           <td>
-                <code><span title="textual.app.CSSPathType">CSSPathType</span></code>
+                <code><span title="textual.app.CSSPathType">CSSPathType</span> | None</code>
           </td>
           <td><p>Path to CSS or <code>None</code> for no CSS file.
 Defaults to None. To load multiple CSS files, pass a list of strings or paths which will be loaded in order.</p></td>
@@ -7441,6 +7463,27 @@ also the <code>sub_title</code> attribute.</p>
       <p>str | None: The default title for the application.</p>
 <p>If set to a string, this sets the default title for the application. See
 also the <code>title</code> attribute.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="textual.app.App.children" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">children</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Widget</span><span class="p">]</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.app.App.children" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>A view on to the children which contains just the screen.</p>
   </div>
 
 </div>
@@ -8358,7 +8401,7 @@ or None to use app. Defaults to None.</p></td>
       <p>Run a callback from another thread.</p>
 <p>Like asyncio apps in general, Textual apps are not thread-safe. If you call methods
 or set attributes on Textual objects from a thread, you may get unpredictable results.</p>
-<p>This method will ensure that your code is ran within the correct context.</p>
+<p>This method will ensure that your code runs within the correct context.</p>
 
   <p><strong>Parameters:</strong></p>
   <table>
@@ -9159,7 +9202,7 @@ Defaults to None.</p></td>
 
 
 <h4 id="textual.app.App.install_screen" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">install_screen</span><span class="p">(</span><span class="n">screen</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">install_screen</span><span class="p">(</span><span class="n">screen</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></code>
 
 <a href="#textual.app.App.install_screen" class="headerlink" title="Permanent link">&para;</a></h4>
 
@@ -9167,6 +9210,9 @@ Defaults to None.</p></td>
   <div class="doc doc-contents ">
   
       <p>Install a screen.</p>
+<p>Installing a screen prevents Textual from destroying it when it is no longer on the screen stack.
+Note that you don't need to install a screen to use it. See <a class="autorefs autorefs-internal" href="#textual.app.App.push_screen">push_screen</a>
+or <a class="autorefs autorefs-internal" href="#textual.app.App.switch_screen">switch_screen</a> to make a new screen current.</p>
 
   <p><strong>Parameters:</strong></p>
   <table>
@@ -9192,12 +9238,11 @@ Defaults to None.</p></td>
         <tr>
           <td><code>name</code></td>
           <td>
-                <code>str | None</code>
+                <code>str</code>
           </td>
-          <td><p>Unique name of screen or None to auto-generate.
-Defaults to None.</p></td>
+          <td><p>Unique name to identify the screen.</p></td>
           <td>
-                <code>None</code>
+              <em>required</em>
           </td>
         </tr>
     </tbody>
@@ -9232,7 +9277,7 @@ Defaults to None.</p></td>
     <tbody>
         <tr>
           <td>
-                <code><span title="textual.widget.AwaitMount">AwaitMount</span></code>
+                <code>None</code>
           </td>
           <td><p>An awaitable that awaits the mounting of the screen and its children.</p></td>
         </tr>
@@ -9685,7 +9730,7 @@ provided a <code>MountError</code> will be raised.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Push a new screen on the screen stack.</p>
+      <p>Push a new screen on the screen stack, making it the current screen.</p>
 
   <p><strong>Parameters:</strong></p>
   <table>
@@ -10168,8 +10213,12 @@ Defaults to a format like ISO 8601 with some reserved characters replaced with u
 
   <div class="doc doc-contents ">
   
-      <p>Uninstall a screen. If the screen was not previously installed then this
-method is a null-op.</p>
+      <p>Uninstall a screen.</p>
+<p>If the screen was not previously installed then this method is a null-op.
+Uninstalling a screen allows Textual to delete it when it is popped or switched.
+Note that uninstalling a screen is only required if you have previously installed it
+with <a class="autorefs autorefs-internal" href="#textual.app.App.install_screen">install_screen</a>.
+Textual will also uninstall screens automatically on exit.</p>
 
   <p><strong>Parameters:</strong></p>
   <table>
