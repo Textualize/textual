@@ -133,7 +133,7 @@ class DOMNode(MessagePump):
         check_identifiers("class name", *_classes)
         self._classes.update(_classes)
 
-        self.children: NodeList = NodeList()
+        self._nodes: NodeList = NodeList()
         self._css_styles: Styles = Styles(self)
         self._inline_styles: Styles = Styles(self)
         self.styles: RenderStyles = RenderStyles(
@@ -152,9 +152,9 @@ class DOMNode(MessagePump):
         super().__init__()
 
     @property
-    def children_view(self) -> Sequence["Widget"]:
+    def children(self) -> Sequence["Widget"]:
         """A view on to the children."""
-        return self.children
+        return self._nodes
 
     @property
     def auto_refresh(self) -> float | None:
@@ -678,7 +678,7 @@ class DOMNode(MessagePump):
             Children of this widget which will be displayed.
 
         """
-        return [child for child in self.children if child.display]
+        return [child for child in self._nodes if child.display]
 
     def watch(
         self,
@@ -721,7 +721,7 @@ class DOMNode(MessagePump):
         Args:
             node: A DOM node.
         """
-        self.children._append(node)
+        self._nodes._append(node)
         node._attach(self)
 
     def _add_children(self, *nodes: Widget) -> None:
@@ -730,7 +730,7 @@ class DOMNode(MessagePump):
         Args:
             *nodes: Positional args should be new DOM nodes.
         """
-        _append = self.children._append
+        _append = self._nodes._append
         for node in nodes:
             node._attach(self)
             _append(node)

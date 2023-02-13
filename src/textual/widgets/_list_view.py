@@ -94,33 +94,33 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         """
         if self.index is None:
             return None
-        elif 0 <= self.index < len(self.children):
-            return self.children[self.index]
+        elif 0 <= self.index < len(self._nodes):
+            return self._nodes[self.index]
 
     def validate_index(self, index: int | None) -> int | None:
         """Clamp the index to the valid range, or set to None if there's nothing to highlight."""
-        if not self.children or index is None:
+        if not self._nodes or index is None:
             return None
         return self._clamp_index(index)
 
     def _clamp_index(self, index: int) -> int:
         """Clamp the index to a valid value given the current list of children"""
-        last_index = max(len(self.children) - 1, 0)
+        last_index = max(len(self._nodes) - 1, 0)
         return clamp(index, 0, last_index)
 
     def _is_valid_index(self, index: int | None) -> bool:
         """Return True if the current index is valid given the current list of children"""
         if index is None:
             return False
-        return 0 <= index < len(self.children)
+        return 0 <= index < len(self._nodes)
 
     def watch_index(self, old_index: int, new_index: int) -> None:
         """Updates the highlighting when the index changes."""
         if self._is_valid_index(old_index):
-            old_child = self.children[old_index]
+            old_child = self._nodes[old_index]
             old_child.highlighted = False
         if self._is_valid_index(new_index):
-            new_child = self.children[new_index]
+            new_child = self._nodes[new_index]
             new_child.highlighted = True
         else:
             new_child = None
@@ -166,7 +166,7 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
 
     def on_list_item__child_clicked(self, event: ListItem._ChildClicked) -> None:
         self.focus()
-        self.index = self.children.index(event.sender)
+        self.index = self._nodes.index(event.sender)
         self.post_message_no_wait(self.Selected(self, event.sender))
 
     def _scroll_highlighted_region(self) -> None:
@@ -175,4 +175,4 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
             self.scroll_to_widget(self.highlighted_child, animate=False)
 
     def __len__(self):
-        return len(self.children)
+        return len(self._nodes)

@@ -419,7 +419,7 @@ class App(Generic[ReturnType], DOMNode):
         return self._return_value
 
     @property
-    def children_view(self) -> Sequence["Widget"]:
+    def children(self) -> Sequence["Widget"]:
         """A view on to the children which contains just the screen."""
         try:
             return (self.screen,)
@@ -1646,19 +1646,19 @@ class App(Generic[ReturnType], DOMNode):
             # Now to figure out where to place it. If we've got a `before`...
             if before is not None:
                 # ...it's safe to NodeList._insert before that location.
-                parent.children._insert(before, child)
+                parent._nodes._insert(before, child)
             elif after is not None and after != -1:
                 # In this case we've got an after. -1 holds the special
                 # position (for now) of meaning "okay really what I mean is
                 # do an append, like if I'd asked to add with no before or
                 # after". So... we insert before the next item in the node
                 # list, iff after isn't -1.
-                parent.children._insert(after + 1, child)
+                parent._nodes._insert(after + 1, child)
             else:
                 # At this point we appear to not be adding before or after,
                 # or we've got a before/after value that really means
                 # "please append". So...
-                parent.children._append(child)
+                parent._nodes._append(child)
 
             # Now that the widget is in the NodeList of its parent, sort out
             # the rest of the admin.
@@ -1703,8 +1703,8 @@ class App(Generic[ReturnType], DOMNode):
                 raise AppError(f"Can't register {widget!r}; expected a Widget instance")
             if widget not in self._registry:
                 self._register_child(parent, widget, before, after)
-                if widget.children:
-                    self._register(widget, *widget.children)
+                if widget._nodes:
+                    self._register(widget, *widget._nodes)
                 apply_stylesheet(widget)
 
         if not self._running:
@@ -1721,7 +1721,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         widget.reset_focus()
         if isinstance(widget._parent, Widget):
-            widget._parent.children._remove(widget)
+            widget._parent._nodes._remove(widget)
             widget._detach()
         self._registry.discard(widget)
 
@@ -2104,7 +2104,7 @@ class App(Generic[ReturnType], DOMNode):
         # snipping each affected branch from the DOM.
         for widget in pruned_remove:
             if widget.parent is not None:
-                widget.parent.children._remove(widget)
+                widget.parent._nodes._remove(widget)
 
         # Return the list of widgets that should end up being sent off in a
         # prune event.
@@ -2123,10 +2123,10 @@ class App(Generic[ReturnType], DOMNode):
 
         while stack:
             widget = pop()
-            children = [*widget.children, *widget._get_virtual_dom()]
+            children = [*widget._nodes, *widget._get_virtual_dom()]
             if children:
                 yield children
-            for child in widget.children:
+            for child in widget._nodes:
                 push(child)
 
     def _remove_nodes(self, widgets: list[Widget]) -> AwaitRemove:
