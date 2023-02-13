@@ -11,6 +11,7 @@ from textual.events import Click, MouseMove
 from textual.message import Message
 from textual.message_pump import MessagePump
 from textual.widgets import DataTable
+from textual.widgets._data_table import DuplicateKey
 from textual.widgets.data_table import CellDoesNotExist, CellKey, ColumnKey, Row, RowKey
 
 ROWS = [["0/0", "0/1"], ["1/0", "1/1"], ["2/0", "2/1"]]
@@ -190,6 +191,25 @@ async def test_add_rows_user_defined_keys():
         first_row = Row(algernon_key, height=1)
         assert table.rows[algernon_key] == first_row
         assert table.rows["algernon"] == first_row
+
+
+async def test_add_row_duplicate_key():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("A")
+        table.add_row("1", key="1")
+        with pytest.raises(DuplicateKey):
+            table.add_row("2", key="1")  # Duplicate row key
+
+
+async def test_add_column_duplicate_key():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("A", key="A")
+        with pytest.raises(DuplicateKey):
+            table.add_column("B", key="A")  # Duplicate column key
 
 
 async def test_add_column_with_width():

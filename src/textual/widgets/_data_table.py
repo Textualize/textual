@@ -45,6 +45,11 @@ class CellDoesNotExist(Exception):
     do not exist in the DataTable."""
 
 
+class DuplicateKey(Exception):
+    """Raised when the RowKey or ColumnKey provided already refers to
+    an existing row or column in the DataTable. Keys must be unique."""
+
+
 @functools.total_ordering
 class StringKey:
     """An object used as a key in a mapping. It can optionally wrap a string,
@@ -456,7 +461,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Cached y_offset - key is update_count - see y_offsets property for more
         information """
         self._ordered_row_cache: LRUCache[tuple[int, int], list[Row]] = LRUCache(1)
-        """Caches row ordering - key is update_count."""
+        """Caches row ordering - key is (num_rows, update_count)."""
 
         self._require_update_dimensions: bool = False
         """Set to re-calculate dimensions on idle."""
@@ -917,6 +922,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 after being added due to sorting/insertion/deletion of other columns).
         """
         column_key = ColumnKey(key)
+        if column_key in self._column_locations:
+            raise DuplicateKey(f"The column key {key!r} already exists.")
         column_index = len(self.columns)
         label = Text.from_markup(label) if isinstance(label, str) else label
         content_width = measure(self.app.console, label, 1)
@@ -959,13 +966,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 of its current location in the DataTable (it could have moved after
                 being added due to sorting or insertion/deletion of other rows).
         """
-        row_index = self.row_count
         row_key = RowKey(key)
+        if row_key in self._row_locations:
+            raise DuplicateKey(f"The row key {row_key!r} already exists.")
 
         # TODO: If there are no columns: do we generate them here?
         #  If we don't do this, users will be required to call add_column(s)
         #  Before they call add_row.
 
+        row_index = self.row_count
         # Map the key of this row to its current index
         self._row_locations[row_key] = row_index
         self.data[row_key] = {
