@@ -588,7 +588,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 for the new cell content.
         """
         if not self.is_valid_coordinate(coordinate):
-            raise CellDoesNotExist()
+            raise CellDoesNotExist(f"Coordinate {coordinate!r} is invalid.")
 
         row_key, column_key = self.coordinate_to_cell_key(coordinate)
         self.update_cell(row_key, column_key, value, update_width=update_width)
