@@ -424,7 +424,10 @@ class App(Generic[ReturnType], DOMNode):
     @property
     def children_view(self) -> Sequence["Widget"]:
         """A view on to the children which contains just the screen."""
-        return self._node_list_view
+        try:
+            return (self.screen,)
+        except ScreenError:
+            return ()
 
     def animate(
         self,
