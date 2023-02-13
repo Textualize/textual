@@ -110,9 +110,6 @@ class Input(Widget, can_focus=True):
         height: 1;
         min-height: 1;
     }
-    Input.-disabled {
-        opacity: 0.6;
-    }
     Input:focus {
         border: tall $accent;
     }
@@ -120,9 +117,6 @@ class Input(Widget, can_focus=True):
         background: $surface;
         color: $text;
         text-style: reverse;
-    }
-    Input>.input--placeholder {
-        color: $text-disabled;
     }
     """
 
