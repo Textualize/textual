@@ -246,7 +246,6 @@ class Widget(DOMNode):
         self._default_layout = VerticalLayout()
         self._animate: BoundAnimator | None = None
         self.highlight_style: Style | None = None
-        self.disabled = disabled
 
         self._vertical_scrollbar: ScrollBar | None = None
         self._horizontal_scrollbar: ScrollBar | None = None
@@ -281,6 +280,7 @@ class Widget(DOMNode):
             raise WidgetError("A widget can't be its own parent")
 
         self._add_children(*children)
+        self.disabled = disabled
 
     virtual_size = Reactive(Size(0, 0), layout=True)
     auto_width = Reactive(True)
