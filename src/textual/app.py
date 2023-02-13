@@ -1271,24 +1271,22 @@ class App(Generic[ReturnType], DOMNode):
             return await_mount
         return AwaitMount(self.screen, [])
 
-    def install_screen(self, screen: Screen, name: str | None = None) -> None:
+    def install_screen(self, screen: Screen, name: str) -> None:
         """Install a screen.
 
         Installing a screen prevents Textual from destroying it when it is no longer on the screen stack.
+        Note that you don't need to install a screen to use it. See [push_screen][textual.app.App.push_screen]
+        or [switch_screen][textual.app.App.switch_screen] to make a new screen current.
 
         Args:
             screen: Screen to install.
-            name: Unique name of screen or None to auto-generate.
-                Defaults to None.
-
+            name: Unique name to identify the screen.
         Raises:
             ScreenError: If the screen can't be installed.
 
         Returns:
             An awaitable that awaits the mounting of the screen and its children.
         """
-        if name is None:
-            name = nanoid.generate()
         if name in self._installed_screens:
             raise ScreenError(f"Can't install screen; {name!r} is already installed")
         if screen in self._installed_screens.values():
@@ -1296,7 +1294,6 @@ class App(Generic[ReturnType], DOMNode):
                 "Can't install screen; {screen!r} has already been installed"
             )
         self._installed_screens[name] = screen
-        # _screen, await_mount = self._get_screen(name)  # Ensures screen is running
         self.log.system(f"{screen} INSTALLED name={name!r}")
 
     def uninstall_screen(self, screen: Screen | str) -> str | None:
