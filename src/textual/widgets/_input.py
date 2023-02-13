@@ -118,6 +118,9 @@ class Input(Widget, can_focus=True):
         color: $text;
         text-style: reverse;
     }
+    Input>.input--placeholder {
+        color: $text-disabled;
+    }
     """
 
     cursor_blink = reactive(True)
