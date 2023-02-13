@@ -237,7 +237,7 @@ class Widget(DOMNode):
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
-        disabled: bool | None = None,
+        disabled: bool = False,
     ) -> None:
         self._size = Size(0, 0)
         self._container_size = Size(0, 0)
@@ -246,7 +246,7 @@ class Widget(DOMNode):
         self._default_layout = VerticalLayout()
         self._animate: BoundAnimator | None = None
         self.highlight_style: Style | None = None
-        self.disabled = bool(disabled)
+        self.disabled = disabled
 
         self._vertical_scrollbar: ScrollBar | None = None
         self._horizontal_scrollbar: ScrollBar | None = None
