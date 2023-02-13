@@ -25,13 +25,14 @@ from typing import (
     Generic,
     Iterable,
     List,
+    Sequence,
     Type,
     TypeVar,
     Union,
     cast,
     overload,
 )
-from weakref import WeakSet, WeakValueDictionary
+from weakref import WeakSet
 
 import nanoid
 import rich
@@ -44,6 +45,7 @@ from rich.traceback import Traceback
 from . import Logger, LogGroup, LogVerbosity, actions, events, log, messages
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
+from ._app_node_list import AppNodeList
 from ._asyncio import create_task
 from ._callback import invoke
 from ._context import active_app
@@ -283,6 +285,7 @@ class App(Generic[ReturnType], DOMNode):
         _init_uvloop()
 
         super().__init__()
+        self._node_list_view = AppNodeList(self)
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
         self._filter: LineFilter | None = None
@@ -385,9 +388,7 @@ class App(Generic[ReturnType], DOMNode):
         self.scroll_sensitivity_y: float = 2.0
         """Number of lines to scroll in the Y direction with wheel or trackpad."""
 
-        self._installed_screens: WeakValueDictionary[
-            str, Screen | Callable[[], Screen]
-        ] = WeakValueDictionary()
+        self._installed_screens: dict[str, Screen | Callable[[], Screen]] = {}
         self._installed_screens.update(**self.SCREENS)
 
         self.devtools: DevtoolsClient | None = None
@@ -419,6 +420,11 @@ class App(Generic[ReturnType], DOMNode):
     def return_value(self) -> ReturnType | None:
         """ReturnType | None: The return type of the app."""
         return self._return_value
+
+    @property
+    def children_view(self) -> Sequence["Widget"]:
+        """A view on to the children which contains just the screen."""
+        return self._node_list_view
 
     def animate(
         self,
@@ -1265,7 +1271,7 @@ class App(Generic[ReturnType], DOMNode):
             return await_mount
         return AwaitMount(self.screen, [])
 
-    def install_screen(self, screen: Screen, name: str | None = None) -> AwaitMount:
+    def install_screen(self, screen: Screen, name: str | None = None) -> None:
         """Install a screen.
 
         Installing a screen prevents Textual from destroying it when it is no longer on the screen stack.
@@ -1290,9 +1296,8 @@ class App(Generic[ReturnType], DOMNode):
                 "Can't install screen; {screen!r} has already been installed"
             )
         self._installed_screens[name] = screen
-        _screen, await_mount = self._get_screen(name)  # Ensures screen is running
+        # _screen, await_mount = self._get_screen(name)  # Ensures screen is running
         self.log.system(f"{screen} INSTALLED name={name!r}")
-        return await_mount
 
     def uninstall_screen(self, screen: Screen | str) -> str | None:
         """Uninstall a screen. If the screen was not previously installed then this
@@ -1894,6 +1899,7 @@ class App(Generic[ReturnType], DOMNode):
         # Handle input events that haven't been forwarded
         # If the event has been forwarded it may have bubbled up back to the App
         if isinstance(event, events.Compose):
+            self.log(event)
             screen = Screen(id="_default")
             self._register(self, screen)
             self._screen_stack.append(screen)

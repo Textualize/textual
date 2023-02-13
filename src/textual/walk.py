@@ -67,8 +67,8 @@ def walk_depth_first(
         else:
             if isinstance(node, check_type):
                 yield node
-            if node.children:
-                push(iter(node.children))
+            if node.children_view:
+                push(iter(node.children_view))
 
 
 @overload
@@ -122,9 +122,9 @@ def walk_breadth_first(
 
     if with_root and isinstance(root, check_type):
         yield root
-    extend(root.children)
+    extend(root.children_view)
     while queue:
         node = popleft()
         if isinstance(node, check_type):
             yield node
-        extend(node.children)
+        extend(node.children_view)

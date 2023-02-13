@@ -7,6 +7,7 @@ from typing import (
     ClassVar,
     Iterable,
     Iterator,
+    Sequence,
     Type,
     TypeVar,
     cast,
@@ -149,6 +150,11 @@ class DOMNode(MessagePump):
         self._has_focus_within: bool = False
 
         super().__init__()
+
+    @property
+    def children_view(self) -> Sequence["Widget"]:
+        """A view on to the children."""
+        return self.children
 
     @property
     def auto_refresh(self) -> float | None:
@@ -502,6 +508,29 @@ class DOMNode(MessagePump):
         Returns:
             A Rich object which may be printed.
         """
+
+        def render_info(node: DOMNode) -> Pretty:
+            return Pretty(node)
+
+        tree = Tree(render_info(self))
+
+        def add_children(tree, node):
+            for child in node.children_view:
+                info = render_info(child)
+                branch = tree.add(info)
+                if tree.children:
+                    add_children(branch, child)
+
+        add_children(tree, self)
+        return tree
+
+    @property
+    def css_tree(self) -> Tree:
+        """Get a Rich tree object which will recursively render the structure of the node tree.
+
+        Returns:
+            A Rich object which may be printed.
+        """
         from rich.columns import Columns
         from rich.console import Group
         from rich.panel import Panel
@@ -527,7 +556,7 @@ class DOMNode(MessagePump):
         tree = Tree(render_info(self))
 
         def add_children(tree, node):
-            for child in node.children:
+            for child in node.children_view:
                 info = render_info(child)
                 css = child.styles.css
                 if css:
@@ -541,7 +570,7 @@ class DOMNode(MessagePump):
                         ),
                     )
                 branch = tree.add(info)
-                if tree.children:
+                if tree.children_view:
                     add_children(branch, child)
 
         add_children(tree, self)
