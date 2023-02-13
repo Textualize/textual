@@ -1297,8 +1297,11 @@ class App(Generic[ReturnType], DOMNode):
         self.log.system(f"{screen} INSTALLED name={name!r}")
 
     def uninstall_screen(self, screen: Screen | str) -> str | None:
-        """Uninstall a screen. If the screen was not previously installed then this
-        method is a null-op.
+        """Uninstall a screen.
+
+        If the screen was not previously installed then this method is a null-op.
+        Uninstalling a screen allows Textual to delete it when it is popped or switched.
+        Note that you
 
         Args:
             screen: The screen to uninstall or the name of a installed screen.

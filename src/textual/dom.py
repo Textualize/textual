@@ -526,7 +526,8 @@ class DOMNode(MessagePump):
 
     @property
     def css_tree(self) -> Tree:
-        """Get a Rich tree object which will recursively render the structure of the node tree.
+        """Get a Rich tree object which will recursively render the structure of the node tree,
+        which also displays CSS and size information.
 
         Returns:
             A Rich object which may be printed.
