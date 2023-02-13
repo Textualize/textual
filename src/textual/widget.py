@@ -2134,11 +2134,11 @@ class Widget(DOMNode):
     def watch_mouse_over(self, value: bool) -> None:
         """Update from CSS if mouse over state changes."""
         if self._has_hover_style:
-            self.app.update_styles(self)
+            self._update_styles()
 
     def watch_has_focus(self, value: bool) -> None:
         """Update from CSS if has focus state changes."""
-        self.app.update_styles(self)
+        self._update_styles()
 
     def _size_updated(
         self, size: Size, virtual_size: Size, container_size: Size
@@ -2486,11 +2486,11 @@ class Widget(DOMNode):
 
     def _on_descendant_blur(self, event: events.DescendantBlur) -> None:
         if self._has_focus_within:
-            self.app.update_styles(self)
+            self._update_styles()
 
     def _on_descendant_focus(self, event: events.DescendantBlur) -> None:
         if self._has_focus_within:
-            self.app.update_styles(self)
+            self._update_styles()
 
     def _on_mouse_scroll_down(self, event: events.MouseScrollDown) -> None:
         if event.ctrl or event.shift:
