@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, ClassVar, Generic, NewType, TypeVar
+from typing import TYPE_CHECKING, ClassVar, Generic, Iterable, NewType, TypeVar, cast
 
 import rich.repr
 from rich.style import NULL_STYLE, Style
@@ -783,7 +783,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         assert self._tree_lines_cached is not None
         return self._tree_lines_cached
 
-    def _on_idle(self) -> None:
+    async def _on_idle(self, event: events.Idle) -> None:
         """Check tree needs a rebuild on idle."""
         # Property calls build if required
         self._tree_lines
@@ -891,6 +891,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 Returns:
                     Strings for space, vertical, terminator and cross.
                 """
+                lines: tuple[Iterable[str], Iterable[str], Iterable[str], Iterable[str]]
                 if self.show_guides:
                     lines = self.LINES["default"]
                     if style.bold:
@@ -901,11 +902,11 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                     lines = ("  ", "  ", "  ", "  ")
 
                 guide_depth = max(0, self.guide_depth - 2)
-                lines = tuple(
-                    f"{vertical}{horizontal * guide_depth} "
-                    for vertical, horizontal in lines
+                guide_lines = tuple(
+                    f"{characters[0]}{characters[1] * guide_depth} "
+                    for characters in lines
                 )
-                return lines
+                return cast("tuple[str, str, str, str]", guide_lines)
 
             if is_hover:
                 line_style = self.get_component_rich_style("tree--highlight-line")

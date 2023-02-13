@@ -37,7 +37,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Breaking change: `TreeNode` can no longer be imported from `textual.widgets`; it is now available via `from textual.widgets.tree import TreeNode`. https://github.com/Textualize/textual/pull/1637
 - `Tree` now shows a (subdued) cursor for a highlighted node when focus has moved elsewhere https://github.com/Textualize/textual/issues/1471
-- Breaking change: renamed `Checkbox` to `Switch`.
 - `DataTable.add_row` now accepts `key` argument to uniquely identify the row https://github.com/Textualize/textual/pull/1638
 - `DataTable.add_column` now accepts `key` argument to uniquely identify the column https://github.com/Textualize/textual/pull/1638
 - `DataTable.add_row` and `DataTable.add_column` now return lists of keys identifying the added rows/columns https://github.com/Textualize/textual/pull/1638
@@ -52,6 +51,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: `DataTable.refresh_cell` was renamed to `DataTable.refresh_coordinate` https://github.com/Textualize/textual/pull/1638
 - Breaking change: `DataTable.get_row_height` now takes a `RowKey` argument instead of a row index https://github.com/Textualize/textual/pull/1638
 - The `_filter` module was made public (now called `filter`) https://github.com/Textualize/textual/pull/1638
+- Breaking change: renamed `Checkbox` to `Switch` https://github.com/Textualize/textual/issues/1746
 
 ### Fixed
 

@@ -63,7 +63,7 @@ class Screen(Widget):
 
     @property
     def is_current(self) -> bool:
-        """Check if this screen is current (i.e. visible to user)."""
+        """Is the screen current (i.e. visible to user)?"""
         from .app import ScreenStackError
 
         try:
@@ -231,7 +231,7 @@ class Screen(Widget):
         else:
             # Only move the focus if we are currently showing the focus
             if direction:
-                to_focus: Widget | None = None
+                to_focus = None
                 chain_length = len(focus_chain)
                 for step in range(1, len(focus_chain) + 1):
                     node = focus_chain[

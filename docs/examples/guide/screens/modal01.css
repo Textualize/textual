@@ -1,7 +1,7 @@
 #dialog {
     grid-size: 2;
     grid-gutter: 1 2;
-    margin: 1 2;
+    padding: 1 2;
 }
 
 #question {

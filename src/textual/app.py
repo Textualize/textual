@@ -209,7 +209,11 @@ class _WriterThread(threading.Thread):
         self.join()
 
 
-CSSPathType = Union[str, PurePath, List[Union[str, PurePath]], None]
+CSSPathType = Union[
+    str,
+    PurePath,
+    List[Union[str, PurePath]],
+]
 
 CallThreadReturnType = TypeVar("CallThreadReturnType")
 
@@ -241,7 +245,7 @@ class App(Generic[ReturnType], DOMNode):
 
     SCREENS: dict[str, Screen | Callable[[], Screen]] = {}
     _BASE_PATH: str | None = None
-    CSS_PATH: CSSPathType = None
+    CSS_PATH: CSSPathType | None = None
 
     TITLE: str | None = None
     """str | None: The default title for the application.
@@ -270,7 +274,7 @@ class App(Generic[ReturnType], DOMNode):
     def __init__(
         self,
         driver_class: Type[Driver] | None = None,
-        css_path: CSSPathType = None,
+        css_path: CSSPathType | None = None,
         watch_css: bool = False,
     ):
         # N.B. This must be done *before* we call the parent constructor, because MessagePump's
@@ -348,6 +352,7 @@ class App(Generic[ReturnType], DOMNode):
         css_path = css_path or self.CSS_PATH
         if css_path is not None:
             # When value(s) are supplied for CSS_PATH, we normalise them to a list of Paths.
+            css_paths: List[PurePath]
             if isinstance(css_path, str):
                 css_paths = [Path(css_path)]
             elif isinstance(css_path, PurePath):
@@ -355,7 +360,9 @@ class App(Generic[ReturnType], DOMNode):
             elif isinstance(css_path, list):
                 css_paths = []
                 for path in css_path:
-                    css_paths.append(Path(path) if isinstance(path, str) else path)
+                    css_paths.append(
+                        Path(path) if isinstance(path, str) else path,
+                    )
             else:
                 raise CssPathError(
                     "Expected a str, Path or list[str | Path] for the CSS_PATH."
@@ -657,7 +664,7 @@ class App(Generic[ReturnType], DOMNode):
         Like asyncio apps in general, Textual apps are not thread-safe. If you call methods
         or set attributes on Textual objects from a thread, you may get unpredictable results.
 
-        This method will ensure that your code is ran within the correct context.
+        This method will ensure that your code runs within the correct context.
 
         Args:
             callback: A callable to run.
@@ -753,7 +760,7 @@ class App(Generic[ReturnType], DOMNode):
             svg_filename_stem = f"{self.title.lower()} {dt}"
             for reserved in ' <>:"/\\|?*.':
                 svg_filename_stem = svg_filename_stem.replace(reserved, "_")
-                svg_filename = svg_filename_stem + ".svg"
+            svg_filename = svg_filename_stem + ".svg"
         else:
             svg_filename = filename
         svg_path = os.path.expanduser(os.path.join(path, svg_filename))
@@ -832,7 +839,7 @@ class App(Generic[ReturnType], DOMNode):
                 driver.send_event(key_event)
                 await wait_for_idle(0)
 
-        await app._animator.wait_for_idle()
+        await app._animator.wait_until_complete()
         await wait_for_idle(0)
 
     @asynccontextmanager
@@ -1230,7 +1237,7 @@ class App(Generic[ReturnType], DOMNode):
         return screen
 
     def push_screen(self, screen: Screen | str) -> AwaitMount:
-        """Push a new screen on the screen stack.
+        """Push a new screen on the screen stack, making it the current screen.
 
         Args:
             screen: A Screen instance or the name of an installed screen.
@@ -1260,6 +1267,8 @@ class App(Generic[ReturnType], DOMNode):
 
     def install_screen(self, screen: Screen, name: str | None = None) -> AwaitMount:
         """Install a screen.
+
+        Installing a screen prevents Textual from destroying it when it is no longer on the screen stack.
 
         Args:
             screen: Screen to install.

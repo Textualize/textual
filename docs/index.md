@@ -81,10 +81,6 @@ Build sophisticated user interfaces with a simple Python API. Run your apps in t
 ```
 
 
-```{.textual path="docs/examples/events/dictionary.py" columns="100" lines="30" press="tab,_,t,e,x,t,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_"}
-```
-
-
 ```{.textual path="docs/examples/guide/layout/combining_layouts.py" columns="100", lines="30"}
 ```
 

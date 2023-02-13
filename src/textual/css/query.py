@@ -255,7 +255,7 @@ class DOMQuery(Generic[QueryType]):
             # The IndexError was got, that's a good thing in this case. So
             # we return what we found.
             pass
-        return the_one
+        return cast("Widget", the_one)
 
     @overload
     def last(self) -> Widget:
