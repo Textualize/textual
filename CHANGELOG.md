@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `App.install_screen` name is no longer optional https://github.com/Textualize/textual/pull/1778
 - `App.query` now only includes the current screen https://github.com/Textualize/textual/pull/1778
 - `DOMNode.tree` now displays simple DOM structure only https://github.com/Textualize/textual/pull/1778
+- `App.install_screen` now returns None rather than AwaitMount https://github.com/Textualize/textual/pull/1778
 
 ### Fixed
 
