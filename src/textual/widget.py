@@ -1178,6 +1178,11 @@ class Widget(DOMNode):
         return self.virtual_region.grow(self.styles.margin)
 
     @property
+    def focusable(self) -> bool:
+        """Can this widget currently receive focus?"""
+        return self.can_focus and not self.disabled
+
+    @property
     def focusable_children(self) -> list[Widget]:
         """Get the children which may be focused.
 
