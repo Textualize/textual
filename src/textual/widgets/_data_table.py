@@ -72,7 +72,10 @@ class StringKey:
     def __lt__(self, other):
         if isinstance(other, str):
             return self.value < other
-        return self.value < other.value
+        elif isinstance(other, StringKey):
+            return self.value < other.value
+        else:
+            raise NotImplemented
 
     def __rich_repr__(self):
         yield "value", self.value
@@ -450,7 +453,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._line_cache: LRUCache[LineCacheKey, Strip] = LRUCache(1000)
         """Cache for lines within rows."""
         self._offset_cache: LRUCache[int, list[tuple[RowKey, int]]] = LRUCache(1)
-        """Cached y_offset - key is update_count - see y_offsets property for more information"""
+        """Cached y_offset - key is update_count - see y_offsets property for more
+        information """
+        self._ordered_row_cache: LRUCache[tuple[int, int], list[Row]] = LRUCache(1)
+        """Caches row ordering - key is update_count."""
 
         self._require_update_dimensions: bool = False
         """Set to re-calculate dimensions on idle."""
@@ -1132,12 +1138,22 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     @property
     def ordered_rows(self) -> list[Row]:
         """The list of Rows in the DataTable, ordered as they appear on screen."""
-        row_indices = range(self.row_count)
-        ordered_rows = []
-        for row_index in row_indices:
-            row_key = self._row_locations.get_key(row_index)
-            row = self.rows[row_key]
-            ordered_rows.append(row)
+        num_rows = self.row_count
+        update_count = self._update_count
+        cache_key = (num_rows, update_count)
+        if cache_key in self._ordered_row_cache:
+            ordered_rows = self._ordered_row_cache[cache_key]
+            print("from cache:")
+        else:
+            row_indices = range(num_rows)
+            ordered_rows = []
+            for row_index in row_indices:
+                row_key = self._row_locations.get_key(row_index)
+                row = self.rows[row_key]
+                ordered_rows.append(row)
+            self._ordered_row_cache[cache_key] = ordered_rows
+            print("computed:")
+        print(ordered_rows)
         return ordered_rows
 
     def _get_row_renderables(self, row_index: int) -> list[RenderableType]:
