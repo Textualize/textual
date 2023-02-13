@@ -74,6 +74,9 @@ class StringKey:
             return self.value < other
         return self.value < other.value
 
+    def __rich_repr__(self):
+        yield "value", self.value
+
 
 class RowKey(StringKey):
     """Uniquely identifies a row in the DataTable. Even if the visual location
@@ -94,6 +97,10 @@ class CellKey(NamedTuple):
 
     row_key: RowKey
     column_key: ColumnKey
+
+    def __rich_repr__(self):
+        yield "row_key", self.row_key
+        yield "column_key", self.column_key
 
 
 def default_cell_formatter(obj: object) -> RenderableType:
@@ -442,7 +449,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Cache for individual cells."""
         self._line_cache: LRUCache[LineCacheKey, Strip] = LRUCache(1000)
         """Cache for lines within rows."""
-        self._offset_cache: LRUCache[int, list[[tuple[RowKey, int]]]] = LRUCache(1)
+        self._offset_cache: LRUCache[int, list[tuple[RowKey, int]]] = LRUCache(1)
         """Cached y_offset - key is update_count - see y_offsets property for more information"""
 
         self._require_update_dimensions: bool = False
@@ -502,14 +509,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         y-coordinate, we can index into this list to find which row that y-coordinate
         lands on, and the y-offset *within* that row. The length of the returned list
         is therefore the total height of all rows within the DataTable."""
-        y_offsets: list[tuple[RowKey, int]] = []
+        y_offsets = []
         if self._update_count in self._offset_cache:
             y_offsets = self._offset_cache[self._update_count]
         else:
             for row in self.ordered_rows:
-                row_key = row.key
-                row_height = row.height
-                y_offsets += [(row_key, y) for y in range(row_height)]
+                y_offsets += [(row.key, y) for y in range(row.height)]
             self._offset_cache = y_offsets
         return y_offsets
 
