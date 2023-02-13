@@ -515,7 +515,7 @@ class DOMNode(MessagePump):
         tree = Tree(render_info(self))
 
         def add_children(tree, node):
-            for child in node.children_view:
+            for child in node.children:
                 info = render_info(child)
                 branch = tree.add(info)
                 if tree.children:
@@ -557,7 +557,7 @@ class DOMNode(MessagePump):
         tree = Tree(render_info(self))
 
         def add_children(tree, node):
-            for child in node.children_view:
+            for child in node.children:
                 info = render_info(child)
                 css = child.styles.css
                 if css:
@@ -571,7 +571,7 @@ class DOMNode(MessagePump):
                         ),
                     )
                 branch = tree.add(info)
-                if tree.children_view:
+                if tree.children:
                     add_children(branch, child)
 
         add_children(tree, self)

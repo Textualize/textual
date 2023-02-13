@@ -104,7 +104,7 @@ async def test_screens():
     app.push_screen("screen3")
     assert app.screen_stack == [screen2, screen3]
     assert app.screen is screen3
-    # Only the current screen is in children_view
+    # Only the current screen is in children
     assert app.children == (screen3,)
 
     # Pop a screen
