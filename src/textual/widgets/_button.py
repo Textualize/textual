@@ -156,9 +156,6 @@ class Button(Static, can_focus=True):
     variant = reactive("default")
     """The variant name for the button."""
 
-    disabled = reactive(False)
-    """The disabled state of the button; `True` if disabled, `False` if not."""
-
     class Pressed(Message, bubble=True):
         """Event sent when a `Button` is pressed.
 
