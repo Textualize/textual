@@ -56,8 +56,9 @@ class Static(Widget, inherit_bindings=False):
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
+        disabled: bool = False,
     ) -> None:
-        super().__init__(name=name, id=id, classes=classes)
+        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self.expand = expand
         self.shrink = shrink
         self.markup = markup
