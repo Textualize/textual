@@ -2436,6 +2436,14 @@ class Widget(DOMNode):
         """
         self.app.capture_mouse(None)
 
+    def check_message_enabled(self, message: Message) -> bool:
+        # Do the normal checking and get out if that fails.
+        if not super().check_message_enabled(message):
+            return False
+        # Otherwise, if this is a mouse event the widget receiving the event
+        # must be capable of being focused right at this moment.
+        return self.focusable if isinstance(message, events.MouseEvent) else True
+
     async def broker_event(self, event_name: str, event: events.Event) -> bool:
         return await self.app._broker_event(event_name, event, default_namespace=self)
 
