@@ -34,7 +34,6 @@ from typing import (
 )
 from weakref import WeakSet
 
-import nanoid
 import rich
 import rich.repr
 from rich.console import Console, RenderableType
