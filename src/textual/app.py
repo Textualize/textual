@@ -45,7 +45,6 @@ from rich.traceback import Traceback
 from . import Logger, LogGroup, LogVerbosity, actions, events, log, messages
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
-from ._app_children_view import AppChildrenView
 from ._asyncio import create_task
 from ._callback import invoke
 from ._context import active_app
@@ -285,7 +284,6 @@ class App(Generic[ReturnType], DOMNode):
         _init_uvloop()
 
         super().__init__()
-        self._node_list_view = AppChildrenView(self)
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
         self._filter: LineFilter | None = None
