@@ -314,7 +314,7 @@ class Screen(Widget):
             # It may have been made invisible
             # Move to a sibling if possible
             for sibling in widget.visible_siblings:
-                if sibling not in avoiding and sibling.can_focus:
+                if sibling not in avoiding and sibling.focusable:
                     self.set_focus(sibling)
                     break
             else:
