@@ -177,7 +177,7 @@ class Screen(Widget):
             else:
                 if node.is_container and node.can_focus_children:
                     push(iter(node.focusable_children))
-                if node.can_focus:
+                if node.focusable:
                     add_widget(node)
 
         return widgets
