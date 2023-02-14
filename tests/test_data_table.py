@@ -423,6 +423,14 @@ async def test_get_column():
             next(cells)
 
 
+async def test_get_column_invalid_key():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        with pytest.raises(ColumnDoesNotExist):
+            list(table.get_column("INVALID"))
+
+
 async def test_update_cell_cell_exists():
     app = DataTableApp()
     async with app.run_test():
