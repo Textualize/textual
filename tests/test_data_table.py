@@ -75,11 +75,12 @@ async def test_datatable_message_emission():
         # therefore no highlighted cells), but then a row was added, and
         # so the cell at (0, 0) became highlighted.
         expected_messages.append("CellHighlighted")
-        await pilot.pause(2 / 100)
+        await wait_for_idle(0)
         assert app.message_names == expected_messages
 
         # Pressing Enter when the cursor is on a cell emits a CellSelected
         await pilot.press("enter")
+        await wait_for_idle(0)
         expected_messages.append("CellSelected")
         assert app.message_names == expected_messages
 
@@ -92,11 +93,12 @@ async def test_datatable_message_emission():
         # Switch over to the row cursor... should emit a `RowHighlighted`
         table.cursor_type = "row"
         expected_messages.append("RowHighlighted")
-        await pilot.pause(2 / 100)
+        await wait_for_idle(0)
         assert app.message_names == expected_messages
 
         # Select the row...
         await pilot.press("enter")
+        await wait_for_idle(0)
         expected_messages.append("RowSelected")
         assert app.message_names == expected_messages
 
@@ -104,18 +106,20 @@ async def test_datatable_message_emission():
         # Switching to the column cursor emits a `ColumnHighlighted`
         table.cursor_type = "column"
         expected_messages.append("ColumnHighlighted")
-        await pilot.pause(2 / 100)
+        await wait_for_idle(0)
         assert app.message_names == expected_messages
 
         # Select the column...
         await pilot.press("enter")
         expected_messages.append("ColumnSelected")
+        await wait_for_idle(0)
         assert app.message_names == expected_messages
 
         # NONE CURSOR
         # No messages get emitted at all...
         table.cursor_type = "none"
         await pilot.press("up", "down", "left", "right", "enter")
+        await wait_for_idle(0)
         # No new messages since cursor not visible
         assert app.message_names == expected_messages
 
@@ -125,6 +129,7 @@ async def test_datatable_message_emission():
         table.show_cursor = False
         table.cursor_type = "cell"
         await pilot.press("up", "down", "left", "right", "enter")
+        await wait_for_idle(0)
         # No new messages since show_cursor = False
         assert app.message_names == expected_messages
 
@@ -132,7 +137,7 @@ async def test_datatable_message_emission():
         # message should be emitted for highlighting the cell.
         table.show_cursor = True
         expected_messages.append("CellHighlighted")
-        await pilot.pause(2 / 100)
+        await wait_for_idle(0)
         assert app.message_names == expected_messages
 
         # Similarly for showing the cursor again when row or column
@@ -141,14 +146,14 @@ async def test_datatable_message_emission():
         table.cursor_type = "row"
         table.show_cursor = True
         expected_messages.append("RowHighlighted")
-        await pilot.pause(2 / 100)
+        await wait_for_idle(0)
         assert app.message_names == expected_messages
 
         table.show_cursor = False
         table.cursor_type = "column"
         table.show_cursor = True
         expected_messages.append("ColumnHighlighted")
-        await pilot.pause(2 / 100)
+        await wait_for_idle(0)
         assert app.message_names == expected_messages
 
         # Likewise, if the cursor_type is "none", and we change the
@@ -156,6 +161,7 @@ async def test_datatable_message_emission():
         # the cursor is still not visible to the user.
         table.cursor_type = "none"
         await pilot.press("up", "down", "left", "right", "enter")
+        await wait_for_idle(0)
         assert app.message_names == expected_messages
 
 
