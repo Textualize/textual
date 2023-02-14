@@ -236,5 +236,4 @@ class LinuxDriver(Driver):
         except Exception as error:
             log(error)
         finally:
-            with timer("selector.close"):
-                selector.close()
+            selector.close()
