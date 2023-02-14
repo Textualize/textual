@@ -464,7 +464,7 @@ class Markdown(Widget):
             self, table_of_contents: TableOfContentsType, *, sender: Widget
         ) -> None:
             super().__init__(sender=sender)
-            self.table_of_contents = table_of_contents
+            self.table_of_contents: TableOfContentsType = table_of_contents
             """Table of contents."""
 
     class TableOfContentsSelected(Message, bubble=True):
