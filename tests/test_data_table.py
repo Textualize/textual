@@ -357,8 +357,8 @@ async def test_get_row():
         assert table.get_row(first_row) == [2, 4, 1]
         assert table.get_row(second_row) == [3, 2, 1]
 
+        # Even if row positions change, keys should always refer to same rows.
         table.sort(b)
-
         assert table.get_row(first_row) == [2, 4, 1]
         assert table.get_row(second_row) == [3, 2, 1]
 
