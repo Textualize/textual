@@ -2153,6 +2153,7 @@ class Widget(DOMNode):
         self._update_styles()
 
     def watch_disabled(self) -> None:
+        """Update the styles of the widget and its children when disabled is toggled."""
         for node in self.walk_children(with_self=True):
             node._update_styles()
 
