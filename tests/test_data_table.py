@@ -441,6 +441,18 @@ async def test_get_column_at():
         first_column = list(table.get_column_at(0))
         assert first_column == [ROWS[0][0], ROWS[1][0], ROWS[2][0]]
 
+        second_column = list(table.get_column_at(1))
+        assert second_column == [ROWS[0][1], ROWS[1][1], ROWS[2][1]]
+
+
+@pytest.mark.parametrize("index", [-1, 5])
+async def test_get_column_at_invalid_index(index):
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        with pytest.raises(ColumnDoesNotExist):
+            list(table.get_column_at(index))
+
 
 async def test_update_cell_cell_exists():
     app = DataTableApp()
