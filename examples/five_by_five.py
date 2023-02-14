@@ -1,6 +1,6 @@
-from __future__ import annotations
-
 """Simple version of 5x5, developed for/with Textual."""
+
+from __future__ import annotations
 
 from pathlib import Path
 from typing import TYPE_CHECKING, cast
