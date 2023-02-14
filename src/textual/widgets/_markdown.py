@@ -293,7 +293,7 @@ class Table(Block):
             elif isinstance(block, TD):
                 rows[-1].append(block.text)
 
-        table: DataTable = DataTable(zebra_stripes=True)
+        table: DataTable = DataTable(zebra_stripes=True, show_cursor=False)
         table.can_focus = False
         table.add_columns(*headers)
         table.add_rows([row for row in rows if row])
