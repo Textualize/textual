@@ -376,7 +376,7 @@ async def test_get_row_invalid_row_key():
     async with app.run_test():
         table = app.query_one(DataTable)
         with pytest.raises(RowDoesNotExist):
-            table.get_row("abc")
+            table.get_row("INVALID")
 
 
 async def test_get_row_at():
@@ -407,6 +407,20 @@ async def test_get_row_at_invalid_index(index):
         table.add_row(3, 2, 1)
         with pytest.raises(RowDoesNotExist):
             table.get_row_at(index)
+
+
+async def test_get_column():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        a, b = table.add_columns("A", "B")
+        table.add_rows(ROWS)
+        cells = table.get_column(a)
+        assert next(cells) == ROWS[0][0]
+        assert next(cells) == ROWS[1][0]
+        assert next(cells) == ROWS[2][0]
+        with pytest.raises(StopIteration):
+            next(cells)
 
 
 async def test_update_cell_cell_exists():
