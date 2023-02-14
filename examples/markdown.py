@@ -5,7 +5,7 @@ from textual.widgets import Footer, MarkdownViewer
 
 class MarkdownApp(App):
     BINDINGS = [
-        ("t", "toggle_toc", "TOC"),
+        ("t", "toggle_table_of_contents", "TOC"),
         ("b", "back", "Back"),
         ("f", "forward", "Forward"),
     ]
@@ -26,8 +26,10 @@ class MarkdownApp(App):
         if not await self.markdown_viewer.go(self.path):
             self.exit(message=f"Unable to load {self.path!r}")
 
-    def action_toggle_toc(self) -> None:
-        self.markdown_viewer.show_toc = not self.markdown_viewer.show_toc
+    def action_toggle_table_of_contents(self) -> None:
+        self.markdown_viewer.show_table_of_contents = (
+            not self.markdown_viewer.show_table_of_contents
+        )
 
     async def action_back(self) -> None:
         await self.markdown_viewer.back()

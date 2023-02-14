@@ -27,9 +27,9 @@ The following example displays Markdown from a string.
 
 ## Messages
 
-### ::: textual.widgets.Markdown.TOCUpdated
+### ::: textual.widgets.Markdown.TableOfContentsUpdated
 
-### ::: textual.widgets.Markdown.TOCSelected
+### ::: textual.widgets.Markdown.TableOfContentsSelected
 
 ### ::: textual.widgets.Markdown.LinkClicked
 

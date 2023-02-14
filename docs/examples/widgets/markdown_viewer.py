@@ -52,7 +52,7 @@ class ListViewExample(App):
 
 class MarkdownExampleApp(App):
     def compose(self) -> ComposeResult:
-        yield MarkdownViewer(EXAMPLE_MARKDOWN, show_toc=True)
+        yield MarkdownViewer(EXAMPLE_MARKDOWN, show_table_of_contents=True)
 
 
 if __name__ == "__main__":

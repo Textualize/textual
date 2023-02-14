@@ -16,7 +16,7 @@ from ..reactive import reactive, var
 from ..widget import Widget
 from ..widgets import DataTable, Static, Tree
 
-TOC: TypeAlias = "list[tuple[int, str, str | None]]"
+TableOfContentsType: TypeAlias = "list[tuple[int, str, str | None]]"
 
 
 class Navigator:
@@ -44,7 +44,7 @@ class Navigator:
             path: Path to new document.
 
         Returns:
-            Path: New location.
+            New location.
         """
         new_path = self.location.parent / Path(path)
         self.stack = self.stack[: self.index + 1]
@@ -76,18 +76,18 @@ class Navigator:
         return False
 
 
-class Block(Static):
+class MarkdownBlock(Static):
     """The base class for a Markdown Element."""
 
     DEFAULT_CSS = """
-    Block {
+    MarkdownBlock {
         height: auto;
     }
     """
 
     def __init__(self, *args, **kwargs) -> None:
         self.text = Text()
-        self.blocks: list[Block] = []
+        self.blocks: list[MarkdownBlock] = []
         super().__init__(*args, **kwargs)
 
     def compose(self) -> ComposeResult:
@@ -103,22 +103,22 @@ class Block(Static):
         await self.post_message(Markdown.LinkClicked(href, sender=self))
 
 
-class Header(Block):
+class MarkdownHeader(MarkdownBlock):
     """Base class for a Markdown header."""
 
     DEFAULT_CSS = """
-    Header {
+    MarkdownHeader {
         color: $text;
     }
     """
 
 
-class H1(Header):
+class MarkdownH1(MarkdownHeader):
     """An H1 Markdown header."""
 
     DEFAULT_CSS = """
 
-    H1 {
+    MarkdownH1 {
         background: $accent-darken-2;
         border: wide $background;
         content-align: center middle;
@@ -131,12 +131,12 @@ class H1(Header):
     """
 
 
-class H2(Header):
+class MarkdownH2(MarkdownHeader):
     """An H2 Markdown header."""
 
     DEFAULT_CSS = """
 
-    H2 {
+    MarkdownH2 {
         background: $panel;
         border: wide $background;
         text-align: center;
@@ -149,11 +149,11 @@ class H2(Header):
     """
 
 
-class H3(Header):
+class MarkdownH3(MarkdownHeader):
     """An H3 Markdown header."""
 
     DEFAULT_CSS = """
-    H3 {
+    MarkdownH3 {
         background: $surface;
         text-style: bold;
         color: $text;
@@ -163,123 +163,115 @@ class H3(Header):
     """
 
 
-class H4(Header):
+class MarkdownH4(MarkdownHeader):
     """An H4 Markdown header."""
 
     DEFAULT_CSS = """
-    H4 {
+    MarkdownH4 {
         text-style: underline;
         margin: 1 0;
     }
-
     """
 
 
-class H5(Header):
+class MarkdownH5(MarkdownHeader):
     """An H5 Markdown header."""
 
     DEFAULT_CSS = """
-    H5 {
+    MarkdownH5 {
         text-style: bold;
         color: $text;
         margin: 1 0;
     }
-
     """
 
 
-class H6(Header):
+class MarkdownH6(MarkdownHeader):
     """An H6 Markdown header."""
 
     DEFAULT_CSS = """
-    H6 {
+    MarkdownH6 {
         text-style: bold;
         color: $text-muted;
         margin: 1 0;
     }
-
     """
 
 
-class Paragraph(Block):
+class MarkdownParagraph(MarkdownBlock):
     """A paragraph Markdown block."""
 
     DEFAULT_CSS = """
-    Markdown > Paragraph {
+    Markdown > MarkdownParagraph {
          margin: 0 0 1 0;
     }
     """
 
 
-class BlockQuote(Block):
+class MarkdownBlockQuote(MarkdownBlock):
     """A block quote Markdown block."""
 
     DEFAULT_CSS = """
-    BlockQuote {
+    MarkdownBlockQuote {
         background: $boost;
         border-left: outer $success;
         margin: 1 0;
         padding: 0 1;
     }
-    BlockQuote > BlockQuote {
+    MarkdownBlockQuote > BlockQuote {
         margin-left: 2;
         margin-top: 1;
     }
-
     """
 
 
-class BulletList(Block):
+class MarkdownBulletList(MarkdownBlock):
     """A Bullet list Markdown block."""
 
     DEFAULT_CSS = """
-
-    BulletList {
+    MarkdownBulletList {
         margin: 0;
         padding: 0 0;
     }
 
-    BulletList BulletList {
+    MarkdownBulletList MarkdownBulletList {
         margin: 0;
         padding-top: 0;
     }
-
     """
 
 
-class OrderedList(Block):
+class MarkdownOrderedList(MarkdownBlock):
     """An ordered list Markdown block."""
 
     DEFAULT_CSS = """
-
-    OrderedList {
+    MarkdownOrderedList {
         margin: 0;
         padding: 0 0;
     }
 
-    OrderedList OrderedList {
+   Markdown OrderedList MarkdownOrderedList {
         margin: 0;
         padding-top: 0;
     }
-
     """
 
 
-class Table(Block):
+class MarkdownTable(MarkdownBlock):
     """A Table markdown Block."""
 
     DEFAULT_CSS = """
-    Table {
+    MarkdownTable {
         margin: 1 0;
     }
-    Table > DataTable {
+    MarkdownTable > DataTable {
         width: 100%;
         height: auto;
     }
     """
 
     def compose(self) -> ComposeResult:
-        def flatten(block: Block) -> Iterable[Block]:
+        def flatten(block: MarkdownBlock) -> Iterable[MarkdownBlock]:
             for block in block.blocks:
                 if block.blocks:
                     yield from flatten(block)
@@ -288,11 +280,11 @@ class Table(Block):
         headers: list[Text] = []
         rows: list[list[Text]] = []
         for block in flatten(self):
-            if isinstance(block, TH):
+            if isinstance(block, MarkdownTH):
                 headers.append(block.text)
-            elif isinstance(block, TR):
+            elif isinstance(block, MarkdownTR):
                 rows.append([])
-            elif isinstance(block, TD):
+            elif isinstance(block, MarkdownTD):
                 rows[-1].append(block.text)
 
         table: DataTable = DataTable(zebra_stripes=True, show_cursor=False)
@@ -303,31 +295,19 @@ class Table(Block):
         self.blocks.clear()
 
 
-class TBody(Block):
+class MarkdownTBody(MarkdownBlock):
     """A table body Markdown block."""
 
-    DEFAULT_CSS = """
 
-    """
-
-
-class THead(Block):
+class MarkdownTHead(MarkdownBlock):
     """A table head Markdown block."""
 
-    DEFAULT_CSS = """
 
-    """
-
-
-class TR(Block):
+class MarkdownTR(MarkdownBlock):
     """A table row Markdown block."""
 
-    DEFAULT_CSS = """
 
-    """
-
-
-class TH(Block):
+class MarkdownTH(MarkdownBlock):
     """A table header Markdown block."""
 
     DEFAULT_CSS = """
@@ -335,7 +315,7 @@ class TH(Block):
     """
 
 
-class TD(Block):
+class MarkdownTD(MarkdownBlock):
     """A table data Markdown block."""
 
     DEFAULT_CSS = """
@@ -343,11 +323,11 @@ class TD(Block):
     """
 
 
-class Bullet(Widget):
+class MarkdownBullet(Widget):
     """A bullet widget."""
 
     DEFAULT_CSS = """
-    Bullet {
+    MarkdownBullet {
         width: auto;
     }
     """
@@ -358,22 +338,20 @@ class Bullet(Widget):
         return Text(self.symbol)
 
 
-class ListItem(Block):
+class MarkdownListItem(MarkdownBlock):
     """A list item Markdown block."""
 
     DEFAULT_CSS = """
-
-    ListItem {
+    MarkdownListItem {
         layout: horizontal;
         margin-right: 1;
         height: auto;
     }
 
-    ListItem > Vertical {
+    MarkdownListItem > Vertical {
         width: 1fr;
         height: auto;
     }
-
     """
 
     def __init__(self, bullet: str) -> None:
@@ -381,7 +359,7 @@ class ListItem(Block):
         super().__init__()
 
     def compose(self) -> ComposeResult:
-        bullet = Bullet()
+        bullet = MarkdownBullet()
         bullet.symbol = self.bullet
         yield bullet
         yield Vertical(*self.blocks)
@@ -389,11 +367,11 @@ class ListItem(Block):
         self.blocks.clear()
 
 
-class Fence(Block):
+class MarkdownFence(MarkdownBlock):
     """A fence Markdown block."""
 
     DEFAULT_CSS = """
-    Fence {
+    MarkdownFence {
         margin: 1 0;
         overflow: auto;
         width: 100%;
@@ -401,7 +379,7 @@ class Fence(Block):
         max-height: 20;
     }
 
-    Fence > * {
+    MarkdownFence > * {
         width: auto;
     }
     """
@@ -426,7 +404,14 @@ class Fence(Block):
         )
 
 
-HEADINGS = {"h1": H1, "h2": H2, "h3": H3, "h4": H4, "h5": H5, "h6": H6}
+HEADINGS = {
+    "h1": MarkdownH1,
+    "h2": MarkdownH2,
+    "h3": MarkdownH3,
+    "h4": MarkdownH4,
+    "h5": MarkdownH5,
+    "h6": MarkdownH6,
+}
 
 NUMERALS = " ⅠⅡⅢⅣⅤⅥ"
 
@@ -464,19 +449,23 @@ class Markdown(Widget):
         super().__init__(name=name, id=id, classes=classes)
         self._markdown = markdown
 
-    class TOCUpdated(Message, bubble=True):
+    class TableOfContentsUpdated(Message, bubble=True):
         """The table of contents was updated."""
 
-        def __init__(self, toc: TOC, *, sender: Widget) -> None:
+        def __init__(
+            self, table_of_contents: TableOfContentsType, *, sender: Widget
+        ) -> None:
             super().__init__(sender=sender)
-            self.toc = toc
+            self.table_of_contents = table_of_contents
+            """Table of contents."""
 
-    class TOCSelected(Message, bubble=True):
+    class TableOfContentsSelected(Message, bubble=True):
         """An item in the TOC was selected."""
 
         def __init__(self, block_id: str, *, sender: Widget) -> None:
             super().__init__(sender=sender)
             self.block_id = block_id
+            """ID of the block that was selected."""
 
     class LinkClicked(Message, bubble=True):
         """A link in the document was clicked."""
@@ -513,47 +502,49 @@ class Markdown(Widget):
         Args:
             markdown: A string containing Markdown.
         """
-        output: list[Block] = []
-        stack: list[Block] = []
+        output: list[MarkdownBlock] = []
+        stack: list[MarkdownBlock] = []
         parser = MarkdownIt("gfm-like")
 
         content = Text()
         block_id: int = 0
 
-        toc: TOC = []
+        table_of_contents: TableOfContentsType = []
 
         for token in parser.parse(markdown):
             if token.type == "heading_open":
                 block_id += 1
                 stack.append(HEADINGS[token.tag](id=f"block{block_id}"))
             elif token.type == "paragraph_open":
-                stack.append(Paragraph())
+                stack.append(MarkdownParagraph())
             elif token.type == "blockquote_open":
-                stack.append(BlockQuote())
+                stack.append(MarkdownBlockQuote())
             elif token.type == "bullet_list_open":
-                stack.append(BulletList())
+                stack.append(MarkdownBulletList())
             elif token.type == "ordered_list_open":
-                stack.append(OrderedList())
+                stack.append(MarkdownOrderedList())
             elif token.type == "list_item_open":
-                stack.append(ListItem(f"{token.info}. " if token.info else "● "))
+                stack.append(
+                    MarkdownListItem(f"{token.info}. " if token.info else "● ")
+                )
             elif token.type == "table_open":
-                stack.append(Table())
+                stack.append(MarkdownTable())
             elif token.type == "tbody_open":
-                stack.append(TBody())
+                stack.append(MarkdownTBody())
             elif token.type == "thead_open":
-                stack.append(THead())
+                stack.append(MarkdownTHead())
             elif token.type == "tr_open":
-                stack.append(TR())
+                stack.append(MarkdownTR())
             elif token.type == "th_open":
-                stack.append(TH())
+                stack.append(MarkdownTH())
             elif token.type == "td_open":
-                stack.append(TD())
+                stack.append(MarkdownTD())
             elif token.type.endswith("_close"):
                 block = stack.pop()
                 if token.type == "heading_close":
                     heading = block.text.plain
                     level = int(token.tag[1:])
-                    toc.append((level, heading, block.id))
+                    table_of_contents.append((level, heading, block.id))
                 if stack:
                     stack[-1].blocks.append(block)
                 else:
@@ -618,30 +609,32 @@ class Markdown(Widget):
                 stack[-1].set_content(content)
             elif token.type == "fence":
                 output.append(
-                    Fence(
+                    MarkdownFence(
                         token.content.rstrip(),
                         token.info,
                     )
                 )
 
-        await self.post_message(Markdown.TOCUpdated(toc, sender=self))
+        await self.post_message(
+            Markdown.TableOfContentsUpdated(table_of_contents, sender=self)
+        )
         await self.mount(*output)
 
 
-class MarkdownTOC(Widget, can_focus_children=True):
+class MarkdownTableOfContents(Widget, can_focus_children=True):
     DEFAULT_CSS = """
-    MarkdownTOC {
+    MarkdownTableOfContents {
         width: auto;
         background: $panel;
         border-right: wide $background;
     }
-    MarkdownTOC > Tree {
+    MarkdownTableOfContents > Tree {
         padding: 1;
         width: auto;
     }
     """
 
-    toc: reactive[TOC | None] = reactive(None, init=False)
+    table_of_contents: reactive[TableOfContentsType | None] = reactive(None, init=False)
 
     def compose(self) -> ComposeResult:
         tree: Tree = Tree("TOC")
@@ -651,20 +644,20 @@ class MarkdownTOC(Widget, can_focus_children=True):
         tree.auto_expand = False
         yield tree
 
-    def watch_toc(self, toc: TOC) -> None:
+    def watch_table_of_contents(self, table_of_contents: TableOfContentsType) -> None:
         """Triggered when the TOC changes."""
-        self.set_toc(toc)
+        self.set_table_of_contents(table_of_contents)
 
-    def set_toc(self, toc: TOC) -> None:
+    def set_table_of_contents(self, table_of_contents: TableOfContentsType) -> None:
         """Set the Table of Contents.
 
         Args:
-            toc: Table of contents.
+            table_of_contents: Table of contents.
         """
         tree = self.query_one(Tree)
         tree.clear()
         root = tree.root
-        for level, name, block_id in toc:
+        for level, name, block_id in table_of_contents:
             node = root
             for _ in range(level - 1):
                 if node._children:
@@ -679,7 +672,7 @@ class MarkdownTOC(Widget, can_focus_children=True):
         node_data = message.node.data
         if node_data is not None:
             await self.post_message(
-                Markdown.TOCSelected(node_data["block_id"], sender=self)
+                Markdown.TableOfContentsSelected(node_data["block_id"], sender=self)
             )
 
 
@@ -692,21 +685,21 @@ class MarkdownViewer(Vertical, can_focus=True, can_focus_children=True):
         scrollbar-gutter: stable;
     }
 
-    MarkdownTOC {
+    MarkdownTableOfContents {
         dock:left;
     }
 
-    MarkdownViewer > MarkdownTOC {
+    MarkdownViewer > MarkdownTableOfContents {
         display: none;
     }
 
-    MarkdownViewer.-show-toc > MarkdownTOC {
+    MarkdownViewer.-show-table-of-contents > MarkdownTableOfContents {
         display: block;
     }
 
     """
 
-    show_toc = reactive(True)
+    show_table_of_contents = reactive(True)
     top_block = reactive("")
 
     navigator: var[Navigator] = var(Navigator)
@@ -715,13 +708,13 @@ class MarkdownViewer(Vertical, can_focus=True, can_focus_children=True):
         self,
         markdown: str | None = None,
         *,
-        show_toc: bool = True,
+        show_table_of_contents: bool = True,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
     ):
         super().__init__(name=name, id=id, classes=classes)
-        self.show_toc = show_toc
+        self.show_table_of_contents = show_table_of_contents
         self._markdown = markdown
 
     @property
@@ -730,9 +723,9 @@ class MarkdownViewer(Vertical, can_focus=True, can_focus_children=True):
         return self.query_one(Markdown)
 
     @property
-    def toc(self) -> MarkdownTOC:
+    def table_of_contents(self) -> MarkdownTableOfContents:
         """The Table of Contents widget"""
-        return self.query_one(MarkdownTOC)
+        return self.query_one(MarkdownTableOfContents)
 
     async def on_mount(self) -> None:
         if self._markdown is not None:
@@ -756,19 +749,25 @@ class MarkdownViewer(Vertical, can_focus=True, can_focus_children=True):
         message.stop()
         await self.go(message.href)
 
-    def watch_show_toc(self, show_toc: bool) -> None:
-        self.set_class(show_toc, "-show-toc")
+    def watch_show_table_of_contents(self, show_table_of_contents: bool) -> None:
+        self.set_class(show_table_of_contents, "-show-table-of-contents")
 
     def compose(self) -> ComposeResult:
-        yield MarkdownTOC()
+        yield MarkdownTableOfContents()
         yield Markdown()
 
-    def on_markdown_tocupdated(self, message: Markdown.TOCUpdated) -> None:
-        self.query_one(MarkdownTOC).toc = message.toc
+    def on_markdown_table_of_contents_updated(
+        self, message: Markdown.TableOfContentsUpdated
+    ) -> None:
+        self.query_one(
+            MarkdownTableOfContents
+        ).table_of_contents = message.table_of_contents
         message.stop()
 
-    def on_markdown_tocselected(self, message: Markdown.TOCSelected) -> None:
+    def on_markdown_table_of_contents_selected(
+        self, message: Markdown.TableOfContentsSelected
+    ) -> None:
         block_selector = f"#{message.block_id}"
-        block = self.query_one(block_selector, Block)
+        block = self.query_one(block_selector, MarkdownBlock)
         self.scroll_to_widget(block, top=True)
         message.stop()

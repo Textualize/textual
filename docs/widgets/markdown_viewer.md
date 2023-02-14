@@ -27,9 +27,9 @@ The following example displays Markdown from a string and a Table of Contents.
 
 ## Reactive Attributes
 
-| Name       | Type | Default | Description                                                       |
-| ---------- | ---- | ------- | ----------------------------------------------------------------- |
-| `show_toc` | bool | True    | Wether a Table of Contents should be displayed with the Markdown. |
+| Name                     | Type | Default | Description                                                       |
+| ------------------------ | ---- | ------- | ----------------------------------------------------------------- |
+| `show_table_of_contents` | bool | True    | Wether a Table of Contents should be displayed with the Markdown. |
 
 ## See Also
 
