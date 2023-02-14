@@ -13,7 +13,7 @@ async def test_unmount():
     class UnmountWidget(Container):
         def on_unmount(self, event: events.Unmount):
             unmount_ids.append(
-                f"{self.__class__.__name__}#{self.id}-{self.parent is not None}-{len(self.children)}"
+                f"{self.__class__.__name__}#{self.id}-{self.parent is not None}-{len(self._nodes)}"
             )
 
     class MyScreen(Screen):
