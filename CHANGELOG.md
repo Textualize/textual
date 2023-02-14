@@ -56,6 +56,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: `DataTable.data` structure changed, and will be made private in upcoming release https://github.com/Textualize/textual/pull/1638
 - Breaking change: `DataTable.refresh_cell` was renamed to `DataTable.refresh_coordinate` https://github.com/Textualize/textual/pull/1638
 - Breaking change: `DataTable.get_row_height` now takes a `RowKey` argument instead of a row index https://github.com/Textualize/textual/pull/1638
+- Breaking change: `DataTable.data` renamed to `DataTable._data` (it's now private) https://github.com/Textualize/textual/pull/1786
 - The `_filter` module was made public (now called `filter`) https://github.com/Textualize/textual/pull/1638
 - Breaking change: renamed `Checkbox` to `Switch` https://github.com/Textualize/textual/issues/1746
 - `App.install_screen` name is no longer optional https://github.com/Textualize/textual/pull/1778
