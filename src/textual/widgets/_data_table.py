@@ -52,7 +52,9 @@ class DuplicateKey(Exception):
 
 @functools.total_ordering
 class StringKey:
-    """An object used as a key in a mapping. It can optionally wrap a string,
+    """An object used as a key in a mapping.
+
+    It can optionally wrap a string,
     and lookups into a map using the object behave the same as lookups using
     the string itself."""
 
@@ -87,19 +89,25 @@ class StringKey:
 
 
 class RowKey(StringKey):
-    """Uniquely identifies a row in the DataTable. Even if the visual location
+    """Uniquely identifies a row in the DataTable.
+
+    Even if the visual location
     of the row changes due to sorting or other modifications, a key will always
     refer to the same row."""
 
 
 class ColumnKey(StringKey):
-    """Uniquely identifies a column in the DataTable. Even if the visual location
+    """Uniquely identifies a column in the DataTable.
+
+    Even if the visual location
     of the column changes due to sorting or other modifications, a key will always
     refer to the same column."""
 
 
 class CellKey(NamedTuple):
-    """A unique identifier for a cell in the DataTable. Even if the cell changes
+    """A unique identifier for a cell in the DataTable.
+
+    Even if the cell changes
     visual location (i.e. moves to a different coordinate in the table), this key
     can still be used to retrieve it, regardless of where it currently is."""
 
@@ -265,8 +273,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     hover_coordinate: Reactive[Coordinate] = Reactive(Coordinate(0, 0), repaint=False)
 
     class CellHighlighted(Message, bubble=True):
-        """Posted when the cursor moves to highlight a new cell. It's only relevant
-        when the `cursor_type` is `"cell"`. It's also posted when the cell cursor is
+        """Posted when the cursor moves to highlight a new cell.
+
+        This is only relevant when the `cursor_type` is `"cell"`.
+        It's also posted when the cell cursor is
         re-enabled (by setting `show_cursor=True`), and when the cursor type is
         changed to `"cell"`. Can be handled using `on_data_table_cell_highlighted` in
         a subclass of `DataTable` or in a parent widget in the DOM.
@@ -297,7 +307,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     class CellSelected(Message, bubble=True):
         """Posted by the `DataTable` widget when a cell is selected.
-        It's only relevant when the `cursor_type` is `"cell"`. Can be handled using
+
+        This is only relevant when the `cursor_type` is `"cell"`. Can be handled using
         `on_data_table_cell_selected` in a subclass of `DataTable` or in a parent
         widget in the DOM.
 
@@ -326,7 +337,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             yield "cell_key", self.cell_key
 
     class RowHighlighted(Message, bubble=True):
-        """Posted when a row is highlighted. This message is only posted when the
+        """Posted when a row is highlighted.
+
+        This message is only posted when the
         `cursor_type` is set to `"row"`. Can be handled using
         `on_data_table_row_highlighted` in a subclass of `DataTable` or in a parent
         widget in the DOM.
@@ -347,7 +360,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             yield "row_key", self.row_key
 
     class RowSelected(Message, bubble=True):
-        """Posted when a row is selected. This message is only posted when the
+        """Posted when a row is selected.
+
+        This message is only posted when the
         `cursor_type` is set to `"row"`. Can be handled using
         `on_data_table_row_selected` in a subclass of `DataTable` or in a parent
         widget in the DOM.
@@ -368,7 +383,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             yield "row_key", self.row_key
 
     class ColumnHighlighted(Message, bubble=True):
-        """Posted when a column is highlighted. This message is only posted when the
+        """Posted when a column is highlighted.
+
+        This message is only posted when the
         `cursor_type` is set to `"column"`. Can be handled using
         `on_data_table_column_highlighted` in a subclass of `DataTable` or in a parent
         widget in the DOM.
@@ -391,7 +408,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             yield "column_key", self.column_key
 
     class ColumnSelected(Message, bubble=True):
-        """Posted when a column is selected. This message is only posted when the
+        """Posted when a column is selected.
+
+        This message is only posted when the
         `cursor_type` is set to `"column"`. Can be handled using
         `on_data_table_column_selected` in a subclass of `DataTable` or in a parent
         widget in the DOM.
@@ -1033,8 +1052,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return row_keys
 
     def on_idle(self) -> None:
-        """Runs when the message pump is empty. We use this for
-        some expensive calculations like re-computing dimensions of the
+        """Runs when the message pump is empty.
+
+        We use this for some expensive calculations like re-computing dimensions of the
         whole DataTable and re-computing column widths after some cells
         have been updated. This is more efficient in the case of high
         frequency updates, ensuring we only do expensive computations once."""
