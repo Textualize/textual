@@ -427,7 +427,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         classes: str | None = None,
     ) -> None:
         super().__init__(name=name, id=id, classes=classes)
-        self.data: dict[RowKey, dict[ColumnKey, CellType]] = {}
+        self._data: dict[RowKey, dict[ColumnKey, CellType]] = {}
         """Contains the cells of the table, indexed by row key and column key.
         The final positioning of a cell on screen cannot be determined solely by this
         structure. Instead, we must check _row_locations and _column_locations to find
@@ -562,7 +562,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             column_key = ColumnKey(column_key)
 
         try:
-            self.data[row_key][column_key] = value
+            self._data[row_key][column_key] = value
         except KeyError:
             raise CellDoesNotExist(
                 f"No cell exists for row_key={row_key!r}, column_key={column_key!r}."
@@ -598,7 +598,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         order they currently appear on screen."""
         for row_metadata in self.ordered_rows:
             row_key = row_metadata.key
-            row = self.data[row_key]
+            row = self._data[row_key]
             yield row[column_key]
 
     def get_cell(self, row_key: RowKey, column_key: ColumnKey) -> CellType:
@@ -612,7 +612,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             The value of the cell identified by the row and column keys.
         """
         try:
-            cell_value = self.data[row_key][column_key]
+            cell_value = self._data[row_key][column_key]
         except KeyError:
             raise CellDoesNotExist(
                 f"No cell exists for row_key={row_key!r}, column_key={column_key!r}."
@@ -739,7 +739,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def _highlight_row(self, row_index: int) -> None:
         """Apply highlighting to the row at the given index, and post event."""
         self.refresh_row(row_index)
-        is_valid_row = row_index < len(self.data)
+        is_valid_row = row_index < len(self._data)
         if is_valid_row:
             row_key = self._row_locations.get_key(row_index)
             self.post_message_no_wait(
@@ -805,7 +805,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             console = self.app.console
             label_width = measure(console, column.label, 1)
             content_width = column.content_width
-            cell_value = self.data[row_key][column_key]
+            cell_value = self._data[row_key][column_key]
 
             new_content_width = measure(console, default_cell_formatter(cell_value), 1)
 
@@ -896,7 +896,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """
         self._clear_caches()
         self._y_offsets.clear()
-        self.data.clear()
+        self._data.clear()
         self.rows.clear()
         if columns:
             self.columns.clear()
@@ -977,7 +977,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         row_index = self.row_count
         # Map the key of this row to its current index
         self._row_locations[row_key] = row_index
-        self.data[row_key] = {
+        self._data[row_key] = {
             column.key: cell
             for column, cell in zip_longest(self.ordered_columns, cells)
         }
@@ -1178,7 +1178,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         # Ensure we order the cells in the row based on current column ordering
         row_key = self._row_locations.get_key(row_index)
-        cell_mapping: dict[ColumnKey, CellType] = self.data.get(row_key, {})
+        cell_mapping: dict[ColumnKey, CellType] = self._data.get(row_key, {})
 
         ordered_row: list[CellType] = []
         for column in ordered_columns:
@@ -1513,7 +1513,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             return result
 
         ordered_rows = sorted(
-            self.data.items(), key=sort_by_column_keys, reverse=reverse
+            self._data.items(), key=sort_by_column_keys, reverse=reverse
         )
         self._row_locations = TwoWayDict(
             {key: new_index for new_index, (key, _) in enumerate(ordered_rows)}

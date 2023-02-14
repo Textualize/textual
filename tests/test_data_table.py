@@ -157,10 +157,10 @@ async def test_add_rows():
         row_keys = table.add_rows(ROWS)
         # We're given a key for each row
         assert len(row_keys) == len(ROWS)
-        assert len(row_keys) == len(table.data)
+        assert len(row_keys) == len(table._data)
         assert table.row_count == len(ROWS)
         # Each key can be used to fetch a row from the DataTable
-        assert all(key in table.data for key in row_keys)
+        assert all(key in table._data for key in row_keys)
 
 
 async def test_add_rows_user_defined_keys():
@@ -179,14 +179,14 @@ async def test_add_rows_user_defined_keys():
 
         # Ensure the data in the table is mapped as expected
         first_row = {key_a: ROWS[0][0], key_b: ROWS[0][1]}
-        assert table.data[algernon_key] == first_row
-        assert table.data["algernon"] == first_row
+        assert table._data[algernon_key] == first_row
+        assert table._data["algernon"] == first_row
 
         second_row = {key_a: ROWS[1][0], key_b: ROWS[1][1]}
-        assert table.data["charlie"] == second_row
+        assert table._data["charlie"] == second_row
 
         third_row = {key_a: ROWS[2][0], key_b: ROWS[2][1]}
-        assert table.data[auto_key] == third_row
+        assert table._data[auto_key] == third_row
 
         first_row = Row(algernon_key, height=1)
         assert table.rows[algernon_key] == first_row
@@ -260,7 +260,7 @@ async def test_clear():
         assert table.hover_coordinate == Coordinate(0, 0)
 
         # Ensure that the table has been cleared
-        assert table.data == {}
+        assert table._data == {}
         assert table.rows == {}
         assert table.row_count == 0
         assert len(table.columns) == 1
