@@ -467,8 +467,9 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
+        disabled: bool = False,
     ) -> None:
-        super().__init__(name=name, id=id, classes=classes)
+        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
         text_label = self.process_label(label)
 
