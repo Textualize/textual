@@ -503,11 +503,7 @@ class DOMNode(MessagePump):
 
     @property
     def tree(self) -> Tree:
-        """Get a Rich tree object which will recursively render the structure of the node tree.
-
-        Returns:
-            A Rich object which may be printed.
-        """
+        """Get a Rich tree object which will recursively render the structure of the node tree."""
 
         def render_info(node: DOMNode) -> Pretty:
             return Pretty(node)
@@ -528,9 +524,6 @@ class DOMNode(MessagePump):
     def css_tree(self) -> Tree:
         """Get a Rich tree object which will recursively render the structure of the node tree,
         which also displays CSS and size information.
-
-        Returns:
-            A Rich object which may be printed.
         """
         from rich.columns import Columns
         from rich.console import Group
