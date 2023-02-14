@@ -48,6 +48,8 @@ The example below populates a table with CSV data.
 
 ### ::: textual.widgets.DataTable.ColumnSelected
 
+### ::: textual.widgets.DataTable.HeaderSelected
+
 ## Bindings
 
 The data table widget defines directly the following bindings:
