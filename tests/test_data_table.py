@@ -347,6 +347,22 @@ async def test_get_cell_at_exception():
             table.get_cell_at(Coordinate(9999, 0))
 
 
+async def test_get_row():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        a, b, c = table.add_columns("A", "B", "C")
+        first_row = table.add_row(2, 4, 1)
+        second_row = table.add_row(3, 2, 1)
+        assert table.get_row(first_row) == [2, 4, 1]
+        assert table.get_row(second_row) == [3, 2, 1]
+
+        table.sort(b)
+
+        assert table.get_row(first_row) == [2, 4, 1]
+        assert table.get_row(second_row) == [3, 2, 1]
+
+
 async def test_update_cell_cell_exists():
     app = DataTableApp()
     async with app.run_test():
