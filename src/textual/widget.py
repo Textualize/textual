@@ -2453,7 +2453,7 @@ class Widget(DOMNode):
         # event must not be disabled at this moment.
         return (
             not self._self_or_ancestors_disabled
-            if isinstance(message, events.MouseEvent)
+            if isinstance(message, (events.MouseEvent, events.Enter, events.Leave))
             else True
         )
 
