@@ -363,6 +363,24 @@ async def test_get_row():
         assert table.get_row(second_row) == [3, 2, 1]
 
 
+async def test_get_row_at():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        a, b, c = table.add_columns("A", "B", "C")
+        table.add_row(2, 4, 1)
+        table.add_row(3, 2, 1)
+        assert table.get_row_at(0) == [2, 4, 1]
+        assert table.get_row_at(1) == [3, 2, 1]
+
+        # If we sort, then the rows present at the indices *do* change!
+        table.sort(b)
+
+        # Since we sorted on column "B", the rows at indices 0 and 1 are swapped.
+        assert table.get_row_at(0) == [3, 2, 1]
+        assert table.get_row_at(1) == [2, 4, 1]
+
+
 async def test_update_cell_cell_exists():
     app = DataTableApp()
     async with app.run_test():
