@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Iterable, TypeAlias
+from typing import Iterable
 
 from markdown_it import MarkdownIt
 from rich.style import Style
 from rich.syntax import Syntax
 from rich.text import Text
+from typing_extensions import TypeAlias
 
 from ..app import ComposeResult
 from ..containers import Vertical
