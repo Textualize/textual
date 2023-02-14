@@ -47,6 +47,16 @@ class CellDoesNotExist(Exception):
     do not exist in the DataTable."""
 
 
+class RowDoesNotExist(Exception):
+    """Raised when the user supplies a row index or row key which does
+    not exist in the DataTable (e.g. out of bounds index, invalid key)"""
+
+
+class ColumnDoesNotExist(Exception):
+    """Raised when the user supplies a column index or column key which does
+    not exist in the DataTable (e.g. out of bounds index, invalid key)"""
+
+
 class DuplicateKey(Exception):
     """The key supplied already exists.
 
@@ -442,7 +452,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         classes: str | None = None,
     ) -> None:
         super().__init__(name=name, id=id, classes=classes)
-        self.data: dict[RowKey, dict[ColumnKey, CellType]] = {}
+        self._data: dict[RowKey, dict[ColumnKey, CellType]] = {}
         """Contains the cells of the table, indexed by row key and column key.
         The final positioning of a cell on screen cannot be determined solely by this
         structure. Instead, we must check _row_locations and _column_locations to find
@@ -576,7 +586,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             column_key = ColumnKey(column_key)
 
         try:
-            self.data[row_key][column_key] = value
+            self._data[row_key][column_key] = value
         except KeyError:
             raise CellDoesNotExist(
                 f"No cell exists for row_key={row_key!r}, column_key={column_key!r}."
@@ -607,14 +617,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         row_key, column_key = self.coordinate_to_cell_key(coordinate)
         self.update_cell(row_key, column_key, value, update_width=update_width)
 
-    def _get_cells_in_column(self, column_key: ColumnKey) -> Iterable[CellType]:
-        """For a given column key, return the cells in that column in the
-        order they currently appear on screen."""
-        for row_metadata in self.ordered_rows:
-            row_key = row_metadata.key
-            row = self.data[row_key]
-            yield row[column_key]
-
     def get_cell(self, row_key: RowKey, column_key: ColumnKey) -> CellType:
         """Given a row key and column key, return the value of the corresponding cell.
 
@@ -626,7 +628,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             The value of the cell identified by the row and column keys.
         """
         try:
-            cell_value = self.data[row_key][column_key]
+            cell_value = self._data[row_key][column_key]
         except KeyError:
             raise CellDoesNotExist(
                 f"No cell exists for row_key={row_key!r}, column_key={column_key!r}."
@@ -647,6 +649,83 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """
         row_key, column_key = self.coordinate_to_cell_key(coordinate)
         return self.get_cell(row_key, column_key)
+
+    def get_row(self, row_key: RowKey | str) -> list[CellType]:
+        """Get the values from the row identified by the given row key.
+
+        Args:
+            row_key: The key of the row.
+
+        Returns:
+            A list of the values contained within the row.
+
+        Raises:
+            RowDoesNotExist: When there is no row corresponding to the key.
+        """
+        if row_key not in self._row_locations:
+            raise RowDoesNotExist(f"Row key {row_key!r} is not valid.")
+        cell_mapping: dict[ColumnKey, CellType] = self._data.get(row_key, {})
+        ordered_row: list[CellType] = [
+            cell_mapping[column.key] for column in self.ordered_columns
+        ]
+        return ordered_row
+
+    def get_row_at(self, row_index: int) -> list[CellType]:
+        """Get the values from the cells in a row at a given index. This will
+        return the values from a row based on the rows _current position_ in
+        the table.
+
+        Args:
+            row_index: The index of the row.
+
+        Returns:
+            A list of the values contained in the row.
+
+        Raises:
+            RowDoesNotExist: If there is no row with the given index.
+        """
+        if not self.is_valid_row_index(row_index):
+            raise RowDoesNotExist(f"Row index {row_index!r} is not valid.")
+        row_key = self._row_locations.get_key(row_index)
+        return self.get_row(row_key)
+
+    def get_column(self, column_key: ColumnKey | str) -> Iterable[CellType]:
+        """Get the values from the column identified by the given column key.
+
+        Args:
+            column_key: The key of the column.
+
+        Returns:
+            A generator which yields the cells in the column.
+
+        Raises:
+            ColumnDoesNotExist: If there is no column corresponding to the key.
+        """
+        if column_key not in self._column_locations:
+            raise ColumnDoesNotExist(f"Column key {column_key!r} is not valid.")
+
+        data = self._data
+        for row_metadata in self.ordered_rows:
+            row_key = row_metadata.key
+            yield data[row_key][column_key]
+
+    def get_column_at(self, column_index: int) -> Iterable[CellType]:
+        """Get the values from the column at a given index.
+
+        Args:
+            column_index: The index of the column.
+
+        Returns:
+            A generator which yields the cells in the column.
+
+        Raises:
+            ColumnDoesNotExist: If there is no column with the given index.
+        """
+        if not self.is_valid_column_index(column_index):
+            raise ColumnDoesNotExist(f"Column index {column_index!r} is not valid.")
+
+        column_key = self._column_locations.get_key(column_index)
+        yield from self.get_column(column_key)
 
     def _clear_caches(self) -> None:
         self._row_render_cache.clear()
@@ -752,7 +831,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def _highlight_row(self, row_index: int) -> None:
         """Apply highlighting to the row at the given index, and post event."""
         self.refresh_row(row_index)
-        is_valid_row = row_index < len(self.data)
+        is_valid_row = row_index < len(self._data)
         if is_valid_row:
             row_key = self._row_locations.get_key(row_index)
             self.post_message_no_wait(
@@ -819,12 +898,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             console = self.app.console
             label_width = measure(console, column.label, 1)
             content_width = column.content_width
-            cell_value = self.data[row_key][column_key]
+            cell_value = self._data[row_key][column_key]
 
             new_content_width = measure(console, default_cell_formatter(cell_value), 1)
 
             if new_content_width < content_width:
-                cells_in_column = self._get_cells_in_column(column_key)
+                cells_in_column = self.get_column(column_key)
                 cell_widths = [
                     measure(console, default_cell_formatter(cell), 1)
                     for cell in cells_in_column
@@ -910,7 +989,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """
         self._clear_caches()
         self._y_offsets.clear()
-        self.data.clear()
+        self._data.clear()
         self.rows.clear()
         if columns:
             self.columns.clear()
@@ -991,7 +1070,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         row_index = self.row_count
         # Map the key of this row to its current index
         self._row_locations[row_key] = row_index
-        self.data[row_key] = {
+        self._data[row_key] = {
             column.key: cell
             for column, cell in zip_longest(self.ordered_columns, cells)
         }
@@ -1190,15 +1269,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             row: list[RenderableType] = [column.label for column in ordered_columns]
             return row
 
-        # Ensure we order the cells in the row based on current column ordering
-        row_key = self._row_locations.get_key(row_index)
-        cell_mapping: dict[ColumnKey, CellType] = self.data.get(row_key, {})
-
-        ordered_row: list[CellType] = []
-        for column in ordered_columns:
-            cell = cell_mapping[column.key]
-            ordered_row.append(cell)
-
+        ordered_row = self.get_row_at(row_index)
         empty = Text()
         return [
             Text() if datum is None else default_cell_formatter(datum) or empty
@@ -1527,7 +1598,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             return result
 
         ordered_rows = sorted(
-            self.data.items(), key=sort_by_column_keys, reverse=reverse
+            self._data.items(), key=sort_by_column_keys, reverse=reverse
         )
         self._row_locations = TwoWayDict(
             {key: new_index for new_index, (key, _) in enumerate(ordered_rows)}

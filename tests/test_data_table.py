@@ -11,8 +11,16 @@ from textual.events import Click, MouseMove
 from textual.message import Message
 from textual.message_pump import MessagePump
 from textual.widgets import DataTable
-from textual.widgets._data_table import DuplicateKey
-from textual.widgets.data_table import CellDoesNotExist, CellKey, ColumnKey, Row, RowKey
+from textual.widgets.data_table import (
+    CellDoesNotExist,
+    CellKey,
+    ColumnDoesNotExist,
+    ColumnKey,
+    DuplicateKey,
+    Row,
+    RowDoesNotExist,
+    RowKey,
+)
 
 ROWS = [["0/0", "0/1"], ["1/0", "1/1"], ["2/0", "2/1"]]
 
@@ -157,10 +165,10 @@ async def test_add_rows():
         row_keys = table.add_rows(ROWS)
         # We're given a key for each row
         assert len(row_keys) == len(ROWS)
-        assert len(row_keys) == len(table.data)
+        assert len(row_keys) == len(table._data)
         assert table.row_count == len(ROWS)
         # Each key can be used to fetch a row from the DataTable
-        assert all(key in table.data for key in row_keys)
+        assert all(key in table._data for key in row_keys)
 
 
 async def test_add_rows_user_defined_keys():
@@ -179,14 +187,14 @@ async def test_add_rows_user_defined_keys():
 
         # Ensure the data in the table is mapped as expected
         first_row = {key_a: ROWS[0][0], key_b: ROWS[0][1]}
-        assert table.data[algernon_key] == first_row
-        assert table.data["algernon"] == first_row
+        assert table._data[algernon_key] == first_row
+        assert table._data["algernon"] == first_row
 
         second_row = {key_a: ROWS[1][0], key_b: ROWS[1][1]}
-        assert table.data["charlie"] == second_row
+        assert table._data["charlie"] == second_row
 
         third_row = {key_a: ROWS[2][0], key_b: ROWS[2][1]}
-        assert table.data[auto_key] == third_row
+        assert table._data[auto_key] == third_row
 
         first_row = Row(algernon_key, height=1)
         assert table.rows[algernon_key] == first_row
@@ -260,7 +268,7 @@ async def test_clear():
         assert table.hover_coordinate == Coordinate(0, 0)
 
         # Ensure that the table has been cleared
-        assert table.data == {}
+        assert table._data == {}
         assert table.rows == {}
         assert table.row_count == 0
         assert len(table.columns) == 1
@@ -345,6 +353,105 @@ async def test_get_cell_at_exception():
         table.add_rows(ROWS)
         with pytest.raises(CellDoesNotExist):
             table.get_cell_at(Coordinate(9999, 0))
+
+
+async def test_get_row():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        a, b, c = table.add_columns("A", "B", "C")
+        first_row = table.add_row(2, 4, 1)
+        second_row = table.add_row(3, 2, 1)
+        assert table.get_row(first_row) == [2, 4, 1]
+        assert table.get_row(second_row) == [3, 2, 1]
+
+        # Even if row positions change, keys should always refer to same rows.
+        table.sort(b)
+        assert table.get_row(first_row) == [2, 4, 1]
+        assert table.get_row(second_row) == [3, 2, 1]
+
+
+async def test_get_row_invalid_row_key():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        with pytest.raises(RowDoesNotExist):
+            table.get_row("INVALID")
+
+
+async def test_get_row_at():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        a, b, c = table.add_columns("A", "B", "C")
+        table.add_row(2, 4, 1)
+        table.add_row(3, 2, 1)
+        assert table.get_row_at(0) == [2, 4, 1]
+        assert table.get_row_at(1) == [3, 2, 1]
+
+        # If we sort, then the rows present at the indices *do* change!
+        table.sort(b)
+
+        # Since we sorted on column "B", the rows at indices 0 and 1 are swapped.
+        assert table.get_row_at(0) == [3, 2, 1]
+        assert table.get_row_at(1) == [2, 4, 1]
+
+
+@pytest.mark.parametrize("index", (-1, 2))
+async def test_get_row_at_invalid_index(index):
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_columns("A", "B", "C")
+        table.add_row(2, 4, 1)
+        table.add_row(3, 2, 1)
+        with pytest.raises(RowDoesNotExist):
+            table.get_row_at(index)
+
+
+async def test_get_column():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        a, b = table.add_columns("A", "B")
+        table.add_rows(ROWS)
+        cells = table.get_column(a)
+        assert next(cells) == ROWS[0][0]
+        assert next(cells) == ROWS[1][0]
+        assert next(cells) == ROWS[2][0]
+        with pytest.raises(StopIteration):
+            next(cells)
+
+
+async def test_get_column_invalid_key():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        with pytest.raises(ColumnDoesNotExist):
+            list(table.get_column("INVALID"))
+
+
+async def test_get_column_at():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_columns("A", "B")
+        table.add_rows(ROWS)
+
+        first_column = list(table.get_column_at(0))
+        assert first_column == [ROWS[0][0], ROWS[1][0], ROWS[2][0]]
+
+        second_column = list(table.get_column_at(1))
+        assert second_column == [ROWS[0][1], ROWS[1][1], ROWS[2][1]]
+
+
+@pytest.mark.parametrize("index", [-1, 5])
+async def test_get_column_at_invalid_index(index):
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        with pytest.raises(ColumnDoesNotExist):
+            list(table.get_column_at(index))
 
 
 async def test_update_cell_cell_exists():
