@@ -445,6 +445,32 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             yield "cursor_column", self.cursor_column
             yield "column_key", self.column_key
 
+    class HeaderSelected(Message, bubble=True):
+        """Posted when a column header/label is clicked.
+
+        Attributes:
+            column_key: The key for the column.
+            column_index: The index for the column.
+            label: The text of the label.
+        """
+
+        def __init__(
+            self,
+            sender: DataTable,
+            column_key: ColumnKey,
+            column_index: int,
+            label: str,
+        ):
+            self.column_key = column_key
+            self.column_index = column_index
+            self.label = label
+            super().__init__(sender)
+
+        def __rich_repr__(self) -> rich.repr.Result:
+            yield "sender", self.sender
+            yield "column_key", self.column_key
+            yield "label", self.label
+
     def __init__(
         self,
         *,
