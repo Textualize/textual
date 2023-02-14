@@ -194,8 +194,7 @@ class Game(Screen):
         Args:
             playable (bool): Should the game currently be playable?
         """
-        for cell in self.query(GameCell):
-            cell.disabled = not playable
+        self.query_one(GameGrid).disabled = not playable
 
     def cell(self, row: int, col: int) -> GameCell:
         """Get the cell at a given location.
