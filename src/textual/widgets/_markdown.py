@@ -446,6 +446,14 @@ class Markdown(Widget):
         id: str | None = None,
         classes: str | None = None,
     ):
+        """A Markdown widget.
+
+        Args:
+            markdown: String containing Markdown or None leave blank for now. Defaults to None.
+            name: The name of the button.
+            id: The ID of the button in the DOM.
+            classes: The CSS classes of the button.
+        """
         super().__init__(name=name, id=id, classes=classes)
         self._markdown = markdown
 
@@ -713,6 +721,15 @@ class MarkdownViewer(Vertical, can_focus=True, can_focus_children=True):
         id: str | None = None,
         classes: str | None = None,
     ):
+        """Create a Markdown Viewer object.
+
+        Args:
+            markdown: String containing Markdown, or None to leave blank. Defaults to None.
+            show_table_of_contents: Show a Table of COntents in a sidebar. Defaults to True.
+            name: The name of the button.
+            id: The ID of the button in the DOM.
+            classes: The CSS classes of the button.
+        """
         super().__init__(name=name, id=id, classes=classes)
         self.show_table_of_contents = show_table_of_contents
         self._markdown = markdown
