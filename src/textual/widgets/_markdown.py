@@ -99,6 +99,7 @@ class Block(Static):
         self.update(text)
 
     async def action_link(self, href: str) -> None:
+        """Called on link click."""
         await self.post_message(Markdown.LinkClicked(href, sender=self))
 
 

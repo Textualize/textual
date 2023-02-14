@@ -40,7 +40,7 @@ Two tildes indicates strikethrough, e.g. `~~cross out~~` render ~~cross out~~.
 
 ### Inline code ###
 
-Inline cod is indicated by backticks. e.g. `import this`.
+Inline code is indicated by backticks. e.g. `import this`.
 
 ## Fences
 
