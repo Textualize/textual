@@ -1178,9 +1178,18 @@ class Widget(DOMNode):
         return self.virtual_region.grow(self.styles.margin)
 
     @property
+    def _self_or_ancestors_disabled(self) -> bool:
+        """Is this widget or any of its ancestors disabled?"""
+        return any(
+            node.disabled
+            for node in self.ancestors_with_self
+            if isinstance(node, Widget)
+        )
+
+    @property
     def focusable(self) -> bool:
         """Can this widget currently receive focus?"""
-        return self.can_focus and not self.disabled
+        return self.can_focus and not self._self_or_ancestors_disabled
 
     @property
     def focusable_children(self) -> list[Widget]:
@@ -2091,7 +2100,7 @@ class Widget(DOMNode):
             Names of the pseudo classes.
 
         """
-        yield "disabled" if self.disabled else "enabled"
+        yield "disabled" if self._self_or_ancestors_disabled else "enabled"
         if self.mouse_over:
             yield "hover"
         if self.has_focus:
@@ -2146,7 +2155,8 @@ class Widget(DOMNode):
         self._update_styles()
 
     def watch_disabled(self) -> None:
-        self._update_styles()
+        for node in self.walk_children(with_self=True):
+            node._update_styles()
 
     def _size_updated(
         self, size: Size, virtual_size: Size, container_size: Size
