@@ -176,6 +176,7 @@ class Input(Widget, can_focus=True):
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
+        disabled: bool = False,
     ) -> None:
         """Initialise the `Input` widget.
 
@@ -187,8 +188,9 @@ class Input(Widget, can_focus=True):
             name: Optional name for the input widget.
             id: Optional ID for the widget.
             classes: Optional initial classes for the widget.
+            disabled: Whether the input is disabled or not.
         """
-        super().__init__(name=name, id=id, classes=classes)
+        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         if value is not None:
             self.value = value
         self.placeholder = placeholder
