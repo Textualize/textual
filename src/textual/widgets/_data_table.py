@@ -41,12 +41,16 @@ CellType = TypeVar("CellType")
 
 
 class CellDoesNotExist(Exception):
-    """Raised when the user supplies coordinates or cell keys which
+    """The cell key/index was invalid.
+
+    Raised when the user supplies coordinates or cell keys which
     do not exist in the DataTable."""
 
 
 class DuplicateKey(Exception):
-    """Raised when the RowKey or ColumnKey provided already refers to
+    """The key supplied already exists.
+
+    Raised when the RowKey or ColumnKey provided already refers to
     an existing row or column in the DataTable. Keys must be unique."""
 
 
@@ -120,8 +124,7 @@ class CellKey(NamedTuple):
 
 
 def default_cell_formatter(obj: object) -> RenderableType:
-    """Given an object stored in a DataTable cell, return a Rich
-    renderable type which displays that object.
+    """Convert a cell into a Rich renderable for display.
 
     Args:
         obj: Data for a cell.
@@ -561,8 +564,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         *,
         update_width: bool = False,
     ) -> None:
-        """Update the content inside the cell with the specified row key
-        and column key.
+        """Update the cell identified by the specified row key and column key.
 
         Args:
             row_key: The key identifying the row.
@@ -736,8 +738,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             )
 
     def coordinate_to_cell_key(self, coordinate: Coordinate) -> CellKey:
-        """Return the key for the cell currently occupying this coordinate in the
-        DataTable
+        """Return the key for the cell currently occupying this coordinate.
 
         Args:
             coordinate: The coordinate to exam the current cell key of.
@@ -1140,8 +1141,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return 0 <= column_index < len(self.columns)
 
     def is_valid_coordinate(self, coordinate: Coordinate) -> bool:
-        """Return a boolean indicating whether the given coordinate is within table
-        bounds.
+        """Return a boolean indicating whether the given coordinate is valid.
 
         Args:
             coordinate: The coordinate to validate.
