@@ -1683,7 +1683,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         column_index = meta["column"]
         is_header_click = self.show_header and row_index == -1
         if is_header_click:
-            # Header clicks work even if cursor is off, and don't move the cursor.
+            # Header clicks work even if cursor is off, and doesn't move the cursor.
             column = self.ordered_columns[column_index]
             message = DataTable.HeaderSelected(
                 self, column.key, column_index, label=column.label
