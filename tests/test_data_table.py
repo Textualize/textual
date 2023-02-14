@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import pytest
 from rich.style import Style
+from rich.text import Text
 
 from textual._wait import wait_for_idle
 from textual.actions import SkipAction
@@ -33,6 +34,7 @@ class DataTableApp(App):
         "RowSelected",
         "ColumnHighlighted",
         "ColumnSelected",
+        "HeaderSelected",
     }
 
     def __init__(self):
@@ -671,6 +673,40 @@ async def test_hover_coordinate():
         table.on_mouse_move(mouse_move)
         await wait_for_idle(0)
         assert table.hover_coordinate == Coordinate(1, 2)
+
+
+async def test_header_selected():
+    """Ensure that a HeaderSelected event gets posted when we click
+    on the header in the DataTable."""
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        column = table.add_column("number")
+        table.add_row(3)
+        click_event = Click(
+            sender=table,
+            x=3,
+            y=0,
+            delta_x=0,
+            delta_y=0,
+            button=0,
+            shift=False,
+            meta=False,
+            ctrl=False,
+        )
+        table.on_click(click_event)
+        await wait_for_idle(0)
+        message: DataTable.HeaderSelected = app.messages[-1]
+        assert message.sender is table
+        assert message.label == Text("number")
+        assert message.column_index == 0
+        assert message.column_key == column
+
+        # Now hide the header and click in the exact same place - no additional message emitted.
+        table.show_header = False
+        table.on_click(click_event)
+        await wait_for_idle(0)
+        assert app.message_names.count("HeaderSelected") == 1
 
 
 async def test_sort_coordinate_and_key_access():
