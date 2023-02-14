@@ -656,6 +656,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Raises:
             RowDoesNotExist: When there is no row corresponding to the key.
         """
+        cell_mapping: dict[ColumnKey, CellType] = self._data.get(row_key, {})
+        ordered_row: list[CellType] = []
+        for column in self.ordered_columns:
+            cell = cell_mapping[column.key]
+            ordered_row.append(cell)
+        return ordered_row
 
     def get_row_at(self, row_index: int) -> list[CellType]:
         """Get the values from the cells in a row at a given index. This will
@@ -671,6 +677,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Raises:
             RowDoesNotExist: If there is no row with the given index.
         """
+        row_key = self._row_locations.get_key(row_index)
+        return self.get_row(row_key)
 
     def get_column(self, column_key: ColumnKey) -> list[CellType]:
         """Get the values from the column identified by the given column key.
@@ -1240,15 +1248,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             row: list[RenderableType] = [column.label for column in ordered_columns]
             return row
 
-        # Ensure we order the cells in the row based on current column ordering
-        row_key = self._row_locations.get_key(row_index)
-        cell_mapping: dict[ColumnKey, CellType] = self._data.get(row_key, {})
-
-        ordered_row: list[CellType] = []
-        for column in ordered_columns:
-            cell = cell_mapping[column.key]
-            ordered_row.append(cell)
-
+        ordered_row = self.get_row_at(row_index)
         empty = Text()
         return [
             Text() if datum is None else default_cell_formatter(datum) or empty
