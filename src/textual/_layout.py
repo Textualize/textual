@@ -57,7 +57,7 @@ class Layout(ABC):
         Returns:
             Width of the content.
         """
-        if not widget.children:
+        if not widget._nodes:
             width = 0
         else:
             # Use a size of 0, 0 to ignore relative sizes, since those are flexible anyway
@@ -85,7 +85,7 @@ class Layout(ABC):
         Returns:
             Content height (in lines).
         """
-        if not widget.children:
+        if not widget._nodes:
             height = 0
         else:
             # Use a height of zero to ignore relative heights

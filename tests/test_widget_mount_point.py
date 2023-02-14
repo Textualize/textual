@@ -23,7 +23,7 @@ def test_find_dom_spot():
 
     # Just as a quick double-check, make sure the main components are in
     # their intended place.
-    assert list(screen.children) == [header, body, footer]
+    assert list(screen._nodes) == [header, body, footer]
 
     # Now check that we find what we're looking for in the places we expect
     # to find them.

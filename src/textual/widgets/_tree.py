@@ -473,7 +473,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         text_label = self.process_label(label)
 
         self._updates = 0
-        self._nodes: dict[NodeID, TreeNode[TreeDataType]] = {}
+        self._tree_nodes: dict[NodeID, TreeNode[TreeDataType]] = {}
         self._current_id = 0
         self.root = self._add_node(None, text_label, data)
 
@@ -515,7 +515,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         expand: bool = False,
     ) -> TreeNode[TreeDataType]:
         node = TreeNode(self, parent, self._new_id(), label, data, expanded=expand)
-        self._nodes[node._id] = node
+        self._tree_nodes[node._id] = node
         self._updates += 1
         return node
 
@@ -630,7 +630,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             Tree.UnknownID: Raised if the `TreeNode` ID is unknown.
         """
         try:
-            return self._nodes[node_id]
+            return self._tree_nodes[node_id]
         except KeyError:
             raise self.UnknownNodeID(f"Unknown NodeID ({node_id}) in tree") from None
 

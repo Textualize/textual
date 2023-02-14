@@ -19,13 +19,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added Shift+scroll wheel and ctrl+scroll wheel to scroll horizontally
 - Added `Tree.action_toggle_node` to toggle a node without selecting, and bound it to <kbd>Space</kbd> https://github.com/Textualize/textual/issues/1433
 - Added `Tree.reset` to fully reset a `Tree` https://github.com/Textualize/textual/issues/1437
-- Added DOMNode.watch and DOMNode.is_attached methods  https://github.com/Textualize/textual/pull/1750
+- Added `DOMNode.watch` and `DOMNode.is_attached` methods  https://github.com/Textualize/textual/pull/1750
+- Added `DOMNode.css_tree` which is a renderable that shows the DOM and CSS https://github.com/Textualize/textual/pull/1778
+- Added `DOMNode.children_view` which is a view on to a nodes children list, use for querying https://github.com/Textualize/textual/pull/1778
 
 ### Changed
 
 - Breaking change: `TreeNode` can no longer be imported from `textual.widgets`; it is now available via `from textual.widgets.tree import TreeNode`. https://github.com/Textualize/textual/pull/1637
 - `Tree` now shows a (subdued) cursor for a highlighted node when focus has moved elsewhere https://github.com/Textualize/textual/issues/1471
 - Breaking change: renamed `Checkbox` to `Switch` https://github.com/Textualize/textual/issues/1746
+- `App.install_screen` name is no longer optional https://github.com/Textualize/textual/pull/1778
+- `App.query` now only includes the current screen https://github.com/Textualize/textual/pull/1778
+- `DOMNode.tree` now displays simple DOM structure only https://github.com/Textualize/textual/pull/1778
+- `App.install_screen` now returns None rather than AwaitMount https://github.com/Textualize/textual/pull/1778
+- `DOMNode.children` is now a simple sequence, the NodesList is exposed as `DOMNode._nodes` https://github.com/Textualize/textual/pull/1778
 
 ### Fixed
 

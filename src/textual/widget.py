@@ -303,7 +303,7 @@ class Widget(DOMNode):
         """
         parent = self.parent
         if parent is not None:
-            siblings = list(parent.children)
+            siblings = list(parent._nodes)
             siblings.remove(self)
             return siblings
         else:
@@ -394,7 +394,7 @@ class Widget(DOMNode):
             NoMatches: if no children could be found for this ID
             WrongType: if the wrong type was found.
         """
-        child = self.children._get_by_id(id)
+        child = self._nodes._get_by_id(id)
         if child is None:
             raise NoMatches(f"No child found with id={id!r}")
         if expect_type is None:
@@ -476,7 +476,7 @@ class Widget(DOMNode):
         """
         assert self.is_container
 
-        cache_key = (size, self.children._updates)
+        cache_key = (size, self._nodes._updates)
         if (
             self._arrangement_cache_key == cache_key
             and self._cached_arrangement is not None
@@ -485,7 +485,7 @@ class Widget(DOMNode):
 
         self._arrangement_cache_key = cache_key
         arrangement = self._cached_arrangement = arrange(
-            self, self.children, size, self.screen.size
+            self, self._nodes, size, self.screen.size
         )
 
         return arrangement
@@ -553,7 +553,7 @@ class Widget(DOMNode):
         # children. We should be able to go looking for the widget's
         # location amongst its parent's children.
         try:
-            return cast("Widget", spot.parent), spot.parent.children.index(spot)
+            return cast("Widget", spot.parent), spot.parent._nodes.index(spot)
         except ValueError:
             raise MountError(f"{spot!r} is not a child of {self!r}") from None
 
@@ -691,7 +691,7 @@ class Widget(DOMNode):
             """Ensure a given child reference is a Widget."""
             if isinstance(child, int):
                 try:
-                    child = self.children[child]
+                    child = self._nodes[child]
                 except IndexError:
                     raise WidgetError(
                         f"An index of {child} for the child to {called} is out of bounds"
@@ -700,7 +700,7 @@ class Widget(DOMNode):
                 # We got an actual widget, so let's be sure it really is one of
                 # our children.
                 try:
-                    _ = self.children.index(child)
+                    _ = self._nodes.index(child)
                 except ValueError:
                     raise WidgetError(f"{child!r} is not a child of {self!r}") from None
             return child
@@ -713,11 +713,11 @@ class Widget(DOMNode):
         # child; where we're moving it to, which should be within the child
         # list; and how we're supposed to move it. All that's left is doing
         # the right thing.
-        self.children._remove(child)
+        self._nodes._remove(child)
         if before is not None:
-            self.children._insert(self.children.index(target), child)
+            self._nodes._insert(self._nodes.index(target), child)
         else:
-            self.children._insert(self.children.index(target) + 1, child)
+            self._nodes._insert(self._nodes.index(target) + 1, child)
 
         # Request a refresh.
         self.refresh(layout=True)
@@ -1199,9 +1199,7 @@ class Widget(DOMNode):
             List of widgets that can receive focus.
 
         """
-        focusable = [
-            child for child in self.children if child.display and child.visible
-        ]
+        focusable = [child for child in self._nodes if child.display and child.visible]
         return sorted(focusable, key=attrgetter("_focus_sort_key"))
 
     @property
@@ -1295,7 +1293,7 @@ class Widget(DOMNode):
         Returns:
             True if this widget is a container.
         """
-        return self.styles.layout is not None or bool(self.children)
+        return self.styles.layout is not None or bool(self._nodes)
 
     @property
     def is_scrollable(self) -> bool:
@@ -1304,7 +1302,7 @@ class Widget(DOMNode):
         Returns:
             True if this widget may be scrolled.
         """
-        return self.styles.layout is not None or bool(self.children)
+        return self.styles.layout is not None or bool(self._nodes)
 
     @property
     def layer(self) -> str:

@@ -7,6 +7,7 @@ from typing import (
     ClassVar,
     Iterable,
     Iterator,
+    Sequence,
     Type,
     TypeVar,
     cast,
@@ -132,7 +133,7 @@ class DOMNode(MessagePump):
         check_identifiers("class name", *_classes)
         self._classes.update(_classes)
 
-        self.children: NodeList = NodeList()
+        self._nodes: NodeList = NodeList()
         self._css_styles: Styles = Styles(self)
         self._inline_styles: Styles = Styles(self)
         self.styles: RenderStyles = RenderStyles(
@@ -149,6 +150,11 @@ class DOMNode(MessagePump):
         self._has_focus_within: bool = False
 
         super().__init__()
+
+    @property
+    def children(self) -> Sequence["Widget"]:
+        """A view on to the children."""
+        return self._nodes
 
     @property
     def auto_refresh(self) -> float | None:
@@ -484,7 +490,7 @@ class DOMNode(MessagePump):
         return self.styles.visibility != "hidden"
 
     @visible.setter
-    def visible(self, new_value: bool) -> None:
+    def visible(self, new_value: bool | str) -> None:
         if isinstance(new_value, bool):
             self.styles.visibility = "visible" if new_value else "hidden"
         elif new_value in VALID_VISIBILITY:
@@ -497,10 +503,27 @@ class DOMNode(MessagePump):
 
     @property
     def tree(self) -> Tree:
-        """Get a Rich tree object which will recursively render the structure of the node tree.
+        """Get a Rich tree object which will recursively render the structure of the node tree."""
 
-        Returns:
-            A Rich object which may be printed.
+        def render_info(node: DOMNode) -> Pretty:
+            return Pretty(node)
+
+        tree = Tree(render_info(self))
+
+        def add_children(tree, node):
+            for child in node.children:
+                info = render_info(child)
+                branch = tree.add(info)
+                if tree.children:
+                    add_children(branch, child)
+
+        add_children(tree, self)
+        return tree
+
+    @property
+    def css_tree(self) -> Tree:
+        """Get a Rich tree object which will recursively render the structure of the node tree,
+        which also displays CSS and size information.
         """
         from rich.columns import Columns
         from rich.console import Group
@@ -648,7 +671,7 @@ class DOMNode(MessagePump):
             Children of this widget which will be displayed.
 
         """
-        return [child for child in self.children if child.display]
+        return [child for child in self._nodes if child.display]
 
     def watch(
         self,
@@ -691,7 +714,7 @@ class DOMNode(MessagePump):
         Args:
             node: A DOM node.
         """
-        self.children._append(node)
+        self._nodes._append(node)
         node._attach(self)
 
     def _add_children(self, *nodes: Widget) -> None:
@@ -700,7 +723,7 @@ class DOMNode(MessagePump):
         Args:
             *nodes: Positional args should be new DOM nodes.
         """
-        _append = self.children._append
+        _append = self._nodes._append
         for node in nodes:
             node._attach(self)
             _append(node)
