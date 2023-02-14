@@ -13,8 +13,10 @@ from textual.widgets._list_item import ListItem
 
 
 class ListView(Vertical, can_focus=True, can_focus_children=False):
-    """Displays a vertical list of `ListItem`s which can be highlighted
-    and selected using the mouse or keyboard.
+    """A vertical list view widget.
+
+    Displays a vertical list of `ListItem`s which can be highlighted and
+    selected using the mouse or keyboard.
 
     Attributes:
         index: The index in the list that's currently highlighted.
@@ -89,16 +91,21 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
 
     @property
     def highlighted_child(self) -> ListItem | None:
-        """ListItem | None: The currently highlighted ListItem,
-        or None if nothing is highlighted.
-        """
+        """The currently highlighted ListItem, or None if nothing is highlighted."""
         if self.index is None:
             return None
         elif 0 <= self.index < len(self._nodes):
             return self._nodes[self.index]
 
     def validate_index(self, index: int | None) -> int | None:
-        """Clamp the index to the valid range, or set to None if there's nothing to highlight."""
+        """Clamp the index to the valid range, or set to None if there's nothing to highlight.
+
+        Args:
+            index: The index to clamp.
+
+        Returns:
+            The clamped index.
+        """
         if not self._nodes or index is None:
             return None
         return self._clamp_index(index)
@@ -155,13 +162,16 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         return await_remove
 
     def action_select_cursor(self) -> None:
+        """Select the current item in the list."""
         selected_child = self.highlighted_child
         self.post_message_no_wait(self.Selected(self, selected_child))
 
     def action_cursor_down(self) -> None:
+        """Select the next item in the list."""
         self.index += 1
 
     def action_cursor_up(self) -> None:
+        """Select the previous item in the list."""
         self.index -= 1
 
     def on_list_item__child_clicked(self, event: ListItem._ChildClicked) -> None:
