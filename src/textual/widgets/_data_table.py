@@ -75,8 +75,13 @@ class StringKey:
     def __eq__(self, other: object) -> bool:
         # Strings will match Keys containing the same string value.
         # Otherwise, you'll need to supply the exact same key object.
-        if isinstance(other, (str, StringKey)):
-            return hash(self) == hash(other)
+        if isinstance(other, str):
+            return self.value == other
+        elif isinstance(other, StringKey):
+            if self.value is not None and other.value is not None:
+                return self.value == other.value
+            else:
+                return hash(self) == hash(other)
         else:
             raise NotImplemented
 
@@ -283,11 +288,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         re-enabled (by setting `show_cursor=True`), and when the cursor type is
         changed to `"cell"`. Can be handled using `on_data_table_cell_highlighted` in
         a subclass of `DataTable` or in a parent widget in the DOM.
-
-        Attributes:
-            value: The value in the highlighted cell.
-            coordinate: The coordinate of the highlighted cell.
-            cell_key: The key for the highlighted cell.
         """
 
         def __init__(
@@ -298,8 +298,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             cell_key: CellKey,
         ) -> None:
             self.value: CellType = value
+            """The value in the highlighted cell."""
             self.coordinate: Coordinate = coordinate
+            """The coordinate of the highlighted cell."""
             self.cell_key: CellKey = cell_key
+            """The key for the highlighted cell."""
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
@@ -314,11 +317,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         This is only relevant when the `cursor_type` is `"cell"`. Can be handled using
         `on_data_table_cell_selected` in a subclass of `DataTable` or in a parent
         widget in the DOM.
-
-        Attributes:
-            value: The value in the cell that was selected.
-            coordinate: The coordinate of the cell that was selected.
-            cell_key: The key for the selected cell.
         """
 
         def __init__(
@@ -329,8 +327,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             cell_key: CellKey,
         ) -> None:
             self.value: CellType = value
+            """The value in the cell that was selected."""
             self.coordinate: Coordinate = coordinate
+            """The coordinate of the cell that was selected."""
             self.cell_key: CellKey = cell_key
+            """The key for the selected cell."""
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
@@ -346,15 +347,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         `cursor_type` is set to `"row"`. Can be handled using
         `on_data_table_row_highlighted` in a subclass of `DataTable` or in a parent
         widget in the DOM.
-
-        Attributes:
-            cursor_row: The y-coordinate of the cursor that highlighted the row.
-            row_key: The key of the row that was highlighted.
         """
 
         def __init__(self, sender: DataTable, cursor_row: int, row_key: RowKey) -> None:
             self.cursor_row: int = cursor_row
+            """The y-coordinate of the cursor that highlighted the row."""
             self.row_key: RowKey = row_key
+            """The key of the row that was highlighted."""
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
@@ -369,15 +368,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         `cursor_type` is set to `"row"`. Can be handled using
         `on_data_table_row_selected` in a subclass of `DataTable` or in a parent
         widget in the DOM.
-
-        Attributes:
-            cursor_row: The y-coordinate of the cursor that made the selection.
-            row_key: The key of the row that was selected.
         """
 
         def __init__(self, sender: DataTable, cursor_row: int, row_key: RowKey) -> None:
             self.cursor_row: int = cursor_row
+            """The y-coordinate of the cursor that made the selection."""
             self.row_key: RowKey = row_key
+            """The key of the row that was selected."""
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
@@ -392,17 +389,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         `cursor_type` is set to `"column"`. Can be handled using
         `on_data_table_column_highlighted` in a subclass of `DataTable` or in a parent
         widget in the DOM.
-
-        Attributes:
-            cursor_column: The x-coordinate of the column that was highlighted.
-            column_key: The key of the column that was highlighted.
         """
 
         def __init__(
             self, sender: DataTable, cursor_column: int, column_key: ColumnKey
         ) -> None:
             self.cursor_column: int = cursor_column
+            """The x-coordinate of the column that was highlighted."""
             self.column_key = column_key
+            """The key of the column that was highlighted."""
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
@@ -417,17 +412,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         `cursor_type` is set to `"column"`. Can be handled using
         `on_data_table_column_selected` in a subclass of `DataTable` or in a parent
         widget in the DOM.
-
-        Attributes:
-            cursor_column: The x-coordinate of the column that was selected.
-            column_key: The key of the column that was selected.
         """
 
         def __init__(
             self, sender: DataTable, cursor_column: int, column_key: ColumnKey
         ) -> None:
             self.cursor_column: int = cursor_column
+            """The x-coordinate of the column that was selected."""
             self.column_key = column_key
+            """The key of the column that was selected."""
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
@@ -818,6 +811,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self._highlight_column(column_index)
 
     def _update_column_widths(self, updated_cells: set[CellKey]) -> None:
+        """Update the widths of the columns based on the newly updated cell widths."""
         for row_key, column_key in updated_cells:
             column = self.columns.get(column_key)
             if column is None:
