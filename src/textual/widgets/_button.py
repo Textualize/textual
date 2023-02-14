@@ -39,11 +39,6 @@ class Button(Static, can_focus=True):
         text-style: bold;
     }
 
-    Button:disabled {
-        opacity: 0.4;
-        text-opacity: 0.7;
-    }
-
     Button:focus {
         text-style: bold reverse;
     }
