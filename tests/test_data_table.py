@@ -431,6 +431,17 @@ async def test_get_column_invalid_key():
             list(table.get_column("INVALID"))
 
 
+async def test_get_column_at():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_columns("A", "B")
+        table.add_rows(ROWS)
+
+        first_column = list(table.get_column_at(0))
+        assert first_column == [ROWS[0][0], ROWS[1][0], ROWS[2][0]]
+
+
 async def test_update_cell_cell_exists():
     app = DataTableApp()
     async with app.run_test():
