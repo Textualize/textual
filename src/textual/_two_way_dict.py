@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TypeVar, Generic
+from typing import Generic, TypeVar
 
 Key = TypeVar("Key")
 Value = TypeVar("Value")
@@ -8,6 +8,8 @@ Value = TypeVar("Value")
 
 class TwoWayDict(Generic[Key, Value]):
     """
+    A two-way mapping offering O(1) access in both directions.
+
     Wraps two dictionaries and uses them to provide efficient access to
     both values (given keys) and keys (given values).
     """
