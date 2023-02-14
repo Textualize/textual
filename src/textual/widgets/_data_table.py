@@ -45,6 +45,16 @@ class CellDoesNotExist(Exception):
     do not exist in the DataTable."""
 
 
+class RowDoesNotExist(Exception):
+    """Raised when the user supplies a row index or row key which does
+    not exist in the DataTable (e.g. out of bounds index, invalid key)"""
+
+
+class ColumnDoesNotExist(Exception):
+    """Raised when the user supplies a column index or column key which does
+    not exist in the DataTable (e.g. out of bounds index, invalid key)"""
+
+
 class DuplicateKey(Exception):
     """Raised when the RowKey or ColumnKey provided already refers to
     an existing row or column in the DataTable. Keys must be unique."""
@@ -633,6 +643,60 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """
         row_key, column_key = self.coordinate_to_cell_key(coordinate)
         return self.get_cell(row_key, column_key)
+
+    def get_row(self, row_key: RowKey) -> list[CellType]:
+        """Get the values from the row identified by the given row key.
+
+        Args:
+            row_key: The key of the row.
+
+        Returns:
+            A list of the values contained within the row.
+
+        Raises:
+            RowDoesNotExist: When there is no row corresponding to the key.
+        """
+
+    def get_row_at(self, row_index: int) -> list[CellType]:
+        """Get the values from the cells in a row at a given index. This will
+        return the values from a row based on the rows _current position_ in
+        the table.
+
+        Args:
+            row_index: The index of the row.
+
+        Returns:
+            A list of the values contained in the row.
+
+        Raises:
+            RowDoesNotExist: If there is no row with the given index.
+        """
+
+    def get_column(self, column_key: ColumnKey) -> list[CellType]:
+        """Get the values from the column identified by the given column key.
+
+        Args:
+            column_key: The key of the column.
+
+        Returns:
+            A list of values in the column
+
+        Raises:
+            ColumnDoesNotExist: If there is no column corresponding to the key.
+        """
+
+    def get_column_at(self, column_index: int) -> list[CellType]:
+        """Get the values from the column at a given index.
+
+        Args:
+            column_index: The index of the column.
+
+        Returns:
+            A list containing the values in the column.
+
+        Raises:
+            ColumnDoesNotExist: If there is no column with the given index.
+        """
 
     def _clear_caches(self) -> None:
         self._row_render_cache.clear()
