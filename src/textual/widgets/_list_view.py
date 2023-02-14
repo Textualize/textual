@@ -167,11 +167,11 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         self.post_message_no_wait(self.Selected(self, selected_child))
 
     def action_cursor_down(self) -> None:
-        """Select the next item in the list."""
+        """Highlight the next item in the list."""
         self.index += 1
 
     def action_cursor_up(self) -> None:
-        """Select the previous item in the list."""
+        """Highlight the previous item in the list."""
         self.index -= 1
 
     def on_list_item__child_clicked(self, event: ListItem._ChildClicked) -> None:
