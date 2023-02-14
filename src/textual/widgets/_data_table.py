@@ -459,7 +459,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             sender: DataTable,
             column_key: ColumnKey,
             column_index: int,
-            label: str,
+            label: Text,
         ):
             self.column_key = column_key
             self.column_index = column_index
@@ -469,7 +469,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         def __rich_repr__(self) -> rich.repr.Result:
             yield "sender", self.sender
             yield "column_key", self.column_key
-            yield "label", self.label
+            yield "label", self.label.plain
 
     def __init__(
         self,
@@ -1360,8 +1360,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         column_key = self._column_locations.get_key(column_index)
         cell_cache_key = (row_key, column_key, style, cursor, hover, self._update_count)
         if cell_cache_key not in self._cell_render_cache:
-            if not is_header_row:
-                style += Style.from_meta({"row": row_index, "column": column_index})
+            style += Style.from_meta({"row": row_index, "column": column_index})
             height = self.header_height if is_header_row else self.rows[row_key].height
             cell = self._get_row_renderables(row_index)[column_index]
             lines = self.app.console.render_lines(
@@ -1676,14 +1675,26 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     def on_click(self, event: events.Click) -> None:
         self._set_hover_cursor(True)
-        if self.show_cursor and self.cursor_type != "none":
+        meta = self.get_style_at(event.x, event.y).meta
+        if not meta:
+            return
+
+        row_index = meta["row"]
+        column_index = meta["column"]
+        is_header_click = self.show_header and row_index == -1
+        if is_header_click:
+            # Header clicks work even if cursor is off, and don't move the cursor.
+            column = self.ordered_columns[column_index]
+            message = DataTable.HeaderSelected(
+                self, column.key, column_index, label=column.label
+            )
+            self.post_message_no_wait(message)
+        elif self.show_cursor and self.cursor_type != "none":
             # Only post selection events if there is a visible row/col/cell cursor.
-            meta = self.get_style_at(event.x, event.y).meta
-            if meta:
-                self.cursor_coordinate = Coordinate(meta["row"], meta["column"])
-                self._post_selected_message()
-                self._scroll_cursor_into_view(animate=True)
-                event.stop()
+            self.cursor_coordinate = Coordinate(row_index, column_index)
+            self._post_selected_message()
+            self._scroll_cursor_into_view(animate=True)
+            event.stop()
 
     def action_cursor_up(self) -> None:
         self._set_hover_cursor(False)
