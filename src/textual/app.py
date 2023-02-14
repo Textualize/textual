@@ -241,6 +241,11 @@ class App(Generic[ReturnType], DOMNode):
         background: $background;
         color: $text;
     }
+
+    *:disabled {
+        opacity: 0.6;
+        text-opacity: 0.8;
+    }
     """
 
     SCREENS: dict[str, Screen | Callable[[], Screen]] = {}
