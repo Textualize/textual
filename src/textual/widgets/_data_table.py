@@ -672,10 +672,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if row_key not in self._row_locations:
             raise RowDoesNotExist(f"Row key {row_key!r} is not valid.")
         cell_mapping: dict[ColumnKey, CellType] = self._data.get(row_key, {})
-        ordered_row: list[CellType] = []
-        for column in self.ordered_columns:
-            cell = cell_mapping[column.key]
-            ordered_row.append(cell)
+        ordered_row: list[CellType] = [
+            cell_mapping[column.key] for column in self.ordered_columns
+        ]
         return ordered_row
 
     def get_row_at(self, row_index: int) -> list[CellType]:
@@ -712,10 +711,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if column_key not in self._column_locations:
             raise ColumnDoesNotExist(f"Column key {column_key!r} is not valid.")
 
+        data = self._data
         for row_metadata in self.ordered_rows:
             row_key = row_metadata.key
-            row = self._data[row_key]
-            yield row[column_key]
+            yield data[row_key][column_key]
 
     def get_column_at(self, column_index: int) -> Iterable[CellType]:
         """Get the values from the column at a given index.
