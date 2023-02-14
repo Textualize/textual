@@ -644,7 +644,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         row_key, column_key = self.coordinate_to_cell_key(coordinate)
         return self.get_cell(row_key, column_key)
 
-    def get_row(self, row_key: RowKey) -> list[CellType]:
+    def get_row(self, row_key: RowKey | str) -> list[CellType]:
         """Get the values from the row identified by the given row key.
 
         Args:
@@ -656,6 +656,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Raises:
             RowDoesNotExist: When there is no row corresponding to the key.
         """
+        if row_key not in self._row_locations:
+            raise RowDoesNotExist(f"Row key {row_key!r} is not valid.")
         cell_mapping: dict[ColumnKey, CellType] = self._data.get(row_key, {})
         ordered_row: list[CellType] = []
         for column in self.ordered_columns:
@@ -677,10 +679,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Raises:
             RowDoesNotExist: If there is no row with the given index.
         """
+        if not self.is_valid_row_index(row_index):
+            raise RowDoesNotExist(f"Row index {row_index!r} is not valid.")
         row_key = self._row_locations.get_key(row_index)
         return self.get_row(row_key)
 
-    def get_column(self, column_key: ColumnKey) -> list[CellType]:
+    def get_column(self, column_key: ColumnKey | str) -> list[CellType]:
         """Get the values from the column identified by the given column key.
 
         Args:

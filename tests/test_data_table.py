@@ -11,8 +11,16 @@ from textual.events import Click, MouseMove
 from textual.message import Message
 from textual.message_pump import MessagePump
 from textual.widgets import DataTable
-from textual.widgets._data_table import DuplicateKey
-from textual.widgets.data_table import CellDoesNotExist, CellKey, ColumnKey, Row, RowKey
+from textual.widgets.data_table import (
+    CellDoesNotExist,
+    CellKey,
+    ColumnDoesNotExist,
+    ColumnKey,
+    DuplicateKey,
+    Row,
+    RowDoesNotExist,
+    RowKey,
+)
 
 ROWS = [["0/0", "0/1"], ["1/0", "1/1"], ["2/0", "2/1"]]
 
@@ -363,6 +371,14 @@ async def test_get_row():
         assert table.get_row(second_row) == [3, 2, 1]
 
 
+async def test_get_row_invalid_row_key():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        with pytest.raises(RowDoesNotExist):
+            table.get_row("abc")
+
+
 async def test_get_row_at():
     app = DataTableApp()
     async with app.run_test():
@@ -379,6 +395,18 @@ async def test_get_row_at():
         # Since we sorted on column "B", the rows at indices 0 and 1 are swapped.
         assert table.get_row_at(0) == [3, 2, 1]
         assert table.get_row_at(1) == [2, 4, 1]
+
+
+@pytest.mark.parametrize("index", (-1, 2))
+async def test_get_row_at_invalid_index(index):
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_columns("A", "B", "C")
+        table.add_row(2, 4, 1)
+        table.add_row(3, 2, 1)
+        with pytest.raises(RowDoesNotExist):
+            table.get_row_at(index)
 
 
 async def test_update_cell_cell_exists():
