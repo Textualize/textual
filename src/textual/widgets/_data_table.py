@@ -211,6 +211,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         "datatable--header",
         "datatable--header-cursor",
         "datatable--header-hover",
+        "datatable--fixed-cursor",
         "datatable--odd-row",
         "datatable--even-row",
     }
@@ -255,6 +256,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     DataTable >  .datatable--cursor {
         background: $secondary;
+        color: $text;
+    }
+
+    DataTable > .datatable--fixed-cursor {
+        background: $secondary 93%;
         color: $text;
     }
 
@@ -1323,25 +1329,30 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Returns:
             A list of segments per line.
         """
-        is_header_row = row_index == -1
+        is_header_cell = row_index == -1
+        is_fixed_cell = not is_header_cell and (
+            row_index < self.fixed_rows or column_index < self.fixed_columns
+        )
+
+        get_component = self.get_component_styles
 
         show_cursor = self.show_cursor
         if hover and show_cursor and self._show_hover_cursor:
-            style += self.get_component_styles("datatable--hover").rich_style
-            if is_header_row:
+            style += get_component("datatable--hover").rich_style
+            if is_header_cell:
                 # Apply subtle variation in style for the fixed (blue background by
                 # default) rows and columns affected by the cursor, to ensure we can
                 # still differentiate between the labels and the data.
-                style += self.get_component_styles("datatable--header-hover").rich_style
+                style += get_component("datatable--header-hover").rich_style
 
         if cursor and show_cursor:
-            style += self.get_component_styles("datatable--cursor").rich_style
-            if is_header_row:
-                style += self.get_component_styles(
-                    "datatable--header-cursor"
-                ).rich_style
+            style += get_component("datatable--cursor").rich_style
+            if is_header_cell:
+                style += get_component("datatable--header-cursor").rich_style
+            elif is_fixed_cell:
+                style += get_component("datatable--fixed-cursor").rich_style
 
-        if is_header_row:
+        if is_header_cell:
             row_key = self._header_row_key
         else:
             row_key = self._row_locations.get_key(row_index)
@@ -1350,7 +1361,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         cell_cache_key = (row_key, column_key, style, cursor, hover, self._update_count)
         if cell_cache_key not in self._cell_render_cache:
             style += Style.from_meta({"row": row_index, "column": column_index})
-            height = self.header_height if is_header_row else self.rows[row_key].height
+            height = self.header_height if is_header_cell else self.rows[row_key].height
             cell = self._get_row_renderables(row_index)[column_index]
             lines = self.app.console.render_lines(
                 Padding(cell, (0, 1)),
