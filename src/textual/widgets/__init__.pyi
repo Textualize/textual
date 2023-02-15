@@ -1,5 +1,6 @@
 # This stub file must re-export every classes exposed in the __init__.py's `__all__` list:
 from ._button import Button as Button
+from ._checkbox import Checkbox as Checkbox
 from ._data_table import DataTable as DataTable
 from ._directory_tree import DirectoryTree as DirectoryTree
 from ._footer import Footer as Footer
@@ -12,6 +13,7 @@ from ._markdown import Markdown as Markdown
 from ._markdown import MarkdownViewer as MarkdownViewer
 from ._placeholder import Placeholder as Placeholder
 from ._pretty import Pretty as Pretty
+from ._radio_button import RadioButton as RadioButton
 from ._static import Static as Static
 from ._switch import Switch as Switch
 from ._text_log import TextLog as TextLog
