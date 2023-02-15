@@ -211,7 +211,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         "datatable--fixed",
         "datatable--odd-row",
         "datatable--even-row",
-        "datatable--highlight",
+        "datatable--hover",
         "datatable--cursor",
     }
     """
@@ -222,7 +222,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     | `datatable--even-row` | Target even rows (row indices start at 0). |
     | `datatable--fixed` | Target fixed columns or header. |
     | `datatable--header` | Target the header of the data table. |
-    | `datatable--highlight` | Target the highlighted cell(s). |
+    | `datatable--hover` | Target the highlighted cell(s). |
     | `datatable--header-hover` | Target highlighted and fixed columns or header. |
     | `datatable--odd-row` | Target odd rows (row indices start at 0). |
     """
@@ -272,7 +272,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         background: $primary 15%;
     }
 
-    DataTable > .datatable--highlight {
+    DataTable > .datatable--hover {
         background: $secondary 20%;
     }
     """
@@ -1325,14 +1325,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         show_cursor = self.show_cursor
         if hover and show_cursor and self._show_hover_cursor:
-            style += self.get_component_styles("datatable--highlight").rich_style
+            style += self.get_component_styles("datatable--hover").rich_style
             if is_header_row:
                 # Apply subtle variation in style for the fixed (blue background by
                 # default) rows and columns affected by the cursor, to ensure we can
                 # still differentiate between the labels and the data.
-                style += self.get_component_styles(
-                    "datatable--highlight-header"
-                ).rich_style
+                style += self.get_component_styles("datatable--hover-header").rich_style
 
         if cursor and show_cursor:
             style += self.get_component_styles("datatable--cursor").rich_style
