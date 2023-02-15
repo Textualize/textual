@@ -39,6 +39,7 @@ textual = "textual.cli.cli:run"
 [tool.poetry.dependencies]
 python = "^3.7"
 rich = ">12.6.0"
+markdown-it-py = {extras = ["plugins", "linkify"], version = "^2.1.0"}
 #rich = {path="../rich", develop=true}
 importlib-metadata = "^4.11.3"
 typing-extensions = "^4.0.0"

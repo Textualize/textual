@@ -51,7 +51,13 @@ class _TreeLine(Generic[TreeDataType]):
         Returns:
             Width in cells.
         """
-        guides = max(0, len(self.path) - (1 if show_root else 2)) * guide_depth
+        if show_root:
+            return 2 + (max(0, len(self.path) - 1)) * guide_depth
+        else:
+            guides = 2
+            if len(self.path) > 1:
+                guides += (len(self.path) - 1) * guide_depth
+
         return guides
 
 
