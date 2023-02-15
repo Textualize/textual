@@ -66,6 +66,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `DOMNode.tree` now displays simple DOM structure only https://github.com/Textualize/textual/pull/1778
 - `App.install_screen` now returns None rather than AwaitMount https://github.com/Textualize/textual/pull/1778
 - `DOMNode.children` is now a simple sequence, the NodesList is exposed as `DOMNode._nodes` https://github.com/Textualize/textual/pull/1778
+- `DataTable` cursor can now enter fixed columns https://github.com/Textualize/textual/pull/1799
 
 ### Fixed
 
