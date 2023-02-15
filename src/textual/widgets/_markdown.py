@@ -86,16 +86,16 @@ class MarkdownBlock(Static):
     """
 
     def __init__(self, *args, **kwargs) -> None:
-        self.text = Text()
-        self.blocks: list[MarkdownBlock] = []
+        self._text = Text()
+        self._blocks: list[MarkdownBlock] = []
         super().__init__(*args, **kwargs)
 
     def compose(self) -> ComposeResult:
-        yield from self.blocks
-        self.blocks.clear()
+        yield from self._blocks
+        self._blocks.clear()
 
     def set_content(self, text: Text) -> None:
-        self.text = text
+        self._text = text
         self.update(text)
 
     async def action_link(self, href: str) -> None:
@@ -272,8 +272,8 @@ class MarkdownTable(MarkdownBlock):
 
     def compose(self) -> ComposeResult:
         def flatten(block: MarkdownBlock) -> Iterable[MarkdownBlock]:
-            for block in block.blocks:
-                if block.blocks:
+            for block in block._blocks:
+                if block._blocks:
                     yield from flatten(block)
                 yield block
 
@@ -281,18 +281,18 @@ class MarkdownTable(MarkdownBlock):
         rows: list[list[Text]] = []
         for block in flatten(self):
             if isinstance(block, MarkdownTH):
-                headers.append(block.text)
+                headers.append(block._text)
             elif isinstance(block, MarkdownTR):
                 rows.append([])
             elif isinstance(block, MarkdownTD):
-                rows[-1].append(block.text)
+                rows[-1].append(block._text)
 
         table: DataTable = DataTable(zebra_stripes=True, show_cursor=False)
         table.can_focus = False
         table.add_columns(*headers)
         table.add_rows([row for row in rows if row])
         yield table
-        self.blocks.clear()
+        self._blocks.clear()
 
 
 class MarkdownTBody(MarkdownBlock):
@@ -333,6 +333,7 @@ class MarkdownBullet(Widget):
     """
 
     symbol = reactive("●​ ")
+    """The symbol for the bullet."""
 
     def render(self) -> Text:
         return Text(self.symbol)
@@ -362,9 +363,9 @@ class MarkdownListItem(MarkdownBlock):
         bullet = MarkdownBullet()
         bullet.symbol = self.bullet
         yield bullet
-        yield Vertical(*self.blocks)
+        yield Vertical(*self._blocks)
 
-        self.blocks.clear()
+        self._blocks.clear()
 
 
 class MarkdownFence(MarkdownBlock):
@@ -449,10 +450,10 @@ class Markdown(Widget):
         """A Markdown widget.
 
         Args:
-            markdown: String containing Markdown or None leave blank for now. Defaults to None.
-            name: The name of the button.
-            id: The ID of the button in the DOM.
-            classes: The CSS classes of the button.
+            markdown: String containing Markdown or None to leave blank for now. Defaults to None.
+            name: The name of the widget.
+            id: The ID of the widget in the DOM.
+            classes: The CSS classes of the widget.
         """
         super().__init__(name=name, id=id, classes=classes)
         self._markdown = markdown
@@ -550,11 +551,11 @@ class Markdown(Widget):
             elif token.type.endswith("_close"):
                 block = stack.pop()
                 if token.type == "heading_close":
-                    heading = block.text.plain
+                    heading = block._text.plain
                     level = int(token.tag[1:])
                     table_of_contents.append((level, heading, block.id))
                 if stack:
-                    stack[-1].blocks.append(block)
+                    stack[-1]._blocks.append(block)
                 else:
                     output.append(block)
             elif token.type == "inline":
@@ -726,9 +727,9 @@ class MarkdownViewer(Vertical, can_focus=True, can_focus_children=True):
         Args:
             markdown: String containing Markdown, or None to leave blank. Defaults to None.
             show_table_of_contents: Show a Table of COntents in a sidebar. Defaults to True.
-            name: The name of the button.
-            id: The ID of the button in the DOM.
-            classes: The CSS classes of the button.
+            name: The name of the widget.
+            id: The ID of the widget in the DOM.
+            classes: The CSS classes of the widget.
         """
         super().__init__(name=name, id=id, classes=classes)
         self.show_table_of_contents = show_table_of_contents
