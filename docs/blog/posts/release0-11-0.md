@@ -20,15 +20,19 @@ The headline feature of this release is the enhanced Markdown support. Here's a 
 --8<-- "docs/blog/images/markdown-viewer.svg"
 </div>
 
+!!! tip
+
+    You can generate these SVG screenshots for your app with `textual run my_app.py --screenshot 5` which will export a screenshot after 5 seconds.
+
 There are actually 2 new widgets: [Markdown](./../../widgets/markdown.md) for a simple Markdown document, and [MarkdownViewer](./../../widgets/markdown_viewer.md) which adds browser-like navigation and a table of contents.
 
-Textual has had support for Markdown since day one by embedding a Rich [Markdown](https://rich.readthedocs.io/en/latest/markdown.html) object (which still gives decent results)! This new widget adds dynamic controls such as scrollable code fences and tables, in addition to working links.
+Textual has had support for Markdown since day one by embedding a Rich [Markdown](https://rich.readthedocs.io/en/latest/markdown.html) object -- which still gives decent results! This new widget adds dynamic controls such as scrollable code fences and tables, in addition to working links.
 
-In future releases I see us adding various Markdown extensions and the ability to easily embed custom widgets within the document. I'm sure there are plenty of interesting applications that could be powered by building a Markdown file with embedded widgets.
+In future releases we plan on adding more Markdown extensions, and the ability to easily embed custom widgets within the document. I'm sure there are plenty of interesting applications that could be powered by dynamically generating Markdown documents.
 
 ## DataTable improvements
 
-There has been a lot of work on the [DataTable](../../widgets/data_table.md) widget API. We've added the ability to sort the data, which required that we introduce the concept of row and column keys. You can now reference rows / columns / cells by their coordinate or by row / column key.
+There has been a lot of work on the [DataTable](../../widgets/data_table.md) API. We've added the ability to sort the data, which required that we introduce the concept of row and column keys. You can now reference rows / columns / cells by their coordinate or by row / column key.
 
 ## Tree control
 
