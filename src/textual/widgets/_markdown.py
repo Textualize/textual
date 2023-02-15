@@ -501,7 +501,7 @@ class Markdown(Widget):
             markdown = path.read_text(encoding="utf-8")
         except Exception:
             return False
-        await self.query("Block").remove()
+        await self.query("MarkdownBlock").remove()
         await self.update(markdown)
         return True
 
