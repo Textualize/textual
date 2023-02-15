@@ -168,7 +168,7 @@ class Column:
 
     @property
     def render_width(self) -> int:
-        """int: Width in cells, required to render a column."""
+        """Width in cells, required to render a column."""
         # +2 is to account for space padding either side of the cell
         if self.auto_width:
             return self.content_width + 2
