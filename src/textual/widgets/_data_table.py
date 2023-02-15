@@ -242,7 +242,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         color: $text;
     }
     DataTable > .datatable--fixed {
-        background: $accent 20%;
+        background: $primary 50%;
         color: $text;
     }
 
@@ -260,7 +260,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     }
 
     DataTable > .datatable--fixed-cursor {
-        background: $secondary 93%;
+        background: $secondary 92%;
         color: $text;
     }
 
