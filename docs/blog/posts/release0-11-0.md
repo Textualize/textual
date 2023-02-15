@@ -34,7 +34,7 @@ In future releases we plan on adding more Markdown extensions, and the ability t
 
 There has been a lot of work on the [DataTable](../../widgets/data_table.md) API. We've added the ability to sort the data, which required that we introduce the concept of row and column keys. You can now reference rows / columns / cells by their coordinate or by row / column key.
 
-Additionally there are new [update_cell][textual.widgets.DataTable.update_cell] and [update_cell][textual.widgets.DataTable.update_cell_at] methods to update cells after the data has been populated. Future releases will have more methods to manipulate table data, which will make it a very general purpose (and powerful) widget.
+Additionally there are new [update_cell][textual.widgets.DataTable.update_cell] and [update_cell_at][textual.widgets.DataTable.update_cell_at] methods to update cells after the data has been populated. Future releases will have more methods to manipulate table data, which will make it a very general purpose (and powerful) widget.
 
 ## Tree control
 
