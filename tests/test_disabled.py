@@ -8,6 +8,8 @@ from textual.widgets import (
     DirectoryTree,
     Input,
     ListView,
+    Markdown,
+    MarkdownViewer,
     Switch,
     TextLog,
     Tree,
@@ -28,6 +30,8 @@ class DisableApp(App[None]):
             Switch(),
             TextLog(),
             Tree("Test"),
+            Markdown(),
+            MarkdownViewer(),
             id="test-container",
         )
 
