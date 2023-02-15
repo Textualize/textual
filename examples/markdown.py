@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from textual.app import App, ComposeResult
 from textual.reactive import var
 from textual.widgets import Footer, MarkdownViewer
@@ -10,7 +12,7 @@ class MarkdownApp(App):
         ("f", "forward", "Forward"),
     ]
 
-    path = var("demo.md")
+    path = var(Path(__file__).parent / "demo.md")
 
     @property
     def markdown_viewer(self) -> MarkdownViewer:
