@@ -138,6 +138,14 @@ def test_tree_example(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "tree.py")
 
 
+def test_markdown_example(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "markdown.py")
+
+
+def test_markdown_viewer_example(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "markdown_viewer.py")
+
+
 # --- CSS properties ---
 # We have a canonical example for each CSS property that is shown in their docs.
 # If any of these change, something has likely broken, so snapshot each of them.

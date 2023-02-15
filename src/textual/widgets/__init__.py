@@ -19,6 +19,7 @@ if typing.TYPE_CHECKING:
     from ._label import Label
     from ._list_item import ListItem
     from ._list_view import ListView
+    from ._markdown import Markdown, MarkdownViewer
     from ._placeholder import Placeholder
     from ._pretty import Pretty
     from ._static import Static
@@ -30,7 +31,6 @@ if typing.TYPE_CHECKING:
 
 __all__ = [
     "Button",
-    "Switch",
     "DataTable",
     "DirectoryTree",
     "Footer",
@@ -39,9 +39,12 @@ __all__ = [
     "Label",
     "ListItem",
     "ListView",
+    "Markdown",
+    "MarkdownViewer",
     "Placeholder",
     "Pretty",
     "Static",
+    "Switch",
     "TextLog",
     "Tree",
     "Welcome",
