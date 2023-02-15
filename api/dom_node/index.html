@@ -318,10 +318,8 @@
     
     
       <li class="md-tabs__item">
-        <a href="../" class="md-tabs__link md-tabs__link--active">
+        <a href="../app/" class="md-tabs__link md-tabs__link--active">
           
-  
-    
   
   API
 
@@ -3908,6 +3906,10 @@
       
         
       
+        
+      
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -4196,6 +4198,58 @@
   
   
     <li class="md-nav__item">
+      <a href="../../widgets/markdown_viewer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Markdown Viewer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/markdown/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Markdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../widgets/placeholder/" class="md-nav__link">
         
   
@@ -4346,29 +4400,33 @@
     
       
         
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
           
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
         
       
         
@@ -4462,8 +4520,6 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
-            
-              
             
               
                 
@@ -5248,6 +5304,8 @@
               
             
               
+            
+              
                 
   
   
@@ -5305,6 +5363,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../list_item/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    List item
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../list_view/" class="md-nav__link">
         
   
@@ -5331,13 +5415,39 @@
   
   
     <li class="md-nav__item">
-      <a href="../list_item/" class="md-nav__link">
+      <a href="../markdown_viewer/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     
   
-    List item
+    Markdown viewer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../markdown/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Markdown
   
 
     
@@ -5695,13 +5805,13 @@
   
   
     <li class="md-nav__item">
-      <a href="../tree/" class="md-nav__link">
+      <a href="../tree_node/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     
   
-    Tree
+    Tree node
   
 
     
@@ -5721,13 +5831,13 @@
   
   
     <li class="md-nav__item">
-      <a href="../tree_node/" class="md-nav__link">
+      <a href="../tree/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     
   
-    Tree node
+    Tree
   
 
     
@@ -6613,7 +6723,7 @@
 
   <div class="doc doc-contents ">
   
-      <p>list[DOMNode]: A list of ancestor nodes Nodes by tracing ancestors all the way back to App.</p>
+      <p>A list of ancestor nodes Nodes by tracing ancestors all the way back to App.</p>
   </div>
 
 </div>
@@ -6634,9 +6744,12 @@
 
   <div class="doc doc-contents ">
   
-      <p>list[DOMNode]: A list of Nodes by tracing a path all the way back to App.</p>
-<p>Note: This is inclusive of <code>self</code>.</p>
-  </div>
+      <p>A list of Nodes by tracing a path all the way back to App.</p>
+
+<details class="note">
+  <summary>Note</summary>
+  <p>This is inclusive of <code>self</code>.</p>
+</details>  </div>
 
 </div>
 
@@ -6656,25 +6769,7 @@
 
   <div class="doc doc-contents ">
   
-      <p>Get the background color and the color of the parent's background.</p>
-
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code>tuple[<a class="autorefs autorefs-internal" title="textual.color.Color" href="../color/#textual.color.Color">Color</a>, <a class="autorefs autorefs-internal" title="textual.color.Color" href="../color/#textual.color.Color">Color</a>]</code>
-          </td>
-          <td><p>Tuple of (base background, background)</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>The background color and the color of the parent's background.</p>
   </div>
 
 </div>
@@ -6716,7 +6811,7 @@
 
   <div class="doc doc-contents ">
   
-      <p>frozenset[str]: A frozenset of the current classes set on the widget.</p>
+      <p>A frozenset of the current classes set on the widget.</p>
   </div>
 
 </div>
@@ -6737,25 +6832,7 @@
 
   <div class="doc doc-contents ">
   
-      <p>Gets the Widgets foreground and background colors, and its parent's (base) colors.</p>
-
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code>tuple[<a class="autorefs autorefs-internal" title="textual.color.Color" href="../color/#textual.color.Color">Color</a>, <a class="autorefs autorefs-internal" title="textual.color.Color" href="../color/#textual.color.Color">Color</a>, <a class="autorefs autorefs-internal" title="textual.color.Color" href="../color/#textual.color.Color">Color</a>, <a class="autorefs autorefs-internal" title="textual.color.Color" href="../color/#textual.color.Color">Color</a>]</code>
-          </td>
-          <td><p>Tuple of (base background, base color, background, color)</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>The widget's foreground and background colors, and its parent's (base) colors.</p>
   </div>
 
 </div>
@@ -6776,7 +6853,7 @@
 
   <div class="doc doc-contents ">
   
-      
+      <p>A CSS selector that identifies this DOM node.</p>
   </div>
 
 </div>
@@ -6797,7 +6874,7 @@
 
   <div class="doc doc-contents ">
   
-      
+      <p>A stylized CSS identifier.</p>
   </div>
 
 </div>
@@ -6818,7 +6895,7 @@
 
   <div class="doc doc-contents ">
   
-      <p>list[DOMNode] A list of nodes from the root to this node, forming a "path".</p>
+      <p>A list of nodes from the root to this node, forming a "path".</p>
   </div>
 
 </div>
@@ -6841,24 +6918,6 @@
   
       <p>Get a Rich tree object which will recursively render the structure of the node tree,
 which also displays CSS and size information.</p>
-
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><span title="rich.tree.Tree">Tree</span></code>
-          </td>
-          <td><p>A Rich object which may be printed.</p></td>
-        </tr>
-    </tbody>
-  </table>
   </div>
 
 </div>
@@ -6880,25 +6939,7 @@ which also displays CSS and size information.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Check if this widget should display or not.</p>
-
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code>bool</code>
-          </td>
-          <td><p><code>True</code> if this DOMNode is displayed (<code>display != "none"</code>) otherwise <code>False</code> .</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>Should the DOM node be displayed?</p>
   </div>
 
 </div>
@@ -6920,24 +6961,6 @@ which also displays CSS and size information.</p>
   <div class="doc doc-contents ">
   
       <p>The children which don't have display: none set.</p>
-
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code>list[<a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a>]</code>
-          </td>
-          <td><p>Children of this widget which will be displayed.</p></td>
-        </tr>
-    </tbody>
-  </table>
   </div>
 
 </div>
@@ -6959,7 +6982,7 @@ which also displays CSS and size information.</p>
 
   <div class="doc doc-contents ">
   
-      <p>str | None: The ID of this node, or None if the node has no ID.</p>
+      <p>The ID of this node, or None if the node has no ID.</p>
   </div>
 
 </div>
@@ -6980,7 +7003,7 @@ which also displays CSS and size information.</p>
 
   <div class="doc doc-contents ">
   
-      <p>str | None: The name of the node.</p>
+      <p>The name of the node.</p>
   </div>
 
 </div>
@@ -7001,7 +7024,7 @@ which also displays CSS and size information.</p>
 
   <div class="doc doc-contents ">
   
-      <p>DOMNode | None: The parent node.</p>
+      <p>The parent node.</p>
   </div>
 
 </div>
@@ -7022,7 +7045,7 @@ which also displays CSS and size information.</p>
 
   <div class="doc doc-contents ">
   
-      <p>frozenset[str]: A set of all pseudo classes</p>
+      <p>A set of all pseudo classes</p>
   </div>
 
 </div>
@@ -7064,7 +7087,7 @@ which also displays CSS and size information.</p>
 
   <div class="doc doc-contents ">
   
-      
+      <p>The screen that this node is contained within.</p>
 
 <details class="note">
   <summary>Note</summary>
@@ -7131,24 +7154,6 @@ the child will also be bold.</p>
   <div class="doc doc-contents ">
   
       <p>Get a Rich tree object which will recursively render the structure of the node tree.</p>
-
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><span title="rich.tree.Tree">Tree</span></code>
-          </td>
-          <td><p>A Rich object which may be printed.</p></td>
-        </tr>
-    </tbody>
-  </table>
   </div>
 
 </div>
@@ -7170,25 +7175,7 @@ the child will also be bold.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Check if the node is visible or None.</p>
-
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code>bool</code>
-          </td>
-          <td><p>True if the node is visible.</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>Is the DOM node visible?</p>
   </div>
 
 </div>
@@ -7423,7 +7410,49 @@ the child will also be bold.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Check for pseudo class (such as hover, focus etc)</p>
+      <p>Check for pseudo classes (such as hover, focus etc)</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>*class_names</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>The pseudo classes to check for.</p></td>
+          <td>
+                <code>()</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p><code>True</code> if the DOM node has those pseudo classes, <code>False</code> if not.</p></td>
+        </tr>
+    </tbody>
+  </table>
 
   </div>
 
