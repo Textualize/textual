@@ -28,7 +28,7 @@ There are actually 2 new widgets: [Markdown](./../../widgets/markdown.md) for a 
 
 Textual has had support for Markdown since day one by embedding a Rich [Markdown](https://rich.readthedocs.io/en/latest/markdown.html) object -- which still gives decent results! This new widget adds dynamic controls such as scrollable code fences and tables, in addition to working links.
 
-In future releases we plan on adding more Markdown extensions, and the ability to easily embed custom widgets within the document. I'm sure there are plenty of interesting applications that could be powered by dynamically generating Markdown documents.
+In future releases we plan on adding more Markdown extensions, and the ability to easily embed custom widgets within the document. I'm sure there are plenty of interesting applications that could be powered by dynamically generated Markdown documents.
 
 ## DataTable improvements
 
