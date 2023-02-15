@@ -21,6 +21,7 @@ class TableApp(App):
         table.focus()
         table.cursor_type = "column"
         table.fixed_columns = 1
+        table.fixed_rows = 1
         yield table
 
     def on_mount(self) -> None:
