@@ -27,7 +27,7 @@ class WidgetDisableTestApp(App[None]):
 
     @property
     def data_table(self) -> DataTable:
-        data_table = DataTable()
+        data_table = DataTable[str]()
         data_table.add_columns("Column 1", "Column 2", "Column 3", "Column 4")
         data_table.add_rows(
             [(str(n), str(n * 10), str(n * 100), str(n * 1000)) for n in range(100)]
