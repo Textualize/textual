@@ -41,6 +41,7 @@ from ._asyncio import create_task
 from ._context import active_app
 from ._easing import DEFAULT_SCROLL_EASING
 from ._layout import Layout
+from ._profile import timer
 from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
 from .actions import SkipAction

@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, ClassVar, NamedTuple
 
-from .geometry import Region, Size, Spacing
+from ._cache import FIFOCache
+from ._profile import timer
+from .geometry import Offset, Region, Size, Spacing
 
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
@@ -11,7 +14,17 @@ if TYPE_CHECKING:
     from .widget import Widget
 
 ArrangeResult: TypeAlias = "tuple[list[WidgetPlacement], set[Widget]]"
-DockArrangeResult: TypeAlias = "tuple[list[WidgetPlacement], set[Widget], Spacing]"
+# DockArrangeResult: TypeAlias = "tuple[list[WidgetPlacement], set[Widget], Spacing]"
+
+
+@dataclass
+class DockArrangeResult:
+    placements: list[WidgetPlacement]
+    widgets: set[Widget]
+    spacing: Spacing
+
+    def unpack(self) -> tuple[list[WidgetPlacement], set[Widget], Spacing]:
+        return (self.placements, self.widgets, self.spacing)
 
 
 class WidgetPlacement(NamedTuple):

@@ -25,6 +25,7 @@ from rich.style import Style
 from . import errors
 from ._cells import cell_len
 from ._loop import loop_last
+from ._profile import timer
 from .geometry import NULL_OFFSET, Offset, Region, Size
 from .strip import Strip
 
@@ -389,12 +390,11 @@ class Compositor:
 
                 if widget.is_container:
                     # Arrange the layout
-                    placements, arranged_widgets, spacing = widget._arrange(
-                        child_region.size
-                    )
+                    arrange_result = widget._arrange(child_region.size)
+                    placements, arranged_widgets, spacing = arrange_result.unpack()
                     widgets.update(arranged_widgets)
 
-                    if placements:
+                    with timer("placements"):
                         # An offset added to all placements
                         placement_offset = container_region.offset
                         placement_scroll_offset = (
