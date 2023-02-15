@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.reactive import var
@@ -12,7 +14,7 @@ class MarkdownApp(App):
         Binding("s", "screenshot", "Screenshot", show=False),
     ]
 
-    path = var("demo.md")
+    path = var(Path(__file__).parent / "demo.md")
 
     @property
     def markdown_viewer(self) -> MarkdownViewer:
