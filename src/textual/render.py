@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from rich.cells import cell_len
 from rich.console import Console, RenderableType
 from rich.protocol import rich_cast
 
@@ -22,6 +23,9 @@ def measure(
     Returns:
         Width in cells
     """
+    if isinstance(renderable, str):
+        return cell_len(renderable)
+
     width = default
     renderable = rich_cast(renderable)
     get_console_width = getattr(renderable, "__rich_measure__", None)
