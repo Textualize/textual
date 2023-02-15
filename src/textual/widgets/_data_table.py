@@ -206,8 +206,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
         "datatable--header",
-        "datatable--cursor-fixed",
-        "datatable--highlight-fixed",
+        "datatable--header-cursor",
+        "datatable--header-hover",
         "datatable--fixed",
         "datatable--odd-row",
         "datatable--even-row",
@@ -218,12 +218,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     | Class | Description |
     | :- | :- |
     | `datatable--cursor` | Target the cursor. |
-    | `datatable--cursor-fixed` | Target fixed columns or header under the cursor. |
+    | `datatable--header-cursor` | Target fixed columns or header under the cursor. |
     | `datatable--even-row` | Target even rows (row indices start at 0). |
     | `datatable--fixed` | Target fixed columns or header. |
     | `datatable--header` | Target the header of the data table. |
     | `datatable--highlight` | Target the highlighted cell(s). |
-    | `datatable--highlight-fixed` | Target highlighted and fixed columns or header. |
+    | `datatable--header-hover` | Target highlighted and fixed columns or header. |
     | `datatable--odd-row` | Target odd rows (row indices start at 0). |
     """
 
@@ -242,8 +242,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     }
     DataTable > .datatable--fixed {
         text-style: bold;
-        background: $primary;
-        color: $text;
+        background: $success-darken-2;
+        color: $text 80%;
     }
 
     DataTable > .datatable--odd-row {
@@ -259,12 +259,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         color: $text;
     }
 
-    DataTable > .datatable--cursor-fixed {
+    DataTable > .datatable--header-cursor {
         background: $secondary-darken-1;
         color: $text;
     }
 
-    DataTable > .datatable--highlight-fixed {
+    DataTable > .datatable--header-hover {
         background: $secondary 30%;
     }
 
@@ -1323,24 +1323,23 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """
         is_header_row = row_index == -1
 
-        # The header row *and* fixed columns both have a different style (blue bg)
-        is_fixed_style = is_header_row or column_index < self.fixed_columns
         show_cursor = self.show_cursor
-
         if hover and show_cursor and self._show_hover_cursor:
             style += self.get_component_styles("datatable--highlight").rich_style
-            if is_fixed_style:
+            if is_header_row:
                 # Apply subtle variation in style for the fixed (blue background by
                 # default) rows and columns affected by the cursor, to ensure we can
                 # still differentiate between the labels and the data.
                 style += self.get_component_styles(
-                    "datatable--highlight-fixed"
+                    "datatable--highlight-header"
                 ).rich_style
 
         if cursor and show_cursor:
             style += self.get_component_styles("datatable--cursor").rich_style
-            if is_fixed_style:
-                style += self.get_component_styles("datatable--cursor-fixed").rich_style
+            if is_header_row:
+                style += self.get_component_styles(
+                    "datatable--header-cursor"
+                ).rich_style
 
         if is_header_row:
             row_key = self._header_row_key
