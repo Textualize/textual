@@ -1590,11 +1590,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         that is occupied by fixed rows and columns respectively. Fixed rows and columns
         are rows and columns that do not participate in scrolling."""
         top = self.header_height if self.show_header else 0
-        top += sum(
-            self.rows[self._row_locations.get_key(row_index)].height
-            for row_index in range(self.fixed_rows)
-            if row_index in self.rows
-        )
+        top += sum(row.height for row in self.ordered_rows[: self.fixed_rows])
         left = sum(
             column.render_width for column in self.ordered_columns[: self.fixed_columns]
         )
