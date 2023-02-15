@@ -1,7 +1,6 @@
 from pathlib import Path
 
 from textual.app import App, ComposeResult
-from textual.binding import Binding
 from textual.reactive import var
 from textual.widgets import Footer, MarkdownViewer
 
@@ -11,7 +10,6 @@ class MarkdownApp(App):
         ("t", "toggle_table_of_contents", "TOC"),
         ("b", "back", "Back"),
         ("f", "forward", "Forward"),
-        Binding("s", "screenshot", "Screenshot", show=False),
     ]
 
     path = var(Path(__file__).parent / "demo.md")
