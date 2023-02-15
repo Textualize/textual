@@ -12,7 +12,7 @@ class MarkdownApp(App):
         ("f", "forward", "Forward"),
     ]
 
-    path = var(str(Path(__file__).parent / "demo.md"))
+    path = var(Path(__file__).parent / "demo.md")
 
     @property
     def markdown_viewer(self) -> MarkdownViewer:

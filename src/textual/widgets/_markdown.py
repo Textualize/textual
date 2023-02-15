@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from pathlib import Path
+from pathlib import Path, PurePath
 from typing import Iterable
 
 from markdown_it import MarkdownIt
@@ -37,7 +37,7 @@ class Navigator:
             return Path(".")
         return self.stack[self.index]
 
-    def go(self, path: str) -> Path:
+    def go(self, path: str | PurePath) -> Path:
         """Go to a new document.
 
         Args:
@@ -749,7 +749,7 @@ class MarkdownViewer(Vertical, can_focus=True, can_focus_children=True):
         if self._markdown is not None:
             await self.document.update(self._markdown)
 
-    async def go(self, location: str) -> bool:
+    async def go(self, location: str | PurePath) -> bool:
         """Navigate to a new document path."""
         return await self.document.load(self.navigator.go(location))
 
