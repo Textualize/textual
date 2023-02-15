@@ -9,6 +9,8 @@ from textual.widgets import (
     ListView,
     ListItem,
     Label,
+    Markdown,
+    MarkdownViewer,
     Tree,
     TextLog,
 )
@@ -22,6 +24,10 @@ class WidgetDisableTestApp(App[None]):
     }
     DataTable, ListView, Tree, TextLog {
         height: 2;
+    }
+
+    Markdown, MarkdownViewer {
+        height: 1fr;
     }
     """
 
@@ -63,6 +69,8 @@ class WidgetDisableTestApp(App[None]):
             Input(),
             Input(placeholder="This is an empty input with a placeholder"),
             Input("This is some text in an input"),
+            Markdown("# Hello, World!"),
+            MarkdownViewer("# Hello, World!"),
             id="test-container",
         )
         yield Footer()
