@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from typing import ClassVar
 
-from rich.console import RenderableType
+from rich.text import Text, TextType
 
 from ..app import RenderResult
 from ..binding import Binding, BindingType
@@ -27,19 +27,19 @@ class ToggleButton(Static):
     | enter,space | Toggle the value. |
     """
 
-    button_prefix: reactive[RenderableType] = reactive[RenderableType]("[")
+    button_prefix: reactive[TextType] = reactive[TextType]("[")
     """The character for the left side of the toggle button."""
 
-    button_suffix: reactive[RenderableType] = reactive[RenderableType]("]")
+    button_suffix: reactive[TextType] = reactive[TextType]("]")
     """The character for the right side of the toggle button."""
 
-    button_off: reactive[RenderableType] = reactive[RenderableType](" ")
+    button_off: reactive[TextType] = reactive[TextType](" ")
     """The character used to signify that the button is off."""
 
-    button_on: reactive[RenderableType] = reactive[RenderableType]("X")
+    button_on: reactive[TextType] = reactive[TextType]("X")
     """The character used to signify that the button is on."""
 
-    label: reactive[RenderableType] = reactive[RenderableType]("")
+    label: reactive[TextType] = reactive[TextType]("")
     """The label that describes the toggle."""
 
     value: reactive[bool] = reactive(False)
@@ -47,7 +47,7 @@ class ToggleButton(Static):
 
     def __init__(
         self,
-        label: str,
+        label: TextType,
         value: bool = False,
         *,
         name: str | None = None,
@@ -66,6 +66,15 @@ class ToggleButton(Static):
         self.label = label
         self.value = value
 
+    @property
+    def _button(self) -> Text:
+        """The button, reflecting the current value."""
+        return Text.assemble(
+            self.button_prefix,
+            (self.button_on if self.value else self.button_off),
+            self.button_suffix,
+        )
+
     def render(self) -> RenderResult:
         """Render the content of the widget.
 
@@ -73,11 +82,7 @@ class ToggleButton(Static):
             The content to render for the widget.
         """
         # TODO: Built a renderable properly.
-        return (
-            f"{self.button_prefix}{self.button_on if self.value else self.button_off}{self.button_suffix}"
-            + (" " if self.label else "")
-            + f"{self.label}"
-        )
+        return self._button + (" " if self.label else "") + f"{self.label}"
 
     def toggle(self) -> None:
         """Toggle the value of the widget."""
