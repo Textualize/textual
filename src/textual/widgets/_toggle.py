@@ -80,6 +80,8 @@ class ToggleButton(Static, can_focus=True):
             id: The ID of the toggle in the DOM.
             classes: The CSS classes of the toggle.
         """
+        # TODO: disabled once
+        # https://github.com/Textualize/textual/pull/1785 is in.
         super().__init__(name=name, id=id, classes=classes)
         self.label = label
         self.button_first = button_first
