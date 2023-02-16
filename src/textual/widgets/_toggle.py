@@ -15,7 +15,7 @@ from ..reactive import reactive
 from ._static import Static
 
 
-class ToggleButton(Static):
+class ToggleButton(Static, can_focus=True):
     """Base toggle button widget."""
 
     BINDINGS: ClassVar[list[BindingType]] = [
@@ -26,6 +26,18 @@ class ToggleButton(Static):
     | :- | :- |
     | enter,space | Toggle the value. |
     """
+
+    DEFAULT_CSS = """
+    ToggleButton:hover {
+        text-style: bold;
+        background: $boost;
+    }
+
+    ToggleButton:focus {
+        color: $text;
+        background: $secondary;
+    }
+    """  # TODO: https://github.com/Textualize/textual/issues/1780
 
     button_prefix: reactive[TextType] = reactive[TextType]("[")
     """The character for the left side of the toggle button."""
