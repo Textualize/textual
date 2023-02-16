@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- DataTable fix issue where offset cache was not being used https://github.com/Textualize/textual/pull/1810
 - DataTable scrollbars resize correctly when header is toggled https://github.com/Textualize/textual/pull/1803
 - DataTable location mapping cleared when clear called https://github.com/Textualize/textual/pull/1809
 
