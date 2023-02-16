@@ -182,6 +182,7 @@ class Row:
 
     key: RowKey
     height: int
+    label: str | None = None
 
 
 class DataTable(ScrollView, Generic[CellType], can_focus=True):
@@ -541,6 +542,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Number of update (INCLUDING SORT) operations so far. Used for cache invalidation."""
         self._header_row_key = RowKey()
         """The header is a special row - not part of the data. Retrieve via this key."""
+        self._label_column_key = ColumnKey()
+        """The column containing row labels is not part of the data. This key identifies it."""
 
     @property
     def hover_row(self) -> int:
@@ -1083,7 +1086,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return column_key
 
     def add_row(
-        self, *cells: CellType, height: int = 1, key: str | None = None
+        self,
+        *cells: CellType,
+        height: int = 1,
+        key: str | None = None,
+        label: str | None = None,
     ) -> RowKey:
         """Add a row at the bottom of the DataTable.
 
@@ -1092,6 +1099,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             height: The height of a row (in lines).
             key: A key which uniquely identifies this row. If None, it will be generated
                 for you and returned.
+            label: The label for the row. Will be displayed to the left if supplied.
 
         Returns:
             Uniquely identifies this row. Can be used to retrieve this row regardless
@@ -1113,7 +1121,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             column.key: cell
             for column, cell in zip_longest(self.ordered_columns, cells)
         }
-        self.rows[row_key] = Row(row_key, height)
+        self.rows[row_key] = Row(row_key, height, label)
         self._new_rows.add(row_key)
         self._require_update_dimensions = True
         self.cursor_coordinate = self.cursor_coordinate
