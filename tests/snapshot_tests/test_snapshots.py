@@ -103,6 +103,11 @@ def test_datatable_column_cursor_render(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_column_cursor.py", press=press)
 
 
+def test_datatable_sort_multikey(snap_compare):
+    press = ["down", "right", "s"]  # Also checks that sort doesn't move cursor.
+    assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_sort.py", press=press)
+
+
 def test_footer_render(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "footer.py")
 
@@ -131,6 +136,14 @@ def test_visibility(snap_compare):
 
 def test_tree_example(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "tree.py")
+
+
+def test_markdown_example(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "markdown.py")
+
+
+def test_markdown_viewer_example(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "markdown_viewer.py")
 
 
 # --- CSS properties ---

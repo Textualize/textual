@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "textual"
-version = "0.10.1"
+version = "0.11.0"
 homepage = "https://github.com/Textualize/textual"
 description = "Modern Text User Interface framework"
 authors = ["Will McGugan <will@textualize.io>"]
@@ -39,6 +39,7 @@ textual = "textual.cli.cli:run"
 [tool.poetry.dependencies]
 python = "^3.7"
 rich = ">12.6.0"
+markdown-it-py = {extras = ["plugins", "linkify"], version = "^2.1.0"}
 #rich = {path="../rich", develop=true}
 importlib-metadata = "^4.11.3"
 typing-extensions = "^4.0.0"
@@ -47,7 +48,6 @@ typing-extensions = "^4.0.0"
 aiohttp = { version = ">=3.8.1", optional = true }
 click = {version = ">=8.1.2", optional = true}
 msgpack = { version = ">=1.0.3", optional = true }
-nanoid = ">=2.0.0"
 mkdocs-exclude = "^1.0.2"
 
 [tool.poetry.extras]

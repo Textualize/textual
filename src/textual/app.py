@@ -25,15 +25,15 @@ from typing import (
     Generic,
     Iterable,
     List,
+    Sequence,
     Type,
     TypeVar,
     Union,
     cast,
     overload,
 )
-from weakref import WeakSet, WeakValueDictionary
+from weakref import WeakSet
 
-import nanoid
 import rich
 import rich.repr
 from rich.console import Console, RenderableType
@@ -48,7 +48,6 @@ from ._asyncio import create_task
 from ._callback import invoke
 from ._context import active_app
 from ._event_broker import NoHandler, extract_handler_actions
-from ._filter import LineFilter, Monochrome
 from ._path import _make_path_object_relative
 from ._wait import wait_for_idle
 from .actions import SkipAction
@@ -62,6 +61,7 @@ from .driver import Driver
 from .drivers.headless_driver import HeadlessDriver
 from .features import FeatureFlag, parse_features
 from .file_monitor import FileMonitor
+from .filter import LineFilter, Monochrome
 from .geometry import Offset, Region, Size
 from .keys import REPLACED_KEYS, _get_key_display
 from .messages import CallbackType
@@ -209,7 +209,11 @@ class _WriterThread(threading.Thread):
         self.join()
 
 
-CSSPathType = Union[str, PurePath, List[Union[str, PurePath]], None]
+CSSPathType = Union[
+    str,
+    PurePath,
+    List[Union[str, PurePath]],
+]
 
 CallThreadReturnType = TypeVar("CallThreadReturnType")
 
@@ -241,7 +245,7 @@ class App(Generic[ReturnType], DOMNode):
 
     SCREENS: dict[str, Screen | Callable[[], Screen]] = {}
     _BASE_PATH: str | None = None
-    CSS_PATH: CSSPathType = None
+    CSS_PATH: CSSPathType | None = None
 
     TITLE: str | None = None
     """str | None: The default title for the application.
@@ -270,7 +274,7 @@ class App(Generic[ReturnType], DOMNode):
     def __init__(
         self,
         driver_class: Type[Driver] | None = None,
-        css_path: CSSPathType = None,
+        css_path: CSSPathType | None = None,
         watch_css: bool = False,
     ):
         # N.B. This must be done *before* we call the parent constructor, because MessagePump's
@@ -348,6 +352,7 @@ class App(Generic[ReturnType], DOMNode):
         css_path = css_path or self.CSS_PATH
         if css_path is not None:
             # When value(s) are supplied for CSS_PATH, we normalise them to a list of Paths.
+            css_paths: List[PurePath]
             if isinstance(css_path, str):
                 css_paths = [Path(css_path)]
             elif isinstance(css_path, PurePath):
@@ -355,7 +360,9 @@ class App(Generic[ReturnType], DOMNode):
             elif isinstance(css_path, list):
                 css_paths = []
                 for path in css_path:
-                    css_paths.append(Path(path) if isinstance(path, str) else path)
+                    css_paths.append(
+                        Path(path) if isinstance(path, str) else path,
+                    )
             else:
                 raise CssPathError(
                     "Expected a str, Path or list[str | Path] for the CSS_PATH."
@@ -378,9 +385,7 @@ class App(Generic[ReturnType], DOMNode):
         self.scroll_sensitivity_y: float = 2.0
         """Number of lines to scroll in the Y direction with wheel or trackpad."""
 
-        self._installed_screens: WeakValueDictionary[
-            str, Screen | Callable[[], Screen]
-        ] = WeakValueDictionary()
+        self._installed_screens: dict[str, Screen | Callable[[], Screen]] = {}
         self._installed_screens.update(**self.SCREENS)
 
         self.devtools: DevtoolsClient | None = None
@@ -412,6 +417,14 @@ class App(Generic[ReturnType], DOMNode):
     def return_value(self) -> ReturnType | None:
         """ReturnType | None: The return type of the app."""
         return self._return_value
+
+    @property
+    def children(self) -> Sequence["Widget"]:
+        """A view on to the children which contains just the screen."""
+        try:
+            return (self.screen,)
+        except ScreenError:
+            return ()
 
     def animate(
         self,
@@ -657,7 +670,7 @@ class App(Generic[ReturnType], DOMNode):
         Like asyncio apps in general, Textual apps are not thread-safe. If you call methods
         or set attributes on Textual objects from a thread, you may get unpredictable results.
 
-        This method will ensure that your code is ran within the correct context.
+        This method will ensure that your code runs within the correct context.
 
         Args:
             callback: A callable to run.
@@ -753,7 +766,7 @@ class App(Generic[ReturnType], DOMNode):
             svg_filename_stem = f"{self.title.lower()} {dt}"
             for reserved in ' <>:"/\\|?*.':
                 svg_filename_stem = svg_filename_stem.replace(reserved, "_")
-                svg_filename = svg_filename_stem + ".svg"
+            svg_filename = svg_filename_stem + ".svg"
         else:
             svg_filename = filename
         svg_path = os.path.expanduser(os.path.join(path, svg_filename))
@@ -832,7 +845,7 @@ class App(Generic[ReturnType], DOMNode):
                 driver.send_event(key_event)
                 await wait_for_idle(0)
 
-        await app._animator.wait_for_idle()
+        await app._animator.wait_until_complete()
         await wait_for_idle(0)
 
     @asynccontextmanager
@@ -1230,7 +1243,7 @@ class App(Generic[ReturnType], DOMNode):
         return screen
 
     def push_screen(self, screen: Screen | str) -> AwaitMount:
-        """Push a new screen on the screen stack.
+        """Push a new screen on the screen stack, making it the current screen.
 
         Args:
             screen: A Screen instance or the name of an installed screen.
@@ -1258,13 +1271,16 @@ class App(Generic[ReturnType], DOMNode):
             return await_mount
         return AwaitMount(self.screen, [])
 
-    def install_screen(self, screen: Screen, name: str | None = None) -> AwaitMount:
+    def install_screen(self, screen: Screen, name: str) -> None:
         """Install a screen.
+
+        Installing a screen prevents Textual from destroying it when it is no longer on the screen stack.
+        Note that you don't need to install a screen to use it. See [push_screen][textual.app.App.push_screen]
+        or [switch_screen][textual.app.App.switch_screen] to make a new screen current.
 
         Args:
             screen: Screen to install.
-            name: Unique name of screen or None to auto-generate.
-                Defaults to None.
+            name: Unique name to identify the screen.
 
         Raises:
             ScreenError: If the screen can't be installed.
@@ -1272,8 +1288,6 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             An awaitable that awaits the mounting of the screen and its children.
         """
-        if name is None:
-            name = nanoid.generate()
         if name in self._installed_screens:
             raise ScreenError(f"Can't install screen; {name!r} is already installed")
         if screen in self._installed_screens.values():
@@ -1281,13 +1295,17 @@ class App(Generic[ReturnType], DOMNode):
                 "Can't install screen; {screen!r} has already been installed"
             )
         self._installed_screens[name] = screen
-        _screen, await_mount = self._get_screen(name)  # Ensures screen is running
         self.log.system(f"{screen} INSTALLED name={name!r}")
-        return await_mount
 
     def uninstall_screen(self, screen: Screen | str) -> str | None:
-        """Uninstall a screen. If the screen was not previously installed then this
-        method is a null-op.
+        """Uninstall a screen.
+
+        If the screen was not previously installed then this method is a null-op.
+        Uninstalling a screen allows Textual to delete it when it is popped or switched.
+        Note that uninstalling a screen is only required if you have previously installed it
+        with [install_screen][textual.app.App.install_screen].
+        Textual will also uninstall screens automatically on exit.
+
 
         Args:
             screen: The screen to uninstall or the name of a installed screen.
@@ -1632,19 +1650,19 @@ class App(Generic[ReturnType], DOMNode):
             # Now to figure out where to place it. If we've got a `before`...
             if before is not None:
                 # ...it's safe to NodeList._insert before that location.
-                parent.children._insert(before, child)
+                parent._nodes._insert(before, child)
             elif after is not None and after != -1:
                 # In this case we've got an after. -1 holds the special
                 # position (for now) of meaning "okay really what I mean is
                 # do an append, like if I'd asked to add with no before or
                 # after". So... we insert before the next item in the node
                 # list, iff after isn't -1.
-                parent.children._insert(after + 1, child)
+                parent._nodes._insert(after + 1, child)
             else:
                 # At this point we appear to not be adding before or after,
                 # or we've got a before/after value that really means
                 # "please append". So...
-                parent.children._append(child)
+                parent._nodes._append(child)
 
             # Now that the widget is in the NodeList of its parent, sort out
             # the rest of the admin.
@@ -1689,8 +1707,8 @@ class App(Generic[ReturnType], DOMNode):
                 raise AppError(f"Can't register {widget!r}; expected a Widget instance")
             if widget not in self._registry:
                 self._register_child(parent, widget, before, after)
-                if widget.children:
-                    self._register(widget, *widget.children)
+                if widget._nodes:
+                    self._register(widget, *widget._nodes)
                 apply_stylesheet(widget)
 
         if not self._running:
@@ -1707,7 +1725,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         widget.reset_focus()
         if isinstance(widget._parent, Widget):
-            widget._parent.children._remove(widget)
+            widget._parent._nodes._remove(widget)
             widget._detach()
         self._registry.discard(widget)
 
@@ -1885,6 +1903,7 @@ class App(Generic[ReturnType], DOMNode):
         # Handle input events that haven't been forwarded
         # If the event has been forwarded it may have bubbled up back to the App
         if isinstance(event, events.Compose):
+            self.log(event)
             screen = Screen(id="_default")
             self._register(self, screen)
             self._screen_stack.append(screen)
@@ -2089,7 +2108,7 @@ class App(Generic[ReturnType], DOMNode):
         # snipping each affected branch from the DOM.
         for widget in pruned_remove:
             if widget.parent is not None:
-                widget.parent.children._remove(widget)
+                widget.parent._nodes._remove(widget)
 
         # Return the list of widgets that should end up being sent off in a
         # prune event.
@@ -2108,10 +2127,10 @@ class App(Generic[ReturnType], DOMNode):
 
         while stack:
             widget = pop()
-            children = [*widget.children, *widget._get_virtual_dom()]
+            children = [*widget._nodes, *widget._get_virtual_dom()]
             if children:
                 yield children
-            for child in widget.children:
+            for child in widget._nodes:
                 push(child)
 
     def _remove_nodes(self, widgets: list[Widget]) -> AwaitRemove:

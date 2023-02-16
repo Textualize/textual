@@ -10,7 +10,6 @@ from .case import camel_to_snake
 
 if TYPE_CHECKING:
     from .message_pump import MessagePump
-    from .widget import Widget
 
 
 @rich.repr.auto

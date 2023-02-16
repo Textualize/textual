@@ -2,8 +2,8 @@ import pytest
 from rich.segment import Segment
 from rich.style import Style
 
-from textual._filter import Monochrome
 from textual._segment_tools import NoCellPositionForIndex
+from textual.filter import Monochrome
 from textual.strip import Strip
 
 

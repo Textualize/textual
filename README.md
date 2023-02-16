@@ -2,7 +2,9 @@
 
 ![Textual splash image](https://raw.githubusercontent.com/Textualize/textual/main/imgs/textual.png)
 
-Textual is a Python framework for creating interactive applications that run in your terminal.
+Textual is a *Rapid Application Development* framework for Python.
+
+Build sophisticated user interfaces with a simple Python API. Run your apps in the terminal and (coming soon) a web browser!
 
 <details>  
   <summary> 🎬 Demonstration </summary>
@@ -22,7 +24,7 @@ https://user-images.githubusercontent.com/554369/197355913-65d3c125-493d-4c05-a5
 
 ## About
 
-Textual adds interactivity to [Rich](https://github.com/Textualize/rich) with a Python API inspired by modern web development.
+Textual adds interactivity to [Rich](https://github.com/Textualize/rich) with an API inspired by modern web development.
 
 On modern terminal software (installed by default on most systems), Textual apps can use **16.7 million** colors with mouse support and smooth flicker-free animation. A powerful layout engine and re-usable components makes it possible to build apps that rival the desktop and web experience. 
 

@@ -13,8 +13,10 @@ from textual.widgets._list_item import ListItem
 
 
 class ListView(Vertical, can_focus=True, can_focus_children=False):
-    """Displays a vertical list of `ListItem`s which can be highlighted
-    and selected using the mouse or keyboard.
+    """A vertical list view widget.
+
+    Displays a vertical list of `ListItem`s which can be highlighted and
+    selected using the mouse or keyboard.
 
     Attributes:
         index: The index in the list that's currently highlighted.
@@ -89,38 +91,43 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
 
     @property
     def highlighted_child(self) -> ListItem | None:
-        """ListItem | None: The currently highlighted ListItem,
-        or None if nothing is highlighted.
-        """
+        """The currently highlighted ListItem, or None if nothing is highlighted."""
         if self.index is None:
             return None
-        elif 0 <= self.index < len(self.children):
-            return self.children[self.index]
+        elif 0 <= self.index < len(self._nodes):
+            return self._nodes[self.index]
 
     def validate_index(self, index: int | None) -> int | None:
-        """Clamp the index to the valid range, or set to None if there's nothing to highlight."""
-        if not self.children or index is None:
+        """Clamp the index to the valid range, or set to None if there's nothing to highlight.
+
+        Args:
+            index: The index to clamp.
+
+        Returns:
+            The clamped index.
+        """
+        if not self._nodes or index is None:
             return None
         return self._clamp_index(index)
 
     def _clamp_index(self, index: int) -> int:
         """Clamp the index to a valid value given the current list of children"""
-        last_index = max(len(self.children) - 1, 0)
+        last_index = max(len(self._nodes) - 1, 0)
         return clamp(index, 0, last_index)
 
     def _is_valid_index(self, index: int | None) -> bool:
         """Return True if the current index is valid given the current list of children"""
         if index is None:
             return False
-        return 0 <= index < len(self.children)
+        return 0 <= index < len(self._nodes)
 
     def watch_index(self, old_index: int, new_index: int) -> None:
         """Updates the highlighting when the index changes."""
         if self._is_valid_index(old_index):
-            old_child = self.children[old_index]
+            old_child = self._nodes[old_index]
             old_child.highlighted = False
         if self._is_valid_index(new_index):
-            new_child = self.children[new_index]
+            new_child = self._nodes[new_index]
             new_child.highlighted = True
         else:
             new_child = None
@@ -155,18 +162,21 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         return await_remove
 
     def action_select_cursor(self) -> None:
+        """Select the current item in the list."""
         selected_child = self.highlighted_child
         self.post_message_no_wait(self.Selected(self, selected_child))
 
     def action_cursor_down(self) -> None:
+        """Highlight the next item in the list."""
         self.index += 1
 
     def action_cursor_up(self) -> None:
+        """Highlight the previous item in the list."""
         self.index -= 1
 
     def on_list_item__child_clicked(self, event: ListItem._ChildClicked) -> None:
         self.focus()
-        self.index = self.children.index(event.sender)
+        self.index = self._nodes.index(event.sender)
         self.post_message_no_wait(self.Selected(self, event.sender))
 
     def _scroll_highlighted_region(self) -> None:
@@ -175,4 +185,4 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
             self.scroll_to_widget(self.highlighted_child, animate=False)
 
     def __len__(self):
-        return len(self.children)
+        return len(self._nodes)
