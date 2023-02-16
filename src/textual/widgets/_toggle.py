@@ -11,6 +11,7 @@ from rich.text import Text, TextType
 
 from ..app import RenderResult
 from ..binding import Binding, BindingType
+from ..message import Message
 from ..reactive import reactive
 from ._static import Static
 
@@ -122,3 +123,23 @@ class ToggleButton(Static, can_focus=True):
     def on_click(self) -> None:
         """Toggle the value of the widget."""
         self.toggle()
+
+    class Changed(Message, bubble=True):
+        """Posted when the value of the toggle button."""
+
+        def __init__(self, sender: ToggleButton, value: bool) -> None:
+            """Initialise the message.
+
+            Args:
+                sender: The toggle button sending the message.
+                value: The value of the toggle button.
+            """
+            super().__init__(sender)
+            self.input = sender
+            """A reference to the toggle button that was changed."""
+            self.value = value
+            """The value of the toggle button after the change."""
+
+    def watch_value(self) -> None:
+        """React to the value being changed."""
+        self.post_message_no_wait(self.Changed(self, self.value))
