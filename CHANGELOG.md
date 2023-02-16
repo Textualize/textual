@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - DataTable scrollbars resize correctly when header is toggled https://github.com/Textualize/textual/pull/1803
+- DataTable location mapping cleared when clear called https://github.com/Textualize/textual/pull/1809
 
 ## [0.11.0] - 2023-02-15
 
