@@ -1,3 +1,7 @@
-from ._toggle import Checkbox
+"""Provides a check box widget."""
 
-__all__ = ["Checkbox"]
+from ._toggle import ToggleButton
+
+
+class Checkbox(ToggleButton):
+    pass
