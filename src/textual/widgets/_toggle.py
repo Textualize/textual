@@ -57,10 +57,14 @@ class ToggleButton(Static, can_focus=True):
     value: reactive[bool] = reactive(False)
     """The value of the button. `True` for on, `False` for off."""
 
+    button_first: reactive[bool] = reactive(True)
+    """Should the button come before the label?"""
+
     def __init__(
         self,
         label: TextType,
         value: bool = False,
+        button_first: bool = True,
         *,
         name: str | None = None,
         id: str | None = None,
@@ -69,13 +73,16 @@ class ToggleButton(Static, can_focus=True):
         """Initialise the toggle.
 
         Args:
+            label: The label for the toggle.
             value: The initial value of the toggle. Defaults to `False`.
+            button_first: Should the button come before the label, or after?
             name: The name of the toggle.
             id: The ID of the toggle in the DOM.
             classes: The CSS classes of the toggle.
         """
         super().__init__(name=name, id=id, classes=classes)
         self.label = label
+        self.button_first = button_first
         self.value = value
 
     @property
@@ -93,8 +100,17 @@ class ToggleButton(Static, can_focus=True):
         Returns:
             The content to render for the widget.
         """
-        # TODO: Built a renderable properly.
-        return self._button + (" " if self.label else "") + f"{self.label}"
+        if self.button_first:
+            return Text.assemble(
+                self._button,
+                (" " if self.label else ""),
+                self.label,
+            )
+        return Text.assemble(
+            self.label,
+            (" " if self.label else ""),
+            self._button,
+        )
 
     def toggle(self) -> None:
         """Toggle the value of the widget."""
