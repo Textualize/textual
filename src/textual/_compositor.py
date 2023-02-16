@@ -254,7 +254,7 @@ class Compositor:
         self.size = size
 
         # Keep a copy of the old map because we're going to compare it with the update
-        old_map = self.map.copy()
+        old_map = self.map
         old_widgets = old_map.keys()
 
         map, widgets = self._arrange_root(parent, size, visible_only=True)
@@ -264,7 +264,7 @@ class Compositor:
         # Newly visible widgets
         shown_widgets = new_widgets - old_widgets
         # Newly hidden widgets
-        hidden_widgets = old_widgets - new_widgets
+        hidden_widgets = self.widgets - widgets
 
         # Replace map and widgets
         self.map = map
@@ -296,7 +296,7 @@ class Compositor:
             self._dirty_regions.update(regions)
 
         return ReflowResult(
-            hidden=set(),
+            hidden=hidden_widgets,
             shown=shown_widgets,
             resized=resized_widgets,
         )
