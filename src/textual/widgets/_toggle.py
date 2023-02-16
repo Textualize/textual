@@ -100,16 +100,13 @@ class ToggleButton(Static, can_focus=True):
         Returns:
             The content to render for the widget.
         """
-        if self.button_first:
-            return Text.assemble(
-                self._button,
-                (" " if self.label else ""),
-                self.label,
-            )
-        return Text.assemble(
-            self.label,
-            (" " if self.label else ""),
-            self._button,
+        button = self._button
+        label = self.label
+        spacer = " " if self.label else ""
+        return (
+            Text.assemble(button, spacer, label)
+            if self.button_first
+            else Text.assemble(label, spacer, button)
         )
 
     def toggle(self) -> None:
