@@ -79,13 +79,17 @@ class ToggleButton(Static):
             + f"{self.label}"
         )
 
-    def action_toggle(self) -> None:
+    def toggle(self) -> None:
         """Toggle the value of the widget."""
         self.value = not self.value
 
+    def action_toggle(self) -> None:
+        """Toggle the value of the widget."""
+        self.toggle()
+
     def on_click(self) -> None:
         """Toggle the value of the widget."""
-        self.action_toggle()
+        self.toggle()
 
 
 class Checkbox(ToggleButton):
