@@ -5,10 +5,12 @@ In particular it provides `Checkbox`, `RadioButton` and `RadioSet`.
 
 from __future__ import annotations
 
+from typing import ClassVar
+
 from rich.console import RenderableType
 
 from ..app import RenderResult
-from ..binding import Binding
+from ..binding import Binding, BindingType
 from ..reactive import reactive
 from ._static import Static
 
