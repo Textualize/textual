@@ -5,38 +5,7 @@ from textual.widgets import Button, Input, Label, Static
 class EditableText(Static):
     """Custom widget to show (editable) static text."""
 
-    DEFAULT_CSS = """
-    EditableText {
-        layout: horizontal;
-        width: 1fr;
-        height: 3;
-    }
-
-    .editabletext--input {
-        width: 1fr;
-        height: 3;
-    }
-
-    .editabletext--label {
-        width: 1fr;
-        height: 3;
-        border: round $primary;
-    }
-
-    .editabletext--edit {
-        min-width: 0;
-        width: 4;
-    }
-
-    .editabletext--confirm {
-        min-width: 0;
-        width: 4;
-    }
-
-    EditableText .ethidden {
-        display: none;
-    }
-    """
+    DEFAULT_CSS = ""  # Default styling should go here.
 
     _confirm_button: Button
     """The button to confirm changes to the text."""
@@ -54,7 +23,7 @@ class EditableText(Static):
         self._label = Label("", classes="editabletext--label")
         self._edit_button = Button("📝", classes="editabletext--edit")
         self._confirm_button = Button(
-            "✅", classes="editabletext--confirm", disabled=True
+            "✅", classes="editabletext--confirm ethidden", disabled=True
         )
 
         yield self._input
@@ -63,11 +32,11 @@ class EditableText(Static):
         yield self._confirm_button
 
     @property
-    def is_editing(self) -> bool:  # (1)!
+    def is_editing(self) -> bool:
         """Is the text being edited?"""
         return not self._input.has_class("ethidden")
 
-    def on_button_pressed(self) -> None:  # (2)!
+    def on_button_pressed(self) -> None:
         if self.is_editing:
             self.switch_to_display_mode()
         else:
@@ -83,7 +52,9 @@ class EditableText(Static):
         self._input.remove_class("ethidden")
 
         self._edit_button.disabled = True
+        self._edit_button.add_class("ethidden")
         self._confirm_button.disabled = False
+        self._confirm_button.remove_class("ethidden")
 
     def switch_to_display_mode(self) -> None:
         if not self.is_editing:
@@ -95,4 +66,6 @@ class EditableText(Static):
         self._label.remove_class("ethidden")
 
         self._confirm_button.disabled = True
+        self._confirm_button.add_class("ethidden")
         self._edit_button.disabled = False
+        self._edit_button.remove_class("ethidden")

@@ -4,15 +4,17 @@
 
 --8<-- "docs/snippets/compound_widget_overview.md"
 
-This chapter will introduce you to the main concepts needed when developing compound widgets.
-To that end, we will be building two compound widgets.
+This guide will introduce you to the main concepts needed when developing compound widgets.
+To that end, we will be building some compound widgets and then we will use them in an app.
 
 We will start by building an editable text widget that shows some text and then contains two buttons:
 one lets us edit the text and the other confirms the changes we made to the text.
-We will use this simpler compound widget to explain the concepts in a vacuum.
+We will use this simpler compound widget to illustrate the points made above.
 
-Then, we will build a more complex compound widget and use it in a “real” app to see the concepts applied in practice.
-This widget will represent a TODO item in a TODO app and will consist of the editable text widget built previously, plus a checkbox to check the status
+Then, we will subclass that widget to create a more specialised editable text widget that is specifically used for dates.
+
+Finally, we will use both those widgets to build yet another compound widget which will be the main building block of a TODO tracking app.
+By building this app we will be able to demonstrate how the communication between compound widgets and applications works.
 
 
 ## `EditableText`
@@ -21,7 +23,7 @@ This widget will represent a TODO item in a TODO app and will consist of the edi
 
 The `EditableText` widget is a widget that contains a label to display text.
 If the "edit" button is pressed, the label is switched out and the user sees an input field to edit the text.
-When the "confirm" button is pressed again, the label comes back into view to display the new text.
+When the "confirm" button is pressed, the label comes back into view to display the new text.
 
 Taking this into account, the widget `EditableText` will need to yield the following sub-widgets in its `compose` method:
 
@@ -30,7 +32,8 @@ Taking this into account, the widget `EditableText` will need to yield the follo
  - a `Button` to switch to editing mode; and
  - a `Button` to switch to display mode.
 
-Below you can find the skeleton for our widget `EditableText`, that inherits from `Static` (instead of inheriting directly from `Widget`) because `Static` caches its rendering, on top of other minor but useful things.
+Below, you can find the skeleton for our widget `EditableText`.
+We inherit from `Static`, instead of from `Widget`, because `Static` does some extra work for us, like caching the rendering.
 
 === "editabletext01.py"
 
@@ -46,12 +49,11 @@ Below you can find the skeleton for our widget `EditableText`, that inherits fro
 
 ### Enabling the styling of your compound widget
 
-When you create a compound widget, and especially if you have reusability in mind, you need to set up your widget in such a way that it can be styled as users please.
-
+When you create a compound widget, and especially if you have reusability in mind, you need to set up your widget in such a way that it can be styled by users.
 This may entail documenting well the specific widgets that make up your compound widget or it may include using semantic classes that identify the purpose of the sub-widgets.
 
 In this guide, we will add classes to each sub-widget that identify the purpose of each sub-widget.
-There is an added advantage of using classes to identify the components of our compound widget, and that has to do with the fact that you don't have to commit to using a specific class for a specific widget/functionality.
+There is an added advantage of using classes to identify the components of our compound widget, and that has to do with the fact that you don't have to commit to using a specific class for a specific sub-widget/functionality.
 
 On top of adding classes that identify the purpose of each sub-widget, we will also use a class to hide either the input or the label, depending on whether we are currently editing or displaying text.
 
@@ -72,10 +74,10 @@ After adding the classes to our widgets, we can style them.
     1. The default styling of our compound widget should go here.
     2. We need to plug in the CSS file with the default style of our compound widget.
 
-=== "editabletext02.css"
+=== "editabletext_defaultcss.css"
 
-    ```sass hl_lines="7 11 17 23 29"
-    --8<-- "docs/examples/guide/compound/editabletext02.css"
+    ```sass hl_lines="7 11 18 24 30"
+    --8<-- "docs/examples/guide/compound/editabletext_defaultcss.css"
     ```
 
 === "Output"
@@ -85,8 +87,8 @@ After adding the classes to our widgets, we can style them.
 
 !!! Tip
 
-    The classes have very distinctive names, like `editabletext--input`, to minimise the risk of name clashing in larger applications.
-    The same applies to the class `ethidden` that is used to control whether the input or the label are being shown.
+    The classes have verbose names, like `editabletext--input`, to minimise the risk of name clashing in larger applications.
+    The same applies to the class `ethidden` that is used to control whether the input or the label is being shown and to control which button is displayed.
 
 
 ### Wiring the components together
@@ -100,12 +102,15 @@ To that end, we will do the following modifications:
  - implement a handler for button presses; and
  - switch between editing and display modes when the buttons are pressed through two methods `switch_to_editing_mode` and `switch_to_display_mode`.
 
-```py hl_lines="35 39 45 57"
---8<-- "docs/examples/guide/compound/editabletext03.py"
-```
 
-1. The property `is_editing` checks if the internal `Input` widget is being shown or not.
-2. When we press the edit/confirm button, we check in which mode we are in and switch to the other one.
+=== "editabletext03.py"
+
+    ```py hl_lines="35 39 45 57"
+    --8<-- "docs/examples/guide/compound/editabletext03.py"
+    ```
+
+    1. The property `is_editing` checks if the internal `Input` widget is being shown or not.
+    2. When we press the edit/confirm button, we check in which mode we are in and switch to the other one.
 
 We implement the button handler in terms of two auxiliary methods because those two methods will provide the interface for users to programmatically change the mode the widget is in.
 
@@ -126,7 +131,7 @@ For an example use case, we will create a small app that uses some `EditableText
 
 === "editabletext04_app.py"
 
-    ```py
+    ```py hl_lines="18"
     --8<-- "docs/examples/guide/compound/editabletext04_app.py"
     ```
 
@@ -146,6 +151,32 @@ For an example use case, we will create a small app that uses some `EditableText
 In the output above, you will see that the three `EditableText` widgets are in edit mode because you can see the placeholder text in the internal `Input` widgets.
 
 
+### Posting custom messages
+
+A compound widget must define messages that are posted at the appropriate times to allow user apps / screens to interact with the compound widget.
+In the case of our widget `EditableText`, those messages will be:
+
+ - `EditableText.Display`, posted when the widget switches into display mode; and
+ - `EditableText.Edit`, posted when the widget switches into edit mode.
+
+Furthermore, when handling the message `Button.Pressed` from the sub-widget `Button`, we need to use the method [`.stop`][textual.message.Message.stop] to prevent it from bubbling.
+If we do not, app implementers may inadvertently handle button presses that are internal to the widget `EditableText`.
+
+This brings is the final change we will make to the widget `EditableText`:
+
+=== "editabletext.py"
+
+    ```py hl_lines="53-54 56-57 80 100 116"
+    --8<-- "docs/examples/guide/compound/editabletext.py"
+    ```
+
+    1. Posted when the widget switches to display mode.
+    2. Posted when the widget switches to edit mode.
+    3. We prevent the message `Button.Pressed` from bubbling up the DOM hierarchy.
+    4. We post the custom event `EditableText.Display` so that container apps / screens can act appropriately.
+    5. We post the custom event `EditableText.Edit` so that container apps / screens can act appropriately.
+
+
 ## Intermission
 
 On our way to understanding how to define and work with compound widgets, we have implemented `EditableText`.
@@ -160,10 +191,10 @@ These two widgets will use the patterns highlighted in the previous sections to 
 ## `DatePicker`
 
 We implement a `DatePicker` widget at the expense of the widget `EditableText`, but programmers do not need to know that.
-Thus, we do not want the messages `EditableText.Display` and `EditableText.Edit` to be posted when using a `DatePicker`.
+This means, we do not want the messages `EditableText.Display` and `EditableText.Edit` to be posted when using a `DatePicker`.
 
 In the widget `DatePicker`, we define more appropriate messages to post when the date is selected and cleared.
-Then, when we receive a message `Display` or `Edit` from the superclass, we stop it from bubbling with the method [`.stop`][textual.message.Message.stop] and post our custom `DatePicker` messages instead:
+Thus, when we receive a message `Display` or `Edit` from the superclass, we stop it from bubbling with the method [`.stop`][textual.message.Message.stop] and post our custom `DatePicker` messages instead:
 
 ```py hl_lines="12 15 22 30"
 --8<-- "docs/examples/guide/compound/date_picker_messages.py"
@@ -171,8 +202,8 @@ Then, when we receive a message `Display` or `Edit` from the superclass, we stop
 
 1. The message `DateCleared` is to be used when the date is edited and completely erased.
 2. The message `Selected` is sent when the user inputs a valid date and confirms it.
-3. We handle the message `EditableText.Display` from the superclass by preventing it from bubbling and then posting the appropriate message from `DatePicker`.
-4. We handle the message `EditableText.Edit` from the superclass by preventing it from bubbling.
+3. We handle the message `EditableText.Display` from the superclass to prevent it from bubbling and then we post the appropriate message from `DatePicker`.
+4. We handle the message `EditableText.Edit` from the superclass to prevent it from bubbling.
 
 
 On top of doing this custom message handling, we also modify the placeholder text in the underlying `Input` widget, we add a bell sound when the user tries to input a date that cannot be parsed, and we add a property `date` to make it easier to access the date of the `DatePicker`:
@@ -183,7 +214,7 @@ On top of doing this custom message handling, we also modify the placeholder tex
 
 !!! Tip
 
-When creating a widget by inheriting from another widget, be sure to determine whether or not you want the super class's messages to be available to be handled by other apps.
+    When creating a widget by inheriting from another widget, be sure to determine whether or not you want the super class's messages to be available to be handled by other apps.
 
 
 ## `TodoItem`
@@ -192,7 +223,12 @@ The implementation of `TodoItem` puts together an `EditableText`, a `DatePicker`
 This implementation shows the same techniques discussed previously, namely:
 
  - Posting custom messages to communicate with apps or screens that might contain this widget. For example, when the item is marked as done we emit a message `TodoItem.Done`.
- - Intercepting messages from sub-widgets and posting other messages with richer context. For example, when the date of the item is changed, we emit a custom message `TodoItem.DueDateChanged` instead of letting the message `DatePicker.Selected` bubble up.
+ - Intercepting messages from sub-widgets and posting other messages with richer context.
+ For example, when the date of the item is changed, we emit a custom message `TodoItem.DueDateChanged` instead of letting the message `DatePicker.Selected` bubble up.
+ This is good because:
+    - it is semantically richer than letting the event `DatePicker.Selected` bubble up;
+    - it gives access to the whole compound widget if users wish to know when a TODO item due date changes; and
+    - it unburdens the user from tracking what are the sub-widgets that `TodoItem` is composed of.
  - Creating methods that allow containing apps and screens to interact with the widget without having to make assumptions about the widget's internals. For example, we provide a property attribute `date` to access the due date and methods to manipulate the item's status message (`reset_status` and `set_status_message`).
 
 We compose the widget
@@ -204,19 +240,26 @@ We compose the widget
 
 === "todo_item.py"
 
-    ```py hl_lines="126 135 140 170-171 180 185 212 218 240-242"
-    --8<-- "docs/examples/guide/compound/todo_item.py"
+    ```py hl_lines="17 39 48 53 83-84 93 98 142 148 170-172"
+    --8<-- "docs/examples/guide/compound/todo_item_without_css.py"
     ```
 
-    1. We use this custom message `DueDateChanged`, instead of `DatePicker.Selected`, for when the app user changes the date by which this todo item is due.
-    2. We use this custom message to let the container app / screen know that the todo item has been marked off as completed.
-    3. We use methods from the compound widgets to communicate with them.
-    4. This is an example of a sub-widget message that is intercepted and replaced with a richer alternative.
-    5. This is a more complex example of a sub-widget message that is intercepted and replaced with a richer alternative, while also letting the widget know that it needs to update itself.
-    6. The property attribute `date` enables programmers to interact with the due date of the todo item without having to assume anything about the internals of the widget.
-    7. This method resets the status message to an indication of how many days are left till the due date of the item.
-    8. This method allows programmers to set custom status messages in the todo item.
-    9. We use this custom message to let the container app / screen know that the todo item has had its date cleared.
+    1. The default styling should go here but we omit it for the sake of brevity.
+    2. We use this custom message `DueDateChanged`, instead of `DatePicker.Selected`, for when the app user changes the date by which this todo item is due.
+    3. We use this custom message to let the container app / screen know that the todo item has had its date cleared.
+    4. We use this custom message to let the container app / screen know that the todo item has been marked off as completed.
+    5. We use methods from the compound widgets to communicate with them.
+    6. This is an example of a sub-widget message that is intercepted and replaced with a richer alternative.
+    7. This is a more complex example of a sub-widget message that is intercepted and replaced with a richer alternative, while also letting the widget know that it needs to update itself.
+    8. The property attribute `date` enables programmers to interact with the due date of the todo item without having to assume anything about the internals of the widget.
+    9. This method resets the status message to an indication of how many days are left till the due date of the item.
+    10. This method allows programmers to set custom status messages in the todo item.
+
+=== "todo_item_css.css"
+
+    ```sass
+    --8<-- "docs/examples/guide/compound/todo_item_css.css"
+    ```
 
 === "todo_item_demo.py"
 

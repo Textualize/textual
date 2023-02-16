@@ -50,11 +50,11 @@ class EditableText(Static):
     _label: Label
     """The label that displays the text."""
 
-    class Edit(Message):
-        """The user switched to edit mode."""
-
-    class Display(Message):
+    class Display(Message):  # (1)!
         """The user switched to display mode."""
+
+    class Edit(Message):  # (2)!
+        """The user switched to edit mode."""
 
     def compose(self) -> ComposeResult:
         self._input = Input(
@@ -77,28 +77,11 @@ class EditableText(Static):
         return not self._input.has_class("ethidden")
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
+        event.stop()  # (3)!
         if self.is_editing:
             self.switch_to_display_mode()
         else:
             self.switch_to_editing_mode()
-
-        event.stop()
-
-    def switch_to_editing_mode(self) -> None:
-        if self.is_editing:
-            return
-
-        self._input.value = str(self._label.renderable)
-
-        self._label.add_class("ethidden")
-        self._input.remove_class("ethidden")
-
-        self._edit_button.disabled = True
-        self._edit_button.add_class("ethidden")
-        self._confirm_button.disabled = False
-        self._confirm_button.remove_class("ethidden")
-
-        self.post_message_no_wait(self.Edit(self))
 
     def switch_to_display_mode(self) -> None:
         if not self.is_editing:
@@ -114,4 +97,20 @@ class EditableText(Static):
         self._edit_button.disabled = False
         self._edit_button.remove_class("ethidden")
 
-        self.post_message_no_wait(self.Display(self))
+        self.post_message_no_wait(self.Display(self))  # (4)!
+
+    def switch_to_editing_mode(self) -> None:
+        if self.is_editing:
+            return
+
+        self._input.value = str(self._label.renderable)
+
+        self._label.add_class("ethidden")
+        self._input.remove_class("ethidden")
+
+        self._edit_button.disabled = True
+        self._edit_button.add_class("ethidden")
+        self._confirm_button.disabled = False
+        self._confirm_button.remove_class("ethidden")
+
+        self.post_message_no_wait(self.Edit(self))  # (5)!

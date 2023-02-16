@@ -13,7 +13,7 @@ class EditableText(Static):
         )
         yield Label("", classes="editabletext--label")
         yield Button("📝", classes="editabletext--edit")
-        yield Button("✅", classes="editabletext--confirm")
+        yield Button("✅", classes="editabletext--confirm ethidden")
 
 
 class EditableTextApp(App[None]):

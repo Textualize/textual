@@ -1,0 +1,88 @@
+/* This is the value of DEFAULT_CSS for the compound widget TodoItem. */
+
+TodoItem {
+    background: $boost;
+    /* May seem redundant but prevents resizing when date is selected/cleared. */
+    border: heavy $panel-lighten-3;
+    padding: 0 1;
+}
+
+/* Change border colour according to due date status. */
+TodoItem.todoitem--due-late {
+    border: heavy $error;
+}
+
+TodoItem.todoitem--due-today {
+    border: heavy $warning;
+}
+
+TodoItem.todoitem--due-in-time {
+    border: heavy $accent;
+}
+
+/* Make sure the top row can be as tall as needed. */
+.todoitem--top-row {
+    height: auto;
+}
+
+.todoitem--top-row .editabletext--label {
+    height: auto;
+}
+
+TodoItem EditableText {
+    height: auto;
+}
+
+/* On the other hand, the bottom row is always 3 lines tall. */
+.todoitem--bot-row {
+    height: 3;
+    align-horizontal: right;
+}
+
+/* Restyle top row when collapsed and remove bottom row. */
+.todoitem--top-row .todoitem--collapsed {
+    height: 3;
+}
+
+.todoitem--top-row .editabletext--label .todoitem--collapsed {
+    height: 3;
+}
+
+TodoItem.todoitem--collapsed .editabletext--label {
+    height: 3;
+}
+
+.todoitem--collapsed .todoitem--bot-row {
+    display: none;
+}
+
+/* Style some sub-widgets. */
+.todoitem--show-more {
+    min-width: 0;
+    width: auto;
+}
+
+.todoitem--status {
+    height: 100%;
+    width: 1fr;
+    content-align-vertical: middle;
+    text-opacity: 70%;
+    padding-left: 3;
+}
+
+.todoitem--duedate {
+    height: 100%;
+    content-align-vertical: middle;
+    padding-right: 1;
+}
+
+.todoitem--datepicker {
+    width: 21;
+    box-sizing: content-box;
+}
+
+.todoitem--datepicker .editabletext--label {
+    border: tall $primary;
+    padding: 0 2;
+    height: 100%;
+}

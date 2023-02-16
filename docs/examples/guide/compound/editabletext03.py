@@ -23,7 +23,7 @@ class EditableText(Static):
         self._label = Label("", classes="editabletext--label")
         self._edit_button = Button("📝", classes="editabletext--edit")
         self._confirm_button = Button(
-            "✅", classes="editabletext--confirm", disabled=True
+            "✅", classes="editabletext--confirm ethidden", disabled=True
         )
 
         yield self._input
@@ -52,7 +52,9 @@ class EditableText(Static):
         self._input.remove_class("ethidden")
 
         self._edit_button.disabled = True
+        self._edit_button.add_class("ethidden")
         self._confirm_button.disabled = False
+        self._confirm_button.remove_class("ethidden")
 
     def switch_to_display_mode(self) -> None:
         if not self.is_editing:
@@ -64,7 +66,9 @@ class EditableText(Static):
         self._label.remove_class("ethidden")
 
         self._confirm_button.disabled = True
+        self._confirm_button.add_class("ethidden")
         self._edit_button.disabled = False
+        self._edit_button.remove_class("ethidden")
 
 
 class EditableTextApp(App[None]):
