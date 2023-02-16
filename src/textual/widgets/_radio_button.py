@@ -6,6 +6,11 @@ from ._toggle import ToggleButton
 
 
 class RadioButton(ToggleButton):
+    """A radio button widget that represents a boolean value.
+
+    TODO: Mention that this is best used in a RadioSet (yet to be added).
+    """
+
     def __init__(
         self,
         label: str,
