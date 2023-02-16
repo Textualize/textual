@@ -11,6 +11,11 @@ class RadioButton(ToggleButton):
     TODO: Mention that this is best used in a RadioSet (yet to be added).
     """
 
+    class Changed(ToggleButton.Changed):
+        """Posted when the value of the radio button changes."""
+
+        namespace = "radio_button"
+
     def __init__(
         self,
         label: str,
