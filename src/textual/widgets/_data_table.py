@@ -574,7 +574,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         else:
             for row in self.ordered_rows:
                 y_offsets += [(row.key, y) for y in range(row.height)]
-            self._offset_cache = y_offsets
+            self._offset_cache[self._update_count] = y_offsets
         return y_offsets
 
     @property
@@ -1119,6 +1119,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if cell_now_available and visible_cursor:
             self._highlight_cursor()
 
+        self._update_count += 1
         self.check_idle()
         return row_key
 
