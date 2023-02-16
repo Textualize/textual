@@ -1313,7 +1313,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return ordered_rows
 
     @property
-    def _render_row_labels(self) -> bool:
+    def _should_render_row_labels(self) -> bool:
+        """Whether row labels should be rendered or not."""
         return self._labelled_row_exists and self.show_row_labels
 
     def _get_row_renderables(self, row_index: int) -> list[RenderableType]:
@@ -1328,7 +1329,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         ordered_columns = self.ordered_columns
         if row_index == -1:
             row: list[RenderableType] = [column.label for column in ordered_columns]
-            if self._render_row_labels:
+            if self._should_render_row_labels:
                 row = [Text(), *row]
             return row
 
@@ -1339,7 +1340,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             Text() if datum is None else default_cell_formatter(datum) or empty
             for datum, _ in zip_longest(ordered_row, range(len(self.columns)))
         ]
-        if self._render_row_labels:
+        if self._should_render_row_labels:
             row_metadata = self.rows.get(self._row_locations.get_key(row_index))
             row_data = [Text(row_metadata.label or ""), *row_data]
         return row_data
