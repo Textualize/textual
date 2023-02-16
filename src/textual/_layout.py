@@ -30,7 +30,7 @@ class DockArrangeResult:
         """A lazy-calculated spatial map."""
         if self._spatial_map is None:
             self._spatial_map = SpatialMap()
-            self._spatial_map.insert_many(
+            self._spatial_map.insert(
                 (
                     placement.region.grow(placement.margin),
                     placement.fixed,
