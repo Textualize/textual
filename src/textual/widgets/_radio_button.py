@@ -14,6 +14,7 @@ class RadioButton(ToggleButton):
     class Changed(ToggleButton.Changed):
         """Posted when the value of the radio button changes."""
 
+        # https://github.com/Textualize/textual/issues/1814
         namespace = "radio_button"
 
     def __init__(

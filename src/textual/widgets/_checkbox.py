@@ -9,4 +9,5 @@ class Checkbox(ToggleButton):
     class Changed(ToggleButton.Changed):
         """Posted when the value of the checkbox changes."""
 
+        # https://github.com/Textualize/textual/issues/1814
         namespace = "checkbox"
