@@ -1115,6 +1115,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if cell_now_available and visible_cursor:
             self._highlight_cursor()
 
+        self._update_count += 1
         self.check_idle()
         return row_key
 
