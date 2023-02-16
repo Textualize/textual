@@ -197,7 +197,6 @@ class Button(Static, can_focus=True):
     def __rich_repr__(self) -> rich.repr.Result:
         yield from super().__rich_repr__()
         yield "variant", self.variant, "default"
-        yield "disabled", self.disabled, False
 
     def validate_variant(self, variant: str) -> str:
         if variant not in _VALID_BUTTON_VARIANTS:
