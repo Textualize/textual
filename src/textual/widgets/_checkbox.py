@@ -4,4 +4,4 @@ from ._toggle import ToggleButton
 
 
 class Checkbox(ToggleButton):
-    pass
+    """A check box widget that represents a boolean value."""
