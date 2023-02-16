@@ -1180,7 +1180,7 @@ class Widget(DOMNode):
     @property
     def _self_or_ancestors_disabled(self) -> bool:
         """Is this widget or any of its ancestors disabled?"""
-        # NOTE: Please see the copy of this code in get_pseudo_classes. I
+        # NOTE: Please see the copy of this code in get_pseudo_classes. If
         # you change this, change that too.
         return any(
             node.disabled
