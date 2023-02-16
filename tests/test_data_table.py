@@ -279,10 +279,13 @@ async def test_clear():
         assert table._data == {}
         assert table.rows == {}
         assert table.row_count == 0
+        assert len(table._row_locations) == 0
+        assert len(table._column_locations) == 1
         assert len(table.columns) == 1
 
         # Clearing the columns too
         table.clear(columns=True)
+        assert len(table._column_locations) == 0
         assert len(table.columns) == 0
 
 
@@ -889,6 +892,36 @@ async def test_column_cursor_highlight_events():
         latest_message = table.app.messages[-1]
         assert latest_message.column_key == column_one_key
         assert latest_message.cursor_column == 0
+
+
+async def test_reuse_row_key_after_clear():
+    """Regression test for https://github.com/Textualize/textual/issues/1806"""
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_columns("A", "B")
+        table.add_row(0, 1, key="ROW1")
+        table.add_row(2, 3, key="ROW2")
+        table.clear()
+        table.add_row(4, 5, key="ROW1")  # Reusing the same keys as above
+        table.add_row(7, 8, key="ROW2")
+        assert table.get_row("ROW1") == [4, 5]
+        assert table.get_row("ROW2") == [7, 8]
+
+
+async def test_reuse_column_key_after_clear():
+    """Regression test for https://github.com/Textualize/textual/issues/1806"""
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("A", key="COLUMN1")
+        table.add_column("B", key="COLUMN2")
+        table.clear(columns=True)
+        table.add_column("C", key="COLUMN1")  # Reusing the same keys as above
+        table.add_column("D", key="COLUMN2")
+        table.add_row(1, 2)
+        assert list(table.get_column("COLUMN1")) == [1]
+        assert list(table.get_column("COLUMN2")) == [2]
 
 
 def test_key_equals_equivalent_string():
