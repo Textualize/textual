@@ -17,7 +17,7 @@ from textual.widgets import (
 
 
 class DisableApp(App[None]):
-    """Application for testing Widget.disable."""
+    """Application for testing Widget.disabled."""
 
     def compose(self) -> ComposeResult:
         """Compose the child widgets."""
