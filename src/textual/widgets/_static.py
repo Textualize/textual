@@ -36,6 +36,7 @@ class Static(Widget, inherit_bindings=False):
         name: Name of widget. Defaults to None.
         id: ID of Widget. Defaults to None.
         classes: Space separated list of class names. Defaults to None.
+        disabled: Whether the static is disabled or not.
     """
 
     DEFAULT_CSS = """
