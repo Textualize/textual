@@ -284,6 +284,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     """
 
     show_header = Reactive(True)
+    show_row_labels = Reactive(True)
     fixed_rows = Reactive(0)
     fixed_columns = Reactive(0)
     zebra_stripes = Reactive(False)
@@ -1370,12 +1371,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             A list of segments per line.
         """
         is_header_cell = row_index == -1
-        is_fixed_cell = not is_header_cell and (
-            row_index < self.fixed_rows or column_index < self.fixed_columns
+        is_row_label_cell = column_index == -1
+
+        is_fixed_style_cell = (
+            not is_header_cell
+            and not is_row_label_cell
+            and (row_index < self.fixed_rows or column_index < self.fixed_columns)
         )
 
         get_component = self.get_component_styles
-
         show_cursor = self.show_cursor
         if hover and show_cursor and self._show_hover_cursor:
             style += get_component("datatable--hover").rich_style
@@ -1389,7 +1393,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             style += get_component("datatable--cursor").rich_style
             if is_header_cell:
                 style += get_component("datatable--header-cursor").rich_style
-            elif is_fixed_cell:
+            elif is_fixed_style_cell:
                 style += get_component("datatable--fixed-cursor").rich_style
 
         if is_header_cell:
@@ -1482,15 +1486,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         # If the row has a label, add it to fixed_row here with correct style.
         fixed_row = []
         header_style = self.get_component_styles("datatable--header").rich_style
-        if self._labelled_row_exists and self.show_row_labels:
-            row = self.rows.get(row_key)
-            label = row.label or ""
+        if self._labelled_row_exists and self.show_row_labels and not is_header_row:
             # TODO: Fix width
             label_cell_lines = render_cell(
                 row_index,
                 -1,
                 header_style,
-                width=4,
+                width=8,
                 cursor=False,
                 hover=False,
             )[line_no]
