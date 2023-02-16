@@ -67,7 +67,11 @@ class ToggleButton(Static):
         self.value = value
 
     def render(self) -> RenderResult:
-        """Render the content of the widget."""
+        """Render the content of the widget.
+
+        Returns:
+            The content to render for the widget.
+        """
         # TODO: Built a renderable properly.
         return (
             f"{self.button_prefix}{self.button_on if self.value else self.button_off}{self.button_suffix}"
