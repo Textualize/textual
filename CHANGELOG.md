@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- DataTable scrollbars resize correctly when header is toggled https://github.com/Textualize/textual/pull/1803
+
 ## [0.11.0] - 2023-02-15
 
 ### Added
