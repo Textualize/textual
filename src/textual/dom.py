@@ -260,9 +260,6 @@ class DOMNode(MessagePump):
         """
         bindings: list[Bindings] = []
 
-        # To start with, assume that bindings won't be priority bindings.
-        priority = False
-
         for base in reversed(cls.__mro__):
             if issubclass(base, DOMNode):
                 if not base._inherit_bindings:

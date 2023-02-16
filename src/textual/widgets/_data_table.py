@@ -787,7 +787,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             elif self.cursor_type == "column":
                 self._highlight_column(self.cursor_column)
 
-    def watch_show_header(self) -> None:
+    def watch_show_header(self, show: bool) -> None:
+        width, height = self.virtual_size
+        height_change = self.header_height if show else -self.header_height
+        self.virtual_size = Size(width, height + height_change)
+        self._scroll_cursor_into_view()
         self._clear_caches()
 
     def watch_fixed_rows(self) -> None:
