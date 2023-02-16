@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from textual.app import ComposeResult
 from textual.message import Message
 from textual.widgets import Button, Input, Label, Static
@@ -8,38 +6,7 @@ from textual.widgets import Button, Input, Label, Static
 class EditableText(Static):
     """Custom widget to show (editable) static text."""
 
-    DEFAULT_CSS = """
-    EditableText {
-        layout: horizontal;
-        width: 1fr;
-        height: 3;
-    }
-
-    .editabletext--input {
-        width: 1fr;
-        height: 3;
-    }
-
-    .editabletext--label {
-        width: 1fr;
-        height: 3;
-        border: round $primary;
-    }
-
-    .editabletext--edit {
-        min-width: 0;
-        width: 4;
-    }
-
-    .editabletext--confirm {
-        min-width: 0;
-        width: 4;
-    }
-
-    EditableText .ethidden {
-        display: none;
-    }
-    """
+    DEFAULT_CSS = """..."""  # Default CSS should go here...
 
     _confirm_button: Button
     """The button to confirm changes to the text."""

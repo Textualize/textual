@@ -21,7 +21,7 @@ class EditableTextApp(App[None]):
         yield EditableText()
 
 
-app = EditableTextApp(css_path="editabletext02.css")  # (2)!
+app = EditableTextApp(css_path="editabletext_defaultcss.css")  # (2)!
 
 
 if __name__ == "__main__":

@@ -1,9 +1,8 @@
 # Compound widgets
 
-Compound widgets, like the name suggests, are widgets that are built by combining other widgets.
+## Overview
 
-By using simpler widgets to build more complex widgets you have an easier time building useful applications,
-as opposed to the trouble you would have to go through if you implemented everything from scratch.
+--8<-- "docs/snippets/compound_widget_overview.md"
 
 This chapter will introduce you to the main concepts needed when developing compound widgets.
 To that end, we will be building two compound widgets.
@@ -145,3 +144,139 @@ For an example use case, we will create a small app that uses some `EditableText
     ```
 
 In the output above, you will see that the three `EditableText` widgets are in edit mode because you can see the placeholder text in the internal `Input` widgets.
+
+
+## Intermission
+
+On our way to understanding how to define and work with compound widgets, we have implemented `EditableText`.
+The next few sections will build on top of that compound widget to build a basic TODO tracking app.
+In order to build this app, we will build two more compound widgets:
+
+ 1. `DatePicker` – does exactly the same thing as an `EditableText`, but to write down dates; and
+ 2. `TodoItem` – represents a task to be completed in the TODO app.
+
+These two widgets will use the patterns highlighted in the previous sections to communicate with the app.
+
+## `DatePicker`
+
+We implement a `DatePicker` widget at the expense of the widget `EditableText`, but programmers do not need to know that.
+Thus, we do not want the messages `EditableText.Display` and `EditableText.Edit` to be posted when using a `DatePicker`.
+
+In the widget `DatePicker`, we define more appropriate messages to post when the date is selected and cleared.
+Then, when we receive a message `Display` or `Edit` from the superclass, we stop it from bubbling with the method [`.stop`][textual.message.Message.stop] and post our custom `DatePicker` messages instead:
+
+```py hl_lines="12 15 22 30"
+--8<-- "docs/examples/guide/compound/date_picker_messages.py"
+```
+
+1. The message `DateCleared` is to be used when the date is edited and completely erased.
+2. The message `Selected` is sent when the user inputs a valid date and confirms it.
+3. We handle the message `EditableText.Display` from the superclass by preventing it from bubbling and then posting the appropriate message from `DatePicker`.
+4. We handle the message `EditableText.Edit` from the superclass by preventing it from bubbling.
+
+
+On top of doing this custom message handling, we also modify the placeholder text in the underlying `Input` widget, we add a bell sound when the user tries to input a date that cannot be parsed, and we add a property `date` to make it easier to access the date of the `DatePicker`:
+
+```py hl_lines="24 29-31 46"
+--8<-- "docs/examples/guide/compound/date_picker.py"
+```
+
+!!! Tip
+
+When creating a widget by inheriting from another widget, be sure to determine whether or not you want the super class's messages to be available to be handled by other apps.
+
+
+## `TodoItem`
+
+The implementation of `TodoItem` puts together an `EditableText`, a `DatePicker`, and some other built-in widgets to build a more complex compound widget.
+This implementation shows the same techniques discussed previously, namely:
+
+ - Posting custom messages to communicate with apps or screens that might contain this widget. For example, when the item is marked as done we emit a message `TodoItem.Done`.
+ - Intercepting messages from sub-widgets and posting other messages with richer context. For example, when the date of the item is changed, we emit a custom message `TodoItem.DueDateChanged` instead of letting the message `DatePicker.Selected` bubble up.
+ - Creating methods that allow containing apps and screens to interact with the widget without having to make assumptions about the widget's internals. For example, we provide a property attribute `date` to access the due date and methods to manipulate the item's status message (`reset_status` and `set_status_message`).
+
+We compose the widget
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/compound/todo_item_demo.py" lines=8 press="S,o,m,e,t,h,i,n,g, ,t,o, ,d,o,."}
+    ```
+
+=== "todo_item.py"
+
+    ```py hl_lines="126 135 140 170-171 180 185 212 218 240-242"
+    --8<-- "docs/examples/guide/compound/todo_item.py"
+    ```
+
+    1. We use this custom message `DueDateChanged`, instead of `DatePicker.Selected`, for when the app user changes the date by which this todo item is due.
+    2. We use this custom message to let the container app / screen know that the todo item has been marked off as completed.
+    3. We use methods from the compound widgets to communicate with them.
+    4. This is an example of a sub-widget message that is intercepted and replaced with a richer alternative.
+    5. This is a more complex example of a sub-widget message that is intercepted and replaced with a richer alternative, while also letting the widget know that it needs to update itself.
+    6. The property attribute `date` enables programmers to interact with the due date of the todo item without having to assume anything about the internals of the widget.
+    7. This method resets the status message to an indication of how many days are left till the due date of the item.
+    8. This method allows programmers to set custom status messages in the todo item.
+    9. We use this custom message to let the container app / screen know that the todo item has had its date cleared.
+
+=== "todo_item_demo.py"
+
+    ```py
+    --8<-- "docs/examples/guide/compound/todo_item_demo.py"
+    ```
+
+!!! Tip
+
+    Whenever relevant, intercept messages from _sub-widgets_ and/or _superclasses_ and post new ones with more context.
+
+For example, in the case of the `TodoItem` widget, it makes sense to post messages like `TodoItem.DueDateChanged` because it will let the container app / screen know which TODO item had its date changed.
+If we just used the original message `DatePicker.Selected`, we would not have direct access to the TODO item that had its date changed.
+
+As another example, consider two behaviors that the TODO item has to handle:
+
+ - when the user adds or changes a description to a TODO item; and
+ - when the user adds or changes the due date of the TODO item.
+
+These two scenarios are easy to distinguish because `DatePicker` posts the messages `DatePicker.DateCleared` and `DatePicker.Selected`, instead of using the original messages `EditableText.Display` and `EditableText.Edit`.
+
+
+## TODO App
+
+Now we use the compound widget `TodoItem` to create a simple TODO tracker app.
+Our application will allow creating new TODO items, sorting them by due date, and checking them off as complete.
+
+After creating a couple of TODO items, this is what the app looks like:
+
+=== "Output"
+
+    <!--
+    1. Create TODO item with description "Update this example"
+    n,U,p,d,a,t,e, ,t,h,i,s, ,e,x,a,m,p,l,e,tab,enter,
+    2. Change its date to 31-12-2099
+    tab,3,1,-,1,2,-,2,0,9,9,tab,enter,
+    3. Collapse it
+    shift+tab,shift+tab,shift+tab,enter,
+    4. Create TODO item with description "Spend time with family!"
+    n,S,p,e,n,d, ,t,i,m,e, ,w,i,t,h, ,f,a,m,i,l,y,!,tab,enter,
+    5. Change its date to 25-12-1997
+    tab,2,5,-,1,2,-,1,9,9,7,tab,enter,
+    6. Create empty TODO item
+    n
+    -->
+
+    ```{.textual path="docs/examples/guide/compound/todo.py" press="n,U,p,d,a,t,e, ,t,h,i,s, ,e,x,a,m,p,l,e,tab,enter,tab,3,1,-,1,2,-,2,0,9,9,tab,enter,shift+tab,shift+tab,shift+tab,enter,n,S,p,e,n,d, ,t,i,m,e, ,w,i,t,h, ,f,a,m,i,l,y,!,tab,enter,tab,2,5,-,1,2,-,1,9,9,7,tab,enter,n"}
+    ```
+
+The source code for the app is shown below.
+Notice how:
+
+ 1. We use the methods defined by `TodoItem` to communicate with the TODO items. For example, instead of reaching for the status label defined in `TodoItem`, we use the method `set_status_message` to set the status message when we create a new item.
+ 2. We use handlers to figure out when the app needs to react to changes that happened to the widget. For example, we use `on_todo_item_due_date_changed` to sort the TODO item by date and the `on_todo_item_done` to clear the TODO item from its container.
+
+This is the full app source code:
+
+```py hl_lines="28 31-43"
+--8<-- "docs/examples/guide/compound/todo.py"
+```
+
+1. We call a method on the compound widget `TodoItem` to communicate with it.
+2. We define a series of handlers that the `TodoItem` widget uses to communicate with its container app / screen.

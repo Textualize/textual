@@ -25,12 +25,21 @@ class TODOApp(App[None]):
         new_todo = TodoItem()
         await self._todo_container.mount(new_todo)
         new_todo.scroll_visible()
-        new_todo.set_status_message("Add description and due date.")
+        new_todo.set_status_message("Add description and due date.")  # (1)!
 
+    # (2)!
     def on_todo_item_due_date_changed(self, event: TodoItem.DueDateChanged) -> None:
         self._sort_todo_item(event.sender)
 
+    def on_todo_item_due_date_cleared(self, event: TodoItem.DueDateCleared) -> None:
+        self._sort_todo_item(event.sender)
+
     async def on_todo_item_done(self, event: TodoItem.Done) -> None:
+        """If an item is done, get rid of it.
+
+        In a more conventional TODO app, completed items would likely be archived
+        instead of completely obliterated.
+        """
         await event.sender.remove()
 
     def _sort_todo_item(self, item: TodoItem) -> None:
@@ -40,16 +49,11 @@ class TODOApp(App[None]):
             return
 
         date = item.date
-        # If the date is None, move the TODO item to the end.
-        if date is None:
-            self._todo_container.move_child(
-                item, len(self._todo_container.children) - 1
-            )
-            return
-
         for idx, todo in enumerate(self._todo_container.query(TodoItem)):
-            if todo.date is None or todo.date > date:
-                self._todo_container.move_child(item, idx)
+            if todo is item:
+                continue
+            if todo.date is None or (date is not None and todo.date > date):
+                self._todo_container.move_child(item, before=idx)
                 return
 
         end = len(self._todo_container.children) - 1

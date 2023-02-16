@@ -196,7 +196,11 @@ Note that we've added `expand=True` to tell the `Table` to expand beyond the opt
 
 ## Compound widgets
 
-TODO: Explanation of compound widgets
+--8<-- "docs/snippets/compound_widget_overview.md"
+
+!!! note
+
+    Read the [compound widgets guide](./compound.md) for a more thorough treatment of compound widgets.
 
 ## Line API
 
