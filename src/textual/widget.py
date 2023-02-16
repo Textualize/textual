@@ -1180,6 +1180,8 @@ class Widget(DOMNode):
     @property
     def _self_or_ancestors_disabled(self) -> bool:
         """Is this widget or any of its ancestors disabled?"""
+        # NOTE: Please see the copy of this code in get_pseudo_classes. I
+        # you change this, change that too.
         return any(
             node.disabled
             for node in self.ancestors_with_self
@@ -2098,7 +2100,16 @@ class Widget(DOMNode):
             Names of the pseudo classes.
 
         """
-        yield "disabled" if self._self_or_ancestors_disabled else "enabled"
+        # NOTE: The heart of this yield is a direct copy of
+        # _self_or_ancestors_disabled. Because this method is called so
+        # much, here we save one function call as a very small but long-term
+        # useful optimisation. If _self_or_ancestors_disabled ever changes,
+        # be sure to reflect that change here!
+        yield "disabled" if any(
+            node.disabled
+            for node in self.ancestors_with_self
+            if isinstance(node, Widget)
+        ) else "enabled"
         if self.mouse_over:
             yield "hover"
         if self.has_focus:
