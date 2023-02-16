@@ -391,8 +391,15 @@ class Compositor:
                 if widget.is_container:
                     # Arrange the layout
                     arrange_result = widget._arrange(child_region.size)
-                    placements, arranged_widgets, spacing = arrange_result.unpack()
+                    arranged_widgets = arrange_result.widgets
+                    spacing = arrange_result.spacing
                     widgets.update(arranged_widgets)
+
+                    placements, visible_placements = arrange_result.get_placements(
+                        widget.size.region + widget.scroll_offset
+                    )
+                    print("len(placements)", len(placements))
+                    total_region = total_region.union(arrange_result.total_region)
 
                     with timer("placements"):
                         # An offset added to all placements
@@ -409,9 +416,10 @@ class Compositor:
                         get_layer_index = layers_to_index.get
 
                         # Add all the widgets
-                        for sub_region, margin, sub_widget, z, fixed in reversed(
-                            placements
-                        ):
+                        for placement in reversed(placements):
+                            sub_region, margin, sub_widget, z, fixed = placement
+                            if placement not in visible_placements:
+                                continue
                             # Combine regions with children to calculate the "virtual size"
                             if fixed:
                                 widget_region = sub_region + placement_offset
@@ -435,23 +443,25 @@ class Compositor:
                                 widget_order,
                                 layer_order,
                                 sub_clip,
-                                visible,
+                                visible and placement in visible_placements,
                             )
+
                             layer_order -= 1
 
                 if visible:
                     # Add any scrollbars
-                    for chrome_widget, chrome_region in widget._arrange_scrollbars(
-                        container_region
-                    ):
-                        map[chrome_widget] = _MapGeometry(
-                            chrome_region + layout_offset,
-                            order,
-                            clip,
-                            container_size,
-                            container_size,
-                            chrome_region,
-                        )
+                    if any(widget.scrollbars_enabled):
+                        for chrome_widget, chrome_region in widget._arrange_scrollbars(
+                            container_region
+                        ):
+                            map[chrome_widget] = _MapGeometry(
+                                chrome_region + layout_offset,
+                                order,
+                                clip,
+                                container_size,
+                                container_size,
+                                chrome_region,
+                            )
 
                     map[widget] = _MapGeometry(
                         region + layout_offset,

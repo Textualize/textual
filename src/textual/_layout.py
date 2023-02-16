@@ -4,9 +4,9 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, ClassVar, NamedTuple
 
-from ._cache import FIFOCache
 from ._profile import timer
-from .geometry import Offset, Region, Size, Spacing
+from ._spatial_map import SpatialMap
+from .geometry import Region, Size, Spacing
 
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
@@ -23,8 +23,33 @@ class DockArrangeResult:
     widgets: set[Widget]
     spacing: Spacing
 
-    def unpack(self) -> tuple[list[WidgetPlacement], set[Widget], Spacing]:
-        return (self.placements, self.widgets, self.spacing)
+    _spatial_map: SpatialMap[WidgetPlacement] | None = None
+
+    @property
+    def spatial_map(self) -> SpatialMap[WidgetPlacement]:
+        if self._spatial_map is None:
+            self._spatial_map = SpatialMap()
+            with timer("insert many"):
+                self._spatial_map.insert_many(
+                    (
+                        placement.region.grow(placement.margin),
+                        placement.fixed,
+                        placement,
+                    )
+                    for placement in self.placements
+                )
+
+        return self._spatial_map
+
+    @property
+    def total_region(self) -> Region:
+        return self.spatial_map.total_region
+
+    def get_placements(
+        self, region: Region
+    ) -> tuple[list[WidgetPlacement], set[WidgetPlacement]]:
+        visible_placements = self.spatial_map.get_values_in_region(region)
+        return self.placements, visible_placements
 
 
 class WidgetPlacement(NamedTuple):
@@ -74,7 +99,7 @@ class Layout(ABC):
             width = 0
         else:
             # Use a size of 0, 0 to ignore relative sizes, since those are flexible anyway
-            placements, _, _ = widget._arrange(Size(0, 0))
+            placements = widget._arrange(Size(0, 0)).placements
             width = max(
                 [
                     placement.region.right + placement.margin.right
@@ -102,7 +127,7 @@ class Layout(ABC):
             height = 0
         else:
             # Use a height of zero to ignore relative heights
-            placements, _, _ = widget._arrange(Size(width, 0))
+            placements = widget._arrange(Size(width, 0)).placements
             height = max(
                 [
                     placement.region.bottom + placement.margin.bottom
