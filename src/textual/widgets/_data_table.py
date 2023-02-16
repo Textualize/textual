@@ -574,7 +574,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         else:
             for row in self.ordered_rows:
                 y_offsets += [(row.key, y) for y in range(row.height)]
-            self._offset_cache = y_offsets
+            self._offset_cache[self._update_count] = y_offsets
         return y_offsets
 
     @property
