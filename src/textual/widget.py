@@ -480,7 +480,7 @@ class Widget(DOMNode):
         if cached_result is not None:
             return cached_result
 
-        arrangement = arrange(self, self._nodes, size, self.screen.size)
+        arrangement = arrange(self, self._nodes, size, size)
         self._arrangement_cache[cache_key] = arrangement
 
         return arrangement
@@ -1741,7 +1741,7 @@ class Widget(DOMNode):
 
         """
         return self.scroll_to(
-            y=self.scroll_target_y + self.container_size.height,
+            y=self.scroll_y + self.container_size.height,
             animate=animate,
             speed=speed,
             duration=duration,

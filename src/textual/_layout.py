@@ -27,29 +27,40 @@ class DockArrangeResult:
 
     @property
     def spatial_map(self) -> SpatialMap[WidgetPlacement]:
+        """A lazy-calculated spatial map."""
         if self._spatial_map is None:
             self._spatial_map = SpatialMap()
-            with timer("insert many"):
-                self._spatial_map.insert_many(
-                    (
-                        placement.region.grow(placement.margin),
-                        placement.fixed,
-                        placement,
-                    )
-                    for placement in self.placements
+            self._spatial_map.insert_many(
+                (
+                    placement.region.grow(placement.margin),
+                    placement.fixed,
+                    placement,
                 )
+                for placement in self.placements
+            )
 
         return self._spatial_map
 
     @property
     def total_region(self) -> Region:
+        """The total area occupied by the arrangement.
+
+        Returns:
+            A Region.
+        """
         return self.spatial_map.total_region
 
-    def get_placements(
-        self, region: Region
-    ) -> tuple[list[WidgetPlacement], set[WidgetPlacement]]:
+    def get_visible_placements(self, region: Region) -> list[WidgetPlacement]:
+        """Get the placements visible within the given region.
+
+        Args:
+            region: A region.
+
+        Returns:
+            Set of placements.
+        """
         visible_placements = self.spatial_map.get_values_in_region(region)
-        return self.placements, visible_placements
+        return visible_placements
 
 
 class WidgetPlacement(NamedTuple):

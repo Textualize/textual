@@ -168,6 +168,7 @@ class Compositor:
     def __init__(self) -> None:
         # A mapping of Widget on to its "render location" (absolute position / depth)
         self.map: CompositorMap = {}
+        self._full_map: CompositorMap | None = None
         self._layers: list[tuple[Widget, MapGeometry]] | None = None
 
         # All widgets considered in the arrangement
@@ -248,6 +249,7 @@ class Compositor:
         self._layers = None
         self._layers_visible = None
         self._visible_widgets = None
+        self._full_map = None
         self.root = parent
         self.size = size
 
@@ -255,7 +257,8 @@ class Compositor:
         old_map = self.map.copy()
         old_widgets = old_map.keys()
 
-        map, widgets = self._arrange_root(parent, size)
+        map, widgets = self._arrange_root(parent, size, visible_only=True)
+
         new_widgets = map.keys()
 
         # Newly visible widgets
@@ -293,10 +296,20 @@ class Compositor:
             self._dirty_regions.update(regions)
 
         return ReflowResult(
-            hidden=hidden_widgets,
+            hidden=set(),
             shown=shown_widgets,
             resized=resized_widgets,
         )
+
+    @property
+    def full_map(self) -> CompositorMap:
+        if self.root is None or not self.map:
+            return {}
+        if self._full_map is None:
+            map, widgets = self._arrange_root(self.root, self.size, visible_only=False)
+            self._full_map = map
+
+        return self._full_map
 
     @property
     def visible_widgets(self) -> dict[Widget, tuple[Region, Region]]:
@@ -323,7 +336,7 @@ class Compositor:
         return self._visible_widgets
 
     def _arrange_root(
-        self, root: Widget, size: Size
+        self, root: Widget, size: Size, visible_only: bool = True
     ) -> tuple[CompositorMap, set[Widget]]:
         """Arrange a widgets children based on its layout attribute.
 
@@ -395,58 +408,55 @@ class Compositor:
                     spacing = arrange_result.spacing
                     widgets.update(arranged_widgets)
 
-                    placements, visible_placements = arrange_result.get_placements(
-                        widget.size.region + widget.scroll_offset
-                    )
-                    print("len(placements)", len(placements))
+                    if visible_only:
+                        placements = arrange_result.get_visible_placements(
+                            widget.size.region + widget.scroll_offset
+                        )
+                    else:
+                        placements = arrange_result.placements
                     total_region = total_region.union(arrange_result.total_region)
 
-                    with timer("placements"):
-                        # An offset added to all placements
-                        placement_offset = container_region.offset
-                        placement_scroll_offset = (
-                            placement_offset - widget.scroll_offset
+                    # An offset added to all placements
+                    placement_offset = container_region.offset
+                    placement_scroll_offset = placement_offset - widget.scroll_offset
+
+                    _layers = widget.layers
+                    layers_to_index = {
+                        layer_name: index for index, layer_name in enumerate(_layers)
+                    }
+                    get_layer_index = layers_to_index.get
+
+                    # Add all the widgets
+                    for sub_region, margin, sub_widget, z, fixed in reversed(
+                        placements
+                    ):
+                        # Combine regions with children to calculate the "virtual size"
+                        if fixed:
+                            widget_region = sub_region + placement_offset
+                        else:
+                            total_region = total_region.union(
+                                sub_region.grow(spacing + margin)
+                            )
+                            widget_region = sub_region + placement_scroll_offset
+
+                        widget_order = (
+                            *order,
+                            get_layer_index(sub_widget.layer, 0),
+                            z,
+                            layer_order,
                         )
 
-                        _layers = widget.layers
-                        layers_to_index = {
-                            layer_name: index
-                            for index, layer_name in enumerate(_layers)
-                        }
-                        get_layer_index = layers_to_index.get
+                        add_widget(
+                            sub_widget,
+                            sub_region,
+                            widget_region,
+                            widget_order,
+                            layer_order,
+                            sub_clip,
+                            visible,
+                        )
 
-                        # Add all the widgets
-                        for placement in reversed(placements):
-                            sub_region, margin, sub_widget, z, fixed = placement
-                            if placement not in visible_placements:
-                                continue
-                            # Combine regions with children to calculate the "virtual size"
-                            if fixed:
-                                widget_region = sub_region + placement_offset
-                            else:
-                                total_region = total_region.union(
-                                    sub_region.grow(spacing + margin)
-                                )
-                                widget_region = sub_region + placement_scroll_offset
-
-                            widget_order = (
-                                *order,
-                                get_layer_index(sub_widget.layer, 0),
-                                z,
-                                layer_order,
-                            )
-
-                            add_widget(
-                                sub_widget,
-                                sub_region,
-                                widget_region,
-                                widget_order,
-                                layer_order,
-                                sub_clip,
-                                visible and placement in visible_placements,
-                            )
-
-                            layer_order -= 1
+                        layer_order -= 1
 
                 if visible:
                     # Add any scrollbars
@@ -529,7 +539,10 @@ class Compositor:
         try:
             return self.map[widget].region.offset
         except KeyError:
-            raise errors.NoWidget("Widget is not in layout")
+            try:
+                return self.full_map[widget].region.offset
+            except KeyError:
+                raise errors.NoWidget("Widget is not in layout")
 
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
         """Get the widget under a given coordinate.
@@ -611,10 +624,15 @@ class Compositor:
             Widget's composition information.
 
         """
+        if self.root is None or not self.map:
+            raise errors.NoWidget("Widget is not in layout")
         try:
             region = self.map[widget]
         except KeyError:
-            raise errors.NoWidget("Widget is not in layout")
+            try:
+                return self.full_map[widget]
+            except KeyError:
+                raise errors.NoWidget("Widget is not in layout")
         else:
             return region
 

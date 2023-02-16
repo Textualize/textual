@@ -80,15 +80,15 @@ class Screen(Widget):
             )
         return self._update_timer
 
-    @property
-    def widgets(self) -> list[Widget]:
-        """Get all widgets."""
-        return list(self._compositor.map.keys())
+    # @property
+    # def widgets(self) -> list[Widget]:
+    #     """Get all widgets."""
+    #     return list(self._compositor.map.keys())
 
-    @property
-    def visible_widgets(self) -> list[Widget]:
-        """Get a list of visible widgets."""
-        return list(self._compositor.visible_widgets)
+    # @property
+    # def visible_widgets(self) -> list[Widget]:
+    #     """Get a list of visible widgets."""
+    #     return list(self._compositor.visible_widgets)
 
     def render(self) -> RenderableType:
         background = self.styles.background
@@ -363,6 +363,9 @@ class Screen(Widget):
                     self.screen.scroll_to_widget(widget)
                 widget.post_message_no_wait(events.Focus(self))
                 self.log.debug(widget, "was focused")
+                import traceback
+
+                traceback.print_stack()
 
     async def _on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)
