@@ -1328,22 +1328,24 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """
         ordered_columns = self.ordered_columns
         if row_index == -1:
-            row: list[RenderableType] = [column.label for column in ordered_columns]
+            row_renderables: list[RenderableType] = [
+                column.label for column in ordered_columns
+            ]
             if self._should_render_row_labels:
-                row = [Text(), *row]
-            return row
+                row_renderables = [Text(), *row_renderables]
+            return row_renderables
 
         ordered_row = self.get_row_at(row_index)
         empty = Text()
 
-        row_data = [
+        row_renderables = [
             Text() if datum is None else default_cell_formatter(datum) or empty
             for datum, _ in zip_longest(ordered_row, range(len(self.columns)))
         ]
         if self._should_render_row_labels:
             row_metadata = self.rows.get(self._row_locations.get_key(row_index))
-            row_data = [Text(row_metadata.label or ""), *row_data]
-        return row_data
+            row_renderables = [Text(row_metadata.label or ""), *row_renderables]
+        return row_renderables
 
     def _render_cell(
         self,
