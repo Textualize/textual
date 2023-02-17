@@ -34,6 +34,8 @@ class SpatialMap(Generic[ValueType]):
         Returns:
             Iterable of grid squares (tuple of 2 values).
         """
+        # (x1, y1) is the coordinate of the top left cell
+        # (x2, y2) is the coordinate of the bottom right cell
         x1, y1, width, height = region
         x2 = x1 + width - 1
         y2 = y1 + height - 1
@@ -49,8 +51,11 @@ class SpatialMap(Generic[ValueType]):
     ) -> None:
         """Insert values in to the Spatial map.
 
+        Values are associated with their region in Euclidean space, and a boolean that
+        indicates fixed regions. Fixed regions don't scroll and are always visible.
+
         Args:
-            regions_and_values: An iterable of Regions and values.
+            regions_and_values: An iterable of (REGION, FIXED, VALUE).
         """
         append_fixed = self._fixed.append
         get_grid_list = self._map.__getitem__
@@ -74,7 +79,7 @@ class SpatialMap(Generic[ValueType]):
             region: A region.
 
         Returns:
-            A set of values under the region.
+            Values under the region.
         """
         results: list[ValueType] = self._fixed.copy()
         add_results = results.extend
