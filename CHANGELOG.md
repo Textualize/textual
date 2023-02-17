@@ -16,7 +16,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Removed `screen.visible_widgets` and `screen.widgets`
 
 ## [0.11.1] - 2023-02-17
->>>>>>> main
 
 ### Fixed
 
