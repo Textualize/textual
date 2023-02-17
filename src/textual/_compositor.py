@@ -378,7 +378,7 @@ class Compositor:
     def _arrange_root(
         self, root: Widget, size: Size, visible_only: bool = True
     ) -> tuple[CompositorMap, set[Widget]]:
-        """Arrange a widgets children based on its layout attribute.
+        """Arrange a widget's children based on its layout attribute.
 
         Args:
             root: Top level widget.
