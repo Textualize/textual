@@ -249,7 +249,6 @@ class Compositor:
         self._layers = None
         self._layers_visible = None
         self._visible_widgets = None
-        self._full_map = None
         self.root = parent
         self.size = size
 
@@ -263,6 +262,7 @@ class Compositor:
 
         # Replace map and widgets
         self.map = map
+        self._full_map = map
         self.widgets = widgets
 
         # Contains widgets + geometry for every widget that changed (added, removed, or updated)
@@ -343,6 +343,7 @@ class Compositor:
 
     @property
     def full_map(self) -> CompositorMap:
+        """Lazily built compositor map that covers all widgets."""
         if self.root is None or not self.map:
             return {}
         if self._full_map is None:

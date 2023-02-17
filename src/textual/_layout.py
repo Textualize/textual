@@ -14,7 +14,6 @@ if TYPE_CHECKING:
     from .widget import Widget
 
 ArrangeResult: TypeAlias = "tuple[list[WidgetPlacement], set[Widget]]"
-# DockArrangeResult: TypeAlias = "tuple[list[WidgetPlacement], set[Widget], Spacing]"
 
 
 @dataclass
