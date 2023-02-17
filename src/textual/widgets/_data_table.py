@@ -574,7 +574,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         else:
             for row in self.ordered_rows:
                 y_offsets += [(row.key, y) for y in range(row.height)]
-            self._offset_cache = y_offsets
+            self._offset_cache[self._update_count] = y_offsets
         return y_offsets
 
     @property
@@ -755,6 +755,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._cell_render_cache.clear()
         self._line_cache.clear()
         self._styles_cache.clear()
+        self._offset_cache.clear()
+        self._ordered_row_cache.clear()
 
     def get_row_height(self, row_key: RowKey) -> int:
         """Given a row key, return the height of that row in terminal cells.
@@ -786,7 +788,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             elif self.cursor_type == "column":
                 self._highlight_column(self.cursor_column)
 
-    def watch_show_header(self) -> None:
+    def watch_show_header(self, show: bool) -> None:
+        width, height = self.virtual_size
+        height_change = self.header_height if show else -self.header_height
+        self.virtual_size = Size(width, height + height_change)
+        self._scroll_cursor_into_view()
         self._clear_caches()
 
     def watch_fixed_rows(self) -> None:
@@ -1014,8 +1020,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._y_offsets.clear()
         self._data.clear()
         self.rows.clear()
+        self._row_locations = TwoWayDict({})
         if columns:
             self.columns.clear()
+            self._column_locations = TwoWayDict({})
         self._require_update_dimensions = True
         self.cursor_coordinate = Coordinate(0, 0)
         self.hover_coordinate = Coordinate(0, 0)
@@ -1111,6 +1119,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if cell_now_available and visible_cursor:
             self._highlight_cursor()
 
+        self._update_count += 1
         self.check_idle()
         return row_key
 

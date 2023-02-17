@@ -15,6 +15,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Removed `screen.visible_widgets` and `screen.widgets`
 
+
+## [0.11.1] Unreleased
+
+### Fixed
+
+- DataTable fix issue where offset cache was not being used https://github.com/Textualize/textual/pull/1810
+- DataTable scrollbars resize correctly when header is toggled https://github.com/Textualize/textual/pull/1803
+- DataTable location mapping cleared when clear called https://github.com/Textualize/textual/pull/1809
+
+
 ## [0.11.0] - 2023-02-15
 
 ### Added
