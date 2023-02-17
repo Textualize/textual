@@ -298,7 +298,7 @@ class Compositor:
             resized=resized_widgets,
         )
 
-    def reflow_visible(self, parent: Widget, size: Size) -> None:
+    def reflow_visible(self, parent: Widget, size: Size) -> set[Widget]:
         """Reflow only the visible children.
 
         This is a fast-path for scrolling.
@@ -320,6 +320,7 @@ class Compositor:
         old_map = self.map
         map, widgets = self._arrange_root(parent, size, visible_only=True)
 
+        exposed_widgets = widgets - self.widgets
         # Replace map and widgets
         self.map = map
         self.widgets = widgets
@@ -339,6 +340,8 @@ class Compositor:
                 if region
             }
             self._dirty_regions.update(regions)
+
+        return exposed_widgets
 
     @property
     def full_map(self) -> CompositorMap:

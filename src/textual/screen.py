@@ -428,9 +428,24 @@ class Screen(Widget):
 
         self._compositor.update_widgets(self._dirty_widgets)
         self.update_timer.pause()
+        ResizeEvent = events.Resize
         try:
             if scroll:
-                self._compositor.reflow_visible(self, size)
+                exposed_widgets = self._compositor.reflow_visible(self, size)
+                if exposed_widgets:
+                    layers = self._compositor.layers
+                    for widget, (
+                        region,
+                        _order,
+                        _clip,
+                        virtual_size,
+                        container_size,
+                        _,
+                    ) in layers:
+                        widget._size_updated(region.size, virtual_size, container_size)
+                        widget.post_message_no_wait(
+                            ResizeEvent(self, region.size, virtual_size, container_size)
+                        )
             else:
                 hidden, shown, resized = self._compositor.reflow(self, size)
                 Hide = events.Hide
@@ -441,7 +456,6 @@ class Screen(Widget):
 
                 # We want to send a resize event to widgets that were just added or change since last layout
                 send_resize = shown | resized
-                ResizeEvent = events.Resize
 
                 layers = self._compositor.layers
                 for widget, (

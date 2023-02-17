@@ -38,6 +38,7 @@ from . import errors, events, messages
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
 from ._asyncio import create_task
+from ._cache import FIFOCache
 from ._context import active_app
 from ._easing import DEFAULT_SCROLL_EASING
 from ._layout import Layout
@@ -260,8 +261,9 @@ class Widget(DOMNode):
         self._content_width_cache: tuple[object, int] = (None, 0)
         self._content_height_cache: tuple[object, int] = (None, 0)
 
-        self._arrangement_cache_key: tuple[Size, int] = (Size(), -1)
-        self._cached_arrangement: DockArrangeResult | None = None
+        self._arrangement_cache: FIFOCache[
+            tuple[Size, int], DockArrangeResult
+        ] = FIFOCache(4)
 
         self._styles_cache = StylesCache()
         self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
@@ -474,14 +476,11 @@ class Widget(DOMNode):
         assert self.is_container
 
         cache_key = (size, self._nodes._updates)
-        if (
-            self._arrangement_cache_key == cache_key
-            and self._cached_arrangement is not None
-        ):
-            return self._cached_arrangement
+        cached_result = self._arrangement_cache.get(cache_key)
+        if cached_result is not None:
+            return cached_result
 
-        self._arrangement_cache_key = cache_key
-        arrangement = self._cached_arrangement = arrange(
+        arrangement = self._arrangement_cache[cache_key] = arrange(
             self, self._nodes, size, self.screen.size
         )
 
@@ -489,7 +488,7 @@ class Widget(DOMNode):
 
     def _clear_arrangement_cache(self) -> None:
         """Clear arrangement cache, forcing a new arrange operation."""
-        self._cached_arrangement = None
+        self._arrangement_cache.clear()
 
     def _get_virtual_dom(self) -> Iterable[Widget]:
         """Get widgets not part of the DOM.

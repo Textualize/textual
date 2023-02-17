@@ -10,8 +10,11 @@ ValueType = TypeVar("ValueType")
 
 
 class SpatialMap(Generic[ValueType]):
-    """A spatial map allows for data to be associated with a rectangular regions
+    """A spatial map allows for data to be associated with rectangular regions
     in Euclidean space, and efficiently queried.
+
+    When the SpatialMap is populated, a reference to each value is placed in a bucket associated
+    with a regular grid that covers 2D space.
 
     """
 
