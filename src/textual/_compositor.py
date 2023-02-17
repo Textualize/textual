@@ -25,7 +25,6 @@ from rich.style import Style
 from . import errors
 from ._cells import cell_len
 from ._loop import loop_last
-from ._profile import timer
 from .geometry import NULL_OFFSET, Offset, Region, Size
 from .strip import Strip
 
@@ -243,7 +242,7 @@ class Compositor:
             size: Size of the area to be filled.
 
         Returns:
-            Hidden, shown and resized widgets.
+            Hidden, shown, and resized widgets.
         """
         self._cuts = None
         self._layers = None
