@@ -1,5 +1,4 @@
 poetry run mypy src/textual
-src/textual/keys.py:16: error: Incompatible types in assignment (expression has type "str", base class "Enum" defined the type as "Callable[[Enum], Any]")  [assignment]
 src/textual/_two_way_dict.py:41: error: Incompatible return value type (got "Optional[Value]", expected "Value")  [return-value]
 src/textual/_two_way_dict.py:52: error: Incompatible return value type (got "Optional[Key]", expected "Key")  [return-value]
 src/textual/devtools/service.py:10: error: Skipping analyzing "msgpack": module is installed, but missing library stubs or py.typed marker  [import]
@@ -93,4 +92,4 @@ src/textual/demo.py:221: error: "App[Any]" has no attribute "add_note"  [attr-de
 src/textual/demo.py:276: error: "App[Any]" has no attribute "add_note"  [attr-defined]
 src/textual/cli/previews/easing.py:102: error: Argument "easing" to "animate" of "App" has incompatible type "Optional[str]"; expected "Union[Callable[[float], float], str]"  [arg-type]
 src/textual/cli/previews/easing.py:111: error: "MessageTarget" has no attribute "id"  [attr-defined]
-Found 85 errors in 29 files (checked 152 source files)
+Found 84 errors in 28 files (checked 152 source files)
