@@ -1,12 +1,6 @@
 poetry run mypy src/textual
 src/textual/_two_way_dict.py:41: error: Incompatible return value type (got "Optional[Value]", expected "Value")  [return-value]
 src/textual/_two_way_dict.py:52: error: Incompatible return value type (got "Optional[Key]", expected "Key")  [return-value]
-src/textual/devtools/service.py:10: error: Skipping analyzing "msgpack": module is installed, but missing library stubs or py.typed marker  [import]
-src/textual/devtools/client.py:13: error: Skipping analyzing "msgpack": module is installed, but missing library stubs or py.typed marker  [import]
-src/textual/__init__.py:27: error: Library stubs not installed for "pkg_resources"  [import]
-src/textual/__init__.py:27: note: Hint: "python3 -m pip install types-setuptools"
-src/textual/__init__.py:27: note: (or run "mypy --install-types" to install all missing stub packages)
-src/textual/__init__.py:27: note: See https://mypy.readthedocs.io/en/stable/running_mypy.html#missing-imports
 src/textual/__init__.py:67: error: Item "None" of "Optional[FrameType]" has no attribute "f_back"  [union-attr]
 src/textual/__init__.py:68: error: Argument 1 to "getframeinfo" has incompatible type "Union[FrameType, None, Any]"; expected "Union[FrameType, TracebackType]"  [arg-type]
 src/textual/_compositor.py:435: error: Argument 4 to "add_widget" has incompatible type "Tuple[object, ...]"; expected "Tuple[Tuple[int, ...], ...]"  [arg-type]
@@ -49,18 +43,19 @@ src/textual/app.py:1702: error: Incompatible types in assignment (expression has
 src/textual/app.py:1770: error: Incompatible types in assignment (expression has type "Union[Screen, Callable[[], Screen]]", variable has type "Screen")  [assignment]
 src/textual/app.py:2032: error: Argument 1 to "action" of "App" has incompatible type "Union[str, Tuple[Any, ...]]"; expected "Union[str, Tuple[str, Tuple[str, ...]]]"  [arg-type]
 src/textual/app.py:2309: error: Cannot find implementation or library stub for module named "uvloop"  [import]
+src/textual/app.py:2309: note: See https://mypy.readthedocs.io/en/stable/running_mypy.html#missing-imports
 src/textual/widgets/_placeholder.py:122: error: Return type "Iterable[Union[Union[ConsoleRenderable, RichCast, str], Segment]]" of "render" incompatible with return type "Union[ConsoleRenderable, RichCast, str]" in supertype "Widget"  [override]
 src/textual/widgets/_header.py:136: error: Argument 3 to "watch" of "DOMNode" has incompatible type "Callable[[str], None]"; expected "Union[Callable[[], Awaitable[None]], Callable[[], None]]"  [arg-type]
 src/textual/widgets/_header.py:137: error: Argument 3 to "watch" of "DOMNode" has incompatible type "Callable[[str], None]"; expected "Union[Callable[[], Awaitable[None]], Callable[[], None]]"  [arg-type]
 src/textual/widgets/_footer.py:69: error: Argument 3 to "watch" of "DOMNode" has incompatible type "Callable[[Optional[Widget]], None]"; expected "Union[Callable[[], Awaitable[None]], Callable[[], None]]"  [arg-type]
 src/textual/_doc.py:18: error: Missing return statement  [return]
-src/textual/_doc.py:85: error: Argument 1 to "open" has incompatible type "Union[PurePath, str, None]"; expected "Union[Union[str, bytes, PathLike[str], PathLike[bytes]], int]"  [arg-type]
+src/textual/_doc.py:85: error: Argument 1 to "open" has incompatible type "Union[PurePath, str, None]"; expected "Union[int, Union[str, bytes, PathLike[str], PathLike[bytes]]]"  [arg-type]
 src/textual/_doc.py:115: error: Argument 1 to "write_text" of "Path" has incompatible type "Optional[Any]"; expected "str"  [arg-type]
 src/textual/widgets/_list_view.py:90: error: Incompatible types in assignment (expression has type "Optional[int]", variable has type "int")  [assignment]
 src/textual/widgets/_list_view.py:93: error: Missing return statement  [return]
 src/textual/widgets/_list_view.py:98: error: Incompatible return value type (got "Widget", expected "Optional[ListItem]")  [return-value]
-src/textual/widgets/_list_view.py:128: error: "Widget" has no attribute "highlighted"; maybe "highlight_style"?  [attr-defined]
-src/textual/widgets/_list_view.py:131: error: "Widget" has no attribute "highlighted"; maybe "highlight_style"?  [attr-defined]
+src/textual/widgets/_list_view.py:128: error: "Widget" has no attribute "highlighted"  [attr-defined]
+src/textual/widgets/_list_view.py:131: error: "Widget" has no attribute "highlighted"  [attr-defined]
 src/textual/widgets/_list_view.py:136: error: Argument 2 to "Highlighted" has incompatible type "Optional[Widget]"; expected "Optional[ListItem]"  [arg-type]
 src/textual/widgets/_list_view.py:161: error: Incompatible types in assignment (expression has type "None", variable has type "int")  [assignment]
 src/textual/widgets/_list_view.py:167: error: Argument 2 to "Selected" has incompatible type "Optional[ListItem]"; expected "ListItem"  [arg-type]
@@ -88,4 +83,4 @@ src/textual/demo.py:221: error: "App[Any]" has no attribute "add_note"  [attr-de
 src/textual/demo.py:276: error: "App[Any]" has no attribute "add_note"  [attr-defined]
 src/textual/cli/previews/easing.py:102: error: Argument "easing" to "animate" of "App" has incompatible type "Optional[str]"; expected "Union[Callable[[float], float], str]"  [arg-type]
 src/textual/cli/previews/easing.py:111: error: "MessageTarget" has no attribute "id"  [attr-defined]
-Found 80 errors in 27 files (checked 152 source files)
+Found 77 errors in 25 files (checked 152 source files)
