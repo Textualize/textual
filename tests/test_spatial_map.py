@@ -46,11 +46,19 @@ def test_get_values_in_region() -> None:
         [
             (Region(10, 5, 5, 5), False, "foo"),
             (Region(5, 20, 5, 5), False, "bar"),
+            (Region(0, 0, 40, 1), True, "title"),
         ]
     )
 
-    assert spatial_map.get_values_in_region(Region(0, 0, 10, 5)) == ["foo"]
-    assert spatial_map.get_values_in_region(Region(0, 1, 10, 5)) == ["foo"]
-    assert spatial_map.get_values_in_region(Region(0, 10, 10, 5)) == []
-    assert spatial_map.get_values_in_region(Region(0, 20, 10, 5)) == ["bar"]
-    assert spatial_map.get_values_in_region(Region(5, 5, 50, 50)) == ["foo", "bar"]
+    assert spatial_map.get_values_in_region(Region(0, 0, 10, 5)) == [
+        "title",
+        "foo",
+    ]
+    assert spatial_map.get_values_in_region(Region(0, 1, 10, 5)) == ["title", "foo"]
+    assert spatial_map.get_values_in_region(Region(0, 10, 10, 5)) == ["title"]
+    assert spatial_map.get_values_in_region(Region(0, 20, 10, 5)) == ["title", "bar"]
+    assert spatial_map.get_values_in_region(Region(5, 5, 50, 50)) == [
+        "title",
+        "foo",
+        "bar",
+    ]
