@@ -51,7 +51,7 @@ class SpatialMap(Generic[ValueType]):
     def insert(
         self, regions_and_values: Iterable[tuple[Region, bool, ValueType]]
     ) -> None:
-        """Insert values in to the Spatial map.
+        """Insert values into the Spatial map.
 
         Values are associated with their region in Euclidean space, and a boolean that
         indicates fixed regions. Fixed regions don't scroll and are always visible.
