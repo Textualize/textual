@@ -68,7 +68,7 @@ class SpatialMap(Generic[ValueType]):
     def get_values_in_region(self, region: Region) -> list[ValueType]:
         """Get a set of values that are under a given region.
 
-        Note that this may return some false positives.
+        Note that this may return false positives.
 
         Args:
             region: A region.

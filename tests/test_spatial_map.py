@@ -14,6 +14,12 @@ from textual.geometry import Region
             ],
         ),
         (
+            Region(10, 10, 10, 10),
+            [
+                (1, 1),
+            ],
+        ),
+        (
             Region(0, 0, 11, 11),
             [(0, 0), (0, 1), (1, 0), (1, 1)],
         ),
@@ -31,3 +37,20 @@ def test_region_to_grid(region, grid):
     spatial_map = SpatialMap(10, 10)
 
     assert list(spatial_map._region_to_grid(region)) == grid
+
+
+def test_get_values_in_region() -> None:
+    spatial_map: SpatialMap[str] = SpatialMap(20, 10)
+
+    spatial_map.insert(
+        [
+            (Region(10, 5, 5, 5), False, "foo"),
+            (Region(5, 20, 5, 5), False, "bar"),
+        ]
+    )
+
+    assert spatial_map.get_values_in_region(Region(0, 0, 10, 5)) == ["foo"]
+    assert spatial_map.get_values_in_region(Region(0, 1, 10, 5)) == ["foo"]
+    assert spatial_map.get_values_in_region(Region(0, 10, 10, 5)) == []
+    assert spatial_map.get_values_in_region(Region(0, 20, 10, 5)) == ["bar"]
+    assert spatial_map.get_values_in_region(Region(5, 5, 50, 50)) == ["foo", "bar"]
