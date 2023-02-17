@@ -450,7 +450,7 @@ class Compositor:
 
                     if visible_only:
                         placements = arrange_result.get_visible_placements(
-                            widget.size.region + widget.scroll_offset
+                            container_size.region + widget.scroll_offset
                         )
                     else:
                         placements = arrange_result.placements

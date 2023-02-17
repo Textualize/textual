@@ -35,13 +35,13 @@ class SpatialMap(Generic[ValueType]):
             Iterable of grid squares (tuple of 2 values).
         """
         x1, y1, width, height = region
-        x2 = x1 + width
-        y2 = y1 + height
+        x2 = x1 + width - 1
+        y2 = y1 + height - 1
         grid_width, grid_height = self._grid_size
 
         return product(
-            range(x1 // grid_width, 1 + x2 // grid_width),
-            range(y1 // grid_height, 1 + y2 // grid_height),
+            range(x1 // grid_width, x2 // grid_width + 1),
+            range(y1 // grid_height, y2 // grid_height + 1),
         )
 
     def insert(
