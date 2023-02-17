@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from collections import defaultdict
 from itertools import product
 from typing import Generic, Iterable, TypeVar
