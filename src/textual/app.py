@@ -608,7 +608,7 @@ class App(Generic[ReturnType], DOMNode):
         self,
         group: LogGroup,
         verbosity: LogVerbosity,
-        _textual_calling_frame: inspect.FrameInfo,
+        _textual_calling_frame: inspect.Traceback,
         *objects: Any,
         **kwargs,
     ) -> None:
