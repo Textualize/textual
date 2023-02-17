@@ -2142,6 +2142,7 @@ class Widget(DOMNode):
             size: Screen size.
             virtual_size: Virtual (scrollable) size.
             container_size: Container size (size of parent).
+            refresh: Also refresh.
         """
         if (
             self._size != size
@@ -2149,11 +2150,13 @@ class Widget(DOMNode):
             or self._container_size != container_size
         ):
             self._size = size
-            self.virtual_size = virtual_size
+            if self.virtual_size:
+                self.virtual_size = virtual_size
+            else:
+                self._reactive_virtual_size = virtual_size
             self._container_size = container_size
             if self.is_scrollable:
                 self._scroll_update(virtual_size)
-            self.refresh()
 
     def _scroll_update(self, virtual_size: Size) -> None:
         """Update scrollbars visibility and dimensions.
@@ -2291,8 +2294,7 @@ class Widget(DOMNode):
             repaint: Repaint the widget (will call render() again). Defaults to True.
             layout: Also layout widgets in the view. Defaults to False.
         """
-
-        if layout:
+        if layout and not self._layout_required:
             self._layout_required = True
             for ancestor in self.ancestors:
                 if not isinstance(ancestor, Widget):

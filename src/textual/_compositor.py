@@ -320,7 +320,7 @@ class Compositor:
         old_map = self.map
         map, widgets = self._arrange_root(parent, size, visible_only=True)
 
-        exposed_widgets = widgets - self.widgets
+        exposed_widgets = map.keys() - old_map.keys()
         # Replace map and widgets
         self.map = map
         self.widgets = widgets
@@ -394,6 +394,7 @@ class Compositor:
 
         map: CompositorMap = {}
         widgets: set[Widget] = set()
+        add_new_widget = widgets.add
         layer_order: int = 0
 
         def add_widget(
@@ -419,7 +420,7 @@ class Compositor:
                 visible = visibility == "visible"
 
             if visible:
-                widgets.add(widget)
+                add_new_widget(widget)
             styles_offset = widget.styles.offset
             layout_offset = (
                 styles_offset.resolve(region.size, clip.size)

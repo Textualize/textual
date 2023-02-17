@@ -9,6 +9,7 @@ from rich.style import Style
 from . import errors, events, messages
 from ._callback import invoke
 from ._compositor import Compositor, MapGeometry
+from ._profile import timer
 from ._types import CallbackType
 from .css.match import match
 from .css.parse import parse_selectors
@@ -434,18 +435,26 @@ class Screen(Widget):
                 exposed_widgets = self._compositor.reflow_visible(self, size)
                 if exposed_widgets:
                     layers = self._compositor.layers
-                    for widget, (
-                        region,
-                        _order,
-                        _clip,
-                        virtual_size,
-                        container_size,
-                        _,
-                    ) in layers:
-                        widget._size_updated(region.size, virtual_size, container_size)
-                        widget.post_message_no_wait(
-                            ResizeEvent(self, region.size, virtual_size, container_size)
-                        )
+                    with timer("size events"):
+                        for widget, (
+                            region,
+                            _order,
+                            _clip,
+                            virtual_size,
+                            container_size,
+                            _,
+                        ) in layers:
+                            if widget in exposed_widgets:
+                                widget._size_updated(
+                                    region.size,
+                                    virtual_size,
+                                    container_size,
+                                )
+                                widget.post_message_no_wait(
+                                    ResizeEvent(
+                                        self, region.size, virtual_size, container_size
+                                    )
+                                )
             else:
                 hidden, shown, resized = self._compositor.reflow(self, size)
                 Hide = events.Hide
