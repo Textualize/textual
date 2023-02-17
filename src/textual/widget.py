@@ -38,11 +38,9 @@ from . import errors, events, messages
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
 from ._asyncio import create_task
-from ._cache import FIFOCache
 from ._context import active_app
 from ._easing import DEFAULT_SCROLL_EASING
 from ._layout import Layout
-from ._profile import timer
 from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
 from .actions import SkipAction
@@ -261,9 +259,8 @@ class Widget(DOMNode):
         self._content_width_cache: tuple[object, int] = (None, 0)
         self._content_height_cache: tuple[object, int] = (None, 0)
 
-        self._arrangement_cache: FIFOCache[
-            tuple[Size, int], DockArrangeResult
-        ] = FIFOCache(4)
+        self._arrangement_cache_key: tuple[Size, int] = (Size(), -1)
+        self._cached_arrangement: DockArrangeResult | None = None
 
         self._styles_cache = StylesCache()
         self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
@@ -281,7 +278,7 @@ class Widget(DOMNode):
 
         self._add_children(*children)
 
-    virtual_size = Reactive(Size(0, 0), repaint=False, layout=True)
+    virtual_size = Reactive(Size(0, 0), layout=True)
     auto_width = Reactive(True)
     auto_height = Reactive(True)
     has_focus = Reactive(False)
@@ -476,18 +473,22 @@ class Widget(DOMNode):
         assert self.is_container
 
         cache_key = (size, self._nodes._updates)
-        cached_result = self._arrangement_cache.get(cache_key)
-        if cached_result is not None:
-            return cached_result
+        if (
+            self._arrangement_cache_key == cache_key
+            and self._cached_arrangement is not None
+        ):
+            return self._cached_arrangement
 
-        arrangement = arrange(self, self._nodes, size, size)
-        self._arrangement_cache[cache_key] = arrangement
+        self._arrangement_cache_key = cache_key
+        arrangement = self._cached_arrangement = arrange(
+            self, self._nodes, size, self.screen.size
+        )
 
         return arrangement
 
     def _clear_arrangement_cache(self) -> None:
         """Clear arrangement cache, forcing a new arrange operation."""
-        self._arrangement_cache.clear()
+        self._cached_arrangement = None
 
     def _get_virtual_dom(self) -> Iterable[Widget]:
         """Get widgets not part of the DOM.
@@ -1741,7 +1742,7 @@ class Widget(DOMNode):
 
         """
         return self.scroll_to(
-            y=self.scroll_y + self.container_size.height,
+            y=self.scroll_target_y + self.container_size.height,
             animate=animate,
             speed=speed,
             duration=duration,
@@ -2147,11 +2148,10 @@ class Widget(DOMNode):
             or self.virtual_size != virtual_size
             or self._container_size != container_size
         ):
-            old_virtual_size = self.virtual_size
             self._size = size
-            self._reactive_virtual_size = virtual_size
+            self.virtual_size = virtual_size
             self._container_size = container_size
-            if self.is_scrollable and old_virtual_size != self.virtual_size:
+            if self.is_scrollable:
                 self._scroll_update(virtual_size)
             self.refresh()
 
@@ -2294,8 +2294,6 @@ class Widget(DOMNode):
 
         if layout:
             self._layout_required = True
-
-            print("LAYOUT")
             for ancestor in self.ancestors:
                 if not isinstance(ancestor, Widget):
                     break
