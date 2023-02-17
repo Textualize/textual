@@ -2134,7 +2134,7 @@ class Widget(DOMNode):
         self.app.update_styles(self)
 
     def _size_updated(
-        self, size: Size, virtual_size: Size, container_size: Size
+        self, size: Size, virtual_size: Size, container_size: Size, layout: bool = True
     ) -> None:
         """Called when the widget's size is updated.
 
@@ -2142,7 +2142,7 @@ class Widget(DOMNode):
             size: Screen size.
             virtual_size: Virtual (scrollable) size.
             container_size: Container size (size of parent).
-            refresh: Also refresh.
+            layout: Perform layout if required.
         """
         if (
             self._size != size
@@ -2150,7 +2150,7 @@ class Widget(DOMNode):
             or self._container_size != container_size
         ):
             self._size = size
-            if self.virtual_size:
+            if layout:
                 self.virtual_size = virtual_size
             else:
                 self._reactive_virtual_size = virtual_size

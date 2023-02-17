@@ -449,6 +449,7 @@ class Screen(Widget):
                                     region.size,
                                     virtual_size,
                                     container_size,
+                                    layout=False,
                                 )
                                 widget.post_message_no_wait(
                                     ResizeEvent(
