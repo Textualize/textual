@@ -3,9 +3,7 @@ src/textual/_two_way_dict.py:41: error: Incompatible return value type (got "Opt
 src/textual/_two_way_dict.py:52: error: Incompatible return value type (got "Optional[Key]", expected "Key")  [return-value]
 src/textual/devtools/service.py:10: error: Skipping analyzing "msgpack": module is installed, but missing library stubs or py.typed marker  [import]
 src/textual/devtools/client.py:13: error: Skipping analyzing "msgpack": module is installed, but missing library stubs or py.typed marker  [import]
-src/textual/devtools/redirect_output.py:42: error: Item "None" of "Optional[FrameType]" has no attribute "f_back"  [union-attr]
-src/textual/devtools/redirect_output.py:43: error: Argument 1 to "getframeinfo" has incompatible type "Union[FrameType, None, Any]"; expected "Union[FrameType, TracebackType]"  [arg-type]
-src/textual/devtools/redirect_output.py:45: error: Argument "caller" to "DevtoolsLog" has incompatible type "Traceback"; expected "FrameInfo"  [arg-type]
+src/textual/devtools/redirect_output.py:48: error: Argument "caller" to "DevtoolsLog" has incompatible type "Traceback"; expected "FrameInfo"  [arg-type]
 src/textual/__init__.py:27: error: Library stubs not installed for "pkg_resources"  [import]
 src/textual/__init__.py:27: note: Hint: "python3 -m pip install types-setuptools"
 src/textual/__init__.py:27: note: (or run "mypy --install-types" to install all missing stub packages)
@@ -92,4 +90,4 @@ src/textual/demo.py:221: error: "App[Any]" has no attribute "add_note"  [attr-de
 src/textual/demo.py:276: error: "App[Any]" has no attribute "add_note"  [attr-defined]
 src/textual/cli/previews/easing.py:102: error: Argument "easing" to "animate" of "App" has incompatible type "Optional[str]"; expected "Union[Callable[[float], float], str]"  [arg-type]
 src/textual/cli/previews/easing.py:111: error: "MessageTarget" has no attribute "id"  [attr-defined]
-Found 84 errors in 28 files (checked 152 source files)
+Found 82 errors in 28 files (checked 152 source files)
