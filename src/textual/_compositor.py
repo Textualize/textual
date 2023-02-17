@@ -243,7 +243,7 @@ class Compositor:
             size: Size of the area to be filled.
 
         Returns:
-            Hidden shown and resized widgets.
+            Hidden, shown and resized widgets.
         """
         self._cuts = None
         self._layers = None
@@ -257,14 +257,9 @@ class Compositor:
         old_map = self.map
         old_widgets = old_map.keys()
 
-        map, widgets = self._arrange_root(parent, size, visible_only=True)
+        map, widgets = self._arrange_root(parent, size)
 
         new_widgets = map.keys()
-
-        # Newly visible widgets
-        shown_widgets = new_widgets - old_widgets
-        # Newly hidden widgets
-        hidden_widgets = self.widgets - widgets
 
         # Replace map and widgets
         self.map = map
@@ -276,13 +271,7 @@ class Compositor:
         # Widgets in both new and old
         common_widgets = old_widgets & new_widgets
 
-        # Widgets with changed size
-        resized_widgets = {
-            widget
-            for widget, (region, *_) in changes
-            if (widget in common_widgets and old_map[widget].region[2:] != region[2:])
-        }
-
+        # Mark dirty regions.
         screen_region = size.region
         if screen_region not in self._dirty_regions:
             regions = {
@@ -295,11 +284,62 @@ class Compositor:
             }
             self._dirty_regions.update(regions)
 
+        resized_widgets = {
+            widget
+            for widget, (region, *_) in changes
+            if (widget in common_widgets and old_map[widget].region[2:] != region[2:])
+        }
+        # Newly visible widgets
+        shown_widgets = new_widgets - old_widgets
+        # Newly hidden widgets
+        hidden_widgets = self.widgets - widgets
         return ReflowResult(
             hidden=hidden_widgets,
             shown=shown_widgets,
             resized=resized_widgets,
         )
+
+    def reflow_visible(self, parent: Widget, size: Size) -> None:
+        """Reflow only the visible children.
+
+        This is a fast-path for scrolling.
+
+        Args:
+            parent: The root widget.
+            size: Size of the area to be filled.
+
+        """
+        self._cuts = None
+        self._layers = None
+        self._layers_visible = None
+        self._visible_widgets = None
+        self._full_map = None
+        self.root = parent
+        self.size = size
+
+        # Keep a copy of the old map because we're going to compare it with the update
+        old_map = self.map
+        map, widgets = self._arrange_root(parent, size, visible_only=True)
+
+        # Replace map and widgets
+        self.map = map
+        self.widgets = widgets
+
+        # Contains widgets + geometry for every widget that changed (added, removed, or updated)
+        changes = map.items() ^ old_map.items()
+
+        # Mark dirty regions.
+        screen_region = size.region
+        if screen_region not in self._dirty_regions:
+            regions = {
+                region
+                for region in (
+                    map_geometry.clip.intersection(map_geometry.region)
+                    for _, map_geometry in changes
+                )
+                if region
+            }
+            self._dirty_regions.update(regions)
 
     @property
     def full_map(self) -> CompositorMap:

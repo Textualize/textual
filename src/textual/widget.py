@@ -240,6 +240,7 @@ class Widget(DOMNode):
         self._container_size = Size(0, 0)
         self._layout_required = False
         self._repaint_required = False
+        self._scroll_required = False
         self._default_layout = VerticalLayout()
         self._animate: BoundAnimator | None = None
         self.highlight_style: Style | None = None
@@ -1710,7 +1711,7 @@ class Widget(DOMNode):
 
         """
         return self.scroll_to(
-            y=self.scroll_target_y - self.container_size.height,
+            y=self.scroll_y - self.container_size.height,
             animate=animate,
             speed=speed,
             duration=duration,
@@ -1742,7 +1743,7 @@ class Widget(DOMNode):
 
         """
         return self.scroll_to(
-            y=self.scroll_target_y + self.container_size.height,
+            y=self.scroll_y + self.container_size.height,
             animate=animate,
             speed=speed,
             duration=duration,
@@ -1776,7 +1777,7 @@ class Widget(DOMNode):
         if speed is None and duration is None:
             duration = 0.3
         return self.scroll_to(
-            x=self.scroll_target_x - self.container_size.width,
+            x=self.scroll_x - self.container_size.width,
             animate=animate,
             speed=speed,
             duration=duration,
@@ -1810,7 +1811,7 @@ class Widget(DOMNode):
         if speed is None and duration is None:
             duration = 0.3
         return self.scroll_to(
-            x=self.scroll_target_x + self.container_size.width,
+            x=self.scroll_x + self.container_size.width,
             animate=animate,
             speed=speed,
             duration=duration,
@@ -2264,7 +2265,7 @@ class Widget(DOMNode):
 
     def _refresh_scroll(self) -> None:
         """Refreshes the scroll position."""
-        self._layout_required = True
+        self._scroll_required = True
         self.check_idle()
 
     def refresh(
@@ -2373,6 +2374,9 @@ class Widget(DOMNode):
             except NoScreen:
                 pass
             else:
+                if self._scroll_required:
+                    self._scroll_required = False
+                    screen.post_message_no_wait(messages.UpdateScroll(self))
                 if self._repaint_required:
                     self._repaint_required = False
                     screen.post_message_no_wait(messages.Update(self, self))

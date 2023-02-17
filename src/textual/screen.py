@@ -80,16 +80,6 @@ class Screen(Widget):
             )
         return self._update_timer
 
-    # @property
-    # def widgets(self) -> list[Widget]:
-    #     """Get all widgets."""
-    #     return list(self._compositor.map.keys())
-
-    # @property
-    # def visible_widgets(self) -> list[Widget]:
-    #     """Get a list of visible widgets."""
-    #     return list(self._compositor.visible_widgets)
-
     def render(self) -> RenderableType:
         background = self.styles.background
         if background.is_transparent:
@@ -377,7 +367,12 @@ class Screen(Widget):
                     if self._layout_required:
                         self._refresh_layout()
                         self._layout_required = False
+                        self._scroll_required = False
                         self._dirty_widgets.clear()
+                    elif self._scroll_required:
+                        self._refresh_layout(scroll=True)
+                        self._scroll_required = False
+
                     if self._repaint_required:
                         self._dirty_widgets.clear()
                         self._dirty_widgets.add(self)
@@ -426,7 +421,9 @@ class Screen(Widget):
         self._callbacks.append(callback)
         self.check_idle()
 
-    def _refresh_layout(self, size: Size | None = None, full: bool = False) -> None:
+    def _refresh_layout(
+        self, size: Size | None = None, full: bool = False, scroll: bool = False
+    ) -> None:
         """Refresh the layout (can change size and positions of widgets)."""
         size = self.outer_size if size is None else size
         if not size:
@@ -435,34 +432,37 @@ class Screen(Widget):
         self._compositor.update_widgets(self._dirty_widgets)
         self.update_timer.pause()
         try:
-            hidden, shown, resized = self._compositor.reflow(self, size)
-            Hide = events.Hide
-            Show = events.Show
+            if scroll:
+                self._compositor.reflow_visible(self, size)
+            else:
+                hidden, shown, resized = self._compositor.reflow(self, size)
+                Hide = events.Hide
+                Show = events.Show
 
-            for widget in hidden:
-                widget.post_message_no_wait(Hide(self))
+                for widget in hidden:
+                    widget.post_message_no_wait(Hide(self))
 
-            # We want to send a resize event to widgets that were just added or change since last layout
-            send_resize = shown | resized
-            ResizeEvent = events.Resize
+                # We want to send a resize event to widgets that were just added or change since last layout
+                send_resize = shown | resized
+                ResizeEvent = events.Resize
 
-            layers = self._compositor.layers
-            for widget, (
-                region,
-                _order,
-                _clip,
-                virtual_size,
-                container_size,
-                _,
-            ) in layers:
-                widget._size_updated(region.size, virtual_size, container_size)
-                if widget in send_resize:
-                    widget.post_message_no_wait(
-                        ResizeEvent(self, region.size, virtual_size, container_size)
-                    )
+                layers = self._compositor.layers
+                for widget, (
+                    region,
+                    _order,
+                    _clip,
+                    virtual_size,
+                    container_size,
+                    _,
+                ) in layers:
+                    widget._size_updated(region.size, virtual_size, container_size)
+                    if widget in send_resize:
+                        widget.post_message_no_wait(
+                            ResizeEvent(self, region.size, virtual_size, container_size)
+                        )
 
-            for widget in shown:
-                widget.post_message_no_wait(Show(self))
+                for widget in shown:
+                    widget.post_message_no_wait(Show(self))
 
         except Exception as error:
             self.app._handle_exception(error)
@@ -485,6 +485,12 @@ class Screen(Widget):
         message.stop()
         message.prevent_default()
         self._layout_required = True
+        self.check_idle()
+
+    async def _on_update_scroll(self, message: messages.UpdateScroll) -> None:
+        message.stop()
+        message.prevent_default()
+        self._scroll_required = True
         self.check_idle()
 
     def _screen_resized(self, size: Size):

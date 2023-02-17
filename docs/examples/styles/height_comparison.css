@@ -28,12 +28,12 @@
 
 Screen {
     layers: ruler;
+    overflow: hidden;
 }
 
 Ruler {
     layer: ruler;
     dock: right;
-    overflow: hidden;
     width: 1;
     background: $accent;
 }

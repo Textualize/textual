@@ -50,6 +50,12 @@ class Layout(Message, verbose=True):
 
 
 @rich.repr.auto
+class UpdateScroll(Message, verbose=True):
+    def can_replace(self, message: Message) -> bool:
+        return isinstance(message, UpdateScroll)
+
+
+@rich.repr.auto
 class InvokeLater(Message, verbose=True, bubble=False):
     def __init__(self, sender: MessagePump, callback: CallbackType) -> None:
         self.callback = callback
