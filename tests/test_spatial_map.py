@@ -36,7 +36,7 @@ from textual.geometry import Region
 def test_region_to_grid(region, grid):
     spatial_map = SpatialMap(10, 10)
 
-    assert list(spatial_map._region_to_grid(region)) == grid
+    assert list(spatial_map._region_to_grid_coordinate(region)) == grid
 
 
 def test_get_values_in_region() -> None:
