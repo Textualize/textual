@@ -73,7 +73,7 @@ class SpatialMap(Generic[ValueType]):
         self.total_region = total_region
 
     def get_values_in_region(self, region: Region) -> list[ValueType]:
-        """Get a set of values that are under a given region.
+        """Get a superset of all the values that intersect with a given region.
 
         Note that this may return false positives.
 
