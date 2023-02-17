@@ -353,9 +353,6 @@ class Screen(Widget):
                     self.screen.scroll_to_widget(widget)
                 widget.post_message_no_wait(events.Focus(self))
                 self.log.debug(widget, "was focused")
-                import traceback
-
-                traceback.print_stack()
 
     async def _on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)
