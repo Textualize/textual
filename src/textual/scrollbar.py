@@ -112,8 +112,14 @@ class ScrollBarRender:
         if window_size and size and virtual_size and size != virtual_size:
             step_size = virtual_size / size
 
+            thumb_size = window_size / step_size * len_bars
+
+            if thumb_size < len_bars:
+                virtual_size += step_size
+                step_size = virtual_size / size
+
             start = int(position / step_size * len_bars)
-            end = start + max(len_bars, int(ceil(window_size / step_size * len_bars)))
+            end = start + max(len_bars, ceil(thumb_size))
 
             start_index, start_bar = divmod(max(0, start), len_bars)
             end_index, end_bar = divmod(max(0, end), len_bars)
@@ -246,6 +252,7 @@ class ScrollBar(Widget):
             yield "thickness", self.thickness
 
     def render(self) -> RenderableType:
+        assert self.parent is not None
         styles = self.parent.styles
         if self.grabbed:
             background = styles.scrollbar_background_active
@@ -258,11 +265,25 @@ class ScrollBar(Widget):
             color = styles.scrollbar_color
         color = background + color
         scrollbar_style = Style.from_color(color.rich_color, background.rich_color)
+        return self._render_bar(scrollbar_style)
+
+    def _render_bar(self, scrollbar_style: Style) -> RenderableType:
+        """Get a renderable for the scrollbar with given style.
+
+        Args:
+            scrollbar_style: Scrollbar style.
+
+        Returns:
+            Scrollbar renderable.
+        """
+        window_size = (
+            self.window_size if self.window_size < self.window_virtual_size else 0
+        )
+        virtual_size = self.window_virtual_size
+
         return self.renderer(
-            virtual_size=self.window_virtual_size,
-            window_size=(
-                self.window_size if self.window_size < self.window_virtual_size else 0
-            ),
+            virtual_size=ceil(virtual_size),
+            window_size=ceil(window_size),
             position=self.position,
             thickness=self.thickness,
             vertical=self.vertical,
@@ -311,14 +332,26 @@ class ScrollBar(Widget):
             x: float | None = None
             y: float | None = None
             if self.vertical:
+                size = self.size.height
+                virtual_size = self.window_virtual_size
+                step_size = virtual_size / size
+                thumb_size = self.window_size / step_size
+                if thumb_size < 1:
+                    virtual_size = ceil(virtual_size + step_size)
                 y = round(
                     self.grabbed_position
                     + (
                         (event.screen_y - self.grabbed.y)
-                        * (self.window_virtual_size / self.window_size)
+                        * (virtual_size / self.window_size)
                     )
                 )
             else:
+                size = self.size.width
+                virtual_size = self.window_virtual_size
+                step_size = virtual_size / size
+                thumb_size = self.window_size / step_size
+                if thumb_size < 1:
+                    virtual_size = ceil(virtual_size + step_size)
                 x = round(
                     self.grabbed_position
                     + (
@@ -345,3 +378,17 @@ class ScrollBarCorner(Widget):
         styles = self.parent.styles
         color = styles.scrollbar_corner_color
         return Blank(color)
+
+
+if __name__ == "__main__":
+    from rich import print
+    from rich.console import Console
+
+    console = Console()
+    scrollbar = ScrollBar()
+    scrollbar.window_virtual_size = 100
+    scrollbar.window_size = 10
+    scrollbar.position = 95
+
+    style = Style.parse("magenta on #333333")
+    console.print(scrollbar._render_bar(style), height=10)
