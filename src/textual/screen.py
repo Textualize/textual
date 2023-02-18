@@ -435,25 +435,28 @@ class Screen(Widget):
                 exposed_widgets = self._compositor.reflow_visible(self, size)
                 if exposed_widgets:
                     layers = self._compositor.layers
-                    with timer("size events"):
-                        for widget, (
-                            region,
-                            _order,
-                            _clip,
-                            virtual_size,
-                            container_size,
-                            _,
-                        ) in layers:
-                            if widget in exposed_widgets:
-                                widget._size_updated(
-                                    region.size,
-                                    virtual_size,
-                                    container_size,
-                                    layout=False,
-                                )
+
+                    for widget, (
+                        region,
+                        _order,
+                        _clip,
+                        virtual_size,
+                        container_size,
+                        _,
+                    ) in layers:
+                        if widget in exposed_widgets:
+                            if widget._size_updated(
+                                region.size,
+                                virtual_size,
+                                container_size,
+                                layout=False,
+                            ):
                                 widget.post_message_no_wait(
                                     ResizeEvent(
-                                        self, region.size, virtual_size, container_size
+                                        self,
+                                        region.size,
+                                        virtual_size,
+                                        container_size,
                                     )
                                 )
             else:

@@ -2135,7 +2135,7 @@ class Widget(DOMNode):
 
     def _size_updated(
         self, size: Size, virtual_size: Size, container_size: Size, layout: bool = True
-    ) -> None:
+    ) -> bool:
         """Called when the widget's size is updated.
 
         Args:
@@ -2143,6 +2143,9 @@ class Widget(DOMNode):
             virtual_size: Virtual (scrollable) size.
             container_size: Container size (size of parent).
             layout: Perform layout if required.
+
+        Returns:
+            True if anything changed, or False if nothing changed.
         """
         if (
             self._size != size
@@ -2157,6 +2160,9 @@ class Widget(DOMNode):
             self._container_size = container_size
             if self.is_scrollable:
                 self._scroll_update(virtual_size)
+            return True
+        else:
+            return False
 
     def _scroll_update(self, virtual_size: Size) -> None:
         """Update scrollbars visibility and dimensions.
