@@ -198,6 +198,18 @@ class MarkdownH6(MarkdownHeader):
     """
 
 
+class MarkdownHorizontalRule(MarkdownBlock):
+    """A horizontal rule."""
+
+    DEFAULT_CSS = """
+    MarkdownHorizontalRule {
+        border-bottom: heavy $primary;
+        height: 1;
+        padding-top: 1;
+    }
+    """
+
+
 class MarkdownParagraph(MarkdownBlock):
     """A paragraph Markdown block."""
 
@@ -501,7 +513,7 @@ class Markdown(Widget):
             markdown = path.read_text(encoding="utf-8")
         except Exception:
             return False
-        await self.query("MarkdownBlock").remove()
+
         await self.update(markdown)
         return True
 
@@ -524,6 +536,8 @@ class Markdown(Widget):
             if token.type == "heading_open":
                 block_id += 1
                 stack.append(HEADINGS[token.tag](id=f"block{block_id}"))
+            elif token.type == "hr":
+                output.append(MarkdownHorizontalRule())
             elif token.type == "paragraph_open":
                 stack.append(MarkdownParagraph())
             elif token.type == "blockquote_open":
@@ -627,7 +641,10 @@ class Markdown(Widget):
         await self.post_message(
             Markdown.TableOfContentsUpdated(table_of_contents, sender=self)
         )
-        await self.mount(*output)
+        with self.app.batch_update():
+            await self.query("MarkdownBlock").remove()
+            await self.mount(*output)
+            self.refresh(layout=True)
 
 
 class MarkdownTableOfContents(Widget, can_focus_children=True):

@@ -7,11 +7,10 @@ try:
 except ImportError:
     raise ImportError("Please install httpx with 'pip install httpx' ")
 
-from rich.markdown import Markdown
 
 from textual.app import App, ComposeResult
 from textual.containers import Content
-from textual.widgets import Static, Input
+from textual.widgets import Input, Markdown
 
 
 class DictionaryApp(App):
@@ -21,7 +20,7 @@ class DictionaryApp(App):
 
     def compose(self) -> ComposeResult:
         yield Input(placeholder="Search for a word")
-        yield Content(Static(id="results"), id="results-container")
+        yield Content(Markdown(id="results"), id="results-container")
 
     def on_mount(self) -> None:
         """Called when app starts."""
@@ -35,7 +34,7 @@ class DictionaryApp(App):
             asyncio.create_task(self.lookup_word(message.value))
         else:
             # Clear the results
-            self.query_one("#results", Static).update()
+            await self.query_one("#results", Markdown).update("")
 
     async def lookup_word(self, word: str) -> None:
         """Looks up a word."""
@@ -45,7 +44,8 @@ class DictionaryApp(App):
 
         if word == self.query_one(Input).value:
             markdown = self.make_word_markdown(results)
-            self.query_one("#results", Static).update(Markdown(markdown))
+            self.log(markdown)
+            await self.query_one("#results", Markdown).update(markdown)
 
     def make_word_markdown(self, results: object) -> str:
         """Convert the results in to markdown."""

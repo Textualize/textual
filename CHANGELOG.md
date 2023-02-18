@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `App.batch_update`
+- Added horizontal rule to Markdown
 
 ### Changed
 
