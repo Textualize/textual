@@ -260,7 +260,7 @@ class MarkdownOrderedList(MarkdownBlock):
     DEFAULT_CSS = """
     MarkdownOrderedList {
         margin: 0;
-        padding: 0 0;
+        padding: 0 0 1 0;
     }
 
    Markdown OrderedList MarkdownOrderedList {
