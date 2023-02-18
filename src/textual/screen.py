@@ -359,8 +359,9 @@ class Screen(Widget):
         # Check for any widgets marked as 'dirty' (needs a repaint)
         event.prevent_default()
 
-        if self.is_current:
+        if not self.app._batch_count and self.is_current:
             async with self.app._dom_lock:
+                print("LAYOUT")
                 if self.is_current:
                     if self._layout_required:
                         self._refresh_layout()

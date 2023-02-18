@@ -411,6 +411,7 @@ class App(Generic[ReturnType], DOMNode):
         self._screenshot: str | None = None
         self._dom_lock = asyncio.Lock()
         self._dom_ready = False
+        self._batch_count = 0
         self.set_class(self.dark, "-dark-mode")
 
     @property
@@ -425,6 +426,18 @@ class App(Generic[ReturnType], DOMNode):
             return (self.screen,)
         except ScreenError:
             return ()
+
+    def _begin_batch(self) -> None:
+        self._batch_count += 1
+
+    def _end_batch(self) -> None:
+        self._batch_count -= 1
+        if not self._batch_count:
+            try:
+                self.screen.check_idle()
+            except ScreenStackError:
+                pass
+            self.check_idle()
 
     def animate(
         self,
@@ -1504,6 +1517,7 @@ class App(Generic[ReturnType], DOMNode):
                     if inspect.isawaitable(ready_result):
                         await ready_result
 
+            self._begin_batch()
             try:
                 try:
                     await self._dispatch_message(events.Compose(sender=self))
@@ -1524,6 +1538,7 @@ class App(Generic[ReturnType], DOMNode):
 
             finally:
                 self._running = True
+                self._end_batch()
                 await self._ready()
                 await invoke_ready_callback()
 
@@ -1615,7 +1630,7 @@ class App(Generic[ReturnType], DOMNode):
 
     def _on_idle(self) -> None:
         """Perform actions when there are no messages in the queue."""
-        if self._require_stylesheet_update:
+        if self._require_stylesheet_update and not self._batch_count:
             nodes: set[DOMNode] = {
                 child
                 for node in self._require_stylesheet_update
