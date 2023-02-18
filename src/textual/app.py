@@ -1828,6 +1828,7 @@ class App(Generic[ReturnType], DOMNode):
             self._writer_thread.stop()
 
     async def _on_exit_app(self) -> None:
+        self._begin_batch()  # Prevent repaint / layout while shutting down
         await self._message_queue.put(None)
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
