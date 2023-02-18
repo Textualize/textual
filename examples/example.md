@@ -42,6 +42,22 @@ Two tildes indicates strikethrough, e.g. `~~cross out~~` render ~~cross out~~.
 
 Inline code is indicated by backticks. e.g. `import this`.
 
+## Lists
+
+1. Lists can be ordered
+2. Lists can be unordered
+   - Foo
+   - Bar
+     - Jessica
+       - Reg
+       - Green
+         - January
+         - February
+         - March
+       - Blue
+     - Paul
+   - Baz
+
 ## Fences
 
 Fenced code blocks are introduced with three back-ticks and the optional parser. Here we are rendering the code in a sub-widget with syntax highlighting and indent guides.

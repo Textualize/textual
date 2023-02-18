@@ -345,7 +345,7 @@ class MarkdownBullet(Widget):
     }
     """
 
-    symbol = reactive("●​ ")
+    symbol = reactive("●​")
     """The symbol for the bullet."""
 
     def render(self) -> Text:
@@ -379,6 +379,14 @@ class MarkdownListItem(MarkdownBlock):
         yield Vertical(*self._blocks)
 
         self._blocks.clear()
+
+
+class MarkdownOrderedListItem(MarkdownListItem):
+    pass
+
+
+class MarkdownUnorderedListItem(MarkdownListItem):
+    pass
 
 
 class MarkdownFence(MarkdownBlock):
@@ -451,6 +459,8 @@ class Markdown(Widget):
     }
     """
     COMPONENT_CLASSES = {"em", "strong", "s", "code_inline"}
+
+    BULLETS = ["⏺ ", "■ ", "• ", "‣ "]
 
     def __init__(
         self,
@@ -548,8 +558,15 @@ class Markdown(Widget):
             elif token.type == "ordered_list_open":
                 stack.append(MarkdownOrderedList())
             elif token.type == "list_item_open":
+                item_count = sum(
+                    1 for block in stack if isinstance(block, MarkdownUnorderedListItem)
+                )
                 stack.append(
-                    MarkdownListItem(f"{token.info}. " if token.info else "● ")
+                    MarkdownOrderedListItem(f" {token.info}. ")
+                    if token.info
+                    else MarkdownUnorderedListItem(
+                        self.BULLETS[item_count % len(self.BULLETS)]
+                    )
                 )
             elif token.type == "table_open":
                 stack.append(MarkdownTable())
