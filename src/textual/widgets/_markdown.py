@@ -342,6 +342,8 @@ class MarkdownBullet(Widget):
     DEFAULT_CSS = """
     MarkdownBullet {
         width: auto;
+        color: $success;
+        text-style: bold;
     }
     """
 
