@@ -356,7 +356,7 @@ class ScrollBar(Widget):
                     self.grabbed_position
                     + (
                         (event.screen_x - self.grabbed.x)
-                        * (self.window_virtual_size / self.window_size)
+                        * (virtual_size / self.window_size)
                     )
                 )
             await self.post_message(ScrollTo(self, x=x, y=y))
