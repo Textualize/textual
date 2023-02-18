@@ -2,8 +2,7 @@
 
 ## Introduction
 
-An annoying puzzle for the terminal, built with
-[Textual](https://www.textualize.io/).
+An annoying puzzle for the terminal, built with [Textual](https://www.textualize.io/).
 
 ## Objective
 

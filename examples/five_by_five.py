@@ -5,8 +5,6 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING, cast
 
-from rich.markdown import Markdown
-
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Horizontal
@@ -14,7 +12,7 @@ from textual.css.query import DOMQuery
 from textual.reactive import reactive
 from textual.screen import Screen
 from textual.widget import Widget
-from textual.widgets import Button, Footer, Label
+from textual.widgets import Button, Footer, Label, Markdown
 
 if TYPE_CHECKING:
     from typing_extensions import Final
@@ -32,7 +30,7 @@ class Help(Screen):
         Returns:
             ComposeResult: The result of composing the help screen.
         """
-        yield Label(Markdown(Path(__file__).with_suffix(".md").read_text()))
+        yield Markdown(Path(__file__).with_suffix(".md").read_text())
 
 
 class WinnerMessage(Label):
