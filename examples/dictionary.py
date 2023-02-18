@@ -44,7 +44,6 @@ class DictionaryApp(App):
 
         if word == self.query_one(Input).value:
             markdown = self.make_word_markdown(results)
-            self.log(markdown)
             await self.query_one("#results", Markdown).update(markdown)
 
     def make_word_markdown(self, results: object) -> str:
