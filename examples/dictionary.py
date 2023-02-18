@@ -42,10 +42,11 @@ class DictionaryApp(App):
         url = f"https://api.dictionaryapi.dev/api/v2/entries/en/{word}"
         async with httpx.AsyncClient() as client:
             response = await client.get(url)
-            if response.status_code % 100 != 2:
+            try:
+                results = response.json()
+            except Exception:
                 self.query_one("#results", Static).update(response.text)
                 return
-            results = response.json()
 
         if word == self.query_one(Input).value:
             markdown = self.make_word_markdown(results)
