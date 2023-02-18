@@ -206,6 +206,7 @@ class MarkdownHorizontalRule(MarkdownBlock):
         border-bottom: heavy $primary;
         height: 1;
         padding-top: 1;
+        margin-bottom: 1;
     }
     """
 
