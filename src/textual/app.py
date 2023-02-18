@@ -449,7 +449,7 @@ class App(Generic[ReturnType], DOMNode):
     def _end_batch(self) -> None:
         """End a batch update."""
         self._batch_count -= 1
-        assert self._batch_count >= 0, "This won't happen if you use `batch_update` ="
+        assert self._batch_count >= 0, "This won't happen if you use `batch_update`"
         if not self._batch_count:
             try:
                 self.screen.check_idle()
