@@ -11,7 +11,12 @@ import unicodedata
 import warnings
 from asyncio import Task
 from concurrent.futures import Future
-from contextlib import asynccontextmanager, redirect_stderr, redirect_stdout
+from contextlib import (
+    asynccontextmanager,
+    contextmanager,
+    redirect_stderr,
+    redirect_stdout,
+)
 from datetime import datetime
 from functools import partial
 from pathlib import Path, PurePath
@@ -22,6 +27,7 @@ from typing import (
     Any,
     Awaitable,
     Callable,
+    Generator,
     Generic,
     Iterable,
     List,
@@ -427,11 +433,23 @@ class App(Generic[ReturnType], DOMNode):
         except ScreenError:
             return ()
 
+    @contextmanager
+    def batch_update(self) -> Generator[None, None, None]:
+        """Suspend all repaints until the end of the batch."""
+        self._begin_batch()
+        try:
+            yield
+        finally:
+            self._end_batch()
+
     def _begin_batch(self) -> None:
+        """Begin a batch update."""
         self._batch_count += 1
 
     def _end_batch(self) -> None:
+        """End a batch update."""
         self._batch_count -= 1
+        assert self._batch_count >= 0, "This won't happen if you use `batch_update` ="
         if not self._batch_count:
             try:
                 self.screen.check_idle()
@@ -1517,30 +1535,29 @@ class App(Generic[ReturnType], DOMNode):
                     if inspect.isawaitable(ready_result):
                         await ready_result
 
-            self._begin_batch()
-            try:
+            with self.batch_update():
                 try:
-                    await self._dispatch_message(events.Compose(sender=self))
-                    await self._dispatch_message(events.Mount(sender=self))
+                    try:
+                        await self._dispatch_message(events.Compose(sender=self))
+                        await self._dispatch_message(events.Mount(sender=self))
+                    finally:
+                        self._mounted_event.set()
+
+                    Reactive._initialize_object(self)
+
+                    self.stylesheet.update(self)
+                    self.refresh()
+
+                    await self.animator.start()
+
+                except Exception:
+                    await self.animator.stop()
+                    raise
+
                 finally:
-                    self._mounted_event.set()
-
-                Reactive._initialize_object(self)
-
-                self.stylesheet.update(self)
-                self.refresh()
-
-                await self.animator.start()
-
-            except Exception:
-                await self.animator.stop()
-                raise
-
-            finally:
-                self._running = True
-                self._end_batch()
-                await self._ready()
-                await invoke_ready_callback()
+                    self._running = True
+                    await self._ready()
+                    await invoke_ready_callback()
 
             try:
                 await self._process_messages_loop()
@@ -1626,6 +1643,7 @@ class App(Generic[ReturnType], DOMNode):
             raise TypeError(
                 f"{self!r} compose() returned an invalid response; {error}"
             ) from error
+
         await self.mount_all(widgets)
 
     def _on_idle(self) -> None:

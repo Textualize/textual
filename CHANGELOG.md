@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.12.0] - Unreleased
 
+### Added
+
+- Added `App.batch_update`
+
 ### Changed
 
 - Scrolling by page now adds to current position.
