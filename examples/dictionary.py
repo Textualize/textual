@@ -11,7 +11,7 @@ from rich.markdown import Markdown
 
 from textual.app import App, ComposeResult
 from textual.containers import Content
-from textual.widgets import Static, Input
+from textual.widgets import Input, Static
 
 
 class DictionaryApp(App):
@@ -41,7 +41,11 @@ class DictionaryApp(App):
         """Looks up a word."""
         url = f"https://api.dictionaryapi.dev/api/v2/entries/en/{word}"
         async with httpx.AsyncClient() as client:
-            results = (await client.get(url)).json()
+            response = await client.get(url)
+            if response.status_code % 100 != 2:
+                self.query_one("#results", Static).update(response.text)
+                return
+            results = response.json()
 
         if word == self.query_one(Input).value:
             markdown = self.make_word_markdown(results)

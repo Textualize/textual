@@ -248,6 +248,7 @@ class Compositor:
         self._layers = None
         self._layers_visible = None
         self._visible_widgets = None
+        self._full_map = None
         self.root = parent
         self.size = size
 
@@ -860,6 +861,7 @@ class Compositor:
             widget: Widget to update.
 
         """
+        self._full_map = None
         regions: list[Region] = []
         add_region = regions.append
         get_widget = self.visible_widgets.__getitem__
