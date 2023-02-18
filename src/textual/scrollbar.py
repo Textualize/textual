@@ -378,17 +378,3 @@ class ScrollBarCorner(Widget):
         styles = self.parent.styles
         color = styles.scrollbar_corner_color
         return Blank(color)
-
-
-if __name__ == "__main__":
-    from rich import print
-    from rich.console import Console
-
-    console = Console()
-    scrollbar = ScrollBar()
-    scrollbar.window_virtual_size = 100
-    scrollbar.window_size = 10
-    scrollbar.position = 95
-
-    style = Style.parse("magenta on #333333")
-    console.print(scrollbar._render_bar(style), height=10)
