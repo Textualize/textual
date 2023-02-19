@@ -160,9 +160,9 @@ class Reactive(Generic[ReactiveType]):
             value = compute_method()
             setattr(obj, internal_name, value)
             self._check_watchers(obj, self.name, old_value)
+            return value
         else:
-            value = getattr(obj, internal_name)
-        return value
+            return getattr(obj, internal_name)
 
     def __set__(self, obj: Reactable, value: ReactiveType) -> None:
         _rich_traceback_omit = True
