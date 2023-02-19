@@ -328,6 +328,27 @@ async def test_reactive_inheritance():
     assert tertiary.baz == "baz"
 
 
+async def test_compute():
+    """Check compute method is called."""
+
+    class ComputeApp(App):
+        count = var(0)
+        count_double = var(0)
+
+        def compute_count_double(self) -> int:
+            return self.count * 2
+
+    app = ComputeApp()
+
+    async with app.run_test():
+        assert app.count_double == 0
+        app.count = 1
+        assert app.count_double == 2
+        assert app.count_double == 2
+        app.count = 2
+        assert app.count_double == 4
+
+
 async def test_watch_compute():
     """Check that watching a computed attribute works."""
 
@@ -347,7 +368,9 @@ async def test_watch_compute():
 
     app = Calculator()
 
-    async with app.run_test() as pilot:
+    # Referencing the value calls compute
+    # Setting any reactive values calls compute
+    async with app.run_test():
         assert app.show_ac is True
         app.value = "1"
         assert app.show_ac is False
@@ -356,4 +379,4 @@ async def test_watch_compute():
         app.numbers = "123"
         assert app.show_ac is False
 
-    assert watch_called == [True, False, True, False]
+    assert watch_called == [True, True, False, False, True, True, False, False]
