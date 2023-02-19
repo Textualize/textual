@@ -61,7 +61,9 @@ Widgets are key to making user-friendly interfaces. The builtin widgets should c
     * [ ] Validation
     * [ ] Error / warning states
     * [ ] Template types: IP address, physical units (weight, volume), currency, credit card etc
-- [ ] Markdown viewer (more dynamic than Rich markdown, with scrollable code areas / collapsible sections)
+- [X] Markdown viewer
+    * [ ] Collapsible sections
+    * [ ] Custom widgets
 - [ ] Plots
     * [ ] bar chart
     * [ ] line chart
