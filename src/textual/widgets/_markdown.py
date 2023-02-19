@@ -10,7 +10,7 @@ from rich.text import Text
 from typing_extensions import TypeAlias
 
 from ..app import ComposeResult
-from ..containers import Vertical
+from ..containers import Horizontal, Vertical
 from ..message import Message
 from ..reactive import reactive, var
 from ..widget import Widget
@@ -238,36 +238,78 @@ class MarkdownBlockQuote(MarkdownBlock):
     """
 
 
-class MarkdownBulletList(MarkdownBlock):
+class MarkdownList(MarkdownBlock):
+    DEFAULT_CSS = """
+    MarkdownList MarkdownList {
+        margin: 0;
+        padding-top: 0;
+    }
+    """
+
+
+class MarkdownBulletList(MarkdownList):
     """A Bullet list Markdown block."""
 
     DEFAULT_CSS = """
     MarkdownBulletList {
-        margin: 0;
+        margin: 0 0 1 0;
         padding: 0 0;
     }
 
-    MarkdownBulletList MarkdownBulletList {
-        margin: 0;
-        padding-top: 0;
+    MarkdownBulletList Horizontal {
+        height: auto;
     }
+
+    MarkdownBulletList  Vertical {
+        height: auto;
+    }
+
+
     """
 
+    def compose(self) -> ComposeResult:
+        for block in self._blocks:
+            print(block)
+            if isinstance(block, MarkdownListItem):
+                bullet = MarkdownBullet()
+                bullet.symbol = block.bullet
+                yield Horizontal(bullet, Vertical(*block._blocks))
+        self._blocks.clear()
 
-class MarkdownOrderedList(MarkdownBlock):
+
+class MarkdownOrderedList(MarkdownList):
     """An ordered list Markdown block."""
 
     DEFAULT_CSS = """
     MarkdownOrderedList {
-        margin: 0;
-        padding: 0 0 1 0;
+        margin: 0 0 1 0;
+        padding: 0 0;
     }
 
-   Markdown OrderedList MarkdownOrderedList {
-        margin: 0;
-        padding-top: 0;
+
+
+    MarkdownOrderedList Horizontal {
+        height: auto;
+    }
+
+    MarkdownOrderedList  Vertical {
+        height: auto;
     }
     """
+
+    def compose(self) -> ComposeResult:
+        symbol_size = max(
+            len(block.bullet)
+            for block in self._blocks
+            if isinstance(block, MarkdownListItem)
+        )
+        for block in self._blocks:
+            if isinstance(block, MarkdownListItem):
+                bullet = MarkdownBullet()
+                bullet.symbol = block.bullet.rjust(symbol_size + 1)
+                yield Horizontal(bullet, Vertical(*block._blocks))
+
+        self._blocks.clear()
 
 
 class MarkdownTable(MarkdownBlock):
@@ -374,14 +416,6 @@ class MarkdownListItem(MarkdownBlock):
         self.bullet = bullet
         super().__init__()
 
-    def compose(self) -> ComposeResult:
-        bullet = MarkdownBullet()
-        bullet.symbol = self.bullet
-        yield bullet
-        yield Vertical(*self._blocks)
-
-        self._blocks.clear()
-
 
 class MarkdownOrderedListItem(MarkdownListItem):
     pass
@@ -462,7 +496,7 @@ class Markdown(Widget):
     """
     COMPONENT_CLASSES = {"em", "strong", "s", "code_inline"}
 
-    BULLETS = ["⏺ ", "■ ", "• ", "‣ "]
+    BULLETS = ["⏺ ", "▪ ", "‣ ", "• ", "⭑ "]
 
     def __init__(
         self,
@@ -560,16 +594,20 @@ class Markdown(Widget):
             elif token.type == "ordered_list_open":
                 stack.append(MarkdownOrderedList())
             elif token.type == "list_item_open":
-                item_count = sum(
-                    1 for block in stack if isinstance(block, MarkdownUnorderedListItem)
-                )
-                stack.append(
-                    MarkdownOrderedListItem(f" {token.info}. ")
-                    if token.info
-                    else MarkdownUnorderedListItem(
-                        self.BULLETS[item_count % len(self.BULLETS)]
+                if token.info:
+                    stack.append(MarkdownOrderedListItem(f"{token.info}. "))
+                else:
+                    item_count = sum(
+                        1
+                        for block in stack
+                        if isinstance(block, MarkdownUnorderedListItem)
                     )
-                )
+                    stack.append(
+                        MarkdownUnorderedListItem(
+                            self.BULLETS[item_count % len(self.BULLETS)]
+                        )
+                    )
+
             elif token.type == "table_open":
                 stack.append(MarkdownTable())
             elif token.type == "tbody_open":
@@ -599,6 +637,8 @@ class Markdown(Widget):
                     for child in token.children:
                         if child.type == "text":
                             content.append(child.content, style_stack[-1])
+                        if child.type == "softbreak":
+                            content.append(" ")
                         elif child.type == "code_inline":
                             content.append(
                                 child.content,
