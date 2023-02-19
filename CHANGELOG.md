@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Scrolling by page now adds to current position.
+- Markdown lists have been polished: a selection of bullets, better alignment of numbers, style tweaks
 
 ### Removed
 

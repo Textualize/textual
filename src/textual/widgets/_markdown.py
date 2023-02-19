@@ -240,6 +240,11 @@ class MarkdownBlockQuote(MarkdownBlock):
 
 class MarkdownList(MarkdownBlock):
     DEFAULT_CSS = """
+
+    MarkdownList {
+        width: 1fr;
+    }
+
     MarkdownList MarkdownList {
         margin: 0;
         padding-top: 0;
@@ -258,18 +263,17 @@ class MarkdownBulletList(MarkdownList):
 
     MarkdownBulletList Horizontal {
         height: auto;
+        width: 1fr;
     }
 
-    MarkdownBulletList  Vertical {
+    MarkdownBulletList Vertical {
         height: auto;
+        width: 1fr;
     }
-
-
     """
 
     def compose(self) -> ComposeResult:
         for block in self._blocks:
-            print(block)
             if isinstance(block, MarkdownListItem):
                 bullet = MarkdownBullet()
                 bullet.symbol = block.bullet
@@ -286,14 +290,14 @@ class MarkdownOrderedList(MarkdownList):
         padding: 0 0;
     }
 
-
-
     MarkdownOrderedList Horizontal {
         height: auto;
+        width: 1fr;
     }
 
     MarkdownOrderedList  Vertical {
         height: auto;
+        width: 1fr;
     }
     """
 
