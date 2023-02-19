@@ -335,8 +335,12 @@ async def test_compute():
         count = var(0)
         count_double = var(0)
 
+        def __init__(self) -> None:
+            self.start = 0
+            super().__init__()
+
         def compute_count_double(self) -> int:
-            return self.count * 2
+            return self.start + self.count * 2
 
     app = ComputeApp()
 
@@ -347,6 +351,8 @@ async def test_compute():
         assert app.count_double == 2
         app.count = 2
         assert app.count_double == 4
+        app.start = 10
+        assert app.count_double == 14
 
 
 async def test_watch_compute():
