@@ -14,7 +14,7 @@ without having to render the entire screen.
 from __future__ import annotations
 
 from operator import itemgetter
-from typing import TYPE_CHECKING, Iterable, NamedTuple, cast
+from typing import TYPE_CHECKING, Callable, Iterable, NamedTuple, cast
 
 import rich.repr
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
@@ -743,10 +743,7 @@ class Compositor:
         cuts = self.cuts
 
         # dict.fromkeys is a callable which takes a list of ints returns a dict which maps ints on to a list of Segments or None.
-        fromkeys = cast(
-            "Callable[[list[int]], dict[int, list[Segment] | None]]", dict.fromkeys
-        )
-        # A mapping of cut index to a list of segments for each line
+        fromkeys = cast("Callable[[list[int]], dict[int, Strip | None]]", dict.fromkeys)
         chops: list[dict[int, Strip | None]]
         chops = [fromkeys(cut_set[:-1]) for cut_set in cuts]
 

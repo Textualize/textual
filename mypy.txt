@@ -1,8 +1,6 @@
 poetry run mypy src/textual
 src/textual/_two_way_dict.py:41: error: Incompatible return value type (got "Optional[Value]", expected "Value")  [return-value]
 src/textual/_two_way_dict.py:52: error: Incompatible return value type (got "Optional[Key]", expected "Key")  [return-value]
-src/textual/_compositor.py:746: error: Name "Callable" is not defined  [name-defined]
-src/textual/_compositor.py:746: note: Did you forget to import it from "typing"? (Suggestion: "from typing import Callable")
 src/textual/_callback.py:61: error: Item "None" of "Optional[App[Any]]" has no attribute "log"  [union-attr]
 src/textual/reactive.py:211: error: Argument "callback" to "Callback" has incompatible type "partial[None]"; expected "Callable[[], Awaitable[None]]"  [arg-type]
 src/textual/reactive.py:211: note: "partial[None].__call__" has type "Callable[[VarArg(Any), KwArg(Any)], None]"
@@ -80,4 +78,4 @@ src/textual/demo.py:221: error: "App[Any]" has no attribute "add_note"  [attr-de
 src/textual/demo.py:276: error: "App[Any]" has no attribute "add_note"  [attr-defined]
 src/textual/cli/previews/easing.py:102: error: Argument "easing" to "animate" of "App" has incompatible type "Optional[str]"; expected "Union[Callable[[float], float], str]"  [arg-type]
 src/textual/cli/previews/easing.py:111: error: "MessageTarget" has no attribute "id"  [attr-defined]
-Found 74 errors in 24 files (checked 152 source files)
+Found 73 errors in 23 files (checked 152 source files)
