@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.11.1] - 2023-02-17
+
+### Fixed
+
+- DataTable fix issue where offset cache was not being used https://github.com/Textualize/textual/pull/1810
+- DataTable scrollbars resize correctly when header is toggled https://github.com/Textualize/textual/pull/1803
+- DataTable location mapping cleared when clear called https://github.com/Textualize/textual/pull/1809
+
 ## [0.11.0] - 2023-02-15
 
 ### Added
@@ -463,6 +471,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.11.1]: https://github.com/Textualize/textual/compare/v0.11.0...v0.11.1
 [0.11.0]: https://github.com/Textualize/textual/compare/v0.10.1...v0.11.0
 [0.10.1]: https://github.com/Textualize/textual/compare/v0.10.0...v0.10.1
 [0.10.0]: https://github.com/Textualize/textual/compare/v0.9.1...v0.10.0
