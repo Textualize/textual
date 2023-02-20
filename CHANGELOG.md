@@ -9,13 +9,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added `App.batch_update`
-- Added horizontal rule to Markdown
+- Added `App.batch_update` https://github.com/Textualize/textual/pull/1832
+- Added horizontal rule to Markdown https://github.com/Textualize/textual/pull/1832
 
 ### Changed
 
 - Scrolling by page now adds to current position.
-- Markdown lists have been polished: a selection of bullets, better alignment of numbers, style tweaks
+- Markdown lists have been polished: a selection of bullets, better alignment of numbers, style tweaks https://github.com/Textualize/textual/pull/1832
 
 ### Removed
 
