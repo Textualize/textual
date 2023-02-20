@@ -19,6 +19,7 @@ from ._asyncio import create_task
 from ._callback import invoke
 from ._context import NoActiveAppError, active_app, active_message_pump
 from ._time import time
+from ._types import CallbackType
 from .case import camel_to_snake
 from .errors import DuplicateKeyHandlers
 from .events import Event
