@@ -1,8 +1,6 @@
 poetry run mypy src/textual
 src/textual/_two_way_dict.py:41: error: Incompatible return value type (got "Optional[Value]", expected "Value")  [return-value]
 src/textual/_two_way_dict.py:52: error: Incompatible return value type (got "Optional[Key]", expected "Key")  [return-value]
-src/textual/__init__.py:67: error: Item "None" of "Optional[FrameType]" has no attribute "f_back"  [union-attr]
-src/textual/__init__.py:68: error: Argument 1 to "getframeinfo" has incompatible type "Union[FrameType, None, Any]"; expected "Union[FrameType, TracebackType]"  [arg-type]
 src/textual/_compositor.py:435: error: Argument 4 to "add_widget" has incompatible type "Tuple[object, ...]"; expected "Tuple[Tuple[int, ...], ...]"  [arg-type]
 src/textual/_compositor.py:731: error: Name "Callable" is not defined  [name-defined]
 src/textual/_compositor.py:731: note: Did you forget to import it from "typing"? (Suggestion: "from typing import Callable")
@@ -83,4 +81,4 @@ src/textual/demo.py:221: error: "App[Any]" has no attribute "add_note"  [attr-de
 src/textual/demo.py:276: error: "App[Any]" has no attribute "add_note"  [attr-defined]
 src/textual/cli/previews/easing.py:102: error: Argument "easing" to "animate" of "App" has incompatible type "Optional[str]"; expected "Union[Callable[[float], float], str]"  [arg-type]
 src/textual/cli/previews/easing.py:111: error: "MessageTarget" has no attribute "id"  [attr-defined]
-Found 77 errors in 25 files (checked 152 source files)
+Found 75 errors in 24 files (checked 152 source files)
