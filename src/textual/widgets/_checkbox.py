@@ -29,7 +29,7 @@ class Checkbox(ToggleButton):
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
-    ):
+    ) -> None:
         """Initialise the radio button.
 
         Args:
