@@ -36,4 +36,5 @@ def compose(node: App | Widget) -> list[Widget]:
             composed.clear()
     finally:
         app._compose_stacks.pop()
+        app._composed.pop()
     return nodes
