@@ -3,11 +3,15 @@
 from __future__ import annotations
 
 from ..containers import Container
+from ..widget import WidgetError
 from ._radio_button import RadioButton
 
 
 class RadioSet(Container):
     """Widget for grouping a collection of radio buttons into a set."""
+
+    class ButtonTypeError(WidgetError):
+        """Type of error thrown if an unknown button type is passed."""
 
     def __init__(
         self,
@@ -27,10 +31,23 @@ class RadioSet(Container):
         Note:
             When a `str` label is provided, a `RadioButton` will be created from it.
         """
+
+        # Be sure we've only been handed strings or radio buttons. This is a
+        # container that can't contain anything else.
+        for button in buttons:
+            if not isinstance(button, (str, RadioButton)):
+                raise self.ButtonTypeError(
+                    f"{button!r} is not of type `str` or `RadioButton`"
+                )
+
+        # Build the internal list of buttons. Here, if we're given a
+        # RadioButton, we use it as-is; otherwise we spin one up from the
+        # given string.
         self._buttons = [
             (button if isinstance(button, RadioButton) else RadioButton(button))
             for button in buttons
         ]
+
         super().__init__(*self._buttons, name=name, id=id, classes=classes)
 
     def on_radio_button_changed(self, event: RadioButton.Changed) -> None:
