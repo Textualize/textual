@@ -41,18 +41,16 @@ class ColorsView(Vertical):
         ]
 
         for color_name in ColorSystem.COLOR_NAMES:
-            items: list[Widget] = [Label(f'"{color_name}"')]
-            for level in LEVELS:
-                color = f"{color_name}-{level}" if level else color_name
-                item = ColorItem(
-                    ColorBar(f"${color}", classes="text label"),
-                    ColorBar("$text-muted", classes="muted"),
-                    ColorBar("$text-disabled", classes="disabled"),
-                    classes=color,
-                )
-                items.append(item)
-
-            yield ColorGroup(*items, id=f"group-{color_name}")
+            with ColorGroup(id=f"group-{color_name}"):
+                yield Label(f'"{color_name}"')
+                for level in LEVELS:
+                    color = f"{color_name}-{level}" if level else color_name
+                    yield ColorItem(
+                        ColorBar(f"${color}", classes="text label"),
+                        ColorBar("$text-muted", classes="muted"),
+                        ColorBar("$text-disabled", classes="disabled"),
+                        classes=color,
+                    )
 
 
 class ColorsApp(App):
