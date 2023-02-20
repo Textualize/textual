@@ -11,6 +11,12 @@ class RadioButton(ToggleButton):
     TODO: Mention that this is best used in a RadioSet (yet to be added).
     """
 
+    class Selected(ToggleButton.Selected):
+        """Posted when the user selects the button."""
+
+        # https://github.com/Textualize/textual/issues/1814
+        namespace = "radio_button"
+
     class Changed(ToggleButton.Changed):
         """Posted when the value of the radio button changes."""
 

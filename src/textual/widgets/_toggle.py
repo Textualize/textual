@@ -134,12 +134,27 @@ class ToggleButton(Static, can_focus=True):
         """Toggle the value of the widget."""
         self.value = not self.value
 
+    class Selected(Message, bubble=True):
+        """Posted when the user selects the button."""
+
+        def __init__(self, sender: ToggleButton) -> None:
+            """Initialise the message.
+
+            Args:
+                sender: The toggle button sending the message.
+            """
+            super().__init__(sender)
+            self.input = sender
+            """A reference to the toggle button that was selected."""
+
     def action_toggle(self) -> None:
         """Toggle the value of the widget."""
+        self.post_message_no_wait(self.Selected(self))
         self.toggle()
 
     def on_click(self) -> None:
         """Toggle the value of the widget."""
+        self.post_message_no_wait(self.Selected(self))
         self.toggle()
 
     class Changed(Message, bubble=True):
