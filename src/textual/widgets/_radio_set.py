@@ -24,16 +24,17 @@ class RadioSet(Container):
         ]
         super().__init__(*self._buttons)
 
-    def on_radio_button_selected(self, event: RadioButton.Selected) -> None:
-        """Respond to a radio button in the set being selected be the user.
+    def on_radio_button_changed(self, event: RadioButton.Changed) -> None:
+        """Respond to the value of a button in the set being changed.
 
         Args:
-            event: The event being raised.
+            event: The event.
         """
-        # For each of the buttons we're responsible for...
-        for button in self._buttons:
-            # ...if it's on and it's not the selected button...
-            if button.value and button != event.input:
-                # ...turn it off.
-                button.value = False
-                break
+        # If the button is changing to be the pressed button...
+        if event.input.value:
+            # ...look the button that was previously the pressed one and
+            # unpress it.
+            for button in self._buttons:
+                if button.value and button != event.input:
+                    button.value = False
+                    break
