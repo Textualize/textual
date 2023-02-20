@@ -54,6 +54,14 @@ class RadioSet(Container):
 
         super().__init__(*self._buttons, name=name, id=id, classes=classes)
 
+    def on_mount(self) -> None:
+        """Set up the radio group for use after the DOM is loaded."""
+        # The assumption here is that we should always start out with at
+        # least one button pressed. So, if there isn't a pressed button...
+        if self._buttons and not any(button.value for button in self._buttons):
+            # ...press the first one.
+            self._buttons[0].value = True
+
     def on_radio_button_changed(self, event: RadioButton.Changed) -> None:
         """Respond to the value of a button in the set being changed.
 
