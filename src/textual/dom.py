@@ -348,7 +348,7 @@ class DOMNode(MessagePump):
         # Note that self.screen may not be the same as self.app.screen
         from .screen import Screen
 
-        node = self
+        node: MessagePump | None = self
         while node is not None and not isinstance(node, Screen):
             node = node._parent
         if not isinstance(node, Screen):
