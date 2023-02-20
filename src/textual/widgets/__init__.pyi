@@ -14,6 +14,7 @@ from ._markdown import MarkdownViewer as MarkdownViewer
 from ._placeholder import Placeholder as Placeholder
 from ._pretty import Pretty as Pretty
 from ._radio_button import RadioButton as RadioButton
+from ._radio_set import RadioSet as RadioSet
 from ._static import Static as Static
 from ._switch import Switch as Switch
 from ._text_log import TextLog as TextLog

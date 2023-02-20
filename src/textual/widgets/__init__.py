@@ -24,6 +24,7 @@ if typing.TYPE_CHECKING:
     from ._placeholder import Placeholder
     from ._pretty import Pretty
     from ._radio_button import RadioButton
+    from ._radio_set import RadioSet
     from ._static import Static
     from ._switch import Switch
     from ._text_log import TextLog
@@ -47,6 +48,7 @@ __all__ = [
     "Placeholder",
     "Pretty",
     "RadioButton",
+    "RadioSet",
     "Static",
     "Switch",
     "TextLog",
