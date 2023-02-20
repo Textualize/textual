@@ -28,6 +28,19 @@ class ToggleButton(Static, can_focus=True):
     | enter,space | Toggle the value. |
     """
 
+    COMPONENT_CLASSES: ClassVar[set[str]] = {
+        "toggle--label",
+        "toggle--button-sides",
+        "toggle--button-inner",
+    }
+    """
+    | Class | Description |
+    | :- | :- |
+    | `toggle--label` | Targets the text label of the toggle button. |
+    | `toggle--button-sides` | Targets the side characters of the toggle button. |
+    | `toggle--button-inner` | Targets the inner character of the toggle button. |
+    """
+
     DEFAULT_CSS = """
     ToggleButton:hover {
         text-style: bold;
@@ -91,10 +104,12 @@ class ToggleButton(Static, can_focus=True):
     @property
     def _button(self) -> Text:
         """The button, reflecting the current value."""
+        side_style = self.get_component_rich_style("toggle--button-sides")
+        inner_style = self.get_component_rich_style("toggle--button-inner")
         return Text.assemble(
-            self.button_prefix,
-            (self.button_on if self.value else self.button_off),
-            self.button_suffix,
+            Text(self.button_prefix, style=side_style),
+            Text(self.button_on if self.value else self.button_off, style=inner_style),
+            Text(self.button_suffix, style=side_style),
         )
 
     def render(self) -> RenderResult:
@@ -104,8 +119,11 @@ class ToggleButton(Static, can_focus=True):
             The content to render for the widget.
         """
         button = self._button
-        label = self.label
-        spacer = " " if self.label else ""
+        label = Text(self.label, style=self.get_component_rich_style("toggle--label"))
+        spacer = Text(
+            " " if self.label else "",
+            style=self.get_component_rich_style("toggle--label"),
+        )
         return (
             Text.assemble(button, spacer, label)
             if self.button_first
