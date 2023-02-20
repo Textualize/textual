@@ -11,7 +11,7 @@ from rich.markdown import Markdown
 
 from textual.app import App, ComposeResult
 from textual.containers import Content
-from textual.widgets import Static, Input
+from textual.widgets import Input, Static
 
 
 class DictionaryApp(App):
@@ -21,7 +21,8 @@ class DictionaryApp(App):
 
     def compose(self) -> ComposeResult:
         yield Input(placeholder="Search for a word")
-        yield Content(Static(id="results"), id="results-container")
+        with Content(id="results-container"):
+            yield Static(id="results")
 
     def on_mount(self) -> None:
         """Called when app starts."""
