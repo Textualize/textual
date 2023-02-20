@@ -651,14 +651,14 @@ class Styles(StylesBase):
         self._updates += 1
         self._rules.clear()  # type: ignore
 
-    def merge(self, other: Styles) -> None:
+    def merge(self, other: StylesBase) -> None:
         """Merge values from another Styles.
 
         Args:
             other: A Styles object.
         """
         self._updates += 1
-        self._rules.update(other._rules)
+        self._rules.update(other.get_rules())
 
     def merge_rules(self, rules: RulesMap) -> None:
         self._updates += 1
@@ -1061,7 +1061,7 @@ class RenderStyles(StylesBase):
     def refresh(self, *, layout: bool = False, children: bool = False) -> None:
         self._inline_styles.refresh(layout=layout, children=children)
 
-    def merge(self, other: Styles) -> None:
+    def merge(self, other: StylesBase) -> None:
         """Merge values from another Styles.
 
         Args:
