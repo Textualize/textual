@@ -134,7 +134,6 @@ class DOMNode(MessagePump):
         self._classes.update(_classes)
 
         self._nodes: NodeList = NodeList()
-        self._composing: bool = False
         self._css_styles: Styles = Styles(self)
         self._inline_styles: Styles = Styles(self)
         self.styles: RenderStyles = RenderStyles(
