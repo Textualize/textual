@@ -42,7 +42,11 @@ class RadioSet(Container):
 
         # Build the internal list of buttons. Here, if we're given a
         # RadioButton, we use it as-is; otherwise we spin one up from the
-        # given string.
+        # given string. We could, of course, just use the children property
+        # to do this as we're guaranteeing that everything within here is a
+        # RadioButton, but doing it this way makes subsequent type issues
+        # less of a problem *and* it's a guard against a developer doing a
+        # sneaky mount on us after the fact.
         self._buttons = [
             (button if isinstance(button, RadioButton) else RadioButton(button))
             for button in buttons
