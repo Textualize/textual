@@ -1,8 +1,6 @@
 poetry run mypy src/textual
 src/textual/_two_way_dict.py:41: error: Incompatible return value type (got "Optional[Value]", expected "Value")  [return-value]
 src/textual/_two_way_dict.py:52: error: Incompatible return value type (got "Optional[Key]", expected "Key")  [return-value]
-src/textual/css/parse.py:278: error: Item "None" of "Optional[Token]" has no attribute "name"  [union-attr]
-src/textual/css/parse.py:279: error: Incompatible types in "yield" (actual type "Optional[Token]", expected type "Token")  [misc]
 src/textual/dom.py:794: error: Incompatible return value type (got "DOMQuery[<nothing>]", expected "Union[DOMQuery[Widget], DOMQuery[ExpectType]]")  [return-value]
 src/textual/widget.py:433: error: "DOMNode" has no attribute "get_child_by_id"  [attr-defined]
 src/textual/widget.py:706: error: Argument 1 to "_to_widget" has incompatible type "Union[int, Widget, None]"; expected "Union[int, Widget]"  [arg-type]
@@ -62,4 +60,4 @@ src/textual/demo.py:221: error: "App[Any]" has no attribute "add_note"  [attr-de
 src/textual/demo.py:276: error: "App[Any]" has no attribute "add_note"  [attr-defined]
 src/textual/cli/previews/easing.py:102: error: Argument "easing" to "animate" of "App" has incompatible type "Optional[str]"; expected "Union[Callable[[float], float], str]"  [arg-type]
 src/textual/cli/previews/easing.py:111: error: "MessageTarget" has no attribute "id"  [attr-defined]
-Found 62 errors in 16 files (checked 152 source files)
+Found 60 errors in 15 files (checked 152 source files)
