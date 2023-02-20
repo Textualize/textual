@@ -34,6 +34,7 @@ from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text
 from rich.traceback import Traceback
+from typing_extensions import Self
 
 from . import errors, events, messages
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
@@ -365,8 +366,10 @@ class Widget(DOMNode):
     def offset(self, offset: Offset) -> None:
         self.styles.offset = ScalarOffset.from_offset(offset)
 
-    def __enter__(self) -> None:
+    def __enter__(self) -> Self:
+        """Use as context manager when composing."""
         self.app._compose_stacks[-1].append(self)
+        return self
 
     def __exit__(
         self,
@@ -374,6 +377,7 @@ class Widget(DOMNode):
         exc_val: BaseException | None,
         exc_tb: TracebackType | None,
     ) -> None:
+        """Exit compose context manager."""
         compose_stack = self.app._compose_stacks[-1]
         composed = compose_stack.pop()
         if compose_stack:
