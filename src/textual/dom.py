@@ -24,7 +24,7 @@ from rich.tree import Tree
 from ._context import NoActiveAppError
 from ._node_list import NodeList
 from ._types import CallbackType
-from .binding import Bindings, BindingType
+from .binding import Binding, Bindings, BindingType
 from .color import BLACK, WHITE, Color
 from .css._error_tools import friendly_list
 from .css.constants import VALID_DISPLAY, VALID_VISIBILITY
@@ -269,7 +269,7 @@ class DOMNode(MessagePump):
                         base.__dict__.get("BINDINGS", []),
                     )
                 )
-        keys = {}
+        keys: dict[str, Binding] = {}
         for bindings_ in bindings:
             keys.update(bindings_.keys)
         return Bindings(keys.values())
