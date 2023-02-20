@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 from ..containers import Container
+from ..message import Message
 from ..widget import WidgetError
 from ._radio_button import RadioButton
+from ._toggle import ToggleButton
 
 
 class RadioSet(Container):
@@ -62,6 +64,24 @@ class RadioSet(Container):
             # ...press the first one.
             self._buttons[0].value = True
 
+    class Changed(Message, bubble=True):
+        """Posted when the pressed button in the set changes."""
+
+        def __init__(self, sender: RadioSet, pressed: ToggleButton) -> None:
+            """Initialise the message.
+
+            Args:
+                sender: The radio set sending the message.
+                pressed: The radio button that was pressed.
+            """
+            super().__init__(sender)
+            self.input = sender
+            """A reference to the `RadioSet` that was changed."""
+            self.pressed = pressed
+            """The `RadioButton` that was pressed to make the change."""
+            self.index = sender.pressed_index
+            """The index of the `RadioButton` that was pressed to make the change."""
+
     def on_radio_button_changed(self, event: RadioButton.Changed) -> None:
         """Respond to the value of a button in the set being changed.
 
@@ -70,8 +90,11 @@ class RadioSet(Container):
         """
         # If the button is changing to be the pressed button...
         if event.input.value:
-            # ...look for the button that was previously the pressed one and
-            # unpress it.
+            # ...send off a message to say that the pressed state has
+            # changed.
+            self.post_message_no_wait(self.Changed(self, event.input))
+            # ...then look for the button that was previously the pressed
+            # one and unpress it.
             for button in self._buttons:
                 if button.value and button != event.input:
                     button.value = False
