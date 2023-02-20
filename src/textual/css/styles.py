@@ -335,6 +335,9 @@ class StylesBase(ABC):
             if not isinstance(value, (Scalar, ScalarOffset)):
                 return None
 
+            from ..widget import Widget
+
+            assert isinstance(self.node, Widget)
             return ScalarAnimation(
                 self.node,
                 self,
