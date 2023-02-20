@@ -45,12 +45,10 @@ class ColorsView(Vertical):
                 yield Label(f'"{color_name}"')
                 for level in LEVELS:
                     color = f"{color_name}-{level}" if level else color_name
-                    yield ColorItem(
-                        ColorBar(f"${color}", classes="text label"),
-                        ColorBar("$text-muted", classes="muted"),
-                        ColorBar("$text-disabled", classes="disabled"),
-                        classes=color,
-                    )
+                    with ColorItem(classes=color):
+                        yield ColorBar(f"${color}", classes="text label")
+                        yield ColorBar("$text-muted", classes="muted")
+                        yield ColorBar("$text-disabled", classes="disabled")
 
 
 class ColorsApp(App):
