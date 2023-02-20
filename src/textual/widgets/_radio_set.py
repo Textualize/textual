@@ -70,7 +70,7 @@ class RadioSet(Container):
         """
         # If the button is changing to be the pressed button...
         if event.input.value:
-            # ...look the button that was previously the pressed one and
+            # ...look for the button that was previously the pressed one and
             # unpress it.
             for button in self._buttons:
                 if button.value and button != event.input:
