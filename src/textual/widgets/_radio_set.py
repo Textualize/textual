@@ -9,11 +9,20 @@ from ._radio_button import RadioButton
 class RadioSet(Container):
     """Widget for grouping a collection of radio buttons into a set."""
 
-    def __init__(self, *buttons: str | RadioButton) -> None:
+    def __init__(
+        self,
+        *buttons: str | RadioButton,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+    ) -> None:
         """Initialise the radio set.
 
         Args:
             buttons: A collection of labels or `RadioButton`s to group together.
+            name: The name of the radio set.
+            id: The ID of the radio set in the DOM.
+            classes: The CSS classes of the radio set.
 
         Note:
             When a `str` label is provided, a `RadioButton` will be created from it.
@@ -22,7 +31,7 @@ class RadioSet(Container):
             (button if isinstance(button, RadioButton) else RadioButton(button))
             for button in buttons
         ]
-        super().__init__(*self._buttons)
+        super().__init__(*self._buttons, name=name, id=id, classes=classes)
 
     def on_radio_button_changed(self, event: RadioButton.Changed) -> None:
         """Respond to the value of a button in the set being changed.
