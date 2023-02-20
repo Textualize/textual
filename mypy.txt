@@ -1,8 +1,6 @@
 poetry run mypy src/textual
 src/textual/_two_way_dict.py:41: error: Incompatible return value type (got "Optional[Value]", expected "Value")  [return-value]
 src/textual/_two_way_dict.py:52: error: Incompatible return value type (got "Optional[Key]", expected "Key")  [return-value]
-src/textual/reactive.py:211: error: Argument "callback" to "Callback" has incompatible type "partial[None]"; expected "Callable[[], Awaitable[None]]"  [arg-type]
-src/textual/reactive.py:211: note: "partial[None].__call__" has type "Callable[[VarArg(Any), KwArg(Any)], None]"
 src/textual/_xterm_parser.py:211: error: Incompatible types in assignment (expression has type "Optional[Event]", variable has type "Key")  [assignment]
 src/textual/css/scalar_animation.py:38: error: "DOMNode" has no attribute "outer_size"  [attr-defined]
 src/textual/css/_style_properties.py:546: error: Argument 1 to "len" has incompatible type "Union[int, Tuple[int], Tuple[int, int], Tuple[int, int, int, int]]"; expected "Sized"  [arg-type]
@@ -76,4 +74,4 @@ src/textual/demo.py:221: error: "App[Any]" has no attribute "add_note"  [attr-de
 src/textual/demo.py:276: error: "App[Any]" has no attribute "add_note"  [attr-defined]
 src/textual/cli/previews/easing.py:102: error: Argument "easing" to "animate" of "App" has incompatible type "Optional[str]"; expected "Union[Callable[[float], float], str]"  [arg-type]
 src/textual/cli/previews/easing.py:111: error: "MessageTarget" has no attribute "id"  [attr-defined]
-Found 71 errors in 21 files (checked 152 source files)
+Found 70 errors in 20 files (checked 152 source files)
