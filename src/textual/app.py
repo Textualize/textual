@@ -389,8 +389,8 @@ class App(Generic[ReturnType], DOMNode):
         self._installed_screens: dict[str, Screen | Callable[[], Screen]] = {}
         self._installed_screens.update(**self.SCREENS)
 
-        self._compose_stack: list[Widget] = []
-        self._composed: list[Widget] = []
+        self._compose_stacks: list[list[Widget]] = []
+        self._composed: list[list[Widget]] = []
 
         self.devtools: DevtoolsClient | None = None
         if "devtools" in self.features:

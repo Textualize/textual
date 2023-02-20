@@ -366,7 +366,7 @@ class Widget(DOMNode):
         self.styles.offset = ScalarOffset.from_offset(offset)
 
     def __enter__(self) -> None:
-        self.app._compose_stack.append(self)
+        self.app._compose_stacks[-1].append(self)
 
     def __exit__(
         self,
@@ -374,12 +374,12 @@ class Widget(DOMNode):
         exc_val: BaseException | None,
         exc_tb: TracebackType | None,
     ) -> None:
-        compose_stack = self.app._compose_stack
+        compose_stack = self.app._compose_stacks[-1]
         composed = compose_stack.pop()
         if compose_stack:
             compose_stack[-1]._nodes._append(composed)
         else:
-            self.app._composed.append(composed)
+            self.app._composed[-1].append(composed)
 
     ExpectType = TypeVar("ExpectType", bound="Widget")
 

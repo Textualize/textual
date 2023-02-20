@@ -18,15 +18,22 @@ def compose(node: App | Widget) -> list[Widget]:
     """
     app = node.app
     nodes: list[Widget] = []
-    for child in node.compose():
+    compose_stack: list[Widget] = []
+    composed: list[Widget] = []
+    app._compose_stacks.append(compose_stack)
+    app._composed.append(composed)
+    try:
+        for child in node.compose():
+            if app._composed:
+                nodes.extend(composed)
+                composed.clear()
+            if compose_stack:
+                compose_stack[-1]._nodes._append(child)
+            else:
+                nodes.append(child)
         if app._composed:
-            nodes.extend(app._composed)
+            nodes.extend(composed)
             app._composed.clear()
-        if app._compose_stack:
-            app._compose_stack[-1]._nodes._append(child)
-        else:
-            nodes.append(child)
-    if app._composed:
-        nodes.extend(app._composed)
-        app._composed.clear()
+    finally:
+        app._compose_stacks.pop()
     return nodes
