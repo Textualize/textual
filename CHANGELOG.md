@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Added alternative method of composing Widgets
+- Added alternative method of composing Widgets https://github.com/Textualize/textual/pull/1847
 
 ## [0.11.1] - 2023-02-17
 
