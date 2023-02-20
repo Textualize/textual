@@ -1,0 +1,12 @@
+Container {
+    height: 1fr;
+    align: center middle;
+}
+
+Container.top {
+    background: $boost;
+}
+
+Input#byte {
+    width: 16;
+}

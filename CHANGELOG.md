@@ -151,8 +151,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `DataTable` cursors not resetting to origin on `clear()` https://github.com/Textualize/textual/pull/1601
 - Fixed TextLog wrapping issue https://github.com/Textualize/textual/issues/1554
 - Fixed issue with TextLog not writing anything before layout https://github.com/Textualize/textual/issues/1498
+<<<<<<< Updated upstream
 - Fixed an exception when populating a child class of `ListView` purely from `compose` https://github.com/Textualize/textual/issues/1588
 - Fixed freeze in tests https://github.com/Textualize/textual/issues/1608
+=======
+- Fixed minus not displaying as symbol https://github.com/Textualize/textual/issues/1482
+>>>>>>> Stashed changes
 
 ## [0.9.1] - 2022-12-30
 
