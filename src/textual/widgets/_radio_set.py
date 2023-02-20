@@ -76,3 +76,23 @@ class RadioSet(Container):
                 if button.value and button != event.input:
                     button.value = False
                     break
+
+    @property
+    def pressed_index(self) -> int:
+        """The index of the currently-pressed button.
+
+        Note:
+            If no button is pressed the value will be `-1`.
+        """
+        for index, button in enumerate(self._buttons):
+            if button.value:
+                return index
+        return -1
+
+    @property
+    def pressed_button(self) -> RadioButton | None:
+        """The currently-pressed button, or `None` none are pressed."""
+        for button in self._buttons:
+            if button.value:
+                return button
+        return None
