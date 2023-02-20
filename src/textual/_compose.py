@@ -24,16 +24,16 @@ def compose(node: App | Widget) -> list[Widget]:
     app._composed.append(composed)
     try:
         for child in node.compose():
-            if app._composed:
+            if composed:
                 nodes.extend(composed)
                 composed.clear()
             if compose_stack:
                 compose_stack[-1]._nodes._append(child)
             else:
                 nodes.append(child)
-        if app._composed:
+        if composed:
             nodes.extend(composed)
-            app._composed.clear()
+            composed.clear()
     finally:
         app._compose_stacks.pop()
     return nodes
