@@ -1209,9 +1209,9 @@ class TestTypeNames:
             stylesheet.parse()
 
     def test_combined_type_no_number(self):
-        for seperator in " >,":
+        for separator in " >,":
             stylesheet = Stylesheet()
-            stylesheet.add_source(f"StartType {seperator} TestType {{}}")
+            stylesheet.add_source(f"StartType {separator} TestType {{}}")
             assert len(stylesheet.rules) == 1
 
     def test_combined_type_with_number(self):
