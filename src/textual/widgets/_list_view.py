@@ -158,7 +158,7 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
                 the DOM has been updated to reflect all children being removed.
         """
         await_remove = self.query("ListView > ListItem").remove()
-        self.index = None
+        self.index = 0
         return await_remove
 
     def action_select_cursor(self) -> None:
