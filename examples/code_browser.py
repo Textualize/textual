@@ -40,7 +40,8 @@ class CodeBrowser(App):
         yield Header()
         with Container():
             yield DirectoryTree(path, id="tree-view")
-            yield Vertical(Static(id="code", expand=True), id="code-view")
+            with Vertical(id="code-view"):
+                yield Static(id="code", expand=True)
         yield Footer()
 
     def on_mount(self, event: events.Mount) -> None:
