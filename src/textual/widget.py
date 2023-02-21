@@ -41,6 +41,7 @@ from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
 from ._asyncio import create_task
 from ._compose import compose
+from ._cache import FIFOCache
 from ._context import active_app
 from ._easing import DEFAULT_SCROLL_EASING
 from ._layout import Layout
@@ -228,6 +229,8 @@ class Widget(DOMNode):
     """Rich renderable may shrink."""
     auto_links = Reactive(True)
     """Widget will highlight links automatically."""
+    disabled = Reactive(False)
+    """The disabled state of the widget. `True` if disabled, `False` if not."""
 
     hover_style: Reactive[Style] = Reactive(Style, repaint=False)
     highlight_link_id: Reactive[str] = Reactive("")
@@ -238,11 +241,13 @@ class Widget(DOMNode):
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
+        disabled: bool = False,
     ) -> None:
         self._size = Size(0, 0)
         self._container_size = Size(0, 0)
         self._layout_required = False
         self._repaint_required = False
+        self._scroll_required = False
         self._default_layout = VerticalLayout()
         self._animate: BoundAnimator | None = None
         self.highlight_style: Style | None = None
@@ -262,8 +267,9 @@ class Widget(DOMNode):
         self._content_width_cache: tuple[object, int] = (None, 0)
         self._content_height_cache: tuple[object, int] = (None, 0)
 
-        self._arrangement_cache_key: tuple[Size, int] = (Size(), -1)
-        self._cached_arrangement: DockArrangeResult | None = None
+        self._arrangement_cache: FIFOCache[
+            tuple[Size, int], DockArrangeResult
+        ] = FIFOCache(4)
 
         self._styles_cache = StylesCache()
         self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
@@ -280,6 +286,7 @@ class Widget(DOMNode):
             raise WidgetError("A widget can't be its own parent")
 
         self._add_children(*children)
+        self.disabled = disabled
 
     virtual_size = Reactive(Size(0, 0), layout=True)
     auto_width = Reactive(True)
@@ -495,14 +502,11 @@ class Widget(DOMNode):
         assert self.is_container
 
         cache_key = (size, self._nodes._updates)
-        if (
-            self._arrangement_cache_key == cache_key
-            and self._cached_arrangement is not None
-        ):
-            return self._cached_arrangement
+        cached_result = self._arrangement_cache.get(cache_key)
+        if cached_result is not None:
+            return cached_result
 
-        self._arrangement_cache_key = cache_key
-        arrangement = self._cached_arrangement = arrange(
+        arrangement = self._arrangement_cache[cache_key] = arrange(
             self, self._nodes, size, self.screen.size
         )
 
@@ -510,7 +514,7 @@ class Widget(DOMNode):
 
     def _clear_arrangement_cache(self) -> None:
         """Clear arrangement cache, forcing a new arrange operation."""
-        self._cached_arrangement = None
+        self._arrangement_cache.clear()
 
     def _get_virtual_dom(self) -> Iterable[Widget]:
         """Get widgets not part of the DOM.
@@ -1196,6 +1200,20 @@ class Widget(DOMNode):
         return self.virtual_region.grow(self.styles.margin)
 
     @property
+    def _self_or_ancestors_disabled(self) -> bool:
+        """Is this widget or any of its ancestors disabled?"""
+        return any(
+            node.disabled
+            for node in self.ancestors_with_self
+            if isinstance(node, Widget)
+        )
+
+    @property
+    def focusable(self) -> bool:
+        """Can this widget currently receive focus?"""
+        return self.can_focus and not self._self_or_ancestors_disabled
+
+    @property
     def focusable_children(self) -> list[Widget]:
         """Get the children which may be focused.
 
@@ -1732,7 +1750,7 @@ class Widget(DOMNode):
 
         """
         return self.scroll_to(
-            y=self.scroll_target_y - self.container_size.height,
+            y=self.scroll_y - self.container_size.height,
             animate=animate,
             speed=speed,
             duration=duration,
@@ -1764,7 +1782,7 @@ class Widget(DOMNode):
 
         """
         return self.scroll_to(
-            y=self.scroll_target_y + self.container_size.height,
+            y=self.scroll_y + self.container_size.height,
             animate=animate,
             speed=speed,
             duration=duration,
@@ -1798,7 +1816,7 @@ class Widget(DOMNode):
         if speed is None and duration is None:
             duration = 0.3
         return self.scroll_to(
-            x=self.scroll_target_x - self.container_size.width,
+            x=self.scroll_x - self.container_size.width,
             animate=animate,
             speed=speed,
             duration=duration,
@@ -1832,7 +1850,7 @@ class Widget(DOMNode):
         if speed is None and duration is None:
             duration = 0.3
         return self.scroll_to(
-            x=self.scroll_target_x + self.container_size.width,
+            x=self.scroll_x + self.container_size.width,
             animate=animate,
             speed=speed,
             duration=duration,
@@ -2102,6 +2120,14 @@ class Widget(DOMNode):
             Names of the pseudo classes.
 
         """
+        node = self
+        while isinstance(node, Widget):
+            if node.disabled:
+                yield "disabled"
+                break
+            node = node._parent
+        else:
+            yield "enabled"
         if self.mouse_over:
             yield "hover"
         if self.has_focus:
@@ -2149,21 +2175,29 @@ class Widget(DOMNode):
     def watch_mouse_over(self, value: bool) -> None:
         """Update from CSS if mouse over state changes."""
         if self._has_hover_style:
-            self.app.update_styles(self)
+            self._update_styles()
 
     def watch_has_focus(self, value: bool) -> None:
         """Update from CSS if has focus state changes."""
-        self.app.update_styles(self)
+        self._update_styles()
+
+    def watch_disabled(self) -> None:
+        """Update the styles of the widget and its children when disabled is toggled."""
+        self._update_styles()
 
     def _size_updated(
-        self, size: Size, virtual_size: Size, container_size: Size
-    ) -> None:
+        self, size: Size, virtual_size: Size, container_size: Size, layout: bool = True
+    ) -> bool:
         """Called when the widget's size is updated.
 
         Args:
             size: Screen size.
             virtual_size: Virtual (scrollable) size.
             container_size: Container size (size of parent).
+            layout: Perform layout if required.
+
+        Returns:
+            True if anything changed, or False if nothing changed.
         """
         if (
             self._size != size
@@ -2171,11 +2205,16 @@ class Widget(DOMNode):
             or self._container_size != container_size
         ):
             self._size = size
-            self.virtual_size = virtual_size
+            if layout:
+                self.virtual_size = virtual_size
+            else:
+                self._reactive_virtual_size = virtual_size
             self._container_size = container_size
             if self.is_scrollable:
                 self._scroll_update(virtual_size)
-            self.refresh()
+            return True
+        else:
+            return False
 
     def _scroll_update(self, virtual_size: Size) -> None:
         """Update scrollbars visibility and dimensions.
@@ -2286,7 +2325,7 @@ class Widget(DOMNode):
 
     def _refresh_scroll(self) -> None:
         """Refreshes the scroll position."""
-        self._layout_required = True
+        self._scroll_required = True
         self.check_idle()
 
     def refresh(
@@ -2313,8 +2352,7 @@ class Widget(DOMNode):
             repaint: Repaint the widget (will call render() again). Defaults to True.
             layout: Also layout widgets in the view. Defaults to False.
         """
-
-        if layout:
+        if layout and not self._layout_required:
             self._layout_required = True
             for ancestor in self.ancestors:
                 if not isinstance(ancestor, Widget):
@@ -2395,6 +2433,9 @@ class Widget(DOMNode):
             except NoScreen:
                 pass
             else:
+                if self._scroll_required:
+                    self._scroll_required = False
+                    screen.post_message_no_wait(messages.UpdateScroll(self))
                 if self._repaint_required:
                     self._repaint_required = False
                     screen.post_message_no_wait(messages.Update(self, self))
@@ -2442,6 +2483,18 @@ class Widget(DOMNode):
         Mouse events will only be sent when the mouse is over the widget.
         """
         self.app.capture_mouse(None)
+
+    def check_message_enabled(self, message: Message) -> bool:
+        # Do the normal checking and get out if that fails.
+        if not super().check_message_enabled(message):
+            return False
+        # Otherwise, if this is a mouse event, the widget receiving the
+        # event must not be disabled at this moment.
+        return (
+            not self._self_or_ancestors_disabled
+            if isinstance(message, (events.MouseEvent, events.Enter, events.Leave))
+            else True
+        )
 
     async def broker_event(self, event_name: str, event: events.Event) -> bool:
         return await self.app._broker_event(event_name, event, default_namespace=self)
@@ -2501,11 +2554,11 @@ class Widget(DOMNode):
 
     def _on_descendant_blur(self, event: events.DescendantBlur) -> None:
         if self._has_focus_within:
-            self.app.update_styles(self)
+            self._update_styles()
 
     def _on_descendant_focus(self, event: events.DescendantBlur) -> None:
         if self._has_focus_within:
-            self.app.update_styles(self)
+            self._update_styles()
 
     def _on_mouse_scroll_down(self, event: events.MouseScrollDown) -> None:
         if event.ctrl or event.shift:

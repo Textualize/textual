@@ -143,24 +143,25 @@ class Reactive(Generic[ReactiveType]):
         self.name = name
         # The internal name where the attribute's value is stored
         self.internal_name = f"_reactive_{name}"
+        self.compute_name = f"compute_{name}"
         default = self._default
         setattr(owner, f"_default_{name}", default)
 
     def __get__(self, obj: Reactable, obj_type: type[object]) -> ReactiveType:
-        _rich_traceback_omit = True
+        internal_name = self.internal_name
+        if not hasattr(obj, internal_name):
+            self._initialize_reactive(obj, self.name)
 
-        self._initialize_reactive(obj, self.name)
-
-        value: ReactiveType
-        compute_method = getattr(self, f"compute_{self.name}", None)
-        if compute_method is not None:
-            old_value = getattr(obj, self.internal_name)
-            value = getattr(obj, f"compute_{self.name}")()
-            setattr(obj, self.internal_name, value)
+        if hasattr(obj, self.compute_name):
+            value: ReactiveType
+            old_value = getattr(obj, internal_name)
+            _rich_traceback_omit = True
+            value = getattr(obj, self.compute_name)()
+            setattr(obj, internal_name, value)
             self._check_watchers(obj, self.name, old_value)
+            return value
         else:
-            value = getattr(obj, self.internal_name)
-        return value
+            return getattr(obj, internal_name)
 
     def __set__(self, obj: Reactable, value: ReactiveType) -> None:
         _rich_traceback_omit = True

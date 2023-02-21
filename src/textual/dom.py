@@ -872,6 +872,16 @@ class DOMNode(MessagePump):
         else:
             self.remove_class(*class_names)
 
+    def _update_styles(self) -> None:
+        """Request an update of this node's styles.
+
+        Should be called whenever CSS classes / pseudo classes change.
+        """
+        try:
+            self.app.update_styles(self)
+        except NoActiveAppError:
+            pass
+
     def add_class(self, *class_names: str) -> None:
         """Add class names to this Node.
 
@@ -884,10 +894,7 @@ class DOMNode(MessagePump):
         self._classes.update(class_names)
         if old_classes == self._classes:
             return
-        try:
-            self.app.update_styles(self)
-        except NoActiveAppError:
-            pass
+        self._update_styles()
 
     def remove_class(self, *class_names: str) -> None:
         """Remove class names from this Node.
@@ -900,10 +907,7 @@ class DOMNode(MessagePump):
         self._classes.difference_update(class_names)
         if old_classes == self._classes:
             return
-        try:
-            self.app.update_styles(self)
-        except NoActiveAppError:
-            pass
+        self._update_styles()
 
     def toggle_class(self, *class_names: str) -> None:
         """Toggle class names on this Node.
@@ -916,10 +920,7 @@ class DOMNode(MessagePump):
         self._classes.symmetric_difference_update(class_names)
         if old_classes == self._classes:
             return
-        try:
-            self.app.update_styles(self)
-        except NoActiveAppError:
-            pass
+        self._update_styles()
 
     def has_pseudo_class(self, *class_names: str) -> bool:
         """Check for pseudo classes (such as hover, focus etc)

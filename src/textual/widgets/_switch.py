@@ -100,6 +100,7 @@ class Switch(Widget, can_focus=True):
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
+        disabled: bool = False,
     ):
         """Initialise the switch.
 
@@ -109,8 +110,9 @@ class Switch(Widget, can_focus=True):
             name: The name of the switch.
             id: The ID of the switch in the DOM.
             classes: The CSS classes of the switch.
+            disabled: Whether the switch is disabled or not.
         """
-        super().__init__(name=name, id=id, classes=classes)
+        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         if value:
             self.slider_pos = 1.0
             self._reactive_value = value
