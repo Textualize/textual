@@ -72,7 +72,7 @@ class Placeholder(Widget):
     _COLORS = cycle(_PLACEHOLDER_BACKGROUND_COLORS)
     _SIZE_RENDER_TEMPLATE = "[b]{} x {}[/b]"
 
-    variant: Reactive[PlaceholderVariant] = reactive("default")
+    variant: Reactive[PlaceholderVariant] = reactive[PlaceholderVariant]("default")
 
     _renderables: dict[PlaceholderVariant, str]
 
