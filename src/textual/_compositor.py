@@ -308,6 +308,9 @@ class Compositor:
             parent: The root widget.
             size: Size of the area to be filled.
 
+        Returns:
+            Set of widgets that were exposed by the scroll.
+
         """
         self._cuts = None
         self._layers = None

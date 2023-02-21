@@ -18,8 +18,11 @@ ArrangeResult: TypeAlias = "tuple[list[WidgetPlacement], set[Widget]]"
 @dataclass
 class DockArrangeResult:
     placements: list[WidgetPlacement]
+    """A `WidgetPlacement` for every widget to describe it's location on screen."""
     widgets: set[Widget]
+    """A set of widgets in the arrangement."""
     spacing: Spacing
+    """Shared spacing around the widgets."""
 
     _spatial_map: SpatialMap[WidgetPlacement] | None = None
 
