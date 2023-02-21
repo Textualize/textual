@@ -274,7 +274,8 @@ def substitute_references(
 
             while True:
                 token = next(iter_tokens, None)
-                if token is not None and token.name == "whitespace":
+                # TODO: Mypy error looks legit
+                if token.name == "whitespace":
                     yield token
                 else:
                     break
