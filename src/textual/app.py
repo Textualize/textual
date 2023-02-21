@@ -1783,6 +1783,7 @@ class App(Generic[ReturnType], DOMNode):
             await child._close_messages()
 
     async def _shutdown(self) -> None:
+        self._begin_update()  # Prevents any layout / repaint while shutting down
         driver = self._driver
         self._running = False
         if driver is not None:
@@ -1908,7 +1909,6 @@ class App(Generic[ReturnType], DOMNode):
         # Handle input events that haven't been forwarded
         # If the event has been forwarded it may have bubbled up back to the App
         if isinstance(event, events.Compose):
-            self.log(event)
             screen = Screen(id="_default")
             self._register(self, screen)
             self._screen_stack.append(screen)
