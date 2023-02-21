@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Added
+
+- Added `Widget.disabled` https://github.com/Textualize/textual/pull/1785
+
+### Fixed
+
+- Numbers in a descendant-combined selector no longer cause an error https://github.com/Textualize/textual/issues/1836
+
 ## [0.11.1] - 2023-02-17
 
 ### Fixed

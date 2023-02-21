@@ -225,6 +225,8 @@ class Widget(DOMNode):
     """Rich renderable may shrink."""
     auto_links = Reactive(True)
     """Widget will highlight links automatically."""
+    disabled = Reactive(False)
+    """The disabled state of the widget. `True` if disabled, `False` if not."""
 
     hover_style: Reactive[Style] = Reactive(Style, repaint=False)
     highlight_link_id: Reactive[str] = Reactive("")
@@ -235,6 +237,7 @@ class Widget(DOMNode):
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
+        disabled: bool = False,
     ) -> None:
         self._size = Size(0, 0)
         self._container_size = Size(0, 0)
@@ -277,6 +280,7 @@ class Widget(DOMNode):
             raise WidgetError("A widget can't be its own parent")
 
         self._add_children(*children)
+        self.disabled = disabled
 
     virtual_size = Reactive(Size(0, 0), layout=True)
     auto_width = Reactive(True)
@@ -1172,6 +1176,20 @@ class Widget(DOMNode):
             The virtual region of the Widget, inclusive of its margin.
         """
         return self.virtual_region.grow(self.styles.margin)
+
+    @property
+    def _self_or_ancestors_disabled(self) -> bool:
+        """Is this widget or any of its ancestors disabled?"""
+        return any(
+            node.disabled
+            for node in self.ancestors_with_self
+            if isinstance(node, Widget)
+        )
+
+    @property
+    def focusable(self) -> bool:
+        """Can this widget currently receive focus?"""
+        return self.can_focus and not self._self_or_ancestors_disabled
 
     @property
     def focusable_children(self) -> list[Widget]:
@@ -2080,6 +2098,14 @@ class Widget(DOMNode):
             Names of the pseudo classes.
 
         """
+        node = self
+        while isinstance(node, Widget):
+            if node.disabled:
+                yield "disabled"
+                break
+            node = node._parent
+        else:
+            yield "enabled"
         if self.mouse_over:
             yield "hover"
         if self.has_focus:
@@ -2127,11 +2153,15 @@ class Widget(DOMNode):
     def watch_mouse_over(self, value: bool) -> None:
         """Update from CSS if mouse over state changes."""
         if self._has_hover_style:
-            self.app.update_styles(self)
+            self._update_styles()
 
     def watch_has_focus(self, value: bool) -> None:
         """Update from CSS if has focus state changes."""
-        self.app.update_styles(self)
+        self._update_styles()
+
+    def watch_disabled(self) -> None:
+        """Update the styles of the widget and its children when disabled is toggled."""
+        self._update_styles()
 
     def _size_updated(
         self, size: Size, virtual_size: Size, container_size: Size
@@ -2421,6 +2451,18 @@ class Widget(DOMNode):
         """
         self.app.capture_mouse(None)
 
+    def check_message_enabled(self, message: Message) -> bool:
+        # Do the normal checking and get out if that fails.
+        if not super().check_message_enabled(message):
+            return False
+        # Otherwise, if this is a mouse event, the widget receiving the
+        # event must not be disabled at this moment.
+        return (
+            not self._self_or_ancestors_disabled
+            if isinstance(message, (events.MouseEvent, events.Enter, events.Leave))
+            else True
+        )
+
     async def broker_event(self, event_name: str, event: events.Event) -> bool:
         return await self.app._broker_event(event_name, event, default_namespace=self)
 
@@ -2479,11 +2521,11 @@ class Widget(DOMNode):
 
     def _on_descendant_blur(self, event: events.DescendantBlur) -> None:
         if self._has_focus_within:
-            self.app.update_styles(self)
+            self._update_styles()
 
     def _on_descendant_focus(self, event: events.DescendantBlur) -> None:
         if self._has_focus_within:
-            self.app.update_styles(self)
+            self._update_styles()
 
     def _on_mouse_scroll_down(self, event: events.MouseScrollDown) -> None:
         if event.ctrl or event.shift:

@@ -29,6 +29,7 @@ class DirectoryTree(Tree[DirEntry]):
         name: The name of the widget, or None for no name. Defaults to None.
         id: The ID of the widget in the DOM, or None for no ID. Defaults to None.
         classes: A space-separated list of classes, or None for no classes. Defaults to None.
+        disabled: Whether the directory tree is disabled or not.
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
@@ -87,6 +88,7 @@ class DirectoryTree(Tree[DirEntry]):
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
+        disabled: bool = False,
     ) -> None:
         self.path = path
         super().__init__(
@@ -95,6 +97,7 @@ class DirectoryTree(Tree[DirEntry]):
             name=name,
             id=id,
             classes=classes,
+            disabled=disabled,
         )
 
     def process_label(self, label: TextType):

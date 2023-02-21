@@ -159,11 +159,7 @@ class Screen(Widget):
 
     @property
     def focus_chain(self) -> list[Widget]:
-        """Get widgets that may receive focus, in focus order.
-
-        Returns:
-            List of Widgets in focus order.
-        """
+        """A list of widgets that may receive focus, in focus order."""
         widgets: list[Widget] = []
         add_widget = widgets.append
         stack: list[Iterator[Widget]] = [iter(self.focusable_children)]
@@ -177,7 +173,7 @@ class Screen(Widget):
             else:
                 if node.is_container and node.can_focus_children:
                     push(iter(node.focusable_children))
-                if node.can_focus:
+                if node.focusable:
                     add_widget(node)
 
         return widgets
@@ -314,7 +310,7 @@ class Screen(Widget):
             # It may have been made invisible
             # Move to a sibling if possible
             for sibling in widget.visible_siblings:
-                if sibling not in avoiding and sibling.can_focus:
+                if sibling not in avoiding and sibling.focusable:
                     self.set_focus(sibling)
                     break
             else:
@@ -351,7 +347,7 @@ class Screen(Widget):
                 self.focused.post_message_no_wait(events.Blur(self))
                 self.focused = None
             self.log.debug("focus was removed")
-        elif widget.can_focus:
+        elif widget.focusable:
             if self.focused != widget:
                 if self.focused is not None:
                     # Blur currently focused widget
@@ -547,7 +543,7 @@ class Screen(Widget):
             except errors.NoWidget:
                 self.set_focus(None)
             else:
-                if isinstance(event, events.MouseUp) and widget.can_focus:
+                if isinstance(event, events.MouseUp) and widget.focusable:
                     if self.focused is not widget:
                         self.set_focus(widget)
                         event.stop()
