@@ -1,7 +1,5 @@
 """Provides a check box widget."""
 
-from __future__ import annotations
-
 from ._toggle import ToggleButton
 
 
