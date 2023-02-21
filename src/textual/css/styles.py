@@ -969,9 +969,17 @@ class RenderStyles(StylesBase):
         self._rich_style: tuple[int, Style] | None = None
         self._gutter: tuple[int, Spacing] | None = None
 
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, RenderStyles):
+            return (
+                self._base_styles._rules == other._base_styles._rules
+                and self._inline_styles._rules == other._inline_styles._rules
+            )
+        return NotImplemented
+
     @property
     def _cache_key(self) -> int:
-        """A key key, that changes when any style is changed.
+        """A cache key, that changes when any style is changed.
 
         Returns:
             An opaque integer.
