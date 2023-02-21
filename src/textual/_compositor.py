@@ -167,6 +167,7 @@ class Compositor:
     def __init__(self) -> None:
         # A mapping of Widget on to its "render location" (absolute position / depth)
         self.map: CompositorMap = {}
+        self._full_map: CompositorMap | None = None
         self._layers: list[tuple[Widget, MapGeometry]] | None = None
 
         # All widgets considered in the arrangement
@@ -241,29 +242,27 @@ class Compositor:
             size: Size of the area to be filled.
 
         Returns:
-            Hidden shown and resized widgets.
+            Hidden, shown, and resized widgets.
         """
         self._cuts = None
         self._layers = None
         self._layers_visible = None
         self._visible_widgets = None
+        self._full_map = None
         self.root = parent
         self.size = size
 
         # Keep a copy of the old map because we're going to compare it with the update
-        old_map = self.map.copy()
+        old_map = self.map
         old_widgets = old_map.keys()
 
         map, widgets = self._arrange_root(parent, size)
-        new_widgets = map.keys()
 
-        # Newly visible widgets
-        shown_widgets = new_widgets - old_widgets
-        # Newly hidden widgets
-        hidden_widgets = old_widgets - new_widgets
+        new_widgets = map.keys()
 
         # Replace map and widgets
         self.map = map
+        self._full_map = map
         self.widgets = widgets
 
         # Contains widgets + geometry for every widget that changed (added, removed, or updated)
@@ -272,13 +271,7 @@ class Compositor:
         # Widgets in both new and old
         common_widgets = old_widgets & new_widgets
 
-        # Widgets with changed size
-        resized_widgets = {
-            widget
-            for widget, (region, *_) in changes
-            if (widget in common_widgets and old_map[widget].region[2:] != region[2:])
-        }
-
+        # Mark dirty regions.
         screen_region = size.region
         if screen_region not in self._dirty_regions:
             regions = {
@@ -291,11 +284,79 @@ class Compositor:
             }
             self._dirty_regions.update(regions)
 
+        resized_widgets = {
+            widget
+            for widget, (region, *_) in changes
+            if (widget in common_widgets and old_map[widget].region[2:] != region[2:])
+        }
+        # Newly visible widgets
+        shown_widgets = new_widgets - old_widgets
+        # Newly hidden widgets
+        hidden_widgets = self.widgets - widgets
         return ReflowResult(
             hidden=hidden_widgets,
             shown=shown_widgets,
             resized=resized_widgets,
         )
+
+    def reflow_visible(self, parent: Widget, size: Size) -> set[Widget]:
+        """Reflow only the visible children.
+
+        This is a fast-path for scrolling.
+
+        Args:
+            parent: The root widget.
+            size: Size of the area to be filled.
+
+        Returns:
+            Set of widgets that were exposed by the scroll.
+
+        """
+        self._cuts = None
+        self._layers = None
+        self._layers_visible = None
+        self._visible_widgets = None
+        self._full_map = None
+        self.root = parent
+        self.size = size
+
+        # Keep a copy of the old map because we're going to compare it with the update
+        old_map = self.map
+        map, widgets = self._arrange_root(parent, size, visible_only=True)
+
+        exposed_widgets = map.keys() - old_map.keys()
+        # Replace map and widgets
+        self.map = map
+        self.widgets = widgets
+
+        # Contains widgets + geometry for every widget that changed (added, removed, or updated)
+        changes = map.items() ^ old_map.items()
+
+        # Mark dirty regions.
+        screen_region = size.region
+        if screen_region not in self._dirty_regions:
+            regions = {
+                region
+                for region in (
+                    map_geometry.clip.intersection(map_geometry.region)
+                    for _, map_geometry in changes
+                )
+                if region
+            }
+            self._dirty_regions.update(regions)
+
+        return exposed_widgets
+
+    @property
+    def full_map(self) -> CompositorMap:
+        """Lazily built compositor map that covers all widgets."""
+        if self.root is None or not self.map:
+            return {}
+        if self._full_map is None:
+            map, widgets = self._arrange_root(self.root, self.size, visible_only=False)
+            self._full_map = map
+
+        return self._full_map
 
     @property
     def visible_widgets(self) -> dict[Widget, tuple[Region, Region]]:
@@ -322,9 +383,9 @@ class Compositor:
         return self._visible_widgets
 
     def _arrange_root(
-        self, root: Widget, size: Size
+        self, root: Widget, size: Size, visible_only: bool = True
     ) -> tuple[CompositorMap, set[Widget]]:
-        """Arrange a widgets children based on its layout attribute.
+        """Arrange a widget's children based on its layout attribute.
 
         Args:
             root: Top level widget.
@@ -337,6 +398,7 @@ class Compositor:
 
         map: CompositorMap = {}
         widgets: set[Widget] = set()
+        add_new_widget = widgets.add
         layer_order: int = 0
 
         def add_widget(
@@ -362,7 +424,7 @@ class Compositor:
                 visible = visibility == "visible"
 
             if visible:
-                widgets.add(widget)
+                add_new_widget(widget)
             styles_offset = widget.styles.offset
             layout_offset = (
                 styles_offset.resolve(region.size, clip.size)
@@ -389,69 +451,75 @@ class Compositor:
 
                 if widget.is_container:
                     # Arrange the layout
-                    placements, arranged_widgets, spacing = widget._arrange(
-                        child_region.size
-                    )
+                    arrange_result = widget._arrange(child_region.size)
+                    arranged_widgets = arrange_result.widgets
+                    spacing = arrange_result.spacing
                     widgets.update(arranged_widgets)
 
-                    if placements:
-                        # An offset added to all placements
-                        placement_offset = container_region.offset
-                        placement_scroll_offset = (
-                            placement_offset - widget.scroll_offset
+                    if visible_only:
+                        placements = arrange_result.get_visible_placements(
+                            container_size.region + widget.scroll_offset
+                        )
+                    else:
+                        placements = arrange_result.placements
+                    total_region = total_region.union(arrange_result.total_region)
+
+                    # An offset added to all placements
+                    placement_offset = container_region.offset
+                    placement_scroll_offset = placement_offset - widget.scroll_offset
+
+                    _layers = widget.layers
+                    layers_to_index = {
+                        layer_name: index for index, layer_name in enumerate(_layers)
+                    }
+                    get_layer_index = layers_to_index.get
+
+                    # Add all the widgets
+                    for sub_region, margin, sub_widget, z, fixed in reversed(
+                        placements
+                    ):
+                        # Combine regions with children to calculate the "virtual size"
+                        if fixed:
+                            widget_region = sub_region + placement_offset
+                        else:
+                            total_region = total_region.union(
+                                sub_region.grow(spacing + margin)
+                            )
+                            widget_region = sub_region + placement_scroll_offset
+
+                        widget_order = (
+                            *order,
+                            get_layer_index(sub_widget.layer, 0),
+                            z,
+                            layer_order,
                         )
 
-                        _layers = widget.layers
-                        layers_to_index = {
-                            layer_name: index
-                            for index, layer_name in enumerate(_layers)
-                        }
-                        get_layer_index = layers_to_index.get
+                        add_widget(
+                            sub_widget,
+                            sub_region,
+                            widget_region,
+                            widget_order,
+                            layer_order,
+                            sub_clip,
+                            visible,
+                        )
 
-                        # Add all the widgets
-                        for sub_region, margin, sub_widget, z, fixed in reversed(
-                            placements
-                        ):
-                            # Combine regions with children to calculate the "virtual size"
-                            if fixed:
-                                widget_region = sub_region + placement_offset
-                            else:
-                                total_region = total_region.union(
-                                    sub_region.grow(spacing + margin)
-                                )
-                                widget_region = sub_region + placement_scroll_offset
-
-                            widget_order = (
-                                *order,
-                                get_layer_index(sub_widget.layer, 0),
-                                z,
-                                layer_order,
-                            )
-
-                            add_widget(
-                                sub_widget,
-                                sub_region,
-                                widget_region,
-                                widget_order,
-                                layer_order,
-                                sub_clip,
-                                visible,
-                            )
-                            layer_order -= 1
+                        layer_order -= 1
 
                 if visible:
                     # Add any scrollbars
-                    for chrome_widget, chrome_region in widget._arrange_scrollbars(
-                        container_region
-                    ):
-                        map[chrome_widget] = _MapGeometry(
-                            chrome_region + layout_offset,
-                            order,
-                            clip,
-                            container_size,
-                            container_size,
-                            chrome_region,
-                        )
+                    if any(widget.scrollbars_enabled):
+                        for chrome_widget, chrome_region in widget._arrange_scrollbars(
+                            container_region
+                        ):
+                            map[chrome_widget] = _MapGeometry(
+                                chrome_region + layout_offset,
+                                order,
+                                clip,
+                                container_size,
+                                container_size,
+                                chrome_region,
+                            )
 
                     map[widget] = _MapGeometry(
                         region + layout_offset,
@@ -519,7 +587,10 @@ class Compositor:
         try:
             return self.map[widget].region.offset
         except KeyError:
-            raise errors.NoWidget("Widget is not in layout")
+            try:
+                return self.full_map[widget].region.offset
+            except KeyError:
+                raise errors.NoWidget("Widget is not in layout")
 
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
         """Get the widget under a given coordinate.
@@ -601,10 +672,15 @@ class Compositor:
             Widget's composition information.
 
         """
+        if self.root is None or not self.map:
+            raise errors.NoWidget("Widget is not in layout")
         try:
             region = self.map[widget]
         except KeyError:
-            raise errors.NoWidget("Widget is not in layout")
+            try:
+                return self.full_map[widget]
+            except KeyError:
+                raise errors.NoWidget("Widget is not in layout")
         else:
             return region
 
@@ -788,6 +864,7 @@ class Compositor:
             widget: Widget to update.
 
         """
+        self._full_map = None
         regions: list[Region] = []
         add_region = regions.append
         get_widget = self.visible_widgets.__getitem__

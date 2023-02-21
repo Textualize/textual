@@ -8,9 +8,9 @@ Input {
 }
 
 #results {
-    width: auto;   
-    min-height: 100%;
-    padding: 0 1;    
+    width: 100%;
+    height: auto;
+
 }
 
 #results-container {

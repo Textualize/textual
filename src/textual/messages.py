@@ -45,12 +45,24 @@ class Update(Message, verbose=True):
 
 @rich.repr.auto
 class Layout(Message, verbose=True):
+    """Sent by Textual when a layout is required."""
+
     def can_replace(self, message: Message) -> bool:
         return isinstance(message, Layout)
 
 
 @rich.repr.auto
+class UpdateScroll(Message, verbose=True):
+    """Sent by Textual when a scroll update is required."""
+
+    def can_replace(self, message: Message) -> bool:
+        return isinstance(message, UpdateScroll)
+
+
+@rich.repr.auto
 class InvokeLater(Message, verbose=True, bubble=False):
+    """Sent by Textual to invoke a callback."""
+
     def __init__(self, sender: MessagePump, callback: CallbackType) -> None:
         self.callback = callback
         super().__init__(sender)

@@ -11,7 +11,12 @@ import unicodedata
 import warnings
 from asyncio import Task
 from concurrent.futures import Future
-from contextlib import asynccontextmanager, redirect_stderr, redirect_stdout
+from contextlib import (
+    asynccontextmanager,
+    contextmanager,
+    redirect_stderr,
+    redirect_stdout,
+)
 from datetime import datetime
 from functools import partial
 from pathlib import Path, PurePath
@@ -22,6 +27,7 @@ from typing import (
     Any,
     Awaitable,
     Callable,
+    Generator,
     Generic,
     Iterable,
     List,
@@ -46,6 +52,7 @@ from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
 from ._asyncio import create_task
 from ._callback import invoke
+from ._compose import compose
 from ._context import active_app
 from ._event_broker import NoHandler, extract_handler_actions
 from ._path import _make_path_object_relative
@@ -393,6 +400,9 @@ class App(Generic[ReturnType], DOMNode):
         self._installed_screens: dict[str, Screen | Callable[[], Screen]] = {}
         self._installed_screens.update(**self.SCREENS)
 
+        self._compose_stacks: list[list[Widget]] = []
+        self._composed: list[list[Widget]] = []
+
         self.devtools: DevtoolsClient | None = None
         if "devtools" in self.features:
             try:
@@ -416,6 +426,7 @@ class App(Generic[ReturnType], DOMNode):
         self._screenshot: str | None = None
         self._dom_lock = asyncio.Lock()
         self._dom_ready = False
+        self._batch_count = 0
         self.set_class(self.dark, "-dark-mode")
 
     @property
@@ -430,6 +441,30 @@ class App(Generic[ReturnType], DOMNode):
             return (self.screen,)
         except ScreenError:
             return ()
+
+    @contextmanager
+    def batch_update(self) -> Generator[None, None, None]:
+        """Suspend all repaints until the end of the batch."""
+        self._begin_batch()
+        try:
+            yield
+        finally:
+            self._end_batch()
+
+    def _begin_batch(self) -> None:
+        """Begin a batch update."""
+        self._batch_count += 1
+
+    def _end_batch(self) -> None:
+        """End a batch update."""
+        self._batch_count -= 1
+        assert self._batch_count >= 0, "This won't happen if you use `batch_update`"
+        if not self._batch_count:
+            try:
+                self.screen.check_idle()
+            except ScreenStackError:
+                pass
+            self.check_idle()
 
     def animate(
         self,
@@ -1509,28 +1544,29 @@ class App(Generic[ReturnType], DOMNode):
                     if inspect.isawaitable(ready_result):
                         await ready_result
 
-            try:
+            with self.batch_update():
                 try:
-                    await self._dispatch_message(events.Compose(sender=self))
-                    await self._dispatch_message(events.Mount(sender=self))
+                    try:
+                        await self._dispatch_message(events.Compose(sender=self))
+                        await self._dispatch_message(events.Mount(sender=self))
+                    finally:
+                        self._mounted_event.set()
+
+                    Reactive._initialize_object(self)
+
+                    self.stylesheet.update(self)
+                    self.refresh()
+
+                    await self.animator.start()
+
+                except Exception:
+                    await self.animator.stop()
+                    raise
+
                 finally:
-                    self._mounted_event.set()
-
-                Reactive._initialize_object(self)
-
-                self.stylesheet.update(self)
-                self.refresh()
-
-                await self.animator.start()
-
-            except Exception:
-                await self.animator.stop()
-                raise
-
-            finally:
-                self._running = True
-                await self._ready()
-                await invoke_ready_callback()
+                    self._running = True
+                    await self._ready()
+                    await invoke_ready_callback()
 
             try:
                 await self._process_messages_loop()
@@ -1611,16 +1647,17 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _on_compose(self) -> None:
         try:
-            widgets = list(self.compose())
+            widgets = compose(self)
         except TypeError as error:
             raise TypeError(
                 f"{self!r} compose() returned an invalid response; {error}"
             ) from error
+
         await self.mount_all(widgets)
 
     def _on_idle(self) -> None:
         """Perform actions when there are no messages in the queue."""
-        if self._require_stylesheet_update:
+        if self._require_stylesheet_update and not self._batch_count:
             nodes: set[DOMNode] = {
                 child
                 for node in self._require_stylesheet_update
@@ -1783,6 +1820,7 @@ class App(Generic[ReturnType], DOMNode):
             await child._close_messages()
 
     async def _shutdown(self) -> None:
+        self._begin_update()  # Prevents any layout / repaint while shutting down
         driver = self._driver
         self._running = False
         if driver is not None:
@@ -1800,6 +1838,7 @@ class App(Generic[ReturnType], DOMNode):
             self._writer_thread.stop()
 
     async def _on_exit_app(self) -> None:
+        self._begin_batch()  # Prevent repaint / layout while shutting down
         await self._message_queue.put(None)
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
@@ -1908,7 +1947,6 @@ class App(Generic[ReturnType], DOMNode):
         # Handle input events that haven't been forwarded
         # If the event has been forwarded it may have bubbled up back to the App
         if isinstance(event, events.Compose):
-            self.log(event)
             screen = Screen(id="_default")
             self._register(self, screen)
             self._screen_stack.append(screen)
