@@ -42,6 +42,32 @@ Two tildes indicates strikethrough, e.g. `~~cross out~~` render ~~cross out~~.
 
 Inline code is indicated by backticks. e.g. `import this`.
 
+## Lists
+
+1. Lists can be ordered
+2. Lists can be unordered
+   - I must not fear.
+     - Fear is the mind-killer.
+       - Fear is the little-death that brings total obliteration.
+         - I will face my fear.
+           - I will permit it to pass over me and through me.
+     - And when it has gone past, I will turn the inner eye to see its path.
+   - Where the fear has gone there will be nothing. Only I will remain.
+
+### Longer list
+
+1. **Duke Leto I Atreides**, head of House Atreides
+2. **Lady Jessica**, Bene Gesserit and concubine of Leto, and mother of Paul and Alia
+3. **Paul Atreides**, son of Leto and Jessica
+4. **Alia Atreides**, daughter of Leto and Jessica
+5. **Gurney Halleck**, troubadour warrior of House Atreides
+6. **Thufir Hawat**, Mentat and Master of Assassins of House Atreides
+7. **Duncan Idaho**, swordmaster of House Atreides
+8. **Dr. Wellington Yueh**, Suk doctor of House Atreides
+9. **Leto**, first son of Paul and Chani who dies as a toddler
+10. **Esmar Tuek**, a smuggler on Arrakis
+11. **Staban Tuek**, son of Esmar
+
 ## Fences
 
 Fenced code blocks are introduced with three back-ticks and the optional parser. Here we are rendering the code in a sub-widget with syntax highlighting and indent guides.
