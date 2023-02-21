@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from functools import cache
 from inspect import getfile
 from typing import (
     TYPE_CHECKING,
@@ -314,7 +315,9 @@ class DOMNode(MessagePump):
 
         return css_stack
 
-    def _get_component_classes(self) -> set[str]:
+    @classmethod
+    @cache
+    def _get_component_classes(cls) -> set[str]:
         """Gets the component classes for this class and inherited from bases.
 
         Component classes are inherited from base classes, unless
@@ -323,14 +326,13 @@ class DOMNode(MessagePump):
         Returns:
             A set with all the component classes available.
         """
-
         component_classes: set[str] = set()
-        for base in self._node_bases:
+        for base in cls._css_bases(cls):
             component_classes.update(base.__dict__.get("COMPONENT_CLASSES", set()))
             if not base.__dict__.get("_inherit_component_classes", True):
                 break
 
-        return component_classes
+        return frozenset(component_classes)
 
     @property
     def parent(self) -> DOMNode | None:

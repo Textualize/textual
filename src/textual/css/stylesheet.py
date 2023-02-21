@@ -28,6 +28,25 @@ from .tokenizer import TokenError
 from .types import Specificity3, Specificity6
 
 
+class _VirtualDOMNode(DOMNode):
+    """A DOM node that exists only to gether styles."""
+
+    def __init__(
+        self,
+        parent: DOMNode,
+        *,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+    ) -> None:
+        self._virtual_parent = parent
+        super().__init__(name=name, id=id, classes=classes)
+
+    def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
+        """Pass the refresh up to the parent, because this object will not exist during render."""
+        self._virtual_parent.refresh(repaint=repaint, layout=layout)
+
+
 class StylesheetParseError(StylesheetError):
     def __init__(self, errors: StylesheetErrors) -> None:
         self.errors = errors
@@ -408,7 +427,7 @@ class Stylesheet:
 
         node._component_styles.clear()
         for component in node._get_component_classes():
-            virtual_node = DOMNode(classes=component)
+            virtual_node = _VirtualDOMNode(node, classes=component)
             virtual_node._attach(node)
             self.apply(virtual_node, animate=False)
             node._component_styles[component] = virtual_node.styles
