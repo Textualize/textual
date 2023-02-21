@@ -1,10 +1,8 @@
 poetry run mypy src/textual
 src/textual/_two_way_dict.py:41: error: Incompatible return value type (got "Optional[Value]", expected "Value")  [return-value]
 src/textual/_two_way_dict.py:52: error: Incompatible return value type (got "Optional[Key]", expected "Key")  [return-value]
-src/textual/scrollbar.py:249: error: Item "None" of "Optional[DOMNode]" has no attribute "styles"  [union-attr]
-src/textual/scrollbar.py:260: error: Invalid self argument "Color" to attribute function "rich_color" with type "Callable[[textual.color.Color], rich.color.Color]"  [misc]
-src/textual/scrollbar.py:282: error: Return type "Coroutine[Any, Any, None]" of "action_scroll_down" incompatible with return type "None" in supertype "Widget"  [override]
-src/textual/scrollbar.py:287: error: Return type "Coroutine[Any, Any, None]" of "action_scroll_up" incompatible with return type "None" in supertype "Widget"  [override]
+src/textual/scrollbar.py:283: error: Return type "Coroutine[Any, Any, None]" of "action_scroll_down" incompatible with return type "None" in supertype "Widget"  [override]
+src/textual/scrollbar.py:288: error: Return type "Coroutine[Any, Any, None]" of "action_scroll_up" incompatible with return type "None" in supertype "Widget"  [override]
 src/textual/css/stylesheet.py:81: error: Item "None" of "Optional[Path]" has no attribute "absolute"  [union-attr]
 src/textual/app.py:303: error: Argument "file" to "Console" has incompatible type "_WriterThread"; expected "Optional[IO[str]]"  [arg-type]
 src/textual/app.py:1566: error: Value of type variable "_T_io" of "redirect_stderr" cannot be "StdoutRedirector"  [type-var]
@@ -54,4 +52,4 @@ src/textual/demo.py:221: error: "App[Any]" has no attribute "add_note"  [attr-de
 src/textual/demo.py:276: error: "App[Any]" has no attribute "add_note"  [attr-defined]
 src/textual/cli/previews/easing.py:102: error: Argument "easing" to "animate" of "App" has incompatible type "Optional[str]"; expected "Union[Callable[[float], float], str]"  [arg-type]
 src/textual/cli/previews/easing.py:111: error: "MessageTarget" has no attribute "id"  [attr-defined]
-Found 54 errors in 13 files (checked 152 source files)
+Found 52 errors in 13 files (checked 152 source files)

@@ -246,6 +246,7 @@ class ScrollBar(Widget):
             yield "thickness", self.thickness
 
     def render(self) -> RenderableType:
+        assert self.parent is not None
         styles = self.parent.styles
         if self.grabbed:
             background = styles.scrollbar_background_active
