@@ -2318,7 +2318,7 @@ class Widget(DOMNode):
         self.check_idle()
 
     def remove(self) -> AwaitRemove:
-        """Remove the Widget from the DOM (effectively deleting it)
+        """Remove the Widget from the DOM (effectively deleting it).
 
         Returns:
             An awaitable object that waits for the widget to be removed.
@@ -2331,16 +2331,16 @@ class Widget(DOMNode):
         """Get renderable for widget.
 
         Returns:
-            Any renderable
+            Any renderable.
         """
-        render = "" if self.is_container else self.css_identifier_styled
+        render: Text | str = "" if self.is_container else self.css_identifier_styled
         return render
 
     def _render(self) -> ConsoleRenderable | RichCast:
         """Get renderable, promoting str to text as required.
 
         Returns:
-            A renderable
+            A renderable.
         """
         renderable = self.render()
         if isinstance(renderable, str):
