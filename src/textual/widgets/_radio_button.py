@@ -32,6 +32,7 @@ class RadioButton(ToggleButton):
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
+        disabled: bool = False,
     ) -> None:
         """Initialise the radio button.
 
@@ -42,8 +43,17 @@ class RadioButton(ToggleButton):
             name: The name of the radio button.
             id: The ID of the radio button in the DOM.
             classes: The CSS classes of the radio button.
+            disabled: Whether the button is disabled or not.
         """
-        super().__init__(label, value, button_first, name=name, id=id, classes=classes)
+        super().__init__(
+            label,
+            value,
+            button_first,
+            name=name,
+            id=id,
+            classes=classes,
+            disabled=disabled,
+        )
         self.button_prefix = "("
         self.button_suffix = ")"
         self.button_on = "⦿"

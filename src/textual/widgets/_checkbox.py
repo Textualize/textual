@@ -29,6 +29,7 @@ class Checkbox(ToggleButton):
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
+        disabled: bool = False,
     ) -> None:
         """Initialise the radio button.
 
@@ -39,6 +40,15 @@ class Checkbox(ToggleButton):
             name: The name of the checkbox.
             id: The ID of the checkbox in the DOM.
             classes: The CSS classes of the checkbox.
+            disabled: Whether the button is disabled or not.
         """
-        super().__init__(label, value, button_first, name=name, id=id, classes=classes)
+        super().__init__(
+            label,
+            value,
+            button_first,
+            name=name,
+            id=id,
+            classes=classes,
+            disabled=disabled,
+        )
         self.button_on = "✓"
