@@ -31,14 +31,16 @@ class ToggleButton(Static, can_focus=True):
     COMPONENT_CLASSES: ClassVar[set[str]] = {
         "toggle--label",
         "toggle--button-sides",
-        "toggle--button-inner",
+        "toggle--button-inner-off",
+        "toggle--button-inner-on",
     }
     """
     | Class | Description |
     | :- | :- |
     | `toggle--label` | Targets the text label of the toggle button. |
     | `toggle--button-sides` | Targets the side characters of the toggle button. |
-    | `toggle--button-inner` | Targets the inner character of the toggle button. |
+    | `toggle--button-inner-off` | Targets the inner character of the toggle button when off. |
+    | `toggle--button-inner-on` | Targets the inner character of the toggle button when on. |
     """
 
     DEFAULT_CSS = """
@@ -47,22 +49,47 @@ class ToggleButton(Static, can_focus=True):
         background: $boost;
     }
 
-    ToggleButton:focus {
-        color: $text;
-        background: $secondary;
+    ToggleButton:focus > .toggle--label {
+        text-style: underline;
+    }
+
+    ToggleButton > .toggle--button-sides {
+        color: $panel-lighten-2;
+    }
+
+    ToggleButton:focus > .toggle--button-sides {
+        color: $panel-lighten-3;
+    }
+
+    ToggleButton > .toggle--button-inner-on {
+        color: $success;
+        background: $panel-lighten-2;
+    }
+
+    ToggleButton:focus > .toggle--button-inner-on {
+        background: $panel-lighten-3;
+    }
+
+    ToggleButton > .toggle--button-inner-off {
+        color: $panel;
+        background: $panel-lighten-2;
+    }
+
+    ToggleButton:focus > .toggle--button-inner-off {
+        background: $panel-lighten-3;
     }
     """  # TODO: https://github.com/Textualize/textual/issues/1780
 
-    button_prefix: reactive[TextType] = reactive[TextType]("[")
+    button_prefix: reactive[TextType] = reactive[TextType]("▐")
     """The character for the left side of the toggle button."""
 
-    button_suffix: reactive[TextType] = reactive[TextType]("]")
+    button_suffix: reactive[TextType] = reactive[TextType]("▌")
     """The character for the right side of the toggle button."""
 
-    button_off: reactive[TextType] = reactive[TextType](" ")
+    button_off: reactive[TextType] = reactive[TextType]("✖")
     """The character used to signify that the button is off."""
 
-    button_on: reactive[TextType] = reactive[TextType]("X")
+    button_on: reactive[TextType] = reactive[TextType]("✖")
     """The character used to signify that the button is on."""
 
     label: reactive[TextType] = reactive[TextType]("")
@@ -105,7 +132,9 @@ class ToggleButton(Static, can_focus=True):
     def _button(self) -> Text:
         """The button, reflecting the current value."""
         side_style = self.get_component_rich_style("toggle--button-sides")
-        inner_style = self.get_component_rich_style("toggle--button-inner")
+        inner_style = self.get_component_rich_style(
+            f"toggle--button-inner-{'on' if self.value else 'off'}"
+        )
         return Text.assemble(
             Text(self.button_prefix, style=side_style),
             Text(self.button_on if self.value else self.button_off, style=inner_style),
@@ -120,10 +149,7 @@ class ToggleButton(Static, can_focus=True):
         """
         button = self._button
         label = Text(self.label, style=self.get_component_rich_style("toggle--label"))
-        spacer = Text(
-            " " if self.label else "",
-            style=self.get_component_rich_style("toggle--label"),
-        )
+        spacer = Text(" " if self.label else "")
         return (
             Text.assemble(button, spacer, label)
             if self.button_first
