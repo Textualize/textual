@@ -31,16 +31,16 @@ class ToggleButton(Static, can_focus=True):
     COMPONENT_CLASSES: ClassVar[set[str]] = {
         "toggle--label",
         "toggle--button-sides",
-        "toggle--button-inner-off",
-        "toggle--button-inner-on",
+        "toggle--button-off",
+        "toggle--button-on",
     }
     """
     | Class | Description |
     | :- | :- |
     | `toggle--label` | Targets the text label of the toggle button. |
     | `toggle--button-sides` | Targets the side characters of the toggle button. |
-    | `toggle--button-inner-off` | Targets the inner character of the toggle button when off. |
-    | `toggle--button-inner-on` | Targets the inner character of the toggle button when on. |
+    | `toggle--button-off` | Targets the inner character of the toggle button when off. |
+    | `toggle--button-on` | Targets the inner character of the toggle button when on. |
     """
 
     DEFAULT_CSS = """
@@ -61,21 +61,21 @@ class ToggleButton(Static, can_focus=True):
         color: $panel-lighten-3;
     }
 
-    ToggleButton > .toggle--button-inner-on {
+    ToggleButton > .toggle--button-on {
         color: $success;
         background: $panel-lighten-2;
     }
 
-    ToggleButton:focus > .toggle--button-inner-on {
+    ToggleButton:focus > .toggle--button-on {
         background: $panel-lighten-3;
     }
 
-    ToggleButton > .toggle--button-inner-off {
+    ToggleButton > .toggle--button-off {
         color: $panel;
         background: $panel-lighten-2;
     }
 
-    ToggleButton:focus > .toggle--button-inner-off {
+    ToggleButton:focus > .toggle--button-off {
         background: $panel-lighten-3;
     }
     """  # TODO: https://github.com/Textualize/textual/issues/1780
@@ -130,7 +130,7 @@ class ToggleButton(Static, can_focus=True):
         """The button, reflecting the current value."""
         side_style = self.get_component_rich_style("toggle--button-sides")
         inner_style = self.get_component_rich_style(
-            f"toggle--button-inner-{'on' if self.value else 'off'}"
+            f"toggle--button-{'on' if self.value else 'off'}"
         )
         return Text.assemble(
             Text(self.button_left, style=side_style),
