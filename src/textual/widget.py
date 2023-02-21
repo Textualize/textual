@@ -707,7 +707,9 @@ class Widget(DOMNode):
 
         # Ensure the child and target are widgets.
         child = _to_widget(child, "move")
-        target = _to_widget(before if after is None else after, "move towards")
+        target = _to_widget(
+            cast("int | Widget", before if after is None else after), "move towards"
+        )
 
         # At this point we should know what we're moving, and it should be a
         # child; where we're moving it to, which should be within the child
