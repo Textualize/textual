@@ -201,4 +201,5 @@ class ToggleButton(Static, can_focus=True):
 
     def watch_value(self) -> None:
         """React to the value being changed."""
+        self.set_class(self.value, "-on")
         self.post_message_no_wait(self.Changed(self, self.value))
