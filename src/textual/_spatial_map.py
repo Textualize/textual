@@ -36,7 +36,7 @@ class SpatialMap(Generic[ValueType]):
         self._map: defaultdict[GridCoordinate, list[ValueType]] = defaultdict(list)
         self._fixed: list[ValueType] = []
 
-    def _region_to_grid_coordinate(self, region: Region) -> Iterable[GridCoordinate]:
+    def _region_to_grid_coordinates(self, region: Region) -> Iterable[GridCoordinate]:
         """Get the grid squares under a region.
 
         Args:
@@ -70,7 +70,7 @@ class SpatialMap(Generic[ValueType]):
         """
         append_fixed = self._fixed.append
         get_grid_list = self._map.__getitem__
-        _region_to_grid = self._region_to_grid_coordinate
+        _region_to_grid = self._region_to_grid_coordinates
         total_region = self.total_region
         for region, fixed, value in regions_and_values:
             total_region = total_region.union(region)
@@ -95,7 +95,7 @@ class SpatialMap(Generic[ValueType]):
         results: list[ValueType] = self._fixed.copy()
         add_results = results.extend
         get_grid_values = self._map.get
-        for grid_coordinate in self._region_to_grid_coordinate(region):
+        for grid_coordinate in self._region_to_grid_coordinates(region):
             grid_values = get_grid_values(grid_coordinate)
             if grid_values is not None:
                 add_results(grid_values)
