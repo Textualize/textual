@@ -80,17 +80,14 @@ class ToggleButton(Static, can_focus=True):
     }
     """  # TODO: https://github.com/Textualize/textual/issues/1780
 
-    button_prefix: reactive[TextType] = reactive[TextType]("▐")
+    button_left: reactive[TextType] = reactive[TextType]("▐")
     """The character for the left side of the toggle button."""
 
-    button_suffix: reactive[TextType] = reactive[TextType]("▌")
+    button_inner: reactive[TextType] = reactive[TextType]("✖")
+    """The character used to for the inside of the button."""
+
+    button_right: reactive[TextType] = reactive[TextType]("▌")
     """The character for the right side of the toggle button."""
-
-    button_off: reactive[TextType] = reactive[TextType]("✖")
-    """The character used to signify that the button is off."""
-
-    button_on: reactive[TextType] = reactive[TextType]("✖")
-    """The character used to signify that the button is on."""
 
     label: reactive[TextType] = reactive[TextType]("")
     """The label that describes the toggle."""
@@ -136,9 +133,9 @@ class ToggleButton(Static, can_focus=True):
             f"toggle--button-inner-{'on' if self.value else 'off'}"
         )
         return Text.assemble(
-            Text(self.button_prefix, style=side_style),
-            Text(self.button_on if self.value else self.button_off, style=inner_style),
-            Text(self.button_suffix, style=side_style),
+            Text(self.button_left, style=side_style),
+            Text(self.button_inner, style=inner_style),
+            Text(self.button_right, style=side_style),
         )
 
     def render(self) -> RenderResult:

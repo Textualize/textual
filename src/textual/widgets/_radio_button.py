@@ -46,5 +46,4 @@ class RadioButton(ToggleButton):
             classes=classes,
             disabled=disabled,
         )
-        self.button_on = "⏺"
-        self.button_off = "⏺"
+        self.button_inner = "⏺"
