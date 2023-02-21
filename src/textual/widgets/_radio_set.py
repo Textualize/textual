@@ -99,6 +99,10 @@ class RadioSet(Container):
                 if button.value and button != event.input:
                     button.value = False
                     break
+        else:
+            # If this leaves us with no buttons checked, disallow that.
+            if not any(button.value for button in self._buttons):
+                event.input.value = True
 
     @property
     def pressed_index(self) -> int:
