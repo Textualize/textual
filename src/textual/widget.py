@@ -2126,7 +2126,9 @@ class Widget(DOMNode):
             renderable.justify = text_justify
 
         renderable = _Styled(
-            renderable, self.rich_style, self.link_style if self.auto_links else None
+            cast(ConsoleRenderable, renderable),
+            self.rich_style,
+            self.link_style if self.auto_links else None,
         )
 
         return renderable
