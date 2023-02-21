@@ -24,11 +24,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Removed `screen.visible_widgets` and `screen.widgets`
 
-
 ### Fixed
 
 - Numbers in a descendant-combined selector no longer cause an error https://github.com/Textualize/textual/issues/1836
-
+- Fixed superfluous scrolling when focusing a docked widget https://github.com/Textualize/textual/issues/1816
 
 ## [0.11.1] - 2023-02-17
 
