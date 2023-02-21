@@ -9,7 +9,6 @@ from rich.style import Style
 from . import errors, events, messages
 from ._callback import invoke
 from ._compositor import Compositor, MapGeometry
-from ._profile import timer
 from ._types import CallbackType
 from .css.match import match
 from .css.parse import parse_selectors
