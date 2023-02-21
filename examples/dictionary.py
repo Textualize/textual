@@ -21,7 +21,7 @@ class DictionaryApp(App):
     def compose(self) -> ComposeResult:
         yield Input(placeholder="Search for a word")
         with Content(id="results-container"):
-            yield Static(id="results")
+            yield Markdown(id="results")
 
     def on_mount(self) -> None:
         """Called when app starts."""
