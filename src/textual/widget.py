@@ -61,6 +61,7 @@ from .walk import walk_depth_first
 
 if TYPE_CHECKING:
     from .app import App, ComposeResult
+    from .message_pump import MessagePump
     from .scrollbar import (
         ScrollBar,
         ScrollBarCorner,
@@ -2096,7 +2097,7 @@ class Widget(DOMNode):
             pass
         else:
             if focused:
-                node = focused
+                node: MessagePump | None = focused
                 while node is not None:
                     if node is self:
                         yield "focus-within"
