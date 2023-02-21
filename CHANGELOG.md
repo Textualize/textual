@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+- Added `Widget.disabled` https://github.com/Textualize/textual/pull/1785
+
 ### Fixed
 
 - Numbers in a descendant-combined selector no longer cause an error https://github.com/Textualize/textual/issues/1836
