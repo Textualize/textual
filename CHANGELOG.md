@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
 ## [0.12.0] - Unreleased
 
 ### Changed
@@ -14,6 +15,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 - Removed `screen.visible_widgets` and `screen.widgets`
+
+### Fixed
+
+- Numbers in a descendant-combined selector no longer cause an error https://github.com/Textualize/textual/issues/1836
 
 ## [0.11.1] - 2023-02-17
 
