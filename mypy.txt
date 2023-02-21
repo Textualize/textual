@@ -1,7 +1,6 @@
 poetry run mypy src/textual
 src/textual/_two_way_dict.py:41: error: Incompatible return value type (got "Optional[Value]", expected "Value")  [return-value]
 src/textual/_two_way_dict.py:52: error: Incompatible return value type (got "Optional[Key]", expected "Key")  [return-value]
-src/textual/css/stylesheet.py:81: error: Item "None" of "Optional[Path]" has no attribute "absolute"  [union-attr]
 src/textual/app.py:303: error: Argument "file" to "Console" has incompatible type "_WriterThread"; expected "Optional[IO[str]]"  [arg-type]
 src/textual/app.py:1566: error: Value of type variable "_T_io" of "redirect_stderr" cannot be "StdoutRedirector"  [type-var]
 src/textual/app.py:1571: error: Value of type variable "_T_io" of "redirect_stderr" cannot be "_NullFile"  [type-var]
@@ -50,4 +49,4 @@ src/textual/demo.py:221: error: "App[Any]" has no attribute "add_note"  [attr-de
 src/textual/demo.py:276: error: "App[Any]" has no attribute "add_note"  [attr-defined]
 src/textual/cli/previews/easing.py:102: error: Argument "easing" to "animate" of "App" has incompatible type "Optional[str]"; expected "Union[Callable[[float], float], str]"  [arg-type]
 src/textual/cli/previews/easing.py:111: error: "MessageTarget" has no attribute "id"  [attr-defined]
-Found 50 errors in 12 files (checked 152 source files)
+Found 49 errors in 11 files (checked 152 source files)
