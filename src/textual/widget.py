@@ -414,23 +414,27 @@ class Widget(DOMNode):
         self, id: str, expect_type: type[ExpectType] | None = None
     ) -> ExpectType | Widget:
         """Return the first descendant widget with the given ID.
+
         Performs a depth-first search rooted at this widget.
 
         Args:
-            id: The ID to search for in the subtree
+            id: The ID to search for in the subtree.
             expect_type: Require the object be of the supplied type, or None for any type.
-                Defaults to None.
 
         Returns:
             The first descendant encountered with this ID.
 
         Raises:
-            NoMatches: if no children could be found for this ID
+            NoMatches: if no children could be found for this ID.
             WrongType: if the wrong type was found.
         """
-        for child in walk_depth_first(self):
+        # We use Widget as a filter_type so that the inferred type of child is Widget.
+        for child in walk_depth_first(self, filter_type=Widget):
             try:
-                return child.get_child_by_id(id, expect_type=expect_type)
+                if expect_type is None:
+                    return child.get_child_by_id(id)
+                else:
+                    return child.get_child_by_id(id, expect_type=expect_type)
             except NoMatches:
                 pass
             except WrongType as exc:

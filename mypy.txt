@@ -1,11 +1,10 @@
 poetry run mypy src/textual
 src/textual/_two_way_dict.py:41: error: Incompatible return value type (got "Optional[Value]", expected "Value")  [return-value]
 src/textual/_two_way_dict.py:52: error: Incompatible return value type (got "Optional[Key]", expected "Key")  [return-value]
-src/textual/widget.py:433: error: "DOMNode" has no attribute "get_child_by_id"  [attr-defined]
-src/textual/widget.py:706: error: Argument 1 to "_to_widget" has incompatible type "Union[int, Widget, None]"; expected "Union[int, Widget]"  [arg-type]
-src/textual/widget.py:2098: error: Incompatible types in assignment (expression has type "Optional[MessagePump]", variable has type "Widget")  [assignment]
-src/textual/widget.py:2122: error: Argument 1 to "_Styled" has incompatible type "Union[ConsoleRenderable, RichCast]"; expected "ConsoleRenderable"  [arg-type]
-src/textual/widget.py:2328: error: Incompatible return value type (got "object", expected "Union[ConsoleRenderable, RichCast, str]")  [return-value]
+src/textual/widget.py:710: error: Argument 1 to "_to_widget" has incompatible type "Union[int, Widget, None]"; expected "Union[int, Widget]"  [arg-type]
+src/textual/widget.py:2102: error: Incompatible types in assignment (expression has type "Optional[MessagePump]", variable has type "Widget")  [assignment]
+src/textual/widget.py:2126: error: Argument 1 to "_Styled" has incompatible type "Union[ConsoleRenderable, RichCast]"; expected "ConsoleRenderable"  [arg-type]
+src/textual/widget.py:2332: error: Incompatible return value type (got "object", expected "Union[ConsoleRenderable, RichCast, str]")  [return-value]
 src/textual/scrollbar.py:249: error: Item "None" of "Optional[DOMNode]" has no attribute "styles"  [union-attr]
 src/textual/scrollbar.py:260: error: Invalid self argument "Color" to attribute function "rich_color" with type "Callable[[textual.color.Color], rich.color.Color]"  [misc]
 src/textual/scrollbar.py:282: error: Return type "Coroutine[Any, Any, None]" of "action_scroll_down" incompatible with return type "None" in supertype "Widget"  [override]
@@ -59,4 +58,4 @@ src/textual/demo.py:221: error: "App[Any]" has no attribute "add_note"  [attr-de
 src/textual/demo.py:276: error: "App[Any]" has no attribute "add_note"  [attr-defined]
 src/textual/cli/previews/easing.py:102: error: Argument "easing" to "animate" of "App" has incompatible type "Optional[str]"; expected "Union[Callable[[float], float], str]"  [arg-type]
 src/textual/cli/previews/easing.py:111: error: "MessageTarget" has no attribute "id"  [attr-defined]
-Found 59 errors in 14 files (checked 152 source files)
+Found 58 errors in 14 files (checked 152 source files)
