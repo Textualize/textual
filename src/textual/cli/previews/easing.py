@@ -73,16 +73,14 @@ class EasingApp(App):
         )
 
         yield EasingButtons()
-        yield Vertical(
-            Horizontal(
-                Label("Animation Duration:", id="label"), duration_input, id="inputs"
-            ),
-            Horizontal(
-                self.animated_bar,
-                Container(self.opacity_widget, id="other"),
-            ),
-            Footer(),
-        )
+        with Vertical():
+            with Horizontal(id="inputs"):
+                yield Label("Animation Duration:", id="label")
+                yield duration_input
+            with Horizontal():
+                yield self.animated_bar
+                yield Container(self.opacity_widget, id="other")
+            yield Footer()
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         self.bell()

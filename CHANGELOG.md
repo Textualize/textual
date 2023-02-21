@@ -12,23 +12,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `App.batch_update` https://github.com/Textualize/textual/pull/1832
 - Added horizontal rule to Markdown https://github.com/Textualize/textual/pull/1832
+- Added `Widget.disabled` https://github.com/Textualize/textual/pull/1785
 
 ### Changed
 
 - Scrolling by page now adds to current position.
 - Markdown lists have been polished: a selection of bullets, better alignment of numbers, style tweaks https://github.com/Textualize/textual/pull/1832
+- Added alternative method of composing Widgets https://github.com/Textualize/textual/pull/1847
 
 ### Removed
 
 - Removed `screen.visible_widgets` and `screen.widgets`
 
-### Added
-
-- Added `Widget.disabled` https://github.com/Textualize/textual/pull/1785
 
 ### Fixed
 
 - Numbers in a descendant-combined selector no longer cause an error https://github.com/Textualize/textual/issues/1836
+
 
 ## [0.11.1] - 2023-02-17
 

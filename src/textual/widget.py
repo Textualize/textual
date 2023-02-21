@@ -5,6 +5,7 @@ from collections import Counter
 from fractions import Fraction
 from itertools import islice
 from operator import attrgetter
+from types import TracebackType
 from typing import (
     TYPE_CHECKING,
     ClassVar,
@@ -33,11 +34,13 @@ from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text
 from rich.traceback import Traceback
+from typing_extensions import Self
 
 from . import errors, events, messages
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
 from ._asyncio import create_task
+from ._compose import compose
 from ._cache import FIFOCache
 from ._context import active_app
 from ._easing import DEFAULT_SCROLL_EASING
@@ -369,6 +372,25 @@ class Widget(DOMNode):
     @offset.setter
     def offset(self, offset: Offset) -> None:
         self.styles.offset = ScalarOffset.from_offset(offset)
+
+    def __enter__(self) -> Self:
+        """Use as context manager when composing."""
+        self.app._compose_stacks[-1].append(self)
+        return self
+
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
+    ) -> None:
+        """Exit compose context manager."""
+        compose_stack = self.app._compose_stacks[-1]
+        composed = compose_stack.pop()
+        if compose_stack:
+            compose_stack[-1]._nodes._append(composed)
+        else:
+            self.app._composed[-1].append(composed)
 
     ExpectType = TypeVar("ExpectType", bound="Widget")
 
@@ -2497,7 +2519,7 @@ class Widget(DOMNode):
 
     async def _on_compose(self) -> None:
         try:
-            widgets = list(self.compose())
+            widgets = compose(self)
         except TypeError as error:
             raise TypeError(
                 f"{self!r} compose() returned an invalid response; {error}"

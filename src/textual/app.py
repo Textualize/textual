@@ -52,6 +52,7 @@ from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
 from ._asyncio import create_task
 from ._callback import invoke
+from ._compose import compose
 from ._context import active_app
 from ._event_broker import NoHandler, extract_handler_actions
 from ._path import _make_path_object_relative
@@ -398,6 +399,9 @@ class App(Generic[ReturnType], DOMNode):
 
         self._installed_screens: dict[str, Screen | Callable[[], Screen]] = {}
         self._installed_screens.update(**self.SCREENS)
+
+        self._compose_stacks: list[list[Widget]] = []
+        self._composed: list[list[Widget]] = []
 
         self.devtools: DevtoolsClient | None = None
         if "devtools" in self.features:
@@ -1643,7 +1647,7 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _on_compose(self) -> None:
         try:
-            widgets = list(self.compose())
+            widgets = compose(self)
         except TypeError as error:
             raise TypeError(
                 f"{self!r} compose() returned an invalid response; {error}"
