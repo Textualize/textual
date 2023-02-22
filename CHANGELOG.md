@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `App.batch_update` https://github.com/Textualize/textual/pull/1832
 - Added horizontal rule to Markdown https://github.com/Textualize/textual/pull/1832
 - Added `Widget.disabled` https://github.com/Textualize/textual/pull/1785
+- Added `DOMNode.notify_style_update` to replace `messages.StylesUpdated` message
 
 ### Changed
 
@@ -23,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 - Removed `screen.visible_widgets` and `screen.widgets`
+- Removed `StylesUpdate` message.
 
 ### Fixed
 

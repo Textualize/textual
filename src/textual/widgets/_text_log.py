@@ -58,8 +58,9 @@ class TextLog(ScrollView, can_focus=True):
         self.markup = markup
         self.highlighter = ReprHighlighter()
 
-    def _on_styles_updated(self) -> None:
+    def notify_style_update(self) -> None:
         self._line_cache.clear()
+        self.refresh()
 
     def write(
         self,

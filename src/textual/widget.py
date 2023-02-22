@@ -2503,7 +2503,7 @@ class Widget(DOMNode):
     async def broker_event(self, event_name: str, event: events.Event) -> bool:
         return await self.app._broker_event(event_name, event, default_namespace=self)
 
-    def _on_styles_updated(self) -> None:
+    def notify_style_update(self) -> None:
         self._rich_style_cache.clear()
 
     async def _on_mouse_down(self, event: events.MouseDown) -> None:
