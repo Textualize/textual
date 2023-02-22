@@ -1,13 +1,12 @@
 from __future__ import annotations
 
 import re
-from functools import cache
+from functools import lru_cache
 from inspect import getfile
 from typing import (
     TYPE_CHECKING,
     ClassVar,
     Iterable,
-    Iterator,
     Sequence,
     Type,
     TypeVar,
@@ -231,7 +230,7 @@ class DOMNode(MessagePump):
         return self._css_bases(self.__class__)
 
     @classmethod
-    @cache
+    @lru_cache(maxsize=None)
     def _css_bases(cls, base: Type[DOMNode]) -> Iterable[Type[DOMNode]]:
         """Get the DOMNode base classes, which inherit CSS.
 
@@ -320,7 +319,7 @@ class DOMNode(MessagePump):
         return css_stack
 
     @classmethod
-    @cache
+    @lru_cache(maxsize=None)
     def _get_component_classes(cls) -> frozenset[str]:
         """Gets the component classes for this class and inherited from bases.
 
