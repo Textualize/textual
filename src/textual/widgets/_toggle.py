@@ -70,13 +70,13 @@ class ToggleButton(Static, can_focus=True):
     }
     """  # TODO: https://github.com/Textualize/textual/issues/1780
 
-    button_left: reactive[str] = reactive[str]("▐")
+    BUTTON_LEFT: str = "▐"
     """The character for the left side of the toggle button."""
 
-    button_inner: reactive[str] = reactive[str]("✖")
+    BUTTON_INNER: str = "✖"
     """The character used to for the inside of the button."""
 
-    button_right: reactive[str] = reactive[str]("▌")
+    BUTTON_RIGHT: str = "▌"
     """The character for the right side of the toggle button."""
 
     value: reactive[bool] = reactive(False)
@@ -121,9 +121,9 @@ class ToggleButton(Static, can_focus=True):
             button_style.bgcolor, self.background_colors[1].rich_color
         )
         return Text.assemble(
-            Text(self.button_left, style=side_style),
-            Text(self.button_inner, style=button_style),
-            Text(self.button_right, style=side_style),
+            Text(self.BUTTON_LEFT, style=side_style),
+            Text(self.BUTTON_INNER, style=button_style),
+            Text(self.BUTTON_RIGHT, style=side_style),
         )
 
     def render(self) -> RenderResult:
