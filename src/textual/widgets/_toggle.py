@@ -82,9 +82,6 @@ class ToggleButton(Static, can_focus=True):
     value: reactive[bool] = reactive(False)
     """The value of the button. `True` for on, `False` for off."""
 
-    button_first: reactive[bool] = reactive(True)
-    """Should the button come before the label?"""
-
     def __init__(
         self,
         label: TextType,
@@ -108,7 +105,7 @@ class ToggleButton(Static, can_focus=True):
             disabled: Whether the button is disabled or not.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
-        self.button_first = button_first
+        self._button_first = button_first
         self.value = value
         self.label: Text = Text.from_markup(label) if isinstance(label, str) else label
         """The label for the button."""
@@ -138,7 +135,7 @@ class ToggleButton(Static, can_focus=True):
         spacer = Text(" " if self.label else "")
         return (
             Text.assemble(button, spacer, label)
-            if self.button_first
+            if self._button_first
             else Text.assemble(label, spacer, button)
         )
 
