@@ -143,27 +143,27 @@ def test_component_classes_inheritance():
         COMPONENT_CLASSES = {"f-1"}
 
     node = DOMNode()
-    node_cc = DOMNode._get_component_classes(type(node))
+    node_cc = node._get_component_classes()
     a = A()
-    a_cc = DOMNode._get_component_classes(type(a))
+    a_cc = a._get_component_classes()
     b = B()
-    b_cc = DOMNode._get_component_classes(type(b))
+    b_cc = b._get_component_classes()
     c = C()
-    c_cc = DOMNode._get_component_classes(type(c))
+    c_cc = c._get_component_classes()
     d = D()
-    d_cc = DOMNode._get_component_classes(type(d))
+    d_cc = d._get_component_classes()
     e = E()
-    e_cc = DOMNode._get_component_classes(type(e))
+    e_cc = e._get_component_classes()
     f = F()
-    f_cc = DOMNode._get_component_classes(type(f))
+    f_cc = f._get_component_classes()
 
-    assert node_cc == []
-    assert a_cc == ["a-1", "a-2"]
-    assert b_cc == ["b-1"]
-    assert c_cc == ["b-1", "c-1", "c-2"]
+    assert node_cc == set()
+    assert a_cc == {"a-1", "a-2"}
+    assert b_cc == {"b-1"}
+    assert c_cc == {"b-1", "c-1", "c-2"}
     assert d_cc == c_cc
-    assert e_cc == ["b-1", "c-1", "c-2", "e-1"]
-    assert f_cc == ["f-1"]
+    assert e_cc == {"b-1", "c-1", "c-2", "e-1"}
+    assert f_cc == {"f-1"}
 
 
 @pytest.fixture

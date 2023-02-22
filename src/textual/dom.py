@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import re
-from functools import lru_cache
 from inspect import getfile
 from typing import (
     TYPE_CHECKING,
     ClassVar,
     Iterable,
+    Iterator,
     Sequence,
     Type,
     TypeVar,
@@ -219,18 +219,18 @@ class DOMNode(MessagePump):
         styles = self._component_styles[name]
         return styles
 
-    def _post_mount(self) -> None:
+    def _post_mount(self):
         """Called after the object has been mounted."""
         Reactive._initialize_object(self)
 
     @property
-    def _node_bases(self) -> Iterable[Type[DOMNode]]:
+    def _node_bases(self) -> Iterator[Type[DOMNode]]:
         """The DOMNode bases classes (including self.__class__)"""
         # Node bases are in reversed order so that the base class is lower priority
         return self._css_bases(self.__class__)
 
-    @staticmethod
-    def _css_bases(base: Type[DOMNode]) -> Iterable[Type[DOMNode]]:
+    @classmethod
+    def _css_bases(cls, base: Type[DOMNode]) -> Iterator[Type[DOMNode]]:
         """Get the DOMNode base classes, which inherit CSS.
 
         Args:
@@ -240,10 +240,8 @@ class DOMNode(MessagePump):
             An iterable of DOMNode classes.
         """
         _class = base
-        node_classes: list[Type[DOMNode]] = []
-        add_class = node_classes.append
         while True:
-            add_class(_class)
+            yield _class
             if not _class._inherit_css:
                 break
             for _base in _class.__bases__:
@@ -252,7 +250,6 @@ class DOMNode(MessagePump):
                     break
             else:
                 break
-        return node_classes
 
     @classmethod
     def _merge_bindings(cls) -> Bindings:
@@ -317,8 +314,7 @@ class DOMNode(MessagePump):
 
         return css_stack
 
-    @staticmethod
-    def _get_component_classes(node_type: type[DOMNode]) -> Iterable[str]:
+    def _get_component_classes(self) -> set[str]:
         """Gets the component classes for this class and inherited from bases.
 
         Component classes are inherited from base classes, unless
@@ -327,13 +323,14 @@ class DOMNode(MessagePump):
         Returns:
             A set with all the component classes available.
         """
-        component_classes: list[str] = []
-        for base in DOMNode._css_bases(node_type):
-            component_classes.extend(base.__dict__.get("COMPONENT_CLASSES", ()))
+
+        component_classes: set[str] = set()
+        for base in self._node_bases:
+            component_classes.update(base.__dict__.get("COMPONENT_CLASSES", set()))
             if not base.__dict__.get("_inherit_component_classes", True):
                 break
 
-        return sorted(component_classes)
+        return component_classes
 
     @property
     def parent(self) -> DOMNode | None:
