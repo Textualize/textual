@@ -157,13 +157,13 @@ def test_component_classes_inheritance():
     f = F()
     f_cc = f._get_component_classes()
 
-    assert node_cc == []
-    assert a_cc == ["a-1", "a-2"]
-    assert b_cc == ["b-1"]
-    assert c_cc == ["b-1", "c-1", "c-2"]
+    assert node_cc == frozenset()
+    assert a_cc == {"a-1", "a-2"}
+    assert b_cc == {"b-1"}
+    assert c_cc == {"b-1", "c-1", "c-2"}
     assert d_cc == c_cc
-    assert e_cc == ["b-1", "c-1", "c-2", "e-1"]
-    assert f_cc == ["f-1"]
+    assert e_cc == {"b-1", "c-1", "c-2", "e-1"}
+    assert f_cc == {"f-1"}
 
 
 @pytest.fixture
