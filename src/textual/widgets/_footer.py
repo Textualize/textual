@@ -132,7 +132,6 @@ class Footer(Widget):
 
     def notify_style_update(self) -> None:
         self._key_text = None
-        self.refresh()
 
     def post_render(self, renderable):
         return renderable
