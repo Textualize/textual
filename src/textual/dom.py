@@ -230,7 +230,6 @@ class DOMNode(MessagePump):
         return self._css_bases(self.__class__)
 
     @classmethod
-    @lru_cache(maxsize=None)
     def _css_bases(cls, base: Type[DOMNode]) -> Iterable[Type[DOMNode]]:
         """Get the DOMNode base classes, which inherit CSS.
 
@@ -319,7 +318,6 @@ class DOMNode(MessagePump):
         return css_stack
 
     @classmethod
-    @lru_cache(maxsize=None)
     def _get_component_classes(cls) -> frozenset[str]:
         """Gets the component classes for this class and inherited from bases.
 
