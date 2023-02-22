@@ -122,8 +122,12 @@ class ToggleButton(Static, can_focus=True):
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._button_first = button_first
         self.value = value
-        self.label: Text = Text.from_markup(label) if isinstance(label, str) else label
-        """The label for the button."""
+        self._label = Text.from_markup(label) if isinstance(label, str) else label
+
+    @property
+    def label(self) -> Text:
+        """The label associated with the button."""
+        return self._label
 
     @property
     def _button(self) -> Text:
@@ -159,9 +163,9 @@ class ToggleButton(Static, can_focus=True):
             The content to render for the widget.
         """
         button = self._button
-        label = self.label.copy()
+        label = self._label.copy()
         label.stylize(self.get_component_rich_style("toggle--label", partial=True))
-        spacer = Text(" " if self.label else "")
+        spacer = Text(" " if label else "")
         return (
             Text.assemble(button, spacer, label)
             if self._button_first
