@@ -2339,9 +2339,12 @@ _uvloop_init_done: bool = False
 
 
 def _init_uvloop() -> None:
-    """
-    Import and install the `uvloop` asyncio policy, if available.
+    """Import and install the `uvloop` asyncio policy, if available.
+
     This is done only once, even if the function is called multiple times.
+
+    This is provided as a nicety for users that have `uvloop` installed independently
+    of Textual, as `uvloop` is not listed as a Textual dependency.
     """
     global _uvloop_init_done
 
@@ -2349,10 +2352,10 @@ def _init_uvloop() -> None:
         return
 
     try:
-        import uvloop
+        import uvloop  # type: ignore[reportMissingImports]
     except ImportError:
         pass
     else:
-        uvloop.install()
+        uvloop.install()  # type: ignore[reportUnknownMemberType]
 
     _uvloop_init_done = True
