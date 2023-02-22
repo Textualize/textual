@@ -407,8 +407,8 @@ class Stylesheet:
         self.replace_rules(node, node_rules, animate=animate)
 
         component_classes = node._get_component_classes()
-        refresh_node = False
         if component_classes:
+            refresh_node = False
             old_component_styles = node._component_styles.copy()
             node._component_styles.clear()
             for component in sorted(component_classes):
@@ -422,7 +422,7 @@ class Stylesheet:
                     refresh_node = True
                 node._component_styles[component] = virtual_node.styles
             if refresh_node:
-                self.refresh()
+                node.refresh()
 
     @classmethod
     def replace_rules(
