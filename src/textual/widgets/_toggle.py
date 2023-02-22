@@ -63,7 +63,6 @@ class ToggleButton(Static, can_focus=True):
 
     ToggleButton.-on > .toggle--button {
         color: $success;
-        background: $foreground 15%;
     }
 
     ToggleButton.-on:focus > .toggle--button {
@@ -75,6 +74,10 @@ class ToggleButton(Static, can_focus=True):
     App.-light-mode ToggleButton > .toggle--button {
         color: $background;
         background: $foreground 10%;
+    }
+
+    App.-light-mode ToggleButton:focus > .toggle--button {
+        background: $foreground 25%;
     }
 
     App.-light-mode ToggleButton.-on > .toggle--button {
