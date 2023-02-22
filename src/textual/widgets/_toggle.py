@@ -36,7 +36,7 @@ class ToggleButton(Static, can_focus=True):
     """
     | Class | Description |
     | :- | :- |
-    | `toggle--button` | Targets toggle button itself. |
+    | `toggle--button` | Targets the toggle button itself. |
     | `toggle--label` | Targets the text label of the toggle button. |
     """
 
@@ -86,13 +86,13 @@ class ToggleButton(Static, can_focus=True):
     """  # TODO: https://github.com/Textualize/textual/issues/1780
 
     BUTTON_LEFT: str = "▐"
-    """The character for the left side of the toggle button."""
+    """The character used for the left side of the toggle button."""
 
     BUTTON_INNER: str = "✖"
-    """The character used to for the inside of the button."""
+    """The character used for the inside of the button."""
 
     BUTTON_RIGHT: str = "▌"
-    """The character for the right side of the toggle button."""
+    """The character used for the right side of the toggle button."""
 
     value: reactive[bool] = reactive(False)
     """The value of the button. `True` for on, `False` for off."""
