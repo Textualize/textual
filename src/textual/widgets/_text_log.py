@@ -60,15 +60,20 @@ class TextLog(ScrollView, can_focus=True):
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self.max_lines = max_lines
+        """Maximum number of lines in the log or `None` for no maximum."""
         self._start_line: int = 0
         self.lines: list[Strip] = []
         self._line_cache: LRUCache[tuple[int, int, int, int], Strip]
         self._line_cache = LRUCache(1024)
         self.max_width: int = 0
         self.min_width = min_width
+        """Minimum width of renderables."""
         self.wrap = wrap
+        """Enable word wrapping."""
         self.highlight = highlight
+        """Automatically highlight content."""
         self.markup = markup
+        """Apply Rich console markup."""
         self.highlighter = ReprHighlighter()
 
     def _on_styles_updated(self) -> None:
