@@ -229,8 +229,8 @@ class DOMNode(MessagePump):
         # Node bases are in reversed order so that the base class is lower priority
         return self._css_bases(self.__class__)
 
-    @classmethod
-    def _css_bases(cls, base: Type[DOMNode]) -> Iterable[Type[DOMNode]]:
+    @staticmethod
+    def _css_bases(base: Type[DOMNode]) -> Iterable[Type[DOMNode]]:
         """Get the DOMNode base classes, which inherit CSS.
 
         Args:
@@ -317,8 +317,8 @@ class DOMNode(MessagePump):
 
         return css_stack
 
-    @classmethod
-    def _get_component_classes(cls) -> frozenset[str]:
+    @staticmethod
+    def _get_component_classes(node_type: type[DOMNode]) -> Iterable[str]:
         """Gets the component classes for this class and inherited from bases.
 
         Component classes are inherited from base classes, unless
@@ -327,13 +327,13 @@ class DOMNode(MessagePump):
         Returns:
             A set with all the component classes available.
         """
-        component_classes: set[str] = set()
-        for base in cls._css_bases(cls):
-            component_classes.update(base.__dict__.get("COMPONENT_CLASSES", set()))
+        component_classes: list[str] = []
+        for base in DOMNode._css_bases(node_type):
+            component_classes.extend(base.__dict__.get("COMPONENT_CLASSES", ()))
             if not base.__dict__.get("_inherit_component_classes", True):
                 break
 
-        return frozenset(component_classes)
+        return sorted(component_classes)
 
     @property
     def parent(self) -> DOMNode | None:

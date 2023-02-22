@@ -406,7 +406,7 @@ class Stylesheet:
         )
         self.replace_rules(node, node_rules, animate=animate)
 
-        component_classes = node._get_component_classes()
+        component_classes = DOMNode._get_component_classes(type(node))
         if component_classes:
             old_component_styles = node._component_styles.copy()
             node._component_styles.clear()
