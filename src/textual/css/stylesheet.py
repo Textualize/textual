@@ -408,6 +408,7 @@ class Stylesheet:
 
         component_classes = node._get_component_classes()
         if component_classes:
+            # Create virtual nodes that exist to extract styles
             refresh_node = False
             old_component_styles = node._component_styles.copy()
             node._component_styles.clear()
@@ -419,6 +420,7 @@ class Stylesheet:
                     not refresh_node
                     and old_component_styles.get(component) != virtual_node.styles
                 ):
+                    # If the styles have changed we want to refresh the node
                     refresh_node = True
                 node._component_styles[component] = virtual_node.styles
             if refresh_node:

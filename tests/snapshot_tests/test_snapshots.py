@@ -213,7 +213,7 @@ def test_demo(snap_compare):
     """Test the demo app (python -m textual)"""
     assert snap_compare(
         Path("../../src/textual/demo.py"),
-        press=["down", "down", "down", "_"],
+        press=["down", "down", "down"],
         terminal_size=(100, 30),
     )
 
@@ -238,6 +238,4 @@ def test_disabled_widgets(snap_compare):
 
 
 def test_focus_component_class(snap_compare):
-    assert snap_compare(
-        SNAPSHOT_APPS_DIR / "focus_component_class.py", press=["tab", "_"]
-    )
+    assert snap_compare(SNAPSHOT_APPS_DIR / "focus_component_class.py", press=["tab"])
