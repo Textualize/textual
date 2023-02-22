@@ -1,5 +1,7 @@
 """Provides a radio button widget."""
 
+from __future__ import annotations
+
 from ._toggle import ToggleButton
 
 
