@@ -1,9 +1,6 @@
 poetry run mypy src/textual
 src/textual/_two_way_dict.py:41: error: Incompatible return value type (got "Optional[Value]", expected "Value")  [return-value]
 src/textual/_two_way_dict.py:52: error: Incompatible return value type (got "Optional[Key]", expected "Key")  [return-value]
-src/textual/widget.py:2139: error: Incompatible types in assignment (expression has type "Optional[MessagePump]", variable has type "Widget")  [assignment]
-src/textual/widget.py:2152: error: Name "node" already defined on line 2134  [no-redef]
-src/textual/widget.py:2157: error: Incompatible types in assignment (expression has type "Optional[MessagePump]", variable has type "Widget")  [assignment]
 src/textual/app.py:315: error: Argument "file" to "Console" has incompatible type "_WriterThread"; expected "Optional[IO[str]]"  [arg-type]
 src/textual/app.py:1607: error: Value of type variable "_T_io" of "redirect_stderr" cannot be "StdoutRedirector"  [type-var]
 src/textual/app.py:1612: error: Value of type variable "_T_io" of "redirect_stderr" cannot be "_NullFile"  [type-var]
@@ -51,4 +48,4 @@ src/textual/demo.py:221: error: "App[Any]" has no attribute "add_note"  [attr-de
 src/textual/demo.py:276: error: "App[Any]" has no attribute "add_note"  [attr-defined]
 src/textual/cli/previews/easing.py:100: error: Argument "easing" to "animate" of "App" has incompatible type "Optional[str]"; expected "Union[Callable[[float], float], str]"  [arg-type]
 src/textual/cli/previews/easing.py:109: error: "MessageTarget" has no attribute "id"  [attr-defined]
-Found 51 errors in 11 files (checked 154 source files)
+Found 48 errors in 10 files (checked 154 source files)

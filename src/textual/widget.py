@@ -2131,7 +2131,7 @@ class Widget(DOMNode):
             Names of the pseudo classes.
 
         """
-        node = self
+        node: MessagePump | None = self
         while isinstance(node, Widget):
             if node.disabled:
                 yield "disabled"
@@ -2149,7 +2149,7 @@ class Widget(DOMNode):
             pass
         else:
             if focused:
-                node: MessagePump | None = focused
+                node = focused
                 while node is not None:
                     if node is self:
                         yield "focus-within"
