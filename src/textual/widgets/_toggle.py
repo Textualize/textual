@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from typing import ClassVar
 
+from rich.style import Style
 from rich.text import Text, TextType
 
 from ..app import RenderResult
@@ -29,18 +30,14 @@ class ToggleButton(Static, can_focus=True):
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
+        "toggle--button",
         "toggle--label",
-        "toggle--button-sides",
-        "toggle--button-off",
-        "toggle--button-on",
     }
     """
     | Class | Description |
     | :- | :- |
     | `toggle--label` | Targets the text label of the toggle button. |
-    | `toggle--button-sides` | Targets the side characters of the toggle button. |
-    | `toggle--button-off` | Targets the inner character of the toggle button when off. |
-    | `toggle--button-on` | Targets the inner character of the toggle button when on. |
+    | `toggle--button` | Targets toggle button itself. |
     """
 
     DEFAULT_CSS = """
@@ -53,29 +50,22 @@ class ToggleButton(Static, can_focus=True):
         text-style: underline;
     }
 
-    ToggleButton > .toggle--button-sides {
-        color: $panel-lighten-2;
+    ToggleButton > .toggle--button {
+        color: $background 50%;
+        background: $foreground 15%;
     }
 
-    ToggleButton:focus > .toggle--button-sides {
-        color: $panel-lighten-3;
+    ToggleButton:focus > .toggle--button {
+        color: $background 50%;
+        background: $foreground 25%;
     }
 
-    ToggleButton > .toggle--button-on {
+    ToggleButton.-on > .toggle--button {
         color: $success;
         background: $panel-lighten-2;
     }
 
-    ToggleButton:focus > .toggle--button-on {
-        background: $panel-lighten-3;
-    }
-
-    ToggleButton > .toggle--button-off {
-        color: $panel;
-        background: $panel-lighten-2;
-    }
-
-    ToggleButton:focus > .toggle--button-off {
+    ToggleButton.-on:focus > .toggle--button {
         background: $panel-lighten-3;
     }
     """  # TODO: https://github.com/Textualize/textual/issues/1780
@@ -128,13 +118,13 @@ class ToggleButton(Static, can_focus=True):
     @property
     def _button(self) -> Text:
         """The button, reflecting the current value."""
-        side_style = self.get_component_rich_style("toggle--button-sides")
-        inner_style = self.get_component_rich_style(
-            f"toggle--button-{'on' if self.value else 'off'}"
+        button_style = self.get_component_rich_style("toggle--button")
+        side_style = Style.from_color(
+            button_style.bgcolor, self.background_colors[1].rich_color
         )
         return Text.assemble(
             Text(self.button_left, style=side_style),
-            Text(self.button_inner, style=inner_style),
+            Text(self.button_inner, style=button_style),
             Text(self.button_right, style=side_style),
         )
 
