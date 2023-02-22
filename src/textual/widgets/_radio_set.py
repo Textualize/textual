@@ -48,13 +48,6 @@ class RadioSet(Container):
         """The buttons within the set."""
         return self.query(RadioButton)
 
-    def on_mount(self) -> None:
-        """Set up the radio group for use after the DOM is loaded."""
-        buttons = self._buttons
-        on_buttons = buttons.filter(".-on")
-        if buttons and not on_buttons:
-            buttons[0].value = True
-
     class Changed(Message, bubble=True):
         """Posted when the pressed button in the set changes."""
 
