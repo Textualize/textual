@@ -39,6 +39,8 @@ RowCacheKey: TypeAlias = (
 CursorType = Literal["cell", "row", "column", "none"]
 CellType = TypeVar("CellType")
 
+CELL_X_PADDING = 2
+
 
 class CellDoesNotExist(Exception):
     """The cell key/index was invalid.
@@ -171,9 +173,9 @@ class Column:
         """Width in cells, required to render a column."""
         # +2 is to account for space padding either side of the cell
         if self.auto_width:
-            return self.content_width + 2
+            return self.content_width + CELL_X_PADDING
         else:
-            return self.width + 2
+            return self.width + CELL_X_PADDING
 
 
 @dataclass
@@ -185,7 +187,7 @@ class Row:
     label: str | None = None
 
 
-class RenderedRow(NamedTuple):
+class RowRenderables(NamedTuple):
     """Container for a row, which contains an optional label and some data cells."""
 
     label: RenderableType | None
@@ -543,7 +545,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """The column containing row labels is not part of the data. This key identifies it."""
         self._labelled_row_exists = False
         """Whether or not the user has supplied any rows with labels."""
-        self._row_label_column_width = 0
+        self._max_label_content_width = 0
+        """The largest content width out of all row labels in the table."""
 
         self.show_header = show_header
         """Show/hide the header row (the row of column labels)."""
@@ -969,23 +972,32 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     def _update_dimensions(self, new_rows: Iterable[RowKey]) -> None:
         """Called to recalculate the virtual (scrollable) size."""
+        console = self.app.console
         for row_key in new_rows:
             row_index = self._row_locations.get(row_key)
             row = self.rows.get(row_key)
+
             if row.label is not None:
                 self._labelled_row_exists = True
 
-            # self._row_label_column_width = max(self._row_label_column_width, )
+            row_label, cells_in_row = self._get_row_renderables(row_index)
+            label_content_width = measure(console, row_label, 1) if row_label else 0
+            self._max_label_content_width = max(
+                self._max_label_content_width, label_content_width
+            )
+            print(label_content_width)
+
             if row_index is None:
                 continue
-            for column, renderable in zip(
-                self.ordered_columns, self._get_row_renderables(row_index).cells
-            ):
-                content_width = measure(self.app.console, renderable, 1)
+
+            for column, renderable in zip(self.ordered_columns, cells_in_row):
+                content_width = measure(console, renderable, 1)
                 column.content_width = max(column.content_width, content_width)
 
         self._clear_caches()
-        total_width = sum(column.render_width for column in self.columns.values())
+
+        data_cells_width = sum(column.render_width for column in self.columns.values())
+        total_width = data_cells_width + self._max_label_content_width
         header_height = self.header_height if self.show_header else 0
         self.virtual_size = Size(
             total_width,
@@ -1058,6 +1070,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._require_update_dimensions = True
         self.cursor_coordinate = Coordinate(0, 0)
         self.hover_coordinate = Coordinate(0, 0)
+        self._max_label_content_width = 0
         self._labelled_row_exists = False
         self.refresh()
 
@@ -1329,14 +1342,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Whether row labels should be rendered or not."""
         return self._labelled_row_exists and self.show_row_labels
 
-    def _get_row_renderables(self, row_index: int) -> RenderedRow:
-        """Get renderables for the row currently at the given row index.
+    def _get_row_renderables(self, row_index: int) -> RowRenderables:
+        """Get renderables for the row currently at the given row index. The renderables
+        returned here have already been passed through the default_cell_formatter.
 
         Args:
             row_index: Index of the row.
 
         Returns:
-            A RenderedRow containing the optional label and the rendered cells.
+            A RowRenderables containing the optional label and the rendered cells.
         """
         ordered_columns = self.ordered_columns
         if row_index == -1:
@@ -1344,7 +1358,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 column.label for column in ordered_columns
             ]
             # This is the cell where header and row labels intersect
-            return RenderedRow(None, header_row)
+            return RowRenderables(None, header_row)
 
         ordered_row = self.get_row_at(row_index)
         empty = Text()
@@ -1361,7 +1375,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 if row_metadata.label
                 else None
             )
-        return RenderedRow(label, formatted_row_cells)
+        return RowRenderables(label, formatted_row_cells)
 
     def _render_cell(
         self,
@@ -1422,8 +1436,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if cell_cache_key not in self._cell_render_cache:
             style += Style.from_meta({"row": row_index, "column": column_index})
             height = self.header_height if is_header_cell else self.rows[row_key].height
-
-            cell = self._get_row_renderables(row_index).cells[column_index]
+            row_label, row_cells = self._get_row_renderables(row_index)
+            if is_row_label_cell:
+                cell = row_label
+            else:
+                cell = row_cells[column_index]
             lines = self.app.console.render_lines(
                 Padding(cell, (0, 1)),
                 self.app.console.options.update_dimensions(width, height),
@@ -1505,12 +1522,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         # If the row has a label, add it to fixed_row here with correct style.
         fixed_row = []
         header_style = self.get_component_styles("datatable--header").rich_style
+
         if self._labelled_row_exists and self.show_row_labels and not is_header_row:
+            # The width of the row label is updated again on idle
             label_cell_lines = render_cell(
                 row_index,
                 -1,
                 header_style,
-                width=self._row_label_column_width,
+                width=self._max_label_content_width + CELL_X_PADDING,
                 cursor=False,
                 hover=False,
             )[line_no]
