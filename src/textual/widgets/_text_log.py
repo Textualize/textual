@@ -60,7 +60,6 @@ class TextLog(ScrollView, can_focus=True):
 
     def notify_style_update(self) -> None:
         self._line_cache.clear()
-        self.refresh()
 
     def write(
         self,
