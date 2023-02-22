@@ -428,6 +428,7 @@ class App(Generic[ReturnType], DOMNode):
         self._dom_ready = False
         self._batch_count = 0
         self.set_class(self.dark, "-dark-mode")
+        self.set_class(not self.dark, "-light-mode")
 
     @property
     def return_value(self) -> ReturnType | None:
