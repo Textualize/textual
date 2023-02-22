@@ -39,11 +39,6 @@ class Button(Static, can_focus=True):
         text-style: bold;
     }
 
-    Button.-disabled {
-        opacity: 0.4;
-        text-opacity: 0.7;
-    }
-
     Button:focus {
         text-style: bold reverse;
     }
@@ -150,14 +145,11 @@ class Button(Static, can_focus=True):
     ACTIVE_EFFECT_DURATION = 0.3
     """When buttons are clicked they get the `-active` class for this duration (in seconds)"""
 
-    label: reactive[RenderableType] = reactive("")
+    label: reactive[RenderableType] = reactive[RenderableType]("")
     """The text label that appears within the button."""
 
     variant = reactive("default")
     """The variant name for the button."""
-
-    disabled = reactive(False)
-    """The disabled state of the button; `True` if disabled, `False` if not."""
 
     class Pressed(Message, bubble=True):
         """Event sent when a `Button` is pressed.
@@ -176,45 +168,35 @@ class Button(Static, can_focus=True):
     def __init__(
         self,
         label: TextType | None = None,
-        disabled: bool = False,
         variant: ButtonVariant = "default",
         *,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
+        disabled: bool = False,
     ):
         """Create a Button widget.
 
         Args:
             label: The text that appears within the button.
-            disabled: Whether the button is disabled or not.
             variant: The variant of the button.
             name: The name of the button.
             id: The ID of the button in the DOM.
             classes: The CSS classes of the button.
+            disabled: Whether the button is disabled or not.
         """
-        super().__init__(name=name, id=id, classes=classes)
+        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
         if label is None:
             label = self.css_identifier_styled
 
         self.label = self.validate_label(label)
 
-        self.disabled = disabled
-        if disabled:
-            self.add_class("-disabled")
-
         self.variant = self.validate_variant(variant)
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield from super().__rich_repr__()
         yield "variant", self.variant, "default"
-        yield "disabled", self.disabled, False
-
-    def watch_mouse_over(self, value: bool) -> None:
-        """Update from CSS if mouse over state changes."""
-        if self._has_hover_style and not self.disabled:
-            self.app.update_styles(self)
 
     def validate_variant(self, variant: str) -> str:
         if variant not in _VALID_BUTTON_VARIANTS:
@@ -226,10 +208,6 @@ class Button(Static, can_focus=True):
     def watch_variant(self, old_variant: str, variant: str):
         self.remove_class(f"-{old_variant}")
         self.add_class(f"-{variant}")
-
-    def watch_disabled(self, disabled: bool) -> None:
-        self.set_class(disabled, "-disabled")
-        self.can_focus = not disabled
 
     def validate_label(self, label: RenderableType) -> RenderableType:
         """Parse markup for self.label"""
@@ -272,11 +250,11 @@ class Button(Static, can_focus=True):
     def success(
         cls,
         label: TextType | None = None,
-        disabled: bool = False,
         *,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
+        disabled: bool = False,
     ) -> Button:
         """Utility constructor for creating a success Button variant.
 
@@ -292,22 +270,22 @@ class Button(Static, can_focus=True):
         """
         return Button(
             label=label,
-            disabled=disabled,
             variant="success",
             name=name,
             id=id,
             classes=classes,
+            disabled=disabled,
         )
 
     @classmethod
     def warning(
         cls,
         label: TextType | None = None,
-        disabled: bool = False,
         *,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
+        disabled: bool = False,
     ) -> Button:
         """Utility constructor for creating a warning Button variant.
 
@@ -323,22 +301,22 @@ class Button(Static, can_focus=True):
         """
         return Button(
             label=label,
-            disabled=disabled,
             variant="warning",
             name=name,
             id=id,
             classes=classes,
+            disabled=disabled,
         )
 
     @classmethod
     def error(
         cls,
         label: TextType | None = None,
-        disabled: bool = False,
         *,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
+        disabled: bool = False,
     ) -> Button:
         """Utility constructor for creating an error Button variant.
 
@@ -354,9 +332,9 @@ class Button(Static, can_focus=True):
         """
         return Button(
             label=label,
-            disabled=disabled,
             variant="error",
             name=name,
             id=id,
             classes=classes,
+            disabled=disabled,
         )

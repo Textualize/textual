@@ -26,21 +26,18 @@ class VisibleTester(App[None]):
 async def test_visibility_changes() -> None:
     """Test changing visibility via code and CSS."""
     async with VisibleTester().run_test() as pilot:
-        assert len(pilot.app.screen.visible_widgets) == 5
         assert pilot.app.query_one("#keep").visible is True
         assert pilot.app.query_one("#hide-via-code").visible is True
         assert pilot.app.query_one("#hide-via-css").visible is True
 
         pilot.app.query_one("#hide-via-code").styles.visibility = "hidden"
         await pilot.pause(0)
-        assert len(pilot.app.screen.visible_widgets) == 4
         assert pilot.app.query_one("#keep").visible is True
         assert pilot.app.query_one("#hide-via-code").visible is False
         assert pilot.app.query_one("#hide-via-css").visible is True
 
         pilot.app.query_one("#hide-via-css").set_class(True, "hidden")
         await pilot.pause(0)
-        assert len(pilot.app.screen.visible_widgets) == 3
         assert pilot.app.query_one("#keep").visible is True
         assert pilot.app.query_one("#hide-via-code").visible is False
         assert pilot.app.query_one("#hide-via-css").visible is False

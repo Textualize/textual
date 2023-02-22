@@ -73,6 +73,7 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
+        disabled: bool = False,
     ) -> None:
         """
         Args:
@@ -81,8 +82,11 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
             name: The name of the widget.
             id: The unique ID of the widget used in CSS/query selection.
             classes: The CSS classes of the widget.
+            disabled: Whether the ListView is disabled or not.
         """
-        super().__init__(*children, name=name, id=id, classes=classes)
+        super().__init__(
+            *children, name=name, id=id, classes=classes, disabled=disabled
+        )
         self._index = initial_index
 
     def on_mount(self) -> None:
