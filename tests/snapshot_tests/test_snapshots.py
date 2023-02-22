@@ -213,7 +213,7 @@ def test_demo(snap_compare):
     """Test the demo app (python -m textual)"""
     assert snap_compare(
         Path("../../src/textual/demo.py"),
-        press=["down", "down", "down"],
+        press=["down", "down", "down", "_"],
         terminal_size=(100, 30),
     )
 
