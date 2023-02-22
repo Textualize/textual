@@ -36,8 +36,8 @@ class ToggleButton(Static, can_focus=True):
     """
     | Class | Description |
     | :- | :- |
-    | `toggle--label` | Targets the text label of the toggle button. |
     | `toggle--button` | Targets toggle button itself. |
+    | `toggle--label` | Targets the text label of the toggle button. |
     """
 
     DEFAULT_CSS = """
