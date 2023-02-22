@@ -1801,6 +1801,7 @@ class App(Generic[ReturnType], DOMNode):
     async def _close_all(self) -> None:
         """Close all message pumps."""
 
+        screen: Screen | Callable[[], Screen]  # Explicit type to reuse variable below.
         # Close all screens on the stack
         for screen in reversed(self._screen_stack):
             if screen._running:

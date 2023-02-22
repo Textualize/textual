@@ -6,8 +6,7 @@ src/textual/app.py:1607: error: Value of type variable "_T_io" of "redirect_stde
 src/textual/app.py:1612: error: Value of type variable "_T_io" of "redirect_stderr" cannot be "_NullFile"  [type-var]
 src/textual/app.py:1613: error: Value of type variable "_T_io" of "redirect_stdout" cannot be "_NullFile"  [type-var]
 src/textual/app.py:1744: error: Incompatible types in assignment (expression has type "reversed[Widget]", variable has type "List[Widget]")  [assignment]
-src/textual/app.py:1812: error: Incompatible types in assignment (expression has type "Union[Screen, Callable[[], Screen]]", variable has type "Screen")  [assignment]
-src/textual/app.py:2075: error: Argument 1 to "action" of "App" has incompatible type "Union[str, Tuple[Any, ...]]"; expected "Union[str, Tuple[str, Tuple[str, ...]]]"  [arg-type]
+src/textual/app.py:2076: error: Argument 1 to "action" of "App" has incompatible type "Union[str, Tuple[Any, ...]]"; expected "Union[str, Tuple[str, Tuple[str, ...]]]"  [arg-type]
 src/textual/widgets/_header.py:136: error: Argument 3 to "watch" of "DOMNode" has incompatible type "Callable[[str], None]"; expected "Union[Callable[[], Awaitable[None]], Callable[[], None]]"  [arg-type]
 src/textual/widgets/_header.py:137: error: Argument 3 to "watch" of "DOMNode" has incompatible type "Callable[[str], None]"; expected "Union[Callable[[], Awaitable[None]], Callable[[], None]]"  [arg-type]
 src/textual/widgets/_footer.py:69: error: Argument 3 to "watch" of "DOMNode" has incompatible type "Callable[[Optional[Widget]], None]"; expected "Union[Callable[[], Awaitable[None]], Callable[[], None]]"  [arg-type]
@@ -46,4 +45,4 @@ src/textual/demo.py:221: error: "App[Any]" has no attribute "add_note"  [attr-de
 src/textual/demo.py:276: error: "App[Any]" has no attribute "add_note"  [attr-defined]
 src/textual/cli/previews/easing.py:100: error: Argument "easing" to "animate" of "App" has incompatible type "Optional[str]"; expected "Union[Callable[[float], float], str]"  [arg-type]
 src/textual/cli/previews/easing.py:109: error: "MessageTarget" has no attribute "id"  [attr-defined]
-Found 47 errors in 10 files (checked 154 source files)
+Found 46 errors in 10 files (checked 154 source files)
