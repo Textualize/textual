@@ -319,7 +319,7 @@ class DOMNode(MessagePump):
 
     @classmethod
     @lru_cache(maxsize=None)
-    def _get_component_classes(cls) -> Sequence[str]:
+    def _get_component_classes(cls) -> frozenset[str]:
         """Gets the component classes for this class and inherited from bases.
 
         Component classes are inherited from base classes, unless
@@ -335,7 +335,7 @@ class DOMNode(MessagePump):
             if not base.__dict__.get("_inherit_component_classes", True):
                 break
 
-        return sorted(component_classes)
+        return frozenset(component_classes)
 
     @property
     def parent(self) -> DOMNode | None:
