@@ -72,6 +72,11 @@ class ToggleButton(Static, can_focus=True):
 
     /* Light mode overrides. */
 
+    App.-light-mode ToggleButton > .toggle--button {
+        color: $background;
+        background: $foreground 10%;
+    }
+
     App.-light-mode ToggleButton.-on > .toggle--button {
         color: $primary;
     }
