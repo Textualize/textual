@@ -70,13 +70,13 @@ class ToggleButton(Static, can_focus=True):
     }
     """  # TODO: https://github.com/Textualize/textual/issues/1780
 
-    button_left: reactive[TextType] = reactive[TextType]("▐")
+    button_left: reactive[str] = reactive[str]("▐")
     """The character for the left side of the toggle button."""
 
-    button_inner: reactive[TextType] = reactive[TextType]("✖")
+    button_inner: reactive[str] = reactive[str]("✖")
     """The character used to for the inside of the button."""
 
-    button_right: reactive[TextType] = reactive[TextType]("▌")
+    button_right: reactive[str] = reactive[str]("▌")
     """The character for the right side of the toggle button."""
 
     label: reactive[TextType] = reactive[TextType]("")
