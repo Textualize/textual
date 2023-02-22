@@ -94,7 +94,7 @@ class ToggleButton(Static, can_focus=True):
     BUTTON_RIGHT: str = "▌"
     """The character used for the right side of the toggle button."""
 
-    value: reactive[bool] = reactive(False)
+    value: reactive[bool] = reactive(False, init=False)
     """The value of the button. `True` for on, `False` for off."""
 
     def __init__(
