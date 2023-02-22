@@ -240,7 +240,7 @@ class DOMNode(MessagePump):
         Returns:
             An iterable of DOMNode classes.
         """
-        classes = []
+        classes: list[type[DOMNode]] = []
         _class = base
         while True:
             classes.append(_class)
