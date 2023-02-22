@@ -50,23 +50,30 @@ class ToggleButton(Static, can_focus=True):
         text-style: underline;
     }
 
+    /* Base button colours (including in dark mode). */
+
     ToggleButton > .toggle--button {
-        color: $background 50%;
+        color: $background;
         background: $foreground 15%;
     }
 
     ToggleButton:focus > .toggle--button {
-        color: $background 50%;
         background: $foreground 25%;
     }
 
     ToggleButton.-on > .toggle--button {
         color: $success;
-        background: $panel-lighten-2;
+        background: $foreground 15%;
     }
 
     ToggleButton.-on:focus > .toggle--button {
-        background: $panel-lighten-3;
+        background: $foreground 25%;
+    }
+
+    /* Light mode overrides. */
+
+    App.-light-mode ToggleButton.-on > .toggle--button {
+        color: $primary;
     }
     """  # TODO: https://github.com/Textualize/textual/issues/1780
 
@@ -113,10 +120,24 @@ class ToggleButton(Static, can_focus=True):
     @property
     def _button(self) -> Text:
         """The button, reflecting the current value."""
+
+        # Grab the button style.
         button_style = self.get_component_rich_style("toggle--button")
+
+        # If the button is off, we're going to do a bit of a switcharound to
+        # make it look like it's a "cutout".
+        if not self.value:
+            button_style = Style.from_color(
+                self.background_colors[1].rich_color, button_style.bgcolor
+            )
+
+        # Building the style for the side characters. Note that this is
+        # sensitive to the type of character used, so pay attention to
+        # BUTTON_LEFT and BUTTON_RIGHT.
         side_style = Style.from_color(
             button_style.bgcolor, self.background_colors[1].rich_color
         )
+
         return Text.assemble(
             Text(self.BUTTON_LEFT, style=side_style),
             Text(self.BUTTON_INNER, style=button_style),
