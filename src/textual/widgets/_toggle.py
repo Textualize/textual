@@ -79,9 +79,6 @@ class ToggleButton(Static, can_focus=True):
     button_right: reactive[str] = reactive[str]("▌")
     """The character for the right side of the toggle button."""
 
-    label: reactive[TextType] = reactive[TextType]("")
-    """The label that describes the toggle."""
-
     value: reactive[bool] = reactive(False)
     """The value of the button. `True` for on, `False` for off."""
 
@@ -111,9 +108,10 @@ class ToggleButton(Static, can_focus=True):
             disabled: Whether the button is disabled or not.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
-        self.label = label
         self.button_first = button_first
         self.value = value
+        self.label: Text = Text.from_markup(label) if isinstance(label, str) else label
+        """The label for the button."""
 
     @property
     def _button(self) -> Text:
@@ -135,7 +133,8 @@ class ToggleButton(Static, can_focus=True):
             The content to render for the widget.
         """
         button = self._button
-        label = Text(self.label, style=self.get_component_rich_style("toggle--label"))
+        label = self.label.copy()
+        label.stylize(self.get_component_rich_style("toggle--label"))
         spacer = Text(" " if self.label else "")
         return (
             Text.assemble(button, spacer, label)
