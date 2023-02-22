@@ -145,7 +145,7 @@ class Button(Static, can_focus=True):
     ACTIVE_EFFECT_DURATION = 0.3
     """When buttons are clicked they get the `-active` class for this duration (in seconds)"""
 
-    label: reactive[RenderableType] = reactive("")
+    label: reactive[RenderableType] = reactive[RenderableType]("")
     """The text label that appears within the button."""
 
     variant = reactive("default")

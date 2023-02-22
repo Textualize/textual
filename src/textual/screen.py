@@ -425,12 +425,12 @@ class Screen(Widget):
         self._compositor.update_widgets(self._dirty_widgets)
         self.update_timer.pause()
         ResizeEvent = events.Resize
+
         try:
             if scroll:
                 exposed_widgets = self._compositor.reflow_visible(self, size)
                 if exposed_widgets:
                     layers = self._compositor.layers
-
                     for widget, (
                         region,
                         _order,
@@ -441,19 +441,14 @@ class Screen(Widget):
                     ) in layers:
                         if widget in exposed_widgets:
                             if widget._size_updated(
-                                region.size,
-                                virtual_size,
-                                container_size,
-                                layout=False,
+                                region.size, virtual_size, container_size, layout=False
                             ):
                                 widget.post_message_no_wait(
                                     ResizeEvent(
-                                        self,
-                                        region.size,
-                                        virtual_size,
-                                        container_size,
+                                        self, region.size, virtual_size, container_size
                                     )
                                 )
+
             else:
                 hidden, shown, resized = self._compositor.reflow(self, size)
                 Hide = events.Hide

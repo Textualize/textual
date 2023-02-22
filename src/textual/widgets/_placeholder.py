@@ -72,7 +72,7 @@ class Placeholder(Widget):
     _COLORS = cycle(_PLACEHOLDER_BACKGROUND_COLORS)
     _SIZE_RENDER_TEMPLATE = "[b]{} x {}[/b]"
 
-    variant: Reactive[PlaceholderVariant] = reactive("default")
+    variant: Reactive[PlaceholderVariant] = reactive[PlaceholderVariant]("default")
 
     _renderables: dict[PlaceholderVariant, str]
 
@@ -150,4 +150,4 @@ class Placeholder(Widget):
         """Update the placeholder "size" variant with the new placeholder size."""
         self._renderables["size"] = self._SIZE_RENDER_TEMPLATE.format(*event.size)
         if self.variant == "size":
-            self.refresh(layout=False)
+            self.refresh()

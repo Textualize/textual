@@ -40,8 +40,8 @@ from . import errors, events, messages
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
 from ._asyncio import create_task
-from ._compose import compose
 from ._cache import FIFOCache
+from ._compose import compose
 from ._context import active_app
 from ._easing import DEFAULT_SCROLL_EASING
 from ._layout import Layout
@@ -1891,18 +1891,22 @@ class Widget(DOMNode):
 
         while isinstance(widget.parent, Widget) and widget is not self:
             container = widget.parent
-            scroll_offset = container.scroll_to_region(
-                region,
-                spacing=widget.parent.gutter,
-                animate=animate,
-                speed=speed,
-                duration=duration,
-                top=top,
-                easing=easing,
-                force=force,
-            )
-            if scroll_offset:
-                scrolled = True
+
+            if widget.styles.dock:
+                scroll_offset = Offset(0, 0)
+            else:
+                scroll_offset = container.scroll_to_region(
+                    region,
+                    spacing=widget.parent.gutter,
+                    animate=animate,
+                    speed=speed,
+                    duration=duration,
+                    top=top,
+                    easing=easing,
+                    force=force,
+                )
+                if scroll_offset:
+                    scrolled = True
 
             # Adjust the region by the amount we just scrolled it, and convert to
             # it's parent's virtual coordinate system.

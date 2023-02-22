@@ -4,6 +4,7 @@
 # Frequently Asked Questions
 - [Does Textual support images?](#does-textual-support-images)
 - [How can I fix ImportError cannot import name ComposeResult from textual.app ?](#how-can-i-fix-importerror-cannot-import-name-composeresult-from-textualapp-)
+- [How can I select and copy text in a Textual app?](#how-can-i-select-and-copy-text-in-a-textual-app)
 - [How do I center a widget in a screen?](#how-do-i-center-a-widget-in-a-screen)
 - [How do I pass arguments to an app?](#how-do-i-pass-arguments-to-an-app)
 - [Why doesn't Textual support ANSI themes?](#why-doesn't-textual-support-ansi-themes)
@@ -25,6 +26,19 @@ The following should do it:
 ```
 pip install "textual[dev]" -U
 ```
+
+<a name="how-can-i-select-and-copy-text-in-a-textual-app"></a>
+## How can I select and copy text in a Textual app?
+
+Running a Textual app puts your terminal in to *application mode* which disables clicking and dragging to select text.
+Most terminal emulators offer a modifier key which you can hold while you click and drag to restore the behavior you
+may expect from the command line. The exact modifier key depends on the terminal and platform you are running on.
+
+- **iTerm** Hold the OPTION key.
+- **Gnome Terminal** Hold the SHIFT key.
+- **Windows Terminal** Hold the SHIFT key.
+
+Refer to the documentation for your terminal emulator, if it is not listed above.
 
 <a name="how-do-i-center-a-widget-in-a-screen"></a>
 ## How do I center a widget in a screen?

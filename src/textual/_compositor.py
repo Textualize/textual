@@ -166,12 +166,14 @@ class Compositor:
 
     def __init__(self) -> None:
         # A mapping of Widget on to its "render location" (absolute position / depth)
-        self.map: CompositorMap = {}
-        self._full_map: CompositorMap | None = None
+
+        self._full_map: CompositorMap = {}
+        self._full_map_invalidated = True
+        self._visible_map: CompositorMap | None = None
         self._layers: list[tuple[Widget, MapGeometry]] | None = None
 
         # All widgets considered in the arrangement
-        # Note this may be a superset of self.map.keys() as some widgets may be invisible for various reasons
+        # Note this may be a superset of self.full_map.keys() as some widgets may be invisible for various reasons
         self.widgets: set[Widget] = set()
 
         # Mapping of visible widgets on to their region, and clip region
@@ -248,12 +250,12 @@ class Compositor:
         self._layers = None
         self._layers_visible = None
         self._visible_widgets = None
-        self._full_map = None
+        self._visible_map = None
         self.root = parent
         self.size = size
 
         # Keep a copy of the old map because we're going to compare it with the update
-        old_map = self.map
+        old_map = self._full_map
         old_widgets = old_map.keys()
 
         map, widgets = self._arrange_root(parent, size)
@@ -261,7 +263,6 @@ class Compositor:
         new_widgets = map.keys()
 
         # Replace map and widgets
-        self.map = map
         self._full_map = map
         self.widgets = widgets
 
@@ -316,18 +317,21 @@ class Compositor:
         self._layers = None
         self._layers_visible = None
         self._visible_widgets = None
-        self._full_map = None
+        self._full_map_invalidated = True
         self.root = parent
         self.size = size
 
         # Keep a copy of the old map because we're going to compare it with the update
-        old_map = self.map
+        old_map = (
+            self._visible_map if self._visible_map is not None else self._full_map or {}
+        )
         map, widgets = self._arrange_root(parent, size, visible_only=True)
 
-        exposed_widgets = map.keys() - old_map.keys()
         # Replace map and widgets
-        self.map = map
+        self._visible_map = map
         self.widgets = widgets
+
+        exposed_widgets = map.keys() - old_map.keys()
 
         # Contains widgets + geometry for every widget that changed (added, removed, or updated)
         changes = map.items() ^ old_map.items()
@@ -350,11 +354,15 @@ class Compositor:
     @property
     def full_map(self) -> CompositorMap:
         """Lazily built compositor map that covers all widgets."""
-        if self.root is None or not self.map:
+
+        if self.root is None:
             return {}
-        if self._full_map is None:
+        if self._full_map_invalidated:
+            self._full_map_invalidated = False
             map, widgets = self._arrange_root(self.root, self.size, visible_only=False)
             self._full_map = map
+            self._visible_widgets = None
+            self._visible_map = None
 
         return self._full_map
 
@@ -365,7 +373,13 @@ class Compositor:
         Returns:
             Visible widget mapping.
         """
+
         if self._visible_widgets is None:
+            map = (
+                self._visible_map
+                if self._visible_map is not None
+                else (self._full_map or {})
+            )
             screen = self.size.region
             in_screen = screen.overlaps
             overlaps = Region.overlaps
@@ -373,7 +387,7 @@ class Compositor:
             # Widgets and regions in render order
             visible_widgets = [
                 (order, widget, region, clip)
-                for widget, (region, order, clip, _, _, _) in self.map.items()
+                for widget, (region, order, clip, _, _, _) in map.items()
                 if in_screen(region) and overlaps(clip, region)
             ]
             visible_widgets.sort(key=itemgetter(0), reverse=True)
@@ -556,9 +570,10 @@ class Compositor:
     @property
     def layers(self) -> list[tuple[Widget, MapGeometry]]:
         """Get widgets and geometry in layer order."""
+        map = self._visible_map if self._visible_map is not None else self._full_map
         if self._layers is None:
             self._layers = sorted(
-                self.map.items(), key=lambda item: item[1].order, reverse=True
+                map.items(), key=lambda item: item[1].order, reverse=True
             )
         return self._layers
 
@@ -585,12 +600,14 @@ class Compositor:
     def get_offset(self, widget: Widget) -> Offset:
         """Get the offset of a widget."""
         try:
-            return self.map[widget].region.offset
+            if self._visible_map is not None:
+                try:
+                    return self._visible_map[widget].region.offset
+                except KeyError:
+                    pass
+            return self.full_map[widget].region.offset
         except KeyError:
-            try:
-                return self.full_map[widget].region.offset
-            except KeyError:
-                raise errors.NoWidget("Widget is not in layout")
+            raise errors.NoWidget("Widget is not in layout")
 
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
         """Get the widget under a given coordinate.
@@ -672,15 +689,17 @@ class Compositor:
             Widget's composition information.
 
         """
-        if self.root is None or not self.map:
+        if self.root is None:
             raise errors.NoWidget("Widget is not in layout")
         try:
-            region = self.map[widget]
+            if self._visible_map is not None:
+                try:
+                    return self._visible_map[widget]
+                except KeyError:
+                    pass
+            region = self.full_map[widget]
         except KeyError:
-            try:
-                return self.full_map[widget]
-            except KeyError:
-                raise errors.NoWidget("Widget is not in layout")
+            raise errors.NoWidget("Widget is not in layout")
         else:
             return region
 
@@ -727,9 +746,6 @@ class Compositor:
         # If a renderable throws an error while rendering, the user likely doesn't care about the traceback
         # up to this point.
         _rich_traceback_guard = True
-
-        if not self.map:
-            return
 
         _Region = Region
 
@@ -864,7 +880,10 @@ class Compositor:
             widget: Widget to update.
 
         """
-        self._full_map = None
+        if not self._full_map_invalidated and not widgets.issuperset(
+            self.visible_widgets
+        ):
+            self._full_map_invalidated = True
         regions: list[Region] = []
         add_region = regions.append
         get_widget = self.visible_widgets.__getitem__
