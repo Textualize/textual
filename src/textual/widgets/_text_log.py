@@ -45,17 +45,35 @@ class TextLog(ScrollView, can_focus=True):
         classes: str | None = None,
         disabled: bool = False,
     ) -> None:
+        """Create a TextLog widget.
+
+        Args:
+            max_lines: Maximum number of lines in the log or `None` for no maximum.
+            min_width: Minimum width of renderables.
+            wrap: Enable word wrapping (default is off).
+            highlight: Automatically highlight content.
+            markup: Apply Rich console markup.
+            name: The name of the button.
+            id: The ID of the button in the DOM.
+            classes: The CSS classes of the button.
+            disabled: Whether the button is disabled or not.
+        """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self.max_lines = max_lines
+        """Maximum number of lines in the log or `None` for no maximum."""
         self._start_line: int = 0
         self.lines: list[Strip] = []
         self._line_cache: LRUCache[tuple[int, int, int, int], Strip]
         self._line_cache = LRUCache(1024)
         self.max_width: int = 0
         self.min_width = min_width
+        """Minimum width of renderables."""
         self.wrap = wrap
+        """Enable word wrapping."""
         self.highlight = highlight
+        """Automatically highlight content."""
         self.markup = markup
+        """Apply Rich console markup."""
         self.highlighter = ReprHighlighter()
 
     def notify_style_update(self) -> None:

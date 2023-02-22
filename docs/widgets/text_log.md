@@ -9,7 +9,7 @@ Call [TextLog.write][textual.widgets.TextLog.write] with a string or [Rich Rende
 
 ## Example
 
-The example below shows each placeholder variant.
+The example below shows an application showing a `TextLog` with different kinds of data logged.
 
 === "Output"
 
