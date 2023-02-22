@@ -407,16 +407,22 @@ class Stylesheet:
         self.replace_rules(node, node_rules, animate=animate)
 
         component_classes = node._get_component_classes()
+        refresh_node = False
         if component_classes:
             old_component_styles = node._component_styles.copy()
             node._component_styles.clear()
-            for component in component_classes:
+            for component in sorted(component_classes):
                 virtual_node = DOMNode(classes=component)
                 virtual_node._attach(node)
                 self.apply(virtual_node, animate=False)
-                if old_component_styles.get(component) != virtual_node.styles:
-                    node.refresh()
+                if (
+                    not refresh_node
+                    and old_component_styles.get(component) != virtual_node.styles
+                ):
+                    refresh_node = True
                 node._component_styles[component] = virtual_node.styles
+            if refresh_node:
+                self.refresh()
 
     @classmethod
     def replace_rules(
