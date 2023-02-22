@@ -223,6 +223,9 @@ class DOMNode(MessagePump):
         """Called after the object has been mounted."""
         Reactive._initialize_object(self)
 
+    def notify_style_update(self) -> None:
+        """Called after styles are updated."""
+
     @property
     def _node_bases(self) -> Sequence[Type[DOMNode]]:
         """The DOMNode bases classes (including self.__class__)"""
