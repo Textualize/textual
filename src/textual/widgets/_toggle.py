@@ -165,7 +165,7 @@ class ToggleButton(Static, can_focus=True):
         button = self._button
         label = self._label.copy()
         label.stylize(self.get_component_rich_style("toggle--label", partial=True))
-        spacer = Text(" " if label else "")
+        spacer = " " if label else ""
         return (
             Text.assemble(button, spacer, label)
             if self._button_first
