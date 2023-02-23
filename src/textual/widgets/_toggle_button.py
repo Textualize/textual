@@ -214,7 +214,7 @@ class ToggleButton(Static, can_focus=True):
         self.toggle()
 
     class Changed(Message, bubble=True):
-        """Posted when the value of the toggle button."""
+        """Posted when the value of the toggle button changes."""
 
         def __init__(self, sender: ToggleButton, value: bool) -> None:
             """Initialise the message.
