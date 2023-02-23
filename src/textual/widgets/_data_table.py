@@ -984,6 +984,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     @property
     def _row_label_column_width(self) -> int:
+        """The render width of the column containing row labels"""
         return self._label_column.render_width if self._should_render_row_labels else 0
 
     def _update_column_widths(self, updated_cells: set[CellKey]) -> None:
