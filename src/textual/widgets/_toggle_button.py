@@ -19,7 +19,13 @@ from ._static import Static
 
 
 class ToggleButton(Static, can_focus=True):
-    """Base toggle button widget."""
+    """Base toggle button widget.
+
+    Warning:
+        `ToggleButton` should be considered to be an internal class; it
+        exists to serve as the common core of [Checkbox][textual.widgets.Checkbox] and
+        [RadioButton][textual.widgets.RadioButton].
+    """
 
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("enter,space", "toggle", "Toggle", show=False),
@@ -27,7 +33,7 @@ class ToggleButton(Static, can_focus=True):
     """
     | Key(s) | Description |
     | :- | :- |
-    | enter,space | Toggle the value. |
+    | enter, space | Toggle the value. |
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
@@ -197,11 +203,14 @@ class ToggleButton(Static, can_focus=True):
         self.value = not self.value
 
     def action_toggle(self) -> None:
-        """Toggle the value of the widget."""
+        """Toggle the value of the widget when called as an action.
+
+        This would normally be used for a keyboard binding.
+        """
         self.toggle()
 
     def on_click(self) -> None:
-        """Toggle the value of the widget."""
+        """Toggle the value of the widget when clicked with the mouse."""
         self.toggle()
 
     class Changed(Message, bubble=True):
@@ -221,6 +230,11 @@ class ToggleButton(Static, can_focus=True):
             """The value of the toggle button after the change."""
 
     def watch_value(self) -> None:
-        """React to the value being changed."""
+        """React to the value being changed.
+
+        When triggered, the CSS class `-on` is applied to the widget if
+        `value` has become `True`, or it is removed if it has become
+        `False`. Subsequently a related `Changed` event will be posted.
+        """
         self.set_class(self.value, "-on")
         self.post_message_no_wait(self.Changed(self, self.value))
