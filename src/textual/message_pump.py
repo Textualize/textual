@@ -152,6 +152,14 @@ class MessagePump(metaclass=MessagePumpMeta):
         self._parent = None
 
     def check_message_enabled(self, message: Message) -> bool:
+        """Check if a given message is enabled (allowed to be sent).
+
+        Args:
+            message: A message object
+
+        Returns:
+            `True` if the message will be sent, or `False` if it is disabled.
+        """
         message_type = type(message)
         if self._prevent_events and message_type in self._prevent_events[-1]:
             return False

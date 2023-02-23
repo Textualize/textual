@@ -2489,6 +2489,14 @@ class Widget(DOMNode):
         self.app.capture_mouse(None)
 
     def check_message_enabled(self, message: Message) -> bool:
+        """Check if a given message is enabled (allowed to be sent).
+
+        Args:
+            message: A message object
+
+        Returns:
+            `True` if the message will be sent, or `False` if it is disabled.
+        """
         # Do the normal checking and get out if that fails.
         if not super().check_message_enabled(message):
             return False
