@@ -1584,13 +1584,16 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return strip
 
     def render_line(self, y: int) -> Strip:
-        width, height = self.size
+        width, _ = self.size
         scroll_x, scroll_y = self.scroll_offset
 
-        fixed_row_keys: list[RowKey] = [
-            self._row_locations.get_key(row_index)
-            for row_index in range(self.fixed_rows)
-        ]
+        fixed_row_keys: list[RowKey] = []
+        append = fixed_row_keys.append
+        for row_index in range(self.fixed_rows):
+            row_key = self._row_locations.get_key(row_index)
+            if row_key is None:
+                raise RowDoesNotExist(f"Row index {row_index!r} is not valid.")
+            append(row_key)
 
         fixed_rows_height = sum(
             self.get_row_height(row_key) for row_key in fixed_row_keys

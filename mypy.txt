@@ -42,8 +42,7 @@ src/textual/widgets/_data_table.py:1487: error: Unsupported operand types for % 
 src/textual/widgets/_data_table.py:1487: note: Left operand is of type "Optional[int]"
 src/textual/widgets/_data_table.py:1495: error: Argument 1 to "Coordinate" has incompatible type "Optional[int]"; expected "int"  [arg-type]
 src/textual/widgets/_data_table.py:1497: error: Argument 1 has incompatible type "Optional[int]"; expected "int"  [arg-type]
-src/textual/widgets/_data_table.py:1591: error: List comprehension has incompatible type List[Optional[RowKey]]; expected List[RowKey]  [misc]
 src/textual/widgets/_button.py:219: error: Item "ConsoleRenderable" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
 src/textual/widgets/_button.py:219: error: Item "RichCast" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
 src/textual/widgets/_button.py:219: error: Item "str" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
-Found 46 errors in 6 files (checked 154 source files)
+Found 45 errors in 6 files (checked 154 source files)
