@@ -121,6 +121,7 @@ nav:
       - "styles/width.md"
     - Widgets:
       - "widgets/button.md"
+      - "widgets/checkbox.md"
       - "widgets/data_table.md"
       - "widgets/directory_tree.md"
       - "widgets/footer.md"

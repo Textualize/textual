@@ -1,0 +1,11 @@
+Screen {
+    align: center middle;
+}
+
+Vertical {
+    width: auto;
+    height: auto;
+    border: solid $boost;
+    background: $panel;
+    padding: 2;
+}
