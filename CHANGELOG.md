@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `App.batch_update` https://github.com/Textualize/textual/pull/1832
 - Added horizontal rule to Markdown https://github.com/Textualize/textual/pull/1832
 - Added `Widget.disabled` https://github.com/Textualize/textual/pull/1785
+- Added `Checkbox` https://github.com/Textualize/textual/pull/1872
+- Added `RadioButton` https://github.com/Textualize/textual/pull/1872
+- Added `RadioSet` https://github.com/Textualize/textual/pull/1872
 
 ### Changed
 
