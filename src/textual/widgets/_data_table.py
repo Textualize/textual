@@ -64,6 +64,9 @@ class DuplicateKey(Exception):
     an existing row or column in the DataTable. Keys must be unique."""
 
 
+StringKeySub = TypeVar("StringKeySub", bound="StringKey")
+
+
 @functools.total_ordering
 class StringKey:
     """An object used as a key in a mapping.
@@ -80,7 +83,9 @@ class StringKey:
 
     value: str | None
 
-    def __new__(cls, value: StringKey | str | None = None) -> StringKey:
+    def __new__(
+        cls: type[StringKeySub], value: StringKey | str | None = None
+    ) -> StringKeySub:
         """Creates a new `StringKey` object if necessary."""
         if isinstance(value, cls):
             return value
