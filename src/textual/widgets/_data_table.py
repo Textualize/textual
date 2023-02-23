@@ -1052,7 +1052,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         # The x-coordinate of a cell is the sum of widths of the data cells to the left
         # plus the width of the render width of the longest row label.
-        x = sum(column.render_width for column in self.ordered_columns[:column_index])
+        x = (
+            sum(column.render_width for column in self.ordered_columns[:column_index])
+            + self._row_label_column_width
+        )
         column_key = self._column_locations.get_key(column_index)
         width = self.columns[column_key].render_width
         height = row.height
