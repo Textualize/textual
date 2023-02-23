@@ -64,7 +64,7 @@ class DuplicateKey(Exception):
     an existing row or column in the DataTable. Keys must be unique."""
 
 
-StringKeySub = TypeVar("StringKeySub", bound="StringKey")
+StringKeySubclass = TypeVar("StringKeySubclass", bound="StringKey")
 
 
 @functools.total_ordering
@@ -84,8 +84,8 @@ class StringKey:
     value: str | None
 
     def __new__(
-        cls: type[StringKeySub], value: StringKey | str | None = None
-    ) -> StringKeySub:
+        cls: type[StringKeySubclass], value: StringKey | str | None = None
+    ) -> StringKeySubclass:
         """Creates a new `StringKey` object if necessary."""
         if isinstance(value, cls):
             return value
@@ -155,6 +155,53 @@ class CellKey(NamedTuple):
     def __rich_repr__(self):
         yield "row_key", self.row_key
         yield "column_key", self.column_key
+
+
+class KeysToIndices(TwoWayDict[StringKeySubclass, int]):
+    """Bidirectional dictionary to turn StringKey keys into their indices."""
+
+    _exception: type[Exception]
+    """The exception to raise when access in either direction fails."""
+
+    def __init__(
+        self, initial: dict[StringKeySubclass, int], exception: type[Exception]
+    ) -> None:
+        super().__init__(initial)
+        self._exception = exception
+
+    def get(self, key: StringKeySubclass) -> int:
+        """Given a key, efficiently lookup and return the associated index.
+
+        This will raise the exception passed in at instantiation time if the key
+        is not valid.
+
+        Args:
+            key: The key.
+
+        Returns:
+            The corresponding index.
+        """
+        index = super().get(key)
+        if index is None:
+            raise self._exception(f"Key {key!r} is not valid.")
+        return index
+
+    def get_key(self, value: int) -> StringKeySubclass:
+        """Given a index, efficiently lookup and return the associated key.
+
+        This will raise the exception passed in at instantiation time if the idnex
+        is not valid.
+
+        Args:
+            value: The index.
+
+        Returns:
+            The corresponding key.
+        """
+        key = super().get_key(value)
+        if key is None:
+            raise self._exception(f"Index {key!r} is not valid.")
+        return key
 
 
 def default_cell_formatter(obj: object) -> RenderableType:
@@ -510,9 +557,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         # given a row or column key, the index that row or column is currently
         # present at, and mean that rows and columns are location independent - they
         # can move around without requiring us to modify the underlying data.
-        self._row_locations: TwoWayDict[RowKey, int] = TwoWayDict({})
+        self._row_locations: KeysToIndices[RowKey] = KeysToIndices({}, RowDoesNotExist)
         """Maps row keys to row indices which represent row order."""
-        self._column_locations: TwoWayDict[ColumnKey, int] = TwoWayDict({})
+        self._column_locations: KeysToIndices[ColumnKey] = KeysToIndices(
+            {}, ColumnDoesNotExist
+        )
         """Maps column keys to column indices which represent column order."""
 
         self._row_render_cache: LRUCache[
@@ -1040,10 +1089,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._y_offsets.clear()
         self._data.clear()
         self.rows.clear()
-        self._row_locations = TwoWayDict({})
+        self._row_locations = KeysToIndices({}, RowDoesNotExist)
         if columns:
             self.columns.clear()
-            self._column_locations = TwoWayDict({})
+            self._column_locations = KeysToIndices({}, ColumnDoesNotExist)
         self._require_update_dimensions = True
         self.cursor_coordinate = Coordinate(0, 0)
         self.hover_coordinate = Coordinate(0, 0)
@@ -1282,13 +1331,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     @property
     def ordered_columns(self) -> list[Column]:
         """The list of Columns in the DataTable, ordered as they appear on screen."""
-        column_indices = range(len(self.columns))
-        ordered_columns: list[Column] = []
-        for index in column_indices:
-            column_key = self._column_locations.get_key(index)
-            if column_key is None:
-                raise ColumnDoesNotExist(f"Column index {index!r} is not valid.")
-            ordered_columns.append(self.columns[column_key])
+        ordered_columns = [
+            self.columns[self._column_locations.get_key(index)]
+            for index in range(len(self.columns))
+        ]
         return ordered_columns
 
     @property
@@ -1301,14 +1347,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if cache_key in self._ordered_row_cache:
             ordered_rows = self._ordered_row_cache[cache_key]
         else:
-            row_indices = range(num_rows)
-            ordered_rows = []
-            for row_index in row_indices:
-                row_key = self._row_locations.get_key(row_index)
-                if row_key is None:
-                    raise RowDoesNotExist(f"Row index {row_index!r} is not valid.")
-                row = self.rows[row_key]
-                ordered_rows.append(row)
+            ordered_rows = [
+                self.rows[self._row_locations.get_key(row_index)]
+                for row_index in range(num_rows)
+            ]
             self._ordered_row_cache[cache_key] = ordered_rows
         return ordered_rows
 
@@ -1376,17 +1418,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             if is_fixed_style:
                 style += self.get_component_styles("datatable--cursor-fixed").rich_style
 
-        row_key: RowKey | None
         if is_header_row:
             row_key = self._header_row_key
         else:
             row_key = self._row_locations.get_key(row_index)
-            if row_key is None:
-                raise RowDoesNotExist(f"Row index {row_index!r} is not valid.")
 
         column_key = self._column_locations.get_key(column_index)
-        if column_key is None:
-            raise ColumnDoesNotExist(f"Column index {column_index!r} is not valid.")
         cell_cache_key: CellCacheKey = (
             row_key,
             column_key,
@@ -1605,13 +1642,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         width, _ = self.size
         scroll_x, scroll_y = self.scroll_offset
 
-        fixed_row_keys: list[RowKey] = []
-        append = fixed_row_keys.append
-        for row_index in range(self.fixed_rows):
-            row_key = self._row_locations.get_key(row_index)
-            if row_key is None:
-                raise RowDoesNotExist(f"Row index {row_index!r} is not valid.")
-            append(row_key)
+        fixed_row_keys = [
+            self._row_locations.get_key(row_index)
+            for row_index in range(self.fixed_rows)
+        ]
 
         fixed_rows_height = sum(
             self.get_row_height(row_key) for row_key in fixed_row_keys
@@ -1667,8 +1701,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         ordered_rows = sorted(
             self._data.items(), key=sort_by_column_keys, reverse=reverse
         )
-        self._row_locations = TwoWayDict(
-            {key: new_index for new_index, (key, _) in enumerate(ordered_rows)}
+        self._row_locations = KeysToIndices(
+            {key: new_index for new_index, (key, _) in enumerate(ordered_rows)},
+            RowDoesNotExist,
         )
         self._update_count += 1
         self.refresh()
