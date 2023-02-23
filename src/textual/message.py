@@ -31,6 +31,7 @@ class Message:
         "_no_default_action",
         "_stop_propagation",
         "_handler_name",
+        "_prevent",
     ]
 
     sender: MessageTarget
@@ -50,6 +51,7 @@ class Message:
         self._handler_name = (
             f"on_{self.namespace}_{name}" if self.namespace else f"on_{name}"
         )
+        self._prevent: set[type[Message]] = set()
         super().__init__()
 
     def __rich_repr__(self) -> rich.repr.Result:
