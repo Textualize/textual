@@ -1447,6 +1447,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         get_component = self.get_component_styles
         show_cursor = self.show_cursor
+
         if hover and show_cursor and self._show_hover_cursor:
             style += get_component("datatable--hover").rich_style
             if is_header_cell or is_row_label_cell:
@@ -1537,6 +1538,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             """Determine whether we should highlight a cell given the location
             of the cursor, the location of the cell, and the type of cursor that
             is currently active."""
+            print(cursor)
             if type_of_cursor == "cell":
                 return cursor == target_cell
             elif type_of_cursor == "row":
@@ -1564,13 +1566,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         if self._labelled_row_exists and self.show_row_labels:
             # The width of the row label is updated again on idle
+            cell_location = Coordinate(row_index, -1)
             label_cell_lines = render_cell(
                 row_index,
                 -1,
                 header_style,
                 width=self._label_column.render_width,
-                cursor=False,
-                hover=False,
+                cursor=_should_highlight(cursor_location, cell_location, cursor_type),
+                hover=_should_highlight(hover_location, cell_location, cursor_type),
             )[line_no]
             fixed_row.append(label_cell_lines)
 
