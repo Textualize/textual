@@ -237,9 +237,11 @@ class Reactive(Generic[ReactiveType]):
                     events.Callback(
                         sender=obj,
                         callback=partial(await_watcher, watch_result),
-                        prevent=obj._prevent_message_types_stack[0]
-                        if obj._prevent_message_types_stack
-                        else None,
+                        prevent=(
+                            obj._prevent_message_types_stack[0]
+                            if obj._prevent_message_types_stack
+                            else None
+                        ),
                     )
                 )
 

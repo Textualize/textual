@@ -582,6 +582,8 @@ class MessagePump(metaclass=MessagePumpMeta):
             return False
         if not self.check_message_enabled(message):
             return True
+        if self._prevent_message_types_stack:
+            message._prevent.update(self._prevent_message_types_stack[-1])
         await self._message_queue.put(message)
         return True
 
@@ -620,6 +622,8 @@ class MessagePump(metaclass=MessagePumpMeta):
             return False
         if not self.check_message_enabled(message):
             return False
+        if self._prevent_message_types_stack:
+            message._prevent.update(self._prevent_message_types_stack[-1])
         self._message_queue.put_nowait(message)
         return True
 
