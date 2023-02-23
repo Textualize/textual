@@ -35,7 +35,7 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
     | down | Move the cursor down. |
     """
 
-    index = reactive(0, always_update=True)
+    index = reactive[int | None](0, always_update=True)
 
     class Highlighted(Message, bubble=True):
         """Posted when the highlighted item changes.
