@@ -546,11 +546,11 @@ class MessagePump(metaclass=MessagePumpMeta):
         """A context manager to *temporarily* prevent the given message types from being posted.
 
         Example:
-
+            ```python
             input = self.query_one(Input)
             with self.prevent(Input.Changed):
                 input.value = "foo"
-
+            ```
 
         """
         if self._prevent_events:
