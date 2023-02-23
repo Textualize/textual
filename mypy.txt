@@ -1,7 +1,0 @@
-poetry run mypy src/textual
-src/textual/app.py:316: error: Argument "file" to "Console" has incompatible type "_WriterThread"; expected "Optional[IO[str]]"  [arg-type]
-src/textual/app.py:1608: error: Value of type variable "_T_io" of "redirect_stderr" cannot be "StdoutRedirector"  [type-var]
-src/textual/widgets/_button.py:219: error: Item "ConsoleRenderable" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
-src/textual/widgets/_button.py:219: error: Item "RichCast" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
-src/textual/widgets/_button.py:219: error: Item "str" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
-Found 5 errors in 2 files (checked 154 source files)
