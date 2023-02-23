@@ -1004,11 +1004,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._clear_caches()
 
         data_cells_width = sum(column.render_width for column in self.columns.values())
-        max_label_render_width = self._label_column.render_width
-        total_width = data_cells_width + max_label_render_width
+        total_width = data_cells_width
+        label_width = (
+            self._label_column.render_width if self._should_render_row_labels else 0
+        )
         header_height = self.header_height if self.show_header else 0
         self.virtual_size = Size(
-            total_width,
+            total_width + label_width,
             self._total_row_height + header_height,
         )
 
