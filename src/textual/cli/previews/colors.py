@@ -41,18 +41,14 @@ class ColorsView(Vertical):
         ]
 
         for color_name in ColorSystem.COLOR_NAMES:
-            items: list[Widget] = [Label(f'"{color_name}"')]
-            for level in LEVELS:
-                color = f"{color_name}-{level}" if level else color_name
-                item = ColorItem(
-                    ColorBar(f"${color}", classes="text label"),
-                    ColorBar("$text-muted", classes="muted"),
-                    ColorBar("$text-disabled", classes="disabled"),
-                    classes=color,
-                )
-                items.append(item)
-
-            yield ColorGroup(*items, id=f"group-{color_name}")
+            with ColorGroup(id=f"group-{color_name}"):
+                yield Label(f'"{color_name}"')
+                for level in LEVELS:
+                    color = f"{color_name}-{level}" if level else color_name
+                    with ColorItem(classes=color):
+                        yield ColorBar(f"${color}", classes="text label")
+                        yield ColorBar("$text-muted", classes="muted")
+                        yield ColorBar("$text-disabled", classes="disabled")
 
 
 class ColorsApp(App):
@@ -72,7 +68,6 @@ class ColorsApp(App):
         content.mount(ColorsView())
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
-        self.bell()
         self.query(ColorGroup).remove_class("-active")
         group = self.query_one(f"#group-{event.button.id}", ColorGroup)
         group.add_class("-active")

@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
+## [0.12.0] - Unreleased
+
+### Added
+
+- Added `App.batch_update` https://github.com/Textualize/textual/pull/1832
+- Added horizontal rule to Markdown https://github.com/Textualize/textual/pull/1832
+- Added `Widget.disabled` https://github.com/Textualize/textual/pull/1785
+- Added `DOMNode.notify_style_update` to replace `messages.StylesUpdated` message https://github.com/Textualize/textual/pull/1861
+
+### Changed
+
+- Scrolling by page now adds to current position.
+- Markdown lists have been polished: a selection of bullets, better alignment of numbers, style tweaks https://github.com/Textualize/textual/pull/1832
+- Added alternative method of composing Widgets https://github.com/Textualize/textual/pull/1847
+
+### Removed
+
+- Removed `screen.visible_widgets` and `screen.widgets`
+- Removed `StylesUpdate` message. https://github.com/Textualize/textual/pull/1861
+
+### Fixed
+
+- Numbers in a descendant-combined selector no longer cause an error https://github.com/Textualize/textual/issues/1836
+- Fixed superfluous scrolling when focusing a docked widget https://github.com/Textualize/textual/issues/1816
+
 ## [0.11.1] - 2023-02-17
 
 ### Fixed

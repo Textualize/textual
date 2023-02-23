@@ -315,6 +315,8 @@ The `background: green` is only applied to the Button underneath the mouse curso
 
 Here are some other pseudo classes:
 
+- `:disabled` Matches widgets which are in a disabled state.
+- `:enabled` Matches widgets which are in an enabled state.
 - `:focus` Matches widgets which have input focus.
 - `:focus-within` Matches widgets with a focused a child widget.
 
