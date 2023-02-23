@@ -545,7 +545,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """The column containing row labels is not part of the data. This key identifies it."""
         self._labelled_row_exists = False
         """Whether or not the user has supplied any rows with labels."""
-        self._max_label_content_width = 0
+        self._label_column = Column(self._label_column_key, Text(), auto_width=True)
         """The largest content width out of all row labels in the table."""
 
         self.show_header = show_header
@@ -982,10 +982,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
             row_label, cells_in_row = self._get_row_renderables(row_index)
             label_content_width = measure(console, row_label, 1) if row_label else 0
-            self._max_label_content_width = max(
-                self._max_label_content_width, label_content_width
+            self._label_column.content_width = max(
+                self._label_column.content_width, label_content_width
             )
-            print(label_content_width)
 
             if row_index is None:
                 continue
@@ -997,7 +996,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._clear_caches()
 
         data_cells_width = sum(column.render_width for column in self.columns.values())
-        total_width = data_cells_width + self._max_label_content_width
+        max_label_render_width = self._label_column.render_width
+        total_width = data_cells_width + max_label_render_width
         header_height = self.header_height if self.show_header else 0
         self.virtual_size = Size(
             total_width,
@@ -1013,7 +1013,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         row_key = self._row_locations.get_key(row_index)
         row = self.rows[row_key]
 
-        # The x-coordinate of a cell is the sum of widths of cells to the left.
+        # The x-coordinate of a cell is the sum of widths of the data cells to the left
+        # plus the width of the render width of the longest row label.
         x = sum(column.render_width for column in self.ordered_columns[:column_index])
         column_key = self._column_locations.get_key(column_index)
         width = self.columns[column_key].render_width
@@ -1070,7 +1071,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._require_update_dimensions = True
         self.cursor_coordinate = Coordinate(0, 0)
         self.hover_coordinate = Coordinate(0, 0)
-        self._max_label_content_width = 0
+        self._label_column = Column(self._label_column_key, Text(), auto_width=True)
         self._labelled_row_exists = False
         self.refresh()
 
@@ -1437,10 +1438,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             style += Style.from_meta({"row": row_index, "column": column_index})
             height = self.header_height if is_header_cell else self.rows[row_key].height
             row_label, row_cells = self._get_row_renderables(row_index)
+
             if is_row_label_cell:
-                cell = row_label
+                cell = row_label if row_label is not None else ""
             else:
                 cell = row_cells[column_index]
+
             lines = self.app.console.render_lines(
                 Padding(cell, (0, 1)),
                 self.app.console.options.update_dimensions(width, height),
@@ -1523,13 +1526,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         fixed_row = []
         header_style = self.get_component_styles("datatable--header").rich_style
 
-        if self._labelled_row_exists and self.show_row_labels and not is_header_row:
+        if self._labelled_row_exists and self.show_row_labels:
             # The width of the row label is updated again on idle
             label_cell_lines = render_cell(
                 row_index,
                 -1,
                 header_style,
-                width=self._max_label_content_width + CELL_X_PADDING,
+                width=self._label_column.render_width,
                 cursor=False,
                 hover=False,
             )[line_no]
