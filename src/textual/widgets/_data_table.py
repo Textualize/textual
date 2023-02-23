@@ -1538,7 +1538,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             """Determine whether we should highlight a cell given the location
             of the cursor, the location of the cell, and the type of cursor that
             is currently active."""
-            print(cursor)
             if type_of_cursor == "cell":
                 return cursor == target_cell
             elif type_of_cursor == "row":
