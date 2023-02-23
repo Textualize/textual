@@ -35,6 +35,7 @@ class DataTableApp(App):
         "ColumnHighlighted",
         "ColumnSelected",
         "HeaderSelected",
+        "RowLabelSelected",
     }
 
     def __init__(self):
@@ -690,7 +691,7 @@ async def test_header_selected():
     app = DataTableApp()
     async with app.run_test():
         table = app.query_one(DataTable)
-        column = table.add_column("number")
+        column_key = table.add_column("number")
         table.add_row(3)
         click_event = Click(
             sender=table,
@@ -698,24 +699,60 @@ async def test_header_selected():
             y=0,
             delta_x=0,
             delta_y=0,
-            button=0,
+            button=1,
             shift=False,
             meta=False,
             ctrl=False,
         )
+        await wait_for_idle(0)
         table.on_click(click_event)
         await wait_for_idle(0)
         message: DataTable.HeaderSelected = app.messages[-1]
         assert message.sender is table
         assert message.label == Text("number")
         assert message.column_index == 0
-        assert message.column_key == column
+        assert message.column_key == column_key
 
         # Now hide the header and click in the exact same place - no additional message emitted.
         table.show_header = False
         table.on_click(click_event)
         await wait_for_idle(0)
         assert app.message_names.count("HeaderSelected") == 1
+
+
+async def test_row_label_selected():
+    """Ensure that the DataTable sends a RowLabelSelected event when
+    the user clicks on a row label."""
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("number")
+        row_key = table.add_row(3, label="A")
+        click_event = Click(
+            sender=table,
+            x=1,
+            y=1,
+            delta_x=0,
+            delta_y=0,
+            button=1,
+            shift=False,
+            meta=False,
+            ctrl=False,
+        )
+        await wait_for_idle(0)
+        table.on_click(click_event)
+        await wait_for_idle(0)
+        message: DataTable.RowLabelSelected = app.messages[-1]
+        assert message.sender is table
+        assert message.label == Text("A")
+        assert message.row_index == 0
+        assert message.row_key == row_key
+
+        # Now hide the row label and click in the same place - no additional message emitted.
+        table.show_row_labels = False
+        table.on_click(click_event)
+        await wait_for_idle(0)
+        assert app.message_names.count("RowLabelSelected") == 1
 
 
 async def test_sort_coordinate_and_key_access():
