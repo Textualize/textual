@@ -1,6 +1,6 @@
 """Provides a radio button widget."""
 
-from ._toggle import ToggleButton
+from ._toggle_button import ToggleButton
 
 
 class RadioButton(ToggleButton):

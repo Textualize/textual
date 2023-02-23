@@ -1,6 +1,6 @@
 """Provides a check box widget."""
 
-from ._toggle import ToggleButton
+from ._toggle_button import ToggleButton
 
 
 class Checkbox(ToggleButton):

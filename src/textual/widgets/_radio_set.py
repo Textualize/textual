@@ -6,7 +6,7 @@ from ..containers import Container
 from ..css.query import DOMQuery, QueryError
 from ..message import Message
 from ._radio_button import RadioButton
-from ._toggle import ToggleButton
+from ._toggle_button import ToggleButton
 
 
 class RadioSet(Container):
