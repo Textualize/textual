@@ -116,8 +116,6 @@ class ByteEditor(Widget):
 
 
 class ByteInputApp(App):
-    CSS_PATH = "byte_input.css"
-
     def compose(self) -> ComposeResult:
         yield ByteEditor()
 
