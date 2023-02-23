@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added horizontal rule to Markdown https://github.com/Textualize/textual/pull/1832
 - Added `Widget.disabled` https://github.com/Textualize/textual/pull/1785
 - Added `DOMNode.notify_style_update` to replace `messages.StylesUpdated` message https://github.com/Textualize/textual/pull/1861
-- Added `MessagePump.prevent` context manager to temporarily suppress a given message type
+- Added `MessagePump.prevent` context manager to temporarily suppress a given message type https://github.com/Textualize/textual/pull/1866
 
 ### Changed
 
