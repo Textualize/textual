@@ -5,25 +5,27 @@ A simple radio button which stores a boolean value.
 - [x] Focusable
 - [ ] Container
 
+A radio button is best used with others inside a [`RadioSet`](./radioset.md).
+
 ## Example
 
-The example below shows radio buttons, used within [RadioSet][textual.widgets.RadioSet]s.
+The example below shows radio buttons, used within a [`RadioSet`](./radioset.md).
 
 === "Output"
 
-    ```{.textual path="docs/examples/widgets/radio_set.py"}
+    ```{.textual path="docs/examples/widgets/radio_button.py"}
     ```
 
-=== "radio_set.py"
+=== "radio_button.py"
 
     ```python
-    --8<-- "docs/examples/widgets/radio_set.py"
+    --8<-- "docs/examples/widgets/radio_button.py"
     ```
 
-=== "radio_set.css"
+=== "radio_button.css"
 
     ```sass
-    --8<-- "docs/examples/widgets/radio_set.css"
+    --8<-- "docs/examples/widgets/radio_button.css"
     ```
 
 ## Reactive Attributes
@@ -57,3 +59,4 @@ The radio button widget provides the following component classes:
 ## See Also
 
 - [RadioButton](../api/radiobutton.md) code reference
+- [RadioSet](./radioset.md)
