@@ -1608,9 +1608,8 @@ class App(Generic[ReturnType], DOMNode):
                                 with redirect_stdout(redirector):  # type: ignore
                                     await run_process_messages()
                         else:
-                            null_file = _NullFile()
-                            with redirect_stderr(null_file):
-                                with redirect_stdout(null_file):
+                            with redirect_stderr(None):
+                                with redirect_stdout(None):
                                     await run_process_messages()
 
                 finally:
