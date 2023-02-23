@@ -124,6 +124,11 @@ class ToggleButton(Static, can_focus=True):
         self._button_first = button_first
         self.value = value
         self._label = Text.from_markup(label) if isinstance(label, str) else label
+        try:
+            # Only use the first line if it's a multi-line label.
+            self._label = self._label.split()[0]
+        except IndexError:
+            pass
 
     @property
     def label(self) -> Text:
