@@ -1295,6 +1295,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         num_rows = self.row_count
         update_count = self._update_count
         cache_key = (num_rows, update_count)
+        ordered_rows: list[Row]
         if cache_key in self._ordered_row_cache:
             ordered_rows = self._ordered_row_cache[cache_key]
         else:
@@ -1302,6 +1303,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             ordered_rows = []
             for row_index in row_indices:
                 row_key = self._row_locations.get_key(row_index)
+                if row_key is None:
+                    raise RowDoesNotExist(f"Row index {row_index!r} is not valid.")
                 row = self.rows[row_key]
                 ordered_rows.append(row)
             self._ordered_row_cache[cache_key] = ordered_rows
