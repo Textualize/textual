@@ -5,7 +5,7 @@ Screen {
 Vertical {
     width: auto;
     height: auto;
-    border: solid $boost;
+    border: solid $primary;
     background: $panel;
     padding: 2;
 }
