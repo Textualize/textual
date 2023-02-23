@@ -1452,6 +1452,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         if row_key in self._row_locations:
             row_index = self._row_locations.get(row_key)
+            assert row_index is not None
         else:
             row_index = -1
 
@@ -1459,7 +1460,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if self.fixed_columns:
             fixed_style = self.get_component_styles("datatable--fixed").rich_style
             fixed_style += Style.from_meta({"fixed": True})
-            fixed_row = []
+            fixed_row: list[list[Segment]] = []
             for column_index, column in enumerate(
                 self.ordered_columns[: self.fixed_columns]
             ):
@@ -1490,7 +1491,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             else:
                 row_style = base_style
 
-        scrollable_row = []
+        scrollable_row: list[list[Segment]] = []
         for column_index, column in enumerate(self.ordered_columns):
             cell_location = Coordinate(row_index, column_index)
             cell_lines = render_cell(

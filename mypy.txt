@@ -36,13 +36,7 @@ src/textual/widgets/_data_table.py:1377: error: Incompatible types in assignment
 src/textual/widgets/_data_table.py:1381: error: Unsupported operand types for in ("Tuple[RowKey, Optional[ColumnKey], Style, bool, bool, int]" and "LRUCache[Tuple[RowKey, ColumnKey, Style, bool, bool, int], List[List[Segment]]]")  [operator]
 src/textual/widgets/_data_table.py:1390: error: Argument 1 has incompatible type "Tuple[RowKey, Optional[ColumnKey], Style, bool, bool, int]"; expected "Tuple[RowKey, ColumnKey, Style, bool, bool, int]"  [arg-type]
 src/textual/widgets/_data_table.py:1391: error: Invalid index type "Tuple[RowKey, Optional[ColumnKey], Style, bool, bool, int]" for "LRUCache[Tuple[RowKey, ColumnKey, Style, bool, bool, int], List[List[Segment]]]"; expected type "Tuple[RowKey, ColumnKey, Style, bool, bool, int]"  [index]
-src/textual/widgets/_data_table.py:1466: error: Argument 1 to "Coordinate" has incompatible type "Optional[int]"; expected "int"  [arg-type]
-src/textual/widgets/_data_table.py:1468: error: Argument 1 has incompatible type "Optional[int]"; expected "int"  [arg-type]
-src/textual/widgets/_data_table.py:1487: error: Unsupported operand types for % ("None" and "int")  [operator]
-src/textual/widgets/_data_table.py:1487: note: Left operand is of type "Optional[int]"
-src/textual/widgets/_data_table.py:1495: error: Argument 1 to "Coordinate" has incompatible type "Optional[int]"; expected "int"  [arg-type]
-src/textual/widgets/_data_table.py:1497: error: Argument 1 has incompatible type "Optional[int]"; expected "int"  [arg-type]
 src/textual/widgets/_button.py:219: error: Item "ConsoleRenderable" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
 src/textual/widgets/_button.py:219: error: Item "RichCast" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
 src/textual/widgets/_button.py:219: error: Item "str" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
-Found 45 errors in 6 files (checked 154 source files)
+Found 40 errors in 6 files (checked 154 source files)
