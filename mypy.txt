@@ -16,11 +16,7 @@ src/textual/widgets/_list_view.py:140: error: Argument 2 to "Highlighted" has in
 src/textual/widgets/_list_view.py:165: error: Incompatible types in assignment (expression has type "None", variable has type "int")  [assignment]
 src/textual/widgets/_list_view.py:171: error: Argument 2 to "Selected" has incompatible type "Optional[ListItem]"; expected "ListItem"  [arg-type]
 src/textual/widgets/_list_view.py:184: error: Argument 2 to "Selected" has incompatible type "MessageTarget"; expected "ListItem"  [arg-type]
-src/textual/widgets/_data_table.py:757: error: Unsupported operand types for in ("Union[RowKey, str]" and "KeysToIndices[RowKey]")  [operator]
-src/textual/widgets/_data_table.py:759: error: Argument 1 to "get" of "dict" has incompatible type "Union[RowKey, str]"; expected "RowKey"  [arg-type]
-src/textual/widgets/_data_table.py:796: error: Unsupported operand types for in ("Union[ColumnKey, str]" and "KeysToIndices[ColumnKey]")  [operator]
-src/textual/widgets/_data_table.py:802: error: Invalid index type "Union[ColumnKey, str]" for "Dict[ColumnKey, CellType]"; expected type "ColumnKey"  [index]
 src/textual/widgets/_button.py:219: error: Item "ConsoleRenderable" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
 src/textual/widgets/_button.py:219: error: Item "RichCast" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
 src/textual/widgets/_button.py:219: error: Item "str" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
-Found 24 errors in 6 files (checked 154 source files)
+Found 20 errors in 5 files (checked 154 source files)

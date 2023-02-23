@@ -754,6 +754,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Raises:
             RowDoesNotExist: When there is no row corresponding to the key.
         """
+        row_key = RowKey(row_key)
         if row_key not in self._row_locations:
             raise RowDoesNotExist(f"Row key {row_key!r} is not valid.")
         cell_mapping: dict[ColumnKey, CellType] = self._data.get(row_key, {})
@@ -793,6 +794,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Raises:
             ColumnDoesNotExist: If there is no column corresponding to the key.
         """
+        column_key = ColumnKey(column_key)
         if column_key not in self._column_locations:
             raise ColumnDoesNotExist(f"Column key {column_key!r} is not valid.")
 
