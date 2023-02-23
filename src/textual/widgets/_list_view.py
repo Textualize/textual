@@ -96,10 +96,10 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
     @property
     def highlighted_child(self) -> ListItem | None:
         """The currently highlighted ListItem, or None if nothing is highlighted."""
-        if self.index is None:
-            return None
-        elif 0 <= self.index < len(self._nodes):
+        if self.index is not None and 0 <= self.index < len(self._nodes):
             return cast(ListItem, self._nodes[self.index])
+        else:
+            return None
 
     def validate_index(self, index: int | None) -> int | None:
         """Clamp the index to the valid range, or set to None if there's nothing to highlight.
