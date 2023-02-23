@@ -235,7 +235,9 @@ class Reactive(Generic[ReactiveType]):
                 # Result is awaitable, so we need to await it within an async context
                 obj.post_message_no_wait(
                     events.Callback(
-                        sender=obj, callback=partial(await_watcher, watch_result)
+                        sender=obj,
+                        callback=partial(await_watcher, watch_result),
+                        prevent=obj._prevent_events[0] if obj._prevent_events else None,
                     )
                 )
 
