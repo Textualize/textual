@@ -4,10 +4,7 @@ src/textual/app.py:1607: error: Value of type variable "_T_io" of "redirect_stde
 src/textual/app.py:1612: error: Value of type variable "_T_io" of "redirect_stderr" cannot be "_NullFile"  [type-var]
 src/textual/app.py:1613: error: Value of type variable "_T_io" of "redirect_stdout" cannot be "_NullFile"  [type-var]
 src/textual/app.py:1744: error: Incompatible types in assignment (expression has type "reversed[Widget]", variable has type "List[Widget]")  [assignment]
-src/textual/widgets/_header.py:136: error: Argument 3 to "watch" of "DOMNode" has incompatible type "Callable[[str], None]"; expected "Union[Callable[[], Awaitable[None]], Callable[[], None]]"  [arg-type]
-src/textual/widgets/_header.py:137: error: Argument 3 to "watch" of "DOMNode" has incompatible type "Callable[[str], None]"; expected "Union[Callable[[], Awaitable[None]], Callable[[], None]]"  [arg-type]
-src/textual/widgets/_footer.py:69: error: Argument 3 to "watch" of "DOMNode" has incompatible type "Callable[[Optional[Widget]], None]"; expected "Union[Callable[[], Awaitable[None]], Callable[[], None]]"  [arg-type]
 src/textual/widgets/_button.py:219: error: Item "ConsoleRenderable" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
 src/textual/widgets/_button.py:219: error: Item "RichCast" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
 src/textual/widgets/_button.py:219: error: Item "str" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
-Found 11 errors in 4 files (checked 154 source files)
+Found 8 errors in 2 files (checked 154 source files)

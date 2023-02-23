@@ -66,7 +66,7 @@ class Footer(Widget):
         self.refresh()
 
     def on_mount(self) -> None:
-        self.watch(self.screen, "focused", self._focus_changed)
+        self.watch(self.screen, "focused", self._focus_changed)  # type: ignore[arg-type]
 
     def _focus_changed(self, focused: Widget | None) -> None:
         self._key_text = None
