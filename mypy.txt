@@ -43,6 +43,4 @@ src/textual/widgets/_button.py:219: error: Item "str" of "Union[ConsoleRenderabl
 src/textual/demo.py:206: error: Argument 3 to "watch" of "DOMNode" has incompatible type "Callable[[bool], None]"; expected "Union[Callable[[], Awaitable[None]], Callable[[], None]]"  [arg-type]
 src/textual/demo.py:221: error: "App[Any]" has no attribute "add_note"  [attr-defined]
 src/textual/demo.py:276: error: "App[Any]" has no attribute "add_note"  [attr-defined]
-src/textual/cli/previews/easing.py:100: error: Argument "easing" to "animate" of "App" has incompatible type "Optional[str]"; expected "Union[Callable[[float], float], str]"  [arg-type]
-src/textual/cli/previews/easing.py:109: error: "MessageTarget" has no attribute "id"  [attr-defined]
-Found 46 errors in 10 files (checked 154 source files)
+Found 44 errors in 9 files (checked 154 source files)
