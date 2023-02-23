@@ -79,7 +79,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         self._max_idle: float | None = None
         self._mounted_event = asyncio.Event()
         self._next_callbacks: list[CallbackType] = []
-        self._prevent_message_types_stack: list[set[type[Message]]] = []
+        self._prevent_message_types_stack: list[set[type[Message]]] = [set()]
 
     @property
     def task(self) -> Task:
@@ -161,10 +161,7 @@ class MessagePump(metaclass=MessagePumpMeta):
             `True` if the message will be sent, or `False` if it is disabled.
         """
         message_type = type(message)
-        if (
-            self._prevent_message_types_stack
-            and message_type in self._prevent_message_types_stack[-1]
-        ):
+        if message_type in self._prevent_message_types_stack[-1]:
             return False
         return type(message) not in self._disabled_messages
 
@@ -556,12 +553,9 @@ class MessagePump(metaclass=MessagePumpMeta):
             ```
 
         """
-        if self._prevent_message_types_stack:
-            self._prevent_message_types_stack.append(
-                self._prevent_message_types_stack[-1].union(message_types)
-            )
-        else:
-            self._prevent_message_types_stack.append(set(message_types))
+        self._prevent_message_types_stack.append(
+            self._prevent_message_types_stack[-1].union(message_types)
+        )
         try:
             yield
         finally:
