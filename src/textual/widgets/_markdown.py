@@ -10,7 +10,7 @@ from rich.text import Text
 from typing_extensions import TypeAlias
 
 from ..app import ComposeResult
-from ..containers import Vertical
+from ..containers import Horizontal, Vertical
 from ..message import Message
 from ..reactive import reactive, var
 from ..widget import Widget
@@ -198,6 +198,19 @@ class MarkdownH6(MarkdownHeader):
     """
 
 
+class MarkdownHorizontalRule(MarkdownBlock):
+    """A horizontal rule."""
+
+    DEFAULT_CSS = """
+    MarkdownHorizontalRule {
+        border-bottom: heavy $primary;
+        height: 1;
+        padding-top: 1;
+        margin-bottom: 1;
+    }
+    """
+
+
 class MarkdownParagraph(MarkdownBlock):
     """A paragraph Markdown block."""
 
@@ -225,36 +238,82 @@ class MarkdownBlockQuote(MarkdownBlock):
     """
 
 
-class MarkdownBulletList(MarkdownBlock):
+class MarkdownList(MarkdownBlock):
+    DEFAULT_CSS = """
+
+    MarkdownList {
+        width: 1fr;
+    }
+
+    MarkdownList MarkdownList {
+        margin: 0;
+        padding-top: 0;
+    }
+    """
+
+
+class MarkdownBulletList(MarkdownList):
     """A Bullet list Markdown block."""
 
     DEFAULT_CSS = """
     MarkdownBulletList {
-        margin: 0;
+        margin: 0 0 1 0;
         padding: 0 0;
     }
 
-    MarkdownBulletList MarkdownBulletList {
-        margin: 0;
-        padding-top: 0;
+    MarkdownBulletList Horizontal {
+        height: auto;
+        width: 1fr;
+    }
+
+    MarkdownBulletList Vertical {
+        height: auto;
+        width: 1fr;
     }
     """
 
+    def compose(self) -> ComposeResult:
+        for block in self._blocks:
+            if isinstance(block, MarkdownListItem):
+                bullet = MarkdownBullet()
+                bullet.symbol = block.bullet
+                yield Horizontal(bullet, Vertical(*block._blocks))
+        self._blocks.clear()
 
-class MarkdownOrderedList(MarkdownBlock):
+
+class MarkdownOrderedList(MarkdownList):
     """An ordered list Markdown block."""
 
     DEFAULT_CSS = """
     MarkdownOrderedList {
-        margin: 0;
+        margin: 0 0 1 0;
         padding: 0 0;
     }
 
-   Markdown OrderedList MarkdownOrderedList {
-        margin: 0;
-        padding-top: 0;
+    MarkdownOrderedList Horizontal {
+        height: auto;
+        width: 1fr;
+    }
+
+    MarkdownOrderedList  Vertical {
+        height: auto;
+        width: 1fr;
     }
     """
+
+    def compose(self) -> ComposeResult:
+        symbol_size = max(
+            len(block.bullet)
+            for block in self._blocks
+            if isinstance(block, MarkdownListItem)
+        )
+        for block in self._blocks:
+            if isinstance(block, MarkdownListItem):
+                bullet = MarkdownBullet()
+                bullet.symbol = block.bullet.rjust(symbol_size + 1)
+                yield Horizontal(bullet, Vertical(*block._blocks))
+
+        self._blocks.clear()
 
 
 class MarkdownTable(MarkdownBlock):
@@ -329,10 +388,12 @@ class MarkdownBullet(Widget):
     DEFAULT_CSS = """
     MarkdownBullet {
         width: auto;
+        color: $success;
+        text-style: bold;
     }
     """
 
-    symbol = reactive("●​ ")
+    symbol = reactive("●​")
     """The symbol for the bullet."""
 
     def render(self) -> Text:
@@ -359,13 +420,13 @@ class MarkdownListItem(MarkdownBlock):
         self.bullet = bullet
         super().__init__()
 
-    def compose(self) -> ComposeResult:
-        bullet = MarkdownBullet()
-        bullet.symbol = self.bullet
-        yield bullet
-        yield Vertical(*self._blocks)
 
-        self._blocks.clear()
+class MarkdownOrderedListItem(MarkdownListItem):
+    pass
+
+
+class MarkdownUnorderedListItem(MarkdownListItem):
+    pass
 
 
 class MarkdownFence(MarkdownBlock):
@@ -439,6 +500,8 @@ class Markdown(Widget):
     """
     COMPONENT_CLASSES = {"em", "strong", "s", "code_inline"}
 
+    BULLETS = ["⏺ ", "▪ ", "‣ ", "• ", "⭑ "]
+
     def __init__(
         self,
         markdown: str | None = None,
@@ -501,7 +564,7 @@ class Markdown(Widget):
             markdown = path.read_text(encoding="utf-8")
         except Exception:
             return False
-        await self.query("MarkdownBlock").remove()
+
         await self.update(markdown)
         return True
 
@@ -524,6 +587,8 @@ class Markdown(Widget):
             if token.type == "heading_open":
                 block_id += 1
                 stack.append(HEADINGS[token.tag](id=f"block{block_id}"))
+            elif token.type == "hr":
+                output.append(MarkdownHorizontalRule())
             elif token.type == "paragraph_open":
                 stack.append(MarkdownParagraph())
             elif token.type == "blockquote_open":
@@ -533,9 +598,20 @@ class Markdown(Widget):
             elif token.type == "ordered_list_open":
                 stack.append(MarkdownOrderedList())
             elif token.type == "list_item_open":
-                stack.append(
-                    MarkdownListItem(f"{token.info}. " if token.info else "● ")
-                )
+                if token.info:
+                    stack.append(MarkdownOrderedListItem(f"{token.info}. "))
+                else:
+                    item_count = sum(
+                        1
+                        for block in stack
+                        if isinstance(block, MarkdownUnorderedListItem)
+                    )
+                    stack.append(
+                        MarkdownUnorderedListItem(
+                            self.BULLETS[item_count % len(self.BULLETS)]
+                        )
+                    )
+
             elif token.type == "table_open":
                 stack.append(MarkdownTable())
             elif token.type == "tbody_open":
@@ -565,6 +641,8 @@ class Markdown(Widget):
                     for child in token.children:
                         if child.type == "text":
                             content.append(child.content, style_stack[-1])
+                        if child.type == "softbreak":
+                            content.append(" ")
                         elif child.type == "code_inline":
                             content.append(
                                 child.content,
@@ -627,7 +705,10 @@ class Markdown(Widget):
         await self.post_message(
             Markdown.TableOfContentsUpdated(table_of_contents, sender=self)
         )
-        await self.mount(*output)
+        with self.app.batch_update():
+            await self.query("MarkdownBlock").remove()
+            await self.mount(*output)
+            self.refresh(layout=True)
 
 
 class MarkdownTableOfContents(Widget, can_focus_children=True):

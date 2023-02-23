@@ -38,10 +38,10 @@ class CodeBrowser(App):
         """Compose our UI."""
         path = "./" if len(sys.argv) < 2 else sys.argv[1]
         yield Header()
-        yield Container(
-            DirectoryTree(path, id="tree-view"),
-            Vertical(Static(id="code", expand=True), id="code-view"),
-        )
+        with Container():
+            yield DirectoryTree(path, id="tree-view")
+            with Vertical(id="code-view"):
+                yield Static(id="code", expand=True)
         yield Footer()
 
     def on_mount(self, event: events.Mount) -> None:

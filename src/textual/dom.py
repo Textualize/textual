@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import re
+from functools import lru_cache
 from inspect import getfile
 from typing import (
     TYPE_CHECKING,
     ClassVar,
     Iterable,
-    Iterator,
     Sequence,
     Type,
     TypeVar,
@@ -223,14 +223,18 @@ class DOMNode(MessagePump):
         """Called after the object has been mounted."""
         Reactive._initialize_object(self)
 
+    def notify_style_update(self) -> None:
+        """Called after styles are updated."""
+
     @property
-    def _node_bases(self) -> Iterator[Type[DOMNode]]:
+    def _node_bases(self) -> Sequence[Type[DOMNode]]:
         """The DOMNode bases classes (including self.__class__)"""
         # Node bases are in reversed order so that the base class is lower priority
         return self._css_bases(self.__class__)
 
     @classmethod
-    def _css_bases(cls, base: Type[DOMNode]) -> Iterator[Type[DOMNode]]:
+    @lru_cache(maxsize=None)
+    def _css_bases(cls, base: Type[DOMNode]) -> Sequence[Type[DOMNode]]:
         """Get the DOMNode base classes, which inherit CSS.
 
         Args:
@@ -239,9 +243,10 @@ class DOMNode(MessagePump):
         Returns:
             An iterable of DOMNode classes.
         """
+        classes: list[type[DOMNode]] = []
         _class = base
         while True:
-            yield _class
+            classes.append(_class)
             if not _class._inherit_css:
                 break
             for _base in _class.__bases__:
@@ -250,6 +255,7 @@ class DOMNode(MessagePump):
                     break
             else:
                 break
+        return classes
 
     @classmethod
     def _merge_bindings(cls) -> Bindings:
@@ -314,7 +320,9 @@ class DOMNode(MessagePump):
 
         return css_stack
 
-    def _get_component_classes(self) -> set[str]:
+    @classmethod
+    @lru_cache(maxsize=None)
+    def _get_component_classes(cls) -> frozenset[str]:
         """Gets the component classes for this class and inherited from bases.
 
         Component classes are inherited from base classes, unless
@@ -325,12 +333,12 @@ class DOMNode(MessagePump):
         """
 
         component_classes: set[str] = set()
-        for base in self._node_bases:
+        for base in cls._css_bases(cls):
             component_classes.update(base.__dict__.get("COMPONENT_CLASSES", set()))
             if not base.__dict__.get("_inherit_component_classes", True):
                 break
 
-        return component_classes
+        return frozenset(component_classes)
 
     @property
     def parent(self) -> DOMNode | None:
@@ -872,6 +880,16 @@ class DOMNode(MessagePump):
         else:
             self.remove_class(*class_names)
 
+    def _update_styles(self) -> None:
+        """Request an update of this node's styles.
+
+        Should be called whenever CSS classes / pseudo classes change.
+        """
+        try:
+            self.app.update_styles(self)
+        except NoActiveAppError:
+            pass
+
     def add_class(self, *class_names: str) -> None:
         """Add class names to this Node.
 
@@ -884,10 +902,7 @@ class DOMNode(MessagePump):
         self._classes.update(class_names)
         if old_classes == self._classes:
             return
-        try:
-            self.app.update_styles(self)
-        except NoActiveAppError:
-            pass
+        self._update_styles()
 
     def remove_class(self, *class_names: str) -> None:
         """Remove class names from this Node.
@@ -900,10 +915,7 @@ class DOMNode(MessagePump):
         self._classes.difference_update(class_names)
         if old_classes == self._classes:
             return
-        try:
-            self.app.update_styles(self)
-        except NoActiveAppError:
-            pass
+        self._update_styles()
 
     def toggle_class(self, *class_names: str) -> None:
         """Toggle class names on this Node.
@@ -916,10 +928,7 @@ class DOMNode(MessagePump):
         self._classes.symmetric_difference_update(class_names)
         if old_classes == self._classes:
             return
-        try:
-            self.app.update_styles(self)
-        except NoActiveAppError:
-            pass
+        self._update_styles()
 
     def has_pseudo_class(self, *class_names: str) -> bool:
         """Check for pseudo classes (such as hover, focus etc)

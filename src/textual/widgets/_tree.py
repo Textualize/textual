@@ -473,8 +473,9 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
+        disabled: bool = False,
     ) -> None:
-        super().__init__(name=name, id=id, classes=classes)
+        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
         text_label = self.process_label(label)
 
@@ -992,7 +993,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 self.cursor_line = cursor_line
                 await self.action("select_cursor")
 
-    def _on_styles_updated(self) -> None:
+    def notify_style_update(self) -> None:
         self._invalidate()
 
     def action_cursor_up(self) -> None:

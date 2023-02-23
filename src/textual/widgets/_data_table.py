@@ -515,8 +515,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
+        disabled: bool = False,
     ) -> None:
-        super().__init__(name=name, id=id, classes=classes)
+        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._data: dict[RowKey, dict[ColumnKey, CellType]] = {}
         """Contains the cells of the table, indexed by row key and column key.
         The final positioning of a cell on screen cannot be determined solely by this
