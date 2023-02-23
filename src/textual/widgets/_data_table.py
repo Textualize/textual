@@ -1632,13 +1632,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             reverse: If True, the sort order will be reversed.
         """
 
-        def sort_by_column_keys(
-            row: tuple[RowKey, dict[ColumnKey | str, CellType]]
-        ) -> Any:
+        def sort_by_column_keys(row: tuple[RowKey, dict[ColumnKey, CellType]]) -> Any:
             _, row_data = row
-            result = itemgetter(*columns)(row_data)
+            result = itemgetter(*column_keys)(row_data)
             return result
 
+        column_keys = [ColumnKey(column) for column in columns]
         ordered_rows = sorted(
             self._data.items(), key=sort_by_column_keys, reverse=reverse
         )

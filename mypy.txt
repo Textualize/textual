@@ -53,8 +53,7 @@ src/textual/widgets/_data_table.py:1558: error: Unsupported operand types for in
 src/textual/widgets/_data_table.py:1559: error: Invalid index type "Tuple[int, int, int, int, Coordinate, Coordinate, Style, str, bool, int]" for "LRUCache[Tuple[int, int, int, int, Coordinate, Coordinate, Style, Literal['cell', 'row', 'column', 'none'], bool, int], Strip]"; expected type "Tuple[int, int, int, int, Coordinate, Coordinate, Style, Literal['cell', 'row', 'column', 'none'], bool, int]"  [index]
 src/textual/widgets/_data_table.py:1578: error: Argument 1 has incompatible type "Tuple[int, int, int, int, Coordinate, Coordinate, Style, str, bool, int]"; expected "Tuple[int, int, int, int, Coordinate, Coordinate, Style, Literal['cell', 'row', 'column', 'none'], bool, int]"  [arg-type]
 src/textual/widgets/_data_table.py:1586: error: List comprehension has incompatible type List[Optional[RowKey]]; expected List[RowKey]  [misc]
-src/textual/widgets/_data_table.py:1643: error: Argument "key" to "sorted" has incompatible type "Callable[[Tuple[RowKey, Dict[Union[ColumnKey, str], CellType]]], Any]"; expected "Callable[[Tuple[RowKey, Dict[ColumnKey, CellType]]], Union[SupportsDunderLT[Any], SupportsDunderGT[Any]]]"  [arg-type]
 src/textual/widgets/_button.py:219: error: Item "ConsoleRenderable" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
 src/textual/widgets/_button.py:219: error: Item "RichCast" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
 src/textual/widgets/_button.py:219: error: Item "str" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
-Found 57 errors in 6 files (checked 154 source files)
+Found 56 errors in 6 files (checked 154 source files)
