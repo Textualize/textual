@@ -97,12 +97,15 @@ class MessagePump(metaclass=MessagePumpMeta):
             ```
 
         """
-        prevent_stack = self._prevent_message_types_stack
-        prevent_stack.append(prevent_stack[-1].union(message_types))
-        try:
+        if message_types:
+            prevent_stack = self._prevent_message_types_stack
+            prevent_stack.append(prevent_stack[-1].union(message_types))
+            try:
+                yield
+            finally:
+                prevent_stack.pop()
+        else:
             yield
-        finally:
-            prevent_stack.pop()
 
     @property
     def task(self) -> Task:
