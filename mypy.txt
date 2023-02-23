@@ -10,9 +10,6 @@ src/textual/app.py:2076: error: Argument 1 to "action" of "App" has incompatible
 src/textual/widgets/_header.py:136: error: Argument 3 to "watch" of "DOMNode" has incompatible type "Callable[[str], None]"; expected "Union[Callable[[], Awaitable[None]], Callable[[], None]]"  [arg-type]
 src/textual/widgets/_header.py:137: error: Argument 3 to "watch" of "DOMNode" has incompatible type "Callable[[str], None]"; expected "Union[Callable[[], Awaitable[None]], Callable[[], None]]"  [arg-type]
 src/textual/widgets/_footer.py:69: error: Argument 3 to "watch" of "DOMNode" has incompatible type "Callable[[Optional[Widget]], None]"; expected "Union[Callable[[], Awaitable[None]], Callable[[], None]]"  [arg-type]
-src/textual/_doc.py:18: error: Missing return statement  [return]
-src/textual/_doc.py:85: error: Argument 1 to "open" has incompatible type "Union[PurePath, str, None]"; expected "Union[int, Union[str, bytes, PathLike[str], PathLike[bytes]]]"  [arg-type]
-src/textual/_doc.py:115: error: Argument 1 to "write_text" of "Path" has incompatible type "Optional[Any]"; expected "str"  [arg-type]
 src/textual/widgets/_list_view.py:94: error: Incompatible types in assignment (expression has type "Optional[int]", variable has type "int")  [assignment]
 src/textual/widgets/_list_view.py:97: error: Missing return statement  [return]
 src/textual/widgets/_list_view.py:102: error: Incompatible return value type (got "Widget", expected "Optional[ListItem]")  [return-value]
@@ -40,4 +37,4 @@ src/textual/widgets/_data_table.py:1629: error: Argument "key" to "sorted" has i
 src/textual/widgets/_button.py:219: error: Item "ConsoleRenderable" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
 src/textual/widgets/_button.py:219: error: Item "RichCast" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
 src/textual/widgets/_button.py:219: error: Item "str" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
-Found 41 errors in 8 files (checked 154 source files)
+Found 38 errors in 7 files (checked 154 source files)
