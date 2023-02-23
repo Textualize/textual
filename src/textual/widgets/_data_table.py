@@ -475,6 +475,31 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         def __rich_repr__(self) -> rich.repr.Result:
             yield "sender", self.sender
             yield "column_key", self.column_key
+            yield "column_index", self.column_index
+            yield "label", self.label.plain
+
+    class RowLabelSelected(Message, bubble=True):
+        """Posted when a row label is clicked."""
+
+        def __init__(
+            self,
+            sender: DataTable,
+            row_key: RowKey,
+            row_index: int,
+            label: Text,
+        ):
+            self.row_key = row_key
+            """The key for the column."""
+            self.row_index = row_index
+            """The index for the column."""
+            self.label = label
+            """The text of the label."""
+            super().__init__(sender)
+
+        def __rich_repr__(self) -> rich.repr.Result:
+            yield "sender", self.sender
+            yield "row_key", self.row_key
+            yield "row_index", self.row_index
             yield "label", self.label.plain
 
     def __init__(
