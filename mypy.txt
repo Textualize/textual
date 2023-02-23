@@ -30,8 +30,7 @@ src/textual/widgets/_data_table.py:991: error: Invalid index type "Optional[RowK
 src/textual/widgets/_data_table.py:996: error: Invalid index type "Optional[ColumnKey]" for "Dict[ColumnKey, Column]"; expected type "ColumnKey"  [index]
 src/textual/widgets/_data_table.py:1011: error: Invalid index type "Optional[RowKey]" for "Dict[RowKey, Row]"; expected type "RowKey"  [index]
 src/textual/widgets/_data_table.py:1027: error: Invalid index type "Optional[ColumnKey]" for "Dict[ColumnKey, Column]"; expected type "ColumnKey"  [index]
-src/textual/widgets/_data_table.py:1289: error: Invalid index type "Optional[ColumnKey]" for "Dict[ColumnKey, Column]"; expected type "ColumnKey"  [index]
 src/textual/widgets/_button.py:219: error: Item "ConsoleRenderable" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
 src/textual/widgets/_button.py:219: error: Item "RichCast" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
 src/textual/widgets/_button.py:219: error: Item "str" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
-Found 35 errors in 6 files (checked 154 source files)
+Found 34 errors in 6 files (checked 154 source files)

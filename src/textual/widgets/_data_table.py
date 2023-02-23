@@ -1283,10 +1283,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def ordered_columns(self) -> list[Column]:
         """The list of Columns in the DataTable, ordered as they appear on screen."""
         column_indices = range(len(self.columns))
-        column_keys = [
-            self._column_locations.get_key(index) for index in column_indices
-        ]
-        ordered_columns = [self.columns[key] for key in column_keys]
+        ordered_columns: list[Column] = []
+        for index in column_indices:
+            column_key = self._column_locations.get_key(index)
+            if column_key is None:
+                raise ColumnDoesNotExist(f"Column index {index!r} is not valid.")
+            ordered_columns.append(self.columns[column_key])
         return ordered_columns
 
     @property
