@@ -59,7 +59,7 @@ class RadioSet(Container):
     @property
     def _buttons(self) -> DOMQuery[RadioButton]:
         """The buttons within the set."""
-        return self.query(RadioButton)
+        return cast(DOMQuery[RadioButton], self.query(RadioButton))
 
     class Changed(Message, bubble=True):
         """Posted when the pressed button in the set changes."""
