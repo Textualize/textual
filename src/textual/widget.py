@@ -2501,7 +2501,7 @@ class Widget(DOMNode):
         if not super().check_message_enabled(message):
             return False
         message_type = type(message)
-        if self.is_prevented(message_type):
+        if self._is_prevented(message_type):
             return False
         # Otherwise, if this is a mouse event, the widget receiving the
         # event must not be disabled at this moment.

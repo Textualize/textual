@@ -81,6 +81,10 @@ class MessagePump(metaclass=MessagePumpMeta):
         self._next_callbacks: list[CallbackType] = []
         self._prevent_message_types_stack: list[set[type[Message]]] = [set()]
 
+    def _get_prevented_messages(self) -> set[type[Message]]:
+        """A set of all the prevented message types."""
+        return set()
+
     @contextmanager
     def prevent(self, *message_types: type[Message]) -> Generator[None, None, None]:
         """A context manager to *temporarily* prevent the given message types from being posted.
@@ -574,7 +578,7 @@ class MessagePump(metaclass=MessagePumpMeta):
             return False
         if not self.check_message_enabled(message):
             return True
-        message._prevent.update(self.prevented_messages)
+        message._prevent.update(self._get_prevented_messages())
         await self._message_queue.put(message)
         return True
 
@@ -613,7 +617,7 @@ class MessagePump(metaclass=MessagePumpMeta):
             return False
         if not self.check_message_enabled(message):
             return False
-        message._prevent.update(self.prevented_messages)
+        message._prevent.update(self._get_prevented_messages())
         self._message_queue.put_nowait(message)
         return True
 
