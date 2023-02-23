@@ -184,7 +184,7 @@ class Row:
 
     key: RowKey
     height: int
-    label: str | None = None
+    label: Text | None = None
 
 
 class RowRenderables(NamedTuple):
@@ -1160,7 +1160,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         *cells: CellType,
         height: int = 1,
         key: str | None = None,
-        label: str | None = None,
+        label: TextType | None = None,
     ) -> RowKey:
         """Add a row at the bottom of the DataTable.
 
@@ -1191,6 +1191,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             column.key: cell
             for column, cell in zip_longest(self.ordered_columns, cells)
         }
+        label = Text.from_markup(label) if isinstance(label, str) else label
         self.rows[row_key] = Row(row_key, height, label)
         self._new_rows.add(row_key)
         self._require_update_dimensions = True
@@ -1448,8 +1449,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         show_cursor = self.show_cursor
         if hover and show_cursor and self._show_hover_cursor:
             style += get_component("datatable--hover").rich_style
-            if is_header_cell:
-                # Apply subtle variation in style for the fixed (blue background by
+            if is_header_cell or is_row_label_cell:
+                # Apply subtle variation in style for the header/label (blue background by
                 # default) rows and columns affected by the cursor, to ensure we can
                 # still differentiate between the labels and the data.
                 style += get_component("datatable--header-hover").rich_style
@@ -1813,11 +1814,18 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         row_index = meta["row"]
         column_index = meta["column"]
         is_header_click = self.show_header and row_index == -1
+        is_row_label_click = self.show_row_labels and column_index == -1
         if is_header_click:
             # Header clicks work even if cursor is off, and doesn't move the cursor.
             column = self.ordered_columns[column_index]
             message = DataTable.HeaderSelected(
                 self, column.key, column_index, label=column.label
+            )
+            self.post_message_no_wait(message)
+        elif is_row_label_click:
+            row = self.ordered_rows[row_index]
+            message = DataTable.RowLabelSelected(
+                self, row.key, row_index, label=row.label
             )
             self.post_message_no_wait(message)
         elif self.show_cursor and self.cursor_type != "none":
