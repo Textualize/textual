@@ -70,12 +70,26 @@ class StringKey:
 
     It can optionally wrap a string,
     and lookups into a map using the object behave the same as lookups using
-    the string itself."""
+    the string itself.
+
+    This class and subclasses are idempotent, which means that if a value
+    `s` is `str | StringKey`, then `StringKey(s)` will safely convert it to
+    a `StringKey` instance if `s` is a string and it will leave `s` unchanged
+    if it was already of the correct type.
+    """
 
     value: str | None
 
-    def __init__(self, value: str | None = None):
-        self.value = value
+    def __new__(cls, value: StringKey | str | None = None) -> StringKey:
+        """Creates a new `StringKey` object if necessary."""
+        if isinstance(value, cls):
+            return value
+
+        string_key = super().__new__(cls)
+        if isinstance(value, StringKey):  # This should never be true.
+            value = value.value
+        string_key.value = value
+        return string_key
 
     def __hash__(self):
         # If a string is supplied, we use the hash of the string. If no string was
