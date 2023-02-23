@@ -31,7 +31,7 @@ async def test_checkbox_initial_state() -> None:
 
 
 async def test_checkbox_toggle() -> None:
-    """The initial states of the check boxes should be as we specified."""
+    """The states of the check boxes after they've been toggled."""
     async with CheckboxApp().run_test() as pilot:
         for box in pilot.app.query(Checkbox):
             box.toggle()
