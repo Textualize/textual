@@ -1466,7 +1466,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         if cursor and show_cursor:
             style += get_component("datatable--cursor").rich_style
-            if is_header_cell:
+            if is_header_cell or is_row_label_cell:
                 style += get_component("datatable--header-cursor").rich_style
             elif is_fixed_style_cell:
                 style += get_component("datatable--fixed-cursor").rich_style
