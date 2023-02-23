@@ -120,9 +120,9 @@ There are other ways of sending (posting) messages, which you may need to use le
 
 ## Preventing messages
 
-You can *temporarily* prevent a Widget or App from posting messages or events of a particular type by calling [prevent][textual.message_pump.MessagePump.prevent], which returns a context manager. This is typically used when updating data in a child widget and you don't want to receive notifications that something has changed.
+You can *temporarily* disable posting of messages of a particular type by calling [prevent][textual.message_pump.MessagePump.prevent], which returns a context manager (used with Python's `with` keyword). This is typically used when updating data in a child widget and you don't want to receive notifications that something has changed.
 
-The following example will play the terminal bell as you type, by handling the [Input.Changed][textual.widgets.Input.Changed] event. There's also a button to clear the input by setting `input.value` to empty string. We don't want to play the bell when the button is clicked so we wrap setting the attribute with a call to [prevent][textual.message_pump.MessagePump.prevent].
+The following example will play the terminal bell as you type. It does this by handling [Input.Changed][textual.widgets.Input.Changed] and calling [bell()][textual.app.App.bell]. There is a Clear button which sets the input's value to an empty string. This would normally also result in a `Input.Changed` event being sent (and the bell playing). Since don't want the button to make a sound, the assignment to `value` is wrapped in with a [prevent][textual.message_pump.MessagePump.prevent] context manager.
 
 !!! tip
 
