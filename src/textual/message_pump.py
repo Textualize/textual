@@ -10,8 +10,9 @@ from __future__ import annotations
 import asyncio
 import inspect
 from asyncio import CancelledError, Queue, QueueEmpty, Task
+from contextlib import contextmanager
 from functools import partial
-from typing import TYPE_CHECKING, Any, Awaitable, Callable, Iterable
+from typing import TYPE_CHECKING, Any, Awaitable, Callable, Generator, Iterable
 from weakref import WeakSet
 
 from . import Logger, events, log, messages
@@ -19,6 +20,7 @@ from ._asyncio import create_task
 from ._callback import invoke
 from ._context import NoActiveAppError, active_app, active_message_pump
 from ._time import time
+from ._types import CallbackType
 from .case import camel_to_snake
 from .errors import DuplicateKeyHandlers
 from .events import Event
@@ -77,6 +79,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         self._max_idle: float | None = None
         self._mounted_event = asyncio.Event()
         self._next_callbacks: list[CallbackType] = []
+        self._prevent_events: list[set[type[Message]]] = []
 
     @property
     def task(self) -> Task:
@@ -149,6 +152,17 @@ class MessagePump(metaclass=MessagePumpMeta):
         self._parent = None
 
     def check_message_enabled(self, message: Message) -> bool:
+        """Check if a given message is enabled (allowed to be sent).
+
+        Args:
+            message: A message object
+
+        Returns:
+            `True` if the message will be sent, or `False` if it is disabled.
+        """
+        message_type = type(message)
+        if self._prevent_events and message_type in self._prevent_events[-1]:
+            return False
         return type(message) not in self._disabled_messages
 
     def disable_messages(self, *messages: type[Message]) -> None:
@@ -527,6 +541,27 @@ class MessagePump(metaclass=MessagePumpMeta):
         if self._message_queue.empty():
             self.post_message_no_wait(messages.Prompt(sender=self))
 
+    @contextmanager
+    def prevent(self, *message_types: type[Message]) -> Generator[None, None, None]:
+        """A context manager to *temporarily* prevent the given message types from being posted.
+
+        Example:
+            ```python
+            input = self.query_one(Input)
+            with self.prevent(Input.Changed):
+                input.value = "foo"
+            ```
+
+        """
+        if self._prevent_events:
+            self._prevent_events.append(self._prevent_events[-1].union(message_types))
+        else:
+            self._prevent_events.append(set(message_types))
+        try:
+            yield
+        finally:
+            self._prevent_events.pop()
+
     async def post_message(self, message: Message) -> bool:
         """Post a message or an event to this message pump.
 
@@ -594,7 +629,11 @@ class MessagePump(metaclass=MessagePumpMeta):
         return self.post_message_no_wait(message)
 
     async def on_callback(self, event: events.Callback) -> None:
-        await invoke(event.callback)
+        if event.prevent:
+            with self.prevent(*event.prevent):
+                await invoke(event.callback)
+        else:
+            await invoke(event.callback)
 
     # TODO: Does dispatch_key belong on message pump?
     async def dispatch_key(self, event: events.Key) -> bool:

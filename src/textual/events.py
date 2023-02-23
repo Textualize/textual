@@ -29,9 +29,13 @@ class Event(Message):
 @rich.repr.auto
 class Callback(Event, bubble=False, verbose=True):
     def __init__(
-        self, sender: MessageTarget, callback: Callable[[], Awaitable[None]]
+        self,
+        sender: MessageTarget,
+        callback: Callable[[], Awaitable[None]],
+        prevent: set[type[Message]] | None = None,
     ) -> None:
         self.callback = callback
+        self.prevent = frozenset(prevent) if prevent else None
         super().__init__(sender)
 
     def __rich_repr__(self) -> rich.repr.Result:
