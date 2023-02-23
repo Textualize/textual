@@ -40,7 +40,4 @@ src/textual/widgets/_data_table.py:1629: error: Argument "key" to "sorted" has i
 src/textual/widgets/_button.py:219: error: Item "ConsoleRenderable" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
 src/textual/widgets/_button.py:219: error: Item "RichCast" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
 src/textual/widgets/_button.py:219: error: Item "str" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
-src/textual/demo.py:206: error: Argument 3 to "watch" of "DOMNode" has incompatible type "Callable[[bool], None]"; expected "Union[Callable[[], Awaitable[None]], Callable[[], None]]"  [arg-type]
-src/textual/demo.py:221: error: "App[Any]" has no attribute "add_note"  [attr-defined]
-src/textual/demo.py:276: error: "App[Any]" has no attribute "add_note"  [attr-defined]
-Found 44 errors in 9 files (checked 154 source files)
+Found 41 errors in 8 files (checked 154 source files)
