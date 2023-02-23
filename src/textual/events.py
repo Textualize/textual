@@ -32,10 +32,8 @@ class Callback(Event, bubble=False, verbose=True):
         self,
         sender: MessageTarget,
         callback: Callable[[], Awaitable[None]],
-        prevent: set[type[Message]] | None = None,
     ) -> None:
         self.callback = callback
-        self.prevent = frozenset(prevent) if prevent else None
         super().__init__(sender)
 
     def __rich_repr__(self) -> rich.repr.Result:

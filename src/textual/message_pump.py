@@ -631,11 +631,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         return self.post_message_no_wait(message)
 
     async def on_callback(self, event: events.Callback) -> None:
-        if event.prevent:
-            with self.prevent(*event.prevent):
-                await invoke(event.callback)
-        else:
-            await invoke(event.callback)
+        await invoke(event.callback)
 
     # TODO: Does dispatch_key belong on message pump?
     async def dispatch_key(self, event: events.Key) -> bool:
