@@ -302,7 +302,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     zebra_stripes = Reactive(False)
     header_height = Reactive(1)
     show_cursor = Reactive(True)
-    cursor_type = Reactive("cell")
+    cursor_type = Reactive[CursorType]("cell")
 
     cursor_coordinate: Reactive[Coordinate] = Reactive(
         Coordinate(0, 0), repaint=False, always_update=True
@@ -1548,7 +1548,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         except LookupError:
             return Strip.blank(width, base_style)
 
-        cache_key = (
+        cache_key: LineCacheKey = (
             y,
             x1,
             x2,
