@@ -11,7 +11,13 @@ from ._radio_button import RadioButton
 
 
 class RadioSet(Container):
-    """Widget for grouping a collection of radio buttons into a set."""
+    """Widget for grouping a collection of radio buttons into a set.
+
+    When a collection of [RadioButton][textual.widgets.RadioButton]s are
+    grouped with this widget, they will be treated as a mutually-exclusive
+    grouping. If one button is turned on, the previously-on button will be
+    turned off.
+    """
 
     DEFAULT_CSS = """
     RadioSet {
@@ -36,14 +42,16 @@ class RadioSet(Container):
         """Initialise the radio set.
 
         Args:
-            buttons: A collection of labels or `RadioButton`s to group together.
+            buttons: A collection of labels or [RadioButton][textual.widgets.RadioButton]s to group together.
             name: The name of the radio set.
             id: The ID of the radio set in the DOM.
             classes: The CSS classes of the radio set.
             disabled: Whether the radio set is disabled or not.
 
         Note:
-            When a `str` label is provided, a `RadioButton` will be created from it.
+            When a `str` label is provided, a
+            [RadioButton][textual.widgets.RadioButton] will be created from
+            it.
         """
         super().__init__(
             *[
@@ -62,7 +70,10 @@ class RadioSet(Container):
         return cast(DOMQuery[RadioButton], self.query(RadioButton))
 
     class Changed(Message, bubble=True):
-        """Posted when the pressed button in the set changes."""
+        """Posted when the pressed button in the set changes.
+
+        This message can be handled using an `on_radio_set_changed` method.
+        """
 
         def __init__(self, sender: RadioSet, pressed: RadioButton) -> None:
             """Initialise the message.
@@ -113,11 +124,7 @@ class RadioSet(Container):
 
     @property
     def pressed_index(self) -> int:
-        """The index of the currently-pressed button.
-
-        Note:
-            If no button is pressed the value will be `-1`.
-        """
+        """The index of the currently-pressed button, or -1 if none are pressed."""
         try:
             return self._nodes.index(self.pressed_button)
         except ValueError:
