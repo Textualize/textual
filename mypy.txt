@@ -32,11 +32,7 @@ src/textual/widgets/_data_table.py:1011: error: Invalid index type "Optional[Row
 src/textual/widgets/_data_table.py:1027: error: Invalid index type "Optional[ColumnKey]" for "Dict[ColumnKey, Column]"; expected type "ColumnKey"  [index]
 src/textual/widgets/_data_table.py:1289: error: Invalid index type "Optional[ColumnKey]" for "Dict[ColumnKey, Column]"; expected type "ColumnKey"  [index]
 src/textual/widgets/_data_table.py:1305: error: Invalid index type "Optional[RowKey]" for "Dict[RowKey, Row]"; expected type "RowKey"  [index]
-src/textual/widgets/_data_table.py:1377: error: Incompatible types in assignment (expression has type "Optional[RowKey]", variable has type "RowKey")  [assignment]
-src/textual/widgets/_data_table.py:1381: error: Unsupported operand types for in ("Tuple[RowKey, Optional[ColumnKey], Style, bool, bool, int]" and "LRUCache[Tuple[RowKey, ColumnKey, Style, bool, bool, int], List[List[Segment]]]")  [operator]
-src/textual/widgets/_data_table.py:1390: error: Argument 1 has incompatible type "Tuple[RowKey, Optional[ColumnKey], Style, bool, bool, int]"; expected "Tuple[RowKey, ColumnKey, Style, bool, bool, int]"  [arg-type]
-src/textual/widgets/_data_table.py:1391: error: Invalid index type "Tuple[RowKey, Optional[ColumnKey], Style, bool, bool, int]" for "LRUCache[Tuple[RowKey, ColumnKey, Style, bool, bool, int], List[List[Segment]]]"; expected type "Tuple[RowKey, ColumnKey, Style, bool, bool, int]"  [index]
 src/textual/widgets/_button.py:219: error: Item "ConsoleRenderable" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
 src/textual/widgets/_button.py:219: error: Item "RichCast" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
 src/textual/widgets/_button.py:219: error: Item "str" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
-Found 40 errors in 6 files (checked 154 source files)
+Found 36 errors in 6 files (checked 154 source files)

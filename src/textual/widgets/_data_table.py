@@ -1371,13 +1371,25 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             if is_fixed_style:
                 style += self.get_component_styles("datatable--cursor-fixed").rich_style
 
+        row_key: RowKey | None
         if is_header_row:
             row_key = self._header_row_key
         else:
             row_key = self._row_locations.get_key(row_index)
+            if row_key is None:
+                raise RowDoesNotExist(f"Row index {row_index!r} is not valid.")
 
         column_key = self._column_locations.get_key(column_index)
-        cell_cache_key = (row_key, column_key, style, cursor, hover, self._update_count)
+        if column_key is None:
+            raise ColumnDoesNotExist(f"Column index {column_index!r} is not valid.")
+        cell_cache_key: CellCacheKey = (
+            row_key,
+            column_key,
+            style,
+            cursor,
+            hover,
+            self._update_count,
+        )
         if cell_cache_key not in self._cell_render_cache:
             style += Style.from_meta({"row": row_index, "column": column_index})
             height = self.header_height if is_header_row else self.rows[row_key].height
