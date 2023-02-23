@@ -151,9 +151,9 @@ class ToggleButton(Static, can_focus=True):
         )
 
         return Text.assemble(
-            Text(self.BUTTON_LEFT, style=side_style),
-            Text(self.BUTTON_INNER, style=button_style),
-            Text(self.BUTTON_RIGHT, style=side_style),
+            (self.BUTTON_LEFT, side_style),
+            (self.BUTTON_INNER, button_style),
+            (self.BUTTON_RIGHT, side_style),
         )
 
     def render(self) -> RenderResult:
