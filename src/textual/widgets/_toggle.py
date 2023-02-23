@@ -167,10 +167,14 @@ class ToggleButton(Static, can_focus=True):
         label = self._label.copy()
         label.stylize(self.get_component_rich_style("toggle--label", partial=True))
         spacer = " " if label else ""
-        return (
-            Text.assemble(button, spacer, label)
-            if self._button_first
-            else Text.assemble(label, spacer, button)
+        return Text.assemble(
+            *(
+                (button, spacer, label)
+                if self._button_first
+                else (label, spacer, button)
+            ),
+            no_wrap=True,
+            overflow="ellipsis",
         )
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
