@@ -161,10 +161,7 @@ class MessagePump(metaclass=MessagePumpMeta):
             `True` if the message will be sent, or `False` if it is disabled.
         """
         message_type = type(message)
-        if (
-            self._prevent_message_types_stack
-            and message_type in self._prevent_message_types_stack[-1]
-        ):
+        if self._prevent_events and message_type in self._prevent_events[-1]:
             return False
         return type(message) not in self._disabled_messages
 
@@ -475,12 +472,11 @@ class MessagePump(metaclass=MessagePumpMeta):
         if message.no_dispatch:
             return
 
-        with self.prevent(*message._prevent):
-            # Allow apps to treat events and messages separately
-            if isinstance(message, Event):
-                await self.on_event(message)
-            else:
-                await self._on_message(message)
+        # Allow apps to treat events and messages separately
+        if isinstance(message, Event):
+            await self.on_event(message)
+        else:
+            await self._on_message(message)
         await self._flush_next_callbacks()
 
     def _get_dispatch_methods(
@@ -557,27 +553,14 @@ class MessagePump(metaclass=MessagePumpMeta):
             ```
 
         """
-        if self._prevent_message_types_stack:
-            self._prevent_message_types_stack.append(
-                self._prevent_message_types_stack[-1].union(message_types)
-            )
+        if self._prevent_events:
+            self._prevent_events.append(self._prevent_events[-1].union(message_types))
         else:
-            self._prevent_message_types_stack.append(set(message_types))
+            self._prevent_events.append(set(message_types))
         try:
             yield
         finally:
-            self._prevent_message_types_stack.pop()
-
-    def is_prevented(self, message_type: type[Message]) -> bool:
-        """Check if a message type is currently prevented from posting with [prevent][textual.message_pump.MessagePump.prevent].
-
-        Args:
-            message_type: A message type.
-
-        Returns:
-            `True` if the message type is currently prevented, otherwise `False`
-        """
-        return message_type in self._prevent_message_types_stack
+            self._prevent_events.pop()
 
     async def post_message(self, message: Message) -> bool:
         """Post a message or an event to this message pump.
@@ -594,8 +577,6 @@ class MessagePump(metaclass=MessagePumpMeta):
             return False
         if not self.check_message_enabled(message):
             return True
-        if self._prevent_message_types_stack:
-            message._prevent.update(self._prevent_message_types_stack[-1])
         await self._message_queue.put(message)
         return True
 
@@ -618,8 +599,6 @@ class MessagePump(metaclass=MessagePumpMeta):
             return False
         if not self.check_message_enabled(message):
             return False
-        if self._prevent_message_types_stack:
-            message._prevent.update(self._prevent_message_types_stack[-1])
         await self._message_queue.put(message)
         return True
 
