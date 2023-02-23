@@ -12,6 +12,7 @@ from rich.text import Text, TextType
 
 from ..app import RenderResult
 from ..binding import Binding, BindingType
+from ..geometry import Size
 from ..message import Message
 from ..reactive import reactive
 from ._static import Static
