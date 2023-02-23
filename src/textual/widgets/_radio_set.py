@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
+from typing import cast
+
 from ..containers import Container
 from ..css.query import DOMQuery, QueryError
 from ..message import Message
 from ._radio_button import RadioButton
-from ._toggle_button import ToggleButton
 
 
 class RadioSet(Container):
@@ -63,7 +64,7 @@ class RadioSet(Container):
     class Changed(Message, bubble=True):
         """Posted when the pressed button in the set changes."""
 
-        def __init__(self, sender: RadioSet, pressed: ToggleButton) -> None:
+        def __init__(self, sender: RadioSet, pressed: RadioButton) -> None:
             """Initialise the message.
 
             Args:
@@ -88,7 +89,9 @@ class RadioSet(Container):
         if event.input.value:
             # ...send off a message to say that the pressed state has
             # changed.
-            self.post_message_no_wait(self.Changed(self, event.input))
+            self.post_message_no_wait(
+                self.Changed(self, cast(RadioButton, event.input))
+            )
             # ...then look for the button that was previously the pressed
             # one and unpress it.
             for button in self._buttons.filter(".-on"):
