@@ -87,7 +87,12 @@ class RadioSet(Container):
             """A reference to the `RadioSet` that was changed."""
             self.pressed = pressed
             """The `RadioButton` that was pressed to make the change."""
-            self.index = sender.pressed_index
+            # Note: it would be cleaner to use `sender.pressed_index` here,
+            # but we can't be 100% sure all of the updates have happened at
+            # this point, and so we can't go looking for the index of the
+            # pressed button via the normal route. So here we go under the
+            # hood.
+            self.index = sender._nodes.index(pressed)
             """The index of the `RadioButton` that was pressed to make the change."""
 
     def on_radio_button_changed(self, event: RadioButton.Changed) -> None:
