@@ -110,7 +110,7 @@ class ToggleButton(Static, can_focus=True):
 
     def __init__(
         self,
-        label: TextType,
+        label: TextType = "",
         value: bool = False,
         button_first: bool = True,
         *,
