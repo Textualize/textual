@@ -14,12 +14,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added horizontal rule to Markdown https://github.com/Textualize/textual/pull/1832
 - Added `Widget.disabled` https://github.com/Textualize/textual/pull/1785
 - Added `DOMNode.notify_style_update` to replace `messages.StylesUpdated` message https://github.com/Textualize/textual/pull/1861
+- Added `DataTable.show_row_labels` reactive to show and hide row labels https://github.com/Textualize/textual/pull/1868
 
 ### Changed
 
 - Scrolling by page now adds to current position.
 - Markdown lists have been polished: a selection of bullets, better alignment of numbers, style tweaks https://github.com/Textualize/textual/pull/1832
 - Added alternative method of composing Widgets https://github.com/Textualize/textual/pull/1847
+- Added `label` parameter to `DataTable.add_row` https://github.com/Textualize/textual/pull/1868
+- Breaking change: Some `DataTable` component classes were renamed - see PR for details https://github.com/Textualize/textual/pull/1868
 
 ### Removed
 

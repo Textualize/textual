@@ -853,7 +853,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         column_width = self._label_column.render_width
         width_change = column_width if show else -column_width
         self.virtual_size = Size(width + width_change, height)
-        self.virtual_size = Size(width + width_change, height)
         self._scroll_cursor_into_view()
         self._clear_caches()
 
