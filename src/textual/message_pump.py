@@ -161,7 +161,10 @@ class MessagePump(metaclass=MessagePumpMeta):
             `True` if the message will be sent, or `False` if it is disabled.
         """
         message_type = type(message)
-        if self._prevent_events and message_type in self._prevent_events[-1]:
+        if (
+            self._prevent_message_types_stack
+            and message_type in self._prevent_message_types_stack[-1]
+        ):
             return False
         return type(message) not in self._disabled_messages
 
@@ -553,14 +556,16 @@ class MessagePump(metaclass=MessagePumpMeta):
             ```
 
         """
-        if self._prevent_events:
-            self._prevent_events.append(self._prevent_events[-1].union(message_types))
+        if self._prevent_message_types_stack:
+            self._prevent_message_types_stack.append(
+                self._prevent_message_types_stack[-1].union(message_types)
+            )
         else:
-            self._prevent_events.append(set(message_types))
+            self._prevent_message_types_stack.append(set(message_types))
         try:
             yield
         finally:
-            self._prevent_events.pop()
+            self._prevent_message_types_stack.pop()
 
     async def post_message(self, message: Message) -> bool:
         """Post a message or an event to this message pump.
