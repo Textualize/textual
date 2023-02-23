@@ -7,7 +7,7 @@ A simple checkbox width which stores a boolean value.
 
 ## Example
 
-The example below shows switches in various states.
+The example below shows check boxes in various states.
 
 === "Output"
 
