@@ -168,6 +168,8 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
     def action_select_cursor(self) -> None:
         """Select the current item in the list."""
         selected_child = self.highlighted_child
+        if selected_child is None:
+            return
         self.post_message_no_wait(self.Selected(self, selected_child))
 
     def action_cursor_down(self) -> None:
