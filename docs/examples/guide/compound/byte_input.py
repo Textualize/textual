@@ -73,7 +73,7 @@ class ByteEditor(Widget):
         height: 1fr;
         align: center middle;
     }
-    ByteEditor > COntainer.top {
+    ByteEditor > Container.top {
         background: $boost;
     }
     """
@@ -92,6 +92,7 @@ class ByteEditor(Widget):
         yield Container(ByteInput())
 
     def on_bit_switch_bit_changed(self, event: BitSwitch.BitChanged) -> None:
+        print("!!!", event)
         value = 0
         for switch in self.query(BitSwitch):
             value |= switch.value << switch.bit
@@ -102,7 +103,8 @@ class ByteEditor(Widget):
 
     def update_switches(self, byte: int) -> None:
         for switch in self.query(BitSwitch):
-            switch.value = bool(byte & 1 << switch.bit)
+            with switch.prevent(BitSwitch.BitChanged):
+                switch.value = bool(byte & (1 << switch.bit))
 
     def on_input_changed(self, event: Input.Changed) -> None:
         try:
@@ -110,7 +112,7 @@ class ByteEditor(Widget):
         except ValueError:
             pass
         else:
-            self.update_switches(byte)
+            self.value = byte
 
 
 class ByteInputApp(App):
