@@ -57,7 +57,7 @@ from ._context import active_app
 from ._event_broker import NoHandler, extract_handler_actions
 from ._path import _make_path_object_relative
 from ._wait import wait_for_idle
-from .actions import SkipAction
+from .actions import Action, SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding, Bindings
 from .css.query import NoMatches
@@ -1975,7 +1975,7 @@ class App(Generic[ReturnType], DOMNode):
 
     async def action(
         self,
-        action: str | tuple[str, tuple[str, ...]],
+        action: str | Action,
         default_namespace: object | None = None,
     ) -> bool:
         """Perform an action.
@@ -2073,7 +2073,7 @@ class App(Generic[ReturnType], DOMNode):
         else:
             event.stop()
         if isinstance(action, (str, tuple)):
-            await self.action(action, default_namespace=default_namespace)
+            await self.action(action, default_namespace=default_namespace)  # type: ignore[arg-type]
         elif callable(action):
             await action()
         else:
