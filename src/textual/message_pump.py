@@ -81,6 +81,26 @@ class MessagePump(metaclass=MessagePumpMeta):
         self._next_callbacks: list[CallbackType] = []
         self._prevent_message_types_stack: list[set[type[Message]]] = [set()]
 
+    @contextmanager
+    def prevent(self, *message_types: type[Message]) -> Generator[None, None, None]:
+        """A context manager to *temporarily* prevent the given message types from being posted.
+
+        Example:
+            ```python
+            input = self.query_one(Input)
+            with self.prevent(Input.Changed):
+                input.value = "foo"
+            ```
+
+        """
+        self._prevent_message_types_stack.append(
+            self._prevent_message_types_stack[-1].union(message_types)
+        )
+        try:
+            yield
+        finally:
+            self._prevent_message_types_stack.pop()
+
     @property
     def task(self) -> Task:
         assert self._task is not None
@@ -160,9 +180,6 @@ class MessagePump(metaclass=MessagePumpMeta):
         Returns:
             `True` if the message will be sent, or `False` if it is disabled.
         """
-        message_type = type(message)
-        if message_type in self._prevent_message_types_stack[-1]:
-            return False
         return type(message) not in self._disabled_messages
 
     def disable_messages(self, *messages: type[Message]) -> None:
@@ -472,12 +489,13 @@ class MessagePump(metaclass=MessagePumpMeta):
         if message.no_dispatch:
             return
 
-        # Allow apps to treat events and messages separately
-        if isinstance(message, Event):
-            await self.on_event(message)
-        else:
-            await self._on_message(message)
-        await self._flush_next_callbacks()
+        with self.prevent(*message._prevent):
+            # Allow apps to treat events and messages separately
+            if isinstance(message, Event):
+                await self.on_event(message)
+            else:
+                await self._on_message(message)
+            await self._flush_next_callbacks()
 
     def _get_dispatch_methods(
         self, method_name: str, message: Message
@@ -541,26 +559,6 @@ class MessagePump(metaclass=MessagePumpMeta):
         if self._message_queue.empty():
             self.post_message_no_wait(messages.Prompt(sender=self))
 
-    @contextmanager
-    def prevent(self, *message_types: type[Message]) -> Generator[None, None, None]:
-        """A context manager to *temporarily* prevent the given message types from being posted.
-
-        Example:
-            ```python
-            input = self.query_one(Input)
-            with self.prevent(Input.Changed):
-                input.value = "foo"
-            ```
-
-        """
-        self._prevent_message_types_stack.append(
-            self._prevent_message_types_stack[-1].union(message_types)
-        )
-        try:
-            yield
-        finally:
-            self._prevent_message_types_stack.pop()
-
     async def post_message(self, message: Message) -> bool:
         """Post a message or an event to this message pump.
 
@@ -576,8 +574,7 @@ class MessagePump(metaclass=MessagePumpMeta):
             return False
         if not self.check_message_enabled(message):
             return True
-        if self._prevent_message_types_stack:
-            message._prevent.update(self._prevent_message_types_stack[-1])
+        message._prevent.update(self.prevented_messages)
         await self._message_queue.put(message)
         return True
 
@@ -616,8 +613,7 @@ class MessagePump(metaclass=MessagePumpMeta):
             return False
         if not self.check_message_enabled(message):
             return False
-        if self._prevent_message_types_stack:
-            message._prevent.update(self._prevent_message_types_stack[-1])
+        message._prevent.update(self.prevented_messages)
         self._message_queue.put_nowait(message)
         return True
 

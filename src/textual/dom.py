@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import re
-from functools import lru_cache
+from contextlib import contextmanager
+from functools import lru_cache, reduce
 from inspect import getfile
 from typing import (
     TYPE_CHECKING,
     ClassVar,
+    Generator,
     Iterable,
     Sequence,
     Type,
@@ -39,6 +41,7 @@ from .walk import walk_breadth_first, walk_depth_first
 
 if TYPE_CHECKING:
     from .app import App
+    from .messages import Message
     from .css.query import DOMQuery
     from .screen import Screen
     from .widget import Widget
@@ -201,6 +204,30 @@ class DOMNode(MessagePump):
             css_type_names.add(base.__name__)
         cls._merged_bindings = cls._merge_bindings()
         cls._css_type_names = frozenset(css_type_names)
+
+    def is_prevented(self, message_type: type[Message]) -> bool:
+        """Check if a message type has been prevented via the [prevent][textual.message_pump.MessagePump.prevent] context manager.
+
+        Args:
+            message_type: A message type.
+
+        Returns:
+            `True` if the message has been prevented from sending, or `False` if it will be sent as normal.
+        """
+        return any(
+            message_type in node._prevent_message_types_stack[-1]
+            for node in self.ancestors_with_self
+        )
+
+    @property
+    def prevented_messages(self) -> set[type[Message]]:
+        """A set of all the prevented message types."""
+        return set().union(
+            *[
+                node._prevent_message_types_stack[-1]
+                for node in self.ancestors_with_self
+            ]
+        )
 
     def get_component_styles(self, name: str) -> RenderStyles:
         """Get a "component" styles object (must be defined in COMPONENT_CLASSES classvar).
