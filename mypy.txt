@@ -12,11 +12,7 @@ src/textual/widgets/_list_view.py:102: error: Incompatible return value type (go
 src/textual/widgets/_list_view.py:132: error: "Widget" has no attribute "highlighted"  [attr-defined]
 src/textual/widgets/_list_view.py:135: error: "Widget" has no attribute "highlighted"  [attr-defined]
 src/textual/widgets/_list_view.py:140: error: Argument 2 to "Highlighted" has incompatible type "Optional[Widget]"; expected "Optional[ListItem]"  [arg-type]
-src/textual/widgets/_list_view.py:177: error: Unsupported operand types for + ("None" and "int")  [operator]
-src/textual/widgets/_list_view.py:177: note: Left operand is of type "Optional[int]"
-src/textual/widgets/_list_view.py:181: error: Unsupported operand types for - ("None" and "int")  [operator]
-src/textual/widgets/_list_view.py:181: note: Left operand is of type "Optional[int]"
 src/textual/widgets/_button.py:219: error: Item "ConsoleRenderable" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
 src/textual/widgets/_button.py:219: error: Item "RichCast" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
 src/textual/widgets/_button.py:219: error: Item "str" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
-Found 18 errors in 5 files (checked 154 source files)
+Found 16 errors in 5 files (checked 154 source files)
