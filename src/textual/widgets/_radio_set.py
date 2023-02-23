@@ -12,6 +12,18 @@ from ._toggle import ToggleButton
 class RadioSet(Container):
     """Widget for grouping a collection of radio buttons into a set."""
 
+    DEFAULT_CSS = """
+    RadioSet {
+        border: round #666;
+        height: auto;
+        width: auto;
+    }
+
+    App.-light-mode RadioSet {
+        border: round #CCC;
+    }
+    """
+
     def __init__(
         self,
         *buttons: str | RadioButton,
