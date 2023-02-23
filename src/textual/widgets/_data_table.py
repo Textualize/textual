@@ -218,10 +218,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         "datatable--cursor",
         "datatable--hover",
         "datatable--fixed",
+        "datatable--fixed-cursor",
         "datatable--header",
         "datatable--header-cursor",
         "datatable--header-hover",
-        "datatable--fixed-cursor",
         "datatable--odd-row",
         "datatable--even-row",
     }
@@ -229,12 +229,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     | Class | Description |
     | :- | :- |
     | `datatable--cursor` | Target the cursor. |
-    | `datatable--header-cursor` | Target fixed columns or header under the cursor. |
-    | `datatable--even-row` | Target even rows (row indices start at 0). |
-    | `datatable--fixed` | Target fixed columns or header. |
+    | `datatable--hover` | Target the cells under the hover cursor. |
+    | `datatable--fixed` | Target fixed columns and fixed rows. |
+    | `datatable--fixed-cursor` | Target highlighted and fixed columns or header. |
     | `datatable--header` | Target the header of the data table. |
-    | `datatable--hover` | Target the highlighted cell(s). |
-    | `datatable--header-hover` | Target highlighted and fixed columns or header. |
+    | `datatable--header-cursor` | Target cells highlighted by the cursor. |
+    | `datatable--header-hover` | Target hovered header or row label cells. |
+    | `datatable--even-row` | Target even rows (row indices start at 0). |
     | `datatable--odd-row` | Target odd rows (row indices start at 0). |
     """
 
