@@ -8,11 +8,7 @@ src/textual/widgets/_header.py:136: error: Argument 3 to "watch" of "DOMNode" ha
 src/textual/widgets/_header.py:137: error: Argument 3 to "watch" of "DOMNode" has incompatible type "Callable[[str], None]"; expected "Union[Callable[[], Awaitable[None]], Callable[[], None]]"  [arg-type]
 src/textual/widgets/_footer.py:69: error: Argument 3 to "watch" of "DOMNode" has incompatible type "Callable[[Optional[Widget]], None]"; expected "Union[Callable[[], Awaitable[None]], Callable[[], None]]"  [arg-type]
 src/textual/widgets/_list_view.py:97: error: Missing return statement  [return]
-src/textual/widgets/_list_view.py:102: error: Incompatible return value type (got "Widget", expected "Optional[ListItem]")  [return-value]
-src/textual/widgets/_list_view.py:132: error: "Widget" has no attribute "highlighted"  [attr-defined]
-src/textual/widgets/_list_view.py:135: error: "Widget" has no attribute "highlighted"  [attr-defined]
-src/textual/widgets/_list_view.py:140: error: Argument 2 to "Highlighted" has incompatible type "Optional[Widget]"; expected "Optional[ListItem]"  [arg-type]
 src/textual/widgets/_button.py:219: error: Item "ConsoleRenderable" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
 src/textual/widgets/_button.py:219: error: Item "RichCast" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
 src/textual/widgets/_button.py:219: error: Item "str" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
-Found 16 errors in 5 files (checked 154 source files)
+Found 12 errors in 5 files (checked 154 source files)

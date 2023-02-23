@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import ClassVar
+from typing import ClassVar, cast
 
 from textual.await_remove import AwaitRemove
 from textual.binding import Binding, BindingType
@@ -99,7 +99,7 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         if self.index is None:
             return None
         elif 0 <= self.index < len(self._nodes):
-            return self._nodes[self.index]
+            return cast(ListItem, self._nodes[self.index])
 
     def validate_index(self, index: int | None) -> int | None:
         """Clamp the index to the valid range, or set to None if there's nothing to highlight.
@@ -128,10 +128,10 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
     def watch_index(self, old_index: int, new_index: int) -> None:
         """Updates the highlighting when the index changes."""
         if self._is_valid_index(old_index):
-            old_child = self._nodes[old_index]
+            old_child = cast(ListItem, self._nodes[old_index])
             old_child.highlighted = False
         if self._is_valid_index(new_index):
-            new_child = self._nodes[new_index]
+            new_child = cast(ListItem, self._nodes[new_index])
             new_child.highlighted = True
         else:
             new_child = None
