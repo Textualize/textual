@@ -172,6 +172,12 @@ class ToggleButton(Static, can_focus=True):
             else Text.assemble(label, spacer, button)
         )
 
+    def get_content_width(self, container: Size, viewport: Size) -> int:
+        return self._button.cell_len + (1 if self._label else 0) + self._label.cell_len
+
+    def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
+        return 1
+
     def toggle(self) -> None:
         """Toggle the value of the widget."""
         self.value = not self.value
