@@ -1735,13 +1735,16 @@ class App(Generic[ReturnType], DOMNode):
         if not widgets:
             return []
 
-        new_widgets = list(widgets)
+        widget_list = list(widgets)
 
+        new_widgets: Iterable[Widget]
         if before is not None or after is not None:
             # There's a before or after, which means there's going to be an
             # insertion, so make it easier to get the new things in the
             # correct order.
-            new_widgets = reversed(new_widgets)
+            new_widgets = reversed(widget_list)
+        else:
+            new_widgets = widget_list
 
         apply_stylesheet = self.stylesheet.apply
         for widget in new_widgets:

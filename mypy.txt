@@ -3,8 +3,7 @@ src/textual/app.py:315: error: Argument "file" to "Console" has incompatible typ
 src/textual/app.py:1607: error: Value of type variable "_T_io" of "redirect_stderr" cannot be "StdoutRedirector"  [type-var]
 src/textual/app.py:1612: error: Value of type variable "_T_io" of "redirect_stderr" cannot be "_NullFile"  [type-var]
 src/textual/app.py:1613: error: Value of type variable "_T_io" of "redirect_stdout" cannot be "_NullFile"  [type-var]
-src/textual/app.py:1744: error: Incompatible types in assignment (expression has type "reversed[Widget]", variable has type "List[Widget]")  [assignment]
 src/textual/widgets/_button.py:219: error: Item "ConsoleRenderable" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
 src/textual/widgets/_button.py:219: error: Item "RichCast" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
 src/textual/widgets/_button.py:219: error: Item "str" of "Union[ConsoleRenderable, RichCast, str]" has no attribute "copy"  [union-attr]
-Found 8 errors in 2 files (checked 154 source files)
+Found 7 errors in 2 files (checked 154 source files)
