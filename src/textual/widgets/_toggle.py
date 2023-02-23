@@ -42,6 +42,10 @@ class ToggleButton(Static, can_focus=True):
     """
 
     DEFAULT_CSS = """
+    ToggleButton {
+        width: auto;
+    }
+
     ToggleButton:hover {
         text-style: bold;
         background: $boost;
