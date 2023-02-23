@@ -134,6 +134,7 @@ nav:
       - "widgets/markdown_viewer.md"
       - "widgets/markdown.md"
       - "widgets/placeholder.md"
+      - "widgets/radiobutton.md"
       - "widgets/static.md"
       - "widgets/switch.md"
       - "widgets/text_log.md"
