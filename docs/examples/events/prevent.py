@@ -18,7 +18,7 @@ class PreventApp(App):
 
     def on_input_changed(self) -> None:
         """Called as the user types."""
-        self.bell()  # (2)
+        self.bell()  # (2)!
 
 
 if __name__ == "__main__":
