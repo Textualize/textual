@@ -205,29 +205,6 @@ class DOMNode(MessagePump):
         cls._merged_bindings = cls._merge_bindings()
         cls._css_type_names = frozenset(css_type_names)
 
-    def _is_prevented(self, message_type: type[Message]) -> bool:
-        """Check if a message type has been prevented via the [prevent][textual.message_pump.MessagePump.prevent] context manager.
-
-        Args:
-            message_type: A message type.
-
-        Returns:
-            `True` if the message has been prevented from sending, or `False` if it will be sent as normal.
-        """
-        return any(
-            message_type in node._prevent_message_types_stack[-1]
-            for node in self.ancestors_with_self
-        )
-
-    def _get_prevented_messages(self) -> set[type[Message]]:
-        """A set of all the prevented message types."""
-        return set().union(
-            *(
-                node._prevent_message_types_stack[-1]
-                for node in self.ancestors_with_self
-            )
-        )
-
     def get_component_styles(self, name: str) -> RenderStyles:
         """Get a "component" styles object (must be defined in COMPONENT_CLASSES classvar).
 

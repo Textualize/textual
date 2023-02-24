@@ -18,7 +18,12 @@ from weakref import WeakSet
 from . import Logger, events, log, messages
 from ._asyncio import create_task
 from ._callback import invoke
-from ._context import NoActiveAppError, active_app, active_message_pump
+from ._context import (
+    NoActiveAppError,
+    active_app,
+    active_message_pump,
+    prevent_message_types_stack,
+)
 from ._time import time
 from ._types import CallbackType
 from .case import camel_to_snake
@@ -79,11 +84,36 @@ class MessagePump(metaclass=MessagePumpMeta):
         self._max_idle: float | None = None
         self._mounted_event = asyncio.Event()
         self._next_callbacks: list[CallbackType] = []
-        self._prevent_message_types_stack: list[set[type[Message]]] = [set()]
+
+    @property
+    def _prevent_message_types_stack(self) -> list[set[type[Message]]]:
+        """A stack that manages prevented messages.
+
+        Returns:
+            A list of sets of Message Types.
+        """
+        try:
+            stack = prevent_message_types_stack.get()
+        except LookupError:
+            stack = [set()]
+            prevent_message_types_stack.set(stack)
+        return stack
 
     def _get_prevented_messages(self) -> set[type[Message]]:
         """A set of all the prevented message types."""
-        return set()
+        return self._prevent_message_types_stack[-1]
+
+    def _is_prevented(self, message_type: type[Message]) -> bool:
+        """Check if a message type has been prevented via the
+        [prevent][textual.message_pump.MessagePump.prevent] context manager.
+
+        Args:
+            message_type: A message type.
+
+        Returns:
+            `True` if the message has been prevented from sending, or `False` if it will be sent as normal.
+        """
+        return message_type in self._prevent_message_types_stack[-1]
 
     @contextmanager
     def prevent(self, *message_types: type[Message]) -> Generator[None, None, None]:
