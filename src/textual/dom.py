@@ -39,7 +39,6 @@ from .walk import walk_breadth_first, walk_depth_first
 
 if TYPE_CHECKING:
     from .app import App
-    from .messages import Message
     from .css.query import DOMQuery
     from .screen import Screen
     from .widget import Widget
