@@ -2153,6 +2153,9 @@ class App(Generic[ReturnType], DOMNode):
             if widget.parent is not None:
                 widget.parent._nodes._remove(widget)
 
+        for node in pruned_remove:
+            node._detach()
+
         # Return the list of widgets that should end up being sent off in a
         # prune event.
         return pruned_remove

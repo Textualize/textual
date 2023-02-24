@@ -239,9 +239,10 @@ class Reactive(Generic[ReactiveType]):
                     )
                 )
 
-        watch_function = getattr(obj, f"watch_{name}", None)
-        if callable(watch_function):
-            invoke_watcher(watch_function, old_value, value)
+        if obj.is_attached:
+            watch_function = getattr(obj, f"watch_{name}", None)
+            if callable(watch_function):
+                invoke_watcher(watch_function, old_value, value)
 
         # Process "global" watchers
         watchers: list[tuple[Reactable, Callable]]
@@ -342,7 +343,6 @@ def _watch(
         callback: A callable to call when the attribute changes.
         init: True to call watcher initialization. Defaults to True.
     """
-
     if not hasattr(obj, "__watchers"):
         setattr(obj, "__watchers", {})
     watchers: dict[str, list[tuple[Reactable, Callable]]] = getattr(obj, "__watchers")
