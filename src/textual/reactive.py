@@ -253,8 +253,9 @@ class Reactive(Generic[ReactiveType]):
                 for reactable, callback in watchers
                 if reactable.is_attached and not reactable._closing
             ]
-            for _, callback in watchers:
-                invoke_watcher(callback, old_value, value)
+            for reactable, callback in watchers:
+                with reactable.prevent(*obj._prevent_message_types_stack[-1]):
+                    invoke_watcher(callback, old_value, value)
 
     @classmethod
     def _compute(cls, obj: Reactable) -> None:

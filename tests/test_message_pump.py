@@ -1,8 +1,10 @@
 import pytest
 
+from textual.app import App, ComposeResult
 from textual.errors import DuplicateKeyHandlers
 from textual.events import Key
 from textual.widget import Widget
+from textual.widgets import Input
 
 
 class ValidWidget(Widget):
@@ -54,3 +56,34 @@ async def test_dispatch_key_raises_when_conflicting_handler_aliases():
     with pytest.raises(DuplicateKeyHandlers):
         await widget.dispatch_key(Key(widget, key="tab", character="\t"))
     assert widget.called_by == widget.key_tab
+
+
+class PreventTestApp(App):
+    def __init__(self) -> None:
+        self.input_changed_events = []
+        super().__init__()
+
+    def compose(self) -> ComposeResult:
+        yield Input()
+
+    def on_input_changed(self, event: Input.Changed) -> None:
+        self.input_changed_events.append(event)
+
+
+async def test_prevent() -> None:
+    app = PreventTestApp()
+
+    async with app.run_test() as pilot:
+        assert not app.input_changed_events
+        input = app.query_one(Input)
+        input.value = "foo"
+        await pilot.pause()
+        assert len(app.input_changed_events) == 1
+        assert app.input_changed_events[0].value == "foo"
+
+        with input.prevent(Input.Changed):
+            input.value = "bar"
+
+        await pilot.pause()
+        assert len(app.input_changed_events) == 1
+        assert app.input_changed_events[0].value == "foo"
