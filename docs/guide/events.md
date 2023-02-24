@@ -122,7 +122,7 @@ There are other ways of sending (posting) messages, which you may need to use le
 
 You can *temporarily* disable posting of messages of a particular type by calling [prevent][textual.message_pump.MessagePump.prevent], which returns a context manager (used with Python's `with` keyword). This is typically used when updating data in a child widget and you don't want to receive notifications that something has changed.
 
-The following example will play the terminal bell as you type. It does this by handling [Input.Changed][textual.widgets.Input.Changed] and calling [bell()][textual.app.App.bell]. There is a Clear button which sets the input's value to an empty string. This would normally also result in a `Input.Changed` event being sent (and the bell playing). Since don't want the button to make a sound, the assignment to `value` is wrapped in with a [prevent][textual.message_pump.MessagePump.prevent] context manager.
+The following example will play the terminal bell as you type. It does this by handling [Input.Changed][textual.widgets.Input.Changed] and calling [bell()][textual.app.App.bell]. There is a Clear button which sets the input's value to an empty string. This would normally also result in a `Input.Changed` event being sent (and the bell playing). Since we don't want the button to make a sound, the assignment to `value` is wrapped within a [prevent][textual.message_pump.MessagePump.prevent] context manager.
 
 !!! tip
 
