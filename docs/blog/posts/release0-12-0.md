@@ -19,7 +19,7 @@ It's been just 9 days since the previous release, but we have a few interesting 
 We've added a little *syntactical sugar* to Textual's `compose` methods, which aids both
 readability and *editability* (that might not be a word).
 
-First, lets look at the old way of building compose methods. This snippet is taken from the `textual colors` command.
+First, let's look at the old way of building compose methods. This snippet is taken from the `textual colors` command.
 
 
 ```python
