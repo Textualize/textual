@@ -606,6 +606,8 @@ class MessagePump(metaclass=MessagePumpMeta):
             return False
         if not self.check_message_enabled(message):
             return True
+        # Add a copy of the prevented message types to the message
+        # This is so that prevented messages are honoured by the event's handler
         message._prevent.update(self._get_prevented_messages())
         await self._message_queue.put(message)
         return True
@@ -645,6 +647,8 @@ class MessagePump(metaclass=MessagePumpMeta):
             return False
         if not self.check_message_enabled(message):
             return False
+        # Add a copy of the prevented message types to the message
+        # This is so that prevented messages are honoured by the event's handler
         message._prevent.update(self._get_prevented_messages())
         self._message_queue.put_nowait(message)
         return True
