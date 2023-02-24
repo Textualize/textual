@@ -88,7 +88,7 @@ Without the batch update there are a few frames where the old markdown blocks ar
 
 ## Disabled widgets
 
-A few widgets (such as [Button](./../../widgets/button.md) had a `disabled` attribute which would fade the widget a little and make it unselectable. We've extended this to all widgets. Although it is particularly applicable to input controls, anything may be disabled. Disabling a container makes it children disabled, so you could use this for disabling a form, for example.
+A few widgets (such as [Button](./../../widgets/button.md) had a `disabled` attribute which would fade the widget a little and make it unselectable. We've extended this to all widgets. Although it is particularly applicable to input controls, anything may be disabled. Disabling a container makes its children disabled, so you could use this for disabling a form, for example.
 
 ## Preventing messages
 
