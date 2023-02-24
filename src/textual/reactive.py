@@ -239,10 +239,9 @@ class Reactive(Generic[ReactiveType]):
                     )
                 )
 
-        if obj.is_attached:
-            watch_function = getattr(obj, f"watch_{name}", None)
-            if callable(watch_function):
-                invoke_watcher(watch_function, old_value, value)
+        watch_function = getattr(obj, f"watch_{name}", None)
+        if callable(watch_function):
+            invoke_watcher(watch_function, old_value, value)
 
         # Process "global" watchers
         watchers: list[tuple[Reactable, Callable]]
