@@ -31,6 +31,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Numbers in a descendant-combined selector no longer cause an error https://github.com/Textualize/textual/issues/1836
 - Fixed superfluous scrolling when focusing a docked widget https://github.com/Textualize/textual/issues/1816
+- Fixes walk_children which was returning more than one screen https://github.com/Textualize/textual/issues/1846
+- Fixed issue with watchers fired for detached nodes https://github.com/Textualize/textual/issues/1846
 
 ## [0.11.1] - 2023-02-17
 

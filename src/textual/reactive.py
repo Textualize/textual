@@ -343,7 +343,6 @@ def _watch(
         callback: A callable to call when the attribute changes.
         init: True to call watcher initialization. Defaults to True.
     """
-
     if not hasattr(obj, "__watchers"):
         setattr(obj, "__watchers", {})
     watchers: dict[str, list[tuple[Reactable, Callable]]] = getattr(obj, "__watchers")
