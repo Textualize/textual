@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import ClassVar, Optional, cast
+from typing import ClassVar, Optional
 
 from textual.await_remove import AwaitRemove
 from textual.binding import Binding, BindingType
@@ -8,7 +8,7 @@ from textual.containers import Vertical
 from textual.geometry import clamp
 from textual.message import Message
 from textual.reactive import reactive
-from textual.widget import AwaitMount
+from textual.widget import AwaitMount, Widget
 from textual.widgets._list_item import ListItem
 
 
@@ -97,7 +97,9 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
     def highlighted_child(self) -> ListItem | None:
         """The currently highlighted ListItem, or None if nothing is highlighted."""
         if self.index is not None and 0 <= self.index < len(self._nodes):
-            return cast(ListItem, self._nodes[self.index])
+            list_item = self._nodes[self.index]
+            assert isinstance(list_item, ListItem)
+            return list_item
         else:
             return None
 
@@ -128,10 +130,14 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
     def watch_index(self, old_index: int, new_index: int) -> None:
         """Updates the highlighting when the index changes."""
         if self._is_valid_index(old_index):
-            old_child = cast(ListItem, self._nodes[old_index])
+            old_child = self._nodes[old_index]
+            assert isinstance(old_child, ListItem)
             old_child.highlighted = False
+
+        new_child: Widget | None
         if self._is_valid_index(new_index):
-            new_child = cast(ListItem, self._nodes[new_index])
+            new_child = self._nodes[new_index]
+            assert isinstance(new_child, ListItem)
             new_child.highlighted = True
         else:
             new_child = None
