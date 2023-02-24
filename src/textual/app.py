@@ -444,7 +444,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @contextmanager
     def batch_update(self) -> Generator[None, None, None]:
-        """Suspend all repaints until the end of the batch."""
+        """A context manager to suspend all repaints until the end of the batch."""
         self._begin_batch()
         try:
             yield
