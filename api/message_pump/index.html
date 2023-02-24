@@ -5177,6 +5177,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.message_pump.MessagePump.check_message_enabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        check_message_enabled()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.message_pump.MessagePump.disable_messages" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5236,6 +5247,17 @@
     <span class="md-ellipsis">
       
         post_message_no_wait()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.message_pump.MessagePump.prevent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        prevent()
       
     </span>
   </a>
@@ -6145,6 +6167,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.message_pump.MessagePump.check_message_enabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        check_message_enabled()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.message_pump.MessagePump.disable_messages" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6204,6 +6237,17 @@
     <span class="md-ellipsis">
       
         post_message_no_wait()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.message_pump.MessagePump.prevent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        prevent()
       
     </span>
   </a>
@@ -6615,6 +6659,66 @@ Positional and keywords arguments are passed to the callable.</p>
 
 
 
+<h3 id="textual.message_pump.MessagePump.check_message_enabled" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">check_message_enabled</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></code>
+
+<a href="#textual.message_pump.MessagePump.check_message_enabled" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Check if a given message is enabled (allowed to be sent).</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>message</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.message.Message" href="../message/#textual.message.Message">Message</a></code>
+          </td>
+          <td><p>A message object.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p><code>True</code> if the message will be sent, or <code>False</code> if it is disabled.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
 <h3 id="textual.message_pump.MessagePump.disable_messages" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">disable_messages</span><span class="p">(</span><span class="o">*</span><span class="n">messages</span><span class="p">)</span></code>
 
@@ -6899,6 +7003,31 @@ If multiple handlers exist that match the key, an exception is raised.</p>
     </tbody>
   </table>
 
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.message_pump.MessagePump.prevent" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">prevent</span><span class="p">(</span><span class="o">*</span><span class="n">message_types</span><span class="p">)</span></code>
+
+<a href="#textual.message_pump.MessagePump.prevent" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>A context manager to <em>temporarily</em> prevent the given message types from being posted.</p>
+
+<details class="example">
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_one</span><span class="p">(</span><span class="n">Input</span><span class="p">)</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">prevent</span><span class="p">(</span><span class="n">Input</span><span class="o">.</span><span class="n">Changed</span><span class="p">):</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="nb">input</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;foo&quot;</span>
+</code></pre></div>
+</details>
   </div>
 
 </div>

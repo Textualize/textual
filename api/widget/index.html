@@ -5626,6 +5626,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widget.Widget.focusable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        focusable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widget.Widget.focusable_children" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5982,6 +5993,17 @@
     <span class="md-ellipsis">
       
         capture_mouse()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.check_message_enabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        check_message_enabled()
       
     </span>
   </a>
@@ -6378,6 +6400,17 @@
     <span class="md-ellipsis">
       
         scroll_visible()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.watch_disabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        watch_disabled()
       
     </span>
   </a>
@@ -6904,6 +6937,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widget.Widget.focusable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        focusable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widget.Widget.focusable_children" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7260,6 +7304,17 @@
     <span class="md-ellipsis">
       
         capture_mouse()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.check_message_enabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        check_message_enabled()
       
     </span>
   </a>
@@ -7656,6 +7711,17 @@
     <span class="md-ellipsis">
       
         scroll_visible()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.watch_disabled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        watch_disabled()
       
     </span>
   </a>
@@ -8079,6 +8145,27 @@
   <div class="doc doc-contents ">
   
       <p>Rich renderable may expand.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.widget.Widget.focusable" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">focusable</span><span class="p">:</span> <span class="nb">bool</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.widget.Widget.focusable" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Can this widget currently receive focus?</p>
   </div>
 
 </div>
@@ -9350,6 +9437,66 @@ depending on the scroll offset.</p>
           <td>
                 <code>True</code>
           </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widget.Widget.check_message_enabled" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">check_message_enabled</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></code>
+
+<a href="#textual.widget.Widget.check_message_enabled" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Check if a given message is enabled (allowed to be sent).</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>message</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.message.Message" href="../message/#textual.message.Message">Message</a></code>
+          </td>
+          <td><p>A message object</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p><code>True</code> if the message will be sent, or <code>False</code> if it is disabled.</p></td>
         </tr>
     </tbody>
   </table>
@@ -12244,6 +12391,24 @@ which will result in Textual choosing the configured default scrolling easing fu
         </tr>
     </tbody>
   </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widget.Widget.watch_disabled" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">watch_disabled</span><span class="p">()</span></code>
+
+<a href="#textual.widget.Widget.watch_disabled" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Update the styles of the widget and its children when disabled is toggled.</p>
 
   </div>
 
