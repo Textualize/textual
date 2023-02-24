@@ -87,11 +87,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     @property
     def _prevent_message_types_stack(self) -> list[set[type[Message]]]:
-        """A stack that manages prevented messages.
-
-        Returns:
-            A list of sets of Message Types.
-        """
+        """The stack that manages prevented messages."""
         try:
             stack = prevent_message_types_stack.get()
         except LookupError:
