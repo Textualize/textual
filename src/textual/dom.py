@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 import re
-from contextlib import contextmanager
-from functools import lru_cache, reduce
+from functools import lru_cache
 from inspect import getfile
 from typing import (
     TYPE_CHECKING,
