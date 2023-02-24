@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import ClassVar, cast
+from typing import ClassVar, Optional, cast
 
 from textual.await_remove import AwaitRemove
 from textual.binding import Binding, BindingType
@@ -35,7 +35,7 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
     | down | Move the cursor down. |
     """
 
-    index = reactive[int | None](0, always_update=True)
+    index = reactive[Optional[int]](0, always_update=True)
 
     class Highlighted(Message, bubble=True):
         """Posted when the highlighted item changes.

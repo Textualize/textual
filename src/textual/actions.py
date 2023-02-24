@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import ast
 import re
-from typing import Any, TypeAlias
 
-Action: TypeAlias = tuple[str, tuple[Any, ...]]
+from typing_extensions import Any, TypeAlias
+
+Action: TypeAlias = "tuple[str, tuple[Any, ...]]"
 """An action is its name and the arbitrary tuple of its parameters."""
 
 

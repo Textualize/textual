@@ -8,17 +8,17 @@ from rich.segment import Segment
 from rich.style import Style
 
 from ._border import get_box, render_row
-from .filter import LineFilter
 from ._opacity import _apply_opacity
 from ._segment_tools import line_pad, line_trim
 from .color import Color
+from .filter import LineFilter
 from .geometry import Region, Size, Spacing
 from .renderables.text_opacity import TextOpacity
 from .renderables.tint import Tint
 from .strip import Strip
 
 if TYPE_CHECKING:
-    from typing import TypeAlias
+    from typing_extensions import TypeAlias
 
     from .css.styles import StylesBase
     from .widget import Widget
