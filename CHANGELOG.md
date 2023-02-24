@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Scrolling by page now adds to current position.
 - Markdown lists have been polished: a selection of bullets, better alignment of numbers, style tweaks https://github.com/Textualize/textual/pull/1832
 - Added alternative method of composing Widgets https://github.com/Textualize/textual/pull/1847
+- Buttons no longer accept arbitrary renderables https://github.com/Textualize/textual/issues/1870
 
 ### Removed
 
