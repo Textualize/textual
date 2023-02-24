@@ -207,7 +207,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         """Check if a given message is enabled (allowed to be sent).
 
         Args:
-            message: A message object
+            message: A message object.
 
         Returns:
             `True` if the message will be sent, or `False` if it is disabled.
