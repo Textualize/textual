@@ -460,10 +460,6 @@ class App(Generic[ReturnType], DOMNode):
         self._batch_count -= 1
         assert self._batch_count >= 0, "This won't happen if you use `batch_update`"
         if not self._batch_count:
-            try:
-                self.screen.check_idle()
-            except ScreenStackError:
-                pass
             self.check_idle()
 
     def animate(
