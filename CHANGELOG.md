@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fix for batch updates
+- Fix for batch updates https://github.com/Textualize/textual/pull/1880
 
 ## [0.12.0] - 2023-02-24
 
