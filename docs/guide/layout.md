@@ -169,11 +169,13 @@ It's fine to do it this way, but Textual offers a simplified syntax using [conte
 When composing a widget, you can introduce a container using Python's `with` statement.
 Any widgets yielded within that block are added as a child of the container.
 
-Let's take the [utility containers](#utility-containers) example and update it to use the context manager approach.
+Let's update the [utility containers](#utility-containers) example to use the context manager approach.
 
 === "utility_containers_using_with.py"
 
-    Composing with context managers.
+    !!! note
+
+        This code uses context managers to compose widgets.
 
     ```python hl_lines="10-16"
     --8<-- "docs/examples/guide/layout/utility_containers_using_with.py"
@@ -181,7 +183,9 @@ Let's take the [utility containers](#utility-containers) example and update it t
 
 === "utility_containers.py"
 
-    This is the original code.
+    !!! note
+
+        This is the original code using positional arguments.
 
     ```python hl_lines="10-21"
     --8<-- "docs/examples/guide/layout/utility_containers.py"
