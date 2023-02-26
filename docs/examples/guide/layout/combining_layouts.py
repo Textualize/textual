@@ -1,6 +1,6 @@
+from textual.app import App, ComposeResult
 from textual.containers import Container, Horizontal, Vertical
-from textual.app import ComposeResult, App
-from textual.widgets import Static, Header
+from textual.widgets import Header, Static
 
 
 class CombiningLayoutsExample(App):
@@ -8,28 +8,21 @@ class CombiningLayoutsExample(App):
 
     def compose(self) -> ComposeResult:
         yield Header()
-        yield Container(
-            Vertical(
-                *[Static(f"Vertical layout, child {number}") for number in range(15)],
-                id="left-pane",
-            ),
-            Horizontal(
-                Static("Horizontally"),
-                Static("Positioned"),
-                Static("Children"),
-                Static("Here"),
-                id="top-right",
-            ),
-            Container(
-                Static("This"),
-                Static("panel"),
-                Static("is"),
-                Static("using"),
-                Static("grid layout!", id="bottom-right-final"),
-                id="bottom-right",
-            ),
-            id="app-grid",
-        )
+        with Container(id="app-grid"):
+            with Vertical(id="left-pane"):
+                for number in range(15):
+                    yield Static(f"Vertical layout, child {number}")
+            with Horizontal(id="top-right"):
+                yield Static("Horizontally")
+                yield Static("Positioned")
+                yield Static("Children")
+                yield Static("Here")
+            with Container(id="bottom-right"):
+                yield Static("This")
+                yield Static("panel")
+                yield Static("is")
+                yield Static("using")
+                yield Static("grid layout!", id="bottom-right-final")
 
 
 if __name__ == "__main__":
