@@ -189,7 +189,7 @@ Let's take the [utility containers](#utility-containers) example and update it t
 
 === "utility_containers.css"
 
-    ```sass hl_lines="2"
+    ```sass
     --8<-- "docs/examples/guide/layout/utility_containers.css"
     ```
 
