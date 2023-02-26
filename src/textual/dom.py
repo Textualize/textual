@@ -221,6 +221,7 @@ class DOMNode(MessagePump):
 
     def _post_mount(self):
         """Called after the object has been mounted."""
+        _rich_traceback_omit = True
         Reactive._initialize_object(self)
 
     def notify_style_update(self) -> None:

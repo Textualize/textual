@@ -429,12 +429,12 @@ class MessagePump(metaclass=MessagePumpMeta):
         try:
             await self._dispatch_message(events.Compose(sender=self))
             await self._dispatch_message(events.Mount(sender=self))
+            self._post_mount()
         except Exception as error:
             self.app._handle_exception(error)
         finally:
             # This is critical, mount may be waiting
             self._mounted_event.set()
-        self._post_mount()
 
     def _post_mount(self):
         """Called after the object has been mounted."""

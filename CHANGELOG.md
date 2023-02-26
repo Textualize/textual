@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fix exceptions in watch methods being hidden on startup https://github.com/Textualize/textual/issues/1886
 
 ## [0.12.1] - 2023-02-25
 
