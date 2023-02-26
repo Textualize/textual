@@ -7170,11 +7170,14 @@ However, Textual comes with a more powerful mechanism for achieving this known a
 It's fine to do it this way, but Textual offers a simplified syntax using <a href="https://docs.python.org/3/reference/datamodel.html#context-managers">context managers</a> which is generally easier to write and edit.</p>
 <p>When composing a widget, you can introduce a container using Python's <code>with</code> statement.
 Any widgets yielded within that block are added as a child of the container.</p>
-<p>Let's take the <a href="#utility-containers">utility containers</a> example and update it to use the context manager approach.</p>
+<p>Let's update the <a href="#utility-containers">utility containers</a> example to use the context manager approach.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="5:4"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><input id="__tabbed_5_3" name="__tabbed_5" type="radio" /><input id="__tabbed_5_4" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">utility_containers_using_with.py</label><label for="__tabbed_5_2">utility_containers.py</label><label for="__tabbed_5_3">utility_containers.css</label><label for="__tabbed_5_4">Output</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<p>Composing with context managers.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This code uses context managers to compose widgets.</p>
+</div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
 <a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="kn">from</span> <span class="nn">textual.containers</span> <span class="kn">import</span> <span class="n">Horizontal</span><span class="p">,</span> <span class="n">Vertical</span>
 <a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Static</span>
@@ -7199,7 +7202,10 @@ Any widgets yielded within that block are added as a child of the container.</p>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<p>This is the original code.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is the original code using positional arguments.</p>
+</div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
 <a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="kn">from</span> <span class="nn">textual.containers</span> <span class="kn">import</span> <span class="n">Horizontal</span><span class="p">,</span> <span class="n">Vertical</span>
 <a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Static</span>
