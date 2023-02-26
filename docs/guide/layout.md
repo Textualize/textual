@@ -163,10 +163,11 @@ However, Textual comes with a more powerful mechanism for achieving this known a
 
 ## Composing with context managers
 
-In the previous section we've show how you add children to a container (such as `Horizontal` and `Vertical`) with positional arguments.
+In the previous section we've show how you add children to a container (such as `Horizontal` and `Vertical`) using positional arguments.
 It's fine to do it this way, but Textual offers a simplified syntax using [context managers](https://docs.python.org/3/reference/datamodel.html#context-managers) which is generally easier to write and edit.
 
-You can introduce a container using Python's `with` statement. Any widgets yielded within that block are added to the container's children.
+When composing a widget, you can introduce a container using Python's `with` statement.
+Any widgets yielded within that block are added as a child of the container.
 
 Let's take the [utility containers](#utility-containers) example and update it to use the context manager approach.
 
