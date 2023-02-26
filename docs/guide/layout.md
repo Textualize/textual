@@ -175,7 +175,7 @@ Let's take the [utility containers](#utility-containers) example and update it t
 
     Composing with context managers.
 
-    ```python
+    ```python hl_lines="10-16"
     --8<-- "docs/examples/guide/layout/utility_containers_using_with.py"
     ```
 
@@ -183,7 +183,7 @@ Let's take the [utility containers](#utility-containers) example and update it t
 
     This is the original code.
 
-    ```python
+    ```python hl_lines="10-21"
     --8<-- "docs/examples/guide/layout/utility_containers.py"
     ```
 
