@@ -5,30 +5,53 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
 
-## [0.12.0] - Unreleased
+### Changed
+
+- Buttons no longer accept arbitrary renderables https://github.com/Textualize/textual/issues/1870
+
+### Fixed
+
+- Fix exceptions in watch methods being hidden on startup https://github.com/Textualize/textual/issues/1886
+
+## [0.12.1] - 2023-02-25
+
+### Fixed
+
+- Fix for batch update glitch https://github.com/Textualize/textual/pull/1880
+
+## [0.12.0] - 2023-02-24
 
 ### Added
 
 - Added `App.batch_update` https://github.com/Textualize/textual/pull/1832
 - Added horizontal rule to Markdown https://github.com/Textualize/textual/pull/1832
 - Added `Widget.disabled` https://github.com/Textualize/textual/pull/1785
+- Added `DOMNode.notify_style_update` to replace `messages.StylesUpdated` message https://github.com/Textualize/textual/pull/1861
+- Added `DataTable.show_row_labels` reactive to show and hide row labels https://github.com/Textualize/textual/pull/1868
+- Added `DataTable.RowLabelSelected` event, which is emitted when a row label is clicked https://github.com/Textualize/textual/pull/1868
+- Added `MessagePump.prevent` context manager to temporarily suppress a given message type https://github.com/Textualize/textual/pull/1866
 
 ### Changed
 
 - Scrolling by page now adds to current position.
 - Markdown lists have been polished: a selection of bullets, better alignment of numbers, style tweaks https://github.com/Textualize/textual/pull/1832
 - Added alternative method of composing Widgets https://github.com/Textualize/textual/pull/1847
-- Buttons no longer accept arbitrary renderables https://github.com/Textualize/textual/issues/1870
+- Added `label` parameter to `DataTable.add_row` https://github.com/Textualize/textual/pull/1868
+- Breaking change: Some `DataTable` component classes were renamed - see PR for details https://github.com/Textualize/textual/pull/1868
 
 ### Removed
 
 - Removed `screen.visible_widgets` and `screen.widgets`
+- Removed `StylesUpdate` message. https://github.com/Textualize/textual/pull/1861
 
 ### Fixed
 
 - Numbers in a descendant-combined selector no longer cause an error https://github.com/Textualize/textual/issues/1836
 - Fixed superfluous scrolling when focusing a docked widget https://github.com/Textualize/textual/issues/1816
+- Fixes walk_children which was returning more than one screen https://github.com/Textualize/textual/issues/1846
+- Fixed issue with watchers fired for detached nodes https://github.com/Textualize/textual/issues/1846
 
 ## [0.11.1] - 2023-02-17
 
@@ -496,6 +519,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.12.0]: https://github.com/Textualize/textual/compare/v0.11.1...v0.12.0
 [0.11.1]: https://github.com/Textualize/textual/compare/v0.11.0...v0.11.1
 [0.11.0]: https://github.com/Textualize/textual/compare/v0.10.1...v0.11.0
 [0.10.1]: https://github.com/Textualize/textual/compare/v0.10.0...v0.10.1

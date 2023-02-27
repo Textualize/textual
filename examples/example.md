@@ -42,6 +42,14 @@ Two tildes indicates strikethrough, e.g. `~~cross out~~` render ~~cross out~~.
 
 Inline code is indicated by backticks. e.g. `import this`.
 
+## Horizontal rule
+
+Draw a horizontal rule with three dashes (`---`).
+
+---
+
+Good for natural breaks in the content, that don't require another header.
+
 ## Lists
 
 1. Lists can be ordered

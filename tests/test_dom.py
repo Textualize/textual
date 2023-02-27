@@ -157,7 +157,7 @@ def test_component_classes_inheritance():
     f = F()
     f_cc = f._get_component_classes()
 
-    assert node_cc == set()
+    assert node_cc == frozenset()
     assert a_cc == {"a-1", "a-2"}
     assert b_cc == {"b-1"}
     assert c_cc == {"b-1", "c-1", "c-2"}

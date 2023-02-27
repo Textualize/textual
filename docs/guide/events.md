@@ -108,7 +108,7 @@ The message class is defined within the widget class itself. This is not strictl
 - It creates a namespace for the handler. So rather than `on_selected`, the handler name becomes `on_color_button_selected`. This makes it less likely that your chosen name will clash with another message.
 
 
-## Sending events
+## Sending messages
 
 In the previous example we used [post_message()][textual.message_pump.MessagePump.post_message] to send an event to its parent. We could also have used [post_message_no_wait()][textual.message_pump.MessagePump.post_message_no_wait] for non async code. Sending messages in this way allows you to write custom widgets without needing to know in what context they will be used.
 
@@ -116,6 +116,32 @@ There are other ways of sending (posting) messages, which you may need to use le
 
 - [post_message][textual.message_pump.MessagePump.post_message] To post a message to a particular widget.
 - [post_message_no_wait][textual.message_pump.MessagePump.post_message_no_wait] The non-async version of `post_message`.
+
+
+## Preventing messages
+
+You can *temporarily* disable posting of messages of a particular type by calling [prevent][textual.message_pump.MessagePump.prevent], which returns a context manager (used with Python's `with` keyword). This is typically used when updating data in a child widget and you don't want to receive notifications that something has changed.
+
+The following example will play the terminal bell as you type. It does this by handling [Input.Changed][textual.widgets.Input.Changed] and calling [bell()][textual.app.App.bell]. There is a Clear button which sets the input's value to an empty string. This would normally also result in a `Input.Changed` event being sent (and the bell playing). Since we don't want the button to make a sound, the assignment to `value` is wrapped within a [prevent][textual.message_pump.MessagePump.prevent] context manager.
+
+!!! tip
+
+    In reality, playing the terminal bell as you type would be very irritating -- we don't recommend it!
+
+=== "prevent.py"
+
+    ```python title="prevent.py"
+    --8<-- "docs/examples/events/prevent.py"
+    ```
+
+    1. Clear the input without sending an Input.Changed event.
+    2. Plays the terminal sound when typing.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/events/prevent.py"}
+    ```
+
 
 
 ## Message handlers

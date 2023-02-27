@@ -108,6 +108,11 @@ def test_datatable_sort_multikey(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_sort.py", press=press)
 
 
+def test_datatable_labels_and_fixed_data(snap_compare):
+    # Ensure that we render correctly when there are fixed rows/cols and labels.
+    assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_row_labels.py")
+
+
 def test_footer_render(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "footer.py")
 
@@ -235,3 +240,7 @@ def test_screen_switch(snap_compare):
 
 def test_disabled_widgets(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "disable_widgets.py")
+
+
+def test_focus_component_class(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "focus_component_class.py", press=["tab"])

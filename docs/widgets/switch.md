@@ -28,9 +28,9 @@ The example below shows switches in various states.
 
 ## Reactive Attributes
 
-| Name    | Type   | Default | Description                      |
-|---------|--------|---------|----------------------------------|
-| `value` | `bool` | `False` | The default value of the switch. |
+| Name    | Type   | Default | Description              |
+|---------|--------|---------|--------------------------|
+| `value` | `bool` | `False` | The value of the switch. |
 
 ## Bindings
 

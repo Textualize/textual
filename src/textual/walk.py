@@ -53,7 +53,7 @@ def walk_depth_first(
     """
     from textual.dom import DOMNode
 
-    stack: list[Iterator[DOMNode]] = [iter(root._nodes)]
+    stack: list[Iterator[DOMNode]] = [iter(root.children)]
     pop = stack.pop
     push = stack.append
     check_type = filter_type or DOMNode

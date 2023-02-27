@@ -120,13 +120,12 @@ class StylesCache:
         )
         if widget.auto_links:
             hover_style = widget.hover_style
-            link_hover_style = widget.link_hover_style
             if (
-                link_hover_style
-                and hover_style._link_id
+                hover_style._link_id
                 and hover_style._meta
                 and "@click" in hover_style.meta
             ):
+                link_hover_style = widget.link_hover_style
                 if link_hover_style:
                     strips = [
                         strip.style_links(hover_style.link_id, link_hover_style)

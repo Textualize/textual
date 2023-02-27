@@ -9,8 +9,8 @@ from rich.segment import Segment
 from rich.style import Style, StyleType
 
 from ._cache import FIFOCache
-from .filter import LineFilter
 from ._segment_tools import index_to_cell_position
+from .filter import LineFilter
 
 
 @rich.repr.auto
@@ -29,6 +29,7 @@ class Strip:
         "_cell_length",
         "_divide_cache",
         "_crop_cache",
+        "_link_ids",
     ]
 
     def __init__(
@@ -38,6 +39,7 @@ class Strip:
         self._cell_length = cell_length
         self._divide_cache: FIFOCache[tuple[int, ...], list[Strip]] = FIFOCache(4)
         self._crop_cache: FIFOCache[tuple[int, int], Strip] = FIFOCache(4)
+        self._link_ids: set[str] | None = None
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._segments
@@ -47,6 +49,15 @@ class Strip:
     def text(self) -> str:
         """Segment text."""
         return "".join(segment.text for segment in self._segments)
+
+    @property
+    def link_ids(self) -> set[str]:
+        """A set of the link ids in this Strip."""
+        if self._link_ids is None:
+            self._link_ids = {
+                style._link_id for _, style, _ in self._segments if style is not None
+            }
+        return self._link_ids
 
     @classmethod
     def blank(cls, cell_length: int, style: StyleType | None = None) -> Strip:
@@ -230,19 +241,18 @@ class Strip:
         Returns:
             New strip (or same Strip if no changes).
         """
+
         _Segment = Segment
-        if not any(
-            segment.style._link_id == link_id
-            for segment in self._segments
-            if segment.style
-        ):
+        if link_id not in self.link_ids:
             return self
         segments = [
             _Segment(
                 text,
-                (style + link_style if style is not None else None)
-                if (style and not style._null and style._link_id == link_id)
-                else style,
+                (
+                    (style + link_style if style is not None else None)
+                    if (style and not style._null and style._link_id == link_id)
+                    else style
+                ),
                 control,
             )
             for text, style, control in self._segments

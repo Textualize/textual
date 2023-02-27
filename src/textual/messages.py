@@ -80,15 +80,6 @@ class ScrollToRegion(Message, bubble=False):
         super().__init__(sender)
 
 
-@rich.repr.auto
-class StylesUpdated(Message, verbose=True):
-    def __init__(self, sender: MessagePump) -> None:
-        super().__init__(sender)
-
-    def can_replace(self, message: Message) -> bool:
-        return isinstance(message, StylesUpdated)
-
-
 class Prompt(Message, no_dispatch=True):
     """Used to 'wake up' an event loop."""
 

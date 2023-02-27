@@ -2498,8 +2498,19 @@ class Widget(DOMNode):
         self.app.capture_mouse(None)
 
     def check_message_enabled(self, message: Message) -> bool:
+        """Check if a given message is enabled (allowed to be sent).
+
+        Args:
+            message: A message object
+
+        Returns:
+            `True` if the message will be sent, or `False` if it is disabled.
+        """
         # Do the normal checking and get out if that fails.
         if not super().check_message_enabled(message):
+            return False
+        message_type = type(message)
+        if self._is_prevented(message_type):
             return False
         # Otherwise, if this is a mouse event, the widget receiving the
         # event must not be disabled at this moment.
@@ -2512,7 +2523,7 @@ class Widget(DOMNode):
     async def broker_event(self, event_name: str, event: events.Event) -> bool:
         return await self.app._broker_event(event_name, event, default_namespace=self)
 
-    def _on_styles_updated(self) -> None:
+    def notify_style_update(self) -> None:
         self._rich_style_cache.clear()
 
     async def _on_mouse_down(self, event: events.MouseDown) -> None:
