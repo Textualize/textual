@@ -93,7 +93,7 @@ class RadioSet(Container):
     @property
     def _buttons(self) -> DOMQuery[RadioButton]:
         """The buttons within the set."""
-        return cast(DOMQuery[RadioButton], self.query(RadioButton))
+        return self.query(RadioButton)
 
     def on_mount(self) -> None:
         """Perform some processing once mounted in the DOM."""
