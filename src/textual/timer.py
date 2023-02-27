@@ -33,7 +33,7 @@ class Timer:
 
     Args:
         event_target: The object which will receive the timer events.
-        interval: The time between timer events.
+        interval: The time between timer events, in seconds.
         sender: The sender of the event.
         name: A name to assign the event (for debugging). Defaults to None.
         callback: A optional callback to invoke when the event is handled. Defaults to None.

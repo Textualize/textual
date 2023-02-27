@@ -89,10 +89,12 @@ class Reactive(Generic[ReactiveType]):
             obj: An object with reactive attributes.
             name: Name of attribute.
         """
+        _rich_traceback_omit = True
         internal_name = f"_reactive_{name}"
         if hasattr(obj, internal_name):
             # Attribute already has a value
             return
+
         compute_method = getattr(obj, f"compute_{name}", None)
         if compute_method is not None and self._init:
             default = getattr(obj, f"compute_{name}")()
@@ -114,7 +116,7 @@ class Reactive(Generic[ReactiveType]):
         Args:
             obj: An object with Reactive descriptors
         """
-
+        _rich_traceback_omit = True
         for name, reactive in obj._reactives.items():
             reactive._initialize_reactive(obj, name)
 
@@ -253,8 +255,9 @@ class Reactive(Generic[ReactiveType]):
                 for reactable, callback in watchers
                 if reactable.is_attached and not reactable._closing
             ]
-            for _, callback in watchers:
-                invoke_watcher(callback, old_value, value)
+            for reactable, callback in watchers:
+                with reactable.prevent(*obj._prevent_message_types_stack[-1]):
+                    invoke_watcher(callback, old_value, value)
 
     @classmethod
     def _compute(cls, obj: Reactable) -> None:
@@ -342,7 +345,6 @@ def _watch(
         callback: A callable to call when the attribute changes.
         init: True to call watcher initialization. Defaults to True.
     """
-
     if not hasattr(obj, "__watchers"):
         setattr(obj, "__watchers", {})
     watchers: dict[str, list[tuple[Reactable, Callable]]] = getattr(obj, "__watchers")

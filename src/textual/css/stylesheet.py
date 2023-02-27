@@ -500,7 +500,7 @@ class Stylesheet:
             for key in modified_rule_keys:
                 setattr(base_styles, key, get_rule(key))
 
-        node.post_message_no_wait(messages.StylesUpdated(sender=node))
+        node.notify_style_update()
 
     def update(self, root: DOMNode, animate: bool = False) -> None:
         """Update styles on node and its children.
