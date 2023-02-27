@@ -519,6 +519,9 @@ class Compositor:
                         )
 
                         layer_order -= 1
+                else:
+                    pass
+                    # region = child_region
 
                 if visible:
                     # Add any scrollbars

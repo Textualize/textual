@@ -160,6 +160,7 @@ class TextLog(ScrollView, can_focus=True):
         self.refresh()
 
     def render_line(self, y: int) -> Strip:
+        print("Render", self.size)
         scroll_x, scroll_y = self.scroll_offset
         line = self._render_line(scroll_y + y, scroll_x, self.size.width)
         strip = Strip(Segment.apply_style(line, self.rich_style), self.size.width)
@@ -192,4 +193,5 @@ class TextLog(ScrollView, can_focus=True):
         )
 
         self._line_cache[key] = line
+        print(line)
         return line

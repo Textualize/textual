@@ -903,22 +903,12 @@ class Widget(DOMNode):
     @property
     def max_scroll_x(self) -> int:
         """The maximum value of `scroll_x`."""
-        return max(
-            0,
-            self.virtual_size.width
-            - self.container_size.width
-            + self.scrollbar_size_vertical,
-        )
+        return max(0, self.virtual_size.width - self.container_size.width)
 
     @property
     def max_scroll_y(self) -> int:
         """The maximum value of `scroll_y`."""
-        return max(
-            0,
-            self.virtual_size.height
-            - self.container_size.height
-            + self.scrollbar_size_horizontal,
-        )
+        return max(0, self.virtual_size.height - self.container_size.height)
 
     @property
     def scrollbar_corner(self) -> ScrollBarCorner:
@@ -1050,6 +1040,11 @@ class Widget(DOMNode):
         """
         styles = self.styles
         return styles.scrollbar_size_horizontal if self.show_horizontal_scrollbar else 0
+
+    @property
+    def scrollbar_size(self) -> Size:
+        """The dimensions of the scrollbar stored in a Size object."""
+        return Size(self.scrollbar_size_vertical, self.scrollbar_size_horizontal)
 
     @property
     def scrollbar_gutter(self) -> Spacing:
@@ -2231,12 +2226,10 @@ class Widget(DOMNode):
 
         if self.show_vertical_scrollbar:
             self.vertical_scrollbar.window_virtual_size = virtual_size.height
-            self.vertical_scrollbar.window_size = (
-                height - self.scrollbar_size_horizontal
-            )
+            self.vertical_scrollbar.window_size = height
         if self.show_horizontal_scrollbar:
             self.horizontal_scrollbar.window_virtual_size = virtual_size.width
-            self.horizontal_scrollbar.window_size = width - self.scrollbar_size_vertical
+            self.horizontal_scrollbar.window_size = width
 
         self.scroll_x = self.validate_scroll_x(self.scroll_x)
         self.scroll_y = self.validate_scroll_y(self.scroll_y)
