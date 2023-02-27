@@ -11,20 +11,38 @@ skip_py310 = pytest.mark.skipif(
 )
 
 
+async def test_screen_walk_children():
+    """Test query only reports active screen."""
+
+    class ScreensApp(App):
+        pass
+
+    app = ScreensApp()
+    async with app.run_test() as pilot:
+        screen1 = Screen()
+        screen2 = Screen()
+        pilot.app.push_screen(screen1)
+        assert list(pilot.app.query("*")) == [screen1]
+        pilot.app.push_screen(screen2)
+        assert list(pilot.app.query("*")) == [screen2]
+
+
 async def test_installed_screens():
     class ScreensApp(App):
         SCREENS = {
             "home": Screen,  # Screen type
             "one": Screen(),  # Screen instance
-            "two": lambda: Screen()  # Callable[[], Screen]
+            "two": lambda: Screen(),  # Callable[[], Screen]
         }
 
     app = ScreensApp()
     async with app.run_test() as pilot:
         pilot.app.push_screen("home")  # Instantiates and pushes the "home" screen
-        pilot.app.push_screen("one")   # Pushes the pre-instantiated "one" screen
+        pilot.app.push_screen("one")  # Pushes the pre-instantiated "one" screen
         pilot.app.push_screen("home")  # Pushes the single instance of "home" screen
-        pilot.app.push_screen("two")   # Calls the callable, pushes returned Screen instance
+        pilot.app.push_screen(
+            "two"
+        )  # Calls the callable, pushes returned Screen instance
 
         assert len(app.screen_stack) == 5
         assert app.screen_stack[1] is app.screen_stack[3]
@@ -40,11 +58,11 @@ async def test_installed_screens():
             pilot.app.pop_screen()
 
 
-
-@skip_py310
 async def test_screens():
-
     app = App()
+    # There should be nothing in the children since the app hasn't run yet
+    assert not app._nodes
+    assert not app.children
     app._set_active()
 
     with pytest.raises(ScreenStackError):
@@ -59,6 +77,10 @@ async def test_screens():
     # installs screens
     app.install_screen(screen1, "screen1")
     app.install_screen(screen2, "screen2")
+
+    # Installing a screen does not add it to the DOM
+    assert not app._nodes
+    assert not app.children
 
     # Check they are installed
     assert app.is_screen_installed("screen1")
@@ -84,17 +106,22 @@ async def test_screens():
     assert app.screen_stack == [screen1]
     # Check it is current
     assert app.screen is screen1
+    # There should be one item in the children view
+    assert app.children == (screen1,)
 
     # Switch to another screen
     app.switch_screen("screen2")
     # Check it has changed the stack and that it is current
     assert app.screen_stack == [screen2]
     assert app.screen is screen2
+    assert app.children == (screen2,)
 
     # Push another screen
     app.push_screen("screen3")
     assert app.screen_stack == [screen2, screen3]
     assert app.screen is screen3
+    # Only the current screen is in children
+    assert app.children == (screen3,)
 
     # Pop a screen
     assert app.pop_screen() is screen3

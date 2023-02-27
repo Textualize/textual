@@ -1,20 +1,35 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from typing import ClassVar
 
 import rich.repr
 from rich.console import RenderableType
 from rich.text import Text
 
 from .. import events
-from ..keys import _get_key_display
-from ..reactive import Reactive, watch
+from ..reactive import Reactive
 from ..widget import Widget
 
 
 @rich.repr.auto
 class Footer(Widget):
     """A simple footer widget which docks itself to the bottom of the parent container."""
+
+    COMPONENT_CLASSES: ClassVar[set[str]] = {
+        "footer--description",
+        "footer--key",
+        "footer--highlight",
+        "footer--highlight-key",
+    }
+    """
+    | Class | Description |
+    | :- | :- |
+    | `footer--description` | Targets the descriptions of the key bindings. |
+    | `footer--highlight` | Targets the highlighted key binding. |
+    | `footer--highlight-key` | Targets the key portion of the highlighted key binding. |
+    | `footer--key` | Targets the key portions of the key bindings. |
+    """
 
     DEFAULT_CSS = """
     Footer {
@@ -38,19 +53,12 @@ class Footer(Widget):
     }
     """
 
-    COMPONENT_CLASSES = {
-        "footer--description",
-        "footer--key",
-        "footer--highlight",
-        "footer--highlight-key",
-    }
+    highlight_key: Reactive[str | None] = Reactive(None)
 
     def __init__(self) -> None:
         super().__init__()
         self._key_text: Text | None = None
         self.auto_links = False
-
-    highlight_key: Reactive[str | None] = Reactive(None)
 
     async def watch_highlight_key(self, value) -> None:
         """If highlight key changes we need to regenerate the text."""
@@ -58,7 +66,7 @@ class Footer(Widget):
         self.refresh()
 
     def on_mount(self) -> None:
-        watch(self.screen, "focused", self._focus_changed)
+        self.watch(self.screen, "focused", self._focus_changed)
 
     def _focus_changed(self, focused: Widget | None) -> None:
         self._key_text = None
@@ -122,9 +130,8 @@ class Footer(Widget):
             text.append_text(key_text)
         return text
 
-    def _on_styles_updated(self) -> None:
+    def notify_style_update(self) -> None:
         self._key_text = None
-        self.refresh()
 
     def post_render(self, renderable):
         return renderable

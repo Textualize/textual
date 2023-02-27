@@ -246,7 +246,7 @@ async def test_pressing_alpha_on_app() -> None:
     """Test that pressing the alpha key, when it's bound on the app, results in an action fire."""
     async with AppWithMovementKeysBound().run_test() as pilot:
         await pilot.press(*AppKeyRecorder.ALPHAS)
-        await pilot.pause(2 / 100)
+        await pilot.pause()
         assert pilot.app.pressed_keys == [*AppKeyRecorder.ALPHAS]
 
 
@@ -254,7 +254,7 @@ async def test_pressing_movement_keys_app() -> None:
     """Test that pressing the movement keys, when they're bound on the app, results in an action fire."""
     async with AppWithMovementKeysBound().run_test() as pilot:
         await pilot.press(*AppKeyRecorder.ALL_KEYS)
-        await pilot.pause(2 / 100)
+        await pilot.pause()
         pilot.app.all_recorded()
 
 
@@ -292,7 +292,7 @@ async def test_focused_child_widget_with_movement_bindings() -> None:
     """A focused child widget with movement bindings should handle its own actions."""
     async with AppWithWidgetWithBindings().run_test() as pilot:
         await pilot.press(*AppKeyRecorder.ALL_KEYS)
-        await pilot.pause(2 / 100)
+
         pilot.app.all_recorded("locally_")
 
 
@@ -339,7 +339,7 @@ async def test_focused_child_widget_with_movement_bindings_on_screen() -> None:
     """A focused child widget, with movement bindings in the screen, should trigger screen actions."""
     async with AppWithScreenWithBindingsWidgetNoBindings().run_test() as pilot:
         await pilot.press(*AppKeyRecorder.ALL_KEYS)
-        await pilot.pause(2 / 100)
+
         pilot.app.all_recorded("screenly_")
 
 
@@ -382,7 +382,7 @@ async def test_contained_focused_child_widget_with_movement_bindings_on_screen()
     """A contained focused child widget, with movement bindings in the screen, should trigger screen actions."""
     async with AppWithScreenWithBindingsWrappedWidgetNoBindings().run_test() as pilot:
         await pilot.press(*AppKeyRecorder.ALL_KEYS)
-        await pilot.pause(2 / 100)
+
         pilot.app.all_recorded("screenly_")
 
 
@@ -421,7 +421,7 @@ async def test_focused_child_widget_with_movement_bindings_no_inherit() -> None:
     """A focused child widget with movement bindings and inherit_bindings=False should handle its own actions."""
     async with AppWithWidgetWithBindingsNoInherit().run_test() as pilot:
         await pilot.press(*AppKeyRecorder.ALL_KEYS)
-        await pilot.pause(2 / 100)
+
         pilot.app.all_recorded("locally_")
 
 
@@ -473,7 +473,7 @@ async def test_focused_child_widget_no_inherit_with_movement_bindings_on_screen(
     """A focused child widget, that doesn't inherit bindings, with movement bindings in the screen, should trigger screen actions."""
     async with AppWithScreenWithBindingsWidgetNoBindingsNoInherit().run_test() as pilot:
         await pilot.press(*AppKeyRecorder.ALL_KEYS)
-        await pilot.pause(2 / 100)
+
         pilot.app.all_recorded("screenly_")
 
 
@@ -528,7 +528,6 @@ async def test_focused_child_widget_no_inherit_empty_bindings_with_movement_bind
     """A focused child widget, that doesn't inherit bindings and sets BINDINGS empty, with movement bindings in the screen, should trigger screen actions."""
     async with AppWithScreenWithBindingsWidgetEmptyBindingsNoInherit().run_test() as pilot:
         await pilot.press(*AppKeyRecorder.ALL_KEYS)
-        await pilot.pause(2 / 100)
         pilot.app.all_recorded("screenly_")
 
 
@@ -610,7 +609,6 @@ async def test_overlapping_priority_bindings() -> None:
     """Test an app stack with overlapping bindings."""
     async with PriorityOverlapApp().run_test() as pilot:
         await pilot.press(*"0abcdef")
-        await pilot.pause(2 / 100)
         assert pilot.app.pressed_keys == [
             "widget_0",
             "app_a",

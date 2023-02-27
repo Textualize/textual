@@ -1,9 +1,9 @@
-from ..app import ComposeResult
-from ._static import Static
-from ._button import Button
-from ..containers import Container
-
 from rich.markdown import Markdown
+
+from ..app import ComposeResult
+from ..containers import Container
+from ._button import Button
+from ._static import Static
 
 WELCOME_MD = """\
 # Welcome!
@@ -24,11 +24,10 @@ Where the fear has gone there will be nothing. Only I will remain."
 
 
 class Welcome(Static):
-
     DEFAULT_CSS = """
         Welcome {
             width: 100%;
-            height: 100%;         
+            height: 100%;
             background: $surface;
         }
 
@@ -44,7 +43,7 @@ class Welcome(Static):
 
         Welcome #close {
             dock: bottom;
-            width: 100%;        
+            width: 100%;
         }
     """
 

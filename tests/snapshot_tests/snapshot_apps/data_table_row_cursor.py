@@ -20,6 +20,8 @@ class TableApp(App):
         table = DataTable()
         table.focus()
         table.cursor_type = "row"
+        table.fixed_columns = 1
+        table.fixed_rows = 1
         yield table
 
     def on_mount(self) -> None:

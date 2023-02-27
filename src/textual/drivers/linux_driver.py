@@ -2,27 +2,26 @@ from __future__ import annotations
 
 import asyncio
 import os
-from codecs import getincrementaldecoder
 import selectors
 import signal
 import sys
 import termios
 import tty
-from typing import Any, TYPE_CHECKING
+from codecs import getincrementaldecoder
 from threading import Event, Thread
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from rich.console import Console
 
 import rich.repr
 
-from .. import log
-from ..driver import Driver
-from ..geometry import Size
+from .. import events, log
+from .._profile import timer
 from .._types import MessageTarget
 from .._xterm_parser import XTermParser
-from .._profile import timer
-from .. import events
+from ..driver import Driver
+from ..geometry import Size
 
 
 @rich.repr.auto
@@ -92,7 +91,6 @@ class LinuxDriver(Driver):
         self.console.file.flush()
 
     def start_application_mode(self):
-
         loop = asyncio.get_running_loop()
 
         def send_size_event():
@@ -123,7 +121,6 @@ class LinuxDriver(Driver):
         except termios.error:
             pass
         else:
-
             newattr[tty.LFLAG] = self._patch_lflag(newattr[tty.LFLAG])
             newattr[tty.IFLAG] = self._patch_iflag(newattr[tty.IFLAG])
 
@@ -145,9 +142,14 @@ class LinuxDriver(Driver):
         self._request_terminal_sync_mode_support()
         self._enable_bracketed_paste()
 
-    def _request_terminal_sync_mode_support(self):
-        self.console.file.write("\033[?2026$p")
-        self.console.file.flush()
+    def _request_terminal_sync_mode_support(self) -> None:
+        """Writes an escape sequence to query the terminal support for the sync protocol."""
+        # Terminals should ignore this sequence if not supported.
+        # Apple terminal doesn't, and writes a single 'p' in to the terminal,
+        # so we will make a special case for Apple terminal (which doesn't support sync anyway).
+        if self.console._environ.get("TERM_PROGRAM", "") != "Apple_Terminal":
+            self.console.file.write("\033[?2026$p")
+            self.console.file.flush()
 
     @classmethod
     def _patch_lflag(cls, attrs: int) -> int:
@@ -203,7 +205,6 @@ class LinuxDriver(Driver):
             pass  # TODO: log
 
     def _run_input_thread(self, loop) -> None:
-
         selector = selectors.DefaultSelector()
         selector.register(self.fileno, selectors.EVENT_READ)
 
@@ -235,5 +236,4 @@ class LinuxDriver(Driver):
         except Exception as error:
             log(error)
         finally:
-            with timer("selector.close"):
-                selector.close()
+            selector.close()

@@ -2,27 +2,28 @@ from __future__ import annotations
 
 from functools import lru_cache
 from sys import intern
-from typing import TYPE_CHECKING, Callable, Iterable, List
+from typing import TYPE_CHECKING, Callable, Iterable
 
 from rich.segment import Segment
 from rich.style import Style
 
 from ._border import get_box, render_row
-from ._filter import LineFilter
 from ._opacity import _apply_opacity
-from ._segment_tools import line_crop, line_pad, line_trim
-from ._typing import TypeAlias
+from ._segment_tools import line_pad, line_trim
 from .color import Color
+from .filter import LineFilter
 from .geometry import Region, Size, Spacing
 from .renderables.text_opacity import TextOpacity
 from .renderables.tint import Tint
 from .strip import Strip
 
 if TYPE_CHECKING:
+    from typing import TypeAlias
+
     from .css.styles import StylesBase
     from .widget import Widget
 
-RenderLineCallback: TypeAlias = Callable[[int], List[Segment]]
+RenderLineCallback: TypeAlias = Callable[[int], Strip]
 
 
 @lru_cache(1024 * 8)
@@ -119,13 +120,12 @@ class StylesCache:
         )
         if widget.auto_links:
             hover_style = widget.hover_style
-            link_hover_style = widget.link_hover_style
             if (
-                link_hover_style
-                and hover_style._link_id
+                hover_style._link_id
                 and hover_style._meta
                 and "@click" in hover_style.meta
             ):
+                link_hover_style = widget.link_hover_style
                 if link_hover_style:
                     strips = [
                         strip.style_links(hover_style.link_id, link_hover_style)
@@ -212,7 +212,7 @@ class StylesCache:
         padding: Spacing,
         base_background: Color,
         background: Color,
-        render_content_line: RenderLineCallback,
+        render_content_line: Callable[[int], Strip],
     ) -> Strip:
         """Render a styled line.
 
@@ -313,6 +313,7 @@ class StylesCache:
             content_y = y - gutter.top
             if content_y < content_height:
                 line = render_content_line(y - gutter.top)
+                line = line.adjust_cell_length(content_width)
             else:
                 line = [make_blank(content_width, inner)]
             if inner:

@@ -9,20 +9,13 @@ from io import StringIO
 from time import time
 from typing import Any, NamedTuple, Type
 
+import aiohttp
+import msgpack
+from aiohttp import ClientConnectorError, ClientResponseError, ClientWebSocketResponse
 from rich.console import Console
 from rich.segment import Segment
 
 from .._log import LogGroup, LogVerbosity
-
-
-import aiohttp
-import msgpack
-from aiohttp import (
-    ClientConnectorError,
-    ClientResponseError,
-    ClientWebSocketResponse,
-)
-
 
 DEVTOOLS_PORT = 8081
 WEBSOCKET_CONNECT_TIMEOUT = 3
@@ -136,6 +129,7 @@ class DevtoolsClient:
             change, it will update its own Console to ensure it renders at
             the correct width for server-side display.
             """
+            assert self.websocket is not None
             async for message in self.websocket:
                 if message.type == aiohttp.WSMsgType.TEXT:
                     message_json = json.loads(message.data)

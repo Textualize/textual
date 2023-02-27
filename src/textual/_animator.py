@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import asyncio
-import sys
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from functools import partial
 from typing import TYPE_CHECKING, Any, Callable, TypeVar
+
+from typing_extensions import Protocol, runtime_checkable
 
 from . import _clock
 from ._callback import invoke
@@ -13,13 +14,11 @@ from ._easing import DEFAULT_EASING, EASING
 from ._types import CallbackType
 from .timer import Timer
 
-if sys.version_info >= (3, 8):
-    from typing import Protocol, runtime_checkable
-else:  # pragma: no cover
-    from typing_extensions import Protocol, runtime_checkable
-
 if TYPE_CHECKING:
     from textual.app import App
+
+    AnimationKey = tuple[int, str]
+    """Animation keys are the id of the object and the attribute being animated."""
 
 EasingFunction = Callable[[float], float]
 
@@ -166,10 +165,19 @@ class BoundAnimator:
 
 
 class Animator:
-    """An object to manage updates to a given attribute over a period of time."""
+    """An object to manage updates to a given attribute over a period of time.
+
+    Attrs:
+        _animations: Dictionary that maps animation keys to the corresponding animation
+            instances.
+        _scheduled: Keys corresponding to animations that have been scheduled but not yet
+            started.
+        app: The app that owns the animator object.
+    """
 
     def __init__(self, app: App, frames_per_second: int = 60) -> None:
-        self._animations: dict[tuple[object, str], Animation] = {}
+        self._animations: dict[AnimationKey, Animation] = {}
+        self._scheduled: set[AnimationKey] = set()
         self.app = app
         self._timer = Timer(
             app,
@@ -179,11 +187,15 @@ class Animator:
             callback=self,
             pause=True,
         )
+        # Flag if no animations are currently taking place.
         self._idle_event = asyncio.Event()
+        # Flag if no animations are currently taking place and none are scheduled.
+        self._complete_event = asyncio.Event()
 
     async def start(self) -> None:
         """Start the animator task."""
         self._idle_event.set()
+        self._complete_event.set()
         self._timer.start()
 
     async def stop(self) -> None:
@@ -194,10 +206,16 @@ class Animator:
             pass
         finally:
             self._idle_event.set()
+            self._complete_event.set()
 
     def bind(self, obj: object) -> BoundAnimator:
-        """Bind the animator to a given objects."""
+        """Bind the animator to a given object."""
         return BoundAnimator(self, obj)
+
+    def is_being_animated(self, obj: object, attribute: str) -> bool:
+        """Does the object/attribute pair have an ongoing or scheduled animation?"""
+        key = (id(obj), attribute)
+        return key in self._animations or key in self._scheduled
 
     def animate(
         self,
@@ -237,6 +255,8 @@ class Animator:
             on_complete=on_complete,
         )
         if delay:
+            self._scheduled.add((id(obj), attribute))
+            self._complete_event.clear()
             self.app.set_timer(delay, animate_callback)
         else:
             animate_callback()
@@ -273,12 +293,13 @@ class Animator:
             duration is None and speed is not None
         ), "An Animation should have a duration OR a speed"
 
+        animation_key = (id(obj), attribute)
+        self._scheduled.discard(animation_key)
+
         if final_value is ...:
             final_value = value
 
         start_time = self._get_time()
-
-        animation_key = (id(obj), attribute)
 
         easing_function = EASING[easing] if isinstance(easing, str) else easing
 
@@ -297,7 +318,6 @@ class Animator:
             )
 
         if animation is None:
-
             if not isinstance(value, (int, float)) and not isinstance(
                 value, Animatable
             ):
@@ -342,11 +362,14 @@ class Animator:
         self._animations[animation_key] = animation
         self._timer.resume()
         self._idle_event.clear()
+        self._complete_event.clear()
 
     async def __call__(self) -> None:
         if not self._animations:
             self._timer.pause()
             self._idle_event.set()
+            if not self._scheduled:
+                self._complete_event.set()
         else:
             animation_time = self._get_time()
             animation_keys = list(self._animations.keys())
@@ -368,3 +391,7 @@ class Animator:
     async def wait_for_idle(self) -> None:
         """Wait for any animations to complete."""
         await self._idle_event.wait()
+
+    async def wait_until_complete(self) -> None:
+        """Wait for any current and scheduled animations to complete."""
+        await self._complete_event.wait()

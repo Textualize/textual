@@ -61,7 +61,8 @@ class Bullet:
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
         yield _markup_and_highlight(self.markup)
-        yield from self.examples
+        if self.examples is not None:
+            yield from self.examples
 
 
 @rich.repr.auto
@@ -76,7 +77,9 @@ class HelpText:
             context around the issue. These are rendered below the summary. Defaults to None.
     """
 
-    def __init__(self, summary: str, *, bullets: Iterable[Bullet] = None) -> None:
+    def __init__(
+        self, summary: str, *, bullets: Iterable[Bullet] | None = None
+    ) -> None:
         self.summary: str = summary
         self.bullets: Iterable[Bullet] | None = bullets or []
 
@@ -87,6 +90,7 @@ class HelpText:
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
         tree = Tree(_markup_and_highlight(f"[b blue]{self.summary}"), guide_style="dim")
-        for bullet in self.bullets:
-            tree.add(bullet)
+        if self.bullets is not None:
+            for bullet in self.bullets:
+                tree.add(bullet)
         yield tree

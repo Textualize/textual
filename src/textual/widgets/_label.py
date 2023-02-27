@@ -12,4 +12,3 @@ class Label(Static):
         height: auto;
     }
     """
-    """str: The default styling of a `Label`."""

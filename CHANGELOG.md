@@ -5,12 +5,141 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.11.0] - Unreleased
+## Unreleased
+
+### Fixed
+
+- Fix exceptions in watch methods being hidden on startup https://github.com/Textualize/textual/issues/1886
+
+## [0.12.1] - 2023-02-25
+
+### Fixed
+
+- Fix for batch update glitch https://github.com/Textualize/textual/pull/1880
+
+## [0.12.0] - 2023-02-24
+
+### Added
+
+- Added `App.batch_update` https://github.com/Textualize/textual/pull/1832
+- Added horizontal rule to Markdown https://github.com/Textualize/textual/pull/1832
+- Added `Widget.disabled` https://github.com/Textualize/textual/pull/1785
+- Added `DOMNode.notify_style_update` to replace `messages.StylesUpdated` message https://github.com/Textualize/textual/pull/1861
+- Added `DataTable.show_row_labels` reactive to show and hide row labels https://github.com/Textualize/textual/pull/1868
+- Added `DataTable.RowLabelSelected` event, which is emitted when a row label is clicked https://github.com/Textualize/textual/pull/1868
+- Added `MessagePump.prevent` context manager to temporarily suppress a given message type https://github.com/Textualize/textual/pull/1866
+
+### Changed
+
+- Scrolling by page now adds to current position.
+- Markdown lists have been polished: a selection of bullets, better alignment of numbers, style tweaks https://github.com/Textualize/textual/pull/1832
+- Added alternative method of composing Widgets https://github.com/Textualize/textual/pull/1847
+- Added `label` parameter to `DataTable.add_row` https://github.com/Textualize/textual/pull/1868
+- Breaking change: Some `DataTable` component classes were renamed - see PR for details https://github.com/Textualize/textual/pull/1868
+
+### Removed
+
+- Removed `screen.visible_widgets` and `screen.widgets`
+- Removed `StylesUpdate` message. https://github.com/Textualize/textual/pull/1861
+
+### Fixed
+
+- Numbers in a descendant-combined selector no longer cause an error https://github.com/Textualize/textual/issues/1836
+- Fixed superfluous scrolling when focusing a docked widget https://github.com/Textualize/textual/issues/1816
+- Fixes walk_children which was returning more than one screen https://github.com/Textualize/textual/issues/1846
+- Fixed issue with watchers fired for detached nodes https://github.com/Textualize/textual/issues/1846
+
+## [0.11.1] - 2023-02-17
+
+### Fixed
+
+- DataTable fix issue where offset cache was not being used https://github.com/Textualize/textual/pull/1810
+- DataTable scrollbars resize correctly when header is toggled https://github.com/Textualize/textual/pull/1803
+- DataTable location mapping cleared when clear called https://github.com/Textualize/textual/pull/1809
+
+## [0.11.0] - 2023-02-15
+
+### Added
+
+- Added `TreeNode.expand_all` https://github.com/Textualize/textual/issues/1430
+- Added `TreeNode.collapse_all` https://github.com/Textualize/textual/issues/1430
+- Added `TreeNode.toggle_all` https://github.com/Textualize/textual/issues/1430
+- Added the coroutines `Animator.wait_until_complete` and `pilot.wait_for_scheduled_animations` that allow waiting for all current and scheduled animations https://github.com/Textualize/textual/issues/1658
+- Added the method `Animator.is_being_animated` that checks if an attribute of an object is being animated or is scheduled for animation
+- Added more keyboard actions and related bindings to `Input` https://github.com/Textualize/textual/pull/1676
+- Added App.scroll_sensitivity_x and App.scroll_sensitivity_y to adjust how many lines the scroll wheel moves the scroll position https://github.com/Textualize/textual/issues/928
+- Added Shift+scroll wheel and ctrl+scroll wheel to scroll horizontally
+- Added `Tree.action_toggle_node` to toggle a node without selecting, and bound it to <kbd>Space</kbd> https://github.com/Textualize/textual/issues/1433
+- Added `Tree.reset` to fully reset a `Tree` https://github.com/Textualize/textual/issues/1437
+- Added `DataTable.sort` to sort rows https://github.com/Textualize/textual/pull/1638
+- Added `DataTable.get_cell` to retrieve a cell by column/row keys https://github.com/Textualize/textual/pull/1638
+- Added `DataTable.get_cell_at` to retrieve a cell by coordinate https://github.com/Textualize/textual/pull/1638
+- Added `DataTable.update_cell` to update a cell by column/row keys https://github.com/Textualize/textual/pull/1638
+- Added `DataTable.update_cell_at` to update a cell at a coordinate  https://github.com/Textualize/textual/pull/1638
+- Added `DataTable.ordered_rows` property to retrieve `Row`s as they're currently ordered https://github.com/Textualize/textual/pull/1638
+- Added `DataTable.ordered_columns` property to retrieve `Column`s as they're currently ordered https://github.com/Textualize/textual/pull/1638
+- Added `DataTable.coordinate_to_cell_key` to find the key for the cell at a coordinate https://github.com/Textualize/textual/pull/1638
+- Added `DataTable.is_valid_coordinate` https://github.com/Textualize/textual/pull/1638
+- Added `DataTable.is_valid_row_index` https://github.com/Textualize/textual/pull/1638
+- Added `DataTable.is_valid_column_index` https://github.com/Textualize/textual/pull/1638
+- Added attributes to events emitted from `DataTable` indicating row/column/cell keys https://github.com/Textualize/textual/pull/1638
+- Added `DataTable.get_row` to retrieve the values from a row by key https://github.com/Textualize/textual/pull/1786
+- Added `DataTable.get_row_at` to retrieve the values from a row by index https://github.com/Textualize/textual/pull/1786
+- Added `DataTable.get_column` to retrieve the values from a column by key https://github.com/Textualize/textual/pull/1786
+- Added `DataTable.get_column_at` to retrieve the values from a column by index https://github.com/Textualize/textual/pull/1786
+- Added `DataTable.HeaderSelected` which is posted when header label clicked https://github.com/Textualize/textual/pull/1788
+- Added `DOMNode.watch` and `DOMNode.is_attached` methods  https://github.com/Textualize/textual/pull/1750
+- Added `DOMNode.css_tree` which is a renderable that shows the DOM and CSS https://github.com/Textualize/textual/pull/1778
+- Added `DOMNode.children_view` which is a view on to a nodes children list, use for querying https://github.com/Textualize/textual/pull/1778
+- Added `Markdown` and `MarkdownViewer` widgets.
+- Added `--screenshot` option to `textual run`
+
+### Changed
+
+- Breaking change: `TreeNode` can no longer be imported from `textual.widgets`; it is now available via `from textual.widgets.tree import TreeNode`. https://github.com/Textualize/textual/pull/1637
+- `Tree` now shows a (subdued) cursor for a highlighted node when focus has moved elsewhere https://github.com/Textualize/textual/issues/1471
+- `DataTable.add_row` now accepts `key` argument to uniquely identify the row https://github.com/Textualize/textual/pull/1638
+- `DataTable.add_column` now accepts `key` argument to uniquely identify the column https://github.com/Textualize/textual/pull/1638
+- `DataTable.add_row` and `DataTable.add_column` now return lists of keys identifying the added rows/columns https://github.com/Textualize/textual/pull/1638
+- Breaking change: `DataTable.get_cell_value` renamed to `DataTable.get_value_at` https://github.com/Textualize/textual/pull/1638
+- `DataTable.row_count` is now a property https://github.com/Textualize/textual/pull/1638
+- Breaking change: `DataTable.cursor_cell` renamed to `DataTable.cursor_coordinate` https://github.com/Textualize/textual/pull/1638
+  - The method `validate_cursor_cell` was renamed to `validate_cursor_coordinate`.
+  - The method `watch_cursor_cell` was renamed to `watch_cursor_coordinate`.
+- Breaking change: `DataTable.hover_cell` renamed to `DataTable.hover_coordinate` https://github.com/Textualize/textual/pull/1638
+  - The method `validate_hover_cell` was renamed to `validate_hover_coordinate`.
+- Breaking change: `DataTable.data` structure changed, and will be made private in upcoming release https://github.com/Textualize/textual/pull/1638
+- Breaking change: `DataTable.refresh_cell` was renamed to `DataTable.refresh_coordinate` https://github.com/Textualize/textual/pull/1638
+- Breaking change: `DataTable.get_row_height` now takes a `RowKey` argument instead of a row index https://github.com/Textualize/textual/pull/1638
+- Breaking change: `DataTable.data` renamed to `DataTable._data` (it's now private) https://github.com/Textualize/textual/pull/1786
+- The `_filter` module was made public (now called `filter`) https://github.com/Textualize/textual/pull/1638
+- Breaking change: renamed `Checkbox` to `Switch` https://github.com/Textualize/textual/issues/1746
+- `App.install_screen` name is no longer optional https://github.com/Textualize/textual/pull/1778
+- `App.query` now only includes the current screen https://github.com/Textualize/textual/pull/1778
+- `DOMNode.tree` now displays simple DOM structure only https://github.com/Textualize/textual/pull/1778
+- `App.install_screen` now returns None rather than AwaitMount https://github.com/Textualize/textual/pull/1778
+- `DOMNode.children` is now a simple sequence, the NodesList is exposed as `DOMNode._nodes` https://github.com/Textualize/textual/pull/1778
+- `DataTable` cursor can now enter fixed columns https://github.com/Textualize/textual/pull/1799
 
 ### Fixed
 
 - Fixed stuck screen  https://github.com/Textualize/textual/issues/1632
+- Fixed programmatic style changes not refreshing children layouts when parent widget did not change size https://github.com/Textualize/textual/issues/1607
 - Fixed relative units in `grid-rows` and `grid-columns` being computed with respect to the wrong dimension https://github.com/Textualize/textual/issues/1406
+- Fixed bug with animations that were triggered back to back, where the second one wouldn't start https://github.com/Textualize/textual/issues/1372
+- Fixed bug with animations that were scheduled where all but the first would be skipped https://github.com/Textualize/textual/issues/1372
+- Programmatically setting `overflow_x`/`overflow_y` refreshes the layout correctly https://github.com/Textualize/textual/issues/1616
+- Fixed double-paste into `Input` https://github.com/Textualize/textual/issues/1657
+- Added a workaround for an apparent Windows Terminal paste issue https://github.com/Textualize/textual/issues/1661
+- Fixed issue with renderable width calculation https://github.com/Textualize/textual/issues/1685
+- Fixed issue with app not processing Paste event https://github.com/Textualize/textual/issues/1666
+- Fixed glitch with view position with auto width inputs https://github.com/Textualize/textual/issues/1693
+- Fixed `DataTable` "selected" events containing wrong coordinates when mouse was used https://github.com/Textualize/textual/issues/1723
+
+### Removed
+
+- Methods `MessagePump.emit` and `MessagePump.emit_no_wait` https://github.com/Textualize/textual/pull/1738
+- Removed `reactive.watch` in favor of DOMNode.watch.
 
 ### Added
 
@@ -390,6 +519,10 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.12.0]: https://github.com/Textualize/textual/compare/v0.11.1...v0.12.0
+[0.11.1]: https://github.com/Textualize/textual/compare/v0.11.0...v0.11.1
+[0.11.0]: https://github.com/Textualize/textual/compare/v0.10.1...v0.11.0
+[0.10.1]: https://github.com/Textualize/textual/compare/v0.10.0...v0.10.1
 [0.10.0]: https://github.com/Textualize/textual/compare/v0.9.1...v0.10.0
 [0.9.1]: https://github.com/Textualize/textual/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/Textualize/textual/compare/v0.8.2...v0.9.0

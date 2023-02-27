@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from fractions import Fraction
 
-from .._resolve import resolve_box_models
-from ..geometry import Size, Region
 from .._layout import ArrangeResult, Layout, WidgetPlacement
+from .._resolve import resolve_box_models
+from ..geometry import Region, Size
 from ..widget import Widget
 
 
@@ -18,7 +18,6 @@ class HorizontalLayout(Layout):
     def arrange(
         self, parent: Widget, children: list[Widget], size: Size
     ) -> ArrangeResult:
-
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
         x = max_height = Fraction(0)

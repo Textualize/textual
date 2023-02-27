@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterable, Iterator
+from typing import TYPE_CHECKING, Iterable, Iterator
 
 import rich.repr
 from rich.console import RenderableType
@@ -9,17 +9,18 @@ from rich.style import Style
 from . import errors, events, messages
 from ._callback import invoke
 from ._compositor import Compositor, MapGeometry
+from ._types import CallbackType
 from .css.match import match
 from .css.parse import parse_selectors
 from .dom import DOMNode
-from .timer import Timer
-from ._types import CallbackType
 from .geometry import Offset, Region, Size
-from ._typing import Final
 from .reactive import Reactive
 from .renderables.blank import Blank
+from .timer import Timer
 from .widget import Widget
 
+if TYPE_CHECKING:
+    from typing_extensions import Final
 
 # Screen updates will be batched so that they don't happen more often than 120 times per second:
 UPDATE_PERIOD: Final[float] = 1 / 120
@@ -62,7 +63,7 @@ class Screen(Widget):
 
     @property
     def is_current(self) -> bool:
-        """Check if this screen is current (i.e. visible to user)."""
+        """Is the screen current (i.e. visible to user)?"""
         from .app import ScreenStackError
 
         try:
@@ -78,16 +79,6 @@ class Screen(Widget):
                 UPDATE_PERIOD, self._on_timer_update, name="screen_update", pause=True
             )
         return self._update_timer
-
-    @property
-    def widgets(self) -> list[Widget]:
-        """Get all widgets."""
-        return list(self._compositor.map.keys())
-
-    @property
-    def visible_widgets(self) -> list[Widget]:
-        """Get a list of visible widgets."""
-        return list(self._compositor.visible_widgets)
 
     def render(self) -> RenderableType:
         background = self.styles.background
@@ -158,11 +149,7 @@ class Screen(Widget):
 
     @property
     def focus_chain(self) -> list[Widget]:
-        """Get widgets that may receive focus, in focus order.
-
-        Returns:
-            List of Widgets in focus order.
-        """
+        """A list of widgets that may receive focus, in focus order."""
         widgets: list[Widget] = []
         add_widget = widgets.append
         stack: list[Iterator[Widget]] = [iter(self.focusable_children)]
@@ -176,7 +163,7 @@ class Screen(Widget):
             else:
                 if node.is_container and node.can_focus_children:
                     push(iter(node.focusable_children))
-                if node.can_focus:
+                if node.focusable:
                     add_widget(node)
 
         return widgets
@@ -230,7 +217,7 @@ class Screen(Widget):
         else:
             # Only move the focus if we are currently showing the focus
             if direction:
-                to_focus: Widget | None = None
+                to_focus = None
                 chain_length = len(focus_chain)
                 for step in range(1, len(focus_chain) + 1):
                     node = focus_chain[
@@ -313,7 +300,7 @@ class Screen(Widget):
             # It may have been made invisible
             # Move to a sibling if possible
             for sibling in widget.visible_siblings:
-                if sibling not in avoiding and sibling.can_focus:
+                if sibling not in avoiding and sibling.focusable:
                     self.set_focus(sibling)
                     break
             else:
@@ -350,7 +337,7 @@ class Screen(Widget):
                 self.focused.post_message_no_wait(events.Blur(self))
                 self.focused = None
             self.log.debug("focus was removed")
-        elif widget.can_focus:
+        elif widget.focusable:
             if self.focused != widget:
                 if self.focused is not None:
                     # Blur currently focused widget
@@ -367,13 +354,18 @@ class Screen(Widget):
         # Check for any widgets marked as 'dirty' (needs a repaint)
         event.prevent_default()
 
-        if self.is_current:
+        if not self.app._batch_count and self.is_current:
             async with self.app._dom_lock:
                 if self.is_current:
                     if self._layout_required:
                         self._refresh_layout()
                         self._layout_required = False
+                        self._scroll_required = False
                         self._dirty_widgets.clear()
+                    elif self._scroll_required:
+                        self._refresh_layout(scroll=True)
+                        self._scroll_required = False
+
                     if self._repaint_required:
                         self._dirty_widgets.clear()
                         self._dirty_widgets.add(self)
@@ -422,7 +414,9 @@ class Screen(Widget):
         self._callbacks.append(callback)
         self.check_idle()
 
-    def _refresh_layout(self, size: Size | None = None, full: bool = False) -> None:
+    def _refresh_layout(
+        self, size: Size | None = None, full: bool = False, scroll: bool = False
+    ) -> None:
         """Refresh the layout (can change size and positions of widgets)."""
         size = self.outer_size if size is None else size
         if not size:
@@ -430,35 +424,59 @@ class Screen(Widget):
 
         self._compositor.update_widgets(self._dirty_widgets)
         self.update_timer.pause()
+        ResizeEvent = events.Resize
+
         try:
-            hidden, shown, resized = self._compositor.reflow(self, size)
-            Hide = events.Hide
-            Show = events.Show
+            if scroll:
+                exposed_widgets = self._compositor.reflow_visible(self, size)
+                if exposed_widgets:
+                    layers = self._compositor.layers
+                    for widget, (
+                        region,
+                        _order,
+                        _clip,
+                        virtual_size,
+                        container_size,
+                        _,
+                    ) in layers:
+                        if widget in exposed_widgets:
+                            if widget._size_updated(
+                                region.size, virtual_size, container_size, layout=False
+                            ):
+                                widget.post_message_no_wait(
+                                    ResizeEvent(
+                                        self, region.size, virtual_size, container_size
+                                    )
+                                )
 
-            for widget in hidden:
-                widget.post_message_no_wait(Hide(self))
+            else:
+                hidden, shown, resized = self._compositor.reflow(self, size)
+                Hide = events.Hide
+                Show = events.Show
 
-            # We want to send a resize event to widgets that were just added or change since last layout
-            send_resize = shown | resized
-            ResizeEvent = events.Resize
+                for widget in hidden:
+                    widget.post_message_no_wait(Hide(self))
 
-            layers = self._compositor.layers
-            for widget, (
-                region,
-                _order,
-                _clip,
-                virtual_size,
-                container_size,
-                _,
-            ) in layers:
-                widget._size_updated(region.size, virtual_size, container_size)
-                if widget in send_resize:
-                    widget.post_message_no_wait(
-                        ResizeEvent(self, region.size, virtual_size, container_size)
-                    )
+                # We want to send a resize event to widgets that were just added or change since last layout
+                send_resize = shown | resized
 
-            for widget in shown:
-                widget.post_message_no_wait(Show(self))
+                layers = self._compositor.layers
+                for widget, (
+                    region,
+                    _order,
+                    _clip,
+                    virtual_size,
+                    container_size,
+                    _,
+                ) in layers:
+                    widget._size_updated(region.size, virtual_size, container_size)
+                    if widget in send_resize:
+                        widget.post_message_no_wait(
+                            ResizeEvent(self, region.size, virtual_size, container_size)
+                        )
+
+                for widget in shown:
+                    widget.post_message_no_wait(Show(self))
 
         except Exception as error:
             self.app._handle_exception(error)
@@ -481,6 +499,12 @@ class Screen(Widget):
         message.stop()
         message.prevent_default()
         self._layout_required = True
+        self.check_idle()
+
+    async def _on_update_scroll(self, message: messages.UpdateScroll) -> None:
+        message.stop()
+        message.prevent_default()
+        self._scroll_required = True
         self.check_idle()
 
     def _screen_resized(self, size: Size):
@@ -546,7 +570,7 @@ class Screen(Widget):
             except errors.NoWidget:
                 self.set_focus(None)
             else:
-                if isinstance(event, events.MouseUp) and widget.can_focus:
+                if isinstance(event, events.MouseUp) and widget.focusable:
                     if self.focused is not widget:
                         self.set_focus(widget)
                         event.stop()

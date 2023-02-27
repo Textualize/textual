@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 from typing import Any
+
 from textual.app import App, ComposeResult
-from textual.widgets import Tree
 from textual.message import Message
+from textual.widgets import Tree
 
 
 class MyTree(Tree[None]):
@@ -45,34 +46,33 @@ async def test_tree_node_selected_message() -> None:
     """Selecting a node should result in a selected message being emitted."""
     async with TreeApp().run_test() as pilot:
         await pilot.press("enter")
-        await pilot.pause(2 / 100)
         assert pilot.app.messages == ["NodeExpanded", "NodeSelected"]
+
+
+async def test_tree_node_selected_message_no_auto() -> None:
+    """Selecting a node should result in only a selected message being emitted."""
+    async with TreeApp().run_test() as pilot:
+        pilot.app.query_one(MyTree).auto_expand = False
+        await pilot.press("enter")
+        assert pilot.app.messages == ["NodeSelected"]
 
 
 async def test_tree_node_expanded_message() -> None:
     """Expanding a node should result in an expanded message being emitted."""
     async with TreeApp().run_test() as pilot:
-        await pilot.press("enter")
-        await pilot.pause(2 / 100)
-        assert pilot.app.messages == ["NodeExpanded", "NodeSelected"]
+        await pilot.press("space")
+        assert pilot.app.messages == ["NodeExpanded"]
 
 
 async def test_tree_node_collapsed_message() -> None:
     """Collapsing a node should result in a collapsed message being emitted."""
     async with TreeApp().run_test() as pilot:
-        await pilot.press("enter", "enter")
-        await pilot.pause(2 / 100)
-        assert pilot.app.messages == [
-            "NodeExpanded",
-            "NodeSelected",
-            "NodeCollapsed",
-            "NodeSelected",
-        ]
+        await pilot.press("space", "space")
+        assert pilot.app.messages == ["NodeExpanded", "NodeCollapsed"]
 
 
 async def test_tree_node_highlighted_message() -> None:
     """Highlighting a node should result in a highlighted message being emitted."""
     async with TreeApp().run_test() as pilot:
         await pilot.press("enter", "down")
-        await pilot.pause(2 / 100)
         assert pilot.app.messages == ["NodeExpanded", "NodeSelected", "NodeHighlighted"]

@@ -1,4 +1,4 @@
-from textual.widgets import TreeNode, Tree
+from textual.widgets import Tree
 
 
 def test_tree_node_parent() -> None:

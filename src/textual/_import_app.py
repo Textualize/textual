@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 import os
-import sys
 import runpy
 import shlex
+import sys
 from pathlib import Path
-from typing import cast, TYPE_CHECKING
-
+from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
     from textual.app import App
@@ -46,10 +45,10 @@ def import_app(import_name: str) -> App:
         A Textual application
     """
 
-    import inspect
     import importlib
+    import inspect
 
-    from textual.app import App, WINDOWS
+    from textual.app import WINDOWS, App
 
     import_name, *argv = shlex.split(import_name, posix=not WINDOWS)
     drive, import_name = os.path.splitdrive(import_name)

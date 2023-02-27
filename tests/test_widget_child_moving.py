@@ -59,9 +59,9 @@ async def test_widget_move_child() -> None:
             container = Widget(*widgets)
             await pilot.app.mount(container)
             container.move_child(child, before=target)
-            assert container.children[0].id == "widget-1"
-            assert container.children[1].id == "widget-0"
-            assert container.children[2].id == "widget-2"
+            assert container._nodes[0].id == "widget-1"
+            assert container._nodes[1].id == "widget-0"
+            assert container._nodes[2].id == "widget-2"
 
     # Test the different permutations of moving one widget after another.
     perms = ((0, 1), (widgets[0], 1), (0, widgets[1]), (widgets[0], widgets[1]))
@@ -70,22 +70,22 @@ async def test_widget_move_child() -> None:
             container = Widget(*widgets)
             await pilot.app.mount(container)
             container.move_child(child, after=target)
-            assert container.children[0].id == "widget-1"
-            assert container.children[1].id == "widget-0"
-            assert container.children[2].id == "widget-2"
+            assert container._nodes[0].id == "widget-1"
+            assert container._nodes[1].id == "widget-0"
+            assert container._nodes[2].id == "widget-2"
 
     # Test moving after a child after the last child.
     async with App().run_test() as pilot:
         container = Widget(*widgets)
         await pilot.app.mount(container)
         container.move_child(widgets[0], after=widgets[-1])
-        assert container.children[0].id == "widget-1"
-        assert container.children[-1].id == "widget-0"
+        assert container._nodes[0].id == "widget-1"
+        assert container._nodes[-1].id == "widget-0"
 
     # Test moving after a child after the last child's numeric position.
     async with App().run_test() as pilot:
         container = Widget(*widgets)
         await pilot.app.mount(container)
         container.move_child(widgets[0], after=widgets[9])
-        assert container.children[0].id == "widget-1"
-        assert container.children[-1].id == "widget-0"
+        assert container._nodes[0].id == "widget-1"
+        assert container._nodes[-1].id == "widget-0"

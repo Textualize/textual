@@ -7,9 +7,9 @@ from typing import ClassVar
 from rich.style import Style
 from rich.text import Text, TextType
 
-from ..message import Message
-from ._tree import Tree, TreeNode, TOGGLE_STYLE
 from .._types import MessageTarget
+from ..message import Message
+from ._tree import TOGGLE_STYLE, Tree, TreeNode
 
 
 @dataclass
@@ -29,21 +29,25 @@ class DirectoryTree(Tree[DirEntry]):
         name: The name of the widget, or None for no name. Defaults to None.
         id: The ID of the widget in the DOM, or None for no ID. Defaults to None.
         classes: A space-separated list of classes, or None for no classes. Defaults to None.
+        disabled: Whether the directory tree is disabled or not.
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
-        "tree--label",
-        "tree--guides",
-        "tree--guides-hover",
-        "tree--guides-selected",
-        "tree--cursor",
-        "tree--highlight",
-        "tree--highlight-line",
         "directory-tree--folder",
         "directory-tree--file",
         "directory-tree--extension",
         "directory-tree--hidden",
     }
+    """
+    | Class | Description |
+    | :- | :- |
+    | `directory-tree--extension` | Target the extension of a file name. |
+    | `directory-tree--file` | Target files in the directory structure. |
+    | `directory-tree--folder` | Target folders in the directory structure. |
+    | `directory-tree--hidden` | Target hidden items in the directory structure. |
+
+    See also the [component classes for `Tree`][textual.widgets.Tree.COMPONENT_CLASSES].
+    """
 
     DEFAULT_CSS = """
     DirectoryTree > .directory-tree--folder {
@@ -64,8 +68,17 @@ class DirectoryTree(Tree[DirEntry]):
     """
 
     class FileSelected(Message, bubble=True):
+        """Posted when a file is selected.
+
+        Can be handled using `on_directory_tree_file_selected` in a subclass of
+        `DirectoryTree` or in a parent widget in the DOM.
+
+        Attributes:
+            path: The path of the file that was selected.
+        """
+
         def __init__(self, sender: MessageTarget, path: str) -> None:
-            self.path = path
+            self.path: str = path
             super().__init__(sender)
 
     def __init__(
@@ -75,8 +88,8 @@ class DirectoryTree(Tree[DirEntry]):
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
+        disabled: bool = False,
     ) -> None:
-
         self.path = path
         super().__init__(
             path,
@@ -84,6 +97,7 @@ class DirectoryTree(Tree[DirEntry]):
             name=name,
             id=id,
             classes=classes,
+            disabled=disabled,
         )
 
     def process_label(self, label: TextType):
@@ -162,7 +176,7 @@ class DirectoryTree(Tree[DirEntry]):
             if not dir_entry.loaded:
                 self.load_directory(event.node)
         else:
-            self.emit_no_wait(self.FileSelected(self, dir_entry.path))
+            self.post_message_no_wait(self.FileSelected(self, dir_entry.path))
 
     def on_tree_node_selected(self, event: Tree.NodeSelected) -> None:
         event.stop()
@@ -170,4 +184,4 @@ class DirectoryTree(Tree[DirEntry]):
         if dir_entry is None:
             return
         if not dir_entry.is_dir:
-            self.emit_no_wait(self.FileSelected(self, dir_entry.path))
+            self.post_message_no_wait(self.FileSelected(self, dir_entry.path))

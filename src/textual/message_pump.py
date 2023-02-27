@@ -10,15 +10,22 @@ from __future__ import annotations
 import asyncio
 import inspect
 from asyncio import CancelledError, Queue, QueueEmpty, Task
+from contextlib import contextmanager
 from functools import partial
-from typing import TYPE_CHECKING, Any, Awaitable, Callable, Iterable
+from typing import TYPE_CHECKING, Any, Awaitable, Callable, Generator, Iterable
 from weakref import WeakSet
 
 from . import Logger, events, log, messages
 from ._asyncio import create_task
 from ._callback import invoke
-from ._context import NoActiveAppError, active_app
+from ._context import (
+    NoActiveAppError,
+    active_app,
+    active_message_pump,
+    prevent_message_types_stack,
+)
 from ._time import time
+from ._types import CallbackType
 from .case import camel_to_snake
 from .errors import DuplicateKeyHandlers
 from .events import Event
@@ -79,6 +86,54 @@ class MessagePump(metaclass=MessagePumpMeta):
         self._next_callbacks: list[CallbackType] = []
 
     @property
+    def _prevent_message_types_stack(self) -> list[set[type[Message]]]:
+        """The stack that manages prevented messages."""
+        try:
+            stack = prevent_message_types_stack.get()
+        except LookupError:
+            stack = [set()]
+            prevent_message_types_stack.set(stack)
+        return stack
+
+    def _get_prevented_messages(self) -> set[type[Message]]:
+        """A set of all the prevented message types."""
+        return self._prevent_message_types_stack[-1]
+
+    def _is_prevented(self, message_type: type[Message]) -> bool:
+        """Check if a message type has been prevented via the
+        [prevent][textual.message_pump.MessagePump.prevent] context manager.
+
+        Args:
+            message_type: A message type.
+
+        Returns:
+            `True` if the message has been prevented from sending, or `False` if it will be sent as normal.
+        """
+        return message_type in self._prevent_message_types_stack[-1]
+
+    @contextmanager
+    def prevent(self, *message_types: type[Message]) -> Generator[None, None, None]:
+        """A context manager to *temporarily* prevent the given message types from being posted.
+
+        Example:
+            ```python
+            input = self.query_one(Input)
+            with self.prevent(Input.Changed):
+                input.value = "foo"
+            ```
+
+        """
+        if message_types:
+            prevent_stack = self._prevent_message_types_stack
+            prevent_stack.append(prevent_stack[-1].union(message_types))
+            try:
+                yield
+            finally:
+                prevent_stack.pop()
+        else:
+            yield
+
+    @property
     def task(self) -> Task:
         assert self._task is not None
         return self._task
@@ -123,6 +178,19 @@ class MessagePump(metaclass=MessagePumpMeta):
         """
         return self.app._logger
 
+    @property
+    def is_attached(self) -> bool:
+        """Is the node is attached to the app via the DOM."""
+        from .app import App
+
+        node = self
+
+        while not isinstance(node, App):
+            if node._parent is None:
+                return False
+            node = node._parent
+        return True
+
     def _attach(self, parent: MessagePump) -> None:
         """Set the parent, and therefore attach this node to the tree.
 
@@ -136,6 +204,14 @@ class MessagePump(metaclass=MessagePumpMeta):
         self._parent = None
 
     def check_message_enabled(self, message: Message) -> bool:
+        """Check if a given message is enabled (allowed to be sent).
+
+        Args:
+            message: A message object.
+
+        Returns:
+            `True` if the message will be sent, or `False` if it is disabled.
+        """
         return type(message) not in self._disabled_messages
 
     def disable_messages(self, *messages: type[Message]) -> None:
@@ -313,12 +389,18 @@ class MessagePump(metaclass=MessagePumpMeta):
         Reactive._reset_object(self)
         await self._message_queue.put(None)
         if wait and self._task is not None and asyncio.current_task() != self._task:
-            # Ensure everything is closed before returning
-            await self._task
+            try:
+                running_widget = active_message_pump.get()
+            except LookupError:
+                running_widget = None
+
+            if running_widget is None or running_widget is not self:
+                await self._task
 
     def _start_messages(self) -> None:
         """Start messages task."""
         if self.app._running:
+            active_message_pump.set(self)
             self._task = create_task(
                 self._process_messages(), name=f"message pump {self}"
             )
@@ -347,17 +429,19 @@ class MessagePump(metaclass=MessagePumpMeta):
         try:
             await self._dispatch_message(events.Compose(sender=self))
             await self._dispatch_message(events.Mount(sender=self))
+            self._post_mount()
         except Exception as error:
             self.app._handle_exception(error)
         finally:
             # This is critical, mount may be waiting
             self._mounted_event.set()
-        Reactive._initialize_object(self)
+
+    def _post_mount(self):
+        """Called after the object has been mounted."""
 
     async def _process_messages_loop(self) -> None:
         """Process messages until the queue is closed."""
         _rich_traceback_guard = True
-
         while not self._closed:
             try:
                 message = await self._get_message()
@@ -393,7 +477,6 @@ class MessagePump(metaclass=MessagePumpMeta):
                     self.app._handle_exception(error)
                     break
                 finally:
-
                     self._message_queue.task_done()
 
                     current_time = time()
@@ -438,12 +521,13 @@ class MessagePump(metaclass=MessagePumpMeta):
         if message.no_dispatch:
             return
 
-        # Allow apps to treat events and messages separately
-        if isinstance(message, Event):
-            await self.on_event(message)
-        else:
-            await self._on_message(message)
-        await self._flush_next_callbacks()
+        with self.prevent(*message._prevent):
+            # Allow apps to treat events and messages separately
+            if isinstance(message, Event):
+                await self.on_event(message)
+            else:
+                await self._on_message(message)
+            await self._flush_next_callbacks()
 
     def _get_dispatch_methods(
         self, method_name: str, message: Message
@@ -522,6 +606,9 @@ class MessagePump(metaclass=MessagePumpMeta):
             return False
         if not self.check_message_enabled(message):
             return True
+        # Add a copy of the prevented message types to the message
+        # This is so that prevented messages are honoured by the event's handler
+        message._prevent.update(self._get_prevented_messages())
         await self._message_queue.put(message)
         return True
 
@@ -560,6 +647,9 @@ class MessagePump(metaclass=MessagePumpMeta):
             return False
         if not self.check_message_enabled(message):
             return False
+        # Add a copy of the prevented message types to the message
+        # This is so that prevented messages are honoured by the event's handler
+        message._prevent.update(self._get_prevented_messages())
         self._message_queue.put_nowait(message)
         return True
 
@@ -575,34 +665,6 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     async def on_callback(self, event: events.Callback) -> None:
         await invoke(event.callback)
-
-    def emit_no_wait(self, message: Message) -> bool:
-        """Send a message to the _parent_, non async version.
-
-        Args:
-            message: A message object.
-
-        Returns:
-            True if the message was posted successfully.
-        """
-        if self._parent:
-            return self._parent._post_message_from_child_no_wait(message)
-        else:
-            return False
-
-    async def emit(self, message: Message) -> bool:
-        """Send a message to the _parent_.
-
-        Args:
-            message: A message object.
-
-        Returns:
-            True if the message was posted successfully.
-        """
-        if self._parent:
-            return await self._parent._post_message_from_child(message)
-        else:
-            return False
 
     # TODO: Does dispatch_key belong on message pump?
     async def dispatch_key(self, event: events.Key) -> bool:

@@ -72,7 +72,6 @@ class DOMQuery(Generic[QueryType]):
         exclude: str | None = None,
         parent: DOMQuery | None = None,
     ) -> None:
-
         self._node = node
         self._nodes: list[QueryType] | None = None
         self._filters: list[tuple[SelectorSet, ...]] = (
@@ -256,7 +255,7 @@ class DOMQuery(Generic[QueryType]):
             # The IndexError was got, that's a good thing in this case. So
             # we return what we found.
             pass
-        return the_one
+        return cast("Widget", the_one)
 
     @overload
     def last(self) -> Widget:

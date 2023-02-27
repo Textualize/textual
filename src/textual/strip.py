@@ -6,11 +6,11 @@ from typing import Iterable, Iterator
 import rich.repr
 from rich.cells import cell_len, set_cell_size
 from rich.segment import Segment
-from rich.style import Style
+from rich.style import Style, StyleType
 
 from ._cache import FIFOCache
-from ._filter import LineFilter
 from ._segment_tools import index_to_cell_position
+from .filter import LineFilter
 
 
 @rich.repr.auto
@@ -29,6 +29,7 @@ class Strip:
         "_cell_length",
         "_divide_cache",
         "_crop_cache",
+        "_link_ids",
     ]
 
     def __init__(
@@ -38,6 +39,7 @@ class Strip:
         self._cell_length = cell_length
         self._divide_cache: FIFOCache[tuple[int, ...], list[Strip]] = FIFOCache(4)
         self._crop_cache: FIFOCache[tuple[int, int], Strip] = FIFOCache(4)
+        self._link_ids: set[str] | None = None
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._segments
@@ -48,8 +50,17 @@ class Strip:
         """Segment text."""
         return "".join(segment.text for segment in self._segments)
 
+    @property
+    def link_ids(self) -> set[str]:
+        """A set of the link ids in this Strip."""
+        if self._link_ids is None:
+            self._link_ids = {
+                style._link_id for _, style, _ in self._segments if style is not None
+            }
+        return self._link_ids
+
     @classmethod
-    def blank(cls, cell_length: int, style: Style | None) -> Strip:
+    def blank(cls, cell_length: int, style: StyleType | None = None) -> Strip:
         """Create a blank strip.
 
         Args:
@@ -59,7 +70,8 @@ class Strip:
         Returns:
             New strip.
         """
-        return cls([Segment(" " * cell_length, style)], cell_length)
+        segment_style = Style.parse(style) if isinstance(style, str) else style
+        return cls([Segment(" " * cell_length, segment_style)], cell_length)
 
     @classmethod
     def from_lines(
@@ -134,6 +146,23 @@ class Strip:
         return isinstance(strip, Strip) and (
             self._segments == strip._segments and self.cell_length == strip.cell_length
         )
+
+    def extend_cell_length(self, cell_length: int, style: Style | None = None) -> Strip:
+        """Extend the cell length if it is less than the given value.
+
+        Args:
+            cell_length: Required minimum cell length.
+            style: Style for padding if the cell length is extended.
+
+        Returns:
+            A new Strip.
+        """
+        if self.cell_length < cell_length:
+            missing_space = cell_length - self.cell_length
+            segments = self._segments + [Segment(" " * missing_space, style)]
+            return Strip(segments, cell_length)
+        else:
+            return self
 
     def adjust_cell_length(self, cell_length: int, style: Style | None = None) -> Strip:
         """Adjust the cell length, possibly truncating or extending.
@@ -212,19 +241,18 @@ class Strip:
         Returns:
             New strip (or same Strip if no changes).
         """
+
         _Segment = Segment
-        if not any(
-            segment.style._link_id == link_id
-            for segment in self._segments
-            if segment.style
-        ):
+        if link_id not in self.link_ids:
             return self
         segments = [
             _Segment(
                 text,
-                (style + link_style if style is not None else None)
-                if (style and not style._null and style._link_id == link_id)
-                else style,
+                (
+                    (style + link_style if style is not None else None)
+                    if (style and not style._null and style._link_id == link_id)
+                    else style
+                ),
                 control,
             )
             for text, style, control in self._segments

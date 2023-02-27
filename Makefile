@@ -1,20 +1,78 @@
+run := poetry run
+
+.PHONY: test
 test:
-	pytest --cov-report term-missing --cov=textual tests/ -vv
+	$(run) pytest --cov-report term-missing --cov=textual tests/ -vv
+
+.PHONY: unit-test
 unit-test:
-	pytest --cov-report term-missing --cov=textual tests/ -vv -m "not integration_test"
+	$(run) pytest --cov-report term-missing --cov=textual tests/ -vv -m "not integration_test"
+
+.PHONY: test-snapshot-update
 test-snapshot-update:
-	pytest --cov-report term-missing --cov=textual tests/ -vv --snapshot-update
+	$(run) pytest --cov-report term-missing --cov=textual tests/ -vv --snapshot-update
+
+.PHONY: typecheck
 typecheck:
-	mypy src/textual
+	$(run) mypy src/textual
+
+.PHONY: format
 format:
-	black src
+	$(run) black src
+
+.PHONY: format-check
 format-check:
-	black --check src
-docs-serve:
+	$(run) black --check src
+
+.PHONY: clean-screenshot-cache
+clean-screenshot-cache:
 	rm -rf .screenshot_cache
-	mkdocs serve
-docs-build:
-	mkdocs build
-docs-deploy:
-	rm -rf .screenshot_cache
-	mkdocs gh-deploy
+
+.PHONY: docs-offline-nav
+docs-offline-nav:
+	echo "INHERIT: mkdocs-offline.yml" > mkdocs-nav-offline.yml
+	grep -v "\- \"*[Bb]log" mkdocs-nav.yml >> mkdocs-nav-offline.yml
+
+.PHONY: docs-online-nav
+docs-online-nav:
+	echo "INHERIT: mkdocs-online.yml" > mkdocs-nav-online.yml
+	cat mkdocs-nav.yml >> mkdocs-nav-online.yml
+
+.PHONY: docs-serve
+docs-serve: clean-screenshot-cache docs-online-nav
+	$(run) mkdocs serve --config-file mkdocs-nav-online.yml
+	rm -f mkdocs-nav-online.yml
+
+.PHONY: docs-build
+docs-build: docs-online-nav
+	$(run) mkdocs build --config-file mkdocs-nav-online.yml
+	rm -f mkdocs-nav-online.yml
+
+.PHONY: docs-build-offline
+docs-build-offline: docs-offline-nav
+	$(run) mkdocs build --config-file mkdocs-nav-offline.yml
+	rm -f mkdocs-nav-offline.yml
+
+.PHONY: clean-offline-docs
+clean-offline-docs:
+	rm -rf docs-offline
+
+.PHONY: docs-deploy
+docs-deploy: clean-screenshot-cache docs-online-nav
+	$(run) mkdocs gh-deploy --config-file mkdocs-nav-online.yml
+	rm -f mkdocs-nav-online.yml
+
+.PHONY: build
+build: docs-build-offline
+	poetry build
+
+.PHONY: clean
+clean: clean-screenshot-cache clean-offline-docs
+
+.PHONY: setup
+setup:
+	poetry install --extras dev
+
+.PHONY: update
+update:
+	poetry update

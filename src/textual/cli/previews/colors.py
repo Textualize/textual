@@ -2,7 +2,7 @@ from textual.app import App, ComposeResult
 from textual.containers import Horizontal, Vertical
 from textual.design import ColorSystem
 from textual.widget import Widget
-from textual.widgets import Button, Footer, Static, Label
+from textual.widgets import Button, Footer, Label, Static
 
 
 class ColorButtons(Vertical):
@@ -30,7 +30,6 @@ class Content(Vertical):
 
 class ColorsView(Vertical):
     def compose(self) -> ComposeResult:
-
         LEVELS = [
             "darken-3",
             "darken-2",
@@ -42,19 +41,14 @@ class ColorsView(Vertical):
         ]
 
         for color_name in ColorSystem.COLOR_NAMES:
-
-            items: list[Widget] = [Label(f'"{color_name}"')]
-            for level in LEVELS:
-                color = f"{color_name}-{level}" if level else color_name
-                item = ColorItem(
-                    ColorBar(f"${color}", classes="text label"),
-                    ColorBar("$text-muted", classes="muted"),
-                    ColorBar("$text-disabled", classes="disabled"),
-                    classes=color,
-                )
-                items.append(item)
-
-            yield ColorGroup(*items, id=f"group-{color_name}")
+            with ColorGroup(id=f"group-{color_name}"):
+                yield Label(f'"{color_name}"')
+                for level in LEVELS:
+                    color = f"{color_name}-{level}" if level else color_name
+                    with ColorItem(classes=color):
+                        yield ColorBar(f"${color}", classes="text label")
+                        yield ColorBar("$text-muted", classes="muted")
+                        yield ColorBar("$text-disabled", classes="disabled")
 
 
 class ColorsApp(App):
@@ -74,7 +68,6 @@ class ColorsApp(App):
         content.mount(ColorsView())
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
-        self.bell()
         self.query(ColorGroup).remove_class("-active")
         group = self.query_one(f"#group-{event.button.id}", ColorGroup)
         group.add_class("-active")

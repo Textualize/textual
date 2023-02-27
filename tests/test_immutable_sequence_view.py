@@ -1,7 +1,9 @@
+from typing import Sequence
+
 import pytest
 
-from typing import Sequence
 from textual._immutable_sequence_view import ImmutableSequenceView
+
 
 def wrap(source: Sequence[int]) -> ImmutableSequenceView[int]:
     """Wrap a sequence of integers inside an immutable sequence view."""

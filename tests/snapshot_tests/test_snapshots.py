@@ -52,8 +52,8 @@ def test_dock_layout_sidebar(snap_compare):
 # from these examples which test rendering and simple interactions with it.
 
 
-def test_checkboxes(snap_compare):
-    """Tests checkboxes but also acts a regression test for using
+def test_switches(snap_compare):
+    """Tests switches but also acts a regression test for using
     width: auto in a Horizontal layout context."""
     press = [
         "shift+tab",
@@ -63,7 +63,7 @@ def test_checkboxes(snap_compare):
         "enter",  # toggle on
         "wait:20",
     ]
-    assert snap_compare(WIDGET_EXAMPLES_DIR / "checkbox.py", press=press)
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "switch.py", press=press)
 
 
 def test_input_and_focus(snap_compare):
@@ -103,6 +103,16 @@ def test_datatable_column_cursor_render(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_column_cursor.py", press=press)
 
 
+def test_datatable_sort_multikey(snap_compare):
+    press = ["down", "right", "s"]  # Also checks that sort doesn't move cursor.
+    assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_sort.py", press=press)
+
+
+def test_datatable_labels_and_fixed_data(snap_compare):
+    # Ensure that we render correctly when there are fixed rows/cols and labels.
+    assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_row_labels.py")
+
+
 def test_footer_render(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "footer.py")
 
@@ -131,6 +141,14 @@ def test_visibility(snap_compare):
 
 def test_tree_example(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "tree.py")
+
+
+def test_markdown_example(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "markdown.py")
+
+
+def test_markdown_viewer_example(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "markdown_viewer.py")
 
 
 # --- CSS properties ---
@@ -179,6 +197,16 @@ def test_nested_auto_heights(snap_compare):
     assert snap_compare("snapshot_apps/nested_auto_heights.py", press=["1", "2", "_"])
 
 
+def test_programmatic_scrollbar_gutter_change(snap_compare):
+    """Regression test for #1607 https://github.com/Textualize/textual/issues/1607
+
+    See also tests/css/test_programmatic_style_changes.py for other related regression tests.
+    """
+    assert snap_compare(
+        "snapshot_apps/programmatic_scrollbar_gutter_change.py", press=["s"]
+    )
+
+
 # --- Other ---
 
 
@@ -190,6 +218,29 @@ def test_demo(snap_compare):
     """Test the demo app (python -m textual)"""
     assert snap_compare(
         Path("../../src/textual/demo.py"),
-        press=["down", "down", "down", "_", "_", "_"],
+        press=["down", "down", "down"],
         terminal_size=(100, 30),
     )
+
+
+def test_label_widths(snap_compare):
+    """Test renderable widths are calculate correctly."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "label_widths.py")
+
+
+def test_auto_width_input(snap_compare):
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "auto_width_input.py", press=["tab", *"Hello"]
+    )
+
+
+def test_screen_switch(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "screen_switch.py", press=["a", "b"])
+
+
+def test_disabled_widgets(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "disable_widgets.py")
+
+
+def test_focus_component_class(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "focus_component_class.py", press=["tab"])

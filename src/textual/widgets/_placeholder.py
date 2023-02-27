@@ -2,11 +2,13 @@ from __future__ import annotations
 
 from itertools import cycle
 
+from rich.console import RenderableType
+from typing_extensions import Literal
+
 from .. import events
 from ..css._error_tools import friendly_list
 from ..reactive import Reactive, reactive
-from ..widget import Widget, RenderResult
-from .._typing import Literal
+from ..widget import RenderResult, Widget
 
 PlaceholderVariant = Literal["default", "size", "text"]
 _VALID_PLACEHOLDER_VARIANTS_ORDERED: list[PlaceholderVariant] = [
@@ -60,19 +62,19 @@ class Placeholder(Widget):
         overflow: hidden;
         color: $text;
     }
-
     Placeholder.-text {
         padding: 1;
     }
+
     """
 
     # Consecutive placeholders get assigned consecutive colors.
     _COLORS = cycle(_PLACEHOLDER_BACKGROUND_COLORS)
     _SIZE_RENDER_TEMPLATE = "[b]{} x {}[/b]"
 
-    variant: Reactive[PlaceholderVariant] = reactive("default")
+    variant: Reactive[PlaceholderVariant] = reactive[PlaceholderVariant]("default")
 
-    _renderables: dict[PlaceholderVariant, RenderResult]
+    _renderables: dict[PlaceholderVariant, str]
 
     @classmethod
     def reset_color_cycle(cls) -> None:
@@ -118,7 +120,7 @@ class Placeholder(Widget):
         while next(self._variants_cycle) != self.variant:
             pass
 
-    def render(self) -> RenderResult:
+    def render(self) -> RenderableType:
         return self._renderables[self.variant]
 
     def cycle_variant(self) -> None:
@@ -146,6 +148,6 @@ class Placeholder(Widget):
 
     def on_resize(self, event: events.Resize) -> None:
         """Update the placeholder "size" variant with the new placeholder size."""
-        self._renderables["size"] = self._SIZE_RENDER_TEMPLATE.format(*self.size)
+        self._renderables["size"] = self._SIZE_RENDER_TEMPLATE.format(*event.size)
         if self.variant == "size":
-            self.refresh(layout=True)
+            self.refresh()

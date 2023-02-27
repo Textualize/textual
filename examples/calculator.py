@@ -1,7 +1,7 @@
 from decimal import Decimal
 
-from textual.app import App, ComposeResult
 from textual import events
+from textual.app import App, ComposeResult
 from textual.containers import Container
 from textual.css.query import NoMatches
 from textual.reactive import var
@@ -48,30 +48,28 @@ class CalculatorApp(App):
 
     def compose(self) -> ComposeResult:
         """Add our buttons."""
-        yield Container(
-            Static(id="numbers"),
-            Button("AC", id="ac", variant="primary"),
-            Button("C", id="c", variant="primary"),
-            Button("+/-", id="plus-minus", variant="primary"),
-            Button("%", id="percent", variant="primary"),
-            Button("÷", id="divide", variant="warning"),
-            Button("7", id="number-7"),
-            Button("8", id="number-8"),
-            Button("9", id="number-9"),
-            Button("×", id="multiply", variant="warning"),
-            Button("4", id="number-4"),
-            Button("5", id="number-5"),
-            Button("6", id="number-6"),
-            Button("-", id="minus", variant="warning"),
-            Button("1", id="number-1"),
-            Button("2", id="number-2"),
-            Button("3", id="number-3"),
-            Button("+", id="plus", variant="warning"),
-            Button("0", id="number-0"),
-            Button(".", id="point"),
-            Button("=", id="equals", variant="warning"),
-            id="calculator",
-        )
+        with Container(id="calculator"):
+            yield Static(id="numbers")
+            yield Button("AC", id="ac", variant="primary")
+            yield Button("C", id="c", variant="primary")
+            yield Button("+/-", id="plus-minus", variant="primary")
+            yield Button("%", id="percent", variant="primary")
+            yield Button("÷", id="divide", variant="warning")
+            yield Button("7", id="number-7")
+            yield Button("8", id="number-8")
+            yield Button("9", id="number-9")
+            yield Button("×", id="multiply", variant="warning")
+            yield Button("4", id="number-4")
+            yield Button("5", id="number-5")
+            yield Button("6", id="number-6")
+            yield Button("-", id="minus", variant="warning")
+            yield Button("1", id="number-1")
+            yield Button("2", id="number-2")
+            yield Button("3", id="number-3")
+            yield Button("+", id="plus", variant="warning")
+            yield Button("0", id="number-0")
+            yield Button(".", id="point")
+            yield Button("=", id="equals", variant="warning")
 
     def on_key(self, event: events.Key) -> None:
         """Called when the user presses a key."""

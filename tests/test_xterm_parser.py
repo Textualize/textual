@@ -5,13 +5,13 @@ import pytest
 
 from textual._xterm_parser import XTermParser
 from textual.events import (
-    Paste,
     Key,
     MouseDown,
-    MouseUp,
     MouseMove,
     MouseScrollDown,
     MouseScrollUp,
+    MouseUp,
+    Paste,
 )
 from textual.messages import TerminalSupportsSynchronizedOutput
 

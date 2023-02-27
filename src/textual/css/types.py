@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from typing import Tuple
 
+from typing_extensions import Literal
+
 from ..color import Color
-from .._typing import Literal
 
 Edge = Literal["top", "right", "bottom", "left"]
 DockEdge = Literal["top", "right", "bottom", "left", ""]

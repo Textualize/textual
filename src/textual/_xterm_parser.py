@@ -1,16 +1,14 @@
 from __future__ import annotations
 
-import unicodedata
 import re
+import unicodedata
 from typing import Any, Callable, Generator, Iterable
 
-from . import events
-from . import messages
+from . import events, messages
 from ._ansi_sequences import ANSI_SEQUENCES_KEYS
 from ._parser import Awaitable, Parser, TokenCallback
 from ._types import MessageTarget
 from .keys import KEY_NAME_REPLACEMENTS
-
 
 # When trying to determine whether the current sequence is a supported/valid
 # escape sequence, at which length should we give up and consider our search
@@ -92,7 +90,6 @@ class XTermParser(Parser[events.Event]):
         return None
 
     def parse(self, on_token: TokenCallback) -> Generator[Awaitable, str, None]:
-
         ESC = "\x1b"
         read1 = self.read1
         sequence_to_key_events = self._sequence_to_key_events
@@ -118,7 +115,10 @@ class XTermParser(Parser[events.Event]):
                 # ESC from the closing bracket, since at that point we didn't know what
                 # the full escape code was.
                 pasted_text = "".join(paste_buffer[:-1])
-                on_token(events.Paste(self.sender, text=pasted_text))
+                # Note the removal of NUL characters: https://github.com/Textualize/textual/issues/1661
+                on_token(
+                    events.Paste(self.sender, text=pasted_text.replace("\x00", ""))
+                )
                 paste_buffer.clear()
 
             character = ESC if use_prior_escape else (yield read1())
@@ -158,7 +158,6 @@ class XTermParser(Parser[events.Event]):
 
                 # Look ahead through the suspected escape sequence for a match
                 while True:
-
                     # If we run into another ESC at this point, then we've failed
                     # to find a match, and should issue everything we've seen within
                     # the suspected sequence as Key events instead.

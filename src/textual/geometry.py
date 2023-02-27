@@ -8,9 +8,20 @@ from __future__ import annotations
 
 from functools import lru_cache
 from operator import attrgetter, itemgetter
-from typing import Any, Collection, NamedTuple, Tuple, TypeVar, Union, cast
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Collection,
+    NamedTuple,
+    Tuple,
+    TypeVar,
+    Union,
+    cast,
+)
 
-from textual._typing import TypeAlias
+if TYPE_CHECKING:
+    from typing_extensions import TypeAlias
+
 
 SpacingDimensions: TypeAlias = Union[
     int, Tuple[int], Tuple[int, int], Tuple[int, int, int, int]

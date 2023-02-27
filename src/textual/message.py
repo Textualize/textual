@@ -1,15 +1,14 @@
 from __future__ import annotations
 
-from typing import ClassVar, TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar
 
 import rich.repr
 
 from . import _clock
-from .case import camel_to_snake
 from ._types import MessageTarget as MessageTarget
+from .case import camel_to_snake
 
 if TYPE_CHECKING:
-    from .widget import Widget
     from .message_pump import MessagePump
 
 
@@ -32,6 +31,7 @@ class Message:
         "_no_default_action",
         "_stop_propagation",
         "_handler_name",
+        "_prevent",
     ]
 
     sender: MessageTarget
@@ -51,6 +51,7 @@ class Message:
         self._handler_name = (
             f"on_{self.namespace}_{name}" if self.namespace else f"on_{name}"
         )
+        self._prevent: set[type[Message]] = set()
         super().__init__()
 
     def __rich_repr__(self) -> rich.repr.Result:

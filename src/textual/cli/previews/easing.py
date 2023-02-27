@@ -1,14 +1,15 @@
 from __future__ import annotations
 
 from rich.console import RenderableType
+
 from textual._easing import EASING
 from textual.app import App, ComposeResult
 from textual.cli.previews.borders import TEXT
 from textual.containers import Container, Horizontal, Vertical
-from textual.reactive import Reactive
+from textual.reactive import reactive, var
 from textual.scrollbar import ScrollBarRender
 from textual.widget import Widget
-from textual.widgets import Button, Footer, Label, Input
+from textual.widgets import Button, Footer, Input, Label
 
 VIRTUAL_SIZE = 100
 WINDOW_SIZE = 10
@@ -23,8 +24,8 @@ class EasingButtons(Widget):
 
 
 class Bar(Widget):
-    position = Reactive.init(START_POSITION)
-    animation_running = Reactive(False)
+    position = reactive(START_POSITION)
+    animation_running = reactive(False)
 
     DEFAULT_CSS = """
 
@@ -53,8 +54,8 @@ class Bar(Widget):
 
 
 class EasingApp(App):
-    position = Reactive.init(START_POSITION)
-    duration = Reactive.var(1.0)
+    position = reactive(START_POSITION)
+    duration = var(1.0)
 
     def on_load(self):
         self.bind(
@@ -72,16 +73,14 @@ class EasingApp(App):
         )
 
         yield EasingButtons()
-        yield Vertical(
-            Horizontal(
-                Label("Animation Duration:", id="label"), duration_input, id="inputs"
-            ),
-            Horizontal(
-                self.animated_bar,
-                Container(self.opacity_widget, id="other"),
-            ),
-            Footer(),
-        )
+        with Vertical():
+            with Horizontal(id="inputs"):
+                yield Label("Animation Duration:", id="label")
+                yield duration_input
+            with Horizontal():
+                yield self.animated_bar
+                yield Container(self.opacity_widget, id="other")
+            yield Footer()
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         self.bell()

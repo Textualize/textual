@@ -1,39 +1,105 @@
 from __future__ import annotations
 
 from functools import lru_cache
-from typing import cast, Tuple, Union
+from typing import TYPE_CHECKING, Tuple, Union, cast
 
 from rich.segment import Segment
 from rich.style import Style
 
 from .color import Color
 from .css.types import EdgeStyle, EdgeType
-from ._typing import TypeAlias
+
+if TYPE_CHECKING:
+    from typing_extensions import TypeAlias
 
 INNER = 1
 OUTER = 2
 
-BORDER_CHARS: dict[EdgeType, tuple[str, str, str]] = {
-    # Each string of the tuple represents a sub-tuple itself:
-    #  - 1st string represents (top1, top2, top3)
-    #  - 2nd string represents (mid1, mid2, mid3)
-    #  - 3rd string represents (bottom1, bottom2, bottom3)
-    "": ("   ", "   ", "   "),
-    "ascii": ("+-+", "| |", "+-+"),
-    "none": ("   ", "   ", "   "),
-    "hidden": ("   ", "   ", "   "),
-    "blank": ("   ", "   ", "   "),
-    "round": ("╭─╮", "│ │", "╰─╯"),
-    "solid": ("┌─┐", "│ │", "└─┘"),
-    "double": ("╔═╗", "║ ║", "╚═╝"),
-    "dashed": ("┏╍┓", "╏ ╏", "┗╍┛"),
-    "heavy": ("┏━┓", "┃ ┃", "┗━┛"),
-    "inner": ("▗▄▖", "▐ ▌", "▝▀▘"),
-    "outer": ("▛▀▜", "▌ ▐", "▙▄▟"),
-    "hkey": ("▔▔▔", "   ", "▁▁▁"),
-    "vkey": ("▏ ▕", "▏ ▕", "▏ ▕"),
-    "tall": ("▊▔▎", "▊ ▎", "▊▁▎"),
-    "wide": ("▁▁▁", "▎ ▋", "▔▔▔"),
+BORDER_CHARS: dict[
+    EdgeType, tuple[tuple[str, str, str], tuple[str, str, str], tuple[str, str, str]]
+] = {
+    # Three tuples for the top, middle, and bottom rows.
+    # The sub-tuples are the characters for the left, center, and right borders.
+    "": (
+        (" ", " ", " "),
+        (" ", " ", " "),
+        (" ", " ", " "),
+    ),
+    "ascii": (
+        ("+", "-", "+"),
+        ("|", " ", "|"),
+        ("+", "-", "+"),
+    ),
+    "none": (
+        (" ", " ", " "),
+        (" ", " ", " "),
+        (" ", " ", " "),
+    ),
+    "hidden": (
+        (" ", " ", " "),
+        (" ", " ", " "),
+        (" ", " ", " "),
+    ),
+    "blank": (
+        (" ", " ", " "),
+        (" ", " ", " "),
+        (" ", " ", " "),
+    ),
+    "round": (
+        ("╭", "─", "╮"),
+        ("│", " ", "│"),
+        ("╰", "─", "╯"),
+    ),
+    "solid": (
+        ("┌", "─", "┐"),
+        ("│", " ", "│"),
+        ("└", "─", "┘"),
+    ),
+    "double": (
+        ("╔", "═", "╗"),
+        ("║", " ", "║"),
+        ("╚", "═", "╝"),
+    ),
+    "dashed": (
+        ("┏", "╍", "┓"),
+        ("╏", " ", "╏"),
+        ("┗", "╍", "┛"),
+    ),
+    "heavy": (
+        ("┏", "━", "┓"),
+        ("┃", " ", "┃"),
+        ("┗", "━", "┛"),
+    ),
+    "inner": (
+        ("▗", "▄", "▖"),
+        ("▐", " ", "▌"),
+        ("▝", "▀", "▘"),
+    ),
+    "outer": (
+        ("▛", "▀", "▜"),
+        ("▌", " ", "▐"),
+        ("▙", "▄", "▟"),
+    ),
+    "hkey": (
+        ("▔", "▔", "▔"),
+        (" ", " ", " "),
+        ("▁", "▁", "▁"),
+    ),
+    "vkey": (
+        ("▏", " ", "▕"),
+        ("▏", " ", "▕"),
+        ("▏", " ", "▕"),
+    ),
+    "tall": (
+        ("▊", "▔", "▎"),
+        ("▊", " ", "▎"),
+        ("▊", "▁", "▎"),
+    ),
+    "wide": (
+        ("▁", "▁", "▁"),
+        ("▎", " ", "▋"),
+        ("▔", "▔", "▔"),
+    ),
 }
 
 # Some of the borders are on the widget background and some are on the background of the parent
@@ -41,27 +107,91 @@ BORDER_CHARS: dict[EdgeType, tuple[str, str, str]] = {
 BORDER_LOCATIONS: dict[
     EdgeType, tuple[tuple[int, int, int], tuple[int, int, int], tuple[int, int, int]]
 ] = {
-    "": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
-    "ascii": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
-    "none": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
-    "hidden": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
-    "blank": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
-    "round": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
-    "solid": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
-    "double": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
-    "dashed": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
-    "heavy": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
-    "inner": ((1, 1, 1), (1, 1, 1), (1, 1, 1)),
-    "outer": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
-    "hkey": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
-    "vkey": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
-    "tall": ((2, 0, 1), (2, 0, 1), (2, 0, 1)),
-    "wide": ((1, 1, 1), (0, 1, 3), (1, 1, 1)),
+    "": (
+        (0, 0, 0),
+        (0, 0, 0),
+        (0, 0, 0),
+    ),
+    "ascii": (
+        (0, 0, 0),
+        (0, 0, 0),
+        (0, 0, 0),
+    ),
+    "none": (
+        (0, 0, 0),
+        (0, 0, 0),
+        (0, 0, 0),
+    ),
+    "hidden": (
+        (0, 0, 0),
+        (0, 0, 0),
+        (0, 0, 0),
+    ),
+    "blank": (
+        (0, 0, 0),
+        (0, 0, 0),
+        (0, 0, 0),
+    ),
+    "round": (
+        (0, 0, 0),
+        (0, 0, 0),
+        (0, 0, 0),
+    ),
+    "solid": (
+        (0, 0, 0),
+        (0, 0, 0),
+        (0, 0, 0),
+    ),
+    "double": (
+        (0, 0, 0),
+        (0, 0, 0),
+        (0, 0, 0),
+    ),
+    "dashed": (
+        (0, 0, 0),
+        (0, 0, 0),
+        (0, 0, 0),
+    ),
+    "heavy": (
+        (0, 0, 0),
+        (0, 0, 0),
+        (0, 0, 0),
+    ),
+    "inner": (
+        (1, 1, 1),
+        (1, 1, 1),
+        (1, 1, 1),
+    ),
+    "outer": (
+        (0, 0, 0),
+        (0, 0, 0),
+        (0, 0, 0),
+    ),
+    "hkey": (
+        (0, 0, 0),
+        (0, 0, 0),
+        (0, 0, 0),
+    ),
+    "vkey": (
+        (0, 0, 0),
+        (0, 0, 0),
+        (0, 0, 0),
+    ),
+    "tall": (
+        (2, 0, 1),
+        (2, 0, 1),
+        (2, 0, 1),
+    ),
+    "wide": (
+        (1, 1, 1),
+        (0, 1, 3),
+        (1, 1, 1),
+    ),
 }
 
 INVISIBLE_EDGE_TYPES = cast("frozenset[EdgeType]", frozenset(("", "none", "hidden")))
 
-BorderValue: TypeAlias = Tuple[EdgeType, Union[str, Color, Style]]
+BorderValue: TypeAlias = Tuple[EdgeType, Color]
 
 BoxSegments: TypeAlias = Tuple[
     Tuple[Segment, Segment, Segment],

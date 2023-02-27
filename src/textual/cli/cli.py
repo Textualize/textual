@@ -10,8 +10,8 @@ except ImportError:
 
 from importlib_metadata import version
 
+from textual._import_app import AppFail, import_app
 from textual.pilot import Pilot
-from textual._import_app import import_app, AppFail
 
 
 @click.group()
@@ -26,6 +26,7 @@ def run():
 def console(verbose: bool, exclude: list[str]) -> None:
     """Launch the textual console."""
     from rich.console import Console
+
     from textual.devtools.server import _run_devtools
 
     console = Console()
@@ -46,7 +47,14 @@ def console(verbose: bool, exclude: list[str]) -> None:
 @click.argument("import_name", metavar="FILE or FILE:APP")
 @click.option("--dev", "dev", help="Enable development mode", is_flag=True)
 @click.option("--press", "press", help="Comma separated keys to simulate press")
-def run_app(import_name: str, dev: bool, press: str) -> None:
+@click.option(
+    "--screenshot",
+    type=int,
+    default=None,
+    metavar="DELAY",
+    help="Take screenshot after DELAY seconds",
+)
+def run_app(import_name: str, dev: bool, press: str, screenshot: int | None) -> None:
     """Run a Textual app.
 
     The code to run may be given as a path (ending with .py) or as a Python
@@ -72,6 +80,7 @@ def run_app(import_name: str, dev: bool, press: str) -> None:
 
     import os
     import sys
+    from asyncio import sleep
 
     from textual.features import parse_features
 
@@ -95,6 +104,10 @@ def run_app(import_name: str, dev: bool, press: str) -> None:
     async def run_press_keys(pilot: Pilot) -> None:
         if press_keys is not None:
             await pilot.press(*press_keys)
+        if screenshot is not None:
+            await sleep(screenshot)
+            filename = pilot.app.save_screenshot()
+            pilot.app.exit(message=f"Saved {filename!r}")
 
     result = app.run(auto_pilot=run_press_keys)
 

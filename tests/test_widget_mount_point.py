@@ -1,6 +1,6 @@
 import pytest
 
-from textual.widget import Widget, MountError
+from textual.widget import MountError, Widget
 
 
 class Content(Widget):
@@ -12,7 +12,6 @@ class Body(Widget):
 
 
 def test_find_dom_spot():
-
     # Build up a "fake" DOM for an application.
     screen = Widget(name="Screen")
     header = Widget(name="Header", id="header")
@@ -24,7 +23,7 @@ def test_find_dom_spot():
 
     # Just as a quick double-check, make sure the main components are in
     # their intended place.
-    assert list(screen.children) == [header, body, footer]
+    assert list(screen._nodes) == [header, body, footer]
 
     # Now check that we find what we're looking for in the places we expect
     # to find them.

@@ -8,7 +8,7 @@ from textual.css.parse import substitute_references
 from textual.css.scalar import Scalar, Unit
 from textual.css.stylesheet import Stylesheet, StylesheetParseError
 from textual.css.tokenize import tokenize
-from textual.css.tokenizer import Token, ReferencedBy
+from textual.css.tokenizer import ReferencedBy, Token, TokenError
 from textual.css.transition import Transition
 from textual.geometry import Spacing
 from textual.layouts.vertical import VerticalLayout
@@ -1189,3 +1189,40 @@ class TestParseTextAlign:
         stylesheet = Stylesheet()
         stylesheet.add_source(css)
         assert stylesheet.rules[0].styles.text_align == "start"
+
+
+class TestTypeNames:
+    def test_type_no_number(self):
+        stylesheet = Stylesheet()
+        stylesheet.add_source("TestType {}")
+        assert len(stylesheet.rules) == 1
+
+    def test_type_with_number(self):
+        stylesheet = Stylesheet()
+        stylesheet.add_source("TestType1 {}")
+        assert len(stylesheet.rules) == 1
+
+    def test_type_starts_with_number(self):
+        stylesheet = Stylesheet()
+        stylesheet.add_source("1TestType {}")
+        with pytest.raises(TokenError):
+            stylesheet.parse()
+
+    def test_combined_type_no_number(self):
+        for separator in " >,":
+            stylesheet = Stylesheet()
+            stylesheet.add_source(f"StartType {separator} TestType {{}}")
+            assert len(stylesheet.rules) == 1
+
+    def test_combined_type_with_number(self):
+        for separator in " >,":
+            stylesheet = Stylesheet()
+            stylesheet.add_source(f"StartType {separator} TestType1 {{}}")
+            assert len(stylesheet.rules) == 1
+
+    def test_combined_type_starts_with_number(self):
+        for separator in " >,":
+            stylesheet = Stylesheet()
+            stylesheet.add_source(f"StartType {separator} 1TestType {{}}")
+            with pytest.raises(TokenError):
+                stylesheet.parse()

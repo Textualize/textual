@@ -2,8 +2,8 @@ import pytest
 
 from textual.app import App, ComposeResult
 from textual.containers import Container
+from textual.css.query import InvalidQueryFormat, NoMatches, TooManyMatches, WrongType
 from textual.widget import Widget
-from textual.css.query import InvalidQueryFormat, WrongType, NoMatches, TooManyMatches
 
 
 def test_query():

@@ -20,22 +20,35 @@ def test_sparkline_two_values_min_max():
 
 
 def test_sparkline_expand_data_to_width():
-    assert render(Sparkline([2, 4],
-                            width=4)) == f"{GREEN}▁{STOP}{GREEN}▁{STOP}{RED}█{STOP}{RED}█{STOP}"
+    assert (
+        render(Sparkline([2, 4], width=4))
+        == f"{GREEN}▁{STOP}{GREEN}▁{STOP}{RED}█{STOP}{RED}█{STOP}"
+    )
 
 
 def test_sparkline_expand_data_to_width_non_divisible():
-    assert render(Sparkline([2, 4], width=3)) == f"{GREEN}▁{STOP}{GREEN}▁{STOP}{RED}█{STOP}"
+    assert (
+        render(Sparkline([2, 4], width=3))
+        == f"{GREEN}▁{STOP}{GREEN}▁{STOP}{RED}█{STOP}"
+    )
 
 
 def test_sparkline_shrink_data_to_width():
-    assert render(Sparkline([2, 2, 4, 4, 6, 6], width=3)) == f"{GREEN}▁{STOP}{BLENDED}▄{STOP}{RED}█{STOP}"
+    assert (
+        render(Sparkline([2, 2, 4, 4, 6, 6], width=3))
+        == f"{GREEN}▁{STOP}{BLENDED}▄{STOP}{RED}█{STOP}"
+    )
 
 
 def test_sparkline_shrink_data_to_width_non_divisible():
-    assert render(
-        Sparkline([1, 2, 3, 4, 5], width=3, summary_function=min)) == f"{GREEN}▁{STOP}{BLENDED}▄{STOP}{RED}█{STOP}"
+    assert (
+        render(Sparkline([1, 2, 3, 4, 5], width=3, summary_function=min))
+        == f"{GREEN}▁{STOP}{BLENDED}▄{STOP}{RED}█{STOP}"
+    )
 
 
 def test_sparkline_color_blend():
-    assert render(Sparkline([1, 2, 3], width=3)) == f"{GREEN}▁{STOP}{BLENDED}▄{STOP}{RED}█{STOP}"
+    assert (
+        render(Sparkline([1, 2, 3], width=3))
+        == f"{GREEN}▁{STOP}{BLENDED}▄{STOP}{RED}█{STOP}"
+    )

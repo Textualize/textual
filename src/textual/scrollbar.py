@@ -92,7 +92,6 @@ class ScrollBarRender:
         back_color: Color = Color.parse("#555555"),
         bar_color: Color = Color.parse("bright_magenta"),
     ) -> Segments:
-
         if vertical:
             bars = ["▁", "▂", "▃", "▄", "▅", "▆", "▇", " "]
         else:
@@ -113,8 +112,14 @@ class ScrollBarRender:
         if window_size and size and virtual_size and size != virtual_size:
             step_size = virtual_size / size
 
+            thumb_size = window_size / step_size * len_bars
+
+            if thumb_size < len_bars:
+                virtual_size += step_size
+                step_size = virtual_size / size
+
             start = int(position / step_size * len_bars)
-            end = start + max(len_bars, int(ceil(window_size / step_size * len_bars)))
+            end = start + max(len_bars, ceil(thumb_size))
 
             start_index, start_bar = divmod(max(0, start), len_bars)
             end_index, end_bar = divmod(max(0, end), len_bars)
@@ -190,7 +195,6 @@ class ScrollBarRender:
 
 @rich.repr.auto
 class ScrollBar(Widget):
-
     renderer: ClassVar[Type[ScrollBarRender]] = ScrollBarRender
     """The class used for rendering scrollbars.
     This can be overriden and set to a ScrollBarRender-derived class
@@ -248,6 +252,7 @@ class ScrollBar(Widget):
             yield "thickness", self.thickness
 
     def render(self) -> RenderableType:
+        assert self.parent is not None
         styles = self.parent.styles
         if self.grabbed:
             background = styles.scrollbar_background_active
@@ -260,11 +265,25 @@ class ScrollBar(Widget):
             color = styles.scrollbar_color
         color = background + color
         scrollbar_style = Style.from_color(color.rich_color, background.rich_color)
+        return self._render_bar(scrollbar_style)
+
+    def _render_bar(self, scrollbar_style: Style) -> RenderableType:
+        """Get a renderable for the scrollbar with given style.
+
+        Args:
+            scrollbar_style: Scrollbar style.
+
+        Returns:
+            Scrollbar renderable.
+        """
+        window_size = (
+            self.window_size if self.window_size < self.window_virtual_size else 0
+        )
+        virtual_size = self.window_virtual_size
+
         return self.renderer(
-            virtual_size=self.window_virtual_size,
-            window_size=(
-                self.window_size if self.window_size < self.window_virtual_size else 0
-            ),
+            virtual_size=ceil(virtual_size),
+            window_size=ceil(window_size),
             position=self.position,
             thickness=self.thickness,
             vertical=self.vertical,
@@ -282,10 +301,12 @@ class ScrollBar(Widget):
         self.mouse_over = False
 
     async def action_scroll_down(self) -> None:
-        await self.emit(ScrollDown(self) if self.vertical else ScrollRight(self))
+        await self.post_message(
+            ScrollDown(self) if self.vertical else ScrollRight(self)
+        )
 
     async def action_scroll_up(self) -> None:
-        await self.emit(ScrollUp(self) if self.vertical else ScrollLeft(self))
+        await self.post_message(ScrollUp(self) if self.vertical else ScrollLeft(self))
 
     def action_grab(self) -> None:
         self.capture_mouse()
@@ -311,22 +332,34 @@ class ScrollBar(Widget):
             x: float | None = None
             y: float | None = None
             if self.vertical:
+                size = self.size.height
+                virtual_size = self.window_virtual_size
+                step_size = virtual_size / size
+                thumb_size = self.window_size / step_size
+                if thumb_size < 1:
+                    virtual_size = ceil(virtual_size + step_size)
                 y = round(
                     self.grabbed_position
                     + (
                         (event.screen_y - self.grabbed.y)
-                        * (self.window_virtual_size / self.window_size)
+                        * (virtual_size / self.window_size)
                     )
                 )
             else:
+                size = self.size.width
+                virtual_size = self.window_virtual_size
+                step_size = virtual_size / size
+                thumb_size = self.window_size / step_size
+                if thumb_size < 1:
+                    virtual_size = ceil(virtual_size + step_size)
                 x = round(
                     self.grabbed_position
                     + (
                         (event.screen_x - self.grabbed.x)
-                        * (self.window_virtual_size / self.window_size)
+                        * (virtual_size / self.window_size)
                     )
                 )
-            await self.emit(ScrollTo(self, x=x, y=y))
+            await self.post_message(ScrollTo(self, x=x, y=y))
         event.stop()
 
     async def _on_click(self, event: events.Click) -> None:

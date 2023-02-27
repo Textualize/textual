@@ -4,8 +4,8 @@ from datetime import datetime
 
 from rich.text import Text
 
+from ..reactive import Reactive
 from ..widget import Widget
-from ..reactive import Reactive, watch
 
 
 class HeaderIcon(Widget):
@@ -100,9 +100,9 @@ class Header(Widget):
     }
     """
 
-    tall = Reactive(False)
-
     DEFAULT_CLASSES = ""
+
+    tall = Reactive(False)
 
     def __init__(
         self,
@@ -133,5 +133,5 @@ class Header(Widget):
         def set_sub_title(sub_title: str) -> None:
             self.query_one(HeaderTitle).sub_text = sub_title
 
-        watch(self.app, "title", set_title)
-        watch(self.app, "sub_title", set_sub_title)
+        self.watch(self.app, "title", set_title)
+        self.watch(self.app, "sub_title", set_sub_title)

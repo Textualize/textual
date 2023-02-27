@@ -3,11 +3,11 @@ from __future__ import annotations
 from collections import defaultdict
 from fractions import Fraction
 from operator import attrgetter
-from typing import Sequence, TYPE_CHECKING
+from typing import TYPE_CHECKING, Sequence
 
-from .geometry import Region, Size, Spacing
 from ._layout import DockArrangeResult, WidgetPlacement
 from ._partition import partition
+from .geometry import Region, Size, Spacing
 
 if TYPE_CHECKING:
     from .widget import Widget
@@ -128,4 +128,4 @@ def arrange(
 
         placements.extend(layout_placements)
 
-    return placements, arrange_widgets, scroll_spacing
+    return DockArrangeResult(placements, arrange_widgets, scroll_spacing)

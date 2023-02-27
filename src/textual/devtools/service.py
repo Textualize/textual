@@ -2,25 +2,24 @@
 from __future__ import annotations
 
 import asyncio
-import base64
 import json
 import pickle
 from json import JSONDecodeError
-from typing import cast
+from typing import Any, cast
 
+import msgpack
 from aiohttp import WSMessage, WSMsgType
 from aiohttp.abc import Request
 from aiohttp.web_ws import WebSocketResponse
 from rich.console import Console
 from rich.markup import escape
-import msgpack
 
 from textual._log import LogGroup
 from textual._time import time
 from textual.devtools.renderables import (
+    DevConsoleHeader,
     DevConsoleLog,
     DevConsoleNotice,
-    DevConsoleHeader,
 )
 
 QUEUEABLE_TYPES = {"client_log", "client_spillover"}
@@ -232,18 +231,16 @@ class ClientHandler:
             )
         try:
             await self.service.send_server_info(client_handler=self)
-            async for message in self.websocket:
-                message = cast(WSMessage, message)
-
-                if message.type in (WSMsgType.TEXT, WSMsgType.BINARY):
-
+            async for websocket_message in self.websocket:
+                if websocket_message.type in (WSMsgType.TEXT, WSMsgType.BINARY):
+                    message: dict[str, Any]
                     try:
-                        if isinstance(message.data, bytes):
-                            message = msgpack.unpackb(message.data)
+                        if isinstance(websocket_message.data, bytes):
+                            message = msgpack.unpackb(websocket_message.data)
                         else:
-                            message = json.loads(message.data)
+                            message = json.loads(websocket_message.data)
                     except JSONDecodeError:
-                        self.service.console.print(escape(str(message.data)))
+                        self.service.console.print(escape(str(websocket_message.data)))
                         continue
 
                     type = message.get("type")
@@ -254,7 +251,7 @@ class ClientHandler:
                         and not self.service.shutdown_event.is_set()
                     ):
                         await self.incoming_queue.put(message)
-                elif message.type == WSMsgType.ERROR:
+                elif websocket_message.type == WSMsgType.ERROR:
                     self.service.console.print(
                         DevConsoleNotice("Websocket error occurred", level="error")
                     )

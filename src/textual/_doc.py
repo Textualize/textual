@@ -2,14 +2,13 @@ from __future__ import annotations
 
 import hashlib
 import os
-from pathlib import Path
 import shlex
+from pathlib import Path
 from typing import Iterable
 
+from textual._import_app import import_app
 from textual.app import App
 from textual.pilot import Pilot
-from textual._import_app import import_app
-
 
 SCREENSHOT_CACHE = ".screenshot_cache"
 
@@ -100,7 +99,10 @@ def take_svg_screenshot(
     async def auto_pilot(pilot: Pilot) -> None:
         app = pilot.app
         await pilot.press(*press)
+        await pilot.wait_for_scheduled_animations()
+        await pilot.pause()
         svg = app.export_screenshot(title=title)
+
         app.exit(svg)
 
     svg = app.run(

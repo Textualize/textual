@@ -1,5 +1,7 @@
 import pytest
-from textual.widgets import Tree, TreeNode
+
+from textual.widgets import Tree
+from textual.widgets.tree import TreeNode
 
 
 def label_of(node: TreeNode[None]):

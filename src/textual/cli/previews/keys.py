@@ -1,13 +1,13 @@
-from rich.panel import Panel
+from __future__ import annotations
 
+from rich.panel import Panel
 from rich.text import Text
 
-from textual.app import App, ComposeResult
-from textual.reactive import var, Reactive
 from textual import events
+from textual.app import App, ComposeResult
 from textual.containers import Horizontal
+from textual.reactive import Reactive, var
 from textual.widgets import Button, Header, TextLog
-
 
 INSTRUCTIONS = """\
 [u]Press some keys![/]

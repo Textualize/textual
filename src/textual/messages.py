@@ -1,12 +1,12 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 import rich.repr
 
-from .geometry import Region
 from ._types import CallbackType
+from .geometry import Region
 from .message import Message
-
 
 if TYPE_CHECKING:
     from .message_pump import MessagePump
@@ -45,12 +45,24 @@ class Update(Message, verbose=True):
 
 @rich.repr.auto
 class Layout(Message, verbose=True):
+    """Sent by Textual when a layout is required."""
+
     def can_replace(self, message: Message) -> bool:
         return isinstance(message, Layout)
 
 
 @rich.repr.auto
+class UpdateScroll(Message, verbose=True):
+    """Sent by Textual when a scroll update is required."""
+
+    def can_replace(self, message: Message) -> bool:
+        return isinstance(message, UpdateScroll)
+
+
+@rich.repr.auto
 class InvokeLater(Message, verbose=True, bubble=False):
+    """Sent by Textual to invoke a callback."""
+
     def __init__(self, sender: MessagePump, callback: CallbackType) -> None:
         self.callback = callback
         super().__init__(sender)
@@ -66,15 +78,6 @@ class ScrollToRegion(Message, bubble=False):
     def __init__(self, sender: MessagePump, region: Region) -> None:
         self.region = region
         super().__init__(sender)
-
-
-@rich.repr.auto
-class StylesUpdated(Message, verbose=True):
-    def __init__(self, sender: MessagePump) -> None:
-        super().__init__(sender)
-
-    def can_replace(self, message: Message) -> bool:
-        return isinstance(message, StylesUpdated)
 
 
 class Prompt(Message, no_dispatch=True):

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import deque
-from typing import Iterable, Iterator, TypeVar, overload, TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterable, Iterator, TypeVar, overload
 
 if TYPE_CHECKING:
     from textual.dom import DOMNode

@@ -1,24 +1,21 @@
 """Simple version of 5x5, developed for/with Textual."""
 
+from __future__ import annotations
+
 from pathlib import Path
-from typing import cast
-import sys
+from typing import TYPE_CHECKING, cast
 
-if sys.version_info >= (3, 8):
-    from typing import Final
-else:
-    from typing_extensions import Final
-
-from textual.containers import Horizontal
 from textual.app import App, ComposeResult
-from textual.screen import Screen
-from textual.widget import Widget
-from textual.widgets import Footer, Button, Label
+from textual.binding import Binding
+from textual.containers import Horizontal
 from textual.css.query import DOMQuery
 from textual.reactive import reactive
-from textual.binding import Binding
+from textual.screen import Screen
+from textual.widget import Widget
+from textual.widgets import Button, Footer, Label, Markdown
 
-from rich.markdown import Markdown
+if TYPE_CHECKING:
+    from typing_extensions import Final
 
 
 class Help(Screen):
@@ -33,7 +30,7 @@ class Help(Screen):
         Returns:
             ComposeResult: The result of composing the help screen.
         """
-        yield Label(Markdown(Path(__file__).with_suffix(".md").read_text()))
+        yield Markdown(Path(__file__).with_suffix(".md").read_text())
 
 
 class WinnerMessage(Label):
@@ -90,11 +87,10 @@ class GameHeader(Widget):
         Returns:
             ComposeResult: The result of composing the game header.
         """
-        yield Horizontal(
-            Label(self.app.title, id="app-title"),
-            Label(id="moves"),
-            Label(id="progress"),
-        )
+        with Horizontal():
+            yield Label(self.app.title, id="app-title")
+            yield Label(id="moves")
+            yield Label(id="progress")
 
     def watch_moves(self, moves: int):
         """Watch the moves reactive and update when it changes.
@@ -195,8 +191,7 @@ class Game(Screen):
         Args:
             playable (bool): Should the game currently be playable?
         """
-        for cell in self.query(GameCell):
-            cell.disabled = not playable
+        self.query_one(GameGrid).disabled = not playable
 
     def cell(self, row: int, col: int) -> GameCell:
         """Get the cell at a given location.

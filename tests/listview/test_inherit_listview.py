@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.widgets import ListView, ListItem, Label
+from textual.widgets import Label, ListItem, ListView
 
 
 class MyListView(ListView):
@@ -31,10 +31,8 @@ async def test_empty_inherited_list_view() -> None:
     """An empty self-populating inherited ListView should work as expected."""
     async with ListViewApp().run_test() as pilot:
         await pilot.press("tab")
-        await pilot.pause(2 / 100)
         assert pilot.app.query_one(MyListView).index is None
         await pilot.press("down")
-        await pilot.pause(2 / 100)
         assert pilot.app.query_one(MyListView).index is None
 
 
@@ -42,8 +40,6 @@ async def test_populated_inherited_list_view() -> None:
     """A self-populating inherited ListView should work as normal."""
     async with ListViewApp(30).run_test() as pilot:
         await pilot.press("tab")
-        await pilot.pause(2 / 100)
         assert pilot.app.query_one(MyListView).index == 0
         await pilot.press("down")
-        await pilot.pause(2 / 100)
         assert pilot.app.query_one(MyListView).index == 1
