@@ -39,7 +39,7 @@ class _TreeLine(Generic[TreeDataType]):
 
     @property
     def node(self) -> TreeNode[TreeDataType]:
-        """TreeNode: The node associated with this line."""
+        """The node associated with this line."""
         return self.path[-1]
 
     def _get_guide_width(self, guide_depth: int, show_root: bool) -> int:
@@ -105,17 +105,17 @@ class TreeNode(Generic[TreeDataType]):
 
     @property
     def children(self) -> TreeNodes[TreeDataType]:
-        """TreeNodes[TreeDataType]: The child nodes of a TreeNode."""
+        """The child nodes of a TreeNode."""
         return TreeNodes(self._children)
 
     @property
     def line(self) -> int:
-        """int: Get the line number for this node, or -1 if it is not displayed."""
+        """Get the line number for this node, or -1 if it is not displayed."""
         return self._line
 
     @property
     def _hover(self) -> bool:
-        """bool: Check if the mouse is over the node."""
+        """Check if the mouse is over the node."""
         return self._hover_
 
     @_hover.setter
@@ -125,7 +125,7 @@ class TreeNode(Generic[TreeDataType]):
 
     @property
     def _selected(self) -> bool:
-        """bool: Check if the node is selected."""
+        """Check if the node is selected."""
         return self._selected_
 
     @_selected.setter
@@ -135,22 +135,22 @@ class TreeNode(Generic[TreeDataType]):
 
     @property
     def id(self) -> NodeID:
-        """NodeID: Get the node ID."""
+        """Get the node ID."""
         return self._id
 
     @property
     def parent(self) -> TreeNode[TreeDataType] | None:
-        """TreeNode[TreeDataType] | None: The parent of the node."""
+        """The parent of the node."""
         return self._parent
 
     @property
     def is_expanded(self) -> bool:
-        """bool: Check if the node is expanded."""
+        """Check if the node is expanded."""
         return self._expanded
 
     @property
     def is_last(self) -> bool:
-        """bool: Check if this is the last child."""
+        """Check if this is the last child."""
         if self._parent is None:
             return True
         return bool(
@@ -159,7 +159,7 @@ class TreeNode(Generic[TreeDataType]):
 
     @property
     def allow_expand(self) -> bool:
-        """bool: Check if the node is allowed to expand."""
+        """Check if the node is allowed to expand."""
         return self._allow_expand
 
     @allow_expand.setter
@@ -227,7 +227,7 @@ class TreeNode(Generic[TreeDataType]):
 
     @property
     def label(self) -> TextType:
-        """TextType: The label for the node."""
+        """The label for the node."""
         return self._label
 
     @label.setter
@@ -368,17 +368,17 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     """
 
     show_root = reactive(True)
-    """bool: Show the root of the tree."""
+    """Show the root of the tree."""
     hover_line = var(-1)
-    """int: The line number under the mouse pointer, or -1 if not under the mouse pointer."""
+    """The line number under the mouse pointer, or -1 if not under the mouse pointer."""
     cursor_line = var(-1)
-    """int: The line with the cursor, or -1 if no cursor."""
+    """The line with the cursor, or -1 if no cursor."""
     show_guides = reactive(True)
-    """bool: Enable display of tree guide lines."""
+    """Enable display of tree guide lines."""
     guide_depth = reactive(4, init=False)
-    """int: The indent depth of tree nodes."""
+    """The indent depth of tree nodes."""
     auto_expand = var(True)
-    """bool: Auto expand tree nodes when clicked."""
+    """Auto expand tree nodes when clicked."""
 
     LINES: dict[str, tuple[str, str, str, str]] = {
         "default": (
@@ -490,12 +490,12 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
     @property
     def cursor_node(self) -> TreeNode[TreeDataType] | None:
-        """TreeNode | Node: The currently selected node, or ``None`` if no selection."""
+        """The currently selected node, or ``None`` if no selection."""
         return self._cursor_node
 
     @property
     def last_line(self) -> int:
-        """int: the index of the last line."""
+        """The index of the last line."""
         return len(self._tree_lines) - 1
 
     def process_label(self, label: TextType):
