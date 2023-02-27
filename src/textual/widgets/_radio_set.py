@@ -133,7 +133,7 @@ class RadioSet(Container):
 
     @property
     def pressed_button(self) -> RadioButton | None:
-        """The currently-pressed button, or `None` none are pressed."""
+        """The currently-pressed button, or `None` if none are pressed."""
         try:
             return self.query_one("RadioButton.-on", RadioButton)
         except QueryError:
