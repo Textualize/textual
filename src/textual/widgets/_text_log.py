@@ -160,10 +160,11 @@ class TextLog(ScrollView, can_focus=True):
         self.refresh()
 
     def render_line(self, y: int) -> Strip:
-        print("Render", self.size)
         scroll_x, scroll_y = self.scroll_offset
         line = self._render_line(scroll_y + y, scroll_x, self.size.width)
-        strip = Strip(Segment.apply_style(line, self.rich_style), self.size.width)
+
+        strip = Strip(Segment.apply_style(line, self.rich_style), line.cell_length)
+
         return strip
 
     def render_lines(self, crop: Region) -> list[Strip]:
@@ -175,7 +176,13 @@ class TextLog(ScrollView, can_focus=True):
         Returns:
             A list of list of segments
         """
+        print(self.virtual_size)
+        print(self.vertical_scrollbar.window_size)
+        print(self.vertical_scrollbar.virtual_size)
+        self.log(scroll_x=self.scroll_x, max_scroll_x=self.max_scroll_x)
+        self.log(scroll_y=self.scroll_y, max_scroll_y=self.max_scroll_y)
         lines = self._styles_cache.render_widget(self, crop)
+
         return lines
 
     def _render_line(self, y: int, scroll_x: int, width: int) -> Strip:
@@ -193,5 +200,4 @@ class TextLog(ScrollView, can_focus=True):
         )
 
         self._line_cache[key] = line
-        print(line)
         return line

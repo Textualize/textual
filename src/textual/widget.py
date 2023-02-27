@@ -903,22 +903,12 @@ class Widget(DOMNode):
     @property
     def max_scroll_x(self) -> int:
         """The maximum value of `scroll_x`."""
-        return max(
-            0,
-            self.virtual_size.width
-            - self.container_size.width
-            + self.scrollbar_size_vertical,
-        )
+        return max(0, self.virtual_size.width - self.size.width)
 
     @property
     def max_scroll_y(self) -> int:
         """The maximum value of `scroll_y`."""
-        return max(
-            0,
-            self.virtual_size.height
-            - self.container_size.height
-            + self.scrollbar_size_horizontal,
-        )
+        return max(0, self.virtual_size.height - self.size.height)
 
     @property
     def scrollbar_corner(self) -> ScrollBarCorner:
@@ -975,10 +965,15 @@ class Widget(DOMNode):
         if not self.is_scrollable or not self.container_size:
             return
 
+        print("----", self)
+        self.log(CONTAINER_SIZE=self.container_size)
+        self.log(VIRTUAL_SIZE=self.virtual_size)
+        self.log(SIZE=self.size)
         styles = self.styles
         overflow_x = styles.overflow_x
         overflow_y = styles.overflow_y
-        width, height = self.container_size
+        self.log(OVERFLOW_X=overflow_x, OVERFLOW_Y=overflow_y)
+        width, height = self.size
 
         show_horizontal = self.show_horizontal_scrollbar
         if overflow_x == "hidden":
@@ -1121,9 +1116,7 @@ class Widget(DOMNode):
         Returns:
             Screen region that contains a widget's content.
         """
-        content_region = self.region.shrink(self.styles.gutter).shrink(
-            self.scrollbar_gutter
-        )
+        content_region = self.region.shrink(self.styles.gutter)
         return content_region
 
     @property
@@ -2232,19 +2225,26 @@ class Widget(DOMNode):
             virtual_size: Virtual size.
         """
         self._refresh_scrollbars()
-        width, height = self.container_size
+        width, height = self.size
 
         if self.show_vertical_scrollbar:
             self.vertical_scrollbar.window_virtual_size = virtual_size.height
-            self.vertical_scrollbar.window_size = (
-                height - self.scrollbar_size_horizontal
-            )
+            self.vertical_scrollbar.window_size = height
         if self.show_horizontal_scrollbar:
             self.horizontal_scrollbar.window_virtual_size = virtual_size.width
-            self.horizontal_scrollbar.window_size = width - self.scrollbar_size_vertical
+            self.horizontal_scrollbar.window_size = width
 
         self.scroll_x = self.validate_scroll_x(self.scroll_x)
         self.scroll_y = self.validate_scroll_y(self.scroll_y)
+
+        print("SCROLL UPDATE", self)
+        print("sizes", self.scrollbar_size_horizontal, self.scrollbar_size_vertical)
+        self.log(self.show_horizontal_scrollbar, self.show_vertical_scrollbar)
+        if (
+            self.horizontal_scrollbar._repaint_required
+            or self.vertical_scrollbar._repaint_required
+        ):
+            self._refresh_scrollbars()
 
     def _render_content(self) -> None:
         """Render all lines."""

@@ -519,9 +519,12 @@ class Compositor:
                         )
 
                         layer_order -= 1
+
+                    region = child_region
+
                 else:
-                    pass
-                    # region = child_region
+                    region = child_region
+                # total_region = region.reset_offset
 
                 if visible:
                     # Add any scrollbars
@@ -538,7 +541,7 @@ class Compositor:
                                 chrome_region,
                             )
 
-                    map[widget] = _MapGeometry(
+                    map[widget] = MapGeometry(
                         region + layout_offset,
                         order,
                         clip,
@@ -546,10 +549,12 @@ class Compositor:
                         container_size,
                         virtual_region,
                     )
+                    widget.log(widget)
+                    widget.log(map[widget])
 
             elif visible:
                 # Add the widget to the map
-                map[widget] = _MapGeometry(
+                map[widget] = MapGeometry(
                     region + layout_offset,
                     order,
                     clip,
