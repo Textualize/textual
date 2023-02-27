@@ -7,16 +7,15 @@ class CheckboxApp(App[None]):
     CSS_PATH = "checkbox.css"
 
     def compose(self) -> ComposeResult:
-        yield Vertical(
-            Checkbox("Arrakis :sweat:"),
-            Checkbox("Caladan"),
-            Checkbox("Chusuk"),
-            Checkbox("[b]Giedi Prime[/b]"),
-            Checkbox("[magenta]Ginaz[/]"),
-            Checkbox("Grumman", True),
-            Checkbox("Kaitain", id="initial_focus"),
-            Checkbox("Novebruns", True),
-        )
+        with Vertical():
+            yield Checkbox("Arrakis :sweat:")
+            yield Checkbox("Caladan")
+            yield Checkbox("Chusuk")
+            yield Checkbox("[b]Giedi Prime[/b]")
+            yield Checkbox("[magenta]Ginaz[/]")
+            yield Checkbox("Grumman", True)
+            yield Checkbox("Kaitain", id="initial_focus")
+            yield Checkbox("Novebruns", True)
 
     def on_mount(self):
         self.query_one("#initial_focus", Checkbox).focus()
