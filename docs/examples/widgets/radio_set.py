@@ -7,22 +7,23 @@ class RadioChoicesApp(App[None]):
     CSS_PATH = "radio_set.css"
 
     def compose(self) -> ComposeResult:
-        yield Horizontal(
-            RadioSet(
-                RadioButton("Battlestar Galactica"),
-                RadioButton("Dune 1984"),
-                RadioButton("Dune 2021"),
-                RadioButton("Serenity", value=True),
-                RadioButton("Star Trek: The Motion Picture"),
-                RadioButton("Star Wars: A New Hope"),
-                RadioButton("The Last Starfighter"),
-                RadioButton(
+        with Horizontal():
+            # A RadioSet built up from RadioButtons.
+            with RadioSet():
+                yield RadioButton("Battlestar Galactica")
+                yield RadioButton("Dune 1984")
+                yield RadioButton("Dune 2021")
+                yield RadioButton("Serenity", value=True)
+                yield RadioButton("Star Trek: The Motion Picture")
+                yield RadioButton("Star Wars: A New Hope")
+                yield RadioButton("The Last Starfighter")
+                yield RadioButton(
                     "Total Recall :backhand_index_pointing_right: :red_circle:",
                     id="focus_me",
-                ),
-                RadioButton("Wing Commander"),
-            ),
-            RadioSet(
+                )
+                yield RadioButton("Wing Commander")
+            # A RadioSet built up from a collection of strings.
+            yield RadioSet(
                 "Amanda",
                 "Connor MacLeod",
                 "Duncan MacLeod",
@@ -32,8 +33,7 @@ class RadioChoicesApp(App[None]):
                 "Methos",
                 "Rachel Ellenstein",
                 "Ramírez",
-            ),
-        )
+            )
 
     def on_mount(self) -> None:
         self.query_one("#focus_me", RadioButton).focus()
