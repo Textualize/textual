@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+- Added `Checkbox` https://github.com/Textualize/textual/pull/1872
+- Added `RadioButton` https://github.com/Textualize/textual/pull/1872
+- Added `RadioSet` https://github.com/Textualize/textual/pull/1872
+
 ### Fixed
 
 - Fix exceptions in watch methods being hidden on startup https://github.com/Textualize/textual/issues/1886
