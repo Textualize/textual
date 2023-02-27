@@ -11,7 +11,7 @@ class RadioButton(ToggleButton):
     """
 
     BUTTON_INNER = "⏺"
-    """The character used to for the inside of the button."""
+    """The character used for the inside of the button."""
 
     class Changed(ToggleButton.Changed):
         """Posted when the value of the radio button changes.
