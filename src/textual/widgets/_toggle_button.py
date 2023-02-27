@@ -132,14 +132,9 @@ class ToggleButton(Static, can_focus=True):
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._button_first = button_first
-        # WORKAROUND: I would `self.value = value` here but I don't want the
-        # Changed event to fire off on the way in. I only want `Changed`
-        # when it has *changed*, not when it's been set to the initial value
-        # the user wants. This can be properly fixed if the `prevent`
-        # context manager can be done.
-        self._reactive_value = value
-        # WORKAROUND: See above. This needs to be here for now too.
-        self.set_class(self.value, "-on")
+        # NOTE: Don't send a Changed message in response to the initial set.
+        with self.prevent(self.Changed):
+            self.value = value
         self._label = Text.from_markup(label) if isinstance(label, str) else label
         try:
             # Only use the first line if it's a multi-line label.
