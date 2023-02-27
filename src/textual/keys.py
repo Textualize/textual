@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import unicodedata
 from enum import Enum
-from typing import TYPE_CHECKING
 
 
 # Adapted from prompt toolkit https://github.com/prompt-toolkit/python-prompt-toolkit/blob/master/prompt_toolkit/keys.py
@@ -13,6 +12,10 @@ class Keys(str, Enum):  # type: ignore[no-redef]
     Note that this is an "StrEnum", all values can be compared against
     strings.
     """
+
+    @property
+    def value(self) -> str:
+        return super().value
 
     Escape = "escape"  # Also Control-[
     ShiftEscape = "shift+escape"
@@ -194,18 +197,6 @@ class Keys(str, Enum):  # type: ignore[no-redef]
     ShiftControlRight = ControlShiftRight
     ShiftControlHome = ControlShiftHome
     ShiftControlEnd = ControlShiftEnd
-
-
-# We want to make sure that mypy knows that the values of Keys will always be strings.
-# Typing is verbose here because the attribute `Enum.value` was special-cased to have
-# very different behaviours in `Keys.value` and `Keys.SomeKey.value`.
-if TYPE_CHECKING:
-    from enum import property as enum_property
-
-    class Keys(str, Enum):  # type: ignore[no-redef]
-        @enum_property
-        def value(self) -> str:
-            ...
 
 
 # Unicode db contains some obscure names

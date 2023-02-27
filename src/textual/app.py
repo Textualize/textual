@@ -57,7 +57,7 @@ from ._context import active_app
 from ._event_broker import NoHandler, extract_handler_actions
 from ._path import _make_path_object_relative
 from ._wait import wait_for_idle
-from .actions import Action, SkipAction
+from .actions import ActionParseResult, SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding, Bindings
 from .css.query import NoMatches
@@ -1734,19 +1734,17 @@ class App(Generic[ReturnType], DOMNode):
         if not widgets:
             return []
 
-        widget_list = list(widgets)
-
-        new_widgets: Iterable[Widget]
+        widget_list: Iterable[Widget]
         if before is not None or after is not None:
             # There's a before or after, which means there's going to be an
             # insertion, so make it easier to get the new things in the
             # correct order.
-            new_widgets = reversed(widget_list)
+            widget_list = reversed(widgets)
         else:
-            new_widgets = widget_list
+            widget_list = widgets
 
         apply_stylesheet = self.stylesheet.apply
-        for widget in new_widgets:
+        for widget in widget_list:
             if not isinstance(widget, Widget):
                 raise AppError(f"Can't register {widget!r}; expected a Widget instance")
             if widget not in self._registry:
@@ -1803,15 +1801,14 @@ class App(Generic[ReturnType], DOMNode):
     async def _close_all(self) -> None:
         """Close all message pumps."""
 
-        screen: Screen | Callable[[], Screen]  # Explicit type to reuse variable below.
-        # Close all screens on the stack
-        for screen in reversed(self._screen_stack):
-            if screen._running:
-                await self._prune_node(screen)
+        # Close all screens on the stack.
+        for stack_screen in reversed(self._screen_stack):
+            if stack_screen._running:
+                await self._prune_node(stack_screen)
 
         self._screen_stack.clear()
 
-        # Close pre-defined screens
+        # Close pre-defined screens.
         for screen in self.SCREENS.values():
             if isinstance(screen, Screen) and screen._running:
                 await self._prune_node(screen)
@@ -1977,7 +1974,7 @@ class App(Generic[ReturnType], DOMNode):
 
     async def action(
         self,
-        action: str | Action,
+        action: str | ActionParseResult,
         default_namespace: object | None = None,
     ) -> bool:
         """Perform an action.

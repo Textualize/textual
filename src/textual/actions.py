@@ -5,7 +5,7 @@ import re
 
 from typing_extensions import Any, TypeAlias
 
-Action: TypeAlias = "tuple[str, tuple[Any, ...]]"
+ActionParseResult: TypeAlias = "tuple[str, tuple[Any, ...]]"
 """An action is its name and the arbitrary tuple of its parameters."""
 
 
@@ -20,7 +20,7 @@ class ActionError(Exception):
 re_action_params = re.compile(r"([\w\.]+)(\(.*?\))")
 
 
-def parse(action: str) -> Action:
+def parse(action: str) -> ActionParseResult:
     """Parses an action string.
 
     Args:

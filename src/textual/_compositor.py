@@ -440,7 +440,7 @@ class Compositor:
 
             Args:
                 widget: The widget to add.
-                virtual_region: TODO.
+                virtual_region: The Widget region relative to it's container.
                 region: The region the widget will occupy.
                 order: Painting order information.
                 layer_order: The order of the widget in its layer.
@@ -834,7 +834,7 @@ class Compositor:
         # Maps each cut on to a list of segments
         cuts = self.cuts
 
-        # dict.fromkeys is a callable which takes a list of ints returns a dict which maps ints on to a list of Segments or None.
+        # dict.fromkeys is a callable which takes a list of ints returns a dict which maps ints onto a list of Segments or None.
         fromkeys = cast("Callable[[list[int]], dict[int, Strip | None]]", dict.fromkeys)
         chops: list[dict[int, Strip | None]]
         chops = [fromkeys(cut_set[:-1]) for cut_set in cuts]
