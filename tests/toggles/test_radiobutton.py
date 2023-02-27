@@ -35,7 +35,7 @@ async def test_radio_button_initial_state() -> None:
 
 
 async def test_radio_button_toggle() -> None:
-    """The states of the radio buttons after they've been toggled."""
+    """Test the status of the radio buttons after they've been toggled."""
     async with RadioButtonApp().run_test() as pilot:
         for box in pilot.app.query(RadioButton):
             box.toggle()
