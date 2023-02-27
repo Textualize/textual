@@ -50,3 +50,17 @@ async def test_radio_sets_toggle():
             ("from_buttons", 0, [True, False, False]),
             ("from_strings", 2, [False, False, True]),
         ]
+
+
+class BadRadioSetApp(App[None]):
+    def compose(self) -> ComposeResult:
+        with RadioSet():
+            for n in range(20):
+                yield RadioButton(str(n), True)
+
+
+async def test_there_can_only_be_one():
+    """Adding multiple 'on' buttons should result in only one on."""
+    async with BadRadioSetApp().run_test() as pilot:
+        assert len(pilot.app.query("RadioButton.-on")) == 1
+        assert pilot.app.query_one(RadioSet).pressed_index == 0
