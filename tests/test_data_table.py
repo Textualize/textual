@@ -35,6 +35,7 @@ class DataTableApp(App):
         "ColumnHighlighted",
         "ColumnSelected",
         "HeaderSelected",
+        "RowLabelSelected",
     }
 
     def __init__(self):
@@ -75,12 +76,12 @@ async def test_datatable_message_emission():
         # therefore no highlighted cells), but then a row was added, and
         # so the cell at (0, 0) became highlighted.
         expected_messages.append("CellHighlighted")
-        await wait_for_idle(0)
+        await pilot.pause()
         assert app.message_names == expected_messages
 
         # Pressing Enter when the cursor is on a cell emits a CellSelected
         await pilot.press("enter")
-        await wait_for_idle(0)
+        await pilot.pause()
         expected_messages.append("CellSelected")
         assert app.message_names == expected_messages
 
@@ -93,12 +94,12 @@ async def test_datatable_message_emission():
         # Switch over to the row cursor... should emit a `RowHighlighted`
         table.cursor_type = "row"
         expected_messages.append("RowHighlighted")
-        await wait_for_idle(0)
+        await pilot.pause()
         assert app.message_names == expected_messages
 
         # Select the row...
         await pilot.press("enter")
-        await wait_for_idle(0)
+        await pilot.pause()
         expected_messages.append("RowSelected")
         assert app.message_names == expected_messages
 
@@ -106,20 +107,20 @@ async def test_datatable_message_emission():
         # Switching to the column cursor emits a `ColumnHighlighted`
         table.cursor_type = "column"
         expected_messages.append("ColumnHighlighted")
-        await wait_for_idle(0)
+        await pilot.pause()
         assert app.message_names == expected_messages
 
         # Select the column...
         await pilot.press("enter")
         expected_messages.append("ColumnSelected")
-        await wait_for_idle(0)
+        await pilot.pause()
         assert app.message_names == expected_messages
 
         # NONE CURSOR
         # No messages get emitted at all...
         table.cursor_type = "none"
         await pilot.press("up", "down", "left", "right", "enter")
-        await wait_for_idle(0)
+        await pilot.pause()
         # No new messages since cursor not visible
         assert app.message_names == expected_messages
 
@@ -129,7 +130,7 @@ async def test_datatable_message_emission():
         table.show_cursor = False
         table.cursor_type = "cell"
         await pilot.press("up", "down", "left", "right", "enter")
-        await wait_for_idle(0)
+        await pilot.pause()
         # No new messages since show_cursor = False
         assert app.message_names == expected_messages
 
@@ -137,7 +138,7 @@ async def test_datatable_message_emission():
         # message should be emitted for highlighting the cell.
         table.show_cursor = True
         expected_messages.append("CellHighlighted")
-        await wait_for_idle(0)
+        await pilot.pause()
         assert app.message_names == expected_messages
 
         # Similarly for showing the cursor again when row or column
@@ -146,14 +147,14 @@ async def test_datatable_message_emission():
         table.cursor_type = "row"
         table.show_cursor = True
         expected_messages.append("RowHighlighted")
-        await wait_for_idle(0)
+        await pilot.pause()
         assert app.message_names == expected_messages
 
         table.show_cursor = False
         table.cursor_type = "column"
         table.show_cursor = True
         expected_messages.append("ColumnHighlighted")
-        await wait_for_idle(0)
+        await pilot.pause()
         assert app.message_names == expected_messages
 
         # Likewise, if the cursor_type is "none", and we change the
@@ -161,7 +162,7 @@ async def test_datatable_message_emission():
         # the cursor is still not visible to the user.
         table.cursor_type = "none"
         await pilot.press("up", "down", "left", "right", "enter")
-        await wait_for_idle(0)
+        await pilot.pause()
         assert app.message_names == expected_messages
 
 
@@ -574,14 +575,14 @@ async def test_datatable_on_click_cell_cursor():
     *and* a CellSelected message for the cell that was clicked.
     Regression test for https://github.com/Textualize/textual/issues/1723"""
     app = DataTableApp()
-    async with app.run_test():
+    async with app.run_test() as pilot:
         table = app.query_one(DataTable)
         click = make_click_event(app)
         column_key = table.add_column("ABC")
         table.add_row("123")
         row_key = table.add_row("456")
         table.on_click(event=click)
-        await wait_for_idle(0)
+        await pilot.pause()
         # There's two CellHighlighted events since a cell is highlighted on initial load,
         # then when we click, another cell is highlighted (and selected).
         assert app.message_names == [
@@ -688,9 +689,9 @@ async def test_header_selected():
     """Ensure that a HeaderSelected event gets posted when we click
     on the header in the DataTable."""
     app = DataTableApp()
-    async with app.run_test():
+    async with app.run_test() as pilot:
         table = app.query_one(DataTable)
-        column = table.add_column("number")
+        column_key = table.add_column("number")
         table.add_row(3)
         click_event = Click(
             sender=table,
@@ -698,24 +699,60 @@ async def test_header_selected():
             y=0,
             delta_x=0,
             delta_y=0,
-            button=0,
+            button=1,
             shift=False,
             meta=False,
             ctrl=False,
         )
+        await pilot.pause()
         table.on_click(click_event)
-        await wait_for_idle(0)
+        await pilot.pause()
         message: DataTable.HeaderSelected = app.messages[-1]
         assert message.sender is table
         assert message.label == Text("number")
         assert message.column_index == 0
-        assert message.column_key == column
+        assert message.column_key == column_key
 
         # Now hide the header and click in the exact same place - no additional message emitted.
         table.show_header = False
         table.on_click(click_event)
-        await wait_for_idle(0)
+        await pilot.pause()
         assert app.message_names.count("HeaderSelected") == 1
+
+
+async def test_row_label_selected():
+    """Ensure that the DataTable sends a RowLabelSelected event when
+    the user clicks on a row label."""
+    app = DataTableApp()
+    async with app.run_test() as pilot:
+        table = app.query_one(DataTable)
+        table.add_column("number")
+        row_key = table.add_row(3, label="A")
+        click_event = Click(
+            sender=table,
+            x=1,
+            y=1,
+            delta_x=0,
+            delta_y=0,
+            button=1,
+            shift=False,
+            meta=False,
+            ctrl=False,
+        )
+        await pilot.pause()
+        table.on_click(click_event)
+        await pilot.pause()
+        message: DataTable.RowLabelSelected = app.messages[-1]
+        assert message.sender is table
+        assert message.label == Text("A")
+        assert message.row_index == 0
+        assert message.row_key == row_key
+
+        # Now hide the row label and click in the same place - no additional message emitted.
+        table.show_row_labels = False
+        table.on_click(click_event)
+        await pilot.pause()
+        assert app.message_names.count("RowLabelSelected") == 1
 
 
 async def test_sort_coordinate_and_key_access():
@@ -786,7 +823,7 @@ async def test_sort_reverse_coordinate_and_key_access():
 
 async def test_cell_cursor_highlight_events():
     app = DataTableApp()
-    async with app.run_test():
+    async with app.run_test() as pilot:
         table = app.query_one(DataTable)
         column_one_key, column_two_key = table.add_columns("A", "B")
         _ = table.add_row(0, 1)
@@ -796,14 +833,14 @@ async def test_cell_cursor_highlight_events():
         table.action_cursor_up()
         table.action_cursor_left()
 
-        await wait_for_idle(0)
+        await pilot.pause()
         assert table.app.message_names == [
             "CellHighlighted"
         ]  # Initial highlight on load
 
         # Move the cursor one cell down, and check the highlighted event posted
         table.action_cursor_down()
-        await wait_for_idle(0)
+        await pilot.pause()
         assert len(table.app.messages) == 2
         latest_message: DataTable.CellHighlighted = table.app.messages[-1]
         assert isinstance(latest_message, DataTable.CellHighlighted)
@@ -813,7 +850,7 @@ async def test_cell_cursor_highlight_events():
 
         # Now move the cursor to the right, and check highlighted event posted
         table.action_cursor_right()
-        await wait_for_idle(0)
+        await pilot.pause()
         assert len(table.app.messages) == 3
         latest_message = table.app.messages[-1]
         assert latest_message.coordinate == Coordinate(1, 1)
@@ -822,7 +859,7 @@ async def test_cell_cursor_highlight_events():
 
 async def test_row_cursor_highlight_events():
     app = DataTableApp()
-    async with app.run_test():
+    async with app.run_test() as pilot:
         table = app.query_one(DataTable)
         table.cursor_type = "row"
         table.add_columns("A", "B")
@@ -835,12 +872,12 @@ async def test_row_cursor_highlight_events():
             table.action_cursor_left()
             table.action_cursor_right()
 
-        await wait_for_idle(0)
+        await pilot.pause()
         assert table.app.message_names == ["RowHighlighted"]  # Initial highlight
 
         # Move the row cursor from row 0 to row 1, check the highlighted event posted
         table.action_cursor_down()
-        await wait_for_idle(0)
+        await pilot.pause()
         assert len(table.app.messages) == 2
         latest_message: DataTable.RowHighlighted = table.app.messages[-1]
         assert isinstance(latest_message, DataTable.RowHighlighted)
@@ -849,7 +886,7 @@ async def test_row_cursor_highlight_events():
 
         # Move the row cursor back up to row 0, check the highlighted event posted
         table.action_cursor_up()
-        await wait_for_idle(0)
+        await pilot.pause()
         assert len(table.app.messages) == 3
         latest_message = table.app.messages[-1]
         assert latest_message.row_key == row_one_key
@@ -858,7 +895,7 @@ async def test_row_cursor_highlight_events():
 
 async def test_column_cursor_highlight_events():
     app = DataTableApp()
-    async with app.run_test():
+    async with app.run_test() as pilot:
         table = app.query_one(DataTable)
         table.cursor_type = "column"
         column_one_key, column_two_key = table.add_columns("A", "B")
@@ -871,13 +908,13 @@ async def test_column_cursor_highlight_events():
             table.action_cursor_up()
             table.action_cursor_down()
 
-        await wait_for_idle(0)
+        await pilot.pause()
         assert table.app.message_names == ["ColumnHighlighted"]  # Initial highlight
 
         # Move the column cursor from column 0 to column 1,
         # check the highlighted event posted
         table.action_cursor_right()
-        await wait_for_idle(0)
+        await pilot.pause()
         assert len(table.app.messages) == 2
         latest_message: DataTable.ColumnHighlighted = table.app.messages[-1]
         assert isinstance(latest_message, DataTable.ColumnHighlighted)
@@ -887,7 +924,7 @@ async def test_column_cursor_highlight_events():
         # Move the column cursor left, back to column 0,
         # check the highlighted event posted again.
         table.action_cursor_left()
-        await wait_for_idle(0)
+        await pilot.pause()
         assert len(table.app.messages) == 3
         latest_message = table.app.messages[-1]
         assert latest_message.column_key == column_one_key
