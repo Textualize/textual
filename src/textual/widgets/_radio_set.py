@@ -69,6 +69,18 @@ class RadioSet(Container):
         """The buttons within the set."""
         return cast(DOMQuery[RadioButton], self.query(RadioButton))
 
+    def on_mount(self) -> None:
+        """Perform some processing once mounted in the DOM."""
+        # It's possible for the user to pass in a collection of radio
+        # buttons, with more than one set to on. So here we check for that
+        # and, for want of a better approach, we keep the first one on and
+        # turn all the others off.
+        switched_on = self._buttons.filter(".-on")
+        if len(switched_on) > 1:
+            with self.prevent(RadioButton.Changed):
+                for button in switched_on[1:]:
+                    button.value = False
+
     class Changed(Message, bubble=True):
         """Posted when the pressed button in the set changes.
 
