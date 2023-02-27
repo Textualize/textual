@@ -15,7 +15,6 @@ from rich.text import Text
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Container, Horizontal
-from textual.message import Message, MessageTarget
 from textual.reactive import reactive
 from textual.widgets import (
     Button,
@@ -190,14 +189,6 @@ JSON_EXAMPLE = """{
 """
 
 
-class Note(Message):
-    """Sent by some demo widgets with noteworthy information."""
-
-    def __init__(self, sender: MessageTarget, note: str | Text) -> None:
-        super().__init__(sender)
-        self.note = note
-
-
 class Body(Container):
     pass
 
@@ -214,7 +205,7 @@ class DarkSwitch(Horizontal):
     def on_mount(self) -> None:
         self.watch(self.app, "dark", self.on_dark_change, init=False)
 
-    def on_dark_change(self) -> None:
+    def on_dark_change(self, dark: bool) -> None:
         self.query_one(Switch).value = self.app.dark
 
     def on_switch_changed(self, event: Switch.Changed) -> None:
@@ -227,7 +218,7 @@ class Welcome(Container):
         yield Button("Start", variant="success")
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
-        self.post_message_no_wait(Note(self, "[b magenta]Start!"))
+        self.app.add_note("[b magenta]Start!")
         self.app.query_one(".location-first").scroll_visible(duration=0.5, top=True)
 
 
@@ -239,7 +230,7 @@ class SectionTitle(Static):
     pass
 
 
-class SidebarMessage(Static):
+class Message(Static):
     pass
 
 
@@ -251,7 +242,7 @@ class Version(Static):
 class Sidebar(Container):
     def compose(self) -> ComposeResult:
         yield Title("Textual Demo")
-        yield OptionGroup(SidebarMessage(MESSAGE), Version())
+        yield OptionGroup(Message(MESSAGE), Version())
         yield DarkSwitch()
 
 
@@ -282,7 +273,7 @@ class LocationLink(Static):
 
     def on_click(self) -> None:
         self.app.query_one(self.reveal).scroll_visible(top=True, duration=0.5)
-        self.post_message_no_wait(Note(self, f"Scrolling to [b]{self.reveal}[/b]"))
+        self.app.add_note(f"Scrolling to [b]{self.reveal}[/b]")
 
 
 class LoginForm(Container):
@@ -324,8 +315,8 @@ class DemoApp(App):
 
     show_sidebar = reactive(False)
 
-    def on_note(self, event: Note) -> None:
-        self.query_one(TextLog).write(event.note)
+    def add_note(self, renderable: RenderableType) -> None:
+        self.query_one(TextLog).write(renderable)
 
     def compose(self) -> ComposeResult:
         example_css = "\n".join(Path(self.css_path[0]).read_text().splitlines()[:50])
@@ -402,7 +393,7 @@ class DemoApp(App):
             sidebar.add_class("-hidden")
 
     def on_mount(self) -> None:
-        self.post_message_no_wait(Note(self, "Textual Demo app is running"))
+        self.add_note("Textual Demo app is running")
         table = self.query_one(DataTable)
         table.add_column("Foo", width=20)
         table.add_column("Bar", width=20)
@@ -425,7 +416,7 @@ class DemoApp(App):
         self.bell()
         path = self.save_screenshot(filename, path)
         message = Text.assemble("Screenshot saved to ", (f"'{path}'", "bold green"))
-        self.post_message_no_wait(Note(self, message))
+        self.add_note(message)
         self.screen.mount(Notification(message))
 
 
