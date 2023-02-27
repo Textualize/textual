@@ -584,7 +584,9 @@ class StylesBase(ABC):
 @dataclass
 class Styles(StylesBase):
     node: DOMNode | None = None
-    _rules: RulesMap = field(default_factory=lambda: RulesMap())
+    _rules: RulesMap = field(
+        default_factory=lambda: RulesMap()
+    )  # mypy won't be happy with `default_factory=RulesMap`
     _updates: int = 0
 
     important: set[str] = field(default_factory=set)
