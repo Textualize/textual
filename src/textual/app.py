@@ -444,7 +444,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @contextmanager
     def batch_update(self) -> Generator[None, None, None]:
-        """Suspend all repaints until the end of the batch."""
+        """A context manager to suspend all repaints until the end of the batch."""
         self._begin_batch()
         try:
             yield
@@ -460,10 +460,6 @@ class App(Generic[ReturnType], DOMNode):
         self._batch_count -= 1
         assert self._batch_count >= 0, "This won't happen if you use `batch_update`"
         if not self._batch_count:
-            try:
-                self.screen.check_idle()
-            except ScreenStackError:
-                pass
             self.check_idle()
 
     def animate(
@@ -2152,6 +2148,9 @@ class App(Generic[ReturnType], DOMNode):
         for widget in pruned_remove:
             if widget.parent is not None:
                 widget.parent._nodes._remove(widget)
+
+        for node in pruned_remove:
+            node._detach()
 
         # Return the list of widgets that should end up being sent off in a
         # prune event.

@@ -707,8 +707,7 @@ class Markdown(Widget):
         )
         with self.app.batch_update():
             await self.query("MarkdownBlock").remove()
-            await self.mount(*output)
-            self.refresh(layout=True)
+            await self.mount_all(output)
 
 
 class MarkdownTableOfContents(Widget, can_focus_children=True):
