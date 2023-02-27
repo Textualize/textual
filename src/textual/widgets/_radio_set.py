@@ -127,9 +127,14 @@ class RadioSet(Container):
                     button.value = False
                     break
         else:
-            # If this leaves us with no buttons checked, disallow that.
+            # If this leaves us with no buttons checked, disallow that. Note
+            # that we stop the current event and (see below) we also prevent
+            # another Changed event being emitted. This should all be seen
+            # as a non-operation.
+            event.stop()
             if not self._buttons.filter(".-on"):
-                event.input.value = True
+                with self.prevent(RadioButton.Changed):
+                    event.input.value = True
 
     @property
     def pressed_button(self) -> RadioButton | None:
