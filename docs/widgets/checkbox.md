@@ -1,6 +1,6 @@
 # Checkbox
 
-A simple checkbox width which stores a boolean value.
+A simple checkbox widget which stores a boolean value.
 
 - [x] Focusable
 - [ ] Container
