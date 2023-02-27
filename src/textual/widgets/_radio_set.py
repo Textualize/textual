@@ -31,6 +31,32 @@ class RadioSet(Container):
     }
     """
 
+    class Changed(Message, bubble=True):
+        """Posted when the pressed button in the set changes.
+
+        This message can be handled using an `on_radio_set_changed` method.
+        """
+
+        def __init__(self, sender: RadioSet, pressed: RadioButton) -> None:
+            """Initialise the message.
+
+            Args:
+                sender: The radio set sending the message.
+                pressed: The radio button that was pressed.
+            """
+            super().__init__(sender)
+            self.input = sender
+            """A reference to the `RadioSet` that was changed."""
+            self.pressed = pressed
+            """The `RadioButton` that was pressed to make the change."""
+            # Note: it would be cleaner to use `sender.pressed_index` here,
+            # but we can't be 100% sure all of the updates have happened at
+            # this point, and so we can't go looking for the index of the
+            # pressed button via the normal route. So here we go under the
+            # hood.
+            self.index = sender._nodes.index(pressed)
+            """The index of the `RadioButton` that was pressed to make the change."""
+
     def __init__(
         self,
         *buttons: str | RadioButton,
@@ -80,32 +106,6 @@ class RadioSet(Container):
             with self.prevent(RadioButton.Changed):
                 for button in switched_on[1:]:
                     button.value = False
-
-    class Changed(Message, bubble=True):
-        """Posted when the pressed button in the set changes.
-
-        This message can be handled using an `on_radio_set_changed` method.
-        """
-
-        def __init__(self, sender: RadioSet, pressed: RadioButton) -> None:
-            """Initialise the message.
-
-            Args:
-                sender: The radio set sending the message.
-                pressed: The radio button that was pressed.
-            """
-            super().__init__(sender)
-            self.input = sender
-            """A reference to the `RadioSet` that was changed."""
-            self.pressed = pressed
-            """The `RadioButton` that was pressed to make the change."""
-            # Note: it would be cleaner to use `sender.pressed_index` here,
-            # but we can't be 100% sure all of the updates have happened at
-            # this point, and so we can't go looking for the index of the
-            # pressed button via the normal route. So here we go under the
-            # hood.
-            self.index = sender._nodes.index(pressed)
-            """The index of the `RadioButton` that was pressed to make the change."""
 
     def on_radio_button_changed(self, event: RadioButton.Changed) -> None:
         """Respond to the value of a button in the set being changed.
