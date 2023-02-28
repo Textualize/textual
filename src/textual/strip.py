@@ -10,7 +10,21 @@ from rich.style import Style, StyleType
 
 from ._cache import FIFOCache
 from ._segment_tools import index_to_cell_position
+from .constants import DEBUG
 from .filter import LineFilter
+
+
+def get_line_length(segments: Iterable[Segment]) -> int:
+    """Get the line length (total length of all segments).
+
+    Args:
+        segments: Iterable of segments.
+
+    Returns:
+        Length of line in cells.
+    """
+    _cell_len = cell_len
+    return sum(_cell_len(text) for text, _, control in segments if not control)
 
 
 @rich.repr.auto
@@ -40,6 +54,10 @@ class Strip:
         self._divide_cache: FIFOCache[tuple[int, ...], list[Strip]] = FIFOCache(4)
         self._crop_cache: FIFOCache[tuple[int, int], Strip] = FIFOCache(4)
         self._link_ids: set[str] | None = None
+
+        if DEBUG and cell_length is not None:
+            # If `cell_length` is incorrect, render will be fubar
+            assert get_line_length(self._segments) == cell_length
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._segments
@@ -106,7 +124,7 @@ class Strip:
         """Get the number of cells required to render this object."""
         # Done on demand and cached, as this is an O(n) operation
         if self._cell_length is None:
-            self._cell_length = Segment.get_line_length(self._segments)
+            self._cell_length = get_line_length(self._segments)
         return self._cell_length
 
     @classmethod
@@ -332,7 +350,7 @@ class Strip:
         add_strip = strips.append
         for segments, cut in zip(Segment.divide(self._segments, cuts), cuts):
             add_strip(Strip(segments, cut - pos))
-            pos += cut
+            pos = cut
 
         self._divide_cache[cache_key] = strips
         return strips

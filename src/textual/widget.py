@@ -1030,6 +1030,11 @@ class Widget(DOMNode):
         return enabled
 
     @property
+    def scrollbar_size(self) -> Size:
+        """The dimensions of the scrollbar stored in a Size object."""
+        return Size(self.scrollbar_size_vertical, self.scrollbar_size_horizontal)
+
+    @property
     def scrollbar_size_vertical(self) -> int:
         """Get the width used by the *vertical* scrollbar.
 

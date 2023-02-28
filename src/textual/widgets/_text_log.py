@@ -162,7 +162,8 @@ class TextLog(ScrollView, can_focus=True):
     def render_line(self, y: int) -> Strip:
         scroll_x, scroll_y = self.scroll_offset
         line = self._render_line(scroll_y + y, scroll_x, self.size.width)
-        strip = Strip(Segment.apply_style(line, self.rich_style), self.size.width)
+        strip = Strip(Segment.apply_style(line, self.rich_style), line.cell_length)
+
         return strip
 
     def render_lines(self, crop: Region) -> list[Strip]:
