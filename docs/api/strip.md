@@ -1,1 +1,1 @@
-::: textual.strip.Strip
+::: textual.strip

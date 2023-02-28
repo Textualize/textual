@@ -1,1 +1,1 @@
-::: textual.binding.Binding
+::: textual.binding
