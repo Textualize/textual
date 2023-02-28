@@ -82,7 +82,7 @@ class ScrollView(Widget):
         Returns:
             True if anything changed, or False if nothing changed.
         """
-        if self._size != size or container_size != container_size:
+        if self._size != size or self._container_size != container_size:
             self.refresh()
         if (
             self._size != size

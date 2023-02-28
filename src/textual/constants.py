@@ -16,9 +16,6 @@ from ._border import BORDER_CHARS
 __all__ = ["BORDERS"]
 
 
-get_environ = os.environ.get
-
-
 def get_environ_bool(name: str) -> bool:
     """Check an environment variable switch.
 
