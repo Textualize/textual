@@ -8,7 +8,8 @@ A number of app level constants where the value is pulled from environment varia
 """
 
 import os
-from typing import Final
+
+from typing_extensions import Final
 
 get_environ = os.environ.get
 
