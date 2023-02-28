@@ -142,6 +142,7 @@ nav:
       - "widgets/tree.md"
   - API:
     - "api/app.md"
+    - "api/await_remove.md"
     - "api/binding.md"
     - "api/button.md"
     - "api/checkbox.md"

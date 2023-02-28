@@ -1,1 +1,1 @@
-::: textual.widget.Widget
+::: textual.widget
