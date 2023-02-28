@@ -978,7 +978,7 @@ class Widget(DOMNode):
         styles = self.styles
         overflow_x = styles.overflow_x
         overflow_y = styles.overflow_y
-        width, height = self.container_size - self.scrollbar_size
+        width, height = self.container_size - self.scrollbars_space
 
         show_horizontal = self.show_horizontal_scrollbar
         if overflow_x == "hidden":
