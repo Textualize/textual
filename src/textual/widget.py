@@ -1519,7 +1519,16 @@ class Widget(DOMNode):
         Note:
             The call to scroll is made after the next refresh.
         """
-        self.call_after_refresh(self._scroll_to, x, y, animate=animate, speed=speed, duration=duration, easing=easing, force=force)
+        self.call_after_refresh(
+            self._scroll_to,
+            x,
+            y,
+            animate=animate,
+            speed=speed,
+            duration=duration,
+            easing=easing,
+            force=force,
+        )
 
     def scroll_relative(
         self,
@@ -1606,6 +1615,7 @@ class Widget(DOMNode):
         """
         if speed is None and duration is None:
             duration = 1.0
+
         # In most cases we'd call self.scroll_to and let it handle the call
         # to do things after a refresh, but here we need the refresh to
         # happen first so that we can get the new self.max_scroll_y (that
@@ -1622,6 +1632,7 @@ class Widget(DOMNode):
                 easing=easing,
                 force=force,
             )
+
         self.call_after_refresh(_lazily_scroll_end)
 
     def scroll_left(
