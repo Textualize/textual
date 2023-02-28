@@ -11,6 +11,11 @@ import os
 
 from typing_extensions import Final
 
+from ._border import BORDER_CHARS
+
+__all__ = ["BORDERS"]
+
+
 get_environ = os.environ.get
 
 
@@ -25,11 +30,6 @@ def get_environ_bool(name: str) -> bool:
     """
     has_environ = os.environ.get(name) == "1"
     return has_environ
-
-
-from ._border import BORDER_CHARS
-
-__all__ = ["BORDERS"]
 
 
 BORDERS = list(BORDER_CHARS)
