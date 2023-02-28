@@ -7,7 +7,10 @@ class Coordinate(NamedTuple):
     """An object representing a row/column coordinate within a grid."""
 
     row: int
+    """The row of the coordinate within a grid."""
+
     column: int
+    """The column of the coordinate within a grid."""
 
     def left(self) -> Coordinate:
         """Get the coordinate to the left.
