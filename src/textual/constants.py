@@ -20,7 +20,7 @@ def get_environ_bool(name: str) -> bool:
         name: Name of environment variable.
 
     Returns:
-        True if the env var is "1", otherwise False.
+        `True` if the env var is "1", otherwise `False`.
     """
     has_environ = os.environ.get(name) == "1"
     return has_environ

@@ -8,6 +8,7 @@ from rich.measure import measure_renderables
 from rich.pretty import Pretty
 from rich.protocol import is_renderable
 from rich.segment import Segment
+from rich.style import Style
 from rich.text import Text
 
 from .._cache import LRUCache
@@ -162,8 +163,7 @@ class TextLog(ScrollView, can_focus=True):
     def render_line(self, y: int) -> Strip:
         scroll_x, scroll_y = self.scroll_offset
         line = self._render_line(scroll_y + y, scroll_x, self.size.width)
-        strip = Strip(Segment.apply_style(line, self.rich_style), line.cell_length)
-
+        strip = line.apply_style(self.rich_style)
         return strip
 
     def render_lines(self, crop: Region) -> list[Strip]:

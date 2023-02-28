@@ -43,6 +43,7 @@ class Strip:
         "_cell_length",
         "_divide_cache",
         "_crop_cache",
+        "_style_cache",
         "_link_ids",
     ]
 
@@ -53,6 +54,7 @@ class Strip:
         self._cell_length = cell_length
         self._divide_cache: FIFOCache[tuple[int, ...], list[Strip]] = FIFOCache(4)
         self._crop_cache: FIFOCache[tuple[int, int], Strip] = FIFOCache(4)
+        self._style_cache: FIFOCache[Style, Strip] = FIFOCache(4)
         self._link_ids: set[str] | None = None
 
         if DEBUG and cell_length is not None:
@@ -354,3 +356,21 @@ class Strip:
 
         self._divide_cache[cache_key] = strips
         return strips
+
+    def apply_style(self, style: Style) -> Strip:
+        """Apply a style to the Strip.
+
+        Args:
+            style: A Rich style.
+
+        Returns:
+            A new strip.
+        """
+        cached = self._style_cache.get(style)
+        if cached is not None:
+            return cached
+        styled_strip = Strip(
+            Segment.apply_style(self._segments, style), self.cell_length
+        )
+        self._style_cache[style] = styled_strip
+        return styled_strip
