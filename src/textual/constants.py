@@ -3,9 +3,6 @@ Constants that we might want to expose via the public API.
 
 """
 
-"""
-A number of app level constants where the value is pulled from environment variables.
-"""
 
 import os
 
