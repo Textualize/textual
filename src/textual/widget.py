@@ -1030,6 +1030,11 @@ class Widget(DOMNode):
         return enabled
 
     @property
+    def scrollbars_space(self) -> tuple[int, int]:
+        """The number of cells occupied by scrollbars for width and height"""
+        return (self.scrollbar_size_vertical, self.scrollbar_size_horizontal)
+
+    @property
     def scrollbar_size_vertical(self) -> int:
         """Get the width used by the *vertical* scrollbar.
 
