@@ -975,10 +975,15 @@ class Widget(DOMNode):
         if not self.is_scrollable or not self.container_size:
             return
 
+        self.log("---")
+        self.log("REFRESH_SCROLLBARS", self)
+        self.log("VIRTUAL_SIZE", self.virtual_size)
+        self.log("CONTAINER_SIZE", self.container_size)
+        self.log("SIZE", self.size)
         styles = self.styles
         overflow_x = styles.overflow_x
         overflow_y = styles.overflow_y
-        width, height = self.container_size - self.scrollbars_space
+        width, height = self.size - self.scrollbars_space
 
         show_horizontal = self.show_horizontal_scrollbar
         if overflow_x == "hidden":
@@ -986,6 +991,7 @@ class Widget(DOMNode):
         elif overflow_x == "scroll":
             show_horizontal = True
         elif overflow_x == "auto":
+            self.log(self.virtual_size.width, width)
             show_horizontal = self.virtual_size.width > width
 
         show_vertical = self.show_vertical_scrollbar
@@ -996,17 +1002,32 @@ class Widget(DOMNode):
         elif overflow_y == "auto":
             show_vertical = self.virtual_size.height > height
 
+        self.log(
+            show_horizontal=show_horizontal,
+            show_vertical=show_vertical,
+            stabilized_scrollbar_size=self._stabilized_scrollbar_size,
+            container_size=self.container_size,
+            overflow_x=overflow_x,
+        )
         if (
             overflow_x == "auto"
             and show_vertical
             and not show_horizontal
             and self._stabilized_scrollbar_size != self.container_size
         ):
+            self.log(
+                "STABILIZING",
+                self.virtual_size.width + styles.scrollbar_size_vertical,
+                width,
+            )
+
             show_horizontal = (
-                self.virtual_size.width + styles.scrollbar_size_vertical > width
+                self.virtual_size.width + styles.scrollbar_size_vertical
+                > self.container_size.width
             )
             self._stabilized_scrollbar_size = self.container_size
 
+        self.log(show_horizontal, show_vertical)
         self.show_horizontal_scrollbar = show_horizontal
         self.show_vertical_scrollbar = show_vertical
 
