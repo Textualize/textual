@@ -1,3 +1,5 @@
+"""Provides a tree widget."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -24,8 +26,17 @@ if TYPE_CHECKING:
     from typing_extensions import TypeAlias
 
 NodeID = NewType("NodeID", int)
+"""The type of an ID applied to a [TreeNode][textual.widgets._tree.TreeNode]."""
+
 TreeDataType = TypeVar("TreeDataType")
+"""The type of the data for a given instance of a [Tree][textual.widgets.Tree]."""
+
 EventTreeDataType = TypeVar("EventTreeDataType")
+"""The type of the data for a given instance of a [Tree][textual.widgets.Tree].
+
+Similar to [TreeDataType][textual.widgets._tree.TreeDataType] but used for
+``Tree`` messages.
+"""
 
 LineCacheKey: TypeAlias = "tuple[int | tuple, ...]"
 
@@ -80,11 +91,23 @@ class TreeNode(Generic[TreeDataType]):
         expanded: bool = True,
         allow_expand: bool = True,
     ) -> None:
+        """Initialise the node.
+
+        Args:
+            tree: The tree that the node is being attached to.
+            parent: The parent node that this node is being attached to.
+            id: The ID of the node.
+            label: The label for the node.
+            data: Optional data to associate with the node.
+            expand: Should the node be attached in an expanded state?
+            allow_expand: Should the node allow being expanded by the user?
+        """
         self._tree = tree
         self._parent = parent
         self._id = id
         self._label = tree.process_label(label)
         self.data = data
+        """Optional data associated with the tree node."""
         self._expanded = expanded
         self._children: list[TreeNode[TreeDataType]] = []
 
@@ -110,7 +133,7 @@ class TreeNode(Generic[TreeDataType]):
 
     @property
     def line(self) -> int:
-        """Get the line number for this node, or -1 if it is not displayed."""
+        """The line number for this node, or -1 if it is not displayed."""
         return self._line
 
     @property
@@ -135,7 +158,7 @@ class TreeNode(Generic[TreeDataType]):
 
     @property
     def id(self) -> NodeID:
-        """Get the node ID."""
+        """The ID of the  node."""
         return self._id
 
     @property
@@ -145,12 +168,12 @@ class TreeNode(Generic[TreeDataType]):
 
     @property
     def is_expanded(self) -> bool:
-        """Check if the node is expanded."""
+        """Is the node expanded?"""
         return self._expanded
 
     @property
     def is_last(self) -> bool:
-        """Check if this is the last child."""
+        """Is this the last child node of its parent?"""
         if self._parent is None:
             return True
         return bool(
@@ -159,7 +182,7 @@ class TreeNode(Generic[TreeDataType]):
 
     @property
     def allow_expand(self) -> bool:
-        """Check if the node is allowed to expand."""
+        """Is this node allowed to expand?"""
         return self._allow_expand
 
     @allow_expand.setter
@@ -238,7 +261,7 @@ class TreeNode(Generic[TreeDataType]):
         """Set a new label for the node.
 
         Args:
-            label: A str or Text object with the new label.
+            label: A ``str`` or ``Text`` object with the new label.
         """
         self._updates += 1
         text_label = self._tree.process_label(label)
@@ -279,7 +302,7 @@ class TreeNode(Generic[TreeDataType]):
 
         Args:
             label: Label for the node.
-            data: Optional data. Defaults to None.
+            data: Optional data.
 
         Returns:
             New node.
@@ -289,6 +312,8 @@ class TreeNode(Generic[TreeDataType]):
 
 
 class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
+    """A widget for displaying and navigating data in a tree."""
+
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("enter", "select_cursor", "Select", show=False),
         Binding("space", "toggle_node", "Toggle", show=False),
@@ -305,13 +330,13 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
-        "tree--label",
+        "tree--cursor",
         "tree--guides",
         "tree--guides-hover",
         "tree--guides-selected",
-        "tree--cursor",
         "tree--highlight",
         "tree--highlight-line",
+        "tree--label",
     }
     """
     | Class | Description |
@@ -475,6 +500,17 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         classes: str | None = None,
         disabled: bool = False,
     ) -> None:
+        """Initialise a Tree.
+
+        Args:
+            label: The label of the root node of the tree.
+            data: The optional data to associate with the root node of the tree.
+            name: The name of the Tree.
+            id: The ID of the tree in the DOM.
+            classes: The CSS classes of the tree.
+            disabled: Whether the tree is disabled or not.
+        """
+
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
         text_label = self.process_label(label)
@@ -483,7 +519,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         self._tree_nodes: dict[NodeID, TreeNode[TreeDataType]] = {}
         self._current_id = 0
         self.root = self._add_node(None, text_label, data)
-
+        """The root node of the tree."""
         self._line_cache: LRUCache[LineCacheKey, Strip] = LRUCache(1024)
         self._tree_lines_cached: list[_TreeLine] | None = None
         self._cursor_node: TreeNode[TreeDataType] | None = None
@@ -498,8 +534,10 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         """The index of the last line."""
         return len(self._tree_lines) - 1
 
-    def process_label(self, label: TextType):
-        """Process a str or Text in to a label. Maybe overridden in a subclass to change modify how labels are rendered.
+    def process_label(self, label: TextType) -> Text:
+        """Process a `str` or `Text` value into a label.
+
+        Maybe overridden in a subclass to change how labels are rendered.
 
         Args:
             label: Label.
@@ -642,11 +680,25 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             raise self.UnknownNodeID(f"Unknown NodeID ({node_id}) in tree") from None
 
     def validate_cursor_line(self, value: int) -> int:
-        """Prevent cursor line from going outside of range."""
+        """Prevent cursor line from going outside of range.
+
+        Args:
+            value: The value to test.
+
+        Return:
+            A valid version of the given value.
+        """
         return clamp(value, 0, len(self._tree_lines) - 1)
 
     def validate_guide_depth(self, value: int) -> int:
-        """Restrict guide depth to reasonable range."""
+        """Restrict guide depth to reasonable range.
+
+        Args:
+            value: The value to test.
+
+        Return:
+            A valid version of the given value.
+        """
         return clamp(value, 2, 10)
 
     def _invalidate(self) -> None:

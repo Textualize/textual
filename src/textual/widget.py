@@ -1443,17 +1443,16 @@ class Widget(DOMNode):
         """Scroll to a given (absolute) coordinate, optionally animating.
 
         Args:
-            x: X coordinate (column) to scroll to, or None for no change. Defaults to None.
-            y: Y coordinate (row) to scroll to, or None for no change. Defaults to None.
-            animate: Animate to new scroll position. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            x: X coordinate (column) to scroll to, or `None` for no change.
+            y: Y coordinate (row) to scroll to, or `None` for no change.
+            animate: Animate to new scroll position.
+            speed: Speed of scroll if `animate` is `True`. Or `None` to use duration.
+            duration: Duration of animation, if `animate` is `True` and speed is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
 
         Returns:
-            True if the scroll position changed, otherwise False.
+            `True` if the scroll position changed, otherwise `False`.
         """
         maybe_scroll_x = x is not None and (self.allow_horizontal_scroll or force)
         maybe_scroll_y = y is not None and (self.allow_vertical_scroll or force)
@@ -1519,14 +1518,13 @@ class Widget(DOMNode):
         """Scroll to a given (absolute) coordinate, optionally animating.
 
         Args:
-            x: X coordinate (column) to scroll to, or None for no change. Defaults to None.
-            y: Y coordinate (row) to scroll to, or None for no change. Defaults to None.
-            animate: Animate to new scroll position. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            x: X coordinate (column) to scroll to, or `None` for no change.
+            y: Y coordinate (row) to scroll to, or `None` for no change.
+            animate: Animate to new scroll position.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
 
         Note:
             The call to scroll is made after the next refresh.
@@ -1556,14 +1554,13 @@ class Widget(DOMNode):
         """Scroll relative to current position.
 
         Args:
-            x: X distance (columns) to scroll, or ``None`` for no change. Defaults to None.
-            y: Y distance (rows) to scroll, or ``None`` for no change. Defaults to None.
-            animate: Animate to new scroll position. Defaults to False.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            x: X distance (columns) to scroll, or ``None`` for no change.
+            y: Y distance (rows) to scroll, or ``None`` for no change.
+            animate: Animate to new scroll position.
+            speed: Speed of scroll if `animate` is `True`. Or `None` to use `duration`.
+            duration: Duration of animation, if animate is `True` and speed is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
         """
         self.scroll_to(
             None if x is None else (self.scroll_x + x),
@@ -1587,12 +1584,11 @@ class Widget(DOMNode):
         """Scroll to home position.
 
         Args:
-            animate: Animate scroll. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            animate: Animate scroll.
+            speed: Speed of scroll if animate is `True`; or `None` to use duration.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
         """
         if speed is None and duration is None:
             duration = 1.0
@@ -1618,12 +1614,11 @@ class Widget(DOMNode):
         """Scroll to the end of the container.
 
         Args:
-            animate: Animate scroll. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            animate: Animate scroll.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
         """
         if speed is None and duration is None:
             duration = 1.0
@@ -1660,12 +1655,11 @@ class Widget(DOMNode):
         """Scroll one cell left.
 
         Args:
-            animate: Animate scroll. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            animate: Animate scroll.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
         """
         self.scroll_to(
             x=self.scroll_target_x - 1,
@@ -1688,15 +1682,14 @@ class Widget(DOMNode):
         """Scroll left one position, taking scroll sensitivity into account.
 
         Args:
-            animate: Animate scroll. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            animate: Animate scroll.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
 
         Returns:
-            True if any scrolling was done.
+            `True` if any scrolling was done.
 
         Note:
             How much is scrolled is controlled by
@@ -1723,12 +1716,11 @@ class Widget(DOMNode):
         """Scroll one cell right.
 
         Args:
-            animate: Animate scroll. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            animate: Animate scroll.
+            speed: Speed of scroll if animate is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
         """
         self.scroll_to(
             x=self.scroll_target_x + 1,
@@ -1751,15 +1743,14 @@ class Widget(DOMNode):
         """Scroll right one position, taking scroll sensitivity into account.
 
         Args:
-            animate: Animate scroll. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            animate: Animate scroll.
+            speed: Speed of scroll if animate is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
 
         Returns:
-            True if any scrolling was done.
+            `True` if any scrolling was done.
 
         Note:
             How much is scrolled is controlled by
@@ -1786,12 +1777,11 @@ class Widget(DOMNode):
         """Scroll one line down.
 
         Args:
-            animate: Animate scroll. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            animate: Animate scroll.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
         """
         self.scroll_to(
             y=self.scroll_target_y + 1,
@@ -1814,15 +1804,14 @@ class Widget(DOMNode):
         """Scroll down one position, taking scroll sensitivity into account.
 
         Args:
-            animate: Animate scroll. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            animate: Animate scroll.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
 
         Returns:
-            True if any scrolling was done.
+            `True` if any scrolling was done.
 
         Note:
             How much is scrolled is controlled by
@@ -1849,12 +1838,11 @@ class Widget(DOMNode):
         """Scroll one line up.
 
         Args:
-            animate: Animate scroll. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            animate: Animate scroll.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and speed is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
         """
         self.scroll_to(
             y=self.scroll_target_y - 1,
@@ -1877,15 +1865,14 @@ class Widget(DOMNode):
         """Scroll up one position, taking scroll sensitivity into account.
 
         Args:
-            animate: Animate scroll. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            animate: Animate scroll.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and speed is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
 
         Returns:
-            True if any scrolling was done.
+            `True` if any scrolling was done.
 
         Note:
             How much is scrolled is controlled by
@@ -1912,12 +1899,11 @@ class Widget(DOMNode):
         """Scroll one page up.
 
         Args:
-            animate: Animate scroll. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            animate: Animate scroll.
+            speed: Speed of scroll if animate is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
         """
         self.scroll_to(
             y=self.scroll_y - self.container_size.height,
@@ -1940,12 +1926,11 @@ class Widget(DOMNode):
         """Scroll one page down.
 
         Args:
-            animate: Animate scroll. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            animate: Animate scroll.
+            speed: Speed of scroll if animate is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
         """
         self.scroll_to(
             y=self.scroll_y + self.container_size.height,
@@ -1968,12 +1953,11 @@ class Widget(DOMNode):
         """Scroll one page left.
 
         Args:
-            animate: Animate scroll. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            animate: Animate scroll.
+            speed: Speed of scroll if animate is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
         """
         if speed is None and duration is None:
             duration = 0.3
@@ -1998,12 +1982,11 @@ class Widget(DOMNode):
         """Scroll one page right.
 
         Args:
-            animate: Animate scroll. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            animate: Animate scroll.
+            speed: Speed of scroll if animate is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
         """
         if speed is None and duration is None:
             duration = 0.3
@@ -2031,16 +2014,15 @@ class Widget(DOMNode):
 
         Args:
             widget: A descendant widget.
-            animate: True to animate, or False to jump. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            top: Scroll widget to top of container. Defaults to False.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            animate: `True` to animate, or `False` to jump.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            top: Scroll widget to top of container.
+            force: Force scrolling even when prohibited by overflow styling.
 
         Returns:
-            True if any scrolling has occurred in any descendant, otherwise False.
+            `True` if any scrolling has occurred in any descendant, otherwise `False`.
         """
 
         # Grow the region by the margin so to keep the margin in view.
@@ -2099,14 +2081,13 @@ class Widget(DOMNode):
 
         Args:
             region: A region that should be visible.
-            spacing: Optional spacing around the region. Defaults to None.
-            animate: True to animate, or False to jump. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            top: Scroll region to top of container. Defaults to False.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            spacing: Optional spacing around the region.
+            animate: `True` to animate, or `False` to jump.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            top: Scroll `region` to top of container.
+            force: Force scrolling even when prohibited by overflow styling.
 
         Returns:
             The distance that was scrolled.
@@ -2151,13 +2132,12 @@ class Widget(DOMNode):
         """Scroll the container to make this widget visible.
 
         Args:
-            animate: _description_. Defaults to True.
-            speed: _description_. Defaults to None.
-            duration: _description_. Defaults to None.
-            top: Scroll to top of container. Defaults to False.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            animate: Animate scroll.
+            speed: Speed of scroll if animate is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            top: Scroll to top of container.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
         """
         parent = self.parent
         if isinstance(parent, Widget):
