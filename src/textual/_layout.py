@@ -25,6 +25,7 @@ class DockArrangeResult:
     """Shared spacing around the widgets."""
 
     _spatial_map: SpatialMap[WidgetPlacement] | None = None
+    """A Spatial map to query widget placements."""
 
     @property
     def spatial_map(self) -> SpatialMap[WidgetPlacement]:
@@ -111,14 +112,16 @@ class Layout(ABC):
             width = 0
         else:
             # Use a size of 0, 0 to ignore relative sizes, since those are flexible anyway
-            placements = widget._arrange(Size(0, 0)).placements
+            arrangement = widget._arrange(Size(0, 0))
+            return arrangement.total_region.right + arrangement.spacing.right
             width = max(
                 [
                     placement.region.right + placement.margin.right
-                    for placement in placements
+                    for placement in arrangement.placements
                 ],
                 default=0,
             )
+            width += arrangement.spacing.right
         return width
 
     def get_content_height(
@@ -139,13 +142,15 @@ class Layout(ABC):
             height = 0
         else:
             # Use a height of zero to ignore relative heights
-            placements = widget._arrange(Size(width, 0)).placements
+            arrangement = widget._arrange(Size(width, 0))
+            return arrangement.total_region.bottom + arrangement.spacing.bottom
             height = max(
                 [
                     placement.region.bottom + placement.margin.bottom
-                    for placement in placements
+                    for placement in arrangement.placements
                 ],
                 default=0,
             )
+            height += arrangement.spacing.bottom
 
         return height

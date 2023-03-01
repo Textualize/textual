@@ -848,14 +848,11 @@ class Widget(DOMNode):
         """
         if self.is_container:
             assert self._layout is not None
-            height = (
-                self._layout.get_content_height(
-                    self,
-                    container,
-                    viewport,
-                    width,
-                )
-                + self.scrollbar_size_horizontal
+            height = self._layout.get_content_height(
+                self,
+                container,
+                viewport,
+                width,
             )
         else:
             cache_key = width
@@ -978,7 +975,7 @@ class Widget(DOMNode):
         styles = self.styles
         overflow_x = styles.overflow_x
         overflow_y = styles.overflow_y
-        width, height = self.size - self.scrollbars_space
+        width, height = self._container_size
 
         show_horizontal = self.show_horizontal_scrollbar
         if overflow_x == "hidden":
@@ -996,17 +993,14 @@ class Widget(DOMNode):
         elif overflow_y == "auto":
             show_vertical = self.virtual_size.height > height
 
-        if (
-            overflow_x == "auto"
-            and show_vertical
-            and not show_horizontal
-            and self._stabilized_scrollbar_size != self.container_size
-        ):
-            show_horizontal = (
-                self.virtual_size.width + styles.scrollbar_size_vertical
-                > self.container_size.width
+        if show_vertical and not show_horizontal:
+            show_horizontal = self.virtual_size.width > (
+                width - styles.scrollbar_size_vertical
             )
-            self._stabilized_scrollbar_size = self.container_size
+        elif show_horizontal and not show_vertical:
+            show_vertical = self.virtual_size.height > (
+                height - styles.scrollbar_size_horizontal
+            )
 
         self.show_horizontal_scrollbar = show_horizontal
         self.show_vertical_scrollbar = show_vertical
