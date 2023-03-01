@@ -30,7 +30,7 @@ class HeaderIcon(Widget):
         """Render the header icon.
 
         Returns:
-            The value to render.
+            The rendered icon.
         """
         return self.icon
 
