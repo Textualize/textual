@@ -14,11 +14,16 @@ from ..reactive import reactive
 from ..widgets import Static
 
 ButtonVariant = Literal["default", "primary", "success", "warning", "error"]
+"""The names of the valid button variants.
+
+These are the variants that can be used with a [Button][textual.widgets.Button].
+"""
+
 _VALID_BUTTON_VARIANTS = {"default", "primary", "success", "warning", "error"}
 
 
 class InvalidButtonVariant(Exception):
-    pass
+    """Exception raised if an invalid button variant is used."""
 
 
 class Button(Static, can_focus=True):
@@ -262,6 +267,7 @@ class Button(Static, can_focus=True):
             name: The name of the button.
             id: The ID of the button in the DOM.
             classes: The CSS classes of the button.
+            disabled: Whether the button is disabled or not.
 
         Returns:
             A Button widget of the 'success' variant.
@@ -293,6 +299,7 @@ class Button(Static, can_focus=True):
             name: The name of the button.
             id: The ID of the button in the DOM.
             classes: The CSS classes of the button.
+            disabled: Whether the button is disabled or not.
 
         Returns:
             A Button widget of the 'warning' variant.
@@ -324,6 +331,7 @@ class Button(Static, can_focus=True):
             name: The name of the button.
             id: The ID of the button in the DOM.
             classes: The CSS classes of the button.
+            disabled: Whether the button is disabled or not.
 
         Returns:
             A Button widget of the 'error' variant.
