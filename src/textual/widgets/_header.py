@@ -94,6 +94,11 @@ class HeaderTitle(Widget):
     """The sub-title text."""
 
     def render(self) -> Text:
+        """Render the title and sub-title.
+
+        Returns:
+            The value to render.
+        """
         text = Text(self.text, no_wrap=True, overflow="ellipsis")
         if self.sub_text:
             text.append(" — ")
