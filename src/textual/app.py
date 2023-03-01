@@ -858,7 +858,6 @@ class App(Generic[ReturnType], DOMNode):
         await wait_for_idle(0)
         for key in keys:
             if key == "_":
-                await wait_for_idle(0)
                 continue
             elif key.startswith("wait:"):
                 _, wait_ms = key.split(":")
