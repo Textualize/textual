@@ -36,6 +36,7 @@ class ListItem(Widget, can_focus=False):
     """
 
     highlighted = reactive(False)
+    """Is this item highlighted?"""
 
     class _ChildClicked(Message):
         """For informing with the parent ListView that we were clicked"""
