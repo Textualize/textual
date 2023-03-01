@@ -119,6 +119,8 @@ class Placeholder(Widget):
         self.styles.background = f"{next(Placeholder._COLORS)} 50%"
 
         self.variant = self.validate_variant(variant)
+        """The current variant of the placeholder."""
+
         # Set a cycle through the variants with the correct starting point.
         self._variants_cycle = cycle(_VALID_PLACEHOLDER_VARIANTS_ORDERED)
         while next(self._variants_cycle) != self.variant:
