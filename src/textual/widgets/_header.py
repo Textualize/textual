@@ -88,6 +88,8 @@ class HeaderTitle(Widget):
     """
 
     text: Reactive[str] = Reactive("")
+    """The main title text."""
+
     sub_text = Reactive("")
 
     def render(self) -> Text:
