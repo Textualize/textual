@@ -1,3 +1,5 @@
+"""Provides a Textual application header widget."""
+
 from __future__ import annotations
 
 from datetime import datetime
