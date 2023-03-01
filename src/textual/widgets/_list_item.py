@@ -1,3 +1,5 @@
+"""Provides a list item widget for use with `ListView`."""
+
 from textual import events
 from textual.message import Message
 from textual.reactive import reactive
