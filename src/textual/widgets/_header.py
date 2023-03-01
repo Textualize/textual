@@ -25,6 +25,11 @@ class HeaderIcon(Widget):
     """The character to use as the icon within the header."""
 
     def render(self) -> RenderResult:
+        """Render the header icon.
+
+        Returns:
+            The value to render.
+        """
         return self.icon
 
 
