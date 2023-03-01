@@ -76,3 +76,7 @@ setup:
 .PHONY: update
 update:
 	poetry update
+
+.PHONY: install-pre-commit
+install-pre-commit:
+	$(run) pre-commit install
