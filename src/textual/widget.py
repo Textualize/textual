@@ -1003,12 +1003,10 @@ class Widget(DOMNode):
             show_vertical = self.virtual_size.height > height
 
         # When a single scrollbar is shown, the other dimension changes, so we need to recalculate.
-
         if show_vertical and not show_horizontal:
             show_horizontal = self.virtual_size.width > (
                 width - styles.scrollbar_size_vertical
             )
-            # self._stabilized_scrollbar_size = self.container_size
         if show_horizontal and not show_vertical:
             show_vertical = self.virtual_size.height > (
                 height - styles.scrollbar_size_horizontal
