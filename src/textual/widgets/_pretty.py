@@ -48,7 +48,7 @@ class Pretty(Widget):
         """Render the pretty-printed object.
 
         Returns:
-            The value to render.
+            The rendered pretty-print.
         """
         return self._renderable
 
