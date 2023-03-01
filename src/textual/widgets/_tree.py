@@ -514,7 +514,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         self._tree_nodes: dict[NodeID, TreeNode[TreeDataType]] = {}
         self._current_id = 0
         self.root = self._add_node(None, text_label, data)
-
+        """The root node of the tree."""
         self._line_cache: LRUCache[LineCacheKey, Strip] = LRUCache(1024)
         self._tree_lines_cached: list[_TreeLine] | None = None
         self._cursor_node: TreeNode[TreeDataType] | None = None
