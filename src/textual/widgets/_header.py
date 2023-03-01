@@ -139,12 +139,12 @@ class Header(Widget):
         classes: str | None = None,
     ):
         super().__init__(name=name, id=id, classes=classes)
-        self.show_clock = show_clock
+        self._show_clock = show_clock
 
     def compose(self):
         yield HeaderIcon()
         yield HeaderTitle()
-        yield HeaderClock() if self.show_clock else HeaderClockSpace()
+        yield HeaderClock() if self._show_clock else HeaderClockSpace()
 
     def watch_tall(self, tall: bool) -> None:
         self.set_class(tall, "-tall")
