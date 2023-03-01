@@ -93,7 +93,7 @@ class HeaderTitle(Widget):
     sub_text = Reactive("")
     """The sub-title text."""
 
-    def render(self) -> Text:
+    def render(self) -> RenderResult:
         """Render the title and sub-title.
 
         Returns:
