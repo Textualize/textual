@@ -68,7 +68,7 @@ class HeaderClock(HeaderClockSpace):
     def on_mount(self) -> None:
         self.set_interval(1, callback=self.refresh, name=f"update header clock")
 
-    def render(self):
+    def render(self) -> RenderResult:
         return Text(datetime.now().time().strftime("%X"))
 
 
