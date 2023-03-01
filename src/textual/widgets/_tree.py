@@ -29,6 +29,8 @@ NodeID = NewType("NodeID", int)
 """The type of an ID applied to a [TreeNode][textual.widgets._tree.TreeNode]."""
 
 TreeDataType = TypeVar("TreeDataType")
+"""The type of the data for a given instance of a [Tree][textual.widgets.Tree]."""
+
 EventTreeDataType = TypeVar("EventTreeDataType")
 
 LineCacheKey: TypeAlias = "tuple[int | tuple, ...]"
