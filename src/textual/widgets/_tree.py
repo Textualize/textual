@@ -175,7 +175,7 @@ class TreeNode(Generic[TreeDataType]):
 
     @property
     def allow_expand(self) -> bool:
-        """Check if the node is allowed to expand."""
+        """Is this node allowed to expand?"""
         return self._allow_expand
 
     @allow_expand.setter
