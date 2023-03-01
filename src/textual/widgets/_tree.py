@@ -161,7 +161,7 @@ class TreeNode(Generic[TreeDataType]):
 
     @property
     def is_expanded(self) -> bool:
-        """Check if the node is expanded."""
+        """Is the node expanded?"""
         return self._expanded
 
     @property
