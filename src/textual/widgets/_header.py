@@ -19,7 +19,9 @@ class HeaderIcon(Widget):
         content-align: left middle;
     }
     """
+
     icon = Reactive("⭘")
+    """The character to use as the icon within the header."""
 
     def render(self):
         return self.icon
