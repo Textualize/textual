@@ -143,7 +143,7 @@ class Header(Widget):
             show_clock: ``True`` if the clock should be shown on the right of the header.
             name: The name of the header widget.
             id: The ID of the header widget in the DOM.
-            classes: The CSS classes of header widget.
+            classes: The CSS classes of the header widget.
         """
         super().__init__(name=name, id=id, classes=classes)
         self._show_clock = show_clock
