@@ -535,7 +535,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         return len(self._tree_lines) - 1
 
     def process_label(self, label: TextType) -> Text:
-        """Process a `str` or `Text` value in to a label.
+        """Process a `str` or `Text` value into a label.
 
         Maybe overridden in a subclass to change modify how labels are rendered.
 
