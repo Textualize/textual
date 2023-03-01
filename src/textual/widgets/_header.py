@@ -107,11 +107,7 @@ class HeaderTitle(Widget):
 
 
 class Header(Widget):
-    """A header widget with icon and clock.
-
-    Args:
-        show_clock: True if the clock should be shown on the right of the header.
-    """
+    """A header widget with icon and clock."""
 
     DEFAULT_CSS = """
     Header {
@@ -138,6 +134,14 @@ class Header(Widget):
         id: str | None = None,
         classes: str | None = None,
     ):
+        """Initialise the header widget.
+
+        Args:
+            show_clock: ``True`` if the clock should be shown on the right of the header.
+            name: The name of the header widget.
+            id: The ID of the header widget in the DOM.
+            classes: The CSS classes of header widget.
+        """
         super().__init__(name=name, id=id, classes=classes)
         self._show_clock = show_clock
 
