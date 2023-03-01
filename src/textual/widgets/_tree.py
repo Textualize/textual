@@ -166,7 +166,7 @@ class TreeNode(Generic[TreeDataType]):
 
     @property
     def is_last(self) -> bool:
-        """Check if this is the last child."""
+        """Is this the last child node of its parent?"""
         if self._parent is None:
             return True
         return bool(
