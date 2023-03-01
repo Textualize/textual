@@ -44,11 +44,9 @@ class ScrollViewApp(App):
         yield TextLog()
         yield Vertical(MyWidget())
 
-    def on_mount(self) -> None:
+    def on_ready(self) -> None:
         self.query_one(TextLog).write("\n".join(f"{n} 0123456789" for n in range(20)))
-        self.call_after_refresh(
-            lambda: self.query_one(Vertical).scroll_end(animate=False)
-        )
+        self.query_one(Vertical).scroll_end(animate=False)
 
 
 if __name__ == "__main__":
