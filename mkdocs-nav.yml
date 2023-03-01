@@ -182,6 +182,7 @@ nav:
     - "api/tree_node.md"
     - "api/tree.md"
     - "api/walk.md"
+    - "api/welcome.md"
     - "api/widget.md"
   - "Blog":
     - blog/index.md
