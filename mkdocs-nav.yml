@@ -179,7 +179,6 @@ nav:
     - "api/text_log.md"
     - "api/toggle_button.md"
     - "api/timer.md"
-    - "api/tree_node.md"
     - "api/tree.md"
     - "api/walk.md"
     - "api/welcome.md"
