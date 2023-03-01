@@ -19,7 +19,9 @@ from .widget import Widget
 
 
 class ScrollMessage(Message, bubble=False):
-    pass
+    """Base class for all messages posted by the scrollbar."""
+
+    sender: ScrollBar
 
 
 @rich.repr.auto
@@ -47,7 +49,7 @@ class ScrollTo(ScrollMessage, verbose=True):
 
     def __init__(
         self,
-        sender: MessageTarget,
+        sender: ScrollBar,
         x: float | None = None,
         y: float | None = None,
         animate: bool = True,
