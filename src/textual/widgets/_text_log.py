@@ -21,6 +21,8 @@ from ..strip import Strip
 
 
 class TextLog(ScrollView, can_focus=True):
+    """A widget for logging text."""
+
     DEFAULT_CSS = """
     TextLog{
         background: $surface;
