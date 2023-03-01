@@ -7,9 +7,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+- Added `Checkbox` https://github.com/Textualize/textual/pull/1872
+- Added `RadioButton` https://github.com/Textualize/textual/pull/1872
+- Added `RadioSet` https://github.com/Textualize/textual/pull/1872
+
 ### Changed
 
+- Widget scrolling methods (such as `Widget.scroll_home` and `Widget.scroll_end`) now perform the scroll after the next refresh https://github.com/Textualize/textual/issues/1774
 - Buttons no longer accept arbitrary renderables https://github.com/Textualize/textual/issues/1870
+
+### Fixed
+
+- Scrolling with cursor keys now moves just one cell https://github.com/Textualize/textual/issues/1897
 
 ### Fixed
 

@@ -1,1 +1,1 @@
-::: textual.dom.DOMNode
+::: textual.dom

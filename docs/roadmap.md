@@ -40,7 +40,7 @@ Widgets are key to making user-friendly interfaces. The builtin widgets should c
 - [x] Buttons
     * [x] Error / warning variants
 - [ ] Color picker
-- [ ] Checkbox
+- [X] Checkbox
 - [ ] Content switcher
 - [x] DataTable
     * [x] Cell select
@@ -70,7 +70,7 @@ Widgets are key to making user-friendly interfaces. The builtin widgets should c
     * [ ] Candlestick chars
 - [ ] Progress bars
     * [ ] Style variants (solid, thin etc)
-- [ ] Radio boxes
+- [X] Radio boxes
 - [ ] Spark-lines
 - [X] Switch
 - [ ] Tabs

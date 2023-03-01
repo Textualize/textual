@@ -118,11 +118,7 @@ class Bindings:
 
     @property
     def shown_keys(self) -> list[Binding]:
-        """A list of bindings for shown keys.
-
-        Returns:
-            Shown bindings.
-        """
+        """A list of bindings for shown keys."""
         keys = [binding for binding in self.keys.values() if binding.show]
         return keys
 

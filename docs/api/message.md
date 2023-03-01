@@ -1,1 +1,1 @@
-::: textual.message.Message
+::: textual.message
