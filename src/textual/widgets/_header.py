@@ -45,6 +45,11 @@ class HeaderClockSpace(Widget):
     """
 
     def render(self) -> RenderResult:
+        """Render the header clock space.
+
+        Returns:
+            The value to render.
+        """
         return ""
 
 
