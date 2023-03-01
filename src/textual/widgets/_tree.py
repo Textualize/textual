@@ -100,6 +100,7 @@ class TreeNode(Generic[TreeDataType]):
         self._id = id
         self._label = tree.process_label(label)
         self.data = data
+        """Optional data associated with the tree node."""
         self._expanded = expanded
         self._children: list[TreeNode[TreeDataType]] = []
 
