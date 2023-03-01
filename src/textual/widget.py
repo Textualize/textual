@@ -1858,15 +1858,14 @@ class Widget(DOMNode):
         """Scroll up one position, taking scroll sensitivity into account.
 
         Args:
-            animate: Animate scroll. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            animate: Animate scroll.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use duration.
+            duration: Duration of animation, if `animate` is `True` and speed is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
 
         Returns:
-            True if any scrolling was done.
+            `True` if any scrolling was done.
 
         Note:
             How much is scrolled is controlled by
