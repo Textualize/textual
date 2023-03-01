@@ -31,7 +31,7 @@ class TextLog(ScrollView, can_focus=True):
     }
     """
 
-    max_lines: var[int | None] = var(None)
+    max_lines: var[int | None] = var[int | None](None)
     min_width: var[int] = var(78)
     wrap: var[bool] = var(False)
     highlight: var[bool] = var(False)
