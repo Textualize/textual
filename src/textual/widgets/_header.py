@@ -50,7 +50,7 @@ class HeaderClockSpace(Widget):
         """Render the header clock space.
 
         Returns:
-            The value to render.
+            The rendered space.
         """
         return ""
 
