@@ -127,6 +127,11 @@ class Placeholder(Widget):
             pass
 
     def render(self) -> RenderableType:
+        """Render the placeholder.
+
+        Returns:
+            The value to render.
+        """
         return self._renderables[self.variant]
 
     def cycle_variant(self) -> None:
