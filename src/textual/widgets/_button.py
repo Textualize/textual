@@ -262,6 +262,7 @@ class Button(Static, can_focus=True):
             name: The name of the button.
             id: The ID of the button in the DOM.
             classes: The CSS classes of the button.
+            disabled: Whether the button is disabled or not.
 
         Returns:
             A Button widget of the 'success' variant.
@@ -293,6 +294,7 @@ class Button(Static, can_focus=True):
             name: The name of the button.
             id: The ID of the button in the DOM.
             classes: The CSS classes of the button.
+            disabled: Whether the button is disabled or not.
 
         Returns:
             A Button widget of the 'warning' variant.
@@ -324,6 +326,7 @@ class Button(Static, can_focus=True):
             name: The name of the button.
             id: The ID of the button in the DOM.
             classes: The CSS classes of the button.
+            disabled: Whether the button is disabled or not.
 
         Returns:
             A Button widget of the 'error' variant.
