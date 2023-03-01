@@ -686,7 +686,14 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         return clamp(value, 0, len(self._tree_lines) - 1)
 
     def validate_guide_depth(self, value: int) -> int:
-        """Restrict guide depth to reasonable range."""
+        """Restrict guide depth to reasonable range.
+
+        Args:
+            value: The value to test.
+
+        Return:
+            A valid version of the given value.
+        """
         return clamp(value, 2, 10)
 
     def _invalidate(self) -> None:
