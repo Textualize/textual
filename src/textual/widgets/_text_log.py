@@ -10,7 +10,6 @@ from rich.measure import measure_renderables
 from rich.pretty import Pretty
 from rich.protocol import is_renderable
 from rich.segment import Segment
-from rich.style import Style
 from rich.text import Text
 
 from .._cache import LRUCache
