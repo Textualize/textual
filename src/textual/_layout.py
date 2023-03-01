@@ -114,14 +114,6 @@ class Layout(ABC):
             # Use a size of 0, 0 to ignore relative sizes, since those are flexible anyway
             arrangement = widget._arrange(Size(0, 0))
             return arrangement.total_region.right + arrangement.spacing.right
-            width = max(
-                [
-                    placement.region.right + placement.margin.right
-                    for placement in arrangement.placements
-                ],
-                default=0,
-            )
-            width += arrangement.spacing.right
         return width
 
     def get_content_height(
@@ -144,13 +136,5 @@ class Layout(ABC):
             # Use a height of zero to ignore relative heights
             arrangement = widget._arrange(Size(width, 0))
             return arrangement.total_region.bottom + arrangement.spacing.bottom
-            height = max(
-                [
-                    placement.region.bottom + placement.margin.bottom
-                    for placement in arrangement.placements
-                ],
-                default=0,
-            )
-            height += arrangement.spacing.bottom
 
         return height
