@@ -2074,14 +2074,13 @@ class Widget(DOMNode):
 
         Args:
             region: A region that should be visible.
-            spacing: Optional spacing around the region. Defaults to None.
-            animate: True to animate, or False to jump. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            top: Scroll region to top of container. Defaults to False.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            spacing: Optional spacing around the region.
+            animate: `True` to animate, or `False` to jump.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            top: Scroll region to top of container.
+            force: Force scrolling even when prohibited by overflow styling.
 
         Returns:
             The distance that was scrolled.
@@ -2126,13 +2125,12 @@ class Widget(DOMNode):
         """Scroll the container to make this widget visible.
 
         Args:
-            animate: _description_. Defaults to True.
-            speed: _description_. Defaults to None.
-            duration: _description_. Defaults to None.
-            top: Scroll to top of container. Defaults to False.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            animate: Animate scroll.
+            speed: Speed of scroll if animate is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            top: Scroll to top of container.
+            easing: An easing method for the scrolling animation.g easing function.
+            force: Force scrolling even when prohibited by overflow styling.
         """
         parent = self.parent
         if isinstance(parent, Widget):
