@@ -237,8 +237,8 @@ class ScrollBar(Widget):
         super().__init__(name=name)
         self.auto_links = False
 
-    window_virtual_size: Reactive[int] = Reactive(100)
-    window_size: Reactive[int] = Reactive(0)
+    window_virtual_size: Reactive[int] = Reactive(100, repaint=False)
+    window_size: Reactive[int] = Reactive(0, repaint=False)
     position: Reactive[int] = Reactive(0)
     mouse_over: Reactive[bool] = Reactive(False)
     grabbed: Reactive[Offset | None] = Reactive(None)
