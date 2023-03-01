@@ -10,7 +10,7 @@ from typing_extensions import Literal
 from .. import events
 from ..css._error_tools import friendly_list
 from ..reactive import Reactive, reactive
-from ..widget import RenderResult, Widget
+from ..widget import Widget
 
 PlaceholderVariant = Literal["default", "size", "text"]
 _VALID_PLACEHOLDER_VARIANTS_ORDERED: list[PlaceholderVariant] = [
