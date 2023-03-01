@@ -57,7 +57,7 @@ class BorderApp(App):
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         self.text.styles.border = (
-            event.button.id,
+            event.sender.id,
             self.stylesheet._variables["secondary"],
         )
         self.bell()

@@ -155,14 +155,10 @@ class Button(Static, can_focus=True):
 
         Can be handled using `on_button_pressed` in a subclass of `Button` or
         in a parent widget in the DOM.
-
-        Attributes:
-            button: The button that was pressed.
         """
 
-        @property
-        def button(self) -> Button:
-            return cast(Button, self.sender)
+        sender: Button
+        """The button that posted the message."""
 
     def __init__(
         self,

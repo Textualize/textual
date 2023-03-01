@@ -263,7 +263,7 @@ class Game(Screen):
         Args:
             event (GameCell.Pressed): The event to react to.
         """
-        self.make_move_on(cast(GameCell, event.button))
+        self.make_move_on(cast(GameCell, event.sender))
 
     def action_new_game(self) -> None:
         """Start a new game."""

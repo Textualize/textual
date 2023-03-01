@@ -26,7 +26,7 @@ class ValidateApp(App):
         yield TextLog(highlight=True)
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
-        if event.button.id == "plus":
+        if event.sender.id == "plus":
             self.count += 1
         else:
             self.count -= 1

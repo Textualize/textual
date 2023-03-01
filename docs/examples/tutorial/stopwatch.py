@@ -3,7 +3,7 @@ from time import monotonic
 from textual.app import App, ComposeResult
 from textual.containers import Container
 from textual.reactive import reactive
-from textual.widgets import Button, Header, Footer, Static
+from textual.widgets import Button, Footer, Header, Static
 
 
 class TimeDisplay(Static):
@@ -49,7 +49,7 @@ class Stopwatch(Static):
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Event handler called when a button is pressed."""
-        button_id = event.button.id
+        button_id = event.sender.id
         time_display = self.query_one(TimeDisplay)
         if button_id == "start":
             time_display.start()

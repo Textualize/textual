@@ -92,13 +92,13 @@ class EasingApp(App):
         target_position = (
             END_POSITION if self.position == START_POSITION else START_POSITION
         )
-        assert event.button.id is not None  # Should be set to an easing function str.
+        assert event.sender.id is not None  # Should be set to an easing function str.
         self.animate(
             "position",
             value=target_position,
             final_value=target_position,
             duration=self.duration,
-            easing=event.button.id,
+            easing=event.sender.id,
             on_complete=_animation_complete,
         )
 

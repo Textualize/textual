@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Widget scrolling methods (such as `Widget.scroll_home` and `Widget.scroll_end`) now perform the scroll after the next refresh https://github.com/Textualize/textual/issues/1774
 - Buttons no longer accept arbitrary renderables https://github.com/Textualize/textual/issues/1870
 
+### Removed
+
+- Removed the attribute `Button.Pressed.button` in favour of `Button.Pressed.sender` https://github.com/Textualize/textual/issues/1813
+
 ### Fixed
 
 - Scrolling with cursor keys now moves just one cell https://github.com/Textualize/textual/issues/1897

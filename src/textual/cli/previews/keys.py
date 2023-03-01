@@ -60,9 +60,9 @@ class KeysApp(App, inherit_bindings=False):
         self.last_key = event.key
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
-        if event.button.id == "quit":
+        if event.sender.id == "quit":
             self.exit()
-        elif event.button.id == "clear":
+        elif event.sender.id == "clear":
             self.query_one(KeyLog).clear()
 
 

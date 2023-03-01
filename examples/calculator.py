@@ -94,7 +94,7 @@ class CalculatorApp(App):
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Called when a button is pressed."""
 
-        button_id = event.button.id
+        button_id = event.sender.id
         assert button_id is not None
 
         def do_math() -> None:

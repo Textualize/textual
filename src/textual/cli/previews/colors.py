@@ -69,7 +69,7 @@ class ColorsApp(App):
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         self.query(ColorGroup).remove_class("-active")
-        group = self.query_one(f"#group-{event.button.id}", ColorGroup)
+        group = self.query_one(f"#group-{event.sender.id}", ColorGroup)
         group.add_class("-active")
         group.scroll_visible(top=True, speed=150)
 

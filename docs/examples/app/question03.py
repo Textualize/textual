@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.widgets import Label, Button
+from textual.widgets import Button, Label
 
 
 class QuestionApp(App[str]):
@@ -29,7 +29,7 @@ class QuestionApp(App[str]):
         yield Button("No", id="no", variant="error")
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
-        self.exit(event.button.id)
+        self.exit(event.sender.id)
 
 
 if __name__ == "__main__":

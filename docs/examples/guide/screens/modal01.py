@@ -1,7 +1,7 @@
 from textual.app import App, ComposeResult
 from textual.containers import Grid
 from textual.screen import Screen
-from textual.widgets import Static, Header, Footer, Button
+from textual.widgets import Button, Footer, Header, Static
 
 
 class QuitScreen(Screen):
@@ -14,7 +14,7 @@ class QuitScreen(Screen):
         )
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
-        if event.button.id == "quit":
+        if event.sender.id == "quit":
             self.app.exit()
         else:
             self.app.pop_screen()

@@ -14,7 +14,7 @@ class MyApp(App[str]):
         yield Button("No", id="no", variant="error")
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
-        self.exit(event.button.id)
+        self.exit(event.sender.id)
 
 
 if __name__ == "__main__":
