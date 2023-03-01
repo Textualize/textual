@@ -274,6 +274,7 @@ class Widget(DOMNode):
         self._styles_cache = StylesCache()
         self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
         self._stabilized_scrollbar_size: Size | None = None
+        self._scrollbar_stabilizer: int = 0
         self._lock = Lock()
 
         super().__init__(
@@ -515,6 +516,8 @@ class Widget(DOMNode):
     def _clear_arrangement_cache(self) -> None:
         """Clear arrangement cache, forcing a new arrange operation."""
         self._arrangement_cache.clear()
+        self._stabilized_scrollbar_size = None
+        self._scrollbar_stabilizer = 0
 
     def _get_virtual_dom(self) -> Iterable[Widget]:
         """Get widgets not part of the DOM.
@@ -972,6 +975,12 @@ class Widget(DOMNode):
         if not self.is_scrollable or not self.container_size:
             return
 
+        if self._stabilized_scrollbar_size != self.container_size:
+            self._scrollbar_stabilizer = 0
+
+        if self._scrollbar_stabilizer > 1:
+            return
+
         styles = self.styles
         overflow_x = styles.overflow_x
         overflow_y = styles.overflow_y
@@ -994,17 +1003,22 @@ class Widget(DOMNode):
             show_vertical = self.virtual_size.height > height
 
         # When a single scrollbar is shown, the other dimension changes, so we need to recalculate.
+
         if show_vertical and not show_horizontal:
             show_horizontal = self.virtual_size.width > (
                 width - styles.scrollbar_size_vertical
             )
-        elif show_horizontal and not show_vertical:
+            # self._stabilized_scrollbar_size = self.container_size
+        if show_horizontal and not show_vertical:
             show_vertical = self.virtual_size.height > (
                 height - styles.scrollbar_size_horizontal
             )
 
         self.show_horizontal_scrollbar = show_horizontal
         self.show_vertical_scrollbar = show_vertical
+
+        self._stabilized_scrollbar_size = self._container_size
+        self._scrollbar_stabilizer += 1
 
         if self._horizontal_scrollbar is not None or show_horizontal:
             self.horizontal_scrollbar.display = show_horizontal
@@ -2363,6 +2377,8 @@ class Widget(DOMNode):
         """
         if layout and not self._layout_required:
             self._layout_required = True
+            self._stabilized_scrollbar_size = None
+            self._scrollbar_stabilizer = 0
             for ancestor in self.ancestors:
                 if not isinstance(ancestor, Widget):
                     break
