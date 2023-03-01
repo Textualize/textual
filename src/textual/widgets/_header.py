@@ -91,6 +91,7 @@ class HeaderTitle(Widget):
     """The main title text."""
 
     sub_text = Reactive("")
+    """The sub-title text."""
 
     def render(self) -> Text:
         text = Text(self.text, no_wrap=True, overflow="ellipsis")
