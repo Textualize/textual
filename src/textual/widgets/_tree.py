@@ -254,7 +254,7 @@ class TreeNode(Generic[TreeDataType]):
         """Set a new label for the node.
 
         Args:
-            label: A str or Text object with the new label.
+            label: A ``str`` or ``Text`` object with the new label.
         """
         self._updates += 1
         text_label = self._tree.process_label(label)
