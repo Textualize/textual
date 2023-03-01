@@ -4,6 +4,7 @@ from datetime import datetime
 
 from rich.text import Text
 
+from ..app import RenderResult
 from ..reactive import Reactive
 from ..widget import Widget
 
@@ -23,7 +24,7 @@ class HeaderIcon(Widget):
     icon = Reactive("⭘")
     """The character to use as the icon within the header."""
 
-    def render(self):
+    def render(self) -> RenderResult:
         return self.icon
 
 
