@@ -44,7 +44,7 @@ class HeaderClockSpace(Widget):
     }
     """
 
-    def render(self) -> str:
+    def render(self) -> RenderResult:
         return ""
 
 
