@@ -977,7 +977,7 @@ class Widget(DOMNode):
         overflow_y = styles.overflow_y
         width, height = self._container_size
 
-        show_horizontal = self.show_horizontal_scrollbar
+        show_horizontal = False
         if overflow_x == "hidden":
             show_horizontal = False
         elif overflow_x == "scroll":
@@ -985,7 +985,7 @@ class Widget(DOMNode):
         elif overflow_x == "auto":
             show_horizontal = self.virtual_size.width > width
 
-        show_vertical = self.show_vertical_scrollbar
+        show_vertical = False
         if overflow_y == "hidden":
             show_vertical = False
         elif overflow_y == "scroll":
@@ -993,6 +993,7 @@ class Widget(DOMNode):
         elif overflow_y == "auto":
             show_vertical = self.virtual_size.height > height
 
+        # When a single scrollbar is shown, the other dimension changes, so we need to recalculate.
         if show_vertical and not show_horizontal:
             show_horizontal = self.virtual_size.width > (
                 width - styles.scrollbar_size_vertical
