@@ -323,13 +323,13 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
-        "tree--label",
+        "tree--cursor",
         "tree--guides",
         "tree--guides-hover",
         "tree--guides-selected",
-        "tree--cursor",
         "tree--highlight",
         "tree--highlight-line",
+        "tree--label",
     }
     """
     | Class | Description |
