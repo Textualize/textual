@@ -32,6 +32,11 @@ TreeDataType = TypeVar("TreeDataType")
 """The type of the data for a given instance of a [Tree][textual.widgets.Tree]."""
 
 EventTreeDataType = TypeVar("EventTreeDataType")
+"""The type of the data for a given instance of a [Tree][textual.widgets.Tree].
+
+Similar to [TreeDataType][textual.widgets._tree.TreeDataType] but used for
+``Tree`` messages.
+"""
 
 LineCacheKey: TypeAlias = "tuple[int | tuple, ...]"
 
