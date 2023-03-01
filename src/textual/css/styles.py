@@ -335,6 +335,9 @@ class StylesBase(ABC):
             if not isinstance(value, (Scalar, ScalarOffset)):
                 return None
 
+            from ..widget import Widget
+
+            assert isinstance(self.node, Widget)
             return ScalarAnimation(
                 self.node,
                 self,
@@ -581,7 +584,9 @@ class StylesBase(ABC):
 @dataclass
 class Styles(StylesBase):
     node: DOMNode | None = None
-    _rules: RulesMap = field(default_factory=dict)
+    _rules: RulesMap = field(
+        default_factory=lambda: RulesMap()
+    )  # mypy won't be happy with `default_factory=RulesMap`
     _updates: int = 0
 
     important: set[str] = field(default_factory=set)
@@ -648,14 +653,14 @@ class Styles(StylesBase):
         self._updates += 1
         self._rules.clear()  # type: ignore
 
-    def merge(self, other: Styles) -> None:
+    def merge(self, other: StylesBase) -> None:
         """Merge values from another Styles.
 
         Args:
             other: A Styles object.
         """
         self._updates += 1
-        self._rules.update(other._rules)
+        self._rules.update(other.get_rules())
 
     def merge_rules(self, rules: RulesMap) -> None:
         self._updates += 1
@@ -1066,7 +1071,7 @@ class RenderStyles(StylesBase):
     def refresh(self, *, layout: bool = False, children: bool = False) -> None:
         self._inline_styles.refresh(layout=layout, children=children)
 
-    def merge(self, other: Styles) -> None:
+    def merge(self, other: StylesBase) -> None:
         """Merge values from another Styles.
 
         Args:

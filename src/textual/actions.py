@@ -3,6 +3,11 @@ from __future__ import annotations
 import ast
 import re
 
+from typing_extensions import Any, TypeAlias
+
+ActionParseResult: TypeAlias = "tuple[str, tuple[Any, ...]]"
+"""An action is its name and the arbitrary tuple of its parameters."""
+
 
 class SkipAction(Exception):
     """Raise in an action to skip the action (and allow any parent bindings to run)."""
@@ -15,7 +20,7 @@ class ActionError(Exception):
 re_action_params = re.compile(r"([\w\.]+)(\(.*?\))")
 
 
-def parse(action: str) -> tuple[str, tuple[object, ...]]:
+def parse(action: str) -> ActionParseResult:
     """Parses an action string.
 
     Args:

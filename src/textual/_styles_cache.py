@@ -18,7 +18,7 @@ from .renderables.tint import Tint
 from .strip import Strip
 
 if TYPE_CHECKING:
-    from typing import TypeAlias
+    from typing_extensions import TypeAlias
 
     from .css.styles import StylesBase
     from .widget import Widget

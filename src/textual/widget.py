@@ -65,6 +65,7 @@ from .walk import walk_depth_first
 
 if TYPE_CHECKING:
     from .app import App, ComposeResult
+    from .message_pump import MessagePump
     from .scrollbar import (
         ScrollBar,
         ScrollBarCorner,
@@ -443,23 +444,27 @@ class Widget(DOMNode):
         self, id: str, expect_type: type[ExpectType] | None = None
     ) -> ExpectType | Widget:
         """Return the first descendant widget with the given ID.
+
         Performs a depth-first search rooted at this widget.
 
         Args:
-            id: The ID to search for in the subtree
+            id: The ID to search for in the subtree.
             expect_type: Require the object be of the supplied type, or None for any type.
-                Defaults to None.
 
         Returns:
             The first descendant encountered with this ID.
 
         Raises:
-            NoMatches: if no children could be found for this ID
+            NoMatches: if no children could be found for this ID.
             WrongType: if the wrong type was found.
         """
-        for child in walk_depth_first(self):
+        # We use Widget as a filter_type so that the inferred type of child is Widget.
+        for child in walk_depth_first(self, filter_type=Widget):
             try:
-                return child.get_child_by_id(id, expect_type=expect_type)
+                if expect_type is None:
+                    return child.get_child_by_id(id)
+                else:
+                    return child.get_child_by_id(id, expect_type=expect_type)
             except NoMatches:
                 pass
             except WrongType as exc:
@@ -729,7 +734,9 @@ class Widget(DOMNode):
 
         # Ensure the child and target are widgets.
         child = _to_widget(child, "move")
-        target = _to_widget(before if after is None else after, "move towards")
+        target = _to_widget(
+            cast("int | Widget", before if after is None else after), "move towards"
+        )
 
         # At this point we should know what we're moving, and it should be a
         # child; where we're moving it to, which should be within the child
@@ -2275,7 +2282,7 @@ class Widget(DOMNode):
             Names of the pseudo classes.
 
         """
-        node = self
+        node: MessagePump | None = self
         while isinstance(node, Widget):
             if node.disabled:
                 yield "disabled"
@@ -2322,7 +2329,9 @@ class Widget(DOMNode):
             renderable.justify = text_justify
 
         renderable = _Styled(
-            renderable, self.rich_style, self.link_style if self.auto_links else None
+            cast(ConsoleRenderable, renderable),
+            self.rich_style,
+            self.link_style if self.auto_links else None,
         )
 
         return renderable
@@ -2524,7 +2533,7 @@ class Widget(DOMNode):
         self.check_idle()
 
     def remove(self) -> AwaitRemove:
-        """Remove the Widget from the DOM (effectively deleting it)
+        """Remove the Widget from the DOM (effectively deleting it).
 
         Returns:
             An awaitable object that waits for the widget to be removed.
@@ -2537,16 +2546,16 @@ class Widget(DOMNode):
         """Get renderable for widget.
 
         Returns:
-            Any renderable
+            Any renderable.
         """
-        render = "" if self.is_container else self.css_identifier_styled
+        render: Text | str = "" if self.is_container else self.css_identifier_styled
         return render
 
     def _render(self) -> ConsoleRenderable | RichCast:
         """Get renderable, promoting str to text as required.
 
         Returns:
-            A renderable
+            A renderable.
         """
         renderable = self.render()
         if isinstance(renderable, str):

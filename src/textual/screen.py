@@ -12,7 +12,7 @@ from ._compositor import Compositor, MapGeometry
 from ._types import CallbackType
 from .css.match import match
 from .css.parse import parse_selectors
-from .dom import DOMNode
+from .css.query import QueryType
 from .geometry import Offset, Region, Size
 from .reactive import Reactive
 from .renderables.blank import Blank
@@ -169,7 +169,7 @@ class Screen(Widget):
         return widgets
 
     def _move_focus(
-        self, direction: int = 0, selector: str | type[DOMNode.ExpectType] = "*"
+        self, direction: int = 0, selector: str | type[QueryType] = "*"
     ) -> Widget | None:
         """Move the focus in the given direction.
 
@@ -230,9 +230,7 @@ class Screen(Widget):
 
         return self.focused
 
-    def focus_next(
-        self, selector: str | type[DOMNode.ExpectType] = "*"
-    ) -> Widget | None:
+    def focus_next(self, selector: str | type[QueryType] = "*") -> Widget | None:
         """Focus the next widget, optionally filtered by a CSS selector.
 
         If no widget is currently focused, this will focus the first focusable widget.
@@ -249,9 +247,7 @@ class Screen(Widget):
         """
         return self._move_focus(1, selector)
 
-    def focus_previous(
-        self, selector: str | type[DOMNode.ExpectType] = "*"
-    ) -> Widget | None:
+    def focus_previous(self, selector: str | type[QueryType] = "*") -> Widget | None:
         """Focus the previous widget, optionally filtered by a CSS selector.
 
         If no widget is currently focused, this will focus the first focusable widget.
