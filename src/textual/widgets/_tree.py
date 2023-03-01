@@ -675,7 +675,14 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             raise self.UnknownNodeID(f"Unknown NodeID ({node_id}) in tree") from None
 
     def validate_cursor_line(self, value: int) -> int:
-        """Prevent cursor line from going outside of range."""
+        """Prevent cursor line from going outside of range.
+
+        Args:
+            value: The value to test.
+
+        Return:
+            A valid version of the given value.
+        """
         return clamp(value, 0, len(self._tree_lines) - 1)
 
     def validate_guide_depth(self, value: int) -> int:
