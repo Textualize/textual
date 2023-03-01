@@ -125,6 +125,7 @@ class Header(Widget):
     DEFAULT_CLASSES = ""
 
     tall = Reactive(False)
+    """Track if the `Header` is in a tall state or not."""
 
     def __init__(
         self,
