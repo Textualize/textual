@@ -10,6 +10,11 @@ from ..widget import Widget
 
 
 class Pretty(Widget):
+    """A pretty-printing widget.
+
+    Used to pretty-print any object.
+    """
+
     DEFAULT_CSS = """
     Static {
         height: auto;
