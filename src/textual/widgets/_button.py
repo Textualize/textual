@@ -4,7 +4,6 @@ from functools import partial
 from typing import cast
 
 import rich.repr
-from rich.console import RenderableType
 from rich.text import Text, TextType
 from typing_extensions import Literal
 
@@ -145,7 +144,7 @@ class Button(Static, can_focus=True):
     ACTIVE_EFFECT_DURATION = 0.3
     """When buttons are clicked they get the `-active` class for this duration (in seconds)"""
 
-    label: reactive[RenderableType] = reactive[RenderableType]("")
+    label: reactive[TextType] = reactive[TextType]("")
     """The text label that appears within the button."""
 
     variant = reactive("default")
@@ -209,15 +208,14 @@ class Button(Static, can_focus=True):
         self.remove_class(f"-{old_variant}")
         self.add_class(f"-{variant}")
 
-    def validate_label(self, label: RenderableType) -> RenderableType:
+    def validate_label(self, label: TextType) -> TextType:
         """Parse markup for self.label"""
         if isinstance(label, str):
             return Text.from_markup(label)
         return label
 
-    def render(self) -> RenderableType:
-        label = self.label.copy()
-        label = Text.assemble(" ", label, " ")
+    def render(self) -> TextType:
+        label = Text.assemble(" ", self.label, " ")
         label.stylize(self.text_style)
         return label
 

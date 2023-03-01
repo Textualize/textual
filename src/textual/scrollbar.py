@@ -300,13 +300,13 @@ class ScrollBar(Widget):
     def _on_leave(self, event: events.Leave) -> None:
         self.mouse_over = False
 
-    async def action_scroll_down(self) -> None:
-        await self.post_message(
+    def action_scroll_down(self) -> None:
+        self.post_message_no_wait(
             ScrollDown(self) if self.vertical else ScrollRight(self)
         )
 
-    async def action_scroll_up(self) -> None:
-        await self.post_message(ScrollUp(self) if self.vertical else ScrollLeft(self))
+    def action_scroll_up(self) -> None:
+        self.post_message_no_wait(ScrollUp(self) if self.vertical else ScrollLeft(self))
 
     def action_grab(self) -> None:
         self.capture_mouse()

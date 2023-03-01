@@ -300,6 +300,12 @@ So, thanks to this bit of code in my `Activity` widget...
         self.save_activity_list()
 ```
 
+!!! warning
+
+    The code above used `emit_no_wait`. Since this blog post was first
+    published that method has been removed from Textual. You should use
+    [`post_message_no_wait` or `post_message`](/guide/events/#sending-messages) instead now.
+
 ### Pain points
 
 On top of the issues of getting to know terminal-based-CSS that I mentioned

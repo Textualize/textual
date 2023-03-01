@@ -31,7 +31,7 @@ class ListItem(Widget, can_focus=False):
     class _ChildClicked(Message):
         """For informing with the parent ListView that we were clicked"""
 
-        pass
+        sender: "ListItem"
 
     def on_click(self, event: events.Click) -> None:
         self.post_message_no_wait(self._ChildClicked(self))
