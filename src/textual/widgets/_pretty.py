@@ -29,6 +29,14 @@ class Pretty(Widget):
         id: str | None = None,
         classes: str | None = None,
     ) -> None:
+        """Initialise the `Pretty` widget.
+
+        Args:
+            object: The object to pretty-print.
+            name: The name of the pretty widget.
+            id: The ID of the pretty in the DOM.
+            classes: The CSS classes of the pretty.
+        """
         super().__init__(
             name=name,
             id=id,
