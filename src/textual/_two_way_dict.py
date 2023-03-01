@@ -29,7 +29,7 @@ class TwoWayDict(Generic[Key, Value]):
         self._forward.__delitem__(key)
         self._reverse.__delitem__(value)
 
-    def get(self, key: Key) -> Value | None:
+    def get(self, key: Key) -> Value:
         """Given a key, efficiently lookup and return the associated value.
 
         Args:
@@ -40,7 +40,7 @@ class TwoWayDict(Generic[Key, Value]):
         """
         return self._forward.get(key)
 
-    def get_key(self, value: Value) -> Key | None:
+    def get_key(self, value: Value) -> Key:
         """Given a value, efficiently lookup and return the associated key.
 
         Args:
