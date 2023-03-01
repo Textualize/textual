@@ -45,6 +45,11 @@ class Pretty(Widget):
         self._renderable = PrettyRenderable(object)
 
     def render(self) -> PrettyRenderable:
+        """Render the pretty-printed object.
+
+        Returns:
+            The value to render.
+        """
         return self._renderable
 
     def update(self, object: Any) -> None:
