@@ -126,7 +126,7 @@ class TreeNode(Generic[TreeDataType]):
 
     @property
     def line(self) -> int:
-        """Get the line number for this node, or -1 if it is not displayed."""
+        """The line number for this node, or -1 if it is not displayed."""
         return self._line
 
     @property
