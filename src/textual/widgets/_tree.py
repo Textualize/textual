@@ -295,7 +295,7 @@ class TreeNode(Generic[TreeDataType]):
 
         Args:
             label: Label for the node.
-            data: Optional data. Defaults to None.
+            data: Optional data.
 
         Returns:
             New node.
