@@ -2106,7 +2106,7 @@ class Widget(DOMNode):
 
         if show_horizontal_scrollbar and show_vertical_scrollbar:
             (
-                _,
+                window_region,
                 vertical_scrollbar_region,
                 horizontal_scrollbar_region,
                 scrollbar_corner_gap,
@@ -2117,18 +2117,34 @@ class Widget(DOMNode):
             if scrollbar_corner_gap:
                 yield self.scrollbar_corner, scrollbar_corner_gap
             if vertical_scrollbar_region:
-                yield self.vertical_scrollbar, vertical_scrollbar_region
+                scrollbar = self.vertical_scrollbar
+                scrollbar.window_virtual_size = self.virtual_size.height
+                scrollbar.window_size = window_region.height
+                yield scrollbar, vertical_scrollbar_region
             if horizontal_scrollbar_region:
-                yield self.horizontal_scrollbar, horizontal_scrollbar_region
+                scrollbar = self.horizontal_scrollbar
+                scrollbar.window_virtual_size = self.virtual_size.width
+                scrollbar.window_size = window_region.width
+                yield scrollbar, horizontal_scrollbar_region
 
         elif show_vertical_scrollbar:
-            _, scrollbar_region = region.split_vertical(-scrollbar_size_vertical)
+            window_region, scrollbar_region = region.split_vertical(
+                -scrollbar_size_vertical
+            )
             if scrollbar_region:
-                yield self.vertical_scrollbar, scrollbar_region
+                scrollbar = self.vertical_scrollbar
+                scrollbar.window_virtual_size = self.virtual_size.height
+                scrollbar.window_size = window_region.height
+                yield scrollbar, scrollbar_region
         elif show_horizontal_scrollbar:
-            _, scrollbar_region = region.split_horizontal(-scrollbar_size_horizontal)
+            window_region, scrollbar_region = region.split_horizontal(
+                -scrollbar_size_horizontal
+            )
             if scrollbar_region:
-                yield self.horizontal_scrollbar, scrollbar_region
+                scrollbar = self.horizontal_scrollbar
+                scrollbar.window_virtual_size = self.virtual_size.width
+                scrollbar.window_size = window_region.width
+                yield scrollbar, scrollbar_region
 
     def get_pseudo_classes(self) -> Iterable[str]:
         """Pseudo classes for a widget.
