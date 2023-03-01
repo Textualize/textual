@@ -495,6 +495,17 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         classes: str | None = None,
         disabled: bool = False,
     ) -> None:
+        """Initialise a Tree.
+
+        Args:
+            label: The label of the root node of the tree.
+            data: The optional data to associate with the root node of the tree.
+            name: The name of the Tree.
+            id: The ID of the tree in the DOM.
+            classes: The CSS classes of the tree.
+            disabled: Whether the tree is disabled or not.
+        """
+
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
         text_label = self.process_label(label)
