@@ -18,7 +18,7 @@ _VALID_BUTTON_VARIANTS = {"default", "primary", "success", "warning", "error"}
 
 
 class InvalidButtonVariant(Exception):
-    pass
+    """Exception raised if an invalid button variant is used."""
 
 
 class Button(Static, can_focus=True):
