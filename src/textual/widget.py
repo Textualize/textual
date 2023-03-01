@@ -1511,17 +1511,16 @@ class Widget(DOMNode):
         """Scroll relative to current position.
 
         Args:
-            x: X distance (columns) to scroll, or ``None`` for no change. Defaults to None.
-            y: Y distance (rows) to scroll, or ``None`` for no change. Defaults to None.
-            animate: Animate to new scroll position. Defaults to False.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            x: X distance (columns) to scroll, or ``None`` for no change.
+            y: Y distance (rows) to scroll, or ``None`` for no change.
+            animate: Animate to new scroll position.
+            speed: Speed of scroll if animate is `True`. Or `None` to use duration.
+            duration: Duration of animation, if animate is `True` and speed is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
 
         Returns:
-            True if the scroll position changed, otherwise False.
+            `True` if the scroll position changed, otherwise `False`.
         """
         return self.scroll_to(
             None if x is None else (self.scroll_x + x),
