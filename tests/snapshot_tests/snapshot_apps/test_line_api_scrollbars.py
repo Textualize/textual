@@ -16,7 +16,7 @@ class MyWidget(Widget):
         )
 
 
-class SVApp(App):
+class ScrollViewApp(App):
     CSS = """
     Screen {
         align: center middle;
@@ -52,5 +52,5 @@ class SVApp(App):
 
 
 if __name__ == "__main__":
-    app = SVApp()
+    app = ScrollViewApp()
     app.run()
