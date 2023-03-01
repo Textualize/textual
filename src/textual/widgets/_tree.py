@@ -26,6 +26,8 @@ if TYPE_CHECKING:
     from typing_extensions import TypeAlias
 
 NodeID = NewType("NodeID", int)
+"""The type of an ID applied to a [TreeNode][textual.widgets._tree.TreeNode]."""
+
 TreeDataType = TypeVar("TreeDataType")
 EventTreeDataType = TypeVar("EventTreeDataType")
 
