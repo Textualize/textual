@@ -74,7 +74,7 @@ class HeaderClock(HeaderClockSpace):
         """Render the header clock.
 
         Returns:
-            The value to render.
+            The rendered clock.
         """
         return Text(datetime.now().time().strftime("%X"))
 
