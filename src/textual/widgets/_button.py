@@ -14,6 +14,11 @@ from ..reactive import reactive
 from ..widgets import Static
 
 ButtonVariant = Literal["default", "primary", "success", "warning", "error"]
+"""The names of the valid button variants.
+
+These are the variants that can be used with a [Button][textual.widgets.Button].
+"""
+
 _VALID_BUTTON_VARIANTS = {"default", "primary", "success", "warning", "error"}
 
 
