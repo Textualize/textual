@@ -13,6 +13,8 @@ from ..reactive import Reactive, reactive
 from ..widget import Widget
 
 PlaceholderVariant = Literal["default", "size", "text"]
+"""The different variants of placeholder."""
+
 _VALID_PLACEHOLDER_VARIANTS_ORDERED: list[PlaceholderVariant] = [
     "default",
     "size",
