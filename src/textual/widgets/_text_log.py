@@ -58,10 +58,10 @@ class TextLog(ScrollView, can_focus=True):
             wrap: Enable word wrapping (default is off).
             highlight: Automatically highlight content.
             markup: Apply Rich console markup.
-            name: The name of the button.
-            id: The ID of the button in the DOM.
-            classes: The CSS classes of the button.
-            disabled: Whether the button is disabled or not.
+            name: The name of the text log.
+            id: The ID of the text log in the DOM.
+            classes: The CSS classes of the text log.
+            disabled: Whether the text log is disabled or not.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self.max_lines = max_lines
