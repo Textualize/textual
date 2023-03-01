@@ -53,5 +53,10 @@ class Pretty(Widget):
         return self._renderable
 
     def update(self, object: Any) -> None:
+        """Update the content of the pretty widget.
+
+        Args:
+            object: The object to pretty-print.
+        """
         self._renderable = PrettyRenderable(object)
         self.refresh(layout=True)
