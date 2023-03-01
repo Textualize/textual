@@ -40,7 +40,7 @@ class ListItem(Widget, can_focus=False):
 
     class _ChildClicked(Message):
         """For informing with the parent ListView that we were clicked"""
-        
+
         sender: "ListItem"
 
     def on_click(self, event: events.Click) -> None:
