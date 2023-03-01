@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import cast
+from typing import Optional, cast
 
 from rich.console import RenderableType
 from rich.highlighter import ReprHighlighter
@@ -30,7 +30,7 @@ class TextLog(ScrollView, can_focus=True):
     }
     """
 
-    max_lines: var[int | None] = var[int | None](None)
+    max_lines: var[int | None] = var[Optional[int]](None)
     min_width: var[int] = var(78)
     wrap: var[bool] = var(False)
     highlight: var[bool] = var(False)
