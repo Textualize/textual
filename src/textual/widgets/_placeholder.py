@@ -1,3 +1,5 @@
+"""Provides a Textual placeholder widget; useful when designing an app's layout."""
+
 from __future__ import annotations
 
 from itertools import cycle
