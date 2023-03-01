@@ -7,6 +7,13 @@ from textual.widget import Widget
 
 
 class ListItem(Widget, can_focus=False):
+    """A widget that is an item within a `ListView`.
+
+    A `ListItem` is designed for use within a
+    [ListView][textual.widgets._list_view.ListView], please see `ListView`'s
+    documentation for more details on use.
+    """
+
     DEFAULT_CSS = """
     ListItem {
         color: $text;
