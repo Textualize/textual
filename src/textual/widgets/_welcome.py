@@ -1,3 +1,5 @@
+"""Provides a Textual welcome widget."""
+
 from rich.markdown import Markdown
 
 from ..app import ComposeResult
@@ -24,6 +26,13 @@ Where the fear has gone there will be nothing. Only I will remain."
 
 
 class Welcome(Static):
+    """A Textual welcome widget.
+
+    This widget can be used as a form of placeholder within a Textual
+    application; although also see
+    [Placeholder][textual.widgets._placeholder.Placeholder].
+    """
+
     DEFAULT_CSS = """
         Welcome {
             width: 100%;
