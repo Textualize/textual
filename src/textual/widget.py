@@ -1804,7 +1804,7 @@ class Widget(DOMNode):
             force: Force scrolling even when prohibited by overflow styling.
 
         Returns:
-            True if any scrolling was done.
+            `True` if any scrolling was done.
 
         Note:
             How much is scrolled is controlled by
