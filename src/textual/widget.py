@@ -1514,7 +1514,7 @@ class Widget(DOMNode):
             x: X coordinate (column) to scroll to, or `None` for no change.
             y: Y coordinate (row) to scroll to, or `None` for no change.
             animate: Animate to new scroll position.
-            speed: Speed of scroll if `animate` is `True`; or None to use duration.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
             duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
@@ -1550,7 +1550,7 @@ class Widget(DOMNode):
             x: X distance (columns) to scroll, or ``None`` for no change.
             y: Y distance (rows) to scroll, or ``None`` for no change.
             animate: Animate to new scroll position.
-            speed: Speed of scroll if animate is `True`. Or `None` to use duration.
+            speed: Speed of scroll if `animate` is `True`. Or `None` to use `duration`.
             duration: Duration of animation, if animate is `True` and speed is `None`.
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
@@ -1579,7 +1579,7 @@ class Widget(DOMNode):
         Args:
             animate: Animate scroll.
             speed: Speed of scroll if animate is `True`; or `None` to use duration.
-            duration: Duration of animation, if animate is `True` and speed is `None`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
         """
@@ -1608,8 +1608,8 @@ class Widget(DOMNode):
 
         Args:
             animate: Animate scroll.
-            speed: Speed of scroll if `animate` is `True`; or `None` to use duration.
-            duration: Duration of animation, if animate is `True` and speed is `None`.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
         """
@@ -1649,7 +1649,7 @@ class Widget(DOMNode):
 
         Args:
             animate: Animate scroll.
-            speed: Speed of scroll if `animate` is `True`; or None to use `duration`.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
             duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
@@ -1682,7 +1682,7 @@ class Widget(DOMNode):
             force: Force scrolling even when prohibited by overflow styling.
 
         Returns:
-            True if any scrolling was done.
+            `True` if any scrolling was done.
 
         Note:
             How much is scrolled is controlled by
@@ -1710,7 +1710,7 @@ class Widget(DOMNode):
 
         Args:
             animate: Animate scroll.
-            speed: Speed of scroll if animate is `True`; or None to use duration.
+            speed: Speed of scroll if animate is `True`; or `None` to use `duration`.
             duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
@@ -1737,13 +1737,13 @@ class Widget(DOMNode):
 
         Args:
             animate: Animate scroll.
-            speed: Speed of scroll if animate is `True`; or None to use duration.
+            speed: Speed of scroll if animate is `True`; or `None` to use `duration`.
             duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
 
         Returns:
-            True if any scrolling was done.
+            `True` if any scrolling was done.
 
         Note:
             How much is scrolled is controlled by
@@ -1771,7 +1771,7 @@ class Widget(DOMNode):
 
         Args:
             animate: Animate scroll.
-            speed: Speed of scroll if `animate` is `True`; or None to use duration.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
             duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
@@ -1798,7 +1798,7 @@ class Widget(DOMNode):
 
         Args:
             animate: Animate scroll.
-            speed: Speed of scroll if `animate` is `True`; or None to use duration.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
             duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
@@ -1832,7 +1832,7 @@ class Widget(DOMNode):
 
         Args:
             animate: Animate scroll.
-            speed: Speed of scroll if `animate` is `True`; or `None` to use duration.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
             duration: Duration of animation, if `animate` is `True` and speed is `None`.
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
@@ -1859,7 +1859,7 @@ class Widget(DOMNode):
 
         Args:
             animate: Animate scroll.
-            speed: Speed of scroll if `animate` is `True`; or `None` to use duration.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
             duration: Duration of animation, if `animate` is `True` and speed is `None`.
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
@@ -2008,7 +2008,7 @@ class Widget(DOMNode):
         Args:
             widget: A descendant widget.
             animate: `True` to animate, or `False` to jump.
-            speed: Speed of scroll if `animate` is `True`; or `None` to use duration.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
             duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
             easing: An easing method for the scrolling animation.
             top: Scroll widget to top of container.
@@ -2079,7 +2079,7 @@ class Widget(DOMNode):
             speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
             duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
             easing: An easing method for the scrolling animation.
-            top: Scroll region to top of container.
+            top: Scroll `region` to top of container.
             force: Force scrolling even when prohibited by overflow styling.
 
         Returns:
@@ -2129,7 +2129,7 @@ class Widget(DOMNode):
             speed: Speed of scroll if animate is `True`; or `None` to use `duration`.
             duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
             top: Scroll to top of container.
-            easing: An easing method for the scrolling animation.g easing function.
+            easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
         """
         parent = self.parent
