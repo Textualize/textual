@@ -151,7 +151,7 @@ class TreeNode(Generic[TreeDataType]):
 
     @property
     def id(self) -> NodeID:
-        """Get the node ID."""
+        """The ID of the  node."""
         return self._id
 
     @property
