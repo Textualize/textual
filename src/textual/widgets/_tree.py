@@ -529,8 +529,10 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         """The index of the last line."""
         return len(self._tree_lines) - 1
 
-    def process_label(self, label: TextType):
-        """Process a str or Text in to a label. Maybe overridden in a subclass to change modify how labels are rendered.
+    def process_label(self, label: TextType) -> Text:
+        """Process a `str` or `Text` value in to a label.
+
+        Maybe overridden in a subclass to change modify how labels are rendered.
 
         Args:
             label: Label.
