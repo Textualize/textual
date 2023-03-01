@@ -1622,7 +1622,8 @@ class Widget(DOMNode):
         # is, we need the layout to work out and then figure out how big
         # things are). Because of this we'll create a closure over the call
         # here and make our own call to call_after_refresh.
-        def _lazily_scroll_end():
+        def _lazily_scroll_end() -> None:
+            """Scroll to the end of the widget."""
             self._scroll_to(
                 0,
                 self.max_scroll_y,
