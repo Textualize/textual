@@ -98,14 +98,12 @@ class Placeholder(Widget):
 
         Args:
             label: The label to identify the placeholder.
-                If no label is present, uses the placeholder ID instead. Defaults to None.
+                If no label is present, uses the placeholder ID instead.
             variant: The variant of the placeholder.
-                Defaults to "default".
             name: The name of the placeholder. Defaults to None.
             id: The ID of the placeholder in the DOM.
-                Defaults to None.
             classes: A space separated string with the CSS classes
-                of the placeholder, if any. Defaults to None.
+                of the placeholder, if any.
         """
         # Create and cache renderables for all the variants.
         self._renderables = {
