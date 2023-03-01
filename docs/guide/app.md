@@ -157,9 +157,13 @@ The chapter on [Textual CSS](CSS.md) describes how to use CSS in detail. For now
 
 The following example enables loading of CSS by adding a `CSS_PATH` class variable:
 
-```python title="question02.py" hl_lines="6"
+```python title="question02.py" hl_lines="6 9"
 --8<-- "docs/examples/app/question02.py"
 ```
+
+!!! note
+
+    We also added an `id` to the `Label`, because we want to style it in the CSS.
 
 If the path is relative (as it is above) then it is taken as relative to where the app is defined. Hence this example references `"question01.css"` in the same directory as the Python code. Here is that CSS file:
 
