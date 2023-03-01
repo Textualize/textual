@@ -2007,16 +2007,15 @@ class Widget(DOMNode):
 
         Args:
             widget: A descendant widget.
-            animate: True to animate, or False to jump. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            top: Scroll widget to top of container. Defaults to False.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            animate: `True` to animate, or `False` to jump.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use duration.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            top: Scroll widget to top of container.
+            force: Force scrolling even when prohibited by overflow styling.
 
         Returns:
-            True if any scrolling has occurred in any descendant, otherwise False.
+            `True` if any scrolling has occurred in any descendant, otherwise `False`.
         """
 
         # Grow the region by the margin so to keep the margin in view.
