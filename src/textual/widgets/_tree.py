@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from multiprocessing import Event
 from typing import TYPE_CHECKING, ClassVar, Generic, Iterable, NewType, TypeVar, cast
 
 import rich.repr
@@ -431,15 +432,17 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
         Can be handled using `on_tree_node_collapsed` in a subclass of `Tree` or in a
         parent node in the DOM.
-
-        Attributes:
-            node: The node that was collapsed.
         """
 
+        node: TreeNode[EventTreeDataType]
+        """The node that was collapsed."""
+        sender: Tree[EventTreeDataType]
+        """The tree that posted this message."""
+
         def __init__(
-            self, sender: MessageTarget, node: TreeNode[EventTreeDataType]
+            self, sender: Tree[EventTreeDataType], node: TreeNode[EventTreeDataType]
         ) -> None:
-            self.node: TreeNode[EventTreeDataType] = node
+            self.node = node
             super().__init__(sender)
 
     class NodeExpanded(Generic[EventTreeDataType], Message, bubble=True):
@@ -447,15 +450,17 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
         Can be handled using `on_tree_node_expanded` in a subclass of `Tree` or in a
         parent node in the DOM.
-
-        Attributes:
-            node: The node that was expanded.
         """
 
+        node: TreeNode[EventTreeDataType]
+        """The node that was expanded."""
+        sender: Tree[EventTreeDataType]
+        """The tree that posted this message."""
+
         def __init__(
-            self, sender: MessageTarget, node: TreeNode[EventTreeDataType]
+            self, sender: Tree[EventTreeDataType], node: TreeNode[EventTreeDataType]
         ) -> None:
-            self.node: TreeNode[EventTreeDataType] = node
+            self.node = node
             super().__init__(sender)
 
     class NodeHighlighted(Generic[EventTreeDataType], Message, bubble=True):
@@ -463,15 +468,17 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
         Can be handled using `on_tree_node_highlighted` in a subclass of `Tree` or in a
         parent node in the DOM.
-
-        Attributes:
-            node: The node that was highlighted.
         """
 
+        node: TreeNode[EventTreeDataType]
+        """The node that was highlighted."""
+        sender: Tree[EventTreeDataType]
+        """The tree that posted this message."""
+
         def __init__(
-            self, sender: MessageTarget, node: TreeNode[EventTreeDataType]
+            self, sender: Tree[EventTreeDataType], node: TreeNode[EventTreeDataType]
         ) -> None:
-            self.node: TreeNode[EventTreeDataType] = node
+            self.node = node
             super().__init__(sender)
 
     class NodeSelected(Generic[EventTreeDataType], Message, bubble=True):
@@ -479,15 +486,17 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
         Can be handled using `on_tree_node_selected` in a subclass of `Tree` or in a
         parent node in the DOM.
-
-        Attributes:
-            node: The node that was selected.
         """
 
+        node: TreeNode[EventTreeDataType]
+        """The node that was selected."""
+        sender: Tree[EventTreeDataType]
+        """The tree that posted this message."""
+
         def __init__(
-            self, sender: MessageTarget, node: TreeNode[EventTreeDataType]
+            self, sender: Tree[EventTreeDataType], node: TreeNode[EventTreeDataType]
         ) -> None:
-            self.node: TreeNode[EventTreeDataType] = node
+            self.node = node
             super().__init__(sender)
 
     def __init__(
