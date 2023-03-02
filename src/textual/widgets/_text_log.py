@@ -148,7 +148,6 @@ class TextLog(ScrollView, can_focus=True):
             self.refresh()
             self.lines = self.lines[-self.max_lines :]
         self.virtual_size = Size(self.max_width, len(self.lines))
-        print(self.virtual_size, self.max_scroll_y)
         self.scroll_end(animate=False)
 
     def clear(self) -> None:
