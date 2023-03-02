@@ -81,16 +81,16 @@ class Switch(Widget, can_focus=True):
 
         Can be handled using `on_switch_changed` in a subclass of `Switch`
         or in a parent widget in the DOM.
-
-        Attributes:
-            value: The value that the switch was changed to.
-            input: The `Switch` widget that was changed.
         """
+
+        sender: Switch
+        """The switch that posted the message."""
+        value: bool
+        """The value that the switch was changed to."""
 
         def __init__(self, sender: Switch, value: bool) -> None:
             super().__init__(sender)
-            self.value: bool = value
-            self.input: Switch = sender
+            self.value = value
 
     def __init__(
         self,
