@@ -43,14 +43,16 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         Highlighted item is controlled using up/down keys.
         Can be handled using `on_list_view_highlighted` in a subclass of `ListView`
         or in a parent widget in the DOM.
-
-        Attributes:
-            item: The highlighted item, if there is one highlighted.
         """
+
+        item: ListItem | None
+        """The highlighted item, if there is one highlighted."""
+        sender: ListView
+        """The list view that posted the message."""
 
         def __init__(self, sender: ListView, item: ListItem | None) -> None:
             super().__init__(sender)
-            self.item: ListItem | None = item
+            self.item = item
 
     class Selected(Message, bubble=True):
         """Posted when a list item is selected, e.g. when you press the enter key on it.
