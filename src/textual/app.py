@@ -70,7 +70,12 @@ from .features import FeatureFlag, parse_features
 from .file_monitor import FileMonitor
 from .filter import LineFilter, Monochrome
 from .geometry import Offset, Region, Size
-from .keys import REPLACED_KEYS, _get_key_display
+from .keys import (
+    REPLACED_KEYS,
+    _character_to_key,
+    _get_key_display,
+    _get_unicode_name_from_key,
+)
 from .messages import CallbackType
 from .reactive import Reactive
 from .renderables.blank import Blank
@@ -864,19 +869,15 @@ class App(Generic[ReturnType], DOMNode):
                 await asyncio.sleep(float(wait_ms) / 1000)
             else:
                 if len(key) == 1 and not key.isalnum():
-                    key = (
-                        unicodedata.name(key)
-                        .lower()
-                        .replace("-", "_")
-                        .replace(" ", "_")
-                    )
+                    key = _character_to_key(key)
                 original_key = REPLACED_KEYS.get(key, key)
+                print(f"original key is {original_key}")
                 char: str | None
                 try:
-                    char = unicodedata.lookup(original_key.upper().replace("_", " "))
+                    char = unicodedata.lookup(_get_unicode_name_from_key(original_key))
                 except KeyError:
                     char = key if len(key) == 1 else None
-                print(f"press {key!r} (char={char!r})")
+                print(f"char is {char!r}")
                 key_event = events.Key(app, key, char)
                 driver.send_event(key_event)
                 await wait_for_idle(0)
