@@ -15,7 +15,7 @@ class RadioButtonApp(App[None]):
         yield RadioButton(value=True, id="rb3")
 
     def on_radio_button_changed(self, event: RadioButton.Changed) -> None:
-        self.events_received.append((event.input.id, event.input.value))
+        self.events_received.append((event.sender.id, event.sender.value))
 
 
 async def test_radio_button_initial_state() -> None:

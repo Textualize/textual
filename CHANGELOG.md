@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Removed the attributes `Input.Changed.input` and `Input.Submitted.input` in favour of the respective `Input.Changed.sender` and `Input.Submitted.sender` attributes https://github.com/Textualize/textual/issues/1813
 - Removed the attribute `RadioSet.Changed.input` in favour of `RadioSet.Changed.sender` https://github.com/Textualize/textual/issues/1813
 - Removed the attribute `Switch.Changed.input` in favour of `Switch.Changed.sender` https://github.com/Textualize/textual/issues/1813
+- Removed the attribute `ToggleButton.Changed.input` in favour of `ToggleButton.Changed.sender` https://github.com/Textualize/textual/issues/1813
 
 ### Fixed
 
