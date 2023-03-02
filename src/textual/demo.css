@@ -102,6 +102,7 @@ Column {
     height: auto;
     min-height: 100vh;
     align: center top;
+    overflow: hidden;
 }
 
 

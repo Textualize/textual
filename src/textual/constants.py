@@ -3,7 +3,6 @@ Constants that we might want to expose via the public API.
 
 """
 
-
 import os
 
 from typing_extensions import Final

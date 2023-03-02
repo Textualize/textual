@@ -274,7 +274,8 @@ class Widget(DOMNode):
 
         self._styles_cache = StylesCache()
         self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
-        self._stabilized_scrollbar_size: Size | None = None
+        self._stabilize_scrollbar: tuple[Size, str, str] | None = None
+        """Used to prevent scrollbar logic getting stuck in an infinite loop."""
         self._lock = Lock()
 
         super().__init__(
@@ -520,6 +521,7 @@ class Widget(DOMNode):
     def _clear_arrangement_cache(self) -> None:
         """Clear arrangement cache, forcing a new arrange operation."""
         self._arrangement_cache.clear()
+        self._stabilize_scrollbar = None
 
     def _get_virtual_dom(self) -> Iterable[Widget]:
         """Get widgets not part of the DOM.
@@ -855,14 +857,11 @@ class Widget(DOMNode):
         """
         if self.is_container:
             assert self._layout is not None
-            height = (
-                self._layout.get_content_height(
-                    self,
-                    container,
-                    viewport,
-                    width,
-                )
-                + self.scrollbar_size_horizontal
+            height = self._layout.get_content_height(
+                self,
+                container,
+                viewport,
+                width,
             )
         else:
             cache_key = width
@@ -913,8 +912,7 @@ class Widget(DOMNode):
         return max(
             0,
             self.virtual_size.width
-            - self.container_size.width
-            + self.scrollbar_size_vertical,
+            - (self.container_size.width - self.scrollbar_size_vertical),
         )
 
     @property
@@ -923,8 +921,7 @@ class Widget(DOMNode):
         return max(
             0,
             self.virtual_size.height
-            - self.container_size.height
-            + self.scrollbar_size_horizontal,
+            - (self.container_size.height - self.scrollbar_size_horizontal),
         )
 
     @property
@@ -985,9 +982,18 @@ class Widget(DOMNode):
         styles = self.styles
         overflow_x = styles.overflow_x
         overflow_y = styles.overflow_y
-        width, height = self.container_size
 
-        show_horizontal = self.show_horizontal_scrollbar
+        stabilize_scrollbar = (
+            self.container_size,
+            overflow_x,
+            overflow_y,
+        )
+        if self._stabilize_scrollbar == stabilize_scrollbar:
+            return
+
+        width, height = self._container_size
+
+        show_horizontal = False
         if overflow_x == "hidden":
             show_horizontal = False
         elif overflow_x == "scroll":
@@ -995,7 +1001,7 @@ class Widget(DOMNode):
         elif overflow_x == "auto":
             show_horizontal = self.virtual_size.width > width
 
-        show_vertical = self.show_vertical_scrollbar
+        show_vertical = False
         if overflow_y == "hidden":
             show_vertical = False
         elif overflow_y == "scroll":
@@ -1003,16 +1009,17 @@ class Widget(DOMNode):
         elif overflow_y == "auto":
             show_vertical = self.virtual_size.height > height
 
-        if (
-            overflow_x == "auto"
-            and show_vertical
-            and not show_horizontal
-            and self._stabilized_scrollbar_size != self.container_size
-        ):
-            show_horizontal = (
-                self.virtual_size.width + styles.scrollbar_size_vertical > width
+        # When a single scrollbar is shown, the other dimension changes, so we need to recalculate.
+        if show_vertical and not show_horizontal:
+            show_horizontal = self.virtual_size.width > (
+                width - styles.scrollbar_size_vertical
             )
-            self._stabilized_scrollbar_size = self.container_size
+        if show_horizontal and not show_vertical:
+            show_vertical = self.virtual_size.height > (
+                height - styles.scrollbar_size_horizontal
+            )
+
+        self._stabilize_scrollbar = stabilize_scrollbar
 
         self.show_horizontal_scrollbar = show_horizontal
         self.show_vertical_scrollbar = show_vertical
@@ -1454,6 +1461,7 @@ class Widget(DOMNode):
         Returns:
             `True` if the scroll position changed, otherwise `False`.
         """
+
         maybe_scroll_x = x is not None and (self.allow_horizontal_scroll or force)
         maybe_scroll_y = y is not None and (self.allow_vertical_scroll or force)
         scrolled_x = scrolled_y = False
@@ -2231,7 +2239,7 @@ class Widget(DOMNode):
 
         if show_horizontal_scrollbar and show_vertical_scrollbar:
             (
-                _,
+                window_region,
                 vertical_scrollbar_region,
                 horizontal_scrollbar_region,
                 scrollbar_corner_gap,
@@ -2242,18 +2250,34 @@ class Widget(DOMNode):
             if scrollbar_corner_gap:
                 yield self.scrollbar_corner, scrollbar_corner_gap
             if vertical_scrollbar_region:
-                yield self.vertical_scrollbar, vertical_scrollbar_region
+                scrollbar = self.vertical_scrollbar
+                scrollbar.window_virtual_size = self.virtual_size.height
+                scrollbar.window_size = window_region.height
+                yield scrollbar, vertical_scrollbar_region
             if horizontal_scrollbar_region:
-                yield self.horizontal_scrollbar, horizontal_scrollbar_region
+                scrollbar = self.horizontal_scrollbar
+                scrollbar.window_virtual_size = self.virtual_size.width
+                scrollbar.window_size = window_region.width
+                yield scrollbar, horizontal_scrollbar_region
 
         elif show_vertical_scrollbar:
-            _, scrollbar_region = region.split_vertical(-scrollbar_size_vertical)
+            window_region, scrollbar_region = region.split_vertical(
+                -scrollbar_size_vertical
+            )
             if scrollbar_region:
-                yield self.vertical_scrollbar, scrollbar_region
+                scrollbar = self.vertical_scrollbar
+                scrollbar.window_virtual_size = self.virtual_size.height
+                scrollbar.window_size = window_region.height
+                yield scrollbar, scrollbar_region
         elif show_horizontal_scrollbar:
-            _, scrollbar_region = region.split_horizontal(-scrollbar_size_horizontal)
+            window_region, scrollbar_region = region.split_horizontal(
+                -scrollbar_size_horizontal
+            )
             if scrollbar_region:
-                yield self.horizontal_scrollbar, scrollbar_region
+                scrollbar = self.horizontal_scrollbar
+                scrollbar.window_virtual_size = self.virtual_size.width
+                scrollbar.window_size = window_region.width
+                yield scrollbar, scrollbar_region
 
     def get_pseudo_classes(self) -> Iterable[str]:
         """Pseudo classes for a widget.
@@ -2374,9 +2398,13 @@ class Widget(DOMNode):
             self.vertical_scrollbar.window_size = (
                 height - self.scrollbar_size_horizontal
             )
+            if self.vertical_scrollbar._repaint_required:
+                self.call_next(self.vertical_scrollbar.refresh)
         if self.show_horizontal_scrollbar:
             self.horizontal_scrollbar.window_virtual_size = virtual_size.width
             self.horizontal_scrollbar.window_size = width - self.scrollbar_size_vertical
+            if self.horizontal_scrollbar._repaint_required:
+                self.call_next(self.horizontal_scrollbar.refresh)
 
         self.scroll_x = self.validate_scroll_x(self.scroll_x)
         self.scroll_y = self.validate_scroll_y(self.scroll_y)
@@ -2498,6 +2526,7 @@ class Widget(DOMNode):
         """
         if layout and not self._layout_required:
             self._layout_required = True
+            self._stabilize_scrollbar = None
             for ancestor in self.ancestors:
                 if not isinstance(ancestor, Widget):
                     break

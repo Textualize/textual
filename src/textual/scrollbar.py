@@ -197,7 +197,7 @@ class ScrollBarRender:
 class ScrollBar(Widget):
     renderer: ClassVar[Type[ScrollBarRender]] = ScrollBarRender
     """The class used for rendering scrollbars.
-    This can be overriden and set to a ScrollBarRender-derived class
+    This can be overridden and set to a ScrollBarRender-derived class
     in order to delegate all scrollbar rendering to that class. E.g.:
 
     ```

@@ -256,3 +256,7 @@ def test_disabled_widgets(snap_compare):
 
 def test_focus_component_class(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "focus_component_class.py", press=["tab"])
+
+
+def test_line_api_scrollbars(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "line_api_scrollbars.py", press=["_"])

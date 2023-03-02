@@ -1817,7 +1817,7 @@ class App(Generic[ReturnType], DOMNode):
             await child._close_messages()
 
     async def _shutdown(self) -> None:
-        self._begin_update()  # Prevents any layout / repaint while shutting down
+        self._begin_batch()  # Prevents any layout / repaint while shutting down
         driver = self._driver
         self._running = False
         if driver is not None:
