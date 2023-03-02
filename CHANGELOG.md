@@ -21,10 +21,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Scrolling with cursor keys now moves just one cell https://github.com/Textualize/textual/issues/1897
-
-### Fixed
-
 - Fix exceptions in watch methods being hidden on startup https://github.com/Textualize/textual/issues/1886
+- Fixed scrollbar size miscalculation https://github.com/Textualize/textual/pull/1910
+- Fixed slow exit on some terminals https://github.com/Textualize/textual/issues/1920
 
 ## [0.12.1] - 2023-02-25
 
