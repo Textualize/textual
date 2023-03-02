@@ -275,6 +275,7 @@ class Widget(DOMNode):
         self._styles_cache = StylesCache()
         self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
         self._stabilize_scrollbar: tuple[Size, str, str] | None = None
+        """Used to prevent scrollbar logic getting stuck in an infinite loop."""
         self._lock = Lock()
 
         super().__init__(
