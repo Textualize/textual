@@ -259,4 +259,4 @@ def test_focus_component_class(snap_compare):
 
 
 def test_line_api_scrollbars(snap_compare):
-    assert snap_compare(SNAPSHOT_APPS_DIR / "test_line_api_scrollbars.py", press=["_"])
+    assert snap_compare(SNAPSHOT_APPS_DIR / "line_api_scrollbars.py", press=["_"])
