@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from textual.app import App, ComposeResult
 from textual.containers import Container
+from textual.geometry import clamp
 from textual.messages import Message
 from textual.reactive import reactive
 from textual.widget import Widget
@@ -24,12 +25,14 @@ class BitSwitch(Widget):
     """
 
     class BitChanged(Message):
+        """Sent when the 'bit' changes."""
+
         def __init__(self, sender: BitSwitch, bit: int, value: bool) -> None:
             super().__init__(sender)
             self.bit = bit
             self.value = value
 
-    value = reactive(False)
+    value = reactive(0)
 
     def __init__(self, bit: int) -> None:
         self.bit = bit
@@ -40,15 +43,19 @@ class BitSwitch(Widget):
         yield Switch()
 
     def watch_value(self, value: bool) -> None:
+        """When the value changes we want to set the switch accordingly."""
         self.query_one(Switch).value = value
 
     def on_switch_changed(self, event: Switch.Changed) -> None:
+        """When the switch changes, notify the parent via a message."""
         event.stop()
         self.value = event.value
         self.post_message_no_wait(self.BitChanged(self, self.bit, event.value))
 
 
 class ByteInput(Widget):
+    """A compound widget with 8 switches."""
+
     DEFAULT_CSS = """
     ByteInput {
         width: auto;
@@ -59,6 +66,9 @@ class ByteInput(Widget):
 
     ByteInput:focus-within {
         border: heavy $secondary;
+    }
+    Input#byte {
+        width: 16;
     }
     """
 
@@ -73,6 +83,7 @@ class ByteEditor(Widget):
         height: 1fr;
         align: center middle;
     }
+
     ByteEditor > Container.top {
         background: $boost;
     }
@@ -81,38 +92,34 @@ class ByteEditor(Widget):
     value = reactive(0)
 
     def validate_value(self, value: int) -> int:
-        if value > 255:
-            return 255
-        if value < 0:
-            return 0
-        return value
+        """Ensure value is between 0 and 255."""
+        return clamp(value, 0, 255)
 
     def compose(self) -> ComposeResult:
-        yield Container(Input(id="byte"), classes="top")
-        yield Container(ByteInput())
+        with Container(classes="top"):
+            yield Input(id="byte", placeholder="byte")
+        with Container():
+            yield ByteInput()
 
     def on_bit_switch_bit_changed(self, event: BitSwitch.BitChanged) -> None:
-        print("!!!", event)
+        """When a switch changes, update the value."""
         value = 0
         for switch in self.query(BitSwitch):
             value |= switch.value << switch.bit
-        self.query_one(Input).value = str(value or "")
+        self.query_one(Input).value = str(value)
 
     def watch_value(self, value: int) -> None:
-        self.update_switches(value)
-
-    def update_switches(self, byte: int) -> None:
+        """When self.value changes, update switches."""
         for switch in self.query(BitSwitch):
             with switch.prevent(BitSwitch.BitChanged):
-                switch.value = bool(byte & (1 << switch.bit))
+                switch.value = bool(value & 1 << switch.bit)
 
     def on_input_changed(self, event: Input.Changed) -> None:
+        """When the text changes, set the value of the byte."""
         try:
-            byte = int(event.value or "0")
+            self.value = int(event.value or "0")
         except ValueError:
             pass
-        else:
-            self.value = byte
 
 
 class ByteInputApp(App):

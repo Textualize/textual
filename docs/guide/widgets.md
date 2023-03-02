@@ -194,10 +194,6 @@ Let's modify the default width for the fizzbuzz example. By default, the table w
 Note that we've added `expand=True` to tell the `Table` to expand beyond the optimal width, so that it fills the 50 characters returned by `get_content_width`.
 
 
-## Compound widgets
-
-TODO: Explanation of compound widgets
-
 ## Line API
 
 A downside of widgets that return Rich renderables is that Textual will redraw the entire widget when its state is updated or it changes size.
@@ -388,3 +384,14 @@ The following builtin widgets use the Line API. If you are building advanced wid
 - [DataTable](https://github.com/Textualize/textual/blob/main/src/textual/widgets/_data_table.py)
 - [TextLog](https://github.com/Textualize/textual/blob/main/src/textual/widgets/_text_log.py)
 - [Tree](https://github.com/Textualize/textual/blob/main/src/textual/widgets/_tree.py)
+
+## Compound widgets
+
+You can combine widgets (builtin or your own) to form more sophisticated widgets. Such widgets are known as *compound* widgets. The Stopwatch in the [tutorial](./../tutorial.md) is an example of a compound widget.
+
+A compound widget can be used like any other widget. The only thing that differs is that a compound widget has a `compose()` method which yields *child* widgets, rather than a `render` or `render_line` method of its own. Having a *parent* widget manage multiple children allows you break your app in to smaller more manageable pieces, making it easy to re-use the those pieces elsewhere in your app (or in other apps).
+
+
+<div class="excalidraw">
+--8<-- "docs/images/byte_input.excalidraw.svg"
+</div>
