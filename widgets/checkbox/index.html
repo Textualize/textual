@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://textual.textualize.io/api/tree_node/">
+        <link rel="canonical" href="https://textual.textualize.io/widgets/checkbox/">
       
       
-        <link rel="prev" href="../timer/">
+        <link rel="prev" href="../button/">
       
       
-        <link rel="next" href="../tree/">
+        <link rel="next" href="../data_table/">
       
       
         
@@ -24,18 +24,18 @@
         <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../feed_rss_updated.xml">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.11+insiders-4.30.0">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.0+insiders-4.32.2">
     
     
       
-        <title>Tree node - Textual</title>
+        <title>Checkbox - Textual</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.b6d2c4d8.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.24f010b1.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.2505c338.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.6932e648.min.css">
       
       
 
@@ -71,9 +71,9 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@textualizeio">
 <meta name="twitter:creator" content="@willmcgugan">
-<meta property="og:title" content="Textual - Tree node">
+<meta property="og:title" content="Textual - Checkbox">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://textual.textualize.io/api/tree_node/">
+<meta property="og:url" content="https://textual.textualize.io/widgets/checkbox/">
 <meta property="og:site_name" content="Textual Documentation">
 <meta property="og:description" content="Textual is a TUI framework for Python, inspired by modern web development.">
 <meta property="og:image" content="https://raw.githubusercontent.com/Textualize/textual/main/imgs/textual.png">
@@ -98,7 +98,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#textual.widgets.tree.TreeNode" class="md-skip">
+        <a href="#checkbox" class="md-skip">
           Skip to content
         </a>
       
@@ -112,7 +112,7 @@
 
   
 
-<header class="md-header md-header--lifted" data-md-component="header">
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../.." title="Textual" class="md-header__button md-logo" aria-label="Textual" data-md-component="logo">
       
@@ -133,7 +133,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Tree node
+              Checkbox
             
           </span>
         </div>
@@ -203,7 +203,7 @@
         <a href="https://github.com/textualize/textual/" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
   </div>
   <div class="md-source__repository">
     GitHub
@@ -216,7 +216,7 @@
     
       
 <nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
-  <div class="md-tabs__inner md-grid">
+  <div class="md-grid">
     <ul class="md-tabs__list">
       
         
@@ -292,11 +292,13 @@
         
   
   
+    
+  
   
     
     
       <li class="md-tabs__item">
-        <a href="../../reference/" class="md-tabs__link">
+        <a href="../../reference/" class="md-tabs__link md-tabs__link--active">
           
   
     
@@ -312,13 +314,11 @@
         
   
   
-    
-  
   
     
     
       <li class="md-tabs__item">
-        <a href="../app/" class="md-tabs__link md-tabs__link--active">
+        <a href="../../api/app/" class="md-tabs__link">
           
   
   API
@@ -390,7 +390,7 @@
       <a href="https://github.com/textualize/textual/" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
   </div>
   <div class="md-source__repository">
     GitHub
@@ -1036,6 +1036,8 @@
       
   
   
+    
+  
   
     
     
@@ -1054,13 +1056,13 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
           
@@ -1087,7 +1089,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -3870,548 +3872,11 @@
                 
   
   
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" >
-        
-          
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../widgets/" class="md-nav__link ">
-              
-  
-  <span class="md-ellipsis">
-    
-  
-    Widgets
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              <label class="md-nav__link " for="__nav_5_5">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5_5">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Widgets
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../widgets/button/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Button
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../widgets/data_table/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    DataTable
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../widgets/directory_tree/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    DirectoryTree
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../widgets/footer/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Footer
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../widgets/header/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Header
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../widgets/input/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Input
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../widgets/label/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Label
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../widgets/list_item/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    List Item
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../widgets/list_view/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    List View
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../widgets/markdown_viewer/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Markdown Viewer
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../widgets/markdown/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Markdown
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../widgets/placeholder/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Placeholder
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../widgets/static/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Static
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../widgets/switch/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Switch
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../widgets/text_log/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    TextLog
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../widgets/tree/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Tree
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
     
   
   
     
     
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
       
         
       
@@ -4427,26 +3892,6 @@
       
         
           
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
         
       
         
@@ -4483,7 +3928,7 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" checked>
         
           
           
@@ -4494,7 +3939,7 @@
   <span class="md-ellipsis">
     
   
-    API
+    Widgets
   
 
     
@@ -4504,74 +3949,22 @@
 
             </a>
             
-              <label class="md-nav__link " for="__nav_6">
+              <label class="md-nav__link " for="__nav_5_5">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_6">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_5">
             <span class="md-nav__icon md-icon"></span>
             
   
-    API
+    Widgets
   
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../app/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    App
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../binding/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Binding
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
             
               
                 
@@ -4603,15 +3996,41 @@
                 
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../color/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    
+  
+    Checkbox
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
     
   
-    Color
+    Checkbox
   
 
     
@@ -4620,58 +4039,109 @@
   
 
       </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../containers/" class="md-nav__link">
+      
         
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
-  <span class="md-ellipsis">
+  
+  
     
   
-    Containers
   
-
-    
-  </span>
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example
+      
+    </span>
+  </a>
   
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reactive-attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reactive Attributes
+      
+    </span>
+  </a>
   
-
-      </a>
-    </li>
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bindings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bindings
+      
+    </span>
+  </a>
   
-
-              
-            
-              
-                
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#component-classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Component Classes
+      
+    </span>
+  </a>
   
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#messages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Messages
+      
+    </span>
+  </a>
   
-  
-    <li class="md-nav__item">
-      <a href="../coordinate/" class="md-nav__link">
+    <nav class="md-nav" aria-label="Messages">
+      <ul class="md-nav__list">
         
+          <li class="md-nav__item">
+  <a href="#textual.widgets._checkbox.Checkbox.Changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
   
-  <span class="md-ellipsis">
-    
+</li>
+        
+      </ul>
+    </nav>
   
-    Coordinate
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        See Also
+      
+    </span>
+  </a>
   
-
-    
-  </span>
+</li>
+      
+    </ul>
   
-  
-
-      </a>
+</nav>
+      
     </li>
   
 
@@ -4689,7 +4159,7 @@
   <span class="md-ellipsis">
     
   
-    Data table
+    DataTable
   
 
     
@@ -4715,59 +4185,7 @@
   <span class="md-ellipsis">
     
   
-    Directory tree
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../dom_node/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Dom node
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../events/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Events
+    DirectoryTree
   
 
     
@@ -4794,32 +4212,6 @@
     
   
     Footer
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../geometry/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Geometry
   
 
     
@@ -4925,7 +4317,7 @@
   <span class="md-ellipsis">
     
   
-    List item
+    List Item
   
 
     
@@ -4951,7 +4343,7 @@
   <span class="md-ellipsis">
     
   
-    List view
+    List View
   
 
     
@@ -4977,7 +4369,7 @@
   <span class="md-ellipsis">
     
   
-    Markdown viewer
+    Markdown Viewer
   
 
     
@@ -5023,84 +4415,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../message_pump/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Message pump
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../message/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Message
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../pilot/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Pilot
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../placeholder/" class="md-nav__link">
         
   
@@ -5127,13 +4441,13 @@
   
   
     <li class="md-nav__item">
-      <a href="../query/" class="md-nav__link">
+      <a href="../radiobutton/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     
   
-    Query
+    RadioButton
   
 
     
@@ -5153,65 +4467,13 @@
   
   
     <li class="md-nav__item">
-      <a href="../reactive/" class="md-nav__link">
+      <a href="../radioset/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     
   
-    Reactive
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../screen/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Screen
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../scroll_view/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Scroll view
+    RadioSet
   
 
     
@@ -5238,32 +4500,6 @@
     
   
     Static
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../strip/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Strip
   
 
     
@@ -5315,7 +4551,7 @@
   <span class="md-ellipsis">
     
   
-    Text log
+    TextLog
   
 
     
@@ -5324,304 +4560,6 @@
   
 
       </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../timer/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Timer
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-    
-  
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    
-  
-    Tree node
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Tree node
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#textual.widgets.tree.TreeNode" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        TreeNode
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="TreeNode">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.allow_expand" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        allow_expand
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.children" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        children
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.id" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        id
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.is_expanded" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        is_expanded
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.is_last" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        is_last
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.label" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        label
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.line" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        line
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.parent" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        parent
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.add" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        add()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.add_leaf" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        add_leaf()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.collapse" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        collapse()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.collapse_all" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        collapse_all()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.expand" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        expand()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.expand_all" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        expand_all()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.set_label" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        set_label()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.toggle" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        toggle()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.toggle_all" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        toggle_all()
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -5653,13 +4591,1158 @@
 
               
             
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../api/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              <label class="md-nav__link " for="__nav_6">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
               
                 
   
   
   
     <li class="md-nav__item">
-      <a href="../walk/" class="md-nav__link">
+      <a href="../../api/app/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    App
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/await_remove/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Await remove
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/binding/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Binding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/button/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Button
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/checkbox/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Checkbox
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/color/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Color
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/containers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Containers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/coordinate/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Coordinate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/data_table/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Data table
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/directory_tree/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Directory tree
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/dom_node/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Dom node
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/events/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Events
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/footer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Footer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/geometry/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Geometry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/header/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Header
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/input/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Input
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/label/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Label
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/list_item/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    List item
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/list_view/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    List view
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/markdown_viewer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Markdown viewer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/markdown/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Markdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/message_pump/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Message pump
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/message/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Message
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/pilot/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Pilot
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/placeholder/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Placeholder
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/query/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Query
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/radiobutton/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Radiobutton
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/radioset/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Radioset
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/reactive/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Reactive
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/screen/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Screen
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/scroll_view/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Scroll view
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/static/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Static
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/strip/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Strip
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/switch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Switch
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/text_log/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Text log
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/toggle_button/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Toggle button
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/timer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Timer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/tree/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Tree
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/walk/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5685,7 +5768,33 @@
   
   
     <li class="md-nav__item">
-      <a href="../widget/" class="md-nav__link">
+      <a href="../../api/welcome/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Welcome
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/widget/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6048,6 +6157,8 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -6056,198 +6167,66 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#textual.widgets.tree.TreeNode" class="md-nav__link">
+  <a href="#example" class="md-nav__link">
     <span class="md-ellipsis">
       
-        TreeNode
+        Example
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="TreeNode">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reactive-attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reactive Attributes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bindings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bindings
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#component-classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Component Classes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#messages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Messages
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Messages">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.allow_expand" class="md-nav__link">
+  <a href="#textual.widgets._checkbox.Checkbox.Changed" class="md-nav__link">
     <span class="md-ellipsis">
       
-        allow_expand
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.children" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        children
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.id" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        id
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.is_expanded" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        is_expanded
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.is_last" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        is_last
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.label" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        label
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.line" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        line
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.parent" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        parent
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.add" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        add()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.add_leaf" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        add_leaf()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.collapse" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        collapse()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.collapse_all" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        collapse_all()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.expand" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        expand()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.expand_all" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        expand_all()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.set_label" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        set_label()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.toggle" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        toggle()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.TreeNode.toggle_all" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        toggle_all()
+        Changed
       
     </span>
   </a>
@@ -6256,6 +6235,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        See Also
+      
+    </span>
+  </a>
   
 </li>
       
@@ -6278,26 +6268,318 @@
   
 
 
+<h1 id="checkbox">Checkbox<a class="headerlink" href="#checkbox" title="Permanent link">&para;</a></h1>
+<p>A simple checkbox widget which stores a boolean value.</p>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Focusable</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Container</li>
+</ul>
+<h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h2>
+<p>The example below shows check boxes in various states.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Output</label><label for="__tabbed_1_2">checkbox.py</label><label for="__tabbed_1_3">checkbox.css</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
+    <!-- Generated with Rich https://www.textualize.io -->
+    <style>
 
-  <h1>Tree node</h1>
+    @font-face {
+        font-family: "Fira Code";
+        src: local("FiraCode-Regular"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Regular.woff2") format("woff2"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Regular.woff") format("woff");
+        font-style: normal;
+        font-weight: 400;
+    }
+    @font-face {
+        font-family: "Fira Code";
+        src: local("FiraCode-Bold"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Bold.woff2") format("woff2"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Bold.woff") format("woff");
+        font-style: bold;
+        font-weight: 700;
+    }
+
+    .terminal-2048600128-matrix {
+        font-family: Fira Code, monospace;
+        font-size: 20px;
+        line-height: 24.4px;
+        font-variant-east-asian: full-width;
+    }
+
+    .terminal-2048600128-title {
+        font-size: 18px;
+        font-weight: bold;
+        font-family: arial;
+    }
+
+    .terminal-2048600128-r1 { fill: #e1e1e1 }
+.terminal-2048600128-r2 { fill: #c5c8c6 }
+.terminal-2048600128-r3 { fill: #004578 }
+.terminal-2048600128-r4 { fill: #42464b }
+.terminal-2048600128-r5 { fill: #24292f }
+.terminal-2048600128-r6 { fill: #e2e3e3 }
+.terminal-2048600128-r7 { fill: #e2e3e3;font-weight: bold }
+.terminal-2048600128-r8 { fill: #98729f }
+.terminal-2048600128-r9 { fill: #4ebf71 }
+.terminal-2048600128-r10 { fill: #565a5e }
+.terminal-2048600128-r11 { fill: #e2e3e3;text-decoration: underline; }
+    </style>
+
+    <defs>
+    <clipPath id="terminal-2048600128-clip-terminal">
+      <rect x="0" y="0" width="975.0" height="584.5999999999999" />
+    </clipPath>
+    <clipPath id="terminal-2048600128-line-0">
+    <rect x="0" y="1.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2048600128-line-1">
+    <rect x="0" y="25.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2048600128-line-2">
+    <rect x="0" y="50.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2048600128-line-3">
+    <rect x="0" y="74.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2048600128-line-4">
+    <rect x="0" y="99.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2048600128-line-5">
+    <rect x="0" y="123.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2048600128-line-6">
+    <rect x="0" y="147.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2048600128-line-7">
+    <rect x="0" y="172.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2048600128-line-8">
+    <rect x="0" y="196.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2048600128-line-9">
+    <rect x="0" y="221.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2048600128-line-10">
+    <rect x="0" y="245.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2048600128-line-11">
+    <rect x="0" y="269.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2048600128-line-12">
+    <rect x="0" y="294.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2048600128-line-13">
+    <rect x="0" y="318.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2048600128-line-14">
+    <rect x="0" y="343.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2048600128-line-15">
+    <rect x="0" y="367.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2048600128-line-16">
+    <rect x="0" y="391.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2048600128-line-17">
+    <rect x="0" y="416.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2048600128-line-18">
+    <rect x="0" y="440.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2048600128-line-19">
+    <rect x="0" y="465.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2048600128-line-20">
+    <rect x="0" y="489.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2048600128-line-21">
+    <rect x="0" y="513.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2048600128-line-22">
+    <rect x="0" y="538.3" width="976" height="24.65"/>
+            </clipPath>
+    </defs>
+
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-2048600128-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">CheckboxApp</text>
+            <g transform="translate(26,22)">
+            <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
+            <circle cx="22" cy="0" r="7" fill="#febc2e"/>
+            <circle cx="44" cy="0" r="7" fill="#28c840"/>
+            </g>
+        
+    <g transform="translate(9, 41)" clip-path="url(#terminal-2048600128-clip-terminal)">
+    <rect fill="#1e1e1e" x="0" y="1.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="25.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="50.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="74.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="99.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="123.5" width="353.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="353.8" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="366" y="123.5" width="231.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="597.8" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="610" y="123.5" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="147.9" width="353.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="353.8" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="366" y="147.9" width="231.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="597.8" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="610" y="147.9" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="172.3" width="353.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="353.8" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="366" y="172.3" width="231.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="597.8" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="610" y="172.3" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="196.7" width="353.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="353.8" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="366" y="196.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="390.4" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#42464b" x="402.6" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="414.8" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="427" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="439.2" y="196.7" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="561.2" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="573.4" y="196.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="597.8" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="610" y="196.7" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="221.1" width="353.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="353.8" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="366" y="221.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="390.4" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#42464b" x="402.6" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="414.8" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="427" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="439.2" y="221.1" width="85.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="524.6" y="221.1" width="48.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="573.4" y="221.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="597.8" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="610" y="221.1" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="245.5" width="353.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="353.8" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="366" y="245.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="390.4" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#42464b" x="402.6" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="414.8" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="427" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="439.2" y="245.5" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="512.4" y="245.5" width="61" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="573.4" y="245.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="597.8" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="610" y="245.5" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="269.9" width="353.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="353.8" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="366" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="390.4" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#42464b" x="402.6" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="414.8" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="427" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="439.2" y="269.9" width="134.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="573.4" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="597.8" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="610" y="269.9" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="294.3" width="353.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="353.8" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="366" y="294.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="390.4" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#42464b" x="402.6" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="414.8" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="427" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="439.2" y="294.3" width="61" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="500.2" y="294.3" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="573.4" y="294.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="597.8" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="610" y="294.3" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="318.7" width="353.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="353.8" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="366" y="318.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="390.4" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#42464b" x="402.6" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="414.8" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="427" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="439.2" y="318.7" width="85.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="524.6" y="318.7" width="48.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="573.4" y="318.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="597.8" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="610" y="318.7" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="343.1" width="353.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="353.8" y="343.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="366" y="343.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="390.4" y="343.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#565a5e" x="402.6" y="343.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="414.8" y="343.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="427" y="343.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="439.2" y="343.1" width="85.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="524.6" y="343.1" width="48.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="573.4" y="343.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="597.8" y="343.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="610" y="343.1" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="367.5" width="353.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="353.8" y="367.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="366" y="367.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="390.4" y="367.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#42464b" x="402.6" y="367.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="414.8" y="367.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="427" y="367.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="439.2" y="367.5" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="549" y="367.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="573.4" y="367.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="597.8" y="367.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="610" y="367.5" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="391.9" width="353.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="353.8" y="391.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="366" y="391.9" width="231.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="597.8" y="391.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="610" y="391.9" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="416.3" width="353.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="353.8" y="416.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="366" y="416.3" width="231.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="597.8" y="416.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="610" y="416.3" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="440.7" width="353.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="353.8" y="440.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="366" y="440.7" width="231.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="597.8" y="440.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="610" y="440.7" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="465.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="489.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="513.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="538.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="562.7" width="976" height="24.65" shape-rendering="crispEdges"/>
+    <g class="terminal-2048600128-matrix">
+    <text class="terminal-2048600128-r2" x="976" y="20" textLength="12.2" clip-path="url(#terminal-2048600128-line-0)">
+</text><text class="terminal-2048600128-r2" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-2048600128-line-1)">
+</text><text class="terminal-2048600128-r2" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-2048600128-line-2)">
+</text><text class="terminal-2048600128-r2" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-2048600128-line-3)">
+</text><text class="terminal-2048600128-r2" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-2048600128-line-4)">
+</text><text class="terminal-2048600128-r3" x="353.8" y="142" textLength="12.2" clip-path="url(#terminal-2048600128-line-5)">┌</text><text class="terminal-2048600128-r3" x="366" y="142" textLength="231.8" clip-path="url(#terminal-2048600128-line-5)">───────────────────</text><text class="terminal-2048600128-r3" x="597.8" y="142" textLength="12.2" clip-path="url(#terminal-2048600128-line-5)">┐</text><text class="terminal-2048600128-r2" x="976" y="142" textLength="12.2" clip-path="url(#terminal-2048600128-line-5)">
+</text><text class="terminal-2048600128-r3" x="353.8" y="166.4" textLength="12.2" clip-path="url(#terminal-2048600128-line-6)">│</text><text class="terminal-2048600128-r3" x="597.8" y="166.4" textLength="12.2" clip-path="url(#terminal-2048600128-line-6)">│</text><text class="terminal-2048600128-r2" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-2048600128-line-6)">
+</text><text class="terminal-2048600128-r3" x="353.8" y="190.8" textLength="12.2" clip-path="url(#terminal-2048600128-line-7)">│</text><text class="terminal-2048600128-r3" x="597.8" y="190.8" textLength="12.2" clip-path="url(#terminal-2048600128-line-7)">│</text><text class="terminal-2048600128-r2" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-2048600128-line-7)">
+</text><text class="terminal-2048600128-r3" x="353.8" y="215.2" textLength="12.2" clip-path="url(#terminal-2048600128-line-8)">│</text><text class="terminal-2048600128-r4" x="390.4" y="215.2" textLength="12.2" clip-path="url(#terminal-2048600128-line-8)">▐</text><text class="terminal-2048600128-r5" x="402.6" y="215.2" textLength="12.2" clip-path="url(#terminal-2048600128-line-8)">✖</text><text class="terminal-2048600128-r4" x="414.8" y="215.2" textLength="12.2" clip-path="url(#terminal-2048600128-line-8)">▌</text><text class="terminal-2048600128-r6" x="439.2" y="215.2" textLength="109.8" clip-path="url(#terminal-2048600128-line-8)">Arrakis&#160;😓</text><text class="terminal-2048600128-r3" x="597.8" y="215.2" textLength="12.2" clip-path="url(#terminal-2048600128-line-8)">│</text><text class="terminal-2048600128-r2" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-2048600128-line-8)">
+</text><text class="terminal-2048600128-r3" x="353.8" y="239.6" textLength="12.2" clip-path="url(#terminal-2048600128-line-9)">│</text><text class="terminal-2048600128-r4" x="390.4" y="239.6" textLength="12.2" clip-path="url(#terminal-2048600128-line-9)">▐</text><text class="terminal-2048600128-r5" x="402.6" y="239.6" textLength="12.2" clip-path="url(#terminal-2048600128-line-9)">✖</text><text class="terminal-2048600128-r4" x="414.8" y="239.6" textLength="12.2" clip-path="url(#terminal-2048600128-line-9)">▌</text><text class="terminal-2048600128-r6" x="439.2" y="239.6" textLength="85.4" clip-path="url(#terminal-2048600128-line-9)">Caladan</text><text class="terminal-2048600128-r3" x="597.8" y="239.6" textLength="12.2" clip-path="url(#terminal-2048600128-line-9)">│</text><text class="terminal-2048600128-r2" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-2048600128-line-9)">
+</text><text class="terminal-2048600128-r3" x="353.8" y="264" textLength="12.2" clip-path="url(#terminal-2048600128-line-10)">│</text><text class="terminal-2048600128-r4" x="390.4" y="264" textLength="12.2" clip-path="url(#terminal-2048600128-line-10)">▐</text><text class="terminal-2048600128-r5" x="402.6" y="264" textLength="12.2" clip-path="url(#terminal-2048600128-line-10)">✖</text><text class="terminal-2048600128-r4" x="414.8" y="264" textLength="12.2" clip-path="url(#terminal-2048600128-line-10)">▌</text><text class="terminal-2048600128-r6" x="439.2" y="264" textLength="73.2" clip-path="url(#terminal-2048600128-line-10)">Chusuk</text><text class="terminal-2048600128-r3" x="597.8" y="264" textLength="12.2" clip-path="url(#terminal-2048600128-line-10)">│</text><text class="terminal-2048600128-r2" x="976" y="264" textLength="12.2" clip-path="url(#terminal-2048600128-line-10)">
+</text><text class="terminal-2048600128-r3" x="353.8" y="288.4" textLength="12.2" clip-path="url(#terminal-2048600128-line-11)">│</text><text class="terminal-2048600128-r4" x="390.4" y="288.4" textLength="12.2" clip-path="url(#terminal-2048600128-line-11)">▐</text><text class="terminal-2048600128-r5" x="402.6" y="288.4" textLength="12.2" clip-path="url(#terminal-2048600128-line-11)">✖</text><text class="terminal-2048600128-r4" x="414.8" y="288.4" textLength="12.2" clip-path="url(#terminal-2048600128-line-11)">▌</text><text class="terminal-2048600128-r7" x="439.2" y="288.4" textLength="134.2" clip-path="url(#terminal-2048600128-line-11)">Giedi&#160;Prime</text><text class="terminal-2048600128-r3" x="597.8" y="288.4" textLength="12.2" clip-path="url(#terminal-2048600128-line-11)">│</text><text class="terminal-2048600128-r2" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-2048600128-line-11)">
+</text><text class="terminal-2048600128-r3" x="353.8" y="312.8" textLength="12.2" clip-path="url(#terminal-2048600128-line-12)">│</text><text class="terminal-2048600128-r4" x="390.4" y="312.8" textLength="12.2" clip-path="url(#terminal-2048600128-line-12)">▐</text><text class="terminal-2048600128-r5" x="402.6" y="312.8" textLength="12.2" clip-path="url(#terminal-2048600128-line-12)">✖</text><text class="terminal-2048600128-r4" x="414.8" y="312.8" textLength="12.2" clip-path="url(#terminal-2048600128-line-12)">▌</text><text class="terminal-2048600128-r8" x="439.2" y="312.8" textLength="61" clip-path="url(#terminal-2048600128-line-12)">Ginaz</text><text class="terminal-2048600128-r3" x="597.8" y="312.8" textLength="12.2" clip-path="url(#terminal-2048600128-line-12)">│</text><text class="terminal-2048600128-r2" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-2048600128-line-12)">
+</text><text class="terminal-2048600128-r3" x="353.8" y="337.2" textLength="12.2" clip-path="url(#terminal-2048600128-line-13)">│</text><text class="terminal-2048600128-r4" x="390.4" y="337.2" textLength="12.2" clip-path="url(#terminal-2048600128-line-13)">▐</text><text class="terminal-2048600128-r9" x="402.6" y="337.2" textLength="12.2" clip-path="url(#terminal-2048600128-line-13)">✖</text><text class="terminal-2048600128-r4" x="414.8" y="337.2" textLength="12.2" clip-path="url(#terminal-2048600128-line-13)">▌</text><text class="terminal-2048600128-r6" x="439.2" y="337.2" textLength="85.4" clip-path="url(#terminal-2048600128-line-13)">Grumman</text><text class="terminal-2048600128-r3" x="597.8" y="337.2" textLength="12.2" clip-path="url(#terminal-2048600128-line-13)">│</text><text class="terminal-2048600128-r2" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-2048600128-line-13)">
+</text><text class="terminal-2048600128-r3" x="353.8" y="361.6" textLength="12.2" clip-path="url(#terminal-2048600128-line-14)">│</text><text class="terminal-2048600128-r10" x="390.4" y="361.6" textLength="12.2" clip-path="url(#terminal-2048600128-line-14)">▐</text><text class="terminal-2048600128-r5" x="402.6" y="361.6" textLength="12.2" clip-path="url(#terminal-2048600128-line-14)">✖</text><text class="terminal-2048600128-r10" x="414.8" y="361.6" textLength="12.2" clip-path="url(#terminal-2048600128-line-14)">▌</text><text class="terminal-2048600128-r11" x="439.2" y="361.6" textLength="85.4" clip-path="url(#terminal-2048600128-line-14)">Kaitain</text><text class="terminal-2048600128-r3" x="597.8" y="361.6" textLength="12.2" clip-path="url(#terminal-2048600128-line-14)">│</text><text class="terminal-2048600128-r2" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-2048600128-line-14)">
+</text><text class="terminal-2048600128-r3" x="353.8" y="386" textLength="12.2" clip-path="url(#terminal-2048600128-line-15)">│</text><text class="terminal-2048600128-r4" x="390.4" y="386" textLength="12.2" clip-path="url(#terminal-2048600128-line-15)">▐</text><text class="terminal-2048600128-r9" x="402.6" y="386" textLength="12.2" clip-path="url(#terminal-2048600128-line-15)">✖</text><text class="terminal-2048600128-r4" x="414.8" y="386" textLength="12.2" clip-path="url(#terminal-2048600128-line-15)">▌</text><text class="terminal-2048600128-r6" x="439.2" y="386" textLength="109.8" clip-path="url(#terminal-2048600128-line-15)">Novebruns</text><text class="terminal-2048600128-r3" x="597.8" y="386" textLength="12.2" clip-path="url(#terminal-2048600128-line-15)">│</text><text class="terminal-2048600128-r2" x="976" y="386" textLength="12.2" clip-path="url(#terminal-2048600128-line-15)">
+</text><text class="terminal-2048600128-r3" x="353.8" y="410.4" textLength="12.2" clip-path="url(#terminal-2048600128-line-16)">│</text><text class="terminal-2048600128-r3" x="597.8" y="410.4" textLength="12.2" clip-path="url(#terminal-2048600128-line-16)">│</text><text class="terminal-2048600128-r2" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-2048600128-line-16)">
+</text><text class="terminal-2048600128-r3" x="353.8" y="434.8" textLength="12.2" clip-path="url(#terminal-2048600128-line-17)">│</text><text class="terminal-2048600128-r3" x="597.8" y="434.8" textLength="12.2" clip-path="url(#terminal-2048600128-line-17)">│</text><text class="terminal-2048600128-r2" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-2048600128-line-17)">
+</text><text class="terminal-2048600128-r3" x="353.8" y="459.2" textLength="12.2" clip-path="url(#terminal-2048600128-line-18)">└</text><text class="terminal-2048600128-r3" x="366" y="459.2" textLength="231.8" clip-path="url(#terminal-2048600128-line-18)">───────────────────</text><text class="terminal-2048600128-r3" x="597.8" y="459.2" textLength="12.2" clip-path="url(#terminal-2048600128-line-18)">┘</text><text class="terminal-2048600128-r2" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-2048600128-line-18)">
+</text><text class="terminal-2048600128-r2" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-2048600128-line-19)">
+</text><text class="terminal-2048600128-r2" x="976" y="508" textLength="12.2" clip-path="url(#terminal-2048600128-line-20)">
+</text><text class="terminal-2048600128-r2" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-2048600128-line-21)">
+</text><text class="terminal-2048600128-r2" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-2048600128-line-22)">
+</text>
+    </g>
+    </g>
+</svg>
+</p>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span> <span class="nn">textual.containers</span> <span class="kn">import</span> <span class="n">Vertical</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Checkbox</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="k">class</span> <span class="nc">CheckboxApp</span><span class="p">(</span><span class="n">App</span><span class="p">[</span><span class="kc">None</span><span class="p">]):</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;checkbox.css&quot;</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>        <span class="k">with</span> <span class="n">Vertical</span><span class="p">():</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>            <span class="k">yield</span> <span class="n">Checkbox</span><span class="p">(</span><span class="s2">&quot;Arrakis :sweat:&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>            <span class="k">yield</span> <span class="n">Checkbox</span><span class="p">(</span><span class="s2">&quot;Caladan&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>            <span class="k">yield</span> <span class="n">Checkbox</span><span class="p">(</span><span class="s2">&quot;Chusuk&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>            <span class="k">yield</span> <span class="n">Checkbox</span><span class="p">(</span><span class="s2">&quot;[b]Giedi Prime[/b]&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>            <span class="k">yield</span> <span class="n">Checkbox</span><span class="p">(</span><span class="s2">&quot;[magenta]Ginaz[/]&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>            <span class="k">yield</span> <span class="n">Checkbox</span><span class="p">(</span><span class="s2">&quot;Grumman&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>            <span class="k">yield</span> <span class="n">Checkbox</span><span class="p">(</span><span class="s2">&quot;Kaitain&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;initial_focus&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>            <span class="k">yield</span> <span class="n">Checkbox</span><span class="p">(</span><span class="s2">&quot;Novebruns&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>    <span class="k">def</span> <span class="nf">on_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">query_one</span><span class="p">(</span><span class="s2">&quot;#initial_focus&quot;</span><span class="p">,</span> <span class="n">Checkbox</span><span class="p">)</span><span class="o">.</span><span class="n">focus</span><span class="p">()</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>
+<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>
+<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>    <span class="n">CheckboxApp</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">Screen</span><span class="w"> </span><span class="err">{</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="na">align</span><span class="o">:</span><span class="w"> </span><span class="no">center</span><span class="w"> </span><span class="no">middle</span><span class="err">;</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="err">}</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="nt">Vertical</span><span class="w"> </span><span class="err">{</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="na">width</span><span class="o">:</span><span class="w"> </span><span class="no">auto</span><span class="err">;</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="na">height</span><span class="o">:</span><span class="w"> </span><span class="no">auto</span><span class="err">;</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="na">border</span><span class="o">:</span><span class="w"> </span><span class="no">solid</span><span class="w"> </span><span class="nv">$primary</span><span class="err">;</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="na">background</span><span class="o">:</span><span class="w"> </span><span class="nv">$panel</span><span class="err">;</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span><span class="na">padding</span><span class="o">:</span><span class="w"> </span><span class="mi">2</span><span class="err">;</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="err">}</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<h2 id="reactive-attributes">Reactive Attributes<a class="headerlink" href="#reactive-attributes" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>value</code></td>
+<td><code>bool</code></td>
+<td><code>False</code></td>
+<td>The value of the checkbox.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="bindings">Bindings<a class="headerlink" href="#bindings" title="Permanent link">&para;</a></h2>
+<p>The checkbox widget defines directly the following bindings:</p>
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+  <div class="doc doc-contents first">
+  
+      <table>
+<thead>
+<tr>
+<th align="left">Key(s)</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">enter, space</td>
+<td align="left">Toggle the value.</td>
+</tr>
+</tbody>
+</table>
+  </div>
+
+</div><h2 id="component-classes">Component Classes<a class="headerlink" href="#component-classes" title="Permanent link">&para;</a></h2>
+<p>The checkbox widget provides the following component classes:</p>
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+  <div class="doc doc-contents first">
+  
+      <table>
+<thead>
+<tr>
+<th align="left">Class</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>toggle--button</code></td>
+<td align="left">Targets the toggle button itself.</td>
+</tr>
+<tr>
+<td align="left"><code>toggle--label</code></td>
+<td align="left">Targets the text label of the toggle button.</td>
+</tr>
+</tbody>
+</table>
+  </div>
+
+</div><h2 id="messages">Messages<a class="headerlink" href="#messages" title="Permanent link">&para;</a></h2>
+
 
 <div class="doc doc-object doc-class">
 
 
 
-<h2 id="textual.widgets.tree.TreeNode" class="doc doc-heading">
-        <code>TreeNode</code>
+<h3 id="textual.widgets._checkbox.Checkbox.Changed" class="doc doc-heading">
+        <code>Changed</code>
 
 
-<a href="#textual.widgets.tree.TreeNode" class="headerlink" title="Permanent link">&para;</a></h2>
+<a href="#textual.widgets._checkbox.Checkbox.Changed" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents first">
       <p class="doc doc-class-bases">
-        Bases: <code><span title="typing.Generic">Generic</span>[<span title="textual.widgets._tree.TreeDataType">TreeDataType</span>]</code></p>
+        Bases: <code><a class="autorefs autorefs-internal" title="textual.widgets._toggle_button.ToggleButton" href="../../api/toggle_button/#textual.widgets._toggle_button.ToggleButton">ToggleButton</a>.<a class="autorefs autorefs-internal" title="textual.widgets._toggle_button.ToggleButton.Changed" href="../../api/toggle_button/#textual.widgets._toggle_button.ToggleButton.Changed">Changed</a></code></p>
 
   
-      <p>An object that represents a "node" in a tree control.</p>
+      <p>Posted when the value of the checkbox changes.</p>
+<p>This message can be handled using an <code>on_checkbox_changed</code> method.</p>
 
 
 
@@ -6311,487 +6593,7 @@
 
 
 
-<div class="doc doc-object doc-attribute">
 
-
-
-<h3 id="textual.widgets._tree.TreeNode.allow_expand" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">allow_expand</span><span class="p">:</span> <span class="nb">bool</span></code>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
-      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
-  </span>
-
-<a href="#textual.widgets._tree.TreeNode.allow_expand" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-  
-      
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-attribute">
-
-
-
-<h3 id="textual.widgets._tree.TreeNode.children" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">children</span><span class="p">:</span> <span class="n">TreeNodes</span><span class="p">[</span><span class="n">TreeDataType</span><span class="p">]</span></code>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
-  </span>
-
-<a href="#textual.widgets._tree.TreeNode.children" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>TreeNodes[TreeDataType]: The child nodes of a TreeNode.</p>
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-attribute">
-
-
-
-<h3 id="textual.widgets._tree.TreeNode.id" class="doc doc-heading">
-<code class="highlight language-python"><span class="nb">id</span><span class="p">:</span> <span class="n">NodeID</span></code>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
-  </span>
-
-<a href="#textual.widgets._tree.TreeNode.id" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-  
-      
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-attribute">
-
-
-
-<h3 id="textual.widgets._tree.TreeNode.is_expanded" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">is_expanded</span><span class="p">:</span> <span class="nb">bool</span></code>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
-  </span>
-
-<a href="#textual.widgets._tree.TreeNode.is_expanded" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-  
-      
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-attribute">
-
-
-
-<h3 id="textual.widgets._tree.TreeNode.is_last" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">is_last</span><span class="p">:</span> <span class="nb">bool</span></code>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
-  </span>
-
-<a href="#textual.widgets._tree.TreeNode.is_last" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-  
-      
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-attribute">
-
-
-
-<h3 id="textual.widgets._tree.TreeNode.label" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">label</span><span class="p">:</span> <span class="n">TextType</span></code>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
-      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
-  </span>
-
-<a href="#textual.widgets._tree.TreeNode.label" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-  
-      
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-attribute">
-
-
-
-<h3 id="textual.widgets._tree.TreeNode.line" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">line</span><span class="p">:</span> <span class="nb">int</span></code>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
-  </span>
-
-<a href="#textual.widgets._tree.TreeNode.line" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-  
-      
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-attribute">
-
-
-
-<h3 id="textual.widgets._tree.TreeNode.parent" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">parent</span><span class="p">:</span> <span class="n">TreeNode</span><span class="p">[</span><span class="n">TreeDataType</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span></code>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
-  </span>
-
-<a href="#textual.widgets._tree.TreeNode.parent" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>TreeNode[TreeDataType] | None: The parent of the node.</p>
-  </div>
-
-</div>
-
-
-
-<div class="doc doc-object doc-function">
-
-
-
-<h3 id="textual.widgets._tree.TreeNode.add" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">add</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">allow_expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
-
-<a href="#textual.widgets._tree.TreeNode.add" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Add a node to the sub-tree.</p>
-
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>label</code></td>
-          <td>
-                <code><span title="rich.text.TextType">TextType</span></code>
-          </td>
-          <td><p>The new node's label.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>data</code></td>
-          <td>
-                <code><span title="textual.widgets._tree.TreeDataType">TreeDataType</span> | None</code>
-          </td>
-          <td><p>Data associated with the new node.</p></td>
-          <td>
-                <code>None</code>
-          </td>
-        </tr>
-        <tr>
-          <td><code>expand</code></td>
-          <td>
-                <code>bool</code>
-          </td>
-          <td><p>Node should be expanded. Defaults to True.</p></td>
-          <td>
-                <code>False</code>
-          </td>
-        </tr>
-        <tr>
-          <td><code>allow_expand</code></td>
-          <td>
-                <code>bool</code>
-          </td>
-          <td><p>Allow use to expand the node via keyboard or mouse. Defaults to True.</p></td>
-          <td>
-                <code>True</code>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.widgets._tree.TreeNode" href="#textual.widgets.tree.TreeNode">TreeNode</a>[<span title="textual.widgets._tree.TreeDataType">TreeDataType</span>]</code>
-          </td>
-          <td><p>A new Tree node</p></td>
-        </tr>
-    </tbody>
-  </table>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-
-<h3 id="textual.widgets._tree.TreeNode.add_leaf" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">add_leaf</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
-
-<a href="#textual.widgets._tree.TreeNode.add_leaf" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Add a 'leaf' node (a node that can not expand).</p>
-
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>label</code></td>
-          <td>
-                <code><span title="rich.text.TextType">TextType</span></code>
-          </td>
-          <td><p>Label for the node.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>data</code></td>
-          <td>
-                <code><span title="textual.widgets._tree.TreeDataType">TreeDataType</span> | None</code>
-          </td>
-          <td><p>Optional data. Defaults to None.</p></td>
-          <td>
-                <code>None</code>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.widgets._tree.TreeNode" href="#textual.widgets.tree.TreeNode">TreeNode</a>[<span title="textual.widgets._tree.TreeDataType">TreeDataType</span>]</code>
-          </td>
-          <td><p>New node.</p></td>
-        </tr>
-    </tbody>
-  </table>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-
-<h3 id="textual.widgets._tree.TreeNode.collapse" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">collapse</span><span class="p">()</span></code>
-
-<a href="#textual.widgets._tree.TreeNode.collapse" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Collapse the node (hide its children).</p>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-
-<h3 id="textual.widgets._tree.TreeNode.collapse_all" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">collapse_all</span><span class="p">()</span></code>
-
-<a href="#textual.widgets._tree.TreeNode.collapse_all" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Collapse the node (hide its children) and all those below it.</p>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-
-<h3 id="textual.widgets._tree.TreeNode.expand" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">expand</span><span class="p">()</span></code>
-
-<a href="#textual.widgets._tree.TreeNode.expand" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Expand the node (show its children).</p>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-
-<h3 id="textual.widgets._tree.TreeNode.expand_all" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">expand_all</span><span class="p">()</span></code>
-
-<a href="#textual.widgets._tree.TreeNode.expand_all" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Expand the node (show its children) and all those below it.</p>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-
-<h3 id="textual.widgets._tree.TreeNode.set_label" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">set_label</span><span class="p">(</span><span class="n">label</span><span class="p">)</span></code>
-
-<a href="#textual.widgets._tree.TreeNode.set_label" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Set a new label for the node.</p>
-
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>label</code></td>
-          <td>
-                <code><span title="rich.text.TextType">TextType</span></code>
-          </td>
-          <td><p>A str or Text object with the new label.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-
-<h3 id="textual.widgets._tree.TreeNode.toggle" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">toggle</span><span class="p">()</span></code>
-
-<a href="#textual.widgets._tree.TreeNode.toggle" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Toggle the node's expanded state.</p>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-
-<h3 id="textual.widgets._tree.TreeNode.toggle_all" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">toggle_all</span><span class="p">()</span></code>
-
-<a href="#textual.widgets._tree.TreeNode.toggle_all" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Toggle the node's expanded state and make all those below it match.</p>
-
-  </div>
-
-</div>
 
 
 
@@ -6799,7 +6601,10 @@
 
   </div>
 
-</div>
+</div><h2 id="see-also">See Also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../api/checkbox/">Checkbox</a> code reference</li>
+</ul>
 
 
 
@@ -6823,7 +6628,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../timer/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Timer" rel="prev">
+          <a href="../button/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Button" rel="prev">
             <div class="md-footer__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
             </div>
@@ -6832,20 +6637,20 @@
                 <span class="md-footer__direction">
                   Previous
                 </span>
-                Timer
+                Button
               </div>
             </div>
           </a>
         
         
           
-          <a href="../tree/" class="md-footer__link md-footer__link--next" aria-label="Next: Tree" rel="next">
+          <a href="../data_table/" class="md-footer__link md-footer__link--next" aria-label="Next: DataTable" rel="next">
             <div class="md-footer__title">
               <div class="md-ellipsis">
                 <span class="md-footer__direction">
                   Next
                 </span>
-                Tree
+                DataTable
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -6879,7 +6684,7 @@
     
     
     <a href="https://twitter.com/textualizeio" target="_blank" rel="noopener" title="textualizeio on Twitter" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
     </a>
   
     
@@ -6887,7 +6692,7 @@
     
     
     <a href="https://github.com/textualize/textual/" target="_blank" rel="noopener" title="Textual on Github" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
     </a>
   
     
@@ -6895,7 +6700,7 @@
     
     
     <a href="https://discord.gg/Enf6Z3qhVr" target="_blank" rel="noopener" title="Textual Discord server" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M524.531 69.836a1.5 1.5 0 0 0-.764-.7A485.065 485.065 0 0 0 404.081 32.03a1.816 1.816 0 0 0-1.923.91 337.461 337.461 0 0 0-14.9 30.6 447.848 447.848 0 0 0-134.426 0 309.541 309.541 0 0 0-15.135-30.6 1.89 1.89 0 0 0-1.924-.91 483.689 483.689 0 0 0-119.688 37.107 1.712 1.712 0 0 0-.788.676C39.068 183.651 18.186 294.69 28.43 404.354a2.016 2.016 0 0 0 .765 1.375 487.666 487.666 0 0 0 146.825 74.189 1.9 1.9 0 0 0 2.063-.676A348.2 348.2 0 0 0 208.12 430.4a1.86 1.86 0 0 0-1.019-2.588 321.173 321.173 0 0 1-45.868-21.853 1.885 1.885 0 0 1-.185-3.126 251.047 251.047 0 0 0 9.109-7.137 1.819 1.819 0 0 1 1.9-.256c96.229 43.917 200.41 43.917 295.5 0a1.812 1.812 0 0 1 1.924.233 234.533 234.533 0 0 0 9.132 7.16 1.884 1.884 0 0 1-.162 3.126 301.407 301.407 0 0 1-45.89 21.83 1.875 1.875 0 0 0-1 2.611 391.055 391.055 0 0 0 30.014 48.815 1.864 1.864 0 0 0 2.063.7A486.048 486.048 0 0 0 610.7 405.729a1.882 1.882 0 0 0 .765-1.352c12.264-126.783-20.532-236.912-86.934-334.541ZM222.491 337.58c-28.972 0-52.844-26.587-52.844-59.239s23.409-59.241 52.844-59.241c29.665 0 53.306 26.82 52.843 59.239 0 32.654-23.41 59.241-52.843 59.241Zm195.38 0c-28.971 0-52.843-26.587-52.843-59.239s23.409-59.241 52.843-59.241c29.667 0 53.307 26.82 52.844 59.239 0 32.654-23.177 59.241-52.844 59.241Z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M524.531 69.836a1.5 1.5 0 0 0-.764-.7A485.065 485.065 0 0 0 404.081 32.03a1.816 1.816 0 0 0-1.923.91 337.461 337.461 0 0 0-14.9 30.6 447.848 447.848 0 0 0-134.426 0 309.541 309.541 0 0 0-15.135-30.6 1.89 1.89 0 0 0-1.924-.91 483.689 483.689 0 0 0-119.688 37.107 1.712 1.712 0 0 0-.788.676C39.068 183.651 18.186 294.69 28.43 404.354a2.016 2.016 0 0 0 .765 1.375 487.666 487.666 0 0 0 146.825 74.189 1.9 1.9 0 0 0 2.063-.676A348.2 348.2 0 0 0 208.12 430.4a1.86 1.86 0 0 0-1.019-2.588 321.173 321.173 0 0 1-45.868-21.853 1.885 1.885 0 0 1-.185-3.126 251.047 251.047 0 0 0 9.109-7.137 1.819 1.819 0 0 1 1.9-.256c96.229 43.917 200.41 43.917 295.5 0a1.812 1.812 0 0 1 1.924.233 234.533 234.533 0 0 0 9.132 7.16 1.884 1.884 0 0 1-.162 3.126 301.407 301.407 0 0 1-45.89 21.83 1.875 1.875 0 0 0-1 2.611 391.055 391.055 0 0 0 30.014 48.815 1.864 1.864 0 0 0 2.063.7A486.048 486.048 0 0 0 610.7 405.729a1.882 1.882 0 0 0 .765-1.352c12.264-126.783-20.532-236.912-86.934-334.541ZM222.491 337.58c-28.972 0-52.844-26.587-52.844-59.239s23.409-59.241 52.844-59.241c29.665 0 53.306 26.82 52.843 59.239 0 32.654-23.41 59.241-52.843 59.241Zm195.38 0c-28.971 0-52.843-26.587-52.843-59.239s23.409-59.241 52.843-59.241c29.667 0 53.307 26.82 52.844 59.239 0 32.654-23.177 59.241-52.844 59.241Z"/></svg>
     </a>
   
 </div>
@@ -6912,7 +6717,7 @@
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.tabs.sticky", "navigation.footer", "content.code.annotate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.6c7302c4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.7ce0e818.min.js"></script>
+      <script src="../../assets/javascripts/bundle.96d2b699.min.js"></script>
       
     
   </body>
