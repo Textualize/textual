@@ -10,7 +10,6 @@ from rich.segment import Segment, Segments
 from rich.style import Style, StyleType
 
 from . import events
-from ._types import MessageTarget
 from .geometry import Offset
 from .message import Message
 from .reactive import Reactive
@@ -22,6 +21,7 @@ class ScrollMessage(Message, bubble=False):
     """Base class for all messages posted by the scrollbar."""
 
     sender: ScrollBar
+    """The scrollbar that posted the message."""
 
 
 @rich.repr.auto
