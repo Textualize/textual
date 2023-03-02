@@ -524,28 +524,40 @@ class Markdown(Widget):
     class TableOfContentsUpdated(Message, bubble=True):
         """The table of contents was updated."""
 
+        sender: Markdown
+        """The markdown widget that posted the message."""
+        table_of_contents: TableOfContentsType
+        """The updated table of contents."""
+
         def __init__(
-            self, table_of_contents: TableOfContentsType, *, sender: Widget
+            self, table_of_contents: TableOfContentsType, *, sender: Markdown
         ) -> None:
             super().__init__(sender=sender)
-            self.table_of_contents: TableOfContentsType = table_of_contents
-            """Table of contents."""
+            self.table_of_contents = table_of_contents
 
     class TableOfContentsSelected(Message, bubble=True):
         """An item in the TOC was selected."""
 
-        def __init__(self, block_id: str, *, sender: Widget) -> None:
+        block_id: str
+        """ID of the block that was selected."""
+        sender: MarkdownTableOfContents
+        """The table of contents that posted the message."""
+
+        def __init__(self, block_id: str, *, sender: MarkdownTableOfContents) -> None:
             super().__init__(sender=sender)
             self.block_id = block_id
-            """ID of the block that was selected."""
 
     class LinkClicked(Message, bubble=True):
         """A link in the document was clicked."""
 
-        def __init__(self, href: str, *, sender: Widget) -> None:
+        href: str
+        """The link that was selected."""
+        sender: MarkdownBlock
+        """The markdown block that posted the event."""
+
+        def __init__(self, href: str, *, sender: MarkdownBlock) -> None:
             super().__init__(sender=sender)
-            self.href: str = href
-            """The link that was selected."""
+            self.href = href
 
     async def on_mount(self) -> None:
         if self._markdown is not None:
