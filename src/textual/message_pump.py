@@ -18,7 +18,12 @@ from weakref import WeakSet
 from . import Logger, events, log, messages
 from ._asyncio import create_task
 from ._callback import invoke
-from ._context import NoActiveAppError, active_app, active_message_pump
+from ._context import (
+    NoActiveAppError,
+    active_app,
+    active_message_pump,
+    prevent_message_types_stack,
+)
 from ._time import time
 from ._types import CallbackType
 from .case import camel_to_snake
@@ -79,7 +84,54 @@ class MessagePump(metaclass=MessagePumpMeta):
         self._max_idle: float | None = None
         self._mounted_event = asyncio.Event()
         self._next_callbacks: list[CallbackType] = []
-        self._prevent_message_types_stack: list[set[type[Message]]] = []
+
+    @property
+    def _prevent_message_types_stack(self) -> list[set[type[Message]]]:
+        """The stack that manages prevented messages."""
+        try:
+            stack = prevent_message_types_stack.get()
+        except LookupError:
+            stack = [set()]
+            prevent_message_types_stack.set(stack)
+        return stack
+
+    def _get_prevented_messages(self) -> set[type[Message]]:
+        """A set of all the prevented message types."""
+        return self._prevent_message_types_stack[-1]
+
+    def _is_prevented(self, message_type: type[Message]) -> bool:
+        """Check if a message type has been prevented via the
+        [prevent][textual.message_pump.MessagePump.prevent] context manager.
+
+        Args:
+            message_type: A message type.
+
+        Returns:
+            `True` if the message has been prevented from sending, or `False` if it will be sent as normal.
+        """
+        return message_type in self._prevent_message_types_stack[-1]
+
+    @contextmanager
+    def prevent(self, *message_types: type[Message]) -> Generator[None, None, None]:
+        """A context manager to *temporarily* prevent the given message types from being posted.
+
+        Example:
+            ```python
+            input = self.query_one(Input)
+            with self.prevent(Input.Changed):
+                input.value = "foo"
+            ```
+
+        """
+        if message_types:
+            prevent_stack = self._prevent_message_types_stack
+            prevent_stack.append(prevent_stack[-1].union(message_types))
+            try:
+                yield
+            finally:
+                prevent_stack.pop()
+        else:
+            yield
 
     @property
     def task(self) -> Task:
@@ -155,17 +207,11 @@ class MessagePump(metaclass=MessagePumpMeta):
         """Check if a given message is enabled (allowed to be sent).
 
         Args:
-            message: A message object
+            message: A message object.
 
         Returns:
             `True` if the message will be sent, or `False` if it is disabled.
         """
-        message_type = type(message)
-        if (
-            self._prevent_message_types_stack
-            and message_type in self._prevent_message_types_stack[-1]
-        ):
-            return False
         return type(message) not in self._disabled_messages
 
     def disable_messages(self, *messages: type[Message]) -> None:
@@ -294,6 +340,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         """
         # We send the InvokeLater message to ourselves first, to ensure we've cleared
         # out anything already pending in our own queue.
+
         message = messages.InvokeLater(self, partial(callback, *args, **kwargs))
         self.post_message_no_wait(message)
 
@@ -383,12 +430,12 @@ class MessagePump(metaclass=MessagePumpMeta):
         try:
             await self._dispatch_message(events.Compose(sender=self))
             await self._dispatch_message(events.Mount(sender=self))
+            self._post_mount()
         except Exception as error:
             self.app._handle_exception(error)
         finally:
             # This is critical, mount may be waiting
             self._mounted_event.set()
-        self._post_mount()
 
     def _post_mount(self):
         """Called after the object has been mounted."""
@@ -475,12 +522,13 @@ class MessagePump(metaclass=MessagePumpMeta):
         if message.no_dispatch:
             return
 
-        # Allow apps to treat events and messages separately
-        if isinstance(message, Event):
-            await self.on_event(message)
-        else:
-            await self._on_message(message)
-        await self._flush_next_callbacks()
+        with self.prevent(*message._prevent):
+            # Allow apps to treat events and messages separately
+            if isinstance(message, Event):
+                await self.on_event(message)
+            else:
+                await self._on_message(message)
+            await self._flush_next_callbacks()
 
     def _get_dispatch_methods(
         self, method_name: str, message: Message
@@ -544,29 +592,6 @@ class MessagePump(metaclass=MessagePumpMeta):
         if self._message_queue.empty():
             self.post_message_no_wait(messages.Prompt(sender=self))
 
-    @contextmanager
-    def prevent(self, *message_types: type[Message]) -> Generator[None, None, None]:
-        """A context manager to *temporarily* prevent the given message types from being posted.
-
-        Example:
-            ```python
-            input = self.query_one(Input)
-            with self.prevent(Input.Changed):
-                input.value = "foo"
-            ```
-
-        """
-        if self._prevent_message_types_stack:
-            self._prevent_message_types_stack.append(
-                self._prevent_message_types_stack[-1].union(message_types)
-            )
-        else:
-            self._prevent_message_types_stack.append(set(message_types))
-        try:
-            yield
-        finally:
-            self._prevent_message_types_stack.pop()
-
     async def post_message(self, message: Message) -> bool:
         """Post a message or an event to this message pump.
 
@@ -582,8 +607,9 @@ class MessagePump(metaclass=MessagePumpMeta):
             return False
         if not self.check_message_enabled(message):
             return True
-        if self._prevent_message_types_stack:
-            message._prevent.update(self._prevent_message_types_stack[-1])
+        # Add a copy of the prevented message types to the message
+        # This is so that prevented messages are honoured by the event's handler
+        message._prevent.update(self._get_prevented_messages())
         await self._message_queue.put(message)
         return True
 
@@ -622,8 +648,9 @@ class MessagePump(metaclass=MessagePumpMeta):
             return False
         if not self.check_message_enabled(message):
             return False
-        if self._prevent_message_types_stack:
-            message._prevent.update(self._prevent_message_types_stack[-1])
+        # Add a copy of the prevented message types to the message
+        # This is so that prevented messages are honoured by the event's handler
+        message._prevent.update(self._get_prevented_messages())
         self._message_queue.put_nowait(message)
         return True
 
@@ -638,11 +665,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         return self.post_message_no_wait(message)
 
     async def on_callback(self, event: events.Callback) -> None:
-        if event.prevent:
-            with self.prevent(*event.prevent):
-                await invoke(event.callback)
-        else:
-            await invoke(event.callback)
+        await invoke(event.callback)
 
     # TODO: Does dispatch_key belong on message pump?
     async def dispatch_key(self, event: events.Key) -> bool:

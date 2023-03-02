@@ -1,0 +1,12 @@
+Screen {
+    align: center middle;
+}
+
+Horizontal {
+    align: center middle;
+    height: auto;
+}
+
+RadioSet {
+    width: 45%;
+}

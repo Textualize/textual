@@ -7,14 +7,14 @@ from .._types import CallbackType
 from .scalar import Scalar, ScalarOffset
 
 if TYPE_CHECKING:
-    from ..dom import DOMNode
+    from ..widget import Widget
     from .styles import StylesBase
 
 
 class ScalarAnimation(Animation):
     def __init__(
         self,
-        widget: DOMNode,
+        widget: Widget,
         styles: StylesBase,
         start_time: float,
         attribute: str,

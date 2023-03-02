@@ -39,7 +39,10 @@ class StdoutRedirector:
         if not self.devtools.is_connected:
             return
 
-        previous_frame = inspect.currentframe().f_back
+        current_frame = inspect.currentframe()
+        assert current_frame is not None
+        previous_frame = current_frame.f_back
+        assert previous_frame is not None
         caller = inspect.getframeinfo(previous_frame)
 
         self._buffer.append(DevtoolsLog(string, caller=caller))

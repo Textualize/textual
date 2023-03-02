@@ -5,7 +5,11 @@ from typing import Generator
 
 
 class AwaitRemove:
-    """An awaitable returned by App.remove and DOMQuery.remove."""
+    """An awaitable returned by a method that removes DOM nodes.
+
+    Returned by [Widget.remove][textual.widget.Widget.remove] and
+    [DOMQuery.remove][textual.css.query.DOMQuery.remove].
+    """
 
     def __init__(self, finished_flag: Event, task: Task) -> None:
         """Initialise the instance of ``AwaitRemove``.

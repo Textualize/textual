@@ -57,7 +57,7 @@ from ._context import active_app
 from ._event_broker import NoHandler, extract_handler_actions
 from ._path import _make_path_object_relative
 from ._wait import wait_for_idle
-from .actions import SkipAction
+from .actions import ActionParseResult, SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding, Bindings
 from .css.query import NoMatches
@@ -428,6 +428,7 @@ class App(Generic[ReturnType], DOMNode):
         self._dom_ready = False
         self._batch_count = 0
         self.set_class(self.dark, "-dark-mode")
+        self.set_class(not self.dark, "-light-mode")
 
     @property
     def return_value(self) -> ReturnType | None:
@@ -444,7 +445,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @contextmanager
     def batch_update(self) -> Generator[None, None, None]:
-        """Suspend all repaints until the end of the batch."""
+        """A context manager to suspend all repaints until the end of the batch."""
         self._begin_batch()
         try:
             yield
@@ -460,10 +461,6 @@ class App(Generic[ReturnType], DOMNode):
         self._batch_count -= 1
         assert self._batch_count >= 0, "This won't happen if you use `batch_update`"
         if not self._batch_count:
-            try:
-                self.screen.check_idle()
-            except ScreenStackError:
-                pass
             self.check_idle()
 
     def animate(
@@ -648,7 +645,7 @@ class App(Generic[ReturnType], DOMNode):
         self,
         group: LogGroup,
         verbosity: LogVerbosity,
-        _textual_calling_frame: inspect.FrameInfo,
+        _textual_calling_frame: inspect.Traceback,
         *objects: Any,
         **kwargs,
     ) -> None:
@@ -1608,9 +1605,8 @@ class App(Generic[ReturnType], DOMNode):
                                 with redirect_stdout(redirector):  # type: ignore
                                     await run_process_messages()
                         else:
-                            null_file = _NullFile()
-                            with redirect_stderr(null_file):
-                                with redirect_stdout(null_file):
+                            with redirect_stderr(None):
+                                with redirect_stdout(None):
                                     await run_process_messages()
 
                 finally:
@@ -1735,16 +1731,17 @@ class App(Generic[ReturnType], DOMNode):
         if not widgets:
             return []
 
-        new_widgets = list(widgets)
-
+        widget_list: Iterable[Widget]
         if before is not None or after is not None:
             # There's a before or after, which means there's going to be an
             # insertion, so make it easier to get the new things in the
             # correct order.
-            new_widgets = reversed(new_widgets)
+            widget_list = reversed(widgets)
+        else:
+            widget_list = widgets
 
         apply_stylesheet = self.stylesheet.apply
-        for widget in new_widgets:
+        for widget in widget_list:
             if not isinstance(widget, Widget):
                 raise AppError(f"Can't register {widget!r}; expected a Widget instance")
             if widget not in self._registry:
@@ -1801,14 +1798,14 @@ class App(Generic[ReturnType], DOMNode):
     async def _close_all(self) -> None:
         """Close all message pumps."""
 
-        # Close all screens on the stack
-        for screen in reversed(self._screen_stack):
-            if screen._running:
-                await self._prune_node(screen)
+        # Close all screens on the stack.
+        for stack_screen in reversed(self._screen_stack):
+            if stack_screen._running:
+                await self._prune_node(stack_screen)
 
         self._screen_stack.clear()
 
-        # Close pre-defined screens
+        # Close pre-defined screens.
         for screen in self.SCREENS.values():
             if isinstance(screen, Screen) and screen._running:
                 await self._prune_node(screen)
@@ -1820,7 +1817,7 @@ class App(Generic[ReturnType], DOMNode):
             await child._close_messages()
 
     async def _shutdown(self) -> None:
-        self._begin_update()  # Prevents any layout / repaint while shutting down
+        self._begin_batch()  # Prevents any layout / repaint while shutting down
         driver = self._driver
         self._running = False
         if driver is not None:
@@ -1974,7 +1971,7 @@ class App(Generic[ReturnType], DOMNode):
 
     async def action(
         self,
-        action: str | tuple[str, tuple[str, ...]],
+        action: str | ActionParseResult,
         default_namespace: object | None = None,
     ) -> bool:
         """Perform an action.
@@ -2072,7 +2069,7 @@ class App(Generic[ReturnType], DOMNode):
         else:
             event.stop()
         if isinstance(action, (str, tuple)):
-            await self.action(action, default_namespace=default_namespace)
+            await self.action(action, default_namespace=default_namespace)  # type: ignore[arg-type]
         elif callable(action):
             await action()
         else:
@@ -2152,6 +2149,9 @@ class App(Generic[ReturnType], DOMNode):
         for widget in pruned_remove:
             if widget.parent is not None:
                 widget.parent._nodes._remove(widget)
+
+        for node in pruned_remove:
+            node._detach()
 
         # Return the list of widgets that should end up being sent off in a
         # prune event.
@@ -2339,9 +2339,12 @@ _uvloop_init_done: bool = False
 
 
 def _init_uvloop() -> None:
-    """
-    Import and install the `uvloop` asyncio policy, if available.
+    """Import and install the `uvloop` asyncio policy, if available.
+
     This is done only once, even if the function is called multiple times.
+
+    This is provided as a nicety for users that have `uvloop` installed independently
+    of Textual, as `uvloop` is not listed as a Textual dependency.
     """
     global _uvloop_init_done
 
@@ -2349,10 +2352,10 @@ def _init_uvloop() -> None:
         return
 
     try:
-        import uvloop
+        import uvloop  # type: ignore[reportMissingImports]
     except ImportError:
         pass
     else:
-        uvloop.install()
+        uvloop.install()  # type: ignore[reportUnknownMemberType]
 
     _uvloop_init_done = True

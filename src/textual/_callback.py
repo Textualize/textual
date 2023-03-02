@@ -58,6 +58,7 @@ async def invoke(callback: Callable, *params: object) -> Any:
         # In debug mode we will warn about callbacks that may be stuck
         def log_slow() -> None:
             """Log a message regarding a slow callback."""
+            assert app is not None
             app.log.warning(
                 f"Callback {callback} is still pending after {INVOKE_TIMEOUT_WARNING} seconds"
             )

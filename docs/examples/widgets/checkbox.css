@@ -1,0 +1,11 @@
+Screen {
+    align: center middle;
+}
+
+Vertical {
+    width: auto;
+    height: auto;
+    border: solid $primary;
+    background: $panel;
+    padding: 2;
+}

@@ -200,8 +200,8 @@ class XTermParser(Parser[events.Event]):
                     if not bracketed_paste:
                         # Was it a pressed key event that we received?
                         key_events = list(sequence_to_key_events(sequence))
-                        for event in key_events:
-                            on_token(event)
+                        for key_event in key_events:
+                            on_token(key_event)
                         if key_events:
                             break
                         # Or a mouse event?

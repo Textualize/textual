@@ -13,12 +13,12 @@ class PreventApp(App):
     def on_button_pressed(self) -> None:
         """Clear the text input."""
         input = self.query_one(Input)
-        with input.prevent(Input.Changed):  # (1)
+        with input.prevent(Input.Changed):  # (1)!
             input.value = ""
 
     def on_input_changed(self) -> None:
         """Called as the user types."""
-        self.bell()  # (2)
+        self.bell()  # (2)!
 
 
 if __name__ == "__main__":

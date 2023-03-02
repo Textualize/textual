@@ -1,1 +1,1 @@
-::: textual.scroll_view.ScrollView
+::: textual.scroll_view

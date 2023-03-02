@@ -9,8 +9,22 @@ from rich.segment import Segment
 from rich.style import Style, StyleType
 
 from ._cache import FIFOCache
-from .filter import LineFilter
 from ._segment_tools import index_to_cell_position
+from .constants import DEBUG
+from .filter import LineFilter
+
+
+def get_line_length(segments: Iterable[Segment]) -> int:
+    """Get the line length (total length of all segments).
+
+    Args:
+        segments: Iterable of segments.
+
+    Returns:
+        Length of line in cells.
+    """
+    _cell_len = cell_len
+    return sum(_cell_len(text) for text, _, control in segments if not control)
 
 
 @rich.repr.auto
@@ -29,6 +43,8 @@ class Strip:
         "_cell_length",
         "_divide_cache",
         "_crop_cache",
+        "_style_cache",
+        "_link_ids",
     ]
 
     def __init__(
@@ -38,6 +54,12 @@ class Strip:
         self._cell_length = cell_length
         self._divide_cache: FIFOCache[tuple[int, ...], list[Strip]] = FIFOCache(4)
         self._crop_cache: FIFOCache[tuple[int, int], Strip] = FIFOCache(4)
+        self._style_cache: FIFOCache[Style, Strip] = FIFOCache(4)
+        self._link_ids: set[str] | None = None
+
+        if DEBUG and cell_length is not None:
+            # If `cell_length` is incorrect, render will be fubar
+            assert get_line_length(self._segments) == cell_length
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._segments
@@ -47,6 +69,15 @@ class Strip:
     def text(self) -> str:
         """Segment text."""
         return "".join(segment.text for segment in self._segments)
+
+    @property
+    def link_ids(self) -> set[str]:
+        """A set of the link ids in this Strip."""
+        if self._link_ids is None:
+            self._link_ids = {
+                style._link_id for _, style, _ in self._segments if style is not None
+            }
+        return self._link_ids
 
     @classmethod
     def blank(cls, cell_length: int, style: StyleType | None = None) -> Strip:
@@ -95,7 +126,7 @@ class Strip:
         """Get the number of cells required to render this object."""
         # Done on demand and cached, as this is an O(n) operation
         if self._cell_length is None:
-            self._cell_length = Segment.get_line_length(self._segments)
+            self._cell_length = get_line_length(self._segments)
         return self._cell_length
 
     @classmethod
@@ -230,19 +261,18 @@ class Strip:
         Returns:
             New strip (or same Strip if no changes).
         """
+
         _Segment = Segment
-        if not any(
-            segment.style._link_id == link_id
-            for segment in self._segments
-            if segment.style
-        ):
+        if link_id not in self.link_ids:
             return self
         segments = [
             _Segment(
                 text,
-                (style + link_style if style is not None else None)
-                if (style and not style._null and style._link_id == link_id)
-                else style,
+                (
+                    (style + link_style if style is not None else None)
+                    if (style and not style._null and style._link_id == link_id)
+                    else style
+                ),
                 control,
             )
             for text, style, control in self._segments
@@ -322,7 +352,25 @@ class Strip:
         add_strip = strips.append
         for segments, cut in zip(Segment.divide(self._segments, cuts), cuts):
             add_strip(Strip(segments, cut - pos))
-            pos += cut
+            pos = cut
 
         self._divide_cache[cache_key] = strips
         return strips
+
+    def apply_style(self, style: Style) -> Strip:
+        """Apply a style to the Strip.
+
+        Args:
+            style: A Rich style.
+
+        Returns:
+            A new strip.
+        """
+        cached = self._style_cache.get(style)
+        if cached is not None:
+            return cached
+        styled_strip = Strip(
+            Segment.apply_style(self._segments, style), self.cell_length
+        )
+        self._style_cache[style] = styled_strip
+        return styled_strip

@@ -35,7 +35,7 @@ class DevtoolsLog(NamedTuple):
     """
 
     objects_or_string: tuple[Any, ...] | str
-    caller: inspect.FrameInfo
+    caller: inspect.Traceback
 
 
 class DevtoolsConsole(Console):

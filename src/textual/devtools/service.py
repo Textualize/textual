@@ -5,10 +5,10 @@ import asyncio
 import json
 import pickle
 from json import JSONDecodeError
-from typing import Any, cast
+from typing import Any
 
 import msgpack
-from aiohttp import WSMessage, WSMsgType
+from aiohttp import WSMsgType
 from aiohttp.abc import Request
 from aiohttp.web_ws import WebSocketResponse
 from rich.console import Console
