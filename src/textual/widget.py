@@ -890,6 +890,7 @@ class Widget(DOMNode):
             self._refresh_scroll()
 
     def watch_scroll_y(self, old_value: float, new_value: float) -> None:
+        print("WATCH SCROLL_Y", old_value, new_value, self.vertical_scrollbar.position)
         self.vertical_scrollbar.position = round(new_value)
         if round(old_value) != round(new_value):
             self._refresh_scroll()
@@ -912,8 +913,7 @@ class Widget(DOMNode):
         return max(
             0,
             self.virtual_size.width
-            - self.container_size.width
-            + self.scrollbar_size_vertical,
+            - (self.container_size.width - self.scrollbar_size_vertical),
         )
 
     @property
@@ -922,8 +922,7 @@ class Widget(DOMNode):
         return max(
             0,
             self.virtual_size.height
-            - self.container_size.height
-            + self.scrollbar_size_horizontal,
+            - (self.container_size.height - self.scrollbar_size_horizontal),
         )
 
     @property
@@ -981,6 +980,9 @@ class Widget(DOMNode):
         if not self.is_scrollable or not self.container_size:
             return
 
+        if self._stabilized_scrollbar_size == self.container_size:
+            return
+
         styles = self.styles
         overflow_x = styles.overflow_x
         overflow_y = styles.overflow_y
@@ -1002,16 +1004,16 @@ class Widget(DOMNode):
         elif overflow_y == "auto":
             show_vertical = self.virtual_size.height > height
 
-        if self._stabilized_scrollbar_size != self.container_size:
-            # When a single scrollbar is shown, the other dimension changes, so we need to recalculate.
-            if show_vertical and not show_horizontal:
-                show_horizontal = self.virtual_size.width > (
-                    width - styles.scrollbar_size_vertical
-                )
-            if show_horizontal and not show_vertical:
-                show_vertical = self.virtual_size.height > (
-                    height - styles.scrollbar_size_horizontal
-                )
+        # if self._stabilized_scrollbar_size != self.container_size:
+        # When a single scrollbar is shown, the other dimension changes, so we need to recalculate.
+        if show_vertical and not show_horizontal:
+            show_horizontal = self.virtual_size.width > (
+                width - styles.scrollbar_size_vertical
+            )
+        if show_horizontal and not show_vertical:
+            show_vertical = self.virtual_size.height > (
+                height - styles.scrollbar_size_horizontal
+            )
 
         self._stabilized_scrollbar_size = self._container_size
 
@@ -1456,9 +1458,13 @@ class Widget(DOMNode):
         Returns:
             True if the scroll position changed, otherwise False.
         """
+
+        print(self, "SCROLL_TO", x, y)
         maybe_scroll_x = x is not None and (self.allow_horizontal_scroll or force)
         maybe_scroll_y = y is not None and (self.allow_vertical_scroll or force)
+        print("maybe_Scroll_y", maybe_scroll_y)
         scrolled_x = scrolled_y = False
+        print(animate)
         if animate:
             # TODO: configure animation speed
             if duration is None and speed is None:
@@ -1501,8 +1507,11 @@ class Widget(DOMNode):
             if maybe_scroll_y:
                 assert y is not None
                 scroll_y = self.scroll_y
+                print("start scroll", self.scroll_y, y)
                 self.scroll_target_y = self.scroll_y = y
+                print("scrolling to ", self.scroll_y)
                 scrolled_y = scroll_y != self.scroll_y
+                print(scrolled_y)
 
         return scrolled_x or scrolled_y
 
@@ -1637,6 +1646,11 @@ class Widget(DOMNode):
         # here and make our own call to call_after_refresh.
         def _lazily_scroll_end() -> None:
             """Scroll to the end of the widget."""
+            print("MAX SCROLL_Y", self.max_scroll_y)
+            print(self.scroll_x, self.scroll_target_x)
+            print(self.scroll_y, self.scroll_target_y)
+            self.log(self.show_horizontal_scrollbar, self.show_vertical_scrollbar)
+            self.log(max_scroll_y=self.max_scroll_y)
             self._scroll_to(
                 0,
                 self.max_scroll_y,
