@@ -3,7 +3,9 @@ from __future__ import annotations
 import functools
 from dataclasses import dataclass
 from itertools import chain, zip_longest
+from multiprocessing import Event
 from operator import itemgetter
+from tkinter import E
 from typing import Any, ClassVar, Generic, Iterable, NamedTuple, TypeVar, cast
 
 import rich.repr
@@ -38,6 +40,9 @@ RowCacheKey: TypeAlias = (
 )
 CursorType = Literal["cell", "row", "column", "none"]
 CellType = TypeVar("CellType")
+"""Used to type a `DataTable` as a container of cells."""
+EventCellType = TypeVar("EventCellType")
+"""Used to type the sender attribute of `DataTable`-related events."""
 
 CELL_X_PADDING = 2
 
@@ -307,7 +312,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     )
     hover_coordinate: Reactive[Coordinate] = Reactive(Coordinate(0, 0), repaint=False)
 
-    class CellHighlighted(Message, bubble=True):
+    class CellHighlighted(Generic[EventCellType], Message, bubble=True):
         """Posted when the cursor moves to highlight a new cell.
 
         This is only relevant when the `cursor_type` is `"cell"`.
@@ -317,19 +322,25 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         a subclass of `DataTable` or in a parent widget in the DOM.
         """
 
+        cell_key: CellKey
+        """The key for the highlighted cell."""
+        coordinate: Coordinate
+        """The coordinate of the highlighted cell."""
+        sender: DataTable[EventCellType]
+        """The data table that posted this message."""
+        value: EventCellType
+        """The value in the highlighted cell."""
+
         def __init__(
             self,
-            sender: DataTable,
-            value: CellType,
+            sender: DataTable[EventCellType],
+            value: EventCellType,
             coordinate: Coordinate,
             cell_key: CellKey,
         ) -> None:
-            self.value: CellType = value
-            """The value in the highlighted cell."""
-            self.coordinate: Coordinate = coordinate
-            """The coordinate of the highlighted cell."""
-            self.cell_key: CellKey = cell_key
-            """The key for the highlighted cell."""
+            self.value = value
+            self.coordinate = coordinate
+            self.cell_key = cell_key
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
@@ -338,7 +349,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             yield "coordinate", self.coordinate
             yield "cell_key", self.cell_key
 
-    class CellSelected(Message, bubble=True):
+    class CellSelected(Generic[EventCellType], Message, bubble=True):
         """Posted by the `DataTable` widget when a cell is selected.
 
         This is only relevant when the `cursor_type` is `"cell"`. Can be handled using
@@ -346,19 +357,25 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         widget in the DOM.
         """
 
+        cell_key: CellKey
+        """The key for the selected cell."""
+        coordinate: Coordinate
+        """The coordinate of the selected cell."""
+        sender: DataTable[EventCellType]
+        """The data table that posted this message."""
+        value: EventCellType
+        """The value in the selected cell."""
+
         def __init__(
             self,
-            sender: DataTable,
-            value: CellType,
+            sender: DataTable[EventCellType],
+            value: EventCellType,
             coordinate: Coordinate,
             cell_key: CellKey,
         ) -> None:
-            self.value: CellType = value
-            """The value in the cell that was selected."""
-            self.coordinate: Coordinate = coordinate
-            """The coordinate of the cell that was selected."""
-            self.cell_key: CellKey = cell_key
-            """The key for the selected cell."""
+            self.value = value
+            self.coordinate = coordinate
+            self.cell_key = cell_key
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
@@ -367,7 +384,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             yield "coordinate", self.coordinate
             yield "cell_key", self.cell_key
 
-    class RowHighlighted(Message, bubble=True):
+    class RowHighlighted(Generic[EventCellType], Message, bubble=True):
         """Posted when a row is highlighted.
 
         This message is only posted when the
@@ -376,11 +393,18 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         widget in the DOM.
         """
 
-        def __init__(self, sender: DataTable, cursor_row: int, row_key: RowKey) -> None:
-            self.cursor_row: int = cursor_row
-            """The y-coordinate of the cursor that highlighted the row."""
-            self.row_key: RowKey = row_key
-            """The key of the row that was highlighted."""
+        cursor_row: int
+        """The y coordinate of the row that was highlighted."""
+        row_key: RowKey
+        """The key of the row that was highlighted."""
+        sender: DataTable[EventCellType]
+        """The data table that posted this message."""
+
+        def __init__(
+            self, sender: DataTable[EventCellType], cursor_row: int, row_key: RowKey
+        ) -> None:
+            self.cursor_row = cursor_row
+            self.row_key = row_key
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
@@ -388,7 +412,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             yield "cursor_row", self.cursor_row
             yield "row_key", self.row_key
 
-    class RowSelected(Message, bubble=True):
+    class RowSelected(Generic[EventCellType], Message, bubble=True):
         """Posted when a row is selected.
 
         This message is only posted when the
@@ -397,11 +421,18 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         widget in the DOM.
         """
 
-        def __init__(self, sender: DataTable, cursor_row: int, row_key: RowKey) -> None:
-            self.cursor_row: int = cursor_row
-            """The y-coordinate of the cursor that made the selection."""
-            self.row_key: RowKey = row_key
-            """The key of the row that was selected."""
+        cursor_row: int
+        """The y coordinate of the row that was selected."""
+        row_key: RowKey
+        """The key of the row that was selected."""
+        sender: DataTable[EventCellType]
+        """The data table that posted this message."""
+
+        def __init__(
+            self, sender: DataTable[EventCellType], cursor_row: int, row_key: RowKey
+        ) -> None:
+            self.cursor_row = cursor_row
+            self.row_key = row_key
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
@@ -409,7 +440,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             yield "cursor_row", self.cursor_row
             yield "row_key", self.row_key
 
-    class ColumnHighlighted(Message, bubble=True):
+    class ColumnHighlighted(Generic[EventCellType], Message, bubble=True):
         """Posted when a column is highlighted.
 
         This message is only posted when the
@@ -418,13 +449,21 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         widget in the DOM.
         """
 
+        column_key: ColumnKey
+        """The key of the column that was highlighted."""
+        cursor_column: int
+        """The x coordinate of the column that was highlighted."""
+        sender: DataTable[EventCellType]
+        """The data table that posted this message."""
+
         def __init__(
-            self, sender: DataTable, cursor_column: int, column_key: ColumnKey
+            self,
+            sender: DataTable[EventCellType],
+            cursor_column: int,
+            column_key: ColumnKey,
         ) -> None:
-            self.cursor_column: int = cursor_column
-            """The x-coordinate of the column that was highlighted."""
+            self.cursor_column = cursor_column
             self.column_key = column_key
-            """The key of the column that was highlighted."""
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
@@ -432,7 +471,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             yield "cursor_column", self.cursor_column
             yield "column_key", self.column_key
 
-    class ColumnSelected(Message, bubble=True):
+    class ColumnSelected(Generic[EventCellType], Message, bubble=True):
         """Posted when a column is selected.
 
         This message is only posted when the
@@ -441,13 +480,21 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         widget in the DOM.
         """
 
+        column_key: ColumnKey
+        """The key of the column that was selected."""
+        cursor_column: int
+        """The x coordinate of the column that was selected."""
+        sender: DataTable[EventCellType]
+        """The data table that posted this message."""
+
         def __init__(
-            self, sender: DataTable, cursor_column: int, column_key: ColumnKey
+            self,
+            sender: DataTable[EventCellType],
+            cursor_column: int,
+            column_key: ColumnKey,
         ) -> None:
-            self.cursor_column: int = cursor_column
-            """The x-coordinate of the column that was selected."""
+            self.cursor_column = cursor_column
             self.column_key = column_key
-            """The key of the column that was selected."""
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
@@ -455,22 +502,28 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             yield "cursor_column", self.cursor_column
             yield "column_key", self.column_key
 
-    class HeaderSelected(Message, bubble=True):
+    class HeaderSelected(Generic[EventCellType], Message, bubble=True):
         """Posted when a column header/label is clicked."""
+
+        column_index: int
+        """The index for the column."""
+        column_key: ColumnKey
+        """The key for the column."""
+        label: Text
+        """The text of the label."""
+        sender: DataTable[EventCellType]
+        """The data table that posted this message."""
 
         def __init__(
             self,
-            sender: DataTable,
+            sender: DataTable[EventCellType],
             column_key: ColumnKey,
             column_index: int,
             label: Text,
         ):
             self.column_key = column_key
-            """The key for the column."""
             self.column_index = column_index
-            """The index for the column."""
             self.label = label
-            """The text of the label."""
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
@@ -479,22 +532,28 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             yield "column_index", self.column_index
             yield "label", self.label.plain
 
-    class RowLabelSelected(Message, bubble=True):
+    class RowLabelSelected(Generic[EventCellType], Message, bubble=True):
         """Posted when a row label is clicked."""
+
+        label: Text
+        """The text of the label."""
+        row_index: int
+        """The index for the row."""
+        row_key: RowKey
+        """The key for the row."""
+        sender: DataTable[EventCellType]
+        """The data table that posted this message."""
 
         def __init__(
             self,
-            sender: DataTable,
+            sender: DataTable[EventCellType],
             row_key: RowKey,
             row_index: int,
             label: Text,
         ):
             self.row_key = row_key
-            """The key for the column."""
             self.row_index = row_index
-            """The index for the column."""
             self.label = label
-            """The text of the label."""
             super().__init__(sender)
 
         def __rich_repr__(self) -> rich.repr.Result:
