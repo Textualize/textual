@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Removed the attribute `Button.Pressed.button` in favour of `Button.Pressed.sender` https://github.com/Textualize/textual/issues/1813
 - Removed the attributes `Input.Changed.input` and `Input.Submitted.input` in favour of the respective `Input.Changed.sender` and `Input.Submitted.sender` attributes https://github.com/Textualize/textual/issues/1813
+- Removed the attribute `RadioSet.Changed.input` in favour of `RadioSet.Changed.sender` https://github.com/Textualize/textual/issues/1813
 
 ### Fixed
 

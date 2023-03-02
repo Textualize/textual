@@ -19,9 +19,9 @@ class RadioSetApp(App[None]):
     def on_radio_set_changed(self, event: RadioSet.Changed) -> None:
         self.events_received.append(
             (
-                event.input.id,
+                event.sender.id,
                 event.index,
-                [button.value for button in event.input.query(RadioButton)],
+                [button.value for button in event.sender.query(RadioButton)],
             )
         )
 
