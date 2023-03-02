@@ -21,13 +21,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 - Removed the attribute `Button.Pressed.button` in favour of `Button.Pressed.sender` https://github.com/Textualize/textual/issues/1813
+- Removed the attributes `Input.Changed.input` and `Input.Submitted.input` in favour of the respective `Input.Changed.sender` and `Input.Submitted.sender` attributes https://github.com/Textualize/textual/issues/1813
 
 ### Fixed
 
 - Scrolling with cursor keys now moves just one cell https://github.com/Textualize/textual/issues/1897
-
-### Fixed
-
 - Fix exceptions in watch methods being hidden on startup https://github.com/Textualize/textual/issues/1886
 
 ## [0.12.1] - 2023-02-25

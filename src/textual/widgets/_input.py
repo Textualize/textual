@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import ClassVar
+from typing import ClassVar, Optional
 
 from rich.cells import cell_len, get_character_cell_size
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
@@ -133,39 +133,39 @@ class Input(Widget, can_focus=True):
     width = reactive(1)
     _cursor_visible = reactive(True)
     password = reactive(False)
-    max_size: reactive[int | None] = reactive(None)
+    max_size = reactive[Optional[int]](None)
 
     class Changed(Message, bubble=True):
         """Posted when the value changes.
 
         Can be handled using `on_input_changed` in a subclass of `Input` or in a parent
         widget in the DOM.
-
-        Attributes:
-            value: The value that the input was changed to.
-            input: The `Input` widget that was changed.
         """
+
+        sender: Input
+        """The input that posted the message."""
+        value: str
+        """The value that the input was changed to."""
 
         def __init__(self, sender: Input, value: str) -> None:
             super().__init__(sender)
-            self.value: str = value
-            self.input: Input = sender
+            self.value = value
 
     class Submitted(Message, bubble=True):
         """Posted when the enter key is pressed within an `Input`.
 
         Can be handled using `on_input_submitted` in a subclass of `Input` or in a
         parent widget in the DOM.
-
-        Attributes:
-            value: The value of the `Input` being submitted.
-            input: The `Input` widget that is being submitted.
         """
+
+        sender: Input
+        """The input that posted the message."""
+        value: str
+        """The value of the input being submitted."""
 
         def __init__(self, sender: Input, value: str) -> None:
             super().__init__(sender)
-            self.value: str = value
-            self.input: Input = sender
+            self.value = value
 
     def __init__(
         self,

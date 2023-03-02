@@ -107,7 +107,7 @@ class EasingApp(App):
         self.opacity_widget.styles.opacity = 1 - value / END_POSITION
 
     def on_input_changed(self, event: Input.Changed):
-        if event.input.id == "duration-input":
+        if event.sender.id == "duration-input":
             new_duration = _try_float(event.value)
             if new_duration is not None:
                 self.duration = new_duration

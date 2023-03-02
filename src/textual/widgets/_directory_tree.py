@@ -77,6 +77,8 @@ class DirectoryTree(Tree[DirEntry]):
             path: The path of the file that was selected.
         """
 
+        sender: DirectoryTree
+
         def __init__(self, sender: MessageTarget, path: str) -> None:
             self.path: str = path
             super().__init__(sender)

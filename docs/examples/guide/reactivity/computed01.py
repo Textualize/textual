@@ -34,9 +34,9 @@ class ComputedApp(App):
         except ValueError:
             self.bell()
         else:
-            if event.input.id == "red":
+            if event.sender.id == "red":
                 self.red = component
-            elif event.input.id == "green":
+            elif event.sender.id == "green":
                 self.green = component
             else:
                 self.blue = component
