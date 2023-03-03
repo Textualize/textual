@@ -67,7 +67,7 @@ class ByteInput(Widget):
     ByteInput:focus-within {
         border: heavy $secondary;
     }
-    Input#byte {
+    ByteEditor Input {
         width: 16;
     }
     """

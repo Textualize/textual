@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 from textual.app import App, ComposeResult
+from textual.containers import Container
 from textual.widget import Widget
-from textual.widgets import Label, Switch
+from textual.widgets import Input, Label, Switch
 
 
 class BitSwitch(Widget):
@@ -39,7 +40,6 @@ class ByteInput(Widget):
         border: blank;
         layout: horizontal;
     }
-
     ByteInput:focus-within {
         border: heavy $secondary;
     }
@@ -50,9 +50,30 @@ class ByteInput(Widget):
             yield BitSwitch(bit)
 
 
+class ByteEditor(Widget):
+    DEFAULT_CSS = """
+    ByteEditor > Container {
+        height: 1fr;
+        align: center middle;
+    }
+    ByteEditor > Container.top {
+        background: $boost;
+    }
+    ByteEditor Input {
+        width: 16;
+    }
+    """
+
+    def compose(self) -> ComposeResult:
+        with Container(classes="top"):
+            yield Input(placeholder="byte")
+        with Container():
+            yield ByteInput()
+
+
 class ByteInputApp(App):
     def compose(self) -> ComposeResult:
-        yield ByteInput()
+        yield ByteEditor()
 
 
 if __name__ == "__main__":

@@ -394,41 +394,69 @@ The Stopwatch in the [tutorial](./../tutorial.md) is an example of a compound wi
 A compound widget can be used like any other widget.
 The only thing that differs is that when you build a compound widget, you write a `compose()` method which yields *child* widgets, rather than implement `render` or `render_line` method.
 
-Let's build an app using compound widgets, so we can explore the benefits. We're going to build an app which you might use to teach binary numbers. In the following sketch we have 8 switches, one for each bit in a byte. If you toggle any of those *bit* switches, it will update a decimal number. Additionally, if you edit the decimal number it will also set the switches to match.
+### Designing the app
+
+Let's design and build an app with compound widgets.
+
+In the following sketch we have 8 switches, one for each bit in a byte. There is also an input control with a decimal number. The idea is that we can update the decimal number, either by editing it directly or by pressing the switches. You could use this a teaching aid for binary numbers.
 
 !!! tip
 
     There are plenty of resources on the web, such as this [excellent video from Khan Academy](https://www.khanacademy.org/math/algebra-home/alg-intro-to-algebra/algebra-alternate-number-bases/v/number-systems-introduction) if you want to brush up on binary numbers.
 
+
 <div class="excalidraw">
 --8<-- "docs/images/byte01.excalidraw.svg"
 </div>
 
-All of the controls in the above sketch are builtin to Textual. We have [Input](../widgets/input.md), [Label](../widgets/label.md), and [Switch](../widgets/switch.md) widgets we can re-use for this app.
+All of the controls ([Input](../widgets/input.md), [Label](../widgets/label.md), and [Switch](../widgets/switch.md)) in the sketch above are builtin to Textual.
+Even with this simple one-screen app there are enough widgets that your app code may become hard to follow.
+Compound widgets will help us break the UI in to more manageable pieces that you will find easier to work with.
 
-We will break this UI up in to three compound widgets.
+###  Identifying components
+
+We will divide this UI in to three compound widgets, corresponding to the logical components of the design.
 
 1. `BitSwitch` for a switch with a numeric label.
 2. `ByteInput` which contains 8 `BitSwitch` widgets.
-3. `ByteEditor` which contains the switches and an input control to show the decimal value.
+3. `ByteEditor` which contains a `ByteInput` and an [Input](../widgets/input.md) to show the decimal value.
+
+This is not the only way we could implement our design with compound widgets.
+So why these three widgets?
+As a rule of thumb a widget should handle one piece of data, which is why we have an independent widget for a bit, a byte, and the decimal value.
 
 <div class="excalidraw">
 --8<-- "docs/images/byte02.excalidraw.svg"
 </div>
 
-In the following code we will implement the first two widgets; the `BitSwitch` and the `ByteInput`.
+In the following code we will implement the three widgets. There will be no functionality yet, but it should look like our design.
 
 === "byte01.py"
 
-    ```python title="byte01.py" hl_lines="27-29 48-50"
+    ```python title="byte01.py" hl_lines="28-30 48-50 67-71"
     --8<-- "docs/examples/guide/compound/byte01.py"
     ```
 
 === "Output"
 
-    ```{.textual path="docs/examples/guide/compound/byte01.py"}
+    ```{.textual path="docs/examples/guide/compound/byte01.py" columns="90" line="30"}
     ```
 
-The `BitSwitch` yields a [Label](../widgets/label.md) which displays the bit number, and a [Switch](../widgets/switch.md) control the user can click. The default CSS for `BitSwitch` aligns its children vertically, and sets the label's [text-align](../styles/text_align.md) to center.
+Note the `compose()` methods of each of the widgets.
 
-The `ByteInput` yields 8 `BitSwitch` widgets and arranges them horizontally. It also adds a `focus-within` style in its CSS to draw an accent border when any of the switches are focused.
+- The `BitSwitch` yields a [Label](../widgets/label.md) which displays the bit number, and a [Switch](../widgets/switch.md) control for that bit. The default CSS for `BitSwitch` aligns its children vertically, and sets the label's [text-align](../styles/text_align.md) to center.
+
+- The `ByteInput` yields 8 `BitSwitch` widgets and arranges them horizontally. It also adds a `focus-within` style in its CSS to draw an accent border when any of the switches are focused.
+
+- The `ByteEditor` yields a `ByteInput` and an Input control. The default CSS stacks the two controls on top of each other to divide the screen in to two parts.
+
+With these three widgets, the [DOM](CSS.md#the-dom) for our app will look like this:
+
+<div class="excalidraw">
+--8<-- "docs/images/byte_input_dom.excalidraw.svg"
+</div>
+
+You will be able to click on the buttons and edit the byte in the input control, but there is currently no code to manage any other behavior.
+
+
+### Properties down, messages up
