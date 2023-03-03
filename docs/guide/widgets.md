@@ -387,11 +387,48 @@ The following builtin widgets use the Line API. If you are building advanced wid
 
 ## Compound widgets
 
-You can combine widgets (builtin or your own) to form more sophisticated widgets. Such widgets are known as *compound* widgets. The Stopwatch in the [tutorial](./../tutorial.md) is an example of a compound widget.
+Widgets may be combined to create new widgets with additional features.
+Such widgets are known as *compound widgets*.
+The Stopwatch in the [tutorial](./../tutorial.md) is an example of a compound widget.
 
-A compound widget can be used like any other widget. The only thing that differs is that a compound widget has a `compose()` method which yields *child* widgets, rather than a `render` or `render_line` method of its own. Having a *parent* widget manage multiple children allows you break your app in to smaller more manageable pieces, making it easy to re-use the those pieces elsewhere in your app (or in other apps).
+A compound widget can be used like any other widget.
+The only thing that differs is that when you build a compound widget, you write a `compose()` method which yields *child* widgets, rather than implement `render` or `render_line` method.
 
+Let's build an app using compound widgets, so we can explore the benefits. We're going to build an app which you might use to teach binary numbers. In the following sketch we have 8 switches, one for each bit in a byte. If you toggle any of those *bit* switches, it will update a decimal number. Additionally, if you edit the decimal number it will also set the switches to match.
+
+!!! tip
+
+    There are plenty of resources on the web, such as this [excellent video from Khan Academy](https://www.khanacademy.org/math/algebra-home/alg-intro-to-algebra/algebra-alternate-number-bases/v/number-systems-introduction) if you want to brush up on binary numbers.
 
 <div class="excalidraw">
---8<-- "docs/images/byte_input.excalidraw.svg"
+--8<-- "docs/images/byte01.excalidraw.svg"
 </div>
+
+All of the controls in the above sketch are builtin to Textual. We have [Input](../widgets/input.md), [Label](../widgets/label.md), and [Switch](../widgets/switch.md) widgets we can re-use for this app.
+
+We will break this UI up in to three compound widgets.
+
+1. `BitSwitch` for a switch with a numeric label.
+2. `ByteInput` which contains 8 `BitSwitch` widgets.
+3. `ByteEditor` which contains the switches and an input control to show the decimal value.
+
+<div class="excalidraw">
+--8<-- "docs/images/byte02.excalidraw.svg"
+</div>
+
+In the following code we will implement the first two widgets; the `BitSwitch` and the `ByteInput`.
+
+=== "byte01.py"
+
+    ```python title="byte01.py" hl_lines="27-29 48-50"
+    --8<-- "docs/examples/guide/compound/byte01.py"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/compound/byte01.py"}
+    ```
+
+The `BitSwitch` yields a [Label](../widgets/label.md) which displays the bit number, and a [Switch](../widgets/switch.md) control the user can click. The default CSS for `BitSwitch` aligns its children vertically, and sets the label's [text-align](../styles/text_align.md) to center.
+
+The `ByteInput` yields 8 `BitSwitch` widgets and arranges them horizontally. It also adds a `focus-within` style in its CSS to draw an accent border when any of the switches are focused.

@@ -1,12 +1,8 @@
 from __future__ import annotations
 
 from textual.app import App, ComposeResult
-from textual.containers import Container
-from textual.geometry import clamp
-from textual.messages import Message
-from textual.reactive import reactive
 from textual.widget import Widget
-from textual.widgets import Input, Label, Switch
+from textual.widgets import Label, Switch
 
 
 class BitSwitch(Widget):
@@ -24,16 +20,6 @@ class BitSwitch(Widget):
     }
     """
 
-    class BitChanged(Message):
-        """Sent when the 'bit' changes."""
-
-        def __init__(self, sender: BitSwitch, bit: int, value: bool) -> None:
-            super().__init__(sender)
-            self.bit = bit
-            self.value = value
-
-    value = reactive(0)
-
     def __init__(self, bit: int) -> None:
         self.bit = bit
         super().__init__()
@@ -42,21 +28,31 @@ class BitSwitch(Widget):
         yield Label(str(self.bit))
         yield Switch()
 
-    def watch_value(self, value: bool) -> None:
-        """When the value changes we want to set the switch accordingly."""
-        self.query_one(Switch).value = value
 
-    def on_switch_changed(self, event: Switch.Changed) -> None:
-        """When the switch changes, notify the parent via a message."""
-        event.stop()
-        self.value = event.value
-        self.post_message_no_wait(self.BitChanged(self, self.bit, event.value))
+class ByteInput(Widget):
+    """A compound widget with 8 switches."""
+
+    DEFAULT_CSS = """
+    ByteInput {
+        width: auto;
+        height: auto;
+        border: blank;
+        layout: horizontal;
+    }
+
+    ByteInput:focus-within {
+        border: heavy $secondary;
+    }
+    """
+
+    def compose(self) -> ComposeResult:
+        for bit in reversed(range(8)):
+            yield BitSwitch(bit)
 
 
 class ByteInputApp(App):
     def compose(self) -> ComposeResult:
-        for bit_no in range(8):
-            yield BitSwitch(bit_no)
+        yield ByteInput()
 
 
 if __name__ == "__main__":
