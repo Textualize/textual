@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Awaitable, Callable, List, Union
+from typing import TYPE_CHECKING, Any, Awaitable, Callable, List, Union
 
 from rich.segment import Segment
 from typing_extensions import Protocol
@@ -28,3 +28,4 @@ class EventTarget(Protocol):
 
 SegmentLines = List[List["Segment"]]
 CallbackType = Union[Callable[[], Awaitable[None]], Callable[[], None]]
+WatchCallbackType = Union[Callable[[Any], Awaitable[None]], Callable[[Any], None]]
