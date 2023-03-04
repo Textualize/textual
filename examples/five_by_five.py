@@ -1,7 +1,9 @@
 """Simple version of 5x5, developed for/with Textual."""
 
+
 from __future__ import annotations
 
+import itertools
 from pathlib import Path
 from typing import TYPE_CHECKING, cast
 
@@ -147,9 +149,8 @@ class GameGrid(Widget):
         Returns:
             ComposeResult: The result of composing the game grid.
         """
-        for row in range(Game.SIZE):
-            for col in range(Game.SIZE):
-                yield GameCell(row, col)
+        for row, col in itertools.product(range(Game.SIZE), range(Game.SIZE)):
+            yield GameCell(row, col)
 
 
 class Game(Screen):

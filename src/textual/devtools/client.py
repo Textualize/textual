@@ -259,5 +259,4 @@ class DevtoolsClient:
         Returns:
             The Segment list pickled with the latest protocol.
         """
-        pickled = pickle.dumps(segments, protocol=4)
-        return pickled
+        return pickle.dumps(segments, protocol=4)

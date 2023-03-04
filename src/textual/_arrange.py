@@ -74,9 +74,6 @@ def arrange(
                     0, height - widget_height, widget_width, widget_height
                 )
                 bottom = max(bottom, widget_height)
-            elif edge == "top":
-                dock_region = Region(0, 0, widget_width, widget_height)
-                top = max(top, widget_height)
             elif edge == "left":
                 dock_region = Region(0, 0, widget_width, widget_height)
                 left = max(left, widget_width)
@@ -85,6 +82,9 @@ def arrange(
                     width - widget_width, 0, widget_width, widget_height
                 )
                 right = max(right, widget_width)
+            elif edge == "top":
+                dock_region = Region(0, 0, widget_width, widget_height)
+                top = max(top, widget_height)
             else:
                 # Should not occur, mainly to keep Mypy happy
                 raise AssertionError("invalid value for edge")  # pragma: no-cover

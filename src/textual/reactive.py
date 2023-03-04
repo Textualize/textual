@@ -154,16 +154,15 @@ class Reactive(Generic[ReactiveType]):
         if not hasattr(obj, internal_name):
             self._initialize_reactive(obj, self.name)
 
-        if hasattr(obj, self.compute_name):
-            value: ReactiveType
-            old_value = getattr(obj, internal_name)
-            _rich_traceback_omit = True
-            value = getattr(obj, self.compute_name)()
-            setattr(obj, internal_name, value)
-            self._check_watchers(obj, self.name, old_value)
-            return value
-        else:
+        if not hasattr(obj, self.compute_name):
             return getattr(obj, internal_name)
+        value: ReactiveType
+        old_value = getattr(obj, internal_name)
+        _rich_traceback_omit = True
+        value = getattr(obj, self.compute_name)()
+        setattr(obj, internal_name, value)
+        self._check_watchers(obj, self.name, old_value)
+        return value
 
     def __set__(self, obj: Reactable, value: ReactiveType) -> None:
         _rich_traceback_omit = True

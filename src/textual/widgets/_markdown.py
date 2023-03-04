@@ -33,9 +33,7 @@ class Navigator:
         Returns:
             A path for the current document.
         """
-        if not self.stack:
-            return Path(".")
-        return self.stack[self.index]
+        return self.stack[self.index] if self.stack else Path(".")
 
     def go(self, path: str | PurePath) -> Path:
         """Go to a new document.

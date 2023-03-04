@@ -215,9 +215,7 @@ class Button(Static, can_focus=True):
 
     def validate_label(self, label: TextType) -> TextType:
         """Parse markup for self.label"""
-        if isinstance(label, str):
-            return Text.from_markup(label)
-        return label
+        return Text.from_markup(label) if isinstance(label, str) else label
 
     def render(self) -> TextType:
         label = Text.assemble(" ", self.label, " ")

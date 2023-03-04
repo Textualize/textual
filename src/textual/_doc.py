@@ -155,5 +155,4 @@ def rich(source, language, css_class, options, md, attrs, **kwargs) -> str:
 
     if "output" in globals:
         console.print(globals["output"])
-    output_svg = console.export_svg(title=title)
-    return output_svg
+    return console.export_svg(title=title)

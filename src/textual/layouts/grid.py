@@ -119,9 +119,7 @@ class GridLayout(Layout):
             viewport,
         )
         rows = resolve(
-            repeat_scalars(
-                row_scalars, table_size_rows if table_size_rows else row + 1
-            ),
+            repeat_scalars(row_scalars, table_size_rows or row + 1),
             size.height,
             gutter_horizontal,
             size,

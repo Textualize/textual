@@ -599,7 +599,7 @@ class Compositor:
 
         if self._layers_visible is None:
             layers_visible: list[list[tuple[Widget, Region, Region]]]
-            layers_visible = [[] for y in range(self.size.height)]
+            layers_visible = [[] for _ in range(self.size.height)]
             layers_visible_appends = [layer.append for layer in layers_visible]
             intersection = Region.intersection
             _range = range
@@ -639,8 +639,8 @@ class Compositor:
             A tuple of the widget and its region.
         """
 
-        contains = Region.contains
         if len(self.layers_visible) > y >= 0:
+            contains = Region.contains
             for widget, cropped_region, region in self.layers_visible[y]:
                 if contains(cropped_region, x, y) and widget.visible:
                     return widget, region

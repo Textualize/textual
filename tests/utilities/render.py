@@ -23,8 +23,7 @@ def render(renderable: RenderableType, no_wrap: bool = False) -> str:
     )
     with console.capture() as capture:
         console.print(renderable, no_wrap=no_wrap, end="")
-    output = replace_link_ids(capture.get())
-    return output
+    return replace_link_ids(capture.get())
 
 
 async def wait_for_predicate(

@@ -199,8 +199,7 @@ class Input(Widget, can_focus=True):
 
     def _position_to_cell(self, position: int) -> int:
         """Convert an index within the value to cell position."""
-        cell_offset = cell_len(self.value[:position])
-        return cell_offset
+        return cell_len(self.value[:position])
 
     @property
     def _cursor_offset(self) -> int:
@@ -220,8 +219,7 @@ class Input(Widget, can_focus=True):
 
     def validate_view_position(self, view_position: int) -> int:
         width = self.content_size.width
-        new_view_position = max(0, min(view_position, self.cursor_width - width))
-        return new_view_position
+        return max(0, min(view_position, self.cursor_width - width))
 
     def watch_cursor_position(self, cursor_position: int) -> None:
         width = self.content_size.width
@@ -273,11 +271,10 @@ class Input(Widget, can_focus=True):
         """Value rendered as text."""
         if self.password:
             return Text("•" * len(self.value), no_wrap=True, overflow="ignore")
-        else:
-            text = Text(self.value, no_wrap=True, overflow="ignore")
-            if self.highlighter is not None:
-                text = self.highlighter(text)
-            return text
+        text = Text(self.value, no_wrap=True, overflow="ignore")
+        if self.highlighter is not None:
+            text = self.highlighter(text)
+        return text
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
         return self.cursor_width

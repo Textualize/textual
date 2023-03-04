@@ -207,7 +207,7 @@ def test_fifo_cache():
     assert len(cache) == 4
     cache.clear()
     assert len(cache) == 0
-    assert list(cache.keys()) == []
+    assert not list(cache.keys())
 
 
 def test_fifo_cache_hits():

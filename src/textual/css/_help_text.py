@@ -43,10 +43,7 @@ class ContextSpecificBullets:
         Args:
             context: The context to retrieve info for.
         """
-        if context == "inline":
-            return list(self.inline)
-        else:
-            return list(self.css)
+        return list(self.inline) if context == "inline" else list(self.css)
 
 
 def _python_name(property_name: str) -> str:

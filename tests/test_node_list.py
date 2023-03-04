@@ -100,4 +100,4 @@ def test_listy():
     assert list(reversed(nodes)) == [widget2, widget1]
     assert nodes[0] == widget1
     assert nodes[1] == widget2
-    assert nodes[0:2] == [widget1, widget2]
+    assert nodes[:2] == [widget1, widget2]

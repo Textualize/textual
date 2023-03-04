@@ -2,6 +2,7 @@ from textual._parser import Parser
 
 
 def test_read1():
+
     class TestParser(Parser[str]):
         """A simple parser that reads a byte at a time from a stream."""
 
@@ -19,14 +20,14 @@ def test_read1():
         # Feed the parser in pieces, first 1 character at a time, then 2, etc
         data = []
         for offset in range(0, len(test_data), size):
-            for chunk in test_parser.feed(test_data[offset : offset + size]):
-                data.append(chunk)
+            data.extend(iter(test_parser.feed(test_data[offset : offset + size])))
         # Check we have received all the data in characters, no matter the fee dsize
         assert len(data) == len(test_data)
         assert "".join(data) == test_data
 
 
 def test_read():
+
     class TestParser(Parser[str]):
         """A parser that reads chunks of a given size from the stream."""
 
@@ -48,6 +49,5 @@ def test_read():
             test_parser = TestParser(read_size)
             data = []
             for offset in range(0, len(test_data), size):
-                for chunk in test_parser.feed(test_data[offset : offset + size]):
-                    data.append(chunk)
+                data.extend(iter(test_parser.feed(test_data[offset : offset + size])))
             assert "".join(data) == test_data

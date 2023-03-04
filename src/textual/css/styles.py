@@ -353,9 +353,11 @@ class StylesBase(ABC):
 
     def __eq__(self, styles: object) -> bool:
         """Check that Styles contains the same rules."""
-        if not isinstance(styles, StylesBase):
-            return NotImplemented
-        return self.get_rules() == styles.get_rules()
+        return (
+            self.get_rules() == styles.get_rules()
+            if isinstance(styles, StylesBase)
+            else NotImplemented
+        )
 
     @property
     def gutter(self) -> Spacing:
@@ -503,10 +505,7 @@ class StylesBase(ABC):
         Returns:
             Transition object or None it no transition exists.
         """
-        if key in self.ANIMATABLE:
-            return self.transitions.get(key, None)
-        else:
-            return None
+        return self.transitions.get(key, None) if key in self.ANIMATABLE else None
 
     def _align_width(self, width: int, parent_width: int) -> int:
         """Align the width dimension.
@@ -520,11 +519,10 @@ class StylesBase(ABC):
         """
         offset_x = 0
         align_horizontal = self.align_horizontal
-        if align_horizontal != "left":
-            if align_horizontal == "center":
-                offset_x = (parent_width - width) // 2
-            else:
-                offset_x = parent_width - width
+        if align_horizontal == "center":
+            offset_x = (parent_width - width) // 2
+        elif align_horizontal != "left":
+            offset_x = parent_width - width
         return offset_x
 
     def _align_height(self, height: int, parent_height: int) -> int:
@@ -539,11 +537,10 @@ class StylesBase(ABC):
         """
         offset_y = 0
         align_vertical = self.align_vertical
-        if align_vertical != "top":
-            if align_vertical == "middle":
-                offset_y = (parent_height - height) // 2
-            else:
-                offset_y = parent_height - height
+        if align_vertical == "middle":
+            offset_y = (parent_height - height) // 2
+        elif align_vertical != "top":
+            offset_y = parent_height - height
         return offset_y
 
     def _align_size(self, child: tuple[int, int], parent: tuple[int, int]) -> Offset:
@@ -684,7 +681,7 @@ class Styles(StylesBase):
             A list containing a tuple of <RULE NAME>, <SPECIFICITY> <RULE VALUE>.
         """
         is_important = self.important.__contains__
-        rules = [
+        return [
             (
                 rule_name,
                 (
@@ -697,7 +694,6 @@ class Styles(StylesBase):
             )
             for rule_name, rule_value in self._rules.items()
         ]
-        return rules
 
     def __rich_repr__(self) -> rich.repr.Result:
         has_rule = self.has_rule
@@ -1117,5 +1113,4 @@ class RenderStyles(StylesBase):
         styles = Styles()
         styles.merge(self._base_styles)
         styles.merge(self._inline_styles)
-        combined_css = styles.css
-        return combined_css
+        return styles.css

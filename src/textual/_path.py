@@ -28,5 +28,4 @@ def _make_path_object_relative(path: str | PurePath, obj: object) -> Path:
         subclass_path = Path(base_path)
     else:
         subclass_path = Path(inspect.getfile(obj.__class__))
-    resolved_path = (subclass_path.parent / path).resolve()
-    return resolved_path
+    return (subclass_path.parent / path).resolve()

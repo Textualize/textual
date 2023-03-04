@@ -86,7 +86,7 @@ def test_offset_add():
     assert Offset(1, 1) + Offset(2, 2) == Offset(3, 3)
     assert Offset(1, 2) + Offset(3, 4) == Offset(4, 6)
     with pytest.raises(TypeError):
-        Offset(1, 1) + "foo"
+        f"{Offset(1, 1)}foo"
 
 
 def test_offset_sub():
@@ -183,7 +183,7 @@ def test_region_bottom_right():
 def test_region_add():
     assert Region(1, 2, 3, 4) + (10, 20) == Region(11, 22, 3, 4)
     with pytest.raises(TypeError):
-        Region(1, 2, 3, 4) + "foo"
+        f"{Region(1, 2, 3, 4)}foo"
 
 
 def test_region_sub():
@@ -286,7 +286,7 @@ def test_region_union():
 def test_size_add():
     assert Size(5, 10) + Size(2, 3) == Size(7, 13)
     with pytest.raises(TypeError):
-        Size(1, 2) + "foo"
+        f"{Size(1, 2)}foo"
 
 
 def test_size_sub():
@@ -387,7 +387,7 @@ def test_spacing_add():
     assert Spacing(1, 2, 3, 4) + Spacing(5, 6, 7, 8) == Spacing(6, 8, 10, 12)
 
     with pytest.raises(TypeError):
-        Spacing(1, 2, 3, 4) + "foo"
+        f"{Spacing(1, 2, 3, 4)}foo"
 
 
 def test_spacing_sub():

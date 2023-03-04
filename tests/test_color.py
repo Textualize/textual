@@ -1,3 +1,4 @@
+import itertools
 import pytest
 from rich.color import Color as RichColor
 from rich.text import Text
@@ -204,13 +205,11 @@ def test_lab_to_rgb(r, g, b, L_, a_, b_):
 def test_rgb_lab_rgb_roundtrip():
     """Test RGB -> CIE-L*ab -> RGB color conversion roundtripping."""
 
-    for r in range(0, 256, 32):
-        for g in range(0, 256, 32):
-            for b in range(0, 256, 32):
-                c_ = lab_to_rgb(rgb_to_lab(Color(r, g, b)))
-                assert c_.r == pytest.approx(r, abs=1)
-                assert c_.g == pytest.approx(g, abs=1)
-                assert c_.b == pytest.approx(b, abs=1)
+    for r, g, b in itertools.product(range(0, 256, 32), range(0, 256, 32), range(0, 256, 32)):
+        c_ = lab_to_rgb(rgb_to_lab(Color(r, g, b)))
+        assert c_.r == pytest.approx(r, abs=1)
+        assert c_.g == pytest.approx(g, abs=1)
+        assert c_.b == pytest.approx(b, abs=1)
 
 
 def test_inverse():

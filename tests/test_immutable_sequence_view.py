@@ -13,14 +13,14 @@ def wrap(source: Sequence[int]) -> ImmutableSequenceView[int]:
 def test_empty_immutable_sequence() -> None:
     """An empty immutable sequence should act as anticipated."""
     assert len(wrap([])) == 0
-    assert bool(wrap([])) is False
-    assert list(wrap([])) == []
+    assert not bool(wrap([]))
+    assert not list(wrap([]))
 
 
 def test_non_empty_immutable_sequence() -> None:
     """A non-empty immutable sequence should act as anticipated."""
     assert len(wrap([0])) == 1
-    assert bool(wrap([0])) is True
+    assert bool(wrap([0]))
     assert list(wrap([0])) == [0]
 
 
@@ -30,7 +30,7 @@ def test_no_assign_to_immutable_sequence() -> None:
     with pytest.raises(TypeError):
         tester[0] = 23
     with pytest.raises(TypeError):
-        tester[0:3] = 23
+        tester[:3] = 23
 
 
 def test_no_del_from_iummutable_sequence() -> None:
@@ -48,8 +48,8 @@ def test_get_item_from_immutable_sequence() -> None:
 
 def test_get_slice_from_immutable_sequence() -> None:
     """It should be possible to get a slice from an immutable sequence."""
-    assert list(wrap(range(10))[0:2]) == [0, 1]
-    assert list(wrap(range(10))[0:-1]) == [0, 1, 2, 3, 4, 5, 6, 7, 8]
+    assert list(wrap(range(10))[:2]) == [0, 1]
+    assert list(wrap(range(10))[:-1]) == [0, 1, 2, 3, 4, 5, 6, 7, 8]
 
 
 def test_immutable_sequence_contains() -> None:

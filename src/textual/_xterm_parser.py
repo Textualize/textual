@@ -73,7 +73,7 @@ class XTermParser(Parser[events.Event]):
 
                 button = (buttons + 1) & 3
 
-            event = event_class(
+            return event_class(
                 sender,
                 x,
                 y,
@@ -86,7 +86,6 @@ class XTermParser(Parser[events.Event]):
                 screen_x=x,
                 screen_y=y,
             )
-            return event
         return None
 
     def parse(self, on_token: TokenCallback) -> Generator[Awaitable, str, None]:
@@ -252,15 +251,16 @@ class XTermParser(Parser[events.Event]):
                 )
         elif len(sequence) == 1:
             try:
-                if not sequence.isalnum():
-                    name = (
+                name = (
+                    sequence
+                    if sequence.isalnum()
+                    else (
                         _unicode_name(sequence)
                         .lower()
                         .replace("-", "_")
                         .replace(" ", "_")
                     )
-                else:
-                    name = sequence
+                )
                 name = KEY_NAME_REPLACEMENTS.get(name, name)
                 yield events.Key(self.sender, name, sequence)
             except:

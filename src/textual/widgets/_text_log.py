@@ -102,16 +102,12 @@ class TextLog(ScrollView, can_focus=True):
         renderable: RenderableType
         if not is_renderable(content):
             renderable = Pretty(content)
+        elif isinstance(content, str):
+            renderable = Text.from_markup(content) if self.markup else Text(content)
+            if self.highlight:
+                renderable = self.highlighter(renderable)
         else:
-            if isinstance(content, str):
-                if self.markup:
-                    renderable = Text.from_markup(content)
-                else:
-                    renderable = Text(content)
-                if self.highlight:
-                    renderable = self.highlighter(renderable)
-            else:
-                renderable = cast(RenderableType, content)
+            renderable = cast(RenderableType, content)
 
         console = self.app.console
         render_options = console.options
@@ -166,8 +162,7 @@ class TextLog(ScrollView, can_focus=True):
     def render_line(self, y: int) -> Strip:
         scroll_x, scroll_y = self.scroll_offset
         line = self._render_line(scroll_y + y, scroll_x, self.size.width)
-        strip = line.apply_style(self.rich_style)
-        return strip
+        return line.apply_style(self.rich_style)
 
     def render_lines(self, crop: Region) -> list[Strip]:
         """Render the widget in to lines.
@@ -178,8 +173,7 @@ class TextLog(ScrollView, can_focus=True):
         Returns:
             A list of list of segments
         """
-        lines = self._styles_cache.render_widget(self, crop)
-        return lines
+        return self._styles_cache.render_widget(self, crop)
 
     def _render_line(self, y: int, scroll_x: int, width: int) -> Strip:
         if y >= len(self.lines):

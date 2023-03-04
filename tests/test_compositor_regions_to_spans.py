@@ -3,7 +3,7 @@ from textual.geometry import Region
 
 
 def test_regions_to_ranges_no_regions():
-    assert list(Compositor._regions_to_spans([])) == []
+    assert not list(Compositor._regions_to_spans([]))
 
 
 def test_regions_to_ranges_single_region():

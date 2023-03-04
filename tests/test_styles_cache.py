@@ -12,8 +12,7 @@ from textual.strip import Strip
 
 def _extract_content(lines: list[Strip]) -> list[str]:
     """Extract the text content from lines."""
-    content = ["".join(segment.text for segment in line) for line in lines]
-    return content
+    return ["".join(segment.text for segment in line) for line in lines]
 
 
 def test_set_dirty():
@@ -254,7 +253,7 @@ def test_dirty_cache() -> None:
         get_content_line,
         content_size=Size(3, 3),
     )
-    assert rendered_lines == []
+    assert not rendered_lines
     del rendered_lines[:]
     text_content = _extract_content(lines)
     assert text_content == expected_text

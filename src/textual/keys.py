@@ -257,9 +257,7 @@ def _get_key_display(key: str) -> str:
 
     # Check if printable. `delete` for example maps to a control sequence
     # which we don't want to write to the terminal.
-    if unicode_character.isprintable():
-        return unicode_character
-    return upper_original
+    return unicode_character if unicode_character.isprintable() else upper_original
 
 
 def _character_to_key(character: str) -> str:

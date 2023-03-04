@@ -74,33 +74,32 @@ def import_app(import_name: str) -> App:
                 app = global_vars[name]
             except KeyError:
                 raise AppFail(f"App {name!r} not found in {lib!r}")
+        elif "app" in global_vars:
+            # App exists, lets use that
+            try:
+                app = global_vars["app"]
+            except KeyError:
+                raise AppFail(f"App {name!r} not found in {lib!r}")
         else:
-            # User has not given a name
-            if "app" in global_vars:
-                # App exists, lets use that
-                try:
-                    app = global_vars["app"]
-                except KeyError:
-                    raise AppFail(f"App {name!r} not found in {lib!r}")
+            # Find an App class or instance that is *not* the base class
+            apps = [
+                value
+                for value in global_vars.values()
+                if (
+                    isinstance(value, App)
+                    or (inspect.isclass(value) and issubclass(value, App))
+                    and value is not App
+                )
+            ]
+            if not apps:
+                raise AppFail(
+                    f'Unable to find app in {lib!r}, try specifying app with "foo.py:app"'
+                )
+            if len(apps) > 1:
+                raise AppFail(
+                    f'Multiple apps found {lib!r}, try specifying app with "foo.py:app"'
+                )
             else:
-                # Find an App class or instance that is *not* the base class
-                apps = [
-                    value
-                    for value in global_vars.values()
-                    if (
-                        isinstance(value, App)
-                        or (inspect.isclass(value) and issubclass(value, App))
-                        and value is not App
-                    )
-                ]
-                if not apps:
-                    raise AppFail(
-                        f'Unable to find app in {lib!r}, try specifying app with "foo.py:app"'
-                    )
-                if len(apps) > 1:
-                    raise AppFail(
-                        f'Multiple apps found {lib!r}, try specifying app with "foo.py:app"'
-                    )
                 app = apps[0]
         app._BASE_PATH = path
 

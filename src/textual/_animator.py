@@ -334,13 +334,12 @@ class Animator:
 
             if duration is not None:
                 animation_duration = duration
+            elif hasattr(value, "get_distance_to"):
+                animation_duration = value.get_distance_to(start_value) / (
+                    speed or 50
+                )
             else:
-                if hasattr(value, "get_distance_to"):
-                    animation_duration = value.get_distance_to(start_value) / (
-                        speed or 50
-                    )
-                else:
-                    animation_duration = abs(value - start_value) / (speed or 50)
+                animation_duration = abs(value - start_value) / (speed or 50)
 
             animation = SimpleAnimation(
                 obj,
@@ -375,8 +374,7 @@ class Animator:
             animation_keys = list(self._animations.keys())
             for animation_key in animation_keys:
                 animation = self._animations[animation_key]
-                animation_complete = animation(animation_time)
-                if animation_complete:
+                if animation_complete := animation(animation_time):
                     completion_callback = animation.on_complete
                     if completion_callback is not None:
                         await invoke(completion_callback)

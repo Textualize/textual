@@ -99,5 +99,4 @@ class SpatialMap(Generic[ValueType]):
             grid_values = get_grid_values(grid_coordinate)
             if grid_values is not None:
                 add_results(grid_values)
-        unique_values = list(dict.fromkeys(results))
-        return unique_values
+        return list(dict.fromkeys(results))

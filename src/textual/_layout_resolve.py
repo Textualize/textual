@@ -55,7 +55,7 @@ def layout_resolve(total: int, edges: Sequence[EdgeProtocol]) -> list[int]:
         if size is None
     ]
     # Remaining space in total
-    remaining = total - sum([size or 0 for size in sizes])
+    remaining = total - sum(size or 0 for size in sizes)
     if remaining <= 0:
         # No room for flexible edges
         return [
@@ -64,7 +64,7 @@ def layout_resolve(total: int, edges: Sequence[EdgeProtocol]) -> list[int]:
         ]
 
     # Get the total fraction value for all flexible edges
-    total_flexible = sum([(edge.fraction or 1) for _, edge in flexible_edges])
+    total_flexible = sum((edge.fraction or 1) for _, edge in flexible_edges)
     while flexible_edges:
         # Calculate number of characters in a ratio portion
         portion = Fraction(remaining, total_flexible)

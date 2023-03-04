@@ -34,7 +34,7 @@ def test_bool() -> None:
 
 
 def test_iter() -> None:
-    assert list(Strip([])) == []
+    assert not list(Strip([]))
     assert list(Strip([Segment("foo")])) == [Segment("foo")]
     assert list(Strip([Segment("foo"), Segment("bar")])) == [
         Segment("foo"),
@@ -49,7 +49,7 @@ def test_len():
 
 
 def test_reversed():
-    assert list(reversed(Strip([]))) == []
+    assert not list(reversed(Strip([])))
     assert list(reversed(Strip([Segment("foo")]))) == [Segment("foo")]
     assert list(reversed(Strip([Segment("foo"), Segment("bar")]))) == [
         Segment("bar"),
@@ -64,7 +64,7 @@ def test_eq():
 
 
 def test_adjust_cell_length():
-    for repeat in range(3):
+    for _ in range(3):
         assert Strip([]).adjust_cell_length(3) == Strip([Segment("   ")])
         assert Strip([Segment("f")]).adjust_cell_length(3) == Strip(
             [Segment("f"), Segment("  ")]
@@ -127,7 +127,7 @@ def test_style_links():
 
 
 def test_crop():
-    for repeat in range(3):
+    for _ in range(3):
         assert Strip([Segment("foo")]).crop(0, 3) == Strip([Segment("foo")])
         assert Strip([Segment("foo")]).crop(0, 2) == Strip([Segment("fo")])
         assert Strip([Segment("foo")]).crop(0, 1) == Strip([Segment("f")])
@@ -142,7 +142,7 @@ def test_crop():
 
 
 def test_divide():
-    for repeat in range(3):
+    for _ in range(3):
         assert Strip([Segment("foo")]).divide([1, 2]) == [
             Strip([Segment("f")]),
             Strip([Segment("o")]),

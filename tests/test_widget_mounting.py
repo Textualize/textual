@@ -31,7 +31,7 @@ async def test_mount_via_app() -> None:
 
         # Mount the next 2 widgets via mount.
         await pilot.app.mount(*widgets[1:3])
-        assert list(pilot.app.screen._nodes) == widgets[0:3]
+        assert list(pilot.app.screen._nodes) == widgets[:3]
 
         # Finally mount the rest of the widgets via mount_all.
         await pilot.app.mount_all(widgets[3:])

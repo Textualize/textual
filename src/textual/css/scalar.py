@@ -258,14 +258,12 @@ class Scalar(NamedTuple):
             New scalar
         """
         if token.lower() == "auto":
-            scalar = cls(1.0, Unit.AUTO, Unit.AUTO)
-        else:
-            match = _MATCH_SCALAR(token)
-            if match is None:
-                raise ScalarParseError(f"{token!r} is not a valid scalar")
-            value, unit_name = match.groups()
-            scalar = cls(float(value), SYMBOL_UNIT[unit_name or ""], percent_unit)
-        return scalar
+            return cls(1.0, Unit.AUTO, Unit.AUTO)
+        match = _MATCH_SCALAR(token)
+        if match is None:
+            raise ScalarParseError(f"{token!r} is not a valid scalar")
+        value, unit_name = match.groups()
+        return cls(float(value), SYMBOL_UNIT[unit_name or ""], percent_unit)
 
     @lru_cache(maxsize=4096)
     def resolve(
@@ -378,8 +376,8 @@ def percentage_string_to_float(string: str) -> float:
         string: The percentage string to convert.
     """
     string = string.strip()
-    if string.endswith("%"):
-        float_percentage = clamp(float(string[:-1]) / 100.0, 0.0, 1.0)
-    else:
-        float_percentage = float(string)
-    return float_percentage
+    return (
+        clamp(float(string[:-1]) / 100.0, 0.0, 1.0)
+        if string.endswith("%")
+        else float(string)
+    )

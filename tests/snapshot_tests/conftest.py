@@ -14,6 +14,7 @@ from _pytest.config import ExitCode
 from _pytest.fixtures import FixtureRequest
 from _pytest.main import Session
 from _pytest.terminal import TerminalReporter
+from datetime import timezone
 from jinja2 import Template
 from rich.console import Console
 from syrupy import SnapshotAssertion
@@ -39,10 +40,10 @@ def snap_compare(
     """
 
     def compare(
-        app_path: str | PurePath,
-        press: Iterable[str] = ("_",),
-        terminal_size: tuple[int, int] = (80, 24),
-    ) -> bool:
+            app_path: str | PurePath,
+            press: Iterable[str] = ("_",),
+            terminal_size: tuple[int, int] = (80, 24),
+        ) -> bool:
         """
         Compare a current screenshot of the app running at app_path, with
         a previously accepted (validated by human) snapshot stored on disk.
@@ -77,7 +78,7 @@ def snap_compare(
         )
         result = snapshot == actual_screenshot
 
-        if result is False:
+        if not result:
             # The split and join below is a mad hack, sorry...
             node.stash[TEXTUAL_SNAPSHOT_SVG_KEY] = "\n".join(
                 str(snapshot).splitlines()[1:-1]
@@ -166,10 +167,11 @@ def pytest_sessionfinish(
             diffs=diffs,
             passes=num_snapshots_passing,
             fails=num_fails,
-            pass_percentage=100 * (num_snapshots_passing / max(num_snapshot_tests, 1)),
+            pass_percentage=100
+            * (num_snapshots_passing / max(num_snapshot_tests, 1)),
             fail_percentage=100 * (num_fails / max(num_snapshot_tests, 1)),
             num_snapshot_tests=num_snapshot_tests,
-            now=datetime.utcnow(),
+            now=datetime.now(timezone.utc),
         )
         with open(snapshot_report_path, "w+", encoding="utf-8") as snapshot_file:
             snapshot_file.write(rendered_report)

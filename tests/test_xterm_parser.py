@@ -43,10 +43,7 @@ def test_varying_parser_chunk_sizes_no_missing_data(parser, chunk_size):
     text = "ABCDEFGH"
 
     data = end + text
-    events = []
-    for chunk in chunks(data, chunk_size):
-        events.append(parser.feed(chunk))
-
+    events = [parser.feed(chunk) for chunk in chunks(data, chunk_size)]
     events = list(itertools.chain.from_iterable(list(event) for event in events))
 
     assert events[0].key == "end"
@@ -133,11 +130,8 @@ def test_unknown_sequence_followed_by_known_sequence(parser, chunk_size):
 
     sequence = unknown_sequence + known_sequence
 
-    events = []
     parser.more_data = lambda: True
-    for chunk in chunks(sequence, chunk_size):
-        events.append(parser.feed(chunk))
-
+    events = [parser.feed(chunk) for chunk in chunks(sequence, chunk_size)]
     events = list(itertools.chain.from_iterable(list(event) for event in events))
 
     assert [event.key for event in events] == [
@@ -286,7 +280,7 @@ def test_mouse_event_detected_but_info_not_parsed(parser):
     # I don't know if this can actually happen in reality, but
     # there's a branch in the code that allows for the possibility.
     events = list(parser.feed("\x1b[<65;18;20;25M"))
-    assert len(events) == 0
+    assert not events
 
 
 def test_escape_sequence_resulting_in_multiple_keypresses(parser):
@@ -308,4 +302,4 @@ def test_terminal_mode_reporting_synchronized_output_supported(parser):
 def test_terminal_mode_reporting_synchronized_output_not_supported(parser):
     sequence = "\x1b[?2026;0$y"
     events = list(parser.feed(sequence))
-    assert events == []
+    assert not events

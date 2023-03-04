@@ -681,8 +681,7 @@ class Widget(DOMNode):
             Only one of ``before`` or ``after`` can be provided. If both are
             provided a ``MountError`` will be raised.
         """
-        await_mount = self.mount(*widgets, before=before, after=after)
-        return await_mount
+        return self.mount(*widgets, before=before, after=after)
 
     def move_child(
         self,
@@ -1037,11 +1036,11 @@ class Widget(DOMNode):
             A tuple of (<vertical scrollbar enabled>, <horizontal scrollbar enabled>)
 
         """
-        if not self.is_scrollable:
-            return False, False
-
-        enabled = self.show_vertical_scrollbar, self.show_horizontal_scrollbar
-        return enabled
+        return (
+            (self.show_vertical_scrollbar, self.show_horizontal_scrollbar)
+            if self.is_scrollable
+            else (False, False)
+        )
 
     @property
     def scrollbars_space(self) -> tuple[int, int]:
@@ -1125,8 +1124,7 @@ class Widget(DOMNode):
         Returns:
             Screen region that contains a widget's content.
         """
-        content_region = self.region.shrink(self.styles.gutter)
-        return content_region
+        return self.region.shrink(self.styles.gutter)
 
     @property
     def scrollable_content_region(self) -> Region:
@@ -1135,10 +1133,7 @@ class Widget(DOMNode):
         Returns:
             Screen region that contains a widget's content.
         """
-        content_region = self.region.shrink(self.styles.gutter).shrink(
-            self.scrollbar_gutter
-        )
-        return content_region
+        return self.region.shrink(self.styles.gutter).shrink(self.scrollbar_gutter)
 
     @property
     def content_offset(self) -> Offset:
@@ -1205,8 +1200,7 @@ class Widget(DOMNode):
         Returns:
             New region.
         """
-        window_region = self.region.at_offset(self.scroll_offset)
-        return window_region
+        return self.region.at_offset(self.scroll_offset)
 
     @property
     def virtual_region_with_margin(self) -> Region:
@@ -1380,11 +1374,10 @@ class Widget(DOMNode):
             if styles.auto_link_color
             else styles.link_color
         )
-        style = styles.link_style + Style.from_color(
+        return styles.link_style + Style.from_color(
             link_color.rich_color,
             link_background.rich_color,
         )
-        return style
 
     @property
     def link_hover_style(self) -> Style:
@@ -2470,8 +2463,7 @@ class Widget(DOMNode):
         Returns:
             A list of list of segments.
         """
-        strips = self._styles_cache.render_widget(self, crop)
-        return strips
+        return self._styles_cache.render_widget(self, crop)
 
     def get_style_at(self, x: int, y: int) -> Style:
         """Get the Rich style in a widget at a given relative offset.
@@ -2487,9 +2479,7 @@ class Widget(DOMNode):
         screen_offset = offset + self.region.offset
 
         widget, _ = self.screen.get_widget_at(*screen_offset)
-        if widget is not self:
-            return Style()
-        return self.screen.get_style_at(*screen_offset)
+        return self.screen.get_style_at(*screen_offset) if widget is self else Style()
 
     async def _forward_event(self, event: events.Event) -> None:
         event._set_forwarded()
@@ -2567,9 +2557,7 @@ class Widget(DOMNode):
             A renderable.
         """
         renderable = self.render()
-        if isinstance(renderable, str):
-            return Text(renderable)
-        return renderable
+        return Text(renderable) if isinstance(renderable, str) else renderable
 
     async def action(self, action: str) -> None:
         """Perform a given action, with this widget as the default namespace.

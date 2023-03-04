@@ -61,8 +61,7 @@ class DockArrangeResult:
         Returns:
             Set of placements.
         """
-        visible_placements = self.spatial_map.get_values_in_region(region)
-        return visible_placements
+        return self.spatial_map.get_values_in_region(region)
 
 
 class WidgetPlacement(NamedTuple):
@@ -131,9 +130,7 @@ class Layout(ABC):
             Content height (in lines).
         """
         if not widget._nodes:
-            height = 0
-        else:
-            # Use a height of zero to ignore relative heights
-            arrangement = widget._arrange(Size(width, 0))
-            height = arrangement.total_region.bottom + arrangement.spacing.bottom
-        return height
+            return 0
+        # Use a height of zero to ignore relative heights
+        arrangement = widget._arrange(Size(width, 0))
+        return arrangement.total_region.bottom + arrangement.spacing.bottom

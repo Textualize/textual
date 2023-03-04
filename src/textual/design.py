@@ -61,9 +61,7 @@ class ColorSystem:
         text_alpha: float = 0.95,
     ):
         def parse(color: str | None) -> Color | None:
-            if color is None:
-                return None
-            return Color.parse(color)
+            return None if color is None else Color.parse(color)
 
         self.primary = Color.parse(primary)
         self.secondary = parse(secondary)
@@ -150,7 +148,7 @@ class ColorSystem:
                     label = "-lighten"
                 else:
                     label = ""
-                yield (f"{label}{'-' + str(abs(n)) if n else ''}"), n * luminosity_step
+                yield (f"{label}{f'-{str(abs(n))}' if n else ''}", n * luminosity_step)
 
         # Color names and color
         COLORS: list[tuple[str, Color]] = [

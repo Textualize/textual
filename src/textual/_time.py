@@ -7,10 +7,7 @@ PLATFORM = platform.system()
 WINDOWS = PLATFORM == "Windows"
 
 
-if WINDOWS:
-    time = perf_counter
-else:
-    time = monotonic
+time = perf_counter if WINDOWS else monotonic
 
 
 if WINDOWS:

@@ -64,10 +64,9 @@ class _TreeLine(Generic[TreeDataType]):
         """
         if show_root:
             return 2 + (max(0, len(self.path) - 1)) * guide_depth
-        else:
-            guides = 2
-            if len(self.path) > 1:
-                guides += (len(self.path) - 1) * guide_depth
+        guides = 2
+        if len(self.path) > 1:
+            guides += (len(self.path) - 1) * guide_depth
 
         return guides
 
@@ -307,8 +306,7 @@ class TreeNode(Generic[TreeDataType]):
         Returns:
             New node.
         """
-        node = self.add(label, data, expand=False, allow_expand=False)
-        return node
+        return self.add(label, data, expand=False, allow_expand=False)
 
 
 class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
@@ -545,12 +543,8 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         Returns:
             A Rich Text object.
         """
-        if isinstance(label, str):
-            text_label = Text.from_markup(label)
-        else:
-            text_label = label
-        first_line = text_label.split()[0]
-        return first_line
+        text_label = Text.from_markup(label) if isinstance(label, str) else label
+        return text_label.split()[0]
 
     def _add_node(
         self,
@@ -588,8 +582,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         else:
             prefix = ("", base_style)
 
-        text = Text.assemble(prefix, node_label)
-        return text
+        return Text.assemble(prefix, node_label)
 
     def get_label_width(self, node: TreeNode[TreeDataType]) -> int:
         """Get the width of the nodes label.
@@ -711,10 +704,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
     def _on_mouse_move(self, event: events.MouseMove):
         meta = event.style.meta
-        if meta and "line" in meta:
-            self.hover_line = meta["line"]
-        else:
-            self.hover_line = -1
+        self.hover_line = meta["line"] if meta and "line" in meta else -1
 
     def _new_id(self) -> NodeID:
         """Create a new node ID.
@@ -883,7 +873,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             )
 
         if lines:
-            width = max([get_line_width(line) for line in lines])
+            width = max(get_line_width(line) for line in lines)
         else:
             width = self.size.width
 

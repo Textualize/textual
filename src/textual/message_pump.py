@@ -61,11 +61,13 @@ class MessagePumpMeta(type):
         namespace = camel_to_snake(name)
         isclass = inspect.isclass
         for value in class_dict.values():
-            if isclass(value) and issubclass(value, Message):
-                if not value.namespace:
-                    value.namespace = namespace
-        class_obj = super().__new__(cls, name, bases, class_dict, **kwargs)
-        return class_obj
+            if (
+                isclass(value)
+                and issubclass(value, Message)
+                and not value.namespace
+            ):
+                value.namespace = namespace
+        return super().__new__(cls, name, bases, class_dict, **kwargs)
 
 
 class MessagePump(metaclass=MessagePumpMeta):
@@ -261,9 +263,7 @@ class MessagePump(metaclass=MessagePumpMeta):
                     raise MessagePumpClosed("The message pump is now closed")
                 self._pending_message = message
 
-        if self._pending_message is not None:
-            return self._pending_message
-        return None
+        return self._pending_message if self._pending_message is not None else None
 
     def set_timer(
         self,

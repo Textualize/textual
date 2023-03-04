@@ -56,17 +56,16 @@ class DictionaryApp(App):
         """Convert the results in to markdown."""
         lines = []
         if isinstance(results, dict):
-            lines.append(f"# {results['title']}")
-            lines.append(results["message"])
+            lines.extend((f"# {results['title']}", results["message"]))
         elif isinstance(results, list):
             for result in results:
-                lines.append(f"# {result['word']}")
-                lines.append("")
+                lines.extend((f"# {result['word']}", ""))
                 for meaning in result.get("meanings", []):
-                    lines.append(f"_{meaning['partOfSpeech']}_")
-                    lines.append("")
-                    for definition in meaning.get("definitions", []):
-                        lines.append(f" - {definition['definition']}")
+                    lines.extend((f"_{meaning['partOfSpeech']}_", ""))
+                    lines.extend(
+                        f" - {definition['definition']}"
+                        for definition in meaning.get("definitions", [])
+                    )
                     lines.append("---")
 
         return "\n".join(lines)

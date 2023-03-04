@@ -244,11 +244,7 @@ class ScalarListProperty:
             obj.refresh(layout=True, children=self.refresh_children)
             return
         parse_values: Iterable[str | float]
-        if isinstance(value, str):
-            parse_values = value.split()
-        else:
-            parse_values = value
-
+        parse_values = value.split() if isinstance(value, str) else value
         scalars = []
         for parse_value in parse_values:
             if isinstance(parse_value, (int, float)):

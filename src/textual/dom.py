@@ -185,20 +185,16 @@ class DOMNode(MessagePump):
 
         reactives = cls._reactives = {}
         for base in reversed(cls.__mro__):
-            reactives.update(
-                {
-                    name: reactive
-                    for name, reactive in base.__dict__.items()
-                    if isinstance(reactive, Reactive)
-                }
-            )
+            reactives |= {
+                name: reactive
+                for name, reactive in base.__dict__.items()
+                if isinstance(reactive, Reactive)
+            }
 
         cls._inherit_css = inherit_css
         cls._inherit_bindings = inherit_bindings
         cls._inherit_component_classes = inherit_component_classes
-        css_type_names: set[str] = set()
-        for base in cls._css_bases(cls):
-            css_type_names.add(base.__name__)
+        css_type_names: set[str] = {base.__name__ for base in cls._css_bases(cls)}
         cls._merged_bindings = cls._merge_bindings()
         cls._css_type_names = frozenset(css_type_names)
 
@@ -458,7 +454,7 @@ class DOMNode(MessagePump):
     @property
     def display(self) -> bool:
         """Should the DOM node be displayed?"""
-        return self.styles.display != "none" and not (self._closing or self._closed)
+        return self.styles.display != "none" and not self._closing and not self._closed
 
     @display.setter
     def display(self, new_val: bool | str) -> None:

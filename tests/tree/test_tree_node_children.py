@@ -31,4 +31,4 @@ def test_tree_node_children() -> None:
     with pytest.raises(TypeError):
         del tree.root.children[0]
     with pytest.raises(TypeError):
-        del tree.root.children[0:2]
+        del tree.root.children[:2]

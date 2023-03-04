@@ -82,9 +82,7 @@ class Screen(Widget):
 
     def render(self) -> RenderableType:
         background = self.styles.background
-        if background.is_transparent:
-            return self.app.render()
-        return Blank(background)
+        return self.app.render() if background.is_transparent else Blank(background)
 
     def get_offset(self, widget: Widget) -> Offset:
         """Get the absolute offset of a given Widget.
@@ -435,15 +433,14 @@ class Screen(Widget):
                         container_size,
                         _,
                     ) in layers:
-                        if widget in exposed_widgets:
-                            if widget._size_updated(
-                                region.size, virtual_size, container_size, layout=False
-                            ):
-                                widget.post_message_no_wait(
-                                    ResizeEvent(
-                                        self, region.size, virtual_size, container_size
-                                    )
+                        if widget in exposed_widgets and widget._size_updated(
+                            region.size, virtual_size, container_size, layout=False
+                        ):
+                            widget.post_message_no_wait(
+                                ResizeEvent(
+                                    self, region.size, virtual_size, container_size
                                 )
+                            )
 
             else:
                 hidden, shown, resized = self._compositor.reflow(self, size)
@@ -566,11 +563,14 @@ class Screen(Widget):
             except errors.NoWidget:
                 self.set_focus(None)
             else:
-                if isinstance(event, events.MouseUp) and widget.focusable:
-                    if self.focused is not widget:
-                        self.set_focus(widget)
-                        event.stop()
-                        return
+                if (
+                    isinstance(event, events.MouseUp)
+                    and widget.focusable
+                    and self.focused is not widget
+                ):
+                    self.set_focus(widget)
+                    event.stop()
+                    return
                 event.style = self.get_style_at(event.screen_x, event.screen_y)
                 if widget is self:
                     event._set_forwarded()

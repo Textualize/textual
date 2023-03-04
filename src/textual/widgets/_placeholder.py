@@ -107,7 +107,7 @@ class Placeholder(Widget):
         """
         # Create and cache renderables for all the variants.
         self._renderables = {
-            "default": label if label else f"#{id}" if id else "Placeholder",
+            "default": label or (f"#{id}" if id else "Placeholder"),
             "size": "",
             "text": "\n\n".join(_LOREM_IPSUM_PLACEHOLDER_TEXT for _ in range(5)),
         }
