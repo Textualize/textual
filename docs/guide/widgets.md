@@ -456,7 +456,44 @@ With these three widgets, the [DOM](CSS.md#the-dom) for our app will look like t
 --8<-- "docs/images/byte_input_dom.excalidraw.svg"
 </div>
 
-You will be able to click on the buttons and edit the byte in the input control, but there is currently no code to manage any other behavior.
+Now we have the design in place, we can implement the behavior.
 
 
-### Properties down, messages up
+### Data flow
+
+One of the goals of compound widgets is that we should be able to re-use widgets in the same way as builtin widgets. When you build a widget, you should be able to use it anywhere in your app. You could also store widgets in a Python module, and publish it on [PyPi](https://pypi.org/).
+
+This is straightforward if you follow the guideline of "attributes down, messages up". This means that a widget can update its children by setting attributes (often *reactive* attributes) or calling methods, but widgets should send [messages](./events.md) to their *parent*.
+
+In practice, this means that if you want to modify a child widget you can set an attribute. Here's an example of an [action](actions.md) that updates a child widget:
+
+```python
+def action_set_true(self):
+    self.query_one(Switch).value = 1
+```
+
+You can also call methods on a child and generally use it in the same way as any Python object.
+
+If a child needs to update a parent, it should send a message with .
+
+```python
+def on_click(self):
+    self.post_message(MyWidget.Change(active=True))
+```
+
+<div class="excalidraw">
+--8<-- "docs/images/attributes_messages.excalidraw.svg"
+</div>
+
+### Attributes down
+
+=== "byte02.py"
+
+    ```python title="byte02.py" hl_lines="5-6 26-32 34 44-48 91-96"
+    --8<-- "docs/examples/guide/compound/byte02.py"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/compound/byte02.py" columns="90" line="30", press="tab,tab,tab,enter"}
+    ```
