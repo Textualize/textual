@@ -1573,7 +1573,7 @@ class App(Generic[ReturnType], DOMNode):
                     await self.animator.stop()
                 finally:
                     for timer in list(self._timers):
-                        await timer.stop()
+                        timer.stop()
 
         self._running = True
         try:

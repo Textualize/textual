@@ -419,7 +419,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         finally:
             self._running = False
             for timer in list(self._timers):
-                await timer.stop()
+                timer.stop()
 
     async def _pre_process(self) -> None:
         """Procedure to run before processing messages."""
