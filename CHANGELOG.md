@@ -14,6 +14,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Messages don't require a `sender` in their constructor https://github.com/Textualize/textual/pull/1940
 - Many messages have grown a `control` property which returns the control they relate to. https://github.com/Textualize/textual/pull/1940
 
+
+### Added
+
+- Added `data_table` attribute to DataTable events https://github.com/Textualize/textual/pull/1940
+- Added `list_view` attribute to `ListView` events https://github.com/Textualize/textual/pull/1940
+- Added `radio_set` attribute to `RadioSet` events https://github.com/Textualize/textual/pull/1940
+- Added `switch` attribute to `Switch` events https://github.com/Textualize/textual/pull/1940
+- Added `toggle_button` attribute to RadioButton and Checkbox events https://github.com/Textualize/textual/pull/1940
+
 ## [0.13.0] - 2023-03-02
 
 ### Added
