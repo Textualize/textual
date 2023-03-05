@@ -169,6 +169,11 @@ class Button(Static, can_focus=True):
             self.button = button
             super().__init__()
 
+        @property
+        def control(self) -> Button:
+            """Alias for the button."""
+            return self.button
+
     def __init__(
         self,
         label: TextType | None = None,

@@ -151,6 +151,11 @@ class Input(Widget, can_focus=True):
             self.input: Input = input
             self.value: str = value
 
+        @property
+        def control(self) -> Input:
+            """Alias for self.input."""
+            return self.input
+
     class Submitted(Message, bubble=True):
         """Posted when the enter key is pressed within an `Input`.
 
@@ -166,6 +171,11 @@ class Input(Widget, can_focus=True):
             super().__init__()
             self.input: Input = input
             self.value: str = value
+
+        @property
+        def control(self) -> Input:
+            """Alias for self.input."""
+            return self.input
 
     def __init__(
         self,

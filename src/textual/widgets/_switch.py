@@ -92,6 +92,11 @@ class Switch(Widget, can_focus=True):
             self.value: bool = value
             self.switch: Switch = switch
 
+        @property
+        def control(self) -> Switch:
+            """Alias for self.switch."""
+            return self.switch
+
     def __init__(
         self,
         value: bool = False,
