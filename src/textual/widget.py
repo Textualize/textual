@@ -42,7 +42,7 @@ from ._arrange import DockArrangeResult, arrange
 from ._asyncio import create_task
 from ._cache import FIFOCache
 from ._compose import compose
-from ._context import active_app
+from ._context import NoActiveAppError, active_app
 from ._easing import DEFAULT_SCROLL_EASING
 from ._layout import Layout
 from ._segment_tools import align_lines
@@ -2588,8 +2588,12 @@ class Widget(DOMNode):
         Returns:
             True if the message was posted, False if this widget was closed / closing.
         """
+
         if not self.is_running:
-            self.log.warning(self, f"IS NOT RUNNING, {message!r} not sent")
+            try:
+                self.log.warning(self, f"IS NOT RUNNING, {message!r} not sent")
+            except NoActiveAppError:
+                pass
         return super().post_message(message)
 
     async def _on_idle(self, event: events.Idle) -> None:
