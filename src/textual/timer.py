@@ -89,14 +89,8 @@ class Timer:
         self._task = create_task(self._run_timer(), name=self.name)
         return self._task
 
-    def stop_no_wait(self) -> None:
+    def stop(self) -> None:
         """Stop the timer."""
-        if self._task is not None:
-            self._task.cancel()
-            self._task = None
-
-    async def stop(self) -> None:
-        """Stop the timer, and block until it exits."""
         if self._task is not None:
             self._active.set()
             self._task.cancel()

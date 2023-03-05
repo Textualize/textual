@@ -382,7 +382,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         self._closing = True
         stop_timers = list(self._timers)
         for timer in stop_timers:
-            await timer.stop()
+            timer.stop()
         self._timers.clear()
         await self._message_queue.put(events.Unmount())
         Reactive._reset_object(self)

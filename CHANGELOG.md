@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.14.0] - Unreleased
+
+### Changes
+
+- There is now only `post_message` to post events, which is non-async https://github.com/Textualize/textual/pull/1940
+- The Timer class now has just one method to stop it, `Timer.stop` which is non sync https://github.com/Textualize/textual/pull/1940
+- Messages don't require a `sender` in their constructor https://github.com/Textualize/textual/pull/1940
+
 ## [0.13.0] - 2023-03-02
 
 ### Added
