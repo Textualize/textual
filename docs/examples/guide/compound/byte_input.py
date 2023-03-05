@@ -27,8 +27,8 @@ class BitSwitch(Widget):
     class BitChanged(Message):
         """Sent when the 'bit' changes."""
 
-        def __init__(self, sender: BitSwitch, bit: int, value: bool) -> None:
-            super().__init__(sender)
+        def __init__(self, bit: int, value: bool) -> None:
+            super().__init__()
             self.bit = bit
             self.value = value
 
@@ -50,7 +50,7 @@ class BitSwitch(Widget):
         """When the switch changes, notify the parent via a message."""
         event.stop()
         self.value = event.value
-        self.post_message_no_wait(self.BitChanged(self, self.bit, event.value))
+        self.post_message(self.BitChanged(self.bit, event.value))
 
 
 class ByteInput(Widget):

@@ -409,13 +409,11 @@ In the following sketch we have 8 switches, one for each bit in a byte. There is
 --8<-- "docs/images/byte01.excalidraw.svg"
 </div>
 
-All of the controls ([Input](../widgets/input.md), [Label](../widgets/label.md), and [Switch](../widgets/switch.md)) in the sketch above are builtin to Textual.
-Even with this simple one-screen app there are enough widgets that your app code may become hard to follow.
-Compound widgets will help us break the UI in to more manageable pieces that you will find easier to work with.
+There are three types of built-in widget in the sketch, namely ([Input](../widgets/input.md), [Label](../widgets/label.md), and [Switch](../widgets/switch.md)). Rather than manage these as a single collection of widgets, we can arrange them in to logical groups with compound widgets. This will make our app easier to work with.
 
 ###  Identifying components
 
-We will divide this UI in to three compound widgets, corresponding to the logical components of the design.
+We will divide this UI in to three compound widgets:
 
 1. `BitSwitch` for a switch with a numeric label.
 2. `ByteInput` which contains 8 `BitSwitch` widgets.
@@ -423,7 +421,7 @@ We will divide this UI in to three compound widgets, corresponding to the logica
 
 This is not the only way we could implement our design with compound widgets.
 So why these three widgets?
-As a rule of thumb a widget should handle one piece of data, which is why we have an independent widget for a bit, a byte, and the decimal value.
+As a rule of thumb, a widget should handle one piece of data, which is why we have an independent widget for a bit, a byte, and the decimal value.
 
 <div class="excalidraw">
 --8<-- "docs/images/byte02.excalidraw.svg"
@@ -456,36 +454,47 @@ With these three widgets, the [DOM](CSS.md#the-dom) for our app will look like t
 --8<-- "docs/images/byte_input_dom.excalidraw.svg"
 </div>
 
-Now we have the design in place, we can implement the behavior.
+Now that we have the design in place, we can implement the behavior.
 
 
 ### Data flow
 
-One of the goals of compound widgets is that we should be able to re-use widgets in the same way as builtin widgets. When you build a widget, you should be able to use it anywhere in your app. You could also store widgets in a Python module, and publish it on [PyPi](https://pypi.org/).
+Custom widgets can be as re-usable as Textual's builtin widgets. You can place a custom widget anywhere in your app and it will work as expected, or use it in another app entirely. Perhaps even publishing your widgets on [PyPi](https://pypi.org/).
 
-This is straightforward if you follow the guideline of "attributes down, messages up". This means that a widget can update its children by setting attributes (often *reactive* attributes) or calling methods, but widgets should send [messages](./events.md) to their *parent*.
+Building a re-usable widget is straightforward if you follow the guideline of "attributes down, messages up". This means that a widget can update its children by setting a child's attributes (often *reactive* attributes) or calling the child's methods, but widgets should only ever send [messages](./events.md) to their *parent*.
 
-In practice, this means that if you want to modify a child widget you can set an attribute. Here's an example of an [action](actions.md) that updates a child widget:
+!!! info
+
+    This pattern of only setting attributes in one direction and using messages for the opposite direction is known as *uni-directional data flow*.
+
+In practice, this means that to update a child widget you get a reference to it and use its public attributes and methods like any other Python object. Here's an example of an [action](actions.md) that updates a child widget:
 
 ```python
 def action_set_true(self):
     self.query_one(Switch).value = 1
 ```
 
-You can also call methods on a child and generally use it in the same way as any Python object.
+If a child needs to update a parent, it should send a message with [post_message][textual.message_pump.MessagePump.post_message].
 
-If a child needs to update a parent, it should send a message with .
+Here's an example of posting message:
 
 ```python
 def on_click(self):
     self.post_message(MyWidget.Change(active=True))
 ```
 
+Note that *attributes down and messages up* means that you can't modify widgets on the same level directly. If you want to modify a *sibling*, you will need to send a message to the parent, and the parent would make the changes.
+
+The following diagram illustrates this concept:
+
+
 <div class="excalidraw">
 --8<-- "docs/images/attributes_messages.excalidraw.svg"
 </div>
 
-### Attributes down
+### Messages up
+
+Let's extend the ByteEditor so that clicking any of the 8 `BitSwitch` widgets updates the decimal value. To do this we will add a custom message to `BitSwitch` that we catch in the `ByteEditor`.
 
 === "byte02.py"
 
@@ -493,7 +502,21 @@ def on_click(self):
     --8<-- "docs/examples/guide/compound/byte02.py"
     ```
 
+    1. This will store the value of the "bit".
+    2. This is sent by the builtin `Switch` widgets, when it changes state.
+    3. Stop the event, because we don't want it to go to the parent.
+    4. Store the new value of the "bit".
+
 === "Output"
 
-    ```{.textual path="docs/examples/guide/compound/byte02.py" columns="90" line="30", press="tab,tab,tab,enter"}
+    ```{.textual path="docs/examples/guide/compound/byte02.py" columns="90" line="30", press="tab,tab,tab,tab,enter"}
     ```
+
+- The `BitSwitch` widget now has an `on_switch_changed` which will handle a [Switch.Changed][textual.widgets.switch.Switch] message, sent when the user clicks a switch. We use this to store the new value of the bit, and sent a new custom message, `BitSwitch.BitChanged`.
+- The `ByteEditor` widget handles the `BitSwitch.Changed` message by calculating the decimal value and setting it on the input.
+
+Here's a (simplified) DOM diagram which shows what these changes are doing:
+
+<div class="excalidraw">
+--8<-- "docs/images/bit_switch_message.excalidraw.svg"
+</div>

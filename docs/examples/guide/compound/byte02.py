@@ -26,12 +26,12 @@ class BitSwitch(Widget):
     class BitChanged(Message):
         """Sent when the 'bit' changes."""
 
-        def __init__(self, sender: BitSwitch, bit: int, value: bool) -> None:
-            super().__init__(sender)
+        def __init__(self, bit: int, value: bool) -> None:
+            super().__init__()
             self.bit = bit
             self.value = value
 
-    value = reactive(0)
+    value = reactive(0)  # (1)!
 
     def __init__(self, bit: int) -> None:
         self.bit = bit
@@ -41,11 +41,11 @@ class BitSwitch(Widget):
         yield Label(str(self.bit))
         yield Switch()
 
-    def on_switch_changed(self, event: Switch.Changed) -> None:
+    def on_switch_changed(self, event: Switch.Changed) -> None:  # (2)!
         """When the switch changes, notify the parent via a message."""
-        event.stop()
-        self.value = event.value
-        self.post_message_no_wait(self.BitChanged(self, self.bit, event.value))
+        event.stop()  # (3)!
+        self.value = event.value  # (4)!
+        self.post_message(self.BitChanged(self.bit, event.value))
 
 
 class ByteInput(Widget):
