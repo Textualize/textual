@@ -107,16 +107,11 @@ The message class is defined within the widget class itself. This is not strictl
 - It reduces the amount of imports. If you import `ColorButton`, you have access to the message class via `ColorButton.Selected`.
 - It creates a namespace for the handler. So rather than `on_selected`, the handler name becomes `on_color_button_selected`. This makes it less likely that your chosen name will clash with another message.
 
+### Sending messages
 
-## Sending messages
+To send a message call the [post_message()][textual.message_pump.MessagePump.post_message] method. This will place a message on the widget's message queue and run any message handlers.
 
-In the previous example we used [post_message()][textual.message_pump.MessagePump.post_message] to send an event to its parent. We could also have used [post_message_no_wait()][textual.message_pump.MessagePump.post_message_no_wait] for non async code. Sending messages in this way allows you to write custom widgets without needing to know in what context they will be used.
-
-There are other ways of sending (posting) messages, which you may need to use less frequently.
-
-- [post_message][textual.message_pump.MessagePump.post_message] To post a message to a particular widget.
-- [post_message_no_wait][textual.message_pump.MessagePump.post_message_no_wait] The non-async version of `post_message`.
-
+It is common for widgets to send messages to themselves, and allow them to bubble. This is so a base class has an opportunity to handle the message. We do this in the example above, which means a subclass could add a `on_color_button_selected` if it wanted to handle the message itself.
 
 ## Preventing messages
 
