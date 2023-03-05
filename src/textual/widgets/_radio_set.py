@@ -37,15 +37,14 @@ class RadioSet(Container):
         This message can be handled using an `on_radio_set_changed` method.
         """
 
-        def __init__(self, sender: RadioSet, pressed: RadioButton) -> None:
+        def __init__(self, radio_set: RadioSet, pressed: RadioButton) -> None:
             """Initialise the message.
 
             Args:
-                sender: The radio set sending the message.
                 pressed: The radio button that was pressed.
             """
-            super().__init__(sender)
-            self.input = sender
+            super().__init__()
+            self.input = radio_set  # TODO: Why is this called "input ?"
             """A reference to the `RadioSet` that was changed."""
             self.pressed = pressed
             """The `RadioButton` that was pressed to make the change."""
@@ -54,7 +53,7 @@ class RadioSet(Container):
             # this point, and so we can't go looking for the index of the
             # pressed button via the normal route. So here we go under the
             # hood.
-            self.index = sender._nodes.index(pressed)
+            self.index = radio_set._nodes.index(pressed)
             """The index of the `RadioButton` that was pressed to make the change."""
 
     def __init__(

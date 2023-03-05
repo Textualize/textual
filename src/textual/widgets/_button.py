@@ -165,9 +165,9 @@ class Button(Static, can_focus=True):
             button: The button that was pressed.
         """
 
-        @property
-        def button(self) -> Button:
-            return cast(Button, self.sender)
+        def __init__(self, button: Button) -> None:
+            self.button = button
+            super().__init__()
 
     def __init__(
         self,

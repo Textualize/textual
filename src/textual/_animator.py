@@ -182,7 +182,6 @@ class Animator:
         self._timer = Timer(
             app,
             1 / frames_per_second,
-            app,
             name="Animator",
             callback=self,
             pause=True,

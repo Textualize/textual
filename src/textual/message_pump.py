@@ -321,7 +321,6 @@ class MessagePump(metaclass=MessagePumpMeta):
         timer = Timer(
             self,
             interval,
-            self,
             name=name or f"set_interval#{Timer._timer_count}",
             callback=callback,
             repeat=repeat or None,
@@ -341,7 +340,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         # We send the InvokeLater message to ourselves first, to ensure we've cleared
         # out anything already pending in our own queue.
 
-        message = messages.InvokeLater(self, partial(callback, *args, **kwargs))
+        message = messages.InvokeLater(partial(callback, *args, **kwargs))
         self.post_message_no_wait(message)
 
     def call_later(self, callback: Callable, *args, **kwargs) -> None:
@@ -353,7 +352,7 @@ class MessagePump(metaclass=MessagePumpMeta):
             *args: Positional arguments to pass to the callable.
             **kwargs: Keyword arguments to pass to the callable.
         """
-        message = events.Callback(self, callback=partial(callback, *args, **kwargs))
+        message = events.Callback(callback=partial(callback, *args, **kwargs))
         self.post_message_no_wait(message)
 
     def call_next(self, callback: Callable, *args, **kwargs) -> None:
@@ -372,7 +371,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     def _close_messages_no_wait(self) -> None:
         """Request the message queue to immediately exit."""
-        self._message_queue.put_nowait(messages.CloseMessages(sender=self))
+        self._message_queue.put_nowait(messages.CloseMessages())
 
     async def _on_close_messages(self, message: messages.CloseMessages) -> None:
         await self._close_messages()
@@ -386,7 +385,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         for timer in stop_timers:
             await timer.stop()
         self._timers.clear()
-        await self._message_queue.put(events.Unmount(sender=self))
+        await self._message_queue.put(events.Unmount())
         Reactive._reset_object(self)
         await self._message_queue.put(None)
         if wait and self._task is not None and asyncio.current_task() != self._task:
@@ -428,8 +427,8 @@ class MessagePump(metaclass=MessagePumpMeta):
         # Dispatch compose and mount messages without going through loop
         # These events must occur in this order, and at the start.
         try:
-            await self._dispatch_message(events.Compose(sender=self))
-            await self._dispatch_message(events.Mount(sender=self))
+            await self._dispatch_message(events.Compose())
+            await self._dispatch_message(events.Mount())
             self._post_mount()
         except Exception as error:
             self.app._handle_exception(error)
@@ -489,7 +488,7 @@ class MessagePump(metaclass=MessagePumpMeta):
                     ):
                         self._last_idle = current_time
                         if not self._closed:
-                            event = events.Idle(self)
+                            event = events.Idle()
                             for _cls, method in self._get_dispatch_methods(
                                 "on_idle", event
                             ):
@@ -590,7 +589,7 @@ class MessagePump(metaclass=MessagePumpMeta):
     def check_idle(self) -> None:
         """Prompt the message pump to call idle if the queue is empty."""
         if self._message_queue.empty():
-            self.post_message_no_wait(messages.Prompt(sender=self))
+            self.post_message_no_wait(messages.Prompt())
 
     async def post_message(self, message: Message) -> bool:
         """Post a message or an event to this message pump.
@@ -607,6 +606,8 @@ class MessagePump(metaclass=MessagePumpMeta):
             return False
         if not self.check_message_enabled(message):
             return True
+        if message._sender is None:
+            message._sender = self
         # Add a copy of the prevented message types to the message
         # This is so that prevented messages are honoured by the event's handler
         message._prevent.update(self._get_prevented_messages())

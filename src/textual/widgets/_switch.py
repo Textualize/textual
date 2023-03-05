@@ -87,10 +87,10 @@ class Switch(Widget, can_focus=True):
             input: The `Switch` widget that was changed.
         """
 
-        def __init__(self, sender: Switch, value: bool) -> None:
-            super().__init__(sender)
+        def __init__(self, switch: Switch, value: bool) -> None:
+            super().__init__()
             self.value: bool = value
-            self.input: Switch = sender
+            self.switch: Switch = switch
 
     def __init__(
         self,

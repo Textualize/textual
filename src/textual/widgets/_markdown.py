@@ -100,7 +100,7 @@ class MarkdownBlock(Static):
 
     async def action_link(self, href: str) -> None:
         """Called on link click."""
-        await self.post_message(Markdown.LinkClicked(href, sender=self))
+        await self.post_message(Markdown.LinkClicked(href))
 
 
 class MarkdownHeader(MarkdownBlock):
@@ -524,26 +524,24 @@ class Markdown(Widget):
     class TableOfContentsUpdated(Message, bubble=True):
         """The table of contents was updated."""
 
-        def __init__(
-            self, table_of_contents: TableOfContentsType, *, sender: Widget
-        ) -> None:
-            super().__init__(sender=sender)
+        def __init__(self, table_of_contents: TableOfContentsType) -> None:
+            super().__init__()
             self.table_of_contents: TableOfContentsType = table_of_contents
             """Table of contents."""
 
     class TableOfContentsSelected(Message, bubble=True):
         """An item in the TOC was selected."""
 
-        def __init__(self, block_id: str, *, sender: Widget) -> None:
-            super().__init__(sender=sender)
+        def __init__(self, block_id: str) -> None:
+            super().__init__()
             self.block_id = block_id
             """ID of the block that was selected."""
 
     class LinkClicked(Message, bubble=True):
         """A link in the document was clicked."""
 
-        def __init__(self, href: str, *, sender: Widget) -> None:
-            super().__init__(sender=sender)
+        def __init__(self, href: str) -> None:
+            super().__init__()
             self.href: str = href
             """The link that was selected."""
 
@@ -702,9 +700,7 @@ class Markdown(Widget):
                     )
                 )
 
-        await self.post_message(
-            Markdown.TableOfContentsUpdated(table_of_contents, sender=self)
-        )
+        await self.post_message(Markdown.TableOfContentsUpdated(table_of_contents))
         with self.app.batch_update():
             await self.query("MarkdownBlock").remove()
             await self.mount_all(output)
@@ -761,7 +757,7 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
         node_data = message.node.data
         if node_data is not None:
             await self.post_message(
-                Markdown.TableOfContentsSelected(node_data["block_id"], sender=self)
+                Markdown.TableOfContentsSelected(node_data["block_id"])
             )
 
 

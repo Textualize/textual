@@ -319,7 +319,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         def __init__(
             self,
-            sender: DataTable,
             value: CellType,
             coordinate: Coordinate,
             cell_key: CellKey,
@@ -330,10 +329,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             """The coordinate of the highlighted cell."""
             self.cell_key: CellKey = cell_key
             """The key for the highlighted cell."""
-            super().__init__(sender)
+            super().__init__()
 
         def __rich_repr__(self) -> rich.repr.Result:
-            yield "sender", self.sender
             yield "value", self.value
             yield "coordinate", self.coordinate
             yield "cell_key", self.cell_key
@@ -348,7 +346,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         def __init__(
             self,
-            sender: DataTable,
             value: CellType,
             coordinate: Coordinate,
             cell_key: CellKey,
@@ -359,10 +356,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             """The coordinate of the cell that was selected."""
             self.cell_key: CellKey = cell_key
             """The key for the selected cell."""
-            super().__init__(sender)
+            super().__init__()
 
         def __rich_repr__(self) -> rich.repr.Result:
-            yield "sender", self.sender
             yield "value", self.value
             yield "coordinate", self.coordinate
             yield "cell_key", self.cell_key
@@ -376,15 +372,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         widget in the DOM.
         """
 
-        def __init__(self, sender: DataTable, cursor_row: int, row_key: RowKey) -> None:
+        def __init__(self, cursor_row: int, row_key: RowKey) -> None:
             self.cursor_row: int = cursor_row
             """The y-coordinate of the cursor that highlighted the row."""
             self.row_key: RowKey = row_key
             """The key of the row that was highlighted."""
-            super().__init__(sender)
+            super().__init__()
 
         def __rich_repr__(self) -> rich.repr.Result:
-            yield "sender", self.sender
             yield "cursor_row", self.cursor_row
             yield "row_key", self.row_key
 
@@ -397,15 +392,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         widget in the DOM.
         """
 
-        def __init__(self, sender: DataTable, cursor_row: int, row_key: RowKey) -> None:
+        def __init__(self, cursor_row: int, row_key: RowKey) -> None:
             self.cursor_row: int = cursor_row
             """The y-coordinate of the cursor that made the selection."""
             self.row_key: RowKey = row_key
             """The key of the row that was selected."""
-            super().__init__(sender)
+            super().__init__()
 
         def __rich_repr__(self) -> rich.repr.Result:
-            yield "sender", self.sender
             yield "cursor_row", self.cursor_row
             yield "row_key", self.row_key
 
@@ -418,17 +412,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         widget in the DOM.
         """
 
-        def __init__(
-            self, sender: DataTable, cursor_column: int, column_key: ColumnKey
-        ) -> None:
+        def __init__(self, cursor_column: int, column_key: ColumnKey) -> None:
             self.cursor_column: int = cursor_column
             """The x-coordinate of the column that was highlighted."""
             self.column_key = column_key
             """The key of the column that was highlighted."""
-            super().__init__(sender)
+            super().__init__()
 
         def __rich_repr__(self) -> rich.repr.Result:
-            yield "sender", self.sender
             yield "cursor_column", self.cursor_column
             yield "column_key", self.column_key
 
@@ -441,17 +432,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         widget in the DOM.
         """
 
-        def __init__(
-            self, sender: DataTable, cursor_column: int, column_key: ColumnKey
-        ) -> None:
+        def __init__(self, cursor_column: int, column_key: ColumnKey) -> None:
             self.cursor_column: int = cursor_column
             """The x-coordinate of the column that was selected."""
             self.column_key = column_key
             """The key of the column that was selected."""
-            super().__init__(sender)
+            super().__init__()
 
         def __rich_repr__(self) -> rich.repr.Result:
-            yield "sender", self.sender
             yield "cursor_column", self.cursor_column
             yield "column_key", self.column_key
 
@@ -460,7 +448,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         def __init__(
             self,
-            sender: DataTable,
             column_key: ColumnKey,
             column_index: int,
             label: Text,
@@ -471,10 +458,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             """The index for the column."""
             self.label = label
             """The text of the label."""
-            super().__init__(sender)
+            super().__init__()
 
         def __rich_repr__(self) -> rich.repr.Result:
-            yield "sender", self.sender
             yield "column_key", self.column_key
             yield "column_index", self.column_index
             yield "label", self.label.plain
@@ -484,7 +470,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         def __init__(
             self,
-            sender: DataTable,
             row_key: RowKey,
             row_index: int,
             label: Text,
@@ -495,10 +480,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             """The index for the column."""
             self.label = label
             """The text of the label."""
-            super().__init__(sender)
+            super().__init__()
 
         def __rich_repr__(self) -> rich.repr.Result:
-            yield "sender", self.sender
             yield "row_key", self.row_key
             yield "row_index", self.row_index
             yield "label", self.label.plain
@@ -898,7 +882,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             cell_key = self.coordinate_to_cell_key(coordinate)
             self.post_message_no_wait(
                 DataTable.CellHighlighted(
-                    self, cell_value, coordinate=coordinate, cell_key=cell_key
+                    cell_value, coordinate=coordinate, cell_key=cell_key
                 )
             )
 

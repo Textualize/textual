@@ -14,18 +14,9 @@ if TYPE_CHECKING:
 
 @rich.repr.auto
 class Message:
-    """Base class for a message.
-
-    Args:
-        sender: The sender of the message / event.
-
-    Attributes:
-        sender: The sender of the message.
-        time: The time when the message was sent.
-    """
+    """Base class for a message."""
 
     __slots__ = [
-        "sender",
         "time",
         "_forwarded",
         "_no_default_action",
@@ -34,15 +25,13 @@ class Message:
         "_prevent",
     ]
 
-    sender: MessageTarget
     bubble: ClassVar[bool] = True  # Message will bubble to parent
     verbose: ClassVar[bool] = False  # Message is verbose
     no_dispatch: ClassVar[bool] = False  # Message may not be handled by client code
     namespace: ClassVar[str] = ""  # Namespace to disambiguate messages
 
-    def __init__(self, sender: MessageTarget) -> None:
-        self.sender: MessageTarget = sender
-
+    def __init__(self) -> None:
+        self._sender: MessageTarget | None = None
         self.time: float = _clock.get_time_no_wait()
         self._forwarded = False
         self._no_default_action = False
@@ -55,7 +44,7 @@ class Message:
         super().__init__()
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield self.sender
+        yield from ()
 
     def __init_subclass__(
         cls,
@@ -72,6 +61,12 @@ class Message:
             cls.no_dispatch = no_dispatch
         if namespace is not None:
             cls.namespace = namespace
+
+    @property
+    def sender(self) -> MessageTarget:
+        """The sender of the message."""
+        assert self._sender is not None
+        return self._sender
 
     @property
     def is_forwarded(self) -> bool:

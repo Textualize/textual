@@ -556,9 +556,8 @@ async def test_coordinate_to_cell_key_invalid_coordinate():
             table.coordinate_to_cell_key(Coordinate(9999, 9999))
 
 
-def make_click_event(sender: MessagePump):
+def make_click_event():
     return Click(
-        sender=sender,
         x=1,
         y=2,
         delta_x=0,
@@ -577,7 +576,7 @@ async def test_datatable_on_click_cell_cursor():
     app = DataTableApp()
     async with app.run_test() as pilot:
         table = app.query_one(DataTable)
-        click = make_click_event(app)
+        click = make_click_event()
         column_key = table.add_column("ABC")
         table.add_row("123")
         row_key = table.add_row("456")
@@ -591,13 +590,11 @@ async def test_datatable_on_click_cell_cursor():
             "CellSelected",
         ]
         cell_highlighted_event: DataTable.CellHighlighted = app.messages[1]
-        assert cell_highlighted_event.sender is table
         assert cell_highlighted_event.value == "456"
         assert cell_highlighted_event.cell_key == CellKey(row_key, column_key)
         assert cell_highlighted_event.coordinate == Coordinate(1, 0)
 
         cell_selected_event: DataTable.CellSelected = app.messages[2]
-        assert cell_selected_event.sender is table
         assert cell_selected_event.value == "456"
         assert cell_selected_event.cell_key == CellKey(row_key, column_key)
         assert cell_selected_event.coordinate == Coordinate(1, 0)

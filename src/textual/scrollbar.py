@@ -47,7 +47,6 @@ class ScrollTo(ScrollMessage, verbose=True):
 
     def __init__(
         self,
-        sender: MessageTarget,
         x: float | None = None,
         y: float | None = None,
         animate: bool = True,
@@ -55,7 +54,7 @@ class ScrollTo(ScrollMessage, verbose=True):
         self.x = x
         self.y = y
         self.animate = animate
-        super().__init__(sender)
+        super().__init__()
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "x", self.x, None

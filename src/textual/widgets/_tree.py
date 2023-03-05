@@ -436,11 +436,9 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             node: The node that was collapsed.
         """
 
-        def __init__(
-            self, sender: MessageTarget, node: TreeNode[EventTreeDataType]
-        ) -> None:
+        def __init__(self, node: TreeNode[EventTreeDataType]) -> None:
             self.node: TreeNode[EventTreeDataType] = node
-            super().__init__(sender)
+            super().__init__()
 
     class NodeExpanded(Generic[EventTreeDataType], Message, bubble=True):
         """Event sent when a node is expanded.
@@ -452,11 +450,9 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             node: The node that was expanded.
         """
 
-        def __init__(
-            self, sender: MessageTarget, node: TreeNode[EventTreeDataType]
-        ) -> None:
+        def __init__(self, node: TreeNode[EventTreeDataType]) -> None:
             self.node: TreeNode[EventTreeDataType] = node
-            super().__init__(sender)
+            super().__init__()
 
     class NodeHighlighted(Generic[EventTreeDataType], Message, bubble=True):
         """Event sent when a node is highlighted.
@@ -468,11 +464,9 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             node: The node that was highlighted.
         """
 
-        def __init__(
-            self, sender: MessageTarget, node: TreeNode[EventTreeDataType]
-        ) -> None:
+        def __init__(self, node: TreeNode[EventTreeDataType]) -> None:
             self.node: TreeNode[EventTreeDataType] = node
-            super().__init__(sender)
+            super().__init__()
 
     class NodeSelected(Generic[EventTreeDataType], Message, bubble=True):
         """Event sent when a node is selected.
@@ -484,11 +478,9 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             node: The node that was selected.
         """
 
-        def __init__(
-            self, sender: MessageTarget, node: TreeNode[EventTreeDataType]
-        ) -> None:
+        def __init__(self, node: TreeNode[EventTreeDataType]) -> None:
             self.node: TreeNode[EventTreeDataType] = node
-            super().__init__(sender)
+            super().__init__()
 
     def __init__(
         self,

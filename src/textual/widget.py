@@ -2588,6 +2588,8 @@ class Widget(DOMNode):
         Returns:
             True if the message was posted, False if this widget was closed / closing.
         """
+        if message._sender is None:
+            message._sender = self
         if not self.check_message_enabled(message):
             return True
         if not self.is_running:
@@ -2608,13 +2610,13 @@ class Widget(DOMNode):
             else:
                 if self._scroll_required:
                     self._scroll_required = False
-                    screen.post_message_no_wait(messages.UpdateScroll(self))
+                    screen.post_message_no_wait(messages.UpdateScroll())
                 if self._repaint_required:
                     self._repaint_required = False
-                    screen.post_message_no_wait(messages.Update(self, self))
+                    screen.post_message_no_wait(messages.Update(self))
                 if self._layout_required:
                     self._layout_required = False
-                    screen.post_message_no_wait(messages.Layout(self))
+                    screen.post_message_no_wait(messages.Layout())
 
     def focus(self, scroll_visible: bool = True) -> None:
         """Give focus to this widget.

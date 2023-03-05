@@ -218,15 +218,15 @@ class ToggleButton(Static, can_focus=True):
     class Changed(Message, bubble=True):
         """Posted when the value of the toggle button changes."""
 
-        def __init__(self, sender: ToggleButton, value: bool) -> None:
+        def __init__(self, toggle_button: ToggleButton, value: bool) -> None:
             """Initialise the message.
 
             Args:
-                sender: The toggle button sending the message.
+                toggle_button: The toggle button sending the message.
                 value: The value of the toggle button.
             """
-            super().__init__(sender)
-            self.input = sender
+            super().__init__()
+            self.toggle_button = toggle_button
             """A reference to the toggle button that was changed."""
             self.value = value
             """The value of the toggle button after the change."""
