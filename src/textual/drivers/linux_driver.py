@@ -97,9 +97,9 @@ class LinuxDriver(Driver):
             terminal_size = self._get_terminal_size()
             width, height = terminal_size
             textual_size = Size(width, height)
-            event = events.Resize(self._target, textual_size, textual_size)
+            event = events.Resize(textual_size, textual_size)
             asyncio.run_coroutine_threadsafe(
-                self._target.post_message(event),
+                self._target._post_message(event),
                 loop=loop,
             )
 
@@ -217,7 +217,7 @@ class LinuxDriver(Driver):
                     return True
             return False
 
-        parser = XTermParser(self._target, more_data, self._debug)
+        parser = XTermParser(more_data, self._debug)
         feed = parser.feed
 
         utf8_decoder = getincrementaldecoder("utf-8")().decode

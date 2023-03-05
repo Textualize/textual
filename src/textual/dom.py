@@ -23,7 +23,7 @@ from rich.tree import Tree
 
 from ._context import NoActiveAppError
 from ._node_list import NodeList
-from ._types import CallbackType
+from ._types import WatchCallbackType
 from .binding import Binding, Bindings, BindingType
 from .color import BLACK, WHITE, Color
 from .css._error_tools import friendly_list
@@ -163,7 +163,7 @@ class DOMNode(MessagePump):
     @auto_refresh.setter
     def auto_refresh(self, interval: float | None) -> None:
         if self._auto_refresh_timer is not None:
-            self._auto_refresh_timer.stop_no_wait()
+            self._auto_refresh_timer.stop()
             self._auto_refresh_timer = None
         if interval is not None:
             self._auto_refresh_timer = self.set_interval(
@@ -661,7 +661,7 @@ class DOMNode(MessagePump):
         self,
         obj: DOMNode,
         attribute_name: str,
-        callback: CallbackType,
+        callback: WatchCallbackType,
         init: bool = True,
     ) -> None:
         """Watches for modifications to reactive attributes on another object.

@@ -34,7 +34,7 @@ def chunks(data, size):
 
 @pytest.fixture
 def parser():
-    return XTermParser(sender=mock.sentinel, more_data=lambda: False)
+    return XTermParser(more_data=lambda: False)
 
 
 @pytest.mark.parametrize("chunk_size", [2, 3, 4, 5, 6])
@@ -65,7 +65,6 @@ def test_bracketed_paste(parser):
     assert len(events) == 1
     assert isinstance(events[0], Paste)
     assert events[0].text == pasted_text
-    assert events[0].sender == mock.sentinel
 
 
 def test_bracketed_paste_content_contains_escape_codes(parser):
@@ -302,7 +301,6 @@ def test_terminal_mode_reporting_synchronized_output_supported(parser):
     events = list(parser.feed(sequence))
     assert len(events) == 1
     assert isinstance(events[0], TerminalSupportsSynchronizedOutput)
-    assert events[0].sender == mock.sentinel
 
 
 def test_terminal_mode_reporting_synchronized_output_not_supported(parser):

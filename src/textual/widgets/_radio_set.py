@@ -37,15 +37,14 @@ class RadioSet(Container):
         This message can be handled using an `on_radio_set_changed` method.
         """
 
-        def __init__(self, sender: RadioSet, pressed: RadioButton) -> None:
+        def __init__(self, radio_set: RadioSet, pressed: RadioButton) -> None:
             """Initialise the message.
 
             Args:
-                sender: The radio set sending the message.
                 pressed: The radio button that was pressed.
             """
-            super().__init__(sender)
-            self.input = sender
+            super().__init__()
+            self.radio_set = radio_set
             """A reference to the `RadioSet` that was changed."""
             self.pressed = pressed
             """The `RadioButton` that was pressed to make the change."""
@@ -54,7 +53,7 @@ class RadioSet(Container):
             # this point, and so we can't go looking for the index of the
             # pressed button via the normal route. So here we go under the
             # hood.
-            self.index = sender._nodes.index(pressed)
+            self.index = radio_set._nodes.index(pressed)
             """The index of the `RadioButton` that was pressed to make the change."""
 
     def __init__(
@@ -114,16 +113,16 @@ class RadioSet(Container):
             event: The event.
         """
         # If the button is changing to be the pressed button...
-        if event.input.value:
+        if event.toggle_button.value:
             # ...send off a message to say that the pressed state has
             # changed.
-            self.post_message_no_wait(
-                self.Changed(self, cast(RadioButton, event.input))
+            self.post_message(
+                self.Changed(self, cast(RadioButton, event.toggle_button))
             )
             # ...then look for the button that was previously the pressed
             # one and unpress it.
             for button in self._buttons.filter(".-on"):
-                if button != event.input:
+                if button != event.toggle_button:
                     button.value = False
                     break
         else:
@@ -134,7 +133,7 @@ class RadioSet(Container):
             event.stop()
             if not self._buttons.filter(".-on"):
                 with self.prevent(RadioButton.Changed):
-                    event.input.value = True
+                    event.toggle_button.value = True
 
     @property
     def pressed_button(self) -> RadioButton | None:

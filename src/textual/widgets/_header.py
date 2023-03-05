@@ -167,4 +167,4 @@ class Header(Widget):
             self.query_one(HeaderTitle).sub_text = sub_title
 
         self.watch(self.app, "title", set_title)
-        self.watch(self.app, "sub_title", set_sub_title)  # type: ignore[arg-type]
+        self.watch(self.app, "sub_title", set_sub_title)

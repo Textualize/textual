@@ -218,18 +218,23 @@ class ToggleButton(Static, can_focus=True):
     class Changed(Message, bubble=True):
         """Posted when the value of the toggle button changes."""
 
-        def __init__(self, sender: ToggleButton, value: bool) -> None:
+        def __init__(self, toggle_button: ToggleButton, value: bool) -> None:
             """Initialise the message.
 
             Args:
-                sender: The toggle button sending the message.
+                toggle_button: The toggle button sending the message.
                 value: The value of the toggle button.
             """
-            super().__init__(sender)
-            self.input = sender
+            super().__init__()
+            self.toggle_button = toggle_button
             """A reference to the toggle button that was changed."""
             self.value = value
             """The value of the toggle button after the change."""
+
+        @property
+        def control(self) -> ToggleButton:
+            """Alias for self.toggle_button."""
+            return self.toggle_button
 
     def watch_value(self) -> None:
         """React to the value being changed.
@@ -239,4 +244,4 @@ class ToggleButton(Static, can_focus=True):
         `False`. Subsequently a related `Changed` event will be posted.
         """
         self.set_class(self.value, "-on")
-        self.post_message_no_wait(self.Changed(self, self.value))
+        self.post_message(self.Changed(self, self.value))
