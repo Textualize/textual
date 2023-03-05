@@ -2588,8 +2588,6 @@ class Widget(DOMNode):
         Returns:
             True if the message was posted, False if this widget was closed / closing.
         """
-        if message._sender is None:
-            message._sender = self
         if not self.check_message_enabled(message):
             return True
         if not self.is_running:
@@ -2731,12 +2729,12 @@ class Widget(DOMNode):
     def _on_focus(self, event: events.Focus) -> None:
         self.has_focus = True
         self.refresh()
-        self.post_message_no_wait(events.DescendantFocus(self))
+        self.post_message_no_wait(events.DescendantFocus())
 
     def _on_blur(self, event: events.Blur) -> None:
         self.has_focus = False
         self.refresh()
-        self.post_message_no_wait(events.DescendantBlur(self))
+        self.post_message_no_wait(events.DescendantBlur())
 
     def _on_descendant_blur(self, event: events.DescendantBlur) -> None:
         if self._has_focus_within:

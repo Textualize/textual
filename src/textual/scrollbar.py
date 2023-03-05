@@ -10,7 +10,6 @@ from rich.segment import Segment, Segments
 from rich.style import Style, StyleType
 
 from . import events
-from ._types import MessageTarget
 from .geometry import Offset
 from .message import Message
 from .reactive import Reactive
@@ -300,12 +299,10 @@ class ScrollBar(Widget):
         self.mouse_over = False
 
     def action_scroll_down(self) -> None:
-        self.post_message_no_wait(
-            ScrollDown(self) if self.vertical else ScrollRight(self)
-        )
+        self.post_message_no_wait(ScrollDown() if self.vertical else ScrollRight())
 
     def action_scroll_up(self) -> None:
-        self.post_message_no_wait(ScrollUp(self) if self.vertical else ScrollLeft(self))
+        self.post_message_no_wait(ScrollUp() if self.vertical else ScrollLeft())
 
     def action_grab(self) -> None:
         self.capture_mouse()
@@ -358,7 +355,7 @@ class ScrollBar(Widget):
                         * (virtual_size / self.window_size)
                     )
                 )
-            await self.post_message(ScrollTo(self, x=x, y=y))
+            await self.post_message(ScrollTo(x=x, y=y))
         event.stop()
 
     async def _on_click(self, event: events.Click) -> None:

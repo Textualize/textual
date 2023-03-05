@@ -10,7 +10,6 @@ from textual.app import App
 from textual.coordinate import Coordinate
 from textual.events import Click, MouseMove
 from textual.message import Message
-from textual.message_pump import MessagePump
 from textual.widgets import DataTable
 from textual.widgets.data_table import (
     CellDoesNotExist,
@@ -607,7 +606,7 @@ async def test_on_click_row_cursor():
     async with app.run_test():
         table = app.query_one(DataTable)
         table.cursor_type = "row"
-        click = make_click_event(app)
+        click = make_click_event()
         table.add_column("ABC")
         table.add_row("123")
         row_key = table.add_row("456")
@@ -616,12 +615,11 @@ async def test_on_click_row_cursor():
         assert app.message_names == ["RowHighlighted", "RowHighlighted", "RowSelected"]
 
         row_highlighted: DataTable.RowHighlighted = app.messages[1]
-        assert row_highlighted.sender is table
+
         assert row_highlighted.row_key == row_key
         assert row_highlighted.cursor_row == 1
 
         row_selected: DataTable.RowSelected = app.messages[2]
-        assert row_selected.sender is table
         assert row_selected.row_key == row_key
         assert row_highlighted.cursor_row == 1
 
@@ -636,7 +634,7 @@ async def test_on_click_column_cursor():
         column_key = table.add_column("ABC")
         table.add_row("123")
         table.add_row("456")
-        click = make_click_event(app)
+        click = make_click_event()
         table.on_click(event=click)
         await wait_for_idle(0)
         assert app.message_names == [
@@ -645,12 +643,10 @@ async def test_on_click_column_cursor():
             "ColumnSelected",
         ]
         column_highlighted: DataTable.ColumnHighlighted = app.messages[1]
-        assert column_highlighted.sender is table
         assert column_highlighted.column_key == column_key
         assert column_highlighted.cursor_column == 0
 
         column_selected: DataTable.ColumnSelected = app.messages[2]
-        assert column_selected.sender is table
         assert column_selected.column_key == column_key
         assert column_highlighted.cursor_column == 0
 
@@ -666,7 +662,6 @@ async def test_hover_coordinate():
         assert table.hover_coordinate == Coordinate(0, 0)
 
         mouse_move = MouseMove(
-            sender=app,
             x=1,
             y=2,
             delta_x=0,
@@ -691,7 +686,6 @@ async def test_header_selected():
         column_key = table.add_column("number")
         table.add_row(3)
         click_event = Click(
-            sender=table,
             x=3,
             y=0,
             delta_x=0,
@@ -705,7 +699,6 @@ async def test_header_selected():
         table.on_click(click_event)
         await pilot.pause()
         message: DataTable.HeaderSelected = app.messages[-1]
-        assert message.sender is table
         assert message.label == Text("number")
         assert message.column_index == 0
         assert message.column_key == column_key
@@ -726,7 +719,6 @@ async def test_row_label_selected():
         table.add_column("number")
         row_key = table.add_row(3, label="A")
         click_event = Click(
-            sender=table,
             x=1,
             y=1,
             delta_x=0,
@@ -740,7 +732,6 @@ async def test_row_label_selected():
         table.on_click(click_event)
         await pilot.pause()
         message: DataTable.RowLabelSelected = app.messages[-1]
-        assert message.sender is table
         assert message.label == Text("A")
         assert message.row_index == 0
         assert message.row_key == row_key

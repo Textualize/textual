@@ -44,7 +44,7 @@ class RadioSet(Container):
                 pressed: The radio button that was pressed.
             """
             super().__init__()
-            self.input = radio_set  # TODO: Why is this called "input ?"
+            self.radio_set = radio_set
             """A reference to the `RadioSet` that was changed."""
             self.pressed = pressed
             """The `RadioButton` that was pressed to make the change."""
@@ -113,16 +113,16 @@ class RadioSet(Container):
             event: The event.
         """
         # If the button is changing to be the pressed button...
-        if event.input.value:
+        if event.toggle_button.value:
             # ...send off a message to say that the pressed state has
             # changed.
             self.post_message_no_wait(
-                self.Changed(self, cast(RadioButton, event.input))
+                self.Changed(self, cast(RadioButton, event.toggle_button))
             )
             # ...then look for the button that was previously the pressed
             # one and unpress it.
             for button in self._buttons.filter(".-on"):
-                if button != event.input:
+                if button != event.toggle_button:
                     button.value = False
                     break
         else:
@@ -133,7 +133,7 @@ class RadioSet(Container):
             event.stop()
             if not self._buttons.filter(".-on"):
                 with self.prevent(RadioButton.Changed):
-                    event.input.value = True
+                    event.toggle_button.value = True
 
     @property
     def pressed_button(self) -> RadioButton | None:

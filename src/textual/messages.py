@@ -9,7 +9,6 @@ from .geometry import Region
 from .message import Message
 
 if TYPE_CHECKING:
-    from .message_pump import MessagePump
     from .widget import Widget
 
 

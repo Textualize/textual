@@ -217,7 +217,7 @@ class LinuxDriver(Driver):
                     return True
             return False
 
-        parser = XTermParser(self._target, more_data, self._debug)
+        parser = XTermParser(more_data, self._debug)
         feed = parser.feed
 
         utf8_decoder = getincrementaldecoder("utf-8")().decode

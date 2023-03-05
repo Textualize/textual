@@ -79,6 +79,7 @@ class DirectoryTree(Tree[DirEntry]):
 
         def __init__(self, path: str) -> None:
             self.path: str = path
+            super().__init__()
 
     def __init__(
         self,

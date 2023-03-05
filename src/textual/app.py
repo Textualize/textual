@@ -878,7 +878,7 @@ class App(Generic[ReturnType], DOMNode):
                 except KeyError:
                     char = key if len(key) == 1 else None
                 print(f"press {key!r} (char={char!r})")
-                key_event = events.Key(app, key, char)
+                key_event = events.Key(key, char)
                 driver.send_event(key_event)
                 await wait_for_idle(0)
 

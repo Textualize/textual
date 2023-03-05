@@ -579,7 +579,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
         # Bubble messages up the DOM (if enabled on the message)
         if message.bubble and self._parent and not message._stop_propagation:
-            if message.sender == self._parent:
+            if message._sender is not None and message._sender == self._parent:
                 # parent is sender, so we stop propagation after parent
                 message.stop()
             if self.is_parent_active and not self._parent._closing:
@@ -600,13 +600,10 @@ class MessagePump(metaclass=MessagePumpMeta):
             True if the messages was posted successfully, False if the message was not posted
                 (because the message pump was in the process of closing).
         """
-
         if self._closing or self._closed:
             return False
         if not self.check_message_enabled(message):
             return True
-        if message._sender is None:
-            message._sender = self
         # Add a copy of the prevented message types to the message
         # This is so that prevented messages are honoured by the event's handler
         message._prevent.update(self._get_prevented_messages())
@@ -626,23 +623,11 @@ class MessagePump(metaclass=MessagePumpMeta):
             return False
         if not self.check_message_enabled(message):
             return False
-        if message._sender is None:
-            message._sender = self
         # Add a copy of the prevented message types to the message
         # This is so that prevented messages are honoured by the event's handler
         message._prevent.update(self._get_prevented_messages())
         self._message_queue.put_nowait(message)
         return True
-
-    async def _post_message_from_child(self, message: Message) -> bool:
-        if self._closing or self._closed:
-            return False
-        return await self.post_message(message)
-
-    def _post_message_from_child_no_wait(self, message: Message) -> bool:
-        if self._closing or self._closed:
-            return False
-        return self.post_message_no_wait(message)
 
     async def on_callback(self, event: events.Callback) -> None:
         await invoke(event.callback)

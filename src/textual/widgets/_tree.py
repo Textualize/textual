@@ -14,7 +14,6 @@ from .._cache import LRUCache
 from .._immutable_sequence_view import ImmutableSequenceView
 from .._loop import loop_last
 from .._segment_tools import line_pad
-from .._types import MessageTarget
 from ..binding import Binding, BindingType
 from ..geometry import Region, Size, clamp
 from ..message import Message
@@ -771,7 +770,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             node._selected = True
             self._cursor_node = node
             if previous_node != node:
-                self.post_message_no_wait(self.NodeHighlighted(self, node))
+                self.post_message_no_wait(self.NodeHighlighted(node))
 
     def watch_guide_depth(self, guide_depth: int) -> None:
         self._invalidate()
@@ -1019,10 +1018,10 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             return
         if node.is_expanded:
             node.collapse()
-            self.post_message_no_wait(self.NodeCollapsed(self, node))
+            self.post_message_no_wait(self.NodeCollapsed(node))
         else:
             node.expand()
-            self.post_message_no_wait(self.NodeExpanded(self, node))
+            self.post_message_no_wait(self.NodeExpanded(node))
 
     async def _on_click(self, event: events.Click) -> None:
         meta = event.style.meta
@@ -1109,4 +1108,4 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             node = line.path[-1]
             if self.auto_expand:
                 self._toggle_node(node)
-            self.post_message_no_wait(self.NodeSelected(self, node))
+            self.post_message_no_wait(self.NodeSelected(node))

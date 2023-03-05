@@ -45,6 +45,7 @@ class ListItem(Widget, can_focus=False):
 
         def __init__(self, item: ListItem) -> None:
             self.item = item
+            super().__init__()
 
     def on_click(self, event: events.Click) -> None:
         self.post_message_no_wait(self._ChildClicked(self))

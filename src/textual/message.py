@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, ClassVar
 import rich.repr
 
 from . import _clock
+from ._context import active_message_pump
 from ._types import MessageTarget as MessageTarget
 from .case import camel_to_snake
 
@@ -17,6 +18,7 @@ class Message:
     """Base class for a message."""
 
     __slots__ = [
+        "_sender",
         "time",
         "_forwarded",
         "_no_default_action",
@@ -30,8 +32,8 @@ class Message:
     no_dispatch: ClassVar[bool] = False  # Message may not be handled by client code
     namespace: ClassVar[str] = ""  # Namespace to disambiguate messages
 
-    def __init__(self) -> None:
-        self._sender: MessageTarget | None = None
+    def __init__(self, sender: MessageTarget | None = None) -> None:
+        self._sender: MessageTarget | None = sender or active_message_pump.get(None)
         self.time: float = _clock.get_time_no_wait()
         self._forwarded = False
         self._no_default_action = False
