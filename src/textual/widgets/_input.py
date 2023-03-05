@@ -243,7 +243,7 @@ class Input(Widget, can_focus=True):
     async def watch_value(self, value: str) -> None:
         if self.styles.auto_dimensions:
             self.refresh(layout=True)
-        await self.post_message(self.Changed(self, value))
+        self.post_message(self.Changed(self, value))
 
     @property
     def cursor_width(self) -> int:
@@ -479,4 +479,4 @@ class Input(Widget, can_focus=True):
 
     async def action_submit(self) -> None:
         """Handle a submit action (normally the user hitting Enter in the input)."""
-        await self.post_message(self.Submitted(self, self.value))
+        self.post_message(self.Submitted(self, self.value))

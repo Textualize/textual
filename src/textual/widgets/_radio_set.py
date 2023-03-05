@@ -116,7 +116,7 @@ class RadioSet(Container):
         if event.toggle_button.value:
             # ...send off a message to say that the pressed state has
             # changed.
-            self.post_message_no_wait(
+            self.post_message(
                 self.Changed(self, cast(RadioButton, event.toggle_button))
             )
             # ...then look for the button that was previously the pressed

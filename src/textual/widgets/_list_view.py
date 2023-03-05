@@ -145,7 +145,7 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
             new_child = None
 
         self._scroll_highlighted_region()
-        self.post_message_no_wait(self.Highlighted(self, new_child))
+        self.post_message(self.Highlighted(self, new_child))
 
     def append(self, item: ListItem) -> AwaitMount:
         """Append a new ListItem to the end of the ListView.
@@ -178,7 +178,7 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         selected_child = self.highlighted_child
         if selected_child is None:
             return
-        self.post_message_no_wait(self.Selected(self, selected_child))
+        self.post_message(self.Selected(self, selected_child))
 
     def action_cursor_down(self) -> None:
         """Highlight the next item in the list."""
@@ -197,7 +197,7 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
     def on_list_item__child_clicked(self, event: ListItem._ChildClicked) -> None:
         self.focus()
         self.index = self._nodes.index(event.item)
-        self.post_message_no_wait(self.Selected(self, event.item))
+        self.post_message(self.Selected(self, event.item))
 
     def _scroll_highlighted_region(self) -> None:
         """Used to keep the highlighted index within vision"""

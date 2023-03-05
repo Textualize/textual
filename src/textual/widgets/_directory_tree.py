@@ -176,7 +176,7 @@ class DirectoryTree(Tree[DirEntry]):
             if not dir_entry.loaded:
                 self.load_directory(event.node)
         else:
-            self.post_message_no_wait(self.FileSelected(self, dir_entry.path))
+            self.post_message(self.FileSelected(dir_entry.path))
 
     def on_tree_node_selected(self, event: Tree.NodeSelected) -> None:
         event.stop()
@@ -184,4 +184,4 @@ class DirectoryTree(Tree[DirEntry]):
         if dir_entry is None:
             return
         if not dir_entry.is_dir:
-            self.post_message_no_wait(self.FileSelected(self, dir_entry.path))
+            self.post_message(self.FileSelected(dir_entry.path))

@@ -100,7 +100,7 @@ class MarkdownBlock(Static):
 
     async def action_link(self, href: str) -> None:
         """Called on link click."""
-        await self.post_message(Markdown.LinkClicked(href))
+        self.post_message(Markdown.LinkClicked(href))
 
 
 class MarkdownHeader(MarkdownBlock):
@@ -700,7 +700,7 @@ class Markdown(Widget):
                     )
                 )
 
-        await self.post_message(Markdown.TableOfContentsUpdated(table_of_contents))
+        self.post_message(Markdown.TableOfContentsUpdated(table_of_contents))
         with self.app.batch_update():
             await self.query("MarkdownBlock").remove()
             await self.mount_all(output)
@@ -756,7 +756,7 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
     async def on_tree_node_selected(self, message: Tree.NodeSelected) -> None:
         node_data = message.node.data
         if node_data is not None:
-            await self.post_message(
+            await self._post_message(
                 Markdown.TableOfContentsSelected(node_data["block_id"])
             )
 

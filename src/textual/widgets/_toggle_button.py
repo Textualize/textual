@@ -239,4 +239,4 @@ class ToggleButton(Static, can_focus=True):
         `False`. Subsequently a related `Changed` event will be posted.
         """
         self.set_class(self.value, "-on")
-        self.post_message_no_wait(self.Changed(self, self.value))
+        self.post_message(self.Changed(self, self.value))

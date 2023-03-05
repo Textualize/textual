@@ -115,10 +115,10 @@ class Message:
         self._stop_propagation = stop
         return self
 
-    async def _bubble_to(self, widget: MessagePump) -> None:
+    def _bubble_to(self, widget: MessagePump) -> None:
         """Bubble to a widget (typically the parent).
 
         Args:
             widget: Target of bubble.
         """
-        await widget.post_message(self)
+        widget.post_message(self)

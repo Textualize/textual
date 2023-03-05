@@ -880,7 +880,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             return
         else:
             cell_key = self.coordinate_to_cell_key(coordinate)
-            self.post_message_no_wait(
+            self.post_message(
                 DataTable.CellHighlighted(
                     cell_value, coordinate=coordinate, cell_key=cell_key
                 )
@@ -911,16 +911,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         is_valid_row = row_index < len(self._data)
         if is_valid_row:
             row_key = self._row_locations.get_key(row_index)
-            self.post_message_no_wait(DataTable.RowHighlighted(row_index, row_key))
+            self.post_message(DataTable.RowHighlighted(row_index, row_key))
 
     def _highlight_column(self, column_index: int) -> None:
         """Apply highlighting to the column at the given index, and post event."""
         self.refresh_column(column_index)
         if column_index < len(self.columns):
             column_key = self._column_locations.get_key(column_index)
-            self.post_message_no_wait(
-                DataTable.ColumnHighlighted(column_index, column_key)
-            )
+            self.post_message(DataTable.ColumnHighlighted(column_index, column_key))
 
     def validate_cursor_coordinate(self, value: Coordinate) -> Coordinate:
         return self._clamp_cursor_coordinate(value)
@@ -1819,11 +1817,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             message = DataTable.HeaderSelected(
                 column.key, column_index, label=column.label
             )
-            self.post_message_no_wait(message)
+            self.post_message(message)
         elif is_row_label_click:
             row = self.ordered_rows[row_index]
             message = DataTable.RowLabelSelected(row.key, row_index, label=row.label)
-            self.post_message_no_wait(message)
+            self.post_message(message)
         elif self.show_cursor and self.cursor_type != "none":
             # Only post selection events if there is a visible row/col/cell cursor.
             self.cursor_coordinate = Coordinate(row_index, column_index)
@@ -1880,7 +1878,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         cursor_type = self.cursor_type
         cell_key = self.coordinate_to_cell_key(cursor_coordinate)
         if cursor_type == "cell":
-            self.post_message_no_wait(
+            self.post_message(
                 DataTable.CellSelected(
                     self.get_cell_at(cursor_coordinate),
                     coordinate=cursor_coordinate,
@@ -1890,10 +1888,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         elif cursor_type == "row":
             row_index, _ = cursor_coordinate
             row_key, _ = cell_key
-            self.post_message_no_wait(DataTable.RowSelected(row_index, row_key))
+            self.post_message(DataTable.RowSelected(row_index, row_key))
         elif cursor_type == "column":
             _, column_index = cursor_coordinate
             _, column_key = cell_key
-            self.post_message_no_wait(
-                DataTable.ColumnSelected(column_index, column_key)
-            )
+            self.post_message(DataTable.ColumnSelected(column_index, column_key))

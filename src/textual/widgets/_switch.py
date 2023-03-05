@@ -124,7 +124,7 @@ class Switch(Widget, can_focus=True):
             self.animate("slider_pos", target_slider_pos, duration=0.3)
         else:
             self.slider_pos = target_slider_pos
-        self.post_message_no_wait(self.Changed(self, self.value))
+        self.post_message(self.Changed(self, self.value))
 
     def watch_slider_pos(self, slider_pos: float) -> None:
         self.set_class(slider_pos == 1, "-on")

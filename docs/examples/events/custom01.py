@@ -24,9 +24,9 @@ class ColorButton(Static):
         self.styles.background = Color.parse("#ffffff33")
         self.styles.border = ("tall", self.color)
 
-    async def on_click(self) -> None:
+    def on_click(self) -> None:
         # The post_message method sends an event to be handled in the DOM
-        await self.post_message(self.Selected(self.color))
+        self.post_message(self.Selected(self.color))
 
     def render(self) -> str:
         return str(self.color)

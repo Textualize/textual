@@ -525,7 +525,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         self._exit = True
         self._return_value = result
-        self.post_message_no_wait(messages.ExitApp())
+        self.post_message(messages.ExitApp())
         if message:
             self._exit_renderables.append(message)
 
@@ -1272,7 +1272,7 @@ class App(Generic[ReturnType], DOMNode):
             The screen that was replaced.
 
         """
-        screen.post_message_no_wait(events.ScreenSuspend())
+        screen.post_message(events.ScreenSuspend())
         self.log.system(f"{screen} SUSPENDED")
         if not self.is_screen_installed(screen) and screen not in self._screen_stack:
             screen.remove()
@@ -1288,7 +1288,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         next_screen, await_mount = self._get_screen(screen)
         self._screen_stack.append(next_screen)
-        self.screen.post_message_no_wait(events.ScreenResume())
+        self.screen.post_message(events.ScreenResume())
         self.log.system(f"{self.screen} is current (PUSHED)")
         return await_mount
 
@@ -1303,7 +1303,7 @@ class App(Generic[ReturnType], DOMNode):
             self._replace_screen(self._screen_stack.pop())
             next_screen, await_mount = self._get_screen(screen)
             self._screen_stack.append(next_screen)
-            self.screen.post_message_no_wait(events.ScreenResume())
+            self.screen.post_message(events.ScreenResume())
             self.log.system(f"{self.screen} is current (SWITCHED)")
             return await_mount
         return AwaitMount(self.screen, [])
@@ -1382,7 +1382,7 @@ class App(Generic[ReturnType], DOMNode):
             )
         previous_screen = self._replace_screen(screen_stack.pop())
         self.screen._screen_resized(self.size)
-        self.screen.post_message_no_wait(events.ScreenResume())
+        self.screen.post_message(events.ScreenResume())
         self.log.system(f"{self.screen} is active")
         return previous_screen
 
@@ -1395,7 +1395,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         self.screen.set_focus(widget, scroll_visible)
 
-    async def _set_mouse_over(self, widget: Widget | None) -> None:
+    def _set_mouse_over(self, widget: Widget | None) -> None:
         """Called when the mouse is over another widget.
 
         Args:
@@ -1404,16 +1404,16 @@ class App(Generic[ReturnType], DOMNode):
         if widget is None:
             if self.mouse_over is not None:
                 try:
-                    await self.mouse_over.post_message(events.Leave())
+                    self.mouse_over.post_message(events.Leave())
                 finally:
                     self.mouse_over = None
         else:
             if self.mouse_over is not widget:
                 try:
                     if self.mouse_over is not None:
-                        await self.mouse_over._forward_event(events.Leave())
+                        self.mouse_over._forward_event(events.Leave())
                     if widget is not None:
-                        await widget._forward_event(events.Enter())
+                        widget._forward_event(events.Enter())
                 finally:
                     self.mouse_over = widget
 
@@ -1426,12 +1426,10 @@ class App(Generic[ReturnType], DOMNode):
         if widget == self.mouse_captured:
             return
         if self.mouse_captured is not None:
-            self.mouse_captured.post_message_no_wait(
-                events.MouseRelease(self.mouse_position)
-            )
+            self.mouse_captured.post_message(events.MouseRelease(self.mouse_position))
         self.mouse_captured = widget
         if widget is not None:
-            widget.post_message_no_wait(events.MouseCapture(self.mouse_position))
+            widget.post_message(events.MouseCapture(self.mouse_position))
 
     def panic(self, *renderables: RenderableType) -> None:
         """Exits the app then displays a message.
@@ -1953,19 +1951,19 @@ class App(Generic[ReturnType], DOMNode):
             if isinstance(event, events.MouseEvent):
                 # Record current mouse position on App
                 self.mouse_position = Offset(event.x, event.y)
-                await self.screen._forward_event(event)
+                self.screen._forward_event(event)
             elif isinstance(event, events.Key):
                 if not await self.check_bindings(event.key, priority=True):
                     forward_target = self.focused or self.screen
-                    await forward_target._forward_event(event)
+                    forward_target._forward_event(event)
             else:
-                await self.screen._forward_event(event)
+                self.screen._forward_event(event)
 
         elif isinstance(event, events.Paste) and not event.is_forwarded:
             if self.focused is not None:
-                await self.focused._forward_event(event)
+                self.focused._forward_event(event)
             else:
-                await self.screen._forward_event(event)
+                self.screen._forward_event(event)
         else:
             await super().on_event(event)
 
@@ -2092,7 +2090,7 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _on_resize(self, event: events.Resize) -> None:
         event.stop()
-        await self.screen.post_message(event)
+        self.screen.post_message(event)
 
     def _detach_from_dom(self, widgets: list[Widget]) -> list[Widget]:
         """Detach a list of widgets from the DOM.

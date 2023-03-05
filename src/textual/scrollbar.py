@@ -299,10 +299,10 @@ class ScrollBar(Widget):
         self.mouse_over = False
 
     def action_scroll_down(self) -> None:
-        self.post_message_no_wait(ScrollDown() if self.vertical else ScrollRight())
+        self.post_message(ScrollDown() if self.vertical else ScrollRight())
 
     def action_scroll_up(self) -> None:
-        self.post_message_no_wait(ScrollUp() if self.vertical else ScrollLeft())
+        self.post_message(ScrollUp() if self.vertical else ScrollLeft())
 
     def action_grab(self) -> None:
         self.capture_mouse()
@@ -355,7 +355,7 @@ class ScrollBar(Widget):
                         * (virtual_size / self.window_size)
                     )
                 )
-            await self.post_message(ScrollTo(x=x, y=y))
+            self.post_message(ScrollTo(x=x, y=y))
         event.stop()
 
     async def _on_click(self, event: events.Click) -> None:

@@ -48,7 +48,7 @@ class ListItem(Widget, can_focus=False):
             super().__init__()
 
     def on_click(self, event: events.Click) -> None:
-        self.post_message_no_wait(self._ChildClicked(self))
+        self.post_message(self._ChildClicked(self))
 
     def watch_highlighted(self, value: bool) -> None:
         self.set_class(value, "--highlight")

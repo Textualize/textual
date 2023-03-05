@@ -340,7 +340,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         # out anything already pending in our own queue.
 
         message = messages.InvokeLater(partial(callback, *args, **kwargs))
-        self.post_message_no_wait(message)
+        self.post_message(message)
 
     def call_later(self, callback: Callable, *args, **kwargs) -> None:
         """Schedule a callback to run after all messages are processed in this object.
@@ -352,7 +352,7 @@ class MessagePump(metaclass=MessagePumpMeta):
             **kwargs: Keyword arguments to pass to the callable.
         """
         message = events.Callback(callback=partial(callback, *args, **kwargs))
-        self.post_message_no_wait(message)
+        self.post_message(message)
 
     def call_next(self, callback: Callable, *args, **kwargs) -> None:
         """Schedule a callback to run immediately after processing the current message.
@@ -583,15 +583,17 @@ class MessagePump(metaclass=MessagePumpMeta):
                 # parent is sender, so we stop propagation after parent
                 message.stop()
             if self.is_parent_active and not self._parent._closing:
-                await message._bubble_to(self._parent)
+                message._bubble_to(self._parent)
 
     def check_idle(self) -> None:
         """Prompt the message pump to call idle if the queue is empty."""
         if self._message_queue.empty():
-            self.post_message_no_wait(messages.Prompt())
+            self.post_message(messages.Prompt())
 
-    async def post_message(self, message: Message) -> bool:
+    async def _post_message(self, message: Message) -> bool:
         """Post a message or an event to this message pump.
+
+        This is an internal method for use where a coroutine is required.
 
         Args:
             message: A message object.
@@ -600,17 +602,9 @@ class MessagePump(metaclass=MessagePumpMeta):
             True if the messages was posted successfully, False if the message was not posted
                 (because the message pump was in the process of closing).
         """
-        if self._closing or self._closed:
-            return False
-        if not self.check_message_enabled(message):
-            return True
-        # Add a copy of the prevented message types to the message
-        # This is so that prevented messages are honoured by the event's handler
-        message._prevent.update(self._get_prevented_messages())
-        await self._message_queue.put(message)
-        return True
+        return self.post_message(message)
 
-    def post_message_no_wait(self, message: Message) -> bool:
+    def post_message(self, message: Message) -> bool:
         """Posts a message on the queue.
 
         Args:

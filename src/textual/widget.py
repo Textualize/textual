@@ -2491,9 +2491,9 @@ class Widget(DOMNode):
             return Style()
         return self.screen.get_style_at(*screen_offset)
 
-    async def _forward_event(self, event: events.Event) -> None:
+    def _forward_event(self, event: events.Event) -> None:
         event._set_forwarded()
-        await self.post_message(event)
+        self.post_message(event)
 
     def _refresh_scroll(self) -> None:
         """Refreshes the scroll position."""
@@ -2579,7 +2579,7 @@ class Widget(DOMNode):
         """
         await self.app.action(action, self)
 
-    async def post_message(self, message: Message) -> bool:
+    def post_message(self, message: Message) -> bool:
         """Post a message to this widget.
 
         Args:
@@ -2588,11 +2588,9 @@ class Widget(DOMNode):
         Returns:
             True if the message was posted, False if this widget was closed / closing.
         """
-        if not self.check_message_enabled(message):
-            return True
         if not self.is_running:
             self.log.warning(self, f"IS NOT RUNNING, {message!r} not sent")
-        return await super().post_message(message)
+        return super().post_message(message)
 
     async def _on_idle(self, event: events.Idle) -> None:
         """Called when there are no more events on the queue.
@@ -2608,13 +2606,13 @@ class Widget(DOMNode):
             else:
                 if self._scroll_required:
                     self._scroll_required = False
-                    screen.post_message_no_wait(messages.UpdateScroll())
+                    screen.post_message(messages.UpdateScroll())
                 if self._repaint_required:
                     self._repaint_required = False
-                    screen.post_message_no_wait(messages.Update(self))
+                    screen.post_message(messages.Update(self))
                 if self._layout_required:
                     self._layout_required = False
-                    screen.post_message_no_wait(messages.Layout())
+                    screen.post_message(messages.Layout())
 
     def focus(self, scroll_visible: bool = True) -> None:
         """Give focus to this widget.
@@ -2729,12 +2727,12 @@ class Widget(DOMNode):
     def _on_focus(self, event: events.Focus) -> None:
         self.has_focus = True
         self.refresh()
-        self.post_message_no_wait(events.DescendantFocus())
+        self.post_message(events.DescendantFocus())
 
     def _on_blur(self, event: events.Blur) -> None:
         self.has_focus = False
         self.refresh()
-        self.post_message_no_wait(events.DescendantBlur())
+        self.post_message(events.DescendantBlur())
 
     def _on_descendant_blur(self, event: events.DescendantBlur) -> None:
         if self._has_focus_within:

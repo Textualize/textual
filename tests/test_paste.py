@@ -11,7 +11,7 @@ async def test_paste_app():
 
     app = PasteApp()
     async with app.run_test() as pilot:
-        await app.post_message(events.Paste(text="Hello"))
+        app.post_message(events.Paste(text="Hello"))
         await pilot.pause(0)
 
     assert len(paste_events) == 1

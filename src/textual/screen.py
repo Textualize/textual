@@ -330,20 +330,20 @@ class Screen(Widget):
         if widget is None:
             # No focus, so blur currently focused widget if it exists
             if self.focused is not None:
-                self.focused.post_message_no_wait(events.Blur())
+                self.focused.post_message(events.Blur())
                 self.focused = None
             self.log.debug("focus was removed")
         elif widget.focusable:
             if self.focused != widget:
                 if self.focused is not None:
                     # Blur currently focused widget
-                    self.focused.post_message_no_wait(events.Blur())
+                    self.focused.post_message(events.Blur())
                 # Change focus
                 self.focused = widget
                 # Send focus event
                 if scroll_visible:
                     self.screen.scroll_to_widget(widget)
-                widget.post_message_no_wait(events.Focus())
+                widget.post_message(events.Focus())
                 self.log.debug(widget, "was focused")
 
     async def _on_idle(self, event: events.Idle) -> None:
@@ -381,7 +381,7 @@ class Screen(Widget):
             self.app._display(self, self._compositor.render())
             self._dirty_widgets.clear()
         if self._callbacks:
-            self.post_message_no_wait(events.InvokeCallbacks())
+            self.post_message(events.InvokeCallbacks())
 
         self.update_timer.pause()
 
@@ -439,7 +439,7 @@ class Screen(Widget):
                             if widget._size_updated(
                                 region.size, virtual_size, container_size, layout=False
                             ):
-                                widget.post_message_no_wait(
+                                widget.post_message(
                                     ResizeEvent(
                                         region.size, virtual_size, container_size
                                     )
@@ -451,7 +451,7 @@ class Screen(Widget):
                 Show = events.Show
 
                 for widget in hidden:
-                    widget.post_message_no_wait(Hide())
+                    widget.post_message(Hide())
 
                 # We want to send a resize event to widgets that were just added or change since last layout
                 send_resize = shown | resized
@@ -467,12 +467,12 @@ class Screen(Widget):
                 ) in layers:
                     widget._size_updated(region.size, virtual_size, container_size)
                     if widget in send_resize:
-                        widget.post_message_no_wait(
+                        widget.post_message(
                             ResizeEvent(region.size, virtual_size, container_size)
                         )
 
                 for widget in shown:
-                    widget.post_message_no_wait(Show())
+                    widget.post_message(Show())
 
         except Exception as error:
             self.app._handle_exception(error)
@@ -480,7 +480,7 @@ class Screen(Widget):
         display_update = self._compositor.render(full=full)
         self.app._display(self, display_update)
         if not self.app._dom_ready:
-            self.app.post_message_no_wait(events.Ready())
+            self.app.post_message(events.Ready())
             self.app._dom_ready = True
 
     async def _on_update(self, message: messages.Update) -> None:
@@ -516,7 +516,7 @@ class Screen(Widget):
         event.stop()
         self._screen_resized(event.size)
 
-    async def _handle_mouse_move(self, event: events.MouseMove) -> None:
+    def _handle_mouse_move(self, event: events.MouseMove) -> None:
         try:
             if self.app.mouse_captured:
                 widget = self.app.mouse_captured
@@ -524,9 +524,9 @@ class Screen(Widget):
             else:
                 widget, region = self.get_widget_at(event.x, event.y)
         except errors.NoWidget:
-            await self.app._set_mouse_over(None)
+            self.app._set_mouse_over(None)
         else:
-            await self.app._set_mouse_over(widget)
+            self.app._set_mouse_over(widget)
             mouse_event = events.MouseMove(
                 event.x - region.x,
                 event.y - region.y,
@@ -542,18 +542,18 @@ class Screen(Widget):
             )
             widget.hover_style = event.style
             mouse_event._set_forwarded()
-            await widget._forward_event(mouse_event)
+            widget._forward_event(mouse_event)
 
-    async def _forward_event(self, event: events.Event) -> None:
+    def _forward_event(self, event: events.Event) -> None:
         if event.is_forwarded:
             return
         event._set_forwarded()
         if isinstance(event, (events.Enter, events.Leave)):
-            await self.post_message(event)
+            self.post_message(event)
 
         elif isinstance(event, events.MouseMove):
             event.style = self.get_style_at(event.screen_x, event.screen_y)
-            await self._handle_mouse_move(event)
+            self._handle_mouse_move(event)
 
         elif isinstance(event, events.MouseEvent):
             try:
@@ -573,11 +573,9 @@ class Screen(Widget):
                 event.style = self.get_style_at(event.screen_x, event.screen_y)
                 if widget is self:
                     event._set_forwarded()
-                    await self.post_message(event)
+                    self.post_message(event)
                 else:
-                    await widget._forward_event(
-                        event._apply_offset(-region.x, -region.y)
-                    )
+                    widget._forward_event(event._apply_offset(-region.x, -region.y))
 
         elif isinstance(event, (events.MouseScrollDown, events.MouseScrollUp)):
             try:
@@ -587,8 +585,8 @@ class Screen(Widget):
             scroll_widget = widget
             if scroll_widget is not None:
                 if scroll_widget is self:
-                    await self.post_message(event)
+                    self.post_message(event)
                 else:
-                    await scroll_widget._forward_event(event)
+                    scroll_widget._forward_event(event)
         else:
-            await self.post_message(event)
+            self.post_message(event)
