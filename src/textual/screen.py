@@ -343,7 +343,7 @@ class Screen(Widget):
                 # Send focus event
                 if scroll_visible:
                     self.screen.scroll_to_widget(widget)
-                widget.post_message_no_wait(events.Focus(self))
+                widget.post_message_no_wait(events.Focus())
                 self.log.debug(widget, "was focused")
 
     async def _on_idle(self, event: events.Idle) -> None:
@@ -381,7 +381,7 @@ class Screen(Widget):
             self.app._display(self, self._compositor.render())
             self._dirty_widgets.clear()
         if self._callbacks:
-            self.post_message_no_wait(events.InvokeCallbacks(self))
+            self.post_message_no_wait(events.InvokeCallbacks())
 
         self.update_timer.pause()
 
@@ -441,7 +441,7 @@ class Screen(Widget):
                             ):
                                 widget.post_message_no_wait(
                                     ResizeEvent(
-                                        self, region.size, virtual_size, container_size
+                                        region.size, virtual_size, container_size
                                     )
                                 )
 
@@ -451,7 +451,7 @@ class Screen(Widget):
                 Show = events.Show
 
                 for widget in hidden:
-                    widget.post_message_no_wait(Hide(self))
+                    widget.post_message_no_wait(Hide())
 
                 # We want to send a resize event to widgets that were just added or change since last layout
                 send_resize = shown | resized
@@ -468,11 +468,11 @@ class Screen(Widget):
                     widget._size_updated(region.size, virtual_size, container_size)
                     if widget in send_resize:
                         widget.post_message_no_wait(
-                            ResizeEvent(self, region.size, virtual_size, container_size)
+                            ResizeEvent(region.size, virtual_size, container_size)
                         )
 
                 for widget in shown:
-                    widget.post_message_no_wait(Show(self))
+                    widget.post_message_no_wait(Show())
 
         except Exception as error:
             self.app._handle_exception(error)
@@ -480,7 +480,7 @@ class Screen(Widget):
         display_update = self._compositor.render(full=full)
         self.app._display(self, display_update)
         if not self.app._dom_ready:
-            self.app.post_message_no_wait(events.Ready(self))
+            self.app.post_message_no_wait(events.Ready())
             self.app._dom_ready = True
 
     async def _on_update(self, message: messages.Update) -> None:
@@ -528,7 +528,6 @@ class Screen(Widget):
         else:
             await self.app._set_mouse_over(widget)
             mouse_event = events.MouseMove(
-                self,
                 event.x - region.x,
                 event.y - region.y,
                 event.delta_x,

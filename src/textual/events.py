@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Awaitable, Callable, Type, TypeVar
+from typing import TYPE_CHECKING, Type, TypeVar
 
 import rich.repr
 from rich.style import Style
 
-from ._types import CallbackType, MessageTarget
+from ._types import CallbackType
 from .geometry import Offset, Size
 from .keys import _get_key_aliases
 from .message import Message

@@ -11,9 +11,6 @@ class MessageTarget(Protocol):
     async def post_message(self, message: "Message") -> bool:
         ...
 
-    async def _post_priority_message(self, message: "Message") -> bool:
-        ...
-
     def post_message_no_wait(self, message: "Message") -> bool:
         ...
 

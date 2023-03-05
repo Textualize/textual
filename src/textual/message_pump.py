@@ -287,7 +287,6 @@ class MessagePump(metaclass=MessagePumpMeta):
         timer = Timer(
             self,
             delay,
-            self,
             name=name or f"set_timer#{Timer._timer_count}",
             callback=callback,
             repeat=0,
@@ -614,28 +613,6 @@ class MessagePump(metaclass=MessagePumpMeta):
         await self._message_queue.put(message)
         return True
 
-    # TODO: This may not be needed, or may only be needed by the timer
-    # Consider removing or making private
-    async def _post_priority_message(self, message: Message) -> bool:
-        """Post a "priority" messages which will be processes prior to regular messages.
-
-        Note that you should rarely need this in a regular app. It exists primarily to allow
-        timer messages to skip the queue, so that they can be more regular.
-
-        Args:
-            message: A message.
-
-        Returns:
-            True if the messages was processed, False if it wasn't.
-        """
-        # TODO: Allow priority messages to jump the queue
-        if self._closing or self._closed:
-            return False
-        if not self.check_message_enabled(message):
-            return False
-        await self._message_queue.put(message)
-        return True
-
     def post_message_no_wait(self, message: Message) -> bool:
         """Posts a message on the queue.
 
@@ -649,6 +626,8 @@ class MessagePump(metaclass=MessagePumpMeta):
             return False
         if not self.check_message_enabled(message):
             return False
+        if message._sender is None:
+            message._sender = self
         # Add a copy of the prevented message types to the message
         # This is so that prevented messages are honoured by the event's handler
         message._prevent.update(self._get_prevented_messages())
