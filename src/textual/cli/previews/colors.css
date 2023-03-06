@@ -9,7 +9,7 @@ ColorButtons {
 }
 
 ColorButtons > Button {
-    width: 30;
+    width: 100%;
 }
 
 ColorsView {

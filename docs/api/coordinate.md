@@ -1,1 +1,1 @@
-::: textual.coordinate.Coordinate
+::: textual.coordinate

@@ -1,3 +1,5 @@
+"""Provides a Textual placeholder widget; useful when designing an app's layout."""
+
 from __future__ import annotations
 
 from itertools import cycle
@@ -8,9 +10,11 @@ from typing_extensions import Literal
 from .. import events
 from ..css._error_tools import friendly_list
 from ..reactive import Reactive, reactive
-from ..widget import RenderResult, Widget
+from ..widget import Widget
 
 PlaceholderVariant = Literal["default", "size", "text"]
+"""The different variants of placeholder."""
+
 _VALID_PLACEHOLDER_VARIANTS_ORDERED: list[PlaceholderVariant] = [
     "default",
     "size",
@@ -94,14 +98,12 @@ class Placeholder(Widget):
 
         Args:
             label: The label to identify the placeholder.
-                If no label is present, uses the placeholder ID instead. Defaults to None.
+                If no label is present, uses the placeholder ID instead.
             variant: The variant of the placeholder.
-                Defaults to "default".
             name: The name of the placeholder. Defaults to None.
             id: The ID of the placeholder in the DOM.
-                Defaults to None.
             classes: A space separated string with the CSS classes
-                of the placeholder, if any. Defaults to None.
+                of the placeholder, if any.
         """
         # Create and cache renderables for all the variants.
         self._renderables = {
@@ -115,12 +117,19 @@ class Placeholder(Widget):
         self.styles.background = f"{next(Placeholder._COLORS)} 50%"
 
         self.variant = self.validate_variant(variant)
+        """The current variant of the placeholder."""
+
         # Set a cycle through the variants with the correct starting point.
         self._variants_cycle = cycle(_VALID_PLACEHOLDER_VARIANTS_ORDERED)
         while next(self._variants_cycle) != self.variant:
             pass
 
     def render(self) -> RenderableType:
+        """Render the placeholder.
+
+        Returns:
+            The value to render.
+        """
         return self._renderables[self.variant]
 
     def cycle_variant(self) -> None:

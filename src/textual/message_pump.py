@@ -340,6 +340,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         """
         # We send the InvokeLater message to ourselves first, to ensure we've cleared
         # out anything already pending in our own queue.
+
         message = messages.InvokeLater(self, partial(callback, *args, **kwargs))
         self.post_message_no_wait(message)
 

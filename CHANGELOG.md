@@ -5,11 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.13.0] - 2023-03-02
+
+### Added
+
+- Added `Checkbox` https://github.com/Textualize/textual/pull/1872
+- Added `RadioButton` https://github.com/Textualize/textual/pull/1872
+- Added `RadioSet` https://github.com/Textualize/textual/pull/1872
+
+### Changed
+
+- Widget scrolling methods (such as `Widget.scroll_home` and `Widget.scroll_end`) now perform the scroll after the next refresh https://github.com/Textualize/textual/issues/1774
+- Buttons no longer accept arbitrary renderables https://github.com/Textualize/textual/issues/1870
 
 ### Fixed
 
+- Scrolling with cursor keys now moves just one cell https://github.com/Textualize/textual/issues/1897
 - Fix exceptions in watch methods being hidden on startup https://github.com/Textualize/textual/issues/1886
+- Fixed scrollbar size miscalculation https://github.com/Textualize/textual/pull/1910
+- Fixed slow exit on some terminals https://github.com/Textualize/textual/issues/1920
 
 ## [0.12.1] - 2023-02-25
 
@@ -515,6 +529,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.13.0]: https://github.com/Textualize/textual/compare/v0.12.1...v0.13.0
+[0.12.1]: https://github.com/Textualize/textual/compare/v0.12.0...v0.12.1
 [0.12.0]: https://github.com/Textualize/textual/compare/v0.11.1...v0.12.0
 [0.11.1]: https://github.com/Textualize/textual/compare/v0.11.0...v0.11.1
 [0.11.0]: https://github.com/Textualize/textual/compare/v0.10.1...v0.11.0

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import ClassVar
+from typing import ClassVar, Optional
 
 from textual.await_remove import AwaitRemove
 from textual.binding import Binding, BindingType
@@ -8,7 +8,7 @@ from textual.containers import Vertical
 from textual.geometry import clamp
 from textual.message import Message
 from textual.reactive import reactive
-from textual.widget import AwaitMount
+from textual.widget import AwaitMount, Widget
 from textual.widgets._list_item import ListItem
 
 
@@ -35,7 +35,7 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
     | down | Move the cursor down. |
     """
 
-    index = reactive(0, always_update=True)
+    index = reactive[Optional[int]](0, always_update=True)
 
     class Highlighted(Message, bubble=True):
         """Posted when the highlighted item changes.
@@ -96,10 +96,12 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
     @property
     def highlighted_child(self) -> ListItem | None:
         """The currently highlighted ListItem, or None if nothing is highlighted."""
-        if self.index is None:
+        if self.index is not None and 0 <= self.index < len(self._nodes):
+            list_item = self._nodes[self.index]
+            assert isinstance(list_item, ListItem)
+            return list_item
+        else:
             return None
-        elif 0 <= self.index < len(self._nodes):
-            return self._nodes[self.index]
 
     def validate_index(self, index: int | None) -> int | None:
         """Clamp the index to the valid range, or set to None if there's nothing to highlight.
@@ -129,9 +131,13 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         """Updates the highlighting when the index changes."""
         if self._is_valid_index(old_index):
             old_child = self._nodes[old_index]
+            assert isinstance(old_child, ListItem)
             old_child.highlighted = False
+
+        new_child: Widget | None
         if self._is_valid_index(new_index):
             new_child = self._nodes[new_index]
+            assert isinstance(new_child, ListItem)
             new_child.highlighted = True
         else:
             new_child = None
@@ -168,14 +174,22 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
     def action_select_cursor(self) -> None:
         """Select the current item in the list."""
         selected_child = self.highlighted_child
+        if selected_child is None:
+            return
         self.post_message_no_wait(self.Selected(self, selected_child))
 
     def action_cursor_down(self) -> None:
         """Highlight the next item in the list."""
+        if self.index is None:
+            self.index = 0
+            return
         self.index += 1
 
     def action_cursor_up(self) -> None:
         """Highlight the previous item in the list."""
+        if self.index is None:
+            self.index = 0
+            return
         self.index -= 1
 
     def on_list_item__child_clicked(self, event: ListItem._ChildClicked) -> None:

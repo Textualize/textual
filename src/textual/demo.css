@@ -1,4 +1,4 @@
- *  {
+* {
     transition: background 500ms in_out_cubic, color 500ms in_out_cubic;
 }
 
@@ -102,6 +102,7 @@ Column {
     height: auto;
     min-height: 100vh;
     align: center top;
+    overflow: hidden;
 }
 
 
@@ -125,7 +126,7 @@ DarkSwitch Switch {
 }
 
 
-Screen > Container {
+Screen>Container {
     height: 100%;
     overflow: hidden;
 }
@@ -222,7 +223,7 @@ LoginForm {
     border: wide $background;
 }
 
-LoginForm Button{
+LoginForm Button {
     margin: 0 1;
     width: 100%;
 }
@@ -250,7 +251,7 @@ Window {
     max-height: 16;
 }
 
-Window > Static {
+Window>Static {
     width: auto;
 }
 

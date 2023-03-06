@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Awaitable, Callable, Type, TypeVar
 import rich.repr
 from rich.style import Style
 
-from ._types import MessageTarget
+from ._types import CallbackType, MessageTarget
 from .geometry import Offset, Size
 from .keys import _get_key_aliases
 from .message import Message
@@ -28,11 +28,7 @@ class Event(Message):
 
 @rich.repr.auto
 class Callback(Event, bubble=False, verbose=True):
-    def __init__(
-        self,
-        sender: MessageTarget,
-        callback: Callable[[], Awaitable[None]],
-    ) -> None:
+    def __init__(self, sender: MessageTarget, callback: CallbackType) -> None:
         self.callback = callback
         super().__init__(sender)
 
