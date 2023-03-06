@@ -871,13 +871,12 @@ class App(Generic[ReturnType], DOMNode):
                 if len(key) == 1 and not key.isalnum():
                     key = _character_to_key(key)
                 original_key = REPLACED_KEYS.get(key, key)
-                print(f"original key is {original_key}")
                 char: str | None
                 try:
                     char = unicodedata.lookup(_get_unicode_name_from_key(original_key))
                 except KeyError:
                     char = key if len(key) == 1 else None
-                print(f"char is {char!r}")
+                print(f"press {key!r} (char={char!r})")
                 key_event = events.Key(app, key, char)
                 driver.send_event(key_event)
                 await wait_for_idle(0)
