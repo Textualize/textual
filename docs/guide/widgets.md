@@ -194,10 +194,6 @@ Let's modify the default width for the fizzbuzz example. By default, the table w
 Note that we've added `expand=True` to tell the `Table` to expand beyond the optimal width, so that it fills the 50 characters returned by `get_content_width`.
 
 
-## Compound widgets
-
-TODO: Explanation of compound widgets
-
 ## Line API
 
 A downside of widgets that return Rich renderables is that Textual will redraw the entire widget when its state is updated or it changes size.
@@ -388,3 +384,191 @@ The following builtin widgets use the Line API. If you are building advanced wid
 - [DataTable](https://github.com/Textualize/textual/blob/main/src/textual/widgets/_data_table.py)
 - [TextLog](https://github.com/Textualize/textual/blob/main/src/textual/widgets/_text_log.py)
 - [Tree](https://github.com/Textualize/textual/blob/main/src/textual/widgets/_tree.py)
+
+## Compound widgets
+
+Widgets may be combined to create new widgets with additional features.
+Such widgets are known as *compound widgets*.
+The stopwatch in the [tutorial](./../tutorial.md) is an example of a compound widget.
+
+A compound widget can be used like any other widget.
+The only thing that differs is that when you build a compound widget, you write a `compose()` method which yields *child* widgets, rather than implement a `render` or `render_line` method.
+
+The following is an example of a compound widget.
+
+=== "compound01.py"
+
+    ```python title="compound01.py" hl_lines="28-30 44-47"
+    --8<-- "docs/examples/guide/compound/compound01.py"
+    ```
+
+    1. The `compose` method makes this widget a *compound* widget.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/compound/compound01.py"}
+    ```
+
+The `InputWithLabel` class bundles an [Input](../widgets/input.md) with a [Label](../widgets/label.md) to create a new widget that displays a right-aligned label next to an input control. You can re-use this `InputWithLabel` class anywhere in a Textual app, including in other widgets.
+
+## Coordinating widgets
+
+Widgets rarely exist in isolation, and often need to communicate or exchange data with other parts of your app.
+This is not difficult to do, but there is a risk that widgets can become dependant on each other, making it impossible to reuse a widget without copying a lot of dependant code.
+
+In this section we will show how to design and build a fully-working app, while keeping widgets reusable.
+
+### Designing the app
+
+We are going to build a *byte editor* which allows you to enter a number in both decimal and binary. You could use this a teaching aid for binary numbers.
+
+Here's a sketch of what the app should ultimately look like:
+
+!!! tip
+
+    There are plenty of resources on the web, such as this [excellent video from Khan Academy](https://www.khanacademy.org/math/algebra-home/alg-intro-to-algebra/algebra-alternate-number-bases/v/number-systems-introduction) if you want to brush up on binary numbers.
+
+
+<div class="excalidraw">
+--8<-- "docs/images/byte01.excalidraw.svg"
+</div>
+
+There are three types of built-in widget in the sketch, namely ([Input](../widgets/input.md), [Label](../widgets/label.md), and [Switch](../widgets/switch.md)). Rather than manage these as a single collection of widgets, we can arrange them in to logical groups with compound widgets. This will make our app easier to work with.
+
+###  Identifying components
+
+We will divide this UI into three compound widgets:
+
+1. `BitSwitch` for a switch with a numeric label.
+2. `ByteInput` which contains 8 `BitSwitch` widgets.
+3. `ByteEditor` which contains a `ByteInput` and an [Input](../widgets/input.md) to show the decimal value.
+
+This is not the only way we could implement our design with compound widgets.
+So why these three widgets?
+As a rule of thumb, a widget should handle one piece of data, which is why we have an independent widget for a bit, a byte, and the decimal value.
+
+<div class="excalidraw">
+--8<-- "docs/images/byte02.excalidraw.svg"
+</div>
+
+In the following code we will implement the three widgets. There will be no functionality yet, but it should look like our design.
+
+=== "byte01.py"
+
+    ```python title="byte01.py" hl_lines="28-30 48-50 67-71"
+    --8<-- "docs/examples/guide/compound/byte01.py"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/compound/byte01.py" columns="90" line="30"}
+    ```
+
+Note the `compose()` methods of each of the widgets.
+
+- The `BitSwitch` yields a [Label](../widgets/label.md) which displays the bit number, and a [Switch](../widgets/switch.md) control for that bit. The default CSS for `BitSwitch` aligns its children vertically, and sets the label's [text-align](../styles/text_align.md) to center.
+
+- The `ByteInput` yields 8 `BitSwitch` widgets and arranges them horizontally. It also adds a `focus-within` style in its CSS to draw an accent border when any of the switches are focused.
+
+- The `ByteEditor` yields a `ByteInput` and an `Input` control. The default CSS stacks the two controls on top of each other to divide the screen in to two parts.
+
+With these three widgets, the [DOM](CSS.md#the-dom) for our app will look like this:
+
+<div class="excalidraw">
+--8<-- "docs/images/byte_input_dom.excalidraw.svg"
+</div>
+
+Now that we have the design in place, we can implement the behavior.
+
+
+### Data flow
+
+We want to ensure that our widgets are re-usable, which we can do by following the guideline of "attributes down, messages up". This means that a widget can update a child by setting its attributes or calling its methods, but widgets should only ever send [messages](./events.md) to their *parent* (or other ancestors).
+
+!!! info
+
+    This pattern of only setting attributes in one direction and using messages for the opposite direction is known as *uni-directional data flow*.
+
+In practice, this means that to update a child widget you get a reference to it and use it like any other Python object. Here's an example of an [action](actions.md) that updates a child widget:
+
+```python
+def action_set_true(self):
+    self.query_one(Switch).value = 1
+```
+
+If a child needs to update a parent, it should send a message with [post_message][textual.message_pump.MessagePump.post_message].
+
+Here's an example of posting message:
+
+```python
+def on_click(self):
+    self.post_message(MyWidget.Change(active=True))
+```
+
+Note that *attributes down and messages up* means that you can't modify widgets on the same level directly. If you want to modify a *sibling*, you will need to send a message to the parent, and the parent would make the changes.
+
+The following diagram illustrates this concept:
+
+
+<div class="excalidraw">
+--8<-- "docs/images/attributes_messages.excalidraw.svg"
+</div>
+
+### Messages up
+
+Let's extend the `ByteEditor` so that clicking any of the 8 `BitSwitch` widgets updates the decimal value. To do this we will add a custom message to `BitSwitch` that we catch in the `ByteEditor`.
+
+=== "byte02.py"
+
+    ```python title="byte02.py" hl_lines="5-6 26-32 34 44-48 91-96"
+    --8<-- "docs/examples/guide/compound/byte02.py"
+    ```
+
+    1. This will store the value of the "bit".
+    2. This is sent by the builtin `Switch` widgets, when it changes state.
+    3. Stop the event, because we don't want it to go to the parent.
+    4. Store the new value of the "bit".
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/compound/byte02.py" columns="90" line="30", press="tab,tab,tab,tab,enter"}
+    ```
+
+- The `BitSwitch` widget now has an `on_switch_changed` method which will handle a [`Switch.Changed`][textual.widgets.Switch.Changed] message, sent when the user clicks a switch. We use this to store the new value of the bit, and sent a new custom message, `BitSwitch.BitChanged`.
+- The `ByteEditor` widget handles the `BitSwitch.Changed` message by calculating the decimal value and setting it on the input.
+
+The following is a (simplified) DOM diagram to show how the new message is processed:
+
+<div class="excalidraw">
+--8<-- "docs/images/bit_switch_message.excalidraw.svg"
+</div>
+
+
+### Attributes down
+
+We also want the switches to update if the user edits the decimal value.
+
+Since the switches are children of `ByteEditor` we can update them by setting their attributes directly.
+This is an example of "attributes down".
+
+=== "byte02.py"
+
+    ```python title="byte03.py" hl_lines="5 45-47 90 92-94 109-114 116-120"
+    --8<-- "docs/examples/guide/compound/byte03.py"
+    ```
+
+    1. When the `BitSwitch`'s value changed, we want to update the builtin `Switch` to match.
+    2. Ensure the value is in a the range of a byte.
+    3. Handle the `Input.Changed` event when the user modified the value in the input.
+    4. When the `ByteEditor` value changes, update all the switches to match.
+    5. Prevent the `BitChanged` message from being sent.
+    6. Because `switch` is a child, we can set its attributes directly.
+
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/compound/byte03.py" columns="90" line="30", press="tab,1,0,0"}
+    ```
+
+- When the user edits the input, the [Input](../widgets/input.md) widget sends a `Changed` event, which we handle with `on_input_changed` by setting `self.value`, which is a reactive value we added to `ByteEditor`.
+- If the value has changed, Textual will call `watch_value` which sets the value of each of the eight switches. Because we are working with children of the `ByteEditor`, we can set attributes directly without going via a message.
