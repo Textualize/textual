@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: The Timer class now has just one method to stop it, `Timer.stop` which is non sync https://github.com/Textualize/textual/pull/1940
 - Breaking change: Messages don't require a `sender` in their constructor https://github.com/Textualize/textual/pull/1940
 - Many messages have grown a `control` property which returns the control they relate to. https://github.com/Textualize/textual/pull/1940
-
+- Dropped `time` attribute from Messages https://github.com/Textualize/textual/pull/1940
 
 ### Added
 

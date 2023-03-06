@@ -19,7 +19,6 @@ class Message:
 
     __slots__ = [
         "_sender",
-        "time",
         "_forwarded",
         "_no_default_action",
         "_stop_propagation",
@@ -34,7 +33,6 @@ class Message:
 
     def __init__(self) -> None:
         self._sender: MessageTarget | None = active_message_pump.get(None)
-        self.time: float = _clock.get_time_no_wait()
         self._forwarded = False
         self._no_default_action = False
         self._stop_propagation = False
