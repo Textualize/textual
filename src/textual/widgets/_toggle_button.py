@@ -65,6 +65,7 @@ class ToggleButton(Static, can_focus=True):
 
     ToggleButton > .toggle--button {
         color: $background;
+        text-style: bold;
         background: $foreground 15%;
     }
 
@@ -99,7 +100,7 @@ class ToggleButton(Static, can_focus=True):
     BUTTON_LEFT: str = "▐"
     """The character used for the left side of the toggle button."""
 
-    BUTTON_INNER: str = "✖"
+    BUTTON_INNER: str = "X"
     """The character used for the inside of the button."""
 
     BUTTON_RIGHT: str = "▌"
