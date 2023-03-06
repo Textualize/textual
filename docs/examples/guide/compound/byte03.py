@@ -117,7 +117,7 @@ class ByteEditor(Widget):
         """When self.value changes, update switches."""
         for switch in self.query(BitSwitch):
             with switch.prevent(BitSwitch.BitChanged):  # (5)!
-                switch.value = bool(value & 1 << switch.bit)  # (6)!
+                switch.value = bool(value & (1 << switch.bit))  # (6)!
 
 
 class ByteInputApp(App):
