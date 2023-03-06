@@ -35,7 +35,7 @@ class RadioSetChangedApp(App[None]):
             f"Pressed button label: {event.pressed.label}"
         )
         self.query_one("#index", Label).update(
-            f"Pressed button index: {event.input.pressed_index}"
+            f"Pressed button index: {event.radio_set.pressed_index}"
         )
 
 
