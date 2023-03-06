@@ -534,7 +534,7 @@ Let's extend the `ByteEditor` so that clicking any of the 8 `BitSwitch` widgets 
     ```{.textual path="docs/examples/guide/compound/byte02.py" columns="90" line="30", press="tab,tab,tab,tab,enter"}
     ```
 
-- The `BitSwitch` widget now has an `on_switch_changed` which will handle a [Switch.Changed][textual.widgets.Switch.Changed] message, sent when the user clicks a switch. We use this to store the new value of the bit, and sent a new custom message, `BitSwitch.BitChanged`.
+- The `BitSwitch` widget now has an `on_switch_changed` method which will handle a [`Switch.Changed`][textual.widgets.Switch.Changed] message, sent when the user clicks a switch. We use this to store the new value of the bit, and sent a new custom message, `BitSwitch.BitChanged`.
 - The `ByteEditor` widget handles the `BitSwitch.Changed` message by calculating the decimal value and setting it on the input.
 
 The following is a (simplified) DOM diagram to show how the new message is processed:
