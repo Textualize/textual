@@ -394,9 +394,31 @@ The Stopwatch in the [tutorial](./../tutorial.md) is an example of a compound wi
 A compound widget can be used like any other widget.
 The only thing that differs is that when you build a compound widget, you write a `compose()` method which yields *child* widgets, rather than implement `render` or `render_line` method.
 
-### Designing the app
+The following is an example of a compound widget.
 
-Let's design and build an app with compound widgets.
+=== "compound01.py"
+
+    ```python title="compound01.py" hl_lines="28-30 44-47"
+    --8<-- "docs/examples/guide/compound/compound01.py"
+    ```
+
+    1. The `compose` method makes this widget a *compound* widget.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/compound/compound01.py"}
+    ```
+
+The `InputWithLabel` class bundles an [Input](../widgets/input.md) with a [Label](../widgets/label.md) to create a new widget that displays a right aligned label next to an input control. You can re-use this `InputWithLabel` class anywhere in a Textual app, including in other widgets.
+
+## Coordinating widgets
+
+Widgets rarely exist in isolation, and often need to communicate or exchange data with other parts of your app.
+This is not difficult to do, but there is a risk that widgets can become dependant on each other, making it impossible to re-use a widget without copying a lot of dependant code.
+
+In this section we will show how to design and build a fully working app, while keeping widgets re-usable.
+
+### Designing the app
 
 In the following sketch we have 8 switches, one for each bit in a byte. There is also an input control with a decimal number. The idea is that we can update the decimal number, either by editing it directly or by pressing the switches. You could use this a teaching aid for binary numbers.
 
@@ -459,15 +481,13 @@ Now that we have the design in place, we can implement the behavior.
 
 ### Data flow
 
-Custom widgets can be as re-usable as Textual's builtin widgets. You can place a custom widget anywhere in your app and it will work as expected, or use it in another app entirely. Perhaps even publishing your widgets on [PyPi](https://pypi.org/).
-
-Building a re-usable widget is straightforward if you follow the guideline of "attributes down, messages up". This means that a widget can update its children by setting a child's attributes (often *reactive* attributes) or calling the child's methods, but widgets should only ever send [messages](./events.md) to their *parent*.
+We want to ensure that our widgets are re-usable, which we can do by following the guideline of "attributes down, messages up". This means that a widget can update a child by setting its attributes or calling its methods, but widgets should only ever send [messages](./events.md) to their *parent*.
 
 !!! info
 
     This pattern of only setting attributes in one direction and using messages for the opposite direction is known as *uni-directional data flow*.
 
-In practice, this means that to update a child widget you get a reference to it and use its public attributes and methods like any other Python object. Here's an example of an [action](actions.md) that updates a child widget:
+In practice, this means that to update a child widget you get a reference to it and use it like any other Python object. Here's an example of an [action](actions.md) that updates a child widget:
 
 ```python
 def action_set_true(self):
@@ -512,10 +532,10 @@ Let's extend the ByteEditor so that clicking any of the 8 `BitSwitch` widgets up
     ```{.textual path="docs/examples/guide/compound/byte02.py" columns="90" line="30", press="tab,tab,tab,tab,enter"}
     ```
 
-- The `BitSwitch` widget now has an `on_switch_changed` which will handle a [Switch.Changed][textual.widgets.switch.Switch] message, sent when the user clicks a switch. We use this to store the new value of the bit, and sent a new custom message, `BitSwitch.BitChanged`.
+- The `BitSwitch` widget now has an `on_switch_changed` which will handle a [Switch.Changed][textual.widgets.Switch.Changed] message, sent when the user clicks a switch. We use this to store the new value of the bit, and sent a new custom message, `BitSwitch.BitChanged`.
 - The `ByteEditor` widget handles the `BitSwitch.Changed` message by calculating the decimal value and setting it on the input.
 
-The following is a (simplified) DOM diagram to show how the new messages are processed:
+The following is a (simplified) DOM diagram to show how the new message is processed:
 
 <div class="excalidraw">
 --8<-- "docs/images/bit_switch_message.excalidraw.svg"
@@ -524,7 +544,10 @@ The following is a (simplified) DOM diagram to show how the new messages are pro
 
 ### Attributes down
 
-We also want the switches to update if the user edits the decimal value. To do this, the `ByteEditor` widget should respond to the input changing, and then modify the switches. Because the switches are children of `ByteEditor` we can update them by setting their attributes directly. This is an example of "attributes down".
+We also want the switches to update if the user edits the decimal value.
+To do this, the `ByteEditor` widget should respond to the input changing by updating the switches.
+Because the switches are children of `ByteEditor` we can update them by setting their attributes directly.
+This is an example of "attributes down".
 
 === "byte02.py"
 
