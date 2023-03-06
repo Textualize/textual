@@ -516,7 +516,7 @@ The following diagram illustrates this concept:
 
 ### Messages up
 
-Let's extend the ByteEditor so that clicking any of the 8 `BitSwitch` widgets updates the decimal value. To do this we will add a custom message to `BitSwitch` that we catch in the `ByteEditor`.
+Let's extend the `ByteEditor` so that clicking any of the 8 `BitSwitch` widgets updates the decimal value. To do this we will add a custom message to `BitSwitch` that we catch in the `ByteEditor`.
 
 === "byte02.py"
 
