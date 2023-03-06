@@ -31,6 +31,25 @@ The example below shows two radio sets, one built using a collection of
 
 ### ::: textual.widgets.RadioSet.Changed
 
+Here is an example of using the message to react to changes in a `RadioSet`:
+
+=== "Output"
+
+    ```{.textual path="docs/examples/widgets/radio_set_changed.py" press="enter"}
+    ```
+
+=== "radio_set_changed.py"
+
+    ```python
+    --8<-- "docs/examples/widgets/radio_set_changed.py"
+    ```
+
+=== "radio_set_changed.css"
+
+    ```sass
+    --8<-- "docs/examples/widgets/radio_set_changed.css"
+    ```
+
 ## See Also
 
 - [RadioSet](../api/radioset.md) code reference
