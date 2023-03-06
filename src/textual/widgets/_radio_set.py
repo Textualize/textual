@@ -116,7 +116,7 @@ class RadioSet(Container):
         if event.radio_button.value:
             # ...send off a message to say that the pressed state has
             # changed.
-            self.post_message(self.Changed(self, cast(RadioButton, event.radio_button)))
+            self.post_message(self.Changed(self, event.radio_button))
             # ...then look for the button that was previously the pressed
             # one and unpress it.
             for button in self._buttons.filter(".-on"):
