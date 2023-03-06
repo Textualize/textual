@@ -560,7 +560,7 @@ This is an example of "attributes down".
     1. When the `BitSwitch`'s value changed, we want to update the builtin `Switch` to match.
     2. Ensure the value is in a the range of a byte.
     3. Handle the `Input.Changed` event when the user modified the value in the input.
-    4. When the ByteEditor value changes, update all the switches to match.
+    4. When the `ByteEditor` value changes, update all the switches to match.
     5. Prevent the `BitChanged` message from being sent.
     6. Because `switch` is a child, we can set its attributes directly.
 
