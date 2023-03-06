@@ -7,6 +7,7 @@ import rich.repr
 
 from ._wait import wait_for_idle
 from .app import App, ReturnType
+from .geometry import Offset
 
 
 @rich.repr.auto(angular=True)
@@ -33,6 +34,28 @@ class Pilot(Generic[ReturnType]):
         """
         if keys:
             await self._app._press_keys(keys)
+
+    async def click(
+        self, selector: str | None = None, offset: Offset = Offset()
+    ) -> None:
+        """Simulate clicking with the mouse.
+
+        Args:
+            selector: The widget that should be clicked. If None, then the click
+                will occur relative to the screen.
+            offset: The offset to click within the selected widget.
+        """
+
+    async def hover(
+        self, selector: str | None = None, offset: Offset = Offset()
+    ) -> None:
+        """Simulate hovering with the mouse cursor.
+
+        Args:
+            selector: The widget that should be hovered. If None, then the click
+                will occur relative to the screen.
+            offset: The offset to hover over within the selected widget.
+        """
 
     async def pause(self, delay: float | None = None) -> None:
         """Insert a pause.
