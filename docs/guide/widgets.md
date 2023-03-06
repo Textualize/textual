@@ -470,7 +470,7 @@ Note the `compose()` methods of each of the widgets.
 
 - The `ByteInput` yields 8 `BitSwitch` widgets and arranges them horizontally. It also adds a `focus-within` style in its CSS to draw an accent border when any of the switches are focused.
 
-- The `ByteEditor` yields a `ByteInput` and an Input control. The default CSS stacks the two controls on top of each other to divide the screen in to two parts.
+- The `ByteEditor` yields a `ByteInput` and an `Input` control. The default CSS stacks the two controls on top of each other to divide the screen in to two parts.
 
 With these three widgets, the [DOM](CSS.md#the-dom) for our app will look like this:
 
