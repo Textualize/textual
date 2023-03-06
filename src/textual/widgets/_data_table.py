@@ -828,6 +828,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._clear_caches()
         self.refresh()
 
+    def on_resize(self, event: events.Resize) -> None:
+        self._update_count += 1
+
     def watch_show_cursor(self, show_cursor: bool) -> None:
         self._clear_caches()
         if show_cursor and self.cursor_type != "none":
@@ -1631,6 +1634,18 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 hover=_should_highlight(hover_location, cell_location, cursor_type),
             )[line_no]
             scrollable_row.append(cell_lines)
+
+        # Extending the styling out horizontally to fill the container
+        widget_width = self.size.width
+        table_width = (
+            sum(
+                column.render_width
+                for column in self.ordered_columns[self.fixed_columns :]
+            )
+            + self._row_label_column_width
+        )
+        remaining_space = max(0, widget_width - table_width)
+        scrollable_row.append([Segment(" " * remaining_space, row_style)])
 
         row_pair = (fixed_row, scrollable_row)
         self._row_render_cache[cache_key] = row_pair
