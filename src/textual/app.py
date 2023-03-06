@@ -879,6 +879,7 @@ class App(Generic[ReturnType], DOMNode):
                     char = key if len(key) == 1 else None
                 print(f"press {key!r} (char={char!r})")
                 key_event = events.Key(key, char)
+                key_event._sender = app
                 driver.send_event(key_event)
                 await wait_for_idle(0)
 

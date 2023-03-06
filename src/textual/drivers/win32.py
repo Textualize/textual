@@ -288,5 +288,5 @@ class EventMonitor(threading.Thread):
     def on_size_change(self, width: int, height: int) -> None:
         """Called when terminal size changes."""
         size = Size(width, height)
-        event = Resize(self.target, size, size)
-        run_coroutine_threadsafe(self.target.post_message(event), loop=self.loop)
+        event = Resize(size, size)
+        run_coroutine_threadsafe(self.target._post_message(event), loop=self.loop)
