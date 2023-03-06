@@ -23,6 +23,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `switch` attribute to `Switch` events https://github.com/Textualize/textual/pull/1940
 - Breaking change: Added `toggle_button` attribute to RadioButton and Checkbox events, replaces `input` https://github.com/Textualize/textual/pull/1940
 
+### Fixed
+
+- Fixed bug that prevented app pilot to press some keys https://github.com/Textualize/textual/issues/1815
+
 ## [0.13.0] - 2023-03-02
 
 ### Added
