@@ -21,6 +21,7 @@ from .._segment_tools import line_crop
 from .._two_way_dict import TwoWayDict
 from .._types import SegmentLines
 from ..binding import Binding, BindingType
+from ..color import Color
 from ..coordinate import Coordinate
 from ..geometry import Region, Size, Spacing, clamp
 from ..message import Message
@@ -1645,7 +1646,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             + self._row_label_column_width
         )
         remaining_space = max(0, widget_width - table_width)
-        scrollable_row.append([Segment(" " * remaining_space, row_style)])
+        background_color = self.background_colors[1]
+        faded_color = Color.from_rich_color(row_style.bgcolor).blend(
+            background_color, factor=0.25
+        )
+        faded_style = Style.from_color(
+            color=row_style.color, bgcolor=faded_color.rich_color
+        )
+        scrollable_row.append([Segment(" " * remaining_space, faded_style)])
 
         row_pair = (fixed_row, scrollable_row)
         self._row_render_cache[cache_key] = row_pair
