@@ -10,9 +10,9 @@ class ColorButton(Static):
     class Selected(Message):
         """Color selected message."""
 
-        def __init__(self, sender: MessageTarget, color: Color) -> None:
+        def __init__(self, color: Color) -> None:
             self.color = color
-            super().__init__(sender)
+            super().__init__()
 
     def __init__(self, color: Color) -> None:
         self.color = color
@@ -24,9 +24,9 @@ class ColorButton(Static):
         self.styles.background = Color.parse("#ffffff33")
         self.styles.border = ("tall", self.color)
 
-    async def on_click(self) -> None:
+    def on_click(self) -> None:
         # The post_message method sends an event to be handled in the DOM
-        await self.post_message(self.Selected(self, self.color))
+        self.post_message(self.Selected(self.color))
 
     def render(self) -> str:
         return str(self.color)
