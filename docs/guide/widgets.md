@@ -414,7 +414,7 @@ The `InputWithLabel` class bundles an [Input](../widgets/input.md) with a [Label
 ## Coordinating widgets
 
 Widgets rarely exist in isolation, and often need to communicate or exchange data with other parts of your app.
-This is not difficult to do, but there is a risk that widgets can become dependant on each other, making it impossible to re-use a widget without copying a lot of dependant code.
+This is not difficult to do, but there is a risk that widgets can become dependant on each other, making it impossible to reuse a widget without copying a lot of dependant code.
 
 In this section we will show how to design and build a fully-working app, while keeping widgets reusable.
 
