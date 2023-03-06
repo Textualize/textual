@@ -1,13 +1,35 @@
 from __future__ import annotations
 
 import asyncio
-from typing import Generic
+from typing import Any, Generic
 
 import rich.repr
 
 from ._wait import wait_for_idle
 from .app import App, ReturnType
+from .events import Click, MouseDown, MouseMove, MouseUp
 from .geometry import Offset
+from .widget import Widget
+
+
+def _get_mouse_message_arguments(
+    target: Widget, offset: Offset = Offset()
+) -> dict[str, Any]:
+    x, y = offset
+    click_x, click_y, _, _ = target.region.translate(offset)
+    message_arguments = {
+        "x": x,
+        "y": y,
+        "delta_x": 0,
+        "delta_y": 0,
+        "button": 1,
+        "shift": False,
+        "meta": False,
+        "ctrl": False,
+        "screen_x": click_x,
+        "screen_y": click_y,
+    }
+    return message_arguments
 
 
 @rich.repr.auto(angular=True)
@@ -42,9 +64,22 @@ class Pilot(Generic[ReturnType]):
 
         Args:
             selector: The widget that should be clicked. If None, then the click
-                will occur relative to the screen.
+                will occur relative to the screen. Note that this simply causes
+                a click to occur at the location of the widget. If the widget is
+                currently hidden or obscured by another widget, then the click may
+                not land on it.
             offset: The offset to click within the selected widget.
         """
+        screen = self.app.screen
+        if selector is not None:
+            target_widget = screen.query_one(selector)
+        else:
+            target_widget = screen
+
+        message_arguments = _get_mouse_message_arguments(target_widget, offset)
+        target_widget.post_message(MouseDown(**message_arguments))
+        target_widget.post_message(MouseUp(**message_arguments))
+        target_widget.post_message(Click(**message_arguments))
 
     async def hover(
         self, selector: str | None = None, offset: Offset = Offset()
@@ -56,6 +91,14 @@ class Pilot(Generic[ReturnType]):
                 will occur relative to the screen.
             offset: The offset to hover over within the selected widget.
         """
+        screen = self.app.screen
+        if selector is not None:
+            target_widget = screen.query_one(selector)
+        else:
+            target_widget = screen
+
+        message_arguments = _get_mouse_message_arguments(target_widget, offset)
+        target_widget.post_message(MouseMove(**message_arguments))
 
     async def pause(self, delay: float | None = None) -> None:
         """Insert a pause.
