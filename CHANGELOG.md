@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Many messages have grown a `control` property which returns the control they relate to. https://github.com/Textualize/textual/pull/1940
 - Dropped `time` attribute from Messages https://github.com/Textualize/textual/pull/1940
 - Updated styling to make it clear DataTable grows horizontally https://github.com/Textualize/textual/pull/1946
+- Changed the `Checkbox` character due to issues with Windows Terminal and Windows 10 https://github.com/Textualize/textual/issues/1934
+- Changed the `RadioButton` character due to issues with Windows Terminal and Windows 10 and 11 https://github.com/Textualize/textual/issues/1934
 
 ### Added
 
@@ -23,6 +25,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `radio_set` attribute to `RadioSet` events https://github.com/Textualize/textual/pull/1940
 - Added `switch` attribute to `Switch` events https://github.com/Textualize/textual/pull/1940
 - Breaking change: Added `toggle_button` attribute to RadioButton and Checkbox events, replaces `input` https://github.com/Textualize/textual/pull/1940
+
+### Fixed
+
+- Fixed bug that prevented app pilot to press some keys https://github.com/Textualize/textual/issues/1815
 
 ## [0.13.0] - 2023-03-02
 
