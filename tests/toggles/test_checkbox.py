@@ -15,7 +15,7 @@ class CheckboxApp(App[None]):
         yield Checkbox(value=True, id="cb3")
 
     def on_checkbox_changed(self, event: Checkbox.Changed) -> None:
-        self.events_received.append((event.toggle_button.id, event.toggle_button.value))
+        self.events_received.append((event.checkbox.id, event.checkbox.value))
 
 
 async def test_checkbox_initial_state() -> None:

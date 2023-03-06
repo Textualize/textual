@@ -1,5 +1,7 @@
 """Provides a check box widget."""
 
+from __future__ import annotations
+
 from ._toggle_button import ToggleButton
 
 
@@ -14,3 +16,9 @@ class Checkbox(ToggleButton):
 
         # https://github.com/Textualize/textual/issues/1814
         namespace = "checkbox"
+
+        @property
+        def checkbox(self) -> Checkbox:
+            """The checkbox that was changed."""
+            assert isinstance(self._toggle_button, Checkbox)
+            return self._toggle_button

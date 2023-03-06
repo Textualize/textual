@@ -226,7 +226,7 @@ class ToggleButton(Static, can_focus=True):
                 value: The value of the toggle button.
             """
             super().__init__()
-            self.toggle_button = toggle_button
+            self._toggle_button = toggle_button
             """A reference to the toggle button that was changed."""
             self.value = value
             """The value of the toggle button after the change."""
@@ -234,7 +234,7 @@ class ToggleButton(Static, can_focus=True):
         @property
         def control(self) -> ToggleButton:
             """Alias for self.toggle_button."""
-            return self.toggle_button
+            return self._toggle_button
 
     def watch_value(self) -> None:
         """React to the value being changed.
