@@ -8,7 +8,7 @@ from . import events, messages
 from ._ansi_sequences import ANSI_SEQUENCES_KEYS
 from ._parser import Awaitable, Parser, TokenCallback
 from ._types import MessageTarget
-from .keys import KEY_NAME_REPLACEMENTS
+from .keys import KEY_NAME_REPLACEMENTS, _character_to_key
 
 # When trying to determine whether the current sequence is a supported/valid
 # escape sequence, at which length should we give up and consider our search
@@ -241,12 +241,7 @@ class XTermParser(Parser[events.Event]):
         elif len(sequence) == 1:
             try:
                 if not sequence.isalnum():
-                    name = (
-                        _unicode_name(sequence)
-                        .lower()
-                        .replace("-", "_")
-                        .replace(" ", "_")
-                    )
+                    name = _character_to_key(sequence)
                 else:
                     name = sequence
                 name = KEY_NAME_REPLACEMENTS.get(name, name)

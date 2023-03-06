@@ -14,7 +14,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: Messages don't require a `sender` in their constructor https://github.com/Textualize/textual/pull/1940
 - Many messages have grown a `control` property which returns the control they relate to. https://github.com/Textualize/textual/pull/1940
 
-
 ### Added
 
 - Added `data_table` attribute to DataTable events https://github.com/Textualize/textual/pull/1940
@@ -22,6 +21,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `radio_set` attribute to `RadioSet` events https://github.com/Textualize/textual/pull/1940
 - Added `switch` attribute to `Switch` events https://github.com/Textualize/textual/pull/1940
 - Breaking change: Added `toggle_button` attribute to RadioButton and Checkbox events, replaces `input` https://github.com/Textualize/textual/pull/1940
+
+### Fixed
+
+- Fixed bug that prevented app pilot to press some keys https://github.com/Textualize/textual/issues/1815
 
 ## [0.13.0] - 2023-03-02
 
@@ -227,12 +230,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `DataTable` cursors not resetting to origin on `clear()` https://github.com/Textualize/textual/pull/1601
 - Fixed TextLog wrapping issue https://github.com/Textualize/textual/issues/1554
 - Fixed issue with TextLog not writing anything before layout https://github.com/Textualize/textual/issues/1498
-<<<<<<< Updated upstream
 - Fixed an exception when populating a child class of `ListView` purely from `compose` https://github.com/Textualize/textual/issues/1588
 - Fixed freeze in tests https://github.com/Textualize/textual/issues/1608
-=======
 - Fixed minus not displaying as symbol https://github.com/Textualize/textual/issues/1482
->>>>>>> Stashed changes
 
 ## [0.9.1] - 2022-12-30
 
