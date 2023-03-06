@@ -5,7 +5,7 @@ from enum import Enum
 
 
 # Adapted from prompt toolkit https://github.com/prompt-toolkit/python-prompt-toolkit/blob/master/prompt_toolkit/keys.py
-class Keys(str, Enum):
+class Keys(str, Enum):  # type: ignore[no-redef]
     """
     List of keys for use in key bindings.
 
@@ -13,7 +13,9 @@ class Keys(str, Enum):
     strings.
     """
 
-    value: str
+    @property
+    def value(self) -> str:
+        return super().value
 
     Escape = "escape"  # Also Control-[
     ShiftEscape = "shift+escape"

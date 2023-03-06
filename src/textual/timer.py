@@ -34,7 +34,6 @@ class Timer:
     Args:
         event_target: The object which will receive the timer events.
         interval: The time between timer events, in seconds.
-        sender: The sender of the event.
         name: A name to assign the event (for debugging). Defaults to None.
         callback: A optional callback to invoke when the event is handled. Defaults to None.
         repeat: The number of times to repeat the timer, or None to repeat forever. Defaults to None.
@@ -48,7 +47,6 @@ class Timer:
         self,
         event_target: MessageTarget,
         interval: float,
-        sender: MessageTarget,
         *,
         name: str | None = None,
         callback: TimerCallback | None = None,
@@ -59,7 +57,6 @@ class Timer:
         self._target_repr = repr(event_target)
         self._target = weakref.ref(event_target)
         self._interval = interval
-        self.sender = sender
         self.name = f"Timer#{self._timer_count}" if name is None else name
         self._timer_count += 1
         self._callback = callback
@@ -92,14 +89,8 @@ class Timer:
         self._task = create_task(self._run_timer(), name=self.name)
         return self._task
 
-    def stop_no_wait(self) -> None:
+    def stop(self) -> None:
         """Stop the timer."""
-        if self._task is not None:
-            self._task.cancel()
-            self._task = None
-
-    async def stop(self) -> None:
-        """Stop the timer, and block until it exits."""
         if self._task is not None:
             self._active.set()
             self._task.cancel()
@@ -170,10 +161,9 @@ class Timer:
                 app._handle_exception(error)
         else:
             event = events.Timer(
-                self.sender,
                 timer=self,
                 time=next_timer,
                 count=count,
                 callback=self._callback,
             )
-            await self.target._post_priority_message(event)
+            await self.target.post_message(event)

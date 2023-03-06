@@ -34,7 +34,7 @@ class Driver(ABC):
 
     def send_event(self, event: events.Event) -> None:
         asyncio.run_coroutine_threadsafe(
-            self._target.post_message(event), loop=self._loop
+            self._target._post_message(event), loop=self._loop
         )
 
     def process_event(self, event: events.Event) -> None:

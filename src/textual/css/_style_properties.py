@@ -528,8 +528,8 @@ class SpacingProperty:
                 string (e.g. ``"blue on #f0f0f0"``).
 
         Raises:
-            ValueError: When the value is malformed, e.g. a ``tuple`` with a length that is
-                not 1, 2, or 4.
+            ValueError: When the value is malformed,
+                e.g. a ``tuple`` with a length that is not 1, 2, or 4.
         """
         _rich_traceback_omit = True
         if spacing is None:
@@ -543,7 +543,9 @@ class SpacingProperty:
                     str(error),
                     help_text=spacing_wrong_number_of_values_help_text(
                         property_name=self.name,
-                        num_values_supplied=len(spacing),
+                        num_values_supplied=(
+                            1 if isinstance(spacing, int) else len(spacing)
+                        ),
                         context="inline",
                     ),
                 )

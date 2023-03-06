@@ -4,7 +4,6 @@ from functools import partial
 from typing import cast
 
 import rich.repr
-from rich.console import RenderableType
 from rich.text import Text, TextType
 from typing_extensions import Literal
 
@@ -15,11 +14,16 @@ from ..reactive import reactive
 from ..widgets import Static
 
 ButtonVariant = Literal["default", "primary", "success", "warning", "error"]
+"""The names of the valid button variants.
+
+These are the variants that can be used with a [Button][textual.widgets.Button].
+"""
+
 _VALID_BUTTON_VARIANTS = {"default", "primary", "success", "warning", "error"}
 
 
 class InvalidButtonVariant(Exception):
-    pass
+    """Exception raised if an invalid button variant is used."""
 
 
 class Button(Static, can_focus=True):
@@ -145,7 +149,7 @@ class Button(Static, can_focus=True):
     ACTIVE_EFFECT_DURATION = 0.3
     """When buttons are clicked they get the `-active` class for this duration (in seconds)"""
 
-    label: reactive[RenderableType] = reactive[RenderableType]("")
+    label: reactive[TextType] = reactive[TextType]("")
     """The text label that appears within the button."""
 
     variant = reactive("default")
@@ -161,9 +165,14 @@ class Button(Static, can_focus=True):
             button: The button that was pressed.
         """
 
+        def __init__(self, button: Button) -> None:
+            self.button = button
+            super().__init__()
+
         @property
-        def button(self) -> Button:
-            return cast(Button, self.sender)
+        def control(self) -> Button:
+            """Alias for the button."""
+            return self.button
 
     def __init__(
         self,
@@ -209,15 +218,14 @@ class Button(Static, can_focus=True):
         self.remove_class(f"-{old_variant}")
         self.add_class(f"-{variant}")
 
-    def validate_label(self, label: RenderableType) -> RenderableType:
+    def validate_label(self, label: TextType) -> TextType:
         """Parse markup for self.label"""
         if isinstance(label, str):
             return Text.from_markup(label)
         return label
 
-    def render(self) -> RenderableType:
-        label = self.label.copy()
-        label = Text.assemble(" ", label, " ")
+    def render(self) -> TextType:
+        label = Text.assemble(" ", self.label, " ")
         label.stylize(self.text_style)
         return label
 
@@ -232,7 +240,7 @@ class Button(Static, can_focus=True):
         # Manage the "active" effect:
         self._start_active_affect()
         # ...and let other components know that we've just been clicked:
-        self.post_message_no_wait(Button.Pressed(self))
+        self.post_message(Button.Pressed(self))
 
     def _start_active_affect(self) -> None:
         """Start a small animation to show the button was clicked."""
@@ -244,7 +252,7 @@ class Button(Static, can_focus=True):
     async def _on_key(self, event: events.Key) -> None:
         if event.key == "enter" and not self.disabled:
             self._start_active_affect()
-            await self.post_message(Button.Pressed(self))
+            self.post_message(Button.Pressed(self))
 
     @classmethod
     def success(
@@ -264,6 +272,7 @@ class Button(Static, can_focus=True):
             name: The name of the button.
             id: The ID of the button in the DOM.
             classes: The CSS classes of the button.
+            disabled: Whether the button is disabled or not.
 
         Returns:
             A Button widget of the 'success' variant.
@@ -295,6 +304,7 @@ class Button(Static, can_focus=True):
             name: The name of the button.
             id: The ID of the button in the DOM.
             classes: The CSS classes of the button.
+            disabled: Whether the button is disabled or not.
 
         Returns:
             A Button widget of the 'warning' variant.
@@ -326,6 +336,7 @@ class Button(Static, can_focus=True):
             name: The name of the button.
             id: The ID of the button in the DOM.
             classes: The CSS classes of the button.
+            disabled: Whether the button is disabled or not.
 
         Returns:
             A Button widget of the 'error' variant.

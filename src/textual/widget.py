@@ -42,7 +42,7 @@ from ._arrange import DockArrangeResult, arrange
 from ._asyncio import create_task
 from ._cache import FIFOCache
 from ._compose import compose
-from ._context import active_app
+from ._context import NoActiveAppError, active_app
 from ._easing import DEFAULT_SCROLL_EASING
 from ._layout import Layout
 from ._segment_tools import align_lines
@@ -65,6 +65,7 @@ from .walk import walk_depth_first
 
 if TYPE_CHECKING:
     from .app import App, ComposeResult
+    from .message_pump import MessagePump
     from .scrollbar import (
         ScrollBar,
         ScrollBarCorner,
@@ -273,7 +274,8 @@ class Widget(DOMNode):
 
         self._styles_cache = StylesCache()
         self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
-        self._stabilized_scrollbar_size: Size | None = None
+        self._stabilize_scrollbar: tuple[Size, str, str] | None = None
+        """Used to prevent scrollbar logic getting stuck in an infinite loop."""
         self._lock = Lock()
 
         super().__init__(
@@ -443,23 +445,27 @@ class Widget(DOMNode):
         self, id: str, expect_type: type[ExpectType] | None = None
     ) -> ExpectType | Widget:
         """Return the first descendant widget with the given ID.
+
         Performs a depth-first search rooted at this widget.
 
         Args:
-            id: The ID to search for in the subtree
+            id: The ID to search for in the subtree.
             expect_type: Require the object be of the supplied type, or None for any type.
-                Defaults to None.
 
         Returns:
             The first descendant encountered with this ID.
 
         Raises:
-            NoMatches: if no children could be found for this ID
+            NoMatches: if no children could be found for this ID.
             WrongType: if the wrong type was found.
         """
-        for child in walk_depth_first(self):
+        # We use Widget as a filter_type so that the inferred type of child is Widget.
+        for child in walk_depth_first(self, filter_type=Widget):
             try:
-                return child.get_child_by_id(id, expect_type=expect_type)
+                if expect_type is None:
+                    return child.get_child_by_id(id)
+                else:
+                    return child.get_child_by_id(id, expect_type=expect_type)
             except NoMatches:
                 pass
             except WrongType as exc:
@@ -515,6 +521,7 @@ class Widget(DOMNode):
     def _clear_arrangement_cache(self) -> None:
         """Clear arrangement cache, forcing a new arrange operation."""
         self._arrangement_cache.clear()
+        self._stabilize_scrollbar = None
 
     def _get_virtual_dom(self) -> Iterable[Widget]:
         """Get widgets not part of the DOM.
@@ -729,7 +736,9 @@ class Widget(DOMNode):
 
         # Ensure the child and target are widgets.
         child = _to_widget(child, "move")
-        target = _to_widget(before if after is None else after, "move towards")
+        target = _to_widget(
+            cast("int | Widget", before if after is None else after), "move towards"
+        )
 
         # At this point we should know what we're moving, and it should be a
         # child; where we're moving it to, which should be within the child
@@ -848,14 +857,11 @@ class Widget(DOMNode):
         """
         if self.is_container:
             assert self._layout is not None
-            height = (
-                self._layout.get_content_height(
-                    self,
-                    container,
-                    viewport,
-                    width,
-                )
-                + self.scrollbar_size_horizontal
+            height = self._layout.get_content_height(
+                self,
+                container,
+                viewport,
+                width,
             )
         else:
             cache_key = width
@@ -906,8 +912,7 @@ class Widget(DOMNode):
         return max(
             0,
             self.virtual_size.width
-            - self.container_size.width
-            + self.scrollbar_size_vertical,
+            - (self.container_size.width - self.scrollbar_size_vertical),
         )
 
     @property
@@ -916,8 +921,7 @@ class Widget(DOMNode):
         return max(
             0,
             self.virtual_size.height
-            - self.container_size.height
-            + self.scrollbar_size_horizontal,
+            - (self.container_size.height - self.scrollbar_size_horizontal),
         )
 
     @property
@@ -978,9 +982,18 @@ class Widget(DOMNode):
         styles = self.styles
         overflow_x = styles.overflow_x
         overflow_y = styles.overflow_y
-        width, height = self.container_size
 
-        show_horizontal = self.show_horizontal_scrollbar
+        stabilize_scrollbar = (
+            self.container_size,
+            overflow_x,
+            overflow_y,
+        )
+        if self._stabilize_scrollbar == stabilize_scrollbar:
+            return
+
+        width, height = self._container_size
+
+        show_horizontal = False
         if overflow_x == "hidden":
             show_horizontal = False
         elif overflow_x == "scroll":
@@ -988,7 +1001,7 @@ class Widget(DOMNode):
         elif overflow_x == "auto":
             show_horizontal = self.virtual_size.width > width
 
-        show_vertical = self.show_vertical_scrollbar
+        show_vertical = False
         if overflow_y == "hidden":
             show_vertical = False
         elif overflow_y == "scroll":
@@ -996,16 +1009,17 @@ class Widget(DOMNode):
         elif overflow_y == "auto":
             show_vertical = self.virtual_size.height > height
 
-        if (
-            overflow_x == "auto"
-            and show_vertical
-            and not show_horizontal
-            and self._stabilized_scrollbar_size != self.container_size
-        ):
-            show_horizontal = (
-                self.virtual_size.width + styles.scrollbar_size_vertical > width
+        # When a single scrollbar is shown, the other dimension changes, so we need to recalculate.
+        if show_vertical and not show_horizontal:
+            show_horizontal = self.virtual_size.width > (
+                width - styles.scrollbar_size_vertical
             )
-            self._stabilized_scrollbar_size = self.container_size
+        if show_horizontal and not show_vertical:
+            show_vertical = self.virtual_size.height > (
+                height - styles.scrollbar_size_horizontal
+            )
+
+        self._stabilize_scrollbar = stabilize_scrollbar
 
         self.show_horizontal_scrollbar = show_horizontal
         self.show_vertical_scrollbar = show_vertical
@@ -1028,6 +1042,11 @@ class Widget(DOMNode):
 
         enabled = self.show_vertical_scrollbar, self.show_horizontal_scrollbar
         return enabled
+
+    @property
+    def scrollbars_space(self) -> tuple[int, int]:
+        """The number of cells occupied by scrollbars for width and height"""
+        return (self.scrollbar_size_vertical, self.scrollbar_size_horizontal)
 
     @property
     def scrollbar_size_vertical(self) -> int:
@@ -1417,7 +1436,7 @@ class Widget(DOMNode):
         self._repaint_regions.clear()
         return regions
 
-    def scroll_to(
+    def _scroll_to(
         self,
         x: float | None = None,
         y: float | None = None,
@@ -1431,18 +1450,18 @@ class Widget(DOMNode):
         """Scroll to a given (absolute) coordinate, optionally animating.
 
         Args:
-            x: X coordinate (column) to scroll to, or None for no change. Defaults to None.
-            y: Y coordinate (row) to scroll to, or None for no change. Defaults to None.
-            animate: Animate to new scroll position. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            x: X coordinate (column) to scroll to, or `None` for no change.
+            y: Y coordinate (row) to scroll to, or `None` for no change.
+            animate: Animate to new scroll position.
+            speed: Speed of scroll if `animate` is `True`. Or `None` to use duration.
+            duration: Duration of animation, if `animate` is `True` and speed is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
 
         Returns:
-            True if the scroll position changed, otherwise False.
+            `True` if the scroll position changed, otherwise `False`.
         """
+
         maybe_scroll_x = x is not None and (self.allow_horizontal_scroll or force)
         maybe_scroll_y = y is not None and (self.allow_vertical_scroll or force)
         scrolled_x = scrolled_y = False
@@ -1493,6 +1512,42 @@ class Widget(DOMNode):
 
         return scrolled_x or scrolled_y
 
+    def scroll_to(
+        self,
+        x: float | None = None,
+        y: float | None = None,
+        *,
+        animate: bool = True,
+        speed: float | None = None,
+        duration: float | None = None,
+        easing: EasingFunction | str | None = None,
+        force: bool = False,
+    ) -> None:
+        """Scroll to a given (absolute) coordinate, optionally animating.
+
+        Args:
+            x: X coordinate (column) to scroll to, or `None` for no change.
+            y: Y coordinate (row) to scroll to, or `None` for no change.
+            animate: Animate to new scroll position.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
+
+        Note:
+            The call to scroll is made after the next refresh.
+        """
+        self.call_after_refresh(
+            self._scroll_to,
+            x,
+            y,
+            animate=animate,
+            speed=speed,
+            duration=duration,
+            easing=easing,
+            force=force,
+        )
+
     def scroll_relative(
         self,
         x: float | None = None,
@@ -1503,23 +1558,19 @@ class Widget(DOMNode):
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
         force: bool = False,
-    ) -> bool:
+    ) -> None:
         """Scroll relative to current position.
 
         Args:
-            x: X distance (columns) to scroll, or ``None`` for no change. Defaults to None.
-            y: Y distance (rows) to scroll, or ``None`` for no change. Defaults to None.
-            animate: Animate to new scroll position. Defaults to False.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
-
-        Returns:
-            True if the scroll position changed, otherwise False.
+            x: X distance (columns) to scroll, or ``None`` for no change.
+            y: Y distance (rows) to scroll, or ``None`` for no change.
+            animate: Animate to new scroll position.
+            speed: Speed of scroll if `animate` is `True`. Or `None` to use `duration`.
+            duration: Duration of animation, if animate is `True` and speed is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
         """
-        return self.scroll_to(
+        self.scroll_to(
             None if x is None else (self.scroll_x + x),
             None if y is None else (self.scroll_y + y),
             animate=animate,
@@ -1537,23 +1588,19 @@ class Widget(DOMNode):
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
         force: bool = False,
-    ) -> bool:
+    ) -> None:
         """Scroll to home position.
 
         Args:
-            animate: Animate scroll. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
-
-        Returns:
-            True if any scrolling was done.
+            animate: Animate scroll.
+            speed: Speed of scroll if animate is `True`; or `None` to use duration.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
         """
         if speed is None and duration is None:
             duration = 1.0
-        return self.scroll_to(
+        self.scroll_to(
             0,
             0,
             animate=animate,
@@ -1571,32 +1618,38 @@ class Widget(DOMNode):
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
         force: bool = False,
-    ) -> bool:
+    ) -> None:
         """Scroll to the end of the container.
 
         Args:
-            animate: Animate scroll. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
-
-        Returns:
-            True if any scrolling was done.
-
+            animate: Animate scroll.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
         """
         if speed is None and duration is None:
             duration = 1.0
-        return self.scroll_to(
-            0,
-            self.max_scroll_y,
-            animate=animate,
-            speed=speed,
-            duration=duration,
-            easing=easing,
-            force=force,
-        )
+
+        # In most cases we'd call self.scroll_to and let it handle the call
+        # to do things after a refresh, but here we need the refresh to
+        # happen first so that we can get the new self.max_scroll_y (that
+        # is, we need the layout to work out and then figure out how big
+        # things are). Because of this we'll create a closure over the call
+        # here and make our own call to call_after_refresh.
+        def _lazily_scroll_end() -> None:
+            """Scroll to the end of the widget."""
+            self._scroll_to(
+                0,
+                self.max_scroll_y,
+                animate=animate,
+                speed=speed,
+                duration=duration,
+                easing=easing,
+                force=force,
+            )
+
+        self.call_after_refresh(_lazily_scroll_end)
 
     def scroll_left(
         self,
@@ -1606,22 +1659,51 @@ class Widget(DOMNode):
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
         force: bool = False,
-    ) -> bool:
+    ) -> None:
         """Scroll one cell left.
 
         Args:
-            animate: Animate scroll. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            animate: Animate scroll.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
+        """
+        self.scroll_to(
+            x=self.scroll_target_x - 1,
+            animate=animate,
+            speed=speed,
+            duration=duration,
+            easing=easing,
+            force=force,
+        )
+
+    def _scroll_left_for_pointer(
+        self,
+        *,
+        animate: bool = True,
+        speed: float | None = None,
+        duration: float | None = None,
+        easing: EasingFunction | str | None = None,
+        force: bool = False,
+    ) -> bool:
+        """Scroll left one position, taking scroll sensitivity into account.
+
+        Args:
+            animate: Animate scroll.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
 
         Returns:
-            True if any scrolling was done.
+            `True` if any scrolling was done.
 
+        Note:
+            How much is scrolled is controlled by
+            [App.scroll_sensitivity_x][textual.app.App.scroll_sensitivity_x].
         """
-        return self.scroll_to(
+        return self._scroll_to(
             x=self.scroll_target_x - self.app.scroll_sensitivity_x,
             animate=animate,
             speed=speed,
@@ -1638,22 +1720,51 @@ class Widget(DOMNode):
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
         force: bool = False,
-    ) -> bool:
-        """Scroll on cell right.
+    ) -> None:
+        """Scroll one cell right.
 
         Args:
-            animate: Animate scroll. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            animate: Animate scroll.
+            speed: Speed of scroll if animate is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
+        """
+        self.scroll_to(
+            x=self.scroll_target_x + 1,
+            animate=animate,
+            speed=speed,
+            duration=duration,
+            easing=easing,
+            force=force,
+        )
+
+    def _scroll_right_for_pointer(
+        self,
+        *,
+        animate: bool = True,
+        speed: float | None = None,
+        duration: float | None = None,
+        easing: EasingFunction | str | None = None,
+        force: bool = False,
+    ) -> bool:
+        """Scroll right one position, taking scroll sensitivity into account.
+
+        Args:
+            animate: Animate scroll.
+            speed: Speed of scroll if animate is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
 
         Returns:
-            True if any scrolling was done.
+            `True` if any scrolling was done.
 
+        Note:
+            How much is scrolled is controlled by
+            [App.scroll_sensitivity_x][textual.app.App.scroll_sensitivity_x].
         """
-        return self.scroll_to(
+        return self._scroll_to(
             x=self.scroll_target_x + self.app.scroll_sensitivity_x,
             animate=animate,
             speed=speed,
@@ -1670,22 +1781,51 @@ class Widget(DOMNode):
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
         force: bool = False,
-    ) -> bool:
+    ) -> None:
         """Scroll one line down.
 
         Args:
-            animate: Animate scroll. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            animate: Animate scroll.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
+        """
+        self.scroll_to(
+            y=self.scroll_target_y + 1,
+            animate=animate,
+            speed=speed,
+            duration=duration,
+            easing=easing,
+            force=force,
+        )
+
+    def _scroll_down_for_pointer(
+        self,
+        *,
+        animate: bool = True,
+        speed: float | None = None,
+        duration: float | None = None,
+        easing: EasingFunction | str | None = None,
+        force: bool = False,
+    ) -> bool:
+        """Scroll down one position, taking scroll sensitivity into account.
+
+        Args:
+            animate: Animate scroll.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
 
         Returns:
-            True if any scrolling was done.
+            `True` if any scrolling was done.
 
+        Note:
+            How much is scrolled is controlled by
+            [App.scroll_sensitivity_y][textual.app.App.scroll_sensitivity_y].
         """
-        return self.scroll_to(
+        return self._scroll_to(
             y=self.scroll_target_y + self.app.scroll_sensitivity_y,
             animate=animate,
             speed=speed,
@@ -1702,23 +1842,52 @@ class Widget(DOMNode):
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
         force: bool = False,
-    ) -> bool:
+    ) -> None:
         """Scroll one line up.
 
         Args:
-            animate: Animate scroll. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            animate: Animate scroll.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and speed is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
+        """
+        self.scroll_to(
+            y=self.scroll_target_y - 1,
+            animate=animate,
+            speed=speed,
+            duration=duration,
+            easing=easing,
+            force=force,
+        )
+
+    def _scroll_up_for_pointer(
+        self,
+        *,
+        animate: bool = True,
+        speed: float | None = None,
+        duration: float | None = None,
+        easing: EasingFunction | str | None = None,
+        force: bool = False,
+    ) -> bool:
+        """Scroll up one position, taking scroll sensitivity into account.
+
+        Args:
+            animate: Animate scroll.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and speed is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
 
         Returns:
-            True if any scrolling was done.
+            `True` if any scrolling was done.
 
+        Note:
+            How much is scrolled is controlled by
+            [App.scroll_sensitivity_y][textual.app.App.scroll_sensitivity_y].
         """
-        return self.scroll_to(
-            y=self.scroll_target_y - +self.app.scroll_sensitivity_y,
+        return self._scroll_to(
+            y=self.scroll_target_y - self.app.scroll_sensitivity_y,
             animate=animate,
             speed=speed,
             duration=duration,
@@ -1734,22 +1903,17 @@ class Widget(DOMNode):
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
         force: bool = False,
-    ) -> bool:
+    ) -> None:
         """Scroll one page up.
 
         Args:
-            animate: Animate scroll. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
-
-        Returns:
-            True if any scrolling was done.
-
+            animate: Animate scroll.
+            speed: Speed of scroll if animate is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
         """
-        return self.scroll_to(
+        self.scroll_to(
             y=self.scroll_y - self.container_size.height,
             animate=animate,
             speed=speed,
@@ -1766,22 +1930,17 @@ class Widget(DOMNode):
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
         force: bool = False,
-    ) -> bool:
+    ) -> None:
         """Scroll one page down.
 
         Args:
-            animate: Animate scroll. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
-
-        Returns:
-            True if any scrolling was done.
-
+            animate: Animate scroll.
+            speed: Speed of scroll if animate is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
         """
-        return self.scroll_to(
+        self.scroll_to(
             y=self.scroll_y + self.container_size.height,
             animate=animate,
             speed=speed,
@@ -1798,24 +1957,19 @@ class Widget(DOMNode):
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
         force: bool = False,
-    ) -> bool:
+    ) -> None:
         """Scroll one page left.
 
         Args:
-            animate: Animate scroll. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
-
-        Returns:
-            True if any scrolling was done.
-
+            animate: Animate scroll.
+            speed: Speed of scroll if animate is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
         """
         if speed is None and duration is None:
             duration = 0.3
-        return self.scroll_to(
+        self.scroll_to(
             x=self.scroll_x - self.container_size.width,
             animate=animate,
             speed=speed,
@@ -1832,24 +1986,19 @@ class Widget(DOMNode):
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
         force: bool = False,
-    ) -> bool:
+    ) -> None:
         """Scroll one page right.
 
         Args:
-            animate: Animate scroll. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
-
-        Returns:
-            True if any scrolling was done.
-
+            animate: Animate scroll.
+            speed: Speed of scroll if animate is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
         """
         if speed is None and duration is None:
             duration = 0.3
-        return self.scroll_to(
+        self.scroll_to(
             x=self.scroll_x + self.container_size.width,
             animate=animate,
             speed=speed,
@@ -1873,16 +2022,15 @@ class Widget(DOMNode):
 
         Args:
             widget: A descendant widget.
-            animate: True to animate, or False to jump. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            top: Scroll widget to top of container. Defaults to False.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            animate: `True` to animate, or `False` to jump.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            top: Scroll widget to top of container.
+            force: Force scrolling even when prohibited by overflow styling.
 
         Returns:
-            True if any scrolling has occurred in any descendant, otherwise False.
+            `True` if any scrolling has occurred in any descendant, otherwise `False`.
         """
 
         # Grow the region by the margin so to keep the margin in view.
@@ -1941,14 +2089,13 @@ class Widget(DOMNode):
 
         Args:
             region: A region that should be visible.
-            spacing: Optional spacing around the region. Defaults to None.
-            animate: True to animate, or False to jump. Defaults to True.
-            speed: Speed of scroll if animate is True. Or None to use duration.
-            duration: Duration of animation, if animate is True and speed is None.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            top: Scroll region to top of container. Defaults to False.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            spacing: Optional spacing around the region.
+            animate: `True` to animate, or `False` to jump.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            top: Scroll `region` to top of container.
+            force: Force scrolling even when prohibited by overflow styling.
 
         Returns:
             The distance that was scrolled.
@@ -1993,13 +2140,12 @@ class Widget(DOMNode):
         """Scroll the container to make this widget visible.
 
         Args:
-            animate: _description_. Defaults to True.
-            speed: _description_. Defaults to None.
-            duration: _description_. Defaults to None.
-            top: Scroll to top of container. Defaults to False.
-            easing: An easing method for the scrolling animation. Defaults to "None",
-                which will result in Textual choosing the configured default scrolling easing function.
-            force: Force scrolling even when prohibited by overflow styling. Defaults to `False`.
+            animate: Animate scroll.
+            speed: Speed of scroll if animate is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            top: Scroll to top of container.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
         """
         parent = self.parent
         if isinstance(parent, Widget):
@@ -2093,7 +2239,7 @@ class Widget(DOMNode):
 
         if show_horizontal_scrollbar and show_vertical_scrollbar:
             (
-                _,
+                window_region,
                 vertical_scrollbar_region,
                 horizontal_scrollbar_region,
                 scrollbar_corner_gap,
@@ -2104,18 +2250,34 @@ class Widget(DOMNode):
             if scrollbar_corner_gap:
                 yield self.scrollbar_corner, scrollbar_corner_gap
             if vertical_scrollbar_region:
-                yield self.vertical_scrollbar, vertical_scrollbar_region
+                scrollbar = self.vertical_scrollbar
+                scrollbar.window_virtual_size = self.virtual_size.height
+                scrollbar.window_size = window_region.height
+                yield scrollbar, vertical_scrollbar_region
             if horizontal_scrollbar_region:
-                yield self.horizontal_scrollbar, horizontal_scrollbar_region
+                scrollbar = self.horizontal_scrollbar
+                scrollbar.window_virtual_size = self.virtual_size.width
+                scrollbar.window_size = window_region.width
+                yield scrollbar, horizontal_scrollbar_region
 
         elif show_vertical_scrollbar:
-            _, scrollbar_region = region.split_vertical(-scrollbar_size_vertical)
+            window_region, scrollbar_region = region.split_vertical(
+                -scrollbar_size_vertical
+            )
             if scrollbar_region:
-                yield self.vertical_scrollbar, scrollbar_region
+                scrollbar = self.vertical_scrollbar
+                scrollbar.window_virtual_size = self.virtual_size.height
+                scrollbar.window_size = window_region.height
+                yield scrollbar, scrollbar_region
         elif show_horizontal_scrollbar:
-            _, scrollbar_region = region.split_horizontal(-scrollbar_size_horizontal)
+            window_region, scrollbar_region = region.split_horizontal(
+                -scrollbar_size_horizontal
+            )
             if scrollbar_region:
-                yield self.horizontal_scrollbar, scrollbar_region
+                scrollbar = self.horizontal_scrollbar
+                scrollbar.window_virtual_size = self.virtual_size.width
+                scrollbar.window_size = window_region.width
+                yield scrollbar, scrollbar_region
 
     def get_pseudo_classes(self) -> Iterable[str]:
         """Pseudo classes for a widget.
@@ -2124,7 +2286,7 @@ class Widget(DOMNode):
             Names of the pseudo classes.
 
         """
-        node = self
+        node: MessagePump | None = self
         while isinstance(node, Widget):
             if node.disabled:
                 yield "disabled"
@@ -2171,7 +2333,9 @@ class Widget(DOMNode):
             renderable.justify = text_justify
 
         renderable = _Styled(
-            renderable, self.rich_style, self.link_style if self.auto_links else None
+            cast(ConsoleRenderable, renderable),
+            self.rich_style,
+            self.link_style if self.auto_links else None,
         )
 
         return renderable
@@ -2234,9 +2398,13 @@ class Widget(DOMNode):
             self.vertical_scrollbar.window_size = (
                 height - self.scrollbar_size_horizontal
             )
+            if self.vertical_scrollbar._repaint_required:
+                self.call_next(self.vertical_scrollbar.refresh)
         if self.show_horizontal_scrollbar:
             self.horizontal_scrollbar.window_virtual_size = virtual_size.width
             self.horizontal_scrollbar.window_size = width - self.scrollbar_size_vertical
+            if self.horizontal_scrollbar._repaint_required:
+                self.call_next(self.horizontal_scrollbar.refresh)
 
         self.scroll_x = self.validate_scroll_x(self.scroll_x)
         self.scroll_y = self.validate_scroll_y(self.scroll_y)
@@ -2323,9 +2491,9 @@ class Widget(DOMNode):
             return Style()
         return self.screen.get_style_at(*screen_offset)
 
-    async def _forward_event(self, event: events.Event) -> None:
+    def _forward_event(self, event: events.Event) -> None:
         event._set_forwarded()
-        await self.post_message(event)
+        self.post_message(event)
 
     def _refresh_scroll(self) -> None:
         """Refreshes the scroll position."""
@@ -2358,6 +2526,7 @@ class Widget(DOMNode):
         """
         if layout and not self._layout_required:
             self._layout_required = True
+            self._stabilize_scrollbar = None
             for ancestor in self.ancestors:
                 if not isinstance(ancestor, Widget):
                     break
@@ -2373,7 +2542,7 @@ class Widget(DOMNode):
         self.check_idle()
 
     def remove(self) -> AwaitRemove:
-        """Remove the Widget from the DOM (effectively deleting it)
+        """Remove the Widget from the DOM (effectively deleting it).
 
         Returns:
             An awaitable object that waits for the widget to be removed.
@@ -2386,16 +2555,16 @@ class Widget(DOMNode):
         """Get renderable for widget.
 
         Returns:
-            Any renderable
+            Any renderable.
         """
-        render = "" if self.is_container else self.css_identifier_styled
+        render: Text | str = "" if self.is_container else self.css_identifier_styled
         return render
 
     def _render(self) -> ConsoleRenderable | RichCast:
         """Get renderable, promoting str to text as required.
 
         Returns:
-            A renderable
+            A renderable.
         """
         renderable = self.render()
         if isinstance(renderable, str):
@@ -2410,7 +2579,7 @@ class Widget(DOMNode):
         """
         await self.app.action(action, self)
 
-    async def post_message(self, message: Message) -> bool:
+    def post_message(self, message: Message) -> bool:
         """Post a message to this widget.
 
         Args:
@@ -2419,11 +2588,13 @@ class Widget(DOMNode):
         Returns:
             True if the message was posted, False if this widget was closed / closing.
         """
-        if not self.check_message_enabled(message):
-            return True
+
         if not self.is_running:
-            self.log.warning(self, f"IS NOT RUNNING, {message!r} not sent")
-        return await super().post_message(message)
+            try:
+                self.log.warning(self, f"IS NOT RUNNING, {message!r} not sent")
+            except NoActiveAppError:
+                pass
+        return super().post_message(message)
 
     async def _on_idle(self, event: events.Idle) -> None:
         """Called when there are no more events on the queue.
@@ -2439,13 +2610,13 @@ class Widget(DOMNode):
             else:
                 if self._scroll_required:
                     self._scroll_required = False
-                    screen.post_message_no_wait(messages.UpdateScroll(self))
+                    screen.post_message(messages.UpdateScroll())
                 if self._repaint_required:
                     self._repaint_required = False
-                    screen.post_message_no_wait(messages.Update(self, self))
+                    screen.post_message(messages.Update(self))
                 if self._layout_required:
                     self._layout_required = False
-                    screen.post_message_no_wait(messages.Layout(self))
+                    screen.post_message(messages.Layout())
 
     def focus(self, scroll_visible: bool = True) -> None:
         """Give focus to this widget.
@@ -2560,12 +2731,12 @@ class Widget(DOMNode):
     def _on_focus(self, event: events.Focus) -> None:
         self.has_focus = True
         self.refresh()
-        self.post_message_no_wait(events.DescendantFocus(self))
+        self.post_message(events.DescendantFocus())
 
     def _on_blur(self, event: events.Blur) -> None:
         self.has_focus = False
         self.refresh()
-        self.post_message_no_wait(events.DescendantBlur(self))
+        self.post_message(events.DescendantBlur())
 
     def _on_descendant_blur(self, event: events.DescendantBlur) -> None:
         if self._has_focus_within:
@@ -2578,21 +2749,21 @@ class Widget(DOMNode):
     def _on_mouse_scroll_down(self, event: events.MouseScrollDown) -> None:
         if event.ctrl or event.shift:
             if self.allow_horizontal_scroll:
-                if self.scroll_right(animate=False):
+                if self._scroll_right_for_pointer(animate=False):
                     event.stop()
         else:
             if self.allow_vertical_scroll:
-                if self.scroll_down(animate=False):
+                if self._scroll_down_for_pointer(animate=False):
                     event.stop()
 
     def _on_mouse_scroll_up(self, event: events.MouseScrollUp) -> None:
         if event.ctrl or event.shift:
             if self.allow_horizontal_scroll:
-                if self.scroll_left(animate=False):
+                if self._scroll_left_for_pointer(animate=False):
                     event.stop()
         else:
             if self.allow_vertical_scroll:
-                if self.scroll_up(animate=False):
+                if self._scroll_up_for_pointer(animate=False):
                     event.stop()
 
     def _on_scroll_to(self, message: ScrollTo) -> None:

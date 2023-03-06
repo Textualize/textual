@@ -1,6 +1,8 @@
+"""Provides a scrollable text-logging widget."""
+
 from __future__ import annotations
 
-from typing import cast
+from typing import Optional, cast
 
 from rich.console import RenderableType
 from rich.highlighter import ReprHighlighter
@@ -18,6 +20,8 @@ from ..strip import Strip
 
 
 class TextLog(ScrollView, can_focus=True):
+    """A widget for logging text."""
+
     DEFAULT_CSS = """
     TextLog{
         background: $surface;
@@ -26,7 +30,7 @@ class TextLog(ScrollView, can_focus=True):
     }
     """
 
-    max_lines: var[int | None] = var(None)
+    max_lines: var[int | None] = var[Optional[int]](None)
     min_width: var[int] = var(78)
     wrap: var[bool] = var(False)
     highlight: var[bool] = var(False)
@@ -53,10 +57,10 @@ class TextLog(ScrollView, can_focus=True):
             wrap: Enable word wrapping (default is off).
             highlight: Automatically highlight content.
             markup: Apply Rich console markup.
-            name: The name of the button.
-            id: The ID of the button in the DOM.
-            classes: The CSS classes of the button.
-            disabled: Whether the button is disabled or not.
+            name: The name of the text log.
+            id: The ID of the text log in the DOM.
+            classes: The CSS classes of the text log.
+            disabled: Whether the text log is disabled or not.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self.max_lines = max_lines
@@ -90,9 +94,9 @@ class TextLog(ScrollView, can_focus=True):
 
         Args:
             content: Rich renderable (or text).
-            width: Width to render or None to use optimal width. Defaults to `None`.
-            expand: Enable expand to widget width, or False to use `width`. Defaults to `False`.
-            shrink: Enable shrinking of content to fit width. Defaults to `True`.
+            width: Width to render or ``None`` to use optimal width.
+            expand: Enable expand to widget width, or ``False`` to use `width`.
+            shrink: Enable shrinking of content to fit width.
         """
 
         renderable: RenderableType
@@ -148,7 +152,7 @@ class TextLog(ScrollView, can_focus=True):
             self.refresh()
             self.lines = self.lines[-self.max_lines :]
         self.virtual_size = Size(self.max_width, len(self.lines))
-        self.scroll_end(animate=False, speed=100)
+        self.scroll_end(animate=False)
 
     def clear(self) -> None:
         """Clear the text log."""
@@ -162,7 +166,7 @@ class TextLog(ScrollView, can_focus=True):
     def render_line(self, y: int) -> Strip:
         scroll_x, scroll_y = self.scroll_offset
         line = self._render_line(scroll_y + y, scroll_x, self.size.width)
-        strip = Strip(Segment.apply_style(line, self.rich_style), self.size.width)
+        strip = line.apply_style(self.rich_style)
         return strip
 
     def render_lines(self, crop: Region) -> list[Strip]:

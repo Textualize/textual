@@ -78,7 +78,7 @@ class StylesheetErrors:
                     f"{path.absolute() if path else filename}:{line_no}:{col_no}"
                 )
                 link_style = Style(
-                    link=f"file://{path.absolute()}",
+                    link=f"file://{path.absolute()}" if path else None,
                     color="red",
                     bold=True,
                     italic=True,

@@ -4,7 +4,7 @@ import hashlib
 import os
 import shlex
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, cast
 
 from textual._import_app import import_app
 from textual.app import App
@@ -45,6 +45,7 @@ def format_svg(source, language, css_class, options, md, attrs, **kwargs) -> str
         import traceback
 
         traceback.print_exception(error)
+        return ""
 
 
 def take_svg_screenshot(
@@ -82,6 +83,7 @@ def take_svg_screenshot(
         hash = hashlib.md5()
         file_paths = [app_path] + app.css_path
         for path in file_paths:
+            assert path is not None
             with open(path, "rb") as source_file:
                 hash.update(source_file.read())
         hash.update(f"{press}-{title}-{terminal_size}".encode("utf-8"))
@@ -105,10 +107,13 @@ def take_svg_screenshot(
 
         app.exit(svg)
 
-    svg = app.run(
-        headless=True,
-        auto_pilot=auto_pilot,
-        size=terminal_size,
+    svg = cast(
+        str,
+        app.run(
+            headless=True,
+            auto_pilot=auto_pilot,
+            size=terminal_size,
+        ),
     )
 
     if app_path is not None:

@@ -146,10 +146,15 @@ class Input(Widget, can_focus=True):
             input: The `Input` widget that was changed.
         """
 
-        def __init__(self, sender: Input, value: str) -> None:
-            super().__init__(sender)
+        def __init__(self, input: Input, value: str) -> None:
+            super().__init__()
+            self.input: Input = input
             self.value: str = value
-            self.input: Input = sender
+
+        @property
+        def control(self) -> Input:
+            """Alias for self.input."""
+            return self.input
 
     class Submitted(Message, bubble=True):
         """Posted when the enter key is pressed within an `Input`.
@@ -162,10 +167,15 @@ class Input(Widget, can_focus=True):
             input: The `Input` widget that is being submitted.
         """
 
-        def __init__(self, sender: Input, value: str) -> None:
-            super().__init__(sender)
+        def __init__(self, input: Input, value: str) -> None:
+            super().__init__()
+            self.input: Input = input
             self.value: str = value
-            self.input: Input = sender
+
+        @property
+        def control(self) -> Input:
+            """Alias for self.input."""
+            return self.input
 
     def __init__(
         self,
@@ -243,7 +253,7 @@ class Input(Widget, can_focus=True):
     async def watch_value(self, value: str) -> None:
         if self.styles.auto_dimensions:
             self.refresh(layout=True)
-        await self.post_message(self.Changed(self, value))
+        self.post_message(self.Changed(self, value))
 
     @property
     def cursor_width(self) -> int:
@@ -478,4 +488,5 @@ class Input(Widget, can_focus=True):
             self.cursor_position = 0
 
     async def action_submit(self) -> None:
-        await self.post_message(self.Submitted(self, self.value))
+        """Handle a submit action (normally the user hitting Enter in the input)."""
+        self.post_message(self.Submitted(self, self.value))

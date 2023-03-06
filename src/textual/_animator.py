@@ -182,7 +182,6 @@ class Animator:
         self._timer = Timer(
             app,
             1 / frames_per_second,
-            app,
             name="Animator",
             callback=self,
             pause=True,
@@ -201,7 +200,7 @@ class Animator:
     async def stop(self) -> None:
         """Stop the animator task."""
         try:
-            await self._timer.stop()
+            self._timer.stop()
         except asyncio.CancelledError:
             pass
         finally:

@@ -14,7 +14,7 @@ without having to render the entire screen.
 from __future__ import annotations
 
 from operator import itemgetter
-from typing import TYPE_CHECKING, Iterable, NamedTuple, cast
+from typing import TYPE_CHECKING, Callable, Iterable, NamedTuple, cast
 
 import rich.repr
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
@@ -45,12 +45,23 @@ class ReflowResult(NamedTuple):
 class MapGeometry(NamedTuple):
     """Defines the absolute location of a Widget."""
 
-    region: Region  # The (screen) region occupied by the widget
-    order: tuple[tuple[int, ...], ...]  # A tuple of ints defining the painting order
-    clip: Region  # A region to clip the widget by (if a Widget is within a container)
-    virtual_size: Size  # The virtual size  (scrollable region) of a widget if it is a container
-    container_size: Size  # The container size (area not occupied by scrollbars)
-    virtual_region: Region  # The region relative to the container (but not necessarily visible)
+    region: Region
+    """The (screen) region occupied by the widget."""
+    order: tuple[tuple[int, int, int], ...]
+    """Tuple of tuples defining the painting order of the widget.
+
+    Each successive triple represents painting order information with regards to
+    ancestors in the DOM hierarchy and the last triple provides painting order
+    information for this specific widget.
+    """
+    clip: Region
+    """A region to clip the widget by (if a Widget is within a container)."""
+    virtual_size: Size
+    """The virtual size (scrollable region) of a widget if it is a container."""
+    container_size: Size
+    """The container size (area not occupied by scrollbars)."""
+    virtual_region: Region
+    """The region relative to the container (but not necessarily visible)."""
 
     @property
     def visible_region(self) -> Region:
@@ -419,19 +430,23 @@ class Compositor:
             widget: Widget,
             virtual_region: Region,
             region: Region,
-            order: tuple[tuple[int, ...], ...],
+            order: tuple[tuple[int, int, int], ...],
             layer_order: int,
             clip: Region,
             visible: bool,
-            _MapGeometry=MapGeometry,
+            _MapGeometry: type[MapGeometry] = MapGeometry,
         ) -> None:
             """Called recursively to place a widget and its children in the map.
 
             Args:
                 widget: The widget to add.
+                virtual_region: The Widget region relative to it's container.
                 region: The region the widget will occupy.
-                order: A tuple of ints to define the order.
+                order: Painting order information.
+                layer_order: The order of the widget in its layer.
                 clip: The clipping region (i.e. the viewport which contains it).
+                visible: Whether the widget should be visible by default.
+                    This may be overriden by the CSS rule `visibility`.
             """
             visibility = widget.styles.get_rule("visibility")
             if visibility is not None:
@@ -501,11 +516,12 @@ class Compositor:
                             )
                             widget_region = sub_region + placement_scroll_offset
 
-                        widget_order = (
-                            *order,
-                            get_layer_index(sub_widget.layer, 0),
-                            z,
-                            layer_order,
+                        widget_order = order + (
+                            (
+                                get_layer_index(sub_widget.layer, 0),
+                                z,
+                                layer_order,
+                            ),
                         )
 
                         add_widget(
@@ -560,7 +576,7 @@ class Compositor:
             root,
             size.region,
             size.region,
-            ((0,),),
+            ((0, 0, 0),),
             layer_order,
             size.region,
             True,
@@ -818,11 +834,8 @@ class Compositor:
         # Maps each cut on to a list of segments
         cuts = self.cuts
 
-        # dict.fromkeys is a callable which takes a list of ints returns a dict which maps ints on to a list of Segments or None.
-        fromkeys = cast(
-            "Callable[[list[int]], dict[int, list[Segment] | None]]", dict.fromkeys
-        )
-        # A mapping of cut index to a list of segments for each line
+        # dict.fromkeys is a callable which takes a list of ints returns a dict which maps ints onto a Segment or None.
+        fromkeys = cast("Callable[[list[int]], dict[int, Strip | None]]", dict.fromkeys)
         chops: list[dict[int, Strip | None]]
         chops = [fromkeys(cut_set[:-1]) for cut_set in cuts]
 

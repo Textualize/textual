@@ -10,7 +10,6 @@ from rich.segment import Segment, Segments
 from rich.style import Style, StyleType
 
 from . import events
-from ._types import MessageTarget
 from .geometry import Offset
 from .message import Message
 from .reactive import Reactive
@@ -47,7 +46,6 @@ class ScrollTo(ScrollMessage, verbose=True):
 
     def __init__(
         self,
-        sender: MessageTarget,
         x: float | None = None,
         y: float | None = None,
         animate: bool = True,
@@ -55,7 +53,7 @@ class ScrollTo(ScrollMessage, verbose=True):
         self.x = x
         self.y = y
         self.animate = animate
-        super().__init__(sender)
+        super().__init__()
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "x", self.x, None
@@ -197,7 +195,7 @@ class ScrollBarRender:
 class ScrollBar(Widget):
     renderer: ClassVar[Type[ScrollBarRender]] = ScrollBarRender
     """The class used for rendering scrollbars.
-    This can be overriden and set to a ScrollBarRender-derived class
+    This can be overridden and set to a ScrollBarRender-derived class
     in order to delegate all scrollbar rendering to that class. E.g.:
 
     ```
@@ -300,13 +298,11 @@ class ScrollBar(Widget):
     def _on_leave(self, event: events.Leave) -> None:
         self.mouse_over = False
 
-    async def action_scroll_down(self) -> None:
-        await self.post_message(
-            ScrollDown(self) if self.vertical else ScrollRight(self)
-        )
+    def action_scroll_down(self) -> None:
+        self.post_message(ScrollDown() if self.vertical else ScrollRight())
 
-    async def action_scroll_up(self) -> None:
-        await self.post_message(ScrollUp(self) if self.vertical else ScrollLeft(self))
+    def action_scroll_up(self) -> None:
+        self.post_message(ScrollUp() if self.vertical else ScrollLeft())
 
     def action_grab(self) -> None:
         self.capture_mouse()
@@ -359,7 +355,7 @@ class ScrollBar(Widget):
                         * (virtual_size / self.window_size)
                     )
                 )
-            await self.post_message(ScrollTo(self, x=x, y=y))
+            self.post_message(ScrollTo(x=x, y=y))
         event.stop()
 
     async def _on_click(self, event: events.Click) -> None:

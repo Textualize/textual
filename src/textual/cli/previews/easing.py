@@ -92,6 +92,7 @@ class EasingApp(App):
         target_position = (
             END_POSITION if self.position == START_POSITION else START_POSITION
         )
+        assert event.button.id is not None  # Should be set to an easing function str.
         self.animate(
             "position",
             value=target_position,
@@ -106,7 +107,7 @@ class EasingApp(App):
         self.opacity_widget.styles.opacity = 1 - value / END_POSITION
 
     def on_input_changed(self, event: Input.Changed):
-        if event.sender.id == "duration-input":
+        if event.input.id == "duration-input":
             new_duration = _try_float(event.value)
             if new_duration is not None:
                 self.duration = new_duration

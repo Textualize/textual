@@ -57,7 +57,7 @@ from ._context import active_app
 from ._event_broker import NoHandler, extract_handler_actions
 from ._path import _make_path_object_relative
 from ._wait import wait_for_idle
-from .actions import SkipAction
+from .actions import ActionParseResult, SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding, Bindings
 from .css.query import NoMatches
@@ -433,6 +433,7 @@ class App(Generic[ReturnType], DOMNode):
         self._dom_ready = False
         self._batch_count = 0
         self.set_class(self.dark, "-dark-mode")
+        self.set_class(not self.dark, "-light-mode")
 
     @property
     def return_value(self) -> ReturnType | None:
@@ -529,7 +530,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         self._exit = True
         self._return_value = result
-        self.post_message_no_wait(messages.ExitApp(sender=self))
+        self.post_message(messages.ExitApp())
         if message:
             self._exit_renderables.append(message)
 
@@ -649,7 +650,7 @@ class App(Generic[ReturnType], DOMNode):
         self,
         group: LogGroup,
         verbosity: LogVerbosity,
-        _textual_calling_frame: inspect.FrameInfo,
+        _textual_calling_frame: inspect.Traceback,
         *objects: Any,
         **kwargs,
     ) -> None:
@@ -877,7 +878,7 @@ class App(Generic[ReturnType], DOMNode):
                 except KeyError:
                     char = key if len(key) == 1 else None
                 print(f"press {key!r} (char={char!r})")
-                key_event = events.Key(app, key, char)
+                key_event = events.Key(key, char)
                 driver.send_event(key_event)
                 await wait_for_idle(0)
 
@@ -1271,7 +1272,7 @@ class App(Generic[ReturnType], DOMNode):
             The screen that was replaced.
 
         """
-        screen.post_message_no_wait(events.ScreenSuspend(self))
+        screen.post_message(events.ScreenSuspend())
         self.log.system(f"{screen} SUSPENDED")
         if not self.is_screen_installed(screen) and screen not in self._screen_stack:
             screen.remove()
@@ -1287,7 +1288,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         next_screen, await_mount = self._get_screen(screen)
         self._screen_stack.append(next_screen)
-        self.screen.post_message_no_wait(events.ScreenResume(self))
+        self.screen.post_message(events.ScreenResume())
         self.log.system(f"{self.screen} is current (PUSHED)")
         return await_mount
 
@@ -1302,7 +1303,7 @@ class App(Generic[ReturnType], DOMNode):
             self._replace_screen(self._screen_stack.pop())
             next_screen, await_mount = self._get_screen(screen)
             self._screen_stack.append(next_screen)
-            self.screen.post_message_no_wait(events.ScreenResume(self))
+            self.screen.post_message(events.ScreenResume())
             self.log.system(f"{self.screen} is current (SWITCHED)")
             return await_mount
         return AwaitMount(self.screen, [])
@@ -1381,7 +1382,7 @@ class App(Generic[ReturnType], DOMNode):
             )
         previous_screen = self._replace_screen(screen_stack.pop())
         self.screen._screen_resized(self.size)
-        self.screen.post_message_no_wait(events.ScreenResume(self))
+        self.screen.post_message(events.ScreenResume())
         self.log.system(f"{self.screen} is active")
         return previous_screen
 
@@ -1394,7 +1395,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         self.screen.set_focus(widget, scroll_visible)
 
-    async def _set_mouse_over(self, widget: Widget | None) -> None:
+    def _set_mouse_over(self, widget: Widget | None) -> None:
         """Called when the mouse is over another widget.
 
         Args:
@@ -1403,16 +1404,16 @@ class App(Generic[ReturnType], DOMNode):
         if widget is None:
             if self.mouse_over is not None:
                 try:
-                    await self.mouse_over.post_message(events.Leave(self))
+                    self.mouse_over.post_message(events.Leave())
                 finally:
                     self.mouse_over = None
         else:
             if self.mouse_over is not widget:
                 try:
                     if self.mouse_over is not None:
-                        await self.mouse_over._forward_event(events.Leave(self))
+                        self.mouse_over._forward_event(events.Leave())
                     if widget is not None:
-                        await widget._forward_event(events.Enter(self))
+                        widget._forward_event(events.Enter())
                 finally:
                     self.mouse_over = widget
 
@@ -1425,12 +1426,10 @@ class App(Generic[ReturnType], DOMNode):
         if widget == self.mouse_captured:
             return
         if self.mouse_captured is not None:
-            self.mouse_captured.post_message_no_wait(
-                events.MouseRelease(self, self.mouse_position)
-            )
+            self.mouse_captured.post_message(events.MouseRelease(self.mouse_position))
         self.mouse_captured = widget
         if widget is not None:
-            widget.post_message_no_wait(events.MouseCapture(self, self.mouse_position))
+            widget.post_message(events.MouseCapture(self.mouse_position))
 
     def panic(self, *renderables: RenderableType) -> None:
         """Exits the app then displays a message.
@@ -1543,8 +1542,8 @@ class App(Generic[ReturnType], DOMNode):
             with self.batch_update():
                 try:
                     try:
-                        await self._dispatch_message(events.Compose(sender=self))
-                        await self._dispatch_message(events.Mount(sender=self))
+                        await self._dispatch_message(events.Compose())
+                        await self._dispatch_message(events.Mount())
                     finally:
                         self._mounted_event.set()
 
@@ -1574,11 +1573,11 @@ class App(Generic[ReturnType], DOMNode):
                     await self.animator.stop()
                 finally:
                     for timer in list(self._timers):
-                        await timer.stop()
+                        timer.stop()
 
         self._running = True
         try:
-            load_event = events.Load(sender=self)
+            load_event = events.Load()
             await self._dispatch_message(load_event)
 
             driver: Driver
@@ -1604,9 +1603,8 @@ class App(Generic[ReturnType], DOMNode):
                                 with redirect_stdout(redirector):  # type: ignore
                                     await run_process_messages()
                         else:
-                            null_file = _NullFile()
-                            with redirect_stderr(null_file):
-                                with redirect_stdout(null_file):
+                            with redirect_stderr(None):
+                                with redirect_stdout(None):
                                     await run_process_messages()
 
                 finally:
@@ -1731,16 +1729,17 @@ class App(Generic[ReturnType], DOMNode):
         if not widgets:
             return []
 
-        new_widgets = list(widgets)
-
+        widget_list: Iterable[Widget]
         if before is not None or after is not None:
             # There's a before or after, which means there's going to be an
             # insertion, so make it easier to get the new things in the
             # correct order.
-            new_widgets = reversed(new_widgets)
+            widget_list = reversed(widgets)
+        else:
+            widget_list = widgets
 
         apply_stylesheet = self.stylesheet.apply
-        for widget in new_widgets:
+        for widget in widget_list:
             if not isinstance(widget, Widget):
                 raise AppError(f"Can't register {widget!r}; expected a Widget instance")
             if widget not in self._registry:
@@ -1797,14 +1796,14 @@ class App(Generic[ReturnType], DOMNode):
     async def _close_all(self) -> None:
         """Close all message pumps."""
 
-        # Close all screens on the stack
-        for screen in reversed(self._screen_stack):
-            if screen._running:
-                await self._prune_node(screen)
+        # Close all screens on the stack.
+        for stack_screen in reversed(self._screen_stack):
+            if stack_screen._running:
+                await self._prune_node(stack_screen)
 
         self._screen_stack.clear()
 
-        # Close pre-defined screens
+        # Close pre-defined screens.
         for screen in self.SCREENS.values():
             if isinstance(screen, Screen) and screen._running:
                 await self._prune_node(screen)
@@ -1816,7 +1815,7 @@ class App(Generic[ReturnType], DOMNode):
             await child._close_messages()
 
     async def _shutdown(self) -> None:
-        self._begin_update()  # Prevents any layout / repaint while shutting down
+        self._begin_batch()  # Prevents any layout / repaint while shutting down
         driver = self._driver
         self._running = False
         if driver is not None:
@@ -1824,7 +1823,7 @@ class App(Generic[ReturnType], DOMNode):
         await self._close_all()
         await self._close_messages()
 
-        await self._dispatch_message(events.Unmount(sender=self))
+        await self._dispatch_message(events.Unmount())
 
         self._print_error_renderables()
         if self.devtools is not None and self.devtools.is_connected:
@@ -1952,25 +1951,25 @@ class App(Generic[ReturnType], DOMNode):
             if isinstance(event, events.MouseEvent):
                 # Record current mouse position on App
                 self.mouse_position = Offset(event.x, event.y)
-                await self.screen._forward_event(event)
+                self.screen._forward_event(event)
             elif isinstance(event, events.Key):
                 if not await self.check_bindings(event.key, priority=True):
                     forward_target = self.focused or self.screen
-                    await forward_target._forward_event(event)
+                    forward_target._forward_event(event)
             else:
-                await self.screen._forward_event(event)
+                self.screen._forward_event(event)
 
         elif isinstance(event, events.Paste) and not event.is_forwarded:
             if self.focused is not None:
-                await self.focused._forward_event(event)
+                self.focused._forward_event(event)
             else:
-                await self.screen._forward_event(event)
+                self.screen._forward_event(event)
         else:
             await super().on_event(event)
 
     async def action(
         self,
-        action: str | tuple[str, tuple[str, ...]],
+        action: str | ActionParseResult,
         default_namespace: object | None = None,
     ) -> bool:
         """Perform an action.
@@ -2068,7 +2067,7 @@ class App(Generic[ReturnType], DOMNode):
         else:
             event.stop()
         if isinstance(action, (str, tuple)):
-            await self.action(action, default_namespace=default_namespace)
+            await self.action(action, default_namespace=default_namespace)  # type: ignore[arg-type]
         elif callable(action):
             await action()
         else:
@@ -2091,7 +2090,7 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _on_resize(self, event: events.Resize) -> None:
         event.stop()
-        await self.screen.post_message(event)
+        self.screen.post_message(event)
 
     def _detach_from_dom(self, widgets: list[Widget]) -> list[Widget]:
         """Detach a list of widgets from the DOM.
@@ -2338,9 +2337,12 @@ _uvloop_init_done: bool = False
 
 
 def _init_uvloop() -> None:
-    """
-    Import and install the `uvloop` asyncio policy, if available.
+    """Import and install the `uvloop` asyncio policy, if available.
+
     This is done only once, even if the function is called multiple times.
+
+    This is provided as a nicety for users that have `uvloop` installed independently
+    of Textual, as `uvloop` is not listed as a Textual dependency.
     """
     global _uvloop_init_done
 
@@ -2348,10 +2350,10 @@ def _init_uvloop() -> None:
         return
 
     try:
-        import uvloop
+        import uvloop  # type: ignore[reportMissingImports]
     except ImportError:
         pass
     else:
-        uvloop.install()
+        uvloop.install()  # type: ignore[reportUnknownMemberType]
 
     _uvloop_init_done = True

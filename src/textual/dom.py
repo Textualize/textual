@@ -23,8 +23,8 @@ from rich.tree import Tree
 
 from ._context import NoActiveAppError
 from ._node_list import NodeList
-from ._types import CallbackType
-from .binding import Bindings, BindingType
+from ._types import WatchCallbackType
+from .binding import Binding, Bindings, BindingType
 from .color import BLACK, WHITE, Color
 from .css._error_tools import friendly_list
 from .css.constants import VALID_DISPLAY, VALID_VISIBILITY
@@ -39,7 +39,7 @@ from .walk import walk_breadth_first, walk_depth_first
 
 if TYPE_CHECKING:
     from .app import App
-    from .css.query import DOMQuery
+    from .css.query import DOMQuery, QueryType
     from .screen import Screen
     from .widget import Widget
     from typing_extensions import TypeAlias
@@ -163,7 +163,7 @@ class DOMNode(MessagePump):
     @auto_refresh.setter
     def auto_refresh(self, interval: float | None) -> None:
         if self._auto_refresh_timer is not None:
-            self._auto_refresh_timer.stop_no_wait()
+            self._auto_refresh_timer.stop()
             self._auto_refresh_timer = None
         if interval is not None:
             self._auto_refresh_timer = self.set_interval(
@@ -276,7 +276,7 @@ class DOMNode(MessagePump):
                         base.__dict__.get("BINDINGS", []),
                     )
                 )
-        keys = {}
+        keys: dict[str, Binding] = {}
         for bindings_ in bindings:
             keys.update(bindings_.keys)
         return Bindings(keys.values())
@@ -357,7 +357,7 @@ class DOMNode(MessagePump):
         # Note that self.screen may not be the same as self.app.screen
         from .screen import Screen
 
-        node = self
+        node: MessagePump | None = self
         while node is not None and not isinstance(node, Screen):
             node = node._parent
         if not isinstance(node, Screen):
@@ -661,7 +661,7 @@ class DOMNode(MessagePump):
         self,
         obj: DOMNode,
         attribute_name: str,
-        callback: CallbackType,
+        callback: WatchCallbackType,
         init: bool = True,
     ) -> None:
         """Watches for modifications to reactive attributes on another object.
@@ -771,19 +771,17 @@ class DOMNode(MessagePump):
             nodes.reverse()
         return cast("list[DOMNode]", nodes)
 
-    ExpectType = TypeVar("ExpectType", bound="Widget")
-
     @overload
     def query(self, selector: str | None) -> DOMQuery[Widget]:
         ...
 
     @overload
-    def query(self, selector: type[ExpectType]) -> DOMQuery[ExpectType]:
+    def query(self, selector: type[QueryType]) -> DOMQuery[QueryType]:
         ...
 
     def query(
-        self, selector: str | type[ExpectType] | None = None
-    ) -> DOMQuery[Widget] | DOMQuery[ExpectType]:
+        self, selector: str | type[QueryType] | None = None
+    ) -> DOMQuery[Widget] | DOMQuery[QueryType]:
         """Get a DOM query matching a selector.
 
         Args:
@@ -792,33 +790,31 @@ class DOMNode(MessagePump):
         Returns:
             A query object.
         """
-        from .css.query import DOMQuery
+        from .css.query import DOMQuery, QueryType
+        from .widget import Widget
 
-        query: str | None
         if isinstance(selector, str) or selector is None:
-            query = selector
+            return DOMQuery[Widget](self, filter=selector)
         else:
-            query = selector.__name__
-
-        return DOMQuery(self, filter=query)
+            return DOMQuery[QueryType](self, filter=selector.__name__)
 
     @overload
     def query_one(self, selector: str) -> Widget:
         ...
 
     @overload
-    def query_one(self, selector: type[ExpectType]) -> ExpectType:
+    def query_one(self, selector: type[QueryType]) -> QueryType:
         ...
 
     @overload
-    def query_one(self, selector: str, expect_type: type[ExpectType]) -> ExpectType:
+    def query_one(self, selector: str, expect_type: type[QueryType]) -> QueryType:
         ...
 
     def query_one(
         self,
-        selector: str | type[ExpectType],
-        expect_type: type[ExpectType] | None = None,
-    ) -> ExpectType | Widget:
+        selector: str | type[QueryType],
+        expect_type: type[QueryType] | None = None,
+    ) -> QueryType | Widget:
         """Get a single Widget matching the given selector or selector type.
 
         Args:
