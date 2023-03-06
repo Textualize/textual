@@ -1,5 +1,7 @@
 """Provides a radio button widget."""
 
+from __future__ import annotations
+
 from ._toggle_button import ToggleButton
 
 
@@ -21,3 +23,14 @@ class RadioButton(ToggleButton):
 
         # https://github.com/Textualize/textual/issues/1814
         namespace = "radio_button"
+
+        @property
+        def radio_button(self) -> RadioButton:
+            """The radio button that was changed."""
+            assert isinstance(self._toggle_button, RadioButton)
+            return self._toggle_button
+
+        @property
+        def control(self) -> RadioButton:
+            """Alias for self.radio_button"""
+            return self.radio_button

@@ -163,7 +163,7 @@ class DOMNode(MessagePump):
     @auto_refresh.setter
     def auto_refresh(self, interval: float | None) -> None:
         if self._auto_refresh_timer is not None:
-            self._auto_refresh_timer.stop_no_wait()
+            self._auto_refresh_timer.stop()
             self._auto_refresh_timer = None
         if interval is not None:
             self._auto_refresh_timer = self.set_interval(

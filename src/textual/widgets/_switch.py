@@ -87,10 +87,15 @@ class Switch(Widget, can_focus=True):
             input: The `Switch` widget that was changed.
         """
 
-        def __init__(self, sender: Switch, value: bool) -> None:
-            super().__init__(sender)
+        def __init__(self, switch: Switch, value: bool) -> None:
+            super().__init__()
             self.value: bool = value
-            self.input: Switch = sender
+            self.switch: Switch = switch
+
+        @property
+        def control(self) -> Switch:
+            """Alias for self.switch."""
+            return self.switch
 
     def __init__(
         self,
@@ -124,7 +129,7 @@ class Switch(Widget, can_focus=True):
             self.animate("slider_pos", target_slider_pos, duration=0.3)
         else:
             self.slider_pos = target_slider_pos
-        self.post_message_no_wait(self.Changed(self, self.value))
+        self.post_message(self.Changed(self, self.value))
 
     def watch_slider_pos(self, slider_pos: float) -> None:
         self.set_class(slider_pos == 1, "-on")

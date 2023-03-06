@@ -287,7 +287,6 @@ class MessagePump(metaclass=MessagePumpMeta):
         timer = Timer(
             self,
             delay,
-            self,
             name=name or f"set_timer#{Timer._timer_count}",
             callback=callback,
             repeat=0,
@@ -321,7 +320,6 @@ class MessagePump(metaclass=MessagePumpMeta):
         timer = Timer(
             self,
             interval,
-            self,
             name=name or f"set_interval#{Timer._timer_count}",
             callback=callback,
             repeat=repeat or None,
@@ -341,8 +339,8 @@ class MessagePump(metaclass=MessagePumpMeta):
         # We send the InvokeLater message to ourselves first, to ensure we've cleared
         # out anything already pending in our own queue.
 
-        message = messages.InvokeLater(self, partial(callback, *args, **kwargs))
-        self.post_message_no_wait(message)
+        message = messages.InvokeLater(partial(callback, *args, **kwargs))
+        self.post_message(message)
 
     def call_later(self, callback: Callable, *args, **kwargs) -> None:
         """Schedule a callback to run after all messages are processed in this object.
@@ -353,8 +351,8 @@ class MessagePump(metaclass=MessagePumpMeta):
             *args: Positional arguments to pass to the callable.
             **kwargs: Keyword arguments to pass to the callable.
         """
-        message = events.Callback(self, callback=partial(callback, *args, **kwargs))
-        self.post_message_no_wait(message)
+        message = events.Callback(callback=partial(callback, *args, **kwargs))
+        self.post_message(message)
 
     def call_next(self, callback: Callable, *args, **kwargs) -> None:
         """Schedule a callback to run immediately after processing the current message.
@@ -372,7 +370,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     def _close_messages_no_wait(self) -> None:
         """Request the message queue to immediately exit."""
-        self._message_queue.put_nowait(messages.CloseMessages(sender=self))
+        self._message_queue.put_nowait(messages.CloseMessages())
 
     async def _on_close_messages(self, message: messages.CloseMessages) -> None:
         await self._close_messages()
@@ -384,9 +382,9 @@ class MessagePump(metaclass=MessagePumpMeta):
         self._closing = True
         stop_timers = list(self._timers)
         for timer in stop_timers:
-            await timer.stop()
+            timer.stop()
         self._timers.clear()
-        await self._message_queue.put(events.Unmount(sender=self))
+        await self._message_queue.put(events.Unmount())
         Reactive._reset_object(self)
         await self._message_queue.put(None)
         if wait and self._task is not None and asyncio.current_task() != self._task:
@@ -421,15 +419,15 @@ class MessagePump(metaclass=MessagePumpMeta):
         finally:
             self._running = False
             for timer in list(self._timers):
-                await timer.stop()
+                timer.stop()
 
     async def _pre_process(self) -> None:
         """Procedure to run before processing messages."""
         # Dispatch compose and mount messages without going through loop
         # These events must occur in this order, and at the start.
         try:
-            await self._dispatch_message(events.Compose(sender=self))
-            await self._dispatch_message(events.Mount(sender=self))
+            await self._dispatch_message(events.Compose())
+            await self._dispatch_message(events.Mount())
             self._post_mount()
         except Exception as error:
             self.app._handle_exception(error)
@@ -489,7 +487,7 @@ class MessagePump(metaclass=MessagePumpMeta):
                     ):
                         self._last_idle = current_time
                         if not self._closed:
-                            event = events.Idle(self)
+                            event = events.Idle()
                             for _cls, method in self._get_dispatch_methods(
                                 "on_idle", event
                             ):
@@ -581,19 +579,21 @@ class MessagePump(metaclass=MessagePumpMeta):
 
         # Bubble messages up the DOM (if enabled on the message)
         if message.bubble and self._parent and not message._stop_propagation:
-            if message.sender == self._parent:
+            if message._sender is not None and message._sender == self._parent:
                 # parent is sender, so we stop propagation after parent
                 message.stop()
             if self.is_parent_active and not self._parent._closing:
-                await message._bubble_to(self._parent)
+                message._bubble_to(self._parent)
 
     def check_idle(self) -> None:
         """Prompt the message pump to call idle if the queue is empty."""
         if self._message_queue.empty():
-            self.post_message_no_wait(messages.Prompt(sender=self))
+            self.post_message(messages.Prompt())
 
-    async def post_message(self, message: Message) -> bool:
+    async def _post_message(self, message: Message) -> bool:
         """Post a message or an event to this message pump.
+
+        This is an internal method for use where a coroutine is required.
 
         Args:
             message: A message object.
@@ -602,40 +602,9 @@ class MessagePump(metaclass=MessagePumpMeta):
             True if the messages was posted successfully, False if the message was not posted
                 (because the message pump was in the process of closing).
         """
+        return self.post_message(message)
 
-        if self._closing or self._closed:
-            return False
-        if not self.check_message_enabled(message):
-            return True
-        # Add a copy of the prevented message types to the message
-        # This is so that prevented messages are honoured by the event's handler
-        message._prevent.update(self._get_prevented_messages())
-        await self._message_queue.put(message)
-        return True
-
-    # TODO: This may not be needed, or may only be needed by the timer
-    # Consider removing or making private
-    async def _post_priority_message(self, message: Message) -> bool:
-        """Post a "priority" messages which will be processes prior to regular messages.
-
-        Note that you should rarely need this in a regular app. It exists primarily to allow
-        timer messages to skip the queue, so that they can be more regular.
-
-        Args:
-            message: A message.
-
-        Returns:
-            True if the messages was processed, False if it wasn't.
-        """
-        # TODO: Allow priority messages to jump the queue
-        if self._closing or self._closed:
-            return False
-        if not self.check_message_enabled(message):
-            return False
-        await self._message_queue.put(message)
-        return True
-
-    def post_message_no_wait(self, message: Message) -> bool:
+    def post_message(self, message: Message) -> bool:
         """Posts a message on the queue.
 
         Args:
@@ -653,16 +622,6 @@ class MessagePump(metaclass=MessagePumpMeta):
         message._prevent.update(self._get_prevented_messages())
         self._message_queue.put_nowait(message)
         return True
-
-    async def _post_message_from_child(self, message: Message) -> bool:
-        if self._closing or self._closed:
-            return False
-        return await self.post_message(message)
-
-    def _post_message_from_child_no_wait(self, message: Message) -> bool:
-        if self._closing or self._closed:
-            return False
-        return self.post_message_no_wait(message)
 
     async def on_callback(self, event: events.Callback) -> None:
         await invoke(event.callback)

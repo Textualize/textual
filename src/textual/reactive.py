@@ -210,9 +210,7 @@ class Reactive(Generic[ReactiveType]):
             _rich_traceback_omit = True
             await awaitable
             # Watcher may have changed the state, so run compute again
-            obj.post_message_no_wait(
-                events.Callback(sender=obj, callback=partial(Reactive._compute, obj))
-            )
+            obj.post_message(events.Callback(callback=partial(Reactive._compute, obj)))
 
         def invoke_watcher(
             watch_function: Callable, old_value: object, value: object
@@ -235,10 +233,8 @@ class Reactive(Generic[ReactiveType]):
                 watch_result = watch_function()
             if isawaitable(watch_result):
                 # Result is awaitable, so we need to await it within an async context
-                obj.post_message_no_wait(
-                    events.Callback(
-                        sender=obj, callback=partial(await_watcher, watch_result)
-                    )
+                obj.post_message(
+                    events.Callback(callback=partial(await_watcher, watch_result))
                 )
 
         watch_function = getattr(obj, f"watch_{name}", None)

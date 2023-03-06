@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Awaitable, Callable, Type, TypeVar
+from typing import TYPE_CHECKING, Type, TypeVar
 
 import rich.repr
 from rich.style import Style
 
-from ._types import CallbackType, MessageTarget
+from ._types import CallbackType
 from .geometry import Offset, Size
 from .keys import _get_key_aliases
 from .message import Message
@@ -28,9 +28,9 @@ class Event(Message):
 
 @rich.repr.auto
 class Callback(Event, bubble=False, verbose=True):
-    def __init__(self, sender: MessageTarget, callback: CallbackType) -> None:
+    def __init__(self, callback: CallbackType) -> None:
         self.callback = callback
-        super().__init__(sender)
+        super().__init__()
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "callback", self.callback
@@ -71,8 +71,8 @@ class Idle(Event, bubble=False):
 class Action(Event):
     __slots__ = ["action"]
 
-    def __init__(self, sender: MessageTarget, action: str) -> None:
-        super().__init__(sender)
+    def __init__(self, action: str) -> None:
+        super().__init__()
         self.action = action
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -82,7 +82,6 @@ class Action(Event):
 class Resize(Event, bubble=False):
     """Sent when the app or widget has been resized.
     Args:
-        sender: The sender of the event (the Screen).
         size: The new size of the Widget.
         virtual_size: The virtual size (scrollable size) of the Widget.
         container_size: The size of the Widget's container widget. Defaults to None.
@@ -93,7 +92,6 @@ class Resize(Event, bubble=False):
 
     def __init__(
         self,
-        sender: MessageTarget,
         size: Size,
         virtual_size: Size,
         container_size: Size | None = None,
@@ -101,7 +99,7 @@ class Resize(Event, bubble=False):
         self.size = size
         self.virtual_size = virtual_size
         self.container_size = size if container_size is None else container_size
-        super().__init__(sender)
+        super().__init__()
 
     def can_replace(self, message: "Message") -> bool:
         return isinstance(message, Resize)
@@ -149,13 +147,12 @@ class MouseCapture(Event, bubble=False):
 
 
     Args:
-        sender: The sender of the event, (in this case the app).
         mouse_position: The position of the mouse when captured.
 
     """
 
-    def __init__(self, sender: MessageTarget, mouse_position: Offset) -> None:
-        super().__init__(sender)
+    def __init__(self, mouse_position: Offset) -> None:
+        super().__init__()
         self.mouse_position = mouse_position
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -167,12 +164,11 @@ class MouseRelease(Event, bubble=False):
     """Mouse has been released.
 
     Args:
-        sender: The sender of the event, (in this case the app).
         mouse_position: The position of the mouse when released.
     """
 
-    def __init__(self, sender: MessageTarget, mouse_position: Offset) -> None:
-        super().__init__(sender)
+    def __init__(self, mouse_position: Offset) -> None:
+        super().__init__()
         self.mouse_position = mouse_position
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -188,7 +184,6 @@ class Key(InputEvent):
     """Sent when the user hits a key on the keyboard.
 
     Args:
-        sender: The sender of the event (always the App).
         key: The key that was pressed.
         character: A printable character or ``None`` if it is not printable.
 
@@ -198,8 +193,8 @@ class Key(InputEvent):
 
     __slots__ = ["key", "character", "aliases"]
 
-    def __init__(self, sender: MessageTarget, key: str, character: str | None) -> None:
-        super().__init__(sender)
+    def __init__(self, key: str, character: str | None) -> None:
+        super().__init__()
         self.key = key
         self.character = (
             (key if len(key) == 1 else None) if character is None else character
@@ -245,7 +240,6 @@ class MouseEvent(InputEvent, bubble=True):
     """Sent in response to a mouse event.
 
     Args:
-        sender: The sender of the event.
         x: The relative x coordinate.
         y: The relative y coordinate.
         delta_x: Change in x since the last message.
@@ -276,7 +270,6 @@ class MouseEvent(InputEvent, bubble=True):
 
     def __init__(
         self,
-        sender: MessageTarget,
         x: int,
         y: int,
         delta_x: int,
@@ -289,7 +282,7 @@ class MouseEvent(InputEvent, bubble=True):
         screen_y: int | None = None,
         style: Style | None = None,
     ) -> None:
-        super().__init__(sender)
+        super().__init__()
         self.x = x
         self.y = y
         self.delta_x = delta_x
@@ -305,7 +298,6 @@ class MouseEvent(InputEvent, bubble=True):
     @classmethod
     def from_event(cls: Type[MouseEventT], event: MouseEvent) -> MouseEventT:
         new_event = cls(
-            event.sender,
             event.x,
             event.y,
             event.delta_x,
@@ -387,7 +379,6 @@ class MouseEvent(InputEvent, bubble=True):
 
     def _apply_offset(self, x: int, y: int) -> MouseEvent:
         return self.__class__(
-            self.sender,
             x=self.x + x,
             y=self.y + y,
             delta_x=self.delta_x,
@@ -437,13 +428,12 @@ class Timer(Event, bubble=False, verbose=True):
 
     def __init__(
         self,
-        sender: MessageTarget,
         timer: "TimerClass",
         time: float,
         count: int = 0,
         callback: TimerCallback | None = None,
     ) -> None:
-        super().__init__(sender)
+        super().__init__()
         self.timer = timer
         self.time = time
         self.count = count
@@ -486,12 +476,11 @@ class Paste(Event, bubble=True):
     and disable it when the app shuts down.
 
     Args:
-        sender: The sender of the event, (in this case the app).
         text: The text that has been pasted.
     """
 
-    def __init__(self, sender: MessageTarget, text: str) -> None:
-        super().__init__(sender)
+    def __init__(self, text: str) -> None:
+        super().__init__()
         self.text = text
 
     def __rich_repr__(self) -> rich.repr.Result:

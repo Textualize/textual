@@ -319,24 +319,30 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         def __init__(
             self,
-            sender: DataTable,
+            data_table: DataTable,
             value: CellType,
             coordinate: Coordinate,
             cell_key: CellKey,
         ) -> None:
+            self.data_table = data_table
+            """The data table."""
             self.value: CellType = value
             """The value in the highlighted cell."""
             self.coordinate: Coordinate = coordinate
             """The coordinate of the highlighted cell."""
             self.cell_key: CellKey = cell_key
             """The key for the highlighted cell."""
-            super().__init__(sender)
+            super().__init__()
 
         def __rich_repr__(self) -> rich.repr.Result:
-            yield "sender", self.sender
             yield "value", self.value
             yield "coordinate", self.coordinate
             yield "cell_key", self.cell_key
+
+        @property
+        def control(self) -> DataTable:
+            """Alias for the data table."""
+            return self.data_table
 
     class CellSelected(Message, bubble=True):
         """Posted by the `DataTable` widget when a cell is selected.
@@ -348,24 +354,30 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         def __init__(
             self,
-            sender: DataTable,
+            data_table: DataTable,
             value: CellType,
             coordinate: Coordinate,
             cell_key: CellKey,
         ) -> None:
+            self.data_table = data_table
+            """The data table."""
             self.value: CellType = value
             """The value in the cell that was selected."""
             self.coordinate: Coordinate = coordinate
             """The coordinate of the cell that was selected."""
             self.cell_key: CellKey = cell_key
             """The key for the selected cell."""
-            super().__init__(sender)
+            super().__init__()
 
         def __rich_repr__(self) -> rich.repr.Result:
-            yield "sender", self.sender
             yield "value", self.value
             yield "coordinate", self.coordinate
             yield "cell_key", self.cell_key
+
+        @property
+        def control(self) -> DataTable:
+            """Alias for the data table."""
+            return self.data_table
 
     class RowHighlighted(Message, bubble=True):
         """Posted when a row is highlighted.
@@ -376,17 +388,25 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         widget in the DOM.
         """
 
-        def __init__(self, sender: DataTable, cursor_row: int, row_key: RowKey) -> None:
+        def __init__(
+            self, data_table: DataTable, cursor_row: int, row_key: RowKey
+        ) -> None:
+            self.data_table = data_table
+            """The data table."""
             self.cursor_row: int = cursor_row
             """The y-coordinate of the cursor that highlighted the row."""
             self.row_key: RowKey = row_key
             """The key of the row that was highlighted."""
-            super().__init__(sender)
+            super().__init__()
 
         def __rich_repr__(self) -> rich.repr.Result:
-            yield "sender", self.sender
             yield "cursor_row", self.cursor_row
             yield "row_key", self.row_key
+
+        @property
+        def control(self) -> DataTable:
+            """Alias for the data table."""
+            return self.data_table
 
     class RowSelected(Message, bubble=True):
         """Posted when a row is selected.
@@ -397,17 +417,25 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         widget in the DOM.
         """
 
-        def __init__(self, sender: DataTable, cursor_row: int, row_key: RowKey) -> None:
+        def __init__(
+            self, data_table: DataTable, cursor_row: int, row_key: RowKey
+        ) -> None:
+            self.data_table = data_table
+            """The data table."""
             self.cursor_row: int = cursor_row
             """The y-coordinate of the cursor that made the selection."""
             self.row_key: RowKey = row_key
             """The key of the row that was selected."""
-            super().__init__(sender)
+            super().__init__()
 
         def __rich_repr__(self) -> rich.repr.Result:
-            yield "sender", self.sender
             yield "cursor_row", self.cursor_row
             yield "row_key", self.row_key
+
+        @property
+        def control(self) -> DataTable:
+            """Alias for the data table."""
+            return self.data_table
 
     class ColumnHighlighted(Message, bubble=True):
         """Posted when a column is highlighted.
@@ -419,18 +447,24 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """
 
         def __init__(
-            self, sender: DataTable, cursor_column: int, column_key: ColumnKey
+            self, data_table: DataTable, cursor_column: int, column_key: ColumnKey
         ) -> None:
+            self.data_table = data_table
+            """The data table."""
             self.cursor_column: int = cursor_column
             """The x-coordinate of the column that was highlighted."""
             self.column_key = column_key
             """The key of the column that was highlighted."""
-            super().__init__(sender)
+            super().__init__()
 
         def __rich_repr__(self) -> rich.repr.Result:
-            yield "sender", self.sender
             yield "cursor_column", self.cursor_column
             yield "column_key", self.column_key
+
+        @property
+        def control(self) -> DataTable:
+            """Alias for the data table."""
+            return self.data_table
 
     class ColumnSelected(Message, bubble=True):
         """Posted when a column is selected.
@@ -442,66 +476,84 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """
 
         def __init__(
-            self, sender: DataTable, cursor_column: int, column_key: ColumnKey
+            self, data_table: DataTable, cursor_column: int, column_key: ColumnKey
         ) -> None:
+            self.data_table = data_table
+            """The data table."""
             self.cursor_column: int = cursor_column
             """The x-coordinate of the column that was selected."""
             self.column_key = column_key
             """The key of the column that was selected."""
-            super().__init__(sender)
+            super().__init__()
 
         def __rich_repr__(self) -> rich.repr.Result:
-            yield "sender", self.sender
             yield "cursor_column", self.cursor_column
             yield "column_key", self.column_key
+
+        @property
+        def control(self) -> DataTable:
+            """Alias for the data table."""
+            return self.data_table
 
     class HeaderSelected(Message, bubble=True):
         """Posted when a column header/label is clicked."""
 
         def __init__(
             self,
-            sender: DataTable,
+            data_table: DataTable,
             column_key: ColumnKey,
             column_index: int,
             label: Text,
         ):
+            self.data_table = data_table
+            """The data table."""
             self.column_key = column_key
             """The key for the column."""
             self.column_index = column_index
             """The index for the column."""
             self.label = label
             """The text of the label."""
-            super().__init__(sender)
+            super().__init__()
 
         def __rich_repr__(self) -> rich.repr.Result:
-            yield "sender", self.sender
             yield "column_key", self.column_key
             yield "column_index", self.column_index
             yield "label", self.label.plain
+
+        @property
+        def control(self) -> DataTable:
+            """Alias for the data table."""
+            return self.data_table
 
     class RowLabelSelected(Message, bubble=True):
         """Posted when a row label is clicked."""
 
         def __init__(
             self,
-            sender: DataTable,
+            data_table: DataTable,
             row_key: RowKey,
             row_index: int,
             label: Text,
         ):
+            self.data_table = data_table
+            """The data table."""
             self.row_key = row_key
             """The key for the column."""
             self.row_index = row_index
             """The index for the column."""
             self.label = label
             """The text of the label."""
-            super().__init__(sender)
+            super().__init__()
 
         def __rich_repr__(self) -> rich.repr.Result:
-            yield "sender", self.sender
             yield "row_key", self.row_key
             yield "row_index", self.row_index
             yield "label", self.label.plain
+
+        @property
+        def control(self) -> DataTable:
+            """Alias for the data table."""
+            return self.data_table
 
     def __init__(
         self,
@@ -896,7 +948,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             return
         else:
             cell_key = self.coordinate_to_cell_key(coordinate)
-            self.post_message_no_wait(
+            self.post_message(
                 DataTable.CellHighlighted(
                     self, cell_value, coordinate=coordinate, cell_key=cell_key
                 )
@@ -927,16 +979,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         is_valid_row = row_index < len(self._data)
         if is_valid_row:
             row_key = self._row_locations.get_key(row_index)
-            self.post_message_no_wait(
-                DataTable.RowHighlighted(self, row_index, row_key)
-            )
+            self.post_message(DataTable.RowHighlighted(self, row_index, row_key))
 
     def _highlight_column(self, column_index: int) -> None:
         """Apply highlighting to the column at the given index, and post event."""
         self.refresh_column(column_index)
         if column_index < len(self.columns):
             column_key = self._column_locations.get_key(column_index)
-            self.post_message_no_wait(
+            self.post_message(
                 DataTable.ColumnHighlighted(self, column_index, column_key)
             )
 
@@ -1837,13 +1887,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             message = DataTable.HeaderSelected(
                 self, column.key, column_index, label=column.label
             )
-            self.post_message_no_wait(message)
+            self.post_message(message)
         elif is_row_label_click:
             row = self.ordered_rows[row_index]
             message = DataTable.RowLabelSelected(
                 self, row.key, row_index, label=row.label
             )
-            self.post_message_no_wait(message)
+            self.post_message(message)
         elif self.show_cursor and self.cursor_type != "none":
             # Only post selection events if there is a visible row/col/cell cursor.
             self.cursor_coordinate = Coordinate(row_index, column_index)
@@ -1900,7 +1950,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         cursor_type = self.cursor_type
         cell_key = self.coordinate_to_cell_key(cursor_coordinate)
         if cursor_type == "cell":
-            self.post_message_no_wait(
+            self.post_message(
                 DataTable.CellSelected(
                     self,
                     self.get_cell_at(cursor_coordinate),
@@ -1911,10 +1961,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         elif cursor_type == "row":
             row_index, _ = cursor_coordinate
             row_key, _ = cell_key
-            self.post_message_no_wait(DataTable.RowSelected(self, row_index, row_key))
+            self.post_message(DataTable.RowSelected(self, row_index, row_key))
         elif cursor_type == "column":
             _, column_index = cursor_coordinate
             _, column_key = cell_key
-            self.post_message_no_wait(
-                DataTable.ColumnSelected(self, column_index, column_key)
-            )
+            self.post_message(DataTable.ColumnSelected(self, column_index, column_key))
