@@ -231,11 +231,6 @@ class ToggleButton(Static, can_focus=True):
             self.value = value
             """The value of the toggle button after the change."""
 
-        @property
-        def control(self) -> ToggleButton:
-            """Alias for self.toggle_button."""
-            return self._toggle_button
-
     def watch_value(self) -> None:
         """React to the value being changed.
 
