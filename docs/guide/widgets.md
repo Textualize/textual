@@ -389,7 +389,7 @@ The following builtin widgets use the Line API. If you are building advanced wid
 
 Widgets may be combined to create new widgets with additional features.
 Such widgets are known as *compound widgets*.
-The Stopwatch in the [tutorial](./../tutorial.md) is an example of a compound widget.
+The stopwatch in the [tutorial](./../tutorial.md) is an example of a compound widget.
 
 A compound widget can be used like any other widget.
 The only thing that differs is that when you build a compound widget, you write a `compose()` method which yields *child* widgets, rather than implement a `render` or `render_line` method.
