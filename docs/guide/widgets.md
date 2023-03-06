@@ -409,7 +409,7 @@ The following is an example of a compound widget.
     ```{.textual path="docs/examples/guide/compound/compound01.py"}
     ```
 
-The `InputWithLabel` class bundles an [Input](../widgets/input.md) with a [Label](../widgets/label.md) to create a new widget that displays a right aligned label next to an input control. You can re-use this `InputWithLabel` class anywhere in a Textual app, including in other widgets.
+The `InputWithLabel` class bundles an [Input](../widgets/input.md) with a [Label](../widgets/label.md) to create a new widget that displays a right-aligned label next to an input control. You can re-use this `InputWithLabel` class anywhere in a Textual app, including in other widgets.
 
 ## Coordinating widgets
 
