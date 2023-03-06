@@ -89,7 +89,7 @@ class ByteEditor(Widget):
 
     value = reactive(0)
 
-    def validate_value(self, value: int) -> int:
+    def validate_value(self, value: int) -> int:  # (2)!
         """Ensure value is between 0 and 255."""
         return clamp(value, 0, 255)
 
@@ -106,18 +106,18 @@ class ByteEditor(Widget):
             value |= switch.value << switch.bit
         self.query_one(Input).value = str(value)
 
-    def on_input_changed(self, event: Input.Changed) -> None:  # (2)!
+    def on_input_changed(self, event: Input.Changed) -> None:  # (3)!
         """When the text changes, set the value of the byte."""
         try:
             self.value = int(event.value or "0")
         except ValueError:
             pass
 
-    def watch_value(self, value: int) -> None:  # (3)!
+    def watch_value(self, value: int) -> None:  # (4)!
         """When self.value changes, update switches."""
         for switch in self.query(BitSwitch):
-            with switch.prevent(BitSwitch.BitChanged):
-                switch.value = bool(value & 1 << switch.bit)
+            with switch.prevent(BitSwitch.BitChanged):  # (5)!
+                switch.value = bool(value & 1 << switch.bit)  # (6)!
 
 
 class ByteInputApp(App):

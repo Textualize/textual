@@ -524,7 +524,7 @@ The following is a (simplified) DOM diagram to show how the new messages are pro
 
 ### Attributes down
 
-We also want to be able to update the decimal value in the input, and have the switches update accordingly.
+We also want the switches to update if the user edits the decimal value. To do this, the `ByteEditor` widget should respond to the input changing, and then modify the switches. Because the switches are children of `ByteEditor` we can update them by setting their attributes directly. This is an example of "attributes down".
 
 === "byte02.py"
 
