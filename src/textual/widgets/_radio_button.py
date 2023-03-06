@@ -29,3 +29,8 @@ class RadioButton(ToggleButton):
             """The radio button that was changed."""
             assert isinstance(self._toggle_button, RadioButton)
             return self._toggle_button
+
+        @property
+        def control(self) -> RadioButton:
+            """Alias for self.radio_button"""
+            return self.radio_button

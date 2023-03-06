@@ -22,3 +22,8 @@ class Checkbox(ToggleButton):
             """The checkbox that was changed."""
             assert isinstance(self._toggle_button, Checkbox)
             return self._toggle_button
+
+        @property
+        def control(self) -> Checkbox:
+            """An alias for self.checkbox"""
+            return self.checkbox
