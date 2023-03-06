@@ -557,7 +557,7 @@ This is an example of "attributes down".
     --8<-- "docs/examples/guide/compound/byte03.py"
     ```
 
-    1. When the BitSwitch's value changed, we want to update the builtin `Switch` to match.
+    1. When the `BitSwitch`'s value changed, we want to update the builtin `Switch` to match.
     2. Ensure the value is in a the range of a byte.
     3. Handle the Input.Changed event when the user modified the value in the input.
     4. When the ByteEditor value changes, update all the switches to match.
