@@ -32,8 +32,8 @@ class Message:
     no_dispatch: ClassVar[bool] = False  # Message may not be handled by client code
     namespace: ClassVar[str] = ""  # Namespace to disambiguate messages
 
-    def __init__(self, sender: MessageTarget | None = None) -> None:
-        self._sender: MessageTarget | None = sender or active_message_pump.get(None)
+    def __init__(self) -> None:
+        self._sender: MessageTarget | None = active_message_pump.get(None)
         self.time: float = _clock.get_time_no_wait()
         self._forwarded = False
         self._no_default_action = False
