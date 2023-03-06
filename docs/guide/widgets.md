@@ -571,4 +571,4 @@ This is an example of "attributes down".
     ```
 
 - When the user edits the input, the [Input](../widgets/input.md) widget sends a `Changed` event, which we handle with `on_input_changed` by setting `self.value`, which is a reactive value we added to `ByteEditor`.
-- If the value has changed, Textual will call `watch_value` which set the value of each of the eight switches. Because we are working with children of the `ByteEditor` we can set attributes directly, without going via a message.
+- If the value has changed, Textual will call `watch_value` which sets the value of each of the eight switches. Because we are working with children of the `ByteEditor`, we can set attributes directly without going via a message.
