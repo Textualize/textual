@@ -515,8 +515,24 @@ Let's extend the ByteEditor so that clicking any of the 8 `BitSwitch` widgets up
 - The `BitSwitch` widget now has an `on_switch_changed` which will handle a [Switch.Changed][textual.widgets.switch.Switch] message, sent when the user clicks a switch. We use this to store the new value of the bit, and sent a new custom message, `BitSwitch.BitChanged`.
 - The `ByteEditor` widget handles the `BitSwitch.Changed` message by calculating the decimal value and setting it on the input.
 
-Here's a (simplified) DOM diagram which shows what these changes are doing:
+The following is a (simplified) DOM diagram to show how the new messages are processed:
 
 <div class="excalidraw">
 --8<-- "docs/images/bit_switch_message.excalidraw.svg"
 </div>
+
+
+### Attributes down
+
+=== "byte02.py"
+
+    ```python title="byte03.py" hl_lines="45-47 90 109-113 115-120"
+    --8<-- "docs/examples/guide/compound/byte03.py"
+    ```
+
+    1. When the BitSwitch's value, we want to update the builtin `Switch` to match.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/compound/byte03.py" columns="90" line="30", press="tab,1,0,0"}
+    ```
