@@ -7,13 +7,14 @@ import rich.repr
 
 from ._wait import wait_for_idle
 from .app import App, ReturnType
+from .css.query import QueryType
 from .events import Click, MouseDown, MouseMove, MouseUp
 from .geometry import Offset
 from .widget import Widget
 
 
 def _get_mouse_message_arguments(
-    target: Widget, offset: Offset = Offset()
+    target: Widget, offset: Offset = Offset(), button: int = 0
 ) -> dict[str, Any]:
     x, y = offset
     click_x, click_y, _, _ = target.region.translate(offset)
@@ -22,7 +23,7 @@ def _get_mouse_message_arguments(
         "y": y,
         "delta_x": 0,
         "delta_y": 0,
-        "button": 1,
+        "button": button,
         "shift": False,
         "meta": False,
         "ctrl": False,
@@ -58,7 +59,7 @@ class Pilot(Generic[ReturnType]):
             await self._app._press_keys(keys)
 
     async def click(
-        self, selector: str | None = None, offset: Offset = Offset()
+        self, selector: QueryType | None = None, offset: Offset = Offset()
     ) -> None:
         """Simulate clicking with the mouse.
 
@@ -76,13 +77,16 @@ class Pilot(Generic[ReturnType]):
         else:
             target_widget = screen
 
-        message_arguments = _get_mouse_message_arguments(target_widget, offset)
+        message_arguments = _get_mouse_message_arguments(
+            target_widget, offset, button=1
+        )
         target_widget.post_message(MouseDown(**message_arguments))
         target_widget.post_message(MouseUp(**message_arguments))
         target_widget.post_message(Click(**message_arguments))
+        await self.pause()
 
     async def hover(
-        self, selector: str | None = None, offset: Offset = Offset()
+        self, selector: QueryType | None = None, offset: Offset = Offset()
     ) -> None:
         """Simulate hovering with the mouse cursor.
 
@@ -97,8 +101,11 @@ class Pilot(Generic[ReturnType]):
         else:
             target_widget = screen
 
-        message_arguments = _get_mouse_message_arguments(target_widget, offset)
+        message_arguments = _get_mouse_message_arguments(
+            target_widget, offset, button=0
+        )
         target_widget.post_message(MouseMove(**message_arguments))
+        await self.pause()
 
     async def pause(self, delay: float | None = None) -> None:
         """Insert a pause.

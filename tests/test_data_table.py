@@ -9,6 +9,7 @@ from textual.actions import SkipAction
 from textual.app import App
 from textual.coordinate import Coordinate
 from textual.events import Click, MouseMove
+from textual.geometry import Offset
 from textual.message import Message
 from textual.widgets import DataTable
 from textual.widgets.data_table import (
@@ -654,26 +655,13 @@ async def test_on_click_column_cursor():
 async def test_hover_coordinate():
     """Ensure that the hover_coordinate reactive is updated as expected."""
     app = DataTableApp()
-    async with app.run_test():
+    async with app.run_test() as pilot:
         table = app.query_one(DataTable)
         table.add_column("ABC")
         table.add_row("123")
         table.add_row("456")
         assert table.hover_coordinate == Coordinate(0, 0)
-
-        mouse_move = MouseMove(
-            x=1,
-            y=2,
-            delta_x=0,
-            delta_y=0,
-            button=0,
-            shift=False,
-            meta=False,
-            ctrl=False,
-            style=Style(meta={"row": 1, "column": 2}),
-        )
-        table.on_mouse_move(mouse_move)
-        await wait_for_idle(0)
+        await pilot.hover(DataTable, offset=Offset(1, 1))
         assert table.hover_coordinate == Coordinate(1, 2)
 
 
