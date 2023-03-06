@@ -26,10 +26,7 @@ _re_bracketed_paste_end = re.compile(r"^\x1b\[201~$")
 class XTermParser(Parser[events.Event]):
     _re_sgr_mouse = re.compile(r"\x1b\[<(\d+);(\d+);(\d+)([Mm])")
 
-    def __init__(
-        self, sender: MessageTarget, more_data: Callable[[], bool], debug: bool = False
-    ) -> None:
-        self.sender = sender
+    def __init__(self, more_data: Callable[[], bool], debug: bool = False) -> None:
         self.more_data = more_data
         self.last_x = 0
         self.last_y = 0
@@ -47,7 +44,7 @@ class XTermParser(Parser[events.Event]):
         self.debug_log(f"FEED {data!r}")
         return super().feed(data)
 
-    def parse_mouse_code(self, code: str, sender: MessageTarget) -> events.Event | None:
+    def parse_mouse_code(self, code: str) -> events.Event | None:
         sgr_match = self._re_sgr_mouse.match(code)
         if sgr_match:
             _buttons, _x, _y, state = sgr_match.groups()
@@ -74,7 +71,6 @@ class XTermParser(Parser[events.Event]):
                 button = (buttons + 1) & 3
 
             event = event_class(
-                sender,
                 x,
                 y,
                 delta_x,
@@ -103,7 +99,7 @@ class XTermParser(Parser[events.Event]):
                 key_events = sequence_to_key_events(character)
                 for event in key_events:
                     if event.key == "escape":
-                        event = events.Key(event.sender, "circumflex_accent", "^")
+                        event = events.Key("circumflex_accent", "^")
                     on_token(event)
 
         while not self.is_eof:
@@ -116,9 +112,7 @@ class XTermParser(Parser[events.Event]):
                 # the full escape code was.
                 pasted_text = "".join(paste_buffer[:-1])
                 # Note the removal of NUL characters: https://github.com/Textualize/textual/issues/1661
-                on_token(
-                    events.Paste(self.sender, text=pasted_text.replace("\x00", ""))
-                )
+                on_token(events.Paste(pasted_text.replace("\x00", "")))
                 paste_buffer.clear()
 
             character = ESC if use_prior_escape else (yield read1())
@@ -145,12 +139,12 @@ class XTermParser(Parser[events.Event]):
                     peek_buffer = yield self.peek_buffer()
                     if not peek_buffer:
                         # An escape arrived without any following characters
-                        on_token(events.Key(self.sender, "escape", "\x1b"))
+                        on_token(events.Key("escape", "\x1b"))
                         continue
                     if peek_buffer and peek_buffer[0] == ESC:
                         # There is an escape in the buffer, so ESC ESC has arrived
                         yield read1()
-                        on_token(events.Key(self.sender, "escape", "\x1b"))
+                        on_token(events.Key("escape", "\x1b"))
                         # If there is no further data, it is not part of a sequence,
                         # So we don't need to go in to the loop
                         if len(peek_buffer) == 1 and not more_data():
@@ -208,7 +202,7 @@ class XTermParser(Parser[events.Event]):
                         mouse_match = _re_mouse_event.match(sequence)
                         if mouse_match is not None:
                             mouse_code = mouse_match.group(0)
-                            event = self.parse_mouse_code(mouse_code, self.sender)
+                            event = self.parse_mouse_code(mouse_code)
                             if event:
                                 on_token(event)
                             break
@@ -221,11 +215,7 @@ class XTermParser(Parser[events.Event]):
                                 mode_report_match["mode_id"] == "2026"
                                 and int(mode_report_match["setting_parameter"]) > 0
                             ):
-                                on_token(
-                                    messages.TerminalSupportsSynchronizedOutput(
-                                        self.sender
-                                    )
-                                )
+                                on_token(messages.TerminalSupportsSynchronizedOutput())
                             break
             else:
                 if not bracketed_paste:
@@ -247,9 +237,7 @@ class XTermParser(Parser[events.Event]):
         keys = ANSI_SEQUENCES_KEYS.get(sequence)
         if keys is not None:
             for key in keys:
-                yield events.Key(
-                    self.sender, key.value, sequence if len(sequence) == 1 else None
-                )
+                yield events.Key(key.value, sequence if len(sequence) == 1 else None)
         elif len(sequence) == 1:
             try:
                 if not sequence.isalnum():
@@ -262,6 +250,6 @@ class XTermParser(Parser[events.Event]):
                 else:
                     name = sequence
                 name = KEY_NAME_REPLACEMENTS.get(name, name)
-                yield events.Key(self.sender, name, sequence)
+                yield events.Key(name, sequence)
             except:
-                yield events.Key(self.sender, sequence, sequence)
+                yield events.Key(sequence, sequence)

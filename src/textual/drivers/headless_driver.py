@@ -39,9 +39,9 @@ class HeadlessDriver(Driver):
             terminal_size = self._get_terminal_size()
             width, height = terminal_size
             textual_size = Size(width, height)
-            event = events.Resize(self._target, textual_size, textual_size)
+            event = events.Resize(textual_size, textual_size)
             asyncio.run_coroutine_threadsafe(
-                self._target.post_message(event),
+                self._target._post_message(event),
                 loop=loop,
             )
 
