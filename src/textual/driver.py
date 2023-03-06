@@ -49,7 +49,6 @@ class Driver(ABC):
             and event.time - self._mouse_down_time <= 0.5
         ):
             click_event = events.Click.from_event(event)
-            event._sender = self._target
             self.send_event(click_event)
 
     @abstractmethod
