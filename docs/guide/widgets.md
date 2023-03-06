@@ -420,7 +420,9 @@ In this section we will show how to design and build a fully working app, while 
 
 ### Designing the app
 
-In the following sketch we have 8 switches, one for each bit in a byte. There is also an input control with a decimal number. The idea is that we can update the decimal number, either by editing it directly or by pressing the switches. You could use this a teaching aid for binary numbers.
+We are going to build a *byte editor* which allows you to enter a number in both decimal and binary. You could use this a teaching aid for binary numbers.
+
+Here's a sketch of what the app should ultimately look like:
 
 !!! tip
 
@@ -545,8 +547,8 @@ The following is a (simplified) DOM diagram to show how the new message is proce
 ### Attributes down
 
 We also want the switches to update if the user edits the decimal value.
-To do this, the `ByteEditor` widget should respond to the input changing by updating the switches.
-Because the switches are children of `ByteEditor` we can update them by setting their attributes directly.
+
+Since the switches are children of `ByteEditor` we can update them by setting their attributes directly.
 This is an example of "attributes down".
 
 === "byte02.py"
