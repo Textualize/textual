@@ -103,21 +103,21 @@ class ByteEditor(Widget):
         """When a switch changes, update the value."""
         value = 0
         for switch in self.query(BitSwitch):
-            value |= switch.value << switch.bit  # (2)!
+            value |= switch.value << switch.bit
         self.query_one(Input).value = str(value)
 
-    def watch_value(self, value: int) -> None:
-        """When self.value changes, update switches."""
-        for switch in self.query(BitSwitch):
-            with switch.prevent(BitSwitch.BitChanged):  # (3)!
-                switch.value = bool(value & 1 << switch.bit)
-
-    def on_input_changed(self, event: Input.Changed) -> None:
+    def on_input_changed(self, event: Input.Changed) -> None:  # (2)!
         """When the text changes, set the value of the byte."""
         try:
             self.value = int(event.value or "0")
         except ValueError:
             pass
+
+    def watch_value(self, value: int) -> None:  # (3)!
+        """When self.value changes, update switches."""
+        for switch in self.query(BitSwitch):
+            with switch.prevent(BitSwitch.BitChanged):
+                switch.value = bool(value & 1 << switch.bit)
 
 
 class ByteInputApp(App):

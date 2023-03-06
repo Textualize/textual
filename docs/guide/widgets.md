@@ -524,15 +524,26 @@ The following is a (simplified) DOM diagram to show how the new messages are pro
 
 ### Attributes down
 
+We also want to be able to update the decimal value in the input, and have the switches update accordingly.
+
 === "byte02.py"
 
-    ```python title="byte03.py" hl_lines="45-47 90 109-113 115-120"
+    ```python title="byte03.py" hl_lines="5 45-47 90 92-94 109-114 116-120"
     --8<-- "docs/examples/guide/compound/byte03.py"
     ```
 
-    1. When the BitSwitch's value, we want to update the builtin `Switch` to match.
+    1. When the BitSwitch's value changed, we want to update the builtin `Switch` to match.
+    2. Ensure the value is in a the range of a byte.
+    3. Handle the Input.Changed event when the user modified the value in the input.
+    4. When the ByteEditor value changes, update all the switches to match.
+    5. Prevent the `BitChanged` message from being sent.
+    6. Because `switch` is a child, we can set its attributes directly.
+
 
 === "Output"
 
     ```{.textual path="docs/examples/guide/compound/byte03.py" columns="90" line="30", press="tab,1,0,0"}
     ```
+
+- When the user edits the input, the [Input](../widgets/input.md) widget sends a `Changed` event, which we handle with `on_input_changed` by setting `self.value`, which is a reactive value we added to `ByteEditor`.
+- If the value has changed, Textual will call `watch_value` which set the value of each of the eight switches. Because we are working with children of the `ByteEditor` we can set attributes directly, without going via a message.
