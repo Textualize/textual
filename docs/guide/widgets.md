@@ -392,7 +392,7 @@ Such widgets are known as *compound widgets*.
 The Stopwatch in the [tutorial](./../tutorial.md) is an example of a compound widget.
 
 A compound widget can be used like any other widget.
-The only thing that differs is that when you build a compound widget, you write a `compose()` method which yields *child* widgets, rather than implement `render` or `render_line` method.
+The only thing that differs is that when you build a compound widget, you write a `compose()` method which yields *child* widgets, rather than implement a `render` or `render_line` method.
 
 The following is an example of a compound widget.
 
@@ -416,7 +416,7 @@ The `InputWithLabel` class bundles an [Input](../widgets/input.md) with a [Label
 Widgets rarely exist in isolation, and often need to communicate or exchange data with other parts of your app.
 This is not difficult to do, but there is a risk that widgets can become dependant on each other, making it impossible to re-use a widget without copying a lot of dependant code.
 
-In this section we will show how to design and build a fully working app, while keeping widgets re-usable.
+In this section we will show how to design and build a fully-working app, while keeping widgets reusable.
 
 ### Designing the app
 
@@ -437,7 +437,7 @@ There are three types of built-in widget in the sketch, namely ([Input](../widge
 
 ###  Identifying components
 
-We will divide this UI in to three compound widgets:
+We will divide this UI into three compound widgets:
 
 1. `BitSwitch` for a switch with a numeric label.
 2. `ByteInput` which contains 8 `BitSwitch` widgets.
@@ -483,7 +483,7 @@ Now that we have the design in place, we can implement the behavior.
 
 ### Data flow
 
-We want to ensure that our widgets are re-usable, which we can do by following the guideline of "attributes down, messages up". This means that a widget can update a child by setting its attributes or calling its methods, but widgets should only ever send [messages](./events.md) to their *parent*.
+We want to ensure that our widgets are re-usable, which we can do by following the guideline of "attributes down, messages up". This means that a widget can update a child by setting its attributes or calling its methods, but widgets should only ever send [messages](./events.md) to their *parent* (or other ancestors).
 
 !!! info
 
