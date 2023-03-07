@@ -622,7 +622,7 @@ class StylesBuilder:
 
         if color is not None or alpha is not None:
             if alpha is not None:
-                color = (color or Color(255, 255, 255)).with_alpha(alpha)
+                color = (color or Color(255, 255, 255)).multiply_alpha(alpha)
             self.styles._rules[name] = color  # type: ignore
 
     process_tint = process_color
