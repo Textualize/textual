@@ -985,7 +985,7 @@ class App(Generic[ReturnType], DOMNode):
             )
         finally:
             try:
-                if auto_pilot_task is not None:
+                if auto_pilot_task is not None and not self._exit_renderables:
                     await auto_pilot_task
             finally:
                 await app._shutdown()
@@ -1809,11 +1809,11 @@ class App(Generic[ReturnType], DOMNode):
             if isinstance(screen, Screen) and screen._running:
                 await self._prune_node(screen)
 
-        # Close any remaining nodes
-        # Should be empty by now
+        # Close any remaining nodes. This should be empty by now, unless we couldn't
+        # even compose the app cleanly when starting up.
         remaining_nodes = list(self._registry)
         for child in remaining_nodes:
-            await child._close_messages()
+            await child._close_messages(wait=False)
 
     async def _shutdown(self) -> None:
         self._begin_batch()  # Prevents any layout / repaint while shutting down

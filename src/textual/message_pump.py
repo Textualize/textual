@@ -372,7 +372,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         """Request the message queue to immediately exit."""
         self._message_queue.put_nowait(messages.CloseMessages())
 
-    async def _on_close_messages(self, message: messages.CloseMessages) -> None:
+    async def _on_close_messages(self) -> None:
         await self._close_messages()
 
     async def _close_messages(self, wait: bool = True) -> None:
@@ -408,6 +408,10 @@ class MessagePump(metaclass=MessagePumpMeta):
             self._closed = True
 
     async def _process_messages(self) -> None:
+        # Don't even bother if the app is already shutting down.
+        if self.app._closing or self.app._closed:
+            return
+
         self._running = True
 
         await self._pre_process()
