@@ -341,6 +341,18 @@ class Color(NamedTuple):
         r, g, b, _ = self
         return Color(r, g, b, alpha)
 
+    def multiply_alpha(self, alpha: float) -> Color:
+        """Create a new color, multiplying the alpha with a new alpha.
+
+        Args:
+            alpha: The alpha value to multiple by.
+
+        Returns:
+            A new color.
+        """
+        r, g, b, a = self
+        return Color(r, g, b, a * alpha)
+
     def blend(
         self, destination: Color, factor: float, alpha: float | None = None
     ) -> Color:
