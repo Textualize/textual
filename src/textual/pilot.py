@@ -71,7 +71,8 @@ class Pilot(Generic[ReturnType]):
                 not land on it.
             offset: The offset to click within the selected widget.
         """
-        screen = self.app.screen
+        app = self.app
+        screen = app.screen
         if selector is not None:
             target_widget = screen.query_one(selector)
         else:
@@ -80,9 +81,9 @@ class Pilot(Generic[ReturnType]):
         message_arguments = _get_mouse_message_arguments(
             target_widget, offset, button=1
         )
-        target_widget.post_message(MouseDown(**message_arguments))
-        target_widget.post_message(MouseUp(**message_arguments))
-        target_widget.post_message(Click(**message_arguments))
+        app.post_message(MouseDown(**message_arguments))
+        app.post_message(MouseUp(**message_arguments))
+        app.post_message(Click(**message_arguments))
         await self.pause()
 
     async def hover(
@@ -92,10 +93,14 @@ class Pilot(Generic[ReturnType]):
 
         Args:
             selector: The widget that should be hovered. If None, then the click
-                will occur relative to the screen.
+                will occur relative to the screen. Note that this simply causes
+                a hover to occur at the location of the widget. If the widget is
+                currently hidden or obscured by another widget, then the hover may
+                not land on it.
             offset: The offset to hover over within the selected widget.
         """
-        screen = self.app.screen
+        app = self.app
+        screen = app.screen
         if selector is not None:
             target_widget = screen.query_one(selector)
         else:
@@ -104,7 +109,7 @@ class Pilot(Generic[ReturnType]):
         message_arguments = _get_mouse_message_arguments(
             target_widget, offset, button=0
         )
-        target_widget.post_message(MouseMove(**message_arguments))
+        app.post_message(MouseMove(**message_arguments))
         await self.pause()
 
     async def pause(self, delay: float | None = None) -> None:
