@@ -158,7 +158,7 @@ class ToggleButton(Static, can_focus=True):
         # If the button is off, we're going to do a bit of a switcharound to
         # make it look like it's a "cutout".
         if not self.value:
-            button_style = Style.from_color(
+            button_style += Style.from_color(
                 self.background_colors[1].rich_color, button_style.bgcolor
             )
 
