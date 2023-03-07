@@ -58,11 +58,17 @@ class ContentSwitcher(Container):
         """Perform the initial setup of the widget once the DOM is ready."""
         self.current = self._initial
 
+    @property
+    def visible_content(self) -> Widget | None:
+        """A reference to the currently-visible widget.
+
+        `None` if nothing is visible.
+        """
+        return self.get_child_by_id(self.current) if self.current is not None else None
+
     def watch_current(self) -> None:
         """React to the current visible child choice being changed."""
-        display = (
-            self.get_child_by_id(self.current) if self.current is not None else None
-        )
+        display = self.visible_content
         with self.app.batch_update():
             for child in self.children:
                 child.display = "block" if child == display else "none"
