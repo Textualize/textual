@@ -38,6 +38,34 @@ def console(verbose: bool, exclude: list[str]) -> None:
         console.show_cursor(True)
 
 
+def _post_run_warnings() -> None:
+    """Look for and report any issues with the environment.
+
+    This is the right place to add code that looks at the terminal, or other
+    environmental issues, and if a problem is seen it should be printed so
+    the developer can see it easily.
+    """
+    import os
+    import platform
+
+    from rich.console import Console
+
+    console = Console()
+
+    warnings = [
+        (
+            platform.system() == "Darwin"
+            and os.environ.get("TERM_PROGRAM") == "Apple_Terminal",
+            "The default terminal app is limited to 256 colors. We recommend installing a newer terminal "
+            "such as iTerm2, Kitty, or WezTerm.",
+        )
+    ]
+
+    for concering, concern in warnings:
+        if concering:
+            console.print(f"[bold yellow]{concern}[/]")
+
+
 @run.command(
     "run",
     context_settings={
@@ -118,6 +146,8 @@ def run_app(import_name: str, dev: bool, press: str, screenshot: int | None) -> 
         console = Console()
         console.print("[b]The app returned:")
         console.print(Pretty(result))
+
+    _post_run_warnings()
 
 
 @run.command("borders")
