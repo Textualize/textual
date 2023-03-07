@@ -17,3 +17,14 @@ ContentSwitcher {
 DataTable {
     background: $panel;
 }
+
+MarkdownH2 {
+    background: $primary;
+    border: none;
+    padding: 0;
+}
+
+MarkdownTable {
+    margin-top: 0;
+    margin-bottom: 1;
+}
