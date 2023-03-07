@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import cast
-
 from ..containers import Container
 from ..css.query import DOMQuery, QueryError
 from ..message import Message

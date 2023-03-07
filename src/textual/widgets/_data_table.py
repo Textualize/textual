@@ -1069,6 +1069,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         console = self.app.console
         for row_key in new_rows:
             row_index = self._row_locations.get(row_key)
+
+            # The row could have been removed before on_idle was called, so we
+            # need to be quite defensive here and don't assume that the row exists.
+            if row_index is None:
+                continue
+
             row = self.rows.get(row_key)
 
             if row.label is not None:
@@ -1079,9 +1085,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self._label_column.content_width = max(
                 self._label_column.content_width, label_content_width
             )
-
-            if row_index is None:
-                continue
 
             for column, renderable in zip(self.ordered_columns, cells_in_row):
                 content_width = measure(console, renderable, 1)
@@ -1810,6 +1813,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         and column metadata from the segments present in the cells."""
         self._set_hover_cursor(True)
         meta = event.style.meta
+
         if meta and self.show_cursor and self.cursor_type != "none":
             try:
                 self.hover_coordinate = Coordinate(meta["row"], meta["column"])
@@ -1896,7 +1900,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     def on_click(self, event: events.Click) -> None:
         self._set_hover_cursor(True)
-        meta = self.get_style_at(event.x, event.y).meta
+        meta = event.style.meta
         if not meta:
             return
 
