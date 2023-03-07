@@ -473,7 +473,7 @@ class StylesBuilder:
                 border_value_error()
 
         if border_alpha is not None:
-            border_color = border_color.with_alpha(border_alpha)
+            border_color = border_color.multiply_alpha(border_alpha)
 
         return normalize_border_value((border_type, border_color))
 
