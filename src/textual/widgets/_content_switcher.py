@@ -72,4 +72,4 @@ class ContentSwitcher(Container):
         display = self.visible_content
         with self.app.batch_update():
             for child in self.children:
-                child.display = "block" if child == display else "none"
+                child.display = child == display
