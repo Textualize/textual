@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 from . import _clock, events
 from ._types import MessageTarget
+from .events import MouseUp
 
 if TYPE_CHECKING:
     from rich.console import Console
@@ -26,6 +27,7 @@ class Driver(ABC):
         self._size = size
         self._loop = asyncio.get_running_loop()
         self._mouse_down_time = _clock.get_time_no_wait()
+        self._dragging = False
 
     @property
     def is_headless(self) -> bool:
@@ -41,6 +43,27 @@ class Driver(ABC):
         """Performs some additional processing of events."""
         if isinstance(event, events.MouseDown):
             self._mouse_down_time = event.time
+        elif isinstance(event, events.MouseMove):
+            if event.button and not self._dragging:
+                self._dragging = True
+            elif self._dragging and not event.button:
+                # Artificially generate a MouseUp event when we stop "dragging"
+                self.send_event(
+                    MouseUp(
+                        x=event.x,
+                        y=event.y,
+                        delta_x=event.delta_x,
+                        delta_y=event.delta_y,
+                        button=0,
+                        shift=event.shift,
+                        meta=event.meta,
+                        ctrl=event.ctrl,
+                        screen_x=event.screen_x,
+                        screen_y=event.screen_y,
+                        style=event.style,
+                    )
+                )
+                self._dragging = False
 
         self.send_event(event)
 
