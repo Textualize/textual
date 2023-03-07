@@ -53,6 +53,9 @@ def _post_run_warnings() -> None:
 
     console = Console()
 
+    # Add any test/warning pair here. The list contains a tuple where the
+    # first item is `True` if a problem situation is detected, and the
+    # second item is a message to show the user on exit from `textual run`.
     warnings = [
         (
             platform.system() == "Darwin"
