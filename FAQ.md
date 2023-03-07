@@ -70,6 +70,74 @@ if __name__ == "__main__":
     ButtonApp().run()
 ```
 
+If you use the above on multiple widgets, you'll find they appear to
+"left-align" in the center of the screen, like this:
+
+```
++-----+
+|     |
++-----+
+
++---------+
+|         |
++---------+
+
++---------------+
+|               |
++---------------+
+```
+
+If you want them more like this:
+
+```
+     +-----+
+     |     |
+     +-----+
+
+   +---------+
+   |         |
+   +---------+
+
++---------------+
+|               |
++---------------+
+```
+
+the best approach is to wrap each widget in a container that individually
+centers it. For example:
+
+```python
+from textual.app import App, ComposeResult
+from textual.containers import Container
+from textual.widgets import Button
+
+class Center( Container ):
+    DEFAULT_CSS = """
+    Center {
+        height: auto;
+        width: 100%;
+        align: center middle;
+    }
+    """
+
+class ButtonApp(App):
+
+    CSS = """
+    Screen {
+        align: center middle;
+    }
+    """
+
+    def compose(self) -> ComposeResult:
+        yield Center(Button("PUSH ME!"))
+        yield Center(Button("AND ME!"))
+        yield Center(Button("ALSO PLEASE PUSH ME!"))
+        yield Center(Button("HEY ME ALSO!!"))
+
+if __name__ == "__main__":
+    ButtonApp().run()
+```
+
 <a name="how-do-i-pass-arguments-to-an-app"></a>
 ## How do I pass arguments to an app?
 
