@@ -151,6 +151,12 @@ A collection of radio buttons, that enforces uniqueness.
 ```{.textual path="docs/examples/widgets/radio_set.py"}
 ```
 
+## Static
+
+Displays simple static content. Typically used as a base class.
+
+[Static reference](./widgets/static.md){ .md-button .md-button--primary }
+
 
 ## Switch
 
