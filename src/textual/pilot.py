@@ -16,6 +16,7 @@ from .widget import Widget
 def _get_mouse_message_arguments(
     target: Widget, offset: Offset = Offset(), button: int = 0
 ) -> dict[str, Any]:
+    """Get the arguments to pass into mouse messages for the click and hover methods."""
     x, y = offset
     click_x, click_y, _, _ = target.region.translate(offset)
     message_arguments = {
