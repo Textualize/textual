@@ -12,7 +12,7 @@ We have many more widgets planned, or you can [build your own](./guide/widgets.m
 
 !!! info
 
-    Textual is a TUI framework. Everything below runs in the *terminal*.
+    Textual is a **TUI** framework. Everything below runs in the *terminal*.
 
 
 ## Button
@@ -27,7 +27,7 @@ A simple button with a variety of semantic styles.
 
 ## Checkbox
 
-A classic checkbox widget.
+A classic checkbox control.
 
 [Checkbox reference](./widgets/checkbox.md){ .md-button .md-button--primary }
 
@@ -37,7 +37,7 @@ A classic checkbox widget.
 
 ## DataTable
 
-A versatile data table widget, with configurable cursors.
+A powerful data table, with configurable cursors.
 
 [DataTable reference](./widgets/data_table.md){ .md-button .md-button--primary }
 
@@ -94,7 +94,7 @@ A simple text label.
 
 ## ListView
 
-A widget to display a list of items.
+Display a list of items (items may be other widgets).
 
 [ListView reference](./widgets/list_view.md){ .md-button .md-button--primary }
 
@@ -164,7 +164,7 @@ A on / off control, inspired by toggle buttons.
 
 ## TextLog
 
-A widget to display text in a scrolling panel.
+Display and update text in a scrolling panel.
 
 [TextLog reference](./widgets/text_log.md){ .md-button .md-button--primary }
 
