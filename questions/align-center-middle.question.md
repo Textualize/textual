@@ -2,7 +2,7 @@
 title: "How do I center a widget in a screen?"
 alt_titles:
   - "centre a widget"
-  - "centre a widgets"
+  - "centre widgets"
   - "center a control"
   - "centre a control"
   - "center controls"
