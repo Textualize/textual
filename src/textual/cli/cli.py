@@ -38,6 +38,38 @@ def console(verbose: bool, exclude: list[str]) -> None:
         console.show_cursor(True)
 
 
+def _post_run_warnings() -> None:
+    """Look for and report any issues with the environment.
+
+    This is the right place to add code that looks at the terminal, or other
+    environmental issues, and if a problem is seen it should be printed so
+    the developer can see it easily.
+    """
+    import os
+    import platform
+
+    from rich.console import Console
+    from rich.panel import Panel
+
+    console = Console()
+
+    # Add any test/warning pair here. The list contains a tuple where the
+    # first item is `True` if a problem situation is detected, and the
+    # second item is a message to show the user on exit from `textual run`.
+    warnings = [
+        (
+            platform.system() == "Darwin"
+            and os.environ.get("TERM_PROGRAM") == "Apple_Terminal",
+            "The default terminal app on macOS is limited to 256 colors. See our FAQ for more details:\n\n"
+            "https://github.com/Textualize/textual/blob/main/FAQ.md#why-doesn't-textual-look-good-on-macos",
+        )
+    ]
+
+    for concerning, concern in warnings:
+        if concerning:
+            console.print(Panel.fit(f"⚠️ [bold green] {concern}[/]", style="cyan"))
+
+
 @run.command(
     "run",
     context_settings={
@@ -118,6 +150,8 @@ def run_app(import_name: str, dev: bool, press: str, screenshot: int | None) -> 
         console = Console()
         console.print("[b]The app returned:")
         console.print(Pretty(result))
+
+    _post_run_warnings()
 
 
 @run.command("borders")

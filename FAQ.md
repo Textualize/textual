@@ -7,6 +7,7 @@
 - [How can I select and copy text in a Textual app?](#how-can-i-select-and-copy-text-in-a-textual-app)
 - [How do I center a widget in a screen?](#how-do-i-center-a-widget-in-a-screen)
 - [How do I pass arguments to an app?](#how-do-i-pass-arguments-to-an-app)
+- [Why doesn't Textual look good on macOS?](#why-doesn't-textual-look-good-on-macos)
 - [Why doesn't Textual support ANSI themes?](#why-doesn't-textual-support-ansi-themes)
 
 <a name="does-textual-support-images"></a>
@@ -171,6 +172,16 @@ Greetings(to_greet="davep").run()
 # Running with both positional arguments.
 Greetings("Well hello", "there").run()
 ```
+
+<a name="why-doesn't-textual-look-good-on-macos"></a>
+## Why doesn't Textual look good on macOS?
+
+The default macOS `Terminal.app` is getting rather old now; it has problems
+such as being limited to just 256 colors, being slow to draw and not all
+box-drawing characters are fully-supported. We recommend installing a newer
+terminal such as [iTerm2](https://iterm2.com/),
+[Kitty](https://sw.kovidgoyal.net/kitty/) or
+[WezTerm](https://wezfurlong.org/wezterm/).
 
 <a name="why-doesn't-textual-support-ansi-themes"></a>
 ## Why doesn't Textual support ANSI themes?
