@@ -108,8 +108,9 @@ Greetings("Well hello", "there").run()
 <a name="why-doesn't-textual-look-good-on-macos"></a>
 ## Why doesn't Textual look good on macOS?
 
-The default macOS `Terminal.app` is getting rather old now, and has problems
-such as being limited to just 256 colors. We recommend installing a newer
+The default macOS `Terminal.app` is getting rather old now; it has problems
+such as being limited to just 256 colors, being slow to draw and not all
+box-drawing characters are fully-supported. We recommend installing a newer
 terminal such as [iTerm2](https://iterm2.com/),
 [Kitty](https://sw.kovidgoyal.net/kitty/) or
 [WezTerm](https://wezfurlong.org/wezterm/).
