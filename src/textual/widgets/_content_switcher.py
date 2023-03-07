@@ -14,6 +14,7 @@ class ContentSwitcher(Container):
 
     Note:
         All child widgets that are to be switched between need a unique ID.
+        Children that have no ID will be hidden and ignored.
     """
 
     current: var[str | None] = var[Optional[str]](None)
