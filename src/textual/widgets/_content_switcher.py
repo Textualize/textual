@@ -31,7 +31,7 @@ class ContentSwitcher(Container):
         disabled: bool = False,
         initial: str | None = None,
     ) -> None:
-        """Initialise the content switch widget.
+        """Initialise the content switching widget.
 
         Args:
             *children: The widgets to switch between.
