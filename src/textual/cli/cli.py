@@ -49,6 +49,7 @@ def _post_run_warnings() -> None:
     import platform
 
     from rich.console import Console
+    from rich.panel import Panel
 
     console = Console()
 
@@ -56,14 +57,14 @@ def _post_run_warnings() -> None:
         (
             platform.system() == "Darwin"
             and os.environ.get("TERM_PROGRAM") == "Apple_Terminal",
-            "The default terminal app is limited to 256 colors. We recommend installing a newer terminal "
-            "such as iTerm2, Kitty, or WezTerm.",
+            "The default terminal app on macOS is limited to 256 colors. See our FAQ for more details:\n\n"
+            "https://github.com/Textualize/textual/blob/main/FAQ.md#why-doesn't-textual-look-good-on-macos",
         )
     ]
 
     for concering, concern in warnings:
         if concering:
-            console.print(f"[bold yellow]{concern}[/]")
+            console.print(Panel.fit(f"⚠️ [bold green] {concern}[/]", style="cyan"))
 
 
 @run.command(
