@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed bug that prevented app pilot to press some keys https://github.com/Textualize/textual/issues/1815
+- DataTable race condition that caused crash https://github.com/Textualize/textual/pull/1962
 
 ## [0.13.0] - 2023-03-02
 

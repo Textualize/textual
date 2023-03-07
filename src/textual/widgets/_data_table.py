@@ -1069,6 +1069,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         console = self.app.console
         for row_key in new_rows:
             row_index = self._row_locations.get(row_key)
+
+            # The row could have been removed before on_idle was called, so we
+            # need to be quite defensive here and don't assume that the row exists.
+            if row_index is None:
+                continue
+
             row = self.rows.get(row_key)
 
             if row.label is not None:
@@ -1079,9 +1085,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self._label_column.content_width = max(
                 self._label_column.content_width, label_content_width
             )
-
-            if row_index is None:
-                continue
 
             for column, renderable in zip(self.ordered_columns, cells_in_row):
                 content_width = measure(console, renderable, 1)
