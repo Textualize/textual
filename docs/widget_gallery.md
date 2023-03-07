@@ -59,7 +59,7 @@ A footer to display and interact with key bindings.
 
 [Footer reference](./widgets/footer.md){ .md-button .md-button--primary }
 
-```{.textual path="docs/examples/widgets/footer.py"}
+```{.textual path="docs/examples/widgets/footer.py" columns="70" lines="12"}
 ```
 
 
@@ -70,7 +70,7 @@ A header to display the app's title and subtitle.
 
 [Header reference](./widgets/header.md){ .md-button .md-button--primary }
 
-```{.textual path="docs/examples/widgets/header.py"}
+```{.textual path="docs/examples/widgets/header.py" columns="70" lines="12"}
 ```
 
 
