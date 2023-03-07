@@ -7,6 +7,7 @@
 - [How can I select and copy text in a Textual app?](#how-can-i-select-and-copy-text-in-a-textual-app)
 - [How do I center a widget in a screen?](#how-do-i-center-a-widget-in-a-screen)
 - [How do I pass arguments to an app?](#how-do-i-pass-arguments-to-an-app)
+- [Why doesn't Textual look good on macOS?](#why-doesn't-textual-look-good-on-macos)
 - [Why doesn't Textual support ANSI themes?](#why-doesn't-textual-support-ansi-themes)
 
 <a name="does-textual-support-images"></a>
@@ -70,6 +71,74 @@ if __name__ == "__main__":
     ButtonApp().run()
 ```
 
+If you use the above on multiple widgets, you'll find they appear to
+"left-align" in the center of the screen, like this:
+
+```
++-----+
+|     |
++-----+
+
++---------+
+|         |
++---------+
+
++---------------+
+|               |
++---------------+
+```
+
+If you want them more like this:
+
+```
+     +-----+
+     |     |
+     +-----+
+
+   +---------+
+   |         |
+   +---------+
+
++---------------+
+|               |
++---------------+
+```
+
+the best approach is to wrap each widget in a container that individually
+centers it. For example:
+
+```python
+from textual.app import App, ComposeResult
+from textual.containers import Container
+from textual.widgets import Button
+
+class Center( Container ):
+    DEFAULT_CSS = """
+    Center {
+        height: auto;
+        width: 100%;
+        align: center middle;
+    }
+    """
+
+class ButtonApp(App):
+
+    CSS = """
+    Screen {
+        align: center middle;
+    }
+    """
+
+    def compose(self) -> ComposeResult:
+        yield Center(Button("PUSH ME!"))
+        yield Center(Button("AND ME!"))
+        yield Center(Button("ALSO PLEASE PUSH ME!"))
+        yield Center(Button("HEY ME ALSO!!"))
+
+if __name__ == "__main__":
+    ButtonApp().run()
+```
+
 <a name="how-do-i-pass-arguments-to-an-app"></a>
 ## How do I pass arguments to an app?
 
@@ -103,6 +172,16 @@ Greetings(to_greet="davep").run()
 # Running with both positional arguments.
 Greetings("Well hello", "there").run()
 ```
+
+<a name="why-doesn't-textual-look-good-on-macos"></a>
+## Why doesn't Textual look good on macOS?
+
+The default macOS `Terminal.app` is getting rather old now; it has problems
+such as being limited to just 256 colors, being slow to draw and not all
+box-drawing characters are fully-supported. We recommend installing a newer
+terminal such as [iTerm2](https://iterm2.com/),
+[Kitty](https://sw.kovidgoyal.net/kitty/) or
+[WezTerm](https://wezfurlong.org/wezterm/).
 
 <a name="why-doesn't-textual-support-ansi-themes"></a>
 ## Why doesn't Textual support ANSI themes?
