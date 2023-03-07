@@ -126,7 +126,7 @@ This example also shows that a widget cannot contain both a `border` and an `out
 /* Set a heavy white border */
 border: heavy white;
 
-/* set a red border on the left */
+/* Set a red border on the left */
 border-left: outer red;
 ```
 
