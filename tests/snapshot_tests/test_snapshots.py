@@ -240,6 +240,11 @@ def test_label_widths(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "label_widths.py")
 
 
+def test_border_alpha(snap_compare):
+    """Test setting a border alpha."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "border_alpha.py")
+
+
 def test_auto_width_input(snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "auto_width_input.py", press=["tab", *"Hello"]

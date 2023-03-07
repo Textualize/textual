@@ -7,13 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.14.0] - Unreleased
 
-### Changes
+### Changed
 
 - Breaking change: There is now only `post_message` to post events, which is non-async, `post_message_no_wait` was dropped. https://github.com/Textualize/textual/pull/1940
 - Breaking change: The Timer class now has just one method to stop it, `Timer.stop` which is non sync https://github.com/Textualize/textual/pull/1940
 - Breaking change: Messages don't require a `sender` in their constructor https://github.com/Textualize/textual/pull/1940
 - Many messages have grown a `control` property which returns the control they relate to. https://github.com/Textualize/textual/pull/1940
-- Dropped `time` attribute from Messages https://github.com/Textualize/textual/pull/1940
+- Updated styling to make it clear DataTable grows horizontally https://github.com/Textualize/textual/pull/1946
+- Changed the `Checkbox` character due to issues with Windows Terminal and Windows 10 https://github.com/Textualize/textual/issues/1934
+- Changed the `RadioButton` character due to issues with Windows Terminal and Windows 10 and 11 https://github.com/Textualize/textual/issues/1934
 
 ### Added
 
@@ -23,10 +25,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `switch` attribute to `Switch` events https://github.com/Textualize/textual/pull/1940
 - Added `hover` and `click` methods to `Pilot` https://github.com/Textualize/textual/pull/1966
 - Breaking change: Added `toggle_button` attribute to RadioButton and Checkbox events, replaces `input` https://github.com/Textualize/textual/pull/1940
+- A percentage alpha can now be applied to a border https://github.com/Textualize/textual/issues/1863
+- Added `Color.multiply_alpha`.
 
 ### Fixed
 
 - Fixed bug that prevented pilot from pressing some keys https://github.com/Textualize/textual/issues/1815
+- DataTable race condition that caused crash https://github.com/Textualize/textual/pull/1962
 
 ## [0.13.0] - 2023-03-02
 
@@ -234,6 +239,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed issue with TextLog not writing anything before layout https://github.com/Textualize/textual/issues/1498
 - Fixed an exception when populating a child class of `ListView` purely from `compose` https://github.com/Textualize/textual/issues/1588
 - Fixed freeze in tests https://github.com/Textualize/textual/issues/1608
+- Fixed minus not displaying as symbol https://github.com/Textualize/textual/issues/1482
 
 ## [0.9.1] - 2022-12-30
 

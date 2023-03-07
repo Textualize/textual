@@ -441,6 +441,7 @@ class StylesBuilder:
     def _parse_border(self, name: str, tokens: list[Token]) -> BorderValue:
         border_type: EdgeType = "solid"
         border_color = Color(0, 255, 0)
+        border_alpha: float | None = None
 
         def border_value_error():
             self.error(name, token, border_property_help_text(name, context="css"))
@@ -462,8 +463,17 @@ class StylesBuilder:
                 except ColorParseError:
                     border_value_error()
 
+            elif token_name == "scalar":
+                alpha_scalar = Scalar.parse(token.value)
+                if alpha_scalar.unit != Unit.PERCENT:
+                    self.error(name, token, "alpha must be given as a percentage.")
+                border_alpha = alpha_scalar.value / 100.0
+
             else:
                 border_value_error()
+
+        if border_alpha is not None:
+            border_color = border_color.multiply_alpha(border_alpha)
 
         return normalize_border_value((border_type, border_color))
 
@@ -612,7 +622,7 @@ class StylesBuilder:
 
         if color is not None or alpha is not None:
             if alpha is not None:
-                color = (color or Color(255, 255, 255)).with_alpha(alpha)
+                color = (color or Color(255, 255, 255)).multiply_alpha(alpha)
             self.styles._rules[name] = color  # type: ignore
 
     process_tint = process_color

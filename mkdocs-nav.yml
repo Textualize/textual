@@ -20,7 +20,7 @@ nav:
     - "guide/widgets.md"
     - "guide/animation.md"
     - "guide/screens.md"
-  - "roadmap.md"
+  - "widget_gallery.md"
   - Reference:
     - "reference/index.md"
     - CSS Types:
@@ -183,5 +183,6 @@ nav:
     - "api/walk.md"
     - "api/welcome.md"
     - "api/widget.md"
+  - "roadmap.md"
   - "Blog":
     - blog/index.md
