@@ -65,8 +65,8 @@ def _post_run_warnings() -> None:
         )
     ]
 
-    for concering, concern in warnings:
-        if concering:
+    for concerning, concern in warnings:
+        if concerning:
             console.print(Panel.fit(f"⚠️ [bold green] {concern}[/]", style="cyan"))
 
 
