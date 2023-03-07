@@ -21,11 +21,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `list_view` attribute to `ListView` events https://github.com/Textualize/textual/pull/1940
 - Added `radio_set` attribute to `RadioSet` events https://github.com/Textualize/textual/pull/1940
 - Added `switch` attribute to `Switch` events https://github.com/Textualize/textual/pull/1940
+- Added `hover` and `click` methods to `Pilot` https://github.com/Textualize/textual/pull/1966
 - Breaking change: Added `toggle_button` attribute to RadioButton and Checkbox events, replaces `input` https://github.com/Textualize/textual/pull/1940
 
 ### Fixed
 
-- Fixed bug that prevented app pilot to press some keys https://github.com/Textualize/textual/issues/1815
+- Fixed bug that prevented pilot from pressing some keys https://github.com/Textualize/textual/issues/1815
 
 ## [0.13.0] - 2023-03-02
 
