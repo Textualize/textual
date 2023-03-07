@@ -135,10 +135,10 @@ border-left: outer red;
 
 ```python
 # Set a heavy white border
-widget.border = ("heavy", "white")
+widget.styles.border = ("heavy", "white")
 
 # Set a red border on the left
-widget.border_left = ("outer", "red")
+widget.styles.border_left = ("outer", "red")
 ```
 
 ## See also

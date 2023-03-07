@@ -84,6 +84,10 @@ class Message:
         """Mark this event as being forwarded."""
         self._forwarded = True
 
+    def _set_sender(self, sender: MessageTarget) -> None:
+        """Set the sender."""
+        self._sender = sender
+
     def can_replace(self, message: "Message") -> bool:
         """Check if another message may supersede this one.
 

@@ -31,6 +31,8 @@ The example below shows two radio sets, one built using a collection of
 
 ### ::: textual.widgets.RadioSet.Changed
 
+#### Example
+
 Here is an example of using the message to react to changes in a `RadioSet`:
 
 === "Output"
