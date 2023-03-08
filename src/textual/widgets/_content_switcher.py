@@ -73,3 +73,13 @@ class ContentSwitcher(Container):
         with self.app.batch_update():
             for child in self.children:
                 child.display = child == display
+            # I don't believe this should be necessary, but I've found that
+            # switching between the DataTable and the Markdown in the
+            # example code for this widget often leaves some artefacts of
+            # the previous visible child behind. This looks to be an issue
+            # with flipping display; any interaction with the application
+            # (just moving the mouse, for example), causes a refresh and
+            # everything falls into place. I'm still looking to find a
+            # really good minimal reproduction of this. Meanwhile, until I
+            # can isolate and raise an issue...
+            self.refresh()
