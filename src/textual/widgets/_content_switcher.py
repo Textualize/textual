@@ -21,6 +21,10 @@ class ContentSwitcher(Container):
     """The ID of the currently-displayed widget.
 
     If set to `None` then no widget is visible.
+
+    Note:
+        If set to an unknown ID, this will result in
+        [NoMatches][textual.css.query.NoMatches] being raised.
     """
 
     def __init__(
