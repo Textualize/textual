@@ -28,6 +28,7 @@ class Driver(ABC):
         self._loop = asyncio.get_running_loop()
         self._mouse_down_time = _clock.get_time_no_wait()
         self._dragging = False
+        self._dragging_button = None
 
     @property
     def is_headless(self) -> bool:
@@ -46,7 +47,8 @@ class Driver(ABC):
         elif isinstance(event, events.MouseMove):
             if event.button and not self._dragging:
                 self._dragging = True
-            elif self._dragging and not event.button:
+                self._dragging_button = event.button
+            elif self._dragging and self._dragging_button != event.button:
                 # Artificially generate a MouseUp event when we stop "dragging"
                 self.send_event(
                     MouseUp(
@@ -54,7 +56,7 @@ class Driver(ABC):
                         y=event.y,
                         delta_x=event.delta_x,
                         delta_y=event.delta_y,
-                        button=0,
+                        button=self._dragging_button,
                         shift=event.shift,
                         meta=event.meta,
                         ctrl=event.ctrl,
@@ -64,6 +66,7 @@ class Driver(ABC):
                     )
                 )
                 self._dragging = False
+                self._dragging_button = None
 
         self.send_event(event)
 
