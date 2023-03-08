@@ -9,7 +9,7 @@ authors:
 
 # Overhead of Python Asyncio tasks
 
-Every widget in Textual, be it a button, tree view, or a text input, runs a [asyncio](https://docs.python.org/3/library/asyncio.html) task. There is even a task for [scrollbar corners](https://github.com/Textualize/textual/blob/e95a65fa56e5b19715180f9e17c7f6747ba15ec5/src/textual/scrollbar.py#L365) (the little space formed when horizontal and vertical scrollbars meet).
+Every widget in Textual, be it a button, tree view, or a text input, runs an [asyncio](https://docs.python.org/3/library/asyncio.html) task. There is even a task for [scrollbar corners](https://github.com/Textualize/textual/blob/e95a65fa56e5b19715180f9e17c7f6747ba15ec5/src/textual/scrollbar.py#L365) (the little space formed when horizontal and vertical scrollbars meet).
 
 <!-- more -->
 
