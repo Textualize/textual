@@ -135,10 +135,10 @@ exceeds the available horizontal space in the parent container.
 ## Utility containers
 
 Textual comes with several "container" widgets.
-These are [Vertical][textual.containers.Vertical], [Horizontal][textual.containers.Horizontal], and [Grid][textual.containers.Grid] which have the corresponding layout.
+These are [VerticalScroll][textual.containers.VerticalScroll], [Horizontal][textual.containers.Horizontal], and [Grid][textual.containers.Grid] which have the corresponding layout.
 
 The example below shows how we can combine these containers to create a simple 2x2 grid.
-Inside a single `Horizontal` container, we place two `Vertical` containers.
+Inside a single `Horizontal` container, we place two `VerticalScroll` containers.
 In other words, we have a single row containing two columns.
 
 === "Output"
@@ -163,7 +163,7 @@ However, Textual comes with a more powerful mechanism for achieving this known a
 
 ## Composing with context managers
 
-In the previous section we've show how you add children to a container (such as `Horizontal` and `Vertical`) using positional arguments.
+In the previous section we've show how you add children to a container (such as `Horizontal` and `VerticalScroll`) using positional arguments.
 It's fine to do it this way, but Textual offers a simplified syntax using [context managers](https://docs.python.org/3/reference/datamodel.html#context-managers) which is generally easier to write and edit.
 
 When composing a widget, you can introduce a container using Python's `with` statement.

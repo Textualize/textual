@@ -25,7 +25,7 @@ The default setting for containers is `overflow: auto auto`.
 
 !!! warning
 
-    Some built-in containers like `Horizontal` and `Vertical` override these defaults.
+    Some built-in containers like `Horizontal` and `VerticalScroll` override these defaults.
 
 ## Example
 

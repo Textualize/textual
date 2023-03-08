@@ -13,11 +13,11 @@ class Container(Widget):
     """
 
 
-class Vertical(Widget):
+class VerticalScroll(Widget):
     """A container widget which aligns children vertically."""
 
     DEFAULT_CSS = """
-    Vertical {
+    VerticalScroll {
         height: 1fr;
         layout: vertical;
         overflow-y: auto;
@@ -44,7 +44,7 @@ class Grid(Widget):
     Grid {
         height: 1fr;
         layout: grid;
-    }    
+    }
     """
 
 
@@ -52,7 +52,7 @@ class Content(Widget, can_focus=True, can_focus_children=False):
     """A container for content such as text."""
 
     DEFAULT_CSS = """
-    Vertical {
+    VerticalScroll {
         height: 1fr;
         layout: vertical;
         overflow-y: auto;

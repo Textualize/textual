@@ -1,11 +1,11 @@
 from textual.app import App
-from textual.containers import Vertical
+from textual.containers import VerticalScroll
 from textual.widgets import Placeholder
 
 
 class MaxWidthApp(App):
     def compose(self):
-        yield Vertical(
+        yield VerticalScroll(
             Placeholder("max-width: 50h", id="p1"),
             Placeholder("max-width: 999", id="p2"),
             Placeholder("max-width: 50%", id="p3"),

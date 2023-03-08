@@ -10,7 +10,7 @@ from rich.text import Text
 from typing_extensions import TypeAlias
 
 from ..app import ComposeResult
-from ..containers import Horizontal, Vertical
+from ..containers import Horizontal, VerticalScroll
 from ..message import Message
 from ..reactive import reactive, var
 from ..widget import Widget
@@ -266,7 +266,7 @@ class MarkdownBulletList(MarkdownList):
         width: 1fr;
     }
 
-    MarkdownBulletList Vertical {
+    MarkdownBulletList VerticalScroll {
         height: auto;
         width: 1fr;
     }
@@ -277,7 +277,7 @@ class MarkdownBulletList(MarkdownList):
             if isinstance(block, MarkdownListItem):
                 bullet = MarkdownBullet()
                 bullet.symbol = block.bullet
-                yield Horizontal(bullet, Vertical(*block._blocks))
+                yield Horizontal(bullet, VerticalScroll(*block._blocks))
         self._blocks.clear()
 
 
@@ -295,7 +295,7 @@ class MarkdownOrderedList(MarkdownList):
         width: 1fr;
     }
 
-    MarkdownOrderedList  Vertical {
+    MarkdownOrderedList VerticalScroll {
         height: auto;
         width: 1fr;
     }
@@ -311,7 +311,7 @@ class MarkdownOrderedList(MarkdownList):
             if isinstance(block, MarkdownListItem):
                 bullet = MarkdownBullet()
                 bullet.symbol = block.bullet.rjust(symbol_size + 1)
-                yield Horizontal(bullet, Vertical(*block._blocks))
+                yield Horizontal(bullet, VerticalScroll(*block._blocks))
 
         self._blocks.clear()
 
@@ -410,7 +410,7 @@ class MarkdownListItem(MarkdownBlock):
         height: auto;
     }
 
-    MarkdownListItem > Vertical {
+    MarkdownListItem > VerticalScroll {
         width: 1fr;
         height: auto;
     }
@@ -761,7 +761,7 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
             )
 
 
-class MarkdownViewer(Vertical, can_focus=True, can_focus_children=True):
+class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
     """A Markdown viewer widget."""
 
     DEFAULT_CSS = """

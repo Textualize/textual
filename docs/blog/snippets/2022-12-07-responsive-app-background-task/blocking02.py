@@ -1,10 +1,10 @@
 import asyncio
-from random import randint
 import time
+from random import randint
 
 from textual.app import App, ComposeResult
 from textual.color import Color
-from textual.containers import Grid, Vertical
+from textual.containers import Grid, VerticalScroll
 from textual.widget import Widget
 from textual.widgets import Footer, Label
 
@@ -29,7 +29,7 @@ class MyApp(App[None]):
     def compose(self) -> ComposeResult:
         yield Grid(
             ColourChanger(),
-            Vertical(id="log"),
+            VerticalScroll(id="log"),
         )
         yield Footer()
 

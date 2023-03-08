@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.containers import Vertical, Horizontal
+from textual.containers import VerticalScroll, Horizontal
 from textual.widgets import (
     Header,
     Footer,
@@ -17,7 +17,6 @@ from textual.widgets import (
 
 
 class WidgetDisableTestApp(App[None]):
-
     CSS = """
     Horizontal {
         height: auto;
@@ -54,7 +53,7 @@ class WidgetDisableTestApp(App[None]):
 
     def compose(self) -> ComposeResult:
         yield Header()
-        yield Vertical(
+        yield VerticalScroll(
             Horizontal(
                 Button(),
                 Button(variant="primary"),
@@ -77,7 +76,7 @@ class WidgetDisableTestApp(App[None]):
 
     def on_mount(self) -> None:
         self.query_one(TextLog).write("Hello, World!")
-        self.query_one("#test-container", Vertical).disabled = True
+        self.query_one("#test-container", VerticalScroll).disabled = True
 
 
 if __name__ == "__main__":
