@@ -42,6 +42,12 @@ When the user presses the "Markdown" button the view is switched:
 ```{.textual path="docs/examples/widgets/content_switcher.py" lines="40" press="tab,tab,enter"}
 ```
 
+## Reactive Attributes
+
+| Name      | Type            | Default | Description                                                          |
+|-----------|-----------------|---------|----------------------------------------------------------------------|
+| `current` | `str` \| `None` | `None`  | The ID of the currently-visible child. `None` means nothing visible. |
+
 
 ## See Also
 
