@@ -1,14 +1,13 @@
 from __future__ import annotations
 
 import pytest
-from rich.style import Style
 from rich.text import Text
 
 from textual._wait import wait_for_idle
 from textual.actions import SkipAction
 from textual.app import App
 from textual.coordinate import Coordinate
-from textual.events import Click, MouseMove
+from textual.geometry import Offset
 from textual.message import Message
 from textual.widgets import DataTable
 from textual.widgets.data_table import (
@@ -163,6 +162,13 @@ async def test_datatable_message_emission():
         await pilot.press("up", "down", "left", "right", "enter")
         await pilot.pause()
         assert app.message_names == expected_messages
+
+
+async def test_empty_table_interactions():
+    app = DataTableApp()
+    async with app.run_test() as pilot:
+        await pilot.press("enter", "up", "down", "left", "right")
+        assert app.message_names == []
 
 
 async def test_add_rows():
@@ -555,32 +561,17 @@ async def test_coordinate_to_cell_key_invalid_coordinate():
             table.coordinate_to_cell_key(Coordinate(9999, 9999))
 
 
-def make_click_event():
-    return Click(
-        x=1,
-        y=2,
-        delta_x=0,
-        delta_y=0,
-        button=0,
-        shift=False,
-        meta=False,
-        ctrl=False,
-    )
-
-
-async def test_datatable_on_click_cell_cursor():
+async def test_datatable_click_cell_cursor():
     """When the cell cursor is used, and we click, we emit a CellHighlighted
     *and* a CellSelected message for the cell that was clicked.
     Regression test for https://github.com/Textualize/textual/issues/1723"""
     app = DataTableApp()
     async with app.run_test() as pilot:
         table = app.query_one(DataTable)
-        click = make_click_event()
         column_key = table.add_column("ABC")
         table.add_row("123")
         row_key = table.add_row("456")
-        table.on_click(event=click)
-        await pilot.pause()
+        await pilot.click(offset=Offset(1, 2))
         # There's two CellHighlighted events since a cell is highlighted on initial load,
         # then when we click, another cell is highlighted (and selected).
         assert app.message_names == [
@@ -599,19 +590,17 @@ async def test_datatable_on_click_cell_cursor():
         assert cell_selected_event.coordinate == Coordinate(1, 0)
 
 
-async def test_on_click_row_cursor():
+async def test_click_row_cursor():
     """When the row cursor is used, and we click, we emit a RowHighlighted
     *and* a RowSelected message for the row that was clicked."""
     app = DataTableApp()
-    async with app.run_test():
+    async with app.run_test() as pilot:
         table = app.query_one(DataTable)
         table.cursor_type = "row"
-        click = make_click_event()
         table.add_column("ABC")
         table.add_row("123")
         row_key = table.add_row("456")
-        table.on_click(event=click)
-        await wait_for_idle(0)
+        await pilot.click(offset=Offset(1, 2))
         assert app.message_names == ["RowHighlighted", "RowHighlighted", "RowSelected"]
 
         row_highlighted: DataTable.RowHighlighted = app.messages[1]
@@ -624,19 +613,17 @@ async def test_on_click_row_cursor():
         assert row_highlighted.cursor_row == 1
 
 
-async def test_on_click_column_cursor():
+async def test_click_column_cursor():
     """When the column cursor is used, and we click, we emit a ColumnHighlighted
     *and* a ColumnSelected message for the column that was clicked."""
     app = DataTableApp()
-    async with app.run_test():
+    async with app.run_test() as pilot:
         table = app.query_one(DataTable)
         table.cursor_type = "column"
         column_key = table.add_column("ABC")
         table.add_row("123")
         table.add_row("456")
-        click = make_click_event()
-        table.on_click(event=click)
-        await wait_for_idle(0)
+        await pilot.click(offset=Offset(1, 2))
         assert app.message_names == [
             "ColumnHighlighted",
             "ColumnHighlighted",
@@ -654,27 +641,14 @@ async def test_on_click_column_cursor():
 async def test_hover_coordinate():
     """Ensure that the hover_coordinate reactive is updated as expected."""
     app = DataTableApp()
-    async with app.run_test():
+    async with app.run_test() as pilot:
         table = app.query_one(DataTable)
         table.add_column("ABC")
         table.add_row("123")
         table.add_row("456")
         assert table.hover_coordinate == Coordinate(0, 0)
-
-        mouse_move = MouseMove(
-            x=1,
-            y=2,
-            delta_x=0,
-            delta_y=0,
-            button=0,
-            shift=False,
-            meta=False,
-            ctrl=False,
-            style=Style(meta={"row": 1, "column": 2}),
-        )
-        table.on_mouse_move(mouse_move)
-        await wait_for_idle(0)
-        assert table.hover_coordinate == Coordinate(1, 2)
+        await pilot.hover(DataTable, offset=Offset(2, 2))
+        assert table.hover_coordinate == Coordinate(1, 0)
 
 
 async def test_header_selected():
@@ -685,19 +659,9 @@ async def test_header_selected():
         table = app.query_one(DataTable)
         column_key = table.add_column("number")
         table.add_row(3)
-        click_event = Click(
-            x=3,
-            y=0,
-            delta_x=0,
-            delta_y=0,
-            button=1,
-            shift=False,
-            meta=False,
-            ctrl=False,
-        )
-        await pilot.pause()
-        table.on_click(click_event)
-        await pilot.pause()
+
+        click_location = Offset(3, 0)  # Click the header
+        await pilot.click(DataTable, offset=click_location)
         message: DataTable.HeaderSelected = app.messages[-1]
         assert message.label == Text("number")
         assert message.column_index == 0
@@ -705,7 +669,7 @@ async def test_header_selected():
 
         # Now hide the header and click in the exact same place - no additional message emitted.
         table.show_header = False
-        table.on_click(click_event)
+        await pilot.click(DataTable, offset=click_location)
         await pilot.pause()
         assert app.message_names.count("HeaderSelected") == 1
 
@@ -718,19 +682,8 @@ async def test_row_label_selected():
         table = app.query_one(DataTable)
         table.add_column("number")
         row_key = table.add_row(3, label="A")
-        click_event = Click(
-            x=1,
-            y=1,
-            delta_x=0,
-            delta_y=0,
-            button=1,
-            shift=False,
-            meta=False,
-            ctrl=False,
-        )
         await pilot.pause()
-        table.on_click(click_event)
-        await pilot.pause()
+        await pilot.click(DataTable, offset=Offset(1, 1))
         message: DataTable.RowLabelSelected = app.messages[-1]
         assert message.label == Text("A")
         assert message.row_index == 0
@@ -738,8 +691,7 @@ async def test_row_label_selected():
 
         # Now hide the row label and click in the same place - no additional message emitted.
         table.show_row_labels = False
-        table.on_click(click_event)
-        await pilot.pause()
+        await pilot.click(DataTable, offset=Offset(1, 1))
         assert app.message_names.count("RowLabelSelected") == 1
 
 
