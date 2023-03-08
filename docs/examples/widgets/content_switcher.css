@@ -3,6 +3,7 @@ Screen {
 }
 
 #buttons {
+    margin-top: 1;
     height: 3;
     width: auto;
 }
@@ -10,8 +11,8 @@ Screen {
 ContentSwitcher {
     background: $panel;
     border: round $primary;
-    width: 70%;
-    height: 70%;
+    width: 90%;
+    height: 80%;
 }
 
 DataTable {
@@ -20,11 +21,7 @@ DataTable {
 
 MarkdownH2 {
     background: $primary;
+    color: yellow;
     border: none;
     padding: 0;
-}
-
-MarkdownTable {
-    margin-top: 0;
-    margin-bottom: 1;
 }

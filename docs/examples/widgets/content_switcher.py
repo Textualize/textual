@@ -1,6 +1,6 @@
 from textual.app import App, ComposeResult
 from textual.containers import Horizontal
-from textual.widgets import Button, ContentSwitcher, DataTable, MarkdownViewer
+from textual.widgets import Button, ContentSwitcher, DataTable, Markdown
 
 MARKDOWN_EXAMPLE = """# Three Flavours Cornetto
 
@@ -31,23 +31,23 @@ class ContentSwitcherApp(App[None]):
     CSS_PATH = "content_switcher.css"
 
     def compose(self) -> ComposeResult:
-        with Horizontal(id="buttons"):
-            yield Button("DataTable", id="data-table")
-            yield Button("Markdown", id="markdown")
+        with Horizontal(id="buttons"):  # (1)!
+            yield Button("DataTable", id="data-table")  # (2)!
+            yield Button("Markdown", id="markdown")  # (3)!
 
-        with ContentSwitcher(initial="data-table"):
+        with ContentSwitcher(initial="data-table"):  # (4)!
             yield DataTable(id="data-table")
-            yield MarkdownViewer(MARKDOWN_EXAMPLE, id="markdown")
+            yield Markdown(MARKDOWN_EXAMPLE, id="markdown")
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
-        self.query_one(ContentSwitcher).current = event.button.id
+        self.query_one(ContentSwitcher).current = event.button.id  # (5)!
 
     def on_mount(self) -> None:
         table = self.query_one(DataTable)
         table.add_columns("Book", "Year")
         table.add_rows(
             [
-                (title.ljust(50), year)
+                (title.ljust(35), year)
                 for title, year in (
                     ("Dune", 1965),
                     ("Dune Messiah", 1969),
