@@ -6417,16 +6417,16 @@
 <h2 id="syntax">Syntax<a class="headerlink" href="#syntax" title="Permanent link">&para;</a></h2>
 <!-- Include this snippet when starting a code block that shows the syntax of a CSS rule. -->
 <div class="highlight" style="padding: 0.25em 1.15em; background: var(--md-code-bg-color);"><pre>
-border: [<a href="../../css_types/border">&lt;border&gt;</a>] [<a href="../../css_types/color">&lt;color&gt;</a>];
+border: [<a href="../../css_types/border">&lt;border&gt;</a>] [<a href="../../css_types/color">&lt;color&gt;</a>] [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
 
-border-top: [<a href="../../css_types/border">&lt;border&gt;</a>] [<a href="../../css_types/color">&lt;color&gt;</a>];
-border-right: [<a href="../../css_types/border">&lt;border&gt;</a>] [<a href="../../css_types/color">&lt;color&gt;</a>];
-border-bottom: [<a href="../../css_types/border">&lt;border&gt;</a>] [<a href="../../css_types/color">&lt;color&gt;</a>];
-border-left: [<a href="../../css_types/border">&lt;border&gt;</a>] [<a href="../../css_types/color">&lt;color&gt;</a>];
+border-top: [<a href="../../css_types/border">&lt;border&gt;</a>] [<a href="../../css_types/color">&lt;color&gt;</a>] [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
+border-right: [<a href="../../css_types/border">&lt;border&gt;</a>] [<a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>]];
+border-bottom: [<a href="../../css_types/border">&lt;border&gt;</a>] [<a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>]];
+border-left: [<a href="../../css_types/border">&lt;border&gt;</a>] [<a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>]];
 </pre></div>
 <!-- Include this snippet when ending a code block that shows the syntax of a CSS rule. -->
 
-<p>The style <code>border</code> accepts an optional <a href="../../css_types/border"><code>&lt;border&gt;</code></a> that sets the visual style of the widget border and an optional <a href="../../css_types/color"><code>&lt;color&gt;</code></a> to set the color of the border.</p>
+<p>The style <code>border</code> accepts an optional <a href="../../css_types/border"><code>&lt;border&gt;</code></a> that sets the visual style of the widget border, an optional <a href="../../css_types/color"><code>&lt;color&gt;</code></a> to set the color of the border, and an optional <a href="../../css_types/percentage"><code>&lt;percentage&gt;</code></a> to specify the color transparency.</p>
 <p>Borders may also be set individually for the four edges of a widget with the <code>border-top</code>, <code>border-right</code>, <code>border-bottom</code> and <code>border-left</code> rules.</p>
 <h3 id="multiple-edge-rules">Multiple edge rules<a class="headerlink" href="#multiple-edge-rules" title="Permanent link">&para;</a></h3>
 <p>If multiple border rules target the same edge, the last rule that targets a specific edge is the one that is applied to that edge.
@@ -6441,7 +6441,8 @@ For example, consider the CSS below:</p>
 <p>The CSS snippet above will add a solid green border around <code>Static</code> widgets, except for the bottom edge, which will be double blue.</p>
 <h3 id="defaults">Defaults<a class="headerlink" href="#defaults" title="Permanent link">&para;</a></h3>
 <p>If <code>&lt;color&gt;</code> is specified but <code>&lt;border&gt;</code> is not, it defaults to <code>"solid"</code>.
-If <code>&lt;border&gt;</code> is specified but <code>&lt;color&gt;</code>is not, it defaults to green (RGB color <code>"#00FF00"</code>).</p>
+If <code>&lt;border&gt;</code> is specified but <code>&lt;color&gt;</code>is not, it defaults to green (RGB color <code>"#00FF00"</code>).
+If <code>&lt;percentage&gt;</code> is not specified it defaults to <code>100%</code>.</p>
 <h2 id="border-command">Border command<a class="headerlink" href="#border-command" title="Permanent link">&para;</a></h2>
 <p>The <code>textual</code> CLI has a subcommand which will let you explore the various border types interactively:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>textual borders
@@ -7128,8 +7129,11 @@ They contain the same text, have the same width and height, and are styled exact
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="cm">/* Set a heavy white border */</span>
 <a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="na">border</span><span class="o">:</span><span class="w"> </span><span class="n">heavy</span><span class="w"> </span><span class="ni">white</span><span class="err">;</span>
 <a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="cm">/* set a red border on the left */</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="cm">/* Set a red border on the left */</span>
 <a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="na">border-left</span><span class="o">:</span><span class="w"> </span><span class="n">outer</span><span class="w"> </span><span class="ni">red</span><span class="err">;</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="cm">/* Set a rounded orange border, 50% transparency. */</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="na">border</span><span class="o">:</span><span class="w"> </span><span class="n">round</span><span class="w"> </span><span class="ni">orange</span><span class="w"> </span><span class="mi">50</span><span class="kt">%</span><span class="err">;</span>
 </code></pre></div>
 <h2 id="python">Python<a class="headerlink" href="#python" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># Set a heavy white border</span>

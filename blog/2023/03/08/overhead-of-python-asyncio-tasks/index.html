@@ -8,34 +8,32 @@
       
       
       
-        <link rel="canonical" href="https://textual.textualize.io/api/events/">
+        <link rel="canonical" href="https://textual.textualize.io/blog/2023/03/08/overhead-of-python-asyncio-tasks/">
       
       
-        <link rel="prev" href="../dom_node/">
+        <link rel="prev" href="../../../02/24/textual-0120-adds-syntactical-sugar-and-batch-updates/">
       
-      
-        <link rel="next" href="../footer/">
       
       
         
       
       
-        <link rel="alternate" type="application/rss+xml" title="RSS feed" href="../../feed_rss_created.xml">
-        <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../feed_rss_updated.xml">
+        <link rel="alternate" type="application/rss+xml" title="RSS feed" href="../../../../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../../../../feed_rss_updated.xml">
       
-      <link rel="icon" href="../../assets/images/favicon.png">
+      <link rel="icon" href="../../../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.0+insiders-4.32.2">
     
     
       
-        <title>Events - Textual</title>
+        <title>Overhead of Python Asyncio tasks - Textual</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.24f010b1.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.24f010b1.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.6932e648.min.css">
+        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.6932e648.min.css">
       
       
 
@@ -51,11 +49,11 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../../../../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="../../stylesheets/custom.css">
+      <link rel="stylesheet" href="../../../../../stylesheets/custom.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -71,9 +69,9 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@textualizeio">
 <meta name="twitter:creator" content="@willmcgugan">
-<meta property="og:title" content="Textual - Events">
+<meta property="og:title" content="Textual - Overhead of Python Asyncio tasks">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://textual.textualize.io/api/events/">
+<meta property="og:url" content="https://textual.textualize.io/blog/2023/03/08/overhead-of-python-asyncio-tasks/">
 <meta property="og:site_name" content="Textual Documentation">
 <meta property="og:description" content="Textual is a TUI framework for Python, inspired by modern web development.">
 <meta property="og:image" content="https://raw.githubusercontent.com/Textualize/textual/main/imgs/textual.png">
@@ -98,7 +96,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#textual.events" class="md-skip">
+        <a href="#overhead-of-python-asyncio-tasks" class="md-skip">
           Skip to content
         </a>
       
@@ -114,7 +112,7 @@
 
 <header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Textual" class="md-header__button md-logo" aria-label="Textual" data-md-component="logo">
+    <a href="../../../../.." title="Textual" class="md-header__button md-logo" aria-label="Textual" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -133,7 +131,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Events
+              Overhead of Python Asyncio tasks
             
           </span>
         </div>
@@ -226,7 +224,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../.." class="md-tabs__link">
+        <a href="../../../../.." class="md-tabs__link">
           
   
     
@@ -244,7 +242,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../tutorial/" class="md-tabs__link">
+      <a href="../../../../../tutorial/" class="md-tabs__link">
         
   
   Tutorial
@@ -261,7 +259,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../guide/" class="md-tabs__link">
+        <a href="../../../../../guide/" class="md-tabs__link">
           
   
     
@@ -279,7 +277,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../widget_gallery/" class="md-tabs__link">
+      <a href="../../../../../widget_gallery/" class="md-tabs__link">
         
   
   Widgets
@@ -296,7 +294,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../reference/" class="md-tabs__link">
+        <a href="../../../../../reference/" class="md-tabs__link">
           
   
     
@@ -312,13 +310,11 @@
         
   
   
-    
-  
   
     
     
       <li class="md-tabs__item">
-        <a href="../app/" class="md-tabs__link md-tabs__link--active">
+        <a href="../../../../../api/app/" class="md-tabs__link">
           
   
   API
@@ -334,7 +330,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../roadmap/" class="md-tabs__link">
+      <a href="../../../../../roadmap/" class="md-tabs__link">
         
   
   Roadmap
@@ -347,11 +343,13 @@
         
   
   
+    
+  
   
     
     
       <li class="md-tabs__item">
-        <a href="../../blog/" class="md-tabs__link">
+        <a href="../../../../" class="md-tabs__link md-tabs__link--active">
           
   
     
@@ -381,7 +379,9 @@
           
             
               
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -392,7 +392,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Textual" class="md-nav__button md-logo" aria-label="Textual" data-md-component="logo">
+    <a href="../../../../.." title="Textual" class="md-nav__button md-logo" aria-label="Textual" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -444,7 +444,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../.." class="md-nav__link ">
+            <a href="../../../../.." class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -485,7 +485,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting_started/" class="md-nav__link">
+      <a href="../../../../../getting_started/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -511,7 +511,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../help/" class="md-nav__link">
+      <a href="../../../../../help/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -544,7 +544,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/" class="md-nav__link">
+      <a href="../../../../../tutorial/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -616,7 +616,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../guide/" class="md-nav__link ">
+            <a href="../../../../../guide/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -657,7 +657,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/devtools/" class="md-nav__link">
+      <a href="../../../../../guide/devtools/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -683,7 +683,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/app/" class="md-nav__link">
+      <a href="../../../../../guide/app/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -709,7 +709,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/styles/" class="md-nav__link">
+      <a href="../../../../../guide/styles/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -735,7 +735,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/CSS/" class="md-nav__link">
+      <a href="../../../../../guide/CSS/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -761,7 +761,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/design/" class="md-nav__link">
+      <a href="../../../../../guide/design/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -787,7 +787,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/queries/" class="md-nav__link">
+      <a href="../../../../../guide/queries/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -813,7 +813,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/layout/" class="md-nav__link">
+      <a href="../../../../../guide/layout/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -839,7 +839,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/events/" class="md-nav__link">
+      <a href="../../../../../guide/events/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -865,7 +865,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/input/" class="md-nav__link">
+      <a href="../../../../../guide/input/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -891,7 +891,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/actions/" class="md-nav__link">
+      <a href="../../../../../guide/actions/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -917,7 +917,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/reactivity/" class="md-nav__link">
+      <a href="../../../../../guide/reactivity/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -943,7 +943,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/widgets/" class="md-nav__link">
+      <a href="../../../../../guide/widgets/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -969,7 +969,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/animation/" class="md-nav__link">
+      <a href="../../../../../guide/animation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -995,7 +995,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/screens/" class="md-nav__link">
+      <a href="../../../../../guide/screens/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1028,7 +1028,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widget_gallery/" class="md-nav__link">
+      <a href="../../../../../widget_gallery/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1080,7 +1080,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../reference/" class="md-nav__link ">
+            <a href="../../../../../reference/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -1164,7 +1164,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../css_types/" class="md-nav__link ">
+            <a href="../../../../../css_types/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -1205,7 +1205,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../css_types/border/" class="md-nav__link">
+      <a href="../../../../../css_types/border/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1231,7 +1231,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../css_types/color/" class="md-nav__link">
+      <a href="../../../../../css_types/color/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1257,7 +1257,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../css_types/horizontal/" class="md-nav__link">
+      <a href="../../../../../css_types/horizontal/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1283,7 +1283,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../css_types/integer/" class="md-nav__link">
+      <a href="../../../../../css_types/integer/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1309,7 +1309,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../css_types/name/" class="md-nav__link">
+      <a href="../../../../../css_types/name/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1335,7 +1335,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../css_types/number/" class="md-nav__link">
+      <a href="../../../../../css_types/number/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1361,7 +1361,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../css_types/overflow/" class="md-nav__link">
+      <a href="../../../../../css_types/overflow/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1387,7 +1387,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../css_types/percentage/" class="md-nav__link">
+      <a href="../../../../../css_types/percentage/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1413,7 +1413,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../css_types/scalar/" class="md-nav__link">
+      <a href="../../../../../css_types/scalar/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1439,7 +1439,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../css_types/text_align/" class="md-nav__link">
+      <a href="../../../../../css_types/text_align/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1465,7 +1465,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../css_types/text_style/" class="md-nav__link">
+      <a href="../../../../../css_types/text_style/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1491,7 +1491,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../css_types/vertical/" class="md-nav__link">
+      <a href="../../../../../css_types/vertical/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1590,7 +1590,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../events/" class="md-nav__link ">
+            <a href="../../../../../events/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -1631,7 +1631,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/blur/" class="md-nav__link">
+      <a href="../../../../../events/blur/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1657,7 +1657,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/descendant_blur/" class="md-nav__link">
+      <a href="../../../../../events/descendant_blur/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1683,7 +1683,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/descendant_focus/" class="md-nav__link">
+      <a href="../../../../../events/descendant_focus/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1709,7 +1709,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/enter/" class="md-nav__link">
+      <a href="../../../../../events/enter/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1735,7 +1735,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/focus/" class="md-nav__link">
+      <a href="../../../../../events/focus/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1761,7 +1761,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/hide/" class="md-nav__link">
+      <a href="../../../../../events/hide/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1787,7 +1787,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/key/" class="md-nav__link">
+      <a href="../../../../../events/key/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1813,7 +1813,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/leave/" class="md-nav__link">
+      <a href="../../../../../events/leave/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1839,7 +1839,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/load/" class="md-nav__link">
+      <a href="../../../../../events/load/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1865,7 +1865,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/mount/" class="md-nav__link">
+      <a href="../../../../../events/mount/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1891,7 +1891,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/mouse_capture/" class="md-nav__link">
+      <a href="../../../../../events/mouse_capture/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1917,7 +1917,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/click/" class="md-nav__link">
+      <a href="../../../../../events/click/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1943,7 +1943,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/mouse_down/" class="md-nav__link">
+      <a href="../../../../../events/mouse_down/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1969,7 +1969,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/mouse_move/" class="md-nav__link">
+      <a href="../../../../../events/mouse_move/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1995,7 +1995,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/mouse_release/" class="md-nav__link">
+      <a href="../../../../../events/mouse_release/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2021,7 +2021,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/mouse_scroll_down/" class="md-nav__link">
+      <a href="../../../../../events/mouse_scroll_down/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2047,7 +2047,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/mouse_scroll_up/" class="md-nav__link">
+      <a href="../../../../../events/mouse_scroll_up/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2073,7 +2073,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/mouse_up/" class="md-nav__link">
+      <a href="../../../../../events/mouse_up/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2099,7 +2099,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/paste/" class="md-nav__link">
+      <a href="../../../../../events/paste/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2125,7 +2125,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/resize/" class="md-nav__link">
+      <a href="../../../../../events/resize/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2151,7 +2151,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/screen_resume/" class="md-nav__link">
+      <a href="../../../../../events/screen_resume/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2177,7 +2177,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/screen_suspend/" class="md-nav__link">
+      <a href="../../../../../events/screen_suspend/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2203,7 +2203,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/show/" class="md-nav__link">
+      <a href="../../../../../events/show/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2322,7 +2322,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../styles/" class="md-nav__link ">
+            <a href="../../../../../styles/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -2363,7 +2363,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/align/" class="md-nav__link">
+      <a href="../../../../../styles/align/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2389,7 +2389,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/background/" class="md-nav__link">
+      <a href="../../../../../styles/background/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2415,7 +2415,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/border/" class="md-nav__link">
+      <a href="../../../../../styles/border/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2441,7 +2441,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/box_sizing/" class="md-nav__link">
+      <a href="../../../../../styles/box_sizing/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2467,7 +2467,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/color/" class="md-nav__link">
+      <a href="../../../../../styles/color/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2493,7 +2493,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/content_align/" class="md-nav__link">
+      <a href="../../../../../styles/content_align/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2519,7 +2519,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/display/" class="md-nav__link">
+      <a href="../../../../../styles/display/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2545,7 +2545,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/dock/" class="md-nav__link">
+      <a href="../../../../../styles/dock/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2602,7 +2602,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../styles/grid/" class="md-nav__link ">
+            <a href="../../../../../styles/grid/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -2643,7 +2643,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/grid/column_span/" class="md-nav__link">
+      <a href="../../../../../styles/grid/column_span/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2669,7 +2669,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/grid/grid_columns/" class="md-nav__link">
+      <a href="../../../../../styles/grid/grid_columns/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2695,7 +2695,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/grid/grid_gutter/" class="md-nav__link">
+      <a href="../../../../../styles/grid/grid_gutter/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2721,7 +2721,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/grid/grid_rows/" class="md-nav__link">
+      <a href="../../../../../styles/grid/grid_rows/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2747,7 +2747,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/grid/grid_size/" class="md-nav__link">
+      <a href="../../../../../styles/grid/grid_size/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2773,7 +2773,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/grid/row_span/" class="md-nav__link">
+      <a href="../../../../../styles/grid/row_span/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2807,7 +2807,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/height/" class="md-nav__link">
+      <a href="../../../../../styles/height/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2833,7 +2833,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/layer/" class="md-nav__link">
+      <a href="../../../../../styles/layer/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2859,7 +2859,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/layers/" class="md-nav__link">
+      <a href="../../../../../styles/layers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2885,7 +2885,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/layout/" class="md-nav__link">
+      <a href="../../../../../styles/layout/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2942,7 +2942,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../styles/links/" class="md-nav__link ">
+            <a href="../../../../../styles/links/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -2983,7 +2983,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/links/link_background/" class="md-nav__link">
+      <a href="../../../../../styles/links/link_background/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3009,7 +3009,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/links/link_color/" class="md-nav__link">
+      <a href="../../../../../styles/links/link_color/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3035,7 +3035,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/links/link_hover_background/" class="md-nav__link">
+      <a href="../../../../../styles/links/link_hover_background/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3061,7 +3061,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/links/link_hover_color/" class="md-nav__link">
+      <a href="../../../../../styles/links/link_hover_color/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3087,7 +3087,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/links/link_hover_style/" class="md-nav__link">
+      <a href="../../../../../styles/links/link_hover_style/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3113,7 +3113,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/links/link_style/" class="md-nav__link">
+      <a href="../../../../../styles/links/link_style/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3147,7 +3147,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/margin/" class="md-nav__link">
+      <a href="../../../../../styles/margin/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3173,7 +3173,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/max_height/" class="md-nav__link">
+      <a href="../../../../../styles/max_height/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3199,7 +3199,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/max_width/" class="md-nav__link">
+      <a href="../../../../../styles/max_width/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3225,7 +3225,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/min_height/" class="md-nav__link">
+      <a href="../../../../../styles/min_height/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3251,7 +3251,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/min_width/" class="md-nav__link">
+      <a href="../../../../../styles/min_width/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3277,7 +3277,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/offset/" class="md-nav__link">
+      <a href="../../../../../styles/offset/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3303,7 +3303,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/opacity/" class="md-nav__link">
+      <a href="../../../../../styles/opacity/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3329,7 +3329,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/outline/" class="md-nav__link">
+      <a href="../../../../../styles/outline/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3355,7 +3355,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/overflow/" class="md-nav__link">
+      <a href="../../../../../styles/overflow/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3381,7 +3381,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/padding/" class="md-nav__link">
+      <a href="../../../../../styles/padding/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3440,7 +3440,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../styles/scrollbar_colors/" class="md-nav__link ">
+            <a href="../../../../../styles/scrollbar_colors/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -3481,7 +3481,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/scrollbar_colors/scrollbar_background/" class="md-nav__link">
+      <a href="../../../../../styles/scrollbar_colors/scrollbar_background/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3507,7 +3507,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/scrollbar_colors/scrollbar_background_active/" class="md-nav__link">
+      <a href="../../../../../styles/scrollbar_colors/scrollbar_background_active/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3533,7 +3533,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/scrollbar_colors/scrollbar_background_hover/" class="md-nav__link">
+      <a href="../../../../../styles/scrollbar_colors/scrollbar_background_hover/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3559,7 +3559,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/scrollbar_colors/scrollbar_color/" class="md-nav__link">
+      <a href="../../../../../styles/scrollbar_colors/scrollbar_color/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3585,7 +3585,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/scrollbar_colors/scrollbar_color_active/" class="md-nav__link">
+      <a href="../../../../../styles/scrollbar_colors/scrollbar_color_active/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3611,7 +3611,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/scrollbar_colors/scrollbar_color_hover/" class="md-nav__link">
+      <a href="../../../../../styles/scrollbar_colors/scrollbar_color_hover/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3637,7 +3637,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/scrollbar_colors/scrollbar_corner_color/" class="md-nav__link">
+      <a href="../../../../../styles/scrollbar_colors/scrollbar_corner_color/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3671,7 +3671,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/scrollbar_gutter/" class="md-nav__link">
+      <a href="../../../../../styles/scrollbar_gutter/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3697,7 +3697,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/scrollbar_size/" class="md-nav__link">
+      <a href="../../../../../styles/scrollbar_size/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3723,7 +3723,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/text_align/" class="md-nav__link">
+      <a href="../../../../../styles/text_align/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3749,7 +3749,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/text_opacity/" class="md-nav__link">
+      <a href="../../../../../styles/text_opacity/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3775,7 +3775,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/text_style/" class="md-nav__link">
+      <a href="../../../../../styles/text_style/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3801,7 +3801,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/tint/" class="md-nav__link">
+      <a href="../../../../../styles/tint/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3827,7 +3827,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/visibility/" class="md-nav__link">
+      <a href="../../../../../styles/visibility/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3853,7 +3853,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/width/" class="md-nav__link">
+      <a href="../../../../../styles/width/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3944,7 +3944,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../widgets/" class="md-nav__link ">
+            <a href="../../../../../widgets/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -3983,7 +3983,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/button/" class="md-nav__link">
+      <a href="../../../../../widgets/button/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4009,7 +4009,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/checkbox/" class="md-nav__link">
+      <a href="../../../../../widgets/checkbox/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4035,7 +4035,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/data_table/" class="md-nav__link">
+      <a href="../../../../../widgets/data_table/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4061,7 +4061,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/directory_tree/" class="md-nav__link">
+      <a href="../../../../../widgets/directory_tree/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4087,7 +4087,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/footer/" class="md-nav__link">
+      <a href="../../../../../widgets/footer/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4113,7 +4113,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/header/" class="md-nav__link">
+      <a href="../../../../../widgets/header/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4141,7 +4141,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/input/" class="md-nav__link">
+      <a href="../../../../../widgets/input/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4167,7 +4167,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/label/" class="md-nav__link">
+      <a href="../../../../../widgets/label/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4193,7 +4193,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/list_item/" class="md-nav__link">
+      <a href="../../../../../widgets/list_item/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4219,7 +4219,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/list_view/" class="md-nav__link">
+      <a href="../../../../../widgets/list_view/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4245,7 +4245,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/markdown_viewer/" class="md-nav__link">
+      <a href="../../../../../widgets/markdown_viewer/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4271,7 +4271,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/markdown/" class="md-nav__link">
+      <a href="../../../../../widgets/markdown/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4297,7 +4297,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/placeholder/" class="md-nav__link">
+      <a href="../../../../../widgets/placeholder/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4323,7 +4323,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/radiobutton/" class="md-nav__link">
+      <a href="../../../../../widgets/radiobutton/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4349,7 +4349,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/radioset/" class="md-nav__link">
+      <a href="../../../../../widgets/radioset/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4375,7 +4375,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/static/" class="md-nav__link">
+      <a href="../../../../../widgets/static/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4401,7 +4401,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/switch/" class="md-nav__link">
+      <a href="../../../../../widgets/switch/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4427,7 +4427,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/text_log/" class="md-nav__link">
+      <a href="../../../../../widgets/text_log/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4453,7 +4453,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/tree/" class="md-nav__link">
+      <a href="../../../../../widgets/tree/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4492,8 +4492,6 @@
       
   
   
-    
-  
   
     
     
@@ -4586,18 +4584,18 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../../../../api/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -4619,7 +4617,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
@@ -4636,7 +4634,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../app/" class="md-nav__link">
+      <a href="../../../../../api/app/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4662,7 +4660,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../await_remove/" class="md-nav__link">
+      <a href="../../../../../api/await_remove/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4688,7 +4686,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../binding/" class="md-nav__link">
+      <a href="../../../../../api/binding/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4714,7 +4712,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../button/" class="md-nav__link">
+      <a href="../../../../../api/button/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4740,7 +4738,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../checkbox/" class="md-nav__link">
+      <a href="../../../../../api/checkbox/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4766,7 +4764,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../color/" class="md-nav__link">
+      <a href="../../../../../api/color/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4792,7 +4790,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../containers/" class="md-nav__link">
+      <a href="../../../../../api/containers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4818,7 +4816,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../coordinate/" class="md-nav__link">
+      <a href="../../../../../api/coordinate/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4844,7 +4842,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../data_table/" class="md-nav__link">
+      <a href="../../../../../api/data_table/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4870,7 +4868,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../directory_tree/" class="md-nav__link">
+      <a href="../../../../../api/directory_tree/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4896,7 +4894,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dom_node/" class="md-nav__link">
+      <a href="../../../../../api/dom_node/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4920,33 +4918,9 @@
                 
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    
-  
-    Events
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../../../../api/events/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4961,339 +4935,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        events
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="events">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Compose" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Compose
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Event" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Event
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Hide" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Hide
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Idle" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Idle
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.InputEvent" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        InputEvent
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.InvokeCallbacks" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        InvokeCallbacks
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Key" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Key
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Key">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Key.is_printable" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        is_printable
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Key.name" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        name
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Key.name_aliases" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        name_aliases
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Load" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Load
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Mount" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Mount
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.MouseCapture" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MouseCapture
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.MouseEvent" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MouseEvent
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="MouseEvent">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.MouseEvent.delta" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        delta
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.MouseEvent.offset" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        offset
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.MouseEvent.screen_offset" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        screen_offset
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.MouseEvent.style" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        style
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.MouseEvent.get_content_offset" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        get_content_offset()
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.MouseMove" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MouseMove
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.MouseRelease" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MouseRelease
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Paste" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Paste
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Ready" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Ready
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Resize" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Resize
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Show" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Show
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Unmount" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Unmount
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -5305,7 +4946,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../footer/" class="md-nav__link">
+      <a href="../../../../../api/footer/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5331,7 +4972,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../geometry/" class="md-nav__link">
+      <a href="../../../../../api/geometry/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5357,7 +4998,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../header/" class="md-nav__link">
+      <a href="../../../../../api/header/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5385,7 +5026,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../input/" class="md-nav__link">
+      <a href="../../../../../api/input/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5411,7 +5052,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../label/" class="md-nav__link">
+      <a href="../../../../../api/label/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5437,7 +5078,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../list_item/" class="md-nav__link">
+      <a href="../../../../../api/list_item/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5463,7 +5104,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../list_view/" class="md-nav__link">
+      <a href="../../../../../api/list_view/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5489,7 +5130,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../markdown_viewer/" class="md-nav__link">
+      <a href="../../../../../api/markdown_viewer/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5515,7 +5156,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../markdown/" class="md-nav__link">
+      <a href="../../../../../api/markdown/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5541,7 +5182,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../message_pump/" class="md-nav__link">
+      <a href="../../../../../api/message_pump/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5567,7 +5208,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../message/" class="md-nav__link">
+      <a href="../../../../../api/message/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5593,7 +5234,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../pilot/" class="md-nav__link">
+      <a href="../../../../../api/pilot/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5619,7 +5260,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../placeholder/" class="md-nav__link">
+      <a href="../../../../../api/placeholder/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5645,7 +5286,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../query/" class="md-nav__link">
+      <a href="../../../../../api/query/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5671,7 +5312,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../radiobutton/" class="md-nav__link">
+      <a href="../../../../../api/radiobutton/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5697,7 +5338,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../radioset/" class="md-nav__link">
+      <a href="../../../../../api/radioset/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5723,7 +5364,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reactive/" class="md-nav__link">
+      <a href="../../../../../api/reactive/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5749,7 +5390,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../screen/" class="md-nav__link">
+      <a href="../../../../../api/screen/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5775,7 +5416,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../scroll_view/" class="md-nav__link">
+      <a href="../../../../../api/scroll_view/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5801,7 +5442,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../static/" class="md-nav__link">
+      <a href="../../../../../api/static/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5827,7 +5468,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../strip/" class="md-nav__link">
+      <a href="../../../../../api/strip/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5853,7 +5494,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../switch/" class="md-nav__link">
+      <a href="../../../../../api/switch/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5879,7 +5520,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../text_log/" class="md-nav__link">
+      <a href="../../../../../api/text_log/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5905,7 +5546,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../toggle_button/" class="md-nav__link">
+      <a href="../../../../../api/toggle_button/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5931,7 +5572,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../timer/" class="md-nav__link">
+      <a href="../../../../../api/timer/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5957,7 +5598,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tree/" class="md-nav__link">
+      <a href="../../../../../api/tree/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5983,7 +5624,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../walk/" class="md-nav__link">
+      <a href="../../../../../api/walk/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6009,7 +5650,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../welcome/" class="md-nav__link">
+      <a href="../../../../../api/welcome/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6035,7 +5676,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../widget/" class="md-nav__link">
+      <a href="../../../../../api/widget/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6068,7 +5709,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../roadmap/" class="md-nav__link">
+      <a href="../../../../../roadmap/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6091,6 +5732,8 @@
       
   
   
+    
+  
   
     
     
@@ -6105,18 +5748,18 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
         
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../blog/" class="md-nav__link ">
+            <a href="../../../../" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -6138,7 +5781,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -6207,7 +5850,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../blog/archive/2023/" class="md-nav__link">
+      <a href="../../../../archive/2023/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6233,7 +5876,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../blog/archive/2022/" class="md-nav__link">
+      <a href="../../../../archive/2022/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6319,7 +5962,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../blog/category/devlog/" class="md-nav__link">
+      <a href="../../../../category/devlog/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6345,7 +5988,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../blog/category/news/" class="md-nav__link">
+      <a href="../../../../category/news/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6371,7 +6014,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../blog/category/release/" class="md-nav__link">
+      <a href="../../../../category/release/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6414,6 +6057,8 @@
             
             
               
+                
+              
               <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
@@ -6423,329 +6068,8 @@
   
   
   
+    
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        events
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="events">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Compose" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Compose
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Event" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Event
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Hide" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Hide
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Idle" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Idle
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.InputEvent" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        InputEvent
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.InvokeCallbacks" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        InvokeCallbacks
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Key" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Key
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Key">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Key.is_printable" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        is_printable
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Key.name" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        name
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Key.name_aliases" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        name_aliases
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Load" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Load
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Mount" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Mount
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.MouseCapture" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MouseCapture
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.MouseEvent" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MouseEvent
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="MouseEvent">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.MouseEvent.delta" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        delta
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.MouseEvent.offset" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        offset
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.MouseEvent.screen_offset" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        screen_offset
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.MouseEvent.style" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        style
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.MouseEvent.get_content_offset" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        get_content_offset()
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.MouseMove" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MouseMove
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.MouseRelease" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MouseRelease
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Paste" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Paste
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Ready" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Ready
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Resize" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Resize
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Show" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Show
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Unmount" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Unmount
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
   
 </nav>
                   </div>
@@ -6754,1187 +6078,158 @@
             
           
           
-            <div class="md-content" data-md-component="content">
-              
-              <article class="md-content__inner md-typeset">
-                
-                  
-
-  
-  
-
-
-  <h1>Events</h1>
-
-<div class="doc doc-object doc-module">
-
-
-
-<h2 id="textual.events" class="doc doc-heading">
-          <code>events</code>
-
-
-<a href="#textual.events" class="headerlink" title="Permanent link">&para;</a></h2>
-
-  <div class="doc doc-contents first">
-
-  
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-<div class="doc doc-object doc-class">
-
-
-
-<h3 id="textual.events.Compose" class="doc doc-heading">
-        <code>Compose</code>
-
-
-<a href="#textual.events.Compose" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Sent to a widget to request it to compose and mount children.</p>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h3 id="textual.events.Event" class="doc doc-heading">
-        <code>Event</code>
-
-
-<a href="#textual.events.Event" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.message.Message" href="../message/#textual.message.Message">Message</a></code></p>
-
-  
-      <p>The base class for all events.</p>
-
-
-
-  
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h3 id="textual.events.Hide" class="doc doc-heading">
-        <code>Hide</code>
-
-
-<a href="#textual.events.Hide" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Sent when a widget has been hidden.</p>
-<p>A widget may be hidden by setting its <code>visible</code> flag to <code>False</code>, if it is no longer in a layout,
-or if it has been offset beyond the edges of the terminal.</p>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h3 id="textual.events.Idle" class="doc doc-heading">
-        <code>Idle</code>
-
-
-<a href="#textual.events.Idle" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Sent when there are no more items in the message queue.</p>
-<p>This is a pseudo-event in that it is created by the Textual system and doesn't go
-through the usual message queue.</p>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h3 id="textual.events.InputEvent" class="doc doc-heading">
-        <code>InputEvent</code>
-
-
-<a href="#textual.events.InputEvent" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Base class for input events.</p>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h3 id="textual.events.InvokeCallbacks" class="doc doc-heading">
-        <code>InvokeCallbacks</code>
-
-
-<a href="#textual.events.InvokeCallbacks" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Sent after the Screen is updated</p>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h3 id="textual.events.Key" class="doc doc-heading">
-        <code>Key</code>
-
-
-<a href="#textual.events.Key" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.InputEvent" href="#textual.events.InputEvent">InputEvent</a></code></p>
-
-  
-      <p>Sent when the user hits a key on the keyboard.</p>
-
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>key</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
-          </td>
-          <td><p>The key that was pressed.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>character</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
-          </td>
-          <td><p>A printable character or <code>None</code> if it is not printable.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-  <p><strong>Attributes:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>aliases</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>
-          </td>
-          <td><p>The aliases for the key, including the key itself.</p></td>
-        </tr>
-    </tbody>
-  </table>
-
-
-
-  
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-<div class="doc doc-object doc-attribute">
-
-
-
-<h4 id="textual.events.Key.is_printable" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">is_printable</span><span class="p">:</span> <span class="nb">bool</span></code>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
-  </span>
-
-<a href="#textual.events.Key.is_printable" class="headerlink" title="Permanent link">&para;</a></h4>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Check if the key is printable (produces a unicode character).</p>
-
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
-          </td>
-          <td><p>True if the key is printable.</p></td>
-        </tr>
-    </tbody>
-  </table>
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-attribute">
-
-
-
-<h4 id="textual.events.Key.name" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">name</span><span class="p">:</span> <span class="nb">str</span></code>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
-  </span>
-
-<a href="#textual.events.Key.name" class="headerlink" title="Permanent link">&para;</a></h4>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Name of a key suitable for use as a Python identifier.</p>
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-attribute">
-
-
-
-<h4 id="textual.events.Key.name_aliases" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">name_aliases</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></code>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
-  </span>
-
-<a href="#textual.events.Key.name_aliases" class="headerlink" title="Permanent link">&para;</a></h4>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>The corresponding name for every alias in <code>aliases</code> list.</p>
-  </div>
-
-</div>
-
-
-
-
-
-  </div>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h3 id="textual.events.Load" class="doc doc-heading">
-        <code>Load</code>
-
-
-<a href="#textual.events.Load" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Sent when the App is running but <em>before</em> the terminal is in application mode.</p>
-<p>Use this event to run any set up that doesn't require any visuals such as loading
-configuration and binding keys.</p>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h3 id="textual.events.Mount" class="doc doc-heading">
-        <code>Mount</code>
-
-
-<a href="#textual.events.Mount" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Sent when a widget is <em>mounted</em> and may receive messages.</p>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h3 id="textual.events.MouseCapture" class="doc doc-heading">
-        <code>MouseCapture</code>
-
-
-<a href="#textual.events.MouseCapture" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Sent when the mouse has been captured.</p>
-<p>When a mouse has been captured, all further mouse events will be sent to the capturing widget.</p>
-
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>mouse_position</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="../geometry/#textual.geometry.Offset">Offset</a></code>
-          </td>
-          <td><p>The position of the mouse when captured.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-
-
-  
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h3 id="textual.events.MouseEvent" class="doc doc-heading">
-        <code>MouseEvent</code>
-
-
-<a href="#textual.events.MouseEvent" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.InputEvent" href="#textual.events.InputEvent">InputEvent</a></code></p>
-
-  
-      <p>Sent in response to a mouse event.</p>
-
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>x</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
-          </td>
-          <td><p>The relative x coordinate.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>y</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
-          </td>
-          <td><p>The relative y coordinate.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>delta_x</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
-          </td>
-          <td><p>Change in x since the last message.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>delta_y</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
-          </td>
-          <td><p>Change in y since the last message.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>button</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
-          </td>
-          <td><p>Indexed of the pressed button.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>shift</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
-          </td>
-          <td><p>True if the shift key is pressed.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>meta</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
-          </td>
-          <td><p>True if the meta key is pressed.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>ctrl</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
-          </td>
-          <td><p>True if the ctrl key is pressed.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>screen_x</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> | None</code>
-          </td>
-          <td><p>The absolute x coordinate.</p></td>
-          <td>
-                <code>None</code>
-          </td>
-        </tr>
-        <tr>
-          <td><code>screen_y</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> | None</code>
-          </td>
-          <td><p>The absolute y coordinate.</p></td>
-          <td>
-                <code>None</code>
-          </td>
-        </tr>
-        <tr>
-          <td><code>style</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" title="rich.style.Style" href="https://rich.readthedocs.io/en/stable/reference/style.html#rich.style.Style">Style</a> | None</code>
-          </td>
-          <td><p>The Rich Style under the mouse cursor.</p></td>
-          <td>
-                <code>None</code>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-
-
-  
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-<div class="doc doc-object doc-attribute">
-
-
-
-<h4 id="textual.events.MouseEvent.delta" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">delta</span><span class="p">:</span> <span class="n">Offset</span></code>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
-  </span>
-
-<a href="#textual.events.MouseEvent.delta" class="headerlink" title="Permanent link">&para;</a></h4>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Mouse coordinate delta (change since last event).</p>
-
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="../geometry/#textual.geometry.Offset">Offset</a></code>
-          </td>
-          <td><p>Mouse coordinate.</p></td>
-        </tr>
-    </tbody>
-  </table>
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-attribute">
-
-
-
-<h4 id="textual.events.MouseEvent.offset" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">offset</span><span class="p">:</span> <span class="n">Offset</span></code>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
-  </span>
-
-<a href="#textual.events.MouseEvent.offset" class="headerlink" title="Permanent link">&para;</a></h4>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>The mouse coordinate as an offset.</p>
-
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="../geometry/#textual.geometry.Offset">Offset</a></code>
-          </td>
-          <td><p>Mouse coordinate.</p></td>
-        </tr>
-    </tbody>
-  </table>
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-attribute">
-
-
-
-<h4 id="textual.events.MouseEvent.screen_offset" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">screen_offset</span><span class="p">:</span> <span class="n">Offset</span></code>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
-  </span>
-
-<a href="#textual.events.MouseEvent.screen_offset" class="headerlink" title="Permanent link">&para;</a></h4>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Mouse coordinate relative to the screen.</p>
-
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="../geometry/#textual.geometry.Offset">Offset</a></code>
-          </td>
-          <td><p>Mouse coordinate.</p></td>
-        </tr>
-    </tbody>
-  </table>
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-attribute">
-
-
-
-<h4 id="textual.events.MouseEvent.style" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">style</span><span class="p">:</span> <span class="n">Style</span></code>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
-  </span>
-
-<a href="#textual.events.MouseEvent.style" class="headerlink" title="Permanent link">&para;</a></h4>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>The (Rich) Style under the cursor.</p>
-  </div>
-
-</div>
-
-
-
-<div class="doc doc-object doc-function">
-
-
-
-<h4 id="textual.events.MouseEvent.get_content_offset" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_content_offset</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span></code>
-
-<a href="#textual.events.MouseEvent.get_content_offset" class="headerlink" title="Permanent link">&para;</a></h4>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Get offset within a widget's content area, or None if offset is not in content (i.e. padding or border).</p>
-
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>widget</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code>
-          </td>
-          <td><p>Widget receiving the event.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="../geometry/#textual.geometry.Offset">Offset</a> | None</code>
-          </td>
-          <td><p>An offset where the origin is at the top left of the content area.</p></td>
-        </tr>
-    </tbody>
-  </table>
-
-  </div>
-
-</div>
-
-
-
-  </div>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h3 id="textual.events.MouseMove" class="doc doc-heading">
-        <code>MouseMove</code>
-
-
-<a href="#textual.events.MouseMove" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.MouseEvent" href="#textual.events.MouseEvent">MouseEvent</a></code></p>
-
-  
-      <p>Sent when the mouse cursor moves.</p>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h3 id="textual.events.MouseRelease" class="doc doc-heading">
-        <code>MouseRelease</code>
-
-
-<a href="#textual.events.MouseRelease" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Mouse has been released.</p>
-
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>mouse_position</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="../geometry/#textual.geometry.Offset">Offset</a></code>
-          </td>
-          <td><p>The position of the mouse when released.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-
-
-  
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h3 id="textual.events.Paste" class="doc doc-heading">
-        <code>Paste</code>
-
-
-<a href="#textual.events.Paste" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Event containing text that was pasted into the Textual application.
-This event will only appear when running in a terminal emulator that supports
-bracketed paste mode. Textual will enable bracketed pastes when an app starts,
-and disable it when the app shuts down.</p>
-
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>text</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
-          </td>
-          <td><p>The text that has been pasted.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-
-
-  
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h3 id="textual.events.Ready" class="doc doc-heading">
-        <code>Ready</code>
-
-
-<a href="#textual.events.Ready" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Sent to the app when the DOM is ready.</p>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h3 id="textual.events.Resize" class="doc doc-heading">
-        <code>Resize</code>
-
-
-<a href="#textual.events.Resize" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Sent when the app or widget has been resized.</p>
-
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>size</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Size" href="../geometry/#textual.geometry.Size">Size</a></code>
-          </td>
-          <td><p>The new size of the Widget.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>virtual_size</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Size" href="../geometry/#textual.geometry.Size">Size</a></code>
-          </td>
-          <td><p>The virtual size (scrollable size) of the Widget.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>container_size</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Size" href="../geometry/#textual.geometry.Size">Size</a> | None</code>
-          </td>
-          <td><p>The size of the Widget's container widget. Defaults to None.</p></td>
-          <td>
-                <code>None</code>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-
-
-  
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h3 id="textual.events.Show" class="doc doc-heading">
-        <code>Show</code>
-
-
-<a href="#textual.events.Show" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Sent when a widget has become visible.</p>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h3 id="textual.events.Unmount" class="doc doc-heading">
-        <code>Unmount</code>
-
-
-<a href="#textual.events.Unmount" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Mount" href="../../events/mount/#textual.events.Mount">Mount</a></code></p>
-
-  
-      <p>Sent when a widget is unmounted and may not longer receive messages.</p>
-
-
-
-  </div>
-
-</div>
-
-
-
-
-  </div>
-
-  </div>
-
-</div>
-
-
-
-
-
-
-                
-              </article>
+  <div class="md-content md-content--post" data-md-component="content">
+    <div class="md-sidebar md-sidebar--post" data-md-component="sidebar" data-md-type="navigation">
+      <div class="md-sidebar__scrollwrap">
+        <div class="md-sidebar__inner md-post">
+          <nav class="md-nav">
+            <div class="md-post__back">
+              <div class="md-nav__title md-nav__container">
+                <a href="../../../../" class="md-nav__link">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+                  <span class="md-ellipsis">
+                    Back to index
+                  </span>
+                </a>
+              </div>
             </div>
+            
+              <div class="md-post__authors md-typeset">
+                
+                  <div class="md-profile md-post__profile">
+                    <span class="md-author md-author--long">
+                      <img src="https://github.com/willmcgugan.png" alt="Will McGugan">
+                    </span>
+                    <span class="md-profile__description">
+                      <strong>Will McGugan</strong><br>
+                      CEO / code-monkey
+                    </span>
+                  </div>
+                
+              </div>
+            
+            <ul class="md-post__meta md-nav__list">
+              <li class="md-nav__item md-nav__title">
+                <div class="md-nav__link">
+                  <span class="md-ellipsis">
+                    Metadata
+                  </span>
+                </div>
+              </li>
+              <li class="md-nav__item">
+                <div class="md-nav__link">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5v-5Z"/></svg>
+                  <time datetime="2023-03-08 00:00:00" class="md-ellipsis">March 8, 2023</time>
+                </div>
+              </li>
+              
+                <li class="md-nav__item">
+                  <div class="md-nav__link">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 3v15h3V3H9m3 2 4 13 3-1-4-13-3 1M5 5v13h3V5H5M3 19v2h18v-2H3Z"/></svg>
+                    <span class="md-ellipsis">
+                      in
+                      
+                        <a href="../../../../category/devlog/">DevLog</a></span>
+                  </div>
+                </li>
+              
+              
+                
+                <li class="md-nav__item">
+                  <div class="md-nav__link">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8m0-18a10 10 0 0 1 10 10 10 10 0 0 1-10 10C6.47 22 2 17.5 2 12A10 10 0 0 1 12 2m.5 5v5.25l4.5 2.67-.75 1.23L11 13V7h1.5Z"/></svg>
+                    <span class="md-ellipsis">
+                      
+                        2 min read
+                      
+                    </span>
+                  </div>
+                </li>
+              
+            </ul>
+            
+          </nav>
           
+        </div>
+      </div>
+    </div>
+    <article class="md-content__inner md-typeset">
+      
+        
+
+  
+  
+
+
+<h1 id="overhead-of-python-asyncio-tasks">Overhead of Python Asyncio tasks<a class="headerlink" href="#overhead-of-python-asyncio-tasks" title="Permanent link">&para;</a></h1>
+<p>Every widget in Textual, be it a button, tree view, or a text input, runs a <a href="https://docs.python.org/3/library/asyncio.html">asyncio</a> task. There is even a task for <a href="https://github.com/Textualize/textual/blob/e95a65fa56e5b19715180f9e17c7f6747ba15ec5/src/textual/scrollbar.py#L365">scrollbar corners</a> (the little space formed when horizontal and vertical scrollbars meet).</p>
+<!-- more -->
+
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>It may be IO that gives AsyncIO its name, but Textual doesn't do any IO of its own. Those tasks are used to power <em>message queues</em>, so that widgets (UI components) can do whatever they do at their own pace.</p>
+</div>
+<p>Its fair to say that Textual apps launch a lot of tasks. Which is why when I was trying to optimize startup (for apps with 1000s of widgets) I suspected it was task related.</p>
+<p>I needed to know how much of an overhead it was to launch tasks. Tasks are lighter weight than threads, but how much lighter? The only way to know for certain was to profile.</p>
+<p>The following code launches a load of <em>do nothing</em> tasks, then waits for them to shut down. This would give me an idea of how performant <code>create_task</code> is, and also a <em>baseline</em> for optimizations. I would know the absolute limit of any optimizations I make.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">asyncio</span> <span class="kn">import</span> <span class="n">create_task</span><span class="p">,</span> <span class="n">wait</span><span class="p">,</span> <span class="n">run</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">process_time</span> <span class="k">as</span> <span class="n">time</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="k">async</span> <span class="k">def</span> <span class="nf">time_tasks</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Time creating and destroying tasks.&quot;&quot;&quot;</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">nop_task</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Do nothing task.&quot;&quot;&quot;</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>        <span class="k">pass</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="n">tasks</span> <span class="o">=</span> <span class="p">[</span><span class="n">create_task</span><span class="p">(</span><span class="n">nop_task</span><span class="p">())</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">count</span><span class="p">)]</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="k">await</span> <span class="n">wait</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>    <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>    <span class="k">return</span> <span class="n">elapsed</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="k">for</span> <span class="n">count</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100_000</span><span class="p">,</span> <span class="mi">1000_000</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">100_000</span><span class="p">):</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>    <span class="n">create_time</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">time_tasks</span><span class="p">(</span><span class="n">count</span><span class="p">))</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>    <span class="n">create_per_second</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">create_time</span> <span class="o">/</span> <span class="n">count</span><span class="p">)</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">count</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> tasks </span><span class="se">\t</span><span class="s2"> </span><span class="si">{</span><span class="n">create_per_second</span><span class="si">:</span><span class="s2">0,.0f</span><span class="si">}</span><span class="s2"> tasks per/s&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>And here is the output:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>100,000 tasks    280,003 tasks per/s
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>200,000 tasks    255,275 tasks per/s
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>300,000 tasks    248,713 tasks per/s
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>400,000 tasks    248,383 tasks per/s
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>500,000 tasks    241,624 tasks per/s
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>600,000 tasks    260,660 tasks per/s
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>700,000 tasks    244,510 tasks per/s
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>800,000 tasks    247,455 tasks per/s
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>900,000 tasks    242,744 tasks per/s
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>1,000,000 tasks          259,715 tasks per/s
+</code></pre></div>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Running on an M1 MacBook Pro.</p>
+</div>
+<p>This tells me I can create, run, and shutdown 260K tasks per second.</p>
+<p>That's fast.</p>
+<p>Clearly <code>create_task</code> is as close as you get to free in the Python world, and I would need to look elsewhere for optimizations. Turns out Textual spends far more time processing CSS rules than creating tasks (obvious in retrospect). I've noticed some big wins there, so the next version of Textual will be faster to start apps with a metric tonne of widgets.</p>
+<p>But I still need to know what to do with those scrollbar corners. A task for two characters. I don't even...</p>
+
+  
+  
+
+
+
+
+  
+
+
+
+      
+    </article>
+  </div>
+
           
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
@@ -7945,10 +6240,12 @@ and disable it when the app shuts down.</p>
   
     
       
+        
+      
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../dom_node/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Dom node" rel="prev">
+          <a href="../../../02/24/textual-0120-adds-syntactical-sugar-and-batch-updates/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Textual 0.12.0 adds syntactical sugar and batch updates" rel="prev">
             <div class="md-footer__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
             </div>
@@ -7957,26 +6254,11 @@ and disable it when the app shuts down.</p>
                 <span class="md-footer__direction">
                   Previous
                 </span>
-                Dom node
+                Textual 0.12.0 adds syntactical sugar and batch updates
               </div>
             </div>
           </a>
         
-        
-          
-          <a href="../footer/" class="md-footer__link md-footer__link--next" aria-label="Next: Footer" rel="next">
-            <div class="md-footer__title">
-              <div class="md-ellipsis">
-                <span class="md-footer__direction">
-                  Next
-                </span>
-                Footer
-              </div>
-            </div>
-            <div class="md-footer__button md-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
-            </div>
-          </a>
         
       </nav>
     
@@ -8034,10 +6316,10 @@ and disable it when the app shuts down.</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.tabs.sticky", "navigation.footer", "content.code.annotate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.6c7302c4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.tabs.sticky", "navigation.footer", "content.code.annotate", "content.code.copy"], "search": "../../../../../assets/javascripts/workers/search.6c7302c4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.96d2b699.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.96d2b699.min.js"></script>
       
     
   </body>

@@ -5325,10 +5325,32 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.pilot.Pilot.click" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        click()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.pilot.Pilot.exit" class="md-nav__link">
     <span class="md-ellipsis">
       
         exit()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.pilot.Pilot.hover" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hover()
       
     </span>
   </a>
@@ -6251,10 +6273,32 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.pilot.Pilot.click" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        click()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.pilot.Pilot.exit" class="md-nav__link">
     <span class="md-ellipsis">
       
         exit()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.pilot.Pilot.hover" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hover()
       
     </span>
   </a>
@@ -6416,6 +6460,66 @@
 
 
 
+<h4 id="textual.pilot.Pilot.click" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">click</span><span class="p">(</span><span class="n">selector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">Offset</span><span class="p">())</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+<a href="#textual.pilot.Pilot.click" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Simulate clicking with the mouse.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>selector</code></td>
+          <td>
+                <code><span title="textual.css.query.QueryType">QueryType</span> | None</code>
+          </td>
+          <td><p>The widget that should be clicked. If None, then the click
+will occur relative to the screen. Note that this simply causes
+a click to occur at the location of the widget. If the widget is
+currently hidden or obscured by another widget, then the click may
+not land on it.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>offset</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="../geometry/#textual.geometry.Offset">Offset</a></code>
+          </td>
+          <td><p>The offset to click within the selected widget.</p></td>
+          <td>
+                <code>Offset()</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
 <h4 id="textual.pilot.Pilot.exit" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">exit</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></code>
   
@@ -6449,6 +6553,66 @@
           <td><p>The app result returned by <code>run</code> or <code>run_async</code>.</p></td>
           <td>
               <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h4 id="textual.pilot.Pilot.hover" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">hover</span><span class="p">(</span><span class="n">selector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">Offset</span><span class="p">())</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+<a href="#textual.pilot.Pilot.hover" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Simulate hovering with the mouse cursor.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>selector</code></td>
+          <td>
+                <code><span title="textual.css.query.QueryType">QueryType</span> | None</code>
+          </td>
+          <td><p>The widget that should be hovered. If None, then the click
+will occur relative to the screen. Note that this simply causes
+a hover to occur at the location of the widget. If the widget is
+currently hidden or obscured by another widget, then the hover may
+not land on it.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>offset</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="../geometry/#textual.geometry.Offset">Offset</a></code>
+          </td>
+          <td><p>The offset to hover over within the selected widget.</p></td>
+          <td>
+                <code>Offset()</code>
           </td>
         </tr>
     </tbody>
