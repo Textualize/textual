@@ -25,7 +25,7 @@ between the different views.
     --8<-- "docs/examples/widgets/content_switcher.py"
     ~~~
 
-    1. A `Horizontal` to hold the buttons, which with a unique ID.
+    1. A `Horizontal` to hold the buttons, each with a unique ID.
     2. This button will select the `DataTable` in the `ContentSwitcher`.
     3. This button will select the `Markdown` in the `ContentSwitcher`
     4. Note that the intial visible content is set by its ID, see below.
