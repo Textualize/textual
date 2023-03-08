@@ -163,6 +163,16 @@ def test_radio_set_example(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "radio_set.py")
 
 
+def test_content_switcher_example_initial(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "content_switcher.py")
+
+
+def test_content_switcher_example_switch(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "content_switcher.py", press=[
+        "tab", "tab", "enter"
+    ])
+
+
 # --- CSS properties ---
 # We have a canonical example for each CSS property that is shown in their docs.
 # If any of these change, something has likely broken, so snapshot each of them.
