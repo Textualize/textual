@@ -145,6 +145,7 @@ nav:
     - "api/await_remove.md"
     - "api/binding.md"
     - "api/button.md"
+    - "api/content_switcher.md"
     - "api/checkbox.md"
     - "api/color.md"
     - "api/containers.md"
