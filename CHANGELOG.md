@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Updated styling to make it clear DataTable grows horizontally https://github.com/Textualize/textual/pull/1946
 - Changed the `Checkbox` character due to issues with Windows Terminal and Windows 10 https://github.com/Textualize/textual/issues/1934
 - Changed the `RadioButton` character due to issues with Windows Terminal and Windows 10 and 11 https://github.com/Textualize/textual/issues/1934
+- Changed the `Markdown` initial bullet character due to issues with Windows Terminal and Windows 10 and 11 https://github.com/Textualize/textual/issues/1982
 
 ### Added
 
@@ -27,11 +28,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: Added `toggle_button` attribute to RadioButton and Checkbox events, replaces `input` https://github.com/Textualize/textual/pull/1940
 - A percentage alpha can now be applied to a border https://github.com/Textualize/textual/issues/1863
 - Added `Color.multiply_alpha`.
+- Added `ContentSwitcher` https://github.com/Textualize/textual/issues/1945
 
 ### Fixed
 
 - Fixed bug that prevented pilot from pressing some keys https://github.com/Textualize/textual/issues/1815
 - DataTable race condition that caused crash https://github.com/Textualize/textual/pull/1962
+- Fixed scrollbar getting "stuck" to cursor when cursor leaves window during drag https://github.com/Textualize/textual/pull/1968
 - DataTable crash when enter pressed when table is empty https://github.com/Textualize/textual/pull/1973
 
 ## [0.13.0] - 2023-03-02

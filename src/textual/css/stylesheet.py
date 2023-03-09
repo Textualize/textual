@@ -128,6 +128,7 @@ class Stylesheet:
         self.__variable_tokens: dict[str, list[Token]] | None = None
         self.source: dict[str, CssSource] = {}
         self._require_parse = False
+        self._invalid_css: set[str] = set()
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield list(self.source.keys())
@@ -188,6 +189,7 @@ class Stylesheet:
         """
         self._variables = variables
         self.__variable_tokens = None
+        self._invalid_css = set()
 
     def _parse_rules(
         self,
@@ -304,10 +306,20 @@ class Stylesheet:
         """
         rules: list[RuleSet] = []
         add_rules = rules.extend
+
         for path, (css, is_default_rules, tie_breaker) in self.source.items():
-            css_rules = self._parse_rules(
-                css, path, is_default_rules=is_default_rules, tie_breaker=tie_breaker
-            )
+            if css in self._invalid_css:
+                continue
+            try:
+                css_rules = self._parse_rules(
+                    css,
+                    path,
+                    is_default_rules=is_default_rules,
+                    tie_breaker=tie_breaker,
+                )
+            except Exception:
+                self._invalid_css.add(css)
+                raise
             if any(rule.errors for rule in css_rules):
                 error_renderable = StylesheetErrors(css_rules)
                 raise StylesheetParseError(error_renderable)

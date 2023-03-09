@@ -17,7 +17,6 @@ if TYPE_CHECKING:
 import rich.repr
 
 from .. import events, log
-from .._profile import timer
 from .._types import MessageTarget
 from .._xterm_parser import XTermParser
 from ..driver import Driver
