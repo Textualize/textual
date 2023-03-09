@@ -1460,7 +1460,6 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             error: An exception instance.
         """
-
         if hasattr(error, "__rich__"):
             # Exception has a rich method, so we can defer to that for the rendering
             self.panic(error)
@@ -1985,7 +1984,6 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             True if the event has handled.
         """
-        print("ACTION", action, default_namespace)
         if isinstance(action, str):
             target, params = actions.parse(action)
         else:
