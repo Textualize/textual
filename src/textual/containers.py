@@ -14,7 +14,7 @@ class Container(Widget):
 
 
 class VerticalScroll(Widget):
-    """A container widget which aligns children vertically."""
+    """A container widget which aligns children vertically and overflows if needed."""
 
     DEFAULT_CSS = """
     VerticalScroll {
