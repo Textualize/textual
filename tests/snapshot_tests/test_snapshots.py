@@ -48,6 +48,10 @@ def test_dock_layout_sidebar(snap_compare):
     assert snap_compare(LAYOUT_EXAMPLES_DIR / "dock_layout2_sidebar.py")
 
 
+def test_layout_containers(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "layout_containers.py")
+
+
 # --- Widgets - rendering and basic interactions ---
 # Each widget should have a canonical example that is display in the docs.
 # When adding a new widget, ideally we should also create a snapshot test
@@ -170,9 +174,11 @@ def test_content_switcher_example_initial(snap_compare):
 
 
 def test_content_switcher_example_switch(snap_compare):
-    assert snap_compare(WIDGET_EXAMPLES_DIR / "content_switcher.py", press=[
-        "tab", "tab", "enter", "wait:500"
-    ], terminal_size=(50, 50))
+    assert snap_compare(
+        WIDGET_EXAMPLES_DIR / "content_switcher.py",
+        press=["tab", "tab", "enter", "wait:500"],
+        terminal_size=(50, 50),
+    )
 
 
 # --- CSS properties ---
@@ -233,6 +239,7 @@ def test_programmatic_scrollbar_gutter_change(snap_compare):
 
 # --- CLI Preview Apps ---
 # For our CLI previews e.g. `textual easing`, `textual colors` etc, we have snapshots
+
 
 def test_borders_preview(snap_compare):
     assert snap_compare(CLI_PREVIEWS_DIR / "borders.py", press=["tab", "enter"])
