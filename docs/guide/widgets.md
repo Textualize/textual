@@ -136,7 +136,7 @@ Let's use markup links in the hello example so that the greeting becomes a link 
 
 === "Output"
 
-    ```{.textual path="docs/examples/guide/widgets/hello05.py" press="_"}
+    ```{.textual path="docs/examples/guide/widgets/hello05.py"}
     ```
 
 If you run this example you will see that the greeting has been underlined, which indicates it is clickable. If you click on the greeting it will run the `next_word` action which updates the next word.

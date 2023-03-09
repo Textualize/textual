@@ -20,7 +20,7 @@ The first line sets the [background](../styles/background.md) style to `"darkblu
 
 The second line sets [border](../styles/border.md) to a tuple of `("heavy", "white")` which tells Textual to draw a white border with a style of `"heavy"`. Running this code will show the following:
 
-```{.textual path="docs/examples/guide/styles/screen.py" press="_"}
+```{.textual path="docs/examples/guide/styles/screen.py"}
 ```
 
 ## Styling widgets

@@ -13,7 +13,7 @@ The example below shows an application showing a `TextLog` with different kinds 
 
 === "Output"
 
-    ```{.textual path="docs/examples/widgets/text_log.py" press="_,H,i"}
+    ```{.textual path="docs/examples/widgets/text_log.py" press="H,i"}
     ```
 
 === "text_log.py"

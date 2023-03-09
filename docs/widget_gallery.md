@@ -182,7 +182,7 @@ Display and update text in a scrolling panel.
 
 [TextLog reference](./widgets/text_log.md){ .md-button .md-button--primary }
 
-```{.textual path="docs/examples/widgets/text_log.py" press="_,H,i"}
+```{.textual path="docs/examples/widgets/text_log.py" press="H,i"}
 ```
 
 ## Tree
