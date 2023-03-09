@@ -393,7 +393,7 @@ class MarkdownBullet(Widget):
     }
     """
 
-    symbol = reactive("●​")
+    symbol = reactive("\u25CF")
     """The symbol for the bullet."""
 
     def render(self) -> Text:
@@ -500,7 +500,7 @@ class Markdown(Widget):
     """
     COMPONENT_CLASSES = {"em", "strong", "s", "code_inline"}
 
-    BULLETS = ["⏺ ", "▪ ", "‣ ", "• ", "⭑ "]
+    BULLETS = ["\u25CF ", "▪ ", "‣ ", "• ", "⭑ "]
 
     def __init__(
         self,
