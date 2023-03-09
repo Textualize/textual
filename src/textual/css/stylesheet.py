@@ -146,7 +146,12 @@ class Stylesheet:
             List of rules sets for this stylesheet.
         """
         if self._require_parse:
-            self.parse()
+            try:
+                self.parse()
+            except Exception:
+                self._require_parse = False
+                self._rules = []
+                raise
             self._require_parse = False
         assert self._rules is not None
         return self._rules
