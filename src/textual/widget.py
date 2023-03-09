@@ -2548,7 +2548,7 @@ class Widget(DOMNode):
             An awaitable object that waits for the widget to be removed.
         """
 
-        await_remove = self.app._remove_nodes([self])
+        await_remove = self.app._remove_nodes([self], self.parent)
         return await_remove
 
     def render(self) -> RenderableType:
