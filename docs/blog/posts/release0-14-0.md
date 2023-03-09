@@ -1,6 +1,6 @@
 ---
 draft: false
-date: 2022-03-09
+date: 2023-03-09
 categories:
   - Release
 title: "Textual 0.14.0 shakes up posting messages"
