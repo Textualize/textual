@@ -328,7 +328,6 @@ class ScrollBar(Widget):
         event.stop()
 
     async def _on_mouse_move(self, event: events.MouseMove) -> None:
-        print("MOVE", self.grabbed, self.window_size)
         if self.grabbed and self.window_size:
             x: float | None = None
             y: float | None = None
