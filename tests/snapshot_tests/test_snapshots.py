@@ -169,7 +169,7 @@ def test_content_switcher_example_initial(snap_compare):
 
 def test_content_switcher_example_switch(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "content_switcher.py", press=[
-        "tab", "tab", "enter", "wait:100"
+        "tab", "tab", "enter", "wait:500"
     ])
 
 
