@@ -1,4 +1,4 @@
-# Markdown Viewer
+# MarkdownViewer
 
 A Widget to display Markdown content with an optional Table of Contents.
 

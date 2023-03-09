@@ -1,4 +1,4 @@
-# List Item
+# ListItem
 
 `ListItem` is the type of the elements in a `ListView`.
 
