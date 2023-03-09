@@ -36,7 +36,7 @@ Let's look at a simple example of writing a screen class to simulate Window's [b
 
 === "Output"
 
-    ```{.textual path="docs/examples/guide/screens/screen01.py" press="b,_"}
+    ```{.textual path="docs/examples/guide/screens/screen01.py" press="b"}
     ```
 
 If you run this you will see an empty screen. Hit the ++b++ key to show a blue screen of death. Hit ++escape++ to return to the default screen.
@@ -65,7 +65,7 @@ You can also _install_ new named screens dynamically with the [install_screen][t
 
 === "Output"
 
-    ```{.textual path="docs/examples/guide/screens/screen02.py" press="b,_"}
+    ```{.textual path="docs/examples/guide/screens/screen02.py" press="b"}
     ```
 
 Although both do the same thing, we recommend `SCREENS` for screens that exist for the lifetime of your app.
@@ -145,7 +145,7 @@ Screens can be used to implement modal dialogs. The following example pushes a s
 
 === "Output"
 
-    ```{.textual path="docs/examples/guide/screens/modal01.py" press="q,_"}
+    ```{.textual path="docs/examples/guide/screens/modal01.py" press="q"}
     ```
 
 Note the `request_quit` action in the app which pushes a new instance of `QuitScreen`. This makes the quit screen active. if you click cancel, the quit screen calls `pop_screen` to return the default screen. This also removes and deletes the `QuitScreen` object.

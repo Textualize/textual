@@ -77,7 +77,7 @@ Build sophisticated user interfaces with a simple Python API. Run your apps in t
 ```{.textual path="examples/pride.py"}
 ```
 
-```{.textual path="docs/examples/tutorial/stopwatch.py" columns="100" lines="30" press="d,tab,enter,_,_"}
+```{.textual path="docs/examples/tutorial/stopwatch.py" columns="100" lines="30" press="d,tab,enter"}
 ```
 
 

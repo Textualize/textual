@@ -68,7 +68,7 @@ Let's look at a trivial Textual app.
 
 === "Output"
 
-    ```{.textual path="docs/examples/guide/dom1.py" press="_"}
+    ```{.textual path="docs/examples/guide/dom1.py"}
     ```
 
 This example creates an instance of `ExampleApp`, which will implicitly create a `Screen` object. In DOM terms, the `Screen` is a _child_ of `ExampleApp`.

@@ -444,7 +444,7 @@ The code below shows a simple sidebar implementation.
 
 === "Output"
 
-    ```{.textual path="docs/examples/guide/layout/dock_layout1_sidebar.py" press="pagedown,down,down,_,_,_,_,_"}
+    ```{.textual path="docs/examples/guide/layout/dock_layout1_sidebar.py" press="pagedown,down,down"}
     ```
 
 === "dock_layout1_sidebar.py"
@@ -468,7 +468,7 @@ This new sidebar is double the width of the one previous one, and has a `deeppin
 
 === "Output"
 
-    ```{.textual path="docs/examples/guide/layout/dock_layout2_sidebar.py" press="pagedown,down,down,_,_,_,_,_"}
+    ```{.textual path="docs/examples/guide/layout/dock_layout2_sidebar.py" press="pagedown,down,down"}
     ```
 
 === "dock_layout2_sidebar.py"
