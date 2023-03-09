@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: Added `toggle_button` attribute to RadioButton and Checkbox events, replaces `input` https://github.com/Textualize/textual/pull/1940
 - A percentage alpha can now be applied to a border https://github.com/Textualize/textual/issues/1863
 - Added `Color.multiply_alpha`.
+- Added `ContentSwitcher` https://github.com/Textualize/textual/issues/1945
 
 ### Fixed
 

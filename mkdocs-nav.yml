@@ -122,6 +122,7 @@ nav:
     - Widgets:
       - "widgets/button.md"
       - "widgets/checkbox.md"
+      - "widgets/content_switcher.md"
       - "widgets/data_table.md"
       - "widgets/directory_tree.md"
       - "widgets/footer.md"
@@ -148,6 +149,7 @@ nav:
     - "api/checkbox.md"
     - "api/color.md"
     - "api/containers.md"
+    - "api/content_switcher.md"
     - "api/coordinate.md"
     - "api/data_table.md"
     - "api/directory_tree.md"
