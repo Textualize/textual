@@ -1,3 +1,4 @@
+from os import terminal_size
 from pathlib import Path
 
 import pytest
@@ -169,9 +170,9 @@ def test_content_switcher_example_initial(snap_compare):
 
 
 def test_content_switcher_example_switch(snap_compare):
-    assert snap_compare(WIDGET_EXAMPLES_DIR / "content_switcher_copy.py", press=[
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "content_switcher.py", press=[
         "tab", "tab", "enter", "wait:500"
-    ])
+    ], terminal_size=(50, 50))
 
 
 # --- CSS properties ---
