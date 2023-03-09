@@ -35,6 +35,14 @@ A classic checkbox control.
 ```
 
 
+## ContentSwitcher
+
+A widget for containing and switching display between multiple child
+widgets.
+
+[ContentSwitcher reference](./widgets/content_switcher.md){ .md-button .md-button--primary }
+
+
 ## DataTable
 
 A powerful data table, with configurable cursors.
