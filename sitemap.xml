@@ -71,6 +71,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://textual.textualize.io/api/content_switcher/</loc>
+         <lastmod>2023-03-09</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://textual.textualize.io/api/coordinate/</loc>
          <lastmod>2023-03-09</lastmod>
          <changefreq>daily</changefreq>
@@ -257,6 +262,11 @@
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2023/02/11/the-heisenbug-lurking-in-your-async-code/</loc>
+         <lastmod>2023-03-09</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://textual.textualize.io/blog/2023/03/08/overhead-of-python-asyncio-tasks/</loc>
          <lastmod>2023-03-09</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -881,6 +891,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://textual.textualize.io/widgets/content_switcher/</loc>
+         <lastmod>2023-03-09</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://textual.textualize.io/widgets/data_table/</loc>
          <lastmod>2023-03-09</lastmod>
          <changefreq>daily</changefreq>
@@ -976,12 +991,12 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://textual.textualize.io/blog/category/release/</loc>
+         <loc>https://textual.textualize.io/blog/category/devlog/</loc>
          <lastmod>2023-03-09</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://textual.textualize.io/blog/category/devlog/</loc>
+         <loc>https://textual.textualize.io/blog/category/release/</loc>
          <lastmod>2023-03-09</lastmod>
          <changefreq>daily</changefreq>
     </url>
