@@ -13,6 +13,18 @@ class Container(Widget):
     """
 
 
+class Vertical(Widget):
+    """A container which lays children vertically."""
+
+    DEFAULT_CSS = """
+    Vertical {
+        width: 1fr;
+        layout: vertical;
+        overflow: hidden hidden;
+    }
+    """
+
+
 class VerticalScroll(Widget):
     """A container which aligns children vertically and overflows automatically."""
 
