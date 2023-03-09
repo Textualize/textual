@@ -868,6 +868,8 @@ class App(Generic[ReturnType], DOMNode):
                 _, wait_ms = key.split(":")
                 print(f"(pause {wait_ms}ms)")
                 await asyncio.sleep(float(wait_ms) / 1000)
+                await app._animator.wait_until_complete()
+                await wait_for_idle(0)
             else:
                 if len(key) == 1 and not key.isalnum():
                     key = _character_to_key(key)
@@ -1458,7 +1460,6 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             error: An exception instance.
         """
-
         if hasattr(error, "__rich__"):
             # Exception has a rich method, so we can defer to that for the rendering
             self.panic(error)
@@ -1983,7 +1984,6 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             True if the event has handled.
         """
-        print("ACTION", action, default_namespace)
         if isinstance(action, str):
             target, params = actions.parse(action)
         else:

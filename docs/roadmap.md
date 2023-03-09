@@ -41,7 +41,7 @@ Widgets are key to making user-friendly interfaces. The builtin widgets should c
     * [x] Error / warning variants
 - [ ] Color picker
 - [X] Checkbox
-- [ ] Content switcher
+- [X] Content switcher
 - [x] DataTable
     * [x] Cell select
     * [x] Row / Column select

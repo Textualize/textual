@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "textual"
-version = "0.13.0"
+version = "0.14.0"
 homepage = "https://github.com/Textualize/textual"
 description = "Modern Text User Interface framework"
 authors = ["Will McGugan <will@textualize.io>"]
@@ -42,7 +42,7 @@ rich = ">12.6.0"
 markdown-it-py = {extras = ["plugins", "linkify"], version = "^2.1.0"}
 #rich = {path="../rich", develop=true}
 importlib-metadata = "^4.11.3"
-typing-extensions = "^4.0.0"
+typing-extensions = "^4.4.0"
 
 # Dependencies below are required for devtools only
 aiohttp = { version = ">=3.8.1", optional = true }

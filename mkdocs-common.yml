@@ -80,8 +80,7 @@ plugins:
             - "!^can_replace$"
     watch:
       - mkdocs-common.yml
-      - mkdocs-nav-offline.yml
-      - mkdocs-nav-online.yml
+      - mkdocs-nav.yml
       - mkdocs-offline.yml
       - mkdocs-online.yml
       - src/textual

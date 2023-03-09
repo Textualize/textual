@@ -5,7 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.14.0] - Unreleased
+## [0.15.0] - Unreleased
+
+### Changed
+
+- Renamed `Vertical` to `VerticalScroll` https://github.com/Textualize/textual/issues/1957
+
+### Added
+
+- Added `HorizontalScroll` https://github.com/Textualize/textual/issues/1957
+
+
+## [0.14.0] - 2023-03-09
 
 ### Changed
 
@@ -16,7 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Updated styling to make it clear DataTable grows horizontally https://github.com/Textualize/textual/pull/1946
 - Changed the `Checkbox` character due to issues with Windows Terminal and Windows 10 https://github.com/Textualize/textual/issues/1934
 - Changed the `RadioButton` character due to issues with Windows Terminal and Windows 10 and 11 https://github.com/Textualize/textual/issues/1934
-- Renamed `Vertical` to `VerticalScroll` https://github.com/Textualize/textual/issues/1957
+- Changed the `Markdown` initial bullet character due to issues with Windows Terminal and Windows 10 and 11 https://github.com/Textualize/textual/issues/1982
 
 ### Added
 
@@ -28,12 +39,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: Added `toggle_button` attribute to RadioButton and Checkbox events, replaces `input` https://github.com/Textualize/textual/pull/1940
 - A percentage alpha can now be applied to a border https://github.com/Textualize/textual/issues/1863
 - Added `Color.multiply_alpha`.
-- Added `HorizontalScroll` https://github.com/Textualize/textual/issues/1957
+- Added `ContentSwitcher` https://github.com/Textualize/textual/issues/1945
 
 ### Fixed
 
 - Fixed bug that prevented pilot from pressing some keys https://github.com/Textualize/textual/issues/1815
 - DataTable race condition that caused crash https://github.com/Textualize/textual/pull/1962
+- Fixed scrollbar getting "stuck" to cursor when cursor leaves window during drag https://github.com/Textualize/textual/pull/1968 https://github.com/Textualize/textual/pull/2003
 - DataTable crash when enter pressed when table is empty https://github.com/Textualize/textual/pull/1973
 
 ## [0.13.0] - 2023-03-02
@@ -561,6 +573,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.14.0]: https://github.com/Textualize/textual/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/Textualize/textual/compare/v0.12.1...v0.13.0
 [0.12.1]: https://github.com/Textualize/textual/compare/v0.12.0...v0.12.1
 [0.12.0]: https://github.com/Textualize/textual/compare/v0.11.1...v0.12.0

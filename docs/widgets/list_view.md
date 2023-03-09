@@ -1,4 +1,4 @@
-# List View
+# ListView
 
 Displays a vertical list of `ListItem`s which can be highlighted and selected.
 Supports keyboard navigation.
