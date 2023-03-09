@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Renamed `Vertical` to `VerticalScroll` https://github.com/Textualize/textual/issues/1957
+- Default `overflow` style for `Horizontal` changed to `hidden hidden` https://github.com/Textualize/textual/issues/1957
 
 ### Added
 

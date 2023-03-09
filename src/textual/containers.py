@@ -32,7 +32,7 @@ class Horizontal(Widget):
     Horizontal {
         height: 1fr;
         layout: horizontal;
-        overflow-x: hidden;
+        overflow: hidden hidden;
     }
     """
 
