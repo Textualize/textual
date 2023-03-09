@@ -1,7 +1,7 @@
 """Test basic functioning of some containers."""
 
 from textual.app import App, ComposeResult
-from textual.containers import Center, Horizontal, HorizontalScroll
+from textual.containers import Center, Horizontal, HorizontalScroll, Middle
 from textual.widgets import Label
 
 
@@ -47,3 +47,18 @@ async def test_center_container():
         center = app.query_one(Center)
         assert center.size.width == app.size.width
         assert center.size.height == 3
+
+
+async def test_middle_container():
+    """Check the size of the container `Middle`."""
+
+    class MiddleApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with Middle():
+                yield Label("1234")
+
+    app = MiddleApp()
+    async with app.run_test():
+        middle = app.query_one(Middle)
+        assert middle.size.width == 4
+        assert middle.size.height == app.size.height

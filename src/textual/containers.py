@@ -61,6 +61,18 @@ class Center(Widget):
     """
 
 
+class Middle(Widget):
+    """A container widget which aligns children vertically in the middle."""
+
+    DEFAULT_CSS = """
+    Middle {
+        align-vertical: middle;
+        height: 100%;
+        width: auto;
+    }
+    """
+
+
 class Grid(Widget):
     """A container widget with grid alignment."""
 
