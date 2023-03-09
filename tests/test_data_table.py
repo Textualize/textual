@@ -1,14 +1,12 @@
 from __future__ import annotations
 
 import pytest
-from rich.style import Style
 from rich.text import Text
 
 from textual._wait import wait_for_idle
 from textual.actions import SkipAction
 from textual.app import App
 from textual.coordinate import Coordinate
-from textual.events import Click, MouseMove
 from textual.geometry import Offset
 from textual.message import Message
 from textual.widgets import DataTable
@@ -164,6 +162,13 @@ async def test_datatable_message_emission():
         await pilot.press("up", "down", "left", "right", "enter")
         await pilot.pause()
         assert app.message_names == expected_messages
+
+
+async def test_empty_table_interactions():
+    app = DataTableApp()
+    async with app.run_test() as pilot:
+        await pilot.press("enter", "up", "down", "left", "right")
+        assert app.message_names == []
 
 
 async def test_add_rows():

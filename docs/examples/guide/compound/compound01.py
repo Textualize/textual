@@ -42,7 +42,7 @@ class CompoundApp(App):
     """
 
     def compose(self) -> ComposeResult:
-        yield InputWithLabel("Fist Name")
+        yield InputWithLabel("First Name")
         yield InputWithLabel("Last Name")
         yield InputWithLabel("Email")
 

@@ -71,7 +71,7 @@ Build sophisticated user interfaces with a simple Python API. Run your apps in t
 
 
 
-```{.textual path="examples/calculator.py" columns=100 lines=41 press="3,.,1,4,5,9,2,_,_,_,_,_,_,_,_"}
+```{.textual path="examples/calculator.py" columns=100 lines=41 press="3,.,1,4,5,9,2,wait:400"}
 ```
 
 ```{.textual path="examples/pride.py"}

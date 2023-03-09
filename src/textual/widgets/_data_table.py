@@ -1975,6 +1975,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Post the appropriate message for a selection based on the `cursor_type`."""
         cursor_coordinate = self.cursor_coordinate
         cursor_type = self.cursor_type
+        if len(self._data) == 0:
+            return
         cell_key = self.coordinate_to_cell_key(cursor_coordinate)
         if cursor_type == "cell":
             self.post_message(

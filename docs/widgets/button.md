@@ -10,7 +10,7 @@ when it has focus.
 ## Example
 
 The example below shows each button variant, and its disabled equivalent.
-Clicking any of the non-disabled buttons in the example app below will result the app exiting and the details of the selected button being printed to the console.
+Clicking any of the non-disabled buttons in the example app below will result in the app exiting and the details of the selected button being printed to the console.
 
 === "Output"
 

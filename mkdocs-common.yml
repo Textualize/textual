@@ -79,6 +79,9 @@ plugins:
             - "^__init__$"
             - "!^can_replace$"
     watch:
+      - mkdocs-common.yml
+      - mkdocs-offline.yml
+      - mkdocs-online.yml
       - src/textual
   exclude:
     glob:
