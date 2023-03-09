@@ -317,7 +317,6 @@ class ScrollBar(Widget):
         if self.grabbed:
             self.release_mouse()
             self.grabbed = None
-            print("RELEASED")
         event.stop()
 
     def _on_mouse_capture(self, event: events.MouseCapture) -> None:
