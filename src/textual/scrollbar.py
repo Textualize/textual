@@ -291,6 +291,7 @@ class ScrollBar(Widget):
     def _on_hide(self, event: events.Hide) -> None:
         if self.grabbed:
             self.release_mouse()
+            self.grabbed = None
 
     def _on_enter(self, event: events.Enter) -> None:
         self.mouse_over = True
@@ -299,10 +300,12 @@ class ScrollBar(Widget):
         self.mouse_over = False
 
     def action_scroll_down(self) -> None:
-        self.post_message(ScrollDown() if self.vertical else ScrollRight())
+        if not self.grabbed:
+            self.post_message(ScrollDown() if self.vertical else ScrollRight())
 
     def action_scroll_up(self) -> None:
-        self.post_message(ScrollUp() if self.vertical else ScrollLeft())
+        if not self.grabbed:
+            self.post_message(ScrollUp() if self.vertical else ScrollLeft())
 
     def action_grab(self) -> None:
         self.capture_mouse()
@@ -313,6 +316,8 @@ class ScrollBar(Widget):
     async def _on_mouse_up(self, event: events.MouseUp) -> None:
         if self.grabbed:
             self.release_mouse()
+            self.grabbed = None
+            print("RELEASED")
         event.stop()
 
     def _on_mouse_capture(self, event: events.MouseCapture) -> None:
@@ -324,6 +329,7 @@ class ScrollBar(Widget):
         event.stop()
 
     async def _on_mouse_move(self, event: events.MouseMove) -> None:
+        print("MOVE", self.grabbed, self.window_size)
         if self.grabbed and self.window_size:
             x: float | None = None
             y: float | None = None
