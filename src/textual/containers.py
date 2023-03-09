@@ -37,6 +37,18 @@ class Horizontal(Widget):
     """
 
 
+class HorizontalScroll(Widget):
+    """A container widget which aligns children horizontally and overflows if needed."""
+
+    DEFAULT_CSS = """
+    HorizontalScroll {
+        height: 1fr;
+        layout: horizontal;
+        overflow-x: auto;
+    }
+    """
+
+
 class Grid(Widget):
     """A container widget with grid alignment."""
 
