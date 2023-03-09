@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `HorizontalScroll` https://github.com/Textualize/textual/issues/1957
+- Added `Center` https://github.com/Textualize/textual/issues/1957
 
 
 ## [0.14.0] - 2023-03-09

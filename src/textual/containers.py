@@ -49,6 +49,18 @@ class HorizontalScroll(Widget):
     """
 
 
+class Center(Widget):
+    """A container widget which centers children horizontally."""
+
+    DEFAULT_CSS = """
+    Center {
+        align-horizontal: center;
+        width: 100%;
+        height: auto;
+    }
+    """
+
+
 class Grid(Widget):
     """A container widget with grid alignment."""
 

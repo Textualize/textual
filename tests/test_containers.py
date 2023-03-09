@@ -1,12 +1,12 @@
 """Test basic functioning of some containers."""
 
 from textual.app import App, ComposeResult
-from textual.containers import Horizontal, HorizontalScroll
+from textual.containers import Center, Horizontal, HorizontalScroll
 from textual.widgets import Label
 
 
 async def test_horizontal_vs_horizontalscroll_scrolling():
-    """Check the default scrollbar behaviours for Horizontal and HorizontalScroll."""
+    """Check the default scrollbar behaviours for `Horizontal` and `HorizontalScroll`."""
 
     class HorizontalsApp(App[None]):
         CSS = """
@@ -32,3 +32,18 @@ async def test_horizontal_vs_horizontalscroll_scrolling():
         assert horizontal.size.height == horizontal_scroll.size.height
         assert horizontal.scrollbars_enabled == (False, False)
         assert horizontal_scroll.scrollbars_enabled == (False, True)
+
+
+async def test_center_container():
+    """Check the size of the container `Center`."""
+
+    class CenterApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with Center():
+                yield Label("<>\n<>\n<>")
+
+    app = CenterApp()
+    async with app.run_test():
+        center = app.query_one(Center)
+        assert center.size.width == app.size.width
+        assert center.size.height == 3
