@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path, PurePath
 from typing import Iterable
 
+import mdformat
 from markdown_it import MarkdownIt
 from rich.style import Style
 from rich.syntax import Syntax
@@ -581,7 +582,15 @@ class Markdown(Widget):
 
         table_of_contents: TableOfContentsType = []
 
-        for token in parser.parse(markdown):
+        # Parse a formatted version of the markdown.
+        # This ensures that ordered lists will be rendered correctly
+        # by applying consecutive numbering.
+        formatted_markdown: str = mdformat.text(
+            markdown,
+            options={"number": True},
+        )
+
+        for token in parser.parse(formatted_markdown):
             if token.type == "heading_open":
                 block_id += 1
                 stack.append(HEADINGS[token.tag](id=f"block{block_id}"))
