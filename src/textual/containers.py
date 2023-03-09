@@ -14,7 +14,7 @@ class Container(Widget):
 
 
 class VerticalScroll(Widget):
-    """A container widget which aligns children vertically and overflows if needed."""
+    """A container which aligns children vertically and overflows automatically."""
 
     DEFAULT_CSS = """
     VerticalScroll {
@@ -26,7 +26,7 @@ class VerticalScroll(Widget):
 
 
 class Horizontal(Widget):
-    """A container widget which aligns children horizontally."""
+    """A container which lays children horizontally."""
 
     DEFAULT_CSS = """
     Horizontal {
@@ -38,7 +38,7 @@ class Horizontal(Widget):
 
 
 class HorizontalScroll(Widget):
-    """A container widget which aligns children horizontally and overflows if needed."""
+    """A container which lays children horizontally and overflows automatically."""
 
     DEFAULT_CSS = """
     HorizontalScroll {
@@ -50,7 +50,7 @@ class HorizontalScroll(Widget):
 
 
 class Center(Widget):
-    """A container widget which centers children horizontally."""
+    """A container which centers children horizontally."""
 
     DEFAULT_CSS = """
     Center {
@@ -62,7 +62,7 @@ class Center(Widget):
 
 
 class Middle(Widget):
-    """A container widget which aligns children vertically in the middle."""
+    """A container which aligns children vertically in the middle."""
 
     DEFAULT_CSS = """
     Middle {
@@ -74,7 +74,7 @@ class Middle(Widget):
 
 
 class Grid(Widget):
-    """A container widget with grid alignment."""
+    """A container with grid alignment."""
 
     DEFAULT_CSS = """
     Grid {
