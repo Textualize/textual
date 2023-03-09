@@ -18,7 +18,7 @@ class VerticalScroll(Widget):
 
     DEFAULT_CSS = """
     VerticalScroll {
-        height: 1fr;
+        width: 1fr;
         layout: vertical;
         overflow-y: auto;
     }
