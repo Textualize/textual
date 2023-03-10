@@ -6,17 +6,17 @@ Textual requires Python 3.7 or later (if you have a choice, pick the most recent
 
 !!! info inline end "Your platform"
 
-    ### :fontawesome-brands-linux: Linux (all distros)
+### :fontawesome-brands-linux: Linux (all distros)
 
-    All Linux distros come with a terminal emulator that can run Textual apps.
+All Linux distros come with a terminal emulator that can run Textual apps.
 
-    ### :material-apple: macOS
+### :material-apple: macOS
 
-    The default terminal app is limited to 256 colors. We recommend installing a newer terminal such as [iterm2](https://iterm2.com/), [Kitty](https://sw.kovidgoyal.net/kitty/), or [WezTerm](https://wezfurlong.org/wezterm/).
+The default terminal app is limited to 256 colors. We recommend installing a newer terminal such as [iterm2](https://iterm2.com/), [Kitty](https://sw.kovidgoyal.net/kitty/), or [WezTerm](https://wezfurlong.org/wezterm/).
 
-    ### :material-microsoft-windows: Windows
+### :material-microsoft-windows: Windows
 
-    The new [Windows Terminal](https://apps.microsoft.com/store/detail/windows-terminal/9N0DX20HK701?hl=en-gb&gl=GB) runs Textual apps beautifully.
+The new [Windows Terminal](https://apps.microsoft.com/store/detail/windows-terminal/9N0DX20HK701?hl=en-gb&gl=GB) runs Textual apps beautifully.
 
 ## Installation
 
@@ -52,23 +52,23 @@ If Textual is installed you should see the following:
 
 The Textual repository comes with a number of example apps. To try out the examples, first clone the Textual repository:
 
-=== "HTTPS"
+### HTTPS
 
-    ```bash
-    git clone https://github.com/Textualize/textual.git
-    ```
+```bash
+git clone https://github.com/Textualize/textual.git
+```
 
-=== "SSH"
+### SSH
 
-    ```bash
-    git clone git@github.com:Textualize/textual.git
-    ```
+```bash
+git clone git@github.com:Textualize/textual.git
+```
 
-=== "GitHub CLI"
+### GitHub CLI
 
-    ```bash
-    gh repo clone Textualize/textual
-    ```
+```bash
+gh repo clone Textualize/textual
+```
 
 
 With the repository cloned, navigate to the `/examples/` directory where you will find a number of Python files you can run from the command line:
