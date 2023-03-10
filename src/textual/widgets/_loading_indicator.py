@@ -61,14 +61,3 @@ class LoadingIndicator(Widget):
         indicator = Text.assemble(*dots)
         indicator.rstrip()
         return indicator
-
-
-if __name__ == "__main__":
-    from textual.app import App, ComposeResult
-
-    class LoadingApp(App):
-        def compose(self) -> ComposeResult:
-            yield LoadingIndicator()
-
-    app = LoadingApp()
-    app.run()
