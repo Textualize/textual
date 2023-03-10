@@ -29,11 +29,11 @@ class LoadingIndicator(Widget):
     """
 
     def on_mount(self) -> None:
-        self.start_time = time()
+        self._start_time = time()
         self.auto_refresh = 1 / 16
 
     def render(self) -> RenderableType:
-        elapsed = time() - self.start_time
+        elapsed = time() - self._start_time
         speed = 0.8
         dot = "\u25CF"
         dot_styles = self.get_component_styles("loading-indicator--dot")

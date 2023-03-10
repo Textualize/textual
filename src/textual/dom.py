@@ -158,6 +158,7 @@ class DOMNode(MessagePump):
 
     @property
     def auto_refresh(self) -> float | None:
+        """Interval to refresh widget, or `None` for no automatic refresh."""
         return self._auto_refresh
 
     @auto_refresh.setter
