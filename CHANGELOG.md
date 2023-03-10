@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed container not resizing when a widget is removed https://github.com/Textualize/textual/issues/2007
+
 ## [0.14.0] - 2023-03-09
 
 ### Changed

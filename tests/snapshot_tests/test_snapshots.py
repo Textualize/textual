@@ -170,9 +170,11 @@ def test_content_switcher_example_initial(snap_compare):
 
 
 def test_content_switcher_example_switch(snap_compare):
-    assert snap_compare(WIDGET_EXAMPLES_DIR / "content_switcher.py", press=[
-        "tab", "tab", "enter", "wait:500"
-    ], terminal_size=(50, 50))
+    assert snap_compare(
+        WIDGET_EXAMPLES_DIR / "content_switcher.py",
+        press=["tab", "tab", "enter", "wait:500"],
+        terminal_size=(50, 50),
+    )
 
 
 # --- CSS properties ---
@@ -233,6 +235,7 @@ def test_programmatic_scrollbar_gutter_change(snap_compare):
 
 # --- CLI Preview Apps ---
 # For our CLI previews e.g. `textual easing`, `textual colors` etc, we have snapshots
+
 
 def test_borders_preview(snap_compare):
     assert snap_compare(CLI_PREVIEWS_DIR / "borders.py", press=["tab", "enter"])
@@ -296,3 +299,9 @@ def test_focus_component_class(snap_compare):
 
 def test_line_api_scrollbars(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "line_api_scrollbars.py")
+
+
+def test_remove_with_auto_height(snap_compare):
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "remove_auto.py", press=["a", "a", "a", "d", "d"]
+    )
