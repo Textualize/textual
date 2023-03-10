@@ -38,7 +38,7 @@ import re
 from colorsys import hls_to_rgb, rgb_to_hls
 from functools import lru_cache
 from operator import itemgetter
-from typing import Callable, NamedTuple
+from typing import Callable, Iterable, NamedTuple
 
 import rich.repr
 from rich.color import Color as RichColor
@@ -549,6 +549,52 @@ class Color(NamedTuple):
         white_contrast = abs(brightness - WHITE.brightness)
         black_contrast = abs(brightness - BLACK.brightness)
         return (WHITE if white_contrast > black_contrast else BLACK).with_alpha(alpha)
+
+
+class Gradient:
+    """Defines a color gradient."""
+
+    def __init__(self, *stops: tuple[float, Color]) -> None:
+        """Create a color gradient that blends colors to form a spectrum.
+
+        A gradient is defined by a sequence of "stops" consisting of a float and a color.
+        The stop indicate the color at that point on a spectrum between 0 and 1.
+
+        Args:
+            stops: A colors stop.
+
+        Raises:
+            ValueError: If any stops are missing (must be at least a stop for 0 and 1).
+        """
+        self.stops = sorted(stops)
+        if len(stops) < 2:
+            raise ValueError("At least 2 stops required.")
+        if self.stops[0][0] != 0.0:
+            raise ValueError("First stop must be 0.")
+        if self.stops[-1][0] != 1.0:
+            raise ValueError("Last stop must be 1.")
+
+    def get_color(self, position: float) -> Color:
+        """Get a color from the gradient at a position between 0 and 1.
+
+        Positions that are between stops will return a blended color.
+
+
+        Args:
+            factor: A number between 0 and 1, where 0 is the first stop, and 1 is the last.
+
+        Returns:
+            A color.
+        """
+        # TODO: consider caching
+        position = clamp(position, 0.0, 1.0)
+        for (stop1, color1), (stop2, color2) in zip(self.stops, self.stops[1:]):
+            if stop2 >= position >= stop1:
+                return color1.blend(
+                    color2,
+                    (position - stop1) / (stop2 - stop1),
+                )
+        return self.stops[-1][1]
 
 
 # Color constants
