@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed container not resizing when a widget is removed https://github.com/Textualize/textual/issues/2007
 
+### Added
+
+- Added a LoadingIndicator widget https://github.com/Textualize/textual/pull/2018
+
 ## [0.14.0] - 2023-03-09
 
 ### Changed
