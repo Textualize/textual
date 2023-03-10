@@ -177,6 +177,10 @@ def test_content_switcher_example_switch(snap_compare):
     )
 
 
+def test_loading_indicator(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "loading_indicator.py")
+
+
 # --- CSS properties ---
 # We have a canonical example for each CSS property that is shown in their docs.
 # If any of these change, something has likely broken, so snapshot each of them.

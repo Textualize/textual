@@ -38,7 +38,7 @@ import re
 from colorsys import hls_to_rgb, rgb_to_hls
 from functools import lru_cache
 from operator import itemgetter
-from typing import Callable, Iterable, NamedTuple
+from typing import Callable, NamedTuple
 
 import rich.repr
 from rich.color import Color as RichColor
