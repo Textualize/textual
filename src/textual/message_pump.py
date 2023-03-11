@@ -526,7 +526,8 @@ class MessagePump(metaclass=MessagePumpMeta):
                 await self.on_event(message)
             else:
                 await self._on_message(message)
-            await self._flush_next_callbacks()
+            if self._next_callbacks:
+                await self._flush_next_callbacks()
 
     def _get_dispatch_methods(
         self, method_name: str, message: Message

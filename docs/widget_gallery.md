@@ -109,6 +109,15 @@ Display a list of items (items may be other widgets).
 ```{.textual path="docs/examples/widgets/list_view.py"}
 ```
 
+## LoadingIndicator
+
+Display an animation while data is loading.
+
+[LoadingIndicator reference](./widgets/loading_indicator.md){ .md-button .md-button--primary }
+
+```{.textual path="docs/examples/widgets/loading_indicator.py"}
+```
+
 ## MarkdownViewer
 
 Display and interact with a Markdown document (adds a table of contents and browser-like navigation to Markdown).

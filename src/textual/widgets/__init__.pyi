@@ -10,6 +10,7 @@ from ._input import Input as Input
 from ._label import Label as Label
 from ._list_item import ListItem as ListItem
 from ._list_view import ListView as ListView
+from ._loading_indicator import LoadingIndicator as LoadingIndicator
 from ._markdown import Markdown as Markdown
 from ._markdown import MarkdownViewer as MarkdownViewer
 from ._placeholder import Placeholder as Placeholder
