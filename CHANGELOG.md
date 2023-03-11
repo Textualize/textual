@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed container not resizing when a widget is removed https://github.com/Textualize/textual/issues/2007
-- Fixes issue where the horizontal scrollbar would be incorrectly enabled
+- Fixes issue where the horizontal scrollbar would be incorrectly enabled https://github.com/Textualize/textual/pull/2024
 
 ### Added
 
