@@ -55,7 +55,7 @@ class Underline(Widget):
         )
 
     def on_click(self, event: events.Click):
-        self.post_message(self.Clicked(event.offset))
+        self.post_message(self.Clicked(event.screen_offset))
 
 
 class Tab(Static):
@@ -170,12 +170,20 @@ class Tabs(Widget):
 
     def on_tab_clicked(self, event: Tab.Clicked) -> None:
         event.stop()
+        self._select_tab(event.tab)
+
+    def _select_tab(self, tab: Tab) -> None:
         self.query("Tab.-selected").remove_class("-selected")
-        event.tab.add_class("-selected")
-        self.selected = event.tab.content_id
+        tab.add_class("-selected")
+        self.selected = tab.content_id
 
     def on_underline_clicked(self, event: Underline.Clicked) -> None:
         event.stop()
+        offset = event.offset + (0, -1)
+        for tab in self.query(Tab):
+            if offset in tab.region:
+                self._select_tab(tab)
+                break
 
     def on_resize(self):
         self.highlight_selected(animate=False)
