@@ -51,9 +51,9 @@ class StatusTable(DataTable):
 
         for _ in range(50):
             self.add_row(
-                urandom(randrange(10, 15)).hex(),
-                urandom(randrange(10, 15)).hex(),
-                urandom(randrange(10, 15)).hex(),
+                "ABCDEFGH",
+                "0123456789",
+                "IJKLMNOPQRSTUVWXYZ",
             )
 
 
