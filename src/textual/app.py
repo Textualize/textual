@@ -1936,7 +1936,7 @@ class App(Generic[ReturnType], DOMNode):
         ):
             binding = bindings.keys.get(key)
             if binding is not None and binding.priority == priority:
-                if await self.action(binding.action, namespace):
+                if await self.run_action(binding.action, namespace):
                     return True
         return False
 
@@ -1969,7 +1969,7 @@ class App(Generic[ReturnType], DOMNode):
         else:
             await super().on_event(event)
 
-    async def action(
+    async def run_action(
         self,
         action: str | ActionParseResult,
         default_namespace: object | None = None,
@@ -2068,7 +2068,7 @@ class App(Generic[ReturnType], DOMNode):
         else:
             event.stop()
         if isinstance(action, (str, tuple)):
-            await self.action(action, default_namespace=default_namespace)  # type: ignore[arg-type]
+            await self.run_action(action, default_namespace=default_namespace)  # type: ignore[arg-type]
         elif callable(action):
             await action()
         else:

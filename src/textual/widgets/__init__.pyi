@@ -19,6 +19,8 @@ from ._radio_button import RadioButton as RadioButton
 from ._radio_set import RadioSet as RadioSet
 from ._static import Static as Static
 from ._switch import Switch as Switch
+from ._tabs import Tab as Tab
+from ._tabs import Tabs as Tabs
 from ._text_log import TextLog as TextLog
 from ._tree import Tree as Tree
 from ._welcome import Welcome as Welcome

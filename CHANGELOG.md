@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added a LoadingIndicator widget https://github.com/Textualize/textual/pull/2018
+- Added Tabs Widget
+
+### Changed
+
+- Renamed Widget.action and App.action to Widget.run_action and App.run_action
 
 ## [0.14.0] - 2023-03-09
 

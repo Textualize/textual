@@ -162,7 +162,7 @@ def test_widget_mount_ids_must_be_unique_mounting_multiple_calls(parent):
 async def test_remove():
     class RemoveMeLabel(Label):
         async def on_mount(self) -> None:
-            await self.action("app.remove_all")
+            await self.run_action("app.remove_all")
 
     class Container(Widget):
         async def clear(self) -> None:

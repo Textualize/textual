@@ -55,6 +55,8 @@ __all__ = [
     "RadioSet",
     "Static",
     "Switch",
+    "Tab",
+    "Tabs",
     "TextLog",
     "Tree",
     "Welcome",

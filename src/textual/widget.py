@@ -2571,13 +2571,13 @@ class Widget(DOMNode):
             return Text(renderable)
         return renderable
 
-    async def action(self, action: str) -> None:
+    async def run_action(self, action: str) -> None:
         """Perform a given action, with this widget as the default namespace.
 
         Args:
             action: Action encoded as a string.
         """
-        await self.app.action(action, self)
+        await self.app.run_action(action, self)
 
     def post_message(self, message: Message) -> bool:
         """Post a message to this widget.
@@ -2714,6 +2714,12 @@ class Widget(DOMNode):
             self.app.panic(Traceback())
         else:
             await self.mount(*widgets)
+
+    def recompose(self) -> AwaitMount:
+        with self.app.batch_update():
+            self.query("*").remove()
+            widgets = compose(self)
+            return self.mount_all(widgets)
 
     def _on_mount(self, event: events.Mount) -> None:
         if self.styles.overflow_y == "scroll":
