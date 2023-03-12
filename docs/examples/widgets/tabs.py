@@ -61,9 +61,9 @@ class TabsApp(App):
     def action_add(self) -> None:
         """Add a new tab."""
         tabs = self.query_one(Tabs)
-        tabs.add_tab(NAMES[0])
         # Cycle the names
         NAMES[:] = [*NAMES[1:], NAMES[0]]
+        tabs.add_tab(NAMES[0])
 
     def action_remove(self) -> None:
         tabs = self.query_one(Tabs)
