@@ -154,7 +154,7 @@ class Tabs(Widget, can_focus=True):
     class TabActivated(Message):
         """Sent when a new tab is activated."""
 
-        def __init__(self, tab: Tab) -> None:
+        def __init__(self, tab: Tab | None) -> None:
             self.tab = tab
             super().__init__()
 
@@ -182,7 +182,15 @@ class Tabs(Widget, can_focus=True):
             classes: Optional initial classes for the widget.
             disabled: Whether the input is disabled or not.
         """
-        add_tabs = [(Tab(tab) if isinstance(tab, (str, Text)) else tab) for tab in tabs]
+        self._tabs_counter = 0
+        add_tabs = [
+            (
+                Tab(tab, id=f"tab-{self._new_tab_id}")
+                if isinstance(tab, (str, Text))
+                else tab
+            )
+            for tab in tabs
+        ]
         super().__init__(
             name=name,
             id=id,
@@ -192,18 +200,98 @@ class Tabs(Widget, can_focus=True):
         self._tabs = add_tabs
         self._first_active = active
 
+    @property
+    def _new_tab_id(self) -> int:
+        """Get the next tab id in a sequence."""
+        self._tabs_counter += 1
+        return self._tabs_counter
+
+    @property
+    def tab_count(self) -> int:
+        """Return the number of tabs."""
+        return len(self.query("#tabs-list > Tab"))
+
+    @property
+    def _next_active(self) -> Tab | None:
+        """Get the next tab to make active, if the active tab is removed."""
+        tabs = list(self.query("#tabs-list > Tab").results(Tab))
+        if self.active_tab is None:
+            return None
+        try:
+            active_index = tabs.index(self.active_tab)
+        except ValueError:
+            return None
+        del tabs[active_index]
+        try:
+            return tabs[active_index]
+        except IndexError:
+            try:
+                return tabs[active_index - 1]
+            except IndexError:
+                pass
+        return None
+
     def add_tab(self, tab: Tab | str | Text) -> None:
         """Add a new tab to the end of the tab list.
 
         Args:
             tab: A new tab object, or a label (str or Text).
         """
-        tab_widget = Tab(tab) if isinstance(tab, (str, Text)) else tab
-        self.query_one("#tabs-list").mount(tab_widget)
+        from_empty = self.tab_count == 0
+        tab_widget = (
+            Tab(tab, id=f"tab-{self._new_tab_id}")
+            if isinstance(tab, (str, Text))
+            else tab
+        )
+        mount_await = self.query_one("#tabs-list").mount(tab_widget)
+        if from_empty:
+            tab_widget.add_class("-active")
+            self.post_message(self.TabActivated(tab_widget))
+
+            async def refresh_active() -> None:
+                """Wait for things to be mounted before highlighting."""
+                await mount_await
+                self.active = tab_widget.id or ""
+                self._highlight_active(animate=False)
+
+            self.call_after_refresh(refresh_active)
 
     def clear(self) -> None:
-        self.query_one("#tabs-list > Tab").remove()
-        self.active = ""
+        """Clear all the tabs."""
+        underline = self.query_one(Underline)
+        underline.highlight_start = 0
+        underline.highlight_end = 0
+        self.query("#tabs-list > Tab").remove()
+        self.post_message(self.TabActivated(None))
+
+    def remove_tab(self, tab_or_id: Tab | str | None) -> None:
+        """Remove a tab.
+
+        Args:
+            tab_id: The Tab's id.
+        """
+        if tab_or_id is None:
+            return
+        if isinstance(tab_or_id, Tab):
+            remove_tab = tab_or_id
+        else:
+            try:
+                remove_tab = self.query_one(f"#tabs-list > #{tab_or_id}", Tab)
+            except NoMatches:
+                return
+        removing_active_tab = remove_tab.has_class("-active")
+
+        next_tab = self._next_active
+        self.post_message(self.TabActivated(next_tab))
+
+        async def do_remove() -> None:
+            await remove_tab.remove()
+            if removing_active_tab:
+                if next_tab is not None:
+                    next_tab.add_class("-active")
+                self.call_after_refresh(self._highlight_active, animate=False)
+
+        self.call_after_refresh(do_remove)
 
     def validate_active(self, active: str) -> str:
         """Check id assigned to active attribute is a valid tab."""
@@ -212,9 +300,12 @@ class Tabs(Widget, can_focus=True):
         return active
 
     @property
-    def active_tab(self) -> Tab:
-        """The currently active tab."""
-        return self.query_one("#tabs-list Tab.-active", Tab)
+    def active_tab(self) -> Tab | None:
+        """The currently active tab, or None if there are no active tabs."""
+        try:
+            return self.query_one("#tabs-list Tab.-active", Tab)
+        except NoMatches:
+            return None
 
     def on_mount(self) -> None:
         """Make the first tab active."""
@@ -241,8 +332,12 @@ class Tabs(Widget, can_focus=True):
             self.query("#tabs-list > Tab.-active").remove_class("-active")
             active_tab.add_class("-active")
             self._highlight_active(animate=previously_active != "")
-            print(self.TabActivated(active_tab).handler_name)
             self.post_message(self.TabActivated(active_tab))
+        else:
+            underline = self.query_one(Underline)
+            underline.highlight_start = 0
+            underline.highlight_end = 0
+            self.post_message(self.TabActivated(None))
 
     def _highlight_active(self, animate: bool = True) -> None:
         """Move the underline bar to under the active tab,
@@ -280,40 +375,48 @@ class Tabs(Widget, can_focus=True):
     def _on_underline_clicked(self, event: Underline.Clicked) -> None:
         event.stop()
         offset = event.offset + (0, -1)
+        self.focus()
         for tab in self.query(Tab):
             if offset in tab.region:
                 self._activate_tab(tab)
                 break
 
     def _scroll_active_tab(self) -> None:
-        try:
-            self.query_one("#tabs-scroll").scroll_to_widget(self.active_tab, force=True)
-        except NoMatches:
-            pass
+        if self.active_tab:
+            try:
+                self.query_one("#tabs-scroll").scroll_to_widget(
+                    self.active_tab, force=True
+                )
+            except NoMatches:
+                pass
 
     def _on_resize(self):
+        """Make the active tab visible on resize."""
         self._highlight_active(animate=False)
         self._scroll_active_tab()
 
     def action_next_tab(self) -> None:
         """Make the next tab active."""
-        active_tab = self.active_tab
-        tabs = list(self.query(Tab))
-        if not tabs:
-            return
-        tab_count = len(tabs)
-        new_tab_index = (tabs.index(active_tab) + 1) % tab_count
-        self.active = tabs[new_tab_index].id or ""
-        self._scroll_active_tab()
+        self._move_tab(+1)
 
     def action_previous_tab(self) -> None:
         """Make the previous tab active."""
+        self._move_tab(-1)
+
+    def _move_tab(self, direction: int) -> None:
+        """Activate the next tab.
+
+        Args:
+            direction: +1 for the next tab, -1 for the previous.
+        """
         active_tab = self.active_tab
+        if active_tab is None:
+            return
         tabs = list(self.query(Tab))
         if not tabs:
             return
         tab_count = len(tabs)
-        new_tab_index = (tabs.index(active_tab) - 1) % tab_count
+        new_tab_index = (tabs.index(active_tab) + direction) % tab_count
         self.active = tabs[new_tab_index].id or ""
         self._scroll_active_tab()
 

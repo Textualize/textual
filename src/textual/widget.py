@@ -2602,6 +2602,9 @@ class Widget(DOMNode):
         Args:
             event: Idle event.
         """
+        self._check_refresh()
+
+    def _check_refresh(self) -> None:
         if self._parent is not None and not self._closing:
             try:
                 screen = self.screen
