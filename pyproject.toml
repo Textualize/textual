@@ -48,7 +48,7 @@ typing-extensions = "^4.4.0"
 aiohttp = { version = ">=3.8.1", optional = true }
 click = {version = ">=8.1.2", optional = true}
 msgpack = { version = ">=1.0.3", optional = true }
-mkdocs-exclude = "^1.0.2"
+mkdocs-exclude = { version = "^1.0.2", optional = true }
 
 [tool.poetry.extras]
 dev = ["aiohttp", "click", "msgpack"]
