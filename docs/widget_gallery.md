@@ -187,7 +187,7 @@ A on / off control, inspired by toggle buttons.
 
 ## Tabs
 
-A row of tabs you can select with the mouse or navigate with keys
+A row of tabs you can select with the mouse or navigate with keys.
 
 [Tabs reference](./widgets/tabs.md){ .md-button .md-button--primary }
 

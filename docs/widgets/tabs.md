@@ -32,9 +32,9 @@ The example below shows check boxes in various states.
 
 ## Bindings
 
-The checkbox widget defines directly the following bindings:
+The Tabs widget defines the following bindings:
 
-::: textual.widgets._tabs.Tabs.BINDINGS
+::: textual.widgets.Tabs.BINDINGS
     options:
       show_root_heading: false
       show_root_toc_entry: false

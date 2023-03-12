@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+from typing import ClassVar
+
 import rich.repr
 from rich.style import Style
 from rich.text import Text, TextType
 
 from .. import events
 from ..app import ComposeResult, RenderResult
-from ..binding import Binding
+from ..binding import Binding, BindingType
 from ..containers import Container, Horizontal, Vertical
 from ..css.query import NoMatches
 from ..geometry import Offset
@@ -144,7 +146,7 @@ class Tabs(Widget, can_focus=True):
     }
     """
 
-    BINDINGS = [
+    BINDINGS: ClassVar[list[BindingType]] = [
         Binding("left", "previous_tab", "Previous tab", show=False),
         Binding("right", "next_tab", "Next tab", show=False),
     ]
