@@ -12,7 +12,7 @@ def compose(self) -> ComposeResult:
     yield Tabs("First tab", "Second tab", Text.from_markup("[u]Third[/u] tab"))
 ```
 
-This will create [Tab][textual.widgets.Tab] widgets internally, with an auto-incrementing `id` attribute (`"tab-1"`, `"tab-2"` etc).
+This will create [Tab][textual.widgets.Tab] widgets internally, with auto-incrementing `id` attributes (`"tab-1"`, `"tab-2"` etc).
 You can also supply `Tab` objects directly in the constructor, which will allow you to explicitly set an `id`. Here's an example:
 
 ```python
