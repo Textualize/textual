@@ -50,7 +50,7 @@ Action strings have the following format:
 
 ### Parameters
 
-If the action string contains parameters, these must be valid Python literals. Which means you can include numbers, strings, dicts, lists etc. but you can't include variables or references to any other python symbols.
+If the action string contains parameters, these must be valid Python literals. Which means you can include numbers, strings, dicts, lists etc. but you can't include variables or references to any other Python symbols.
 
 Consequently `"set_background('blue')"` is a valid action string, but `"set_background(new_color)"` is not &mdash; because `new_color` is a variable and not a literal.
 
