@@ -134,11 +134,11 @@ exceeds the available horizontal space in the parent container.
 
 ## Utility containers
 
-Textual comes with several "container" widgets.
-These are [VerticalScroll][textual.containers.VerticalScroll], [Horizontal][textual.containers.Horizontal], and [Grid][textual.containers.Grid] which have the corresponding layout.
+Textual comes with [several "container" widgets][textual.containers].
+Among them, we have [Vertical][textual.containers.Vertical], [Horizontal][textual.containers.Horizontal], and [Grid][textual.containers.Grid] which have the corresponding layout.
 
 The example below shows how we can combine these containers to create a simple 2x2 grid.
-Inside a single `Horizontal` container, we place two `VerticalScroll` containers.
+Inside a single `Horizontal` container, we place two `Vertical` containers.
 In other words, we have a single row containing two columns.
 
 === "Output"
@@ -163,8 +163,8 @@ However, Textual comes with a more powerful mechanism for achieving this known a
 
 ## Composing with context managers
 
-In the previous section we've show how you add children to a container (such as `Horizontal` and `VerticalScroll`) using positional arguments.
-It's fine to do it this way, but Textual offers a simplified syntax using [context managers](https://docs.python.org/3/reference/datamodel.html#context-managers) which is generally easier to write and edit.
+In the previous section, we've shown how you add children to a container (such as `Horizontal` and `Vertical`) using positional arguments.
+It's fine to do it this way, but Textual offers a simplified syntax using [context managers](https://docs.python.org/3/reference/datamodel.html#context-managers), which is generally easier to write and edit.
 
 When composing a widget, you can introduce a container using Python's `with` statement.
 Any widgets yielded within that block are added as a child of the container.
@@ -202,7 +202,7 @@ Let's update the [utility containers](#utility-containers) example to use the co
     ```{.textual path="docs/examples/guide/layout/utility_containers_using_with.py"}
     ```
 
-Note how the end result is the same, but the code with context managers is a little easer to read. It is up to you which method you want to use, and you can mix context managers with positional arguments if you like!
+Note how the end result is the same, but the code with context managers is a little easier to read. It is up to you which method you want to use, and you can mix context managers with positional arguments if you like!
 
 ## Grid
 

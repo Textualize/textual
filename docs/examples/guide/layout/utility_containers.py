@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.containers import Horizontal, VerticalScroll
+from textual.containers import Horizontal, Vertical
 from textual.widgets import Static
 
 
@@ -8,12 +8,12 @@ class UtilityContainersExample(App):
 
     def compose(self) -> ComposeResult:
         yield Horizontal(
-            VerticalScroll(
+            Vertical(
                 Static("One"),
                 Static("Two"),
                 classes="column",
             ),
-            VerticalScroll(
+            Vertical(
                 Static("Three"),
                 Static("Four"),
                 classes="column",
