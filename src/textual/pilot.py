@@ -17,11 +17,10 @@ def _get_mouse_message_arguments(
     target: Widget, offset: Offset = Offset(), button: int = 0
 ) -> dict[str, Any]:
     """Get the arguments to pass into mouse messages for the click and hover methods."""
-    x, y = offset
     click_x, click_y, _, _ = target.region.translate(offset)
     message_arguments = {
-        "x": x,
-        "y": y,
+        "x": click_x,
+        "y": click_y,
         "delta_x": 0,
         "delta_y": 0,
         "button": button,
