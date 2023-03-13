@@ -16,7 +16,7 @@ What's new in this release?
 
 <!-- more -->
 
-The highlight of this release is a new [Tabs](./widgets/../../../widgets/tabs.md) widget which displays tabs which can be navigated much like tabs in a browser. Here's a screenshot:
+The highlight of this release is a new [Tabs](./widgets/../../../widgets/tabs.md) widget to display tabs which can be navigated much like tabs in a browser. Here's a screenshot:
 
 <div>
 --8<-- "docs/blog/images/tabs_widget.svg"
