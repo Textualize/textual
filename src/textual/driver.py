@@ -26,7 +26,7 @@ class Driver(ABC):
         self._debug = debug
         self._size = size
         self._loop = asyncio.get_running_loop()
-        self._mouse_down_time = _time.get_time_no_wait()
+        self._mouse_down_time = _time.get_time()
         self._down_buttons: list[int] = []
         self._last_move_event: events.MouseMove | None = None
 

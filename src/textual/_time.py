@@ -44,21 +44,8 @@ else:
             await asyncio_sleep(sleep_for)
 
 
-def get_time_no_wait() -> float:
+def get_time() -> float:
     """Get the current wall clock (monotonic) time.
-
-    Returns:
-        The value (in fractional seconds) of a monotonic clock,
-        i.e. a clock that cannot go backwards.
-    """
-    return time()
-
-
-async def get_time() -> float:
-    """Asynchronous version of `get_time_no_wait`.
-
-    Useful in situations where we want asyncio to be able to "do things"
-    elsewhere right before we fetch the time.
 
     Returns:
         The value (in fractional seconds) of a monotonic clock,

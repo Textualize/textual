@@ -126,15 +126,15 @@ class Timer:
         _repeat = self._repeat
         _interval = self._interval
         await self._active.wait()
-        start = _time.get_time_no_wait()
+        start = _time.get_time()
 
         while _repeat is None or count <= _repeat:
             next_timer = start + ((count + 1) * _interval)
-            now = await _time.get_time()
+            now = _time.get_time()
             if self._skip and next_timer < now:
                 count += 1
                 continue
-            now = await _time.get_time()
+            now = _time.get_time()
             wait_time = max(0, next_timer - now)
             if wait_time > 1 / 1000:
                 await sleep(wait_time)
@@ -142,7 +142,7 @@ class Timer:
             count += 1
             await self._active.wait()
             if self._reset:
-                start = _time.get_time_no_wait()
+                start = _time.get_time()
                 count = 0
                 self._reset = False
                 continue
