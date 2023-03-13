@@ -140,6 +140,7 @@ nav:
       - "widgets/radioset.md"
       - "widgets/static.md"
       - "widgets/switch.md"
+      - "widgets/tabs.md"
       - "widgets/text_log.md"
       - "widgets/tree.md"
   - API:
@@ -180,6 +181,7 @@ nav:
     - "api/static.md"
     - "api/strip.md"
     - "api/switch.md"
+    - "api/tabs.md"
     - "api/text_log.md"
     - "api/toggle_button.md"
     - "api/timer.md"

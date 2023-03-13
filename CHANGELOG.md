@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.15.0] - 2023-03-13
 
 ### Fixed
 
@@ -19,6 +19,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added a LoadingIndicator widget https://github.com/Textualize/textual/pull/2018
+- Added Tabs Widget https://github.com/Textualize/textual/pull/2020
+
+### Changed
+
+- Breaking change: Renamed Widget.action and App.action to Widget.run_action and App.run_action
 - Added `shift`, `meta` and `control` arguments to `Pilot.click`.
 
 ## [0.14.0] - 2023-03-09
@@ -33,6 +38,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Changed the `Checkbox` character due to issues with Windows Terminal and Windows 10 https://github.com/Textualize/textual/issues/1934
 - Changed the `RadioButton` character due to issues with Windows Terminal and Windows 10 and 11 https://github.com/Textualize/textual/issues/1934
 - Changed the `Markdown` initial bullet character due to issues with Windows Terminal and Windows 10 and 11 https://github.com/Textualize/textual/issues/1982
+- The underscore `_` is no longer a special alias for the method `pilot.press`
 
 ### Added
 

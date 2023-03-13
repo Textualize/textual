@@ -185,6 +185,16 @@ A on / off control, inspired by toggle buttons.
 ```{.textual path="docs/examples/widgets/switch.py"}
 ```
 
+## Tabs
+
+A row of tabs you can select with the mouse or navigate with keys.
+
+[Tabs reference](./widgets/tabs.md){ .md-button .md-button--primary }
+
+```{.textual path="docs/examples/widgets/tabs.py" press="a,a,a,a,right,right"}
+```
+
+
 ## TextLog
 
 Display and update text in a scrolling panel.
