@@ -75,6 +75,7 @@ class Underline(Widget):
 
     def on_click(self, event: events.Click):
         """Catch clicks, so that the underline can activate the tabs."""
+        event.stop()
         self.post_message(self.Clicked(event.screen_offset))
 
 
