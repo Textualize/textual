@@ -16,21 +16,8 @@ class _Clock:
     async def get_time(self) -> float:
         return time()
 
-    def get_time_no_wait(self) -> float:
-        return time()
-
 
 _clock = _Clock()
-
-
-def get_time_no_wait() -> float:
-    """
-    Get the current wall clock time.
-
-    Returns:
-        The value (in fractional seconds) of a monotonic clock, i.e. a clock that cannot go backwards.
-    """
-    return _clock.get_time_no_wait()
 
 
 async def get_time() -> float:

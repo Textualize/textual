@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any, Callable, TypeVar
 
 from typing_extensions import Protocol, runtime_checkable
 
-from . import _clock
+from . import _time
 from ._callback import invoke
 from ._easing import DEFAULT_EASING, EASING
 from ._types import CallbackType
@@ -385,7 +385,7 @@ class Animator:
         """Get the current wall clock time, via the internal Timer."""
         # N.B. We could remove this method and always call `self._timer.get_time()` internally,
         # but it's handy to have in mocking situations
-        return _clock.get_time_no_wait()
+        return _time.get_time_no_wait()
 
     async def wait_for_idle(self) -> None:
         """Wait for any animations to complete."""
