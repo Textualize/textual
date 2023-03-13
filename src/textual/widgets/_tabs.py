@@ -289,7 +289,7 @@ class Tabs(Widget, can_focus=True):
             if removing_active_tab:
                 if next_tab is not None:
                     next_tab.add_class("-active")
-                self.call_after_refresh(self._highlight_active, animate=False)
+                self.call_after_refresh(self._highlight_active, animate=True)
 
         self.call_after_refresh(do_remove)
 

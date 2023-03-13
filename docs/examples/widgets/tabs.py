@@ -66,6 +66,7 @@ class TabsApp(App):
         tabs.add_tab(NAMES[0])
 
     def action_remove(self) -> None:
+        """Remove active tab."""
         tabs = self.query_one(Tabs)
         active_tab = tabs.active_tab
         if active_tab is not None:
