@@ -67,7 +67,6 @@ class Center(Widget):
     DEFAULT_CSS = """
     Center {
         align-horizontal: center;
-        width: 100%;
         height: auto;
     }
     """
@@ -79,7 +78,6 @@ class Middle(Widget):
     DEFAULT_CSS = """
     Middle {
         align-vertical: middle;
-        height: 100%;
         width: auto;
     }
     """
