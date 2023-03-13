@@ -34,6 +34,12 @@ class Underline(Widget):
     """
 
     COMPONENT_CLASSES = {"underline--bar"}
+    """
+    | Class | Description |
+    | :- | :- |
+    | `underline-bar` | Style of the bar (may be used to change the color). |
+
+    """
 
     highlight_start = reactive(0)
     """First cell in highlight."""
