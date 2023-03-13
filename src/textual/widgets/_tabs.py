@@ -373,7 +373,7 @@ class Tabs(Widget, can_focus=True):
             self.post_message(self.TabActivated(None))
 
     def _highlight_active(self, animate: bool = True) -> None:
-        """Move the underline bar to under the active tab,
+        """Move the underline bar to under the active tab.
 
         Args:
             animate: Should the bar animate?
@@ -428,7 +428,7 @@ class Tabs(Widget, can_focus=True):
                 break
 
     def _scroll_active_tab(self) -> None:
-        """Scroll the active tab in to view."""
+        """Scroll the active tab into view."""
         if self.active_tab:
             try:
                 self.query_one("#tabs-scroll").scroll_to_widget(
