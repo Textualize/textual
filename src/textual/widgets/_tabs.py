@@ -50,9 +50,6 @@ class Underline(Widget):
         """Inform ancestors the underline was clicked."""
 
         offset: Offset
-        """The offset for/that ... """
-
-        offset: Offset
         """The offset of the click, relative to the origin of the bar."""
 
         def __init__(self, offset: Offset) -> None:
@@ -168,6 +165,12 @@ class Tabs(Widget, can_focus=True):
         Binding("left", "previous_tab", "Previous tab", show=False),
         Binding("right", "next_tab", "Next tab", show=False),
     ]
+    """
+    | Key(s) | Description |
+    | :- | :- |
+    | left | Move to the previous tab. |
+    | right | Move to the next tab. |
+    """
 
     class TabActivated(Message):
         """Sent when a new tab is activated."""
