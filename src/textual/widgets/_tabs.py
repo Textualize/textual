@@ -172,6 +172,9 @@ class Tabs(Widget, can_focus=True):
     class TabActivated(Message):
         """Sent when a new tab is activated."""
 
+        tab: Tab
+        """The tab that was activated."""
+
         def __init__(self, tab: Tab | None) -> None:
             self.tab = tab
             super().__init__()
@@ -195,7 +198,7 @@ class Tabs(Widget, can_focus=True):
 
         Args:
             *tabs: Positional argument should be explicit Tab objects, or a str or Text.
-            active (_type_, optional): ID of the tab which should be active on start.
+            active: ID of the tab which should be active on start.
             name: Optional name for the input widget.
             id: Optional ID for the widget.
             classes: Optional initial classes for the widget.
