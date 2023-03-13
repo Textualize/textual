@@ -240,12 +240,12 @@ class Tabs(Widget, can_focus=True):
 
     @property
     def tab_count(self) -> int:
-        """The total number of tabs."""
+        """Total number of tabs."""
         return len(self.query("#tabs-list > Tab"))
 
     @property
     def _next_active(self) -> Tab | None:
-        """Get the next tab to make active, if the active tab is removed."""
+        """Next tab to make active if the active tab is removed."""
         tabs = list(self.query("#tabs-list > Tab").results(Tab))
         if self.active_tab is None:
             return None
