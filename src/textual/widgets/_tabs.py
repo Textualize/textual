@@ -36,7 +36,9 @@ class Underline(Widget):
     COMPONENT_CLASSES = {"underline--bar"}
 
     highlight_start = reactive(0)
+    """First cell in highlight."""
     highlight_end = reactive(0)
+    """Last cell (inclusive) in highlight."""
 
     class Clicked(Message):
         """Inform ancestors the underline was clicked."""
