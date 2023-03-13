@@ -68,6 +68,7 @@ class Center(Widget):
     Center {
         align-horizontal: center;
         height: auto;
+        width: 1fr;
     }
     """
 
@@ -79,6 +80,7 @@ class Middle(Widget):
     Middle {
         align-vertical: middle;
         width: auto;
+        height: 1fr;
     }
     """
 
