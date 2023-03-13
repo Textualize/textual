@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `Pilot.click` not correctly creating the mouse events https://github.com/Textualize/textual/issues/2022
 - Fixes issue where the horizontal scrollbar would be incorrectly enabled https://github.com/Textualize/textual/pull/2024
 - Fixes for tracebacks not appearing on exit https://github.com/Textualize/textual/issues/2027
+- Fixed how the namespace for messages is calculated to facilitate inheriting messages https://github.com/Textualize/textual/issues/1814
 
 ### Added
 
