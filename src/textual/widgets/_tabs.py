@@ -125,8 +125,6 @@ class Tab(Static):
             id: Optional ID for the widget.
         """
         self.label = Text.from_markup(label) if isinstance(label, str) else label
-        if id is None:
-            id = f"tab-{self.label_text.lower().replace(' ', '-')}"
         super().__init__(id=id)
         self.update(label)
 
@@ -204,11 +202,12 @@ class Tabs(Widget, can_focus=True):
             disabled: Whether the input is disabled or not.
         """
         self._tabs_counter = 0
+
         add_tabs = [
             (
                 Tab(tab, id=f"tab-{self._new_tab_id}")
                 if isinstance(tab, (str, Text))
-                else tab
+                else self._auto_tab_id(tab)
             )
             for tab in tabs
         ]
@@ -220,6 +219,12 @@ class Tabs(Widget, can_focus=True):
         )
         self._tabs = add_tabs
         self._first_active = active
+
+    def _auto_tab_id(self, tab: Tab) -> Tab:
+        """Set an automatic ID if not supplied."""
+        if tab.id is None:
+            tab.id = f"tab-{self._new_tab_id}"
+        return tab
 
     @property
     def _new_tab_id(self) -> int:
@@ -262,7 +267,7 @@ class Tabs(Widget, can_focus=True):
         tab_widget = (
             Tab(tab, id=f"tab-{self._new_tab_id}")
             if isinstance(tab, (str, Text))
-            else tab
+            else self._auto_tab_id(tab)
         )
         mount_await = self.query_one("#tabs-list").mount(tab_widget)
         if from_empty:
