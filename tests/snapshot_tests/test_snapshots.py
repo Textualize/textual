@@ -305,3 +305,7 @@ def test_remove_with_auto_height(snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "remove_auto.py", press=["a", "a", "a", "d", "d"]
     )
+
+
+def test_auto_table(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "auto-table.py", terminal_size=(120, 40))
