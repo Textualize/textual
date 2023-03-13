@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed container not resizing when a widget is removed https://github.com/Textualize/textual/issues/2007
+- Fixed issue where the horizontal scrollbar would be incorrectly enabled https://github.com/Textualize/textual/pull/2024
+- Fixed `Pilot.click` not correctly creating the mouse events https://github.com/Textualize/textual/issues/2022
+- Fixes issue where the horizontal scrollbar would be incorrectly enabled https://github.com/Textualize/textual/pull/2024
+- Fixes for tracebacks not appearing on exit https://github.com/Textualize/textual/issues/2027
 
 ### Added
 
@@ -19,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Breaking change: Renamed Widget.action and App.action to Widget.run_action and App.run_action
+- Added `shift`, `meta` and `control` arguments to `Pilot.click`.
 
 ## [0.14.0] - 2023-03-09
 

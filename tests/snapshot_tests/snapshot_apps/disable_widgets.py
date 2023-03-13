@@ -17,7 +17,6 @@ from textual.widgets import (
 
 
 class WidgetDisableTestApp(App[None]):
-
     CSS = """
     Horizontal {
         height: auto;

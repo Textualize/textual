@@ -1827,12 +1827,13 @@ class App(Generic[ReturnType], DOMNode):
 
         await self._dispatch_message(events.Unmount())
 
-        self._print_error_renderables()
         if self.devtools is not None and self.devtools.is_connected:
             await self._disconnect_devtools()
 
         if self._writer_thread is not None:
             self._writer_thread.stop()
+
+        self._print_error_renderables()
 
     async def _on_exit_app(self) -> None:
         self._begin_batch()  # Prevent repaint / layout while shutting down
