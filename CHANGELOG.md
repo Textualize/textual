@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added a LoadingIndicator widget https://github.com/Textualize/textual/pull/2018
+- Added TEXTUAL_DRIVER environment variable
 
 ## [0.14.0] - 2023-03-09
 
