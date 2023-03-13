@@ -181,7 +181,8 @@ class Tabs(Widget, can_focus=True):
         def __rich_repr__(self) -> rich.repr.Result:
             yield self.tab
 
-    active: reactive[str] = reactive(str, init=False)
+    active: reactive[str] = reactive("", init=False)
+    """The ID of the active tab, or empty string if none are active."""
 
     def __init__(
         self,
