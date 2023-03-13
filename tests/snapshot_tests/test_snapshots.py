@@ -1,4 +1,3 @@
-from os import terminal_size
 from pathlib import Path
 
 import pytest
@@ -81,8 +80,7 @@ def test_input_and_focus(snap_compare):
         "tab",
         *"Darren",  # Focus first input, write "Darren"
         "tab",
-        *"Burns",
-        "_",  # Tab focus to second input, write "Burns"
+        *"Burns",  # Focus second input, write "Burns"
     ]
     assert snap_compare(WIDGET_EXAMPLES_DIR / "input.py", press=press)
 
@@ -99,17 +97,17 @@ def test_placeholder_render(snap_compare):
 
 
 def test_datatable_render(snap_compare):
-    press = ["tab", "down", "down", "right", "up", "left", "_"]
+    press = ["tab", "down", "down", "right", "up", "left"]
     assert snap_compare(WIDGET_EXAMPLES_DIR / "data_table.py", press=press)
 
 
 def test_datatable_row_cursor_render(snap_compare):
-    press = ["up", "left", "right", "down", "down", "_"]
+    press = ["up", "left", "right", "down", "down"]
     assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_row_cursor.py", press=press)
 
 
 def test_datatable_column_cursor_render(snap_compare):
-    press = ["left", "up", "down", "right", "right", "_"]
+    press = ["left", "up", "down", "right", "right"]
     assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_column_cursor.py", press=press)
 
 

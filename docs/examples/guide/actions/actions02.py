@@ -1,5 +1,5 @@
-from textual.app import App
 from textual import events
+from textual.app import App
 
 
 class ActionsApp(App):
@@ -8,7 +8,7 @@ class ActionsApp(App):
 
     async def on_key(self, event: events.Key) -> None:
         if event.key == "r":
-            await self.action("set_background('red')")
+            await self.run_action("set_background('red')")
 
 
 if __name__ == "__main__":

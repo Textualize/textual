@@ -3,10 +3,8 @@ from string import punctuation
 from textual import events
 from textual.app import App
 
-KEY_CHARACTERS_TO_TEST = "akTW03" + punctuation.replace("_", "")
-"""Test some "simple" characters (letters + digits) and all punctuation.
-Ignore the underscore because that is an alias to add a pause in the pilot.
-"""
+KEY_CHARACTERS_TO_TEST = "akTW03" + punctuation
+"""Test some "simple" characters (letters + digits) and all punctuation."""
 
 
 async def test_pilot_press_ascii_chars():

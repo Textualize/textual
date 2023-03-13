@@ -209,8 +209,12 @@ class StylesBase(ABC):
 
     node: DOMNode | None = None
 
-    display = StringEnumProperty(VALID_DISPLAY, "block", layout=True)
-    visibility = StringEnumProperty(VALID_VISIBILITY, "visible", layout=True)
+    display = StringEnumProperty(
+        VALID_DISPLAY, "block", layout=True, refresh_parent=True
+    )
+    visibility = StringEnumProperty(
+        VALID_VISIBILITY, "visible", layout=True, refresh_parent=True
+    )
     layout = LayoutProperty()
 
     auto_color = BooleanProperty(default=False)
@@ -429,12 +433,15 @@ class StylesBase(ABC):
         """
 
     @abstractmethod
-    def refresh(self, *, layout: bool = False, children: bool = False) -> None:
+    def refresh(
+        self, *, layout: bool = False, children: bool = False, parent: bool = False
+    ) -> None:
         """Mark the styles as requiring a refresh.
 
         Args:
-            layout: Also require a layout. Defaults to False.
-            children: Also refresh children. Defaults to False.
+            layout: Also require a layout.
+            children: Also refresh children.
+            parent: Also refresh the parent.
         """
 
     @abstractmethod
@@ -641,7 +648,11 @@ class Styles(StylesBase):
     def get_rule(self, rule: str, default: object = None) -> object:
         return self._rules.get(rule, default)
 
-    def refresh(self, *, layout: bool = False, children: bool = False) -> None:
+    def refresh(
+        self, *, layout: bool = False, children: bool = False, parent: bool = False
+    ) -> None:
+        if parent and self.node and self.node.parent:
+            self.node.parent.refresh()
         if self.node is not None:
             self.node.refresh(layout=layout)
             if children:
@@ -1068,8 +1079,10 @@ class RenderStyles(StylesBase):
             if self.has_rule(rule_name):
                 yield rule_name, getattr(self, rule_name)
 
-    def refresh(self, *, layout: bool = False, children: bool = False) -> None:
-        self._inline_styles.refresh(layout=layout, children=children)
+    def refresh(
+        self, *, layout: bool = False, children: bool = False, parent: bool = False
+    ) -> None:
+        self._inline_styles.refresh(layout=layout, children=children, parent=parent)
 
     def merge(self, other: StylesBase) -> None:
         """Merge values from another Styles.

@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
 ## Unreleased
 
 ### Changed
@@ -14,7 +15,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added a LoadingIndicator widget https://github.com/Textualize/textual/pull/2018
 - Added `HorizontalScroll` https://github.com/Textualize/textual/issues/1957
 - Added `Center` https://github.com/Textualize/textual/issues/1957
 - Added `Middle` https://github.com/Textualize/textual/issues/1957
@@ -24,6 +24,26 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed container not resizing when a widget is removed https://github.com/Textualize/textual/issues/2007
 - Fixes issue where the horizontal scrollbar would be incorrectly enabled https://github.com/Textualize/textual/pull/2024
+
+## [0.15.0] - 2023-03-13
+
+### Changed
+
+- Fixed container not resizing when a widget is removed https://github.com/Textualize/textual/issues/2007
+- Fixed issue where the horizontal scrollbar would be incorrectly enabled https://github.com/Textualize/textual/pull/2024
+- Fixed `Pilot.click` not correctly creating the mouse events https://github.com/Textualize/textual/issues/2022
+- Fixes issue where the horizontal scrollbar would be incorrectly enabled https://github.com/Textualize/textual/pull/2024
+- Fixes for tracebacks not appearing on exit https://github.com/Textualize/textual/issues/2027
+
+### Added
+
+- Added a LoadingIndicator widget https://github.com/Textualize/textual/pull/2018
+- Added Tabs Widget https://github.com/Textualize/textual/pull/2020
+
+### Changed
+
+- Breaking change: Renamed Widget.action and App.action to Widget.run_action and App.run_action
+- Added `shift`, `meta` and `control` arguments to `Pilot.click`.
 
 ## [0.14.0] - 2023-03-09
 
@@ -37,6 +57,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Changed the `Checkbox` character due to issues with Windows Terminal and Windows 10 https://github.com/Textualize/textual/issues/1934
 - Changed the `RadioButton` character due to issues with Windows Terminal and Windows 10 and 11 https://github.com/Textualize/textual/issues/1934
 - Changed the `Markdown` initial bullet character due to issues with Windows Terminal and Windows 10 and 11 https://github.com/Textualize/textual/issues/1982
+- The underscore `_` is no longer a special alias for the method `pilot.press`
 
 ### Added
 
