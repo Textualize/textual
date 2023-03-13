@@ -50,6 +50,9 @@ class Underline(Widget):
         """Inform ancestors the underline was clicked."""
 
         offset: Offset
+        """The offset for/that ... """
+
+        offset: Offset
         """The offset of the click, relative to the origin of the bar."""
 
         def __init__(self, offset: Offset) -> None:
@@ -96,11 +99,13 @@ class Tab(Static):
     Tab.-active:hover {
         color: $text;
     }
-
     """
 
     class Clicked(Message):
         """A tab was clicked."""
+
+        tab: Tab
+        """The tab that was clicked."""
 
         def __init__(self, tab: Tab) -> None:
             self.tab = tab
@@ -115,9 +120,8 @@ class Tab(Static):
         """Initialise a Tab.
 
         Args:
-            label: The label to use in the tab. May be a str or a Text object.
+            label: The label to use in the tab.
             id: Optional ID for the widget.
-
         """
         self.label = Text.from_markup(label) if isinstance(label, str) else label
         if id is None:

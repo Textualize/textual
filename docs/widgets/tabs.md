@@ -19,7 +19,7 @@ You can also supply `Tab` objects directly in the constructor, which will allow 
 def compose(self) -> ComposeResult:
     yield Tabs(
         Tab("First tab", id="one"),
-        Tab("Second tab", id="two")
+        Tab("Second tab", id="two"),
     )
 ```
 
@@ -36,7 +36,7 @@ Tabs may be added dynamically with the [add_tab][textual.widgets.Tabs.add_tab] m
 
 ## Example
 
-The following example adds a Tabs widget above a text label. Press ++a++ to add a tab, ++c++ to clear the tabs.
+The following example adds a `Tabs` widget above a text label. Press ++a++ to add a tab, ++c++ to clear the tabs.
 
 === "Output"
 
