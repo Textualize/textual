@@ -862,9 +862,7 @@ class App(Generic[ReturnType], DOMNode):
         assert driver is not None
         await wait_for_idle(0)
         for key in keys:
-            if key == "_":
-                continue
-            elif key.startswith("wait:"):
+            if key.startswith("wait:"):
                 _, wait_ms = key.split(":")
                 print(f"(pause {wait_ms}ms)")
                 await asyncio.sleep(float(wait_ms) / 1000)
