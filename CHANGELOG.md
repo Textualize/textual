@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.15.0] - 2023-03-13
 
 ### Fixed
 
@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added a LoadingIndicator widget https://github.com/Textualize/textual/pull/2018
-- Added Tabs Widget
+- Added Tabs Widget https://github.com/Textualize/textual/pull/2020
 
 ### Changed
 
