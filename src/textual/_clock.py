@@ -19,9 +19,6 @@ class _Clock:
     def get_time_no_wait(self) -> float:
         return time()
 
-    async def sleep(self, seconds: float) -> None:
-        await asyncio.sleep(seconds)
-
 
 _clock = _Clock()
 
@@ -45,13 +42,3 @@ async def get_time() -> float:
         The value (in fractional seconds) of a monotonic clock, i.e. a clock that cannot go backwards.
     """
     return await _clock.get_time()
-
-
-async def sleep(seconds: float) -> None:
-    """
-    Coroutine that completes after a given time (in seconds).
-
-    Args:
-        seconds: The duration we should wait for before unblocking the awaiter
-    """
-    return await _clock.sleep(seconds)
