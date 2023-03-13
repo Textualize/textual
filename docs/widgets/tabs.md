@@ -5,7 +5,7 @@ Displays a number of tab headers which may be activated with a click or navigate
 - [x] Focusable
 - [ ] Container
 
-Construct a `Tabs` widget with strings or [Text][rich.text.Text] objects as positional arguments, which will set the label in the tabs. Here's an example with three tabs:
+Construct a `Tabs` widget with strings or [Text][rich.text.Text] objects as positional arguments, which will set the labels in the tabs. Here's an example with three tabs:
 
 ```python
 def compose(self) -> ComposeResult:
