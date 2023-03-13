@@ -13,7 +13,7 @@ from typing import Awaitable, Callable, Union
 
 from rich.repr import Result, rich_repr
 
-from . import _clock, _time, events
+from . import _time, events
 from ._asyncio import create_task
 from ._callback import invoke
 from ._context import active_app
@@ -130,11 +130,11 @@ class Timer:
 
         while _repeat is None or count <= _repeat:
             next_timer = start + ((count + 1) * _interval)
-            now = await _clock.get_time()
+            now = await _time.get_time()
             if self._skip and next_timer < now:
                 count += 1
                 continue
-            now = await _clock.get_time()
+            now = await _time.get_time()
             wait_time = max(0, next_timer - now)
             if wait_time > 1 / 1000:
                 await sleep(wait_time)
