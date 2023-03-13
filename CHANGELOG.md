@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Renamed Widget.action and App.action to Widget.run_action and App.run_action
+- Breaking change: Renamed Widget.action and App.action to Widget.run_action and App.run_action
 
 ## [0.14.0] - 2023-03-09
 
