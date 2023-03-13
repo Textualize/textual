@@ -29,6 +29,7 @@ if typing.TYPE_CHECKING:
     from ._radio_set import RadioSet
     from ._static import Static
     from ._switch import Switch
+    from ._tabs import Tab, Tabs
     from ._text_log import TextLog
     from ._tree import Tree
     from ._welcome import Welcome

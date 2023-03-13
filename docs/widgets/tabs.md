@@ -1,11 +1,11 @@
 # Tabs
 
-Displays a number of tab headers which may be clicked or navigated with cursor keys.
+Displays a number of tab headers which may be activated with click or navigated with cursor keys.
 
 - [x] Focusable
 - [ ] Container
 
-You can construct a `Tabs` widget with strings or [Text][rich.text.Text] objects as positional arguments. Here's an example with three tabs:
+Construct a `Tabs` widget with strings or [Text][rich.text.Text] objects as positional arguments, which will set the label in the tabs. Here's an example with three tabs:
 
 ```python
 def compose(self) -> ComposeResult:
@@ -23,9 +23,16 @@ def compose(self) -> ComposeResult:
     )
 ```
 
-When the user switches to a tab by clicking or pressing keys, then Tabs will send a [Tabs.TabActivated][textual.widgets.Tabs.TabActivated] messages which contains the `tab` that was activated.
-You can use `event.tab.id` attribute to respond the the tab that was activated.
+When the user switches to a tab by clicking or pressing keys, then `Tabs` will send a [Tabs.TabActivated][textual.widgets.Tabs.TabActivated] message which contains the `tab` that was activated.
+You can then use `event.tab.id` attribute to perform any related actions.
 
+## Clearing tabs
+
+Clear tabs by calling the [clear][textual.widgets.Tabs.clear] method. Clearing the tabs will send a [Tabs.TabActivated][textual.widgets.Tabs.TabActivated] message with the `tab` attribute set to `None`.
+
+## Adding tabs
+
+Tabs may be added dynamically with the [add_tab][textual.widgets.Tabs.add_tab] method, which accepts strings, [Text][rich.text.Text], or [Tab][textual.widgets.Tab] objects.
 
 ## Example
 
@@ -45,24 +52,15 @@ The following example adds a Tabs widget above a text label. Press ++a++ to add 
 
 ## Reactive Attributes
 
-| Name     | Type  | Default | Description              |
-| -------- | ----- | ------- | ------------------------ |
-| `active` | `str` | `""`    | The ID of the active tab |
+| Name     | Type  | Default | Description                                                                        |
+| -------- | ----- | ------- | ---------------------------------------------------------------------------------- |
+| `active` | `str` | `""`    | The ID of the active tab. Set this attribute to a tab ID to change the active tab. |
 
 
 ## Messages
 
 ### ::: textual.widgets.Tabs.TabActivated
 
-
-## Bindings
-
-The Tabs widget defines the following bindings:
-
-::: textual.widgets.Tabs.BINDINGS
-    options:
-      show_root_heading: false
-      show_root_toc_entry: false
 
 ## See Also
 
