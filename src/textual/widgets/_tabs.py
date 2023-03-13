@@ -39,6 +39,8 @@ class Underline(Widget):
     highlight_end = reactive(0)
 
     class Clicked(Message):
+        """Inform ancestors the underline was clicked."""
+
         def __init__(self, offset: Offset) -> None:
             self.offset = offset
             super().__init__()
@@ -49,6 +51,7 @@ class Underline(Widget):
         return (self.highlight_start, self.highlight_end)
 
     def render(self) -> RenderResult:
+        """Render the bar."""
         bar_style = self.get_component_rich_style("underline--bar")
         return UnderlineBar(
             highlight_range=self._highlight_range,
@@ -57,6 +60,7 @@ class Underline(Widget):
         )
 
     def on_click(self, event: events.Click):
+        """Catch clicks, so that the underline can activate the tabs."""
         self.post_message(self.Clicked(event.screen_offset))
 
 
@@ -208,7 +212,7 @@ class Tabs(Widget, can_focus=True):
 
     @property
     def tab_count(self) -> int:
-        """Return the number of tabs."""
+        """The total number of tabs."""
         return len(self.query("#tabs-list > Tab"))
 
     @property
@@ -327,6 +331,7 @@ class Tabs(Widget, can_focus=True):
                 yield Underline()
 
     def watch_active(self, previously_active: str, active: str) -> None:
+        """Handle a change to the active tab."""
         if active:
             active_tab = self.query_one(f"#tabs-list > #{active}", Tab)
             self.query("#tabs-list > Tab.-active").remove_class("-active")
@@ -362,17 +367,30 @@ class Tabs(Widget, can_focus=True):
                 underline.highlight_end = end
 
     async def _on_tab_clicked(self, event: Tab.Clicked) -> None:
+        """Activate a tab that was clicked."""
         self.focus()
         event.stop()
         self._activate_tab(event.tab)
 
     def _activate_tab(self, tab: Tab) -> None:
+        """Activate a tab.
+
+        Args:
+            tab: The Tab that was clicked.
+        """
         self.query("#tabs-list Tab.-active").remove_class("-active")
         tab.add_class("-active")
         self.active = tab.id or ""
         self.query_one("#tabs-scroll").scroll_to_widget(tab, force=True)
 
     def _on_underline_clicked(self, event: Underline.Clicked) -> None:
+        """The underline was clicked.
+
+        Activate the tab above to make a larger clickable area.
+
+        Args:
+            event: The Underline.Clicked event.
+        """
         event.stop()
         offset = event.offset + (0, -1)
         self.focus()
@@ -382,6 +400,7 @@ class Tabs(Widget, can_focus=True):
                 break
 
     def _scroll_active_tab(self) -> None:
+        """Scroll the active tab in to view."""
         if self.active_tab:
             try:
                 self.query_one("#tabs-scroll").scroll_to_widget(
@@ -419,28 +438,3 @@ class Tabs(Widget, can_focus=True):
         new_tab_index = (tabs.index(active_tab) + direction) % tab_count
         self.active = tabs[new_tab_index].id or ""
         self._scroll_active_tab()
-
-
-if __name__ == "__main__":
-    from textual.app import App
-
-    class TabsApp(App):
-        def compose(self) -> ComposeResult:
-            yield Tabs(
-                "Foo",
-                "bar",
-                Tab("A much longer tab header"),
-                Tab("Paul"),
-                Tab("Jessica"),
-                Tab("Duncan"),
-                Tab("Chani"),
-            )
-
-            yield Tabs("a", "b")
-
-            yield Tabs("One", "Two", "Three")
-
-            yield Tabs()
-
-    app = TabsApp()
-    app.run()
