@@ -3933,6 +3933,10 @@
       
         
       
+        
+      
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -4273,6 +4277,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../widgets/loading_indicator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    LoadingIndicator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../widgets/markdown_viewer/" class="md-nav__link">
         
   
@@ -4455,6 +4485,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../widgets/tabs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Tabs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../widgets/text_log/" class="md-nav__link">
         
   
@@ -4560,6 +4616,10 @@
       
         
           
+        
+      
+        
+      
         
       
         
@@ -5176,6 +5236,45 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.color.Gradient" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gradient
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Gradient">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.color.Gradient.__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.color.Gradient.get_color" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_color()
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.color.HSL" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5705,6 +5804,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../loading_indicator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Loading indicator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../markdown_viewer/" class="md-nav__link">
         
   
@@ -6076,6 +6201,32 @@
     
   
     Switch
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tabs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Tabs
   
 
     
@@ -6969,6 +7120,45 @@
       
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.color.Gradient" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gradient
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Gradient">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.color.Gradient.__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.color.Gradient.get_color" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_color()
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -9214,6 +9404,166 @@ be returned unmodified.</p></td>
 
 
 
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="textual.color.Gradient" class="doc doc-heading">
+        <code>Gradient</code>
+
+
+<a href="#textual.color.Gradient" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+
+  
+      <p>Defines a color gradient.</p>
+
+
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h4 id="textual.color.Gradient.__init__" class="doc doc-heading">
+<code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">stops</span><span class="p">)</span></code>
+
+<a href="#textual.color.Gradient.__init__" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Create a color gradient that blends colors to form a spectrum.</p>
+<p>A gradient is defined by a sequence of "stops" consisting of a float and a color.
+The stop indicate the color at that point on a spectrum between 0 and 1.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>stops</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a>, <a class="autorefs autorefs-internal" title="textual.color.Color" href="#textual.color.Color">Color</a>]</code>
+          </td>
+          <td><p>A colors stop.</p></td>
+          <td>
+                <code>()</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Raises:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#ValueError">ValueError</a></code>
+          </td>
+          <td><p>If any stops are missing (must be at least a stop for 0 and 1).</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h4 id="textual.color.Gradient.get_color" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_color</span><span class="p">(</span><span class="n">position</span><span class="p">)</span></code>
+
+<a href="#textual.color.Gradient.get_color" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Get a color from the gradient at a position between 0 and 1.</p>
+<p>Positions that are between stops will return a blended color.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>factor</code></td>
+          <td>
+          </td>
+          <td><p>A number between 0 and 1, where 0 is the first stop, and 1 is the last.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.color.Color" href="#textual.color.Color">Color</a></code>
+          </td>
+          <td><p>A color.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
 
 
 

@@ -3933,6 +3933,10 @@
       
         
       
+        
+      
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -4273,6 +4277,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../widgets/loading_indicator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    LoadingIndicator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../widgets/markdown_viewer/" class="md-nav__link">
         
   
@@ -4455,6 +4485,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../widgets/tabs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Tabs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../widgets/text_log/" class="md-nav__link">
         
   
@@ -4560,6 +4616,10 @@
       
         
           
+        
+      
+        
+      
         
       
         
@@ -4924,17 +4984,6 @@
     <span class="md-ellipsis">
       
         title
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.app.App.action" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        action()
       
     </span>
   </a>
@@ -5364,6 +5413,17 @@
     <span class="md-ellipsis">
       
         run()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.run_action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        run_action()
       
     </span>
   </a>
@@ -6001,6 +6061,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../loading_indicator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Loading indicator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../markdown_viewer/" class="md-nav__link">
         
   
@@ -6372,6 +6458,32 @@
     
   
     Switch
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tabs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Tabs
   
 
     
@@ -7154,17 +7266,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#textual.app.App.action" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        action()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#textual.app.App.action_bell" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7587,6 +7688,17 @@
     <span class="md-ellipsis">
       
         run()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.run_action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        run_action()
       
     </span>
   </a>
@@ -8239,81 +8351,6 @@ the title.</p>
 </div>
 
 
-
-<div class="doc doc-object doc-function">
-
-
-
-<h4 id="textual.app.App.action" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">action</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">default_namespace</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-async"><code>async</code></small>
-  </span>
-
-<a href="#textual.app.App.action" class="headerlink" title="Permanent link">&para;</a></h4>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Perform an action.</p>
-
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>action</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <span title="textual.actions.ActionParseResult">ActionParseResult</span></code>
-          </td>
-          <td><p>Action encoded in a string.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>default_namespace</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#object">object</a> | None</code>
-          </td>
-          <td><p>Namespace to use if not provided in the action,
-or None to use app. Defaults to None.</p></td>
-          <td>
-                <code>None</code>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
-          </td>
-          <td><p>True if the event has handled.</p></td>
-        </tr>
-    </tbody>
-  </table>
-
-  </div>
-
-</div>
 
 <div class="doc doc-object doc-function">
 
@@ -10344,6 +10381,81 @@ or None to auto-detect. Defaults to None.</p></td>
                 <code><span title="textual.app.ReturnType">ReturnType</span> | None</code>
           </td>
           <td><p>App return value.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h4 id="textual.app.App.run_action" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">run_action</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">default_namespace</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+<a href="#textual.app.App.run_action" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Perform an action.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>action</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <span title="textual.actions.ActionParseResult">ActionParseResult</span></code>
+          </td>
+          <td><p>Action encoded in a string.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>default_namespace</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#object">object</a> | None</code>
+          </td>
+          <td><p>Namespace to use if not provided in the action,
+or None to use app. Defaults to None.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td><p>True if the event has handled.</p></td>
         </tr>
     </tbody>
   </table>

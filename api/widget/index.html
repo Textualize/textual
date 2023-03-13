@@ -3933,6 +3933,10 @@
       
         
       
+        
+      
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -4273,6 +4277,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../widgets/loading_indicator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    LoadingIndicator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../widgets/markdown_viewer/" class="md-nav__link">
         
   
@@ -4455,6 +4485,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../widgets/tabs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Tabs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../widgets/text_log/" class="md-nav__link">
         
   
@@ -4560,6 +4616,10 @@
       
         
           
+        
+      
+        
+      
         
       
         
@@ -5188,6 +5248,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../loading_indicator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Loading indicator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../markdown_viewer/" class="md-nav__link">
         
   
@@ -5559,6 +5645,32 @@
     
   
     Switch
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tabs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Tabs
   
 
     
@@ -6318,17 +6430,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#textual.widget.Widget.action" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        action()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#textual.widget.Widget.animate" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6586,6 +6687,17 @@
     <span class="md-ellipsis">
       
         reset_focus()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.run_action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        run_action()
       
     </span>
   </a>
@@ -7726,17 +7838,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#textual.widget.Widget.action" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        action()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#textual.widget.Widget.animate" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7994,6 +8095,17 @@
     <span class="md-ellipsis">
       
         reset_focus()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.run_action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        run_action()
       
     </span>
   </a>
@@ -9861,52 +9973,6 @@ depending on the scroll offset.</p>
 
 
 
-<h4 id="textual.widget.Widget.action" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">action</span><span class="p">(</span><span class="n">action</span><span class="p">)</span></code>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-async"><code>async</code></small>
-  </span>
-
-<a href="#textual.widget.Widget.action" class="headerlink" title="Permanent link">&para;</a></h4>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Perform a given action, with this widget as the default namespace.</p>
-
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>action</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
-          </td>
-          <td><p>Action encoded as a string.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-
 <h4 id="textual.widget.Widget.animate" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">animate</span><span class="p">(</span><span class="n">attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">final_value</span><span class="o">=</span><span class="bp">Ellipsis</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">easing</span><span class="o">=</span><span class="n">DEFAULT_EASING</span><span class="p">,</span> <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
@@ -11400,6 +11466,52 @@ do this automatically.</p>
   <div class="doc doc-contents ">
   
       <p>Reset the focus (move it to the next available widget).</p>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h4 id="textual.widget.Widget.run_action" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">run_action</span><span class="p">(</span><span class="n">action</span><span class="p">)</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+<a href="#textual.widget.Widget.run_action" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Perform a given action, with this widget as the default namespace.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>action</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+          </td>
+          <td><p>Action encoded as a string.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
 
   </div>
 

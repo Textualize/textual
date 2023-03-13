@@ -4055,6 +4055,10 @@
       
         
       
+        
+      
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -4395,6 +4399,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../widgets/loading_indicator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    LoadingIndicator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../widgets/markdown_viewer/" class="md-nav__link">
         
   
@@ -4577,6 +4607,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../widgets/tabs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Tabs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../widgets/text_log/" class="md-nav__link">
         
   
@@ -4680,6 +4736,10 @@
       
         
           
+        
+      
+        
+      
         
       
         
@@ -5308,6 +5368,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../api/loading_indicator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Loading indicator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../api/markdown_viewer/" class="md-nav__link">
         
   
@@ -5679,6 +5765,32 @@
     
   
     Switch
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/tabs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Tabs
   
 
     
@@ -6519,7 +6631,7 @@ This customisable size is the width of the scrollbar, given that its length will
 </div>
 <div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span> <span class="nn">textual.containers</span> <span class="kn">import</span> <span class="n">Vertical</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span> <span class="nn">textual.containers</span> <span class="kn">import</span> <span class="n">Container</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Label</span>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">TEXT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;I must not fear.</span>
@@ -6534,7 +6646,7 @@ This customisable size is the width of the scrollbar, given that its length will
 <a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>
 <a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="k">class</span> <span class="nc">ScrollbarApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
 <a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>        <span class="k">yield</span> <span class="n">Vertical</span><span class="p">(</span><span class="n">Label</span><span class="p">(</span><span class="n">TEXT</span> <span class="o">*</span> <span class="mi">5</span><span class="p">),</span> <span class="n">classes</span><span class="o">=</span><span class="s2">&quot;panel&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>        <span class="k">yield</span> <span class="n">Container</span><span class="p">(</span><span class="n">Label</span><span class="p">(</span><span class="n">TEXT</span> <span class="o">*</span> <span class="mi">5</span><span class="p">),</span> <span class="n">classes</span><span class="o">=</span><span class="s2">&quot;panel&quot;</span><span class="p">)</span>
 <a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>
 <a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>
 <a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="n">app</span> <span class="o">=</span> <span class="n">ScrollbarApp</span><span class="p">(</span><span class="n">css_path</span><span class="o">=</span><span class="s2">&quot;scrollbar_size.css&quot;</span><span class="p">)</span>

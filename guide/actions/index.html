@@ -4064,6 +4064,10 @@
       
         
       
+        
+      
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -4404,6 +4408,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../widgets/loading_indicator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    LoadingIndicator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../widgets/markdown_viewer/" class="md-nav__link">
         
   
@@ -4586,6 +4616,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../widgets/tabs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Tabs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../widgets/text_log/" class="md-nav__link">
         
   
@@ -4689,6 +4745,10 @@
       
         
           
+        
+      
+        
+      
         
       
         
@@ -5317,6 +5377,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../api/loading_indicator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Loading indicator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../api/markdown_viewer/" class="md-nav__link">
         
   
@@ -5688,6 +5774,32 @@
     
   
     Switch
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/tabs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Tabs
   
 
     
@@ -6390,9 +6502,9 @@
 </code></pre></div>
 <p>The <code>action_set_background</code> method is an action which sets the background of the screen. The key handler above will call this action if you press the <span class="keys"><kbd class="key-r">R</kbd></span> key.</p>
 <p>Although it is possible (and occasionally useful) to call action methods in this way, they are intended to be parsed from an <em>action string</em>. For instance, the string <code>"set_background('red')"</code> is an action string which would call <code>self.action_set_background('red')</code>.</p>
-<p>The following example replaces the immediate call with a call to <a class="autorefs autorefs-internal" href="../../api/widget/#textual.widget.Widget.action">action()</a> which parses an action string and dispatches it to the appropriate method.</p>
-<div class="highlight"><span class="filename">actions02.py</span><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span> <span class="nn">textual</span> <span class="kn">import</span> <span class="n">events</span>
+<p>The following example replaces the immediate call with a call to <a class="autorefs autorefs-internal" href="../../api/widget/#textual.widget.Widget.run_action">run_action()</a> which parses an action string and dispatches it to the appropriate method.</p>
+<div class="highlight"><span class="filename">actions02.py</span><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span> <span class="nn">textual</span> <span class="kn">import</span> <span class="n">events</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="k">class</span> <span class="nc">ActionsApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
@@ -6401,20 +6513,20 @@
 <a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
 <a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="hll">    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">events</span><span class="o">.</span><span class="n">Key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="hll">        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;r&quot;</span><span class="p">:</span>
-</span><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="hll">            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">action</span><span class="p">(</span><span class="s2">&quot;set_background(&#39;red&#39;)&quot;</span><span class="p">)</span>
+</span><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="hll">            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_action</span><span class="p">(</span><span class="s2">&quot;set_background(&#39;red&#39;)&quot;</span><span class="p">)</span>
 </span><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>
 <a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>
 <a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
 <a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">ActionsApp</span><span class="p">()</span>
 <a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
-<p>Note that the <code>action()</code> method is a coroutine so <code>on_key</code> needs to be prefixed with the <code>async</code> keyword.</p>
+<p>Note that the <code>run_action()</code> method is a coroutine so <code>on_key</code> needs to be prefixed with the <code>async</code> keyword.</p>
 <p>You will not typically need this in a real app as Textual will run actions in links or key bindings. Before we discuss these, let's have a closer look at the syntax for action strings.</p>
 <h2 id="syntax">Syntax<a class="headerlink" href="#syntax" title="Permanent link">&para;</a></h2>
 <p>Action strings have a simple syntax, which for the most part replicates Python's function call syntax.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>As much as they <em>look</em> like Python code, Textual does <strong>not</strong> call Python's <code>eval</code> function or similar to compile action strings.</p>
+<p>As much as they <em>look</em> like Python code, Textual does <strong>not</strong> call Python's <code>eval</code> function to compile action strings.</p>
 </div>
 <p>Action strings have the following format:</p>
 <ul>
@@ -6442,7 +6554,7 @@
 </div>
 
 <h3 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h3>
-<p>If the action string contains parameters, these must be valid Python literals. Which means you can include numbers, strings, dicts, lists etc. but you can't include variables or references to any other python symbol.</p>
+<p>If the action string contains parameters, these must be valid Python literals. Which means you can include numbers, strings, dicts, lists etc. but you can't include variables or references to any other Python symbols.</p>
 <p>Consequently <code>"set_background('blue')"</code> is a valid action string, but <code>"set_background(new_color)"</code> is not &mdash; because <code>new_color</code> is a variable and not a literal.</p>
 <h2 id="links">Links<a class="headerlink" href="#links" title="Permanent link">&para;</a></h2>
 <p>Actions may be embedded as links within console markup. You can create such links with a  <code>@click</code> tag.</p>
