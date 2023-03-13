@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed container not resizing when a widget is removed https://github.com/Textualize/textual/issues/2007
+- Fixed `Pilot.click` not correctly creating the mouse events https://github.com/Textualize/textual/issues/2022
 
 ### Added
 
