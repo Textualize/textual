@@ -49,6 +49,9 @@ class Underline(Widget):
     class Clicked(Message):
         """Inform ancestors the underline was clicked."""
 
+        offset: Offset
+        """The offset of the click, relative to the origin of the bar."""
+
         def __init__(self, offset: Offset) -> None:
             self.offset = offset
             super().__init__()
