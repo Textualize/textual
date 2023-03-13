@@ -44,7 +44,7 @@ python -m textual
 
 If Textual is installed you should see the following:
 
-```{.textual path="src/textual/demo.py" columns="127" lines="53" press="enter,_,_,_,_,_,_,tab,_,w,i,l,l"}
+```{.textual path="src/textual/demo.py" columns="127" lines="53" press="enter,tab,w,i,l,l"}
 ```
 
 ## Examples

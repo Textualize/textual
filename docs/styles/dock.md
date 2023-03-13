@@ -19,7 +19,7 @@ Notice that even though the content is scrolled, the sidebar remains fixed.
 
 === "Output"
 
-    ```{.textual path="docs/examples/guide/layout/dock_layout1_sidebar.py" press="pagedown,down,down,_,_,_,_,_"}
+    ```{.textual path="docs/examples/guide/layout/dock_layout1_sidebar.py" press="pagedown,down,down"}
     ```
 
 === "dock_layout1_sidebar.py"

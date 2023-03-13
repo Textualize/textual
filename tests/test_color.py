@@ -2,7 +2,7 @@ import pytest
 from rich.color import Color as RichColor
 from rich.text import Text
 
-from textual.color import Color, Lab, lab_to_rgb, rgb_to_lab
+from textual.color import Color, Gradient, Lab, lab_to_rgb, rgb_to_lab
 
 
 def test_rich_color():
@@ -215,3 +215,31 @@ def test_rgb_lab_rgb_roundtrip():
 
 def test_inverse():
     assert Color(55, 0, 255, 0.1).inverse == Color(200, 255, 0, 0.1)
+
+
+def test_gradient_errors():
+    with pytest.raises(ValueError):
+        Gradient()
+    with pytest.raises(ValueError):
+        Gradient((0, Color.parse("red")))
+
+    with pytest.raises(ValueError):
+        Gradient(
+            (0, Color.parse("red")),
+            (0.8, Color.parse("blue")),
+        )
+
+
+def test_gradient():
+    gradient = Gradient(
+        (0, Color(255, 0, 0)),
+        (0.5, Color(0, 0, 255)),
+        (1, Color(0, 255, 0)),
+    )
+
+    assert gradient.get_color(-1) == Color(255, 0, 0)
+    assert gradient.get_color(0) == Color(255, 0, 0)
+    assert gradient.get_color(1) == Color(0, 255, 0)
+    assert gradient.get_color(1.2) == Color(0, 255, 0)
+    assert gradient.get_color(0.5) == Color(0, 0, 255)
+    assert gradient.get_color(0.7) == Color(0, 101, 153)

@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.15.0] - Unreleased
+## Unreleased
 
 ### Changed
 
@@ -14,11 +14,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- Added a LoadingIndicator widget https://github.com/Textualize/textual/pull/2018
 - Added `HorizontalScroll` https://github.com/Textualize/textual/issues/1957
 - Added `Center` https://github.com/Textualize/textual/issues/1957
 - Added `Middle` https://github.com/Textualize/textual/issues/1957
 - Added `VerticalScroll` (mimicking the old behaviour of `Vertical`) https://github.com/Textualize/textual/issues/1957
 
+### Fixed
+
+- Fixed container not resizing when a widget is removed https://github.com/Textualize/textual/issues/2007
+- Fixes issue where the horizontal scrollbar would be incorrectly enabled https://github.com/Textualize/textual/pull/2024
 
 ## [0.14.0] - 2023-03-09
 

@@ -25,7 +25,7 @@ This will be a simple yet **fully featured** app &mdash; you could distribute th
 Here's what the finished app will look like:
 
 
-```{.textual path="docs/examples/tutorial/stopwatch.py" press="tab,enter,_,tab,enter,_,tab,_,enter,_,tab,enter,_,_"}
+```{.textual path="docs/examples/tutorial/stopwatch.py" press="tab,enter,tab,enter,tab,enter,tab,enter"}
 ```
 
 ### Get the code
@@ -339,7 +339,7 @@ The `on_button_pressed` method is an *event handler*. Event handlers are methods
 
 If you run `stopwatch04.py` now you will be able to toggle between the two states by clicking the first button:
 
-```{.textual path="docs/examples/tutorial/stopwatch04.py" title="stopwatch04.py" press="tab,tab,tab,_,enter,_,_,_"}
+```{.textual path="docs/examples/tutorial/stopwatch04.py" title="stopwatch04.py" press="tab,tab,tab,enter"}
 ```
 
 ## Reactive attributes
@@ -421,7 +421,7 @@ This code supplies missing features and makes our app useful. We've made the fol
 
 If you run `stopwatch06.py` you will be able to use the stopwatches independently.
 
-```{.textual path="docs/examples/tutorial/stopwatch06.py" title="stopwatch06.py" press="tab,enter,_,_,tab,enter,_,tab"}
+```{.textual path="docs/examples/tutorial/stopwatch06.py" title="stopwatch06.py" press="tab,enter,tab,enter,tab"}
 ```
 
 The only remaining feature of the Stopwatch app left to implement is the ability to add and remove stopwatches.
@@ -449,7 +449,7 @@ The `action_remove_stopwatch` function calls [query()][textual.dom.DOMNode.query
 
 If you run `stopwatch.py` now you can add a new stopwatch with the ++a++ key and remove a stopwatch with ++r++.
 
-```{.textual path="docs/examples/tutorial/stopwatch.py" press="d,a,a,a,a,a,a,a,tab,enter,_,_,_,_,tab,_"}
+```{.textual path="docs/examples/tutorial/stopwatch.py" press="d,a,a,a,a,a,a,a,tab,enter,tab"}
 ```
 
 ## What next?

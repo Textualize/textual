@@ -133,12 +133,12 @@ def test_header_render(snap_compare):
 
 def test_list_view(snap_compare):
     assert snap_compare(
-        WIDGET_EXAMPLES_DIR / "list_view.py", press=["tab", "down", "down", "up", "_"]
+        WIDGET_EXAMPLES_DIR / "list_view.py", press=["tab", "down", "down", "up"]
     )
 
 
 def test_textlog_max_lines(snap_compare):
-    assert snap_compare("snapshot_apps/textlog_max_lines.py", press=[*"abcde", "_"])
+    assert snap_compare("snapshot_apps/textlog_max_lines.py", press=[*"abcde"])
 
 
 def test_fr_units(snap_compare):
@@ -213,7 +213,7 @@ def test_order_independence(snap_compare):
 
 
 def test_order_independence_toggle(snap_compare):
-    assert snap_compare("snapshot_apps/layer_order_independence.py", press="t,_")
+    assert snap_compare("snapshot_apps/layer_order_independence.py", press="t")
 
 
 def test_columns_height(snap_compare):
@@ -228,7 +228,7 @@ def test_offsets(snap_compare):
 
 def test_nested_auto_heights(snap_compare):
     """Test refreshing widget within a auto sized container"""
-    assert snap_compare("snapshot_apps/nested_auto_heights.py", press=["1", "2", "_"])
+    assert snap_compare("snapshot_apps/nested_auto_heights.py", press=["1", "2"])
 
 
 def test_programmatic_scrollbar_gutter_change(snap_compare):
@@ -306,4 +306,14 @@ def test_focus_component_class(snap_compare):
 
 
 def test_line_api_scrollbars(snap_compare):
-    assert snap_compare(SNAPSHOT_APPS_DIR / "line_api_scrollbars.py", press=["_"])
+    assert snap_compare(SNAPSHOT_APPS_DIR / "line_api_scrollbars.py")
+
+
+def test_remove_with_auto_height(snap_compare):
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "remove_auto.py", press=["a", "a", "a", "d", "d"]
+    )
+
+
+def test_auto_table(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "auto-table.py", terminal_size=(120, 40))

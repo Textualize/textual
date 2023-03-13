@@ -21,6 +21,7 @@ if typing.TYPE_CHECKING:
     from ._label import Label
     from ._list_item import ListItem
     from ._list_view import ListView
+    from ._loading_indicator import LoadingIndicator
     from ._markdown import Markdown, MarkdownViewer
     from ._placeholder import Placeholder
     from ._pretty import Pretty
@@ -45,6 +46,7 @@ __all__ = [
     "Label",
     "ListItem",
     "ListView",
+    "LoadingIndicator",
     "Markdown",
     "MarkdownViewer",
     "Placeholder",

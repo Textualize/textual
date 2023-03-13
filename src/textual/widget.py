@@ -1010,11 +1010,11 @@ class Widget(DOMNode):
             show_vertical = self.virtual_size.height > height
 
         # When a single scrollbar is shown, the other dimension changes, so we need to recalculate.
-        if show_vertical and not show_horizontal:
+        if overflow_x == "auto" and show_vertical and not show_horizontal:
             show_horizontal = self.virtual_size.width > (
                 width - styles.scrollbar_size_vertical
             )
-        if show_horizontal and not show_vertical:
+        if overflow_y == "auto" and show_horizontal and not show_vertical:
             show_vertical = self.virtual_size.height > (
                 height - styles.scrollbar_size_horizontal
             )
@@ -2548,7 +2548,7 @@ class Widget(DOMNode):
             An awaitable object that waits for the widget to be removed.
         """
 
-        await_remove = self.app._remove_nodes([self])
+        await_remove = self.app._remove_nodes([self], self.parent)
         return await_remove
 
     def render(self) -> RenderableType:

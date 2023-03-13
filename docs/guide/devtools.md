@@ -60,7 +60,7 @@ textual console
 
 You should see the Textual devtools welcome message:
 
-```{.textual title="textual console" path="docs/examples/getting_started/console.py", press="_,_"}
+```{.textual title="textual console" path="docs/examples/getting_started/console.py"}
 ```
 
 In the other console, run your application with `textual run` and the `--dev` switch:
