@@ -1,6 +1,6 @@
 # Tabs
 
-Displays a number of tab headers which may be activated with click or navigated with cursor keys.
+Displays a number of tab headers which may be activated with a click or navigated with cursor keys.
 
 - [x] Focusable
 - [ ] Container
