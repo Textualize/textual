@@ -2718,12 +2718,6 @@ class Widget(DOMNode):
         else:
             await self.mount(*widgets)
 
-    def recompose(self) -> AwaitMount:
-        with self.app.batch_update():
-            self.query("*").remove()
-            widgets = compose(self)
-            return self.mount_all(widgets)
-
     def _on_mount(self, event: events.Mount) -> None:
         if self.styles.overflow_y == "scroll":
             self.show_vertical_scrollbar = True
