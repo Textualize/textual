@@ -1,2 +1,2 @@
-::: textual.widgets.Tabs
 ::: textual.widgets.Tab
+::: textual.widgets.Tabs
