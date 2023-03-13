@@ -38,7 +38,7 @@ The example below shows how you might create a simple form using two `Input` wid
 
 ## Bindings
 
-The input widget defines directly the following bindings:
+The Input widget defines the following bindings:
 
 ::: textual.widgets.Input.BINDINGS
     options:
