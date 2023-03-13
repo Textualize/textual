@@ -61,6 +61,14 @@ The following example adds a `Tabs` widget above a text label. Press ++a++ to ad
 
 ### ::: textual.widgets.Tabs.TabActivated
 
+## Bindings
+
+The Tabs widget defines the following bindings:
+
+::: textual.widgets.Tabs.BINDINGS
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
 
 ## See Also
 
