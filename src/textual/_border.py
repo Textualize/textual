@@ -17,6 +17,8 @@ if TYPE_CHECKING:
 INNER = 1
 OUTER = 2
 
+_EMPTY_SEGMENT = Segment("", Style())
+
 BORDER_CHARS: dict[
     EdgeType, tuple[tuple[str, str, str], tuple[str, str, str], tuple[str, str, str]]
 ] = {
@@ -334,8 +336,8 @@ def render_row(
     width: int,
     left: bool,
     right: bool,
-    label: Segment,
-    label_alignment: AlignHorizontal,
+    label: Segment = _EMPTY_SEGMENT,
+    label_alignment: AlignHorizontal = "left",
 ) -> list[Segment]:
     """Render a top, or bottom border row.
 
@@ -357,6 +359,8 @@ def render_row(
     middle_segments: list[Segment]
     if not space_available:
         middle_segments = [label]
+    elif not label:
+        middle_segments = [Segment(box2.text * space_available, box2.style)]
     elif label_alignment == "left" or label_alignment == "right":
         edge = Segment(box2.text * space_available, box2.style)
         middle_segments = [label, edge] if label_alignment == "left" else [edge, label]
