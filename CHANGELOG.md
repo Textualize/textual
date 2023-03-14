@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `Widget.border_title` and `Widget.border_subtitle` to set border (sub)title for a widget https://github.com/Textualize/textual/issues/1864
-
+- Added CSS styles `border_title_align` and `border_subtitle_align`.
 
 ## [0.15.1] - 2023-03-14
 
