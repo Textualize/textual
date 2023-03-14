@@ -9,7 +9,7 @@ from rich.style import Style
 from rich.text import Text
 
 from .color import Color
-from .css.types import EdgeStyle, EdgeType
+from .css.types import AlignHorizontal, EdgeStyle, EdgeType
 
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
@@ -330,7 +330,12 @@ def render_border_label(
 
 
 def render_row(
-    box_row: tuple[Segment, Segment, Segment], width: int, left: bool, right: bool
+    box_row: tuple[Segment, Segment, Segment],
+    width: int,
+    left: bool,
+    right: bool,
+    label: Segment,
+    label_alignment: AlignHorizontal,
 ) -> list[Segment]:
     """Render a top, or bottom border row.
 
@@ -344,14 +349,36 @@ def render_row(
         A list of segments.
     """
     box1, box2, box3 = box_row
-    if left and right:
-        return [box1, Segment(box2.text * (width - 2), box2.style), box3]
-    if left:
-        return [box1, Segment(box2.text * (width - 1), box2.style)]
-    if right:
-        return [Segment(box2.text * (width - 1), box2.style), box3]
+
+    corners_needed = left + right
+    label_length = label.cell_length
+    space_available = max(0, width - corners_needed - label_length)
+
+    middle_segments: list[Segment]
+    if not space_available:
+        middle_segments = [label]
+    elif label_alignment == "left" or label_alignment == "right":
+        edge = Segment(box2.text * space_available, box2.style)
+        middle_segments = [label, edge] if label_alignment == "left" else [edge, label]
+    elif label_alignment == "center":
+        length_on_left = space_available // 2
+        length_on_right = space_available - length_on_left
+        middle_segments = [
+            Segment(box2.text * length_on_left, box2.style),
+            label,
+            Segment(box2.text * length_on_right, box2.style),
+        ]
     else:
-        return [Segment(box2.text * width, box2.style)]
+        assert False
+
+    if left and right:
+        return [box1] + middle_segments + [box3]
+    if left:
+        return [box1] + middle_segments
+    if right:
+        return middle_segments + [box3]
+    else:
+        return middle_segments
 
 
 _edge_type_normalization_table: dict[EdgeType, EdgeType] = {

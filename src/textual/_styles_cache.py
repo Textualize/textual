@@ -280,14 +280,15 @@ class StylesCache:
         line: Iterable[Segment]
         # Draw top or bottom borders (A)
         if (border_top and y == 0) or (border_bottom and y == height - 1):
+            is_top = y == 0
             border_color = base_background + (
-                border_top_color if y == 0 else border_bottom_color
+                border_top_color if is_top else border_bottom_color
             )
             border_color_as_style = from_color(color=border_color.rich_color)
-            border_edge_type = border_top if y == 0 else border_bottom
+            border_edge_type = border_top if is_top else border_bottom
             label = render_border_label(
-                self._border_title if y == 0 else self._border_subtitle,
-                y == 0,
+                self._border_title if is_top else self._border_subtitle,
+                is_top,
                 border_edge_type,
                 width,
                 inner,
@@ -300,11 +301,16 @@ class StylesCache:
                 outer,
                 border_color_as_style,
             )
+            label_alignment = (
+                styles.border_title_align if is_top else styles.border_subtitle_align
+            )
             line = render_row(
-                box_segments[0 if y == 0 else 2],
+                box_segments[0 if is_top else 2],
                 width,
                 border_left != "",
                 border_right != "",
+                label,
+                label_alignment,
             )
 
         # Draw padding (B)
