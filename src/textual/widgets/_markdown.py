@@ -349,6 +349,7 @@ class MarkdownTableContent(Widget):
             style=self.rich_style,
             header_style=self.get_component_rich_style("markdown-table--header"),
             border_style=self.get_component_rich_style("markdown-table--lines"),
+            collapse_padding=True,
         )
         for header in self.headers:
             table.add_column(header)
