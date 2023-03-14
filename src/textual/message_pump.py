@@ -62,7 +62,7 @@ class MessagePumpMeta(type):
         isclass = inspect.isclass
         for value in class_dict.values():
             if isclass(value) and issubclass(value, Message):
-                if not value.namespace:
+                if "namespace" not in value.__dict__:
                     value.namespace = namespace
         class_obj = super().__new__(cls, name, bases, class_dict, **kwargs)
         return class_obj

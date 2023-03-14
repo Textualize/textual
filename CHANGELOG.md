@@ -20,6 +20,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Middle` https://github.com/Textualize/textual/issues/1957
 - Added `VerticalScroll` (mimicking the old behaviour of `Vertical`) https://github.com/Textualize/textual/issues/1957
 
+
+## [0.15.1] - 2023-03-14
+
+### Fixed
+
+- Fixed how the namespace for messages is calculated to facilitate inheriting messages https://github.com/Textualize/textual/issues/1814
+- `Tab` is now correctly made available from `textual.widgets`. https://github.com/Textualize/textual/issues/2044
+
+## [0.15.0] - 2023-03-13
+
 ### Fixed
 
 - Fixed container not resizing when a widget is removed https://github.com/Textualize/textual/issues/2007
@@ -603,6 +613,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.15.1]: https://github.com/Textualize/textual/compare/v0.15.0...v0.15.1
+[0.15.0]: https://github.com/Textualize/textual/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/Textualize/textual/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/Textualize/textual/compare/v0.12.1...v0.13.0
 [0.12.1]: https://github.com/Textualize/textual/compare/v0.12.0...v0.12.1
