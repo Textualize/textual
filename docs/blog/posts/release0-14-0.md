@@ -35,7 +35,7 @@ Additionally, we've simplified constructing messages classes. Previously all mes
 So prior to 0.14.0 you might have posted messages like the following:
 
 ```python
-async self.post_message(self.Changed(self, item=self.item))
+await self.post_message(self.Changed(self, item=self.item))
 ```
 
 You can now replace it with this simpler function call:
