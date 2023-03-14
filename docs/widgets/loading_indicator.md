@@ -5,6 +5,16 @@ Displays pulsating dots to indicate when data is being loaded.
 - [ ] Focusable
 - [ ] Container
 
+You can set the color of the loading indicator by setting its `color` style.
+
+Here's how you would do that with CSS:
+
+```sass
+LoadingIndicator {
+    color: red;
+}
+```
+
 
 === "Output"
 
@@ -16,8 +26,6 @@ Displays pulsating dots to indicate when data is being loaded.
     ```python
     --8<-- "docs/examples/widgets/loading_indicator.py"
     ```
-
-
 
 ## See Also
 
