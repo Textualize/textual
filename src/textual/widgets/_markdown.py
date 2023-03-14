@@ -321,7 +321,7 @@ class MarkdownOrderedList(MarkdownList):
 class MarkdownTableContent(Widget):
     DEFAULT_CSS = """
     MarkdownTableContent {
-        width: auto;
+        width: 100%;
         height: auto;
 
     }
@@ -330,7 +330,7 @@ class MarkdownTableContent(Widget):
 
     }
     MarkdownTableContent > .markdown-table--lines {
-        color: $panel;
+
     }
     """
 
@@ -344,12 +344,13 @@ class MarkdownTableContent(Widget):
 
     def render(self) -> Table:
         table = Table(
-            expand=False,
+            expand=True,
             box=box.SIMPLE_HEAVY,
             style=self.rich_style,
             header_style=self.get_component_rich_style("markdown-table--header"),
             border_style=self.get_component_rich_style("markdown-table--lines"),
             collapse_padding=True,
+            padding=0,
         )
         for header in self.headers:
             table.add_column(header)
