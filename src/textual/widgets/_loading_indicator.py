@@ -6,26 +6,20 @@ from rich.console import RenderableType
 from rich.style import Style
 from rich.text import Text
 
-from ..color import Gradient
+from ..color import Color, Gradient
 from ..widget import Widget
 
 
 class LoadingIndicator(Widget):
     """Display an animated loading indicator."""
 
-    COMPONENT_CLASSES = {"loading-indicator--dot"}
-
     DEFAULT_CSS = """
     LoadingIndicator {
         width: 100%;
         height: 100%;
         content-align: center middle;
-    }
-
-    LoadingIndicator > .loading-indicator--dot {
         color: $accent;
     }
-
     """
 
     def on_mount(self) -> None:
@@ -36,11 +30,7 @@ class LoadingIndicator(Widget):
         elapsed = time() - self._start_time
         speed = 0.8
         dot = "\u25CF"
-        dot_styles = self.get_component_styles("loading-indicator--dot")
-
-        base_style = self.rich_style
-        background = self.background_colors[-1]
-        color = dot_styles.color
+        _, _, background, color = self.colors
 
         gradient = Gradient(
             (0.0, background.blend(color, 0.1)),
@@ -53,8 +43,7 @@ class LoadingIndicator(Widget):
         dots = [
             (
                 f"{dot} ",
-                base_style
-                + Style.from_color(gradient.get_color((1 - blend) ** 2).rich_color),
+                Style.from_color(gradient.get_color((1 - blend) ** 2).rich_color),
             )
             for blend in blends
         ]
