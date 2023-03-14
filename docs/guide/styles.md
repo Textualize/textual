@@ -257,6 +257,22 @@ There are many other border types. Run the following from the command prompt to 
 textual borders
 ```
 
+
+#### Border labels (title and subtitle)
+
+A widget that has a border set can have a title in the top edge of the border.
+For that, set the attribute [`border_title`][textual.widget.Widget.border_title] in your widget.
+Similarly, a widget with a border can have a subtitle in its bottom edge.
+To change it, assign to the attribute [`border_subtitle`][textual.widget.Widget.border_subtitle].
+
+These labels must be one-line strings, but they can contain rich markup.
+Additionally, the labels can be aligned horizontally with the respective styles:
+
+ - [`border-title-align`](../styles/border_title_align.md) for the title; and
+ - [`border-subtitle-align`](../styles/border_subtitle_align.md) for the subtitle.
+
+--8<-- "docs/snippets/border_sub_title_align_all_example.md"
+
 ### Outline
 
 [Outline](../styles/outline.md) is similar to border and is set in the same way. The difference is that outline will not change the size of the widget, and may overlap the content area. The following example sets an outline on a widget:

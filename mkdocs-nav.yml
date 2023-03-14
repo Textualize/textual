@@ -67,6 +67,8 @@ nav:
       - "styles/align.md"
       - "styles/background.md"
       - "styles/border.md"
+      - "styles/border_subtitle_align.md"
+      - "styles/border_title_align.md"
       - "styles/box_sizing.md"
       - "styles/color.md"
       - "styles/content_align.md"
