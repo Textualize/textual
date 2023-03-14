@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 from functools import lru_cache
-from typing import TYPE_CHECKING, Tuple, Union, cast
+from typing import TYPE_CHECKING, Tuple, cast
 
+from rich.console import Console
 from rich.segment import Segment
 from rich.style import Style
+from rich.text import Text
 
 from .color import Color
 from .css.types import EdgeStyle, EdgeType
@@ -103,7 +105,8 @@ BORDER_CHARS: dict[
 }
 
 # Some of the borders are on the widget background and some are on the background of the parent
-# This table selects which for each character, 0 indicates the widget, 1 selects the parent
+# This table selects which for each character, 0 indicates the widget, 1 selects the parent.
+# 2 and 3 reverse a cross-combination of the background and foreground colors of 0 and 1.
 BORDER_LOCATIONS: dict[
     EdgeType, tuple[tuple[int, int, int], tuple[int, int, int], tuple[int, int, int]]
 ] = {
@@ -189,6 +192,14 @@ BORDER_LOCATIONS: dict[
     ),
 }
 
+# In a similar fashion, we extract the border _label_ locations for easier access when
+# rendering a border label.
+# The values are a pair with (title location, subtitle location).
+BORDER_LABEL_LOCATIONS: dict[EdgeType, tuple[int, int]] = {
+    edge_type: (locations[0][1], locations[2][1])
+    for edge_type, locations in BORDER_LOCATIONS.items()
+}
+
 INVISIBLE_EDGE_TYPES = cast("frozenset[EdgeType]", frozenset(("", "none", "hidden")))
 
 BorderValue: TypeAlias = Tuple[EdgeType, Color]
@@ -259,6 +270,63 @@ def get_box(
             _Segment(bottom3, styles[lbottom3]),
         ),
     )
+
+
+@lru_cache(maxsize=1024)
+def render_border_label(
+    label: str,
+    is_title: bool,
+    name: EdgeType,
+    width: int,
+    inner_style: Style,
+    outer_style: Style,
+    style: Style,
+) -> Segment:
+    """Render a border label (the title or subtitle) with optional markup.
+
+    The styling that may be embedded in the label will be reapplied after taking into
+    account the inner, outer, and border-specific styles.
+
+    Args:
+        label: The label to display (that may contain markup).
+        is_title: Whether we are rendering the title (`True`) or the subtitle (`False`).
+        name: Name of the box type.
+        width: The width, in cells, of the space available for the whole edge.
+            This accounts for the 2 cells made available for the corner, which means
+            that the space available for the label is effectively `width - 2`.
+        inner_style: The inner style (widget background).
+        outer_style: The outer style (parent background).
+        style: Widget style.
+    """
+    if not label:
+        return Segment("", Style())
+
+    console = Console(width=width - 2)
+    text_label = Text.from_markup(label)
+    wrapped = text_label.wrap(console, console.width, overflow="ellipsis", no_wrap=True)
+    segment_label = next(segment for segment in console.render(wrapped))
+
+    label_style_location = BORDER_LABEL_LOCATIONS[name][0 if is_title else 1]
+
+    inner = inner_style + style
+    outer = outer_style + style
+    segment_style: Style
+    if label_style_location == 0:
+        segment_style = inner + segment_label.style
+    elif label_style_location == 1:
+        segment_style = outer + segment_label.style
+    elif label_style_location == 2:
+        segment_style = (
+            Style.from_color(outer.bgcolor, inner.color) + segment_label.style
+        )
+    elif label_style_location == 3:
+        segment_style = (
+            Style.from_color(inner.bgcolor, outer.color) + segment_label.style
+        )
+    else:
+        assert False
+
+    return Segment(segment_label.text, segment_style)
 
 
 def render_row(

@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Callable, Iterable
 from rich.segment import Segment
 from rich.style import Style
 
-from ._border import get_box, render_row
+from ._border import get_box, render_border_label, render_row
 from ._opacity import _apply_opacity
 from ._segment_tools import line_pad, line_trim
 from .color import Color
@@ -283,11 +283,22 @@ class StylesCache:
             border_color = base_background + (
                 border_top_color if y == 0 else border_bottom_color
             )
-            box_segments = get_box(
-                border_top if y == 0 else border_bottom,
+            border_color_as_style = from_color(color=border_color.rich_color)
+            border_edge_type = border_top if y == 0 else border_bottom
+            label = render_border_label(
+                self._border_title if y == 0 else self._border_subtitle,
+                y == 0,
+                border_edge_type,
+                width,
                 inner,
                 outer,
-                from_color(color=border_color.rich_color),
+                border_color_as_style,
+            )
+            box_segments = get_box(
+                border_edge_type,
+                inner,
+                outer,
+                border_color_as_style,
             )
             line = render_row(
                 box_segments[0 if y == 0 else 2],
