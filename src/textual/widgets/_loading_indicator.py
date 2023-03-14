@@ -6,7 +6,7 @@ from rich.console import RenderableType
 from rich.style import Style
 from rich.text import Text
 
-from ..color import Color, Gradient
+from ..color import Gradient
 from ..widget import Widget
 
 
