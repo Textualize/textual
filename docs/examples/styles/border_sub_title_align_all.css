@@ -1,0 +1,68 @@
+Grid {
+    grid-size: 3 3;
+    align: center middle;
+}
+
+Container {
+    width: 100%;
+    height: 100%;
+    align: center middle;
+}
+
+#lbl1 {
+    border: vkey $secondary;
+    border-title-align: left;  /* (1)! */
+    border-subtitle-align: left;
+}
+
+#lbl2 {
+    border: round $secondary;
+    /* Default is `left`. */
+    border-title-align: ;  /* (2)! */
+    border-subtitle-align: center;
+}
+
+#lbl3 {
+    border: wide $secondary;
+    padding: 1;
+    border-title-align: left;
+    /* Default is `right`. */
+    border-subtitle-align: ;  /* (3)! */
+}
+
+#lbl4 {
+    border: ascii $success;
+    border-title-align: center;
+    border-subtitle-align: left;
+}
+
+#lbl5 {
+    /* No border = no (sub)title. */
+    border: none $success;  /* (4)! */
+    border-title-align: center;
+    border-subtitle-align: center;
+}
+
+#lbl6 {
+    border: solid $success;
+    border-title-align: center;
+    border-subtitle-align: right;
+}
+
+#lbl7 {
+    border: hkey $error;
+    border-title-align: right;
+    border-subtitle-align: left;
+}
+
+#lbl8 {
+    border: inner $error;
+    border-title-align: right;
+    border-subtitle-align: center;
+}
+
+#lbl9 {
+    border: heavy $error;
+    border-title-align: right;
+    border-subtitle-align: right;
+}
