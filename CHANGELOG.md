@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Changed
+
+- Dropped "loading-indicator--dot" component style from LoadingIndicator https://github.com/Textualize/textual/pull/2050
 
 ## [0.15.1] - 2023-03-14
 
