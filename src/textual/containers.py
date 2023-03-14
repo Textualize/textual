@@ -14,7 +14,7 @@ class Container(Widget):
 
 
 class Vertical(Widget):
-    """A container which lays children vertically."""
+    """A container which arranges children vertically."""
 
     DEFAULT_CSS = """
     Vertical {
@@ -26,7 +26,7 @@ class Vertical(Widget):
 
 
 class VerticalScroll(Widget):
-    """A container which aligns children vertically and overflows automatically."""
+    """A container which arranges children vertically, with an automatic vertical scrollbar."""
 
     DEFAULT_CSS = """
     VerticalScroll {
@@ -38,7 +38,7 @@ class VerticalScroll(Widget):
 
 
 class Horizontal(Widget):
-    """A container which lays children horizontally."""
+    """A container which arranges children horizontally."""
 
     DEFAULT_CSS = """
     Horizontal {
@@ -50,7 +50,7 @@ class Horizontal(Widget):
 
 
 class HorizontalScroll(Widget):
-    """A container which lays children horizontally and overflows automatically."""
+    """A container which arranges children horizontally, with an automatic horizontal scrollbar."""
 
     DEFAULT_CSS = """
     HorizontalScroll {
