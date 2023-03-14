@@ -23,6 +23,7 @@ if typing.TYPE_CHECKING:
     from ._list_view import ListView
     from ._loading_indicator import LoadingIndicator
     from ._markdown import Markdown, MarkdownViewer
+    from ._menu import Menu
     from ._placeholder import Placeholder
     from ._pretty import Pretty
     from ._radio_button import RadioButton
@@ -50,6 +51,7 @@ __all__ = [
     "LoadingIndicator",
     "Markdown",
     "MarkdownViewer",
+    "Menu",
     "Placeholder",
     "Pretty",
     "RadioButton",
