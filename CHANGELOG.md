@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed how the namespace for messages is calculated to facilitate inheriting messages https://github.com/Textualize/textual/issues/1814
-- `Tab` is now correctly made available from `textual.widgets`.
+- `Tab` is now correctly made available from `textual.widgets`. https://github.com/Textualize/textual/issues/2044
 
 ## [0.15.0] - 2023-03-13
 
