@@ -2364,12 +2364,20 @@ class Widget(DOMNode):
         first, *_ = title.splitlines()
         return first
 
+    def watch_border_title(self, title: str) -> None:
+        """Update border title internally."""
+        self._styles_cache._border_title = title
+
     def validate_border_subtitle(self, subtitle: str) -> str:
         """Ensure we only use a single line for the border subtitle."""
         if not subtitle:
             return subtitle
         first, *_ = subtitle.splitlines()
         return first
+
+    def watch_border_subtitle(self, subtitle: str) -> None:
+        """Update the border subtitle internally."""
+        self._styles_cache._border_subtitle = subtitle
 
     def _size_updated(
         self, size: Size, virtual_size: Size, container_size: Size, layout: bool = True

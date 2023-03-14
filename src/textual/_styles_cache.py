@@ -66,6 +66,11 @@ class StylesCache:
 
     """
 
+    _border_title: str = ""
+    """The widget's border title."""
+    _border_subtitle: str = ""
+    """The widget's border subtitle."""
+
     def __init__(self) -> None:
         self._cache: dict[int, Strip] = {}
         self._dirty_lines: set[int] = set()
