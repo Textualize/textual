@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Dropped "loading-indicator--dot" component style from LoadingIndicator
+- Dropped "loading-indicator--dot" component style from LoadingIndicator https://github.com/Textualize/textual/pull/2050
 
 ## [0.15.1] - 2023-03-14
 
