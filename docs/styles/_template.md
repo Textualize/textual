@@ -19,23 +19,7 @@ rule-name: <a href="../../css_types/type_one">&lt;type-one&gt;</a>;
 ### Values
 
 <!--
-If this rule only needs one type, include it directly:
-
---8<-- "docs/snippets/type_syntax/only_type.md"
--->
-
-<!--
-If this rule needs two or more types:
-
-### &lt;first-type&gt;
-
---8<-- "docs/snippets/type_syntax/first_type.md"
-
-### &lt;second-type&gt;
-
---8<-- "docs/snippets/type_syntax/second_type.md"
-
-...
+For enum-like styles that don't warrant a dedicated type.
 -->
 
 ### Defaults
@@ -120,12 +104,12 @@ Copy the same examples as the ones shown in the CSS above.
 If the programmatic way of setting the rule differs significantly from the CSS way, make note of that here.
 
 ```py
-rule_name = value1
-rule_name = value2
-rule_name = (different_syntax_value, shown_here)
+widget.styles.rule_name = value1
+widget.styles.rule_name = value2
+widget.styles.rule_name = (different_syntax_value, shown_here)
 
-rule_name_variant = value3
-rule_name_variant = value4
+widget.styles.rule_name_variant = value3
+widget.styles.rule_name_variant = value4
 ```
 
 -->
