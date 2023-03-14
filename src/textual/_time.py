@@ -44,11 +44,10 @@ else:
             await asyncio_sleep(sleep_for)
 
 
-def get_time() -> float:
-    """Get the current wall clock (monotonic) time.
+get_time = time
+"""Get the current wall clock (monotonic) time.
 
-    Returns:
-        The value (in fractional seconds) of a monotonic clock,
-        i.e. a clock that cannot go backwards.
-    """
-    return time()
+Returns:
+    The value (in fractional seconds) of a monotonic clock,
+    i.e. a clock that cannot go backwards.
+"""
