@@ -4,8 +4,10 @@ from pathlib import Path, PurePath
 from typing import Iterable
 
 from markdown_it import MarkdownIt
+from rich import box
 from rich.style import Style
 from rich.syntax import Syntax
+from rich.table import Table
 from rich.text import Text
 from typing_extensions import TypeAlias
 
@@ -316,17 +318,57 @@ class MarkdownOrderedList(MarkdownList):
         self._blocks.clear()
 
 
+class MarkdownTableContent(Widget):
+    DEFAULT_CSS = """
+    MarkdownTableContent {
+        width: auto;
+        height: auto;
+
+    }
+    MarkdownTableContent > .markdown-table--header {
+        text-style: bold;
+
+    }
+    MarkdownTableContent > .markdown-table--lines {
+        color: $panel;
+    }
+    """
+
+    COMPONENT_CLASSES = {"markdown-table--header", "markdown-table--lines"}
+
+    def __init__(self, headers: list[Text], rows: list[list[Text]]):
+        self.headers = headers
+        self.rows = rows
+        super().__init__()
+        self.shrink = True
+
+    def render(self) -> Table:
+        table = Table(
+            expand=False,
+            box=box.SIMPLE_HEAVY,
+            style=self.rich_style,
+            header_style=self.get_component_rich_style("markdown-table--header"),
+            border_style=self.get_component_rich_style("markdown-table--lines"),
+        )
+        for header in self.headers:
+            table.add_column(header)
+        for row in self.rows:
+            if row:
+                table.add_row(*row)
+        return table
+
+
 class MarkdownTable(MarkdownBlock):
     """A Table markdown Block."""
 
     DEFAULT_CSS = """
     MarkdownTable {
-        margin: 1 0;
-    }
-    MarkdownTable > DataTable {
         width: 100%;
-        height: auto;
+        margin: 1 0;
+        background: $panel;
+        border: wide $background;
     }
+
     """
 
     def compose(self) -> ComposeResult:
@@ -346,11 +388,7 @@ class MarkdownTable(MarkdownBlock):
             elif isinstance(block, MarkdownTD):
                 rows[-1].append(block._text)
 
-        table: DataTable = DataTable(zebra_stripes=True, show_cursor=False)
-        table.can_focus = False
-        table.add_columns(*headers)
-        table.add_rows([row for row in rows if row])
-        yield table
+        yield MarkdownTableContent(headers, rows)
         self._blocks.clear()
 
 
