@@ -68,10 +68,10 @@ dock: top;     /* Docks on the    top edge of the parent container. */
 ## Python
 
 ```python
-widget.styles.dock = bottom;  # Dock bottom.
-widget.styles.dock = left;    # Dock   left.
-widget.styles.dock = right;   # Dock  right.
-widget.styles.dock = top;     # Dock    top.
+widget.styles.dock = "bottom"  # Dock bottom.
+widget.styles.dock = "left"    # Dock   left.
+widget.styles.dock = "right"   # Dock  right.
+widget.styles.dock = "top"     # Dock    top.
 ```
 
 ## See also
