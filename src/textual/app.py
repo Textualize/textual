@@ -1131,6 +1131,20 @@ class App(Generic[ReturnType], DOMNode):
             else self.screen.get_widget_by_id(id, expect_type)
         )
 
+    def get_child_by_type(self, expect_type: type[ExpectType]) -> ExpectType:
+        """Get a child of a give type.
+
+        Args:
+            expect_type: The type of the expected child.
+
+        Raises:
+            NoMatches: If no valid child is found.
+
+        Returns:
+            A widget.
+        """
+        return self.screen.get_child_by_type(expect_type)
+
     def update_styles(self, node: DOMNode | None = None) -> None:
         """Request update of styles.
 

@@ -61,12 +61,10 @@ class ContentSwitcher(Container):
 
     def on_mount(self) -> None:
         """Perform the initial setup of the widget once the DOM is ready."""
-        # On startup, ensure everything is hidden.
+        initial = self._initial
         with self.app.batch_update():
             for child in self.children:
-                child.display = False
-        # Then set the initial display.
-        self.current = self._initial
+                child.display = child.id == initial
 
     @property
     def visible_content(self) -> Widget | None:

@@ -475,6 +475,23 @@ class Widget(DOMNode):
                 ) from exc
         raise NoMatches(f"No descendant found with id={id!r}")
 
+    def get_child_by_type(self, expect_type: type[ExpectType]) -> ExpectType:
+        """Get a child of a give type.
+
+        Args:
+            expect_type: The type of the expected child.
+
+        Raises:
+            NoMatches: If no valid child is found.
+
+        Returns:
+            A widget.
+        """
+        for child in self._nodes:
+            if isinstance(child, expect_type):
+                return child
+        raise NoMatches(f"No immediate child of type {expect_type}; {self._nodes}")
+
     def get_component_rich_style(self, name: str, *, partial: bool = False) -> Style:
         """Get a *Rich* style for a component.
 
@@ -495,6 +512,24 @@ class Widget(DOMNode):
         style, partial_style = self._rich_style_cache[name]
 
         return partial_style if partial else style
+
+    def render_str(self, text_content: str | Text) -> Text:
+        """Convert str in to a Text object.
+
+        If you pass in an existing Text object it will be returned unaltered.
+
+        Args:
+            text_content: Text or str.
+
+        Returns:
+            A text object.
+        """
+        text = (
+            Text.from_markup(text_content)
+            if isinstance(text_content, str)
+            else text_content
+        )
+        return text
 
     def _arrange(self, size: Size) -> DockArrangeResult:
         """Arrange children.
@@ -2589,7 +2624,7 @@ class Widget(DOMNode):
             True if the message was posted, False if this widget was closed / closing.
         """
 
-        if not self.is_running:
+        if not self.is_running and not message.no_dispatch:
             try:
                 self.log.warning(self, f"IS NOT RUNNING, {message!r} not sent")
             except NoActiveAppError:

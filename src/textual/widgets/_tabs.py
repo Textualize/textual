@@ -175,7 +175,7 @@ class Tabs(Widget, can_focus=True):
     class TabActivated(Message):
         """Sent when a new tab is activated."""
 
-        tab: Tab
+        tab: Tab | None
         """The tab that was activated."""
 
         def __init__(self, tab: Tab | None) -> None:
