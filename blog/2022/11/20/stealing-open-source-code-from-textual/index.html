@@ -6410,7 +6410,7 @@
 <!-- more -->
 
 <h2 id="loop-first-last">Loop first / last<a class="headerlink" href="#loop-first-last" title="Permanent link">&para;</a></h2>
-<p>How often do you find yourself looping over an iterable and needing to know if an element is the first and/or last in the sequence? It's a simple thing, but I find myself nedding this a <em>lot</em>, so I wrote some helpers in <a href="https://github.com/Textualize/textual/blob/main/src/textual/_loop.py">_loop.py</a>. </p>
+<p>How often do you find yourself looping over an iterable and needing to know if an element is the first and/or last in the sequence? It's a simple thing, but I find myself needing this a <em>lot</em>, so I wrote some helpers in <a href="https://github.com/Textualize/textual/blob/main/src/textual/_loop.py">_loop.py</a>.</p>
 <p>I'm sure there is an equivalent implementation on PyPI, but steal this if you need it.</p>
 <p>Here's an example of use:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">for</span> <span class="n">last</span><span class="p">,</span> <span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span> <span class="ow">in</span> <span class="n">loop_last</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">y</span><span class="p">)):</span>
@@ -6437,7 +6437,7 @@
 </code></pre></div>
 <p>In Textual, we use a <a href="https://github.com/Textualize/textual/search?q=LRUCache">LRUCache</a> to store the results of rendering content to the terminal. For example, in a <a href="https://twitter.com/search?q=%23textualdatatable&amp;src=typed_query&amp;f=live">datatable</a> it is too costly to render everything up front. So Textual renders only the lines that are currently visible on the "screen". The cache ensures that scrolling only needs to render the newly exposed lines, and lines that haven't been displayed in a while are discarded to save memory.</p>
 <h2 id="color">Color<a class="headerlink" href="#color" title="Permanent link">&para;</a></h2>
-<p>Textual has a <a href="https://github.com/Textualize/textual/blob/main/src/textual/color.py">Color</a> class which could be extracted in to a module of its own. </p>
+<p>Textual has a <a href="https://github.com/Textualize/textual/blob/main/src/textual/color.py">Color</a> class which could be extracted in to a module of its own.</p>
 <p>The Color class can parse colors encoded in a variety of HTML and CSS formats. Color object support a variety of methods and operators you can use to manipulate colors, in a fairly natural way.</p>
 <p>Here's some examples in the REPL.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">textual.color</span> <span class="kn">import</span> <span class="n">Color</span>

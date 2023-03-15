@@ -6382,11 +6382,11 @@
 
 
 <h1 id="no-async-async-with-python">No-async async with Python<a class="headerlink" href="#no-async-async-with-python" title="Permanent link">&para;</a></h1>
-<p>A (reasonable) criticism of async is that it tends to proliferate in your code. In order to <code>await</code> something, your functions must be <code>async</code> all the way up the call-stack.</p>
+<p>A (reasonable) criticism of async is that it tends to proliferate in your code. In order to <code>await</code> something, your functions must be <code>async</code> all the way up the call-stack. This tends to result in you making things <code>async</code> just to support that one call that needs it or, worse, adding <code>async</code> just-in-case. Given that going from <code>def</code> to <code>async def</code> is a breaking change there is a strong incentive to go straight there.</p>
 <p>Before you know it, you have adopted a policy of "async all the things".</p>
 <!-- more -->
 
-<p>Textual is very much an async framework, but doesn't <em>require</em> the app developer to use the <code>async</code> and <code>await</code> keywords. Async in Textual apps is entirely optional. This post is about how Textual accomplishes this async-agnosticism.</p>
+<p>Textual is an async framework, but doesn't <em>require</em> the app developer to use the <code>async</code> and <code>await</code> keywords (but you can if you need to). This post is about how Textual accomplishes this async-agnosticism.</p>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
 <p>See this <a href="https://textual.textualize.io/guide/widgets/#attributes-down">example</a> from the docs for an async-less Textual app.</p>
