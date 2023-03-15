@@ -73,7 +73,7 @@ The "await me maybe" pattern is great when an async framework calls the app's co
 
 Textual's API consists of regular methods for the most part, but there are a few methods which are optionally awaitable. These are *not* coroutines (which must be awaited to do anything).
 
-In practice, this means that those API calls initiate something which will complete a short time later. If you discard the return value then it won't prevent it from working. You only need to `await` if you want to to know when it has finished.
+In practice, this means that those API calls initiate something which will complete a short time later. If you discard the return value then it won't prevent it from working. You only need to `await` if you want to know when it has finished.
 
 The `mount` method is one such method. Calling it will add a widget to the screen:
 
