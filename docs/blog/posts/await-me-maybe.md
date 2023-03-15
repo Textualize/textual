@@ -9,13 +9,13 @@ authors:
 
 # No-async async with Python
 
-A (reasonable) criticism of async is that it tends to proliferate in your code. In order to `await` something, your functions must be `async` all the way up the call-stack.
+A (reasonable) criticism of async is that it tends to proliferate in your code. In order to `await` something, your functions must be `async` all the way up the call-stack. This tends to result in you making things `async` just to support that one call that needs it or, worse, adding `async` just-in-case. Given that going from `def` to `async def` is a breaking change there is a strong incentive to go straight there.
 
 Before you know it, you have adopted a policy of "async all the things".
 
 <!-- more -->
 
-Textual is very much an async framework, but doesn't *require* the app developer to use the `async` and `await` keywords. Async in Textual apps is entirely optional. This post is about how Textual accomplishes this async-agnosticism.
+Textual is an async framework, but doesn't *require* the app developer to use the `async` and `await` keywords (but you can if you need to). This post is about how Textual accomplishes this async-agnosticism.
 
 !!! info
 
