@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path, PurePath
-from typing import Iterable
+from typing import Iterable, Callable
 
 from markdown_it import MarkdownIt
 from rich.style import Style
@@ -17,7 +17,6 @@ from ..widget import Widget
 from ..widgets import DataTable, Static, Tree
 
 TableOfContentsType: TypeAlias = "list[tuple[int, str, str | None]]"
-
 
 class Navigator:
     """Manages a stack of paths like a browser."""
@@ -509,6 +508,7 @@ class Markdown(Widget):
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
+        parser_factory: Optional[Callable[[], MarkdownIt]] = None
     ):
         """A Markdown widget.
 
@@ -517,9 +517,11 @@ class Markdown(Widget):
             name: The name of the widget.
             id: The ID of the widget in the DOM.
             classes: The CSS classes of the widget.
+            parser_factory: A factory function to return a configured MarkdownIt instance. If `None`, a "gfm-like" parser is used.
         """
         super().__init__(name=name, id=id, classes=classes)
         self._markdown = markdown
+        self._parser_factory = parser_factory
 
     class TableOfContentsUpdated(Message, bubble=True):
         """The table of contents was updated."""
@@ -574,7 +576,7 @@ class Markdown(Widget):
         """
         output: list[MarkdownBlock] = []
         stack: list[MarkdownBlock] = []
-        parser = MarkdownIt("gfm-like")
+        parser = self._parser_factory() if self._parser_factory else MarkdownIt("gfm-like")
 
         content = Text()
         block_id: int = 0
@@ -799,6 +801,7 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
+        parser_factory: Optional[Callable[[], MarkdownIt]] = None
     ):
         """Create a Markdown Viewer object.
 
@@ -808,10 +811,12 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
             name: The name of the widget.
             id: The ID of the widget in the DOM.
             classes: The CSS classes of the widget.
+            parser_factory: A factory function to return a configured MarkdownIt instance. If `None`, a "gfm-like" parser is used.
         """
         super().__init__(name=name, id=id, classes=classes)
         self.show_table_of_contents = show_table_of_contents
         self._markdown = markdown
+        self._parser_factory = parser_factory
 
     @property
     def document(self) -> Markdown:
@@ -850,7 +855,7 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
 
     def compose(self) -> ComposeResult:
         yield MarkdownTableOfContents()
-        yield Markdown()
+        yield Markdown(parser_factory=self._parser_factory)
 
     def on_markdown_table_of_contents_updated(
         self, message: Markdown.TableOfContentsUpdated
