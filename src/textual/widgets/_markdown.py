@@ -16,7 +16,7 @@ from ..containers import Horizontal, Vertical
 from ..message import Message
 from ..reactive import reactive, var
 from ..widget import Widget
-from ..widgets import DataTable, Static, Tree
+from ..widgets import Static, Tree
 
 TableOfContentsType: TypeAlias = "list[tuple[int, str, str | None]]"
 
@@ -319,6 +319,8 @@ class MarkdownOrderedList(MarkdownList):
 
 
 class MarkdownTableContent(Widget):
+    """Renders a Markdown table."""
+
     DEFAULT_CSS = """
     MarkdownTableContent {
         width: 100%;
@@ -327,10 +329,6 @@ class MarkdownTableContent(Widget):
     }
     MarkdownTableContent > .markdown-table--header {
         text-style: bold;
-
-    }
-    MarkdownTableContent > .markdown-table--lines {
-
     }
     """
 
@@ -338,7 +336,9 @@ class MarkdownTableContent(Widget):
 
     def __init__(self, headers: list[Text], rows: list[list[Text]]):
         self.headers = headers
+        """List of header text."""
         self.rows = rows
+        """The row contents."""
         super().__init__()
         self.shrink = True
 
@@ -409,17 +409,9 @@ class MarkdownTR(MarkdownBlock):
 class MarkdownTH(MarkdownBlock):
     """A table header Markdown block."""
 
-    DEFAULT_CSS = """
-
-    """
-
 
 class MarkdownTD(MarkdownBlock):
     """A table data Markdown block."""
-
-    DEFAULT_CSS = """
-
-    """
 
 
 class MarkdownBullet(Widget):
@@ -759,7 +751,7 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
     }
     """
 
-    table_of_contents: reactive[TableOfContentsType | None] = reactive(None, init=False)
+    table_of_contents = reactive[TableOfContentsType | None](None, init=False)
 
     def compose(self) -> ComposeResult:
         tree: Tree = Tree("TOC")
