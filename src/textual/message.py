@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, ClassVar
 
 import rich.repr
 
-from . import _clock
+from . import _time
 from ._context import active_message_pump
 from ._types import MessageTarget as MessageTarget
 from .case import camel_to_snake
@@ -34,7 +34,7 @@ class Message:
 
     def __init__(self) -> None:
         self._sender: MessageTarget | None = active_message_pump.get(None)
-        self.time: float = _clock.get_time_no_wait()
+        self.time: float = _time.get_time()
         self._forwarded = False
         self._no_default_action = False
         self._stop_propagation = False
