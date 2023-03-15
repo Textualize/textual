@@ -69,7 +69,7 @@ if __name__ == "__main__":
 
 ## Optionally awaitable
 
-The "await me maybe" pattern is great when an async framework calls the app's code. The app developer can chose to write async code or not. Things get a little more complicated when the an app wants to call the framework's API. If the API has *asynced all the things*, then it would force the app to do the same.
+The "await me maybe" pattern is great when an async framework calls the app's code. The app developer can choose to write async code or not. Things get a little more complicated when the app wants to call the framework's API. If the API has *asynced all the things*, then it would force the app to do the same.
 
 Textual's API consists of regular methods for the most part, but there are a few methods which are optionally awaitable. These are *not* coroutines (which must be awaited to do anything).
 
