@@ -139,6 +139,8 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         # relate to.
         self._lines: list[OptionLineSegments] = []
         self._spans: list[OptionLineSpan] = []
+        # TODO: Do I need to me telling it what width to deal with? Do I
+        # need to be working out all the lines again if I get resized?
         lines_from = self.app.console.render_lines
         line = 0
         for option in self._options:
