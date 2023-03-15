@@ -99,7 +99,7 @@ async def on_key(self):
     self.query_one(MyWidget).styles.border = ("heavy", "red")
 ```
 
-Incidentally, I found there were few examples of writing an awaitable object in Python. So here is the code for `AwaitMount` which is returned by the `mount` method:
+Incidentally, I found there were very few examples of writing awaitable objects in Python. So here is the code for `AwaitMount` which is returned by the `mount` method:
 
 ```python
 class AwaitMount:
