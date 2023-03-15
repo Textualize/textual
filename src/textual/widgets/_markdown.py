@@ -751,7 +751,7 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
     }
     """
 
-    table_of_contents = reactive[TableOfContentsType | None](None, init=False)
+    table_of_contents = reactive["TableOfContentsType | None"](None, init=False)
 
     def compose(self) -> ComposeResult:
         tree: Tree = Tree("TOC")
