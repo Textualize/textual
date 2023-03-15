@@ -6448,7 +6448,7 @@
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="c1"># add a border</span>
 <a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">query_one</span><span class="p">(</span><span class="n">MyWidget</span><span class="p">)</span><span class="o">.</span><span class="n">styles</span><span class="o">.</span><span class="n">border</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;heavy&quot;</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">)</span>
 </code></pre></div>
-<p>Incidentally, I found there were few examples of writing an awaitable object in Python. So here is the code for <code>AwaitMount</code> which is returned by the <code>mount</code> method:</p>
+<p>Incidentally, I found there were very few examples of writing awaitable objects in Python. So here is the code for <code>AwaitMount</code> which is returned by the <code>mount</code> method:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">class</span> <span class="nc">AwaitMount</span><span class="p">:</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;An awaitable returned by mount() and mount_all().&quot;&quot;&quot;</span>
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
