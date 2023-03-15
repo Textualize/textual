@@ -133,6 +133,6 @@ Textual did initially "async all the things", which you might see if you find so
 
 This is not because I dislike async. I'm a fan! But it does place a small burden on the developer (more to type and think about). With the current API you generally don't need to write coroutines, or remember to await things. But async is there if you need it.
 
-We're finding that Textual is increasingly becoming an UI to things which are naturally concurrent, so async was a good move. Concurrency can be a tricky subject, so we're planning some API magic to take the pain out of running tasks, threads, and processes. Stay tuned!
+We're finding that Textual is increasingly becoming a UI to things which are naturally concurrent, so async was a good move. Concurrency can be a tricky subject, so we're planning some API magic to take the pain out of running tasks, threads, and processes. Stay tuned!
 
 Join us on our [Discord server](https://discord.gg/Enf6Z3qhVr) if you want to talk about these things with the Textualize developers.
