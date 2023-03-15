@@ -551,7 +551,7 @@ We also want the switches to update if the user edits the decimal value.
 Since the switches are children of `ByteEditor` we can update them by setting their attributes directly.
 This is an example of "attributes down".
 
-=== "byte02.py"
+=== "byte03.py"
 
     ```python title="byte03.py" hl_lines="5 45-47 90 92-94 109-114 116-120"
     --8<-- "docs/examples/guide/compound/byte03.py"
