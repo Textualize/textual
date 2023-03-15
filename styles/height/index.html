@@ -6839,8 +6839,8 @@ Open the CSS file tab to see the comments that explain how each height is comput
 </div>
 <div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span> <span class="nn">textual.containers</span> <span class="kn">import</span> <span class="n">Vertical</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Placeholder</span><span class="p">,</span> <span class="n">Label</span><span class="p">,</span> <span class="n">Static</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span> <span class="nn">textual.containers</span> <span class="kn">import</span> <span class="n">VerticalScroll</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Label</span><span class="p">,</span> <span class="n">Placeholder</span><span class="p">,</span> <span class="n">Static</span>
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
 <a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
 <a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="k">class</span> <span class="nc">Ruler</span><span class="p">(</span><span class="n">Static</span><span class="p">):</span>
@@ -6851,7 +6851,7 @@ Open the CSS file tab to see the comments that explain how each height is comput
 <a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>
 <a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="k">class</span> <span class="nc">HeightComparisonApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
 <a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>        <span class="k">yield</span> <span class="n">Vertical</span><span class="p">(</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>        <span class="k">yield</span> <span class="n">VerticalScroll</span><span class="p">(</span>
 <a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="hll">            <span class="n">Placeholder</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;cells&quot;</span><span class="p">),</span>  <span class="c1"># (1)!</span>
 </span><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="hll">            <span class="n">Placeholder</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;percent&quot;</span><span class="p">),</span>
 </span><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="hll">            <span class="n">Placeholder</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">),</span>
@@ -6915,8 +6915,8 @@ Open the CSS file tab to see the comments that explain how each height is comput
 <ol>
 <li>This sets the height to 2 lines.</li>
 <li>This sets the height to 12.5% of the space made available by the container. The container is 24 lines tall, so 12.5% of 24 is 3.</li>
-<li>This sets the height to 5% of the width of the direct container, which is the <code>Vertical</code> container. Because it expands to fit all of the terminal, the width of the <code>Vertical</code> is 80 and 5% of 80 is 4.</li>
-<li>This sets the height to 12.5% of the height of the direct container, which is the <code>Vertical</code> container. Because it expands to fit all of the terminal, the height of the <code>Vertical</code> is 24 and 12.5% of 24 is 3.</li>
+<li>This sets the height to 5% of the width of the direct container, which is the <code>VerticalScroll</code> container. Because it expands to fit all of the terminal, the width of the <code>VerticalScroll</code> is 80 and 5% of 80 is 4.</li>
+<li>This sets the height to 12.5% of the height of the direct container, which is the <code>VerticalScroll</code> container. Because it expands to fit all of the terminal, the height of the <code>VerticalScroll</code> is 24 and 12.5% of 24 is 3.</li>
 <li>This sets the height to 6.25% of the viewport width, which is 80. 6.25% of 80 is 5.</li>
 <li>This sets the height to 12.5% of the viewport height, which is 24. 12.5% of 24 is 3.</li>
 <li>This sets the height of the placeholder to be the optimal size that fits the content without scrolling.
