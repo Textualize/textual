@@ -87,7 +87,7 @@ In this example we don't care that the widget hasn't been mounted immediately, o
 
 !!! note
 
-    Textual awaits the result of mount after the message handler, so even if you don't *explicitly* await it, it will have been completed by the time the next message handler run.
+    Textual awaits the result of mount after the message handler, so even if you don't *explicitly* await it, it will have been completed by the time the next message handler runs.
 
 We might care if we want to mount a widget then make some changes to it. By making the handler `async` and awaiting the result of mount, we can be sure that the widget has been initialized before we update it:
 
