@@ -66,7 +66,7 @@ class Message:
 
     @property
     def sender(self) -> MessageTarget:
-        """The sender of the message."""
+        """The active message target when the message was posted."""
         assert self._sender is not None
         return self._sender
 
