@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed borders not rendering correctly.
+- Fixed borders not rendering correctly. https://github.com/Textualize/textual/pull/2074
 
 ### Changed
 
