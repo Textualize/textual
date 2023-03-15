@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.containers import Container, Horizontal, Vertical
+from textual.containers import Container, Horizontal, VerticalScroll
 from textual.widgets import Header, Static
 
 
@@ -9,7 +9,7 @@ class CombiningLayoutsExample(App):
     def compose(self) -> ComposeResult:
         yield Header()
         with Container(id="app-grid"):
-            with Vertical(id="left-pane"):
+            with VerticalScroll(id="left-pane"):
                 for number in range(15):
                     yield Static(f"Vertical layout, child {number}")
             with Horizontal(id="top-right"):

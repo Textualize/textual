@@ -4,7 +4,7 @@ from typing import ClassVar, Optional
 
 from textual.await_remove import AwaitRemove
 from textual.binding import Binding, BindingType
-from textual.containers import Vertical
+from textual.containers import VerticalScroll
 from textual.geometry import clamp
 from textual.message import Message
 from textual.reactive import reactive
@@ -12,7 +12,7 @@ from textual.widget import AwaitMount, Widget
 from textual.widgets._list_item import ListItem
 
 
-class ListView(Vertical, can_focus=True, can_focus_children=False):
+class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
     """A vertical list view widget.
 
     Displays a vertical list of `ListItem`s which can be highlighted and

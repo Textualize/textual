@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.containers import Horizontal, Vertical
+from textual.containers import Horizontal, VerticalScroll
 from textual.widgets import Button, Static
 
 
@@ -8,7 +8,7 @@ class ButtonsApp(App[str]):
 
     def compose(self) -> ComposeResult:
         yield Horizontal(
-            Vertical(
+            VerticalScroll(
                 Static("Standard Buttons", classes="header"),
                 Button("Default"),
                 Button("Primary!", variant="primary"),
@@ -16,7 +16,7 @@ class ButtonsApp(App[str]):
                 Button.warning("Warning!"),
                 Button.error("Error!"),
             ),
-            Vertical(
+            VerticalScroll(
                 Static("Disabled Buttons", classes="header"),
                 Button("Default", disabled=True),
                 Button("Primary!", variant="primary", disabled=True),

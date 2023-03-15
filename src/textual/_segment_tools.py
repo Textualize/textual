@@ -192,11 +192,10 @@ def align_lines(
         style: Background style.
         size: Size of container.
         horizontal: Horizontal alignment.
-        vertical: Vertical alignment
+        vertical: Vertical alignment.
 
     Returns:
         Aligned lines.
-
     """
 
     width, height = size

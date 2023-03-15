@@ -2,7 +2,7 @@ Button {
     margin: 1 2;
 }
 
-Horizontal > Vertical {
+Horizontal > VerticalScroll {
     width: 24;
 }
 
