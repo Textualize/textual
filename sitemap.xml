@@ -261,6 +261,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://textual.textualize.io/blog/2023/03/15/no-async-async-with-python/</loc>
+         <lastmod>2023-03-15</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://textual.textualize.io/blog/2022/12/08/be-the-keymaster/</loc>
          <lastmod>2023-03-15</lastmod>
          <changefreq>daily</changefreq>
@@ -1021,12 +1026,12 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://textual.textualize.io/blog/category/release/</loc>
+         <loc>https://textual.textualize.io/blog/category/devlog/</loc>
          <lastmod>2023-03-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://textual.textualize.io/blog/category/devlog/</loc>
+         <loc>https://textual.textualize.io/blog/category/release/</loc>
          <lastmod>2023-03-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
