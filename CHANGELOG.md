@@ -15,6 +15,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Removed `sender` attribute from messages. It's now just private (`_sender`). https://github.com/Textualize/textual/pull/2071
 
+### Fixed
+
+- Fixed borders not rendering correctly. https://github.com/Textualize/textual/pull/2074
+
+
 ### Changed
 
 - Breaking change: changed default behaviour of `Vertical` (see `VerticalScroll`) https://github.com/Textualize/textual/issues/1957
