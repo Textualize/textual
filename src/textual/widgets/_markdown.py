@@ -579,7 +579,7 @@ class Markdown(Widget):
         stack: list[MarkdownBlock] = []
         parser = (
             MarkdownIt("gfm-like")
-            if self.parser_factory is None
+            if self._parser_factory is None
             else self._parser_factory()
         )
 
