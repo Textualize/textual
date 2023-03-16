@@ -63,12 +63,6 @@ class OptionLineSpan(NamedTuple):
 class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
     """A vertical bounce-bar menu."""
 
-    # TODO:
-    #
-    # Little to no regard has been given to caching and optimisation right
-    # now. This is at the "get the API right" stage of things, then it'll be
-    # at the "make it fast" stage.
-
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("up", "up", "Up", show=False),
         Binding("down", "down", "Down", show=False),
