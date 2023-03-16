@@ -76,6 +76,8 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("up", "up", "Up", show=False),
         Binding("down", "down", "Down", show=False),
+        Binding("home", "first", "First", show=False),
+        Binding("end", "last", "Last", show=False),
     ]
     """
     | Key(s) | Description |
@@ -242,4 +244,16 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         """Move the highlight down by one option."""
         if self.highlighted is not None:
             self.highlighted += 1
+            self.scroll_to_highlight()
+
+    def action_first(self) -> None:
+        """Move the highlight to the first option."""
+        if self._options:
+            self.highlighted = 0
+            self.scroll_to_highlight()
+
+    def action_last(self) -> None:
+        """Move the highlight to the last option."""
+        if self._options:
+            self.highlighted = len(self._options) - 1
             self.scroll_to_highlight()
