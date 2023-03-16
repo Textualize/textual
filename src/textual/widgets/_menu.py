@@ -154,6 +154,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         """Initialise the menu.
 
         Args:
+            *options: The options for the menu.
             name: The name of the Tree.
             id: The ID of the tree in the DOM.
             classes: The CSS classes of the tree.
