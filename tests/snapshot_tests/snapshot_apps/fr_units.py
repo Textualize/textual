@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.containers import Horizontal, Vertical
+from textual.containers import Horizontal, VerticalScroll
 from textual.widgets import Static
 
 
@@ -8,7 +8,6 @@ class StaticText(Static):
 
 
 class FRApp(App):
-
     CSS = """
     StaticText {
         height: 1fr;
@@ -39,7 +38,7 @@ class FRApp(App):
     """
 
     def compose(self) -> ComposeResult:
-        yield Vertical(
+        yield VerticalScroll(
             StaticText("HEADER", id="header"),
             Horizontal(
                 StaticText("foo", id="foo"),

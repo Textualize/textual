@@ -1,5 +1,5 @@
 ---
-draft: false 
+draft: false
 date: 2022-11-20
 categories:
   - DevLog
@@ -30,7 +30,7 @@ There are a number of files and modules in [Textual](https://github.com/Textuali
 
 ## Loop first / last
 
-How often do you find yourself looping over an iterable and needing to know if an element is the first and/or last in the sequence? It's a simple thing, but I find myself nedding this a *lot*, so I wrote some helpers in [_loop.py](https://github.com/Textualize/textual/blob/main/src/textual/_loop.py). 
+How often do you find yourself looping over an iterable and needing to know if an element is the first and/or last in the sequence? It's a simple thing, but I find myself needing this a *lot*, so I wrote some helpers in [_loop.py](https://github.com/Textualize/textual/blob/main/src/textual/_loop.py).
 
 I'm sure there is an equivalent implementation on PyPI, but steal this if you need it.
 
@@ -72,7 +72,7 @@ In Textual, we use a [LRUCache](https://github.com/Textualize/textual/search?q=L
 
 ## Color
 
-Textual has a [Color](https://github.com/Textualize/textual/blob/main/src/textual/color.py) class which could be extracted in to a module of its own. 
+Textual has a [Color](https://github.com/Textualize/textual/blob/main/src/textual/color.py) class which could be extracted in to a module of its own.
 
 The Color class can parse colors encoded in a variety of HTML and CSS formats. Color object support a variety of methods and operators you can use to manipulate colors, in a fairly natural way.
 

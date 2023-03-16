@@ -1,7 +1,7 @@
 from textual.app import App, ComposeResult
 from textual.screen import Screen
 from textual.widgets import Header, Footer, Label
-from textual.containers import Vertical, Container
+from textual.containers import VerticalScroll, Container
 
 
 class Overlay(Container):
@@ -9,12 +9,12 @@ class Overlay(Container):
         yield Label("This should float over the top")
 
 
-class Body1(Vertical):
+class Body1(VerticalScroll):
     def compose(self) -> ComposeResult:
         yield Label("My God! It's full of stars! " * 300)
 
 
-class Body2(Vertical):
+class Body2(VerticalScroll):
     def compose(self) -> ComposeResult:
         yield Label("My God! It's full of stars! " * 300)
 
@@ -36,7 +36,6 @@ class Bad(Screen):
 
 
 class Layers(App[None]):
-
     CSS = """
     Screen {
         layers: base higher;

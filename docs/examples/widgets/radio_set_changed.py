@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.containers import Horizontal, Vertical
+from textual.containers import Horizontal, VerticalScroll
 from textual.widgets import Label, RadioButton, RadioSet
 
 
@@ -7,7 +7,7 @@ class RadioSetChangedApp(App[None]):
     CSS_PATH = "radio_set_changed.css"
 
     def compose(self) -> ComposeResult:
-        with Vertical():
+        with VerticalScroll():
             with Horizontal():
                 with RadioSet():
                     yield RadioButton("Battlestar Galactica")

@@ -1,6 +1,6 @@
 from textual.app import App
-from textual.containers import Vertical
-from textual.widgets import Placeholder, Label, Static
+from textual.containers import VerticalScroll
+from textual.widgets import Label, Placeholder, Static
 
 
 class Ruler(Static):
@@ -11,7 +11,7 @@ class Ruler(Static):
 
 class HeightComparisonApp(App):
     def compose(self):
-        yield Vertical(
+        yield VerticalScroll(
             Placeholder(id="cells"),  # (1)!
             Placeholder(id="percent"),
             Placeholder(id="w"),

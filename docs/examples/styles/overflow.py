@@ -1,6 +1,6 @@
 from textual.app import App
+from textual.containers import Horizontal, VerticalScroll
 from textual.widgets import Static
-from textual.containers import Horizontal, Vertical
 
 TEXT = """I must not fear.
 Fear is the mind-killer.
@@ -14,8 +14,8 @@ Where the fear has gone there will be nothing. Only I will remain."""
 class OverflowApp(App):
     def compose(self):
         yield Horizontal(
-            Vertical(Static(TEXT), Static(TEXT), Static(TEXT), id="left"),
-            Vertical(Static(TEXT), Static(TEXT), Static(TEXT), id="right"),
+            VerticalScroll(Static(TEXT), Static(TEXT), Static(TEXT), id="left"),
+            VerticalScroll(Static(TEXT), Static(TEXT), Static(TEXT), id="right"),
         )
 
 

@@ -1,11 +1,11 @@
 from textual.app import App, ComposeResult
-from textual.containers import Horizontal, Vertical
+from textual.containers import Horizontal, VerticalScroll
 from textual.design import ColorSystem
 from textual.widget import Widget
 from textual.widgets import Button, Footer, Label, Static
 
 
-class ColorButtons(Vertical):
+class ColorButtons(VerticalScroll):
     def compose(self) -> ComposeResult:
         for border in ColorSystem.COLOR_NAMES:
             if border:
@@ -20,15 +20,15 @@ class ColorItem(Horizontal):
     pass
 
 
-class ColorGroup(Vertical):
+class ColorGroup(VerticalScroll):
     pass
 
 
-class Content(Vertical):
+class Content(VerticalScroll):
     pass
 
 
-class ColorsView(Vertical):
+class ColorsView(VerticalScroll):
     def compose(self) -> ComposeResult:
         LEVELS = [
             "darken-3",

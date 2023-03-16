@@ -1,19 +1,18 @@
 """Regression test for #1616 https://github.com/Textualize/textual/issues/1616"""
-import pytest
 
 from textual.app import App
-from textual.containers import Vertical
+from textual.containers import VerticalScroll
 
 
 async def test_overflow_change_updates_virtual_size_appropriately():
     class MyApp(App):
         def compose(self):
-            yield Vertical()
+            yield VerticalScroll()
 
     app = MyApp()
 
     async with app.run_test() as pilot:
-        vertical = app.query_one(Vertical)
+        vertical = app.query_one(VerticalScroll)
 
         height = vertical.virtual_size.height
 

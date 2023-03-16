@@ -621,9 +621,8 @@ class DOMNode(MessagePump):
         base_background = background = BLACK
         for node in reversed(self.ancestors_with_self):
             styles = node.styles
-            if styles.has_rule("background"):
-                base_background = background
-                background += styles.background
+            base_background = background
+            background += styles.background
         return (base_background, background)
 
     @property
@@ -633,9 +632,8 @@ class DOMNode(MessagePump):
         base_color = color = BLACK
         for node in reversed(self.ancestors_with_self):
             styles = node.styles
-            if styles.has_rule("background"):
-                base_background = background
-                background += styles.background
+            base_background = background
+            background += styles.background
             if styles.has_rule("color"):
                 base_color = color
                 if styles.auto_color:

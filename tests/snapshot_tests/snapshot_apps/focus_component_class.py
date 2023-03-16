@@ -1,7 +1,7 @@
 from rich.text import Text
 
 from textual.app import App, ComposeResult, RenderResult
-from textual.containers import Vertical
+from textual.containers import VerticalScroll
 from textual.widgets import Header, Footer
 from textual.widget import Widget
 
@@ -32,7 +32,7 @@ class Tester(Widget, can_focus=True):
 class StyleBugApp(App[None]):
     def compose(self) -> ComposeResult:
         yield Header()
-        with Vertical():
+        with VerticalScroll():
             for n in range(40):
                 yield Tester(n)
         yield Footer()

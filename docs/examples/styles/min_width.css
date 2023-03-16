@@ -1,4 +1,4 @@
-Vertical {
+VerticalScroll {
     height: 100%;
     width: 100%;
     overflow-x: auto;
@@ -10,7 +10,8 @@ Placeholder {
 }
 
 #p1 {
-    min-width: 25%;  /* (1)! */
+    min-width: 25%;
+    /* (1)! */
 }
 
 #p2 {
