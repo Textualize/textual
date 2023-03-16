@@ -197,11 +197,11 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         # to have a look at validate_highlighted.
         self.highlighted = None
 
-    def option(self, position: int) -> MenuOption[MenuDataType]:
+    def option(self, index: int) -> MenuOption[MenuDataType]:
         """Get the menu option at the given position in the list of options.
 
         Args:
-            position: The position of the required menu option.
+            index: The position of the required menu option.
 
         Returns:
             The menu option at that position.
@@ -209,7 +209,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         Raises:
             IndexError: If there is no menu option at that position.
         """
-        return self._options[position]
+        return self._options[index]
 
     def render_line(self, y: int) -> Strip:
         """Render a single line in the menu.
