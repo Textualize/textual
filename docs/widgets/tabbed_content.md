@@ -88,4 +88,4 @@ Example app showing the widget:
 
 - [TabbedContent](../api/tabbed_content.md) code reference.
 - [Tabs](../api/tabs.md) code reference.
-- [ContentSwitcher](../ap/../api/content_switcher.md)
+- [ContentSwitcher](../api/content_switcher.md)
