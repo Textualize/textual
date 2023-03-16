@@ -18,7 +18,7 @@ class BorderSubTitleAlignAll(App[None]):
             yield make_label_container(
                 "This is the",
                 "lbl1",
-                "[b]Left, but it's really long[/]",  # (2)!
+                "[b]Left, [i]but[/i] it's really long[/]",  # (2)!
                 "[u]Left[/]",
             )
             yield make_label_container(
@@ -57,3 +57,6 @@ class BorderSubTitleAlignAll(App[None]):
 
 
 app = BorderSubTitleAlignAll(css_path="border_sub_title_align_all.css")
+
+if __name__ == "__main__":
+    app.run()
