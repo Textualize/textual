@@ -54,7 +54,12 @@ class OptionLineSpan(NamedTuple):
     line_count: int
     """The count of lines that make up the option."""
 
-    def __contains__(self, line: int) -> bool:
+    def __contains__(self, line: object) -> bool:
+        # For this named tuple `in` will have a very specific meaning; but
+        # to keep mypy and friends happy we need to accept an object as the
+        # parameter. So, let's keep the type checkers happy but only accept
+        # an int.
+        assert isinstance(line, int)
         return line >= self.first and line < (self.first + self.line_count)
 
 
