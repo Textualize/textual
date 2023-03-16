@@ -9,6 +9,7 @@ from rich.segment import Segment
 
 from ..binding import Binding, BindingType
 from ..geometry import Region, Size
+from ..message import Message
 from ..reactive import reactive
 from ..scroll_view import ScrollView
 from ..strip import Strip
@@ -111,6 +112,13 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
 
     highlighted: reactive[int | None] = reactive["int | None"](None)
     """The index of the currently-highlighted option, or `None` if no option is highlighted."""
+
+    class Debug(Message):
+        """A debug message. Remove before flight."""
+
+        def __init__(self, cargo: object) -> None:
+            super().__init__()
+            self.cargo = cargo
 
     def __init__(
         self,
