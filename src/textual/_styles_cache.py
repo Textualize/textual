@@ -66,11 +66,6 @@ class StylesCache:
 
     """
 
-    _border_title: str = ""
-    """The widget's border title."""
-    _border_subtitle: str = ""
-    """The widget's border subtitle."""
-
     def __init__(self) -> None:
         self._cache: dict[int, Strip] = {}
         self._dirty_lines: set[int] = set()
@@ -118,6 +113,8 @@ class StylesCache:
             base_background,
             background,
             widget.render_line,
+            widget.border_title,
+            widget.border_subtitle,
             content_size=widget.content_region.size,
             padding=styles.padding,
             crop=crop,
@@ -146,6 +143,8 @@ class StylesCache:
         base_background: Color,
         background: Color,
         render_content_line: RenderLineCallback,
+        border_title: str,
+        border_subtitle: str,
         content_size: Size | None = None,
         padding: Spacing | None = None,
         crop: Region | None = None,
@@ -159,9 +158,12 @@ class StylesCache:
             base_background: Background color beneath widget.
             background: Background color of widget.
             render_content_line: Callback to render content line.
-            content_size: Size of content or None to assume full size. Defaults to None.
-            padding: Override padding from Styles, or None to use styles.padding. Defaults to None.
-            crop: Region to crop to. Defaults to None.
+            border_title: The title for the widget border.
+            border_subtitle: The subtitle for the widget border.
+            content_size: Size of content or None to assume full size.
+            padding: Override padding from Styles, or None to use styles.padding.
+            crop: Region to crop to.
+            filter:
 
         Returns:
             Rendered lines.
@@ -193,6 +195,8 @@ class StylesCache:
                     base_background,
                     background,
                     render_content_line,
+                    border_title,
+                    border_subtitle,
                 )
                 self._cache[y] = strip
             else:
@@ -218,6 +222,8 @@ class StylesCache:
         base_background: Color,
         background: Color,
         render_content_line: Callable[[int], Strip],
+        border_title: str,
+        border_subtitle: str,
     ) -> Strip:
         """Render a styled line.
 
@@ -287,7 +293,7 @@ class StylesCache:
             border_color_as_style = from_color(color=border_color.rich_color)
             border_edge_type = border_top if is_top else border_bottom
             label = render_border_label(
-                self._border_title if is_top else self._border_subtitle,
+                border_title if is_top else border_subtitle,
                 is_top,
                 border_edge_type,
                 width,
