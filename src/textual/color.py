@@ -504,7 +504,7 @@ class Color(NamedTuple):
             a = clamp(float(a), 0.0, 1.0)
             color = Color.from_hsl(h, s, l).with_alpha(a)
         else:
-            raise AssertionError(  #  pragma: no-cover
+            raise AssertionError(  # pragma: no-cover
                 "Can't get here if RE_COLOR matches"
             )
         return color
@@ -596,7 +596,7 @@ class Gradient:
                     color2,
                     (position - stop1) / (stop2 - stop1),
                 )
-        raise AssertionError("Can't get here if `stops` is valid")
+        raise AssertionError("Can't get here if `_stops` is valid")
 
 
 # Color constants
