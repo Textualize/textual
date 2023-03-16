@@ -209,10 +209,18 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
 
     def scroll_to_highlight(self) -> None:
         """Ensure that the highlighted option is in view."""
-        assert self.highlighted is not None
-        # TODO: Not like this; but testing like this.
-        self.scroll_to_region(Region(0, self.highlighted, 1, 1))
-        self.log.debug(Region(0, self.highlighted, 1, 1))
+        highlighted = self.highlighted
+        assert highlighted is not None
+        self.scroll_to_region(
+            Region(
+                0,
+                self._spans[highlighted].first,
+                self.size.width,
+                self._spans[highlighted].line_count,
+            ),
+            force=True,
+            animate=False,
+        )
 
     def validate_highlighted(self, highlighted: int | None) -> int | None:
         """Validate the `highlighted` property value on access."""
