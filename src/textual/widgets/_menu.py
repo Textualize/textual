@@ -18,24 +18,13 @@ MenuDataType = TypeVar("MenuDataType")
 """The type of the data for a given instance of a [Menu][textual.widgets.Menu]."""
 
 
-class MenuOption(Generic[MenuDataType]):
+class MenuOption(NamedTuple, Generic[MenuDataType]):
     """Class that holds the details of an individual menu option."""
 
-    def __init__(
-        self, prompt: RenderableType, data: MenuDataType | None = None
-    ) -> None:
-        """Initialise the menu option.
-
-        Args:
-            prompt: The prompt that will be shown for the menu option.
-            data: The data associated with the menu option.
-        """
-        self._prompt = prompt
-        self.data = data
-
-    @property
-    def prompt(self) -> RenderableType:
-        return self._prompt
+    prompt: RenderableType
+    """The prompt for the menu option."""
+    data: MenuDataType | None = None
+    """Data associated with the menu option."""
 
 
 class OptionLineSegments(NamedTuple, Generic[MenuDataType]):
