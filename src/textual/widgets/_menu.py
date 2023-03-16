@@ -174,7 +174,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         # Each option can be a different height, so we'll render from a list
         # of individual lines, while keeping track of with option they
         # relate to.
-        self._lines: list[OptionLineSegments] = []
+        self._lines: list[OptionLineSegments[MenuDataType]] = []
         self._spans: list[OptionLineSpan] = []
         # TODO: Do I need to be telling it what width to deal with? Do I
         # need to be working out all the lines again if I get resized?
