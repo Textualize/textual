@@ -509,7 +509,7 @@ class Markdown(Widget):
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
-        parser_factory: Optional[Callable[[], MarkdownIt]] = None,
+        parser_factory: Callable[[], MarkdownIt] | None = None,
     ):
         """A Markdown widget.
 
@@ -578,7 +578,9 @@ class Markdown(Widget):
         output: list[MarkdownBlock] = []
         stack: list[MarkdownBlock] = []
         parser = (
-            self._parser_factory() if self._parser_factory else MarkdownIt("gfm-like")
+            MarkdownIt("gfm-like")
+            if self.parser_factory is None
+            else self._parser_factory()
         )
 
         content = Text()
@@ -804,7 +806,7 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
-        parser_factory: Optional[Callable[[], MarkdownIt]] = None,
+        parser_factory: Callable[[], MarkdownIt] | None = None,
     ):
         """Create a Markdown Viewer object.
 
