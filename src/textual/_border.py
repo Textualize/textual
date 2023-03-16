@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import lru_cache
-from typing import TYPE_CHECKING, Tuple, cast
+from typing import TYPE_CHECKING, Iterable, Tuple, cast
 
 from rich.console import Console
 from rich.segment import Segment
@@ -285,7 +285,7 @@ def render_border_label(
     console: Console,
     has_left_corner: bool,
     has_right_corner: bool,
-) -> list[Segment]:
+) -> Iterable[Segment]:
     """Render a border label (the title or subtitle) with optional markup.
 
     The styling that may be embedded in the label will be reapplied after taking into
@@ -313,7 +313,8 @@ def render_border_label(
     corners_needed = has_left_corner + has_right_corner
     cells_reserved = 2 + corners_needed
     if not label or width <= cells_reserved:
-        return []
+        yield from ()
+        return
 
     text_label = Text.from_markup(label)
     text_label.truncate(width - cells_reserved, overflow="ellipsis")
@@ -340,7 +341,9 @@ def render_border_label(
         Segment(segment.text, base_style + segment.style) for segment in segments
     ]
     blank = Segment(" ", base_style)
-    return [blank] + styled_segments + [blank]
+    yield blank
+    yield from styled_segments
+    yield blank
 
 
 def render_row(

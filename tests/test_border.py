@@ -89,17 +89,19 @@ def test_render_border_label_empty_label_skipped(
 ):
     """Test that we get an empty list of segments if there is no label to display."""
 
-    assert [] == render_border_label(
-        "",
-        True,
-        "round",
-        width,
-        _EMPTY_STYLE,
-        _EMPTY_STYLE,
-        _EMPTY_STYLE,
-        _WIDE_CONSOLE,
-        has_left_corner,
-        has_right_corner,
+    assert [] == list(
+        render_border_label(
+            "",
+            True,
+            "round",
+            width,
+            _EMPTY_STYLE,
+            _EMPTY_STYLE,
+            _EMPTY_STYLE,
+            _WIDE_CONSOLE,
+            has_left_corner,
+            has_right_corner,
+        )
     )
 
 
@@ -127,17 +129,19 @@ def test_render_border_label_skipped_if_narrow(
     If we don't have space for all of these, we skip the label altogether.
     """
 
-    assert [] == render_border_label(
-        label,
-        True,
-        "round",
-        width,
-        _EMPTY_STYLE,
-        _EMPTY_STYLE,
-        _EMPTY_STYLE,
-        _WIDE_CONSOLE,
-        has_left_corner,
-        has_right_corner,
+    assert [] == list(
+        render_border_label(
+            label,
+            True,
+            "round",
+            width,
+            _EMPTY_STYLE,
+            _EMPTY_STYLE,
+            _EMPTY_STYLE,
+            _WIDE_CONSOLE,
+            has_left_corner,
+            has_right_corner,
+        )
     )
 
 
