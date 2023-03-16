@@ -272,7 +272,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
                 self._spans[highlighted].line_count,
             ),
             force=True,
-            animate=False,
+            animate=False,  # https://github.com/Textualize/textual/issues/2077
         )
 
     def validate_highlighted(self, highlighted: int | None) -> int | None:
