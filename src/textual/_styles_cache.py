@@ -4,6 +4,7 @@ from functools import lru_cache
 from sys import intern
 from typing import TYPE_CHECKING, Callable, Iterable
 
+from rich.console import Console
 from rich.segment import Segment
 from rich.style import Style
 
@@ -113,6 +114,7 @@ class StylesCache:
             base_background,
             background,
             widget.render_line,
+            widget.app.console,
             widget.border_title,
             widget.border_subtitle,
             content_size=widget.content_region.size,
@@ -143,6 +145,7 @@ class StylesCache:
         base_background: Color,
         background: Color,
         render_content_line: RenderLineCallback,
+        console: Console,
         border_title: str,
         border_subtitle: str,
         content_size: Size | None = None,
@@ -158,12 +161,13 @@ class StylesCache:
             base_background: Background color beneath widget.
             background: Background color of widget.
             render_content_line: Callback to render content line.
+            console: The console in use by the app.
             border_title: The title for the widget border.
             border_subtitle: The subtitle for the widget border.
             content_size: Size of content or None to assume full size.
             padding: Override padding from Styles, or None to use styles.padding.
             crop: Region to crop to.
-            filter:
+            filter: Additional post-processing for the segments.
 
         Returns:
             Rendered lines.
@@ -195,6 +199,7 @@ class StylesCache:
                     base_background,
                     background,
                     render_content_line,
+                    console,
                     border_title,
                     border_subtitle,
                 )
@@ -222,6 +227,7 @@ class StylesCache:
         base_background: Color,
         background: Color,
         render_content_line: Callable[[int], Strip],
+        console: Console,
         border_title: str,
         border_subtitle: str,
     ) -> Strip:
@@ -236,6 +242,9 @@ class StylesCache:
             base_background: Background color of widget beneath this line.
             background: Background color of widget.
             render_content_line: Callback to render a line of content.
+            console: The console in use by the app.
+            border_title: The title for the widget border.
+            border_subtitle: The subtitle for the widget border.
 
         Returns:
             A line of segments.
@@ -292,7 +301,9 @@ class StylesCache:
             )
             border_color_as_style = from_color(color=border_color.rich_color)
             border_edge_type = border_top if is_top else border_bottom
-            label = render_border_label(
+            has_left = border_left != ""
+            has_right = border_right != ""
+            label_segments = render_border_label(
                 border_title if is_top else border_subtitle,
                 is_top,
                 border_edge_type,
@@ -300,6 +311,9 @@ class StylesCache:
                 inner,
                 outer,
                 border_color_as_style,
+                console,
+                has_left,
+                has_right,
             )
             box_segments = get_box(
                 border_edge_type,
@@ -313,9 +327,9 @@ class StylesCache:
             line = render_row(
                 box_segments[0 if is_top else 2],
                 width,
-                border_left != "",
-                border_right != "",
-                label,
+                has_left,
+                has_right,
+                label_segments,
                 label_alignment,
             )
 

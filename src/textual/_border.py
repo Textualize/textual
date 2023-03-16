@@ -274,7 +274,6 @@ def get_box(
     )
 
 
-@lru_cache(maxsize=1024)
 def render_border_label(
     label: str,
     is_title: bool,
@@ -283,52 +282,65 @@ def render_border_label(
     inner_style: Style,
     outer_style: Style,
     style: Style,
-) -> Segment:
+    console: Console,
+    has_left_corner: bool,
+    has_right_corner: bool,
+) -> list[Segment]:
     """Render a border label (the title or subtitle) with optional markup.
 
     The styling that may be embedded in the label will be reapplied after taking into
-    account the inner, outer, and border-specific styles.
+    account the inner, outer, and border-specific, styles.
 
     Args:
         label: The label to display (that may contain markup).
         is_title: Whether we are rendering the title (`True`) or the subtitle (`False`).
         name: Name of the box type.
         width: The width, in cells, of the space available for the whole edge.
-            This accounts for the 2 cells made available for the corner, which means
-            that the space available for the label is effectively `width - 2`.
+            This accounts for the 2 cells made available for the corner and for the two
+            blank spaces around the label, which means that the space available for the
+            label is effectively `width - 4`.
         inner_style: The inner style (widget background).
         outer_style: The outer style (parent background).
         style: Widget style.
-    """
-    if not label:
-        return Segment("", Style())
+        console: The console that will render the markup in the label.
+        has_left_corner: Whether the border edge will have to render a left corner.
+        has_right_corner: Whether the border edge will have to render a right corner.
 
-    console = Console(width=width - 2)
+    Returns:
+        A list of segments that represent the full label and surrounding padding.
+    """
+    # How many cells do we need to reserve for surrounding blanks and corners?
+    corners_needed = has_left_corner + has_right_corner
+    cells_reserved = 2 + corners_needed
+    if not label or width <= cells_reserved:
+        return []
+
     text_label = Text.from_markup(label)
-    wrapped = text_label.wrap(console, console.width, overflow="ellipsis", no_wrap=True)
-    segment_label = next(segment for segment in console.render(wrapped))
+    text_label.truncate(width - cells_reserved, overflow="ellipsis")
+    segments = text_label.render(console)
 
     label_style_location = BORDER_LABEL_LOCATIONS[name][0 if is_title else 1]
 
     inner = inner_style + style
     outer = outer_style + style
-    segment_style: Style
+
+    base_style: Style
     if label_style_location == 0:
-        segment_style = inner + segment_label.style
+        base_style = inner
     elif label_style_location == 1:
-        segment_style = outer + segment_label.style
+        base_style = outer
     elif label_style_location == 2:
-        segment_style = (
-            Style.from_color(outer.bgcolor, inner.color) + segment_label.style
-        )
+        base_style = Style.from_color(outer.bgcolor, inner.color)
     elif label_style_location == 3:
-        segment_style = (
-            Style.from_color(inner.bgcolor, outer.color) + segment_label.style
-        )
+        base_style = Style.from_color(inner.bgcolor, outer.color)
     else:
         assert False
 
-    return Segment(segment_label.text, segment_style)
+    styled_segments = [
+        Segment(segment.text, base_style + segment.style) for segment in segments
+    ]
+    blank = Segment(" ", base_style)
+    return [blank] + styled_segments + [blank]
 
 
 def render_row(
