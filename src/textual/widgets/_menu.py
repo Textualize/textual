@@ -126,7 +126,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         `Menu` or in a parent node in the DOM.
         """
 
-        def __init__(self, menu: Menu, option: MenuOption[MenuMessageDataType]) -> None:
+        def __init__(self, menu: Menu, index: int) -> None:
             """Initialise the option highlighted message.
 
             Args:
@@ -136,11 +136,14 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
             super().__init__()
             self.menu = menu
             """The menu that sent the message."""
-            self.option = option
+            self.index = index
+            """The index of the highlighted option."""
+            self.option = menu.option(index)
             """The highlighted option."""
 
         def __rich_repr__(self) -> Result:
             yield "menu", self.menu
+            yield "index", self.index
             yield "option", self.option
 
     def __init__(
@@ -275,7 +278,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         highlighted = self.highlighted
         assert highlighted is not None
         self.scroll_to_highlight()
-        self.post_message(self.OptionHighlighted(self, self._options[highlighted]))
+        self.post_message(self.OptionHighlighted(self, highlighted))
 
     def action_up(self) -> None:
         """Move the highlight up by one option."""
