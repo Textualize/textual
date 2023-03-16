@@ -395,6 +395,7 @@ class StylesCache:
                 width,
                 outline_left != "",
                 outline_right != "",
+                (),
             )
 
         elif outline_left or outline_right:

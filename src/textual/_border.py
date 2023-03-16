@@ -346,58 +346,99 @@ def render_border_label(
     yield blank
 
 
-def render_row(
+def _compose_row_with_label(
     box_row: tuple[Segment, Segment, Segment],
     width: int,
     left: bool,
     right: bool,
-    label: Segment = _EMPTY_SEGMENT,
-    label_alignment: AlignHorizontal = "left",
-) -> list[Segment]:
-    """Render a top, or bottom border row.
+    label_segments: Iterable[Segment],
+    label_alignment: AlignHorizontal,
+) -> Iterable[Segment]:
+    """Compose a box row with its padded label.
+
+    This is the function that actually does the work that `render_row` is intended
+    to do, but we have many lists of segments flowing around, so it becomes easier
+    to yield the segments bit by bit, and the aggregate everything into a list later.
 
     Args:
         box_row: Corners and side segments.
         width: Total width of resulting line.
         left: Render left corner.
         right: Render right corner.
+        label_segments: The segments that make up the label.
+        label_alignment: Where to horizontally align the label.
 
     Returns:
-        A list of segments.
+        An iterable of segments.
     """
     box1, box2, box3 = box_row
 
     corners_needed = left + right
-    label_length = label.cell_length
+    label_segments_list = list(label_segments)
+
+    # Ensure the label is flush with the edge if possible by removing a blank.
+    if label_alignment == "left" and not left:
+        label_segments_list = label_segments_list[1:]
+    elif label_alignment == "right" and not right:
+        label_segments_list = label_segments_list[:-1]
+
+    label_length = sum((segment.cell_length for segment in label_segments_list), 0)
     space_available = max(0, width - corners_needed - label_length)
 
-    middle_segments: list[Segment]
+    if left:
+        yield box1
+
     if not space_available:
-        middle_segments = [label]
-    elif not label:
-        middle_segments = [Segment(box2.text * space_available, box2.style)]
+        yield from label_segments_list
+    elif not label_length:
+        yield Segment(box2.text * space_available, box2.style)
     elif label_alignment == "left" or label_alignment == "right":
         edge = Segment(box2.text * space_available, box2.style)
-        middle_segments = [label, edge] if label_alignment == "left" else [edge, label]
+        if label_alignment == "left":
+            yield from label_segments_list
+            yield edge
+        else:
+            yield edge
+            yield from label_segments_list
     elif label_alignment == "center":
         length_on_left = space_available // 2
         length_on_right = space_available - length_on_left
-        middle_segments = [
-            Segment(box2.text * length_on_left, box2.style),
-            label,
-            Segment(box2.text * length_on_right, box2.style),
-        ]
+        yield Segment(box2.text * length_on_left, box2.style)
+        yield from label_segments_list
+        yield Segment(box2.text * length_on_right, box2.style)
     else:
         assert False
 
-    if left and right:
-        return [box1] + middle_segments + [box3]
-    if left:
-        return [box1] + middle_segments
     if right:
-        return middle_segments + [box3]
-    else:
-        return middle_segments
+        yield box3
+
+
+def render_row(
+    box_row: tuple[Segment, Segment, Segment],
+    width: int,
+    left: bool,
+    right: bool,
+    label_segments: Iterable[Segment],
+    label_alignment: AlignHorizontal = "left",
+) -> list[Segment]:
+    """Render a top or bottom border row.
+
+    Args:
+        box_row: Corners and side segments.
+        width: Total width of resulting line.
+        left: Render left corner.
+        right: Render right corner.
+        label_segments: The segments that make up the label.
+        label_alignments: Where to horizontally align the label.
+
+    Returns:
+        A list of segments.
+    """
+    return list(
+        _compose_row_with_label(
+            box_row, width, left, right, label_segments, label_alignment
+        )
+    )
 
 
 _edge_type_normalization_table: dict[EdgeType, EdgeType] = {
