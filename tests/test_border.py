@@ -1,7 +1,9 @@
+import pytest
+from rich.console import Console
 from rich.segment import Segment
 from rich.style import Style
 
-from textual._border import render_row
+from textual._border import render_border_label, render_row
 from textual.widget import Widget
 
 
@@ -63,3 +65,75 @@ def test_border_subtitle_single_line():
 
     widget.border_subtitle = "[red]This also \n works with markup \n involved.[/]"
     assert widget.border_subtitle == "[red]This also "
+
+
+@pytest.mark.parametrize(
+    ["width", "has_left_corner", "has_right_corner"],
+    [
+        (10, True, True),
+        (10, True, False),
+        (10, False, False),
+        (10, False, True),
+        (1, True, True),
+        (1, True, False),
+        (1, False, False),
+        (1, False, True),
+    ],
+)
+def test_render_border_label_empty_label_skipped(
+    width: int, has_left_corner: bool, has_right_corner: bool
+):
+    """Test that we get an empty list of segments if there is no label to display."""
+
+    console = Console()
+    assert [] == render_border_label(
+        "",
+        True,
+        "round",
+        width,
+        Style(),
+        Style(),
+        Style(),
+        console,
+        has_left_corner,
+        has_right_corner,
+    )
+
+
+@pytest.mark.parametrize(
+    ["label", "width", "has_left_corner", "has_right_corner"],
+    [
+        ("hey", 2, True, True),
+        ("hey", 2, True, False),
+        ("hey", 2, False, True),
+        ("hey", 2, False, False),
+        ("hey", 3, True, True),
+        ("hey", 3, True, False),
+        ("hey", 3, False, True),
+        ("hey", 4, True, True),
+    ],
+)
+def test_render_border_label_skipped_if_narrow(
+    label: str, width: int, has_left_corner: bool, has_right_corner: bool
+):
+    """Test that we skip rendering a label when we do not have space for it.
+
+    In order for us to have enough space for the label, we need to have space for the
+    corners that we need (none, just one, or both) and we need to be able to have two
+    blank spaces around the label (one on each side).
+    If we don't have space for all of these, we skip the label altogether.
+    """
+
+    console = Console()
+    assert [] == render_border_label(
+        label,
+        True,
+        "round",
+        width,
+        Style(),
+        Style(),
+        Style(),
+        console,
+        has_left_corner,
+        has_right_corner,
+    )
