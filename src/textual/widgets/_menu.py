@@ -34,12 +34,9 @@ class MenuOption(NamedTuple, Generic[MenuDataType]):
     """Data associated with the menu option."""
 
 
-class OptionLineSegments(NamedTuple, Generic[MenuDataType]):
+class OptionLine(NamedTuple):
     """Class that holds a list of segments for the line of a menu option."""
 
-    # TODO: I might be able to do away with option and just work with index.
-    option: MenuOption[MenuDataType]
-    """The [MenuOption][textual.widgets.menu.MenuOption] related to the line."""
     option_index: int
     """The index of the [MenuOption][textual.widgets.menu.MenuOption] that this line is related to."""
     segments: list[Segment]
@@ -186,7 +183,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         # Each option can be a different height, so we'll render from a list
         # of individual lines, while keeping track of with option they
         # relate to.
-        self._lines: list[OptionLineSegments[MenuDataType]] = []
+        self._lines: list[OptionLine] = []
         self._spans: list[OptionLineSpan] = []
         # TODO: Do I need to be telling it what width to deal with? Do I
         # need to be working out all the lines again if I get resized?
@@ -194,8 +191,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         line = 0
         for option_index, option in enumerate(self._options):
             lines = [
-                OptionLineSegments(option, option_index, line)
-                for line in lines_from(option.prompt)
+                OptionLine(option_index, line) for line in lines_from(option.prompt)
             ]
             self._lines.extend(lines)
             self._spans.append(OptionLineSpan(line, len(lines)))
