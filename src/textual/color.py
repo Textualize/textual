@@ -547,10 +547,7 @@ class Color(NamedTuple):
         Returns:
             A new color, either an off-white or off-black
         """
-        brightness = self.brightness
-        white_contrast = abs(brightness - WHITE.brightness)
-        black_contrast = abs(brightness - BLACK.brightness)
-        return (WHITE if white_contrast > black_contrast else BLACK).with_alpha(alpha)
+        return (WHITE if self.brightness < 0.5 else BLACK).with_alpha(alpha)
 
 
 class Gradient:
