@@ -181,3 +181,20 @@ async def test_remove():
         await pilot.press("r")
         await pilot.pause()
     assert app.return_value == 123
+
+
+# Regression test for https://github.com/Textualize/textual/issues/2079
+async def test_remove_unmounted():
+    mounted = False
+
+    class RemoveApp(App):
+        def on_mount(self):
+            nonlocal mounted
+            label = Label()
+            label.remove()
+            mounted = True
+
+    app = RemoveApp()
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        assert mounted
