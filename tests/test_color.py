@@ -42,7 +42,7 @@ def test_rgb():
     assert Color(10, 20, 30, 0.55).rgb == (10, 20, 30)
 
 
-def test_hls():
+def test_hsl():
     red = Color(200, 20, 32)
     print(red.hsl)
     assert red.hsl == pytest.approx(
@@ -51,6 +51,7 @@ def test_hls():
     assert Color.from_hsl(
         0.9888888888888889, 0.818181818181818, 0.43137254901960786
     ).normalized == pytest.approx(red.normalized, rel=1e-5)
+    assert red.hsl.css == "hsl(356,81.8%,43.1%)"
 
 
 def test_color_brightness():
@@ -65,6 +66,12 @@ def test_color_hex():
     assert Color(255, 0, 127, 0.5).hex == "#FF007F7F"
 
 
+def test_color_hex6():
+    assert Color(0, 0, 0).hex6 == "#000000"
+    assert Color(255, 255, 255, 0.25).hex6 == "#FFFFFF"
+    assert Color(255, 0, 127, 0.5).hex6 == "#FF007F"
+
+
 def test_color_css():
     assert Color(255, 0, 127).css == "rgb(255,0,127)"
     assert Color(255, 0, 127, 0.5).css == "rgba(255,0,127,0.5)"
@@ -72,6 +79,11 @@ def test_color_css():
 
 def test_color_with_alpha():
     assert Color(255, 50, 100).with_alpha(0.25) == Color(255, 50, 100, 0.25)
+
+
+def test_multiply_alpha():
+    assert Color(100, 100, 100).multiply_alpha(0.5) == Color(100, 100, 100, 0.5)
+    assert Color(100, 100, 100, 0.5).multiply_alpha(0.5) == Color(100, 100, 100, 0.25)
 
 
 def test_color_blend():
@@ -149,6 +161,7 @@ def test_color_parse_color():
 
 def test_color_add():
     assert Color(50, 100, 200) + Color(10, 20, 30, 0.9) == Color(14, 28, 47)
+    assert Color(50, 100, 200).__add__("foo") == NotImplemented
 
 
 # Computed with http://www.easyrgb.com/en/convert.php,
@@ -221,6 +234,10 @@ def test_gradient_errors():
     with pytest.raises(ValueError):
         Gradient()
     with pytest.raises(ValueError):
+        Gradient((0.1, Color.parse("red")))
+    with pytest.raises(ValueError):
+        Gradient((0.1, Color.parse("red")), (1, Color.parse("blue")))
+    with pytest.raises(ValueError):
         Gradient((0, Color.parse("red")))
 
     with pytest.raises(ValueError):
@@ -243,3 +260,7 @@ def test_gradient():
     assert gradient.get_color(1.2) == Color(0, 255, 0)
     assert gradient.get_color(0.5) == Color(0, 0, 255)
     assert gradient.get_color(0.7) == Color(0, 101, 153)
+
+    gradient._stops.pop()
+    with pytest.raises(AssertionError):
+        gradient.get_color(1.0)

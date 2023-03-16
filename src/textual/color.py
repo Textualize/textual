@@ -297,7 +297,7 @@ class Color(NamedTuple):
             A CSS hex-style color, e.g. "#46b3de"
 
         """
-        r, g, b, a = self.clamped
+        r, g, b, _a = self.clamped
         return f"#{r:02X}{g:02X}{b:02X}"
 
     @property
@@ -504,7 +504,9 @@ class Color(NamedTuple):
             a = clamp(float(a), 0.0, 1.0)
             color = Color.from_hsl(h, s, l).with_alpha(a)
         else:
-            raise AssertionError("Can't get here if RE_COLOR matches")
+            raise AssertionError(  # pragma: no-cover
+                "Can't get here if RE_COLOR matches"
+            )
         return color
 
     @lru_cache(maxsize=1024)
@@ -545,10 +547,7 @@ class Color(NamedTuple):
         Returns:
             A new color, either an off-white or off-black
         """
-        brightness = self.brightness
-        white_contrast = abs(brightness - WHITE.brightness)
-        black_contrast = abs(brightness - BLACK.brightness)
-        return (WHITE if white_contrast > black_contrast else BLACK).with_alpha(alpha)
+        return (WHITE if self.brightness < 0.5 else BLACK).with_alpha(alpha)
 
 
 class Gradient:
@@ -566,12 +565,12 @@ class Gradient:
         Raises:
             ValueError: If any stops are missing (must be at least a stop for 0 and 1).
         """
-        self.stops = sorted(stops)
+        self._stops = sorted(stops)
         if len(stops) < 2:
             raise ValueError("At least 2 stops required.")
-        if self.stops[0][0] != 0.0:
+        if self._stops[0][0] != 0.0:
             raise ValueError("First stop must be 0.")
-        if self.stops[-1][0] != 1.0:
+        if self._stops[-1][0] != 1.0:
             raise ValueError("Last stop must be 1.")
 
     def get_color(self, position: float) -> Color:
@@ -588,13 +587,13 @@ class Gradient:
         """
         # TODO: consider caching
         position = clamp(position, 0.0, 1.0)
-        for (stop1, color1), (stop2, color2) in zip(self.stops, self.stops[1:]):
+        for (stop1, color1), (stop2, color2) in zip(self._stops, self._stops[1:]):
             if stop2 >= position >= stop1:
                 return color1.blend(
                     color2,
                     (position - stop1) / (stop2 - stop1),
                 )
-        return self.stops[-1][1]
+        raise AssertionError("Can't get here if `_stops` is valid")
 
 
 # Color constants
