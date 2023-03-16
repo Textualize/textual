@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.containers import Vertical
+from textual.containers import VerticalScroll
 from textual.widgets import Label, Static
 
 
@@ -18,7 +18,6 @@ class Box(Static):
 
 
 class OffsetsApp(App):
-
     CSS = """
     
     #box1 {

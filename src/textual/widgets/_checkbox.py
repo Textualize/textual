@@ -14,9 +14,6 @@ class Checkbox(ToggleButton):
         This message can be handled using an `on_checkbox_changed` method.
         """
 
-        # https://github.com/Textualize/textual/issues/1814
-        namespace = "checkbox"
-
         @property
         def checkbox(self) -> Checkbox:
             """The checkbox that was changed."""

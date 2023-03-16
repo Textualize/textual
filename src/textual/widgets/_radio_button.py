@@ -21,9 +21,6 @@ class RadioButton(ToggleButton):
         This message can be handled using an `on_radio_button_changed` method.
         """
 
-        # https://github.com/Textualize/textual/issues/1814
-        namespace = "radio_button"
-
         @property
         def radio_button(self) -> RadioButton:
             """The radio button that was changed."""

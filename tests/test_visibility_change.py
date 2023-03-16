@@ -1,7 +1,7 @@
 """See https://github.com/Textualize/textual/issues/1355 as the motivation for these tests."""
 
 from textual.app import App, ComposeResult
-from textual.containers import Vertical
+from textual.containers import VerticalScroll
 from textual.widget import Widget
 
 
@@ -18,7 +18,7 @@ class VisibleTester(App[None]):
     """
 
     def compose(self) -> ComposeResult:
-        yield Vertical(
+        yield VerticalScroll(
             Widget(id="keep"), Widget(id="hide-via-code"), Widget(id="hide-via-css")
         )
 

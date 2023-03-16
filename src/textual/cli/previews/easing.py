@@ -5,7 +5,7 @@ from rich.console import RenderableType
 from textual._easing import EASING
 from textual.app import App, ComposeResult
 from textual.cli.previews.borders import TEXT
-from textual.containers import Container, Horizontal, Vertical
+from textual.containers import Container, Horizontal, VerticalScroll
 from textual.reactive import reactive, var
 from textual.scrollbar import ScrollBarRender
 from textual.widget import Widget
@@ -73,7 +73,7 @@ class EasingApp(App):
         )
 
         yield EasingButtons()
-        with Vertical():
+        with VerticalScroll():
             with Horizontal(id="inputs"):
                 yield Label("Animation Duration:", id="label")
                 yield duration_input

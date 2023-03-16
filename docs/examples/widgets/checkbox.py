@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.containers import Vertical
+from textual.containers import VerticalScroll
 from textual.widgets import Checkbox
 
 
@@ -7,7 +7,7 @@ class CheckboxApp(App[None]):
     CSS_PATH = "checkbox.css"
 
     def compose(self) -> ComposeResult:
-        with Vertical():
+        with VerticalScroll():
             yield Checkbox("Arrakis :sweat:")
             yield Checkbox("Caladan")
             yield Checkbox("Chusuk")

@@ -47,6 +47,14 @@ def test_dock_layout_sidebar(snap_compare):
     assert snap_compare(LAYOUT_EXAMPLES_DIR / "dock_layout2_sidebar.py")
 
 
+def test_layout_containers(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "layout_containers.py")
+
+
+def test_alignment_containers(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "alignment_containers.py")
+
+
 # --- Widgets - rendering and basic interactions ---
 # Each widget should have a canonical example that is display in the docs.
 # When adding a new widget, ideally we should also create a snapshot test
