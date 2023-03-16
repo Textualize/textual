@@ -81,6 +81,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
     | end | Move the menu highlight to the last option. |
     | page_up | Move the menu highlight up a page of options. |
     | page_down | Move the menu highlight down a page of options. |
+    | enter | Select the current menu option. |
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
