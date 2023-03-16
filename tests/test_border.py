@@ -6,6 +6,10 @@ from rich.style import Style
 from textual._border import render_border_label, render_row
 from textual.widget import Widget
 
+_EMPTY_STYLE = Style()
+_BLANK_SEGMENT = Segment(" ", _EMPTY_STYLE)
+_WIDE_CONSOLE = Console(width=9999)
+
 
 def test_border_render_row():
     style = Style.parse("red")
@@ -85,16 +89,15 @@ def test_render_border_label_empty_label_skipped(
 ):
     """Test that we get an empty list of segments if there is no label to display."""
 
-    console = Console()
     assert [] == render_border_label(
         "",
         True,
         "round",
         width,
-        Style(),
-        Style(),
-        Style(),
-        console,
+        _EMPTY_STYLE,
+        _EMPTY_STYLE,
+        _EMPTY_STYLE,
+        _WIDE_CONSOLE,
         has_left_corner,
         has_right_corner,
     )
@@ -124,16 +127,102 @@ def test_render_border_label_skipped_if_narrow(
     If we don't have space for all of these, we skip the label altogether.
     """
 
-    console = Console()
     assert [] == render_border_label(
         label,
         True,
         "round",
         width,
-        Style(),
-        Style(),
-        Style(),
-        console,
+        _EMPTY_STYLE,
+        _EMPTY_STYLE,
+        _EMPTY_STYLE,
+        _WIDE_CONSOLE,
         has_left_corner,
         has_right_corner,
     )
+
+
+@pytest.mark.parametrize(
+    "label",
+    [
+        "Why did the scarecrow",
+        "win a Nobel prize?",
+        "because it was outstanding",
+        "in its field.",
+    ],
+)
+def test_render_border_label_wide_plain(label: str):
+    """Test label rendering in a wide area with no styling."""
+
+    BIG_NUM = 9999
+    args = (
+        True,
+        "round",
+        BIG_NUM,
+        _EMPTY_STYLE,
+        _EMPTY_STYLE,
+        _EMPTY_STYLE,
+        _WIDE_CONSOLE,
+        True,
+        True,
+    )
+    left, original_text, right = render_border_label(label, *args)
+
+    assert left == _BLANK_SEGMENT
+    assert right == _BLANK_SEGMENT
+    assert original_text == Segment(label, _EMPTY_STYLE)
+
+
+def test_render_border_label():
+    """Test label rendering with styling, with and without overflow."""
+
+    label = "[b][on red]What [i]is up[/on red] with you?[/]"
+    border_style = Style.parse("green on blue")
+
+    # Implicit test on the number of segments returned:
+    blank1, what, is_up, with_you, blank2 = render_border_label(
+        label,
+        True,
+        "round",
+        9999,
+        _EMPTY_STYLE,
+        _EMPTY_STYLE,
+        border_style,
+        _WIDE_CONSOLE,
+        False,
+        False,
+    )
+
+    expected_blank = Segment(" ", border_style)
+    assert blank1 == expected_blank
+    assert blank2 == expected_blank
+
+    what_style = Style.parse("b on red")
+    expected_what = Segment("What ", border_style + what_style)
+    assert what == expected_what
+
+    is_up_style = Style.parse("b on red i")
+    expected_is_up = Segment("is up", border_style + is_up_style)
+    assert is_up == expected_is_up
+
+    with_you_style = Style.parse("b i")
+    expected_with_you = Segment(" with you?", border_style + with_you_style)
+    assert with_you == expected_with_you
+
+    blank1, what, blank2 = render_border_label(
+        label,
+        True,
+        "round",
+        5 + 2,  # 5 where "What…" fits + 2 for the blank spaces + 0 for the corners.
+        _EMPTY_STYLE,
+        _EMPTY_STYLE,
+        border_style,
+        _WIDE_CONSOLE,
+        False,  # This corner costs 0 cells.
+        False,  # This corner costs 0 cells.
+    )
+
+    assert blank1 == expected_blank
+    assert blank2 == expected_blank
+
+    expected_what = Segment("What…", border_style + what_style)
+    assert what == expected_what
