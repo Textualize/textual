@@ -11,7 +11,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Dropped "loading-indicator--dot" component style from LoadingIndicator https://github.com/Textualize/textual/pull/2050
 
-## Unreleased
+### Fixed
+
+- Fixed borders not rendering correctly. https://github.com/Textualize/textual/pull/2074
 
 ### Changed
 
