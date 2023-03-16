@@ -65,12 +65,6 @@ class Message:
             cls.namespace = namespace
 
     @property
-    def sender(self) -> MessageTarget:
-        """The sender of the message."""
-        assert self._sender is not None
-        return self._sender
-
-    @property
     def is_forwarded(self) -> bool:
         return self._forwarded
 
