@@ -80,6 +80,8 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
     | :- | :- |
     | up | Move the menu highlight up. |
     | down | Move the menu highlight down. |
+    | home | Move the menu highlight to the first option. |
+    | end | Move the menu highlight to the last option. |
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
