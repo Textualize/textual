@@ -44,7 +44,13 @@ class OptionLine(NamedTuple):
 
 
 class OptionLineSpan(NamedTuple):
-    """Class that holds the line span information for a menu option."""
+    """Class that holds the line span information for a menu option.
+
+    A [MenuOption][textual.widgets.menu.MenuOption] can have a prompt that
+    spans multiple lines. Also, there's no requirement that every option in
+    a menu has the same span information. So this structure is used to track
+    the line that an option starts on, and how many lines it contains.
+    """
 
     first: int
     """The line position for the start of the option.."""
