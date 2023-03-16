@@ -76,6 +76,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         Binding("end", "last", "Last", show=False),
         Binding("page_up", "page_up", "Page Up", show=False),
         Binding("page_down", "page_down", "Page Down", show=False),
+        Binding("enter", "select", "Select", show=False),
     ]
     """
     | Key(s) | Description |
@@ -125,25 +126,21 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
             super().__init__()
             self.cargo = cargo
 
-    class OptionHighlighted(Generic[MenuMessageDataType], Message):
-        """Message sent when an option is highlighted.
-
-        Can be handled using `on_menu_option_highlighted` in a subclass of
-        `Menu` or in a parent node in the DOM.
-        """
+    class OptionMessage(Generic[MenuMessageDataType], Message):
+        """Base class for all menu option messages."""
 
         def __init__(self, menu: Menu, index: int) -> None:
-            """Initialise the option highlighted message.
+            """Initialise the option message.
 
             Args:
-                menu: The menu that has the highlighted option.
-                option: The option that is highlighted.
+                menu: The menu that owns the option.
+                option: The option that the messages relates to.
             """
             super().__init__()
             self.menu = menu
             """The menu that sent the message."""
             self.index = index
-            """The index of the highlighted option."""
+            """The index of the option that the message relates to."""
             self.option = menu.option(index)
             """The highlighted option."""
 
@@ -151,6 +148,20 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
             yield "menu", self.menu
             yield "index", self.index
             yield "option", self.option
+
+    class OptionHighlighted(OptionMessage[MenuMessageDataType]):
+        """Message sent when an option is highlighted.
+
+        Can be handled using `on_menu_option_highlighted` in a subclass of
+        `Menu` or in a parent node in the DOM.
+        """
+
+    class OptionSelected(OptionMessage[MenuMessageDataType], Message):
+        """Message sent when an option is selected.
+
+        Can be handled using `on_menu_option_selected` in a subclass of
+        `Menu` or in a parent node in the DOM.
+        """
 
     def __init__(
         self,
@@ -355,3 +366,14 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
     def action_page_down(self) -> None:
         """Move the highlight down one page of options."""
         self._page(self.action_last, self.action_first, 1)
+
+    def action_select(self) -> None:
+        """Select the currently-highlighted menu option.
+
+        If no option is selected, then nothing happens. If an option is
+        selected, a [Menu.OptionSelected][textual.widgets.Menu.OptionSelected]
+        message will be posted.
+        """
+        highlighted = self.highlighted
+        if highlighted is not None:
+            self.post_message(self.OptionSelected(self, highlighted))
