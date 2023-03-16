@@ -17,7 +17,7 @@ class ContentSwitcher(Container):
         Children that have no ID will be hidden and ignored.
     """
 
-    current: reactive[str | None] = reactive[Optional[str]](None)
+    current: reactive[str | None] = reactive[Optional[str]](None, init=False)
     """The ID of the currently-displayed widget.
 
     If set to `None` then no widget is visible.
@@ -44,7 +44,7 @@ class ContentSwitcher(Container):
             id: The ID of the content switcher in the DOM.
             classes: The CSS classes of the content switcher.
             disabled: Whether the content switcher is disabled or not.
-            initial: The ID of the initial widget to show.
+            initial: The ID of the initial widget to show, or ``None`` for the first tab.
 
         Note:
             If `initial` is not supplied no children will be shown to start
@@ -57,14 +57,15 @@ class ContentSwitcher(Container):
             classes=classes,
             disabled=disabled,
         )
-        self._initial = initial
+        self._initial = initial or ""
 
     def on_mount(self) -> None:
         """Perform the initial setup of the widget once the DOM is ready."""
         initial = self._initial
         with self.app.batch_update():
             for child in self.children:
-                child.display = child.id == initial
+                child.display = bool(initial) and child.id == initial
+        self._reactive_current = initial
 
     @property
     def visible_content(self) -> Widget | None:

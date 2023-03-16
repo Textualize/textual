@@ -36,7 +36,7 @@ class TabbedApp(App):
         yield Footer()
 
         # Add the TabbedContent widget
-        with TabbedContent():
+        with TabbedContent(initial="jessica"):
             with TabPane("Leto", id="leto"):  # First tab
                 yield Markdown(LETO)  # Tab content
             with TabPane("Jessica", id="jessica"):

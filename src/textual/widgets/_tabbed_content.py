@@ -79,9 +79,16 @@ class TabbedContent(Widget):
     active: reactive[str] = reactive("", init=False)
     """The ID of the active tab, or empty string if none are active."""
 
-    def __init__(self, *titles: TextType) -> None:
+    def __init__(self, *titles: TextType, initial: str = "") -> None:
+        """Initialize a TabbedContent widgets.
+
+        Args:
+            *titles: Positional argument will be used as title.
+            initial: The id of the initial tab, or empty string to select the first tab.
+        """
         self.titles = [self.render_str(title) for title in titles]
         self._tab_content: list[Widget] = []
+        self._initial = initial
         super().__init__()
 
     def compose(self) -> ComposeResult:
@@ -111,9 +118,10 @@ class TabbedContent(Widget):
             ContentTab(content._title, content.id or "") for content in pane_content
         ]
         # Yield the tabs
-        yield Tabs(*tabs)
+        yield Tabs(*tabs, active=self._initial)
         # Yield the content switcher and panes
-        with ContentSwitcher():
+        print("INITIAL", self._initial)
+        with ContentSwitcher(initial=self._initial):
             yield from pane_content
 
     def compose_add_child(self, widget: Widget) -> None:
@@ -122,6 +130,7 @@ class TabbedContent(Widget):
 
     def on_tabs_tab_activated(self, event: Tabs.TabActivated) -> None:
         """User clicked a tab."""
+        self.log("on_tabs_tab_activated", event)
         event.stop()
         switcher = self.query_one(ContentSwitcher)
         assert isinstance(event.tab, ContentTab)
@@ -134,24 +143,3 @@ class TabbedContent(Widget):
     def watch_active(self, active: str) -> None:
         """Switch tabs when the active attributes changes."""
         self.query_one(Tabs).active = active
-
-
-if __name__ == "__main__":
-    from textual.app import App
-    from textual.widgets import Label
-
-    class TabbedApp(App):
-        def compose(self) -> ComposeResult:
-            with TabbedContent():
-                with TabPane("foo"):
-                    yield Label("This is foo\nfoo")
-                with TabPane("bar"):
-                    yield Label("This is Bar")
-                with TabPane("baz"):
-                    yield Label("This is Baz")
-
-        def on_ready(self) -> None:
-            self.log(self.tree)
-
-    app = TabbedApp()
-    app.run()

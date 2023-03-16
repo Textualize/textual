@@ -84,13 +84,6 @@ Example app showing the widget:
 | `active` | `str` | `""`    | The `id` attribute of the active tab. Set this to switch tabs. |
 
 
-
-## Additional notes
-
-- Did you know this?
-- Another pro tip.
-
-
 ## See also
 
 - [TabbedContent](../api/tabbed_content.md) code reference.
