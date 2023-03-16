@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import ClassVar, Generic, NamedTuple, TypeVar
 
 from rich.console import RenderableType
+from rich.repr import Result
 from rich.segment import Segment
 
 from ..binding import Binding, BindingType
@@ -16,6 +17,12 @@ from ..strip import Strip
 
 MenuDataType = TypeVar("MenuDataType")
 """The type of the data for a given instance of a [Menu][textual.widgets.Menu]."""
+
+MenuMessageDataType = TypeVar("MenuMessageDataType")
+"""The type of the data for a given instance of a [Menu][textual.widgets.Menu].
+
+As used when creating messages.
+"""
 
 
 class MenuOption(NamedTuple, Generic[MenuDataType]):
@@ -111,6 +118,30 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         def __init__(self, cargo: object) -> None:
             super().__init__()
             self.cargo = cargo
+
+    class OptionHighlighted(Generic[MenuMessageDataType], Message):
+        """Message sent when an option is highlighted.
+
+        Can be handled using `on_menu_option_highlighted` in a subclass of
+        `Menu` or in a parent node in the DOM.
+        """
+
+        def __init__(self, menu: Menu, option: MenuOption[MenuMessageDataType]) -> None:
+            """Initialise the option highlighted message.
+
+            Args:
+                menu: The menu that has the highlighted option.
+                option: The option that is highlighted.
+            """
+            super().__init__()
+            self.menu = menu
+            """The menu that sent the message."""
+            self.option = option
+            """The highlighted option."""
+
+        def __rich_repr__(self) -> Result:
+            yield "menu", self.menu
+            yield "option", self.option
 
     def __init__(
         self,
@@ -224,26 +255,33 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
             return len(self._options) - 1
         return highlighted
 
+    def _update_for_highlight(self) -> None:
+        """React to the highlighted option having changed."""
+        highlighted = self.highlighted
+        assert highlighted is not None
+        self.scroll_to_highlight()
+        self.post_message(self.OptionHighlighted(self, self._options[highlighted]))
+
     def action_up(self) -> None:
         """Move the highlight up by one option."""
         if self.highlighted is not None:
             self.highlighted -= 1
-            self.scroll_to_highlight()
+            self._update_for_highlight()
 
     def action_down(self) -> None:
         """Move the highlight down by one option."""
         if self.highlighted is not None:
             self.highlighted += 1
-            self.scroll_to_highlight()
+            self._update_for_highlight()
 
     def action_first(self) -> None:
         """Move the highlight to the first option."""
         if self._options:
             self.highlighted = 0
-            self.scroll_to_highlight()
+            self._update_for_highlight()
 
     def action_last(self) -> None:
         """Move the highlight to the last option."""
         if self._options:
             self.highlighted = len(self._options) - 1
-            self.scroll_to_highlight()
+            self._update_for_highlight()
