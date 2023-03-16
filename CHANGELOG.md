@@ -11,7 +11,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Dropped "loading-indicator--dot" component style from LoadingIndicator https://github.com/Textualize/textual/pull/2050
 
-## Unreleased
+### Removed
+
+- Removed `sender` attribute from messages. It's no just private (`_sender`).
 
 ### Changed
 

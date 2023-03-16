@@ -42,6 +42,7 @@ class Driver(ABC):
 
     def process_event(self, event: events.Event) -> None:
         """Performs some additional processing of events."""
+        event._set_sender(self._target)
         if isinstance(event, events.MouseDown):
             self._mouse_down_time = event.time
             if event.button:
