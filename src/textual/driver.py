@@ -4,7 +4,7 @@ import asyncio
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
-from . import _clock, events
+from . import _time, events
 from ._types import MessageTarget
 from .events import MouseUp
 
@@ -26,7 +26,7 @@ class Driver(ABC):
         self._debug = debug
         self._size = size
         self._loop = asyncio.get_running_loop()
-        self._mouse_down_time = _clock.get_time_no_wait()
+        self._mouse_down_time = _time.get_time()
         self._down_buttons: list[int] = []
         self._last_move_event: events.MouseMove | None = None
 
@@ -42,6 +42,7 @@ class Driver(ABC):
 
     def process_event(self, event: events.Event) -> None:
         """Performs some additional processing of events."""
+        event._set_sender(self._target)
         if isinstance(event, events.MouseDown):
             self._mouse_down_time = event.time
             if event.button:

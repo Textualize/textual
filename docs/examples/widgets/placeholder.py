@@ -1,14 +1,13 @@
 from textual.app import App, ComposeResult
-from textual.containers import Container, Horizontal, Vertical
+from textual.containers import Container, Horizontal, VerticalScroll
 from textual.widgets import Placeholder
 
 
 class PlaceholderApp(App):
-
     CSS_PATH = "placeholder.css"
 
     def compose(self) -> ComposeResult:
-        yield Vertical(
+        yield VerticalScroll(
             Container(
                 Placeholder("This is a custom label for p1.", id="p1"),
                 Placeholder("Placeholder p2 here!", id="p2"),

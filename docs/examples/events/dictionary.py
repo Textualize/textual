@@ -6,9 +6,10 @@ except ImportError:
     raise ImportError("Please install httpx with 'pip install httpx' ")
 
 from rich.json import JSON
+
 from textual.app import App, ComposeResult
-from textual.containers import Vertical
-from textual.widgets import Static, Input
+from textual.containers import VerticalScroll
+from textual.widgets import Input, Static
 
 
 class DictionaryApp(App):
@@ -18,7 +19,7 @@ class DictionaryApp(App):
 
     def compose(self) -> ComposeResult:
         yield Input(placeholder="Search for a word")
-        yield Vertical(Static(id="results"), id="results-container")
+        yield VerticalScroll(Static(id="results"), id="results-container")
 
     async def on_input_changed(self, message: Input.Changed) -> None:
         """A coroutine to handle a text changed message."""

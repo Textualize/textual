@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Changed
+
+- Dropped "loading-indicator--dot" component style from LoadingIndicator https://github.com/Textualize/textual/pull/2050
+
+### Removed
+
+- Removed `sender` attribute from messages. It's now just private (`_sender`). https://github.com/Textualize/textual/pull/2071
+
+### Fixed
+
+- Fixed borders not rendering correctly. https://github.com/Textualize/textual/pull/2074
+- Fix for error when removing nodes. https://github.com/Textualize/textual/issues/2079
+
+
+### Changed
+
+- Breaking change: changed default behaviour of `Vertical` (see `VerticalScroll`) https://github.com/Textualize/textual/issues/1957
+- The default `overflow` style for `Horizontal` was changed to `hidden hidden` https://github.com/Textualize/textual/issues/1957
+
+### Added
+
+- Added `HorizontalScroll` https://github.com/Textualize/textual/issues/1957
+- Added `Center` https://github.com/Textualize/textual/issues/1957
+- Added `Middle` https://github.com/Textualize/textual/issues/1957
+- Added `VerticalScroll` (mimicking the old behaviour of `Vertical`) https://github.com/Textualize/textual/issues/1957
+
 
 ## Unreleased
 
@@ -23,6 +51,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.15.0] - 2023-03-13
 
 ### Fixed
+
+- Fixed container not resizing when a widget is removed https://github.com/Textualize/textual/issues/2007
+- Fixes issue where the horizontal scrollbar would be incorrectly enabled https://github.com/Textualize/textual/pull/2024
+
+## [0.15.0] - 2023-03-13
+
+### Changed
 
 - Fixed container not resizing when a widget is removed https://github.com/Textualize/textual/issues/2007
 - Fixed issue where the horizontal scrollbar would be incorrectly enabled https://github.com/Textualize/textual/pull/2024

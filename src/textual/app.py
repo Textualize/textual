@@ -53,7 +53,7 @@ from ._ansi_sequences import SYNC_END, SYNC_START
 from ._asyncio import create_task
 from ._callback import invoke
 from ._compose import compose
-from ._context import active_app
+from ._context import active_app, active_message_pump
 from ._event_broker import NoHandler, extract_handler_actions
 from ._path import _make_path_object_relative
 from ._wait import wait_for_idle
@@ -918,6 +918,7 @@ class App(Generic[ReturnType], DOMNode):
             )
 
         # Launch the app in the "background"
+        active_message_pump.set(app)
         app_task = create_task(run_app(app), name=f"run_test {app}")
 
         # Wait until the app has performed all startup routines.
@@ -973,6 +974,7 @@ class App(Generic[ReturnType], DOMNode):
                         raise
 
                 pilot = Pilot(app)
+                active_message_pump.set(self)
                 auto_pilot_task = create_task(
                     run_auto_pilot(auto_pilot, pilot), name=repr(pilot)
                 )
@@ -2174,11 +2176,14 @@ class App(Generic[ReturnType], DOMNode):
             for child in widget._nodes:
                 push(child)
 
-    def _remove_nodes(self, widgets: list[Widget], parent: DOMNode) -> AwaitRemove:
+    def _remove_nodes(
+        self, widgets: list[Widget], parent: DOMNode | None
+    ) -> AwaitRemove:
         """Remove nodes from DOM, and return an awaitable that awaits cleanup.
 
         Args:
             widgets: List of nodes to remove.
+            parent: Parent node of widgets, or None for no parent.
 
         Returns:
             Awaitable that returns when the nodes have been fully removed.
@@ -2197,7 +2202,7 @@ class App(Generic[ReturnType], DOMNode):
                 await self._prune_nodes(widgets)
             finally:
                 finished_event.set()
-                if parent.styles.auto_dimensions:
+                if parent is not None and parent.styles.auto_dimensions:
                     parent.refresh(layout=True)
 
         removed_widgets = self._detach_from_dom(widgets)

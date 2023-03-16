@@ -2,6 +2,7 @@ from textual.app import App, ComposeResult
 from textual.containers import Horizontal
 from textual.widgets import Button
 
+
 class WidgetDisableTestApp(App[None]):
     CSS = """
     Horizontal {
@@ -27,6 +28,7 @@ class WidgetDisableTestApp(App[None]):
                 yield Button(variant="success")
                 yield Button(variant="warning")
                 yield Button(variant="error")
+
 
 if __name__ == "__main__":
     WidgetDisableTestApp().run()

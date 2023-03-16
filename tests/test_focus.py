@@ -151,11 +151,11 @@ def test_focus_next_and_previous_with_type_selector_without_self():
 
     screen = app.screen
 
-    from textual.containers import Horizontal, Vertical
+    from textual.containers import Horizontal, VerticalScroll
     from textual.widgets import Button, Input, Switch
 
     screen._add_children(
-        Vertical(
+        VerticalScroll(
             Horizontal(
                 Input(id="w3"),
                 Switch(id="w4"),
