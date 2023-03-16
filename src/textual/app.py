@@ -2174,11 +2174,14 @@ class App(Generic[ReturnType], DOMNode):
             for child in widget._nodes:
                 push(child)
 
-    def _remove_nodes(self, widgets: list[Widget], parent: DOMNode) -> AwaitRemove:
+    def _remove_nodes(
+        self, widgets: list[Widget], parent: DOMNode | None
+    ) -> AwaitRemove:
         """Remove nodes from DOM, and return an awaitable that awaits cleanup.
 
         Args:
             widgets: List of nodes to remove.
+            parent: Parent node of widgets, or None for no parent.
 
         Returns:
             Awaitable that returns when the nodes have been fully removed.
@@ -2197,7 +2200,7 @@ class App(Generic[ReturnType], DOMNode):
                 await self._prune_nodes(widgets)
             finally:
                 finished_event.set()
-                if parent.styles.auto_dimensions:
+                if parent is not None and parent.styles.auto_dimensions:
                     parent.refresh(layout=True)
 
         removed_widgets = self._detach_from_dom(widgets)

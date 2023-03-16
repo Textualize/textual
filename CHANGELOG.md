@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed borders not rendering correctly. https://github.com/Textualize/textual/pull/2074
+- Fix for error when removing nodes. https://github.com/Textualize/textual/issues/2079
 
 ### Changed
 
