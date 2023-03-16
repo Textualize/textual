@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Dropped "loading-indicator--dot" component style from LoadingIndicator https://github.com/Textualize/textual/pull/2050
+- Tabs widget now sends Tabs.TabsCleared when there is not active tab.
+- Breaking change: changed default behaviour of `Vertical` (see `VerticalScroll`) https://github.com/Textualize/textual/issues/1957
+- The default `overflow` style for `Horizontal` was changed to `hidden hidden` https://github.com/Textualize/textual/issues/1957
 
 ### Removed
 
@@ -20,18 +23,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed borders not rendering correctly. https://github.com/Textualize/textual/pull/2074
 - Fix for error when removing nodes. https://github.com/Textualize/textual/issues/2079
 
-
-### Changed
-
-- Breaking change: changed default behaviour of `Vertical` (see `VerticalScroll`) https://github.com/Textualize/textual/issues/1957
-- The default `overflow` style for `Horizontal` was changed to `hidden hidden` https://github.com/Textualize/textual/issues/1957
-
 ### Added
 
 - Added `HorizontalScroll` https://github.com/Textualize/textual/issues/1957
 - Added `Center` https://github.com/Textualize/textual/issues/1957
 - Added `Middle` https://github.com/Textualize/textual/issues/1957
 - Added `VerticalScroll` (mimicking the old behaviour of `Vertical`) https://github.com/Textualize/textual/issues/1957
+- Added `TabbedContent` widget
 
 
 ## [0.15.1] - 2023-03-14

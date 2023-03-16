@@ -5,51 +5,79 @@ from itertools import zip_longest
 from rich.text import Text, TextType
 
 from ..app import ComposeResult
+from ..reactive import reactive
 from ..widget import Widget
 from ._content_switcher import ContentSwitcher
 from ._tabs import Tab, Tabs
 
+__all__ = [
+    "ContentTab",
+    "TabbedContent",
+    "TabPane",
+]
 
-class _Tab(Tab):
+
+class ContentTab(Tab):
+    """A Tab with an associated content id."""
+
     def __init__(self, label: Text, content_id: str):
-        super().__init__(label)
-        self.content_id = content_id
+        """Initialize a ContentTab.
+
+        Args:
+            label: The label to be displayed within the tab.
+            content_id: The id of the content associated with the tab.
+        """
+        super().__init__(label, id=content_id)
 
 
 class TabPane(Widget):
+    """A container for switchable content, with additional title."""
+
     DEFAULT_CSS = """
     TabPane {
         height: auto;
-        background: $boost;
         padding: 1 2;
     }
     """
 
     def __init__(
         self,
-        title: Text,
+        title: TextType,
         *children: Widget,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
     ):
-        self.title = title
+        """Initialize a TabPane.
+
+        Args:
+            title: Title of the TabPane (will be displayed in a tab label).
+            name: Optional name for the TabPane.
+            id: Optional ID for the TabPane.
+            classes: Optional initial classes for the widget.
+            disabled: Whether the TabPane is disabled or not.
+        """
+        self._title = self.render_str(title)
         super().__init__(
             *children, name=name, id=id, classes=classes, disabled=disabled
         )
 
 
 class TabbedContent(Widget):
+    """A container with associated tabs to toggle content visibility."""
+
     DEFAULT_CSS = """
     TabbedContent {
         height: auto;
-        background: $boost;
     }
     TabbedContent > ContentSwitcher {
         height: auto;
     }
     """
+
+    active: reactive[str] = reactive("", init=False)
+    """The ID of the active tab, or empty string if none are active."""
 
     def __init__(self, *titles: TextType) -> None:
         self.titles = [self.render_str(title) for title in titles]
@@ -57,11 +85,15 @@ class TabbedContent(Widget):
         super().__init__()
 
     def compose(self) -> ComposeResult:
+        """Compose the tabbed content."""
+
         def set_id(content: TabPane, new_id: str) -> TabPane:
+            """Set an id on the content, if not already present."""
             if content.id is None:
                 content.id = new_id
             return content
 
+        # Wrap content in a `TabPane` if required.
         pane_content = [
             (
                 set_id(content, f"tab-{index}")
@@ -74,8 +106,13 @@ class TabbedContent(Widget):
                 zip_longest(self.titles, self._tab_content), 1
             )
         ]
-        tabs = [_Tab(content.title, content.id or "") for content in pane_content]
+        # Get a tab for each pane
+        tabs = [
+            ContentTab(content._title, content.id or "") for content in pane_content
+        ]
+        # Yield the tabs
         yield Tabs(*tabs)
+        # Yield the content switcher and panes
         with ContentSwitcher():
             yield from pane_content
 
@@ -84,9 +121,19 @@ class TabbedContent(Widget):
         self._tab_content.append(widget)
 
     def on_tabs_tab_activated(self, event: Tabs.TabActivated) -> None:
+        """User clicked a tab."""
+        event.stop()
         switcher = self.query_one(ContentSwitcher)
-        assert isinstance(event.tab, _Tab)
-        switcher.current = event.tab.content_id
+        assert isinstance(event.tab, ContentTab)
+        switcher.current = event.tab.id
+
+    def on_tabs_tabs_cleared(self, event: Tabs.TabsCleared) -> None:
+        """All tabs were removed."""
+        event.stop()
+
+    def watch_active(self, active: str) -> None:
+        """Switch tabs when the active attributes changes."""
+        self.query_one(Tabs).active = active
 
 
 if __name__ == "__main__":
@@ -95,10 +142,16 @@ if __name__ == "__main__":
 
     class TabbedApp(App):
         def compose(self) -> ComposeResult:
-            with TabbedContent("Foo", "Bar", "baz"):
-                yield Label("This is foo\nfoo")
-                yield Label("This is Bar")
-                yield Label("This is Baz")
+            with TabbedContent():
+                with TabPane("foo"):
+                    yield Label("This is foo\nfoo")
+                with TabPane("bar"):
+                    yield Label("This is Bar")
+                with TabPane("baz"):
+                    yield Label("This is Baz")
+
+        def on_ready(self) -> None:
+            self.log(self.tree)
 
     app = TabbedApp()
     app.run()

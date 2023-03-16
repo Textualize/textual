@@ -390,7 +390,8 @@ class Widget(DOMNode):
         compose_stack = self.app._compose_stacks[-1]
         composed = compose_stack.pop()
         if compose_stack:
-            compose_stack[-1]._nodes._append(composed)
+            # compose_stack[-1]._nodes._append(composed)
+            compose_stack[-1].compose_add_child(composed)
         else:
             self.app._composed[-1].append(composed)
 

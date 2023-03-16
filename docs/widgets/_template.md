@@ -33,7 +33,7 @@ Example app showing the widget:
 
 ## Bindings
 
-The WIDGET widget defines directly the following bindings:
+The WIDGET widget defines the following bindings:
 
 ::: textual.widgets.WIDGET.BINDINGS
     options:

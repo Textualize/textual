@@ -23,7 +23,7 @@ The example below populates a table with CSV data.
 ## Reactive Attributes
 
 | Name                | Type                                        | Default            | Description                                           |
-|---------------------|---------------------------------------------|--------------------|-------------------------------------------------------|
+| ------------------- | ------------------------------------------- | ------------------ | ----------------------------------------------------- |
 | `show_header`       | `bool`                                      | `True`             | Show the table header                                 |
 | `fixed_rows`        | `int`                                       | `0`                | Number of fixed rows (rows which do not scroll)       |
 | `fixed_columns`     | `int`                                       | `0`                | Number of fixed columns (columns which do not scroll) |
@@ -52,7 +52,7 @@ The example below populates a table with CSV data.
 
 ## Bindings
 
-The data table widget defines directly the following bindings:
+The data table widget defines the following bindings:
 
 ::: textual.widgets.DataTable.BINDINGS
     options:

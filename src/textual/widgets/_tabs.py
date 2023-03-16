@@ -175,15 +175,32 @@ class Tabs(Widget, can_focus=True):
     class TabActivated(Message):
         """Sent when a new tab is activated."""
 
-        tab: Tab | None
+        tabs: Tabs
+        """The tabs widget containing the tab."""
+        tab: Tab
         """The tab that was activated."""
 
-        def __init__(self, tab: Tab | None) -> None:
+        def __init__(self, tabs: Tabs, tab: Tab) -> None:
+            self.tabs = tabs
             self.tab = tab
             super().__init__()
 
         def __rich_repr__(self) -> rich.repr.Result:
+            yield self.tabs
             yield self.tab
+
+    class TabsCleared(Message):
+        """Sent when there are no active tabs."""
+
+        tabs: Tabs
+        """The tabs widget which was cleared"""
+
+        def __init__(self, tabs: Tabs) -> None:
+            self.tabs = tabs
+            super().__init__()
+
+        def __rich_repr__(self) -> rich.repr.Result:
+            yield self.tabs
 
     active: reactive[str] = reactive("", init=False)
     """The ID of the active tab, or empty string if none are active."""
@@ -278,7 +295,7 @@ class Tabs(Widget, can_focus=True):
         mount_await = self.query_one("#tabs-list").mount(tab_widget)
         if from_empty:
             tab_widget.add_class("-active")
-            self.post_message(self.TabActivated(tab_widget))
+            self.post_message(self.TabActivated(self, tab_widget))
 
             async def refresh_active() -> None:
                 """Wait for things to be mounted before highlighting."""
@@ -294,7 +311,7 @@ class Tabs(Widget, can_focus=True):
         underline.highlight_start = 0
         underline.highlight_end = 0
         self.query("#tabs-list > Tab").remove()
-        self.post_message(self.TabActivated(None))
+        self.post_message(self.TabsCleared(self))
 
     def remove_tab(self, tab_or_id: Tab | str | None) -> None:
         """Remove a tab.
@@ -314,9 +331,13 @@ class Tabs(Widget, can_focus=True):
         removing_active_tab = remove_tab.has_class("-active")
 
         next_tab = self._next_active
-        self.post_message(self.TabActivated(next_tab))
+        if next_tab is None:
+            self.post_message(self.TabsCleared(self))
+        else:
+            self.post_message(self.TabActivated(self, next_tab))
 
         async def do_remove() -> None:
+            """Perform the remove after refresh so the underline bar gets new positions."""
             await remove_tab.remove()
             if removing_active_tab:
                 if next_tab is not None:
@@ -365,12 +386,12 @@ class Tabs(Widget, can_focus=True):
             self.query("#tabs-list > Tab.-active").remove_class("-active")
             active_tab.add_class("-active")
             self._highlight_active(animate=previously_active != "")
-            self.post_message(self.TabActivated(active_tab))
+            self.post_message(self.TabActivated(self, active_tab))
         else:
             underline = self.query_one(Underline)
             underline.highlight_start = 0
             underline.highlight_end = 0
-            self.post_message(self.TabActivated(None))
+            self.post_message(self.TabsCleared(self))
 
     def _highlight_active(self, animate: bool = True) -> None:
         """Move the underline bar to under the active tab.

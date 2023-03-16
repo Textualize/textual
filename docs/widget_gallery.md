@@ -194,6 +194,14 @@ A row of tabs you can select with the mouse or navigate with keys.
 ```{.textual path="docs/examples/widgets/tabs.py" press="a,a,a,a,right,right"}
 ```
 
+## TabbedContent
+
+A Combination of Tabs and ContentSwitcher to navigate static content.
+
+[TabbedContent reference](./widgets/tabbed_content.md){ .md-button .md-button--primary }
+
+```{.textual path="docs/examples/widgets/tabbed_content.py" press="j"}
+```
 
 ## TextLog
 
