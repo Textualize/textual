@@ -18,6 +18,7 @@ from ..widgets import DataTable, Static, Tree
 
 TableOfContentsType: TypeAlias = "list[tuple[int, str, str | None]]"
 
+
 class Navigator:
     """Manages a stack of paths like a browser."""
 
@@ -508,7 +509,7 @@ class Markdown(Widget):
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
-        parser_factory: Optional[Callable[[], MarkdownIt]] = None
+        parser_factory: Optional[Callable[[], MarkdownIt]] = None,
     ):
         """A Markdown widget.
 
@@ -576,7 +577,9 @@ class Markdown(Widget):
         """
         output: list[MarkdownBlock] = []
         stack: list[MarkdownBlock] = []
-        parser = self._parser_factory() if self._parser_factory else MarkdownIt("gfm-like")
+        parser = (
+            self._parser_factory() if self._parser_factory else MarkdownIt("gfm-like")
+        )
 
         content = Text()
         block_id: int = 0
@@ -801,7 +804,7 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
-        parser_factory: Optional[Callable[[], MarkdownIt]] = None
+        parser_factory: Optional[Callable[[], MarkdownIt]] = None,
     ):
         """Create a Markdown Viewer object.
 
