@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import ClassVar, Generic, NamedTuple, TypeVar
+from typing import Callable, ClassVar, Generic, Literal, NamedTuple, TypeVar
 
 from rich.console import RenderableType
 from rich.repr import Result
@@ -37,8 +37,11 @@ class MenuOption(NamedTuple, Generic[MenuDataType]):
 class OptionLineSegments(NamedTuple, Generic[MenuDataType]):
     """Class that holds a list of segments for the line of a menu option."""
 
+    # TODO: I might be able to do away with option and just work with index.
     option: MenuOption[MenuDataType]
     """The [MenuOption][textual.widgets.menu.MenuOption] related to the line."""
+    option_index: int
+    """The index of the [MenuOption][textual.widgets.menu.MenuOption] that this line is related to."""
     segments: list[Segment]
     """The list of segments that make up the line of the prompt."""
 
@@ -74,6 +77,8 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         Binding("down", "down", "Down", show=False),
         Binding("home", "first", "First", show=False),
         Binding("end", "last", "Last", show=False),
+        Binding("page_up", "page_up", "Page Up", show=False),
+        Binding("page_down", "page_down", "Page Down", show=False),
     ]
     """
     | Key(s) | Description |
@@ -82,6 +87,8 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
     | down | Move the menu highlight down. |
     | home | Move the menu highlight to the first option. |
     | end | Move the menu highlight to the last option. |
+    | page_up | Move the menu highlight up a page of options. |
+    | page_down | Move the menu highlight down a page of options. |
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
@@ -185,9 +192,10 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         # need to be working out all the lines again if I get resized?
         lines_from = self.app.console.render_lines
         line = 0
-        for option in self._options:
+        for option_index, option in enumerate(self._options):
             lines = [
-                OptionLineSegments(option, line) for line in lines_from(option.prompt)
+                OptionLineSegments(option, option_index, line)
+                for line in lines_from(option.prompt)
             ]
             self._lines.extend(lines)
             self._spans.append(OptionLineSpan(line, len(lines)))
@@ -305,3 +313,49 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         if self._options:
             self.highlighted = len(self._options) - 1
             self._update_for_highlight()
+
+    def _page(
+        self,
+        default: Callable[[], None],
+        wrap_around: Callable[[], None],
+        direction: Literal[-1, 1],
+    ) -> None:
+        """Move the highlight by one page.
+
+        Args:
+            default: The default action to take if no option is highlighted.
+            wrap_around: The action to take if we need to wrap around the ends.
+            direction: The direction to head, -1 for up and 1 for down.
+        """
+        highlighted = self.highlighted
+        if highlighted is None:
+            # There is no highlight yet so let's go to the default position.
+            default()
+        else:
+            # We want to page roughly by lines, but we're dealing with
+            # options that can be a varying number of lines in height. So
+            # let's start with the a target line alone.
+            target_line = self._spans[highlighted].first + (
+                direction * self.scrollable_content_region.height
+            )
+            try:
+                # Now that we've got a target line, let's figure out the
+                # index of the target option.
+                target_option = self._lines[target_line].option_index
+            except IndexError:
+                # An index error suggests we've gone out of bounds, let's
+                # settle on whatever the call things is a good place to wrap
+                # to.
+                wrap_around()
+            else:
+                # Looks like we've figured out the next option to jump to.
+                self.highlighted = target_option
+                self._update_for_highlight()
+
+    def action_page_up(self) -> None:
+        """Move the highlight up one page of options."""
+        self._page(self.action_first, self.action_last, -1)
+
+    def action_page_down(self) -> None:
+        """Move the highlight down one page of options."""
+        self._page(self.action_last, self.action_first, 1)
