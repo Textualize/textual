@@ -4,20 +4,19 @@ from textual.widgets import Footer, Markdown, TabbedContent, TabPane
 LETO = """
 # Duke Leto I Atreides
 
-Head of House Atreides
+Head of House Atreides.
 """
 
 JESSICA = """
 # Lady Jessica
 
-Bene Gesserit and concubine of Leto, and mother of Paul and Alia
+Bene Gesserit and concubine of Leto, and mother of Paul and Alia.
 """
 
 PAUL = """
 # Paul Atreides
 
-Son of Leto and Jessica
-
+Son of Leto and Jessica.
 """
 
 

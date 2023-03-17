@@ -2,13 +2,13 @@
 
 Switch between mutually exclusive content panes via a row of tabs.
 
-This widget combines the [Tabs](../widgets/tabs.md) and [ContentSwitcher](../widgets/content_switcher.md) widgets to create a convenient way of navigating content.
-
 - [x] Focusable
 - [x] Container
 
-Only a single child of TabbedContent is visible at a time.
-Each child has an associated tab which to make it visible, and hide the others.
+This widget combines the [Tabs](../widgets/tabs.md) and [ContentSwitcher](../widgets/content_switcher.md) widgets to create a convenient way of navigating content.
+
+Only a single child of TabbedContent is visible at once.
+Each child has an associated tab which will make it visible and hide the others.
 
 ## Composing
 
@@ -51,10 +51,6 @@ def compose(self) -> ComposeResult:
             yield Markdown(PAUL)
 ```
 
-!!! note
-
-    If you don't provide `id` attributes to the tab panes, they will be assigned sequentially starting at `tab-1` (then `tab-2` etc).
-
 You can then switch tabs by setting the `active` reactive attribute:
 
 ```python
@@ -62,9 +58,28 @@ You can then switch tabs by setting the `active` reactive attribute:
 self.query_one(TabbedContent).active = "jessica"
 ```
 
+!!! note
+
+    If you don't provide `id` attributes to the tab panes, they will be assigned sequentially starting at `tab-1` (then `tab-2` etc).
+
+## Initial tab
+
+The first child of `TabbedContent` will be the initial active tab by default. You can pick a different initial tab by setting the `initial` argument to the `id` of the tab:
+
+```python
+def compose(self) -> ComposeResult:
+    with TabbedContent(initial="jessica"):
+        with TabPane("Leto", id="leto"):
+            yield Markdown(LETO)
+        with TabPane("Jessica", id="jessica"):
+            yield Markdown(JESSICA)
+        with TabPane("Paul", id="paul"):
+            yield Markdown(PAUL)
+```
+
 ## Example
 
-Example app showing the widget:
+The following example contains a `TabbedContent` with three tabs.
 
 === "Output"
 
@@ -88,4 +103,4 @@ Example app showing the widget:
 
 - [TabbedContent](../api/tabbed_content.md) code reference.
 - [Tabs](../api/tabs.md) code reference.
-- [ContentSwitcher](../api/content_switcher.md)
+- [ContentSwitcher](../api/content_switcher.md) code reference.

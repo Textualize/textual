@@ -31,7 +31,11 @@ class ContentTab(Tab):
 
 
 class TabPane(Widget):
-    """A container for switchable content, with additional title."""
+    """A container for switchable content, with additional title.
+
+    This widget is intended to be used with [TabbedContent][textual.widgets.TabbedContent].
+
+    """
 
     DEFAULT_CSS = """
     TabPane {
@@ -127,7 +131,7 @@ class TabbedContent(Widget):
         """When using the context manager compose syntax, we want to attach nodes to the switcher."""
         self._tab_content.append(widget)
 
-    def on_tabs_tab_activated(self, event: Tabs.TabActivated) -> None:
+    def _on_tabs_tab_activated(self, event: Tabs.TabActivated) -> None:
         """User clicked a tab."""
         self.log("on_tabs_tab_activated", event)
         event.stop()
@@ -135,7 +139,7 @@ class TabbedContent(Widget):
         assert isinstance(event.tab, ContentTab)
         switcher.current = event.tab.id
 
-    def on_tabs_tabs_cleared(self, event: Tabs.TabsCleared) -> None:
+    def _on_tabs_tabs_cleared(self, event: Tabs.TabsCleared) -> None:
         """All tabs were removed."""
         event.stop()
 
