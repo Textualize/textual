@@ -390,7 +390,6 @@ class Widget(DOMNode):
         compose_stack = self.app._compose_stacks[-1]
         composed = compose_stack.pop()
         if compose_stack:
-            # compose_stack[-1]._nodes._append(composed)
             compose_stack[-1].compose_add_child(composed)
         else:
             self.app._composed[-1].append(composed)
@@ -489,7 +488,9 @@ class Widget(DOMNode):
             A widget.
         """
         for child in self._nodes:
-            if isinstance(child, expect_type):
+            # We want the child with the exact type (not subclasses)
+            if type(child) is expect_type:
+                assert isinstance(child, expect_type)
                 return child
         raise NoMatches(f"No immediate child of type {expect_type}; {self._nodes}")
 

@@ -2,6 +2,7 @@ import pytest
 
 from textual._node_list import DuplicateIds
 from textual.app import App, ComposeResult
+from textual.containers import Container
 from textual.css.errors import StyleValueError
 from textual.css.query import NoMatches
 from textual.geometry import Size
@@ -109,6 +110,24 @@ def test_get_child_by_id_no_matching_child(parent):
 def test_get_child_by_id_only_immediate_descendents(parent):
     with pytest.raises(NoMatches):
         parent.get_child_by_id(id="grandchild1")
+
+
+async def test_get_child_by_type():
+    class GetChildApp(App):
+        def compose(self) -> ComposeResult:
+            yield Widget(id="widget1")
+            yield Container(
+                Label(id="label1"),
+                Widget(id="widget2"),
+                id="container1",
+            )
+
+    app = GetChildApp()
+    async with app.run_test():
+        assert app.get_child_by_type(Widget).id == "widget1"
+        assert app.get_child_by_type(Container).id == "container1"
+        with pytest.raises(NoMatches):
+            app.get_child_by_type(Label)
 
 
 def test_get_widget_by_id_no_matching_child(parent):
