@@ -1,4 +1,5 @@
 import pytest
+from rich.text import Text
 
 from textual._node_list import DuplicateIds
 from textual.app import App, ComposeResult
@@ -217,3 +218,12 @@ async def test_remove_unmounted():
     async with app.run_test() as pilot:
         await pilot.pause()
         assert mounted
+
+
+def test_render_str() -> None:
+    widget = Label()
+    assert widget.render_str("foo") == Text("foo")
+    assert widget.render_str("[b]foo") == Text.from_markup("[b]foo")
+    # Text objects are passed unchanged
+    text = Text("bar")
+    assert widget.render_str(text) is text

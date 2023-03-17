@@ -120,7 +120,6 @@ class TabbedContent(Widget):
         # Yield the tabs
         yield Tabs(*tabs, active=self._initial)
         # Yield the content switcher and panes
-        print("INITIAL", self._initial)
         with ContentSwitcher(initial=self._initial):
             yield from pane_content
 
