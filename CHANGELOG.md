@@ -29,9 +29,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Center` https://github.com/Textualize/textual/issues/1957
 - Added `Middle` https://github.com/Textualize/textual/issues/1957
 - Added `VerticalScroll` (mimicking the old behaviour of `Vertical`) https://github.com/Textualize/textual/issues/1957
-- Added `TabbedContent` widget
-- Added `get_child_by_type` method to widgets / app
-- Added `Widget.render_str` method
+- Added `TabbedContent` widget https://github.com/Textualize/textual/pull/2059
+- Added `get_child_by_type` method to widgets / app https://github.com/Textualize/textual/pull/2059
+- Added `Widget.render_str` method https://github.com/Textualize/textual/pull/2059
 
 
 ## [0.15.1] - 2023-03-14
