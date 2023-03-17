@@ -193,7 +193,7 @@ class Tabs(Widget, can_focus=True):
         """Sent when there are no active tabs."""
 
         tabs: Tabs
-        """The tabs widget which was cleared"""
+        """The tabs widget which was cleared."""
 
         def __init__(self, tabs: Tabs) -> None:
             self.tabs = tabs
