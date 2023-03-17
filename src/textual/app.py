@@ -2216,7 +2216,7 @@ class App(Generic[ReturnType], DOMNode):
                 await self._prune_nodes(widgets)
             finally:
                 finished_event.set()
-                if parent is not None and parent.styles.auto_dimensions:
+                if parent is not None:
                     parent.refresh(layout=True)
 
         removed_widgets = self._detach_from_dom(widgets)
