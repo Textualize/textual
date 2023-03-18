@@ -159,7 +159,7 @@ class DOMNode(MessagePump):
         if you want children to be attached to a different node.
 
         Args:
-            node: A DOM node to add.
+            node: A Widget to add.
         """
         self._nodes._append(widget)
 

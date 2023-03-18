@@ -99,7 +99,15 @@ class TabbedContent(Widget):
         """Compose the tabbed content."""
 
         def set_id(content: TabPane, new_id: str) -> TabPane:
-            """Set an id on the content, if not already present."""
+            """Set an id on the content, if not already present.
+
+            Args:
+                content: a TabPane.
+                new_id: New `is` attribute, if it is not already set.
+
+            Returns:
+                The same TabPane.
+            """
             if content.id is None:
                 content.id = new_id
             return content
@@ -128,7 +136,11 @@ class TabbedContent(Widget):
             yield from pane_content
 
     def compose_add_child(self, widget: Widget) -> None:
-        """When using the context manager compose syntax, we want to attach nodes to the switcher."""
+        """When using the context manager compose syntax, we want to attach nodes to the switcher.
+
+        Args:
+            widget: A Widget to add.
+        """
         self._tab_content.append(widget)
 
     def _on_tabs_tab_activated(self, event: Tabs.TabActivated) -> None:
