@@ -181,6 +181,12 @@ class Tabs(Widget, can_focus=True):
         """The tab that was activated."""
 
         def __init__(self, tabs: Tabs, tab: Tab) -> None:
+            """Initialize event.
+
+            Args:
+                tabs: The Tabs widget.
+                tab: The tab that was activated.
+            """
             self.tabs = tabs
             self.tab = tab
             super().__init__()
@@ -189,13 +195,18 @@ class Tabs(Widget, can_focus=True):
             yield self.tabs
             yield self.tab
 
-    class TabsCleared(Message):
+    class Cleared(Message):
         """Sent when there are no active tabs."""
 
         tabs: Tabs
         """The tabs widget which was cleared."""
 
         def __init__(self, tabs: Tabs) -> None:
+            """Initialize the event.
+
+            Args:
+                tabs: The tabs widget.
+            """
             self.tabs = tabs
             super().__init__()
 
@@ -311,7 +322,7 @@ class Tabs(Widget, can_focus=True):
         underline.highlight_start = 0
         underline.highlight_end = 0
         self.query("#tabs-list > Tab").remove()
-        self.post_message(self.TabsCleared(self))
+        self.post_message(self.Cleared(self))
 
     def remove_tab(self, tab_or_id: Tab | str | None) -> None:
         """Remove a tab.
@@ -332,7 +343,7 @@ class Tabs(Widget, can_focus=True):
 
         next_tab = self._next_active
         if next_tab is None:
-            self.post_message(self.TabsCleared(self))
+            self.post_message(self.Cleared(self))
         else:
             self.post_message(self.TabActivated(self, next_tab))
 
@@ -391,7 +402,7 @@ class Tabs(Widget, can_focus=True):
             underline = self.query_one(Underline)
             underline.highlight_start = 0
             underline.highlight_end = 0
-            self.post_message(self.TabsCleared(self))
+            self.post_message(self.Cleared(self))
 
     def _highlight_active(self, animate: bool = True) -> None:
         """Move the underline bar to under the active tab.

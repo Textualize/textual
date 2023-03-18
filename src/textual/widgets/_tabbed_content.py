@@ -151,7 +151,7 @@ class TabbedContent(Widget):
         assert isinstance(event.tab, ContentTab)
         switcher.current = event.tab.id
 
-    def _on_tabs_tabs_cleared(self, event: Tabs.TabsCleared) -> None:
+    def _on_tabs_cleared(self, event: Tabs.Cleared) -> None:
         """All tabs were removed."""
         event.stop()
 
