@@ -4,8 +4,10 @@ from pathlib import Path, PurePath
 from typing import Iterable
 
 from markdown_it import MarkdownIt
+from rich import box
 from rich.style import Style
 from rich.syntax import Syntax
+from rich.table import Table
 from rich.text import Text
 from typing_extensions import TypeAlias
 
@@ -14,7 +16,7 @@ from ..containers import Horizontal, VerticalScroll
 from ..message import Message
 from ..reactive import reactive, var
 from ..widget import Widget
-from ..widgets import DataTable, Static, Tree
+from ..widgets import Static, Tree
 
 TableOfContentsType: TypeAlias = "list[tuple[int, str, str | None]]"
 
@@ -316,17 +318,59 @@ class MarkdownOrderedList(MarkdownList):
         self._blocks.clear()
 
 
+class MarkdownTableContent(Widget):
+    """Renders a Markdown table."""
+
+    DEFAULT_CSS = """
+    MarkdownTableContent {
+        width: 100%;
+        height: auto;
+
+    }
+    MarkdownTableContent > .markdown-table--header {
+        text-style: bold;
+    }
+    """
+
+    COMPONENT_CLASSES = {"markdown-table--header", "markdown-table--lines"}
+
+    def __init__(self, headers: list[Text], rows: list[list[Text]]):
+        self.headers = headers
+        """List of header text."""
+        self.rows = rows
+        """The row contents."""
+        super().__init__()
+        self.shrink = True
+
+    def render(self) -> Table:
+        table = Table(
+            expand=True,
+            box=box.SIMPLE_HEAVY,
+            style=self.rich_style,
+            header_style=self.get_component_rich_style("markdown-table--header"),
+            border_style=self.get_component_rich_style("markdown-table--lines"),
+            collapse_padding=True,
+            padding=0,
+        )
+        for header in self.headers:
+            table.add_column(header)
+        for row in self.rows:
+            if row:
+                table.add_row(*row)
+        return table
+
+
 class MarkdownTable(MarkdownBlock):
     """A Table markdown Block."""
 
     DEFAULT_CSS = """
     MarkdownTable {
-        margin: 1 0;
-    }
-    MarkdownTable > DataTable {
         width: 100%;
-        height: auto;
+        margin: 1 0;
+        background: $panel;
+        border: wide $background;
     }
+
     """
 
     def compose(self) -> ComposeResult:
@@ -346,11 +390,7 @@ class MarkdownTable(MarkdownBlock):
             elif isinstance(block, MarkdownTD):
                 rows[-1].append(block._text)
 
-        table: DataTable = DataTable(zebra_stripes=True, show_cursor=False)
-        table.can_focus = False
-        table.add_columns(*headers)
-        table.add_rows([row for row in rows if row])
-        yield table
+        yield MarkdownTableContent(headers, rows)
         self._blocks.clear()
 
 
@@ -369,17 +409,9 @@ class MarkdownTR(MarkdownBlock):
 class MarkdownTH(MarkdownBlock):
     """A table header Markdown block."""
 
-    DEFAULT_CSS = """
-
-    """
-
 
 class MarkdownTD(MarkdownBlock):
     """A table data Markdown block."""
-
-    DEFAULT_CSS = """
-
-    """
 
 
 class MarkdownBullet(Widget):
@@ -721,7 +753,7 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
     }
     """
 
-    table_of_contents: reactive[TableOfContentsType | None] = reactive(None, init=False)
+    table_of_contents = reactive["TableOfContentsType | None"](None, init=False)
 
     def compose(self) -> ComposeResult:
         tree: Tree = Tree("TOC")
