@@ -83,7 +83,7 @@ class ContentSwitcher(Container):
             new: The new widget ID (or `None` if nothing should be shown).
         """
         with self.app.batch_update():
-            if old is not None:
+            if old:
                 self.get_child_by_id(old).display = False
-            if new is not None:
+            if new:
                 self.get_child_by_id(new).display = True
