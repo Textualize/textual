@@ -57,6 +57,7 @@ class TabPane(Widget):
 
         Args:
             title: Title of the TabPane (will be displayed in a tab label).
+            *children: Widget to go inside the TabPane.
             name: Optional name for the TabPane.
             id: Optional ID for the TabPane.
             classes: Optional initial classes for the widget.

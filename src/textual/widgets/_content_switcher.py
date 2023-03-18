@@ -44,11 +44,10 @@ class ContentSwitcher(Container):
             id: The ID of the content switcher in the DOM.
             classes: The CSS classes of the content switcher.
             disabled: Whether the content switcher is disabled or not.
-            initial: The ID of the initial widget to show, or ``None`` for the first widget.
+            initial: The ID of the initial widget to show, ``None`` or empty string for the first tab.
 
         Note:
-            If `initial` is not supplied no children will be shown to start
-            with.
+            If `initial` is not supplied no children will be shown to start with.
         """
         super().__init__(
             *children,
