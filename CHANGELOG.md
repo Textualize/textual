@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 - Added `parser_factory` argument to `Markdown` and `MarkdownViewer` constructors https://github.com/Textualize/textual/pull/2075
+- Added the option to supply a custom path in the `json_tree.py` example https://github.com/Textualize/textual/pull/2087
 
 ### Changed
 
