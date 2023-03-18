@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.widgets import Footer, Markdown, TabbedContent, TabPane
+from textual.widgets import Footer, Label, Markdown, TabbedContent, TabPane
 
 LETO = """
 # Duke Leto I Atreides
@@ -40,12 +40,16 @@ class TabbedApp(App):
                 yield Markdown(LETO)  # Tab content
             with TabPane("Jessica", id="jessica"):
                 yield Markdown(JESSICA)
+                with TabbedContent("Paul", "Alia"):
+                    yield TabPane("Paul", Label("First child"))
+                    yield TabPane("Alia", Label("Second child"))
+
             with TabPane("Paul", id="paul"):
                 yield Markdown(PAUL)
 
     def action_show_tab(self, tab: str) -> None:
         """Switch to a new tab."""
-        self.query_one(TabbedContent).active = tab
+        self.get_child_by_type(TabbedContent).active = tab
 
 
 if __name__ == "__main__":
