@@ -81,7 +81,7 @@ class TabbedContent(Widget):
     }
     """
 
-    active: reactive[str | None] = reactive(None, init=False)
+    active: reactive[str] = reactive("", init=False)
     """The ID of the active tab, or empty string if none are active."""
 
     def __init__(self, *titles: TextType, initial: str = "") -> None:
@@ -95,6 +95,22 @@ class TabbedContent(Widget):
         self._tab_content: list[Widget] = []
         self._initial = initial
         super().__init__()
+
+    def validate_active(self, active: str) -> str:
+        """It doesn't make sense for `active` to be an empty string.
+
+        Args:
+            active: Attribute to be validated.
+
+        Returns:
+            Value of `active`.
+
+        Raises:
+            ValueError: If the active attribute is set to empty string.
+        """
+        if not active:
+            raise ValueError("'active' tab must not be empty string.")
+        return active
 
     def compose(self) -> ComposeResult:
         """Compose the tabbed content."""
@@ -131,9 +147,9 @@ class TabbedContent(Widget):
             ContentTab(content._title, content.id or "") for content in pane_content
         ]
         # Yield the tabs
-        yield Tabs(*tabs, active=self._initial)
+        yield Tabs(*tabs, active=self._initial or None)
         # Yield the content switcher and panes
-        with ContentSwitcher(initial=self._initial):
+        with ContentSwitcher(initial=self._initial or None):
             yield from pane_content
 
     def compose_add_child(self, widget: Widget) -> None:

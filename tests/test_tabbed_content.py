@@ -1,3 +1,5 @@
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.widgets import Label, TabbedContent, TabPane
 
@@ -51,6 +53,14 @@ async def test_tabbed_content_switch():
         assert not app.query_one("#foo-label").region
         assert not app.query_one("#bar-label").region
         assert app.query_one("#baz-label").region
+
+        # Check fail with non existent tab
+        with pytest.raises(ValueError):
+            tabbed_content.active = "X"
+
+        # Check fail with empty tab
+        with pytest.raises(ValueError):
+            tabbed_content.active = ""
 
 
 async def test_tabbed_content_initial():
