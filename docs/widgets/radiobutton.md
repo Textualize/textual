@@ -31,12 +31,12 @@ The example below shows radio buttons, used within a [`RadioSet`](./radioset.md)
 ## Reactive Attributes
 
 | Name    | Type   | Default | Description                    |
-|---------|--------|---------|--------------------------------|
+| ------- | ------ | ------- | ------------------------------ |
 | `value` | `bool` | `False` | The value of the radio button. |
 
 ## Bindings
 
-The radio button widget defines directly the following bindings:
+The radio button widget defines the following bindings:
 
 ::: textual.widgets._toggle_button.ToggleButton.BINDINGS
     options:

@@ -28,7 +28,7 @@ def compose(node: App | Widget) -> list[Widget]:
                 nodes.extend(composed)
                 composed.clear()
             if compose_stack:
-                compose_stack[-1]._nodes._append(child)
+                compose_stack[-1].compose_add_child(child)
             else:
                 nodes.append(child)
         if composed:

@@ -17,7 +17,7 @@ class ContentSwitcher(Container):
         Children that have no ID will be hidden and ignored.
     """
 
-    current: reactive[str | None] = reactive[Optional[str]](None)
+    current: reactive[str | None] = reactive[Optional[str]](None, init=False)
     """The ID of the currently-displayed widget.
 
     If set to `None` then no widget is visible.
@@ -44,11 +44,10 @@ class ContentSwitcher(Container):
             id: The ID of the content switcher in the DOM.
             classes: The CSS classes of the content switcher.
             disabled: Whether the content switcher is disabled or not.
-            initial: The ID of the initial widget to show.
+            initial: The ID of the initial widget to show, ``None`` or empty string for the first tab.
 
         Note:
-            If `initial` is not supplied no children will be shown to start
-            with.
+            If `initial` is not supplied no children will be shown to start with.
         """
         super().__init__(
             *children,
@@ -61,12 +60,11 @@ class ContentSwitcher(Container):
 
     def on_mount(self) -> None:
         """Perform the initial setup of the widget once the DOM is ready."""
-        # On startup, ensure everything is hidden.
+        initial = self._initial
         with self.app.batch_update():
             for child in self.children:
-                child.display = False
-        # Then set the initial display.
-        self.current = self._initial
+                child.display = bool(initial) and child.id == initial
+        self._reactive_current = initial
 
     @property
     def visible_content(self) -> Widget | None:
@@ -84,7 +82,7 @@ class ContentSwitcher(Container):
             new: The new widget ID (or `None` if nothing should be shown).
         """
         with self.app.batch_update():
-            if old is not None:
+            if old:
                 self.get_child_by_id(old).display = False
-            if new is not None:
+            if new:
                 self.get_child_by_id(new).display = True

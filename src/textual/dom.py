@@ -151,6 +151,18 @@ class DOMNode(MessagePump):
 
         super().__init__()
 
+    def compose_add_child(self, widget: Widget) -> None:
+        """Add a node to children.
+
+        This is used by the compose process when it adds children.
+        There is no need to use it directly, but you may want to override it in a subclass
+        if you want children to be attached to a different node.
+
+        Args:
+            widget: A Widget to add.
+        """
+        self._nodes._append(widget)
+
     @property
     def children(self) -> Sequence["Widget"]:
         """A view on to the children."""

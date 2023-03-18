@@ -44,7 +44,7 @@ Tree widgets have a "root" attribute which is an instance of a [TreeNode][textua
 
 ## Bindings
 
-The tree widget defines directly the following bindings:
+The tree widget defines the following bindings:
 
 ::: textual.widgets.Tree.BINDINGS
     options:

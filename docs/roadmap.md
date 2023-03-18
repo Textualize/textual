@@ -73,7 +73,7 @@ Widgets are key to making user-friendly interfaces. The builtin widgets should c
 - [X] Radio boxes
 - [ ] Spark-lines
 - [X] Switch
-- [ ] Tabs
+- [X] Tabs
 - [ ] TextArea (multi-line input)
     * [ ] Basic controls
     * [ ] Indentation guides
