@@ -81,7 +81,7 @@ class TabbedContent(Widget):
     }
     """
 
-    active: reactive[str] = reactive("", init=False)
+    active: reactive[str | None] = reactive(None, init=False)
     """The ID of the active tab, or empty string if none are active."""
 
     def __init__(self, *titles: TextType, initial: str = "") -> None:
@@ -150,6 +150,7 @@ class TabbedContent(Widget):
         switcher = self.get_child_by_type(ContentSwitcher)
         assert isinstance(event.tab, ContentTab)
         switcher.current = event.tab.id
+        self.active = event.tab.id
 
     def _on_tabs_cleared(self, event: Tabs.Cleared) -> None:
         """All tabs were removed."""
