@@ -146,7 +146,6 @@ class TabbedContent(Widget):
 
     def _on_tabs_tab_activated(self, event: Tabs.TabActivated) -> None:
         """User clicked a tab."""
-        self.log("on_tabs_tab_activated", event)
         event.stop()
         switcher = self.query_one(ContentSwitcher)
         assert isinstance(event.tab, ContentTab)
