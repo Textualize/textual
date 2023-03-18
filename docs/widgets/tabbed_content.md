@@ -12,7 +12,7 @@ Each child has an associated tab which will make it visible and hide the others.
 
 ## Composing
 
-There are two way to provide the titles for the tab.
+There are two ways to provide the titles for the tab.
 You can pass them as positional arguments to the [TabbedContent][textual.widgets.TabbedContent] constructor:
 
 ```python
