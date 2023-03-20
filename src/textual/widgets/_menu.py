@@ -329,12 +329,16 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         if self.highlighted is not None:
             self.highlighted -= 1
             self._update_for_highlight()
+        elif self._options:
+            self.action_first()
 
     def action_down(self) -> None:
         """Move the highlight down by one option."""
         if self.highlighted is not None:
             self.highlighted += 1
             self._update_for_highlight()
+        elif self._options:
+            self.action_first()
 
     def action_first(self) -> None:
         """Move the highlight to the first option."""
