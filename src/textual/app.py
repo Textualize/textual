@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import importlib
 import inspect
 import io
 import os
@@ -47,7 +48,7 @@ from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
 from rich.traceback import Traceback
 
-from . import Logger, LogGroup, LogVerbosity, actions, events, log, messages
+from . import Logger, LogGroup, LogVerbosity, actions, constants, events, log, messages
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
 from ._asyncio import create_task
@@ -590,7 +591,24 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             A Driver class which manages input and display.
         """
+
         driver_class: Type[Driver]
+
+        driver_import = constants.DRIVER
+        if driver_import is not None:
+            # The driver class is set from the environment
+            # Syntax should be foo.bar.baz:MyDriver
+            module_import, colon, driver_symbol = driver_import.partition(":")
+            driver_module = importlib.import_module(module_import)
+            driver_class = getattr(driver_module, driver_symbol)
+            if not inspect.isclass(driver_class) or not issubclass(
+                driver_class, Driver
+            ):
+                raise RuntimeError(
+                    f"Unable to import {driver_import!r}; {driver_class!r} is not a Driver class "
+                )
+            return driver_class
+
         if WINDOWS:
             from .drivers.windows_driver import WindowsDriver
 

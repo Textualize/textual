@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `TabbedContent` widget https://github.com/Textualize/textual/pull/2059
 - Added `get_child_by_type` method to widgets / app https://github.com/Textualize/textual/pull/2059
 - Added `Widget.render_str` method https://github.com/Textualize/textual/pull/2059
+- Added TEXTUAL_DRIVER environment variable
 
 
 ## [0.15.1] - 2023-03-14
