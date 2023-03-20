@@ -115,6 +115,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
     DEFAULT_CSS = """
     Menu {
         overflow: hidden;
+        color: $text;
     }
 
     Menu > .menu--separator {
