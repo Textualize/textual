@@ -198,10 +198,6 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         # Initial calculation of the shape of the prompts.
         self._calculate_lines_and_spans()
 
-        # TODO: Decide what the width actually should be in this case. Right
-        # now this is just about ensuing the scrolling kicks in.
-        self.virtual_size = Size(self.size.width, len(self._lines))
-
         # Finally, cause the highlighted property to settle down based on
         # the state of the menu in regard to its available options. Be sure
         # to have a look at validate_highlighted.
@@ -209,8 +205,10 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
 
     def _calculate_lines_and_spans(self) -> None:
         """Calculation the lines and the spans of the options' prompts."""
+
         self._lines.clear()
         self._spans.clear()
+
         # TODO: Do I need to be telling it what width to deal with? Do I
         # need to be working out all the lines again if I get resized?
         lines_from = self.app.console.render_lines
@@ -222,6 +220,10 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
             self._lines.extend(lines)
             self._spans.append(OptionLineSpan(line, len(lines)))
             line += len(lines)
+
+        # TODO: Decide what the width actually should be in this case. Right
+        # now this is just about ensuing the scrolling kicks in.
+        self.virtual_size = Size(self.size.width, len(self._lines))
 
     def add(self, option: MenuOption[MenuDataType] | RenderableType) -> Self:
         """Add a new option to the end of the menu.
