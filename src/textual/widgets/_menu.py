@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
-from typing import Callable, ClassVar, Generic, Literal, NamedTuple, TypeVar
+from typing import Callable, ClassVar, Generic, NamedTuple, TypeVar
 
 from rich.console import RenderableType
 from rich.repr import Result
 from rich.segment import Segment
+from typing_extensions import Literal
 
 from ..binding import Binding, BindingType
 from ..geometry import Region, Size
