@@ -296,9 +296,12 @@ def render_border_label(
         is_title: Whether we are rendering the title (`True`) or the subtitle (`False`).
         name: Name of the box type.
         width: The width, in cells, of the space available for the whole edge.
-            This accounts for the 2 cells made available for the corner and for the two
-            blank spaces around the label, which means that the space available for the
-            label is effectively `width - 4`.
+            This is the total space that may also be needed for the border corners and
+            the whitespace padding around the (sub)title. Thus, the effective space
+            available for the border label is:
+            - `width` if no corner is needed;
+            - `width - 2` if one corner is needed; and
+            - `width - 4` if both corners are needed.
         inner_style: The inner style (widget background).
         outer_style: The outer style (parent background).
         style: Widget style.
@@ -311,7 +314,7 @@ def render_border_label(
     """
     # How many cells do we need to reserve for surrounding blanks and corners?
     corners_needed = has_left_corner + has_right_corner
-    cells_reserved = 2 + corners_needed
+    cells_reserved = 2 * corners_needed
     if not label or width <= cells_reserved:
         yield from ()
         return
@@ -341,9 +344,11 @@ def render_border_label(
         Segment(segment.text, base_style + segment.style) for segment in segments
     ]
     blank = Segment(" ", base_style)
-    yield blank
+    if has_left_corner:
+        yield blank
     yield from styled_segments
-    yield blank
+    if has_right_corner:
+        yield blank
 
 
 def _compose_row_with_label(
@@ -375,12 +380,6 @@ def _compose_row_with_label(
 
     corners_needed = left + right
     label_segments_list = list(label_segments)
-
-    # Ensure the label is flush with the edge if possible by removing a blank.
-    if label_alignment == "left" and not left:
-        label_segments_list = label_segments_list[1:]
-    elif label_alignment == "right" and not right:
-        label_segments_list = label_segments_list[:-1]
 
     label_length = sum((segment.cell_length for segment in label_segments_list), 0)
     space_available = max(0, width - corners_needed - label_length)

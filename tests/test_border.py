@@ -113,10 +113,7 @@ def test_render_border_label_empty_label_skipped(
         ("hey", 2, True, True),
         ("hey", 2, True, False),
         ("hey", 2, False, True),
-        ("hey", 2, False, False),
         ("hey", 3, True, True),
-        ("hey", 3, True, False),
-        ("hey", 3, False, True),
         ("hey", 4, True, True),
     ],
 )
@@ -194,8 +191,8 @@ def test_render_border_label():
         _EMPTY_STYLE,
         border_style,
         _WIDE_CONSOLE,
-        False,
-        False,
+        True,
+        True,
     )
 
     expected_blank = Segment(" ", border_style)
@@ -218,13 +215,13 @@ def test_render_border_label():
         label,
         True,
         "round",
-        5 + 2,  # 5 where "What…" fits + 2 for the blank spaces + 0 for the corners.
+        5 + 4,  # 5 where "What…" fits + 2 for the blank spaces + 2 for the corners.
         _EMPTY_STYLE,
         _EMPTY_STYLE,
         border_style,
         _WIDE_CONSOLE,
-        False,  # This corner costs 0 cells.
-        False,  # This corner costs 0 cells.
+        True,  # This corner costs 2 cells.
+        True,  # This corner costs 2 cells.
     )
 
     assert blank1 == expected_blank
