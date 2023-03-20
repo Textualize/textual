@@ -314,6 +314,20 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         """The count of options in the menu."""
         return len(self._options)
 
+    def option(self, index: int) -> MenuOption[MenuDataType]:
+        """Get the menu option at the given index.
+
+        Args:
+            index: The index of the option to get.
+
+        Returns:
+            The option at that index.
+
+        Raises:
+            IndexError: If there is no option with the index.
+        """
+        return self._options[index]
+
     def render_line(self, y: int) -> Strip:
         """Render a single line in the menu.
 
