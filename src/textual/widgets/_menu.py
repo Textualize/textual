@@ -189,18 +189,43 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
-        # Build up the list of menu options. The caller can pass in either
-        # strings or actual MenuOption objects.
-        self._options: list[MenuOption[MenuDataType] | MenuSeparator] = [
-            option
-            if isinstance(option, (MenuOption, MenuSeparator))
-            else MenuOption(option)
-            for option in options
+        self._contents: list[MenuOption[MenuDataType] | MenuSeparator] = [
+            self._make_content(option) for option in options
         ]
+        """A list of the content of the menu.
 
-        # Used to hold the "shape" of the option prompts in the menu.
+        This is *every* that makes up the content of the menu; this includes
+        both the prompts *and* the separators (and any other decoration we
+        could end up adding -- although I don't anticipate anything else at
+        the moment; but padding around separators could be a thing,
+        perhaps).
+        """
+
+        self._options: list[MenuOption[MenuDataType]] = [
+            content for content in self._contents if isinstance(content, MenuOption)
+        ]
+        """A list of the options within the menu.
+
+        This is a list of references to just the options alone, ignoring the
+        separators and potentially any other line-oriented menu content that
+        isn't an option.
+        """
+
         self._lines: list[OptionLine] = []
+        """A list of all of the individual lines that make up the menu.
+
+        Note that the size of this list will at least the same as the number
+        of options, and actually greater if any prompt of any option is
+        multiple lines.
+        """
+
         self._spans: list[OptionLineSpan] = []
+        """A list of the locations and sizes of all options in the menu.
+
+        This will be the same size as the number of prompts; each entry in
+        the list contains the line offset of the start of the prompt, and
+        the count of the lines in the prompt.
+        """
 
         # Initial calculation of the shape of the prompts.
         self._calculate_lines_and_spans()
@@ -209,6 +234,23 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         # the state of the menu in regard to its available options. Be sure
         # to have a look at validate_highlighted.
         self.highlighted = None
+
+    def _make_content(
+        self, content: MenuOption[MenuDataType] | MenuSeparator | RenderableType
+    ) -> MenuOption[MenuDataType] | MenuSeparator:
+        """Convert a single item of content for the menu into a menu content type.
+
+        Args:
+            content: The content to turn into a full menu type.
+
+        Returns:
+            The content, usable in the menu.
+        """
+        return (
+            content
+            if isinstance(content, (MenuOption, MenuSeparator))
+            else MenuOption(content)
+        )
 
     def _calculate_lines_and_spans(self) -> None:
         """Calculation the lines and the spans of the options' prompts."""
@@ -219,23 +261,36 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         # TODO: Do I need to be telling it what width to deal with? Do I
         # need to be working out all the lines again if I get resized?
         lines_from = self.app.console.render_lines
+
+        # Create a rule that can be used as a separator.
+        separator = lines_from(Rule())[0]
+
         line = 0
-        for option_index, option in enumerate(self._options):
-            lines = [
-                OptionLine(option_index, line)
-                for line in lines_from(
-                    option.prompt if isinstance(option, MenuOption) else ""
-                )
-            ]
+        option = 0
+        for content in self._contents:
+            if isinstance(content, MenuOption):
+                lines = [
+                    OptionLine(option, prompt_line)
+                    for prompt_line in lines_from(content.prompt)
+                ]
+                self._spans.append(OptionLineSpan(line, len(lines)))
+                option += 1
+            else:
+                assert isinstance(content, MenuSeparator)
+                # It's a menu separator so let's make a single line rule for
+                # it. Note that we associate it with the previous proper
+                # menu option.
+                lines = [OptionLine(option, separator)]
             self._lines.extend(lines)
-            self._spans.append(OptionLineSpan(line, len(lines)))
             line += len(lines)
 
         # TODO: Decide what the width actually should be in this case. Right
         # now this is just about ensuing the scrolling kicks in.
         self.virtual_size = Size(self.size.width, len(self._lines))
 
-    def add(self, option: MenuOption[MenuDataType] | RenderableType) -> Self:
+    def add(
+        self, option: MenuOption[MenuDataType] | MenuSeparator | RenderableType
+    ) -> Self:
         """Add a new option to the end of the menu.
 
         Args:
@@ -244,9 +299,12 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         Returns:
             The menu.
         """
-        self._options.append(
-            option if isinstance(option, MenuOption) else MenuOption(option)
-        )
+        # Turn any renderable into actual menu content.
+        content = self._make_content(option)
+        self._contents.append(content)
+        # If the content is a genuine menu option, add it to the list of options.
+        if isinstance(content, MenuOption):
+            self._options.append(content)
         self._calculate_lines_and_spans()
         self.refresh()
         return self
@@ -275,13 +333,6 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
             # An IndexError means we're drawing in a menu where there's more
             # menu than there are prompts.
             return Strip([])
-
-        # If the line relates to an option that's a separator, let's exit
-        # early with a Rich rule.
-        #
-        # TODO: STYLING!
-        if isinstance(self._options[line.option_index], MenuSeparator):
-            return Strip(self.app.console.render_lines(Rule())[0])
 
         # Knowing which line we're going to be drawing, we can now go pull
         # the relevant segments for the line of that particular prompt.
