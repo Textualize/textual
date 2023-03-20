@@ -3,7 +3,7 @@ from textual.containers import Container, Grid
 from textual.widgets import Label
 
 
-def make_label_container(  # (1)!
+def make_label_container(  # (11)!
     text: str, id: str, border_title: str, border_subtitle: str
 ) -> Container:
     lbl = Label(text, id=id)
@@ -15,44 +15,56 @@ def make_label_container(  # (1)!
 class BorderSubTitleAlignAll(App[None]):
     def compose(self):
         with Grid():
-            yield make_label_container(
-                "This is the",
+            yield make_label_container(  # (1)!
+                "This is the story of",
                 "lbl1",
-                "[b]Left, [i]but[/i] it's really long[/]",  # (2)!
-                "[u]Left[/]",
+                "[b]Border [i]title[/i][/]",
+                "[u][r]Border[/r] subtitle[/]",
             )
-            yield make_label_container(
-                "story of a Python",
+            yield make_label_container(  # (2)!
+                "a Python",
                 "lbl2",
-                "[b red]Left",  # (3)!
-                "[reverse]Center, but it's loooooooooooong.",
+                "[b red]Left, but it's loooooooooooong",
+                "[reverse]Center, but it's loooooooooooong",
             )
-            yield make_label_container(
+            yield make_label_container(  # (3)!
                 "developer that",
                 "lbl3",
-                "[b i on purple]Left[/]",  # (4)!
-                "Right",
+                "[b i on purple]Left[/]",
+                "[r u white on black]@@@[/]",
             )
             yield make_label_container(
                 "had to fill up",
                 "lbl4",
-                "Center",
-                "[link=https://textual.textualize.io]Left",  # (5)!
+                "",  # (4)!
+                "[link=https://textual.textualize.io]Left[/]",  # (5)!
             )
-            yield make_label_container("nine labels", "lbl5", "Center", "Center")
             yield make_label_container(
+                "nine labels", "lbl5", "Title", "Subtitle"
+            )  # (6)!
+            yield make_label_container(  # (7)!
                 "and ended up redoing it",
                 "lbl6",
-                "Center",
-                "Right",
+                "Title",
+                "Subtitle",
             )
-            yield make_label_container("because the first try", "lbl7", "Right", "Left")
-            yield make_label_container("had some labels", "lbl8", "Right", "Center")
-            yield make_label_container(
+            yield make_label_container(  # (8)!
+                "because the first try",
+                "lbl7",
+                "Title, but really loooooooooong!",
+                "Subtitle, but really loooooooooong!",
+            )
+            yield make_label_container(  # (9)!
+                "had some labels",
+                "lbl8",
+                "Title, but really loooooooooong!",
+                "Subtitle, but really loooooooooong!",
+            )
+            yield make_label_container(  # (10)!
                 "that were too long.",
                 "lbl9",
-                "Right",
-                "Right",
+                "Title, but really loooooooooong!",
+                "Subtitle, but really loooooooooong!",
             )
 
 

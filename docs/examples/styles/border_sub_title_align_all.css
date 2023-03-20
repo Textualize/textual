@@ -9,60 +9,56 @@ Container {
     align: center middle;
 }
 
-#lbl1 {
+#lbl1 {  /* (1)! */
     border: vkey $secondary;
-    border-title-align: left;  /* (1)! */
-    border-subtitle-align: left;
 }
 
-#lbl2 {
+#lbl2 {  /* (2)! */
     border: round $secondary;
-    /* Default is `left`. */
-    border-title-align: ;  /* (2)! */
-    border-subtitle-align: center;
+    border-title-align: right;
+    border-subtitle-align: right;
 }
 
 #lbl3 {
     border: wide $secondary;
-    padding: 1;
-    border-title-align: left;
-    /* Default is `right`. */
-    border-subtitle-align: ;  /* (3)! */
+    border-title-align: center;
+    border-subtitle-align: center;
 }
 
 #lbl4 {
     border: ascii $success;
-    border-title-align: center;
+    border-title-align: center;  /* (3)! */
     border-subtitle-align: left;
 }
 
-#lbl5 {
+#lbl5 {  /* (4)! */
     /* No border = no (sub)title. */
-    border: none $success;  /* (4)! */
+    border: none $success;
     border-title-align: center;
     border-subtitle-align: center;
 }
 
-#lbl6 {
-    border: solid $success;
-    border-title-align: center;
-    border-subtitle-align: right;
+#lbl6 {  /* (5)! */
+    border-top: solid $success;
+    border-bottom: solid $success;
 }
 
-#lbl7 {
-    border: hkey $error;
-    border-title-align: right;
+#lbl7 {  /* (6)! */
+    border-top: solid $error;
+    border-bottom: solid $error;
+    padding: 1 2;
     border-subtitle-align: left;
 }
 
 #lbl8 {
-    border: inner $error;
-    border-title-align: right;
+    border-top: solid $error;
+    border-bottom: solid $error;
+    border-title-align: center;
     border-subtitle-align: center;
 }
 
 #lbl9 {
-    border: heavy $error;
+    border-top: solid $error;
+    border-bottom: solid $error;
     border-title-align: right;
-    border-subtitle-align: right;
 }
