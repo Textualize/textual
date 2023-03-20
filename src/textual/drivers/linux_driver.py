@@ -9,7 +9,7 @@ import termios
 import tty
 from codecs import getincrementaldecoder
 from threading import Event, Thread
-from typing import IO, TYPE_CHECKING, Any
+from typing import IO, Any
 
 import rich.repr
 
@@ -32,6 +32,14 @@ class LinuxDriver(Driver):
         debug: bool = False,
         size: tuple[int, int] | None = None,
     ) -> None:
+        """Initialize a driver.
+
+        Args:
+            file: A file-like object open for writing unicode.
+            target: The message target (expected to be the app).
+            debug: Enabled debug mode. Defaults to False.
+            size: Initial size of the terminal or None to detect. Defaults to None.
+        """
         super().__init__(file, target, debug=debug, size=size)
         self._file = file
         self.fileno = sys.stdin.fileno()
