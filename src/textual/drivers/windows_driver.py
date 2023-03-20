@@ -28,9 +28,15 @@ class WindowsDriver(Driver):
         self._restore_console: Callable[[], None] | None = None
 
     def write(self, data: str) -> None:
+        """Write data to the output device.
+
+        Args:
+            data: Raw data.
+        """
         self._file.write(data)
 
     def _enable_mouse_support(self) -> None:
+        """Enable reporting of mouse events."""
         write = self.write
         write("\x1b[?1000h")  # SET_VT200_MOUSE
         write("\x1b[?1003h")  # SET_ANY_EVENT_MOUSE
@@ -39,6 +45,7 @@ class WindowsDriver(Driver):
         self.flush()
 
     def _disable_mouse_support(self) -> None:
+        """Disable reporting of mouse events."""
         write = self.write
         write("\x1b[?1000l")
         write("\x1b[?1003l")
@@ -55,6 +62,7 @@ class WindowsDriver(Driver):
         self.write("\x1b[?2004l")
 
     def start_application_mode(self) -> None:
+        """Start application mode."""
         loop = asyncio.get_running_loop()
 
         self._restore_console = win32.enable_application_mode()
@@ -73,6 +81,7 @@ class WindowsDriver(Driver):
         self._event_thread.start()
 
     def disable_input(self) -> None:
+        """Disable further input."""
         try:
             if not self.exit_event.is_set():
                 self._disable_mouse_support()
@@ -86,6 +95,7 @@ class WindowsDriver(Driver):
             pass
 
     def stop_application_mode(self) -> None:
+        """Stop application mode, restore state."""
         self._disable_bracketed_paste()
         self.disable_input()
         if self._restore_console:
