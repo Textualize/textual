@@ -109,6 +109,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
     | Class | Description |
     | :- | :- |
     | `menu--option-highlighted` | Target the highlighted menu option. |
+    | `menu--separator` | Target the menu separators. |
     """
 
     DEFAULT_CSS = """
