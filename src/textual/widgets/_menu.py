@@ -191,13 +191,26 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
             for option in options
         ]
 
-        # Now that we know the initial list of options, we need to work out
-        # the individual lines that will make up the content of the menu.
-        # Each option can be a different height, so we'll render from a list
-        # of individual lines, while keeping track of with option they
-        # relate to.
+        # Used to hold the "shape" of the option prompts in the menu.
         self._lines: list[OptionLine] = []
         self._spans: list[OptionLineSpan] = []
+
+        # Initial calculation of the shape of the prompts.
+        self._calculate_lines_and_spans()
+
+        # TODO: Decide what the width actually should be in this case. Right
+        # now this is just about ensuing the scrolling kicks in.
+        self.virtual_size = Size(self.size.width, len(self._lines))
+
+        # Finally, cause the highlighted property to settle down based on
+        # the state of the menu in regard to its available options. Be sure
+        # to have a look at validate_highlighted.
+        self.highlighted = None
+
+    def _calculate_lines_and_spans(self) -> None:
+        """Calculation the lines and the spans of the options' prompts."""
+        self._lines.clear()
+        self._spans.clear()
         # TODO: Do I need to be telling it what width to deal with? Do I
         # need to be working out all the lines again if I get resized?
         lines_from = self.app.console.render_lines
@@ -209,15 +222,6 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
             self._lines.extend(lines)
             self._spans.append(OptionLineSpan(line, len(lines)))
             line += len(lines)
-
-        # TODO: Decide what the width actually should be in this case. Right
-        # now this is just about ensuing the scrolling kicks in.
-        self.virtual_size = Size(self.size.width, len(self._lines))
-
-        # Finally, cause the highlighted property to settle down based on
-        # the state of the menu in regard to its available options. Be sure
-        # to have a look at validate_highlighted.
-        self.highlighted = None
 
     def option(self, index: int) -> MenuOption[MenuDataType]:
         """Get the menu option at the given position in the list of options.
