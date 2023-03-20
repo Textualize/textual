@@ -7,7 +7,7 @@ from typing import Callable, ClassVar, Generic, NamedTuple, TypeVar
 from rich.console import RenderableType
 from rich.repr import Result
 from rich.segment import Segment
-from typing_extensions import Literal
+from typing_extensions import Literal, Self
 
 from ..binding import Binding, BindingType
 from ..geometry import Region, Size
@@ -222,6 +222,22 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
             self._lines.extend(lines)
             self._spans.append(OptionLineSpan(line, len(lines)))
             line += len(lines)
+
+    def add(self, option: MenuOption[MenuDataType] | RenderableType) -> Self:
+        """Add a new option to the end of the menu.
+
+        Args:
+            option: The option to add.
+
+        Returns:
+            The menu.
+        """
+        self._options.append(
+            option if isinstance(option, MenuOption) else MenuOption(option)
+        )
+        self._calculate_lines_and_spans()
+        self.refresh()
+        return self
 
     def option(self, index: int) -> MenuOption[MenuDataType]:
         """Get the menu option at the given position in the list of options.
