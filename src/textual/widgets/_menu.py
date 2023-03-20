@@ -272,7 +272,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         lines_from = self.app.console.render_lines
 
         # Create a rule that can be used as a separator.
-        separator = lines_from(Rule(style=None))[0]
+        separator = lines_from(Rule(style=""))[0]
 
         line = 0
         option = 0
