@@ -36,7 +36,7 @@ from rich.text import Text
 from rich.traceback import Traceback
 from typing_extensions import Self
 
-from . import errors, events, messages
+from . import constants, errors, events, messages
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
 from ._asyncio import create_task
@@ -2626,7 +2626,7 @@ class Widget(DOMNode):
             True if the message was posted, False if this widget was closed / closing.
         """
 
-        if not self.is_running and not message.no_dispatch:
+        if constants.DEBUG and not self.is_running and not message.no_dispatch:
             try:
                 self.log.warning(self, f"IS NOT RUNNING, {message!r} not sent")
             except NoActiveAppError:
