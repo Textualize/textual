@@ -159,7 +159,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
             """The menu that sent the message."""
             self.index = index
             """The index of the option that the message relates to."""
-            self.option = menu._options[index]
+            self.option = menu.option(index)
             """The highlighted option."""
 
         def __rich_repr__(self) -> Result:
