@@ -11,9 +11,6 @@ from codecs import getincrementaldecoder
 from threading import Event, Thread
 from typing import IO, TYPE_CHECKING, Any
 
-if TYPE_CHECKING:
-    from rich.console import Console
-
 import rich.repr
 
 from .. import events, log
@@ -67,6 +64,7 @@ class LinuxDriver(Driver):
         return width, height
 
     def _enable_mouse_support(self) -> None:
+        """Enable reporting of mouse events."""
         write = self.write
         write("\x1b[?1000h")  # SET_VT200_MOUSE
         write("\x1b[?1003h")  # SET_ANY_EVENT_MOUSE
@@ -88,6 +86,7 @@ class LinuxDriver(Driver):
         self.write("\x1b[?2004l")
 
     def _disable_mouse_support(self) -> None:
+        """Disable reporting of mouse events."""
         write = self.write
         write("\x1b[?1000l")  #
         write("\x1b[?1003l")  #
@@ -96,9 +95,15 @@ class LinuxDriver(Driver):
         self.flush()
 
     def write(self, data: str) -> None:
+        """Write data to the output device.
+
+        Args:
+            data: Raw data.
+        """
         self._file.write(data)
 
     def start_application_mode(self):
+        """Start application mode."""
         loop = asyncio.get_running_loop()
 
         def send_size_event():
@@ -145,7 +150,7 @@ class LinuxDriver(Driver):
         self.write("\x1b[?25l")  # Hide cursor
         self.write("\033[?1003h\n")
         self.flush()
-        self._key_thread = Thread(target=self.run_input_thread, args=(loop,))
+        self._key_thread = Thread(target=self.run_input_thread)
         send_size_event()
         self._key_thread.start()
         self._request_terminal_sync_mode_support()
@@ -194,6 +199,7 @@ class LinuxDriver(Driver):
             pass
 
     def stop_application_mode(self) -> None:
+        """Disable further input."""
         self._disable_bracketed_paste()
         self.disable_input()
 
@@ -207,13 +213,8 @@ class LinuxDriver(Driver):
             self.write("\x1b[?1049l" + "\x1b[?25h")
             self.flush()
 
-    def run_input_thread(self, loop) -> None:
-        try:
-            self._run_input_thread(loop)
-        except Exception:
-            pass  # TODO: log
-
-    def _run_input_thread(self, loop) -> None:
+    def run_input_thread(self) -> None:
+        """Wait for input and dispatch events."""
         selector = selectors.DefaultSelector()
         selector.register(self.fileno, selectors.EVENT_READ)
 
