@@ -148,7 +148,7 @@ Quotes nest nicely. Here's what quotes within quotes look like:
 
 ## Tables
 
-Tables are supported, and render with a DataTable.
+Tables are supported, and render as a Rich table.
 
 I would like to add controls to these widgets to export the table as CSV, which I think would be a nice feature. In the future we might also have sortable columns by clicking on the headers.
 

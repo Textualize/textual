@@ -394,7 +394,7 @@ class Widget(DOMNode):
         compose_stack = self.app._compose_stacks[-1]
         composed = compose_stack.pop()
         if compose_stack:
-            compose_stack[-1]._nodes._append(composed)
+            compose_stack[-1].compose_add_child(composed)
         else:
             self.app._composed[-1].append(composed)
 
@@ -479,6 +479,25 @@ class Widget(DOMNode):
                 ) from exc
         raise NoMatches(f"No descendant found with id={id!r}")
 
+    def get_child_by_type(self, expect_type: type[ExpectType]) -> ExpectType:
+        """Get a child of a give type.
+
+        Args:
+            expect_type: The type of the expected child.
+
+        Raises:
+            NoMatches: If no valid child is found.
+
+        Returns:
+            A widget.
+        """
+        for child in self._nodes:
+            # We want the child with the exact type (not subclasses)
+            if type(child) is expect_type:
+                assert isinstance(child, expect_type)
+                return child
+        raise NoMatches(f"No immediate child of type {expect_type}; {self._nodes}")
+
     def get_component_rich_style(self, name: str, *, partial: bool = False) -> Style:
         """Get a *Rich* style for a component.
 
@@ -499,6 +518,24 @@ class Widget(DOMNode):
         style, partial_style = self._rich_style_cache[name]
 
         return partial_style if partial else style
+
+    def render_str(self, text_content: str | Text) -> Text:
+        """Convert str in to a Text object.
+
+        If you pass in an existing Text object it will be returned unaltered.
+
+        Args:
+            text_content: Text or str.
+
+        Returns:
+            A text object.
+        """
+        text = (
+            Text.from_markup(text_content)
+            if isinstance(text_content, str)
+            else text_content
+        )
+        return text
 
     def _arrange(self, size: Size) -> DockArrangeResult:
         """Arrange children.
@@ -2417,12 +2454,12 @@ class Widget(DOMNode):
                 height - self.scrollbar_size_horizontal
             )
             if self.vertical_scrollbar._repaint_required:
-                self.call_next(self.vertical_scrollbar.refresh)
+                self.call_later(self.vertical_scrollbar.refresh)
         if self.show_horizontal_scrollbar:
             self.horizontal_scrollbar.window_virtual_size = virtual_size.width
             self.horizontal_scrollbar.window_size = width - self.scrollbar_size_vertical
             if self.horizontal_scrollbar._repaint_required:
-                self.call_next(self.horizontal_scrollbar.refresh)
+                self.call_later(self.horizontal_scrollbar.refresh)
 
         self.scroll_x = self.validate_scroll_x(self.scroll_x)
         self.scroll_y = self.validate_scroll_y(self.scroll_y)
@@ -2607,7 +2644,7 @@ class Widget(DOMNode):
             True if the message was posted, False if this widget was closed / closing.
         """
 
-        if not self.is_running:
+        if not self.is_running and not message.no_dispatch:
             try:
                 self.log.warning(self, f"IS NOT RUNNING, {message!r} not sent")
             except NoActiveAppError:
