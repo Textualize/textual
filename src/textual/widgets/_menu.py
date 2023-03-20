@@ -378,7 +378,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
             )
 
         # It's a normal option line.
-        return strip
+        return strip.apply_style(self.rich_style)
 
     def scroll_to_highlight(self) -> None:
         """Ensure that the highlighted option is in view."""
