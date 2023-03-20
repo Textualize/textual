@@ -143,7 +143,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
             """The menu that sent the message."""
             self.index = index
             """The index of the option that the message relates to."""
-            self.option = menu.option(index)
+            self.option = menu._options[index]
             """The highlighted option."""
 
         def __rich_repr__(self) -> Result:
@@ -240,20 +240,6 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         self._calculate_lines_and_spans()
         self.refresh()
         return self
-
-    def option(self, index: int) -> MenuOption[MenuDataType]:
-        """Get the menu option at the given position in the list of options.
-
-        Args:
-            index: The position of the required menu option.
-
-        Returns:
-            The menu option at that position.
-
-        Raises:
-            IndexError: If there is no menu option at that position.
-        """
-        return self._options[index]
 
     @property
     def option_count(self) -> int:
