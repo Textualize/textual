@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 from threading import Event, Thread
-from typing import IO, TYPE_CHECKING, Callable
+from typing import IO, Callable
 
 from .._context import active_app
 from .._types import MessageTarget
