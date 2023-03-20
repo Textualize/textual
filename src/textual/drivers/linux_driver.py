@@ -9,7 +9,7 @@ import termios
 import tty
 from codecs import getincrementaldecoder
 from threading import Event, Thread
-from typing import TYPE_CHECKING, Any
+from typing import IO, TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from rich.console import Console
@@ -29,13 +29,14 @@ class LinuxDriver(Driver):
 
     def __init__(
         self,
-        console: "Console",
+        file: IO[str],
         target: "MessageTarget",
         *,
         debug: bool = False,
         size: tuple[int, int] | None = None,
     ) -> None:
-        super().__init__(console, target, debug=debug, size=size)
+        super().__init__(file, target, debug=debug, size=size)
+        self._file = file
         self.fileno = sys.stdin.fileno()
         self.attrs_before: list[Any] | None = None
         self.exit_event = Event()
@@ -45,6 +46,11 @@ class LinuxDriver(Driver):
         yield "debug", self._debug
 
     def _get_terminal_size(self) -> tuple[int, int]:
+        """Detect the terminal size
+
+        Returns:
+            The size of the terminal as a tuple of (WIDTH, HEIGHT)
+        """
         width: int | None = 80
         height: int | None = 25
         import shutil
@@ -61,33 +67,36 @@ class LinuxDriver(Driver):
         return width, height
 
     def _enable_mouse_support(self) -> None:
-        write = self.console.file.write
+        write = self.write
         write("\x1b[?1000h")  # SET_VT200_MOUSE
         write("\x1b[?1003h")  # SET_ANY_EVENT_MOUSE
         write("\x1b[?1015h")  # SET_VT200_HIGHLIGHT_MOUSE
         write("\x1b[?1006h")  # SET_SGR_EXT_MODE_MOUSE
 
         # write("\x1b[?1007h")
-        self.console.file.flush()
+        self.flush()
 
         # Note: E.g. lxterminal understands 1000h, but not the urxvt or sgr
         #       extensions.
 
     def _enable_bracketed_paste(self) -> None:
         """Enable bracketed paste mode."""
-        self.console.file.write("\x1b[?2004h")
+        self.write("\x1b[?2004h")
 
     def _disable_bracketed_paste(self) -> None:
         """Disable bracketed paste mode."""
-        self.console.file.write("\x1b[?2004l")
+        self.write("\x1b[?2004l")
 
     def _disable_mouse_support(self) -> None:
-        write = self.console.file.write
+        write = self.write
         write("\x1b[?1000l")  #
         write("\x1b[?1003l")  #
         write("\x1b[?1015l")
         write("\x1b[?1006l")
-        self.console.file.flush()
+        self.flush()
+
+    def write(self, data: str) -> None:
+        self._file.write(data)
 
     def start_application_mode(self):
         loop = asyncio.get_running_loop()
@@ -107,7 +116,8 @@ class LinuxDriver(Driver):
 
         signal.signal(signal.SIGWINCH, on_terminal_resize)
 
-        self.console.set_alt_screen(True)
+        self.write("\x1b[?1049h")  # Alt screen
+
         self._enable_mouse_support()
         try:
             self.attrs_before = termios.tcgetattr(self.fileno)
@@ -132,9 +142,9 @@ class LinuxDriver(Driver):
 
             termios.tcsetattr(self.fileno, termios.TCSANOW, newattr)
 
-        self.console.show_cursor(False)
-        self.console.file.write("\033[?1003h\n")
-        self.console.file.flush()
+        self.write("\x1b[?25l")  # Hide cursor
+        self.write("\033[?1003h\n")
+        self.flush()
         self._key_thread = Thread(target=self.run_input_thread, args=(loop,))
         send_size_event()
         self._key_thread.start()
@@ -146,9 +156,9 @@ class LinuxDriver(Driver):
         # Terminals should ignore this sequence if not supported.
         # Apple terminal doesn't, and writes a single 'p' in to the terminal,
         # so we will make a special case for Apple terminal (which doesn't support sync anyway).
-        if self.console._environ.get("TERM_PROGRAM", "") != "Apple_Terminal":
-            self.console.file.write("\033[?2026$p")
-            self.console.file.flush()
+        if os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal":
+            self.write("\033[?2026$p")
+            self.flush()
 
     @classmethod
     def _patch_lflag(cls, attrs: int) -> int:
@@ -193,9 +203,9 @@ class LinuxDriver(Driver):
             except termios.error:
                 pass
 
-        with self.console:
-            self.console.set_alt_screen(False)
-            self.console.show_cursor(True)
+            # Alt screen false, show cursor
+            self.write("\x1b[?1049l" + "\x1b[?25h")
+            self.flush()
 
     def run_input_thread(self, loop) -> None:
         try:

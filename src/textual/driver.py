@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import IO, TYPE_CHECKING
 
 from . import _time, events
 from ._types import MessageTarget
@@ -15,13 +15,13 @@ if TYPE_CHECKING:
 class Driver(ABC):
     def __init__(
         self,
-        console: "Console",
+        file: IO[str],
         target: "MessageTarget",
         *,
         debug: bool = False,
         size: tuple[int, int] | None = None,
     ) -> None:
-        self.console = console
+        self._file = file
         self._target = target
         self._debug = debug
         self._size = size
@@ -86,6 +86,13 @@ class Driver(ABC):
         ):
             click_event = events.Click.from_event(event)
             self.send_event(click_event)
+
+    def flush(self) -> None:
+        pass
+
+    @abstractmethod
+    def write(self, data: str) -> None:
+        ...
 
     @abstractmethod
     def start_application_mode(self) -> None:
