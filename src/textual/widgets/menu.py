@@ -1,3 +1,3 @@
-from ._menu import MenuOption
+from ._menu import MenuOption, MenuSeparator
 
-__all__ = ["MenuOption"]
+__all__ = ["MenuOption", "MenuSeparator"]

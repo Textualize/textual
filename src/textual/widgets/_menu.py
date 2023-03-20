@@ -6,6 +6,7 @@ from typing import Callable, ClassVar, Generic, NamedTuple, TypeVar
 
 from rich.console import RenderableType
 from rich.repr import Result
+from rich.rule import Rule
 from rich.segment import Segment
 from typing_extensions import Literal, Self
 
@@ -33,6 +34,10 @@ class MenuOption(NamedTuple, Generic[MenuDataType]):
     """The prompt for the menu option."""
     data: MenuDataType | None = None
     """Data associated with the menu option."""
+
+
+class MenuSeparator:
+    """Class that denotes that a particular option is really a menu separator."""
 
 
 class OptionLine(NamedTuple):
@@ -141,7 +146,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
             super().__init__()
             self.menu = menu
             """The menu that sent the message."""
-            self.index = index
+            self.index = index  # TODO: This will be thrown off by separator lines.
             """The index of the option that the message relates to."""
             self.option = menu._options[index]
             """The highlighted option."""
@@ -167,7 +172,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
 
     def __init__(
         self,
-        *options: MenuOption[MenuDataType] | RenderableType,
+        *options: MenuOption[MenuDataType] | MenuSeparator | RenderableType,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -186,8 +191,10 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
 
         # Build up the list of menu options. The caller can pass in either
         # strings or actual MenuOption objects.
-        self._options: list[MenuOption[MenuDataType]] = [
-            option if isinstance(option, MenuOption) else MenuOption(option)
+        self._options: list[MenuOption[MenuDataType] | MenuSeparator] = [
+            option
+            if isinstance(option, (MenuOption, MenuSeparator))
+            else MenuOption(option)
             for option in options
         ]
 
@@ -215,7 +222,10 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         line = 0
         for option_index, option in enumerate(self._options):
             lines = [
-                OptionLine(option_index, line) for line in lines_from(option.prompt)
+                OptionLine(option_index, line)
+                for line in lines_from(
+                    option.prompt if isinstance(option, MenuOption) else ""
+                )
             ]
             self._lines.extend(lines)
             self._spans.append(OptionLineSpan(line, len(lines)))
@@ -256,23 +266,33 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
             A `Strip` instance for the caller to render.
         """
 
-        # First off, work out the index of line we're working on, based off
-        # the current scroll offset plus the line we're being asked to
-        # render.
-        line = self.scroll_offset.y + y
-
-        # Knowing which line we're going to be drawing, we can now go pull
-        # the relevant segments for the line of that particular prompt.
+        # First off, work out which line we're working on, based off the
+        # current scroll offset plus the line we're being asked to render.
+        line_number = self.scroll_offset.y + y
         try:
-            strip = Strip(self._lines[line].segments)
+            line = self._lines[line_number]
         except IndexError:
             # An IndexError means we're drawing in a menu where there's more
             # menu than there are prompts.
-            strip = Strip([])
+            return Strip([])
+
+        # If the line relates to an option that's a separator, let's exit
+        # early with a Rich rule.
+        #
+        # TODO: STYLING!
+        if isinstance(self._options[line.option_index], MenuSeparator):
+            return Strip(self.app.console.render_lines(Rule())[0])
+
+        # Knowing which line we're going to be drawing, we can now go pull
+        # the relevant segments for the line of that particular prompt.
+        strip = Strip(line.segments)
 
         # If something is highlighted, and the line falls within the span of
         # lines that that highlighted option takes up...
-        if self.highlighted is not None and line in self._spans[self.highlighted]:
+        if (
+            self.highlighted is not None
+            and line_number in self._spans[self.highlighted]
+        ):
             # ...paint this as a highlighted option.
             return strip.apply_style(
                 self.get_component_rich_style("menu--option-highlighted", partial=True)
