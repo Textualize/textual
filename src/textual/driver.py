@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 from abc import ABC, abstractmethod
-from typing import IO, TYPE_CHECKING
+from typing import IO
 
 from . import _time, events
 from ._types import MessageTarget

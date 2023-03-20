@@ -185,6 +185,7 @@ class LinuxDriver(Driver):
         )
 
     def disable_input(self) -> None:
+        """Disable further input."""
         try:
             if not self.exit_event.is_set():
                 signal.signal(signal.SIGWINCH, signal.SIG_DFL)
