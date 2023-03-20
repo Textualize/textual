@@ -157,7 +157,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
             super().__init__()
             self.menu = menu
             """The menu that sent the message."""
-            self.index = index  # TODO: This will be thrown off by separator lines.
+            self.index = index
             """The index of the option that the message relates to."""
             self.option = menu._options[index]
             """The highlighted option."""
