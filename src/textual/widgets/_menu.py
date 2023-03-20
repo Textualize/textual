@@ -8,7 +8,7 @@ from rich.console import RenderableType
 from rich.repr import Result
 from rich.rule import Rule
 from rich.segment import Segment
-from typing_extensions import Literal, Self
+from typing_extensions import Final, Literal, Self
 
 from ..binding import Binding, BindingType
 from ..geometry import Region, Size
@@ -47,6 +47,10 @@ class OptionLine(NamedTuple):
     """The index of the [MenuOption][textual.widgets.menu.MenuOption] that this line is related to."""
     segments: list[Segment]
     """The list of segments that make up the line of the prompt."""
+
+
+SEPARATOR_MARKER: Final[int] = -1
+"""Used as a special marker for `OptionLine` to say the line is a part of a separator."""
 
 
 class OptionLineSpan(NamedTuple):
@@ -99,6 +103,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
     COMPONENT_CLASSES: ClassVar[set[str]] = {
         "menu--option-highlighted",
         "menu--option-hover",
+        "menu--separator",
     }
     """
     | Class | Description |
@@ -109,6 +114,10 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
     DEFAULT_CSS = """
     Menu {
         overflow: hidden;
+    }
+
+    Menu > .menu--separator {
+        color: $text-muted;
     }
 
     Menu > .menu--option-highlighted {
@@ -263,7 +272,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         lines_from = self.app.console.render_lines
 
         # Create a rule that can be used as a separator.
-        separator = lines_from(Rule())[0]
+        separator = lines_from(Rule(style=None))[0]
 
         line = 0
         option = 0
@@ -277,10 +286,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
                 option += 1
             else:
                 assert isinstance(content, MenuSeparator)
-                # It's a menu separator so let's make a single line rule for
-                # it. Note that we associate it with the previous proper
-                # menu option.
-                lines = [OptionLine(option, separator)]
+                lines = [OptionLine(SEPARATOR_MARKER, separator)]
             self._lines.extend(lines)
             line += len(lines)
 
@@ -352,6 +358,13 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         # the relevant segments for the line of that particular prompt.
         strip = Strip(line.segments)
 
+        # If the line we're looking at is part of a separator, let's style
+        # it as such and get out.
+        if line.option_index == SEPARATOR_MARKER:
+            return strip.apply_style(
+                self.get_component_rich_style("menu--separator", partial=True)
+            )
+
         # If something is highlighted, and the line falls within the span of
         # lines that that highlighted option takes up...
         if (
@@ -363,6 +376,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
                 self.get_component_rich_style("menu--option-highlighted", partial=True)
             )
 
+        # It's a normal option line.
         return strip
 
     def scroll_to_highlight(self) -> None:
