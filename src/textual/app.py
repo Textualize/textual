@@ -507,12 +507,12 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def debug(self) -> bool:
-        """bool: Is debug mode is enabled?"""
+        """Is debug mode is enabled?"""
         return "debug" in self.features
 
     @property
     def is_headless(self) -> bool:
-        """bool: Is the app running in 'headless' mode?"""
+        """Is the driver running in 'headless' mode?"""
         return False if self._driver is None else self._driver.is_headless
 
     @property
