@@ -1,11 +1,11 @@
 from textual.app import App
-from textual.containers import Horizontal, Vertical
+from textual.containers import Horizontal, VerticalScroll
 from textual.widgets import Placeholder
 
 
 class VisibilityContainersApp(App):
     def compose(self):
-        yield Vertical(
+        yield VerticalScroll(
             Horizontal(
                 Placeholder(),
                 Placeholder(),

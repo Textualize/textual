@@ -1,5 +1,5 @@
 from textual.app import App
-from textual.containers import Vertical
+from textual.containers import VerticalScroll
 from textual.widgets import Static
 
 
@@ -10,7 +10,7 @@ class Visibility(App):
     Screen {
         layout: horizontal;        
     }
-    Vertical {
+    VerticalScroll {
         width: 1fr;
         border: solid red;
     }
@@ -30,13 +30,12 @@ class Visibility(App):
     """
 
     def compose(self):
-
-        yield Vertical(
+        yield VerticalScroll(
             Static("foo"),
             Static("float", classes="float"),
             id="container1",
         )
-        yield Vertical(
+        yield VerticalScroll(
             Static("bar"),
             Static("float", classes="float"),
             id="container2",

@@ -1,10 +1,9 @@
 from textual.app import App, ComposeResult
-from textual.containers import Vertical
+from textual.containers import VerticalScroll
 from textual.widgets import Header, Footer, Label, Input
 
 
 class InputWidthAutoApp(App[None]):
-
     CSS = """
     Input.auto {
         width: auto;

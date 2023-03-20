@@ -721,11 +721,13 @@ class StringEnumProperty:
         default: str,
         layout: bool = False,
         refresh_children: bool = False,
+        refresh_parent: bool = False,
     ) -> None:
         self._valid_values = valid_values
         self._default = default
         self._layout = layout
         self._refresh_children = refresh_children
+        self._refresh_parent = refresh_parent
 
     def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
@@ -759,7 +761,11 @@ class StringEnumProperty:
         if value is None:
             if obj.clear_rule(self.name):
                 self._before_refresh(obj, value)
-                obj.refresh(layout=self._layout, children=self._refresh_children)
+                obj.refresh(
+                    layout=self._layout,
+                    children=self._refresh_children,
+                    parent=self._refresh_parent,
+                )
         else:
             if value not in self._valid_values:
                 raise StyleValueError(
@@ -772,7 +778,11 @@ class StringEnumProperty:
                 )
             if obj.set_rule(self.name, value):
                 self._before_refresh(obj, value)
-                obj.refresh(layout=self._layout, children=self._refresh_children)
+                obj.refresh(
+                    layout=self._layout,
+                    children=self._refresh_children,
+                    parent=self._refresh_parent,
+                )
 
 
 class OverflowProperty(StringEnumProperty):

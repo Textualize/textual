@@ -1,4 +1,3 @@
-from os import terminal_size
 from pathlib import Path
 
 import pytest
@@ -48,6 +47,14 @@ def test_dock_layout_sidebar(snap_compare):
     assert snap_compare(LAYOUT_EXAMPLES_DIR / "dock_layout2_sidebar.py")
 
 
+def test_layout_containers(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "layout_containers.py")
+
+
+def test_alignment_containers(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "alignment_containers.py")
+
+
 # --- Widgets - rendering and basic interactions ---
 # Each widget should have a canonical example that is display in the docs.
 # When adding a new widget, ideally we should also create a snapshot test
@@ -73,8 +80,7 @@ def test_input_and_focus(snap_compare):
         "tab",
         *"Darren",  # Focus first input, write "Darren"
         "tab",
-        *"Burns",
-        "_",  # Tab focus to second input, write "Burns"
+        *"Burns",  # Focus second input, write "Burns"
     ]
     assert snap_compare(WIDGET_EXAMPLES_DIR / "input.py", press=press)
 
@@ -91,17 +97,17 @@ def test_placeholder_render(snap_compare):
 
 
 def test_datatable_render(snap_compare):
-    press = ["tab", "down", "down", "right", "up", "left", "_"]
+    press = ["tab", "down", "down", "right", "up", "left"]
     assert snap_compare(WIDGET_EXAMPLES_DIR / "data_table.py", press=press)
 
 
 def test_datatable_row_cursor_render(snap_compare):
-    press = ["up", "left", "right", "down", "down", "_"]
+    press = ["up", "left", "right", "down", "down"]
     assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_row_cursor.py", press=press)
 
 
 def test_datatable_column_cursor_render(snap_compare):
-    press = ["left", "up", "down", "right", "right", "_"]
+    press = ["left", "up", "down", "right", "right"]
     assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_column_cursor.py", press=press)
 
 
@@ -175,6 +181,10 @@ def test_content_switcher_example_switch(snap_compare):
         press=["tab", "tab", "enter", "wait:500"],
         terminal_size=(50, 50),
     )
+
+
+def test_tabbed_content(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "tabbed_content.py")
 
 
 # --- CSS properties ---

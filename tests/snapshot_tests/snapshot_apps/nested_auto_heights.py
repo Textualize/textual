@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from textual.app import App, ComposeResult
-from textual.containers import Vertical
+from textual.containers import VerticalScroll
 from textual.widgets import Static
 
 
@@ -42,8 +42,8 @@ class NestedAutoApp(App[None]):
 
     def compose(self) -> ComposeResult:
         self._static = Static("", id="my-static")
-        yield Vertical(
-            Vertical(
+        yield VerticalScroll(
+            VerticalScroll(
                 self._static,
                 id="my-static-wrapper",
             ),

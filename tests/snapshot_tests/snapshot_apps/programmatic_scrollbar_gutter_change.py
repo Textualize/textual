@@ -22,8 +22,6 @@ class ProgrammaticScrollbarGutterChange(App[None]):
             self.query_one(Grid).styles.scrollbar_gutter = "stable"
 
 
-app = ProgrammaticScrollbarGutterChange()
-
-
 if __name__ == "__main__":
-    app().run()
+    app = ProgrammaticScrollbarGutterChange()
+    app.run()

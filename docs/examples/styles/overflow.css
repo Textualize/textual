@@ -3,7 +3,7 @@ Screen {
     color: black;
 }
 
-Vertical {
+VerticalScroll {
     width: 1fr;
 }
 
@@ -13,7 +13,7 @@ Static {
     border: green wide;
     color: white 90%;
     height: auto;
-}    
+}
 
 #right {
     overflow-y: hidden;

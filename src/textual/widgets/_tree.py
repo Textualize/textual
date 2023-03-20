@@ -1034,7 +1034,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
             else:
                 self.cursor_line = cursor_line
-                await self.action("select_cursor")
+                await self.run_action("select_cursor")
 
     def notify_style_update(self) -> None:
         self._invalidate()

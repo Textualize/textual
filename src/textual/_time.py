@@ -42,3 +42,12 @@ else:
         sleep_for = secs - 0.0005
         if sleep_for > 0:
             await asyncio_sleep(sleep_for)
+
+
+get_time = time
+"""Get the current wall clock (monotonic) time.
+
+Returns:
+    The value (in fractional seconds) of a monotonic clock,
+    i.e. a clock that cannot go backwards.
+"""

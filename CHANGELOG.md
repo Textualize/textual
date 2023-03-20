@@ -7,16 +7,70 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+- Added `parser_factory` argument to `Markdown` and `MarkdownViewer` constructors https://github.com/Textualize/textual/pull/2075
+
+### Changed
+
+- Dropped "loading-indicator--dot" component style from LoadingIndicator https://github.com/Textualize/textual/pull/2050
+- Tabs widget now sends Tabs.Cleared when there is no active tab.
+- Breaking change: changed default behaviour of `Vertical` (see `VerticalScroll`) https://github.com/Textualize/textual/issues/1957
+- The default `overflow` style for `Horizontal` was changed to `hidden hidden` https://github.com/Textualize/textual/issues/1957
+
+### Removed
+
+- Removed `sender` attribute from messages. It's now just private (`_sender`). https://github.com/Textualize/textual/pull/2071
+
+### Fixed
+
+- Fixed borders not rendering correctly. https://github.com/Textualize/textual/pull/2074
+- Fix for error when removing nodes. https://github.com/Textualize/textual/issues/2079
+
+### Added
+
+- Added `HorizontalScroll` https://github.com/Textualize/textual/issues/1957
+- Added `Center` https://github.com/Textualize/textual/issues/1957
+- Added `Middle` https://github.com/Textualize/textual/issues/1957
+- Added `VerticalScroll` (mimicking the old behaviour of `Vertical`) https://github.com/Textualize/textual/issues/1957
+- Added `TabbedContent` widget https://github.com/Textualize/textual/pull/2059
+- Added `get_child_by_type` method to widgets / app https://github.com/Textualize/textual/pull/2059
+- Added `Widget.render_str` method https://github.com/Textualize/textual/pull/2059
+- Added TEXTUAL_DRIVER environment variable
+
+
+## [0.15.1] - 2023-03-14
+
+### Fixed
+
+- Fixed how the namespace for messages is calculated to facilitate inheriting messages https://github.com/Textualize/textual/issues/1814
+- `Tab` is now correctly made available from `textual.widgets`. https://github.com/Textualize/textual/issues/2044
+
+## [0.15.0] - 2023-03-13
+
 ### Fixed
 
 - Fixed container not resizing when a widget is removed https://github.com/Textualize/textual/issues/2007
+- Fixes issue where the horizontal scrollbar would be incorrectly enabled https://github.com/Textualize/textual/pull/2024
+
+## [0.15.0] - 2023-03-13
+
+### Changed
+
+- Fixed container not resizing when a widget is removed https://github.com/Textualize/textual/issues/2007
+- Fixed issue where the horizontal scrollbar would be incorrectly enabled https://github.com/Textualize/textual/pull/2024
+- Fixed `Pilot.click` not correctly creating the mouse events https://github.com/Textualize/textual/issues/2022
 - Fixes issue where the horizontal scrollbar would be incorrectly enabled https://github.com/Textualize/textual/pull/2024
 - Fixes for tracebacks not appearing on exit https://github.com/Textualize/textual/issues/2027
 
 ### Added
 
 - Added a LoadingIndicator widget https://github.com/Textualize/textual/pull/2018
-- Added TEXTUAL_DRIVER environment variable
+- Added Tabs Widget https://github.com/Textualize/textual/pull/2020
+
+### Changed
+
+- Breaking change: Renamed Widget.action and App.action to Widget.run_action and App.run_action
+- Added `shift`, `meta` and `control` arguments to `Pilot.click`.
 
 ## [0.14.0] - 2023-03-09
 
@@ -30,6 +84,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Changed the `Checkbox` character due to issues with Windows Terminal and Windows 10 https://github.com/Textualize/textual/issues/1934
 - Changed the `RadioButton` character due to issues with Windows Terminal and Windows 10 and 11 https://github.com/Textualize/textual/issues/1934
 - Changed the `Markdown` initial bullet character due to issues with Windows Terminal and Windows 10 and 11 https://github.com/Textualize/textual/issues/1982
+- The underscore `_` is no longer a special alias for the method `pilot.press`
 
 ### Added
 
@@ -575,6 +630,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.15.1]: https://github.com/Textualize/textual/compare/v0.15.0...v0.15.1
+[0.15.0]: https://github.com/Textualize/textual/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/Textualize/textual/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/Textualize/textual/compare/v0.12.1...v0.13.0
 [0.12.1]: https://github.com/Textualize/textual/compare/v0.12.0...v0.12.1

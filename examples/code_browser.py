@@ -14,7 +14,7 @@ from rich.traceback import Traceback
 
 from textual import events
 from textual.app import App, ComposeResult
-from textual.containers import Container, Vertical
+from textual.containers import Container, VerticalScroll
 from textual.reactive import var
 from textual.widgets import DirectoryTree, Footer, Header, Static
 
@@ -40,7 +40,7 @@ class CodeBrowser(App):
         yield Header()
         with Container():
             yield DirectoryTree(path, id="tree-view")
-            with Vertical(id="code-view"):
+            with VerticalScroll(id="code-view"):
                 yield Static(id="code", expand=True)
         yield Footer()
 

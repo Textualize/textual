@@ -29,6 +29,8 @@ if typing.TYPE_CHECKING:
     from ._radio_set import RadioSet
     from ._static import Static
     from ._switch import Switch
+    from ._tabbed_content import TabbedContent, TabPane
+    from ._tabs import Tab, Tabs
     from ._text_log import TextLog
     from ._tree import Tree
     from ._welcome import Welcome
@@ -55,6 +57,10 @@ __all__ = [
     "RadioSet",
     "Static",
     "Switch",
+    "Tab",
+    "TabbedContent",
+    "TabPane",
+    "Tabs",
     "TextLog",
     "Tree",
     "Welcome",

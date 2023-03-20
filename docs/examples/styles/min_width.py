@@ -1,11 +1,11 @@
 from textual.app import App
-from textual.containers import Vertical
+from textual.containers import VerticalScroll
 from textual.widgets import Placeholder
 
 
 class MinWidthApp(App):
     def compose(self):
-        yield Vertical(
+        yield VerticalScroll(
             Placeholder("min-width: 25%", id="p1"),
             Placeholder("min-width: 75%", id="p2"),
             Placeholder("min-width: 100", id="p3"),

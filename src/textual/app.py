@@ -54,7 +54,7 @@ from ._ansi_sequences import SYNC_END, SYNC_START
 from ._asyncio import create_task
 from ._callback import invoke
 from ._compose import compose
-from ._context import active_app
+from ._context import active_app, active_message_pump
 from ._event_broker import NoHandler, extract_handler_actions
 from ._path import _make_path_object_relative
 from ._wait import wait_for_idle
@@ -880,9 +880,7 @@ class App(Generic[ReturnType], DOMNode):
         assert driver is not None
         await wait_for_idle(0)
         for key in keys:
-            if key == "_":
-                continue
-            elif key.startswith("wait:"):
+            if key.startswith("wait:"):
                 _, wait_ms = key.split(":")
                 print(f"(pause {wait_ms}ms)")
                 await asyncio.sleep(float(wait_ms) / 1000)
@@ -938,6 +936,7 @@ class App(Generic[ReturnType], DOMNode):
             )
 
         # Launch the app in the "background"
+        active_message_pump.set(app)
         app_task = create_task(run_app(app), name=f"run_test {app}")
 
         # Wait until the app has performed all startup routines.
@@ -993,6 +992,7 @@ class App(Generic[ReturnType], DOMNode):
                         raise
 
                 pilot = Pilot(app)
+                active_message_pump.set(self)
                 auto_pilot_task = create_task(
                     run_auto_pilot(auto_pilot, pilot), name=repr(pilot)
                 )
@@ -1150,6 +1150,20 @@ class App(Generic[ReturnType], DOMNode):
             if expect_type is None
             else self.screen.get_widget_by_id(id, expect_type)
         )
+
+    def get_child_by_type(self, expect_type: type[ExpectType]) -> ExpectType:
+        """Get a child of a give type.
+
+        Args:
+            expect_type: The type of the expected child.
+
+        Raises:
+            NoMatches: If no valid child is found.
+
+        Returns:
+            A widget.
+        """
+        return self.screen.get_child_by_type(expect_type)
 
     def update_styles(self, node: DOMNode | None = None) -> None:
         """Request update of styles.
@@ -1955,7 +1969,7 @@ class App(Generic[ReturnType], DOMNode):
         ):
             binding = bindings.keys.get(key)
             if binding is not None and binding.priority == priority:
-                if await self.action(binding.action, namespace):
+                if await self.run_action(binding.action, namespace):
                     return True
         return False
 
@@ -1988,7 +2002,7 @@ class App(Generic[ReturnType], DOMNode):
         else:
             await super().on_event(event)
 
-    async def action(
+    async def run_action(
         self,
         action: str | ActionParseResult,
         default_namespace: object | None = None,
@@ -2087,7 +2101,7 @@ class App(Generic[ReturnType], DOMNode):
         else:
             event.stop()
         if isinstance(action, (str, tuple)):
-            await self.action(action, default_namespace=default_namespace)  # type: ignore[arg-type]
+            await self.run_action(action, default_namespace=default_namespace)  # type: ignore[arg-type]
         elif callable(action):
             await action()
         else:
@@ -2194,11 +2208,14 @@ class App(Generic[ReturnType], DOMNode):
             for child in widget._nodes:
                 push(child)
 
-    def _remove_nodes(self, widgets: list[Widget], parent: DOMNode) -> AwaitRemove:
+    def _remove_nodes(
+        self, widgets: list[Widget], parent: DOMNode | None
+    ) -> AwaitRemove:
         """Remove nodes from DOM, and return an awaitable that awaits cleanup.
 
         Args:
             widgets: List of nodes to remove.
+            parent: Parent node of widgets, or None for no parent.
 
         Returns:
             Awaitable that returns when the nodes have been fully removed.
@@ -2217,7 +2234,7 @@ class App(Generic[ReturnType], DOMNode):
                 await self._prune_nodes(widgets)
             finally:
                 finished_event.set()
-                if parent.styles.auto_dimensions:
+                if parent is not None:
                     parent.refresh(layout=True)
 
         removed_widgets = self._detach_from_dom(widgets)

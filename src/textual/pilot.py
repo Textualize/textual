@@ -7,27 +7,30 @@ import rich.repr
 
 from ._wait import wait_for_idle
 from .app import App, ReturnType
-from .css.query import QueryType
 from .events import Click, MouseDown, MouseMove, MouseUp
 from .geometry import Offset
 from .widget import Widget
 
 
 def _get_mouse_message_arguments(
-    target: Widget, offset: Offset = Offset(), button: int = 0
+    target: Widget,
+    offset: Offset = Offset(),
+    button: int = 0,
+    shift: bool = False,
+    meta: bool = False,
+    control: bool = False,
 ) -> dict[str, Any]:
     """Get the arguments to pass into mouse messages for the click and hover methods."""
-    x, y = offset
     click_x, click_y, _, _ = target.region.translate(offset)
     message_arguments = {
-        "x": x,
-        "y": y,
+        "x": click_x,
+        "y": click_y,
         "delta_x": 0,
         "delta_y": 0,
         "button": button,
-        "shift": False,
-        "meta": False,
-        "ctrl": False,
+        "shift": shift,
+        "meta": meta,
+        "ctrl": control,
         "screen_x": click_x,
         "screen_y": click_y,
     }
@@ -60,7 +63,12 @@ class Pilot(Generic[ReturnType]):
             await self._app._press_keys(keys)
 
     async def click(
-        self, selector: QueryType | None = None, offset: Offset = Offset()
+        self,
+        selector: type[Widget] | str | None = None,
+        offset: Offset = Offset(),
+        shift: bool = False,
+        meta: bool = False,
+        control: bool = False,
     ) -> None:
         """Simulate clicking with the mouse.
 
@@ -71,6 +79,9 @@ class Pilot(Generic[ReturnType]):
                 currently hidden or obscured by another widget, then the click may
                 not land on it.
             offset: The offset to click within the selected widget.
+            shift: Click with the shift key held down.
+            meta: Click with the meta key held down.
+            control: Click with the control key held down.
         """
         app = self.app
         screen = app.screen
@@ -80,15 +91,19 @@ class Pilot(Generic[ReturnType]):
             target_widget = screen
 
         message_arguments = _get_mouse_message_arguments(
-            target_widget, offset, button=1
+            target_widget, offset, button=1, shift=shift, meta=meta, control=control
         )
         app.post_message(MouseDown(**message_arguments))
+        await self.pause()
         app.post_message(MouseUp(**message_arguments))
+        await self.pause()
         app.post_message(Click(**message_arguments))
         await self.pause()
 
     async def hover(
-        self, selector: QueryType | None = None, offset: Offset = Offset()
+        self,
+        selector: type[Widget] | str | None | None = None,
+        offset: Offset = Offset(),
     ) -> None:
         """Simulate hovering with the mouse cursor.
 

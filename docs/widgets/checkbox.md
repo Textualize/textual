@@ -29,12 +29,12 @@ The example below shows check boxes in various states.
 ## Reactive Attributes
 
 | Name    | Type   | Default | Description                |
-|---------|--------|---------|----------------------------|
+| ------- | ------ | ------- | -------------------------- |
 | `value` | `bool` | `False` | The value of the checkbox. |
 
 ## Bindings
 
-The checkbox widget defines directly the following bindings:
+The checkbox widget defines the following bindings:
 
 ::: textual.widgets._toggle_button.ToggleButton.BINDINGS
     options:
