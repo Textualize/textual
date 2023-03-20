@@ -32,6 +32,9 @@ class HeadlessDriver(Driver):
         height = height or 25
         return width, height
 
+    def write(self, data: str) -> None:
+        pass
+
     def start_application_mode(self) -> None:
         loop = asyncio.get_running_loop()
 

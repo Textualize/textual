@@ -91,5 +91,6 @@ class WindowsDriver(Driver):
         if self._restore_console:
             self._restore_console()
 
+        # Disable alt screen, show cursor
         self.write("\x1b[?1049l" + "\x1b[?25h")
         self.flush()
