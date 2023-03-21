@@ -34,6 +34,8 @@ class MenuOption(NamedTuple, Generic[MenuDataType]):
     """The prompt for the menu option."""
     data: MenuDataType | None = None
     """Data associated with the menu option."""
+    disabled: bool = False
+    """Is the menu option disabled?"""
 
 
 class MenuSeparator:
@@ -102,7 +104,9 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
         "menu--option-highlighted",
+        "menu--option-highlighted-disabled",
         "menu--option-hover",
+        "menu--option-disabled",
         "menu--separator",
     }
     """
@@ -130,6 +134,15 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
 
     Menu:focus > .menu--option-highlighted {
         background: $secondary;
+    }
+
+    Menu > .menu--option-disabled {
+        color: $text-disabled;
+    }
+
+    Menu > .menu--option-highlighted-disabled {
+        color: $text-disabled;
+        background: $secondary-darken-2;
     }
     """
 
@@ -337,6 +350,38 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         self.refresh()
         return self
 
+    def _set_option_disabled(self, index: int, disabled: bool) -> Self:
+        """Set the disabled state of a menu option.
+
+        Args:
+            index: The index of the option to set the disabled state of.
+            disabled: The disabled state to set.
+
+        Returns:
+            The menu.
+        """
+        old = self._options[index]
+        self._options[index] = MenuOption(old.prompt, old.data, disabled)
+        # TODO: Refresh only if the affected option is visible.
+        self.refresh()
+        return self
+
+    def enable_option(self, index: int) -> Self:
+        """Enable the menu option at the given index.
+
+        Returns:
+            The menu.
+        """
+        return self._set_option_disabled(index, False)
+
+    def disable_option(self, index: int) -> Self:
+        """Disable the menu option at the given index.
+
+        Returns:
+            The menu.
+        """
+        return self._set_option_disabled(index, True)
+
     @property
     def option_count(self) -> int:
         """The count of options in the menu."""
@@ -387,6 +432,16 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
                 self.get_component_rich_style("menu--separator", partial=True)
             )
 
+        # If the option we're drawing is disabled, exit with an option style.
+        if self._options[line.option_index].disabled:
+            if line.option_index == self.highlighted:
+                return strip.apply_style(
+                    self.get_component_rich_style("menu--option-highlighted-disabled")
+                )
+            return strip.apply_style(
+                self.get_component_rich_style("menu--option-disabled")
+            )
+
         # If something is highlighted, and the line falls within the span of
         # lines that that highlighted option takes up...
         if (
@@ -431,7 +486,8 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         highlighted = self.highlighted
         assert highlighted is not None
         self.scroll_to_highlight()
-        self.post_message(self.OptionHighlighted(self, highlighted))
+        if not self._options[highlighted].disabled:
+            self.post_message(self.OptionHighlighted(self, highlighted))
 
     def action_up(self) -> None:
         """Move the highlight up by one option."""
@@ -515,5 +571,5 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         message will be posted.
         """
         highlighted = self.highlighted
-        if highlighted is not None:
+        if highlighted is not None and not self._options[highlighted].disabled:
             self.post_message(self.OptionSelected(self, highlighted))
