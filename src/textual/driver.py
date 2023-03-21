@@ -25,8 +25,8 @@ class Driver(ABC):
         Args:
             file: A file-like object open for writing unicode.
             target: The message target (expected to be the app).
-            debug: Enabled debug mode. Defaults to False.
-            size: Initial size of the terminal or None to detect. Defaults to None.
+            debug: Enabled debug mode.
+            size: Initial size of the terminal or `None` to detect.
         """
         self._file = file
         self._target = target
