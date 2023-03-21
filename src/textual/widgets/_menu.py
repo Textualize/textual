@@ -211,10 +211,10 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
 
         Args:
             *options: The options for the menu.
-            name: The name of the Tree.
-            id: The ID of the tree in the DOM.
-            classes: The CSS classes of the tree.
-            disabled: Whether the tree is disabled or not.
+            name: The name of the Menu.
+            id: The ID of the menu in the DOM.
+            classes: The CSS classes of the menu.
+            disabled: Whether the menu is disabled or not.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
