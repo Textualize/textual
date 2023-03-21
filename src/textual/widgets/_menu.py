@@ -177,7 +177,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
             """The menu that sent the message."""
             self.index = index
             """The index of the option that the message relates to."""
-            self.option = menu.option(index)
+            self.option = menu.option_at_index(index)
             """The highlighted option."""
 
         def __rich_repr__(self) -> Result:
@@ -371,7 +371,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         self.refresh()
         return self
 
-    def enable_option(self, index: int) -> Self:
+    def enable_option_at_index(self, index: int) -> Self:
         """Enable the menu option at the given index.
 
         Returns:
@@ -379,7 +379,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         """
         return self._set_option_disabled(index, False)
 
-    def disable_option(self, index: int) -> Self:
+    def disable_option_at_index(self, index: int) -> Self:
         """Disable the menu option at the given index.
 
         Returns:
@@ -392,7 +392,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         """The count of options in the menu."""
         return len(self._options)
 
-    def option(self, index: int) -> MenuOption[MenuDataType]:
+    def option_at_index(self, index: int) -> MenuOption[MenuDataType]:
         """Get the menu option at the given index.
 
         Args:
