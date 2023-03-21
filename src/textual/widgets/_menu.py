@@ -384,6 +384,8 @@ class Menu(ScrollView, can_focus=True):
         Returns:
             The menu.
         """
+        # TODO: If someone inherits from MenuOption, and adds more
+        # properties, they'll get lost by this. I need to rethink this.
         old_prompt, old_id, *_ = self._options[index]
         self._options[index] = MenuOption(old_prompt, old_id, disabled)
         # TODO: Refresh only if the affected option is visible.
