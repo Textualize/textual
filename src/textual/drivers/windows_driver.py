@@ -21,6 +21,14 @@ class WindowsDriver(Driver):
         debug: bool = False,
         size: tuple[int, int] | None = None,
     ) -> None:
+        """Initialize a driver.
+
+        Args:
+            file: A file-like object open for writing unicode.
+            target: The message target (expected to be the app).
+            debug: Enabled debug mode.
+            size: Initial size of the terminal or `None` to detect.
+        """
         super().__init__(file, target, debug=debug, size=size)
 
         self.exit_event = Event()
