@@ -27,11 +27,17 @@ As used when creating messages.
 """
 
 
+class DuplicateID(Exception):
+    """Exception raised if a duplicate ID is used."""
+
+
 class MenuOption(NamedTuple, Generic[MenuDataType]):
     """Class that holds the details of an individual menu option."""
 
     prompt: RenderableType
     """The prompt for the menu option."""
+    id: str | None = None
+    """An optional ID to associate with the menu option."""
     data: MenuDataType | None = None
     """Data associated with the menu option."""
     disabled: bool = False
@@ -173,17 +179,20 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
                 option: The option that the messages relates to.
             """
             super().__init__()
-            self.menu = menu
+            self.menu: Menu = menu
             """The menu that sent the message."""
-            self.index = index
-            """The index of the option that the message relates to."""
-            self.option = menu.option_at_index(index)
+            self.option: MenuOption = menu.get_option_at_index(index)
             """The highlighted option."""
+            self.option_id: str | None = self.option.id
+            """The ID of the option that the message relates to."""
+            self.option_index: int = index
+            """The index of the option that the message relates to."""
 
         def __rich_repr__(self) -> Result:
             yield "menu", self.menu
-            yield "index", self.index
             yield "option", self.option
+            yield "option_id", self.option_id
+            yield "option_index", self.option_index
 
     class OptionHighlighted(OptionMessage[MenuMessageDataType]):
         """Message sent when an option is highlighted.
@@ -240,6 +249,9 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         isn't an option.
         """
 
+        self._option_ids: dict[str, int] = {}
+        """A dictionary of menu IDs and the option indexes they relate to."""
+
         self._lines: list[Line] = []
         """A list of all of the individual lines that make up the menu.
 
@@ -256,8 +268,8 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         the count of the lines in the prompt.
         """
 
-        # Initial calculation of the shape of the prompts.
-        self._calculate_lines_and_spans()
+        # Initial calculation of the content tracking.
+        self._refresh_content_tracking()
 
         # Finally, cause the highlighted property to settle down based on
         # the state of the menu in regard to its available options. Be sure
@@ -281,15 +293,16 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
             else MenuOption(content)
         )
 
-    def _clear_lines_and_spans(self) -> None:
-        """Clear down the line and span information."""
+    def _clear_content_tracking(self) -> None:
+        """Clear down the content tracking information."""
         self._lines.clear()
         self._spans.clear()
+        self._option_ids.clear()
 
-    def _calculate_lines_and_spans(self) -> None:
-        """Calculation the lines and the spans of the options' prompts."""
+    def _refresh_content_tracking(self) -> None:
+        """Refresh the various forms of menu content tracking."""
 
-        self._clear_lines_and_spans()
+        self._clear_content_tracking()
 
         # TODO: Do I need to be telling it what width to deal with? Do I
         # need to be working out all the lines again if I get resized?
@@ -302,11 +315,22 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         option = 0
         for content in self._contents:
             if isinstance(content, MenuOption):
+                # The content is a menu option, so render out the prompt and
+                # work out the lines needed to show it.
                 lines = [
                     Line(prompt_line, option)
                     for prompt_line in lines_from(content.prompt)
                 ]
+                # Record the span information for the option.
                 self._spans.append(OptionLineSpan(line, len(lines)))
+                if content.id is not None:
+                    # The option has an ID set, create a mapping from that
+                    # ID to the option so we can use it later.
+                    if content.id in self._option_ids:
+                        raise DuplicateID(
+                            f"The menu already has an option with id '{content.id}'"
+                        )
+                    self._option_ids[content.id] = option
                 option += 1
             else:
                 # The content isn't a menu option, so it must be a separator
@@ -337,7 +361,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         # If the content is a genuine menu option, add it to the list of options.
         if isinstance(content, MenuOption):
             self._options.append(content)
-        self._calculate_lines_and_spans()
+        self._refresh_content_tracking()
         self.refresh()
         return self
 
@@ -349,7 +373,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         """
         self._contents.clear()
         self._options.clear()
-        self._clear_lines_and_spans()
+        self._refresh_content_tracking()
         self.highlighted = None
         self.virtual_size = Size(self.size.width, 0)
         self.refresh()
@@ -365,8 +389,8 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         Returns:
             The menu.
         """
-        old = self._options[index]
-        self._options[index] = MenuOption(old.prompt, old.data, disabled)
+        old_prompt, old_id, old_data, *_ = self._options[index]
+        self._options[index] = MenuOption(old_prompt, old_id, old_data, disabled)
         # TODO: Refresh only if the affected option is visible.
         self.refresh()
         return self
@@ -376,6 +400,9 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
 
         Returns:
             The menu.
+
+        Raises:
+            IndexError: If there is no menu option with the given index.
         """
         return self._set_option_disabled(index, False)
 
@@ -384,15 +411,46 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
 
         Returns:
             The menu.
+
+        Raises:
+            IndexError: If there is no menu option with the given index.
         """
         return self._set_option_disabled(index, True)
+
+    def enable_option(self, option_id: str) -> Self:
+        """Enable the menu option with the given ID.
+
+        Args:
+            option_id: The ID of the option to enable.
+
+        Returns:
+            The menu.
+
+        Raises:
+            KeyError: If no option in the menu has the given ID.
+        """
+        return self.enable_option_at_index(self._option_ids[option_id])
+
+    def disable_option(self, option_id: str) -> Self:
+        """Disable the menu option with the given ID.
+
+        Args:
+            option_id: The ID of the option to disable.
+
+        Returns:
+            The menu.
+
+        Raises:
+            KeyError: If no option in the menu has the given ID.
+        """
+        return self.disable_option_at_index(self._option_ids[option_id])
 
     @property
     def option_count(self) -> int:
         """The count of options in the menu."""
         return len(self._options)
 
-    def option_at_index(self, index: int) -> MenuOption[MenuDataType]:
+    def get_option_at_index(self, index: int) -> MenuOption[MenuDataType]:
         """Get the menu option at the given index.
 
         Args:
