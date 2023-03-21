@@ -17,29 +17,18 @@ from ..reactive import reactive
 from ..scroll_view import ScrollView
 from ..strip import Strip
 
-MenuDataType = TypeVar("MenuDataType")
-"""The type of the data for a given instance of a [Menu][textual.widgets.Menu]."""
-
-MenuMessageDataType = TypeVar("MenuMessageDataType")
-"""The type of the data for a given instance of a [Menu][textual.widgets.Menu].
-
-As used when creating messages.
-"""
-
 
 class DuplicateID(Exception):
     """Exception raised if a duplicate ID is used."""
 
 
-class MenuOption(NamedTuple, Generic[MenuDataType]):
+class MenuOption(NamedTuple):
     """Class that holds the details of an individual menu option."""
 
     prompt: RenderableType
     """The prompt for the menu option."""
     id: str | None = None
     """An optional ID to associate with the menu option."""
-    data: MenuDataType | None = None
-    """Data associated with the menu option."""
     disabled: bool = False
     """Is the menu option disabled?"""
 
@@ -84,7 +73,7 @@ class OptionLineSpan(NamedTuple):
         return line >= self.first and line < (self.first + self.line_count)
 
 
-class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
+class Menu(ScrollView, can_focus=True):
     """A vertical bounce-bar menu."""
 
     BINDINGS: ClassVar[list[BindingType]] = [
@@ -168,7 +157,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
             super().__init__()
             self.cargo = cargo
 
-    class OptionMessage(Generic[MenuMessageDataType], Message):
+    class OptionMessage(Message):
         """Base class for all menu option messages."""
 
         def __init__(self, menu: Menu, index: int) -> None:
@@ -194,14 +183,14 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
             yield "option_id", self.option_id
             yield "option_index", self.option_index
 
-    class OptionHighlighted(OptionMessage[MenuMessageDataType]):
+    class OptionHighlighted(OptionMessage):
         """Message sent when an option is highlighted.
 
         Can be handled using `on_menu_option_highlighted` in a subclass of
         `Menu` or in a parent node in the DOM.
         """
 
-    class OptionSelected(OptionMessage[MenuMessageDataType]):
+    class OptionSelected(OptionMessage):
         """Message sent when an option is selected.
 
         Can be handled using `on_menu_option_selected` in a subclass of
@@ -210,7 +199,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
 
     def __init__(
         self,
-        *options: MenuOption[MenuDataType] | MenuSeparator | RenderableType,
+        *options: MenuOption | MenuSeparator | RenderableType,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -227,7 +216,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
-        self._contents: list[MenuOption[MenuDataType] | MenuSeparator] = [
+        self._contents: list[MenuOption | MenuSeparator] = [
             self._make_content(option) for option in options
         ]
         """A list of the content of the menu.
@@ -239,7 +228,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         perhaps).
         """
 
-        self._options: list[MenuOption[MenuDataType]] = [
+        self._options: list[MenuOption] = [
             content for content in self._contents if isinstance(content, MenuOption)
         ]
         """A list of the options within the menu.
@@ -277,8 +266,8 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         self.highlighted = None
 
     def _make_content(
-        self, content: MenuOption[MenuDataType] | MenuSeparator | RenderableType
-    ) -> MenuOption[MenuDataType] | MenuSeparator:
+        self, content: MenuOption | MenuSeparator | RenderableType
+    ) -> MenuOption | MenuSeparator:
         """Convert a single item of content for the menu into a menu content type.
 
         Args:
@@ -352,9 +341,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         # now this is just about ensuing the scrolling kicks in.
         self.virtual_size = Size(self.size.width, len(self._lines))
 
-    def add(
-        self, option: MenuOption[MenuDataType] | MenuSeparator | RenderableType
-    ) -> Self:
+    def add(self, option: MenuOption | MenuSeparator | RenderableType) -> Self:
         """Add a new option to the end of the menu.
 
         Args:
@@ -397,8 +384,8 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         Returns:
             The menu.
         """
-        old_prompt, old_id, old_data, *_ = self._options[index]
-        self._options[index] = MenuOption(old_prompt, old_id, old_data, disabled)
+        old_prompt, old_id, *_ = self._options[index]
+        self._options[index] = MenuOption(old_prompt, old_id, disabled)
         # TODO: Refresh only if the affected option is visible.
         self.refresh()
         return self
@@ -458,7 +445,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         """The count of options in the menu."""
         return len(self._options)
 
-    def get_option_at_index(self, index: int) -> MenuOption[MenuDataType]:
+    def get_option_at_index(self, index: int) -> MenuOption:
         """Get the menu option at the given index.
 
         Args:
@@ -472,7 +459,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         """
         return self._options[index]
 
-    def get_option(self, option_id: str) -> MenuOption[MenuDataType]:
+    def get_option(self, option_id: str) -> MenuOption:
         """Get the menu option with the given ID.
 
         Args:
