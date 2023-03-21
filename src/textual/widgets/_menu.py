@@ -287,7 +287,9 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
                 self._spans.append(OptionLineSpan(line, len(lines)))
                 option += 1
             else:
-                assert isinstance(content, MenuSeparator)
+                # The content isn't a menu option, so it must be a separator
+                # (if there were to be other non-option content for a menu
+                # it's in this if/else where we'd process it).
                 lines = [Line(separator)]
             self._lines.extend(lines)
             line += len(lines)
