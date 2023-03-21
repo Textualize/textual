@@ -507,7 +507,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def debug(self) -> bool:
-        """Is debug mode is enabled?"""
+        """Is debug mode enabled?"""
         return "debug" in self.features
 
     @property
