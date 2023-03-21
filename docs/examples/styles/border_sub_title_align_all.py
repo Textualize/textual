@@ -39,9 +39,9 @@ class BorderSubTitleAlignAll(App[None]):
                 "",  # (4)!
                 "[link=https://textual.textualize.io]Left[/]",  # (5)!
             )
-            yield make_label_container(
+            yield make_label_container(  # (6)!
                 "nine labels", "lbl5", "Title", "Subtitle"
-            )  # (6)!
+            )
             yield make_label_container(  # (7)!
                 "and ended up redoing it",
                 "lbl6",

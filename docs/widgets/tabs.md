@@ -60,7 +60,7 @@ The following example adds a `Tabs` widget above a text label. Press ++a++ to ad
 ## Messages
 
 ### ::: textual.widgets.Tabs.TabActivated
-### ::: textual.widgets.Tabs.TabsCleared
+### ::: textual.widgets.Tabs.Cleared
 
 ## Bindings
 
