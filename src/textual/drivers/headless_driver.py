@@ -59,7 +59,7 @@ class HeadlessDriver(Driver):
         send_size_event()
 
     def disable_input(self) -> None:
-        """Start application mode."""
+        """Disable further input."""
 
     def stop_application_mode(self) -> None:
         """Stop application mode, restore state."""
