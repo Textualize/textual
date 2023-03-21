@@ -464,6 +464,20 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         """
         return self._options[index]
 
+    def get_option(self, option_id: str) -> MenuOption[MenuDataType]:
+        """Get the menu option with the given ID.
+
+        Args:
+            index: The ID of the option to get.
+
+        Returns:
+            The option at with the ID.
+
+        Raises:
+            KeyError: If no option in the menu has the given ID.
+        """
+        return self.get_option_at_index(self._option_ids[option_id])
+
     def render_line(self, y: int) -> Strip:
         """Render a single line in the menu.
 
