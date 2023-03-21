@@ -192,7 +192,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         `Menu` or in a parent node in the DOM.
         """
 
-    class OptionSelected(OptionMessage[MenuMessageDataType], Message):
+    class OptionSelected(OptionMessage[MenuMessageDataType]):
         """Message sent when an option is selected.
 
         Can be handled using `on_menu_option_selected` in a subclass of
