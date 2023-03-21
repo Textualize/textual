@@ -90,11 +90,11 @@ class DirectoryTree(Tree[DirEntry]):
         classes: str | None = None,
         disabled: bool = False,
     ) -> None:
-        path = os.fspath(path)
-        self.path = path
+        str_path = os.fspath(path)
+        self.path = str_path
         super().__init__(
-            path,
-            data=DirEntry(path, True),
+            str_path,
+            data=DirEntry(str_path, True),
             name=name,
             id=id,
             classes=classes,
