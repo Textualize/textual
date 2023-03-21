@@ -5,7 +5,7 @@
     grid-rows: 1fr;
 }
 
-#left-pane > Static {    
+#left-pane > Static {
     background: $boost;
     color: auto;
     margin-bottom: 1;
@@ -13,6 +13,7 @@
 }
 
 #left-pane {
+    width: 100%;
     height: 100%;
     row-span: 2;
     background: $panel;

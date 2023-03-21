@@ -7,16 +7,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+- Added `parser_factory` argument to `Markdown` and `MarkdownViewer` constructors https://github.com/Textualize/textual/pull/2075
+
 ### Changed
 
 - Dropped "loading-indicator--dot" component style from LoadingIndicator https://github.com/Textualize/textual/pull/2050
-
-## Unreleased
-
-### Changed
-
+- Tabs widget now sends Tabs.Cleared when there is no active tab.
 - Breaking change: changed default behaviour of `Vertical` (see `VerticalScroll`) https://github.com/Textualize/textual/issues/1957
 - The default `overflow` style for `Horizontal` was changed to `hidden hidden` https://github.com/Textualize/textual/issues/1957
+
+### Removed
+
+- Removed `sender` attribute from messages. It's now just private (`_sender`). https://github.com/Textualize/textual/pull/2071
+
+### Fixed
+
+- Fixed borders not rendering correctly. https://github.com/Textualize/textual/pull/2074
+- Fix for error when removing nodes. https://github.com/Textualize/textual/issues/2079
 
 ### Added
 
@@ -24,6 +32,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Center` https://github.com/Textualize/textual/issues/1957
 - Added `Middle` https://github.com/Textualize/textual/issues/1957
 - Added `VerticalScroll` (mimicking the old behaviour of `Vertical`) https://github.com/Textualize/textual/issues/1957
+- Added `TabbedContent` widget https://github.com/Textualize/textual/pull/2059
+- Added `get_child_by_type` method to widgets / app https://github.com/Textualize/textual/pull/2059
+- Added `Widget.render_str` method https://github.com/Textualize/textual/pull/2059
+- Added TEXTUAL_DRIVER environment variable
 
 
 ## [0.15.1] - 2023-03-14

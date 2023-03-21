@@ -761,7 +761,11 @@ class StringEnumProperty:
         if value is None:
             if obj.clear_rule(self.name):
                 self._before_refresh(obj, value)
-                obj.refresh(layout=self._layout, children=self._refresh_children)
+                obj.refresh(
+                    layout=self._layout,
+                    children=self._refresh_children,
+                    parent=self._refresh_parent,
+                )
         else:
             if value not in self._valid_values:
                 raise StyleValueError(

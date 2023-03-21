@@ -29,12 +29,12 @@ The example below shows switches in various states.
 ## Reactive Attributes
 
 | Name    | Type   | Default | Description              |
-|---------|--------|---------|--------------------------|
+| ------- | ------ | ------- | ------------------------ |
 | `value` | `bool` | `False` | The value of the switch. |
 
 ## Bindings
 
-The switch widget defines directly the following bindings:
+The switch widget defines the following bindings:
 
 ::: textual.widgets.Switch.BINDINGS
     options:

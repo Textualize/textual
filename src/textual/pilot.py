@@ -7,7 +7,6 @@ import rich.repr
 
 from ._wait import wait_for_idle
 from .app import App, ReturnType
-from .css.query import QueryType
 from .events import Click, MouseDown, MouseMove, MouseUp
 from .geometry import Offset
 from .widget import Widget
@@ -65,7 +64,7 @@ class Pilot(Generic[ReturnType]):
 
     async def click(
         self,
-        selector: QueryType | None = None,
+        selector: type[Widget] | str | None = None,
         offset: Offset = Offset(),
         shift: bool = False,
         meta: bool = False,
@@ -95,12 +94,16 @@ class Pilot(Generic[ReturnType]):
             target_widget, offset, button=1, shift=shift, meta=meta, control=control
         )
         app.post_message(MouseDown(**message_arguments))
+        await self.pause()
         app.post_message(MouseUp(**message_arguments))
+        await self.pause()
         app.post_message(Click(**message_arguments))
         await self.pause()
 
     async def hover(
-        self, selector: QueryType | None = None, offset: Offset = Offset()
+        self,
+        selector: type[Widget] | str | None | None = None,
+        offset: Offset = Offset(),
     ) -> None:
         """Simulate hovering with the mouse cursor.
 

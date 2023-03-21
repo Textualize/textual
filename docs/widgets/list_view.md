@@ -41,7 +41,7 @@ The example below shows an app with a simple `ListView`.
 
 ## Bindings
 
-The list view widget defines directly the following bindings:
+The list view widget defines the following bindings:
 
 ::: textual.widgets.ListView.BINDINGS
     options:

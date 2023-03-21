@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 from pathlib import Path, PurePath
-from typing import Iterable
+from typing import Iterable, Callable
 
 from markdown_it import MarkdownIt
+from rich import box
 from rich.style import Style
 from rich.syntax import Syntax
+from rich.table import Table
 from rich.text import Text
 from typing_extensions import TypeAlias
 
@@ -14,7 +16,7 @@ from ..containers import Horizontal, VerticalScroll
 from ..message import Message
 from ..reactive import reactive, var
 from ..widget import Widget
-from ..widgets import DataTable, Static, Tree
+from ..widgets import Static, Tree
 
 TableOfContentsType: TypeAlias = "list[tuple[int, str, str | None]]"
 
@@ -316,17 +318,59 @@ class MarkdownOrderedList(MarkdownList):
         self._blocks.clear()
 
 
+class MarkdownTableContent(Widget):
+    """Renders a Markdown table."""
+
+    DEFAULT_CSS = """
+    MarkdownTableContent {
+        width: 100%;
+        height: auto;
+
+    }
+    MarkdownTableContent > .markdown-table--header {
+        text-style: bold;
+    }
+    """
+
+    COMPONENT_CLASSES = {"markdown-table--header", "markdown-table--lines"}
+
+    def __init__(self, headers: list[Text], rows: list[list[Text]]):
+        self.headers = headers
+        """List of header text."""
+        self.rows = rows
+        """The row contents."""
+        super().__init__()
+        self.shrink = True
+
+    def render(self) -> Table:
+        table = Table(
+            expand=True,
+            box=box.SIMPLE_HEAVY,
+            style=self.rich_style,
+            header_style=self.get_component_rich_style("markdown-table--header"),
+            border_style=self.get_component_rich_style("markdown-table--lines"),
+            collapse_padding=True,
+            padding=0,
+        )
+        for header in self.headers:
+            table.add_column(header)
+        for row in self.rows:
+            if row:
+                table.add_row(*row)
+        return table
+
+
 class MarkdownTable(MarkdownBlock):
     """A Table markdown Block."""
 
     DEFAULT_CSS = """
     MarkdownTable {
-        margin: 1 0;
-    }
-    MarkdownTable > DataTable {
         width: 100%;
-        height: auto;
+        margin: 1 0;
+        background: $panel;
+        border: wide $background;
     }
+
     """
 
     def compose(self) -> ComposeResult:
@@ -346,11 +390,7 @@ class MarkdownTable(MarkdownBlock):
             elif isinstance(block, MarkdownTD):
                 rows[-1].append(block._text)
 
-        table: DataTable = DataTable(zebra_stripes=True, show_cursor=False)
-        table.can_focus = False
-        table.add_columns(*headers)
-        table.add_rows([row for row in rows if row])
-        yield table
+        yield MarkdownTableContent(headers, rows)
         self._blocks.clear()
 
 
@@ -369,17 +409,9 @@ class MarkdownTR(MarkdownBlock):
 class MarkdownTH(MarkdownBlock):
     """A table header Markdown block."""
 
-    DEFAULT_CSS = """
-
-    """
-
 
 class MarkdownTD(MarkdownBlock):
     """A table data Markdown block."""
-
-    DEFAULT_CSS = """
-
-    """
 
 
 class MarkdownBullet(Widget):
@@ -509,6 +541,7 @@ class Markdown(Widget):
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
+        parser_factory: Callable[[], MarkdownIt] | None = None,
     ):
         """A Markdown widget.
 
@@ -517,9 +550,11 @@ class Markdown(Widget):
             name: The name of the widget.
             id: The ID of the widget in the DOM.
             classes: The CSS classes of the widget.
+            parser_factory: A factory function to return a configured MarkdownIt instance. If `None`, a "gfm-like" parser is used.
         """
         super().__init__(name=name, id=id, classes=classes)
         self._markdown = markdown
+        self._parser_factory = parser_factory
 
     class TableOfContentsUpdated(Message, bubble=True):
         """The table of contents was updated."""
@@ -574,7 +609,11 @@ class Markdown(Widget):
         """
         output: list[MarkdownBlock] = []
         stack: list[MarkdownBlock] = []
-        parser = MarkdownIt("gfm-like")
+        parser = (
+            MarkdownIt("gfm-like")
+            if self._parser_factory is None
+            else self._parser_factory()
+        )
 
         content = Text()
         block_id: int = 0
@@ -721,7 +760,7 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
     }
     """
 
-    table_of_contents: reactive[TableOfContentsType | None] = reactive(None, init=False)
+    table_of_contents = reactive["TableOfContentsType | None"](None, init=False)
 
     def compose(self) -> ComposeResult:
         tree: Tree = Tree("TOC")
@@ -799,6 +838,7 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
+        parser_factory: Callable[[], MarkdownIt] | None = None,
     ):
         """Create a Markdown Viewer object.
 
@@ -808,10 +848,12 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
             name: The name of the widget.
             id: The ID of the widget in the DOM.
             classes: The CSS classes of the widget.
+            parser_factory: A factory function to return a configured MarkdownIt instance. If `None`, a "gfm-like" parser is used.
         """
         super().__init__(name=name, id=id, classes=classes)
         self.show_table_of_contents = show_table_of_contents
         self._markdown = markdown
+        self._parser_factory = parser_factory
 
     @property
     def document(self) -> Markdown:
@@ -850,7 +892,7 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
 
     def compose(self) -> ComposeResult:
         yield MarkdownTableOfContents()
-        yield Markdown()
+        yield Markdown(parser_factory=self._parser_factory)
 
     def on_markdown_table_of_contents_updated(
         self, message: Markdown.TableOfContentsUpdated

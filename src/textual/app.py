@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import importlib
 import inspect
 import io
 import os
@@ -47,13 +48,13 @@ from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
 from rich.traceback import Traceback
 
-from . import Logger, LogGroup, LogVerbosity, actions, events, log, messages
+from . import Logger, LogGroup, LogVerbosity, actions, constants, events, log, messages
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
 from ._asyncio import create_task
 from ._callback import invoke
 from ._compose import compose
-from ._context import active_app
+from ._context import active_app, active_message_pump
 from ._event_broker import NoHandler, extract_handler_actions
 from ._path import _make_path_object_relative
 from ._wait import wait_for_idle
@@ -590,7 +591,24 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             A Driver class which manages input and display.
         """
+
         driver_class: Type[Driver]
+
+        driver_import = constants.DRIVER
+        if driver_import is not None:
+            # The driver class is set from the environment
+            # Syntax should be foo.bar.baz:MyDriver
+            module_import, colon, driver_symbol = driver_import.partition(":")
+            driver_module = importlib.import_module(module_import)
+            driver_class = getattr(driver_module, driver_symbol)
+            if not inspect.isclass(driver_class) or not issubclass(
+                driver_class, Driver
+            ):
+                raise RuntimeError(
+                    f"Unable to import {driver_import!r}; {driver_class!r} is not a Driver class "
+                )
+            return driver_class
+
         if WINDOWS:
             from .drivers.windows_driver import WindowsDriver
 
@@ -918,6 +936,7 @@ class App(Generic[ReturnType], DOMNode):
             )
 
         # Launch the app in the "background"
+        active_message_pump.set(app)
         app_task = create_task(run_app(app), name=f"run_test {app}")
 
         # Wait until the app has performed all startup routines.
@@ -973,6 +992,7 @@ class App(Generic[ReturnType], DOMNode):
                         raise
 
                 pilot = Pilot(app)
+                active_message_pump.set(self)
                 auto_pilot_task = create_task(
                     run_auto_pilot(auto_pilot, pilot), name=repr(pilot)
                 )
@@ -1130,6 +1150,20 @@ class App(Generic[ReturnType], DOMNode):
             if expect_type is None
             else self.screen.get_widget_by_id(id, expect_type)
         )
+
+    def get_child_by_type(self, expect_type: type[ExpectType]) -> ExpectType:
+        """Get a child of a give type.
+
+        Args:
+            expect_type: The type of the expected child.
+
+        Raises:
+            NoMatches: If no valid child is found.
+
+        Returns:
+            A widget.
+        """
+        return self.screen.get_child_by_type(expect_type)
 
     def update_styles(self, node: DOMNode | None = None) -> None:
         """Request update of styles.
@@ -2174,11 +2208,14 @@ class App(Generic[ReturnType], DOMNode):
             for child in widget._nodes:
                 push(child)
 
-    def _remove_nodes(self, widgets: list[Widget], parent: DOMNode) -> AwaitRemove:
+    def _remove_nodes(
+        self, widgets: list[Widget], parent: DOMNode | None
+    ) -> AwaitRemove:
         """Remove nodes from DOM, and return an awaitable that awaits cleanup.
 
         Args:
             widgets: List of nodes to remove.
+            parent: Parent node of widgets, or None for no parent.
 
         Returns:
             Awaitable that returns when the nodes have been fully removed.
@@ -2197,7 +2234,7 @@ class App(Generic[ReturnType], DOMNode):
                 await self._prune_nodes(widgets)
             finally:
                 finished_event.set()
-                if parent.styles.auto_dimensions:
+                if parent is not None:
                     parent.refresh(layout=True)
 
         removed_widgets = self._detach_from_dom(widgets)

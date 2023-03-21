@@ -151,6 +151,18 @@ class DOMNode(MessagePump):
 
         super().__init__()
 
+    def compose_add_child(self, widget: Widget) -> None:
+        """Add a node to children.
+
+        This is used by the compose process when it adds children.
+        There is no need to use it directly, but you may want to override it in a subclass
+        if you want children to be attached to a different node.
+
+        Args:
+            widget: A Widget to add.
+        """
+        self._nodes._append(widget)
+
     @property
     def children(self) -> Sequence["Widget"]:
         """A view on to the children."""
@@ -609,9 +621,8 @@ class DOMNode(MessagePump):
         base_background = background = BLACK
         for node in reversed(self.ancestors_with_self):
             styles = node.styles
-            if styles.has_rule("background"):
-                base_background = background
-                background += styles.background
+            base_background = background
+            background += styles.background
         return (base_background, background)
 
     @property
@@ -621,9 +632,8 @@ class DOMNode(MessagePump):
         base_color = color = BLACK
         for node in reversed(self.ancestors_with_self):
             styles = node.styles
-            if styles.has_rule("background"):
-                base_background = background
-                background += styles.background
+            base_background = background
+            background += styles.background
             if styles.has_rule("color"):
                 base_color = color
                 if styles.auto_color:
