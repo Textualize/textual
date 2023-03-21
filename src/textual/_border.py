@@ -316,7 +316,6 @@ def render_border_label(
     corners_needed = has_left_corner + has_right_corner
     cells_reserved = 2 * corners_needed
     if not label or width <= cells_reserved:
-        yield from ()
         return
 
     text_label = Text.from_markup(label)
