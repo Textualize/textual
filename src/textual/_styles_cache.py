@@ -303,18 +303,23 @@ class StylesCache:
             border_edge_type = border_top if is_top else border_bottom
             has_left = border_left != ""
             has_right = border_right != ""
-            label_segments = render_border_label(
-                border_title if is_top else border_subtitle,
-                is_top,
-                border_edge_type,
-                width,
-                inner,
-                outer,
-                border_color_as_style,
-                console,
-                has_left,
-                has_right,
-            )
+            border_label = border_title if is_top else border_subtitle
+            # Try to save time with expensive call to `render_border_label`:
+            if not border_label:
+                label_segments: Iterable[Segment] = []
+            else:
+                label_segments = render_border_label(
+                    border_label,
+                    is_top,
+                    border_edge_type,
+                    width,
+                    inner,
+                    outer,
+                    border_color_as_style,
+                    console,
+                    has_left,
+                    has_right,
+                )
             box_segments = get_box(
                 border_edge_type,
                 inner,
