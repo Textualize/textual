@@ -535,13 +535,9 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         """Ensure that the highlighted option is in view."""
         highlighted = self.highlighted
         assert highlighted is not None
+        span = self._spans[highlighted]
         self.scroll_to_region(
-            Region(
-                0,
-                self._spans[highlighted].first,
-                self.size.width,
-                self._spans[highlighted].line_count,
-            ),
+            Region(0, span.first, self.size.width, span.line_count),
             force=True,
             animate=False,  # https://github.com/Textualize/textual/issues/2077
         )
