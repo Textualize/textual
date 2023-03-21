@@ -263,11 +263,15 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
             else MenuOption(content)
         )
 
+    def _clear_lines_and_spans(self) -> None:
+        """Clear down the line and span information."""
+        self._lines.clear()
+        self._spans.clear()
+
     def _calculate_lines_and_spans(self) -> None:
         """Calculation the lines and the spans of the options' prompts."""
 
-        self._lines.clear()
-        self._spans.clear()
+        self._clear_lines_and_spans()
 
         # TODO: Do I need to be telling it what width to deal with? Do I
         # need to be working out all the lines again if I get resized?
@@ -316,6 +320,20 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         if isinstance(content, MenuOption):
             self._options.append(content)
         self._calculate_lines_and_spans()
+        self.refresh()
+        return self
+
+    def clear(self) -> Self:
+        """Clear the content of the menu.
+
+        Returns:
+            The menu.
+        """
+        self._contents.clear()
+        self._options.clear()
+        self._clear_lines_and_spans()
+        self.highlighted = None
+        self.virtual_size = Size(self.size.width, 0)
         self.refresh()
         return self
 
