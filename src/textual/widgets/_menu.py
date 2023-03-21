@@ -8,7 +8,7 @@ from rich.console import RenderableType
 from rich.repr import Result
 from rich.rule import Rule
 from rich.segment import Segment
-from typing_extensions import Final, Literal, Self
+from typing_extensions import Literal, Self
 
 from ..binding import Binding, BindingType
 from ..geometry import Region, Size
