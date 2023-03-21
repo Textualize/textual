@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Callable, ClassVar, Generic, NamedTuple, TypeVar
+from typing import Callable, ClassVar, NamedTuple
 
 from rich.console import RenderableType
 from rich.repr import Result
