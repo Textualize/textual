@@ -271,7 +271,16 @@ Additionally, the labels can be aligned horizontally with the respective styles:
  - [`border-title-align`](../styles/border_title_align.md) for the title; and
  - [`border-subtitle-align`](../styles/border_subtitle_align.md) for the subtitle.
 
---8<-- "docs/snippets/border_sub_title_align_all_example.md"
+We can easily modify the previous example to add a title and a subtitle to the border:
+
+```py hl_lines="23-24"
+--8<-- "docs/examples/guide/styles/border_title.py"
+```
+
+This modification produces the following output:
+
+```{.textual path="docs/examples/guide/styles/border_title.py"}
+```
 
 ### Outline
 
