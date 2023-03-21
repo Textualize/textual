@@ -51,10 +51,10 @@ class LinuxDriver(Driver):
         yield "debug", self._debug
 
     def _get_terminal_size(self) -> tuple[int, int]:
-        """Detect the terminal size
+        """Detect the terminal size.
 
         Returns:
-            The size of the terminal as a tuple of (WIDTH, HEIGHT)
+            The size of the terminal as a tuple of (WIDTH, HEIGHT).
         """
         width: int | None = 80
         height: int | None = 25
