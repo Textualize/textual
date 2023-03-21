@@ -12,6 +12,7 @@ class HeadlessDriver(Driver):
 
     @property
     def is_headless(self) -> bool:
+        """Is the driver running in 'headless' mode?"""
         return True
 
     def _get_terminal_size(self) -> tuple[int, int]:
@@ -32,10 +33,20 @@ class HeadlessDriver(Driver):
         height = height or 25
         return width, height
 
+    def write(self, data: str) -> None:
+        """Write data to the output device.
+
+        Args:
+            data: Raw data.
+        """
+        # Nothing to write as this is a headless driver.
+
     def start_application_mode(self) -> None:
+        """Start application mode."""
         loop = asyncio.get_running_loop()
 
-        def send_size_event():
+        def send_size_event() -> None:
+            """Send first resize event."""
             terminal_size = self._get_terminal_size()
             width, height = terminal_size
             textual_size = Size(width, height)
@@ -48,7 +59,8 @@ class HeadlessDriver(Driver):
         send_size_event()
 
     def disable_input(self) -> None:
-        pass
+        """Disable further input."""
 
     def stop_application_mode(self) -> None:
-        pass
+        """Stop application mode, restore state."""
+        # Nothing to do

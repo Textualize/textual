@@ -2,26 +2,33 @@ from __future__ import annotations
 
 import asyncio
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import IO
 
 from . import _time, events
 from ._types import MessageTarget
 from .events import MouseUp
 
-if TYPE_CHECKING:
-    from rich.console import Console
-
 
 class Driver(ABC):
+    """A base class for drivers."""
+
     def __init__(
         self,
-        console: "Console",
+        file: IO[str],
         target: "MessageTarget",
         *,
         debug: bool = False,
         size: tuple[int, int] | None = None,
     ) -> None:
-        self.console = console
+        """Initialize a driver.
+
+        Args:
+            file: A file-like object open for writing unicode.
+            target: The message target (expected to be the app).
+            debug: Enabled debug mode.
+            size: Initial size of the terminal or `None` to detect.
+        """
+        self._file = file
         self._target = target
         self._debug = debug
         self._size = size
@@ -32,16 +39,25 @@ class Driver(ABC):
 
     @property
     def is_headless(self) -> bool:
-        """Check if the driver is 'headless'"""
+        """Is the driver 'headless' (no output)?"""
         return False
 
     def send_event(self, event: events.Event) -> None:
+        """Send an event to the target app.
+
+        Args:
+            event: An event.
+        """
         asyncio.run_coroutine_threadsafe(
             self._target._post_message(event), loop=self._loop
         )
 
     def process_event(self, event: events.Event) -> None:
-        """Performs some additional processing of events."""
+        """Perform additional processing on an event, prior to sending.
+
+        Args:
+            event: An event to send.
+        """
         event._set_sender(self._target)
         if isinstance(event, events.MouseDown):
             self._mouse_down_time = event.time
@@ -87,14 +103,25 @@ class Driver(ABC):
             click_event = events.Click.from_event(event)
             self.send_event(click_event)
 
+    def flush(self) -> None:
+        """Flush any buffered data."""
+
+    @abstractmethod
+    def write(self, data: str) -> None:
+        """Write data to the output device.
+
+        Args:
+            data: Raw data.
+        """
+
     @abstractmethod
     def start_application_mode(self) -> None:
-        ...
+        """Start application mode."""
 
     @abstractmethod
     def disable_input(self) -> None:
-        ...
+        """Disable further input."""
 
     @abstractmethod
     def stop_application_mode(self) -> None:
-        ...
+        """Stop application mode, restore state."""
