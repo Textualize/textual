@@ -208,7 +208,7 @@ class LinuxDriver(Driver):
             pass
 
     def stop_application_mode(self) -> None:
-        """Disable further input."""
+        """Stop application mode, restore state."""
         self._disable_bracketed_paste()
         self.disable_input()
 
