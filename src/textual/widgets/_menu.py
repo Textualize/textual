@@ -40,17 +40,17 @@ class MenuSeparator:
     """Class that denotes that a particular option is really a menu separator."""
 
 
-class OptionLine(NamedTuple):
+class Line(NamedTuple):
     """Class that holds a list of segments for the line of a menu option."""
 
-    option_index: int
-    """The index of the [MenuOption][textual.widgets.menu.MenuOption] that this line is related to."""
     segments: list[Segment]
-    """The list of segments that make up the line of the prompt."""
+    """The list of segments that make up the line."""
 
+    option_index: int | None = None
+    """The index of the [MenuOption][textual.widgets.menu.MenuOption] that this line is related to.
 
-SEPARATOR_MARKER: Final[int] = -1
-"""Used as a special marker for `OptionLine` to say the line is a part of a separator."""
+    If the line isn't related to a menu option this will be `None`.
+    """
 
 
 class OptionLineSpan(NamedTuple):
@@ -222,7 +222,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         isn't an option.
         """
 
-        self._lines: list[OptionLine] = []
+        self._lines: list[Line] = []
         """A list of all of the individual lines that make up the menu.
 
         Note that the size of this list will at least the same as the number
@@ -281,14 +281,14 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         for content in self._contents:
             if isinstance(content, MenuOption):
                 lines = [
-                    OptionLine(option, prompt_line)
+                    Line(prompt_line, option)
                     for prompt_line in lines_from(content.prompt)
                 ]
                 self._spans.append(OptionLineSpan(line, len(lines)))
                 option += 1
             else:
                 assert isinstance(content, MenuSeparator)
-                lines = [OptionLine(SEPARATOR_MARKER, separator)]
+                lines = [Line(separator)]
             self._lines.extend(lines)
             line += len(lines)
 
@@ -360,9 +360,9 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         # the relevant segments for the line of that particular prompt.
         strip = Strip(line.segments)
 
-        # If the line we're looking at is part of a separator, let's style
-        # it as such and get out.
-        if line.option_index == SEPARATOR_MARKER:
+        # If the line we're looking at isn't associated with a menu option,
+        # it will be a separator, so let's exit early with that.
+        if line.option_index is None:
             return strip.apply_style(
                 self.get_component_rich_style("menu--separator", partial=True)
             )
