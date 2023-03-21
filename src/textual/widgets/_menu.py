@@ -118,6 +118,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
 
     DEFAULT_CSS = """
     Menu {
+        background: $panel-lighten-1;
         overflow: hidden;
         color: $text;
     }
@@ -127,13 +128,13 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
     }
 
     Menu > .menu--option-highlighted {
-        background: $secondary-darken-2;
+        background: $accent 50%;
         color: $text;
         text-style: bold;
     }
 
     Menu:focus > .menu--option-highlighted {
-        background: $secondary;
+        background: $accent;
     }
 
     Menu > .menu--option-disabled {
@@ -142,7 +143,11 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
 
     Menu > .menu--option-highlighted-disabled {
         color: $text-disabled;
-        background: $secondary-darken-2;
+        background: $accent 30%;
+    }
+
+    Menu:focus > .menu--option-highlighted-disabled {
+        background: $accent 40%;
     }
     """
 
@@ -428,9 +433,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         # If the line we're looking at isn't associated with a menu option,
         # it will be a separator, so let's exit early with that.
         if line.option_index is None:
-            return strip.apply_style(
-                self.get_component_rich_style("menu--separator", partial=True)
-            )
+            return strip.apply_style(self.get_component_rich_style("menu--separator"))
 
         # If the option we're drawing is disabled, exit with an option style.
         if self._options[line.option_index].disabled:
@@ -450,7 +453,7 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         ):
             # ...paint this as a highlighted option.
             return strip.apply_style(
-                self.get_component_rich_style("menu--option-highlighted", partial=True)
+                self.get_component_rich_style("menu--option-highlighted")
             )
 
         # It's a normal option line.
