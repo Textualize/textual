@@ -311,34 +311,42 @@ class Menu(Generic[MenuDataType], ScrollView, can_focus=True):
         # Create a rule that can be used as a separator.
         separator = lines_from(Rule(style=""))[0]
 
+        # Set up for doing less property access work inside the loop.
+        spans = self._spans
+        option_ids = self._option_ids
+        lines = self._lines
+
+        # Work through each item that makes up the content of the menu,
+        # break out the individual lines that will be used to draw it, and
+        # also set up the tracking of the actual menu options.
         line = 0
         option = 0
         for content in self._contents:
             if isinstance(content, MenuOption):
                 # The content is a menu option, so render out the prompt and
                 # work out the lines needed to show it.
-                lines = [
+                new_lines = [
                     Line(prompt_line, option)
                     for prompt_line in lines_from(content.prompt)
                 ]
                 # Record the span information for the option.
-                self._spans.append(OptionLineSpan(line, len(lines)))
+                spans.append(OptionLineSpan(line, len(new_lines)))
                 if content.id is not None:
                     # The option has an ID set, create a mapping from that
                     # ID to the option so we can use it later.
-                    if content.id in self._option_ids:
+                    if content.id in option_ids:
                         raise DuplicateID(
                             f"The menu already has an option with id '{content.id}'"
                         )
-                    self._option_ids[content.id] = option
+                    option_ids[content.id] = option
                 option += 1
             else:
                 # The content isn't a menu option, so it must be a separator
                 # (if there were to be other non-option content for a menu
                 # it's in this if/else where we'd process it).
-                lines = [Line(separator)]
-            self._lines.extend(lines)
-            line += len(lines)
+                new_lines = [Line(separator)]
+            lines.extend(new_lines)
+            line += len(new_lines)
 
         # TODO: Decide what the width actually should be in this case. Right
         # now this is just about ensuing the scrolling kicks in.
