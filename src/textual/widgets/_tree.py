@@ -89,7 +89,7 @@ class TreeNode(Generic[TreeDataType]):
         *,
         expanded: bool = True,
         allow_expand: bool = True,
-    ):
+    ) -> None:
         """Initialise the node.
 
         Args:
