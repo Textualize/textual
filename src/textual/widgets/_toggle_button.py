@@ -205,7 +205,11 @@ class ToggleButton(Static, can_focus=True):
         return 1
 
     def toggle(self) -> Self:
-        """Toggle the value of the widget."""
+        """Toggle the value of the widget.
+
+        Returns:
+            The `ToggleButton` instance.
+        """
         self.value = not self.value
         return self
 

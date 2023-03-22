@@ -17,6 +17,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: changed default behaviour of `Vertical` (see `VerticalScroll`) https://github.com/Textualize/textual/issues/1957
 - The default `overflow` style for `Horizontal` was changed to `hidden hidden` https://github.com/Textualize/textual/issues/1957
 - `DirectoryTree` also accepts `pathlib.Path` objects as the path to list https://github.com/Textualize/textual/issues/1438
+- Some widget methods now return `self` instead of `None` https://github.com/Textualize/textual/pull/2102:
+  - `Widget`: `refresh`, `focus`, `reset_focus`
+  - `Button.press`
+  - `DataTable`: `clear`, `refresh_coordinate`, `refresh_row`, `refresh_column`, `sort`
+  - `Placehoder.cycle_variant`
+  - `Switch.toggle`
+  - `Tabs.clear`
+  - `TextLog`: `write`, `clear`
+  - `TreeNode`: `expand`, `expand_all`, `collapse`, `collapse_all`, `toggle`, `toggle_all`
+  - `Tree`: `clear`, `reset`
 
 ### Removed
 

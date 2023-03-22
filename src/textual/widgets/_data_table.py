@@ -1160,7 +1160,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Clear the table.
 
         Args:
-            columns: Also clear the columns. Defaults to False.
+            columns: Also clear the columns.
+
+        Returns:
+            The `DataTable` instance.
         """
         self._clear_caches()
         self._y_offsets.clear()
@@ -1338,6 +1341,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         Args:
             coordinate: The coordinate to refresh.
+
+        Returns:
+            The `DataTable` instance.
         """
         if not self.is_valid_coordinate(coordinate):
             return self
@@ -1349,6 +1355,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         Args:
             row_index: The index of the row to refresh.
+
+        Returns:
+            The `DataTable` instance.
         """
         if not self.is_valid_row_index(row_index):
             return self
@@ -1361,6 +1370,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         Args:
             column_index: The index of the column to refresh.
+
+        Returns:
+            The `DataTable` instance.
         """
         if not self.is_valid_column_index(column_index):
             return self
@@ -1369,9 +1381,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return self._refresh_region(region)
 
     def _refresh_region(self, region: Region) -> Self:
-        """Refresh a region of the DataTable, if it's visible within
-        the window. This method will translate the region to account
-        for scrolling."""
+        """Refresh a region of the DataTable, if it's visible within the window.
+
+        This method will translate the region to account for scrolling.
+
+        Returns:
+            The `DataTable` instance.
+        """
         if not self.window_region.overlaps(region):
             return self
         region = region.translate(-self.scroll_offset)
@@ -1840,11 +1856,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         *columns: ColumnKey | str,
         reverse: bool = False,
     ) -> Self:
-        """Sort the rows in the DataTable by one or more column keys.
+        """Sort the rows in the `DataTable` by one or more column keys.
 
         Args:
             columns: One or more columns to sort by the values in.
             reverse: If True, the sort order will be reversed.
+
+        Returns:
+            The `DataTable` instance.
         """
 
         def sort_by_column_keys(

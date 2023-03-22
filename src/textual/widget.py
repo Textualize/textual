@@ -2558,8 +2558,11 @@ class Widget(DOMNode):
 
         Args:
             *regions: Additional screen regions to mark as dirty.
-            repaint: Repaint the widget (will call render() again). Defaults to True.
-            layout: Also layout widgets in the view. Defaults to False.
+            repaint: Repaint the widget (will call render() again).
+            layout: Also layout widgets in the view.
+
+        Returns:
+            The `Widget` instance.
         """
         if layout and not self._layout_required:
             self._layout_required = True
@@ -2663,8 +2666,10 @@ class Widget(DOMNode):
         """Give focus to this widget.
 
         Args:
-            scroll_visible: Scroll parent to make this widget
-                visible. Defaults to True.
+            scroll_visible: Scroll parent to make this widget visible.
+
+        Returns:
+            The `Widget` instance.
         """
 
         def set_focus(widget: Widget):
@@ -2678,7 +2683,11 @@ class Widget(DOMNode):
         return self
 
     def reset_focus(self) -> Self:
-        """Reset the focus (move it to the next available widget)."""
+        """Reset the focus (move it to the next available widget).
+
+        Returns:
+            The `Widget` instance.
+        """
         try:
             self.screen._reset_focus(self)
         except NoScreen:

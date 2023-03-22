@@ -100,6 +100,9 @@ class TextLog(ScrollView, can_focus=True):
             width: Width to render or ``None`` to use optimal width.
             expand: Enable expand to widget width, or ``False`` to use `width`.
             shrink: Enable shrinking of content to fit width.
+
+        Returns:
+            The `TextLog` instance.
         """
 
         renderable: RenderableType
@@ -160,7 +163,11 @@ class TextLog(ScrollView, can_focus=True):
         return self
 
     def clear(self) -> Self:
-        """Clear the text log."""
+        """Clear the text log.
+
+        Returns:
+            The `TextLog` instance.
+        """
         self.lines.clear()
         self._line_cache.clear()
         self._start_line = 0

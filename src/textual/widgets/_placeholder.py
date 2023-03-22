@@ -133,7 +133,11 @@ class Placeholder(Widget):
         return self._renderables[self.variant]
 
     def cycle_variant(self) -> Self:
-        """Get the next variant in the cycle."""
+        """Get the next variant in the cycle.
+
+        Returns:
+            The `Placeholder` instance.
+        """
         self.variant = next(self._variants_cycle)
         return self
 

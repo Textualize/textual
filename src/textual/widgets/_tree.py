@@ -202,13 +202,21 @@ class TreeNode(Generic[TreeDataType]):
                 child._expand(expand_all)
 
     def expand(self) -> Self:
-        """Expand the node (show its children)."""
+        """Expand the node (show its children).
+
+        Returns:
+            The `TreeNode` instance.
+        """
         self._expand(False)
         self._tree._invalidate()
         return self
 
     def expand_all(self) -> Self:
-        """Expand the node (show its children) and all those below it."""
+        """Expand the node (show its children) and all those below it.
+
+        Returns:
+            The `TreeNode` instance.
+        """
         self._expand(True)
         self._tree._invalidate()
         return self
@@ -226,19 +234,31 @@ class TreeNode(Generic[TreeDataType]):
                 child._collapse(collapse_all)
 
     def collapse(self) -> Self:
-        """Collapse the node (hide its children)."""
+        """Collapse the node (hide its children).
+
+        Returns:
+            The `TreeNode` instance.
+        """
         self._collapse(False)
         self._tree._invalidate()
         return self
 
     def collapse_all(self) -> Self:
-        """Collapse the node (hide its children) and all those below it."""
+        """Collapse the node (hide its children) and all those below it.
+
+        Returns:
+            The `TreeNode` instance.
+        """
         self._collapse(True)
         self._tree._invalidate()
         return self
 
     def toggle(self) -> Self:
-        """Toggle the node's expanded state."""
+        """Toggle the node's expanded state.
+
+        Returns:
+            The `TreeNode` instance.
+        """
         if self._expanded:
             self.collapse()
         else:
@@ -246,7 +266,11 @@ class TreeNode(Generic[TreeDataType]):
         return self
 
     def toggle_all(self) -> Self:
-        """Toggle the node's expanded state and make all those below it match."""
+        """Toggle the node's expanded state and make all those below it match.
+
+        Returns:
+            The `TreeNode` instance.
+        """
         if self._expanded:
             self.collapse_all()
         else:
@@ -604,7 +628,11 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         return label.cell_len
 
     def clear(self) -> Self:
-        """Clear all nodes under root."""
+        """Clear all nodes under root.
+
+        Returns:
+            The `Tree` instance.
+        """
         self._line_cache.clear()
         self._tree_lines_cached = None
         self._current_id = 0
@@ -627,6 +655,9 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         Args:
             label: The label for the root node.
             data: Optional data for the root node.
+
+        Returns:
+            The `Tree` instance.
         """
         self.clear()
         self.root.label = label

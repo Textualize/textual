@@ -233,7 +233,10 @@ class Button(Static, can_focus=True):
         self.press()
 
     def press(self) -> Self:
-        """Respond to a button press."""
+        """Respond to a button press.
+
+        Returns:
+            The button instance."""
         if self.disabled or not self.display:
             return self
         # Manage the "active" effect:

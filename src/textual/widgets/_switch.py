@@ -166,6 +166,9 @@ class Switch(Widget, can_focus=True):
 
         As a result of the value changing, a `Switch.Changed` message will
         be posted.
+
+        Returns:
+            The `Switch` instance.
         """
         self.value = not self.value
         return self

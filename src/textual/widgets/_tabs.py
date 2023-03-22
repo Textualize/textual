@@ -320,7 +320,11 @@ class Tabs(Widget, can_focus=True):
             self.call_after_refresh(refresh_active)
 
     def clear(self) -> Self:
-        """Clear all the tabs."""
+        """Clear all the tabs.
+
+        Returns:
+            The `Tabs` instance.
+        """
         underline = self.query_one(Underline)
         underline.highlight_start = 0
         underline.highlight_end = 0
