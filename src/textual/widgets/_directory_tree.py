@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import ClassVar
@@ -7,14 +8,13 @@ from typing import ClassVar
 from rich.style import Style
 from rich.text import Text, TextType
 
-from .._types import MessageTarget
 from ..message import Message
 from ._tree import TOGGLE_STYLE, Tree, TreeNode
 
 
 @dataclass
 class DirEntry:
-    """Attaches directory information ot a node."""
+    """Attaches directory information to a node."""
 
     path: str
     is_dir: bool
@@ -26,9 +26,9 @@ class DirectoryTree(Tree[DirEntry]):
 
     Args:
         path: Path to directory.
-        name: The name of the widget, or None for no name. Defaults to None.
-        id: The ID of the widget in the DOM, or None for no ID. Defaults to None.
-        classes: A space-separated list of classes, or None for no classes. Defaults to None.
+        name: The name of the widget, or None for no name.
+        id: The ID of the widget in the DOM, or None for no ID.
+        classes: A space-separated list of classes, or None for no classes.
         disabled: Whether the directory tree is disabled or not.
     """
 
@@ -83,17 +83,18 @@ class DirectoryTree(Tree[DirEntry]):
 
     def __init__(
         self,
-        path: str,
+        path: str | Path,
         *,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
     ) -> None:
-        self.path = path
+        str_path = os.fspath(path)
+        self.path = str_path
         super().__init__(
-            path,
-            data=DirEntry(path, True),
+            str_path,
+            data=DirEntry(str_path, True),
             name=name,
             id=id,
             classes=classes,
