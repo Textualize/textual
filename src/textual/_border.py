@@ -1,19 +1,23 @@
 from __future__ import annotations
 
 from functools import lru_cache
-from typing import TYPE_CHECKING, Tuple, Union, cast
+from typing import TYPE_CHECKING, Iterable, Tuple, cast
 
+from rich.console import Console
 from rich.segment import Segment
 from rich.style import Style
+from rich.text import Text
 
 from .color import Color
-from .css.types import EdgeStyle, EdgeType
+from .css.types import AlignHorizontal, EdgeStyle, EdgeType
 
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
 
 INNER = 1
 OUTER = 2
+
+_EMPTY_SEGMENT = Segment("", Style())
 
 BORDER_CHARS: dict[
     EdgeType, tuple[tuple[str, str, str], tuple[str, str, str], tuple[str, str, str]]
@@ -103,7 +107,8 @@ BORDER_CHARS: dict[
 }
 
 # Some of the borders are on the widget background and some are on the background of the parent
-# This table selects which for each character, 0 indicates the widget, 1 selects the parent
+# This table selects which for each character, 0 indicates the widget, 1 selects the parent.
+# 2 and 3 reverse a cross-combination of the background and foreground colors of 0 and 1.
 BORDER_LOCATIONS: dict[
     EdgeType, tuple[tuple[int, int, int], tuple[int, int, int], tuple[int, int, int]]
 ] = {
@@ -189,6 +194,14 @@ BORDER_LOCATIONS: dict[
     ),
 }
 
+# In a similar fashion, we extract the border _label_ locations for easier access when
+# rendering a border label.
+# The values are a pair with (title location, subtitle location).
+BORDER_LABEL_LOCATIONS: dict[EdgeType, tuple[int, int]] = {
+    edge_type: (locations[0][1], locations[2][1])
+    for edge_type, locations in BORDER_LOCATIONS.items()
+}
+
 INVISIBLE_EDGE_TYPES = cast("frozenset[EdgeType]", frozenset(("", "none", "hidden")))
 
 BorderValue: TypeAlias = Tuple[EdgeType, Color]
@@ -261,29 +274,141 @@ def get_box(
     )
 
 
+def render_border_label(
+    label: str,
+    is_title: bool,
+    name: EdgeType,
+    width: int,
+    inner_style: Style,
+    outer_style: Style,
+    style: Style,
+    console: Console,
+    has_left_corner: bool,
+    has_right_corner: bool,
+) -> Iterable[Segment]:
+    """Render a border label (the title or subtitle) with optional markup.
+
+    The styling that may be embedded in the label will be reapplied after taking into
+    account the inner, outer, and border-specific, styles.
+
+    Args:
+        label: The label to display (that may contain markup).
+        is_title: Whether we are rendering the title (`True`) or the subtitle (`False`).
+        name: Name of the box type.
+        width: The width, in cells, of the space available for the whole edge.
+            This is the total space that may also be needed for the border corners and
+            the whitespace padding around the (sub)title. Thus, the effective space
+            available for the border label is:
+            - `width` if no corner is needed;
+            - `width - 2` if one corner is needed; and
+            - `width - 4` if both corners are needed.
+        inner_style: The inner style (widget background).
+        outer_style: The outer style (parent background).
+        style: Widget style.
+        console: The console that will render the markup in the label.
+        has_left_corner: Whether the border edge will have to render a left corner.
+        has_right_corner: Whether the border edge will have to render a right corner.
+
+    Returns:
+        A list of segments that represent the full label and surrounding padding.
+    """
+    # How many cells do we need to reserve for surrounding blanks and corners?
+    corners_needed = has_left_corner + has_right_corner
+    cells_reserved = 2 * corners_needed
+    if not label or width <= cells_reserved:
+        return
+
+    text_label = Text.from_markup(label)
+    text_label.truncate(width - cells_reserved, overflow="ellipsis")
+    segments = text_label.render(console)
+
+    label_style_location = BORDER_LABEL_LOCATIONS[name][0 if is_title else 1]
+
+    inner = inner_style + style
+    outer = outer_style + style
+
+    base_style: Style
+    if label_style_location == 0:
+        base_style = inner
+    elif label_style_location == 1:
+        base_style = outer
+    elif label_style_location == 2:
+        base_style = Style.from_color(outer.bgcolor, inner.color)
+    elif label_style_location == 3:
+        base_style = Style.from_color(inner.bgcolor, outer.color)
+    else:
+        assert False
+
+    styled_segments = [
+        Segment(segment.text, base_style + segment.style) for segment in segments
+    ]
+    blank = Segment(" ", base_style)
+    if has_left_corner:
+        yield blank
+    yield from styled_segments
+    if has_right_corner:
+        yield blank
+
+
 def render_row(
-    box_row: tuple[Segment, Segment, Segment], width: int, left: bool, right: bool
-) -> list[Segment]:
-    """Render a top, or bottom border row.
+    box_row: tuple[Segment, Segment, Segment],
+    width: int,
+    left: bool,
+    right: bool,
+    label_segments: Iterable[Segment],
+    label_alignment: AlignHorizontal = "left",
+) -> Iterable[Segment]:
+    """Compose a box row with its padded label.
+
+    This is the function that actually does the work that `render_row` is intended
+    to do, but we have many lists of segments flowing around, so it becomes easier
+    to yield the segments bit by bit, and the aggregate everything into a list later.
 
     Args:
         box_row: Corners and side segments.
         width: Total width of resulting line.
         left: Render left corner.
         right: Render right corner.
+        label_segments: The segments that make up the label.
+        label_alignment: Where to horizontally align the label.
 
     Returns:
-        A list of segments.
+        An iterable of segments.
     """
     box1, box2, box3 = box_row
-    if left and right:
-        return [box1, Segment(box2.text * (width - 2), box2.style), box3]
+
+    corners_needed = left + right
+    label_segments_list = list(label_segments)
+
+    label_length = sum((segment.cell_length for segment in label_segments_list), 0)
+    space_available = max(0, width - corners_needed - label_length)
+
     if left:
-        return [box1, Segment(box2.text * (width - 1), box2.style)]
-    if right:
-        return [Segment(box2.text * (width - 1), box2.style), box3]
+        yield box1
+
+    if not space_available:
+        yield from label_segments_list
+    elif not label_length:
+        yield Segment(box2.text * space_available, box2.style)
+    elif label_alignment == "left" or label_alignment == "right":
+        edge = Segment(box2.text * space_available, box2.style)
+        if label_alignment == "left":
+            yield from label_segments_list
+            yield edge
+        else:
+            yield edge
+            yield from label_segments_list
+    elif label_alignment == "center":
+        length_on_left = space_available // 2
+        length_on_right = space_available - length_on_left
+        yield Segment(box2.text * length_on_left, box2.style)
+        yield from label_segments_list
+        yield Segment(box2.text * length_on_right, box2.style)
     else:
-        return [Segment(box2.text * width, box2.style)]
+        assert False
+
+    if right:
+        yield box3
 
 
 _edge_type_normalization_table: dict[EdgeType, EdgeType] = {

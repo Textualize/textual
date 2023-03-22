@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 - Added `parser_factory` argument to `Markdown` and `MarkdownViewer` constructors https://github.com/Textualize/textual/pull/2075
+- Added `HorizontalScroll` https://github.com/Textualize/textual/issues/1957
+- Added `Center` https://github.com/Textualize/textual/issues/1957
+- Added `Middle` https://github.com/Textualize/textual/issues/1957
+- Added `VerticalScroll` (mimicking the old behaviour of `Vertical`) https://github.com/Textualize/textual/issues/1957
+- Added `Widget.border_title` and `Widget.border_subtitle` to set border (sub)title for a widget https://github.com/Textualize/textual/issues/1864
+- Added CSS styles `border_title_align` and `border_subtitle_align`.
+- Added `TabbedContent` widget https://github.com/Textualize/textual/pull/2059
+- Added `get_child_by_type` method to widgets / app https://github.com/Textualize/textual/pull/2059
+- Added `Widget.render_str` method https://github.com/Textualize/textual/pull/2059
+- Added TEXTUAL_DRIVER environment variable
 
 ### Changed
 
@@ -26,18 +36,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed borders not rendering correctly. https://github.com/Textualize/textual/pull/2074
 - Fix for error when removing nodes. https://github.com/Textualize/textual/issues/2079
-
-### Added
-
-- Added `HorizontalScroll` https://github.com/Textualize/textual/issues/1957
-- Added `Center` https://github.com/Textualize/textual/issues/1957
-- Added `Middle` https://github.com/Textualize/textual/issues/1957
-- Added `VerticalScroll` (mimicking the old behaviour of `Vertical`) https://github.com/Textualize/textual/issues/1957
-- Added `TabbedContent` widget https://github.com/Textualize/textual/pull/2059
-- Added `get_child_by_type` method to widgets / app https://github.com/Textualize/textual/pull/2059
-- Added `Widget.render_str` method https://github.com/Textualize/textual/pull/2059
-- Added TEXTUAL_DRIVER environment variable
-
 
 ## [0.15.1] - 2023-03-14
 

@@ -4,10 +4,11 @@ from functools import lru_cache
 from sys import intern
 from typing import TYPE_CHECKING, Callable, Iterable
 
+from rich.console import Console
 from rich.segment import Segment
 from rich.style import Style
 
-from ._border import get_box, render_row
+from ._border import get_box, render_border_label, render_row
 from ._opacity import _apply_opacity
 from ._segment_tools import line_pad, line_trim
 from .color import Color
@@ -113,6 +114,9 @@ class StylesCache:
             base_background,
             background,
             widget.render_line,
+            widget.app.console,
+            widget.border_title,
+            widget.border_subtitle,
             content_size=widget.content_region.size,
             padding=styles.padding,
             crop=crop,
@@ -141,6 +145,9 @@ class StylesCache:
         base_background: Color,
         background: Color,
         render_content_line: RenderLineCallback,
+        console: Console,
+        border_title: str,
+        border_subtitle: str,
         content_size: Size | None = None,
         padding: Spacing | None = None,
         crop: Region | None = None,
@@ -154,9 +161,13 @@ class StylesCache:
             base_background: Background color beneath widget.
             background: Background color of widget.
             render_content_line: Callback to render content line.
-            content_size: Size of content or None to assume full size. Defaults to None.
-            padding: Override padding from Styles, or None to use styles.padding. Defaults to None.
-            crop: Region to crop to. Defaults to None.
+            console: The console in use by the app.
+            border_title: The title for the widget border.
+            border_subtitle: The subtitle for the widget border.
+            content_size: Size of content or None to assume full size.
+            padding: Override padding from Styles, or None to use styles.padding.
+            crop: Region to crop to.
+            filter: Additional post-processing for the segments.
 
         Returns:
             Rendered lines.
@@ -188,6 +199,9 @@ class StylesCache:
                     base_background,
                     background,
                     render_content_line,
+                    console,
+                    border_title,
+                    border_subtitle,
                 )
                 self._cache[y] = strip
             else:
@@ -213,6 +227,9 @@ class StylesCache:
         base_background: Color,
         background: Color,
         render_content_line: Callable[[int], Strip],
+        console: Console,
+        border_title: str,
+        border_subtitle: str,
     ) -> Strip:
         """Render a styled line.
 
@@ -225,6 +242,9 @@ class StylesCache:
             base_background: Background color of widget beneath this line.
             background: Background color of widget.
             render_content_line: Callback to render a line of content.
+            console: The console in use by the app.
+            border_title: The title for the widget border.
+            border_subtitle: The subtitle for the widget border.
 
         Returns:
             A line of segments.
@@ -275,20 +295,47 @@ class StylesCache:
         line: Iterable[Segment]
         # Draw top or bottom borders (A)
         if (border_top and y == 0) or (border_bottom and y == height - 1):
+            is_top = y == 0
             border_color = base_background + (
-                border_top_color if y == 0 else border_bottom_color
+                border_top_color if is_top else border_bottom_color
             )
+            border_color_as_style = from_color(color=border_color.rich_color)
+            border_edge_type = border_top if is_top else border_bottom
+            has_left = border_left != ""
+            has_right = border_right != ""
+            border_label = border_title if is_top else border_subtitle
+            # Try to save time with expensive call to `render_border_label`:
+            if border_label:
+                label_segments = render_border_label(
+                    border_label,
+                    is_top,
+                    border_edge_type,
+                    width,
+                    inner,
+                    outer,
+                    border_color_as_style,
+                    console,
+                    has_left,
+                    has_right,
+                )
+            else:
+                label_segments = []
             box_segments = get_box(
-                border_top if y == 0 else border_bottom,
+                border_edge_type,
                 inner,
                 outer,
-                from_color(color=border_color.rich_color),
+                border_color_as_style,
+            )
+            label_alignment = (
+                styles.border_title_align if is_top else styles.border_subtitle_align
             )
             line = render_row(
-                box_segments[0 if y == 0 else 2],
+                box_segments[0 if is_top else 2],
                 width,
-                border_left != "",
-                border_right != "",
+                has_left,
+                has_right,
+                label_segments,
+                label_alignment,
             )
 
         # Draw padding (B)
@@ -353,6 +400,7 @@ class StylesCache:
                 width,
                 outline_left != "",
                 outline_right != "",
+                (),
             )
 
         elif outline_left or outline_right:
