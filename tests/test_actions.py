@@ -56,7 +56,7 @@ def test_nested_and_convoluted_tuple_arguments(
         ("f('''''')", ("",)),
         ('f("""""")', ("",)),
         ("f('(')", ("(",)),
-        ("f(')')", (")",)),
+        ("f(')')", (")",)),  # Regression test for #2088
         ("f('f()')", ("f()",)),
     ],
 )
@@ -65,7 +65,7 @@ def test_parse_action_nested_special_character_arguments(
 ) -> None:
     """Test that special characters nested in strings are handled correctly.
 
-    See: https://github.com/Textualize/textual/issues/2088
+    See also: https://github.com/Textualize/textual/issues/2088
     """
     _, args = parse(action_string)
     assert args == expected_arguments
