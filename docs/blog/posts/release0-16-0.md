@@ -34,7 +34,7 @@ Here's an example of the UI you can create with this widget (note the nesting)!
 
 ## Border titles
 
-The second highlight is a frequently requests feature (FRF?). Widgets now have the properties `border_title` and `border_subtitle` which are strings which will be displayed within a widget's border.
+The second highlight is a frequently requests feature (FRF?). Widgets now have the two new string properties, `border_title` and `border_subtitle`, which will be displayed within the widget's border.
 
 You can set the alignment of these titles via [`border-title-align`](../../styles/border_title_align.md) and [`border-subtitle-align`](../../styles/border_subtitle_align.md). Titles may contain [Console Markup](https://rich.readthedocs.io/en/latest/markup.html), so you can add additional color and style to the labels.
 
