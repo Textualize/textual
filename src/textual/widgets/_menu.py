@@ -22,15 +22,37 @@ class DuplicateID(Exception):
     """Exception raised if a duplicate ID is used."""
 
 
-class MenuOption(NamedTuple):
+class MenuOption:
     """Class that holds the details of an individual menu option."""
 
-    prompt: RenderableType
-    """The prompt for the menu option."""
-    id: str | None = None
-    """An optional ID to associate with the menu option."""
-    disabled: bool = False
-    """Is the menu option disabled?"""
+    def __init__(
+        self, prompt: RenderableType, id: str | None = None, disabled: bool = False
+    ) -> None:
+        """Initialise the menu option.
+
+        Args:
+            prompt: The prompt for the menu option.
+            id: An optional ID for the menu option.
+            disabled: The initial enabled/disabled state. Enabled by default.
+        """
+        self.__prompt = prompt
+        self.__id = id
+        self.disabled = disabled
+
+    @property
+    def prompt(self) -> RenderableType:
+        """The prompt for the menu option."""
+        return self.__prompt
+
+    @property
+    def id(self) -> str | None:
+        """An optional ID for the menu option."""
+        return self.__id
+
+    def __rich_repr__(self) -> Result:
+        yield "prompt", self.prompt
+        yield "id", self.id, None
+        yield "disabled", self.disabled, False
 
 
 class MenuSeparator:
@@ -397,10 +419,7 @@ class Menu(ScrollView, can_focus=True):
         Returns:
             The menu.
         """
-        # TODO: If someone inherits from MenuOption, and adds more
-        # properties, they'll get lost by this. I need to rethink this.
-        old_prompt, old_id, *_ = self._options[index]
-        self._options[index] = MenuOption(old_prompt, old_id, disabled)
+        self._options[index].disabled = disabled
         # TODO: Refresh only if the affected option is visible.
         self.refresh()
         return self
