@@ -8,7 +8,7 @@ from rich.console import RenderableType
 from rich.repr import Result
 from rich.rule import Rule
 from rich.segment import Segment
-from typing_extensions import Literal, Self
+from typing_extensions import Literal, Self, TypeAlias
 
 from ..binding import Binding, BindingType
 from ..geometry import Region, Size
@@ -71,6 +71,21 @@ class OptionLineSpan(NamedTuple):
         # an int.
         assert isinstance(line, int)
         return line >= self.first and line < (self.first + self.line_count)
+
+
+MenuContent: TypeAlias = "MenuOption | MenuSeparator"
+"""The type of an item of content in the menu.
+
+This type represents all of the types that will be found in the list of
+content of the menu after it has been processed for addition.
+"""
+
+NewMenuContent: TypeAlias = "MenuContent | None | RenderableType"
+"""The type of a new item of menu content to be added to a menu.
+
+This type represnets all of the types that will be accepted when adding new
+content to the menu. This is a superset of `MenuContent`.
+"""
 
 
 class Menu(ScrollView, can_focus=True):
@@ -199,7 +214,7 @@ class Menu(ScrollView, can_focus=True):
 
     def __init__(
         self,
-        *options: MenuOption | MenuSeparator | RenderableType,
+        *content: NewMenuContent,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -208,7 +223,7 @@ class Menu(ScrollView, can_focus=True):
         """Initialise the menu.
 
         Args:
-            *options: The options for the menu.
+            *content: The content for the menu.
             name: The name of the Menu.
             id: The ID of the menu in the DOM.
             classes: The CSS classes of the menu.
@@ -216,8 +231,8 @@ class Menu(ScrollView, can_focus=True):
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
-        self._contents: list[MenuOption | MenuSeparator] = [
-            self._make_content(option) for option in options
+        self._contents: list[MenuContent] = [
+            self._make_content(item) for item in content
         ]
         """A list of the content of the menu.
 
@@ -265,9 +280,7 @@ class Menu(ScrollView, can_focus=True):
         # to have a look at validate_highlighted.
         self.highlighted = None
 
-    def _make_content(
-        self, content: MenuOption | MenuSeparator | RenderableType
-    ) -> MenuOption | MenuSeparator:
+    def _make_content(self, content: NewMenuContent) -> MenuContent:
         """Convert a single item of content for the menu into a menu content type.
 
         Args:
@@ -276,11 +289,11 @@ class Menu(ScrollView, can_focus=True):
         Returns:
             The content, usable in the menu.
         """
-        return (
-            content
-            if isinstance(content, (MenuOption, MenuSeparator))
-            else MenuOption(content)
-        )
+        if isinstance(content, (MenuOption, MenuSeparator)):
+            return content
+        if content is None:
+            return MenuSeparator()
+        return MenuOption(content)
 
     def _clear_content_tracking(self) -> None:
         """Clear down the content tracking information."""
@@ -341,7 +354,7 @@ class Menu(ScrollView, can_focus=True):
         # now this is just about ensuing the scrolling kicks in.
         self.virtual_size = Size(self.size.width, len(self._lines))
 
-    def add(self, option: MenuOption | MenuSeparator | RenderableType) -> Self:
+    def add(self, option: NewMenuContent = None) -> Self:
         """Add a new option to the end of the menu.
 
         Args:
@@ -350,7 +363,7 @@ class Menu(ScrollView, can_focus=True):
         Returns:
             The menu.
         """
-        # Turn any renderable into actual menu content.
+        # Turn any incoming value into valid content for the menu.
         content = self._make_content(option)
         self._contents.append(content)
         # If the content is a genuine menu option, add it to the list of options.
