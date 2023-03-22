@@ -15,6 +15,7 @@ class MenuApp(App[None]):
             MenuOption("bare option"),
             MenuSeparator(),
             MenuOption("disabled option", disabled=True),
+            None,
             MenuOption("with id option", id="42"),
             MenuOption("with id and disabled option", id="23", disabled=True),
         )
