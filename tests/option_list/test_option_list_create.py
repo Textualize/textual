@@ -88,3 +88,16 @@ async def test_clear_option_list() -> None:
         assert option_list.option_count == 5
         option_list.clear()
         assert option_list.option_count == 0
+
+
+async def test_add_later() -> None:
+    """It should be possible to add more items to a list."""
+    async with OptionListApp().run_test() as pilot:
+        option_list = pilot.app.query_one(OptionList)
+        assert option_list.option_count == 5
+        option_list.add("more")
+        assert option_list.option_count == 6
+        option_list.add()
+        assert option_list.option_count == 6
+        option_list.add(Option("even more"))
+        assert option_list.option_count == 7
