@@ -192,14 +192,6 @@ class OptionList(ScrollView, can_focus=True):
     highlighted: reactive[int | None] = reactive["int | None"](None)
     """The index of the currently-highlighted option, or `None` if no option is highlighted."""
 
-    # TODO: REMOVE BEFORE FLIGHT!
-    class Debug(Message):
-        """A debug message. Remove before flight."""
-
-        def __init__(self, cargo: object) -> None:
-            super().__init__()
-            self.cargo = cargo
-
     class OptionMessage(Message):
         """Base class for all option messages."""
 
