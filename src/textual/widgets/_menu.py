@@ -354,17 +354,17 @@ class Menu(ScrollView, can_focus=True):
         # now this is just about ensuing the scrolling kicks in.
         self.virtual_size = Size(self.size.width, len(self._lines))
 
-    def add(self, option: NewMenuContent = None) -> Self:
+    def add(self, item: NewMenuContent = None) -> Self:
         """Add a new option to the end of the menu.
 
         Args:
-            option: The option to add.
+            item: The new item to add.
 
         Returns:
             The menu.
         """
         # Turn any incoming value into valid content for the menu.
-        content = self._make_content(option)
+        content = self._make_content(item)
         self._contents.append(content)
         # If the content is a genuine menu option, add it to the list of options.
         if isinstance(content, MenuOption):
