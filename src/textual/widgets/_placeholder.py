@@ -5,7 +5,7 @@ from __future__ import annotations
 from itertools import cycle
 
 from rich.console import RenderableType
-from typing_extensions import Literal
+from typing_extensions import Literal, Self
 
 from .. import events
 from ..css._error_tools import friendly_list
@@ -132,9 +132,10 @@ class Placeholder(Widget):
         """
         return self._renderables[self.variant]
 
-    def cycle_variant(self) -> None:
+    def cycle_variant(self) -> Self:
         """Get the next variant in the cycle."""
         self.variant = next(self._variants_cycle)
+        return self
 
     def watch_variant(
         self, old_variant: PlaceholderVariant, variant: PlaceholderVariant

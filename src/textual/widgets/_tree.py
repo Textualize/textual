@@ -22,7 +22,7 @@ from ..scroll_view import ScrollView
 from ..strip import Strip
 
 if TYPE_CHECKING:
-    from typing_extensions import TypeAlias
+    from typing_extensions import Self, TypeAlias
 
 NodeID = NewType("NodeID", int)
 """The type of an ID applied to a [TreeNode][textual.widgets._tree.TreeNode]."""
@@ -89,7 +89,7 @@ class TreeNode(Generic[TreeDataType]):
         *,
         expanded: bool = True,
         allow_expand: bool = True,
-    ) -> None:
+    ):
         """Initialise the node.
 
         Args:
@@ -201,15 +201,17 @@ class TreeNode(Generic[TreeDataType]):
             for child in self.children:
                 child._expand(expand_all)
 
-    def expand(self) -> None:
+    def expand(self) -> Self:
         """Expand the node (show its children)."""
         self._expand(False)
         self._tree._invalidate()
+        return self
 
-    def expand_all(self) -> None:
+    def expand_all(self) -> Self:
         """Expand the node (show its children) and all those below it."""
         self._expand(True)
         self._tree._invalidate()
+        return self
 
     def _collapse(self, collapse_all: bool) -> None:
         """Mark the node as collapsed (its children are hidden).
@@ -223,29 +225,33 @@ class TreeNode(Generic[TreeDataType]):
             for child in self.children:
                 child._collapse(collapse_all)
 
-    def collapse(self) -> None:
+    def collapse(self) -> Self:
         """Collapse the node (hide its children)."""
         self._collapse(False)
         self._tree._invalidate()
+        return self
 
-    def collapse_all(self) -> None:
+    def collapse_all(self) -> Self:
         """Collapse the node (hide its children) and all those below it."""
         self._collapse(True)
         self._tree._invalidate()
+        return self
 
-    def toggle(self) -> None:
+    def toggle(self) -> Self:
         """Toggle the node's expanded state."""
         if self._expanded:
             self.collapse()
         else:
             self.expand()
+        return self
 
-    def toggle_all(self) -> None:
+    def toggle_all(self) -> Self:
         """Toggle the node's expanded state and make all those below it match."""
         if self._expanded:
             self.collapse_all()
         else:
             self.expand_all()
+        return self
 
     @property
     def label(self) -> TextType:
@@ -597,7 +603,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         label = self.render_label(node, NULL_STYLE, NULL_STYLE)
         return label.cell_len
 
-    def clear(self) -> None:
+    def clear(self) -> Self:
         """Clear all nodes under root."""
         self._line_cache.clear()
         self._tree_lines_cached = None
@@ -613,9 +619,9 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             expanded=True,
         )
         self._updates += 1
-        self.refresh()
+        return self.refresh()
 
-    def reset(self, label: TextType, data: TreeDataType | None = None) -> None:
+    def reset(self, label: TextType, data: TreeDataType | None = None) -> Self:
         """Clear the tree and reset the root node.
 
         Args:
@@ -625,6 +631,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         self.clear()
         self.root.label = label
         self.root.data = data
+        return self
 
     def select_node(self, node: TreeNode[TreeDataType] | None) -> None:
         """Move the cursor to the given node, or reset cursor.

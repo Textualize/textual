@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from rich.console import RenderableType
 
@@ -10,6 +10,9 @@ from ..message import Message
 from ..reactive import reactive
 from ..scrollbar import ScrollBarRender
 from ..widget import Widget
+
+if TYPE_CHECKING:
+    from typing_extensions import Self
 
 
 class Switch(Widget, can_focus=True):
@@ -158,10 +161,11 @@ class Switch(Widget, can_focus=True):
         """Toggle the state of the switch."""
         self.toggle()
 
-    def toggle(self) -> None:
+    def toggle(self) -> Self:
         """Toggle the switch value.
 
         As a result of the value changing, a `Switch.Changed` message will
         be posted.
         """
         self.value = not self.value
+        return self

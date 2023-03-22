@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import rich.repr
 from rich.style import Style
@@ -17,6 +17,9 @@ from ..reactive import reactive
 from ..renderables.underline_bar import UnderlineBar
 from ..widget import Widget
 from ..widgets import Static
+
+if TYPE_CHECKING:
+    from typing_extensions import Self
 
 
 class Underline(Widget):
@@ -316,13 +319,14 @@ class Tabs(Widget, can_focus=True):
 
             self.call_after_refresh(refresh_active)
 
-    def clear(self) -> None:
+    def clear(self) -> Self:
         """Clear all the tabs."""
         underline = self.query_one(Underline)
         underline.highlight_start = 0
         underline.highlight_end = 0
         self.query("#tabs-list > Tab").remove()
         self.post_message(self.Cleared(self))
+        return self
 
     def remove_tab(self, tab_or_id: Tab | str | None) -> None:
         """Remove a tab.

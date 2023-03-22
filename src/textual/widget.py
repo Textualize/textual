@@ -2542,7 +2542,7 @@ class Widget(DOMNode):
         *regions: Region,
         repaint: bool = True,
         layout: bool = False,
-    ) -> None:
+    ) -> Self:
         """Initiate a refresh of the widget.
 
         This method sets an internal flag to perform a refresh, which will be done on the
@@ -2577,6 +2577,7 @@ class Widget(DOMNode):
             self._repaint_required = True
 
         self.check_idle()
+        return self
 
     def remove(self) -> AwaitRemove:
         """Remove the Widget from the DOM (effectively deleting it).
@@ -2658,7 +2659,7 @@ class Widget(DOMNode):
                     self._layout_required = False
                     screen.post_message(messages.Layout())
 
-    def focus(self, scroll_visible: bool = True) -> None:
+    def focus(self, scroll_visible: bool = True) -> Self:
         """Give focus to this widget.
 
         Args:
@@ -2674,13 +2675,15 @@ class Widget(DOMNode):
                 pass
 
         self.app.call_later(set_focus, self)
+        return self
 
-    def reset_focus(self) -> None:
+    def reset_focus(self) -> Self:
         """Reset the focus (move it to the next available widget)."""
         try:
             self.screen._reset_focus(self)
         except NoScreen:
             pass
+        return self
 
     def capture_mouse(self, capture: bool = True) -> None:
         """Capture (or release) the mouse.

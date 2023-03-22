@@ -42,7 +42,7 @@ if TYPE_CHECKING:
     from .css.query import DOMQuery, QueryType
     from .screen import Screen
     from .widget import Widget
-    from typing_extensions import TypeAlias
+    from typing_extensions import Self, TypeAlias
 
 from typing_extensions import Literal
 
@@ -950,5 +950,5 @@ class DOMNode(MessagePump):
         has_pseudo_classes = self.pseudo_classes.issuperset(class_names)
         return has_pseudo_classes
 
-    def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
-        pass
+    def refresh(self, *, repaint: bool = True, layout: bool = False) -> Self:
+        return self
