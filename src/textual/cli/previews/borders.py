@@ -46,6 +46,7 @@ class BorderApp(App):
         height: auto;
         background: $panel;
         color: $text;
+        border-title-align: center;
     }
     """
 
@@ -53,9 +54,11 @@ class BorderApp(App):
         yield BorderButtons()
         self.text = Label(TEXT, id="text")
         self.text.shrink = True
+        self.text.border_title = "solid"
         yield self.text
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
+        self.text.border_title = event.button.id
         self.text.styles.border = (
             event.button.id,
             self.stylesheet._variables["secondary"],
