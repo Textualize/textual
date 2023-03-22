@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Callable, ClassVar, NamedTuple
+from typing import Callable, ClassVar, Iterator, NamedTuple
 
 from rich.console import RenderableType
 from rich.repr import Result
@@ -478,6 +478,11 @@ class Menu(ScrollView, can_focus=True):
     def option_count(self) -> int:
         """The count of options in the menu."""
         return len(self._options)
+
+    @property
+    def options(self) -> Iterator[MenuOption]:
+        """An iterator of options within the menu."""
+        return iter(self._options)
 
     def get_option_at_index(self, index: int) -> MenuOption:
         """Get the menu option at the given index.
