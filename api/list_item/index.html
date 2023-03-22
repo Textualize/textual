@@ -11,12 +11,6 @@
         <link rel="canonical" href="https://textual.textualize.io/api/list_item/">
       
       
-        <link rel="prev" href="../label/">
-      
-      
-        <link rel="next" href="../list_view/">
-      
-      
         
       
       
@@ -24,7 +18,7 @@
         <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../feed_rss_updated.xml">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.0+insiders-4.32.2">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10+insiders-4.26.2">
     
     
       
@@ -32,10 +26,11 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.24f010b1.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.7b4d9e6f.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.6932e648.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.08040f6c.min.css">
+        
       
       
 
@@ -112,7 +107,7 @@
 
   
 
-<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+<header class="md-header md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../.." title="Textual" class="md-header__button md-logo" aria-label="Textual" data-md-component="logo">
       
@@ -143,6 +138,8 @@
       <form class="md-header__option" data-md-component="palette">
         
           
+          
+          
           <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
           
             <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
@@ -150,6 +147,8 @@
             </label>
           
         
+          
+          
           
           <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent=""  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
           
@@ -191,7 +190,7 @@
           <div class="md-search-result__meta">
             Initializing search
           </div>
-          <ol class="md-search-result__list" role="presentation"></ol>
+          <ol class="md-search-result__list"></ol>
         </div>
       </div>
     </div>
@@ -203,7 +202,7 @@
         <a href="https://github.com/textualize/textual/" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
   </div>
   <div class="md-source__repository">
     GitHub
@@ -214,15 +213,17 @@
   </nav>
   
     
-      
-<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
-  <div class="md-grid">
+      <nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
     <ul class="md-tabs__list">
       
         
+
+
+
+
   
-  
-  
+    
     
     
       <li class="md-tabs__item">
@@ -240,8 +241,10 @@
 
       
         
-  
-  
+
+
+
+
   
     <li class="md-tabs__item">
       <a href="../../tutorial/" class="md-tabs__link">
@@ -255,9 +258,12 @@
 
       
         
+
+
+
+
   
-  
-  
+    
     
     
       <li class="md-tabs__item">
@@ -275,8 +281,10 @@
 
       
         
-  
-  
+
+
+
+
   
     <li class="md-tabs__item">
       <a href="../../widget_gallery/" class="md-tabs__link">
@@ -290,9 +298,12 @@
 
       
         
+
+
+
+
   
-  
-  
+    
     
     
       <li class="md-tabs__item">
@@ -310,11 +321,14 @@
 
       
         
+
   
+
+
+
+
   
     
-  
-  
     
     
       <li class="md-tabs__item">
@@ -330,8 +344,10 @@
 
       
         
-  
-  
+
+
+
+
   
     <li class="md-tabs__item">
       <a href="../../roadmap/" class="md-tabs__link">
@@ -345,9 +361,12 @@
 
       
         
+
+
+
+
   
-  
-  
+    
     
     
       <li class="md-tabs__item">
@@ -405,7 +424,7 @@
       <a href="https://github.com/textualize/textual/" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
   </div>
   <div class="md-source__repository">
     GitHub
@@ -437,9 +456,8 @@
       
         
         
+          <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" >
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
         
           
           
@@ -448,11 +466,7 @@
               
   
   <span class="md-ellipsis">
-    
-  
     Introduction
-  
-
     
   </span>
   
@@ -466,14 +480,10 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+        <nav class="md-nav" aria-label="Introduction" data-md-level="1">
           <label class="md-nav__title" for="__nav_1">
             <span class="md-nav__icon md-icon"></span>
-            
-  
-    Introduction
-  
-
+            Introduction
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -489,11 +499,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Getting started
-  
-
     
   </span>
   
@@ -515,11 +521,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Help
-  
-
     
   </span>
   
@@ -548,11 +550,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Tutorial
-  
-
     
   </span>
   
@@ -609,9 +607,8 @@
       
         
         
+          <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
           
@@ -620,11 +617,7 @@
               
   
   <span class="md-ellipsis">
-    
-  
     Guide
-  
-
     
   </span>
   
@@ -638,14 +631,10 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" aria-label="Guide" data-md-level="1">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
-            
-  
-    Guide
-  
-
+            Guide
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -661,11 +650,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Devtools
-  
-
     
   </span>
   
@@ -687,11 +672,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     App Basics
-  
-
     
   </span>
   
@@ -713,11 +694,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Styles
-  
-
     
   </span>
   
@@ -739,11 +716,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Textual CSS
-  
-
     
   </span>
   
@@ -765,11 +738,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Design System
-  
-
     
   </span>
   
@@ -791,11 +760,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     DOM Queries
-  
-
     
   </span>
   
@@ -817,11 +782,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Layout
-  
-
     
   </span>
   
@@ -843,11 +804,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Events and Messages
-  
-
     
   </span>
   
@@ -869,11 +826,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Input
-  
-
     
   </span>
   
@@ -895,11 +848,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Actions
-  
-
     
   </span>
   
@@ -921,11 +870,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Reactivity
-  
-
     
   </span>
   
@@ -947,11 +892,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Widgets
-  
-
     
   </span>
   
@@ -973,11 +914,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Animation
-  
-
     
   </span>
   
@@ -999,11 +936,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Screens
-  
-
     
   </span>
   
@@ -1032,11 +965,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Widgets
-  
-
     
   </span>
   
@@ -1073,9 +1002,8 @@
       
         
         
+          <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
           
@@ -1084,11 +1012,7 @@
               
   
   <span class="md-ellipsis">
-    
-  
     Reference
-  
-
     
   </span>
   
@@ -1102,14 +1026,10 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" aria-label="Reference" data-md-level="1">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
-            
-  
-    Reference
-  
-
+            Reference
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1157,9 +1077,8 @@
       
         
         
+          <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_2" type="checkbox" id="__nav_5_2" >
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
         
           
           
@@ -1168,11 +1087,7 @@
               
   
   <span class="md-ellipsis">
-    
-  
     CSS Types
-  
-
     
   </span>
   
@@ -1186,14 +1101,10 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+        <nav class="md-nav" aria-label="CSS Types" data-md-level="2">
           <label class="md-nav__title" for="__nav_5_2">
             <span class="md-nav__icon md-icon"></span>
-            
-  
-    CSS Types
-  
-
+            CSS Types
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1209,11 +1120,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     &lt;border&gt;
-  
-
     
   </span>
   
@@ -1235,11 +1142,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     &lt;color&gt;
-  
-
     
   </span>
   
@@ -1261,11 +1164,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     &lt;horizontal&gt;
-  
-
     
   </span>
   
@@ -1287,11 +1186,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     &lt;integer&gt;
-  
-
     
   </span>
   
@@ -1313,11 +1208,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     &lt;name&gt;
-  
-
     
   </span>
   
@@ -1339,11 +1230,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     &lt;number&gt;
-  
-
     
   </span>
   
@@ -1365,11 +1252,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     &lt;overflow&gt;
-  
-
     
   </span>
   
@@ -1391,11 +1274,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     &lt;percentage&gt;
-  
-
     
   </span>
   
@@ -1417,11 +1296,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     &lt;scalar&gt;
-  
-
     
   </span>
   
@@ -1443,11 +1318,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     &lt;text-align&gt;
-  
-
     
   </span>
   
@@ -1469,11 +1340,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     &lt;text-style&gt;
-  
-
     
   </span>
   
@@ -1495,11 +1362,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     &lt;vertical&gt;
-  
-
     
   </span>
   
@@ -1583,9 +1446,8 @@
       
         
         
+          <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" >
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" >
         
           
           
@@ -1594,11 +1456,7 @@
               
   
   <span class="md-ellipsis">
-    
-  
     Events
-  
-
     
   </span>
   
@@ -1612,14 +1470,10 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+        <nav class="md-nav" aria-label="Events" data-md-level="2">
           <label class="md-nav__title" for="__nav_5_3">
             <span class="md-nav__icon md-icon"></span>
-            
-  
-    Events
-  
-
+            Events
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1635,11 +1489,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Blur
-  
-
     
   </span>
   
@@ -1661,11 +1511,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     DescendantBlur
-  
-
     
   </span>
   
@@ -1687,11 +1533,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     DescendantFocus
-  
-
     
   </span>
   
@@ -1713,11 +1555,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Enter
-  
-
     
   </span>
   
@@ -1739,11 +1577,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Focus
-  
-
     
   </span>
   
@@ -1765,11 +1599,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Hide
-  
-
     
   </span>
   
@@ -1791,11 +1621,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Key
-  
-
     
   </span>
   
@@ -1817,11 +1643,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Leave
-  
-
     
   </span>
   
@@ -1843,11 +1665,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Load
-  
-
     
   </span>
   
@@ -1869,11 +1687,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Mount
-  
-
     
   </span>
   
@@ -1895,11 +1709,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     MouseCapture
-  
-
     
   </span>
   
@@ -1921,11 +1731,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Click
-  
-
     
   </span>
   
@@ -1947,11 +1753,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     MouseDown
-  
-
     
   </span>
   
@@ -1973,11 +1775,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     MouseMove
-  
-
     
   </span>
   
@@ -1999,11 +1797,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     MouseRelease
-  
-
     
   </span>
   
@@ -2025,11 +1819,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     MouseScrollDown
-  
-
     
   </span>
   
@@ -2051,11 +1841,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     MouseScrollUp
-  
-
     
   </span>
   
@@ -2077,11 +1863,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     MouseUp
-  
-
     
   </span>
   
@@ -2103,11 +1885,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Paste
-  
-
     
   </span>
   
@@ -2129,11 +1907,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Resize
-  
-
     
   </span>
   
@@ -2155,11 +1929,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     ScreenResume
-  
-
     
   </span>
   
@@ -2181,11 +1951,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     ScreenSuspend
-  
-
     
   </span>
   
@@ -2207,11 +1973,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Show
-  
-
     
   </span>
   
@@ -2319,9 +2081,8 @@
       
         
         
+          <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_4" type="checkbox" id="__nav_5_4" >
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" >
         
           
           
@@ -2330,11 +2091,7 @@
               
   
   <span class="md-ellipsis">
-    
-  
     Styles
-  
-
     
   </span>
   
@@ -2348,14 +2105,10 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+        <nav class="md-nav" aria-label="Styles" data-md-level="2">
           <label class="md-nav__title" for="__nav_5_4">
             <span class="md-nav__icon md-icon"></span>
-            
-  
-    Styles
-  
-
+            Styles
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -2371,11 +2124,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Align
-  
-
     
   </span>
   
@@ -2397,11 +2146,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Background
-  
-
     
   </span>
   
@@ -2423,11 +2168,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Border
-  
-
     
   </span>
   
@@ -2449,11 +2190,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Border-subtitle-align
-  
-
     
   </span>
   
@@ -2475,11 +2212,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Border-title-align
-  
-
     
   </span>
   
@@ -2501,11 +2234,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Box-sizing
-  
-
     
   </span>
   
@@ -2527,11 +2256,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Color
-  
-
     
   </span>
   
@@ -2553,11 +2278,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Content-align
-  
-
     
   </span>
   
@@ -2579,11 +2300,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Display
-  
-
     
   </span>
   
@@ -2605,11 +2322,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Dock
-  
-
     
   </span>
   
@@ -2651,9 +2364,8 @@
       
         
         
+          <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_4_12" type="checkbox" id="__nav_5_4_12" >
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4_12" >
         
           
           
@@ -2662,11 +2374,7 @@
               
   
   <span class="md-ellipsis">
-    
-  
     Grid
-  
-
     
   </span>
   
@@ -2680,14 +2388,10 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_4_12_label" aria-expanded="false">
+        <nav class="md-nav" aria-label="Grid" data-md-level="3">
           <label class="md-nav__title" for="__nav_5_4_12">
             <span class="md-nav__icon md-icon"></span>
-            
-  
-    Grid
-  
-
+            Grid
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -2703,11 +2407,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Column-span
-  
-
     
   </span>
   
@@ -2729,11 +2429,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Grid-columns
-  
-
     
   </span>
   
@@ -2755,11 +2451,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Grid-gutter
-  
-
     
   </span>
   
@@ -2781,11 +2473,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Grid-rows
-  
-
     
   </span>
   
@@ -2807,11 +2495,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Grid-size
-  
-
     
   </span>
   
@@ -2833,11 +2517,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Row-span
-  
-
     
   </span>
   
@@ -2867,11 +2547,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Height
-  
-
     
   </span>
   
@@ -2893,11 +2569,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Layer
-  
-
     
   </span>
   
@@ -2919,11 +2591,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Layers
-  
-
     
   </span>
   
@@ -2945,11 +2613,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Layout
-  
-
     
   </span>
   
@@ -2991,9 +2655,8 @@
       
         
         
+          <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_4_17" type="checkbox" id="__nav_5_4_17" >
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4_17" >
         
           
           
@@ -3002,11 +2665,7 @@
               
   
   <span class="md-ellipsis">
-    
-  
     Links
-  
-
     
   </span>
   
@@ -3020,14 +2679,10 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_4_17_label" aria-expanded="false">
+        <nav class="md-nav" aria-label="Links" data-md-level="3">
           <label class="md-nav__title" for="__nav_5_4_17">
             <span class="md-nav__icon md-icon"></span>
-            
-  
-    Links
-  
-
+            Links
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -3043,11 +2698,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Link-background
-  
-
     
   </span>
   
@@ -3069,11 +2720,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Link-color
-  
-
     
   </span>
   
@@ -3095,11 +2742,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Link-hover-background
-  
-
     
   </span>
   
@@ -3121,11 +2764,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Link-hover-color
-  
-
     
   </span>
   
@@ -3147,11 +2786,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Link-hover-style
-  
-
     
   </span>
   
@@ -3173,11 +2808,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Link-style
-  
-
     
   </span>
   
@@ -3207,11 +2838,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Margin
-  
-
     
   </span>
   
@@ -3233,11 +2860,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Max-height
-  
-
     
   </span>
   
@@ -3259,11 +2882,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Max-width
-  
-
     
   </span>
   
@@ -3285,11 +2904,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Min-height
-  
-
     
   </span>
   
@@ -3311,11 +2926,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Min-width
-  
-
     
   </span>
   
@@ -3337,11 +2948,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Offset
-  
-
     
   </span>
   
@@ -3363,11 +2970,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Opacity
-  
-
     
   </span>
   
@@ -3389,11 +2992,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Outline
-  
-
     
   </span>
   
@@ -3415,11 +3014,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Overflow
-  
-
     
   </span>
   
@@ -3441,11 +3036,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Padding
-  
-
     
   </span>
   
@@ -3489,9 +3080,8 @@
       
         
         
+          <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_4_28" type="checkbox" id="__nav_5_4_28" >
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4_28" >
         
           
           
@@ -3500,11 +3090,7 @@
               
   
   <span class="md-ellipsis">
-    
-  
     Scrollbar colors
-  
-
     
   </span>
   
@@ -3518,14 +3104,10 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_4_28_label" aria-expanded="false">
+        <nav class="md-nav" aria-label="Scrollbar colors" data-md-level="3">
           <label class="md-nav__title" for="__nav_5_4_28">
             <span class="md-nav__icon md-icon"></span>
-            
-  
-    Scrollbar colors
-  
-
+            Scrollbar colors
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -3541,11 +3123,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Scrollbar-background
-  
-
     
   </span>
   
@@ -3567,11 +3145,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Scrollbar-background-active
-  
-
     
   </span>
   
@@ -3593,11 +3167,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Scrollbar-background-hover
-  
-
     
   </span>
   
@@ -3619,11 +3189,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Scrollbar-color
-  
-
     
   </span>
   
@@ -3645,11 +3211,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Scrollbar-color-active
-  
-
     
   </span>
   
@@ -3671,11 +3233,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Scrollbar-color-hover
-  
-
     
   </span>
   
@@ -3697,11 +3255,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Scrollbar-corner-color
-  
-
     
   </span>
   
@@ -3731,11 +3285,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Scrollbar-gutter
-  
-
     
   </span>
   
@@ -3757,11 +3307,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Scrollbar-size
-  
-
     
   </span>
   
@@ -3783,11 +3329,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Text-align
-  
-
     
   </span>
   
@@ -3809,11 +3351,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Text-opacity
-  
-
     
   </span>
   
@@ -3835,11 +3373,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Text-style
-  
-
     
   </span>
   
@@ -3861,11 +3395,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Tint
-  
-
     
   </span>
   
@@ -3887,11 +3417,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Visibility
-  
-
     
   </span>
   
@@ -3913,11 +3439,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Width
-  
-
     
   </span>
   
@@ -4001,9 +3523,8 @@
       
         
         
+          <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_5" type="checkbox" id="__nav_5_5" >
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" >
         
           
           
@@ -4012,11 +3533,7 @@
               
   
   <span class="md-ellipsis">
-    
-  
     Widgets
-  
-
     
   </span>
   
@@ -4030,14 +3547,10 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+        <nav class="md-nav" aria-label="Widgets" data-md-level="2">
           <label class="md-nav__title" for="__nav_5_5">
             <span class="md-nav__icon md-icon"></span>
-            
-  
-    Widgets
-  
-
+            Widgets
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -4051,11 +3564,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Button
-  
-
     
   </span>
   
@@ -4077,11 +3586,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Checkbox
-  
-
     
   </span>
   
@@ -4103,11 +3608,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     ContentSwitcher
-  
-
     
   </span>
   
@@ -4129,11 +3630,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     DataTable
-  
-
     
   </span>
   
@@ -4155,11 +3652,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     DirectoryTree
-  
-
     
   </span>
   
@@ -4181,11 +3674,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Footer
-  
-
     
   </span>
   
@@ -4207,11 +3696,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Header
-  
-
     
   </span>
   
@@ -4235,11 +3720,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Input
-  
-
     
   </span>
   
@@ -4261,11 +3742,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Label
-  
-
     
   </span>
   
@@ -4287,11 +3764,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     ListItem
-  
-
     
   </span>
   
@@ -4313,11 +3786,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     ListView
-  
-
     
   </span>
   
@@ -4339,11 +3808,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     LoadingIndicator
-  
-
     
   </span>
   
@@ -4365,11 +3830,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     MarkdownViewer
-  
-
     
   </span>
   
@@ -4391,11 +3852,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Markdown
-  
-
     
   </span>
   
@@ -4417,11 +3874,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Placeholder
-  
-
     
   </span>
   
@@ -4443,11 +3896,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     RadioButton
-  
-
     
   </span>
   
@@ -4469,11 +3918,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     RadioSet
-  
-
     
   </span>
   
@@ -4495,11 +3940,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Static
-  
-
     
   </span>
   
@@ -4521,11 +3962,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Switch
-  
-
     
   </span>
   
@@ -4547,11 +3984,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     TabbedContent
-  
-
     
   </span>
   
@@ -4573,11 +4006,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Tabs
-  
-
     
   </span>
   
@@ -4599,11 +4028,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     TextLog
-  
-
     
   </span>
   
@@ -4625,11 +4050,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Tree
-  
-
     
   </span>
   
@@ -4766,9 +4187,8 @@
       
         
         
+          <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" checked>
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
         
           
           
@@ -4777,11 +4197,7 @@
               
   
   <span class="md-ellipsis">
-    
-  
     API
-  
-
     
   </span>
   
@@ -4795,14 +4211,10 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+        <nav class="md-nav" aria-label="API" data-md-level="1">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
-            
-  
-    API
-  
-
+            API
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -4816,11 +4228,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     App
-  
-
     
   </span>
   
@@ -4842,11 +4250,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Await remove
-  
-
     
   </span>
   
@@ -4868,11 +4272,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Binding
-  
-
     
   </span>
   
@@ -4894,11 +4294,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Button
-  
-
     
   </span>
   
@@ -4920,11 +4316,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Checkbox
-  
-
     
   </span>
   
@@ -4946,11 +4338,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Color
-  
-
     
   </span>
   
@@ -4972,11 +4360,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Containers
-  
-
     
   </span>
   
@@ -4998,11 +4382,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Content switcher
-  
-
     
   </span>
   
@@ -5024,11 +4404,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Coordinate
-  
-
     
   </span>
   
@@ -5050,11 +4426,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Data table
-  
-
     
   </span>
   
@@ -5076,11 +4448,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Directory tree
-  
-
     
   </span>
   
@@ -5102,11 +4470,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Dom node
-  
-
     
   </span>
   
@@ -5128,11 +4492,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Events
-  
-
     
   </span>
   
@@ -5154,11 +4514,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Footer
-  
-
     
   </span>
   
@@ -5180,11 +4536,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Geometry
-  
-
     
   </span>
   
@@ -5206,11 +4558,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Header
-  
-
     
   </span>
   
@@ -5234,11 +4582,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Input
-  
-
     
   </span>
   
@@ -5260,11 +4604,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Label
-  
-
     
   </span>
   
@@ -5285,7 +4625,7 @@
   
     <li class="md-nav__item md-nav__item--active">
       
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
       
       
       
@@ -5293,11 +4633,7 @@
           
   
   <span class="md-ellipsis">
-    
-  
     List item
-  
-
     
   </span>
   
@@ -5310,11 +4646,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     List item
-  
-
     
   </span>
   
@@ -5338,9 +4670,7 @@
         <li class="md-nav__item">
   <a href="#textual.widgets.ListItem" class="md-nav__link">
     <span class="md-ellipsis">
-      
-        ListItem
-      
+      ListItem
     </span>
   </a>
   
@@ -5350,9 +4680,7 @@
           <li class="md-nav__item">
   <a href="#textual.widgets._list_item.ListItem.highlighted" class="md-nav__link">
     <span class="md-ellipsis">
-      
-        highlighted
-      
+      highlighted
     </span>
   </a>
   
@@ -5382,11 +4710,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     List view
-  
-
     
   </span>
   
@@ -5408,11 +4732,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Loading indicator
-  
-
     
   </span>
   
@@ -5434,11 +4754,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Markdown viewer
-  
-
     
   </span>
   
@@ -5460,11 +4776,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Markdown
-  
-
     
   </span>
   
@@ -5486,11 +4798,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Message pump
-  
-
     
   </span>
   
@@ -5512,11 +4820,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Message
-  
-
     
   </span>
   
@@ -5538,11 +4842,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Pilot
-  
-
     
   </span>
   
@@ -5564,11 +4864,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Placeholder
-  
-
     
   </span>
   
@@ -5590,11 +4886,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Query
-  
-
     
   </span>
   
@@ -5616,11 +4908,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Radiobutton
-  
-
     
   </span>
   
@@ -5642,11 +4930,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Radioset
-  
-
     
   </span>
   
@@ -5668,11 +4952,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Reactive
-  
-
     
   </span>
   
@@ -5694,11 +4974,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Screen
-  
-
     
   </span>
   
@@ -5720,11 +4996,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Scroll view
-  
-
     
   </span>
   
@@ -5746,11 +5018,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Static
-  
-
     
   </span>
   
@@ -5772,11 +5040,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Strip
-  
-
     
   </span>
   
@@ -5798,11 +5062,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Switch
-  
-
     
   </span>
   
@@ -5824,11 +5084,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Tabbed content
-  
-
     
   </span>
   
@@ -5850,11 +5106,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Tabs
-  
-
     
   </span>
   
@@ -5876,11 +5128,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Text log
-  
-
     
   </span>
   
@@ -5902,11 +5150,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Timer
-  
-
     
   </span>
   
@@ -5928,11 +5172,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Toggle button
-  
-
     
   </span>
   
@@ -5954,11 +5194,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Tree
-  
-
     
   </span>
   
@@ -5980,11 +5216,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Walk
-  
-
     
   </span>
   
@@ -6006,11 +5238,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Welcome
-  
-
     
   </span>
   
@@ -6032,11 +5260,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Widget
-  
-
     
   </span>
   
@@ -6065,11 +5289,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Roadmap
-  
-
     
   </span>
   
@@ -6102,9 +5322,8 @@
       
         
         
+          <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8" type="checkbox" id="__nav_8" >
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
         
           
           
@@ -6113,11 +5332,7 @@
               
   
   <span class="md-ellipsis">
-    
-  
     Blog
-  
-
     
   </span>
   
@@ -6131,14 +5346,10 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+        <nav class="md-nav" aria-label="Blog" data-md-level="1">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
-            
-  
-    Blog
-  
-
+            Blog
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -6162,19 +5373,14 @@
       
         
         
+          <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8_2" type="checkbox" id="__nav_8_2" >
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2" >
-        
-          <label class="md-nav__link" for="__nav_8_2" id="__nav_8_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_8_2">
             
   
   <span class="md-ellipsis">
-    
-  
     Archive
-  
-
     
   </span>
   
@@ -6183,14 +5389,10 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="false">
+        <nav class="md-nav" aria-label="Archive" data-md-level="2">
           <label class="md-nav__title" for="__nav_8_2">
             <span class="md-nav__icon md-icon"></span>
-            
-  
-    Archive
-  
-
+            Archive
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -6204,11 +5406,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     2023
-  
-
     
   </span>
   
@@ -6230,11 +5428,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     2022
-  
-
     
   </span>
   
@@ -6274,19 +5468,14 @@
       
         
         
+          <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8_3" type="checkbox" id="__nav_8_3" >
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_3" >
-        
-          <label class="md-nav__link" for="__nav_8_3" id="__nav_8_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_8_3">
             
   
   <span class="md-ellipsis">
-    
-  
     Categories
-  
-
     
   </span>
   
@@ -6295,14 +5484,10 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_3_label" aria-expanded="false">
+        <nav class="md-nav" aria-label="Categories" data-md-level="2">
           <label class="md-nav__title" for="__nav_8_3">
             <span class="md-nav__icon md-icon"></span>
-            
-  
-    Categories
-  
-
+            Categories
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -6316,11 +5501,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     DevLog
-  
-
     
   </span>
   
@@ -6342,11 +5523,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     News
-  
-
     
   </span>
   
@@ -6368,11 +5545,7 @@
         
   
   <span class="md-ellipsis">
-    
-  
     Release
-  
-
     
   </span>
   
@@ -6426,9 +5599,7 @@
         <li class="md-nav__item">
   <a href="#textual.widgets.ListItem" class="md-nav__link">
     <span class="md-ellipsis">
-      
-        ListItem
-      
+      ListItem
     </span>
   </a>
   
@@ -6438,9 +5609,7 @@
           <li class="md-nav__item">
   <a href="#textual.widgets._list_item.ListItem.highlighted" class="md-nav__link">
     <span class="md-ellipsis">
-      
-        highlighted
-      
+      highlighted
     </span>
   </a>
   
@@ -6461,13 +5630,14 @@
           
           
             <div class="md-content" data-md-component="content">
-              
               <article class="md-content__inner md-typeset">
                 
                   
 
-  
-  
+  <a href="https://github.com/textualize/textual/edit/main/docs/api/list_item.md" title="Edit this page" class="md-content__button md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+  </a>
 
 
   <h1>List item</h1>
@@ -6476,11 +5646,11 @@
 
 
 
-<h2 id="textual.widgets.ListItem" class="doc doc-heading">
+<h2 class="doc doc-heading" id="textual.widgets.ListItem">
         <code>ListItem</code>
 
 
-<a href="#textual.widgets.ListItem" class="headerlink" title="Permanent link">&para;</a></h2>
+<a class="headerlink" href="#textual.widgets.ListItem" title="Permanent link">&para;</a></h2>
 
 
   <div class="doc doc-contents first">
@@ -6509,14 +5679,14 @@ documentation for more details on use.</p>
 
 
 
-<h3 id="textual.widgets._list_item.ListItem.highlighted" class="doc doc-heading">
+<h3 class="doc doc-heading" id="textual.widgets._list_item.ListItem.highlighted">
 <code class="highlight language-python"><span class="n">highlighted</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
-<a href="#textual.widgets._list_item.ListItem.highlighted" class="headerlink" title="Permanent link">&para;</a></h3>
+<a class="headerlink" href="#textual.widgets._list_item.ListItem.highlighted" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
@@ -6554,42 +5724,40 @@ documentation for more details on use.</p>
         <footer class="md-footer">
   
     
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
-      <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
-          
-          <a href="../label/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Label" rel="prev">
-            <div class="md-footer__button md-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+        <a href="../label/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Label" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Label
             </div>
-            <div class="md-footer__title">
-              <div class="md-ellipsis">
-                <span class="md-footer__direction">
-                  Previous
-                </span>
-                Label
-              </div>
-            </div>
-          </a>
+          </div>
+        </a>
+      
+      
         
-        
-          
-          <a href="../list_view/" class="md-footer__link md-footer__link--next" aria-label="Next: List view" rel="next">
-            <div class="md-footer__title">
-              <div class="md-ellipsis">
-                <span class="md-footer__direction">
-                  Next
-                </span>
-                List view
-              </div>
+        <a href="../list_view/" class="md-footer__link md-footer__link--next" aria-label="Next: List view" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              List view
             </div>
-            <div class="md-footer__button md-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
-            </div>
-          </a>
-        
-      </nav>
-    
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
@@ -6611,26 +5779,20 @@ documentation for more details on use.</p>
   
     
     
-    
-    
     <a href="https://twitter.com/textualizeio" target="_blank" rel="noopener" title="textualizeio on Twitter" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
     </a>
   
-    
-    
     
     
     <a href="https://github.com/textualize/textual/" target="_blank" rel="noopener" title="Textual on Github" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
     </a>
   
     
     
-    
-    
     <a href="https://discord.gg/Enf6Z3qhVr" target="_blank" rel="noopener" title="Textual Discord server" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M524.531 69.836a1.5 1.5 0 0 0-.764-.7A485.065 485.065 0 0 0 404.081 32.03a1.816 1.816 0 0 0-1.923.91 337.461 337.461 0 0 0-14.9 30.6 447.848 447.848 0 0 0-134.426 0 309.541 309.541 0 0 0-15.135-30.6 1.89 1.89 0 0 0-1.924-.91 483.689 483.689 0 0 0-119.688 37.107 1.712 1.712 0 0 0-.788.676C39.068 183.651 18.186 294.69 28.43 404.354a2.016 2.016 0 0 0 .765 1.375 487.666 487.666 0 0 0 146.825 74.189 1.9 1.9 0 0 0 2.063-.676A348.2 348.2 0 0 0 208.12 430.4a1.86 1.86 0 0 0-1.019-2.588 321.173 321.173 0 0 1-45.868-21.853 1.885 1.885 0 0 1-.185-3.126 251.047 251.047 0 0 0 9.109-7.137 1.819 1.819 0 0 1 1.9-.256c96.229 43.917 200.41 43.917 295.5 0a1.812 1.812 0 0 1 1.924.233 234.533 234.533 0 0 0 9.132 7.16 1.884 1.884 0 0 1-.162 3.126 301.407 301.407 0 0 1-45.89 21.83 1.875 1.875 0 0 0-1 2.611 391.055 391.055 0 0 0 30.014 48.815 1.864 1.864 0 0 0 2.063.7A486.048 486.048 0 0 0 610.7 405.729a1.882 1.882 0 0 0 .765-1.352c12.264-126.783-20.532-236.912-86.934-334.541ZM222.491 337.58c-28.972 0-52.844-26.587-52.844-59.239s23.409-59.241 52.844-59.241c29.665 0 53.306 26.82 52.843 59.239 0 32.654-23.41 59.241-52.843 59.241Zm195.38 0c-28.971 0-52.843-26.587-52.843-59.239s23.409-59.241 52.843-59.241c29.667 0 53.307 26.82 52.844 59.239 0 32.654-23.177 59.241-52.844 59.241Z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M524.531 69.836a1.5 1.5 0 0 0-.764-.7A485.065 485.065 0 0 0 404.081 32.03a1.816 1.816 0 0 0-1.923.91 337.461 337.461 0 0 0-14.9 30.6 447.848 447.848 0 0 0-134.426 0 309.541 309.541 0 0 0-15.135-30.6 1.89 1.89 0 0 0-1.924-.91 483.689 483.689 0 0 0-119.688 37.107 1.712 1.712 0 0 0-.788.676C39.068 183.651 18.186 294.69 28.43 404.354a2.016 2.016 0 0 0 .765 1.375 487.666 487.666 0 0 0 146.825 74.189 1.9 1.9 0 0 0 2.063-.676A348.2 348.2 0 0 0 208.12 430.4a1.86 1.86 0 0 0-1.019-2.588 321.173 321.173 0 0 1-45.868-21.853 1.885 1.885 0 0 1-.185-3.126 251.047 251.047 0 0 0 9.109-7.137 1.819 1.819 0 0 1 1.9-.256c96.229 43.917 200.41 43.917 295.5 0a1.812 1.812 0 0 1 1.924.233 234.533 234.533 0 0 0 9.132 7.16 1.884 1.884 0 0 1-.162 3.126 301.407 301.407 0 0 1-45.89 21.83 1.875 1.875 0 0 0-1 2.611 391.055 391.055 0 0 0 30.014 48.815 1.864 1.864 0 0 0 2.063.7A486.048 486.048 0 0 0 610.7 405.729a1.882 1.882 0 0 0 .765-1.352c12.264-126.783-20.532-236.912-86.934-334.541ZM222.491 337.58c-28.972 0-52.844-26.587-52.844-59.239s23.409-59.241 52.844-59.241c29.665 0 53.306 26.82 52.843 59.239 0 32.654-23.41 59.241-52.843 59.241Zm195.38 0c-28.971 0-52.843-26.587-52.843-59.239s23.409-59.241 52.843-59.241c29.667 0 53.307 26.82 52.844 59.239 0 32.654-23.177 59.241-52.844 59.241Z"/></svg>
     </a>
   
 </div>
@@ -6644,10 +5806,10 @@ documentation for more details on use.</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.tabs.sticky", "navigation.footer", "content.code.annotate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.6c7302c4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.tabs.sticky", "navigation.footer", "content.code.annotate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.939a4419.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.96d2b699.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b9c29124.min.js"></script>
       
     
   </body>
