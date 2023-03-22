@@ -1,0 +1,64 @@
+Grid {
+    grid-size: 3 3;
+    align: center middle;
+}
+
+Container {
+    width: 100%;
+    height: 100%;
+    align: center middle;
+}
+
+#lbl1 {  /* (1)! */
+    border: vkey $secondary;
+}
+
+#lbl2 {  /* (2)! */
+    border: round $secondary;
+    border-title-align: right;
+    border-subtitle-align: right;
+}
+
+#lbl3 {
+    border: wide $secondary;
+    border-title-align: center;
+    border-subtitle-align: center;
+}
+
+#lbl4 {
+    border: ascii $success;
+    border-title-align: center;  /* (3)! */
+    border-subtitle-align: left;
+}
+
+#lbl5 {  /* (4)! */
+    /* No border = no (sub)title. */
+    border: none $success;
+    border-title-align: center;
+    border-subtitle-align: center;
+}
+
+#lbl6 {  /* (5)! */
+    border-top: solid $success;
+    border-bottom: solid $success;
+}
+
+#lbl7 {  /* (6)! */
+    border-top: solid $error;
+    border-bottom: solid $error;
+    padding: 1 2;
+    border-subtitle-align: left;
+}
+
+#lbl8 {
+    border-top: solid $error;
+    border-bottom: solid $error;
+    border-title-align: center;
+    border-subtitle-align: center;
+}
+
+#lbl9 {
+    border-top: solid $error;
+    border-bottom: solid $error;
+    border-title-align: right;
+}

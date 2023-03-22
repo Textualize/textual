@@ -1,6 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.widgets import Static
-
+from textual.widgets import Label
 
 TEXT = """I must not fear.
 Fear is the mind-killer.
@@ -13,7 +12,7 @@ Where the fear has gone there will be nothing. Only I will remain."""
 
 class BorderApp(App):
     def compose(self) -> ComposeResult:
-        self.widget = Static(TEXT)
+        self.widget = Label(TEXT)
         yield self.widget
 
     def on_mount(self) -> None:
