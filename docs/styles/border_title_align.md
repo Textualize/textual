@@ -1,6 +1,6 @@
 # Border-title-align
 
-The `border-title-align` sets the horizontal alignment for the border title.
+The `border-title-align` rule sets the horizontal alignment for the border title.
 
 ## Syntax
 

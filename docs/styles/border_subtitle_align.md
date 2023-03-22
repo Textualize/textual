@@ -1,6 +1,6 @@
 # Border-subtitle-align
 
-The `border-subtitle-align` sets the horizontal alignment for the border subtitle.
+The `border-subtitle-align` rule sets the horizontal alignment for the border subtitle.
 
 ## Syntax
 
