@@ -21,6 +21,7 @@ class BorderTitleApp(App[None]):
         self.widget.styles.border = ("heavy", "yellow")
         self.widget.border_title = "Litany Against Fear"
         self.widget.border_subtitle = "by Frank Herbert, in “Dune”"
+        self.widget.styles.border_title_align = "center"
 
 
 if __name__ == "__main__":

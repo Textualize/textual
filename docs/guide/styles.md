@@ -258,26 +258,23 @@ textual borders
 ```
 
 
-#### Border labels (title and subtitle)
+#### Title alignment
 
-A widget that has a border set can have a title in the top edge of the border.
-For that, set the attribute [`border_title`][textual.widget.Widget.border_title] in your widget.
-Similarly, a widget with a border can have a subtitle in its bottom edge.
-To change it, assign to the attribute [`border_subtitle`][textual.widget.Widget.border_subtitle].
+Widgets have two attributes, `border_title` and `border_subtitle` which (if set) will be displayed within the border.
+The `border_title` attribute is displayed in the top border, and `border_subtitle` is displayed in the bottom border.
 
-These labels must be one-line strings, but they can contain rich markup.
-Additionally, the labels can be aligned horizontally with the respective styles:
+There are two styles to set the alignment of these border labels, which may be set to "left", "right", or "center".
 
- - [`border-title-align`](../styles/border_title_align.md) for the title; and
- - [`border-subtitle-align`](../styles/border_subtitle_align.md) for the subtitle.
+ - [`border-title-align`](../styles/border_title_align.md) sets the alignment of the title, which defaults to "left".
+ - [`border-subtitle-align`](../styles/border_subtitle_align.md) sets the alignment of the subtitle, which defaults to "right".
 
-We can easily modify the previous example to add a title and a subtitle to the border:
+The following example sets both titles and changes the alignment of the title (top) to "center".
 
-```py hl_lines="23-24"
+```py hl_lines="22-24"
 --8<-- "docs/examples/guide/styles/border_title.py"
 ```
 
-This modification produces the following output:
+Note the addition of the titles and their alignments:
 
 ```{.textual path="docs/examples/guide/styles/border_title.py"}
 ```
