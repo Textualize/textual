@@ -350,13 +350,13 @@ def render_border_label(
         yield blank
 
 
-def _compose_row_with_label(
+def render_row(
     box_row: tuple[Segment, Segment, Segment],
     width: int,
     left: bool,
     right: bool,
     label_segments: Iterable[Segment],
-    label_alignment: AlignHorizontal,
+    label_alignment: AlignHorizontal = "left",
 ) -> Iterable[Segment]:
     """Compose a box row with its padded label.
 
@@ -409,34 +409,6 @@ def _compose_row_with_label(
 
     if right:
         yield box3
-
-
-def render_row(
-    box_row: tuple[Segment, Segment, Segment],
-    width: int,
-    left: bool,
-    right: bool,
-    label_segments: Iterable[Segment],
-    label_alignment: AlignHorizontal = "left",
-) -> list[Segment]:
-    """Render a top or bottom border row.
-
-    Args:
-        box_row: Corners and side segments.
-        width: Total width of resulting line.
-        left: Render left corner.
-        right: Render right corner.
-        label_segments: The segments that make up the label.
-        label_alignments: Where to horizontally align the label.
-
-    Returns:
-        A list of segments.
-    """
-    return list(
-        _compose_row_with_label(
-            box_row, width, left, right, label_segments, label_alignment
-        )
-    )
 
 
 _edge_type_normalization_table: dict[EdgeType, EdgeType] = {
