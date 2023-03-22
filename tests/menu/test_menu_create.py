@@ -1,3 +1,5 @@
+"""Core menu unit tests, aimed at testing basic menu creation."""
+
 from __future__ import annotations
 
 import pytest
