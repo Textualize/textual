@@ -2560,7 +2560,7 @@ class Widget(DOMNode):
         *regions: Region,
         repaint: bool = True,
         layout: bool = False,
-    ) -> None:
+    ) -> Self:
         """Initiate a refresh of the widget.
 
         This method sets an internal flag to perform a refresh, which will be done on the
@@ -2576,8 +2576,11 @@ class Widget(DOMNode):
 
         Args:
             *regions: Additional screen regions to mark as dirty.
-            repaint: Repaint the widget (will call render() again). Defaults to True.
-            layout: Also layout widgets in the view. Defaults to False.
+            repaint: Repaint the widget (will call render() again).
+            layout: Also layout widgets in the view.
+
+        Returns:
+            The `Widget` instance.
         """
         if layout and not self._layout_required:
             self._layout_required = True
@@ -2595,6 +2598,7 @@ class Widget(DOMNode):
             self._repaint_required = True
 
         self.check_idle()
+        return self
 
     def remove(self) -> AwaitRemove:
         """Remove the Widget from the DOM (effectively deleting it).
@@ -2676,12 +2680,14 @@ class Widget(DOMNode):
                     self._layout_required = False
                     screen.post_message(messages.Layout())
 
-    def focus(self, scroll_visible: bool = True) -> None:
+    def focus(self, scroll_visible: bool = True) -> Self:
         """Give focus to this widget.
 
         Args:
-            scroll_visible: Scroll parent to make this widget
-                visible. Defaults to True.
+            scroll_visible: Scroll parent to make this widget visible.
+
+        Returns:
+            The `Widget` instance.
         """
 
         def set_focus(widget: Widget):
@@ -2692,13 +2698,19 @@ class Widget(DOMNode):
                 pass
 
         self.app.call_later(set_focus, self)
+        return self
 
-    def reset_focus(self) -> None:
-        """Reset the focus (move it to the next available widget)."""
+    def reset_focus(self) -> Self:
+        """Reset the focus (move it to the next available widget).
+
+        Returns:
+            The `Widget` instance.
+        """
         try:
             self.screen._reset_focus(self)
         except NoScreen:
             pass
+        return self
 
     def capture_mouse(self, capture: bool = True) -> None:
         """Capture (or release) the mouse.

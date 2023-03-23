@@ -13,7 +13,7 @@ from rich.protocol import is_renderable
 from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text, TextType
-from typing_extensions import Literal, TypeAlias
+from typing_extensions import Literal, Self, TypeAlias
 
 from .. import events
 from .._cache import LRUCache
@@ -247,6 +247,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     DataTable {
         background: $surface ;
         color: $text;
+        height: auto;
     }
     DataTable > .datatable--header {
         text-style: bold;
@@ -1156,11 +1157,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         full_column_region = Region(x, 0, width, height)
         return full_column_region
 
-    def clear(self, columns: bool = False) -> None:
+    def clear(self, columns: bool = False) -> Self:
         """Clear the table.
 
         Args:
-            columns: Also clear the columns. Defaults to False.
+            columns: Also clear the columns.
+
+        Returns:
+            The `DataTable` instance.
         """
         self._clear_caches()
         self._y_offsets.clear()
@@ -1176,6 +1180,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._label_column = Column(self._label_column_key, Text(), auto_width=True)
         self._labelled_row_exists = False
         self.refresh()
+        return self
 
     def add_column(
         self, label: TextType, *, width: int | None = None, key: str | None = None
@@ -1333,49 +1338,66 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self._updated_cells.clear()
             self._update_column_widths(updated_columns)
 
-    def refresh_coordinate(self, coordinate: Coordinate) -> None:
+    def refresh_coordinate(self, coordinate: Coordinate) -> Self:
         """Refresh the cell at a coordinate.
 
         Args:
             coordinate: The coordinate to refresh.
+
+        Returns:
+            The `DataTable` instance.
         """
         if not self.is_valid_coordinate(coordinate):
-            return
+            return self
         region = self._get_cell_region(coordinate)
         self._refresh_region(region)
+        return self
 
-    def refresh_row(self, row_index: int) -> None:
+    def refresh_row(self, row_index: int) -> Self:
         """Refresh the row at the given index.
 
         Args:
             row_index: The index of the row to refresh.
+
+        Returns:
+            The `DataTable` instance.
         """
         if not self.is_valid_row_index(row_index):
-            return
+            return self
 
         region = self._get_row_region(row_index)
         self._refresh_region(region)
+        return self
 
-    def refresh_column(self, column_index: int) -> None:
+    def refresh_column(self, column_index: int) -> Self:
         """Refresh the column at the given index.
 
         Args:
             column_index: The index of the column to refresh.
+
+        Returns:
+            The `DataTable` instance.
         """
         if not self.is_valid_column_index(column_index):
-            return
+            return self
 
         region = self._get_column_region(column_index)
         self._refresh_region(region)
+        return self
 
-    def _refresh_region(self, region: Region) -> None:
-        """Refresh a region of the DataTable, if it's visible within
-        the window. This method will translate the region to account
-        for scrolling."""
+    def _refresh_region(self, region: Region) -> Self:
+        """Refresh a region of the DataTable, if it's visible within the window.
+
+        This method will translate the region to account for scrolling.
+
+        Returns:
+            The `DataTable` instance.
+        """
         if not self.window_region.overlaps(region):
-            return
+            return self
         region = region.translate(-self.scroll_offset)
         self.refresh(region)
+        return self
 
     def is_valid_row_index(self, row_index: int) -> bool:
         """Return a boolean indicating whether the row_index is within table bounds.
@@ -1839,12 +1861,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self,
         *columns: ColumnKey | str,
         reverse: bool = False,
-    ) -> None:
-        """Sort the rows in the DataTable by one or more column keys.
+    ) -> Self:
+        """Sort the rows in the `DataTable` by one or more column keys.
 
         Args:
             columns: One or more columns to sort by the values in.
             reverse: If True, the sort order will be reversed.
+
+        Returns:
+            The `DataTable` instance.
         """
 
         def sort_by_column_keys(
@@ -1862,6 +1887,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         )
         self._update_count += 1
         self.refresh()
+        return self
 
     def _scroll_cursor_into_view(self, animate: bool = False) -> None:
         """When the cursor is at a boundary of the DataTable and moves out

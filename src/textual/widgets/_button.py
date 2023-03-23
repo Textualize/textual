@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 from functools import partial
-from typing import cast
 
 import rich.repr
 from rich.text import Text, TextType
-from typing_extensions import Literal
+from typing_extensions import Literal, Self
 
 from .. import events
 from ..css._error_tools import friendly_list
@@ -233,14 +232,18 @@ class Button(Static, can_focus=True):
         event.stop()
         self.press()
 
-    def press(self) -> None:
-        """Respond to a button press."""
+    def press(self) -> Self:
+        """Respond to a button press.
+
+        Returns:
+            The button instance."""
         if self.disabled or not self.display:
-            return
+            return self
         # Manage the "active" effect:
         self._start_active_affect()
         # ...and let other components know that we've just been clicked:
         self.post_message(Button.Pressed(self))
+        return self
 
     def _start_active_affect(self) -> None:
         """Start a small animation to show the button was clicked."""
