@@ -159,6 +159,7 @@ class OptionList(ScrollView, can_focus=True):
     OptionList {
         background: $panel-lighten-1;
         color: $text;
+        overflow-x: hidden;
     }
 
     OptionList > .option-list--separator {
@@ -191,6 +192,17 @@ class OptionList(ScrollView, can_focus=True):
 
     highlighted: reactive[int | None] = reactive["int | None"](None)
     """The index of the currently-highlighted option, or `None` if no option is highlighted."""
+
+    class Debug(Message):
+        """DEBUG MESSAGE: REMOVE BEFORE FLIGHT!"""
+
+        def __init__(self, sender, cargo) -> None:
+            super().__init__()
+            self.sender = sender
+            self.cargo = cargo
+
+        def __rich_repr__(self) -> Result:
+            yield self.cargo
 
     class OptionMessage(Message):
         """Base class for all option messages."""
@@ -251,6 +263,10 @@ class OptionList(ScrollView, can_focus=True):
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
+        # Used internally to track if we need to refresh the content
+        # tracking data. See on_idle.
+        self._needs_refresh_content_tracking = False
+
         self._contents: list[OptionListContent] = [
             self._make_content(item) for item in content
         ]
@@ -293,12 +309,44 @@ class OptionList(ScrollView, can_focus=True):
         """
 
         # Initial calculation of the content tracking.
-        self._refresh_content_tracking()
+        self._request_content_tracking_refresh()
 
         # Finally, cause the highlighted property to settle down based on
         # the state of the option list in regard to its available options.
         # Be sure to have a look at validate_highlighted.
         self.highlighted = None
+
+    def _request_content_tracking_refresh(self) -> None:
+        """Request that the content tracking information gets refreshed.
+
+        Calling this method sets a flag to say the refresh should happen,
+        and books the refresh call in for the next idle moment.
+        """
+        self._needs_refresh_content_tracking = True
+        self.check_idle()
+
+    def on_idle(self) -> None:
+        """Perform content tracking data refresh when idle."""
+        self._refresh_content_tracking()
+
+    def watch_show_vertical_scrollbar(self, old: bool, new: bool) -> None:
+        """Handle the vertical scrollbar visibility status changing.
+
+        Args:
+            old: The old status.
+            new: The new status.
+
+        `show_vertical_scrollbar` is watched because it has an impact on the
+        available witch in which to render renderables. If a vertical
+        scrollbar appears or disappears we need to recalculate all the lines
+        that make up the list.
+        """
+        if old != new:
+            self._request_content_tracking_refresh()
+
+    def on_resize(self) -> None:
+        """Refresh the layout of the renderables in the list when resized."""
+        self._request_content_tracking_refresh()
 
     def _make_content(self, content: NewOptionListContent) -> OptionListContent:
         """Convert a single item of content for the list into a content type.
@@ -324,19 +372,30 @@ class OptionList(ScrollView, can_focus=True):
     def _refresh_content_tracking(self) -> None:
         """Refresh the various forms of option list content tracking."""
 
+        # If we don't need to refresh, don't bother.
+        if not self._needs_refresh_content_tracking:
+            return
+
+        # If we don't know our own width yet, we can't sensibly work out the
+        # heights of the prompts of the options yet, so let's shortcut that
+        # work. We'll be back here once we know our height.
+        if not self.size.width:
+            return
+
         self._clear_content_tracking()
-
-        # TODO: Do I need to be telling it what width to deal with? Do I
-        # need to be working out all the lines again if I get resized?
-        lines_from = self.app.console.render_lines
-
-        # Create a rule that can be used as a separator.
-        separator = lines_from(Rule(style=""))[0]
+        self._needs_refresh_content_tracking = False
 
         # Set up for doing less property access work inside the loop.
+        lines_from = self.app.console.render_lines
+        options = self.app.console.options.update_width(
+            self.scrollable_content_region.width
+        )
         spans = self._spans
         option_ids = self._option_ids
         lines = self._lines
+
+        # Create a rule that can be used as a separator.
+        separator = lines_from(Rule(style=""))[0]
 
         # Work through each item that makes up the content of the list,
         # break out the individual lines that will be used to draw it, and
@@ -349,7 +408,7 @@ class OptionList(ScrollView, can_focus=True):
                 # work out the lines needed to show it.
                 new_lines = [
                     Line(prompt_line, option)
-                    for prompt_line in lines_from(content.prompt)
+                    for prompt_line in lines_from(content.prompt, options)
                 ]
                 # Record the span information for the option.
                 spans.append(OptionLineSpan(line, len(new_lines)))
@@ -370,9 +429,9 @@ class OptionList(ScrollView, can_focus=True):
             lines.extend(new_lines)
             line += len(new_lines)
 
-        # TODO: Decide what the width actually should be in this case. Right
-        # now this is just about ensuing the scrolling kicks in.
-        self.virtual_size = Size(self.size.width, len(self._lines))
+        # Now that we know how many lines make up the whole content of the
+        # list, set the virtual size.
+        self.virtual_size = Size(self.scrollable_content_region.width, len(self._lines))
 
     def add(self, item: NewOptionListContent = None) -> Self:
         """Add a new option to the end of the option list.
@@ -403,7 +462,7 @@ class OptionList(ScrollView, can_focus=True):
         self._options.clear()
         self._refresh_content_tracking()
         self.highlighted = None
-        self.virtual_size = Size(self.size.width, 0)
+        self.virtual_size = Size(self.scrollable_content_region.width, 0)
         self.refresh()
         return self
 
@@ -545,7 +604,7 @@ class OptionList(ScrollView, can_focus=True):
 
         # At this point we know we're drawing actual content. To allow for
         # horizontal scrolling, let's crop the strip at the right locations.
-        strip = strip.crop(scroll_x, scroll_x + self.size.width)
+        strip = strip.crop(scroll_x, scroll_x + self.scrollable_content_region.width)
 
         # If the option we're drawing is disabled, exit with an option style.
         if self._options[line.option_index].disabled:
@@ -579,7 +638,9 @@ class OptionList(ScrollView, can_focus=True):
         assert highlighted is not None
         span = self._spans[highlighted]
         self.scroll_to_region(
-            Region(0, span.first, self.size.width, span.line_count),
+            Region(
+                0, span.first, self.scrollable_content_region.width, span.line_count
+            ),
             force=True,
             animate=False,  # https://github.com/Textualize/textual/issues/2077
         )
