@@ -443,7 +443,7 @@ class OptionList(ScrollView, can_focus=True):
 
         # Now that we know how many lines make up the whole content of the
         # list, set the virtual size.
-        self.virtual_size = Size(self.scrollable_content_region.width, len(self._lines))
+        self.virtual_size = Size(self.scrollable_content_region.width, len(lines))
 
     def add(self, item: NewOptionListContent = None) -> Self:
         """Add a new option to the end of the option list.
