@@ -1,6 +1,6 @@
 # Text-opacity
 
-The `text-opacity` blends the color of the content of a widget with the color of the background.
+The `text-opacity` style blends the color of the content of a widget with the color of the background.
 
 ## Syntax
 

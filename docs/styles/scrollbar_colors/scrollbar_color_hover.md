@@ -1,6 +1,6 @@
 # Scrollbar-color-hover
 
-The `scrollbar-color-hover` sets the color of the scrollbar when the cursor is over it.
+The `scrollbar-color-hover` style sets the color of the scrollbar when the cursor is over it.
 
 ## Syntax
 

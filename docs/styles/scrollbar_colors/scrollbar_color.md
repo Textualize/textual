@@ -1,6 +1,6 @@
 # Scrollbar-color
 
-The `scrollbar-color` sets the color of the scrollbar.
+The `scrollbar-color` style sets the color of the scrollbar.
 
 ## Syntax
 

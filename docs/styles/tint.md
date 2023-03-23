@@ -1,6 +1,6 @@
 # Tint
 
-The `tint` rule blends a color with the whole widget.
+The `tint` style blends a color with the whole widget.
 
 ## Syntax
 
@@ -8,7 +8,7 @@ The `tint` rule blends a color with the whole widget.
 tint: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The tint rule blends a [`<color>`](../css_types/color.md) with the widget. The color should likely have an _alpha_ component (specified directly in the color used or by the optional [`<percentage>`](../css_types/percentage.md)), otherwise the end result will obscure the widget content.
+The tint style blends a [`<color>`](../css_types/color.md) with the widget. The color should likely have an _alpha_ component (specified directly in the color used or by the optional [`<percentage>`](../css_types/percentage.md)), otherwise the end result will obscure the widget content.
 
 ## Example
 

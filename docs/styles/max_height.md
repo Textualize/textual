@@ -1,6 +1,6 @@
 # Max-height
 
-The `max-height` rule sets a maximum height for a widget.
+The `max-height` style sets a maximum height for a widget.
 
 ## Syntax
 
@@ -8,7 +8,7 @@ The `max-height` rule sets a maximum height for a widget.
 max-height: <a href="../../css_types/scalar">&lt;scalar&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The `max-height` rule accepts a [`<scalar>`](../../css_types/scalar) that defines an upper bound for the [`height`](./height) of a widget.
+The `max-height` style accepts a [`<scalar>`](../../css_types/scalar) that defines an upper bound for the [`height`](./height) of a widget.
 That is, the height of a widget is never allowed to exceed `max-height`.
 
 ## Example

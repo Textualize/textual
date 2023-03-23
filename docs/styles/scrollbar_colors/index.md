@@ -1,9 +1,9 @@
 # Scrollbar colors
 
-There are a number of rules to set the colors used in Textual scrollbars.
+There are a number of styles to set the colors used in Textual scrollbars.
 You won't typically need to do this, as the default themes have carefully chosen colors, but you can if you want to.
 
-| Rule                                                              | Applies to                                               |
+| Style                                                             | Applies to                                               |
 |-------------------------------------------------------------------|----------------------------------------------------------|
 | [`scrollbar-background`](./scrollbar_background.md)               | Scrollbar background.                                    |
 | [`scrollbar-background-active`](./scrollbar_background_active.md) | Scrollbar background when the thumb is being dragged.    |
@@ -35,7 +35,7 @@ Visit each style's reference page to learn more about how the values are used.
 
 ## Example
 
-This example shows two planels that contain oversized text.
+This example shows two panels that contain oversized text.
 The right panel sets `scrollbar-background`, `scrollbar-color`, and `scrollbar-corner-color`, and the left panel shows the default colors for comparison.
 
 === "Output"

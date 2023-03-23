@@ -1,6 +1,6 @@
 # Link-background
 
-The `link-background` sets the background color of the link.
+The `link-background` style sets the background color of the link.
 
 !!! note
 

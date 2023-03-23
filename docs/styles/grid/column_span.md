@@ -12,7 +12,7 @@ The `column-span` style specifies how many columns a widget will span in a grid 
 column-span: <a href="../../css_types/integer">&lt;integer&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The style `column-span` accepts a single non-negative [`<integer>`](../../../css_types/integer) that quantifies how many columns the given widget spans.
+The `column-span` style accepts a single non-negative [`<integer>`](../../../css_types/integer) that quantifies how many columns the given widget spans.
 
 ## Example
 

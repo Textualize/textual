@@ -12,7 +12,7 @@ The `grid-rows` style allows to define the height of the rows of the grid.
 grid-rows: <a href="../../css_types/scalar">&lt;scalar&gt;</a>+;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The style `grid-rows` takes one or more [`<scalar>`](../../../css_types/scalar) that specify the length of the rows of the grid.
+The `grid-rows` style takes one or more [`<scalar>`](../../../css_types/scalar) that specify the length of the rows of the grid.
 
 If there are more rows in the grid than scalars specified in `grid-rows`, they are reused cyclically.
 If the number of [`<scalar>`](../../../css_types/scalar) is in excess, the excess is ignored.
@@ -22,7 +22,7 @@ If the number of [`<scalar>`](../../../css_types/scalar) is in excess, the exces
 The example below shows a grid with 10 labels laid out in a grid with 5 rows and 2 columns.
 
 We set `grid-rows: 1fr 6 25%`.
-Because there are more rows than scalars in the style rule, the scalars will be reused:
+Because there are more rows than scalars in the style definition, the scalars will be reused:
 
  - rows 1 and 4 have height `1fr`;
  - rows 2 and 5 have height `6`; and

@@ -1,6 +1,6 @@
 # Overflow
 
-The `overflow` rule specifies if and when scrollbars should be displayed.
+The `overflow` style specifies if and when scrollbars should be displayed.
 
 ## Syntax
 
