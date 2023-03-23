@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+- DataTable now has height: auto by default. https://github.com/Textualize/textual/issues/2117
 - Textual will now render strings within renderables (such as tables) as Console Markup by default. You can wrap your text with rich.Text() if you want the original behavior. https://github.com/Textualize/textual/issues/2120
 - Some widget methods now return `self` instead of `None` https://github.com/Textualize/textual/pull/2102:
   - `Widget`: `refresh`, `focus`, `reset_focus`
@@ -20,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - `TextLog`: `write`, `clear`
   - `TreeNode`: `expand`, `expand_all`, `collapse`, `collapse_all`, `toggle`, `toggle_all`
   - `Tree`: `clear`, `reset`
+
 
 ## [0.16.0] - 2023-03-22
 
