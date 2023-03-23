@@ -893,7 +893,11 @@ class Compositor:
             widget: Widget to update.
 
         """
-        self._full_map_invalidated = True
+        if not self._full_map_invalidated and not widgets.issubset(
+            self.visible_widgets.keys()
+        ):
+            self._full_map_invalidated = True
+
         regions: list[Region] = []
         add_region = regions.append
         get_widget = self.visible_widgets.__getitem__
