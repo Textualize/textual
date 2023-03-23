@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Textual will not render strings within renderables (such as tables) as Console Markup by default. You wrap wrap your text with rich.Text() if you want the original behavior. https://github.com/Textualize/textual/issues/2120
+- Textual will now render strings within renderables (such as tables) as Console Markup by default. You can wrap your text with rich.Text() if you want the original behavior. https://github.com/Textualize/textual/issues/2120
 
 ## [0.16.0] - 2023-03-22
 
