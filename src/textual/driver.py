@@ -103,15 +103,24 @@ class Driver(ABC):
             click_event = events.Click.from_event(event)
             self.send_event(click_event)
 
-    def flush(self) -> None:
-        """Flush any buffered data."""
-
     @abstractmethod
     def write(self, data: str) -> None:
         """Write data to the output device.
 
         Args:
             data: Raw data.
+        """
+
+    def flush(self) -> None:
+        """Flush any buffered data."""
+
+    @abstractmethod
+    def set_terminal_size(self, size: tuple[int, int]) -> None:
+        """Set the terminal size.
+
+        Args:
+            size: Width and height of the terminal, in cells.
+
         """
 
     @abstractmethod

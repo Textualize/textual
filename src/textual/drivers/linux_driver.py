@@ -46,6 +46,7 @@ class LinuxDriver(Driver):
         self.attrs_before: list[Any] | None = None
         self.exit_event = Event()
         self._key_thread: Thread | None = None
+        self._loop: asyncio.AbstractEventLoop | None = None
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "debug", self._debug
@@ -110,22 +111,20 @@ class LinuxDriver(Driver):
         """
         self._file.write(data)
 
+    def set_terminal_size(self, size) -> None:
+        assert self._loop is not None
+        terminal_size = Size(*size)
+        event = events.Resize(terminal_size, terminal_size)
+        asyncio.run_coroutine_threadsafe(
+            self._target._post_message(event), loop=self._loop
+        )
+
     def start_application_mode(self):
         """Start application mode."""
-        loop = asyncio.get_running_loop()
-
-        def send_size_event():
-            terminal_size = self._get_terminal_size()
-            width, height = terminal_size
-            textual_size = Size(width, height)
-            event = events.Resize(textual_size, textual_size)
-            asyncio.run_coroutine_threadsafe(
-                self._target._post_message(event),
-                loop=loop,
-            )
+        self._loop = asyncio.get_running_loop()
 
         def on_terminal_resize(signum, stack) -> None:
-            send_size_event()
+            self.set_terminal_size(self._get_terminal_size())
 
         signal.signal(signal.SIGWINCH, on_terminal_resize)
 
@@ -159,7 +158,7 @@ class LinuxDriver(Driver):
         self.write("\033[?1003h\n")
         self.flush()
         self._key_thread = Thread(target=self.run_input_thread)
-        send_size_event()
+        self.set_terminal_size(self._get_terminal_size())
         self._key_thread.start()
         self._request_terminal_sync_mode_support()
         self._enable_bracketed_paste()
