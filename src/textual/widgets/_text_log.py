@@ -112,10 +112,7 @@ class TextLog(ScrollView, can_focus=True):
             The `TextLog` instance.
         """
 
-        if scroll_end is None:
-            auto_scroll = self.auto_scroll
-        else:
-            auto_scroll = scroll_end
+        auto_scroll = self.auto_scroll if scroll_end is None else scroll_end
 
         renderable: RenderableType
         if not is_renderable(content):
