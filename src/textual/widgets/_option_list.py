@@ -157,7 +157,6 @@ class OptionList(ScrollView, can_focus=True):
     DEFAULT_CSS = """
     OptionList {
         background: $panel-lighten-1;
-        overflow: hidden;
         color: $text;
     }
 
