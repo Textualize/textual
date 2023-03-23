@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Fixed
+
+- Issue with parsing action strings whose arguments contained quoted closing parenthesis https://github.com/Textualize/textual/pull/2112
+- Issues with parsing action strings with tuple arguments https://github.com/Textualize/textual/pull/2112
+
 ### Changed
 
 - DataTable now has height: auto by default. https://github.com/Textualize/textual/issues/2117
@@ -21,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - `TextLog`: `write`, `clear`
   - `TreeNode`: `expand`, `expand_all`, `collapse`, `collapse_all`, `toggle`, `toggle_all`
   - `Tree`: `clear`, `reset`
+
 
 
 ## [0.16.0] - 2023-03-22
