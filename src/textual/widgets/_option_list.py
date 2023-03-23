@@ -150,6 +150,8 @@ class OptionList(ScrollView, can_focus=True):
     | Class | Description |
     | :- | :- |
     | `option-list--option-highlighted` | Target the highlighted option. |
+    | `option-list--option-highlighted-disabled` | Target a disabled option that is also highlighted. |
+    | `option-list--option-disabled` | Target disabled options. |
     | `option-list--separator` | Target the separators. |
     """
 
