@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Changed
+
+- DataTable now has height: auto by default. https://github.com/Textualize/textual/issues/2117
+
 ## [0.16.0] - 2023-03-22
 
 ### Added

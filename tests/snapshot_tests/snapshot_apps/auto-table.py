@@ -69,6 +69,7 @@ class Status(LabeledBox):
 
     Status StatusTable {
         width: auto;
+        height: 100%;
         margin-top: 1;
         scrollbar-gutter: stable;
         overflow-x: hidden;

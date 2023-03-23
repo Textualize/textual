@@ -646,6 +646,8 @@ async def test_hover_coordinate():
         table.add_column("ABC")
         table.add_row("123")
         table.add_row("456")
+        await pilot.pause()
+        print(table.virtual_size)
         assert table.hover_coordinate == Coordinate(0, 0)
         await pilot.hover(DataTable, offset=Offset(2, 2))
         assert table.hover_coordinate == Coordinate(1, 0)
