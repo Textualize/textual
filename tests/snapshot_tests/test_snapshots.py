@@ -323,3 +323,7 @@ def test_auto_table(snap_compare):
 
 def test_table_markup(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "table_markup.py")
+
+
+def test_textlog_scroll(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "textlog_scroll.py")
