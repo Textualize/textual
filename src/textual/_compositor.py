@@ -889,11 +889,15 @@ class Compositor:
         """Update a given widget in the composition.
 
         Args:
-            console: Console instance.
-            widget: Widget to update.
+            widgets: Set of Widgets to update.
 
         """
-        self._full_map_invalidated = True
+        # If there are any *new* widgets we need to invalidate the full map
+        if not self._full_map_invalidated and not widgets.issubset(
+            self.visible_widgets.keys()
+        ):
+            self._full_map_invalidated = True
+
         regions: list[Region] = []
         add_region = regions.append
         get_widget = self.visible_widgets.__getitem__
