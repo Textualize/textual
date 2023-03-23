@@ -1,6 +1,6 @@
 # Scrollbar-background-active
 
-The `scrollbar-background-active` sets the background color of the scrollbar when the thumb is being dragged.
+The `scrollbar-background-active` style sets the background color of the scrollbar when the thumb is being dragged.
 
 ## Syntax
 

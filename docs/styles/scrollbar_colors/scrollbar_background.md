@@ -1,6 +1,6 @@
 # Scrollbar-background
 
-The `scrollbar-background` sets the background color of the scrollbar.
+The `scrollbar-background` style sets the background color of the scrollbar.
 ## Syntax
 
 --8<-- "docs/snippets/syntax_block_start.md"

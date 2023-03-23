@@ -1,6 +1,6 @@
 # Text-align
 
-The `text-align` rule sets the text alignment in a widget.
+The `text-align` style sets the text alignment in a widget.
 
 ## Syntax
 
@@ -8,7 +8,7 @@ The `text-align` rule sets the text alignment in a widget.
 text-align: <a href="../../css_types/text_align">&lt;text-align&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The `text-align` rule accepts a value of the type [`<text-align>`](../css_types/text_align.md) that defines how text is aligned inside the widget.
+The `text-align` style accepts a value of the type [`<text-align>`](../css_types/text_align.md) that defines how text is aligned inside the widget.
 
 ### Defaults
 

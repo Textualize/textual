@@ -1,6 +1,6 @@
 # Offset
 
-The `offset` rule defines an offset for the position of the widget.
+The `offset` style defines an offset for the position of the widget.
 
 ## Syntax
 
@@ -8,7 +8,7 @@ The `offset` rule defines an offset for the position of the widget.
 offset: <a href="../../css_types/scalar">&lt;scalar&gt;</a> <a href="../../css_types/scalar">&lt;scalar&gt;</a>;
 
 offset-x: <a href="../../css_types/scalar">&lt;scalar&gt;</a>;
-offset-y: <a href="../../css_types/scalar">&lt;scalar&gt;</a> 
+offset-y: <a href="../../css_types/scalar">&lt;scalar&gt;</a>
 --8<-- "docs/snippets/syntax_block_end.md"
 
 The two [`<scalar>`](../../css_types/scalar) in the `offset` define, respectively, the offsets in the horizontal and vertical axes for the widget.

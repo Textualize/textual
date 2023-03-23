@@ -1,6 +1,6 @@
 # Border-title-align
 
-The `border-title-align` rule sets the horizontal alignment for the border title.
+The `border-title-align` style sets the horizontal alignment for the border title.
 
 ## Syntax
 
@@ -8,7 +8,7 @@ The `border-title-align` rule sets the horizontal alignment for the border title
 border-title-align: <a href="../../css_types/horizontal">&lt;horizontal&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The style `border-title-align` takes a [`<horizontal>`](../../css_types/horizontal) that determines where the border title is aligned along the top edge of the border.
+The `border-title-align` style takes a [`<horizontal>`](../../css_types/horizontal) that determines where the border title is aligned along the top edge of the border.
 This means that the border corners are always visible.
 
 ### Default
@@ -40,7 +40,7 @@ This example shows three labels, each with a different border title alignment:
     ```
 
 
-### All title and subtitle combinations
+### Complete usage reference
 
 --8<-- "docs/snippets/border_sub_title_align_all_example.md"
 

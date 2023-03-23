@@ -11,7 +11,7 @@ align-horizontal: <a href="../../css_types/horizontal">&lt;horizontal&gt;</a>;
 align-vertical: <a href="../../css_types/vertical">&lt;vertical&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The style `align` takes a [`<horizontal>`](../../css_types/horizontal) followed by a [`<vertical>`](../../css_types/vertical).
+The `align` style takes a [`<horizontal>`](../../css_types/horizontal) followed by a [`<vertical>`](../../css_types/vertical).
 
 You can specify the alignment of children on both the horizontal and vertical axes at the same time,
 or on each of the axis separately.

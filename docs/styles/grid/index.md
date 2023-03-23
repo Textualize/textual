@@ -1,6 +1,6 @@
 # Grid
 
-There are a number of properties relating to the Textual `grid` layout.
+There are a number of styles relating to the Textual `grid` layout.
 
 For an in-depth look at the grid layout, visit the grid [guide](../../guide/layout.md#grid).
 
@@ -33,10 +33,10 @@ Visit each style's reference page to learn more about how the values are used.
 
 ## Example
 
-The example below shows all the properties above in action.
+The example below shows all the styles above in action.
 The `grid-size: 3 4;` declaration sets the grid to 3 columns and 4 rows.
 The first cell of the grid, tinted magenta, shows a cell spanning multiple rows and columns.
-The spacing between grid cells is because of the `grid-gutter` declaration.
+The spacing between grid cells is defined by the `grid-gutter` style.
 
 === "Output"
 
@@ -57,7 +57,7 @@ The spacing between grid cells is because of the `grid-gutter` declaration.
 
 !!! warning
 
-    The properties listed on this page will only work when the layout is `grid`.
+    The styles listed on this page will only work when the layout is `grid`.
 
 ## See also
 
