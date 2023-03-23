@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Optional, cast
+from typing import TYPE_CHECKING, Optional, cast
 
 from rich.console import RenderableType
 from rich.highlighter import ReprHighlighter
@@ -17,6 +17,9 @@ from ..geometry import Region, Size
 from ..reactive import var
 from ..scroll_view import ScrollView
 from ..strip import Strip
+
+if TYPE_CHECKING:
+    from typing_extensions import Self
 
 
 class TextLog(ScrollView, can_focus=True):
@@ -89,7 +92,7 @@ class TextLog(ScrollView, can_focus=True):
         width: int | None = None,
         expand: bool = False,
         shrink: bool = True,
-    ) -> None:
+    ) -> Self:
         """Write text or a rich renderable.
 
         Args:
@@ -97,6 +100,9 @@ class TextLog(ScrollView, can_focus=True):
             width: Width to render or ``None`` to use optimal width.
             expand: Enable expand to widget width, or ``False`` to use `width`.
             shrink: Enable shrinking of content to fit width.
+
+        Returns:
+            The `TextLog` instance.
         """
 
         renderable: RenderableType
@@ -136,7 +142,7 @@ class TextLog(ScrollView, can_focus=True):
         )
         lines = list(Segment.split_lines(segments))
         if not lines:
-            return
+            return self
 
         self.max_width = max(
             self.max_width,
@@ -154,14 +160,21 @@ class TextLog(ScrollView, can_focus=True):
         self.virtual_size = Size(self.max_width, len(self.lines))
         self.scroll_end(animate=False)
 
-    def clear(self) -> None:
-        """Clear the text log."""
+        return self
+
+    def clear(self) -> Self:
+        """Clear the text log.
+
+        Returns:
+            The `TextLog` instance.
+        """
         self.lines.clear()
         self._line_cache.clear()
         self._start_line = 0
         self.max_width = 0
         self.virtual_size = Size(self.max_width, len(self.lines))
         self.refresh()
+        return self
 
     def render_line(self, y: int) -> Strip:
         scroll_x, scroll_y = self.scroll_offset

@@ -5,7 +5,7 @@ In particular it provides `Checkbox`, `RadioButton` and `RadioSet`.
 
 from __future__ import annotations
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from rich.style import Style
 from rich.text import Text, TextType
@@ -16,6 +16,9 @@ from ..geometry import Size
 from ..message import Message
 from ..reactive import reactive
 from ._static import Static
+
+if TYPE_CHECKING:
+    from typing_extensions import Self
 
 
 class ToggleButton(Static, can_focus=True):
@@ -201,9 +204,14 @@ class ToggleButton(Static, can_focus=True):
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
         return 1
 
-    def toggle(self) -> None:
-        """Toggle the value of the widget."""
+    def toggle(self) -> Self:
+        """Toggle the value of the widget.
+
+        Returns:
+            The `ToggleButton` instance.
+        """
         self.value = not self.value
+        return self
 
     def action_toggle(self) -> None:
         """Toggle the value of the widget when called as an action.
