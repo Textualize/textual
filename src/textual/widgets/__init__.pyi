@@ -13,7 +13,7 @@ from ._list_view import ListView as ListView
 from ._loading_indicator import LoadingIndicator as LoadingIndicator
 from ._markdown import Markdown as Markdown
 from ._markdown import MarkdownViewer as MarkdownViewer
-from ._menu import Menu as Menu
+from ._option_list import OptionList as OptionList
 from ._placeholder import Placeholder as Placeholder
 from ._pretty import Pretty as Pretty
 from ._radio_button import RadioButton as RadioButton
