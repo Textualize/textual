@@ -103,10 +103,10 @@ class TextLog(ScrollView, can_focus=True):
 
         Args:
             content: Rich renderable (or text).
-            width: Width to render or ``None`` to use optimal width.
-            expand: Enable expand to widget width, or ``False`` to use `width`.
+            width: Width to render or `None` to use optimal width.
+            expand: Enable expand to widget width, or `False` to use `width`.
             shrink: Enable shrinking of content to fit width.
-            scroll_end: Enable automatic scroll to end, or ``None`` to use `self.auto_scroll`.
+            scroll_end: Enable automatic scroll to end, or ``None` to use `self.auto_scroll`.
 
         Returns:
             The `TextLog` instance.
