@@ -6,7 +6,7 @@ import pytest
 
 from textual.app import App, ComposeResult
 from textual.widgets import OptionList
-from textual.widgets.option_list import Option, Separator
+from textual.widgets.option_list import DuplicateID, Option, Separator
 
 
 class OptionListApp(App[None]):
@@ -101,3 +101,10 @@ async def test_add_later() -> None:
         assert option_list.option_count == 6
         option_list.add(Option("even more"))
         assert option_list.option_count == 7
+
+
+async def test_create_with_duplicate_id() -> None:
+    """Adding an option with a duplicate ID should be an error."""
+    async with OptionListApp().run_test() as pilot:
+        with pytest.raises(DuplicateID):
+            pilot.app.query_one(OptionList).add(Option("dupe", id="3"))
