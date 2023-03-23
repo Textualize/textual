@@ -5,10 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.16.0] - 2023-03-22
 
 ### Added
 - Added `parser_factory` argument to `Markdown` and `MarkdownViewer` constructors https://github.com/Textualize/textual/pull/2075
+- Added `HorizontalScroll` https://github.com/Textualize/textual/issues/1957
+- Added `Center` https://github.com/Textualize/textual/issues/1957
+- Added `Middle` https://github.com/Textualize/textual/issues/1957
+- Added `VerticalScroll` (mimicking the old behaviour of `Vertical`) https://github.com/Textualize/textual/issues/1957
+- Added `Widget.border_title` and `Widget.border_subtitle` to set border (sub)title for a widget https://github.com/Textualize/textual/issues/1864
+- Added CSS styles `border_title_align` and `border_subtitle_align`.
+- Added `TabbedContent` widget https://github.com/Textualize/textual/pull/2059
+- Added `get_child_by_type` method to widgets / app https://github.com/Textualize/textual/pull/2059
+- Added `Widget.render_str` method https://github.com/Textualize/textual/pull/2059
+- Added TEXTUAL_DRIVER environment variable
 
 ### Changed
 
@@ -16,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Tabs widget now sends Tabs.Cleared when there is no active tab.
 - Breaking change: changed default behaviour of `Vertical` (see `VerticalScroll`) https://github.com/Textualize/textual/issues/1957
 - The default `overflow` style for `Horizontal` was changed to `hidden hidden` https://github.com/Textualize/textual/issues/1957
+- `DirectoryTree` also accepts `pathlib.Path` objects as the path to list https://github.com/Textualize/textual/issues/1438
 
 ### Removed
 
@@ -25,18 +36,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed borders not rendering correctly. https://github.com/Textualize/textual/pull/2074
 - Fix for error when removing nodes. https://github.com/Textualize/textual/issues/2079
-
-### Added
-
-- Added `HorizontalScroll` https://github.com/Textualize/textual/issues/1957
-- Added `Center` https://github.com/Textualize/textual/issues/1957
-- Added `Middle` https://github.com/Textualize/textual/issues/1957
-- Added `VerticalScroll` (mimicking the old behaviour of `Vertical`) https://github.com/Textualize/textual/issues/1957
-- Added `TabbedContent` widget https://github.com/Textualize/textual/pull/2059
-- Added `get_child_by_type` method to widgets / app https://github.com/Textualize/textual/pull/2059
-- Added `Widget.render_str` method https://github.com/Textualize/textual/pull/2059
-- Added TEXTUAL_DRIVER environment variable
-
 
 ## [0.15.1] - 2023-03-14
 
@@ -630,6 +629,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.16.0]: https://github.com/Textualize/textual/compare/v0.15.1...v0.16.0
 [0.15.1]: https://github.com/Textualize/textual/compare/v0.15.0...v0.15.1
 [0.15.0]: https://github.com/Textualize/textual/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/Textualize/textual/compare/v0.13.0...v0.14.0

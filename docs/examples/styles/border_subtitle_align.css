@@ -1,0 +1,23 @@
+#label1 {
+    border: solid $secondary;
+    border-subtitle-align: left;
+}
+
+#label2 {
+    border: dashed $secondary;
+    border-subtitle-align: center;
+}
+
+#label3 {
+    border: tall $secondary;
+    border-subtitle-align: right;
+}
+
+Screen > Label {
+    width: 100%;
+    height: 5;
+    content-align: center middle;
+    color: white;
+    margin: 1;
+    box-sizing: border-box;
+}

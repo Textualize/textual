@@ -96,6 +96,9 @@ class RulesMap(TypedDict, total=False):
     border_bottom: tuple[str, Color]
     border_left: tuple[str, Color]
 
+    border_title_align: AlignHorizontal
+    border_subtitle_align: AlignHorizontal
+
     outline_top: tuple[str, Color]
     outline_right: tuple[str, Color]
     outline_bottom: tuple[str, Color]
@@ -234,6 +237,9 @@ class StylesBase(ABC):
     border_right = BoxProperty(Color(0, 255, 0))
     border_bottom = BoxProperty(Color(0, 255, 0))
     border_left = BoxProperty(Color(0, 255, 0))
+
+    border_title_align = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "left")
+    border_subtitle_align = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "right")
 
     outline = BorderProperty(layout=False)
     outline_top = BoxProperty(Color(0, 255, 0))
@@ -917,6 +923,11 @@ class Styles(StylesBase):
 
         if "text_align" in rules:
             append_declaration("text-align", self.text_align)
+
+        if "border_title_align" in rules:
+            append_declaration("border-title-align", self.border_title_align)
+        if "border_subtitle_align" in rules:
+            append_declaration("border-subtitle-align", self.border_subtitle_align)
 
         if "opacity" in rules:
             append_declaration("opacity", str(self.opacity))

@@ -812,6 +812,9 @@ class StylesBuilder:
     process_content_align_horizontal = process_align_horizontal
     process_content_align_vertical = process_align_vertical
 
+    process_border_title_align = process_align_horizontal
+    process_border_subtitle_align = process_align_horizontal
+
     def process_scrollbar_gutter(self, name: str, tokens: list[Token]) -> None:
         try:
             value = self._process_enum(name, tokens, VALID_SCROLLBAR_GUTTER)

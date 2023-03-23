@@ -257,6 +257,28 @@ There are many other border types. Run the following from the command prompt to 
 textual borders
 ```
 
+
+#### Title alignment
+
+Widgets have two attributes, `border_title` and `border_subtitle` which (if set) will be displayed within the border.
+The `border_title` attribute is displayed in the top border, and `border_subtitle` is displayed in the bottom border.
+
+There are two styles to set the alignment of these border labels, which may be set to "left", "right", or "center".
+
+ - [`border-title-align`](../styles/border_title_align.md) sets the alignment of the title, which defaults to "left".
+ - [`border-subtitle-align`](../styles/border_subtitle_align.md) sets the alignment of the subtitle, which defaults to "right".
+
+The following example sets both titles and changes the alignment of the title (top) to "center".
+
+```py hl_lines="22-24"
+--8<-- "docs/examples/guide/styles/border_title.py"
+```
+
+Note the addition of the titles and their alignments:
+
+```{.textual path="docs/examples/guide/styles/border_title.py"}
+```
+
 ### Outline
 
 [Outline](../styles/outline.md) is similar to border and is set in the same way. The difference is that outline will not change the size of the widget, and may overlap the content area. The following example sets an outline on a widget:

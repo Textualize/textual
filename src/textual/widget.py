@@ -232,6 +232,10 @@ class Widget(DOMNode):
     """Widget will highlight links automatically."""
     disabled = Reactive(False)
     """The disabled state of the widget. `True` if disabled, `False` if not."""
+    border_title = Reactive("")
+    """The one-line border title, which may contain markup to be parsed."""
+    border_subtitle = Reactive("")
+    """The one-line border subtitle, which may contain markup to be parsed."""
 
     hover_style: Reactive[Style] = Reactive(Style, repaint=False)
     highlight_link_id: Reactive[str] = Reactive("")
@@ -2389,6 +2393,20 @@ class Widget(DOMNode):
     def watch_disabled(self) -> None:
         """Update the styles of the widget and its children when disabled is toggled."""
         self._update_styles()
+
+    def validate_border_title(self, title: str) -> str:
+        """Ensure we only use a single line for the border title."""
+        if not title:
+            return title
+        first, *_ = title.splitlines()
+        return first
+
+    def validate_border_subtitle(self, subtitle: str) -> str:
+        """Ensure we only use a single line for the border subtitle."""
+        if not subtitle:
+            return subtitle
+        first, *_ = subtitle.splitlines()
+        return first
 
     def _size_updated(
         self, size: Size, virtual_size: Size, container_size: Size, layout: bool = True
