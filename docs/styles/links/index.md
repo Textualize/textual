@@ -5,7 +5,7 @@ There are a number of styles which influence the appearance of these links withi
 
 !!! note
 
-    These CSS rules only target Textual action links. Internet hyperlinks are not affected by these CSS rules.
+    These CSS rules only target Textual action links. Internet hyperlinks are not affected by these styles.
 
 | Property                                              | Description                                                       |
 |-------------------------------------------------------|-------------------------------------------------------------------|

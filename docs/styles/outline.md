@@ -1,6 +1,6 @@
 # Outline
 
-The `outline` rule enables the drawing of a box around the content of a widget, which means the outline is drawn _over_ the content area.
+The `outline` style enables the drawing of a box around the content of a widget, which means the outline is drawn _over_ the content area.
 
 !!! note
 
@@ -20,7 +20,7 @@ outline-left: [<a href="../../css_types/border">&lt;border&gt;</a>] [<a href="..
 The style `outline` accepts an optional [`<border>`](../../css_types/border) that sets the visual style of the widget outline and an optional [`<color>`](../../css_types/color) to set the color of the outline.
 
 Unlike the style [`border`](./border.md), the frame of the outline is drawn over the content area of the widget.
-This rule can be useful for temporary emphasis of the content of a widget, if you want to draw the user's attention to it.
+This rule can be useful to add temporary emphasis on the content of a widget, if you want to draw the user's attention to it.
 
 ## Border command
 
@@ -77,27 +77,7 @@ The next example shows a grid with all the available outline types.
 
 ### Borders and outlines
 
-The next example makes the difference between [`border`](./border.md) and [`outline`](./outline.md) clearer by having three labels side-by-side.
-They contain the same text, have the same width and height, and are styled exactly the same up to their `outline` and [`border`](./border.md) rules.
-
-This example also shows that a widget cannot contain both a `border` and an `outline`:
-
-=== "Output"
-
-    ```{.textual path="docs/examples/styles/outline_vs_border.py"}
-    ```
-
-=== "outline_vs_border.py"
-
-    ```python
-    --8<-- "docs/examples/styles/outline_vs_border.py"
-    ```
-
-=== "outline_vs_border.css"
-
-    ```sass hl_lines="5-7 9-11"
-    --8<-- "docs/examples/styles/outline_vs_border.css"
-    ```
+--8<-- "docs/snippets/border_vs_outline_example.md"
 
 ## CSS
 

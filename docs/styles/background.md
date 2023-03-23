@@ -1,6 +1,6 @@
 # Background
 
-The `background` rule sets the background color of a widget.
+The `background` style sets the background color of a widget.
 
 ## Syntax
 
@@ -8,7 +8,7 @@ The `background` rule sets the background color of a widget.
 background: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The style `background` needs a [`<color>`](../../css_types/color) followed by an optional [`<percentage>`](../../css_types/percentage) to specify the color transparency (clamped between `0%` and `100%`).
+The `background` style needs a [`<color>`](../../css_types/color) followed by an optional [`<percentage>`](../../css_types/percentage) to specify the color transparency (clamped between `0%` and `100%`).
 
 ## Examples
 
@@ -35,7 +35,7 @@ This example creates three widgets and applies a different background to each.
 
 ### Different transparency settings
 
-The next example creates ten widgets layed out side by side to show the effect of setting different percentages for the transparency of the background color.
+The next example creates ten widgets laid out side by side to show the effect of setting different percentages for the transparency of the background color.
 
 === "Output"
 

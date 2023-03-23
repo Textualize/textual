@@ -12,7 +12,7 @@ The `grid-columns` style allows to define the width of the columns of the grid.
 grid-columns: <a href="../../css_types/scalar">&lt;scalar&gt;</a>+;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The style `grid-columns` takes one or more [`<scalar>`](../../../css_types/scalar) that specify the length of the columns of the grid.
+The `grid-columns` style takes one or more [`<scalar>`](../../../css_types/scalar) that specify the length of the columns of the grid.
 
 If there are more columns in the grid than scalars specified in `grid-columns`, they are reused cyclically.
 If the number of [`<scalar>`](../../../css_types/scalar) is in excess, the excess is ignored.
@@ -22,7 +22,7 @@ If the number of [`<scalar>`](../../../css_types/scalar) is in excess, the exces
 The example below shows a grid with 10 labels laid out in a grid with 2 rows and 5 columns.
 
 We set `grid-columns: 1fr 16 2fr`.
-Because there are more rows than scalars in the style rule, the scalars will be reused:
+Because there are more rows than scalars in the style definition, the scalars will be reused:
 
  - columns 1 and 4 have width `1fr`;
  - columns 2 and 5 have width `16`; and

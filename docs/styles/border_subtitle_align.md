@@ -1,6 +1,6 @@
 # Border-subtitle-align
 
-The `border-subtitle-align` rule sets the horizontal alignment for the border subtitle.
+The `border-subtitle-align` style sets the horizontal alignment for the border subtitle.
 
 ## Syntax
 
@@ -8,7 +8,7 @@ The `border-subtitle-align` rule sets the horizontal alignment for the border su
 border-subtitle-align: <a href="../../css_types/horizontal">&lt;horizontal&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The style `border-subtitle-align` takes a [`<horizontal>`](../../css_types/horizontal) that determines where the border subtitle is aligned along the top edge of the border.
+The `border-subtitle-align` style takes a [`<horizontal>`](../../css_types/horizontal) that determines where the border subtitle is aligned along the top edge of the border.
 This means that the border corners are always visible.
 
 ### Default

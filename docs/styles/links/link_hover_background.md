@@ -1,6 +1,6 @@
 # Link-hover-background
 
-The `link-hover-background` sets the background color of the link when the mouse cursor is over the link.
+The `link-hover-background` style sets the background color of the link when the mouse cursor is over the link.
 
 !!! note
 

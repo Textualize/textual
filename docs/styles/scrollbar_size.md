@@ -1,6 +1,6 @@
 # Scrollbar-size
 
-The `scrollbar-size` rule defines the width of the scrollbars.
+The `scrollbar-size` style defines the width of the scrollbars.
 
 ## Syntax
 
@@ -12,7 +12,7 @@ scrollbar-size-horizontal: <a href="../../css_types/integer">&lt;integer&gt;</a>
 scrollbar-size-vertical: <a href="../../css_types/integer">&lt;integer&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The `scrollbar-size` rule takes two [`<integer>`](../css_types/integer.md) to set the horizontal and vertical scrollbar sizes, respectively.
+The `scrollbar-size` style takes two [`<integer>`](../css_types/integer.md) to set the horizontal and vertical scrollbar sizes, respectively.
 This customisable size is the width of the scrollbar, given that its length will always be 100% of the container.
 
 The scrollbar widths may also be set individually with `scrollbar-size-horizontal` and `scrollbar-size-vertical`.
@@ -76,7 +76,7 @@ scrollbar-size-vertical: 4;
 
 ## Python
 
-The rule `scrollbar-size` has no Python equivalent.
+The style `scrollbar-size` has no Python equivalent.
 The scrollbar sizes must be set independently:
 
 ```py

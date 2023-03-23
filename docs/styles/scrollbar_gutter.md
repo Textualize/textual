@@ -1,6 +1,6 @@
 # Scrollbar-gutter
 
-The `scrollbar-gutter` rule allows reserving space for a vertical scrollbar.
+The `scrollbar-gutter` style allows reserving space for a vertical scrollbar.
 
 ## Syntax
 

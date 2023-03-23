@@ -1,6 +1,6 @@
 # Margin
 
-The `margin` rule specifies spacing around a widget.
+The `margin` style specifies spacing around a widget.
 
 ## Syntax
 
@@ -30,7 +30,7 @@ The number of values given defines what edges get what margin:
     To remember the order of the edges affected by the rule `margin` when it has 4 values, think of a clock.
     Its hand starts at the top and the goes clockwise: top, right, bottom, left.
 
-Alternatively, margin can be set for each edge individually through the rules `margin-top`, `margin-right`, `margin-bottom`, and `margin-left`, respectively.
+Alternatively, margin can be set for each edge individually through the styles `margin-top`, `margin-right`, `margin-bottom`, and `margin-left`, respectively.
 
 ## Examples
 
@@ -96,9 +96,8 @@ margin-left: 4;
 
 ## Python
 
-In Python, you cannot set any of the individual `margin` rules `margin-top`, `margin-right`, `margin-bottom`, and `margin-left`.
-
-However, you _can_ set margin to a single integer, a tuple of 2 integers, or a tuple of 4 integers:
+Python does not provide the properties `margin-top`, `margin-right`, `margin-bottom`, and `margin-left`.
+However, you _can_ set the margin to a single integer, a tuple of 2 integers, or a tuple of 4 integers:
 
 ```python
 # Set margin of 1 around all edges

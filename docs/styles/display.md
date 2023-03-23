@@ -1,6 +1,6 @@
 # Display
 
-The `display` property defines whether a widget is displayed or not.
+The `display` style defines whether a widget is displayed or not.
 
 ## Syntax
 

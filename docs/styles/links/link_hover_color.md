@@ -1,6 +1,6 @@
 # Link-hover-color
 
-The `link-hover-color` sets the color of the link text when the mouse cursor is over the link.
+The `link-hover-color` style sets the color of the link text when the mouse cursor is over the link.
 
 !!! note
 

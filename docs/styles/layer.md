@@ -1,6 +1,6 @@
 # Layer
 
-The `layer` property defines the layer a widget belongs to.
+The `layer` style defines the layer a widget belongs to.
 
 ## Syntax
 
@@ -8,8 +8,8 @@ The `layer` property defines the layer a widget belongs to.
 layer: <a href="../../css_types/name">&lt;name&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The `layer` rule accepts a [`<name>`](../../css_types/name) that defines the layer this widget belongs to.
-This [`<name>`](../../css_types/name) must correspond to a [`<name>`](../../css_types/name) that has been defined in a [`layers`](./layers) rule by an ancestor of this widget.
+The `layer` style accepts a [`<name>`](../../css_types/name) that defines the layer this widget belongs to.
+This [`<name>`](../../css_types/name) must correspond to a [`<name>`](../../css_types/name) that has been defined in a [`layers`](./layers) style by an ancestor of this widget.
 
 More information on layers can be found in the [guide](../guide/layout.md#layers).
 

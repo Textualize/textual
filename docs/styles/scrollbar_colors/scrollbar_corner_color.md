@@ -1,6 +1,6 @@
 # Scrollbar-corner-color
 
-The `scrollbar-corner-color` sets the color of the gap between the horizontal and vertical scrollbars.
+The `scrollbar-corner-color` style sets the color of the gap between the horizontal and vertical scrollbars.
 
 ## Syntax
 
