@@ -402,9 +402,9 @@ class OptionList(ScrollView, can_focus=True):
         options = self.app.console.options.update_width(
             self.scrollable_content_region.width
         )
-        spans = self._spans
+        add_span = self._spans.append
         option_ids = self._option_ids
-        lines = self._lines
+        add_lines = self._lines.extend
 
         # Create a rule that can be used as a separator.
         separator = lines_from(Rule(style=""))[0]
@@ -423,7 +423,7 @@ class OptionList(ScrollView, can_focus=True):
                     for prompt_line in lines_from(content.prompt, options)
                 ]
                 # Record the span information for the option.
-                spans.append(OptionLineSpan(line, len(new_lines)))
+                add_span(OptionLineSpan(line, len(new_lines)))
                 if content.id is not None:
                     # The option has an ID set, create a mapping from that
                     # ID to the option so we can use it later.
@@ -438,12 +438,12 @@ class OptionList(ScrollView, can_focus=True):
                 # there were to be other non-option content for an option
                 # list it's in this if/else where we'd process it).
                 new_lines = [Line(separator)]
-            lines.extend(new_lines)
+            add_lines(new_lines)
             line += len(new_lines)
 
         # Now that we know how many lines make up the whole content of the
         # list, set the virtual size.
-        self.virtual_size = Size(self.scrollable_content_region.width, len(lines))
+        self.virtual_size = Size(self.scrollable_content_region.width, len(self._lines))
 
     def add(self, item: NewOptionListContent = None) -> Self:
         """Add a new option to the end of the option list.
