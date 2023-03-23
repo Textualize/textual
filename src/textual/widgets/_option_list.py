@@ -635,7 +635,8 @@ class OptionList(ScrollView, can_focus=True):
     def scroll_to_highlight(self) -> None:
         """Ensure that the highlighted option is in view."""
         highlighted = self.highlighted
-        assert highlighted is not None
+        if highlighted is None:
+            return
         span = self._spans[highlighted]
         self.scroll_to_region(
             Region(
