@@ -381,11 +381,18 @@ class OptionList(ScrollView, can_focus=True):
         # bit.
         self._option_ids.clear()
 
-    def _refresh_content_tracking(self) -> None:
-        """Refresh the various forms of option list content tracking."""
+    def _refresh_content_tracking(self, force: bool = False) -> None:
+        """Refresh the various forms of option list content tracking.
+
+        Args:
+            force: Optionally force the refresh.
+
+        Without a `force` the refresh will only take place if it has been
+        requested via `_refresh_content_tracking`.
+        """
 
         # If we don't need to refresh, don't bother.
-        if not self._needs_refresh_content_tracking:
+        if not self._needs_refresh_content_tracking and not force:
             return
 
         # If we don't know our own width yet, we can't sensibly work out the
@@ -460,7 +467,7 @@ class OptionList(ScrollView, can_focus=True):
         # If the content is a genuine option, add it to the list of options.
         if isinstance(content, Option):
             self._options.append(content)
-        self._refresh_content_tracking()
+        self._refresh_content_tracking(force=True)
         self.refresh()
         return self
 
