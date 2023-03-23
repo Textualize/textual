@@ -40,7 +40,7 @@ This example shows three labels, each with a different border subtitle alignment
     ```
 
 
-### All title and subtitle combinations
+### Complete usage reference
 
 --8<-- "docs/snippets/border_sub_title_align_all_example.md"
 
