@@ -647,7 +647,8 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             expanded=True,
         )
         self._updates += 1
-        return self.refresh()
+        self.refresh()
+        return self
 
     def reset(self, label: TextType, data: TreeDataType | None = None) -> Self:
         """Clear the tree and reset the root node.

@@ -1178,7 +1178,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.hover_coordinate = Coordinate(0, 0)
         self._label_column = Column(self._label_column_key, Text(), auto_width=True)
         self._labelled_row_exists = False
-        return self.refresh()
+        self.refresh()
+        return self
 
     def add_column(
         self, label: TextType, *, width: int | None = None, key: str | None = None
@@ -1348,7 +1349,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if not self.is_valid_coordinate(coordinate):
             return self
         region = self._get_cell_region(coordinate)
-        return self._refresh_region(region)
+        self._refresh_region(region)
+        return self
 
     def refresh_row(self, row_index: int) -> Self:
         """Refresh the row at the given index.
@@ -1363,7 +1365,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             return self
 
         region = self._get_row_region(row_index)
-        return self._refresh_region(region)
+        self._refresh_region(region)
+        return self
 
     def refresh_column(self, column_index: int) -> Self:
         """Refresh the column at the given index.
@@ -1378,7 +1381,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             return self
 
         region = self._get_column_region(column_index)
-        return self._refresh_region(region)
+        self._refresh_region(region)
+        return self
 
     def _refresh_region(self, region: Region) -> Self:
         """Refresh a region of the DataTable, if it's visible within the window.
@@ -1391,7 +1395,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if not self.window_region.overlaps(region):
             return self
         region = region.translate(-self.scroll_offset)
-        return self.refresh(region)
+        self.refresh(region)
+        return self
 
     def is_valid_row_index(self, row_index: int) -> bool:
         """Return a boolean indicating whether the row_index is within table bounds.
@@ -1880,7 +1885,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             {key: new_index for new_index, (key, _) in enumerate(ordered_rows)}
         )
         self._update_count += 1
-        return self.refresh()
+        self.refresh()
+        return self
 
     def _scroll_cursor_into_view(self, animate: bool = False) -> None:
         """When the cursor is at a boundary of the DataTable and moves out

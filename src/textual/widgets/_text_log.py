@@ -173,7 +173,8 @@ class TextLog(ScrollView, can_focus=True):
         self._start_line = 0
         self.max_width = 0
         self.virtual_size = Size(self.max_width, len(self.lines))
-        return self.refresh()
+        self.refresh()
+        return self
 
     def render_line(self, y: int) -> Strip:
         scroll_x, scroll_y = self.scroll_offset
