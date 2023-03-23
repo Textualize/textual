@@ -1,3 +1,3 @@
-from ._option_list import Option, Separator
+from ._option_list import DuplicateID, Option, Separator
 
-__all__ = ["Option", "Separator"]
+__all__ = ["DuplicateID", "Option", "Separator"]
