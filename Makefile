@@ -43,6 +43,11 @@ docs-serve: clean-screenshot-cache docs-online-nav
 	$(run) mkdocs serve --config-file mkdocs-nav-online.yml
 	rm -f mkdocs-nav-online.yml
 
+.PHONY: docs-serve-offline
+docs-serve-offline: clean-screenshot-cache docs-offline-nav
+	$(run) mkdocs serve --config-file mkdocs-nav-offline.yml
+	rm -f mkdocs-nav-offline.yml
+
 .PHONY: docs-build
 docs-build: docs-online-nav
 	$(run) mkdocs build --config-file mkdocs-nav-online.yml
