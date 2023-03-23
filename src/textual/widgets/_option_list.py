@@ -367,6 +367,9 @@ class OptionList(ScrollView, can_focus=True):
         """Clear down the content tracking information."""
         self._lines.clear()
         self._spans.clear()
+        # TODO: Having the option ID tracking be tied up with the main
+        # content tracking isn't necessary. Can possibly improve this a wee
+        # bit.
         self._option_ids.clear()
 
     def _refresh_content_tracking(self) -> None:
