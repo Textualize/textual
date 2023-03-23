@@ -143,7 +143,6 @@ class OptionList(ScrollView, can_focus=True):
     COMPONENT_CLASSES: ClassVar[set[str]] = {
         "option-list--option-highlighted",
         "option-list--option-highlighted-disabled",
-        "option-list--option-hover",
         "option-list--option-disabled",
         "option-list--separator",
     }
