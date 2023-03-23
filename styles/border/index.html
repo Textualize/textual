@@ -5823,7 +5823,7 @@
 
 
 <h1 id="border">Border<a class="headerlink" href="#border" title="Permanent link">&para;</a></h1>
-<p>The <code>border</code> rule enables the drawing of a box around a widget.</p>
+<p>The <code>border</code> style enables the drawing of a box around a widget.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Due to a Textual limitation, <a href="./"><code>border</code></a> and <a href="../outline/"><code>outline</code></a> cannot coexist in the same edge of a widget.</p>
@@ -5840,10 +5840,10 @@ border-left: [<a href="../../css_types/border">&lt;border&gt;</a>] [<a href="../
 </pre></div>
 <!-- Include this snippet when ending a code block that shows the syntax of a CSS rule. -->
 
-<p>The style <code>border</code> accepts an optional <a href="../../css_types/border"><code>&lt;border&gt;</code></a> that sets the visual style of the widget border, an optional <a href="../../css_types/color"><code>&lt;color&gt;</code></a> to set the color of the border, and an optional <a href="../../css_types/percentage"><code>&lt;percentage&gt;</code></a> to specify the color transparency.</p>
+<p>The <code>border</code> style accepts an optional <a href="../../css_types/border"><code>&lt;border&gt;</code></a> that sets the visual style of the widget border, an optional <a href="../../css_types/color"><code>&lt;color&gt;</code></a> to set the color of the border, and an optional <a href="../../css_types/percentage"><code>&lt;percentage&gt;</code></a> to specify the color transparency.</p>
 <p>Borders may also be set individually for the four edges of a widget with the <code>border-top</code>, <code>border-right</code>, <code>border-bottom</code> and <code>border-left</code> rules.</p>
 <h3 id="multiple-edge-rules">Multiple edge rules<a class="headerlink" href="#multiple-edge-rules" title="Permanent link">&para;</a></h3>
-<p>If multiple border rules target the same edge, the last rule that targets a specific edge is the one that is applied to that edge.
+<p>If multiple border styles target the same edge, the last style that targets a specific edge is the one that is applied to that edge.
 For example, consider the CSS below:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">Static</span><span class="w"> </span><span class="err">{</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="na">border-top</span><span class="o">:</span><span class="w"> </span><span class="no">dashed</span><span class="w"> </span><span class="ni">red</span><span class="err">;</span>
@@ -6338,8 +6338,8 @@ If <code>&lt;percentage&gt;</code> is not specified it defaults to <code>100%</c
 </div>
 </div>
 <h3 id="borders-and-outlines">Borders and outlines<a class="headerlink" href="#borders-and-outlines" title="Permanent link">&para;</a></h3>
-<p>The next example makes the difference between <a href="./"><code>border</code></a> and <a href="../outline/"><code>outline</code></a> clearer by having three labels side-by-side.
-They contain the same text, have the same width and height, and are styled exactly the same up to their <code>outline</code> and <a href="./"><code>border</code></a> rules.</p>
+<p>The next example makes the difference between <a href="/styles/border"><code>border</code></a> and <a href="/styles/outline"><code>outline</code></a> clearer by having three labels side-by-side.
+They contain the same text, have the same width and height, and are styled exactly the same up to their <a href="/styles/border"><code>border</code></a> and <a href="/styles/outline"><code>outline</code></a> styles.</p>
 <p>This example also shows that a widget cannot contain both a <code>border</code> and an <code>outline</code>:</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="3:3"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Output</label><label for="__tabbed_3_2">outline_vs_border.py</label><label for="__tabbed_3_3">outline_vs_border.css</label></div>
 <div class="tabbed-content">

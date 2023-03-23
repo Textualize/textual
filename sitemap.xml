@@ -641,6 +641,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://textual.textualize.io/snippets/border_vs_outline_example/</loc>
+         <lastmod>2023-03-23</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://textual.textualize.io/snippets/syntax_block_end/</loc>
          <lastmod>2023-03-23</lastmod>
          <changefreq>daily</changefreq>

@@ -5705,13 +5705,13 @@ grid-rows: <a href="../../css_types/scalar">&lt;scalar&gt;</a>+;
 </pre></div>
 <!-- Include this snippet when ending a code block that shows the syntax of a CSS rule. -->
 
-<p>The style <code>grid-rows</code> takes one or more <a href="../../../css_types/scalar"><code>&lt;scalar&gt;</code></a> that specify the length of the rows of the grid.</p>
+<p>The <code>grid-rows</code> style takes one or more <a href="../../../css_types/scalar"><code>&lt;scalar&gt;</code></a> that specify the length of the rows of the grid.</p>
 <p>If there are more rows in the grid than scalars specified in <code>grid-rows</code>, they are reused cyclically.
 If the number of <a href="../../../css_types/scalar"><code>&lt;scalar&gt;</code></a> is in excess, the excess is ignored.</p>
 <h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h2>
 <p>The example below shows a grid with 10 labels laid out in a grid with 5 rows and 2 columns.</p>
 <p>We set <code>grid-rows: 1fr 6 25%</code>.
-Because there are more rows than scalars in the style rule, the scalars will be reused:</p>
+Because there are more rows than scalars in the style definition, the scalars will be reused:</p>
 <ul>
 <li>rows 1 and 4 have height <code>1fr</code>;</li>
 <li>rows 2 and 5 have height <code>6</code>; and</li>

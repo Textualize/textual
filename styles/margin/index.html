@@ -5739,7 +5739,7 @@
 
 
 <h1 id="margin">Margin<a class="headerlink" href="#margin" title="Permanent link">&para;</a></h1>
-<p>The <code>margin</code> rule specifies spacing around a widget.</p>
+<p>The <code>margin</code> style specifies spacing around a widget.</p>
 <h2 id="syntax">Syntax<a class="headerlink" href="#syntax" title="Permanent link">&para;</a></h2>
 <!-- Include this snippet when starting a code block that shows the syntax of a CSS rule. -->
 <div class="highlight" style="padding: 0.25em 1.15em; background: var(--md-code-bg-color);"><pre>
@@ -5769,7 +5769,7 @@ The number of values given defines what edges get what margin:</p>
 <p>To remember the order of the edges affected by the rule <code>margin</code> when it has 4 values, think of a clock.
 Its hand starts at the top and the goes clockwise: top, right, bottom, left.</p>
 </div>
-<p>Alternatively, margin can be set for each edge individually through the rules <code>margin-top</code>, <code>margin-right</code>, <code>margin-bottom</code>, and <code>margin-left</code>, respectively.</p>
+<p>Alternatively, margin can be set for each edge individually through the styles <code>margin-top</code>, <code>margin-right</code>, <code>margin-bottom</code>, and <code>margin-left</code>, respectively.</p>
 <h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
 <h3 id="basic-usage">Basic usage<a class="headerlink" href="#basic-usage" title="Permanent link">&para;</a></h3>
 <p>In the example below we add a large margin to a label, which makes it move away from the top-left corner of the screen.</p>
@@ -6231,8 +6231,8 @@ In each cell, we have a placeholder that has its margins set in different ways.<
 <a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="na">margin-left</span><span class="o">:</span><span class="w"> </span><span class="mi">4</span><span class="err">;</span>
 </code></pre></div>
 <h2 id="python">Python<a class="headerlink" href="#python" title="Permanent link">&para;</a></h2>
-<p>In Python, you cannot set any of the individual <code>margin</code> rules <code>margin-top</code>, <code>margin-right</code>, <code>margin-bottom</code>, and <code>margin-left</code>.</p>
-<p>However, you <em>can</em> set margin to a single integer, a tuple of 2 integers, or a tuple of 4 integers:</p>
+<p>Python does not provide the properties <code>margin-top</code>, <code>margin-right</code>, <code>margin-bottom</code>, and <code>margin-left</code>.
+However, you <em>can</em> set the margin to a single integer, a tuple of 2 integers, or a tuple of 4 integers:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Set margin of 1 around all edges</span>
 <a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">widget</span><span class="o">.</span><span class="n">styles</span><span class="o">.</span><span class="n">margin</span> <span class="o">=</span> <span class="mi">1</span>
 <a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1"># Set margin of 2 on the top and bottom edges, and 4 on the left and right</span>
