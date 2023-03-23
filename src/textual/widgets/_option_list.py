@@ -263,9 +263,9 @@ class OptionList(ScrollView, can_focus=True):
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
-        # Used internally to track if we need to refresh the content
-        # tracking data. See on_idle.
+        # Internal refresh trackers. For things driven from on_idle.
         self._needs_refresh_content_tracking = False
+        self._needs_to_scroll_to_highlight = False
 
         self._contents: list[OptionListContent] = [
             self._make_content(item) for item in content
@@ -316,18 +316,27 @@ class OptionList(ScrollView, can_focus=True):
         # Be sure to have a look at validate_highlighted.
         self.highlighted = None
 
-    def _request_content_tracking_refresh(self) -> None:
+    def _request_content_tracking_refresh(
+        self, rescroll_to_highlight: bool = False
+    ) -> None:
         """Request that the content tracking information gets refreshed.
+
+        Args:
+            rescroll_to_highlight: Should the widget ensure the highlight is visible?
 
         Calling this method sets a flag to say the refresh should happen,
         and books the refresh call in for the next idle moment.
         """
         self._needs_refresh_content_tracking = True
+        self._needs_to_scroll_to_highlight = rescroll_to_highlight
         self.check_idle()
 
     def on_idle(self) -> None:
         """Perform content tracking data refresh when idle."""
         self._refresh_content_tracking()
+        if self._needs_to_scroll_to_highlight:
+            self._needs_to_scroll_to_highlight = False
+            self.scroll_to_highlight()
 
     def watch_show_vertical_scrollbar(self, old: bool, new: bool) -> None:
         """Handle the vertical scrollbar visibility status changing.
@@ -346,7 +355,7 @@ class OptionList(ScrollView, can_focus=True):
 
     def on_resize(self) -> None:
         """Refresh the layout of the renderables in the list when resized."""
-        self._request_content_tracking_refresh()
+        self._request_content_tracking_refresh(rescroll_to_highlight=True)
 
     def _make_content(self, content: NewOptionListContent) -> OptionListContent:
         """Convert a single item of content for the list into a content type.
