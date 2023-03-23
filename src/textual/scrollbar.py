@@ -112,10 +112,6 @@ class ScrollBarRender:
 
             thumb_size = window_size / step_size * len_bars
 
-            if thumb_size < len_bars:
-                virtual_size += step_size
-                step_size = virtual_size / size
-
             start = int(position / step_size * len_bars)
             end = start + max(len_bars, ceil(thumb_size))
 

@@ -2664,6 +2664,7 @@ class Widget(DOMNode):
         self._check_refresh()
 
     def _check_refresh(self) -> None:
+        """Check if a refresh was requested."""
         if self._parent is not None and not self._closing:
             try:
                 screen = self.screen
