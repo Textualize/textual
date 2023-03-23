@@ -16,8 +16,7 @@ class OptionListApp(App[None]):
 async def test_initial_highlight() -> None:
     """The highlight should start on the first item."""
     async with OptionListApp().run_test() as pilot:
-        option_list = pilot.app.query_one(OptionList)
-        assert option_list.highlighted == 0
+        assert pilot.app.query_one(OptionList).highlighted == 0
 
 
 async def test_cleared_highlight_is_none() -> None:
