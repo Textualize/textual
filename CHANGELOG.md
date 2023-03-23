@@ -27,6 +27,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - `TreeNode`: `expand`, `expand_all`, `collapse`, `collapse_all`, `toggle`, `toggle_all`
   - `Tree`: `clear`, `reset`
 
+### Added
+
+- Added auto_scroll attribute to TextLog
+- Added scroll_end switch to TextLog.write
 
 
 ## [0.16.0] - 2023-03-22

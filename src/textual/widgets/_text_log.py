@@ -38,6 +38,7 @@ class TextLog(ScrollView, can_focus=True):
     wrap: var[bool] = var(False)
     highlight: var[bool] = var(False)
     markup: var[bool] = var(False)
+    auto_scroll: var[bool] = var(True)
 
     def __init__(
         self,
@@ -47,6 +48,7 @@ class TextLog(ScrollView, can_focus=True):
         wrap: bool = False,
         highlight: bool = False,
         markup: bool = False,
+        auto_scroll: bool = True,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -60,6 +62,7 @@ class TextLog(ScrollView, can_focus=True):
             wrap: Enable word wrapping (default is off).
             highlight: Automatically highlight content.
             markup: Apply Rich console markup.
+            auto_scroll: Enable automatic scrolling to end.
             name: The name of the text log.
             id: The ID of the text log in the DOM.
             classes: The CSS classes of the text log.
@@ -81,6 +84,8 @@ class TextLog(ScrollView, can_focus=True):
         """Automatically highlight content."""
         self.markup = markup
         """Apply Rich console markup."""
+        self.auto_scroll = auto_scroll
+        """Automatically scroll to the end."""
         self.highlighter = ReprHighlighter()
 
     def notify_style_update(self) -> None:
@@ -92,6 +97,7 @@ class TextLog(ScrollView, can_focus=True):
         width: int | None = None,
         expand: bool = False,
         shrink: bool = True,
+        scroll_end: bool | None = None,
     ) -> Self:
         """Write text or a rich renderable.
 
@@ -100,10 +106,16 @@ class TextLog(ScrollView, can_focus=True):
             width: Width to render or ``None`` to use optimal width.
             expand: Enable expand to widget width, or ``False`` to use `width`.
             shrink: Enable shrinking of content to fit width.
+            scroll_end: Enable automatic scroll to end, or ``None`` to use `self.auto_scroll`.
 
         Returns:
             The `TextLog` instance.
         """
+
+        if scroll_end is None:
+            auto_scroll = self.auto_scroll
+        else:
+            auto_scroll = scroll_end
 
         renderable: RenderableType
         if not is_renderable(content):
@@ -158,7 +170,8 @@ class TextLog(ScrollView, can_focus=True):
             self.refresh()
             self.lines = self.lines[-self.max_lines :]
         self.virtual_size = Size(self.max_width, len(self.lines))
-        self.scroll_end(animate=False)
+        if auto_scroll:
+            self.scroll_end(animate=False)
 
         return self
 
