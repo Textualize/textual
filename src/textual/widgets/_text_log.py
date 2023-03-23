@@ -85,7 +85,7 @@ class TextLog(ScrollView, can_focus=True):
         self.markup = markup
         """Apply Rich console markup."""
         self.auto_scroll = auto_scroll
-        """Automatically scroll to the end."""
+        """Automatically scroll to the end on write."""
         self.highlighter = ReprHighlighter()
 
     def notify_style_update(self) -> None:
@@ -106,7 +106,7 @@ class TextLog(ScrollView, can_focus=True):
             width: Width to render or `None` to use optimal width.
             expand: Enable expand to widget width, or `False` to use `width`.
             shrink: Enable shrinking of content to fit width.
-            scroll_end: Enable automatic scroll to end, or ``None` to use `self.auto_scroll`.
+            scroll_end: Enable automatic scroll to end, or `None` to use `self.auto_scroll`.
 
         Returns:
             The `TextLog` instance.
