@@ -520,9 +520,11 @@ class OptionList(ScrollView, can_focus=True):
             A `Strip` instance for the caller to render.
         """
 
+        scroll_x, scroll_y = self.scroll_offset
+
         # First off, work out which line we're working on, based off the
         # current scroll offset plus the line we're being asked to render.
-        line_number = self.scroll_offset.y + y
+        line_number = scroll_y + y
         try:
             line = self._lines[line_number]
         except IndexError:
@@ -540,6 +542,10 @@ class OptionList(ScrollView, can_focus=True):
             return strip.apply_style(
                 self.get_component_rich_style("option-list--separator")
             )
+
+        # At this point we know we're drawing actual content. To allow for
+        # horizontal scrolling, let's crop the strip at the right locations.
+        strip = strip.crop(scroll_x, scroll_x + self.size.width)
 
         # If the option we're drawing is disabled, exit with an option style.
         if self._options[line.option_index].disabled:
