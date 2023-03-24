@@ -166,4 +166,4 @@ class Timer:
                 count=count,
                 callback=self._callback,
             )
-            await self.target.post_message(event)
+            self.target.post_message(event)
