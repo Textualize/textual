@@ -330,12 +330,7 @@ class ScrollBar(Widget):
             x: float | None = None
             y: float | None = None
             if self.vertical:
-                size = self.size.height
                 virtual_size = self.window_virtual_size
-                # step_size = virtual_size / size
-                # thumb_size = self.window_size / step_size
-                # if thumb_size < 1:
-                #     virtual_size = ceil(virtual_size + step_size)
                 y = round(
                     self.grabbed_position
                     + (
@@ -344,12 +339,7 @@ class ScrollBar(Widget):
                     )
                 )
             else:
-                size = self.size.width
                 virtual_size = self.window_virtual_size
-                # step_size = virtual_size / size
-                # thumb_size = self.window_size / step_size
-                # if thumb_size < 1:
-                #     virtual_size = ceil(virtual_size + step_size)
                 x = round(
                     self.grabbed_position
                     + (

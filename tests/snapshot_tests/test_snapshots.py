@@ -337,4 +337,6 @@ def test_tabs_invalidate(snap_compare):
 
 
 def test_scrollbar_thumb_height(snap_compare):
-    assert snap_compare(SNAPSHOT_APPS_DIR / "scrollbar_thumb_height.py")
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "scrollbar_thumb_height.py",
+    )
