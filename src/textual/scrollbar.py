@@ -108,16 +108,14 @@ class ScrollBarRender:
 
         foreground_meta = {"@mouse.up": "release", "@mouse.down": "grab"}
         if window_size and size and virtual_size and size != virtual_size:
-            step_size = virtual_size / size
+            bar_ratio = virtual_size / size
+            thumb_size = int(max(1, window_size / bar_ratio))
 
-            thumb_size = window_size / step_size * len_bars
+            position_ratio = position / (virtual_size - window_size)
+            position = (size - thumb_size) * position_ratio
 
-            if thumb_size < len_bars:
-                virtual_size += step_size
-                step_size = virtual_size / size
-
-            start = int(position / step_size * len_bars)
-            end = start + max(len_bars, ceil(thumb_size))
+            start = int(position * len_bars)
+            end = int((position + thumb_size) * len_bars)
 
             start_index, start_bar = divmod(max(0, start), len_bars)
             end_index, end_bar = divmod(max(0, end), len_bars)
@@ -334,10 +332,10 @@ class ScrollBar(Widget):
             if self.vertical:
                 size = self.size.height
                 virtual_size = self.window_virtual_size
-                step_size = virtual_size / size
-                thumb_size = self.window_size / step_size
-                if thumb_size < 1:
-                    virtual_size = ceil(virtual_size + step_size)
+                # step_size = virtual_size / size
+                # thumb_size = self.window_size / step_size
+                # if thumb_size < 1:
+                #     virtual_size = ceil(virtual_size + step_size)
                 y = round(
                     self.grabbed_position
                     + (
@@ -348,10 +346,10 @@ class ScrollBar(Widget):
             else:
                 size = self.size.width
                 virtual_size = self.window_virtual_size
-                step_size = virtual_size / size
-                thumb_size = self.window_size / step_size
-                if thumb_size < 1:
-                    virtual_size = ceil(virtual_size + step_size)
+                # step_size = virtual_size / size
+                # thumb_size = self.window_size / step_size
+                # if thumb_size < 1:
+                #     virtual_size = ceil(virtual_size + step_size)
                 x = round(
                     self.grabbed_position
                     + (
