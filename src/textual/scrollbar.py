@@ -109,13 +109,13 @@ class ScrollBarRender:
         foreground_meta = {"@mouse.up": "release", "@mouse.down": "grab"}
         if window_size and size and virtual_size and size != virtual_size:
             bar_ratio = virtual_size / size
-            thumb_size = int(max(1, window_size / bar_ratio))
+            thumb_size = max(1, window_size / bar_ratio)
 
             position_ratio = position / (virtual_size - window_size)
             position = (size - thumb_size) * position_ratio
 
             start = int(position * len_bars)
-            end = int((position + thumb_size) * len_bars)
+            end = start + ceil(thumb_size * len_bars)
 
             start_index, start_bar = divmod(max(0, start), len_bars)
             end_index, end_bar = divmod(max(0, end), len_bars)
