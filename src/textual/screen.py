@@ -85,7 +85,7 @@ class Screen(Widget):
         background = self.styles.background
 
         try:
-            base_screen = visible_screen_stack.get().pop(0)
+            base_screen = visible_screen_stack.get().pop()
         except (LookupError, IndexError):
             base_screen = None
 

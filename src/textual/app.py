@@ -658,7 +658,7 @@ class App(Generic[ReturnType], DOMNode):
             screens.append(screen)
             if screen.styles.background.a == 1:
                 break
-        return screens
+        return screens[::-1]
 
     @property
     def size(self) -> Size:
