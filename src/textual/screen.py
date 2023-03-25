@@ -86,7 +86,7 @@ class Screen(Widget):
 
         try:
             base_screen = visible_screen_stack.get().pop(0)
-        except IndexError:
+        except (LookupError, IndexError):
             base_screen = None
 
         if base_screen is not None and 1 > background.a > 0:
