@@ -9,6 +9,7 @@ from rich.style import Style
 from . import errors, events, messages
 from ._callback import invoke
 from ._compositor import Compositor, MapGeometry
+from ._context import visible_screen_stack
 from ._types import CallbackType
 from .css.match import match
 from .css.parse import parse_selectors
@@ -56,7 +57,6 @@ class Screen(Widget):
         self._dirty_widgets: set[Widget] = set()
         self._update_timer: Timer | None = None
         self._callbacks: list[CallbackType] = []
-        self._max_idle = UPDATE_PERIOD
 
     @property
     def is_transparent(self) -> bool:
@@ -84,18 +84,14 @@ class Screen(Widget):
     def render(self) -> RenderableType:
         background = self.styles.background
 
-        self.app._base_screen_offset += 1
         try:
-            try:
-                base_screen = self.app.visible_screens[self.app._base_screen_offset]
-            except IndexError:
-                base_screen = None
+            base_screen = visible_screen_stack.get().pop(0)
+        except IndexError:
+            base_screen = None
 
-            if base_screen is not None and 1 > background.a > 0:
-                full_render = base_screen._compositor
-                return Tint(full_render, background)
-        finally:
-            self.app._base_screen_offset -= 1
+        if base_screen is not None and 1 > background.a > 0:
+            full_render = base_screen._compositor
+            return Tint(full_render, background)
 
         # background = self.styles.background
         if background.is_transparent:
@@ -391,12 +387,16 @@ class Screen(Widget):
     def _on_timer_update(self) -> None:
         """Called by the _update_timer."""
         # Render widgets together
-        if self._dirty_widgets:
+        if self.is_current and self._dirty_widgets:
             self._compositor.update_widgets(self._dirty_widgets)
             if self.is_current:
-                self.app._display(self, self._compositor.render_update())
-            else:
-                self.app.screen.refresh()
+                self.app._display(
+                    self,
+                    self._compositor.render_update(
+                        screen_stack=self.app.background_screens
+                    ),
+                )
+
             self._dirty_widgets.clear()
         if self._callbacks:
             self.post_message(events.InvokeCallbacks())
@@ -411,7 +411,9 @@ class Screen(Widget):
         """If there are scheduled callbacks to run, call them and clear
         the callback queue."""
         if self._callbacks:
-            display_update = self._compositor.render_update()
+            display_update = self._compositor.render_update(
+                screen_stack=self.app.background_screens
+            )
             self.app._display(self, display_update)
             callbacks = self._callbacks[:]
             self._callbacks.clear()
@@ -494,8 +496,12 @@ class Screen(Widget):
         except Exception as error:
             self.app._handle_exception(error)
             return
-        display_update = self._compositor.render_update(full=full)
-        self.app._display(self, display_update)
+        if self.is_current:
+            display_update = self._compositor.render_update(
+                full=full, screen_stack=self.app.background_screens
+            )
+            self.app._display(self, display_update)
+
         if not self.app._dom_ready:
             self.app.post_message(events.Ready())
             self.app._dom_ready = True
@@ -523,12 +529,13 @@ class Screen(Widget):
     def _screen_resized(self, size: Size):
         """Called by App when the screen is resized."""
         self._refresh_layout(size, full=True)
+        self.refresh()
 
     def _on_screen_resume(self) -> None:
         """Called by the App"""
         size = self.app.size
-        self.refresh()
         self._refresh_layout(size, full=True)
+        self.refresh()
 
     async def _on_resize(self, event: events.Resize) -> None:
         event.stop()

@@ -7,6 +7,7 @@ if TYPE_CHECKING:
     from .app import App
     from .message import Message
     from .message_pump import MessagePump
+    from .screen import Screen
 
 
 class NoActiveAppError(RuntimeError):
@@ -18,3 +19,4 @@ active_message_pump: ContextVar["MessagePump"] = ContextVar("active_message_pump
 prevent_message_types_stack: ContextVar[list[set[type[Message]]]] = ContextVar(
     "prevent_message_types_stack"
 )
+visible_screen_stack: ContextVar[list[Screen]] = ContextVar("visible_screen_stack")

@@ -24,6 +24,7 @@ from rich.style import Style
 
 from . import errors
 from ._cells import cell_len
+from ._context import visible_screen_stack
 from ._loop import loop_last
 from .geometry import NULL_OFFSET, Offset, Region, Size
 from .strip import Strip, StripRenderable
@@ -31,6 +32,7 @@ from .strip import Strip, StripRenderable
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
 
+    from .screen import Screen
     from .widget import Widget
 
 
@@ -370,7 +372,7 @@ class Compositor:
             return {}
         if self._full_map_invalidated:
             self._full_map_invalidated = False
-            map, widgets = self._arrange_root(self.root, self.size, visible_only=False)
+            map, _widgets = self._arrange_root(self.root, self.size, visible_only=False)
             self._full_map = map
             self._visible_widgets = None
             self._visible_map = None
@@ -752,7 +754,7 @@ class Compositor:
         return self._cuts
 
     def _get_renders(
-        self, crop: Region | None = None
+        self, crop: Region | None = None, screen_stack_offset: int = 0
     ) -> Iterable[tuple[Region, Region, list[Strip]]]:
         """Get rendered widgets (lists of segments) in the composition.
 
@@ -800,7 +802,9 @@ class Compositor:
                     _Region(delta_x, delta_y, new_width, new_height)
                 )
 
-    def render_update(self, full: bool = False) -> RenderableType | None:
+    def render_update(
+        self, full: bool = False, screen_stack: list[Screen] | None = None
+    ) -> RenderableType | None:
         """Render an update renderable
 
         Args:
@@ -809,6 +813,7 @@ class Compositor:
         Returns:
             A renderable for the update, or `None` if no update was required.
         """
+        visible_screen_stack.set(screen_stack or [])
         screen_region = self.size.region
         if full:
             return self.render_full_update()
@@ -850,19 +855,20 @@ class Compositor:
         chop_ends = [cut_set[1:] for cut_set in self.cuts]
         return ChopsUpdate(chops, spans, chop_ends)
 
-    def render_strips(self, stack_offset: int = 0) -> list[Strip]:
+    def render_strips(self) -> list[Strip]:
         """Render to a list of strips.
 
         Returns:
             A list of strips with the screen content.
         """
-
         chops = self._render_chops(self.size.region, lambda y: True)
         render_strips = [Strip.join(chop.values()) for chop in chops]
         return render_strips
 
     def _render_chops(
-        self, crop: Region, is_rendered_line: Callable[[int], bool]
+        self,
+        crop: Region,
+        is_rendered_line: Callable[[int], bool],
     ) -> list[dict[int, Strip | None]]:
         """Render update 'chops'
 

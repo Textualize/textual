@@ -328,7 +328,6 @@ class App(Generic[ReturnType], DOMNode):
         self.error_console = Console(markup=False, stderr=True)
         self.driver_class = driver_class or self.get_driver_class()
         self._screen_stack: list[Screen] = []
-        self._base_screen_offset = 0
         self._sync_available = False
 
         self.mouse_over: Widget | None = None
@@ -652,20 +651,14 @@ class App(Generic[ReturnType], DOMNode):
             raise ScreenStackError("No screens on stack") from None
 
     @property
-    def visible_screens(self) -> list[Screen]:
+    def background_screens(self) -> list[Screen]:
         """Top of stack and any screens that may be visible due to background opacity."""
         screens: list[Screen] = []
-        for screen in reversed(self._screen_stack):
+        for screen in reversed(self._screen_stack[:-1]):
             screens.append(screen)
             if screen.styles.background.a == 1:
                 break
         return screens
-
-    @property
-    def base_screen(self) -> Screen | None:
-        if len(self._screen_stack) < 2:
-            return None
-        return self._screen_stack[-2]
 
     @property
     def size(self) -> Size:
@@ -1338,6 +1331,10 @@ class App(Generic[ReturnType], DOMNode):
             screen: A Screen instance or the name of an installed screen.
 
         """
+        if not isinstance(screen, (Screen, str)):
+            raise TypeError(
+                f"push_screen requires a Screen instance or str; not {screen!r}"
+            )
         next_screen, await_mount = self._get_screen(screen)
         self._screen_stack.append(next_screen)
         self.screen.post_message(events.ScreenResume())
@@ -1351,6 +1348,10 @@ class App(Generic[ReturnType], DOMNode):
             screen: Either a Screen object or screen name (the `name` argument when installed).
 
         """
+        if not isinstance(screen, (Screen, str)):
+            raise TypeError(
+                f"switch_screen requires a Screen instance or str; not {screen!r}"
+            )
         if self.screen is not screen:
             self._replace_screen(self._screen_stack.pop())
             next_screen, await_mount = self._get_screen(screen)
@@ -2143,7 +2144,8 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _on_resize(self, event: events.Resize) -> None:
         event.stop()
-        for screen in self.visible_screens:
+        self.screen.post_message(event)
+        for screen in self.background_screens:
             screen.post_message(event)
 
     def _detach_from_dom(self, widgets: list[Widget]) -> list[Widget]:
