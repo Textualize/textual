@@ -16,6 +16,7 @@ from .css.query import QueryType
 from .geometry import Offset, Region, Size
 from .reactive import Reactive
 from .renderables.blank import Blank
+from .renderables.tint import Tint
 from .timer import Timer
 from .widget import Widget
 
@@ -82,6 +83,21 @@ class Screen(Widget):
 
     def render(self) -> RenderableType:
         background = self.styles.background
+
+        self.app._base_screen_offset += 1
+        try:
+            try:
+                base_screen = self.app.visible_screens[self.app._base_screen_offset]
+            except IndexError:
+                base_screen = None
+
+            if base_screen is not None and 1 > background.a > 0:
+                full_render = base_screen._compositor
+                return Tint(full_render, background)
+        finally:
+            self.app._base_screen_offset -= 1
+
+        # background = self.styles.background
         if background.is_transparent:
             return self.app.render()
         return Blank(background)
@@ -350,25 +366,24 @@ class Screen(Widget):
         # Check for any widgets marked as 'dirty' (needs a repaint)
         event.prevent_default()
 
-        if not self.app._batch_count and self.is_current:
+        if not self.app._batch_count:
             async with self.app._dom_lock:
-                if self.is_current:
-                    if self._layout_required:
-                        self._refresh_layout()
-                        self._layout_required = False
-                        self._scroll_required = False
-                        self._dirty_widgets.clear()
-                    elif self._scroll_required:
-                        self._refresh_layout(scroll=True)
-                        self._scroll_required = False
+                if self._layout_required:
+                    self._refresh_layout()
+                    self._layout_required = False
+                    self._scroll_required = False
+                    self._dirty_widgets.clear()
+                elif self._scroll_required:
+                    self._refresh_layout(scroll=True)
+                    self._scroll_required = False
 
-                    if self._repaint_required:
-                        self._dirty_widgets.clear()
-                        self._dirty_widgets.add(self)
-                        self._repaint_required = False
+                if self._repaint_required:
+                    self._dirty_widgets.clear()
+                    self._dirty_widgets.add(self)
+                    self._repaint_required = False
 
-                    if self._dirty_widgets:
-                        self.update_timer.resume()
+                if self._dirty_widgets:
+                    self.update_timer.resume()
 
         # The Screen is idle - a good opportunity to invoke the scheduled callbacks
         await self._invoke_and_clear_callbacks()
@@ -378,7 +393,10 @@ class Screen(Widget):
         # Render widgets together
         if self._dirty_widgets:
             self._compositor.update_widgets(self._dirty_widgets)
-            self.app._display(self, self._compositor.render())
+            if self.is_current:
+                self.app._display(self, self._compositor.render_update())
+            else:
+                self.app.screen.refresh()
             self._dirty_widgets.clear()
         if self._callbacks:
             self.post_message(events.InvokeCallbacks())
@@ -393,7 +411,7 @@ class Screen(Widget):
         """If there are scheduled callbacks to run, call them and clear
         the callback queue."""
         if self._callbacks:
-            display_update = self._compositor.render()
+            display_update = self._compositor.render_update()
             self.app._display(self, display_update)
             callbacks = self._callbacks[:]
             self._callbacks.clear()
@@ -417,7 +435,6 @@ class Screen(Widget):
         size = self.outer_size if size is None else size
         if not size:
             return
-
         self._compositor.update_widgets(self._dirty_widgets)
         self.update_timer.pause()
         ResizeEvent = events.Resize
@@ -477,7 +494,7 @@ class Screen(Widget):
         except Exception as error:
             self.app._handle_exception(error)
             return
-        display_update = self._compositor.render(full=full)
+        display_update = self._compositor.render_update(full=full)
         self.app._display(self, display_update)
         if not self.app._dom_ready:
             self.app.post_message(events.Ready())
@@ -510,6 +527,7 @@ class Screen(Widget):
     def _on_screen_resume(self) -> None:
         """Called by the App"""
         size = self.app.size
+        self.refresh()
         self._refresh_layout(size, full=True)
 
     async def _on_resize(self, event: events.Resize) -> None:

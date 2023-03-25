@@ -5,6 +5,7 @@ from typing import Iterable, Iterator
 
 import rich.repr
 from rich.cells import cell_len, set_cell_size
+from rich.console import Console, ConsoleOptions, RenderResult
 from rich.segment import Segment
 from rich.style import Style, StyleType
 
@@ -25,6 +26,21 @@ def get_line_length(segments: Iterable[Segment]) -> int:
     """
     _cell_len = cell_len
     return sum(_cell_len(text) for text, _, control in segments if not control)
+
+
+class StripRenderable:
+    """A renderable which renders a list of strips."""
+
+    def __init__(self, strips: list[Strip]) -> None:
+        self.strips = strips
+
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
+        new_line = Segment.line()
+        for strip in self.strips:
+            yield from strip
+            yield new_line
 
 
 @rich.repr.auto

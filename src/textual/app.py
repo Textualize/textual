@@ -328,6 +328,7 @@ class App(Generic[ReturnType], DOMNode):
         self.error_console = Console(markup=False, stderr=True)
         self.driver_class = driver_class or self.get_driver_class()
         self._screen_stack: list[Screen] = []
+        self._base_screen_offset = 0
         self._sync_available = False
 
         self.mouse_over: Widget | None = None
@@ -651,6 +652,22 @@ class App(Generic[ReturnType], DOMNode):
             raise ScreenStackError("No screens on stack") from None
 
     @property
+    def visible_screens(self) -> list[Screen]:
+        """Top of stack and any screens that may be visible due to background opacity."""
+        screens: list[Screen] = []
+        for screen in reversed(self._screen_stack):
+            screens.append(screen)
+            if screen.styles.background.a == 1:
+                break
+        return screens
+
+    @property
+    def base_screen(self) -> Screen | None:
+        if len(self._screen_stack) < 2:
+            return None
+        return self._screen_stack[-2]
+
+    @property
     def size(self) -> Size:
         """Size: The size of the terminal."""
         if self._driver is not None and self._driver._size is not None:
@@ -796,7 +813,7 @@ class App(Generic[ReturnType], DOMNode):
             record=True,
             legacy_windows=False,
         )
-        screen_render = self.screen._compositor.render(full=True)
+        screen_render = self.screen._compositor.render_update(full=True)
         console.print(screen_render)
         return console.export_svg(title=title or self.title)
 
@@ -2126,7 +2143,8 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _on_resize(self, event: events.Resize) -> None:
         event.stop()
-        self.screen.post_message(event)
+        for screen in self.visible_screens:
+            screen.post_message(event)
 
     def _detach_from_dom(self, widgets: list[Widget]) -> list[Widget]:
         """Detach a list of widgets from the DOM.

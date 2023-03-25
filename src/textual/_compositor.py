@@ -26,7 +26,7 @@ from . import errors
 from ._cells import cell_len
 from ._loop import loop_last
 from .geometry import NULL_OFFSET, Offset, Region, Size
-from .strip import Strip
+from .strip import Strip, StripRenderable
 
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
@@ -800,41 +800,80 @@ class Compositor:
                     _Region(delta_x, delta_y, new_width, new_height)
                 )
 
-    def render(self, full: bool = False) -> RenderableType | None:
-        """Render a layout.
+    def render_update(self, full: bool = False) -> RenderableType | None:
+        """Render an update renderable
+
+        Args:
+            full: Enable full update, or `False` for a partial update.
 
         Returns:
-            A renderable
+            A renderable for the update, or `None` if no update was required.
         """
-
-        width, height = self.size
-        screen_region = Region(0, 0, width, height)
-
+        screen_region = self.size.region
         if full:
-            update_regions: set[Region] = set()
+            return self.render_full_update()
         else:
-            update_regions = self._dirty_regions.copy()
-            if screen_region in update_regions:
-                # If one of the updates is the entire screen, then we only need one update
-                full = True
-        self._dirty_regions.clear()
+            if screen_region in self._dirty_regions:
+                return self.render_full_update()
+            return self.render_partial_update()
 
-        if full:
-            crop = screen_region
-            spans = []
-            is_rendered_line = lambda y: True
-        elif update_regions:
+    def render_full_update(self) -> LayoutUpdate:
+        """Render a full update.
+
+        Returns:
+            A LayoutUpdate renderable
+        """
+        screen_region = self.size.region
+        self._dirty_regions.clear()
+        crop = screen_region
+        chops = self._render_chops(crop, lambda y: True)
+        render_strips = [Strip.join(chop.values()) for chop in chops]
+        return LayoutUpdate(render_strips, screen_region)
+
+    def render_partial_update(self) -> ChopsUpdate | None:
+        """Render a partial update.
+
+        Returns:
+            A ChopsUpdate if there is anything to update, otherwise `None`.
+
+        """
+        screen_region = self.size.region
+        update_regions = self._dirty_regions.copy()
+        if update_regions:
             # Create a crop regions that surrounds all updates
             crop = Region.from_union(update_regions).intersection(screen_region)
             spans = list(self._regions_to_spans(update_regions))
             is_rendered_line = {y for y, _, _ in spans}.__contains__
         else:
             return None
+        chops = self._render_chops(crop, is_rendered_line)
+        chop_ends = [cut_set[1:] for cut_set in self.cuts]
+        return ChopsUpdate(chops, spans, chop_ends)
 
-        # Maps each cut on to a list of segments
+    def render_strips(self, stack_offset: int = 0) -> list[Strip]:
+        """Render to a list of strips.
+
+        Returns:
+            A list of strips with the screen content.
+        """
+
+        chops = self._render_chops(self.size.region, lambda y: True)
+        render_strips = [Strip.join(chop.values()) for chop in chops]
+        return render_strips
+
+    def _render_chops(
+        self, crop: Region, is_rendered_line: Callable[[int], bool]
+    ) -> list[dict[int, Strip | None]]:
+        """Render update 'chops'
+
+        Args:
+            crop: Region to crop to.
+            is_rendered_line: Callable to check if line should be rendered.
+
+        Returns:
+            Chops structure.
+        """
         cuts = self.cuts
-
-        # dict.fromkeys is a callable which takes a list of ints returns a dict which maps ints onto a Segment or None.
         fromkeys = cast("Callable[[list[int]], dict[int, Strip | None]]", dict.fromkeys)
         chops: list[dict[int, Strip | None]]
         chops = [fromkeys(cut_set[:-1]) for cut_set in cuts]
@@ -872,18 +911,10 @@ class Compositor:
                     if chops_line[cut] is None:
                         chops_line[cut] = strip
 
-        if full:
-            render_strips = [Strip.join(chop.values()) for chop in chops]
-            return LayoutUpdate(render_strips, screen_region)
-        else:
-            chop_ends = [cut_set[1:] for cut_set in cuts]
-            return ChopsUpdate(chops, spans, chop_ends)
+        return chops
 
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-        if self._dirty_regions:
-            yield self.render() or ""
+    def __rich__(self) -> StripRenderable:
+        return StripRenderable(self.render_strips())
 
     def update_widgets(self, widgets: set[Widget]) -> None:
         """Update a given widget in the composition.
