@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - `TextLog`: `write`, `clear`
   - `TreeNode`: `expand`, `expand_all`, `collapse`, `collapse_all`, `toggle`, `toggle_all`
   - `Tree`: `clear`, `reset`
+- Replaced some private attributes with public ones in the json tree example. https://github.com/Textualize/textual/pull/2138
 
 ### Added
 

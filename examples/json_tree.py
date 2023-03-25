@@ -43,24 +43,24 @@ class TreeApp(App):
                 data (object): Data associated with the node.
             """
             if isinstance(data, dict):
-                node._label = Text(f"{{}} {name}")
+                node.set_label(Text(f"{{}} {name}"))
                 for key, value in data.items():
                     new_node = node.add("")
                     add_node(key, new_node, value)
             elif isinstance(data, list):
-                node._label = Text(f"[] {name}")
+                node.set_label(Text(f"[] {name}"))
                 for index, value in enumerate(data):
                     new_node = node.add("")
                     add_node(str(index), new_node, value)
             else:
-                node._allow_expand = False
+                node.allow_expand = False
                 if name:
                     label = Text.assemble(
                         Text.from_markup(f"[b]{name}[/b]="), highlighter(repr(data))
                     )
                 else:
                     label = Text(repr(data))
-                node._label = label
+                node.set_label(label)
 
         add_node("JSON", node, json_data)
 
