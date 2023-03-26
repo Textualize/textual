@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterable
+from typing import TYPE_CHECKING, Iterable
 
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.segment import Segment
@@ -8,29 +8,32 @@ from rich.style import Style
 
 from ..color import Color
 
+if TYPE_CHECKING:
+    from ..screen import Screen
 
-class Tint:
+
+class BackgroundScreen:
     """Applies a color on top of an existing renderable."""
 
     def __init__(
         self,
-        renderable: RenderableType,
+        screen: Screen,
         color: Color,
     ) -> None:
-        """Wrap a renderable to apply a tint color.
+        """Tints a renderable and removes links / meta.
 
         Args:
             renderable: A renderable.
             color: A color (presumably with alpha).
         """
-        self.renderable = renderable
+        self.screen = screen
         self.color = color
 
     @classmethod
     def process_segments(
         cls, segments: Iterable[Segment], color: Color
     ) -> Iterable[Segment]:
-        """Apply tint to segments.
+        """Apply tint to segments and remove meta + styles
 
         Args:
             segments: Incoming segments.
@@ -50,7 +53,7 @@ class Tint:
             if control:
                 yield segment
             else:
-                style = style or NULL_STYLE
+                style = NULL_STYLE if style is None else style.reset()
                 yield _Segment(
                     text,
                     (
@@ -74,6 +77,6 @@ class Tint:
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
-        segments = console.render(self.renderable, options)
+        segments = console.render(self.screen._compositor, options)
         color = self.color
         return self.process_segments(segments, color)

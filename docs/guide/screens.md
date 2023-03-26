@@ -149,3 +149,8 @@ Screens can be used to implement modal dialogs. The following example pushes a s
     ```
 
 Note the `request_quit` action in the app which pushes a new instance of `QuitScreen`. This makes the quit screen active. if you click cancel, the quit screen calls `pop_screen` to return the default screen. This also removes and deletes the `QuitScreen` object.
+
+## Background opacity
+
+If a screen has a background color with an *alpha* component, then the background color will be blended with the screen below it.
+The scree

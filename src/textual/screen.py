@@ -16,8 +16,8 @@ from .css.parse import parse_selectors
 from .css.query import QueryType
 from .geometry import Offset, Region, Size
 from .reactive import Reactive
+from .renderables.background_screen import BackgroundScreen
 from .renderables.blank import Blank
-from .renderables.tint import Tint
 from .timer import Timer
 from .widget import Widget
 
@@ -90,8 +90,7 @@ class Screen(Widget):
             base_screen = None
 
         if base_screen is not None and 1 > background.a > 0:
-            full_render = base_screen._compositor
-            return Tint(full_render, background)
+            return BackgroundScreen(base_screen, background)
 
         if background.is_transparent:
             return self.app.render()
@@ -361,24 +360,25 @@ class Screen(Widget):
         # Check for any widgets marked as 'dirty' (needs a repaint)
         event.prevent_default()
 
-        if not self.app._batch_count:
+        if not self.app._batch_count and self.is_current:
             async with self.app._dom_lock:
-                if self._layout_required:
-                    self._refresh_layout()
-                    self._layout_required = False
-                    self._scroll_required = False
-                    self._dirty_widgets.clear()
-                elif self._scroll_required:
-                    self._refresh_layout(scroll=True)
-                    self._scroll_required = False
+                if self.is_current:
+                    if self._layout_required:
+                        self._refresh_layout()
+                        self._layout_required = False
+                        self._scroll_required = False
+                        self._dirty_widgets.clear()
+                    elif self._scroll_required:
+                        self._refresh_layout(scroll=True)
+                        self._scroll_required = False
 
-                if self._repaint_required:
-                    self._dirty_widgets.clear()
-                    self._dirty_widgets.add(self)
-                    self._repaint_required = False
+                    if self._repaint_required:
+                        self._dirty_widgets.clear()
+                        self._dirty_widgets.add(self)
+                        self._repaint_required = False
 
-                if self._dirty_widgets:
-                    self.update_timer.resume()
+                    if self._dirty_widgets:
+                        self.update_timer.resume()
 
         # The Screen is idle - a good opportunity to invoke the scheduled callbacks
         await self._invoke_and_clear_callbacks()

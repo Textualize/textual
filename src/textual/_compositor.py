@@ -754,9 +754,12 @@ class Compositor:
         return self._cuts
 
     def _get_renders(
-        self, crop: Region | None = None, screen_stack_offset: int = 0
+        self, crop: Region | None = None
     ) -> Iterable[tuple[Region, Region, list[Strip]]]:
         """Get rendered widgets (lists of segments) in the composition.
+
+        Args:
+            crop: Region to crop to, or `None` for entire screen.
 
         Returns:
             An iterable of <region>, <clip region>, and <strips>
