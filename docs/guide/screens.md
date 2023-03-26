@@ -153,4 +153,4 @@ Note the `request_quit` action in the app which pushes a new instance of `QuitSc
 ## Background opacity
 
 If a screen has a background color with an *alpha* component, then the background color will be blended with the screen below it.
-The scree
+Besides being visual interesting, this effect can make it clear to the user that they can return to the screen below.

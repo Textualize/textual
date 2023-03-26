@@ -1319,6 +1319,7 @@ class App(Generic[ReturnType], DOMNode):
             The screen that was replaced.
 
         """
+        self.screen.refresh()
         screen.post_message(events.ScreenSuspend())
         self.log.system(f"{screen} SUSPENDED")
         if not self.is_screen_installed(screen) and screen not in self._screen_stack:
@@ -1337,6 +1338,9 @@ class App(Generic[ReturnType], DOMNode):
             raise TypeError(
                 f"push_screen requires a Screen instance or str; not {screen!r}"
             )
+
+        self.screen.post_message(events.ScreenSuspend())
+        self.screen.refresh()
         next_screen, await_mount = self._get_screen(screen)
         self._screen_stack.append(next_screen)
         self.screen.post_message(events.ScreenResume())
@@ -1958,22 +1962,37 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def _binding_chain(self) -> list[tuple[DOMNode, Bindings]]:
-        """Get a chain of nodes and bindings to consider. If no widget is focused, returns the bindings from both the screen and the app level bindings. Otherwise, combines all the bindings from the currently focused node up the DOM to the root App.
+        """Get a chain of nodes and bindings to consider.
+        If no widget is focused, returns the bindings from both the screen and the app level bindings.
+        Otherwise, combines all the bindings from the currently focused node up the DOM to the root App.
 
         Returns:
             List of DOM nodes and their bindings.
         """
         focused = self.focused
         namespace_bindings: list[tuple[DOMNode, Bindings]]
+        screen = self.screen
+
         if focused is None:
-            namespace_bindings = [
-                (self.screen, self.screen._bindings),
-                (self, self._bindings),
-            ]
+            if screen.is_modal:
+                namespace_bindings = [
+                    (self.screen, self.screen._bindings),
+                ]
+            else:
+                namespace_bindings = [
+                    (self.screen, self.screen._bindings),
+                    (self, self._bindings),
+                ]
         else:
-            namespace_bindings = [
-                (node, node._bindings) for node in focused.ancestors_with_self
-            ]
+            if screen.is_modal:
+                namespace_bindings = [
+                    (node, node._bindings) for node in focused.ancestors_with_self
+                ]
+            else:
+                namespace_bindings = [
+                    (node, node._bindings) for node in focused.ancestors
+                ]
+
         return namespace_bindings
 
     async def check_bindings(self, key: str, priority: bool = False) -> bool:

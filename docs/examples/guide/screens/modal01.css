@@ -1,14 +1,24 @@
+QuitScreen {
+    align: center middle;
+}
+
 #dialog {
     grid-size: 2;
     grid-gutter: 1 2;
+    grid-rows: 1fr 3;
     padding: 1 2;
+    width: 50%;
+    min-width: 30;
+    height: 14;
+    border: thick $background 80%;
+    background: $surface;
 }
 
 #question {
     column-span: 2;
-    content-align: center bottom;
-    width: 100%;
-    height: 100%;
+    height: 1fr;
+    width: 1fr;
+    content-align: center middle;
 }
 
 Button {

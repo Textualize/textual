@@ -45,6 +45,9 @@ class Screen(Widget):
     """
 
     focused: Reactive[Widget | None] = Reactive(None)
+    """The focused widget or `None` for no focus."""
+    stack_updates: Reactive[int] = Reactive(0, repaint=False)
+    """An integer that updates when the screen is resumed."""
 
     def __init__(
         self,
@@ -52,11 +55,17 @@ class Screen(Widget):
         id: str | None = None,
         classes: str | None = None,
     ) -> None:
+        self._modal = False
         super().__init__(name=name, id=id, classes=classes)
         self._compositor = Compositor()
         self._dirty_widgets: set[Widget] = set()
         self._update_timer: Timer | None = None
         self._callbacks: list[CallbackType] = []
+
+    @property
+    def is_modal(self) -> bool:
+        """Is the screen modal?"""
+        return self._modal
 
     @property
     def is_transparent(self) -> bool:
@@ -531,10 +540,16 @@ class Screen(Widget):
         self.refresh()
 
     def _on_screen_resume(self) -> None:
-        """Called by the App"""
+        """Screen has resumed."""
+        self.stack_updates += 1
         size = self.app.size
         self._refresh_layout(size, full=True)
         self.refresh()
+
+    def _on_screen_suspend(self) -> None:
+        """Screen has suspended."""
+        self.app._set_mouse_over(None)
+        self.stack_updates += 1
 
     async def _on_resize(self, event: events.Resize) -> None:
         event.stop()
@@ -614,3 +629,29 @@ class Screen(Widget):
                     scroll_widget._forward_event(event)
         else:
             self.post_message(event)
+
+
+@rich.repr.auto
+class ModalScreen(Screen):
+    """A widget for the root of the app."""
+
+    # The screen is a special case and unless a class that inherits from us
+    # says otherwise, all screen-level bindings should be treated as having
+    # priority.
+
+    DEFAULT_CSS = """
+    ModalScreen {
+        layout: vertical;
+        overflow-y: auto;
+        background: $primary-darken-3 60%;
+    }
+    """
+
+    def __init__(
+        self,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+    ) -> None:
+        super().__init__(name=name, id=id, classes=classes)
+        self._modal = True

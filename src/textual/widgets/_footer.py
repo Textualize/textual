@@ -66,9 +66,10 @@ class Footer(Widget):
         self.refresh()
 
     def on_mount(self) -> None:
-        self.watch(self.screen, "focused", self._focus_changed)
+        self.watch(self.screen, "focused", self._bindings_changed)
+        self.watch(self.screen, "stack_updates", self._bindings_changed)
 
-    def _focus_changed(self, focused: Widget | None) -> None:
+    def _bindings_changed(self, focused: Widget | None) -> None:
         self._key_text = None
         self.refresh()
 
@@ -78,7 +79,8 @@ class Footer(Widget):
 
     async def on_leave(self, event: events.Leave) -> None:
         """Clear any highlight when the mouse leaves the widget"""
-        self.highlight_key = None
+        if self.screen.is_current:
+            self.highlight_key = None
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield from super().__rich_repr__()
