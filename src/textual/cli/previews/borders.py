@@ -63,7 +63,6 @@ class BorderApp(App):
             event.button.id,
             self.stylesheet._variables["secondary"],
         )
-        self.bell()
 
 
 app = BorderApp()
