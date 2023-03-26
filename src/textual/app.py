@@ -1319,7 +1319,8 @@ class App(Generic[ReturnType], DOMNode):
             The screen that was replaced.
 
         """
-        self.screen.refresh()
+        if self._screen_stack:
+            self.screen.refresh()
         screen.post_message(events.ScreenSuspend())
         self.log.system(f"{screen} SUSPENDED")
         if not self.is_screen_installed(screen) and screen not in self._screen_stack:
@@ -1339,8 +1340,9 @@ class App(Generic[ReturnType], DOMNode):
                 f"push_screen requires a Screen instance or str; not {screen!r}"
             )
 
-        self.screen.post_message(events.ScreenSuspend())
-        self.screen.refresh()
+        if self._screen_stack:
+            self.screen.post_message(events.ScreenSuspend())
+            self.screen.refresh()
         next_screen, await_mount = self._get_screen(screen)
         self._screen_stack.append(next_screen)
         self.screen.post_message(events.ScreenResume())
@@ -1986,11 +1988,11 @@ class App(Generic[ReturnType], DOMNode):
         else:
             if screen.is_modal:
                 namespace_bindings = [
-                    (node, node._bindings) for node in focused.ancestors_with_self
+                    (node, node._bindings) for node in focused.ancestors
                 ]
             else:
                 namespace_bindings = [
-                    (node, node._bindings) for node in focused.ancestors
+                    (node, node._bindings) for node in focused.ancestors_with_self
                 ]
 
         return namespace_bindings
