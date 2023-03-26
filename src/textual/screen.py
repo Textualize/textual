@@ -93,7 +93,6 @@ class Screen(Widget):
             full_render = base_screen._compositor
             return Tint(full_render, background)
 
-        # background = self.styles.background
         if background.is_transparent:
             return self.app.render()
         return Blank(background)

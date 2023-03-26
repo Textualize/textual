@@ -1698,7 +1698,7 @@ class App(Generic[ReturnType], DOMNode):
             widgets = compose(self)
         except TypeError as error:
             raise TypeError(
-                f"{self!r} compose() returned an invalid response; {error}"
+                f"{self!r} compose() method returned an invalid result; {error}"
             ) from error
 
         await self.mount_all(widgets)

@@ -291,6 +291,12 @@ class Widget(DOMNode):
         if self in children:
             raise WidgetError("A widget can't be its own parent")
 
+        for child in children:
+            if not isinstance(child, Widget):
+                raise TypeError(
+                    f"Widget positional arguments must be Widget subclasses; not {child!r}"
+                )
+
         self._add_children(*children)
         self.disabled = disabled
 
@@ -376,7 +382,7 @@ class Widget(DOMNode):
         return self.styles.offset.resolve(self.size, self.app.size)
 
     @offset.setter
-    def offset(self, offset: Offset) -> None:
+    def offset(self, offset: tuple[int, int]) -> None:
         self.styles.offset = ScalarOffset.from_offset(offset)
 
     def __enter__(self) -> Self:
@@ -2272,7 +2278,6 @@ class Widget(DOMNode):
             Tuples of scrollbar Widget and region.
 
         """
-
         show_vertical_scrollbar, show_horizontal_scrollbar = self.scrollbars_enabled
 
         scrollbar_size_horizontal = self.scrollbar_size_horizontal
@@ -2779,7 +2784,7 @@ class Widget(DOMNode):
             widgets = compose(self)
         except TypeError as error:
             raise TypeError(
-                f"{self!r} compose() returned an invalid response; {error}"
+                f"{self!r} compose() method returned an invalid result; {error}"
             ) from error
         except Exception:
             self.app.panic(Traceback())

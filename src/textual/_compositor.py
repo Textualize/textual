@@ -545,7 +545,7 @@ class Compositor:
                             container_region
                         ):
                             map[chrome_widget] = _MapGeometry(
-                                chrome_region + layout_offset,
+                                chrome_region,
                                 order,
                                 clip,
                                 container_size,
