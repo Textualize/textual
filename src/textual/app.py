@@ -806,7 +806,9 @@ class App(Generic[ReturnType], DOMNode):
             record=True,
             legacy_windows=False,
         )
-        screen_render = self.screen._compositor.render_update(full=True)
+        screen_render = self.screen._compositor.render_update(
+            full=True, screen_stack=self.app.background_screens
+        )
         console.print(screen_render)
         return console.export_svg(title=title or self.title)
 
