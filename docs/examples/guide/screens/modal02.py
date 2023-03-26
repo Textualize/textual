@@ -13,7 +13,7 @@ Where the fear has gone there will be nothing. Only I will remain."""
 
 
 class QuitScreen(ModalScreen):
-    """Modal screen with dialog."""
+    """Screen with a dialog to quit."""
 
     def compose(self) -> ComposeResult:
         yield Grid(
@@ -31,7 +31,9 @@ class QuitScreen(ModalScreen):
 
 
 class ModalApp(App):
-    CSS_PATH = "modal02.css"
+    """A app with a modal dialog."""
+
+    CSS_PATH = "modal01.css"
     BINDINGS = [("q", "request_quit", "Quit")]
 
     def compose(self) -> ComposeResult:

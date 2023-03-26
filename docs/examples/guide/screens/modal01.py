@@ -1,6 +1,6 @@
 from textual.app import App, ComposeResult
 from textual.containers import Grid
-from textual.screen import ModalScreen
+from textual.screen import Screen
 from textual.widgets import Button, Footer, Header, Label
 
 TEXT = """I must not fear.
@@ -12,7 +12,9 @@ And when it has gone past, I will turn the inner eye to see its path.
 Where the fear has gone there will be nothing. Only I will remain."""
 
 
-class QuitScreen(ModalScreen):
+class QuitScreen(Screen):
+    """Screen with a dialog to quit."""
+
     def compose(self) -> ComposeResult:
         yield Grid(
             Label("Are you sure you want to quit?", id="question"),
@@ -29,6 +31,8 @@ class QuitScreen(ModalScreen):
 
 
 class ModalApp(App):
+    """A app with a modal dialog."""
+
     CSS_PATH = "modal01.css"
     BINDINGS = [("q", "request_quit", "Quit")]
 

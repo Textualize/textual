@@ -633,17 +633,13 @@ class Screen(Widget):
 
 @rich.repr.auto
 class ModalScreen(Screen):
-    """A widget for the root of the app."""
-
-    # The screen is a special case and unless a class that inherits from us
-    # says otherwise, all screen-level bindings should be treated as having
-    # priority.
+    """A screen with bindings that take precedence over the App's key bindings."""
 
     DEFAULT_CSS = """
     ModalScreen {
         layout: vertical;
         overflow-y: auto;
-        background: $primary-darken-3 60%;
+        background: $background 60%;
     }
     """
 
