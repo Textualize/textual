@@ -651,6 +651,17 @@ class App(Generic[ReturnType], DOMNode):
             raise ScreenStackError("No screens on stack") from None
 
     @property
+    def _background_screens(self) -> list[Screen]:
+        """A list of screens that may be visible due to background opacity (top-most first, not including current screen)."""
+        screens: list[Screen] = []
+        for screen in reversed(self._screen_stack[:-1]):
+            screens.append(screen)
+            if screen.styles.background.a == 1:
+                break
+        background_screens = screens[::-1]
+        return background_screens
+
+    @property
     def size(self) -> Size:
         """Size: The size of the terminal."""
         if self._driver is not None and self._driver._size is not None:
@@ -796,7 +807,9 @@ class App(Generic[ReturnType], DOMNode):
             record=True,
             legacy_windows=False,
         )
-        screen_render = self.screen._compositor.render(full=True)
+        screen_render = self.screen._compositor.render_update(
+            full=True, screen_stack=self.app._background_screens
+        )
         console.print(screen_render)
         return console.export_svg(title=title or self.title)
 
@@ -1307,6 +1320,8 @@ class App(Generic[ReturnType], DOMNode):
             The screen that was replaced.
 
         """
+        if self._screen_stack:
+            self.screen.refresh()
         screen.post_message(events.ScreenSuspend())
         self.log.system(f"{screen} SUSPENDED")
         if not self.is_screen_installed(screen) and screen not in self._screen_stack:
@@ -1321,9 +1336,17 @@ class App(Generic[ReturnType], DOMNode):
             screen: A Screen instance or the name of an installed screen.
 
         """
+        if not isinstance(screen, (Screen, str)):
+            raise TypeError(
+                f"push_screen requires a Screen instance or str; not {screen!r}"
+            )
+
+        if self._screen_stack:
+            self.screen.post_message(events.ScreenSuspend())
+            self.screen.refresh()
         next_screen, await_mount = self._get_screen(screen)
         self._screen_stack.append(next_screen)
-        self.screen.post_message(events.ScreenResume())
+        next_screen.post_message(events.ScreenResume())
         self.log.system(f"{self.screen} is current (PUSHED)")
         return await_mount
 
@@ -1334,6 +1357,10 @@ class App(Generic[ReturnType], DOMNode):
             screen: Either a Screen object or screen name (the `name` argument when installed).
 
         """
+        if not isinstance(screen, (Screen, str)):
+            raise TypeError(
+                f"switch_screen requires a Screen instance or str; not {screen!r}"
+            )
         if self.screen is not screen:
             self._replace_screen(self._screen_stack.pop())
             next_screen, await_mount = self._get_screen(screen)
@@ -1446,9 +1473,9 @@ class App(Generic[ReturnType], DOMNode):
             if self.mouse_over is not widget:
                 try:
                     if self.mouse_over is not None:
-                        self.mouse_over._forward_event(events.Leave())
+                        self.mouse_over.post_message(events.Leave())
                     if widget is not None:
-                        widget._forward_event(events.Enter())
+                        widget.post_message(events.Enter())
                 finally:
                     self.mouse_over = widget
 
@@ -1680,7 +1707,7 @@ class App(Generic[ReturnType], DOMNode):
             widgets = compose(self)
         except TypeError as error:
             raise TypeError(
-                f"{self!r} compose() returned an invalid response; {error}"
+                f"{self!r} compose() method returned an invalid result; {error}"
             ) from error
 
         await self.mount_all(widgets)
@@ -1938,22 +1965,37 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def _binding_chain(self) -> list[tuple[DOMNode, Bindings]]:
-        """Get a chain of nodes and bindings to consider. If no widget is focused, returns the bindings from both the screen and the app level bindings. Otherwise, combines all the bindings from the currently focused node up the DOM to the root App.
+        """Get a chain of nodes and bindings to consider.
+        If no widget is focused, returns the bindings from both the screen and the app level bindings.
+        Otherwise, combines all the bindings from the currently focused node up the DOM to the root App.
 
         Returns:
             List of DOM nodes and their bindings.
         """
         focused = self.focused
         namespace_bindings: list[tuple[DOMNode, Bindings]]
+        screen = self.screen
+
         if focused is None:
-            namespace_bindings = [
-                (self.screen, self.screen._bindings),
-                (self, self._bindings),
-            ]
+            if screen.is_modal:
+                namespace_bindings = [
+                    (self.screen, self.screen._bindings),
+                ]
+            else:
+                namespace_bindings = [
+                    (self.screen, self.screen._bindings),
+                    (self, self._bindings),
+                ]
         else:
-            namespace_bindings = [
-                (node, node._bindings) for node in focused.ancestors_with_self
-            ]
+            if screen.is_modal:
+                namespace_bindings = [
+                    (node, node._bindings) for node in focused.ancestors
+                ]
+            else:
+                namespace_bindings = [
+                    (node, node._bindings) for node in focused.ancestors_with_self
+                ]
+
         return namespace_bindings
 
     async def check_bindings(self, key: str, priority: bool = False) -> bool:
@@ -2127,6 +2169,8 @@ class App(Generic[ReturnType], DOMNode):
     async def _on_resize(self, event: events.Resize) -> None:
         event.stop()
         self.screen.post_message(event)
+        for screen in self._background_screens:
+            screen.post_message(event)
 
     def _detach_from_dom(self, widgets: list[Widget]) -> list[Widget]:
         """Detach a list of widgets from the DOM.

@@ -130,7 +130,6 @@ class GridLayout(Layout):
 
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
-        fraction_unit = Fraction(1)
         widgets: list[Widget] = []
         add_widget = widgets.append
         max_column = len(columns) - 1
@@ -145,7 +144,10 @@ class GridLayout(Layout):
             y2, cell_height = rows[min(max_row, row + row_span)]
             cell_size = Size(cell_width + x2 - x, cell_height + y2 - y)
             width, height, margin = widget._get_box_model(
-                cell_size, viewport, fraction_unit, fraction_unit
+                cell_size,
+                viewport,
+                Fraction(cell_size.width),
+                Fraction(cell_size.height),
             )
             region = (
                 Region(x, y, int(width + margin.width), int(height + margin.height))

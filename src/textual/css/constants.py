@@ -10,20 +10,21 @@ if typing.TYPE_CHECKING:
 VALID_VISIBILITY: Final = {"visible", "hidden"}
 VALID_DISPLAY: Final = {"block", "none"}
 VALID_BORDER: Final = {
-    "none",
-    "hidden",
     "ascii",
-    "round",
     "blank",
-    "solid",
-    "double",
     "dashed",
+    "double",
     "heavy",
-    "inner",
-    "outer",
+    "hidden",
     "hkey",
-    "vkey",
+    "inner",
+    "none",
+    "outer",
+    "round",
+    "solid",
     "tall",
+    "thick",
+    "vkey",
     "wide",
 }
 VALID_EDGE: Final = {"top", "right", "bottom", "left"}
