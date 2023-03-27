@@ -651,8 +651,8 @@ class App(Generic[ReturnType], DOMNode):
             raise ScreenStackError("No screens on stack") from None
 
     @property
-    def background_screens(self) -> list[Screen]:
-        """A list of screens that may be visible due to background opacity (top-most first.)"""
+    def _background_screens(self) -> list[Screen]:
+        """A list of screens that may be visible due to background opacity (top-most first, not including current screen)."""
         screens: list[Screen] = []
         for screen in reversed(self._screen_stack[:-1]):
             screens.append(screen)
@@ -808,7 +808,7 @@ class App(Generic[ReturnType], DOMNode):
             legacy_windows=False,
         )
         screen_render = self.screen._compositor.render_update(
-            full=True, screen_stack=self.app.background_screens
+            full=True, screen_stack=self.app._background_screens
         )
         console.print(screen_render)
         return console.export_svg(title=title or self.title)
@@ -2169,7 +2169,7 @@ class App(Generic[ReturnType], DOMNode):
     async def _on_resize(self, event: events.Resize) -> None:
         event.stop()
         self.screen.post_message(event)
-        for screen in self.background_screens:
+        for screen in self._background_screens:
             screen.post_message(event)
 
     def _detach_from_dom(self, widgets: list[Widget]) -> list[Widget]:

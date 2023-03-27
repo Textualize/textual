@@ -398,7 +398,7 @@ class Screen(Widget):
         if self._dirty_widgets and self.is_current:
             self._compositor.update_widgets(self._dirty_widgets)
             update = self._compositor.render_update(
-                screen_stack=self.app.background_screens
+                screen_stack=self.app._background_screens
             )
             self.app._display(self, update)
             self._dirty_widgets.clear()
@@ -416,7 +416,7 @@ class Screen(Widget):
         the callback queue."""
         if self._callbacks:
             display_update = self._compositor.render_update(
-                screen_stack=self.app.background_screens
+                screen_stack=self.app._background_screens
             )
             self.app._display(self, display_update)
             callbacks = self._callbacks[:]
@@ -502,7 +502,7 @@ class Screen(Widget):
             return
         if self.is_current:
             display_update = self._compositor.render_update(
-                full=full, screen_stack=self.app.background_screens
+                full=full, screen_stack=self.app._background_screens
             )
             self.app._display(self, display_update)
 
@@ -550,7 +550,7 @@ class Screen(Widget):
     async def _on_resize(self, event: events.Resize) -> None:
         event.stop()
         self._screen_resized(event.size)
-        for screen in self.app.background_screens:
+        for screen in self.app._background_screens:
             screen._screen_resized(event.size)
 
     def _handle_mouse_move(self, event: events.MouseMove) -> None:
