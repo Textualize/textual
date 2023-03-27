@@ -131,7 +131,7 @@ You can also switch screens with the `"app.switch_screen"` action which accepts 
 ## Screen opacity
 
 If a screen has a background color with an *alpha* component, then the background color will be blended with the screen beneath it.
-For example, if the top-most screen has a background set to "rgba(0,0,255,0.5)" then anywhere in the screen not occupied with a widget will display the *second* screen from the top, tinted with 50% blue.
+For example, if the top-most screen has a background set to `rgba(0,0,255,0.5)` then anywhere in the screen not occupied with a widget will display the *second* screen from the top, tinted with 50% blue.
 
 
 <div class="excalidraw">
