@@ -17,7 +17,7 @@ from rich.style import Style
 from typing_extensions import Literal, Self, TypeAlias
 
 from ..binding import Binding, BindingType
-from ..events import MouseMove
+from ..events import Click, MouseMove
 from ..geometry import Region, Size
 from ..message import Message
 from ..reactive import reactive
@@ -401,6 +401,17 @@ class OptionList(ScrollView, can_focus=True):
     def on_leave(self) -> None:
         """React to the mouse leaving the widget."""
         self.mouse_hovering_over = None
+
+    def on_click(self, event: Click) -> None:
+        """React to the mouse being clicked on an item.
+
+        Args:
+            event: The click event.
+        """
+        clicked_option = event.style.meta.get("option")
+        if clicked_option is not None:
+            self.highlighted = clicked_option
+            self._update_for_highlight()
 
     def watch_mouse_hovering_over(
         self, old_line: int | None, new_line: int | None
