@@ -85,3 +85,39 @@ async def test_move_home() -> None:
         assert option_list.highlighted == 5
         await pilot.press("tab", "home")
         assert option_list.highlighted == 0
+
+
+async def test_page_down_from_start_short_list() -> None:
+    """Doing a page down from the start of a short list should move to the end."""
+    async with OptionListApp().run_test() as pilot:
+        await pilot.press("tab", "page_down")
+        assert pilot.app.query_one(OptionList).highlighted == 5
+
+
+async def test_page_up_from_end_short_list() -> None:
+    """Doing a page up from the end of a short list should move to the start."""
+    async with OptionListApp().run_test() as pilot:
+        option_list = pilot.app.query_one(OptionList)
+        assert option_list.highlighted == 0
+        option_list.highlighted = 5
+        assert option_list.highlighted == 5
+        await pilot.press("tab", "page_up")
+        assert option_list.highlighted == 0
+
+
+async def test_page_down_from_end_short_list() -> None:
+    """Doing a page down from the end of a short list should go nowhere."""
+    async with OptionListApp().run_test() as pilot:
+        option_list = pilot.app.query_one(OptionList)
+        assert option_list.highlighted == 0
+        option_list.highlighted = 5
+        assert option_list.highlighted == 5
+        await pilot.press("tab", "page_down")
+        assert option_list.highlighted == 5
+
+
+async def test_page_up_from_start_short_list() -> None:
+    """Doing a page up from the start of a short list go nowhere."""
+    async with OptionListApp().run_test() as pilot:
+        await pilot.press("tab", "page_up")
+        assert pilot.app.query_one(OptionList).highlighted == 0
