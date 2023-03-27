@@ -192,7 +192,7 @@ We can solve both those issues by replacing our use of [Screen][textual.screen.S
 This screen sub-class will prevent key bindings on the app from being processed.
 It also sets a background with a little alpha to allow the previous screen to show through.
 
-Let's see what happens when use `ModalScreen`.
+Let's see what happens when we use `ModalScreen`.
 
 
 === "Output"
