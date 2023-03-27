@@ -92,15 +92,8 @@ class Screen(Widget):
 
     def render(self) -> RenderableType:
         background = self.styles.background
-
         try:
-            screen_stack = visible_screen_stack.get()
-        except LookupError:
-            screen_stack = self.app.background_screens
-            visible_screen_stack.set(screen_stack)
-
-        try:
-            base_screen = screen_stack.pop()
+            base_screen = visible_screen_stack.get().pop()
         except IndexError:
             base_screen = None
 
@@ -393,6 +386,7 @@ class Screen(Widget):
                         self._repaint_required = False
 
                     if self._dirty_widgets:
+                        self._on_timer_update()
                         self.update_timer.resume()
 
         # The Screen is idle - a good opportunity to invoke the scheduled callbacks
@@ -401,16 +395,12 @@ class Screen(Widget):
     def _on_timer_update(self) -> None:
         """Called by the _update_timer."""
         # Render widgets together
-        if self.is_current and self._dirty_widgets:
+        if self._dirty_widgets and self.is_current:
             self._compositor.update_widgets(self._dirty_widgets)
-            if self.is_current:
-                self.app._display(
-                    self,
-                    self._compositor.render_update(
-                        screen_stack=self.app.background_screens
-                    ),
-                )
-
+            update = self._compositor.render_update(
+                screen_stack=self.app.background_screens
+            )
+            self.app._display(self, update)
             self._dirty_widgets.clear()
         if self._callbacks:
             self.post_message(events.InvokeCallbacks())

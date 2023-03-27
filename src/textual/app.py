@@ -658,7 +658,9 @@ class App(Generic[ReturnType], DOMNode):
             screens.append(screen)
             if screen.styles.background.a == 1:
                 break
-        return screens[::-1]
+        background_screens = screens[::-1]
+        self.log(background_screens)
+        return background_screens
 
     @property
     def size(self) -> Size:
@@ -1472,9 +1474,9 @@ class App(Generic[ReturnType], DOMNode):
             if self.mouse_over is not widget:
                 try:
                     if self.mouse_over is not None:
-                        self.mouse_over._forward_event(events.Leave())
+                        self.mouse_over.post_message(events.Leave())
                     if widget is not None:
-                        widget._forward_event(events.Enter())
+                        widget.post_message(events.Enter())
                 finally:
                     self.mouse_over = widget
 

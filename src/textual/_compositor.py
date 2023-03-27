@@ -448,7 +448,7 @@ class Compositor:
                 layer_order: The order of the widget in its layer.
                 clip: The clipping region (i.e. the viewport which contains it).
                 visible: Whether the widget should be visible by default.
-                    This may be overriden by the CSS rule `visibility`.
+                    This may be overridden by the CSS rule `visibility`.
             """
             visibility = widget.styles.get_rule("visibility")
             if visibility is not None:
@@ -683,7 +683,7 @@ class Compositor:
         x -= region.x
         y -= region.y
 
-        visible_screen_stack.set([])  # We don't care about background screens
+        visible_screen_stack.set(widget.app.background_screens)
         lines = widget.render_lines(Region(0, y, region.width, 1))
 
         if not lines:
@@ -817,13 +817,12 @@ class Compositor:
         Returns:
             A renderable for the update, or `None` if no update was required.
         """
+
         visible_screen_stack.set(screen_stack or [])
         screen_region = self.size.region
-        if full:
+        if full or screen_region in self._dirty_regions:
             return self.render_full_update()
         else:
-            if screen_region in self._dirty_regions:
-                return self.render_full_update()
             return self.render_partial_update()
 
     def render_full_update(self) -> LayoutUpdate:
