@@ -121,3 +121,20 @@ async def test_page_up_from_start_short_list() -> None:
     async with OptionListApp().run_test() as pilot:
         await pilot.press("tab", "page_up")
         assert pilot.app.query_one(OptionList).highlighted == 0
+
+
+class EmptyOptionListApp(App[None]):
+    """Test option list application with no optons."""
+
+    def compose(self) -> ComposeResult:
+        yield OptionList()
+
+
+async def test_empty_list_movement() -> None:
+    """Attempting to move around an empty list should be a non-operation."""
+    async with EmptyOptionListApp().run_test() as pilot:
+        option_list = pilot.app.query_one(OptionList)
+        await pilot.press("tab")
+        for movement in ("up", "down", "home", "end", "page_up", "page_down"):
+            await pilot.press(movement)
+            assert option_list.highlighted is None
