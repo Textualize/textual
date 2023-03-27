@@ -295,11 +295,6 @@ class App(Generic[ReturnType], DOMNode):
         css_path: CSSPathType | None = None,
         watch_css: bool = False,
     ):
-        # N.B. This must be done *before* we call the parent constructor, because MessagePump's
-        # constructor instantiates a `asyncio.PriorityQueue` and in Python versions older than 3.10
-        # this will create some first references to an asyncio loop.
-        _init_uvloop()
-
         super().__init__()
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
@@ -2415,29 +2410,3 @@ class App(Generic[ReturnType], DOMNode):
     def _end_update(self) -> None:
         if self._sync_available:
             self.console.file.write(SYNC_END)
-
-
-_uvloop_init_done: bool = False
-
-
-def _init_uvloop() -> None:
-    """Import and install the `uvloop` asyncio policy, if available.
-
-    This is done only once, even if the function is called multiple times.
-
-    This is provided as a nicety for users that have `uvloop` installed independently
-    of Textual, as `uvloop` is not listed as a Textual dependency.
-    """
-    global _uvloop_init_done
-
-    if _uvloop_init_done:
-        return
-
-    try:
-        import uvloop  # type: ignore[reportMissingImports]
-    except ImportError:
-        pass
-    else:
-        uvloop.install()  # type: ignore[reportUnknownMemberType]
-
-    _uvloop_init_done = True
