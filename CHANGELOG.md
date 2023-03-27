@@ -34,7 +34,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added auto_scroll attribute to TextLog https://github.com/Textualize/textual/pull/2127
 - Added scroll_end switch to TextLog.write https://github.com/Textualize/textual/pull/2127
-- Added screen.ModalScreen which prevents App from handling bindings.https://github.com/Textualize/textual/pull/2139
+- Added screen.ModalScreen which prevents App from handling bindings. https://github.com/Textualize/textual/pull/2139
 
 
 ## [0.16.0] - 2023-03-22
