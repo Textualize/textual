@@ -48,7 +48,6 @@ typing-extensions = "^4.4.0"
 aiohttp = { version = ">=3.8.1", optional = true }
 click = {version = ">=8.1.2", optional = true}
 msgpack = { version = ">=1.0.3", optional = true }
-mkdocs-exclude = { version = "^1.0.2", optional = true }
 
 [tool.poetry.extras]
 dev = ["aiohttp", "click", "msgpack"]
@@ -61,6 +60,7 @@ pytest-cov = "^2.12.1"
 mkdocs = "^1.3.0"
 mkdocstrings = {extras = ["python"], version = "^0.20.0"}
 mkdocs-material = "^9.0.11"
+mkdocs-exclude = "^1.0.2"
 pre-commit = "^2.13.0"
 pytest-aiohttp = "^1.0.4"
 time-machine = "^2.6.0"
