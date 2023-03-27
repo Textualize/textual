@@ -818,7 +818,7 @@ class Compositor:
             A renderable for the update, or `None` if no update was required.
         """
 
-        visible_screen_stack.set(screen_stack or [])
+        visible_screen_stack.set([] if screen_stack is None else screen_stack)
         screen_region = self.size.region
         if full or screen_region in self._dirty_regions:
             return self.render_full_update()
