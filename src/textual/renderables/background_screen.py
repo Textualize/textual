@@ -13,14 +13,14 @@ if TYPE_CHECKING:
 
 
 class BackgroundScreen:
-    """Applies a color on top of an existing renderable."""
+    """Tints a renderable and removes links / meta."""
 
     def __init__(
         self,
         screen: Screen,
         color: Color,
     ) -> None:
-        """Tints a renderable and removes links / meta.
+        """Initialize a BackgroundScreen instance.
 
         Args:
             renderable: A renderable.
