@@ -390,22 +390,3 @@ class Strip:
         )
         self._style_cache[style] = styled_strip
         return styled_strip
-
-    def remove_links(self) -> Strip:
-        """Create a new strip without any links.
-
-        Returns:
-            A new strip.
-        """
-        _Segment = Segment
-
-        strip_without_links = Strip(
-            [
-                _Segment(
-                    text, None if style is None else style.update_link("foo"), None
-                )
-                for text, style, _control in self._segments
-            ],
-            cell_length=self.cell_length,
-        )
-        return strip_without_links
