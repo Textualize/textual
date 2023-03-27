@@ -683,6 +683,7 @@ class Compositor:
         x -= region.x
         y -= region.y
 
+        visible_screen_stack.set([])  # We don't care about background screens
         lines = widget.render_lines(Region(0, y, region.width, 1))
 
         if not lines:
