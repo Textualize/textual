@@ -214,6 +214,12 @@ class OptionList(ScrollView, can_focus=True):
         text-style: bold;
     }
 
+    OptionList:focus > .option-list--option-hover-highlighted {
+        background: $accent;
+        color: $text;
+        text-style: bold;
+    }
+
     OptionList > .option-list--option-hover-highlighted-disabled {
         color: $text-disabled;
         background: $accent 60%;
