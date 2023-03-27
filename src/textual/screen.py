@@ -32,10 +32,6 @@ UPDATE_PERIOD: Final[float] = 1 / 120
 class Screen(Widget):
     """A widget for the root of the app."""
 
-    # The screen is a special case and unless a class that inherits from us
-    # says otherwise, all screen-level bindings should be treated as having
-    # priority.
-
     DEFAULT_CSS = """
     Screen {
         layout: vertical;

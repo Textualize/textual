@@ -29,16 +29,16 @@ def get_line_length(segments: Iterable[Segment]) -> int:
 
 
 class StripRenderable:
-    """A renderable which renders a list of strips."""
+    """A renderable which renders a list of strips in to lines.."""
 
     def __init__(self, strips: list[Strip]) -> None:
-        self.strips = strips
+        self._strips = strips
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
         new_line = Segment.line()
-        for strip in self.strips:
+        for strip in self._strips:
             yield from strip
             yield new_line
 
