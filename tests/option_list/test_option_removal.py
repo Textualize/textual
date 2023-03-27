@@ -1,0 +1,85 @@
+"""Test removing options from an option list."""
+
+from __future__ import annotations
+
+from textual.app import App, ComposeResult
+from textual.widgets import OptionList
+from textual.widgets.option_list import Option
+
+
+class OptionListApp(App[None]):
+    """Test option list application."""
+
+    def compose(self) -> ComposeResult:
+        yield OptionList(
+            Option("0", id="0"),
+            Option("1", id="1"),
+        )
+
+
+async def test_remove_first_option_via_index() -> None:
+    """It should be possible to remove the first option of an option list, via index."""
+    async with OptionListApp().run_test() as pilot:
+        option_list = pilot.app.query_one(OptionList)
+        assert option_list.option_count == 2
+        assert option_list.highlighted == 0
+        option_list.remove_option_at_index(0)
+        assert option_list.option_count == 1
+        assert option_list.highlighted == 0
+
+
+async def test_remove_first_option_via_id() -> None:
+    """It should be possible to remove the first option of an option list, via ID."""
+    async with OptionListApp().run_test() as pilot:
+        option_list = pilot.app.query_one(OptionList)
+        assert option_list.option_count == 2
+        assert option_list.highlighted == 0
+        option_list.remove_option("0")
+        assert option_list.option_count == 1
+        assert option_list.highlighted == 0
+
+
+async def test_remove_last_option_via_index() -> None:
+    """It should be possible to remove the last option of an option list, via index."""
+    async with OptionListApp().run_test() as pilot:
+        option_list = pilot.app.query_one(OptionList)
+        assert option_list.option_count == 2
+        assert option_list.highlighted == 0
+        option_list.remove_option_at_index(1)
+        assert option_list.option_count == 1
+        assert option_list.highlighted == 0
+
+
+async def test_remove_last_option_via_id() -> None:
+    """It should be possible to remove the last option of an option list, via ID."""
+    async with OptionListApp().run_test() as pilot:
+        option_list = pilot.app.query_one(OptionList)
+        assert option_list.option_count == 2
+        assert option_list.highlighted == 0
+        option_list.remove_option("1")
+        assert option_list.option_count == 1
+        assert option_list.highlighted == 0
+
+
+async def test_remove_all_options_via_index() -> None:
+    """It should be possible to remove all options via index."""
+    async with OptionListApp().run_test() as pilot:
+        option_list = pilot.app.query_one(OptionList)
+        assert option_list.option_count == 2
+        assert option_list.highlighted == 0
+        option_list.remove_option_at_index(0)
+        option_list.remove_option_at_index(0)
+        assert option_list.option_count == 0
+        assert option_list.highlighted is None
+
+
+async def test_remove_all_options_via_id() -> None:
+    """It should be possible to remove all options via ID."""
+    async with OptionListApp().run_test() as pilot:
+        option_list = pilot.app.query_one(OptionList)
+        assert option_list.option_count == 2
+        assert option_list.highlighted == 0
+        option_list.remove_option("0")
+        option_list.remove_option("1")
+        assert option_list.option_count == 0
+        assert option_list.highlighted is None
