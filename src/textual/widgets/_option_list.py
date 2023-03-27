@@ -733,6 +733,7 @@ class OptionList(ScrollView, can_focus=True):
 
         highlighted = self.highlighted
         mouse_over = self.mouse_hovering_over
+        spans = self._spans
 
         # Handle drawing a disabled option.
         if self._options[option_index].disabled:
@@ -756,7 +757,7 @@ class OptionList(ScrollView, can_focus=True):
             )
 
         # Handle drawing a highlighted option.
-        if highlighted is not None and line_number in self._spans[highlighted]:
+        if highlighted is not None and line_number in spans[highlighted]:
             # Highlighted with the mouse over it?
             if option_index == mouse_over:
                 return strip.apply_style(
@@ -769,9 +770,9 @@ class OptionList(ScrollView, can_focus=True):
                 self.get_component_rich_style("option-list--option-highlighted")
             )
 
-        # Perhaps the line is within an option that has the mouse hovering
-        # over it?
-        if mouse_over is not None and line_number in self._spans[mouse_over]:
+        # Perhaps the line is within an otherwise-uninteresting option that
+        # has the mouse hovering over it?
+        if mouse_over is not None and line_number in spans[mouse_over]:
             return strip.apply_style(
                 self.get_component_rich_style("option-list--option-hover")
             )
