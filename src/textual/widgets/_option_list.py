@@ -232,17 +232,6 @@ class OptionList(ScrollView, can_focus=True):
     mouse_hovering_over: reactive[int | None] = reactive["int | None"](None)
     """The index of the option that the mouse is currently hovering over."""
 
-    class Debug(Message):
-        """DEBUG MESSAGE: REMOVE BEFORE FLIGHT!"""
-
-        def __init__(self, sender, cargo) -> None:
-            super().__init__()
-            self.sender = sender
-            self.cargo = cargo
-
-        def __rich_repr__(self) -> Result:
-            yield self.cargo
-
     class OptionMessage(Message):
         """Base class for all option messages."""
 
