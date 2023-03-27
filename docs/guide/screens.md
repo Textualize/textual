@@ -212,3 +212,6 @@ Let's see what happens when use `ModalScreen`.
     ```sass title="modal01.css"
     --8<-- "docs/examples/guide/screens/modal01.css"
     ```
+
+Now when we press ++q++, the dialog is displayed over the main screen.
+The main screen is darkened to indicate to the user that it is not active, and only the dialog will respond to input.
