@@ -503,7 +503,7 @@ class OptionList(ScrollView, can_focus=True):
         # list, set the virtual size.
         self.virtual_size = Size(self.scrollable_content_region.width, len(self._lines))
 
-    def add(self, item: NewOptionListContent = None) -> Self:
+    def add_option(self, item: NewOptionListContent = None) -> Self:
         """Add a new option to the end of the option list.
 
         Args:
@@ -522,7 +522,7 @@ class OptionList(ScrollView, can_focus=True):
         self.refresh()
         return self
 
-    def clear(self) -> Self:
+    def clear_options(self) -> Self:
         """Clear the content of the option list.
 
         Returns:

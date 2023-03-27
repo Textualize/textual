@@ -23,7 +23,7 @@ async def test_cleared_highlight_is_none() -> None:
     """The highlight should be `None` if the list is cleared."""
     async with OptionListApp().run_test() as pilot:
         option_list = pilot.app.query_one(OptionList)
-        option_list.clear()
+        option_list.clear_options()
         assert option_list.highlighted is None
 
 
@@ -31,7 +31,7 @@ async def test_cleared_movement_does_nothing() -> None:
     """The highlight should remain `None` if the list is cleared."""
     async with OptionListApp().run_test() as pilot:
         option_list = pilot.app.query_one(OptionList)
-        option_list.clear()
+        option_list.clear_options()
         assert option_list.highlighted is None
         await pilot.press("tab", "down", "up", "page_down", "page_up", "home", "end")
         assert option_list.highlighted is None
@@ -153,7 +153,7 @@ async def test_no_highlight_movement() -> None:
         async with EmptyOptionListApp().run_test() as pilot:
             option_list = pilot.app.query_one(OptionList)
             for _ in range(100):
-                option_list.add("test")
+                option_list.add_option("test")
             await pilot.press("tab")
             await pilot.press(movement)
             assert option_list.highlighted == landing

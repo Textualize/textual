@@ -86,7 +86,7 @@ async def test_clear_option_list() -> None:
     async with OptionListApp().run_test() as pilot:
         option_list = pilot.app.query_one(OptionList)
         assert option_list.option_count == 5
-        option_list.clear()
+        option_list.clear_options()
         assert option_list.option_count == 0
 
 
@@ -95,11 +95,11 @@ async def test_add_later() -> None:
     async with OptionListApp().run_test() as pilot:
         option_list = pilot.app.query_one(OptionList)
         assert option_list.option_count == 5
-        option_list.add("more")
+        option_list.add_option("more")
         assert option_list.option_count == 6
-        option_list.add()
+        option_list.add_option()
         assert option_list.option_count == 6
-        option_list.add(Option("even more"))
+        option_list.add_option(Option("even more"))
         assert option_list.option_count == 7
 
 
@@ -107,4 +107,4 @@ async def test_create_with_duplicate_id() -> None:
     """Adding an option with a duplicate ID should be an error."""
     async with OptionListApp().run_test() as pilot:
         with pytest.raises(DuplicateID):
-            pilot.app.query_one(OptionList).add(Option("dupe", id="3"))
+            pilot.app.query_one(OptionList).add_option(Option("dupe", id="3"))
