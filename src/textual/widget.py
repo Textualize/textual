@@ -179,6 +179,15 @@ class MountError(WidgetError):
     """Error raised when there was a problem with the mount request."""
 
 
+class PseudoClasses(NamedTuple):
+    """Used for render/render_line based widgets that use caching. This structure can be used as a
+    cache-key."""
+
+    enabled: bool
+    focus: bool
+    hover: bool
+
+
 @rich.repr.auto
 class Widget(DOMNode):
     """
@@ -2351,6 +2360,27 @@ class Widget(DOMNode):
                         yield "focus-within"
                         break
                     node = node._parent
+
+    def get_pseudo_class_state(self) -> PseudoClasses:
+        """Get an object describing whether each pseudo class is present on this object or not.
+
+        Returns:
+            A PseudoClasses object describing the pseudo classes that are present.
+        """
+        node: MessagePump | None = self
+        disabled = False
+        while isinstance(node, Widget):
+            if node.disabled:
+                disabled = True
+                break
+            node = node._parent
+
+        pseudo_classes = PseudoClasses(
+            enabled=disabled,
+            hover=self.mouse_over,
+            focus=self.has_focus,
+        )
+        return pseudo_classes
 
     def post_render(self, renderable: RenderableType) -> ConsoleRenderable:
         """Applies style attributes to the default renderable.
