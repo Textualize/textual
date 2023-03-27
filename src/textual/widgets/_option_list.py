@@ -408,17 +408,6 @@ class OptionList(ScrollView, can_focus=True):
             self.highlighted = clicked_option
             self._update_for_highlight()
 
-    def watch_mouse_hovering_over(
-        self, old_line: int | None, new_line: int | None
-    ) -> None:
-        """Watch for the mouse hover location changing and restyle accordingly.
-
-        Args:
-            old_line: The line that the mouse was previously over, if any.
-            new_line: The line that the mouse is now over, if any.
-        """
-        self.log.debug(f"watch_mouse_hovering_over({old_line}, {new_line})")
-
     def _make_content(self, content: NewOptionListContent) -> OptionListContent:
         """Convert a single item of content for the list into a content type.
 
