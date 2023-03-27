@@ -1346,7 +1346,7 @@ class App(Generic[ReturnType], DOMNode):
             self.screen.refresh()
         next_screen, await_mount = self._get_screen(screen)
         self._screen_stack.append(next_screen)
-        self.screen.post_message(events.ScreenResume())
+        next_screen.post_message(events.ScreenResume())
         self.log.system(f"{self.screen} is current (PUSHED)")
         return await_mount
 
