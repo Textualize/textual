@@ -522,6 +522,53 @@ class OptionList(ScrollView, can_focus=True):
         self.refresh()
         return self
 
+    def _remove_option(self, index: int) -> None:
+        """Remove an option from the option list.
+
+        Args:
+            index: The index of the item to remove.
+
+        Raises:
+            IndexError: If there is no option of the given index.
+        """
+        option = self._options[index]
+        del self._options[index]
+        del self._contents[self._contents.index(option)]
+        self._refresh_content_tracking(force=True)
+        # Force a re-validation of the highlight.
+        self.highlighted = self.highlighted
+        self.refresh()
+
+    def remove_option(self, option_id: str) -> Self:
+        """Remove the open with the given ID.
+
+        Args:
+            option_id: The ID of the option to remove.
+
+        Returns:
+            The `OptionList` instance.
+
+        Raises:
+            KeyError: If no option has the given ID.
+        """
+        self._remove_option(self._option_ids[option_id])
+        return self
+
+    def remove_option_at_index(self, index: int) -> Self:
+        """Remove the option at the given index.
+
+        Args:
+            index: The index of the option to remove.
+
+        Returns:
+            The `OptionList` instance.
+
+        Raises:
+            IndexError: If there is no option with the given index.
+        """
+        self._remove_option(index)
+        return self
+
     def clear_options(self) -> Self:
         """Clear the content of the option list.
 
@@ -750,11 +797,9 @@ class OptionList(ScrollView, can_focus=True):
         """Validate the `highlighted` property value on access."""
         if not self._options:
             return None
-        if highlighted is None or highlighted >= len(self._options):
+        if highlighted is None or highlighted < 0:
             return 0
-        if highlighted < 0:
-            return len(self._options) - 1
-        return highlighted
+        return min(highlighted, len(self._options) - 1)
 
     def _update_for_highlight(self) -> None:
         """React to the highlighted option having changed."""
