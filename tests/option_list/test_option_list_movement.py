@@ -138,3 +138,22 @@ async def test_empty_list_movement() -> None:
         for movement in ("up", "down", "home", "end", "page_up", "page_down"):
             await pilot.press(movement)
             assert option_list.highlighted is None
+
+
+async def test_no_highlight_movement() -> None:
+    """Attempting to move around in a list with no highlight should select the most appropriate item."""
+    for movement, landing in (
+        ("up", 0),
+        ("down", 0),
+        ("home", 0),
+        ("end", 99),
+        ("page_up", 0),
+        ("page_down", 99),
+    ):
+        async with EmptyOptionListApp().run_test() as pilot:
+            option_list = pilot.app.query_one(OptionList)
+            for _ in range(100):
+                option_list.add("test")
+            await pilot.press("tab")
+            await pilot.press(movement)
+            assert option_list.highlighted == landing
