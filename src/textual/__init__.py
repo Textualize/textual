@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Callable
 import rich.repr
 from rich.console import RenderableType
 
+from . import constants
 from ._context import active_app
 from ._log import LogGroup, LogVerbosity
 
@@ -61,6 +62,16 @@ class Logger:
             print_args = (*args, *[f"{key}={value!r}" for key, value in kwargs.items()])
             print(*print_args)
             return
+        if constants.LOG_FILE:
+            output = " ".join(str(arg) for arg in args)
+            if kwargs:
+                key_values = " ".join(
+                    f"{key}={value!r}" for key, value in kwargs.items()
+                )
+                output = f"{output} {key_values}" if output else key_values
+
+            with open(constants.LOG_FILE, "a") as log_file:
+                print(output, file=log_file)
         if app.devtools is None or not app.devtools.is_connected:
             return
 

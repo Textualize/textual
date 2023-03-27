@@ -399,7 +399,6 @@ class MessagePump(metaclass=MessagePumpMeta):
     def _start_messages(self) -> None:
         """Start messages task."""
         if self.app._running:
-            active_message_pump.set(self)
             self._task = create_task(
                 self._process_messages(), name=f"message pump {self}"
             )
@@ -409,6 +408,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     async def _process_messages(self) -> None:
         self._running = True
+        active_message_pump.set(self)
 
         await self._pre_process()
 

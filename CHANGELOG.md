@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added auto_scroll attribute to TextLog https://github.com/Textualize/textual/pull/2127
 - Added scroll_end switch to TextLog.write https://github.com/Textualize/textual/pull/2127
 - Added Screen.ModalScreen which prevents App from handling bindings. https://github.com/Textualize/textual/pull/2139
+- Added TEXTUAL_LOG env var which should be a path that Textual will write verbose logs to (textual devtools is generally preferred) https://github.com/Textualize/textual/pull/2148
 
 
 ## [0.16.0] - 2023-03-22
