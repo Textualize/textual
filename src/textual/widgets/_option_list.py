@@ -7,7 +7,7 @@ forms of bounce-bar menu.
 
 from __future__ import annotations
 
-from typing import Callable, ClassVar, Iterator, NamedTuple
+from typing import ClassVar, Iterator, NamedTuple
 
 from rich.console import RenderableType
 from rich.repr import Result
