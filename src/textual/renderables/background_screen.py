@@ -53,7 +53,7 @@ class BackgroundScreen:
             if control:
                 yield segment
             else:
-                style = NULL_STYLE if style is None else style.reset()
+                style = NULL_STYLE if style is None else style.clear_meta_and_links()
                 yield _Segment(
                     text,
                     (

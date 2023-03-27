@@ -550,6 +550,8 @@ class Screen(Widget):
     async def _on_resize(self, event: events.Resize) -> None:
         event.stop()
         self._screen_resized(event.size)
+        for screen in self.app.background_screens:
+            screen._screen_resized(event.size)
 
     def _handle_mouse_move(self, event: events.MouseMove) -> None:
         try:
