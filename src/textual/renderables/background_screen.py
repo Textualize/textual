@@ -23,7 +23,7 @@ class BackgroundScreen:
         """Initialize a BackgroundScreen instance.
 
         Args:
-            renderable: A renderable.
+            screen: A Screen instance.
             color: A color (presumably with alpha).
         """
         self.screen = screen
