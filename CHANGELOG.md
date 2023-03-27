@@ -27,14 +27,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - `TextLog`: `write`, `clear`
   - `TreeNode`: `expand`, `expand_all`, `collapse`, `collapse_all`, `toggle`, `toggle_all`
   - `Tree`: `clear`, `reset`
-- Screens with alpha in their background color will now blend with the background.
-- Added "thick" border style.
+- Screens with alpha in their background color will now blend with the background. https://github.com/Textualize/textual/pull/2139
+- Added "thick" border style. https://github.com/Textualize/textual/pull/2139
 
 ### Added
 
 - Added auto_scroll attribute to TextLog https://github.com/Textualize/textual/pull/2127
 - Added scroll_end switch to TextLog.write https://github.com/Textualize/textual/pull/2127
-- Added screen.ModalScreen which prevents App from handling bindings.
+- Added screen.ModalScreen which prevents App from handling bindings.https://github.com/Textualize/textual/pull/2139
 
 
 ## [0.16.0] - 2023-03-22
