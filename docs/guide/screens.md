@@ -74,7 +74,11 @@ If you have installed a screen, but you later want it to be removed and cleaned 
 
 ## Screen stack
 
-Textual apps keep a _stack_ of screens. You can think of the screen stack as a stack of paper, where only the very top sheet is visible. If you remove the top sheet the paper underneath becomes visible. Screens work in a similar way.
+Textual apps keep a _stack_ of screens. You can think of this screen stack as a stack of paper, where only the very top sheet is visible. If you remove the top sheet, the paper underneath becomes visible. Screens work in a similar way.
+
+!!! note
+
+    You can also make parts of the top screen translucent, so that deeper screens show through. See [Screen opacity](#screen-opacity).
 
 The active screen (top of the stack) will render the screen and receive input events. The following API methods on the App class can manipulate this stack, and let you decide which screen the user can interact with.
 
