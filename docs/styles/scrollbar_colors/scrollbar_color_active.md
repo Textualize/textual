@@ -1,6 +1,6 @@
 # Scrollbar-color-active
 
-The `scrollbar-color-active` sets the color of the scrollbar when the thumb is being dragged.
+The `scrollbar-color-active` style sets the color of the scrollbar when the thumb is being dragged.
 
 ## Syntax
 

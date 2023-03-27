@@ -22,7 +22,7 @@ from ..scroll_view import ScrollView
 from ..strip import Strip
 
 if TYPE_CHECKING:
-    from typing_extensions import TypeAlias
+    from typing_extensions import Self, TypeAlias
 
 NodeID = NewType("NodeID", int)
 """The type of an ID applied to a [TreeNode][textual.widgets._tree.TreeNode]."""
@@ -201,15 +201,25 @@ class TreeNode(Generic[TreeDataType]):
             for child in self.children:
                 child._expand(expand_all)
 
-    def expand(self) -> None:
-        """Expand the node (show its children)."""
+    def expand(self) -> Self:
+        """Expand the node (show its children).
+
+        Returns:
+            The `TreeNode` instance.
+        """
         self._expand(False)
         self._tree._invalidate()
+        return self
 
-    def expand_all(self) -> None:
-        """Expand the node (show its children) and all those below it."""
+    def expand_all(self) -> Self:
+        """Expand the node (show its children) and all those below it.
+
+        Returns:
+            The `TreeNode` instance.
+        """
         self._expand(True)
         self._tree._invalidate()
+        return self
 
     def _collapse(self, collapse_all: bool) -> None:
         """Mark the node as collapsed (its children are hidden).
@@ -223,29 +233,49 @@ class TreeNode(Generic[TreeDataType]):
             for child in self.children:
                 child._collapse(collapse_all)
 
-    def collapse(self) -> None:
-        """Collapse the node (hide its children)."""
+    def collapse(self) -> Self:
+        """Collapse the node (hide its children).
+
+        Returns:
+            The `TreeNode` instance.
+        """
         self._collapse(False)
         self._tree._invalidate()
+        return self
 
-    def collapse_all(self) -> None:
-        """Collapse the node (hide its children) and all those below it."""
+    def collapse_all(self) -> Self:
+        """Collapse the node (hide its children) and all those below it.
+
+        Returns:
+            The `TreeNode` instance.
+        """
         self._collapse(True)
         self._tree._invalidate()
+        return self
 
-    def toggle(self) -> None:
-        """Toggle the node's expanded state."""
+    def toggle(self) -> Self:
+        """Toggle the node's expanded state.
+
+        Returns:
+            The `TreeNode` instance.
+        """
         if self._expanded:
             self.collapse()
         else:
             self.expand()
+        return self
 
-    def toggle_all(self) -> None:
-        """Toggle the node's expanded state and make all those below it match."""
+    def toggle_all(self) -> Self:
+        """Toggle the node's expanded state and make all those below it match.
+
+        Returns:
+            The `TreeNode` instance.
+        """
         if self._expanded:
             self.collapse_all()
         else:
             self.expand_all()
+        return self
 
     @property
     def label(self) -> TextType:
@@ -597,8 +627,12 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         label = self.render_label(node, NULL_STYLE, NULL_STYLE)
         return label.cell_len
 
-    def clear(self) -> None:
-        """Clear all nodes under root."""
+    def clear(self) -> Self:
+        """Clear all nodes under root.
+
+        Returns:
+            The `Tree` instance.
+        """
         self._line_cache.clear()
         self._tree_lines_cached = None
         self._current_id = 0
@@ -614,17 +648,22 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         )
         self._updates += 1
         self.refresh()
+        return self
 
-    def reset(self, label: TextType, data: TreeDataType | None = None) -> None:
+    def reset(self, label: TextType, data: TreeDataType | None = None) -> Self:
         """Clear the tree and reset the root node.
 
         Args:
             label: The label for the root node.
             data: Optional data for the root node.
+
+        Returns:
+            The `Tree` instance.
         """
         self.clear()
         self.root.label = label
         self.root.data = data
+        return self
 
     def select_node(self, node: TreeNode[TreeDataType] | None) -> None:
         """Move the cursor to the given node, or reset cursor.

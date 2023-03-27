@@ -319,3 +319,24 @@ def test_remove_with_auto_height(snap_compare):
 
 def test_auto_table(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "auto-table.py", terminal_size=(120, 40))
+
+
+def test_table_markup(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "table_markup.py")
+
+
+def test_textlog_scroll(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "textlog_scroll.py")
+
+
+def test_tabs_invalidate(snap_compare):
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "tabs_invalidate.py",
+        press=["tab", "right"],
+    )
+
+
+def test_scrollbar_thumb_height(snap_compare):
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "scrollbar_thumb_height.py",
+    )

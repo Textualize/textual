@@ -1,6 +1,6 @@
 # Link-style
 
-The `link-style` sets the text style for the link text.
+The `link-style` style sets the text style for the link text.
 
 !!! note
 

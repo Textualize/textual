@@ -1,6 +1,6 @@
 # Link-hover-style
 
-The `link-hover-style` sets the text style for the link text when the mouse cursor is over the link.
+The `link-hover-style` style sets the text style for the link text when the mouse cursor is over the link.
 
 !!! note
 

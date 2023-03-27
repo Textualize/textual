@@ -1,6 +1,6 @@
 # Box-sizing
 
-The `box-sizing` property determines how the width and height of a widget are calculated.
+The `box-sizing` style determines how the width and height of a widget are calculated.
 
 ## Syntax
 

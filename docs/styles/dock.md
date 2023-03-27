@@ -1,6 +1,6 @@
 # Dock
 
-The `dock` property is used to fix a widget to the edge of a container (which may be the entire terminal window).
+The `dock` style is used to fix a widget to the edge of a container (which may be the entire terminal window).
 
 ## Syntax
 

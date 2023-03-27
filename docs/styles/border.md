@@ -1,6 +1,6 @@
 # Border
 
-The `border` rule enables the drawing of a box around a widget.
+The `border` style enables the drawing of a box around a widget.
 
 !!! note
 
@@ -17,13 +17,13 @@ border-bottom: [<a href="../../css_types/border">&lt;border&gt;</a>] [<a href=".
 border-left: [<a href="../../css_types/border">&lt;border&gt;</a>] [<a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>]];
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The style `border` accepts an optional [`<border>`](../../css_types/border) that sets the visual style of the widget border, an optional [`<color>`](../../css_types/color) to set the color of the border, and an optional [`<percentage>`](../../css_types/percentage) to specify the color transparency.
+The `border` style accepts an optional [`<border>`](../../css_types/border) that sets the visual style of the widget border, an optional [`<color>`](../../css_types/color) to set the color of the border, and an optional [`<percentage>`](../../css_types/percentage) to specify the color transparency.
 
 Borders may also be set individually for the four edges of a widget with the `border-top`, `border-right`, `border-bottom` and `border-left` rules.
 
 ### Multiple edge rules
 
-If multiple border rules target the same edge, the last rule that targets a specific edge is the one that is applied to that edge.
+If multiple border styles target the same edge, the last style that targets a specific edge is the one that is applied to that edge.
 For example, consider the CSS below:
 
 ```sass
@@ -99,27 +99,7 @@ The next example shows a grid with all the available border types.
 
 ### Borders and outlines
 
-The next example makes the difference between [`border`](./border.md) and [`outline`](./outline.md) clearer by having three labels side-by-side.
-They contain the same text, have the same width and height, and are styled exactly the same up to their `outline` and [`border`](./border.md) rules.
-
-This example also shows that a widget cannot contain both a `border` and an `outline`:
-
-=== "Output"
-
-    ```{.textual path="docs/examples/styles/outline_vs_border.py"}
-    ```
-
-=== "outline_vs_border.py"
-
-    ```python
-    --8<-- "docs/examples/styles/outline_vs_border.py"
-    ```
-
-=== "outline_vs_border.css"
-
-    ```sass hl_lines="5-7 9-11"
-    --8<-- "docs/examples/styles/outline_vs_border.css"
-    ```
+--8<-- "docs/snippets/border_vs_outline_example.md"
 
 ## CSS
 

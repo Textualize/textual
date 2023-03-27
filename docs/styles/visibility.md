@@ -1,6 +1,6 @@
 # Visibility
 
-The `visibility` rule determines whether a widget is visible or not.
+The `visibility` style determines whether a widget is visible or not.
 
 ## Syntax
 
@@ -32,7 +32,7 @@ This is shown in the second example below.
 
 ### Basic usage
 
-Note that the second widget is hidden, while leaving a space where it would have been rendered.
+Note that the second widget is hidden while leaving a space where it would have been rendered.
 
 === "Output"
 
@@ -53,7 +53,7 @@ Note that the second widget is hidden, while leaving a space where it would have
 
 ### Overriding container visibility
 
-The next example shows the interaction of the `visibility` rule with invisible containers that have visible children.
+The next example shows the interaction of the `visibility` style with invisible containers that have visible children.
 The app below has three rows with a `Horizontal` container per row and three placeholders per row.
 The containers all have a white background, and then:
 

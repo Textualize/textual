@@ -1,6 +1,6 @@
 # Link-color
 
-The `link-color` sets the color of the link text.
+The `link-color` style sets the color of the link text.
 
 !!! note
 

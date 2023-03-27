@@ -1,6 +1,6 @@
 # Width
 
-The `width` rule sets a widget's width.
+The `width` style sets a widget's width.
 
 ## Syntax
 

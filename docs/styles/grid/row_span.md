@@ -12,7 +12,7 @@ The `row-span` style specifies how many rows a widget will span in a grid layout
 row-span: <a href="../../css_types/integer">&lt;integer&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The style `row-span` accepts a single non-negative [`<integer>`](../../../css_types/integer) that quantifies how many rows the given widget spans.
+The `row-span` style accepts a single non-negative [`<integer>`](../../../css_types/integer) that quantifies how many rows the given widget spans.
 
 ## Example
 

@@ -1,6 +1,6 @@
 # Padding
 
-The `padding` rule specifies spacing around the content of a widget.
+The `padding` style specifies spacing around the content of a widget.
 
 ## Syntax
 
@@ -27,7 +27,7 @@ The values of the [`<integer>`](../../css_types/integer) determine how much spac
 !!! tip
 
     To remember the order of the edges affected by the rule `padding` when it has 4 values, think of a clock.
-    Its hand starts at the top and the goes clockwise: top, right, bottom, left.
+    Its hand starts at the top and then goes clockwise: top, right, bottom, left.
 
 Alternatively, padding can be set for each edge individually through the rules `padding-top`, `padding-right`, `padding-bottom`, and `padding-left`, respectively.
 
@@ -96,7 +96,7 @@ padding-left: 4;
 
 ## Python
 
-In Python, you cannot set any of the individual `padding` rules `padding-top`, `padding-right`, `padding-bottom`, and `padding-left`.
+In Python, you cannot set any of the individual `padding` styles `padding-top`, `padding-right`, `padding-bottom`, and `padding-left`.
 
 However, you _can_ set padding to a single integer, a tuple of 2 integers, or a tuple of 4 integers:
 

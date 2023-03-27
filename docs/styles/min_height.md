@@ -1,6 +1,6 @@
 # Min-height
 
-The `min-height` rule sets a minimum height for a widget.
+The `min-height` style sets a minimum height for a widget.
 
 ## Syntax
 
@@ -8,7 +8,7 @@ The `min-height` rule sets a minimum height for a widget.
 min-height: <a href="../../css_types/scalar">&lt;scalar&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The `min-height` rule accepts a [`<scalar>`](../../css_types/scalar) that defines a lower bound for the [`height`](./height) of a widget.
+The `min-height` style accepts a [`<scalar>`](../../css_types/scalar) that defines a lower bound for the [`height`](./height) of a widget.
 That is, the height of a widget is never allowed to be under `min-height`.
 
 ## Example

@@ -319,7 +319,7 @@ class App(Generic[ReturnType], DOMNode):
 
         self.console = Console(
             file=file,
-            markup=False,
+            markup=True,
             highlight=False,
             emoji=False,
             legacy_windows=False,

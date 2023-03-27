@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Issue with parsing action strings whose arguments contained quoted closing parenthesis https://github.com/Textualize/textual/pull/2112
+- Issues with parsing action strings with tuple arguments https://github.com/Textualize/textual/pull/2112
+- Fix for tabs not invalidating https://github.com/Textualize/textual/issues/2125
+
+### Changed
+
+- DataTable now has height: auto by default. https://github.com/Textualize/textual/issues/2117
+- Textual will now render strings within renderables (such as tables) as Console Markup by default. You can wrap your text with rich.Text() if you want the original behavior. https://github.com/Textualize/textual/issues/2120
+- Some widget methods now return `self` instead of `None` https://github.com/Textualize/textual/pull/2102:
+  - `Widget`: `refresh`, `focus`, `reset_focus`
+  - `Button.press`
+  - `DataTable`: `clear`, `refresh_coordinate`, `refresh_row`, `refresh_column`, `sort`
+  - `Placehoder.cycle_variant`
+  - `Switch.toggle`
+  - `Tabs.clear`
+  - `TextLog`: `write`, `clear`
+  - `TreeNode`: `expand`, `expand_all`, `collapse`, `collapse_all`, `toggle`, `toggle_all`
+  - `Tree`: `clear`, `reset`
+
+### Added
+
+- Added auto_scroll attribute to TextLog https://github.com/Textualize/textual/pull/2127
+- Added scroll_end switch to TextLog.write https://github.com/Textualize/textual/pull/2127
+
+
 ## [0.16.0] - 2023-03-22
 
 ### Added
