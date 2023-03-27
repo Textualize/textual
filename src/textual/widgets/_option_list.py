@@ -812,7 +812,10 @@ class OptionList(ScrollView, can_focus=True):
     def action_up(self) -> None:
         """Move the highlight up by one option."""
         if self.highlighted is not None:
-            self.highlighted -= 1
+            if self.highlighted > 0:
+                self.highlighted -= 1
+            else:
+                self.highlighted = len(self._options) - 1
             self._update_for_highlight()
         elif self._options:
             self.action_first()
@@ -820,7 +823,10 @@ class OptionList(ScrollView, can_focus=True):
     def action_down(self) -> None:
         """Move the highlight down by one option."""
         if self.highlighted is not None:
-            self.highlighted += 1
+            if self.highlighted < len(self._options) - 1:
+                self.highlighted += 1
+            else:
+                self.highlighted = 0
             self._update_for_highlight()
         elif self._options:
             self.action_first()
