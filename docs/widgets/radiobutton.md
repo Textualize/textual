@@ -1,5 +1,7 @@
 # RadioButton
 
+!!! tip "Added in version 0.13.0"
+
 A simple radio button which stores a boolean value.
 
 - [x] Focusable

@@ -1,5 +1,7 @@
 # ContentSwitcher
 
+!!! tip "Added in version 0.14.0"
+
 A widget for containing and switching display between multiple child
 widgets.
 

@@ -1,5 +1,6 @@
 # Placeholder
 
+!!! tip "Added in version 0.6.0"
 
 A widget that is meant to have no complex functionality.
 Use the placeholder widget when studying the layout of your app before having to develop your custom widgets.

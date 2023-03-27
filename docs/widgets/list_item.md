@@ -1,5 +1,7 @@
 # ListItem
 
+!!! tip "Added in version 0.5.0"
+
 `ListItem` is the type of the elements in a `ListView`.
 
 - [ ] Focusable

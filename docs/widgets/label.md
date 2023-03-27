@@ -1,5 +1,7 @@
 # Label
 
+!!! tip "Added in version 0.5.0"
+
 A widget which displays static text, but which can also contain more complex Rich renderables.
 
 - [ ] Focusable
