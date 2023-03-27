@@ -1,5 +1,7 @@
 # MarkdownViewer
 
+!!! tip "Added in version 0.11.0"
+
 A Widget to display Markdown content with an optional Table of Contents.
 
 - [x] Focusable

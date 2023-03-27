@@ -422,11 +422,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.6.0] - 2022-12-11
 
+https://textual.textualize.io/blog/2022/12/11/version-060
+
 ### Added
 
 - Added "inherited bindings" -- BINDINGS classvar will be merged with base classes, unless inherit_bindings is set to False
 - Added `Tree` widget which replaces `TreeControl`.
 - Added widget `Placeholder` https://github.com/Textualize/textual/issues/1200.
+- Added `ListView` and `ListItem` widgets https://github.com/Textualize/textual/pull/1143
 
 ### Changed
 
