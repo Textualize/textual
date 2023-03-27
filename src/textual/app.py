@@ -652,14 +652,13 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def background_screens(self) -> list[Screen]:
-        """Top of stack and any screens that may be visible due to background opacity."""
+        """A list of screens that may be visible due to background opacity (top-most first.)"""
         screens: list[Screen] = []
         for screen in reversed(self._screen_stack[:-1]):
             screens.append(screen)
             if screen.styles.background.a == 1:
                 break
         background_screens = screens[::-1]
-        self.log(background_screens)
         return background_screens
 
     @property
