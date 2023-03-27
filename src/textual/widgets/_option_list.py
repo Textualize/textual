@@ -705,19 +705,22 @@ class OptionList(ScrollView, can_focus=True):
         # horizontal scrolling, let's crop the strip at the right locations.
         strip = strip.crop(scroll_x, scroll_x + self.scrollable_content_region.width)
 
+        highlighted = self.highlighted
+        mouse_over = self.mouse_hovering_over
+
         # Handle drawing a disabled option.
         if self._options[option_index].disabled:
             # Disabled but the highlight?
-            if option_index == self.highlighted:
+            if option_index == highlighted:
                 return strip.apply_style(
                     self.get_component_rich_style(
                         "option-list--option-hover-highlighted-disabled"
-                        if option_index == self.mouse_hovering_over
+                        if option_index == mouse_over
                         else "option-list--option-highlighted-disabled"
                     )
                 )
             # Disabled but mouse hover?
-            if option_index == self.mouse_hovering_over:
+            if option_index == mouse_over:
                 return strip.apply_style(
                     self.get_component_rich_style("option-list--option-hover-disabled")
                 )
@@ -727,12 +730,9 @@ class OptionList(ScrollView, can_focus=True):
             )
 
         # Handle drawing a highlighted option.
-        if (
-            self.highlighted is not None
-            and line_number in self._spans[self.highlighted]
-        ):
+        if highlighted is not None and line_number in self._spans[highlighted]:
             # Highlighted with the mouse over it?
-            if option_index == self.mouse_hovering_over:
+            if option_index == mouse_over:
                 return strip.apply_style(
                     self.get_component_rich_style(
                         "option-list--option-hover-highlighted"
@@ -745,10 +745,7 @@ class OptionList(ScrollView, can_focus=True):
 
         # Perhaps the line is within an option that has the mouse hovering
         # over it?
-        if (
-            self.mouse_hovering_over is not None
-            and line_number in self._spans[self.mouse_hovering_over]
-        ):
+        if mouse_over is not None and line_number in self._spans[mouse_over]:
             return strip.apply_style(
                 self.get_component_rich_style("option-list--option-hover")
             )
