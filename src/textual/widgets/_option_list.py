@@ -13,9 +13,11 @@ from rich.console import RenderableType
 from rich.repr import Result
 from rich.rule import Rule
 from rich.segment import Segment
+from rich.style import Style
 from typing_extensions import Literal, Self, TypeAlias
 
 from ..binding import Binding, BindingType
+from ..events import MouseMove
 from ..geometry import Region, Size
 from ..message import Message
 from ..reactive import reactive
@@ -141,17 +143,25 @@ class OptionList(ScrollView, can_focus=True):
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
+        "option-list--option-disabled",
         "option-list--option-highlighted",
         "option-list--option-highlighted-disabled",
-        "option-list--option-disabled",
+        "option-list--option-hover",
+        "option-list--option-hover-disabled",
+        "option-list--option-hover-highlighted",
+        "option-list--option-hover-highlighted-disabled",
         "option-list--separator",
     }
     """
     | Class | Description |
     | :- | :- |
+    | `option-list--option-disabled` | Target disabled options. |
     | `option-list--option-highlighted` | Target the highlighted option. |
     | `option-list--option-highlighted-disabled` | Target a disabled option that is also highlighted. |
-    | `option-list--option-disabled` | Target disabled options. |
+    | `option-list--option-hover` | Target an option that has the mouse over it. |
+    | `option-list--option-hover-disabled` | Target a disabled option that has the mouse over it. |
+    | `option-list--option-hover-highlighted` | Target a highlighted option that has the mouse over it. |
+    | `option-list--option-hover-highlighted-disabled` | Target a disabled highlighted option that has the mouse over it. |
     | `option-list--separator` | Target the separators. |
     """
 
@@ -188,10 +198,33 @@ class OptionList(ScrollView, can_focus=True):
     OptionList:focus > .option-list--option-highlighted-disabled {
         background: $accent 40%;
     }
+
+    OptionList > .option-list--option-hover {
+        background: $panel-lighten-2;
+    }
+
+    OptionList > .option-list--option-hover-disabled {
+        color: $text-disabled;
+        background: $panel-lighten-2;
+    }
+
+    OptionList > .option-list--option-hover-highlighted {
+        background: $accent 60%;
+        color: $text;
+        text-style: bold;
+    }
+
+    OptionList > .option-list--option-hover-highlighted-disabled {
+        color: $text-disabled;
+        background: $accent 60%;
+    }
     """
 
     highlighted: reactive[int | None] = reactive["int | None"](None)
     """The index of the currently-highlighted option, or `None` if no option is highlighted."""
+
+    mouse_hovering_over: reactive[int | None] = reactive["int | None"](None)
+    """The index of the option that the mouse is currently hovering over."""
 
     class Debug(Message):
         """DEBUG MESSAGE: REMOVE BEFORE FLIGHT!"""
@@ -356,6 +389,29 @@ class OptionList(ScrollView, can_focus=True):
     def on_resize(self) -> None:
         """Refresh the layout of the renderables in the list when resized."""
         self._request_content_tracking_refresh(rescroll_to_highlight=True)
+
+    def on_mouse_move(self, event: MouseMove) -> None:
+        """React to the mouse moving.
+
+        Args:
+            event: The mouse movement event.
+        """
+        self.mouse_hovering_over = event.style.meta.get("option")
+
+    def on_leave(self) -> None:
+        """React to the mouse leaving the widget."""
+        self.mouse_hovering_over = None
+
+    def watch_mouse_hovering_over(
+        self, old_line: int | None, new_line: int | None
+    ) -> None:
+        """Watch for the mouse hover location changing and restyle accordingly.
+
+        Args:
+            old_line: The line that the mouse was previously over, if any.
+            new_line: The line that the mouse is now over, if any.
+        """
+        self.log.debug(f"watch_mouse_hovering_over({old_line}, {new_line})")
 
     def _make_content(self, content: NewOptionListContent) -> OptionListContent:
         """Convert a single item of content for the list into a content type.
@@ -610,13 +666,20 @@ class OptionList(ScrollView, can_focus=True):
             # there's more list than there are options.
             return Strip([])
 
+        # Now that we know which line we're on, pull out the option index so
+        # we have a "local" copy to refer to rather than needing to do a
+        # property access multiple times.
+        option_index = line.option_index
+
         # Knowing which line we're going to be drawing, we can now go pull
         # the relevant segments for the line of that particular prompt.
-        strip = Strip(line.segments)
+        # While we're here, let's also attach which option index the line is
+        # with.
+        strip = Strip(line.segments).apply_style(Style(meta={"option": option_index}))
 
         # If the line we're looking at isn't associated with an option, it
         # will be a separator, so let's exit early with that.
-        if line.option_index is None:
+        if option_index is None:
             return strip.apply_style(
                 self.get_component_rich_style("option-list--separator")
             )
@@ -625,27 +688,52 @@ class OptionList(ScrollView, can_focus=True):
         # horizontal scrolling, let's crop the strip at the right locations.
         strip = strip.crop(scroll_x, scroll_x + self.scrollable_content_region.width)
 
-        # If the option we're drawing is disabled, exit with an option style.
-        if self._options[line.option_index].disabled:
-            if line.option_index == self.highlighted:
+        # Handle drawing a disabled option.
+        if self._options[option_index].disabled:
+            # Disabled but the highlight?
+            if option_index == self.highlighted:
                 return strip.apply_style(
                     self.get_component_rich_style(
-                        "option-list--option-highlighted-disabled"
+                        "option-list--option-hover-highlighted-disabled"
+                        if option_index == self.mouse_hovering_over
+                        else "option-list--option-highlighted-disabled"
                     )
                 )
+            # Disabled but mouse hover?
+            if option_index == self.mouse_hovering_over:
+                return strip.apply_style(
+                    self.get_component_rich_style("option-list--option-hover-disabled")
+                )
+            # Just a normal disabled option.
             return strip.apply_style(
                 self.get_component_rich_style("option-list--option-disabled")
             )
 
-        # If something is highlighted, and the line falls within the span of
-        # lines that that highlighted option takes up...
+        # Handle drawing a highlighted option.
         if (
             self.highlighted is not None
             and line_number in self._spans[self.highlighted]
         ):
-            # ...paint this as a highlighted option.
+            # Highlighted with the mouse over it?
+            if option_index == self.mouse_hovering_over:
+                return strip.apply_style(
+                    self.get_component_rich_style(
+                        "option-list--option-hover-highlighted"
+                    )
+                )
+            # Just a normal highlight.
             return strip.apply_style(
                 self.get_component_rich_style("option-list--option-highlighted")
+            )
+
+        # Perhaps the line is within an option that has the mouse hovering
+        # over it?
+        if (
+            self.mouse_hovering_over is not None
+            and line_number in self._spans[self.mouse_hovering_over]
+        ):
+            return strip.apply_style(
+                self.get_component_rich_style("option-list--option-hover")
             )
 
         # It's a normal option line.
