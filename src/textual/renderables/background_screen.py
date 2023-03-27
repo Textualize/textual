@@ -27,7 +27,9 @@ class BackgroundScreen:
             color: A color (presumably with alpha).
         """
         self.screen = screen
+        """Screen to process."""
         self.color = color
+        """Color to apply (should have alpha)."""
 
     @classmethod
     def process_segments(
