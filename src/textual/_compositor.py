@@ -809,7 +809,7 @@ class Compositor:
     def render_update(
         self, full: bool = False, screen_stack: list[Screen] | None = None
     ) -> RenderableType | None:
-        """Render an update renderable
+        """Render an update renderable.
 
         Args:
             full: Enable full update, or `False` for a partial update.
