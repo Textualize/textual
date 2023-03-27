@@ -41,7 +41,7 @@ python = "^3.7"
 rich = ">12.6.0"
 markdown-it-py = {extras = ["plugins", "linkify"], version = "^2.1.0"}
 #rich = {path="../rich", develop=true}
-importlib-metadata = "^4.11.3"
+importlib-metadata = ">=4.11.3"
 typing-extensions = "^4.4.0"
 
 # Dependencies below are required for devtools only
