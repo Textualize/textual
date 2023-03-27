@@ -813,29 +813,30 @@ class OptionList(ScrollView, can_focus=True):
             self.highlighted = len(self._options) - 1
             self._update_for_highlight()
 
-    def _page(
-        self,
-        default: Callable[[], None],
-        wrap_around: Callable[[], None],
-        direction: Literal[-1, 1],
-    ) -> None:
+    def _page(self, direction: Literal[-1, 1]) -> None:
         """Move the highlight by one page.
 
         Args:
-            default: The default action to take if no option is highlighted.
-            wrap_around: The action to take if we need to wrap around the ends.
             direction: The direction to head, -1 for up and 1 for down.
         """
+
+        # If we find ourselves in a position where we don't know where we're
+        # going, we need a fallback location. Where we go will depend on the
+        # direction.
+        fallback = self.action_first if direction == -1 else self.action_last
+
         highlighted = self.highlighted
         if highlighted is None:
             # There is no highlight yet so let's go to the default position.
-            default()
+            fallback()
         else:
             # We want to page roughly by lines, but we're dealing with
             # options that can be a varying number of lines in height. So
             # let's start with the a target line alone.
-            target_line = self._spans[highlighted].first + (
-                direction * self.scrollable_content_region.height
+            target_line = max(
+                0,
+                self._spans[highlighted].first
+                + (direction * self.scrollable_content_region.height),
             )
             try:
                 # Now that we've got a target line, let's figure out the
@@ -845,19 +846,19 @@ class OptionList(ScrollView, can_focus=True):
                 # An index error suggests we've gone out of bounds, let's
                 # settle on whatever the call things is a good place to wrap
                 # to.
-                wrap_around()
+                fallback()
             else:
                 # Looks like we've figured out the next option to jump to.
                 self.highlighted = target_option
                 self._update_for_highlight()
 
-    def action_page_up(self) -> None:
-        """Move the highlight up one page of options."""
-        self._page(self.action_first, self.action_last, -1)
+    def action_page_up(self):
+        """Move the highlight up one page."""
+        self._page(-1)
 
-    def action_page_down(self) -> None:
-        """Move the highlight down one page of options."""
-        self._page(self.action_last, self.action_first, 1)
+    def action_page_down(self):
+        """Move the highlight down one page."""
+        self._page(1)
 
     def action_select(self) -> None:
         """Select the currently-highlighted option.
