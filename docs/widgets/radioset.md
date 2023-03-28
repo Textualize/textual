@@ -1,5 +1,7 @@
 # RadioSet
 
+!!! tip "Added in version 0.13.0"
+
 A container widget that groups [`RadioButton`](./radiobutton.md)s together.
 
 - [ ] Focusable

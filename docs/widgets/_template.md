@@ -1,5 +1,7 @@
 # Widget
 
+!!! tip "Added in version x.y.z"
+
 Widget description.
 
 - [ ] Focusable

@@ -1,5 +1,7 @@
 # Markdown
 
+!!! tip "Added in version 0.11.0"
+
 A widget to display a Markdown document.
 
 - [x] Focusable

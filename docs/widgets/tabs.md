@@ -1,5 +1,7 @@
 # Tabs
 
+!!! tip "Added in version 0.15.0"
+
 Displays a number of tab headers which may be activated with a click or navigated with cursor keys.
 
 - [x] Focusable
