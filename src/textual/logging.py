@@ -27,6 +27,6 @@ class TextualHandler(Handler):
             if self._stderr:
                 print(message, file=sys.stderr)
             elif self._stdout:
-                print(message, file=sys.stderr)
+                print(message, file=sys.stdout)
         else:
             app.log.logging(message)
