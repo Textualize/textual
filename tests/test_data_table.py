@@ -652,6 +652,23 @@ async def test_hover_coordinate():
         assert table.hover_coordinate == Coordinate(1, 0)
 
 
+async def test_hover_mouse_leave():
+    """When the mouse cursor leaves the DataTable, there should be no hover highlighting."""
+    app = DataTableApp()
+    async with app.run_test() as pilot:
+        table = app.query_one(DataTable)
+        table.add_column("ABC")
+        table.add_row("123")
+        await pilot.pause()
+        assert table.hover_coordinate == Coordinate(0, 0)
+        # Hover over a cell, and the hover cursor is visible
+        await pilot.hover(DataTable, offset=Offset(1, 1))
+        assert table._show_hover_cursor
+        # Move our cursor away from the DataTable, and the hover cursor is hidden
+        await pilot.hover(DataTable, offset=Offset(-1, -1))
+        assert not table._show_hover_cursor
+
+
 async def test_header_selected():
     """Ensure that a HeaderSelected event gets posted when we click
     on the header in the DataTable."""

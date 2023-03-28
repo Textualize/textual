@@ -7,7 +7,7 @@ from textual.containers import Container
 from textual.css.errors import StyleValueError
 from textual.css.query import NoMatches
 from textual.geometry import Size
-from textual.widget import MountError, Widget
+from textual.widget import MountError, PseudoClasses, Widget
 from textual.widgets import Label
 
 
@@ -176,6 +176,39 @@ def test_widget_mount_ids_must_be_unique_mounting_multiple_calls(parent):
     parent.mount(widget1)
     with pytest.raises(DuplicateIds):
         parent.mount(widget2)
+
+
+def test_get_pseudo_class_state():
+    widget = Widget()
+    pseudo_classes = widget.get_pseudo_class_state()
+    assert pseudo_classes == PseudoClasses(enabled=True, focus=False, hover=False)
+
+
+def test_get_pseudo_class_state_disabled():
+    widget = Widget(disabled=True)
+    pseudo_classes = widget.get_pseudo_class_state()
+    assert pseudo_classes == PseudoClasses(enabled=False, focus=False, hover=False)
+
+
+def test_get_pseudo_class_state_parent_disabled():
+    child = Widget()
+    _parent = Widget(child, disabled=True)
+    pseudo_classes = child.get_pseudo_class_state()
+    assert pseudo_classes == PseudoClasses(enabled=False, focus=False, hover=False)
+
+
+def test_get_pseudo_class_state_hover():
+    widget = Widget()
+    widget.mouse_over = True
+    pseudo_classes = widget.get_pseudo_class_state()
+    assert pseudo_classes == PseudoClasses(enabled=True, focus=False, hover=True)
+
+
+def test_get_pseudo_class_state_focus():
+    widget = Widget()
+    widget.has_focus = True
+    pseudo_classes = widget.get_pseudo_class_state()
+    assert pseudo_classes == PseudoClasses(enabled=True, focus=True, hover=False)
 
 
 # Regression test for https://github.com/Textualize/textual/issues/1634
