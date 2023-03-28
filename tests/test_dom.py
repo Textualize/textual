@@ -72,6 +72,10 @@ def test_classes_set_classes():
     assert node.classes == frozenset({})
     node.set_classes(["paul"])
     assert node.classes == frozenset({"paul"})
+    with pytest.raises(BadIdentifier):
+        node.classes = "foo 25"
+    with pytest.raises(BadIdentifier):
+        node.classes = ["foo", "25"]
 
 
 def test_inherited_bindings():
