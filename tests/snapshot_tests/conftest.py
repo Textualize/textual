@@ -7,7 +7,7 @@ from datetime import datetime
 from operator import attrgetter
 from os import PathLike
 from pathlib import Path, PurePath
-from typing import Awaitable, Coroutine, Union, List, Optional, Callable, Iterable
+from typing import Awaitable, Union, List, Optional, Callable, Iterable
 
 import pytest
 from _pytest.config import ExitCode

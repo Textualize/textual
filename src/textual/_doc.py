@@ -5,7 +5,7 @@ import inspect
 import os
 import shlex
 from pathlib import Path
-from typing import Awaitable, Callable, Coroutine, Iterable, cast
+from typing import Awaitable, Callable, Iterable, cast
 
 from textual._import_app import import_app
 from textual.app import App
