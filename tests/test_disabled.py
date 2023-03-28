@@ -44,15 +44,6 @@ async def test_all_initially_enabled() -> None:
         )
 
 
-async def test_enabled_widgets_have_enabled_pseudo_class() -> None:
-    """All enabled widgets should have the :enabled pseudoclass."""
-    async with DisableApp().run_test() as pilot:
-        assert all(
-            node.has_pseudo_class("enabled") and not node.has_pseudo_class("disabled")
-            for node in pilot.app.screen.query("#test-container > *")
-        )
-
-
 async def test_all_individually_disabled() -> None:
     """Post-disable all widgets should report being disabled."""
     async with DisableApp().run_test() as pilot:

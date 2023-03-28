@@ -2338,8 +2338,7 @@ class Widget(DOMNode):
                 yield "disabled"
                 break
             node = node._parent
-        else:
-            yield "enabled"
+
         if self.mouse_over:
             yield "hover"
         if self.has_focus:

@@ -178,6 +178,27 @@ def test_widget_mount_ids_must_be_unique_mounting_multiple_calls(parent):
         parent.mount(widget2)
 
 
+def test_pseudo_classes_property_default():
+    widget = Widget()
+    assert widget.pseudo_classes == set()
+
+
+def test_pseudo_classes_property_hover():
+    widget = Widget()
+    widget.mouse_over = True
+    assert widget.pseudo_classes == {"hover"}
+
+
+def test_pseudo_classes_property_disabled():
+    assert Widget(disabled=True).pseudo_classes == {"disabled"}
+
+
+def test_pesudo_classes_property_focus():
+    widget = Widget()
+    widget.has_focus = True
+    assert widget.pseudo_classes == {"focus"}
+
+
 # Regression test for https://github.com/Textualize/textual/issues/1634
 async def test_remove():
     class RemoveMeLabel(Label):
