@@ -1,6 +1,10 @@
-# Textual
+![Discord](https://img.shields.io/discord/1026214085173461072)
+
+
 
 ![Textual splash image](https://raw.githubusercontent.com/Textualize/textual/main/imgs/textual.png)
+
+# Textual
 
 Textual is a *Rapid Application Development* framework for Python.
 
