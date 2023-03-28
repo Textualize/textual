@@ -83,6 +83,26 @@ class NoScreen(DOMError):
     pass
 
 
+class _ClassesDescriptor:
+    """A descriptor to manage the `classes` property."""
+
+    def __get__(
+        self, obj: DOMNode, objtype: type[DOMNode] | None = None
+    ) -> frozenset[str]:
+        """A frozenset of the current classes on the widget."""
+        return frozenset(obj._classes)
+
+    def __set__(self, obj: DOMNode, classes: str | Iterable[str]) -> None:
+        """Replaces classes entirely."""
+        if isinstance(classes, str):
+            class_names = set(classes.split())
+        else:
+            class_names = set(classes)
+        check_identifiers("class name", *class_names)
+        obj._classes = class_names
+        obj._update_styles()
+
+
 @rich.repr.auto
 class DOMNode(MessagePump):
     """The base class for object that can be in the Textual DOM (App and Widget)"""
@@ -428,10 +448,7 @@ class DOMNode(MessagePump):
             tokens.append(f"[name={self.name}]", style="underline")
         return tokens
 
-    @property
-    def classes(self) -> frozenset[str]:
-        """A frozenset of the current classes set on the widget."""
-        return frozenset(self._classes)
+    classes = _ClassesDescriptor()
 
     @property
     def pseudo_classes(self) -> frozenset[str]:
@@ -851,8 +868,16 @@ class DOMNode(MessagePump):
 
         return query.only_one() if expect_type is None else query.only_one(expect_type)
 
-    def set_styles(self, css: str | None = None, **update_styles) -> None:
-        """Set custom styles on this object."""
+    def set_styles(self, css: str | None = None, **update_styles) -> Self:
+        """Set custom styles on this object.
+
+        Args:
+            css: Styles in CSS format.
+            **update_styles: Keyword arguments map style names on to style.
+
+        Returns:
+            Self.
+        """
 
         if css is not None:
             try:
@@ -877,16 +902,32 @@ class DOMNode(MessagePump):
         """
         return self._classes.issuperset(class_names)
 
-    def set_class(self, add: bool, *class_names: str) -> None:
+    def set_class(self, add: bool, *class_names: str) -> Self:
         """Add or remove class(es) based on a condition.
 
         Args:
             add: Add the classes if True, otherwise remove them.
+
+        Returns:
+            Self.
         """
         if add:
             self.add_class(*class_names)
         else:
             self.remove_class(*class_names)
+        return self
+
+    def set_classes(self, classes: str | Iterable[str]) -> Self:
+        """Replace all classes.
+
+        Args:
+            A string contain space separated classes, or an iterable of class names.
+
+        Returns:
+            Self.
+        """
+        self.classes = classes
+        return self
 
     def _update_styles(self) -> None:
         """Request an update of this node's styles.
@@ -898,45 +939,56 @@ class DOMNode(MessagePump):
         except NoActiveAppError:
             pass
 
-    def add_class(self, *class_names: str) -> None:
+    def add_class(self, *class_names: str) -> Self:
         """Add class names to this Node.
 
         Args:
             *class_names: CSS class names to add.
 
+        Returns:
+            Self.
         """
         check_identifiers("class name", *class_names)
         old_classes = self._classes.copy()
         self._classes.update(class_names)
         if old_classes == self._classes:
-            return
+            return self
         self._update_styles()
+        return self
 
-    def remove_class(self, *class_names: str) -> None:
+    def remove_class(self, *class_names: str) -> Self:
         """Remove class names from this Node.
 
         Args:
             *class_names: CSS class names to remove.
+
+        Returns:
+            Self.
         """
         check_identifiers("class name", *class_names)
         old_classes = self._classes.copy()
         self._classes.difference_update(class_names)
         if old_classes == self._classes:
-            return
+            return self
         self._update_styles()
+        return self
 
-    def toggle_class(self, *class_names: str) -> None:
+    def toggle_class(self, *class_names: str) -> Self:
         """Toggle class names on this Node.
 
         Args:
             *class_names: CSS class names to toggle.
+
+        Returns:
+            Self.
         """
         check_identifiers("class name", *class_names)
         old_classes = self._classes.copy()
         self._classes.symmetric_difference_update(class_names)
         if old_classes == self._classes:
-            return
+            return self
         self._update_styles()
+        return self
 
     def has_pseudo_class(self, *class_names: str) -> bool:
         """Check for pseudo classes (such as hover, focus etc)

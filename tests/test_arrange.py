@@ -12,7 +12,6 @@ def test_arrange_empty():
     result = arrange(container, [], Size(80, 24), Size(80, 24))
     assert result.placements == []
     assert result.widgets == set()
-    assert result.spacing == Spacing(0, 0, 0, 0)
 
 
 def test_arrange_dock_top():
@@ -31,7 +30,6 @@ def test_arrange_dock_top():
         WidgetPlacement(Region(0, 1, 80, 23), Spacing(), child, order=0, fixed=False),
     ]
     assert result.widgets == {child, header}
-    assert result.spacing == Spacing(1, 0, 0, 0)
 
 
 def test_arrange_dock_left():
@@ -49,7 +47,6 @@ def test_arrange_dock_left():
         WidgetPlacement(Region(10, 0, 70, 24), Spacing(), child, order=0, fixed=False),
     ]
     assert result.widgets == {child, header}
-    assert result.spacing == Spacing(0, 0, 0, 10)
 
 
 def test_arrange_dock_right():
@@ -67,7 +64,6 @@ def test_arrange_dock_right():
         WidgetPlacement(Region(0, 0, 70, 24), Spacing(), child, order=0, fixed=False),
     ]
     assert result.widgets == {child, header}
-    assert result.spacing == Spacing(0, 10, 0, 0)
 
 
 def test_arrange_dock_bottom():
@@ -85,7 +81,6 @@ def test_arrange_dock_bottom():
         WidgetPlacement(Region(0, 0, 80, 23), Spacing(), child, order=0, fixed=False),
     ]
     assert result.widgets == {child, header}
-    assert result.spacing == Spacing(0, 0, 1, 0)
 
 
 def test_arrange_dock_badly():

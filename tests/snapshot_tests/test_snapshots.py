@@ -354,3 +354,8 @@ def test_css_hot_reloading(snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "hot_reloading_app.py", run_before=run_before
     )
+
+
+def test_layer_fix(snap_compare):
+    # Check https://github.com/Textualize/textual/issues/1358
+    assert snap_compare(SNAPSHOT_APPS_DIR / "layer_fix.py", press=["d"])
