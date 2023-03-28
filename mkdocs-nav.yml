@@ -173,6 +173,7 @@ nav:
     - "api/markdown.md"
     - "api/message_pump.md"
     - "api/message.md"
+    - "api/option_list.md"
     - "api/pilot.md"
     - "api/placeholder.md"
     - "api/query.md"
