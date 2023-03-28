@@ -343,4 +343,5 @@ def test_scrollbar_thumb_height(snap_compare):
 
 
 def test_layer_fix(snap_compare):
+    # Check https://github.com/Textualize/textual/issues/1358
     assert snap_compare(SNAPSHOT_APPS_DIR / "layer_fix.py", press=["d"])
