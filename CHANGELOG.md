@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Issue with parsing action strings whose arguments contained quoted closing parenthesis https://github.com/Textualize/textual/pull/2112
 - Issues with parsing action strings with tuple arguments https://github.com/Textualize/textual/pull/2112
+- Issue with watching for CSS file changes https://github.com/Textualize/textual/pull/2128
 - Fix for tabs not invalidating https://github.com/Textualize/textual/issues/2125
 - Fixed scrollbar layers issue https://github.com/Textualize/textual/issues/1358
 - Fix for interaction between pseudo-classes and widget-level render caches https://github.com/Textualize/textual/pull/2155

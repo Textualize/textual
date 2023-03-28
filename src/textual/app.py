@@ -1081,7 +1081,6 @@ class App(Generic[ReturnType], DOMNode):
                 self.bell()
             else:
                 self.stylesheet = stylesheet
-                self.reset_styles()
                 self.stylesheet.update(self)
                 self.screen.refresh(layout=True)
 

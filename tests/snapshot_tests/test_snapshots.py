@@ -342,6 +342,20 @@ def test_scrollbar_thumb_height(snap_compare):
     )
 
 
+def test_css_hot_reloading(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/2063."""
+
+    async def run_before(pilot):
+        css_file = pilot.app.CSS_PATH
+        with open(css_file, "w") as f:
+            f.write("/* This file is purposefully empty. */\n")  # Clear all the CSS.
+        await pilot.app._on_css_change()
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "hot_reloading_app.py", run_before=run_before
+    )
+
+
 def test_layer_fix(snap_compare):
     # Check https://github.com/Textualize/textual/issues/1358
     assert snap_compare(SNAPSHOT_APPS_DIR / "layer_fix.py", press=["d"])
