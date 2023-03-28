@@ -156,17 +156,26 @@ class MessagePump(metaclass=MessagePumpMeta):
         try:
             return active_app.get()
         except LookupError:
-            raise NoActiveAppError()
+            from .app import App
+
+            node: MessagePump | None = self
+            while not isinstance(node, App):
+                if node is None:
+                    raise NoActiveAppError()
+                node = node._parent
+            active_app.set(node)
+            return node
 
     @property
     def is_parent_active(self) -> bool:
+        """Is the parent active?"""
         return bool(
             self._parent and not self._parent._closed and not self._parent._closing
         )
 
     @property
     def is_running(self) -> bool:
-        """bool: Is the message pump running (potentially processing messages)."""
+        """Is the message pump running (potentially processing messages)."""
         return self._running
 
     @property
@@ -399,7 +408,6 @@ class MessagePump(metaclass=MessagePumpMeta):
     def _start_messages(self) -> None:
         """Start messages task."""
         if self.app._running:
-            active_message_pump.set(self)
             self._task = create_task(
                 self._process_messages(), name=f"message pump {self}"
             )
@@ -409,6 +417,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     async def _process_messages(self) -> None:
         self._running = True
+        active_message_pump.set(self)
 
         await self._pre_process()
 

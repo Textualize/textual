@@ -1,5 +1,7 @@
 # Checkbox
 
+!!! tip "Added in version 0.13.0"
+
 A simple checkbox widget which stores a boolean value.
 
 - [x] Focusable

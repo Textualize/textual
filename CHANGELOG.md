@@ -28,13 +28,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - `TextLog`: `write`, `clear`
   - `TreeNode`: `expand`, `expand_all`, `collapse`, `collapse_all`, `toggle`, `toggle_all`
   - `Tree`: `clear`, `reset`
+- Screens with alpha in their background color will now blend with the background. https://github.com/Textualize/textual/pull/2139
+- Added "thick" border style. https://github.com/Textualize/textual/pull/2139
+- message_pump.app will now set the active app if it is not already set.
 
 ### Added
 
 - Added auto_scroll attribute to TextLog https://github.com/Textualize/textual/pull/2127
 - Added scroll_end switch to TextLog.write https://github.com/Textualize/textual/pull/2127
 - Added `Widget.get_pseudo_class_state` https://github.com/Textualize/textual/pull/2155
-
+- Added Screen.ModalScreen which prevents App from handling bindings. https://github.com/Textualize/textual/pull/2139
+- Added TEXTUAL_LOG env var which should be a path that Textual will write verbose logs to (textual devtools is generally preferred) https://github.com/Textualize/textual/pull/2148
+- Added textual.logging.TextualHandler logging handler
 
 ## [0.16.0] - 2023-03-22
 
@@ -420,11 +425,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.6.0] - 2022-12-11
 
+https://textual.textualize.io/blog/2022/12/11/version-060
+
 ### Added
 
 - Added "inherited bindings" -- BINDINGS classvar will be merged with base classes, unless inherit_bindings is set to False
 - Added `Tree` widget which replaces `TreeControl`.
 - Added widget `Placeholder` https://github.com/Textualize/textual/issues/1200.
+- Added `ListView` and `ListItem` widgets https://github.com/Textualize/textual/pull/1143
 
 ### Changed
 

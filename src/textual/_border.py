@@ -17,8 +17,6 @@ if TYPE_CHECKING:
 INNER = 1
 OUTER = 2
 
-_EMPTY_SEGMENT = Segment("", Style())
-
 BORDER_CHARS: dict[
     EdgeType, tuple[tuple[str, str, str], tuple[str, str, str], tuple[str, str, str]]
 ] = {
@@ -83,6 +81,11 @@ BORDER_CHARS: dict[
         ("▛", "▀", "▜"),
         ("▌", " ", "▐"),
         ("▙", "▄", "▟"),
+    ),
+    "thick": (
+        ("█", "▀", "█"),
+        ("█", " ", "█"),
+        ("█", "▄", "█"),
     ),
     "hkey": (
         ("▔", "▔", "▔"),
@@ -168,6 +171,11 @@ BORDER_LOCATIONS: dict[
         (1, 1, 1),
     ),
     "outer": (
+        (0, 0, 0),
+        (0, 0, 0),
+        (0, 0, 0),
+    ),
+    "thick": (
         (0, 0, 0),
         (0, 0, 0),
         (0, 0, 0),

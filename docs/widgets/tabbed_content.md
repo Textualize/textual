@@ -1,5 +1,7 @@
 # TabbedContent
 
+!!! tip "Added in version 0.16.0"
+
 Switch between mutually exclusive content panes via a row of tabs.
 
 - [x] Focusable

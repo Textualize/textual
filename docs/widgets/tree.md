@@ -1,5 +1,7 @@
 # Tree
 
+!!! tip "Added in version 0.6.0"
+
 A tree control widget.
 
 - [x] Focusable
