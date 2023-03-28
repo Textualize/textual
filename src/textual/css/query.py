@@ -331,7 +331,7 @@ class DOMQuery(Generic[QueryType]):
         return self
 
     def set_classes(self, classes: str | Iterable[str]) -> DOMQuery[QueryType]:
-        """Set the classes on nodes to exactly the given set
+        """Set the classes on nodes to exactly the given set.
 
         Args:
             classes: A string of space separated classes, or an iterable of class names.
