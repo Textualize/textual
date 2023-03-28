@@ -374,9 +374,9 @@ class OptionList(ScrollView, can_focus=True):
             new: The new status.
 
         `show_vertical_scrollbar` is watched because it has an impact on the
-        available witch in which to render renderables. If a vertical
-        scrollbar appears or disappears we need to recalculate all the lines
-        that make up the list.
+        available width in which to render the renderables that make up the
+        options in the list. If a vertical scrollbar appears or disappears
+        we need to recalculate all the lines that make up the list.
         """
         if old != new:
             self._request_content_tracking_refresh()
