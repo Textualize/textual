@@ -9,12 +9,14 @@ from rich.style import Style
 from . import errors, events, messages
 from ._callback import invoke
 from ._compositor import Compositor, MapGeometry
+from ._context import visible_screen_stack
 from ._types import CallbackType
 from .css.match import match
 from .css.parse import parse_selectors
 from .css.query import QueryType
 from .geometry import Offset, Region, Size
 from .reactive import Reactive
+from .renderables.background_screen import BackgroundScreen
 from .renderables.blank import Blank
 from .timer import Timer
 from .widget import Widget
@@ -30,10 +32,6 @@ UPDATE_PERIOD: Final[float] = 1 / 120
 class Screen(Widget):
     """A widget for the root of the app."""
 
-    # The screen is a special case and unless a class that inherits from us
-    # says otherwise, all screen-level bindings should be treated as having
-    # priority.
-
     DEFAULT_CSS = """
     Screen {
         layout: vertical;
@@ -43,6 +41,9 @@ class Screen(Widget):
     """
 
     focused: Reactive[Widget | None] = Reactive(None)
+    """The focused widget or `None` for no focus."""
+    stack_updates: Reactive[int] = Reactive(0, repaint=False)
+    """An integer that updates when the screen is resumed."""
 
     def __init__(
         self,
@@ -50,12 +51,17 @@ class Screen(Widget):
         id: str | None = None,
         classes: str | None = None,
     ) -> None:
+        self._modal = False
         super().__init__(name=name, id=id, classes=classes)
         self._compositor = Compositor()
         self._dirty_widgets: set[Widget] = set()
         self._update_timer: Timer | None = None
         self._callbacks: list[CallbackType] = []
-        self._max_idle = UPDATE_PERIOD
+
+    @property
+    def is_modal(self) -> bool:
+        """Is the screen modal?"""
+        return self._modal
 
     @property
     def is_transparent(self) -> bool:
@@ -82,6 +88,14 @@ class Screen(Widget):
 
     def render(self) -> RenderableType:
         background = self.styles.background
+        try:
+            base_screen = visible_screen_stack.get().pop()
+        except IndexError:
+            base_screen = None
+
+        if base_screen is not None and 1 > background.a > 0:
+            return BackgroundScreen(base_screen, background)
+
         if background.is_transparent:
             return self.app.render()
         return Blank(background)
@@ -368,6 +382,7 @@ class Screen(Widget):
                         self._repaint_required = False
 
                     if self._dirty_widgets:
+                        self._on_timer_update()
                         self.update_timer.resume()
 
         # The Screen is idle - a good opportunity to invoke the scheduled callbacks
@@ -376,9 +391,12 @@ class Screen(Widget):
     def _on_timer_update(self) -> None:
         """Called by the _update_timer."""
         # Render widgets together
-        if self._dirty_widgets:
+        if self._dirty_widgets and self.is_current:
             self._compositor.update_widgets(self._dirty_widgets)
-            self.app._display(self, self._compositor.render())
+            update = self._compositor.render_update(
+                screen_stack=self.app._background_screens
+            )
+            self.app._display(self, update)
             self._dirty_widgets.clear()
         if self._callbacks:
             self.post_message(events.InvokeCallbacks())
@@ -393,7 +411,9 @@ class Screen(Widget):
         """If there are scheduled callbacks to run, call them and clear
         the callback queue."""
         if self._callbacks:
-            display_update = self._compositor.render()
+            display_update = self._compositor.render_update(
+                screen_stack=self.app._background_screens
+            )
             self.app._display(self, display_update)
             callbacks = self._callbacks[:]
             self._callbacks.clear()
@@ -417,7 +437,6 @@ class Screen(Widget):
         size = self.outer_size if size is None else size
         if not size:
             return
-
         self._compositor.update_widgets(self._dirty_widgets)
         self.update_timer.pause()
         ResizeEvent = events.Resize
@@ -477,8 +496,12 @@ class Screen(Widget):
         except Exception as error:
             self.app._handle_exception(error)
             return
-        display_update = self._compositor.render(full=full)
-        self.app._display(self, display_update)
+        if self.is_current:
+            display_update = self._compositor.render_update(
+                full=full, screen_stack=self.app._background_screens
+            )
+            self.app._display(self, display_update)
+
         if not self.app._dom_ready:
             self.app.post_message(events.Ready())
             self.app._dom_ready = True
@@ -506,15 +529,25 @@ class Screen(Widget):
     def _screen_resized(self, size: Size):
         """Called by App when the screen is resized."""
         self._refresh_layout(size, full=True)
+        self.refresh()
 
     def _on_screen_resume(self) -> None:
-        """Called by the App"""
+        """Screen has resumed."""
+        self.stack_updates += 1
         size = self.app.size
         self._refresh_layout(size, full=True)
+        self.refresh()
+
+    def _on_screen_suspend(self) -> None:
+        """Screen has suspended."""
+        self.app._set_mouse_over(None)
+        self.stack_updates += 1
 
     async def _on_resize(self, event: events.Resize) -> None:
         event.stop()
         self._screen_resized(event.size)
+        for screen in self.app._background_screens:
+            screen._screen_resized(event.size)
 
     def _handle_mouse_move(self, event: events.MouseMove) -> None:
         try:
@@ -590,3 +623,25 @@ class Screen(Widget):
                     scroll_widget._forward_event(event)
         else:
             self.post_message(event)
+
+
+@rich.repr.auto
+class ModalScreen(Screen):
+    """A screen with bindings that take precedence over the App's key bindings."""
+
+    DEFAULT_CSS = """
+    ModalScreen {
+        layout: vertical;
+        overflow-y: auto;
+        background: $background 60%;
+    }
+    """
+
+    def __init__(
+        self,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+    ) -> None:
+        super().__init__(name=name, id=id, classes=classes)
+        self._modal = True

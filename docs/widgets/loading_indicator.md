@@ -1,5 +1,7 @@
 # LoadingIndicator
 
+!!! tip "Added in version 0.15.0"
+
 Displays pulsating dots to indicate when data is being loaded.
 
 - [ ] Focusable

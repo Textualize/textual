@@ -34,3 +34,6 @@ BORDERS = list(BORDER_CHARS)
 DEBUG: Final[bool] = get_environ_bool("TEXTUAL_DEBUG")
 
 DRIVER: Final[str | None] = get_environ("TEXTUAL_DRIVER", None)
+
+LOG_FILE: Final[str | None] = get_environ("TEXTUAL_LOG", None)
+"""A last resort log file that appends all logs, when devtools isn't working."""

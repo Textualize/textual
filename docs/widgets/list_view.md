@@ -1,5 +1,7 @@
 # ListView
 
+!!! tip "Added in version 0.6.0"
+
 Displays a vertical list of `ListItem`s which can be highlighted and selected.
 Supports keyboard navigation.
 

@@ -16,6 +16,7 @@ EdgeType = Literal[
     "blank",
     "round",
     "solid",
+    "thick",
     "double",
     "dashed",
     "heavy",
