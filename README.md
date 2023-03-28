@@ -1,8 +1,10 @@
-[![Discord](https://img.shields.io/discord/1026214085173461072)](https://discord.gg/Enf6Z3qhVr)
 
 
 
 ![Textual splash image](https://raw.githubusercontent.com/Textualize/textual/main/imgs/textual.png)
+
+[![Discord](https://img.shields.io/discord/1026214085173461072)](https://discord.gg/Enf6Z3qhVr)
+
 
 # Textual
 
