@@ -77,8 +77,8 @@ async def test_select_message_with_keyboard() -> None:
         ]
 
 
-async def test_move_highlight_with_mouse() -> None:
-    """Changing option via the mouse should result in a message."""
+async def test_click_option_with_mouse() -> None:
+    """Clicking on an option via the mouse should result in highlight and select messages."""
     async with OptionListApp().run_test() as pilot:
         assert isinstance(pilot.app, OptionListApp)
         await pilot.click(OptionList, Offset(1, 1))
