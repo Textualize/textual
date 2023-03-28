@@ -340,3 +340,7 @@ def test_scrollbar_thumb_height(snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "scrollbar_thumb_height.py",
     )
+
+
+def test_layer_fix(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "layer_fix.py", press=["d"])
