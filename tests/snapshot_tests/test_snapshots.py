@@ -340,3 +340,15 @@ def test_scrollbar_thumb_height(snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "scrollbar_thumb_height.py",
     )
+
+
+def test_css_hot_reloading(snap_compare):
+    async def run_before(pilot):
+        css_file = pilot.app.CSS_PATH
+        with open(css_file, "w") as f:
+            f.write("")  # Clear all the CSS.
+        await pilot.app._on_css_change()
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "hot_reloading_app.py", run_before=run_before
+    )
