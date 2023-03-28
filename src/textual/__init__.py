@@ -142,6 +142,11 @@ class Logger:
         """Logs system information."""
         return Logger(self._log, LogGroup.SYSTEM)
 
+    @property
+    def logging(self) -> Logger:
+        """Logs from stdlib logging module."""
+        return Logger(self._log, LogGroup.LOGGING)
+
 
 log = Logger(None)
 
