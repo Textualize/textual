@@ -137,6 +137,7 @@ nav:
       - "widgets/loading_indicator.md"
       - "widgets/markdown_viewer.md"
       - "widgets/markdown.md"
+      - "widgets/option_list.md"
       - "widgets/placeholder.md"
       - "widgets/radiobutton.md"
       - "widgets/radioset.md"
