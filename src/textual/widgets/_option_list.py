@@ -240,7 +240,7 @@ class OptionList(ScrollView, can_focus=True):
 
             Args:
                 option_list: The option list that owns the option.
-                option: The option that the message relates to.
+                index: The index of the option that the message relates to.
             """
             super().__init__()
             self.option_list: OptionList = option_list
