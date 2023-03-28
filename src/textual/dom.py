@@ -83,6 +83,26 @@ class NoScreen(DOMError):
     pass
 
 
+class _ClassesDescriptor:
+    """A descriptor to manage the `classes` property."""
+
+    def __get__(
+        self, obj: DOMNode, objtype: type[DOMNode] | None = None
+    ) -> frozenset[str]:
+        """A frozenset of the current classes on the widget."""
+        return frozenset(obj._classes)
+
+    def __set__(self, obj: DOMNode, classes: str | Iterable[str]) -> None:
+        """Replaces classes entirely."""
+        if isinstance(classes, str):
+            class_names = set(classes.split())
+        else:
+            class_names = set(classes)
+        check_identifiers("class name", *class_names)
+        obj._classes = class_names
+        obj._update_styles()
+
+
 @rich.repr.auto
 class DOMNode(MessagePump):
     """The base class for object that can be in the Textual DOM (App and Widget)"""
@@ -428,10 +448,7 @@ class DOMNode(MessagePump):
             tokens.append(f"[name={self.name}]", style="underline")
         return tokens
 
-    @property
-    def classes(self) -> frozenset[str]:
-        """A frozenset of the current classes set on the widget."""
-        return frozenset(self._classes)
+    classes = _ClassesDescriptor()
 
     @property
     def pseudo_classes(self) -> frozenset[str]:
@@ -887,6 +904,15 @@ class DOMNode(MessagePump):
             self.add_class(*class_names)
         else:
             self.remove_class(*class_names)
+
+    def set_classes(self, classes: str | Iterable[str]) -> None:
+        """Replace all classes.
+
+        Args:
+            A string contain space separated classes, or an iterable of class names.
+
+        """
+        self.classes = classes
 
     def _update_styles(self) -> None:
         """Request an update of this node's styles.

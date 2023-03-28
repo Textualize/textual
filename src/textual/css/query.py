@@ -16,7 +16,7 @@ a method which evaluates the query, such as first() and last().
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generic, Iterator, TypeVar, cast, overload
+from typing import TYPE_CHECKING, Generic, Iterable, Iterator, TypeVar, cast, overload
 
 import rich.repr
 
@@ -328,6 +328,25 @@ class DOMQuery(Generic[QueryType]):
         """
         for node in self:
             node.set_class(add, *class_names)
+        return self
+
+    def set_classes(self, classes: str | Iterable[str]) -> DOMQuery[QueryType]:
+        """Set the classes on nodes to exactly the given set
+
+        Args:
+            classes: A string of space separated classes, or an iterable of class names.
+
+        Returns:
+            Self.
+        """
+
+        if isinstance(classes, str):
+            for node in self:
+                node.set_classes(classes)
+        else:
+            class_names = list(classes)
+            for node in self:
+                node.set_classes(class_names)
         return self
 
     def add_class(self, *class_names: str) -> DOMQuery[QueryType]:
