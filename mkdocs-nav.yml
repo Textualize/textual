@@ -169,6 +169,7 @@ nav:
     - "api/list_item.md"
     - "api/list_view.md"
     - "api/loading_indicator.md"
+    - "api/logging.md"
     - "api/markdown_viewer.md"
     - "api/markdown.md"
     - "api/message_pump.md"

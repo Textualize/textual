@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - `Tree`: `clear`, `reset`
 - Screens with alpha in their background color will now blend with the background. https://github.com/Textualize/textual/pull/2139
 - Added "thick" border style. https://github.com/Textualize/textual/pull/2139
+- message_pump.app will now set the active app if it is not already set.
 
 ### Added
 
@@ -36,7 +37,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added scroll_end switch to TextLog.write https://github.com/Textualize/textual/pull/2127
 - Added Screen.ModalScreen which prevents App from handling bindings. https://github.com/Textualize/textual/pull/2139
 - Added TEXTUAL_LOG env var which should be a path that Textual will write verbose logs to (textual devtools is generally preferred) https://github.com/Textualize/textual/pull/2148
-
+- Added textual.logging.TextualHandler logging handler
 
 ## [0.16.0] - 2023-03-22
 
