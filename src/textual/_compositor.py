@@ -484,7 +484,6 @@ class Compositor:
                     # Arrange the layout
                     arrange_result = widget._arrange(child_region.size)
                     arranged_widgets = arrange_result.widgets
-                    spacing = arrange_result.spacing
                     widgets.update(arranged_widgets)
 
                     if visible_only:
@@ -513,9 +512,7 @@ class Compositor:
                         if fixed:
                             widget_region = sub_region + placement_offset
                         else:
-                            total_region = total_region.union(
-                                sub_region.grow(spacing + margin)
-                            )
+                            total_region = total_region.union(sub_region.grow(margin))
                             widget_region = sub_region + placement_scroll_offset
 
                         widget_order = order + (
