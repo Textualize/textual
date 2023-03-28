@@ -6,6 +6,7 @@ Textual is a *Rapid Application Development* framework for Python.
 
 Build sophisticated user interfaces with a simple Python API. Run your apps in the terminal and (coming soon) a web browser!
 
+
 <details>  
   <summary> 🎬 Demonstration </summary>
   <hr>
@@ -19,7 +20,6 @@ https://user-images.githubusercontent.com/554369/197355913-65d3c125-493d-4c05-a5
 
 
  </details>
-
 
 
 ## About
@@ -55,6 +55,10 @@ python -m textual
 ## Documentation
 
 Head over to the [Textual documentation](http://textual.textualize.io/) to start building!
+
+## Join us on Discord
+
+Join the Textual developers and community on our [Discord Server](https://discord.gg/Enf6Z3qhVr).
 
 ## Examples
 
