@@ -406,7 +406,6 @@ class OptionList(ScrollView, can_focus=True):
         clicked_option = event.style.meta.get("option")
         if clicked_option is not None:
             self.highlighted = clicked_option
-            self._update_for_highlight()
 
     def _make_content(self, content: NewOptionListContent) -> OptionListContent:
         """Convert a single item of content for the list into a content type.
@@ -785,7 +784,13 @@ class OptionList(ScrollView, can_focus=True):
         highlighted = self.highlighted
         if highlighted is None:
             return
-        span = self._spans[highlighted]
+        try:
+            span = self._spans[highlighted]
+        except IndexError:
+            # Index error means we're being asked to scroll to a highlight
+            # before all the tracking information has been worked out.
+            # That's fine; let's just NoP that.
+            return
         self.scroll_to_region(
             Region(
                 0, span.first, self.scrollable_content_region.width, span.line_count
@@ -802,13 +807,12 @@ class OptionList(ScrollView, can_focus=True):
             return 0
         return min(highlighted, len(self._options) - 1)
 
-    def _update_for_highlight(self) -> None:
+    def watch_highlighted(self, highlighted: int | None) -> None:
         """React to the highlighted option having changed."""
-        highlighted = self.highlighted
-        assert highlighted is not None
-        self.scroll_to_highlight()
-        if not self._options[highlighted].disabled:
-            self.post_message(self.OptionHighlighted(self, highlighted))
+        if highlighted is not None:
+            self.scroll_to_highlight()
+            if not self._options[highlighted].disabled:
+                self.post_message(self.OptionHighlighted(self, highlighted))
 
     def action_up(self) -> None:
         """Move the highlight up by one option."""
@@ -817,7 +821,6 @@ class OptionList(ScrollView, can_focus=True):
                 self.highlighted -= 1
             else:
                 self.highlighted = len(self._options) - 1
-            self._update_for_highlight()
         elif self._options:
             self.action_first()
 
@@ -828,7 +831,6 @@ class OptionList(ScrollView, can_focus=True):
                 self.highlighted += 1
             else:
                 self.highlighted = 0
-            self._update_for_highlight()
         elif self._options:
             self.action_first()
 
@@ -836,13 +838,11 @@ class OptionList(ScrollView, can_focus=True):
         """Move the highlight to the first option."""
         if self._options:
             self.highlighted = 0
-            self._update_for_highlight()
 
     def action_last(self) -> None:
         """Move the highlight to the last option."""
         if self._options:
             self.highlighted = len(self._options) - 1
-            self._update_for_highlight()
 
     def _page(self, direction: Literal[-1, 1]) -> None:
         """Move the highlight by one page.
@@ -881,7 +881,6 @@ class OptionList(ScrollView, can_focus=True):
             else:
                 # Looks like we've figured out the next option to jump to.
                 self.highlighted = target_option
-                self._update_for_highlight()
 
     def action_page_up(self):
         """Move the highlight up one page."""
