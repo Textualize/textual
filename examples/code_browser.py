@@ -7,7 +7,6 @@ Run with:
 
 """
 
-import logging
 import sys
 
 from rich.syntax import Syntax
@@ -16,15 +15,8 @@ from rich.traceback import Traceback
 from textual import events
 from textual.app import App, ComposeResult
 from textual.containers import Container, VerticalScroll
-from textual.logging import TextualHandler
 from textual.reactive import var
 from textual.widgets import DirectoryTree, Footer, Header, Static
-
-FORMAT = "%(message)s"
-logging.basicConfig(level="NOTSET", handlers=[TextualHandler()])
-
-log = logging.getLogger("rich")
-log.info("Hello, World!")
 
 
 class CodeBrowser(App):
@@ -41,7 +33,6 @@ class CodeBrowser(App):
     def watch_show_tree(self, show_tree: bool) -> None:
         """Called when show_tree is modified."""
         self.set_class(show_tree, "-show-tree")
-        logging.debug("SHow Tree")
 
     def compose(self) -> ComposeResult:
         """Compose our UI."""
