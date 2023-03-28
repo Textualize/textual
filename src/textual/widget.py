@@ -2376,7 +2376,7 @@ class Widget(DOMNode):
             node = node._parent
 
         pseudo_classes = PseudoClasses(
-            enabled=disabled,
+            enabled=not disabled,
             hover=self.mouse_over,
             focus=self.has_focus,
         )

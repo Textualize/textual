@@ -1860,6 +1860,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             except KeyError:
                 pass
 
+    def on_leave(self, event: events.Leave) -> None:
+        self._set_hover_cursor(False)
+
     def _get_fixed_offset(self) -> Spacing:
         """Calculate the "fixed offset", that is the space to the top and left
         that is occupied by fixed rows and columns respectively. Fixed rows and columns
