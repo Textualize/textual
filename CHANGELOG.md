@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Issue with parsing action strings whose arguments contained quoted closing parenthesis https://github.com/Textualize/textual/pull/2112
 - Issues with parsing action strings with tuple arguments https://github.com/Textualize/textual/pull/2112
 - Fix for tabs not invalidating https://github.com/Textualize/textual/issues/2125
+- Fix for interaction between pseudo-classes and widget-level render caches https://github.com/Textualize/textual/pull/2155
 
 ### Changed
 
@@ -32,6 +33,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added auto_scroll attribute to TextLog https://github.com/Textualize/textual/pull/2127
 - Added scroll_end switch to TextLog.write https://github.com/Textualize/textual/pull/2127
+- Added `Widget.get_pseudo_class_state` https://github.com/Textualize/textual/pull/2155
 
 
 ## [0.16.0] - 2023-03-22
