@@ -406,6 +406,7 @@ class OptionList(ScrollView, can_focus=True):
         clicked_option = event.style.meta.get("option")
         if clicked_option is not None:
             self.highlighted = clicked_option
+            self.action_select()
 
     def _make_content(self, content: NewOptionListContent) -> OptionListContent:
         """Convert a single item of content for the list into a content type.
