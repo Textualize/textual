@@ -49,6 +49,16 @@ async def test_same_highlight_message() -> None:
         assert pilot.app.messages == []
 
 
+async def test_highlight_disabled_option_no_message() -> None:
+    """Highlighting a disabled option should result in no messages."""
+    async with OptionListApp().run_test() as pilot:
+        assert isinstance(pilot.app, OptionListApp)
+        pilot.app.query_one(OptionList).disable_option("1")
+        pilot.app.query_one(OptionList).highlighted = 1
+        await pilot.pause(0.01)
+        assert pilot.app.messages == []
+
+
 async def test_new_highlight() -> None:
     """Setting the highlight to a new option should result in a message."""
     async with OptionListApp().run_test() as pilot:
