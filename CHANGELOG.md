@@ -40,7 +40,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added Screen.ModalScreen which prevents App from handling bindings. https://github.com/Textualize/textual/pull/2139
 - Added TEXTUAL_LOG env var which should be a path that Textual will write verbose logs to (textual devtools is generally preferred) https://github.com/Textualize/textual/pull/2148
 - Added textual.logging.TextualHandler logging handler
-- Added Query.set_classes DOMNode.set_classes and `classes` setter for Widget https://github.com/Textualize/textual/issues/1081
+- Added Query.set_classes, DOMNode.set_classes, and `classes` setter for Widget https://github.com/Textualize/textual/issues/1081
 
 ## [0.16.0] - 2023-03-22
 
