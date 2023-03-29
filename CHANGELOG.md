@@ -11,7 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Issue with parsing action strings whose arguments contained quoted closing parenthesis https://github.com/Textualize/textual/pull/2112
 - Issues with parsing action strings with tuple arguments https://github.com/Textualize/textual/pull/2112
+- Issue with watching for CSS file changes https://github.com/Textualize/textual/pull/2128
 - Fix for tabs not invalidating https://github.com/Textualize/textual/issues/2125
+- Fixed scrollbar layers issue https://github.com/Textualize/textual/issues/1358
+- Fix for interaction between pseudo-classes and widget-level render caches https://github.com/Textualize/textual/pull/2155
 
 ### Changed
 
@@ -29,14 +32,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - `Tree`: `clear`, `reset`
 - Screens with alpha in their background color will now blend with the background. https://github.com/Textualize/textual/pull/2139
 - Added "thick" border style. https://github.com/Textualize/textual/pull/2139
+- message_pump.app will now set the active app if it is not already set.
 
 ### Added
 
 - Added auto_scroll attribute to TextLog https://github.com/Textualize/textual/pull/2127
 - Added scroll_end switch to TextLog.write https://github.com/Textualize/textual/pull/2127
+- Added `Widget.get_pseudo_class_state` https://github.com/Textualize/textual/pull/2155
 - Added Screen.ModalScreen which prevents App from handling bindings. https://github.com/Textualize/textual/pull/2139
 - Added TEXTUAL_LOG env var which should be a path that Textual will write verbose logs to (textual devtools is generally preferred) https://github.com/Textualize/textual/pull/2148
-
+- Added textual.logging.TextualHandler logging handler
+- Added Query.set_classes, DOMNode.set_classes, and `classes` setter for Widget https://github.com/Textualize/textual/issues/1081
 
 ## [0.16.0] - 2023-03-22
 

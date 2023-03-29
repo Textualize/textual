@@ -29,14 +29,13 @@ from ..reactive import Reactive
 from ..render import measure
 from ..scroll_view import ScrollView
 from ..strip import Strip
+from ..widget import PseudoClasses
 
-CellCacheKey: TypeAlias = "tuple[RowKey, ColumnKey, Style, bool, bool, int]"
-LineCacheKey: TypeAlias = (
-    "tuple[int, int, int, int, Coordinate, Coordinate, Style, CursorType, bool, int]"
+CellCacheKey: TypeAlias = (
+    "tuple[RowKey, ColumnKey, Style, bool, bool, int, PseudoClasses]"
 )
-RowCacheKey: TypeAlias = (
-    "tuple[RowKey, int, Style, Coordinate, Coordinate, CursorType, bool, bool, int]"
-)
+LineCacheKey: TypeAlias = "tuple[int, int, int, int, Coordinate, Coordinate, Style, CursorType, bool, int, PseudoClasses]"
+RowCacheKey: TypeAlias = "tuple[RowKey, int, Style, Coordinate, Coordinate, CursorType, bool, bool, int, PseudoClasses]"
 CursorType = Literal["cell", "row", "column", "none"]
 CellType = TypeVar("CellType")
 
@@ -608,6 +607,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         information """
         self._ordered_row_cache: LRUCache[tuple[int, int], list[Row]] = LRUCache(1)
         """Caches row ordering - key is (num_rows, update_count)."""
+
+        self._pseudo_class_state = PseudoClasses(False, False, False)
+        """The pseudo-class state is used as part of cache keys to ensure that, for example,
+        when we lose focus on the DataTable, rules which apply to :focus are invalidated
+        and we prevent lingering styles."""
 
         self._require_update_dimensions: bool = False
         """Set to re-calculate dimensions on idle."""
@@ -1558,7 +1562,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             row_key = self._row_locations.get_key(row_index)
 
         column_key = self._column_locations.get_key(column_index)
-        cell_cache_key = (row_key, column_key, style, cursor, hover, self._update_count)
+        cell_cache_key = (
+            row_key,
+            column_key,
+            style,
+            cursor,
+            hover,
+            self._update_count,
+            self._pseudo_class_state,
+        )
 
         if cell_cache_key not in self._cell_render_cache:
             style += Style.from_meta({"row": row_index, "column": column_index})
@@ -1614,6 +1626,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             show_cursor,
             self._show_hover_cursor,
             self._update_count,
+            self._pseudo_class_state,
         )
 
         if cache_key in self._row_render_cache:
@@ -1786,6 +1799,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self.cursor_type,
             self._show_hover_cursor,
             self._update_count,
+            self._pseudo_class_state,
         )
         if cache_key in self._line_cache:
             return self._line_cache[cache_key]
@@ -1809,6 +1823,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         self._line_cache[cache_key] = strip
         return strip
+
+    def render_lines(self, crop: Region) -> list[Strip]:
+        self._pseudo_class_state = self.get_pseudo_class_state()
+        return super().render_lines(crop)
 
     def render_line(self, y: int) -> Strip:
         width, height = self.size
@@ -1841,6 +1859,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 self.hover_coordinate = Coordinate(meta["row"], meta["column"])
             except KeyError:
                 pass
+
+    def on_leave(self, event: events.Leave) -> None:
+        self._set_hover_cursor(False)
 
     def _get_fixed_offset(self) -> Spacing:
         """Calculate the "fixed offset", that is the space to the top and left

@@ -7,7 +7,7 @@ from datetime import datetime
 from operator import attrgetter
 from os import PathLike
 from pathlib import Path, PurePath
-from typing import Union, List, Optional, Callable, Iterable
+from typing import Awaitable, Union, List, Optional, Callable, Iterable
 
 import pytest
 from _pytest.config import ExitCode
@@ -21,6 +21,7 @@ from syrupy import SnapshotAssertion
 from textual._doc import take_svg_screenshot
 from textual._import_app import import_app
 from textual.app import App
+from textual.pilot import Pilot
 
 TEXTUAL_SNAPSHOT_SVG_KEY = pytest.StashKey[str]()
 TEXTUAL_ACTUAL_SVG_KEY = pytest.StashKey[str]()
@@ -42,6 +43,7 @@ def snap_compare(
         app_path: str | PurePath,
         press: Iterable[str] = ("_",),
         terminal_size: tuple[int, int] = (80, 24),
+        run_before: Callable[[Pilot], Awaitable[None] | None] | None = None,
     ) -> bool:
         """
         Compare a current screenshot of the app running at app_path, with
@@ -54,9 +56,12 @@ def snap_compare(
                 test this function is called from.
             press (Iterable[str]): Key presses to run before taking screenshot. "_" is a short pause.
             terminal_size (tuple[int, int]): A pair of integers (WIDTH, HEIGHT), representing terminal size.
+            run_before: An arbitrary callable that runs arbitrary code before taking the
+                screenshot. Use this to simulate complex user interactions with the app
+                that cannot be simulated by key presses.
 
         Returns:
-            bool: True if the screenshot matches the snapshot.
+            Whether the screenshot matches the snapshot.
         """
         node = request.node
         path = Path(app_path)
@@ -74,6 +79,7 @@ def snap_compare(
             app=app,
             press=press,
             terminal_size=terminal_size,
+            run_before=run_before,
         )
         result = snapshot == actual_screenshot
 

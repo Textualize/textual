@@ -1,10 +1,17 @@
-# Textual
+
+
 
 ![Textual splash image](https://raw.githubusercontent.com/Textualize/textual/main/imgs/textual.png)
+
+[![Discord](https://img.shields.io/discord/1026214085173461072)](https://discord.gg/Enf6Z3qhVr)
+
+
+# Textual
 
 Textual is a *Rapid Application Development* framework for Python.
 
 Build sophisticated user interfaces with a simple Python API. Run your apps in the terminal and (coming soon) a web browser!
+
 
 <details>  
   <summary> 🎬 Demonstration </summary>
@@ -19,7 +26,6 @@ https://user-images.githubusercontent.com/554369/197355913-65d3c125-493d-4c05-a5
 
 
  </details>
-
 
 
 ## About
@@ -55,6 +61,10 @@ python -m textual
 ## Documentation
 
 Head over to the [Textual documentation](http://textual.textualize.io/) to start building!
+
+## Join us on Discord
+
+Join the Textual developers and community on our [Discord Server](https://discord.gg/Enf6Z3qhVr).
 
 ## Examples
 

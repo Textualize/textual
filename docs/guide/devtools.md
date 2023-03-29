@@ -120,5 +120,37 @@ class LogApp(App):
 
 if __name__ == "__main__":
     LogApp().run()
+```
 
+### Logging handler
+
+Textual has a [logging handler][textual.logging.TextualHandler] which will write anything logged via the builtin logging library to the devtools.
+This may be useful if you have a third-party library that uses the logging module, and you want to see those logs with Textual logs.
+
+!!! note
+
+    The logging library works with strings only, so you won't be able to log Rich renderables such as `self.tree` with the logging handler.
+
+Here's an example of configuring logging to use the `TextualHandler`.
+
+```python
+import logging
+from textual.app import App
+from textual.logging import TextualHandler
+
+logging.basicConfig(
+    level="NOTSET",
+    handlers=[TextualHandler()],
+)
+
+
+class LogApp(App):
+    """Using logging with Textual."""
+
+    def on_mount(self) -> None:
+        logging.debug("Logged via TextualHandler")
+
+
+if __name__ == "__main__":
+    LogApp().run()
 ```

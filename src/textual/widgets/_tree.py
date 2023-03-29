@@ -925,6 +925,10 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 self.cursor_line = -1
         self.refresh()
 
+    def render_lines(self, crop: Region) -> list[Strip]:
+        self._pseudo_class_state = self.get_pseudo_class_state()
+        return super().render_lines(crop)
+
     def render_line(self, y: int) -> Strip:
         width = self.size.width
         scroll_x, scroll_y = self.scroll_offset
@@ -952,7 +956,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             is_hover,
             width,
             self._updates,
-            self.has_focus,
+            self._pseudo_class_state,
             tuple(node._updates for node in line.path),
         )
         if cache_key in self._line_cache:
