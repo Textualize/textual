@@ -73,8 +73,8 @@ class Separator:
 class Line(NamedTuple):
     """Class that holds a list of segments for the line of a option."""
 
-    segments: list[Segment]
-    """The list of segments that make up the line."""
+    segments: Strip
+    """The strip of segments that make up the line."""
 
     option_index: int | None = None
     """The index of the [Option][textual.widgets.option_list.Option] that this line is related to.
@@ -465,7 +465,7 @@ class OptionList(ScrollView, can_focus=True):
         add_lines = self._lines.extend
 
         # Create a rule that can be used as a separator.
-        separator = lines_from(Rule(style=""))[0]
+        separator = Strip(lines_from(Rule(style=""))[0])
 
         # Work through each item that makes up the content of the list,
         # break out the individual lines that will be used to draw it, and
@@ -477,7 +477,10 @@ class OptionList(ScrollView, can_focus=True):
                 # The content is an option, so render out the prompt and
                 # work out the lines needed to show it.
                 new_lines = [
-                    Line(prompt_line, option)
+                    Line(
+                        Strip(prompt_line).apply_style(Style(meta={"option": option})),
+                        option,
+                    )
                     for prompt_line in lines_from(content.prompt, options)
                 ]
                 # Record the span information for the option.
@@ -751,9 +754,7 @@ class OptionList(ScrollView, can_focus=True):
 
         # Knowing which line we're going to be drawing, we can now go pull
         # the relevant segments for the line of that particular prompt.
-        # While we're here, let's also attach which option index the line is
-        # with.
-        strip = Strip(line.segments).apply_style(Style(meta={"option": option_index}))
+        strip = line.segments
 
         # If the line we're looking at isn't associated with an option, it
         # will be a separator, so let's exit early with that.
