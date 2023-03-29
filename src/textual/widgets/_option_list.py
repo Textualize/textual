@@ -12,7 +12,6 @@ from typing import ClassVar, NamedTuple
 from rich.console import RenderableType
 from rich.repr import Result
 from rich.rule import Rule
-from rich.segment import Segment
 from rich.style import Style
 from typing_extensions import Literal, Self, TypeAlias
 
