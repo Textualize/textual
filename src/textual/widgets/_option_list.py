@@ -122,13 +122,13 @@ class OptionList(ScrollView, can_focus=True):
     """A vertical option list with bounce-bar highlighting."""
 
     BINDINGS: ClassVar[list[BindingType]] = [
-        Binding("down", "down", "Down", show=False),
+        Binding("down", "cursor_down", "Down", show=False),
         Binding("end", "last", "Last", show=False),
         Binding("enter", "select", "Select", show=False),
         Binding("home", "first", "First", show=False),
         Binding("page_down", "page_down", "Page Down", show=False),
         Binding("page_up", "page_up", "Page Up", show=False),
-        Binding("up", "up", "Up", show=False),
+        Binding("up", "cursor_up", "Up", show=False),
     ]
     """
     | Key(s) | Description |
@@ -816,7 +816,7 @@ class OptionList(ScrollView, can_focus=True):
             if not self._options[highlighted].disabled:
                 self.post_message(self.OptionHighlighted(self, highlighted))
 
-    def action_up(self) -> None:
+    def action_cursor_up(self) -> None:
         """Move the highlight up by one option."""
         if self.highlighted is not None:
             if self.highlighted > 0:
@@ -826,7 +826,7 @@ class OptionList(ScrollView, can_focus=True):
         elif self._options:
             self.action_first()
 
-    def action_down(self) -> None:
+    def action_cursor_down(self) -> None:
         """Move the highlight down by one option."""
         if self.highlighted is not None:
             if self.highlighted < len(self._options) - 1:
