@@ -249,6 +249,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         background: $surface ;
         color: $text;
         height: auto;
+        max-height: 100vh;
     }
     DataTable > .datatable--header {
         text-style: bold;
@@ -1976,6 +1977,34 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self._post_selected_message()
             self._scroll_cursor_into_view(animate=True)
             event.stop()
+
+    def action_page_down(self) -> None:
+        self._set_hover_cursor(False)
+        cursor_type = self.cursor_type
+        if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
+            row_index, _ = self.cursor_coordinate
+            height = self.parent.container_size.height
+
+            # Determine how many rows constitutes a "page"
+            offset = 0
+            rows_to_scroll = 0
+            for ordered_row in self.ordered_rows[row_index:]:
+                if offset >= height:
+                    break
+                rows_to_scroll += 1
+                offset += ordered_row.height
+
+            cursor_row, cursor_column = self.cursor_coordinate
+            self.cursor_coordinate = Coordinate(
+                cursor_row + rows_to_scroll - 1, cursor_column
+            )
+            self._scroll_cursor_into_view()
+
+    def action_page_up(self) -> None:
+        self._set_hover_cursor(False)
+        cursor_type = self.cursor_type
+        if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
+            pass
 
     def action_cursor_up(self) -> None:
         self._set_hover_cursor(False)
