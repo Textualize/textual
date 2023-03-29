@@ -249,7 +249,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         background: $surface ;
         color: $text;
         height: auto;
-        max-height: 100vh
+        max-height: 100%;
     }
     DataTable > .datatable--header {
         text-style: bold;
@@ -1983,7 +1983,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
             row_index, _ = self.cursor_coordinate
-            height = self.parent.container_size.height
+            height = self.size.height - self.header_height if self.show_header else 0
 
             # Determine how many rows constitutes a "page"
             offset = 0
@@ -1996,7 +1996,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
             cursor_row, cursor_column = self.cursor_coordinate
             self.cursor_coordinate = Coordinate(
-                cursor_row + rows_to_scroll - 1, cursor_column
+                cursor_row + rows_to_scroll, cursor_column
             )
             self._scroll_cursor_into_view()
 
