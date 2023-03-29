@@ -200,12 +200,12 @@ class OptionList(ScrollView, can_focus=True):
     }
 
     OptionList > .option-list--option-hover {
-        background: $panel-lighten-2;
+        background: $boost;
     }
 
     OptionList > .option-list--option-hover-disabled {
         color: $text-disabled;
-        background: $panel-lighten-2;
+        background: $boost;
     }
 
     OptionList > .option-list--option-hover-highlighted {
