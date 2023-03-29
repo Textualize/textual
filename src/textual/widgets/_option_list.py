@@ -122,24 +122,24 @@ class OptionList(ScrollView, can_focus=True):
     """A vertical option list with bounce-bar highlighting."""
 
     BINDINGS: ClassVar[list[BindingType]] = [
-        Binding("up", "up", "Up", show=False),
         Binding("down", "down", "Down", show=False),
-        Binding("home", "first", "First", show=False),
         Binding("end", "last", "Last", show=False),
-        Binding("page_up", "page_up", "Page Up", show=False),
-        Binding("page_down", "page_down", "Page Down", show=False),
         Binding("enter", "select", "Select", show=False),
+        Binding("home", "first", "First", show=False),
+        Binding("page_down", "page_down", "Page Down", show=False),
+        Binding("page_up", "page_up", "Page Up", show=False),
+        Binding("up", "up", "Up", show=False),
     ]
     """
     | Key(s) | Description |
     | :- | :- |
-    | up | Move the highlight up. |
     | down | Move the highlight down. |
-    | home | Move the highlight to the first option. |
     | end | Move the highlight to the last option. |
-    | page_up | Move the highlight up a page of options. |
-    | page_down | Move the highlight down a page of options. |
     | enter | Select the current option. |
+    | home | Move the highlight to the first option. |
+    | page_down | Move the highlight down a page of options. |
+    | page_up | Move the highlight up a page of options. |
+    | up | Move the highlight up. |
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
