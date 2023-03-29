@@ -2024,6 +2024,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         else:
             super().action_page_up()
 
+    def action_scroll_home(self) -> None:
+        # TODO
+        pass
+
+    def action_scroll_end(self) -> None:
+        # TODO
+        pass
+
     def action_cursor_up(self) -> None:
         self._set_hover_cursor(False)
         cursor_type = self.cursor_type
