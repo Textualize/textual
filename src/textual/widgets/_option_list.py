@@ -231,7 +231,10 @@ class OptionList(ScrollView, can_focus=True):
     """The index of the currently-highlighted option, or `None` if no option is highlighted."""
 
     mouse_hovering_over: reactive[int | None] = reactive["int | None"](None)
-    """The index of the option that the mouse is currently hovering over."""
+    """The index of the option that the mouse is currently hovering over.
+
+    If the mouse isn't over any option this will be `None`.
+    """
 
     class OptionMessage(Message):
         """Base class for all option messages."""
