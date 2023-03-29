@@ -116,7 +116,7 @@ content of the option list after it has been processed for addition.
 NewOptionListContent: TypeAlias = "OptionListContent | None | RenderableType"
 """The type of a new item of option list content to be added to an option list.
 
-This type represnets all of the types that will be accepted when adding new
+This type represents all of the types that will be accepted when adding new
 content to the option list. This is a superset of `OptionListContent`.
 """
 
