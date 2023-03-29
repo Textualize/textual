@@ -187,6 +187,11 @@ def test_tabbed_content(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "tabbed_content.py")
 
 
+def test_option_list(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_strings.py")
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_options.py")
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_tables.py")
+
 # --- CSS properties ---
 # We have a canonical example for each CSS property that is shown in their docs.
 # If any of these change, something has likely broken, so snapshot each of them.
