@@ -30,10 +30,6 @@
     border: inner $accent;
 }
 
-#none {
-    border: none $accent;
-}
-
 #outer {
     border: outer $accent;
 }
@@ -48,6 +44,10 @@
 
 #tall {
     border: tall $accent;
+}
+
+#thick {
+    border: thick $accent;
 }
 
 #vkey {

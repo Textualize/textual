@@ -14,13 +14,14 @@ class AllBordersApp(App):
             Label("hidden/none", id="hidden"),
             Label("hkey", id="hkey"),
             Label("inner", id="inner"),
-            Label("none", id="none"),
             Label("outer", id="outer"),
             Label("round", id="round"),
             Label("solid", id="solid"),
             Label("tall", id="tall"),
+            Label("thick", id="thick"),
             Label("vkey", id="vkey"),
             Label("wide", id="wide"),
         )
+
 
 app = AllBordersApp(css_path="border_all.css")
