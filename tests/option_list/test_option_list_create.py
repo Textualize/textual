@@ -6,7 +6,12 @@ import pytest
 
 from textual.app import App, ComposeResult
 from textual.widgets import OptionList
-from textual.widgets.option_list import DuplicateID, Option, Separator
+from textual.widgets.option_list import (
+    DuplicateID,
+    Option,
+    OptionDoesNotExist,
+    Separator,
+)
 
 
 class OptionListApp(App[None]):
@@ -59,7 +64,7 @@ async def test_get_option_by_id() -> None:
 async def test_get_option_with_bad_id() -> None:
     """Asking for an option with a bad ID should give an error."""
     async with OptionListApp().run_test() as pilot:
-        with pytest.raises(KeyError):
+        with pytest.raises(OptionDoesNotExist):
             _ = pilot.app.query_one(OptionList).get_option("this does not exist")
 
 
@@ -75,9 +80,9 @@ async def test_get_option_by_index() -> None:
 async def test_get_option_at_bad_index() -> None:
     """Asking for an option at a bad index should give an error."""
     async with OptionListApp().run_test() as pilot:
-        with pytest.raises(IndexError):
+        with pytest.raises(OptionDoesNotExist):
             _ = pilot.app.query_one(OptionList).get_option_at_index(42)
-        with pytest.raises(IndexError):
+        with pytest.raises(OptionDoesNotExist):
             _ = pilot.app.query_one(OptionList).get_option_at_index(-42)
 
 
