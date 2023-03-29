@@ -249,7 +249,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         background: $surface ;
         color: $text;
         height: auto;
-        max-height: 100%;
+        max-height: 100vh;
     }
     DataTable > .datatable--header {
         text-style: bold;
@@ -1982,21 +1982,20 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._set_hover_cursor(False)
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
-            row_index, _ = self.cursor_coordinate
             height = self.size.height - self.header_height if self.show_header else 0
 
             # Determine how many rows constitutes a "page"
             offset = 0
             rows_to_scroll = 0
+            row_index, column_index = self.cursor_coordinate
             for ordered_row in self.ordered_rows[row_index:]:
-                if offset >= height:
+                offset += ordered_row.height
+                if offset > height:
                     break
                 rows_to_scroll += 1
-                offset += ordered_row.height
 
-            cursor_row, cursor_column = self.cursor_coordinate
             self.cursor_coordinate = Coordinate(
-                cursor_row + rows_to_scroll, cursor_column
+                row_index + rows_to_scroll, column_index
             )
             self._scroll_cursor_into_view()
 
@@ -2004,7 +2003,22 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._set_hover_cursor(False)
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
-            pass
+            height = self.size.height - self.header_height if self.show_header else 0
+
+            # Determine how many rows constitutes a "page"
+            offset = 0
+            rows_to_scroll = 0
+            row_index, column_index = self.cursor_coordinate
+            for ordered_row in self.ordered_rows[: row_index + 1]:
+                offset += ordered_row.height
+                if offset > height:
+                    break
+                rows_to_scroll += 1
+
+            self.cursor_coordinate = Coordinate(
+                row_index - rows_to_scroll, column_index
+            )
+            self._scroll_cursor_into_view()
 
     def action_cursor_up(self) -> None:
         self._set_hover_cursor(False)
