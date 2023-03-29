@@ -116,7 +116,7 @@ content of the option list after it has been processed for addition.
 NewOptionListContent: TypeAlias = "OptionListContent | None | RenderableType"
 """The type of a new item of option list content to be added to an option list.
 
-This type represnets all of the types that will be accepted when adding new
+This type represents all of the types that will be accepted when adding new
 content to the option list. This is a superset of `OptionListContent`.
 """
 
@@ -324,7 +324,7 @@ class OptionList(ScrollView, can_focus=True):
         self._lines: list[Line] = []
         """A list of all of the individual lines that make up the option list.
 
-        Note that the size of this list will at least the same as the number
+        Note that the size of this list will be at least the same as the number
         of options, and actually greater if any prompt of any option is
         multiple lines.
         """
@@ -548,7 +548,7 @@ class OptionList(ScrollView, can_focus=True):
         self.refresh()
 
     def remove_option(self, option_id: str) -> Self:
-        """Remove the open with the given ID.
+        """Remove the option with the given ID.
 
         Args:
             option_id: The ID of the option to remove.
