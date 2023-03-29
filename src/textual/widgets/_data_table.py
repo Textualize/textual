@@ -203,6 +203,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Binding("down", "cursor_down", "Cursor Down", show=False),
         Binding("right", "cursor_right", "Cursor Right", show=False),
         Binding("left", "cursor_left", "Cursor Left", show=False),
+        Binding("pageup", "page_up", "Page Up", show=False),
+        Binding("pagedown", "page_down", "Page Down", show=False),
     ]
     """
     | Key(s) | Description |
