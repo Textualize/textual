@@ -900,7 +900,7 @@ class OptionList(ScrollView, can_focus=True):
         else:
             # We want to page roughly by lines, but we're dealing with
             # options that can be a varying number of lines in height. So
-            # let's start with the a target line alone.
+            # let's start with the target line alone.
             target_line = max(
                 0,
                 self._spans[highlighted].first
