@@ -43,7 +43,7 @@ class Option:
 
         Args:
             prompt: The prompt for the option.
-            id: An optional ID for the option.
+            id: The optional ID for the option.
             disabled: The initial enabled/disabled state. Enabled by default.
         """
         self.__prompt = prompt
@@ -57,7 +57,7 @@ class Option:
 
     @property
     def id(self) -> str | None:
-        """An optional ID for the option."""
+        """The optional ID for the option."""
         return self.__id
 
     def __rich_repr__(self) -> Result:
