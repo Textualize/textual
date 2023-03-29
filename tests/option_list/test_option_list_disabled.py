@@ -27,15 +27,17 @@ class OptionListApp(App[None]):
 async def test_default_enabled() -> None:
     """Options created enabled should remain enabled."""
     async with OptionListApp(False).run_test() as pilot:
-        for option in pilot.app.query_one(OptionList).options:
-            assert option.disabled is False
+        option_list = pilot.app.query_one(OptionList)
+        for option in range(option_list.option_count):
+            assert option_list.get_option_at_index(option).disabled is False
 
 
 async def test_default_disabled() -> None:
     """Options created disabled should remain disabled."""
     async with OptionListApp(True).run_test() as pilot:
-        for option in pilot.app.query_one(OptionList).options:
-            assert option.disabled is True
+        option_list = pilot.app.query_one(OptionList)
+        for option in range(option_list.option_count):
+            assert option_list.get_option_at_index(option).disabled is True
 
 
 async def test_enabled_to_disabled_via_index() -> None:
