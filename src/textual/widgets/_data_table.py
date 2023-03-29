@@ -617,6 +617,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Set to re-calculate dimensions on idle."""
         self._new_rows: set[RowKey] = set()
         """Tracking newly added rows to be used in calculation of dimensions on idle."""
+        self._rows_to_remove: set[RowKey] = set()
+        """Tracking rows which have are to be removed on idle."""
         self._updated_cells: set[CellKey] = set()
         """Track which cells were updated, so that we can refresh them once on idle."""
 
@@ -1069,7 +1071,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             else:
                 column.content_width = max(new_content_width, label_width)
 
-    def _update_dimensions(self, new_rows: Iterable[RowKey]) -> None:
+    def _update_dimensions(self, new_rows: set[RowKey]) -> None:
         """Called to recalculate the virtual (scrollable) size."""
         console = self.app.console
         for row_key in new_rows:
@@ -1112,7 +1114,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         row_index, column_index = coordinate
         row_key = self._row_locations.get_key(row_index)
-        row = self.rows[row_key]
+        row = self.rows.get(row_key)
+        if not row:
+            return Region(0, 0, 0, 0)
 
         # The x-coordinate of a cell is the sum of widths of the data cells to the left
         # plus the width of the render width of the longest row label.
@@ -1320,6 +1324,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             row_keys.append(row_key)
         return row_keys
 
+    def remove_row(self, row_key: RowKey) -> None:
+        self._require_update_dimensions = True
+        self._rows_to_remove.add(row_key)
+        self._update_count += 1
+
     def on_idle(self) -> None:
         """Runs when the message pump is empty.
 
@@ -1334,6 +1343,24 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             new_rows = self._new_rows.copy()
             self._new_rows.clear()
             self._update_dimensions(new_rows)
+
+        if self._rows_to_remove:
+            rows_to_remove = self._rows_to_remove.copy()
+            self._rows_to_remove.clear()
+            for row_key in rows_to_remove:
+                print(f"removing {row_key} (index={self._row_locations.get(row_key)})")
+                self._data.pop(row_key, None)
+                self.rows.pop(row_key, None)
+                row_index = self._row_locations.get(row_key)
+                del self._row_locations[row_key]
+                for row in self.ordered_rows[row_index + 1 :]:
+                    # We also need to subtract from all the indices below
+                    key_to_shift = row.key
+                    old_index = self._row_locations.get(key_to_shift)
+                    self._row_locations[key_to_shift] = old_index - 1
+                    print(old_index, "->", old_index - 1)
+
+            print(self._row_locations._forward)
 
         if self._updated_cells:
             # Cell contents have already been updated at this point.
