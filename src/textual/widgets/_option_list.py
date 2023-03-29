@@ -324,7 +324,7 @@ class OptionList(ScrollView, can_focus=True):
         self._lines: list[Line] = []
         """A list of all of the individual lines that make up the option list.
 
-        Note that the size of this list will at least the same as the number
+        Note that the size of this list will be at least the same as the number
         of options, and actually greater if any prompt of any option is
         multiple lines.
         """
