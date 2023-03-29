@@ -249,7 +249,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         background: $surface ;
         color: $text;
         height: auto;
-        max-height: 100vh;
+        max-height: 100vh
     }
     DataTable > .datatable--header {
         text-style: bold;

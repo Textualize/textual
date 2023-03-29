@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.17.0] - 2023-03-29
 
 ### Fixed
 
@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Screens with alpha in their background color will now blend with the background. https://github.com/Textualize/textual/pull/2139
 - Added "thick" border style. https://github.com/Textualize/textual/pull/2139
 - message_pump.app will now set the active app if it is not already set.
+- DataTable now has max height set to 100vh
 
 ### Added
 

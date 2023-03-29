@@ -437,6 +437,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         try:
             await self._dispatch_message(events.Compose())
             await self._dispatch_message(events.Mount())
+            self.check_idle()
             self._post_mount()
         except Exception as error:
             self.app._handle_exception(error)

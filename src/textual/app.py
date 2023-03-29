@@ -1599,6 +1599,7 @@ class App(Generic[ReturnType], DOMNode):
                     try:
                         await self._dispatch_message(events.Compose())
                         await self._dispatch_message(events.Mount())
+                        self.check_idle()
                     finally:
                         self._mounted_event.set()
 

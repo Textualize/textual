@@ -382,7 +382,6 @@ class Screen(Widget):
                         self._repaint_required = False
 
                     if self._dirty_widgets:
-                        self._on_timer_update()
                         self.update_timer.resume()
 
         # The Screen is idle - a good opportunity to invoke the scheduled callbacks
