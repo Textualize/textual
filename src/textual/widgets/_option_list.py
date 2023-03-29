@@ -29,6 +29,10 @@ class DuplicateID(Exception):
     """Exception raised if a duplicate ID is used."""
 
 
+class OptionDoesNotExist(Exception):
+    """Exception raised when a request has been made for an option that doesn't exist."""
+
+
 class Option:
     """Class that holds the details of an individual option."""
 
@@ -545,9 +549,14 @@ class OptionList(ScrollView, can_focus=True):
             The `OptionList` instance.
 
         Raises:
-            KeyError: If no option has the given ID.
+            OptionDoesNotExist: If no option has the given ID.
         """
-        self._remove_option(self._option_ids[option_id])
+        try:
+            self._remove_option(self._option_ids[option_id])
+        except KeyError:
+            raise OptionDoesNotExist(
+                f"There is no option with an ID of '{option_id}'"
+            ) from None
         return self
 
     def remove_option_at_index(self, index: int) -> Self:
@@ -560,9 +569,14 @@ class OptionList(ScrollView, can_focus=True):
             The `OptionList` instance.
 
         Raises:
-            IndexError: If there is no option with the given index.
+            OptionDoesNotExist: If there is no option with the given index.
         """
-        self._remove_option(index)
+        try:
+            self._remove_option(index)
+        except IndexError:
+            raise OptionDoesNotExist(
+                f"There is no option with an index of {index}"
+            ) from None
         return self
 
     def clear_options(self) -> Self:
@@ -602,9 +616,14 @@ class OptionList(ScrollView, can_focus=True):
             The `OptionList` instance.
 
         Raises:
-            IndexError: If there is no option with the given index.
+            OptionDoesNotExist: If there is no option with the given index.
         """
-        return self._set_option_disabled(index, False)
+        try:
+            return self._set_option_disabled(index, False)
+        except IndexError:
+            raise OptionDoesNotExist(
+                f"There is no option with an index of {index}"
+            ) from None
 
     def disable_option_at_index(self, index: int) -> Self:
         """Disable the option at the given index.
@@ -613,9 +632,14 @@ class OptionList(ScrollView, can_focus=True):
             The `OptionList` instance.
 
         Raises:
-            IndexError: If there is no option with the given index.
+            OptionDoesNotExist: If there is no option with the given index.
         """
-        return self._set_option_disabled(index, True)
+        try:
+            return self._set_option_disabled(index, True)
+        except IndexError:
+            raise OptionDoesNotExist(
+                f"There is no option with an index of {index}"
+            ) from None
 
     def enable_option(self, option_id: str) -> Self:
         """Enable the option with the given ID.
@@ -627,9 +651,14 @@ class OptionList(ScrollView, can_focus=True):
             The `OptionList` instance.
 
         Raises:
-            KeyError: If no option has the given ID.
+            OptionDoesNotExist: If no option has the given ID.
         """
-        return self.enable_option_at_index(self._option_ids[option_id])
+        try:
+            return self.enable_option_at_index(self._option_ids[option_id])
+        except KeyError:
+            raise OptionDoesNotExist(
+                f"There is no option with an ID of '{option_id}'"
+            ) from None
 
     def disable_option(self, option_id: str) -> Self:
         """Disable the option with the given ID.
@@ -641,9 +670,14 @@ class OptionList(ScrollView, can_focus=True):
             The `OptionList` instance.
 
         Raises:
-            KeyError: If no option has the given ID.
+            OptionDoesNotExist: If no option has the given ID.
         """
-        return self.disable_option_at_index(self._option_ids[option_id])
+        try:
+            return self.disable_option_at_index(self._option_ids[option_id])
+        except KeyError:
+            raise OptionDoesNotExist(
+                f"There is no option with an ID of '{option_id}'"
+            ) from None
 
     @property
     def option_count(self) -> int:
@@ -665,9 +699,14 @@ class OptionList(ScrollView, can_focus=True):
             The option at that index.
 
         Raises:
-            IndexError: If there is no option with the index.
+            OptionDoesNotExist: If there is no option with the index.
         """
-        return self._options[index]
+        try:
+            return self._options[index]
+        except IndexError:
+            raise OptionDoesNotExist(
+                f"There is no option with an index of {index}"
+            ) from None
 
     def get_option(self, option_id: str) -> Option:
         """Get the option with the given ID.
@@ -679,9 +718,14 @@ class OptionList(ScrollView, can_focus=True):
             The option at with the ID.
 
         Raises:
-            KeyError: If no option has the given ID.
+            OptionDoesNotExist: If no option has the given ID.
         """
-        return self.get_option_at_index(self._option_ids[option_id])
+        try:
+            return self.get_option_at_index(self._option_ids[option_id])
+        except KeyError:
+            raise OptionDoesNotExist(
+                f"There is no option with an ID of '{option_id}'"
+            ) from None
 
     def render_line(self, y: int) -> Strip:
         """Render a single line in the option list.
