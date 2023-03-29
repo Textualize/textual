@@ -849,6 +849,7 @@ class Compositor:
         """
         screen_region = self.size.region
         update_regions = self._dirty_regions.copy()
+        self._dirty_regions.clear()
         if update_regions:
             # Create a crop region that surrounds all updates.
             crop = Region.from_union(update_regions).intersection(screen_region)

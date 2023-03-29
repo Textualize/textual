@@ -176,7 +176,7 @@ class OptionList(ScrollView, can_focus=True):
     }
 
     OptionList > .option-list--separator {
-        color: $text-muted;
+        color: $foreground 15%;
     }
 
     OptionList > .option-list--option-highlighted {
