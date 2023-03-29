@@ -36,9 +36,9 @@ The App class keeps a stack of these screens so you can switch to a new screen a
 Screens can be used to build modal dialogs by *pushing* a screen with controls / buttons, and *popping* the screen when the user has finished with it.
 The problem with this approach is that there was nothing to indicate to the user that the original screen was still there, and could be returned to.
 
-In this release we have added alpha support to the Screen's background color which allows the screen underneath to show through, often blended with a little color.
+In this release we have added alpha support to the Screen's background color which allows the screen underneath to show through, typically blended with a little color.
+Applying this to a screen makes it clear than the user can return to the previous screen when they have finished interacting with the modal.
 
-Adding this to an app is easy with CSS.
 The following adds a translucent background to a screen:
 
 ```sass hl_lines="3"
