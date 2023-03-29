@@ -67,7 +67,7 @@ class Option:
 
 
 class Separator:
-    """Class that denotes that a particular option is really a separator."""
+    """Class used to add a separator to an [OptionList][textual.widgets.OptionList]."""
 
 
 class Line(NamedTuple):
