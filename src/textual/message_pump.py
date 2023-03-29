@@ -597,7 +597,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     def check_idle(self) -> None:
         """Prompt the message pump to call idle if the queue is empty."""
-        if self._message_queue.empty():
+        if self._running and self._message_queue.empty():
             self.post_message(messages.Prompt())
 
     async def _post_message(self, message: Message) -> bool:
