@@ -1995,9 +1995,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 rows_to_scroll += 1
 
             self.cursor_coordinate = Coordinate(
-                row_index + rows_to_scroll, column_index
+                row_index + rows_to_scroll - 1, column_index
             )
             self._scroll_cursor_into_view()
+        else:
+            super().action_page_down()
 
     def action_page_up(self) -> None:
         self._set_hover_cursor(False)
@@ -2016,9 +2018,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 rows_to_scroll += 1
 
             self.cursor_coordinate = Coordinate(
-                row_index - rows_to_scroll, column_index
+                row_index - rows_to_scroll + 1, column_index
             )
             self._scroll_cursor_into_view()
+        else:
+            super().action_page_up()
 
     def action_cursor_up(self) -> None:
         self._set_hover_cursor(False)
