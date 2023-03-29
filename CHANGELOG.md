@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.17.0] - 2023-03-29
 
 ### Fixed
 
@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Screens with alpha in their background color will now blend with the background. https://github.com/Textualize/textual/pull/2139
 - Added "thick" border style. https://github.com/Textualize/textual/pull/2139
 - message_pump.app will now set the active app if it is not already set.
+- DataTable now has max height set to 100vh
 
 ### Added
 
@@ -43,6 +44,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added TEXTUAL_LOG env var which should be a path that Textual will write verbose logs to (textual devtools is generally preferred) https://github.com/Textualize/textual/pull/2148
 - Added textual.logging.TextualHandler logging handler
 - Added Query.set_classes, DOMNode.set_classes, and `classes` setter for Widget https://github.com/Textualize/textual/issues/1081
+- Added `OptionList` https://github.com/Textualize/textual/pull/2154
 
 ## [0.16.0] - 2023-03-22
 

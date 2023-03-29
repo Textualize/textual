@@ -3,14 +3,14 @@ draft: false
 date: 2023-03-29
 categories:
   - Release
-title: "Textual 0.17.0 adds translucent screens and Options List"
+title: "Textual 0.17.0 adds translucent screens and Option List"
 authors:
   - willmcgugan
 ---
 
-# Textual 0.17.0 adds translucent screens and Options List
+# Textual 0.17.0 adds translucent screens and Option List
 
-This is a surprisingly large release, given it has been just 7 days since the last version, and we were down a developer for most of that time.
+This is a surprisingly large release, given it has been just 7 days since the last version (and we were down a developer for most of that time).
 
 What's new in this release?
 
@@ -20,12 +20,12 @@ There are two new notable features I want to cover. The first is a compositor ef
 
 ## Translucent screens
 
-Textual has a concept of "screens" which you can think of as different modes, with independent own logic and widgets.
-The App class keeps a stack of these screens so you can switch to a new screen, but easily return to the previous screen.
+Textual has a concept of "screens" which you can think of as independent UI modes, each with their own user interface and logic.
+The App class keeps a stack of these screens so you can switch to a new screen and later return to the previous screen.
 
-!!! info inline end "Screens"
+!!! tip inline end "Screens"
 
-    See the [screens](../../guide/screens.md) docs for more information.
+    See the [guide](../../guide/screens.md) to learn more about the screens API.
 
     <a href="/guide/screens">
     <div class="excalidraw">
@@ -33,13 +33,13 @@ The App class keeps a stack of these screens so you can switch to a new screen, 
     </div>
     </a>
 
-You can use screens to build modal dialogs by *pushing* a screen with controls / buttons, and *popping* the screen when the user has finished with it.
+Screens can be used to build modal dialogs by *pushing* a screen with controls / buttons, and *popping* the screen when the user has finished with it.
 The problem with this approach is that there was nothing to indicate to the user that the original screen was still there, and could be returned to.
 
-In this release we have added alpha support to a Screen's background color which allows the screen underneath to show through, often blended with a little color.
+In this release we have added alpha support to the Screen's background color which allows the screen underneath to show through, often blended with a little color.
 
-Adding this to your app couldn't be much easier.
-Here's a simple example:
+Adding this to an app is easy with CSS.
+The following adds a translucent background to a screen:
 
 ```sass hl_lines="3"
 DialogScreen {
@@ -52,28 +52,45 @@ Setting the background to `$primary` will make the background blue (with the def
 The addition of `30%` sets the alpha so that it will be blended with the background.
 Here's the kind of effect this creates:
 
-<div class="excalidraw">
+<div>
 --8<-- "docs/blog/images/transparent_background.svg"
 </div>
 
-There are 4 screens here, one for the base screen and each of the three dialogs.
+There are 4 screens in the above screenshot, one for the base screen and one for each of the three dialogs.
+Note how each screen modifies the color of the screen below, but leaves everything visible.
 
-## Options list
+See the [docs on screen opacity](../../guide/screens.md#screen-opacity) if you want to add this to your apps.
 
-Textual has had a [ListView](../../widgets/list_view.md) widget for a while, which is an excellent way of navigating a list of items (actually other widgets). In this release we've added an [OptionList](../../widgets/options_list.md) which is similar in appearance, but uses the [line api](../../guide/widgets.md#line-api) under the hood which makes it way more efficient when it comes to very large lists.
+## Option list
+
+Textual has had a [ListView](../../widgets/list_view.md) widget for a while, which is an excellent way of navigating a list of items (actually other widgets). In this release we've added an [OptionList](../../widgets/option_list.md) which is similar in appearance, but uses the [line api](../../guide/widgets.md#line-api) under the hood. The Line API makes it more efficient when you approach thousands of items.
+
+```{.textual path="docs/examples/widgets/option_list_strings.py"}
+```
+
+The Options List accepts [Rich](https://github.com/Textualize/rich/) *renderable*, which means that anything Rich can render may be displayed in a list. Here's an Option List of tables:
+
+```{.textual path="docs/examples/widgets/option_list_tables.py" columns="100" lines="32"}
+```
+
+We plan to build on the `OptionList` widget to implement drop-downs, menus, check lists, etc.
+But it is still very useful as it is, and you can add it to apps now.
 
 ## What else?
 
-There are a number of fixes regarding freshing in this release. If you had issues with parts of the screen not updating, the new version should resolve it.
+There are a number of fixes regarding refreshing in this release. If you had issues with parts of the screen not updating, the new version should resolve it.
 
-There's also a new logging handler, and a "thick" border type. [release notes](https://github.com/Textualize/textual/releases/tag/v0.17.0) for the full details.
+There's also a new logging handler, and a "thick" border type.
 
-If you want to talk about this update or anything else Textual related, join us on our [Discord server](https://discord.gg/Enf6Z3qhVr).
+See [release notes](https://github.com/Textualize/textual/releases/tag/v0.17.0) for the full details.
 
 
 ## Next week
 
-Next week we plan to take a break from building Textual to building apps with Textual.
+Next week we plan to take a break from building Textual to *building apps* with Textual.
 We do this now and again to give us an opportunity to step back and understand things from the perspective of a developer using Textual.
-It will also give us the chance to build some really interesting apps.
-Hope it goes without saying, but these will all be under an Open Source license.
+We will hopefully have something interesting to show from the exercise, and new Open Source apps to share.
+
+## Join us
+
+If you want to talk about this update or anything else Textual related, join us on our [Discord server](https://discord.gg/Enf6Z3qhVr).

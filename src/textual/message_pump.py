@@ -437,6 +437,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         try:
             await self._dispatch_message(events.Compose())
             await self._dispatch_message(events.Mount())
+            self.check_idle()
             self._post_mount()
         except Exception as error:
             self.app._handle_exception(error)
@@ -597,7 +598,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     def check_idle(self) -> None:
         """Prompt the message pump to call idle if the queue is empty."""
-        if self._message_queue.empty():
+        if self._running and self._message_queue.empty():
             self.post_message(messages.Prompt())
 
     async def _post_message(self, message: Message) -> bool:
