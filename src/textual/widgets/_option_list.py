@@ -684,11 +684,6 @@ class OptionList(ScrollView, can_focus=True):
         """The count of options."""
         return len(self._options)
 
-    @property
-    def options(self) -> Iterator[Option]:
-        """An iterator of options within the list."""
-        return iter(self._options)
-
     def get_option_at_index(self, index: int) -> Option:
         """Get the option at the given index.
 
