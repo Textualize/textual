@@ -230,12 +230,6 @@ class OptionList(ScrollView, can_focus=True):
     highlighted: reactive[int | None] = reactive["int | None"](None)
     """The index of the currently-highlighted option, or `None` if no option is highlighted."""
 
-    mouse_hovering_over: reactive[int | None] = reactive["int | None"](None)
-    """The index of the option that the mouse is currently hovering over.
-
-    If the mouse isn't over any option this will be `None`.
-    """
-
     class OptionMessage(Message):
         """Base class for all option messages."""
 
@@ -343,6 +337,9 @@ class OptionList(ScrollView, can_focus=True):
         # Initial calculation of the content tracking.
         self._request_content_tracking_refresh()
 
+        self._mouse_hovering_over: int | None = None
+        """Used to track what the mouse is hovering over."""
+
         # Finally, cause the highlighted property to settle down based on
         # the state of the option list in regard to its available options.
         # Be sure to have a look at validate_highlighted.
@@ -395,11 +392,11 @@ class OptionList(ScrollView, can_focus=True):
         Args:
             event: The mouse movement event.
         """
-        self.mouse_hovering_over = event.style.meta.get("option")
+        self._mouse_hovering_over = event.style.meta.get("option")
 
     def on_leave(self) -> None:
         """React to the mouse leaving the widget."""
-        self.mouse_hovering_over = None
+        self._mouse_hovering_over = None
 
     def on_click(self, event: Click) -> None:
         """React to the mouse being clicked on an item.
@@ -583,7 +580,7 @@ class OptionList(ScrollView, can_focus=True):
         self._options.clear()
         self._refresh_content_tracking(force=True)
         self.highlighted = None
-        self.mouse_hovering_over = None
+        self._mouse_hovering_over = None
         self.virtual_size = Size(self.scrollable_content_region.width, 0)
         self.refresh()
         return self
@@ -736,7 +733,7 @@ class OptionList(ScrollView, can_focus=True):
         strip = strip.crop(scroll_x, scroll_x + self.scrollable_content_region.width)
 
         highlighted = self.highlighted
-        mouse_over = self.mouse_hovering_over
+        mouse_over = self._mouse_hovering_over
         spans = self._spans
 
         # Handle drawing a disabled option.
