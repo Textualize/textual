@@ -542,7 +542,7 @@ class OptionList(ScrollView, can_focus=True):
         self.refresh()
 
     def remove_option(self, option_id: str) -> Self:
-        """Remove the open with the given ID.
+        """Remove the option with the given ID.
 
         Args:
             option_id: The ID of the option to remove.
