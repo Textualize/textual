@@ -437,6 +437,9 @@ class OptionList(ScrollView, can_focus=True):
         Args:
             force: Optionally force the refresh.
 
+        Raises:
+            DuplicateID: If there is an attempt to use a duplicate ID.
+
         Without a `force` the refresh will only take place if it has been
         requested via `_refresh_content_tracking`.
         """
@@ -513,6 +516,9 @@ class OptionList(ScrollView, can_focus=True):
 
         Returns:
             The `OptionList` instance.
+
+        Raises:
+            DuplicateID: If there is an attempt to use a duplicate ID.
         """
         # Turn any incoming value into valid content for the list.
         content = self._make_content(item)
