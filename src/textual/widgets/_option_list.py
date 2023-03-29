@@ -367,20 +367,15 @@ class OptionList(ScrollView, can_focus=True):
             self._needs_to_scroll_to_highlight = False
             self.scroll_to_highlight()
 
-    def watch_show_vertical_scrollbar(self, old: bool, new: bool) -> None:
+    def watch_show_vertical_scrollbar(self) -> None:
         """Handle the vertical scrollbar visibility status changing.
-
-        Args:
-            old: The old status.
-            new: The new status.
 
         `show_vertical_scrollbar` is watched because it has an impact on the
         available width in which to render the renderables that make up the
         options in the list. If a vertical scrollbar appears or disappears
         we need to recalculate all the lines that make up the list.
         """
-        if old != new:
-            self._request_content_tracking_refresh()
+        self._request_content_tracking_refresh()
 
     def on_resize(self) -> None:
         """Refresh the layout of the renderables in the list when resized."""
