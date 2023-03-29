@@ -838,7 +838,7 @@ class OptionList(ScrollView, can_focus=True):
                 0, span.first, self.scrollable_content_region.width, span.line_count
             ),
             force=True,
-            animate=self.show_vertical_scrollbar,  # https://github.com/Textualize/textual/issues/2077
+            animate=False,
         )
 
     def validate_highlighted(self, highlighted: int | None) -> int | None:
