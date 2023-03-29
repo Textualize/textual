@@ -39,7 +39,7 @@ The problem with this approach is that there was nothing to indicate to the user
 In this release we have added alpha support to the Screen's background color which allows the screen underneath to show through, typically blended with a little color.
 Applying this to a screen makes it clear than the user can return to the previous screen when they have finished interacting with the modal.
 
-The following adds a translucent background to a screen:
+Here's how you can enable this effect with CSS:
 
 ```sass hl_lines="3"
 DialogScreen {
