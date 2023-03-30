@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fix cursor not hiding on Windows
+- Fix cursor not hiding on Windows https://github.com/Textualize/textual/issues/2170
+- Fixed freeze when ctrl-clicking links https://github.com/Textualize/textual/issues/2167 https://github.com/Textualize/textual/issues/2073
 
 ## [0.17.0] - 2023-03-29
 
