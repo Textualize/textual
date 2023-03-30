@@ -25,4 +25,11 @@ class EventTarget(Protocol):
 
 SegmentLines = List[List["Segment"]]
 CallbackType = Union[Callable[[], Awaitable[None]], Callable[[], None]]
-WatchCallbackType = Union[Callable[[Any], Awaitable[None]], Callable[[Any], None]]
+WatchCallbackType = Union[
+    Callable[[], Awaitable[None]],
+    Callable[[Any], Awaitable[None]],
+    Callable[[Any, Any], Awaitable[None]],
+    Callable[[], None],
+    Callable[[Any], None],
+    Callable[[Any, Any], None],
+]
