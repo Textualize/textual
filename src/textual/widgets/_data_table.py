@@ -1347,11 +1347,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             rows_to_remove = self._rows_to_remove.copy()
             self._rows_to_remove.clear()
             for row_key in rows_to_remove:
-                print(f"removing {row_key} (index={self._row_locations.get(row_key)})")
-                print("FORWARD")
-                print(self._row_locations._forward)
-                print("REVERSE")
-                print(self._row_locations._reverse)
                 row_index = self._row_locations.get(row_key)
                 del self._row_locations[row_key]
                 for row in self.ordered_rows[row_index + 1 :]:
@@ -1359,12 +1354,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                     key_to_shift = row.key
                     old_index = self._row_locations.get(key_to_shift)
                     del self._row_locations[key_to_shift]
-                    self._row_locations[key_to_shift] = old_index - 1
+                    self._row_locations[key_to_shift] = max(0, old_index - 1)
                 self._data.pop(row_key, None)
                 self.rows.pop(row_key, None)
             self._update_count += 1
-
-            print(self._row_locations._forward)
 
         if self._updated_cells:
             # Cell contents have already been updated at this point.
