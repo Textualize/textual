@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path, PurePath
-from typing import Iterable, Callable
+from typing import Callable, Iterable
 
 from markdown_it import MarkdownIt
 from rich import box
@@ -304,15 +304,22 @@ class MarkdownOrderedList(MarkdownList):
     """
 
     def compose(self) -> ComposeResult:
+        suffix = ". "
+        start = 1
+        if self._blocks and isinstance(self._blocks[0], MarkdownOrderedListItem):
+            try:
+                start = int(self._blocks[0].bullet)
+            except ValueError:
+                pass
         symbol_size = max(
-            len(block.bullet)
-            for block in self._blocks
+            len(f"{number}{suffix}")
+            for number, block in enumerate(self._blocks, start)
             if isinstance(block, MarkdownListItem)
         )
-        for block in self._blocks:
+        for number, block in enumerate(self._blocks, start):
             if isinstance(block, MarkdownListItem):
                 bullet = MarkdownBullet()
-                bullet.symbol = block.bullet.rjust(symbol_size + 1)
+                bullet.symbol = f"{number}{suffix}".rjust(symbol_size + 1)
                 yield Horizontal(bullet, VerticalScroll(*block._blocks))
 
         self._blocks.clear()
@@ -636,7 +643,7 @@ class Markdown(Widget):
                 stack.append(MarkdownOrderedList())
             elif token.type == "list_item_open":
                 if token.info:
-                    stack.append(MarkdownOrderedListItem(f"{token.info}. "))
+                    stack.append(MarkdownOrderedListItem(token.info))
                 else:
                     item_count = sum(
                         1

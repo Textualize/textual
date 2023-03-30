@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed bindings persistance https://github.com/Textualize/textual/issues/1613
+- The `Markdown` widget now auto-increments ordered lists https://github.com/Textualize/textual/issues/2002
 
 ## [0.17.1] - 2023-03-30
 
