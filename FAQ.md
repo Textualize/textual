@@ -7,6 +7,7 @@
 - [How can I select and copy text in a Textual app?](#how-can-i-select-and-copy-text-in-a-textual-app)
 - [How do I center a widget in a screen?](#how-do-i-center-a-widget-in-a-screen)
 - [How do I pass arguments to an app?](#how-do-i-pass-arguments-to-an-app)
+- [Why do some key combinations never make it to my app?](#why-do-some-key-combinations-never-make-it-to-my-app)
 - [Why doesn't Textual look good on macOS?](#why-doesn't-textual-look-good-on-macos)
 - [Why doesn't Textual support ANSI themes?](#why-doesn't-textual-support-ansi-themes)
 
@@ -172,6 +173,22 @@ Greetings(to_greet="davep").run()
 # Running with both positional arguments.
 Greetings("Well hello", "there").run()
 ```
+
+<a name="why-do-some-key-combinations-never-make-it-to-my-app"></a>
+## Why do some key combinations never make it to my app?
+
+Textual can only ever support key combinations that are passed on by your
+terminal application. Which keys get passed on can differ from terminal to
+terminal, and from operating system to operating system.
+
+When [creating bindings for your
+application](https://textual.textualize.io/guide/input/#bindings) we
+recommend picking keys and key combinations that are supported on as many
+platforms as possible.
+
+The easiest way to test different environments to see which
+[keys](https://textual.textualize.io/guide/input/#keyboard-input) can be
+detected is to use `textual keys`.
 
 <a name="why-doesn't-textual-look-good-on-macos"></a>
 ## Why doesn't Textual look good on macOS?
