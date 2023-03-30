@@ -65,7 +65,10 @@ class Driver(ABC):
                 self._down_buttons.append(event.button)
         elif isinstance(event, events.MouseUp):
             if event.button:
-                self._down_buttons.remove(event.button)
+                try:
+                    self._down_buttons.remove(event.button)
+                except ValueError:
+                    pass
         elif isinstance(event, events.MouseMove):
             if (
                 self._down_buttons

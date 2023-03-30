@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.17.1] - 2023-03-30
+
+### Fixed
+
+- Fix cursor not hiding on Windows https://github.com/Textualize/textual/issues/2170
+- Fixed freeze when ctrl-clicking links https://github.com/Textualize/textual/issues/2167 https://github.com/Textualize/textual/issues/2073
+
 ## [0.17.0] - 2023-03-29
 
 ### Fixed
