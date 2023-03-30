@@ -182,7 +182,7 @@ terminal application. Which keys get passed on can differ from terminal to
 terminal, and from operating system to operating system.
 
 Because of this it's best to stick to key combinations that are known to be
-universally-supported; these include the likes of:
+universally-supported; these include:
 
 - Letters
 - Numbers
