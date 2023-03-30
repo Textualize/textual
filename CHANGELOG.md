@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.18.0] - Unreleased
+
+### Fixed
+
+- The `Markdown` widget now auto-increments ordered lists https://github.com/Textualize/textual/issues/2002
+
 ## [0.17.1] - 2023-03-30
 
 ### Fixed
