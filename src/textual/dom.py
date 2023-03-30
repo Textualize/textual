@@ -165,7 +165,11 @@ class DOMNode(MessagePump):
         self._auto_refresh: float | None = None
         self._auto_refresh_timer: Timer | None = None
         self._css_types = {cls.__name__ for cls in self._css_bases(self.__class__)}
-        self._bindings = (self._merged_bindings or Bindings()).copy()
+        self._bindings = (
+            Bindings()
+            if self._merged_bindings is None
+            else self._merged_bindings.copy()
+        )
         self._has_hover_style: bool = False
         self._has_focus_within: bool = False
 
