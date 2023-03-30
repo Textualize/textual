@@ -2375,18 +2375,36 @@ class App(Generic[ReturnType], DOMNode):
         self.pop_screen()
 
     async def action_back(self) -> None:
+        """Go back to the previous screen (pop the current screen)."""
         try:
             self.pop_screen()
         except ScreenStackError:
             pass
 
     async def action_add_class_(self, selector: str, class_name: str) -> None:
+        """Add a CSS class on the selected widget.
+
+        Args:
+            selector: Selects the widget to add the class to.
+            class_name: The class to add to the selected widget.
+        """
         self.screen.query(selector).add_class(class_name)
 
     async def action_remove_class_(self, selector: str, class_name: str) -> None:
+        """Remove a CSS class on the selected widget.
+
+        Args:
+            selector: Selects the widget to remove the class from.
+            class_name: The class to remove from  the selected widget."""
         self.screen.query(selector).remove_class(class_name)
 
     async def action_toggle_class(self, selector: str, class_name: str) -> None:
+        """Toggle a CSS class on the selected widget.
+
+        Args:
+            selector: Selects the widget to toggle the class on.
+            class_name: The class to toggle on the selected widget.
+        """
         self.screen.query(selector).toggle_class(class_name)
 
     def action_focus_next(self) -> None:
