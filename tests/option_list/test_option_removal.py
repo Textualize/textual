@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.widgets import OptionList
-from textual.widgets.option_list import Option
+from textual.widgets.option_list import Option, OptionDoesNotExist
 
 
 class OptionListApp(App[None]):
@@ -83,3 +85,17 @@ async def test_remove_all_options_via_id() -> None:
         option_list.remove_option("1")
         assert option_list.option_count == 0
         assert option_list.highlighted is None
+
+
+async def test_remove_invalid_id() -> None:
+    """Attempting to remove an option ID that doesn't exist should raise an exception."""
+    async with OptionListApp().run_test() as pilot:
+        with pytest.raises(OptionDoesNotExist):
+            pilot.app.query_one(OptionList).remove_option("does-not-exist")
+
+
+async def test_remove_invalid_index() -> None:
+    """Attempting to remove an option index that doesn't exist should raise an exception."""
+    async with OptionListApp().run_test() as pilot:
+        with pytest.raises(OptionDoesNotExist):
+            pilot.app.query_one(OptionList).remove_option_at_index(23)
