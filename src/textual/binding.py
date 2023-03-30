@@ -98,6 +98,12 @@ class Bindings:
             else {}
         )
 
+    def copy(self) -> Bindings:
+        """Return a copy of this instance."""
+        copy = Bindings()
+        copy.keys = dict(self.keys.items())
+        return copy
+
     def __rich_repr__(self) -> rich.repr.Result:
         yield self.keys
 
