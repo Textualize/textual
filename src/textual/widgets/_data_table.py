@@ -1327,7 +1327,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def remove_row(self, row_key: RowKey) -> None:
         self._require_update_dimensions = True
         self._rows_to_remove.add(row_key)
-        self._update_count += 1
 
     def on_idle(self) -> None:
         """Runs when the message pump is empty.
@@ -1349,16 +1348,21 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self._rows_to_remove.clear()
             for row_key in rows_to_remove:
                 print(f"removing {row_key} (index={self._row_locations.get(row_key)})")
-                self._data.pop(row_key, None)
-                self.rows.pop(row_key, None)
+                print("FORWARD")
+                print(self._row_locations._forward)
+                print("REVERSE")
+                print(self._row_locations._reverse)
                 row_index = self._row_locations.get(row_key)
                 del self._row_locations[row_key]
                 for row in self.ordered_rows[row_index + 1 :]:
                     # We also need to subtract from all the indices below
                     key_to_shift = row.key
                     old_index = self._row_locations.get(key_to_shift)
+                    del self._row_locations[key_to_shift]
                     self._row_locations[key_to_shift] = old_index - 1
-                    print(old_index, "->", old_index - 1)
+                self._data.pop(row_key, None)
+                self.rows.pop(row_key, None)
+            self._update_count += 1
 
             print(self._row_locations._forward)
 
@@ -1489,6 +1493,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             ordered_rows = []
             for row_index in row_indices:
                 row_key = self._row_locations.get_key(row_index)
+                print(f"getting {row_index} from row_locations")
+                print(self._row_locations._reverse)
                 row = self.rows[row_key]
                 ordered_rows.append(row)
             self._ordered_row_cache[cache_key] = ordered_rows
