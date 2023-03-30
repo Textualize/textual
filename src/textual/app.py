@@ -2382,11 +2382,20 @@ class App(Generic[ReturnType], DOMNode):
             pass
 
     async def action_add_class_(self, selector: str, class_name: str) -> None:
-        """Add a CSS class on the selected widget."""
+        """Add a CSS class on the selected widget.
+
+        Args:
+            selector: Selects the widget to add the class to.
+            class_name: The class to add to the selected widget.
+        """
         self.screen.query(selector).add_class(class_name)
 
     async def action_remove_class_(self, selector: str, class_name: str) -> None:
-        """Remove a CSS class on the selected widget."""
+        """Remove a CSS class on the selected widget.
+
+        Args:
+            selector: Selects the widget to remove the class from.
+            class_name: The class to remove from  the selected widget."""
         self.screen.query(selector).remove_class(class_name)
 
     async def action_toggle_class(self, selector: str, class_name: str) -> None:
