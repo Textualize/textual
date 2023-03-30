@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Iterable, MutableMapping
+from typing import TYPE_CHECKING, Iterable
 
 import rich.repr
 
@@ -92,16 +92,20 @@ class Bindings:
                         priority=binding.priority,
                     )
 
-        self.keys: MutableMapping[str, Binding] = (
+        self.keys: dict[str, Binding] = (
             {binding.key: binding for binding in make_bindings(bindings)}
             if bindings
             else {}
         )
 
     def copy(self) -> Bindings:
-        """Return a copy of this instance."""
+        """Return a copy of this instance.
+
+        Return:
+            New bindings object.
+        """
         copy = Bindings()
-        copy.keys = dict(self.keys.items())
+        copy.keys = self.keys.copy()
         return copy
 
     def __rich_repr__(self) -> rich.repr.Result:
