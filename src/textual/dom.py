@@ -24,6 +24,7 @@ from rich.tree import Tree
 from ._context import NoActiveAppError
 from ._node_list import NodeList
 from ._types import WatchCallbackType
+from ._worker_manager import WorkerManager
 from .binding import Binding, Bindings, BindingType
 from .color import BLACK, WHITE, Color
 from .css._error_tools import friendly_list
@@ -42,6 +43,7 @@ if TYPE_CHECKING:
     from .css.query import DOMQuery, QueryType
     from .screen import Screen
     from .widget import Widget
+    from .worker import Worker, WorkType, ResultType
     from typing_extensions import Self, TypeAlias
 
 from typing_extensions import Literal
@@ -172,6 +174,7 @@ class DOMNode(MessagePump):
         )
         self._has_hover_style: bool = False
         self._has_focus_within: bool = False
+        self._worker_manager: WorkerManager | None = None
 
         super().__init__()
 
@@ -207,6 +210,33 @@ class DOMNode(MessagePump):
                 interval, self._automatic_refresh, name=f"auto refresh {self!r}"
             )
         self._auto_refresh = interval
+
+    @property
+    def workers(self) -> WorkerManager:
+        """A worker manager."""
+        if self._worker_manager is None:
+            self._worker_manager = WorkerManager(self.app)
+        return self._worker_manager
+
+    def run_worker(
+        self,
+        work: WorkType[ResultType],
+        *,
+        name: str | None = "",
+        group: str = "default",
+        description: str = "",
+        start: bool = True,
+        exclusive: bool = True,
+    ) -> Worker[ResultType]:
+        worker: Worker[ResultType] = self.workers._run(
+            work,
+            name=name,
+            group=group,
+            description=description,
+            start=start,
+            exclusive=exclusive,
+        )
+        return worker
 
     def _automatic_refresh(self) -> None:
         """Perform an automatic refresh (set with auto_refresh property)."""

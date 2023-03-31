@@ -13,6 +13,7 @@ class LogGroup(Enum):
     PRINT = 6
     SYSTEM = 7
     LOGGING = 8
+    WORKER = 9
 
 
 class LogVerbosity(Enum):

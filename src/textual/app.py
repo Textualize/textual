@@ -937,6 +937,8 @@ class App(Generic[ReturnType], DOMNode):
             app_ready_event.set()
 
         async def run_app(app) -> None:
+            app._loop = asyncio.get_running_loop()
+            app._thread_id = threading.get_ident()
             await app._process_messages(
                 ready_callback=on_app_ready,
                 headless=headless,

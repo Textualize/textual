@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import asyncio
 import inspect
+import threading
 from asyncio import CancelledError, Queue, QueueEmpty, Task
 from contextlib import contextmanager
 from functools import partial
@@ -69,6 +70,8 @@ class MessagePumpMeta(type):
 
 
 class MessagePump(metaclass=MessagePumpMeta):
+    """Base class which supplies a message pump."""
+
     def __init__(self, parent: MessagePump | None = None) -> None:
         self._message_queue: Queue[Message | None] = Queue()
         self._active_message: Message | None = None
@@ -84,6 +87,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         self._max_idle: float | None = None
         self._mounted_event = asyncio.Event()
         self._next_callbacks: list[CallbackType] = []
+        self._thread_id = threading.get_ident()
 
     @property
     def _prevent_message_types_stack(self) -> list[set[type[Message]]]:
@@ -631,7 +635,15 @@ class MessagePump(metaclass=MessagePumpMeta):
         # Add a copy of the prevented message types to the message
         # This is so that prevented messages are honoured by the event's handler
         message._prevent.update(self._get_prevented_messages())
-        self._message_queue.put_nowait(message)
+        if self._thread_id != threading.get_ident():
+            # If we're not calling from the same thread, make it threadsafe
+            loop = self.app._loop
+            assert loop is not None
+            asyncio.run_coroutine_threadsafe(
+                self._message_queue.put(message), loop=loop
+            )
+        else:
+            self._message_queue.put_nowait(message)
         return True
 
     async def on_callback(self, event: events.Callback) -> None:
