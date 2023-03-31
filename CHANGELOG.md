@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+- Add `remove_row` and `remove_rows` methods to the DataTable https://github.com/Textualize/textual/discussions/2116
+
 ### Fixed
 
 - Fixed bindings persistance https://github.com/Textualize/textual/issues/1613
