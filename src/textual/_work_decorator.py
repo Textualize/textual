@@ -1,5 +1,5 @@
 from functools import partial, wraps
-from typing import TYPE_CHECKING, Callable, TypeVar, cast, overload
+from typing import TYPE_CHECKING, Any, Callable, TypeVar, cast, overload
 
 from typing_extensions import ParamSpec, TypeAlias
 
@@ -9,10 +9,6 @@ if TYPE_CHECKING:
 
 T = TypeVar("T")
 P = ParamSpec("P")
-
-DecoratedMethod = TypeVar("DecoratedMethod")
-
-X = TypeVar("X")
 
 Decorator: TypeAlias = Callable[[Callable[P, T]], Callable[P, None]]
 
@@ -28,7 +24,7 @@ def work(*, exclusive: bool = False) -> Decorator:
 
 
 def work(
-    method: Callable[P, T] | None = None, exclusive: bool = False
+    method: Callable[P, Any] | None = None, exclusive: bool = False
 ) -> Callable[P, None] | Decorator:
     def do_work(method: Callable[P, T]) -> Callable[P, None]:
         @wraps(method)

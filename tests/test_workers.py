@@ -3,6 +3,8 @@ from textual.worker import Worker, WorkerState
 
 
 def test_initialize():
+    """Test initial values."""
+
     def foo() -> str:
         return "foo"
 
@@ -19,7 +21,9 @@ def test_initialize():
     assert worker.result is None
 
 
-async def test_run() -> None:
+async def test_run_success() -> None:
+    """Test successful runs."""
+
     def foo() -> str:
         """Regular function."""
         return "foo"
@@ -49,12 +53,15 @@ async def test_run() -> None:
         baz_worker: Worker[str] = Worker(
             baz(), name="baz", group="baz-group", description="Baz test"
         )
+        assert foo_worker.result is None
+        assert bar_worker.result is None
+        assert baz_worker.result is None
         foo_worker._start(app)
         bar_worker._start(app)
         baz_worker._start(app)
         assert await foo_worker.wait() == "foo"
         assert await bar_worker.wait() == "bar"
         assert await baz_worker.wait() == "baz"
-        assert foo_worker.result == "bar"
+        assert foo_worker.result == "foo"
         assert bar_worker.result == "bar"
         assert baz_worker.result == "baz"
