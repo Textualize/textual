@@ -1287,6 +1287,28 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.check_idle()
         return row_key
 
+    def remove_row(self, row_key: RowKey) -> Self:
+        """Remove a row.
+        Args:
+            row_key: Key describing the specific row to remove
+
+        Returns:
+            The `DataTable` instance.
+        """
+        if row_key not in self._row_locations:
+            raise RowDoesNotExist(f"The row key {row_key!r} already exists.")
+
+        del self._row_locations[row_key]
+        del self._data[row_key]
+        del self.rows[row_key]
+
+        # TODO should the cursor be modified?
+
+        self._new_rows.remove(row_key)
+        self._update_count -= 1
+        self.check_idle()
+        return self
+
     def add_columns(self, *labels: TextType) -> list[ColumnKey]:
         """Add a number of columns.
 
@@ -1320,6 +1342,18 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             row_key = self.add_row(*row)
             row_keys.append(row_key)
         return row_keys
+
+    def remove_rows(self, row_keys: Iterable[RowKey]) -> Self:
+        """Remove a number of rows.
+        Args:
+            row_keys: Iterable of keys. A key describes the specific row to remove.
+
+        Returns:
+            The `DataTable` instance.
+        """
+        for row_key in row_keys:
+            self.remove_row(row_key)
+        return self
 
     def on_idle(self) -> None:
         """Runs when the message pump is empty.
