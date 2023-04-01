@@ -279,11 +279,7 @@ class App(Generic[ReturnType], DOMNode):
     also the `sub_title` attribute.
     """
 
-    BINDINGS = [
-        Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
-        Binding("tab", "focus_next", "Focus Next", show=False),
-        Binding("shift+tab", "focus_previous", "Focus Previous", show=False),
-    ]
+    BINDINGS = [Binding("ctrl+c", "quit", "Quit", show=False, priority=True)]
 
     title: Reactive[str] = Reactive("", compute=False)
     sub_title: Reactive[str] = Reactive("", compute=False)
@@ -1984,7 +1980,7 @@ class App(Generic[ReturnType], DOMNode):
     def _modal_binding_chain(self) -> list[tuple[DOMNode, Bindings]]:
         """The binding chain, ignoring everything before the last modal."""
         binding_chain = self._binding_chain
-        for index, (node, _bindings) in enumerate(binding_chain):
+        for index, (node, _bindings) in enumerate(binding_chain, 1):
             if node.is_modal:
                 return binding_chain[:index]
         return binding_chain
