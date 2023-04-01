@@ -23,7 +23,7 @@ class WorkerManager:
 
     """
 
-    def __init__(self, app: App, node: DOMNode) -> None:
+    def __init__(self, app: App) -> None:
         """Initialize a worker manager.
 
         Args:
@@ -31,8 +31,6 @@ class WorkerManager:
         """
         self._app = app
         """A reference to the app."""
-        self._node = node
-        """A reference to the node."""
         self._workers: set[Worker] = set()
         """The workers being managed."""
 
@@ -75,9 +73,10 @@ class WorkerManager:
         if start:
             worker._start(self._app, self._remove_worker)
 
-    def _run(
+    def _new_worker(
         self,
         work: WorkType,
+        node: DOMNode,
         *,
         name: str | None = "",
         group: str = "default",
@@ -99,7 +98,7 @@ class WorkerManager:
             A Worker instance.
         """
         worker: Worker[Any] = Worker(
-            self._node,
+            node,
             work,
             name=name or getattr(work, "__name__", "") or "",
             group=group,
@@ -136,6 +135,13 @@ class WorkerManager:
             A list of workers that were cancelled.
         """
         workers = [worker for worker in self._workers if worker.group == group]
+        for worker in workers:
+            worker.cancel()
+        return workers
+
+    def cancel_node(self, node: DOMNode) -> list[Worker]:
+        """Cancel all workers associated with a given node."""
+        workers = [worker for worker in self._workers if worker.node == node]
         for worker in workers:
             worker.cancel()
         return workers

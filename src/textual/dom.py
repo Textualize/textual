@@ -214,9 +214,7 @@ class DOMNode(MessagePump):
     @property
     def workers(self) -> WorkerManager:
         """A worker manager."""
-        if self._worker_manager is None:
-            self._worker_manager = WorkerManager(self.app, self)
-        return self._worker_manager
+        return self.app.workers
 
     def run_worker(
         self,
@@ -228,8 +226,9 @@ class DOMNode(MessagePump):
         start: bool = True,
         exclusive: bool = True,
     ) -> Worker[ResultType]:
-        worker: Worker[ResultType] = self.workers._run(
+        worker: Worker[ResultType] = self.workers._new_worker(
             work,
+            self,
             name=name,
             group=group,
             description=description,

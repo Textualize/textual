@@ -58,6 +58,7 @@ from ._context import active_app, active_message_pump
 from ._event_broker import NoHandler, extract_handler_actions
 from ._path import _make_path_object_relative
 from ._wait import wait_for_idle
+from ._worker_manager import WorkerManager
 from .actions import ActionParseResult, SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding, Bindings
@@ -320,6 +321,7 @@ class App(Generic[ReturnType], DOMNode):
             legacy_windows=False,
             _environ=environ,
         )
+        self._workers = WorkerManager(self)
         self.error_console = Console(markup=False, stderr=True)
         self.driver_class = driver_class or self.get_driver_class()
         self._screen_stack: list[Screen] = []
@@ -430,6 +432,11 @@ class App(Generic[ReturnType], DOMNode):
         self._batch_count = 0
         self.set_class(self.dark, "-dark-mode")
         self.set_class(not self.dark, "-light-mode")
+
+    @property
+    def workers(self) -> WorkerManager:
+        """A worker manager."""
+        return self._workers
 
     @property
     def return_value(self) -> ReturnType | None:
