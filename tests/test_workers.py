@@ -1,5 +1,15 @@
+import asyncio
+
+import pytest
+
 from textual.app import App
-from textual.worker import Worker, WorkerState
+from textual.worker import (
+    Worker,
+    WorkerCancelled,
+    WorkerFailed,
+    WorkerState,
+    get_current_worker,
+)
 
 
 def test_initialize():
@@ -65,3 +75,79 @@ async def test_run_success() -> None:
         assert foo_worker.result == "foo"
         assert bar_worker.result == "bar"
         assert baz_worker.result == "baz"
+
+
+async def test_run_error() -> None:
+    async def run_error() -> str:
+        await asyncio.sleep(0.1)
+        1 / 0
+        return "Never"
+
+    class ErrorApp(App):
+        pass
+
+    app = ErrorApp()
+    async with app.run_test():
+        worker: Worker[str] = Worker(run_error)
+        worker._start(app)
+        with pytest.raises(WorkerFailed):
+            await worker.wait()
+
+
+async def test_run_cancel() -> None:
+    """Test run may be cancelled."""
+
+    async def run_error() -> str:
+        await asyncio.sleep(0.1)
+        return "Never"
+
+    class ErrorApp(App):
+        pass
+
+    app = ErrorApp()
+    async with app.run_test():
+        worker: Worker[str] = Worker(run_error)
+        worker._start(app)
+        await asyncio.sleep(0)
+        worker.cancel()
+        assert worker.is_cancelled
+        with pytest.raises(WorkerCancelled):
+            await worker.wait()
+
+
+async def test_run_cancel_immediately() -> None:
+    """Edge case for cancelling immediately."""
+
+    async def run_error() -> str:
+        await asyncio.sleep(0.1)
+        return "Never"
+
+    class ErrorApp(App):
+        pass
+
+    app = ErrorApp()
+    async with app.run_test():
+        worker: Worker[str] = Worker(run_error)
+        worker._start(app)
+        worker.cancel()
+        assert worker.is_cancelled
+        with pytest.raises(WorkerCancelled):
+            await worker.wait()
+
+
+async def test_get_worker() -> None:
+    """Check get current worker."""
+
+    async def run_worker() -> Worker:
+        worker = get_current_worker()
+        return worker
+
+    class WorkerApp(App):
+        pass
+
+    app = WorkerApp()
+    async with app.run_test():
+        worker: Worker[Worker] = Worker(run_worker)
+        worker._start(app)
+
+        assert await worker.wait() is worker

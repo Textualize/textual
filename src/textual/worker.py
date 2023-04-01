@@ -45,7 +45,7 @@ class WorkerCancelled(WorkerError):
     """The worker was cancelled and did not complete."""
 
 
-def get_worker() -> Worker:
+def get_current_worker() -> Worker:
     """Get the currently active worker.
 
     Raises:
@@ -266,12 +266,12 @@ class Worker(Generic[ResultType]):
         self._task = asyncio.create_task(self._run(app))
 
         def task_done_callback(_task: asyncio.Task) -> None:
-            """Run thhe callback.
+            """Run the callback.
 
-            Called by `Task.add_done_callback`
+            Called by `Task.add_done_callback`.
 
             Args:
-                _task: The worker's task.
+                The worker's task.
             """
             if done_callback is not None:
                 done_callback(self)
@@ -288,16 +288,17 @@ class Worker(Generic[ResultType]):
         """Wait for the work to complete."""
         if self.state == WorkerState.PENDING:
             raise WorkerError("Worker must be started before calling this method.")
-
         if self._task is not None:
-            await self._task
-
+            try:
+                await self._task
+            except asyncio.CancelledError as error:
+                self._state = WorkerState.CANCELLED
+                self._error = error
         if self.state == WorkerState.ERROR:
             assert self._error is not None
-            raise WorkerError(self._error)
+            raise WorkerFailed(self._error)
         elif self.state == WorkerState.CANCELLED:
             raise WorkerCancelled("Worker was cancelled, and did not complete.")
 
         assert self._result is not None
-
         return self._result

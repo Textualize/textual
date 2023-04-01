@@ -1,53 +1,96 @@
+from __future__ import annotations
+
 from functools import partial, wraps
-from typing import TYPE_CHECKING, Any, Callable, TypeVar, cast, overload
+from typing import TYPE_CHECKING, Callable, Coroutine, TypeVar, cast, overload
 
 from typing_extensions import ParamSpec, TypeAlias
 
 if TYPE_CHECKING:
-    from .dom import DOMNode
+    from .worker import Worker
 
 
-T = TypeVar("T")
-P = ParamSpec("P")
+FactoryParamSpec = ParamSpec("FactoryParamSpec")
+DecoratorParamSpec = ParamSpec("DecoratorParamSpec")
+ReturnType = TypeVar("ReturnType")
 
-Decorator: TypeAlias = Callable[[Callable[P, T]], Callable[P, None]]
+Decorator: TypeAlias = Callable[
+    [
+        Callable[DecoratorParamSpec, ReturnType]
+        | Callable[DecoratorParamSpec, Coroutine[None, None, ReturnType]]
+    ],
+    Callable[DecoratorParamSpec, "Worker[ReturnType]"],
+]
 
 
 @overload
-def work(method: Callable[P, T]) -> Callable[P, None]:
+def work(
+    method: Callable[FactoryParamSpec, Coroutine[None, None, ReturnType]]
+) -> Callable[FactoryParamSpec, "Worker[ReturnType]"]:
     ...
 
 
 @overload
-def work(*, exclusive: bool = False) -> Decorator:
+def work(
+    method: Callable[FactoryParamSpec, ReturnType]
+) -> Callable[FactoryParamSpec, "Worker[ReturnType]"]:
+    ...
+
+
+@overload
+def work(*, exclusive: bool = False) -> Decorator[..., ReturnType]:
     ...
 
 
 def work(
-    method: Callable[P, Any] | None = None, exclusive: bool = False
-) -> Callable[P, None] | Decorator:
-    def do_work(method: Callable[P, T]) -> Callable[P, None]:
+    method: Callable[FactoryParamSpec, ReturnType]
+    | Callable[FactoryParamSpec, Coroutine[None, None, ReturnType]]
+    | None = None,
+    *,
+    name: str = "",
+    group: str = "default",
+    exclusive: bool = False,
+) -> Callable[FactoryParamSpec, Worker[ReturnType]] | Decorator:
+    """Worker decorator factory."""
+
+    def decorator(
+        method: Callable[DecoratorParamSpec, ReturnType]
+        | Callable[DecoratorParamSpec, Coroutine[None, None, ReturnType]]
+    ) -> Callable[DecoratorParamSpec, Worker[ReturnType]]:
+        """The decorator."""
+
         @wraps(method)
-        def decorated(*args: P.args, **kwargs: P.kwargs) -> None:
+        def decorated(
+            *args: DecoratorParamSpec.args, **kwargs: DecoratorParamSpec.kwargs
+        ) -> Worker[ReturnType]:
+            """The replaced callable."""
             from .dom import DOMNode
 
-            assert isinstance(args[0], DOMNode)
-            self: DOMNode = cast(DOMNode, args[0])
+            self = args[0]
+            assert isinstance(self, DOMNode)
+
             positional_arguments = ", ".join(repr(arg) for arg in args[1:])
             keyword_arguments = ", ".join(
                 f"{name}={value!r}" for name, value in kwargs.items()
             )
-            worker_description = f"{method.__name__}({', '.join(token for token in [positional_arguments, keyword_arguments] if token)})"
-            self.run_worker(
-                partial(method, *args, **kwargs),
-                name=method.__name__,
-                description=worker_description,
-                exclusive=exclusive,
+            tokens = [positional_arguments, keyword_arguments]
+            worker_description = (
+                f"{method.__name__}({', '.join(token for token in tokens if token)})"
             )
+            worker = cast(
+                Worker[ReturnType],
+                self.run_worker(
+                    partial(method, *args, **kwargs),
+                    name=name or method.__name__,
+                    group=group,
+                    description=worker_description,
+                    exclusive=exclusive,
+                ),
+            )
+            return worker
 
         return decorated
 
     if method is None:
-        return do_work
+        return decorator
     else:
-        return do_work(method)
+        return decorator(method)
