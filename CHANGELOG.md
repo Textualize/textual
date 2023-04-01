@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed modal bindings https://github.com/Textualize/textual/issues/2194
 - Fix binding enter to active button https://github.com/Textualize/textual/issues/2194
 
+### [Changed]
+
+- tab and shift+tab are now defined on Screen.
+
 ## [0.17.1] - 2023-03-30
 
 ### Fixed
