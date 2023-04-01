@@ -12,14 +12,16 @@ from textual.worker import (
 )
 
 
-def test_initialize():
+async def test_initialize():
     """Test initial values."""
 
     def foo() -> str:
         return "foo"
 
-    worker = Worker(foo, name="foo", group="foo-group", description="Foo test")
-    repr(worker)
+    app = App()
+    async with app.run_test():
+        worker = Worker(app, foo, name="foo", group="foo-group", description="Foo test")
+        repr(worker)
 
     assert worker.state == WorkerState.PENDING
     assert not worker.is_cancelled
@@ -53,15 +55,15 @@ async def test_run_success() -> None:
     async with app.run_test():
         # Call regular function
         foo_worker: Worker[str] = Worker(
-            foo, name="foo", group="foo-group", description="Foo test"
+            app, foo, name="foo", group="foo-group", description="Foo test"
         )
         # Call coroutine function
         bar_worker: Worker[str] = Worker(
-            bar, name="bar", group="bar-group", description="Bar test"
+            app, bar, name="bar", group="bar-group", description="Bar test"
         )
         # Call coroutine
         baz_worker: Worker[str] = Worker(
-            baz(), name="baz", group="baz-group", description="Baz test"
+            app, baz(), name="baz", group="baz-group", description="Baz test"
         )
         assert foo_worker.result is None
         assert bar_worker.result is None
@@ -88,7 +90,7 @@ async def test_run_error() -> None:
 
     app = ErrorApp()
     async with app.run_test():
-        worker: Worker[str] = Worker(run_error)
+        worker: Worker[str] = Worker(app, run_error)
         worker._start(app)
         with pytest.raises(WorkerFailed):
             await worker.wait()
@@ -106,7 +108,7 @@ async def test_run_cancel() -> None:
 
     app = ErrorApp()
     async with app.run_test():
-        worker: Worker[str] = Worker(run_error)
+        worker: Worker[str] = Worker(app, run_error)
         worker._start(app)
         await asyncio.sleep(0)
         worker.cancel()
@@ -127,7 +129,7 @@ async def test_run_cancel_immediately() -> None:
 
     app = ErrorApp()
     async with app.run_test():
-        worker: Worker[str] = Worker(run_error)
+        worker: Worker[str] = Worker(app, run_error)
         worker._start(app)
         worker.cancel()
         assert worker.is_cancelled
@@ -147,7 +149,7 @@ async def test_get_worker() -> None:
 
     app = WorkerApp()
     async with app.run_test():
-        worker: Worker[Worker] = Worker(run_worker)
+        worker: Worker[Worker] = Worker(app, run_worker)
         worker._start(app)
 
         assert await worker.wait() is worker

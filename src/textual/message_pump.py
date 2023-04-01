@@ -638,7 +638,6 @@ class MessagePump(metaclass=MessagePumpMeta):
         if self._thread_id != threading.get_ident():
             # If we're not calling from the same thread, make it threadsafe
             loop = self.app._loop
-            q
             asyncio.run_coroutine_threadsafe(
                 self._message_queue.put(message), loop=loop
             )

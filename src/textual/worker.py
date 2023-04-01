@@ -18,8 +18,11 @@ from typing import (
 import rich.repr
 from typing_extensions import TypeAlias
 
+from .message import Message
+
 if TYPE_CHECKING:
     from .app import App
+    from .dom import DOMNode
 
 
 active_worker: ContextVar[Worker] = ContextVar("active_worker")
@@ -99,8 +102,24 @@ class _ReprText:
 class Worker(Generic[ResultType]):
     """A class to manage concurrent work (either a task or a thread)."""
 
+    @rich.repr.auto
+    class StateChanged(Message, bubble=False):
+        """The worker state changed."""
+
+        namespace = "worker"
+
+        def __init__(self, worker: Worker, state: WorkerState) -> None:
+            self.worker = worker
+            self.state = state
+            super().__init__()
+
+        def __rich_repr__(self) -> rich.repr.Result:
+            yield self.worker
+            yield self.state
+
     def __init__(
         self,
+        node: DOMNode,
         work: WorkType | None = None,
         *,
         name: str = "",
@@ -115,11 +134,13 @@ class Worker(Generic[ResultType]):
             group: The worker group.
             description: Description of the worker (longer string with more details).
         """
+        self._node = node
         self._work = work
         self.name = name
         self.group = group
         self.description = description
         self._state = WorkerState.PENDING
+        self.state = self._state
         self._error: BaseException | None = None
         self._completed_steps: int = 0
         self._total_steps: int | None = None
@@ -127,6 +148,7 @@ class Worker(Generic[ResultType]):
         self._created_time = monotonic()
         self._result: ResultType | None = None
         self._task: asyncio.Task | None = None
+        self._node.post_message(self.StateChanged(self, self._state))
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield _ReprText(self.state.name)
@@ -136,9 +158,22 @@ class Worker(Generic[ResultType]):
         yield "progress", round(self.progress, 1), 0.0
 
     @property
+    def node(self) -> DOMNode:
+        """The node where this worker was run from."""
+        return self._node
+
+    @property
     def state(self) -> WorkerState:
         """The current state of the worker."""
         return self._state
+
+    @state.setter
+    def state(self, state: WorkerState) -> None:
+        """Set the state, and send a message."""
+        changed = state != self._state
+        self._state = state
+        if changed:
+            self._node.post_message(self.StateChanged(self, state))
 
     @property
     def is_cancelled(self) -> bool:
@@ -234,22 +269,22 @@ class Worker(Generic[ResultType]):
         app._set_active()
         active_worker.set(self)
 
-        self._state = WorkerState.RUNNING
-        app.log.worker(self, "RUNNING")
+        self.state = WorkerState.RUNNING
+        app.log.worker(self)
         try:
             self._result = await self.run()
         except asyncio.CancelledError as error:
-            self._state = WorkerState.CANCELLED
+            self.state = WorkerState.CANCELLED
             self._error = error
-            app.log.worker(self, "CANCELLED")
+            app.log.worker(self)
         except Exception as error:
-            self._state = WorkerState.ERROR
+            self.state = WorkerState.ERROR
             self._error = error
-            app.log.worker(self, "ERROR", repr(error))
+            app.log.worker(self, "failed", repr(error))
             app.fatal_error()
         else:
-            self._state = WorkerState.SUCCESS
-            app.log.worker(self, "SUCCESS")
+            self.state = WorkerState.SUCCESS
+            app.log.worker(self)
 
     def _start(
         self, app: App, done_callback: Callable[[Worker], None] | None = None
@@ -262,7 +297,7 @@ class Worker(Generic[ResultType]):
         """
         if self._task is not None:
             return
-        self._state = WorkerState.RUNNING
+        self.state = WorkerState.RUNNING
         self._task = asyncio.create_task(self._run(app))
 
         def task_done_callback(_task: asyncio.Task) -> None:
@@ -292,7 +327,7 @@ class Worker(Generic[ResultType]):
             try:
                 await self._task
             except asyncio.CancelledError as error:
-                self._state = WorkerState.CANCELLED
+                self.state = WorkerState.CANCELLED
                 self._error = error
         if self.state == WorkerState.ERROR:
             assert self._error is not None

@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import asyncio
 from collections import Counter
-from typing import TYPE_CHECKING, Any
+from operator import attrgetter
+from typing import TYPE_CHECKING, Any, Iterator
 
 import rich.repr
 
@@ -9,6 +11,7 @@ from .worker import Worker, WorkerState, WorkType
 
 if TYPE_CHECKING:
     from .app import App
+    from .dom import DOMNode
 
 
 @rich.repr.auto(angular=True)
@@ -20,7 +23,7 @@ class WorkerManager:
 
     """
 
-    def __init__(self, app: App) -> None:
+    def __init__(self, app: App, node: DOMNode) -> None:
         """Initialize a worker manager.
 
         Args:
@@ -28,6 +31,8 @@ class WorkerManager:
         """
         self._app = app
         """A reference to the app."""
+        self._node = node
+        """A reference to the node."""
         self._workers: set[Worker] = set()
         """The workers being managed."""
 
@@ -36,6 +41,23 @@ class WorkerManager:
         counter.update(worker.state for worker in self._workers)
         for state, count in sorted(counter.items()):
             yield state.name, count
+
+    def __iter__(self) -> Iterator[Worker[Any]]:
+        return iter(sorted(self._workers, key=attrgetter("_created_time")))
+
+    def __reversed__(self) -> Iterator[Worker[Any]]:
+        return iter(
+            sorted(self._workers, key=attrgetter("_created_time"), reverse=True)
+        )
+
+    def __bool__(self) -> bool:
+        return bool(self._workers)
+
+    def __len__(self) -> int:
+        return len(self._workers)
+
+    def __contains__(self, worker: object) -> bool:
+        return worker in self._workers
 
     def add_worker(
         self, worker: Worker, start: bool = True, exclusive: bool = True
@@ -77,6 +99,7 @@ class WorkerManager:
             A Worker instance.
         """
         worker: Worker[Any] = Worker(
+            self._node,
             work,
             name=name or getattr(work, "__name__", "") or "",
             group=group,
@@ -116,3 +139,7 @@ class WorkerManager:
         for worker in workers:
             worker.cancel()
         return workers
+
+    async def wait_for_complete(self) -> None:
+        """Cancel all tasks and wait their completion."""
+        await asyncio.gather(*[worker.wait() for worker in self])

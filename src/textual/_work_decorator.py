@@ -81,7 +81,7 @@ def work(
                 f"{method.__name__}({', '.join(token for token in tokens if token)})"
             )
             worker = cast(
-                Worker[ReturnType],
+                "Worker[ReturnType]",
                 self.run_worker(
                     partial(method, *args, **kwargs),
                     name=name or method.__name__,

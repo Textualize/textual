@@ -215,7 +215,7 @@ class DOMNode(MessagePump):
     def workers(self) -> WorkerManager:
         """A worker manager."""
         if self._worker_manager is None:
-            self._worker_manager = WorkerManager(self.app)
+            self._worker_manager = WorkerManager(self.app, self)
         return self._worker_manager
 
     def run_worker(
