@@ -74,7 +74,6 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     def __init__(self, parent: MessagePump | None = None) -> None:
         self._message_queue: Queue[Message | None] = Queue()
-        self._active_message: Message | None = None
         self._parent = parent
         self._running: bool = False
         self._closing: bool = False
@@ -478,40 +477,35 @@ class MessagePump(metaclass=MessagePumpMeta):
                 except MessagePumpClosed:
                     break
 
-            self._active_message = message
-
             try:
-                try:
-                    await self._dispatch_message(message)
-                except CancelledError:
-                    raise
-                except Exception as error:
-                    self._mounted_event.set()
-                    self.app._handle_exception(error)
-                    break
-                finally:
-                    self._message_queue.task_done()
-
-                    current_time = time()
-
-                    # Insert idle events
-                    if self._message_queue.empty() or (
-                        self._max_idle is not None
-                        and current_time - self._last_idle > self._max_idle
-                    ):
-                        self._last_idle = current_time
-                        if not self._closed:
-                            event = events.Idle()
-                            for _cls, method in self._get_dispatch_methods(
-                                "on_idle", event
-                            ):
-                                try:
-                                    await invoke(method, event)
-                                except Exception as error:
-                                    self.app._handle_exception(error)
-                                    break
+                await self._dispatch_message(message)
+            except CancelledError:
+                raise
+            except Exception as error:
+                self._mounted_event.set()
+                self.app._handle_exception(error)
+                break
             finally:
-                self._active_message = None
+                self._message_queue.task_done()
+
+                current_time = time()
+
+                # Insert idle events
+                if self._message_queue.empty() or (
+                    self._max_idle is not None
+                    and current_time - self._last_idle > self._max_idle
+                ):
+                    self._last_idle = current_time
+                    if not self._closed:
+                        event = events.Idle()
+                        for _cls, method in self._get_dispatch_methods(
+                            "on_idle", event
+                        ):
+                            try:
+                                await invoke(method, event)
+                            except Exception as error:
+                                self.app._handle_exception(error)
+                                break
 
     async def _flush_next_callbacks(self) -> None:
         """Invoke pending callbacks in next callbacks queue."""
