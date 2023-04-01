@@ -55,8 +55,10 @@ def work(
     """Worker decorator factory."""
 
     def decorator(
-        method: Callable[DecoratorParamSpec, ReturnType]
-        | Callable[DecoratorParamSpec, Coroutine[None, None, ReturnType]]
+        method: (
+            Callable[DecoratorParamSpec, ReturnType]
+            | Callable[DecoratorParamSpec, Coroutine[None, None, ReturnType]]
+        )
     ) -> Callable[DecoratorParamSpec, Worker[ReturnType]]:
         """The decorator."""
 

@@ -238,15 +238,15 @@ class Worker(Generic[ResultType]):
         app.log.worker(self, "RUNNING")
         try:
             self._result = await self.run()
+        except asyncio.CancelledError as error:
+            self._state = WorkerState.CANCELLED
+            self._error = error
+            app.log.worker(self, "CANCELLED")
         except Exception as error:
             self._state = WorkerState.ERROR
             self._error = error
             app.log.worker(self, "ERROR", repr(error))
             app.fatal_error()
-        except asyncio.CancelledError as error:
-            self._state = WorkerState.CANCELLED
-            self._error = error
-            app.log.worker(self, "CANCELLED")
         else:
             self._state = WorkerState.SUCCESS
             app.log.worker(self, "SUCCESS")
