@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed bindings persistance https://github.com/Textualize/textual/issues/1613
 - The `Markdown` widget now auto-increments ordered lists https://github.com/Textualize/textual/issues/2002
 - Fixed modal bindings https://github.com/Textualize/textual/issues/2194
-
+- Fix binding enter to active button https://github.com/Textualize/textual/issues/2194
 
 ## [0.17.1] - 2023-03-30
 
