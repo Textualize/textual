@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import partial, wraps
-from typing import TYPE_CHECKING, Callable, Coroutine, TypeVar, cast, overload
+from typing import TYPE_CHECKING, Callable, Coroutine, TypeVar, Union, cast, overload
 
 from typing_extensions import ParamSpec, TypeAlias
 
@@ -15,8 +15,10 @@ ReturnType = TypeVar("ReturnType")
 
 Decorator: TypeAlias = Callable[
     [
-        Callable[DecoratorParamSpec, ReturnType]
-        | Callable[DecoratorParamSpec, Coroutine[None, None, ReturnType]]
+        Union[
+            Callable[DecoratorParamSpec, ReturnType],
+            Callable[DecoratorParamSpec, Coroutine[None, None, ReturnType]],
+        ]
     ],
     Callable[DecoratorParamSpec, "Worker[ReturnType]"],
 ]
