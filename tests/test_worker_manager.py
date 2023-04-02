@@ -2,16 +2,26 @@ import asyncio
 import time
 
 from textual.app import App, ComposeResult
-from textual.reactive import var
 from textual.widget import Widget
 from textual.worker import Worker, WorkerState
 
 
-async def test_run_worker_async():
+def test_worker_manager_init():
+    app = App()
+    assert isinstance(repr(app.workers), str)
+    assert not bool(app.workers)
+    assert len(app.workers) == 0
+    assert list(app.workers) == []
+    assert list(reversed(app.workers)) == []
+
+
+async def test_run_worker_async() -> None:
     """Check self.run_worker"""
     worker_events: list[Worker.StateChanged] = []
 
     work_result: str = ""
+
+    new_worker: Worker
 
     class WorkerWidget(Widget):
         async def work(self) -> str:
@@ -21,7 +31,8 @@ async def test_run_worker_async():
             return "foo"
 
         def on_mount(self):
-            self.run_worker(self.work)
+            nonlocal new_worker
+            new_worker = self.run_worker(self.work, start=False)
 
         def on_worker_state_changed(self, event) -> None:
             worker_events.append(event)
@@ -32,8 +43,11 @@ async def test_run_worker_async():
 
     app = WorkerApp()
     async with app.run_test():
-        worker_widget = app.query_one(WorkerWidget)
-        await worker_widget.workers.wait_for_complete()
+        assert new_worker in app.workers
+        assert len(app.workers) == 1
+        app.workers.start_all()
+        await app.workers.wait_for_complete()
+        assert len(app.workers) == 0
 
     assert work_result == "foo"
     assert isinstance(worker_events[0].worker.node, WorkerWidget)
@@ -45,7 +59,7 @@ async def test_run_worker_async():
     ]
 
 
-async def test_run_worker_thread():
+async def test_run_worker_thread() -> None:
     """Check self.run_worker"""
     worker_events: list[Worker.StateChanged] = []
 
@@ -70,8 +84,7 @@ async def test_run_worker_thread():
 
     app = WorkerApp()
     async with app.run_test():
-        worker_widget = app.query_one(WorkerWidget)
-        await worker_widget.workers.wait_for_complete()
+        await app.workers.wait_for_complete()
 
     assert work_result == "foo"
     assert isinstance(worker_events[0].worker.node, WorkerWidget)

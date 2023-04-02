@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 from collections import Counter
 from operator import attrgetter
-from typing import TYPE_CHECKING, Any, Iterator
+from typing import TYPE_CHECKING, Any, Iterable, Iterator
 
 import rich.repr
 
@@ -68,7 +68,7 @@ class WorkerManager:
             exclusive: Cancel all workers in the same group as `worker`.
         """
         if exclusive and worker.group:
-            self.cancel_group(worker.group)
+            self.cancel_group(worker.node, worker.group)
         self._workers.add(worker)
         if start:
             worker._start(self._app, self._remove_worker)
@@ -125,16 +125,21 @@ class WorkerManager:
         for worker in self._workers:
             worker.cancel()
 
-    def cancel_group(self, group: str) -> list[Worker]:
+    def cancel_group(self, node: DOMNode, group: str) -> list[Worker]:
         """Cancel a single group.
 
         Args:
+            node: Worker DOM node.
             group: A group name.
 
         Return:
             A list of workers that were cancelled.
         """
-        workers = [worker for worker in self._workers if worker.group == group]
+        workers = [
+            worker
+            for worker in self._workers
+            if (worker.group == group and worker.node == node)
+        ]
         for worker in workers:
             worker.cancel()
         return workers
@@ -146,6 +151,11 @@ class WorkerManager:
             worker.cancel()
         return workers
 
-    async def wait_for_complete(self) -> None:
-        """Cancel all tasks and wait their completion."""
-        await asyncio.gather(*[worker.wait() for worker in self])
+    async def wait_for_complete(self, workers: Iterable[Worker] | None = None) -> None:
+        """Wait for workers to complete.
+
+        Args:
+            workers: An iterable of workers or None to wait for all workers in the manager.
+        """
+
+        await asyncio.gather(*[worker.wait() for worker in (workers or self)])
