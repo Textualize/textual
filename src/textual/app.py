@@ -1633,6 +1633,7 @@ class App(Generic[ReturnType], DOMNode):
             except asyncio.CancelledError:
                 pass
             finally:
+                self.workers.cancel_all()
                 self._running = False
                 try:
                     await self.animator.stop()

@@ -923,6 +923,7 @@ class DOMNode(MessagePump):
         styles = self.styles
         for key, value in update_styles.items():
             setattr(styles, key, value)
+        return self
 
     def has_class(self, *class_names: str) -> bool:
         """Check if the Node has all the given class names.
