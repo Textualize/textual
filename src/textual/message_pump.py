@@ -86,7 +86,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         self._max_idle: float | None = None
         self._mounted_event = asyncio.Event()
         self._next_callbacks: list[CallbackType] = []
-        self._thread_id: int = 0
+        self._thread_id: int = threading.get_ident()
 
     @property
     def _prevent_message_types_stack(self) -> list[set[type[Message]]]:
@@ -630,12 +630,10 @@ class MessagePump(metaclass=MessagePumpMeta):
         # Add a copy of the prevented message types to the message
         # This is so that prevented messages are honoured by the event's handler
         message._prevent.update(self._get_prevented_messages())
-        if self._thread_id != threading.get_ident():
+        if self._thread_id != threading.get_ident() and self.app._loop is not None:
             # If we're not calling from the same thread, make it threadsafe
             loop = self.app._loop
-            asyncio.run_coroutine_threadsafe(
-                self._message_queue.put(message), loop=loop
-            )
+            loop.call_soon_threadsafe(self._message_queue.put_nowait, message)
         else:
             self._message_queue.put_nowait(message)
         return True

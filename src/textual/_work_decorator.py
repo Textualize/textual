@@ -11,61 +11,61 @@ if TYPE_CHECKING:
 
 FactoryParamSpec = ParamSpec("FactoryParamSpec")
 DecoratorParamSpec = ParamSpec("DecoratorParamSpec")
-T = TypeVar("ReturnType")
+ReturnType = TypeVar("ReturnType")
 
 Decorator: TypeAlias = Callable[
     [
         Union[
-            Callable[DecoratorParamSpec, T],
-            Callable[DecoratorParamSpec, Coroutine[None, None, T]],
+            Callable[DecoratorParamSpec, ReturnType],
+            Callable[DecoratorParamSpec, Coroutine[None, None, ReturnType]],
         ]
     ],
-    Callable[DecoratorParamSpec, "Worker[T]"],
+    Callable[DecoratorParamSpec, "Worker[ReturnType]"],
 ]
 
 
 @overload
 def work(
-    method: Callable[FactoryParamSpec, Coroutine[None, None, T]]
-) -> Callable[FactoryParamSpec, "Worker[T]"]:
+    method: Callable[FactoryParamSpec, Coroutine[None, None, ReturnType]]
+) -> Callable[FactoryParamSpec, "Worker[ReturnType]"]:
     ...
 
 
 @overload
 def work(
-    method: Callable[FactoryParamSpec, T]
-) -> Callable[FactoryParamSpec, "Worker[T]"]:
+    method: Callable[FactoryParamSpec, ReturnType]
+) -> Callable[FactoryParamSpec, "Worker[ReturnType]"]:
     ...
 
 
 @overload
-def work(*, exclusive: bool = False) -> Decorator[..., T]:
+def work(*, exclusive: bool = False) -> Decorator[..., ReturnType]:
     ...
 
 
 def work(
-    method: Callable[FactoryParamSpec, T]
-    | Callable[FactoryParamSpec, Coroutine[None, None, T]]
+    method: Callable[FactoryParamSpec, ReturnType]
+    | Callable[FactoryParamSpec, Coroutine[None, None, ReturnType]]
     | None = None,
     *,
     name: str = "",
     group: str = "default",
     exclusive: bool = False,
-) -> Callable[FactoryParamSpec, Worker[T]] | Decorator:
+) -> Callable[FactoryParamSpec, Worker[ReturnType]] | Decorator:
     """Worker decorator factory."""
 
     def decorator(
         method: (
-            Callable[DecoratorParamSpec, T]
-            | Callable[DecoratorParamSpec, Coroutine[None, None, T]]
+            Callable[DecoratorParamSpec, ReturnType]
+            | Callable[DecoratorParamSpec, Coroutine[None, None, ReturnType]]
         )
-    ) -> Callable[DecoratorParamSpec, Worker[T]]:
+    ) -> Callable[DecoratorParamSpec, Worker[ReturnType]]:
         """The decorator."""
 
         @wraps(method)
         def decorated(
             *args: DecoratorParamSpec.args, **kwargs: DecoratorParamSpec.kwargs
-        ) -> Worker[T]:
+        ) -> Worker[ReturnType]:
             """The replaced callable."""
             from .dom import DOMNode
 

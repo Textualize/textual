@@ -236,6 +236,7 @@ class DOMNode(MessagePump):
         )
         return worker
 
+    @property
     def is_modal(self) -> bool:
         """Is the node a modal?"""
         return False
