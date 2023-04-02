@@ -237,6 +237,10 @@ class DOMNode(MessagePump):
         )
         return worker
 
+    def is_modal(self) -> bool:
+        """Is the node a modal?"""
+        return False
+
     def _automatic_refresh(self) -> None:
         """Perform an automatic refresh (set with auto_refresh property)."""
         self.refresh()
