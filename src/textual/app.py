@@ -436,7 +436,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def return_value(self) -> ReturnType | None:
-        """ReturnType | None: The return type of the app."""
+        """The return type of the app."""
         return self._return_value
 
     @property
@@ -515,7 +515,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def screen_stack(self) -> list[Screen]:
-        """list[Screen]: A *copy* of the screen stack."""
+        """A *copy* of the screen stack."""
         return self._screen_stack.copy()
 
     def exit(
@@ -535,7 +535,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def focused(self) -> Widget | None:
-        """Widget | None: the widget that is focused on the currently active screen."""
+        """The widget that is focused on the currently active screen."""
         return self.screen.focused
 
     @property
@@ -661,7 +661,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def size(self) -> Size:
-        """Size: The size of the terminal."""
+        """The size of the terminal."""
         if self._driver is not None and self._driver._size is not None:
             width, height = self._driver._size
         else:
@@ -670,7 +670,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def log(self) -> Logger:
-        """Logger: The logger object."""
+        """The logger object."""
         return self._logger
 
     def _log(
