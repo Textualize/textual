@@ -22,6 +22,7 @@ class DockArrangeResult:
     widgets: set[Widget]
     """A set of widgets in the arrangement."""
     scroll_spacing: Spacing
+    """Spacing to reduce scrollable area."""
 
     _spatial_map: SpatialMap[WidgetPlacement] | None = None
     """A Spatial map to query widget placements."""
