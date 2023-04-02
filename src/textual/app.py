@@ -279,11 +279,7 @@ class App(Generic[ReturnType], DOMNode):
     also the `sub_title` attribute.
     """
 
-    BINDINGS = [
-        Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
-        Binding("tab", "focus_next", "Focus Next", show=False),
-        Binding("shift+tab", "focus_previous", "Focus Previous", show=False),
-    ]
+    BINDINGS = [Binding("ctrl+c", "quit", "Quit", show=False, priority=True)]
 
     title: Reactive[str] = Reactive("", compute=False)
     sub_title: Reactive[str] = Reactive("", compute=False)
@@ -1961,37 +1957,33 @@ class App(Generic[ReturnType], DOMNode):
     @property
     def _binding_chain(self) -> list[tuple[DOMNode, Bindings]]:
         """Get a chain of nodes and bindings to consider.
+
         If no widget is focused, returns the bindings from both the screen and the app level bindings.
         Otherwise, combines all the bindings from the currently focused node up the DOM to the root App.
-
-        Returns:
-            List of DOM nodes and their bindings.
         """
         focused = self.focused
         namespace_bindings: list[tuple[DOMNode, Bindings]]
-        screen = self.screen
 
         if focused is None:
-            if screen.is_modal:
-                namespace_bindings = [
-                    (self.screen, self.screen._bindings),
-                ]
-            else:
-                namespace_bindings = [
-                    (self.screen, self.screen._bindings),
-                    (self, self._bindings),
-                ]
+            namespace_bindings = [
+                (self.screen, self.screen._bindings),
+                (self, self._bindings),
+            ]
         else:
-            if screen.is_modal:
-                namespace_bindings = [
-                    (node, node._bindings) for node in focused.ancestors
-                ]
-            else:
-                namespace_bindings = [
-                    (node, node._bindings) for node in focused.ancestors_with_self
-                ]
+            namespace_bindings = [
+                (node, node._bindings) for node in focused.ancestors_with_self
+            ]
 
         return namespace_bindings
+
+    @property
+    def _modal_binding_chain(self) -> list[tuple[DOMNode, Bindings]]:
+        """The binding chain, ignoring everything before the last modal."""
+        binding_chain = self._binding_chain
+        for index, (node, _bindings) in enumerate(binding_chain, 1):
+            if node.is_modal:
+                return binding_chain[:index]
+        return binding_chain
 
     async def check_bindings(self, key: str, priority: bool = False) -> bool:
         """Handle a key press.
@@ -2004,7 +1996,7 @@ class App(Generic[ReturnType], DOMNode):
             True if the key was handled by a binding, otherwise False
         """
         for namespace, bindings in (
-            reversed(self._binding_chain) if priority else self._binding_chain
+            reversed(self._binding_chain) if priority else self._modal_binding_chain
         ):
             binding = bindings.keys.get(key)
             if binding is not None and binding.priority == priority:

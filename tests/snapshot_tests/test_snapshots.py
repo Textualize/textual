@@ -192,6 +192,7 @@ def test_option_list(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_options.py")
     assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_tables.py")
 
+
 # --- CSS properties ---
 # We have a canonical example for each CSS property that is shown in their docs.
 # If any of these change, something has likely broken, so snapshot each of them.
@@ -364,3 +365,19 @@ def test_css_hot_reloading(snap_compare):
 def test_layer_fix(snap_compare):
     # Check https://github.com/Textualize/textual/issues/1358
     assert snap_compare(SNAPSHOT_APPS_DIR / "layer_fix.py", press=["d"])
+
+
+def test_modal_dialog_bindings_input(snap_compare):
+    # Check https://github.com/Textualize/textual/issues/2194
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "modal_screen_bindings.py",
+        press=["enter", "tab", "h", "!", "left", "i", "tab"],
+    )
+
+
+def test_modal_dialog_bindings(snap_compare):
+    # Check https://github.com/Textualize/textual/issues/2194
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "modal_screen_bindings.py",
+        press=["enter", "tab", "h", "i", "tab", "enter"],
+    )

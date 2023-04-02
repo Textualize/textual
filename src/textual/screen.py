@@ -11,6 +11,7 @@ from ._callback import invoke
 from ._compositor import Compositor, MapGeometry
 from ._context import visible_screen_stack
 from ._types import CallbackType
+from .binding import Binding
 from .css.match import match
 from .css.parse import parse_selectors
 from .css.query import QueryType
@@ -44,6 +45,11 @@ class Screen(Widget):
     """The focused widget or `None` for no focus."""
     stack_updates: Reactive[int] = Reactive(0, repaint=False)
     """An integer that updates when the screen is resumed."""
+
+    BINDINGS = [
+        Binding("tab", "focus_next", "Focus Next", show=False),
+        Binding("shift+tab", "focus_previous", "Focus Previous", show=False),
+    ]
 
     def __init__(
         self,
