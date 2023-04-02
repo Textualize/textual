@@ -174,7 +174,6 @@ class DOMNode(MessagePump):
         )
         self._has_hover_style: bool = False
         self._has_focus_within: bool = False
-        self._worker_manager: WorkerManager | None = None
 
         super().__init__()
 

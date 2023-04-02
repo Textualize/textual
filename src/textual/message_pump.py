@@ -86,7 +86,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         self._max_idle: float | None = None
         self._mounted_event = asyncio.Event()
         self._next_callbacks: list[CallbackType] = []
-        self._thread_id = threading.get_ident()
+        self._thread_id: int = 0
 
     @property
     def _prevent_message_types_stack(self) -> list[set[type[Message]]]:
@@ -454,6 +454,7 @@ class MessagePump(metaclass=MessagePumpMeta):
     async def _process_messages_loop(self) -> None:
         """Process messages until the queue is closed."""
         _rich_traceback_guard = True
+        self._thread_id = threading.get_ident()
         while not self._closed:
             try:
                 message = await self._get_message()

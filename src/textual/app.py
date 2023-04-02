@@ -148,7 +148,7 @@ class CssPathError(Exception):
     """Raised when supplied CSS path(s) are invalid."""
 
 
-T = TypeVar("ReturnType")
+ReturnType = TypeVar("ReturnType")
 
 
 class _NullFile:
@@ -233,7 +233,7 @@ CallThreadReturnType = TypeVar("CallThreadReturnType")
 
 
 @rich.repr.auto
-class App(Generic[T], DOMNode):
+class App(Generic[ReturnType], DOMNode):
     """The base class for Textual Applications.
     Args:
         driver_class: Driver class or ``None`` to auto-detect. Defaults to None.
@@ -413,8 +413,7 @@ class App(Generic[T], DOMNode):
                 self.devtools = DevtoolsClient()
 
         self._loop: asyncio.AbstractEventLoop | None = None
-        self._thread_id: int = 0
-        self._return_value: T | None = None
+        self._return_value: ReturnType | None = None
         self._exit = False
 
         self.css_monitor = (
@@ -435,7 +434,7 @@ class App(Generic[T], DOMNode):
         return self._workers
 
     @property
-    def return_value(self) -> T | None:
+    def return_value(self) -> ReturnType | None:
         """The return type of the app."""
         return self._return_value
 
@@ -519,7 +518,7 @@ class App(Generic[T], DOMNode):
         return self._screen_stack.copy()
 
     def exit(
-        self, result: T | None = None, message: RenderableType | None = None
+        self, result: ReturnType | None = None, message: RenderableType | None = None
     ) -> None:
         """Exit the app, and return the supplied result.
 
@@ -972,7 +971,7 @@ class App(Generic[T], DOMNode):
         headless: bool = False,
         size: tuple[int, int] | None = None,
         auto_pilot: AutopilotCallbackType | None = None,
-    ) -> T | None:
+    ) -> ReturnType | None:
         """Run the app asynchronously.
 
         Args:
@@ -1031,7 +1030,7 @@ class App(Generic[T], DOMNode):
         headless: bool = False,
         size: tuple[int, int] | None = None,
         auto_pilot: AutopilotCallbackType | None = None,
-    ) -> T | None:
+    ) -> ReturnType | None:
         """Run the app.
 
         Args:
