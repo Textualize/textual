@@ -528,7 +528,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def focused(self) -> Widget | None:
-        """Widget | None: the widget that is focused on the currently active screen."""
+        """The widget that is focused on the currently active screen."""
         return self.screen.focused
 
     @property
