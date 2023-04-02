@@ -256,7 +256,7 @@ class Button(Static, can_focus=True):
         )
 
     def action_press(self) -> None:
-        """Activate a press if"""
+        """Activate a press of the button."""
         self.press()
 
     @classmethod
