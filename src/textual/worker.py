@@ -13,6 +13,7 @@ from typing import (
     Generic,
     TypeVar,
     Union,
+    cast,
 )
 
 import rich.repr
@@ -335,5 +336,4 @@ class Worker(Generic[ResultType]):
         elif self.state == WorkerState.CANCELLED:
             raise WorkerCancelled("Worker was cancelled, and did not complete.")
 
-        assert self._result is not None
-        return self._result
+        return cast("ResultType", self._result)
