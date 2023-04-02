@@ -6,7 +6,7 @@ from typing import Any, Generic
 import rich.repr
 
 from ._wait import wait_for_idle
-from .app import App, ReturnType
+from .app import App, T
 from .events import Click, MouseDown, MouseMove, MouseUp
 from .geometry import Offset
 from .widget import Widget
@@ -38,17 +38,17 @@ def _get_mouse_message_arguments(
 
 
 @rich.repr.auto(angular=True)
-class Pilot(Generic[ReturnType]):
+class Pilot(Generic[T]):
     """Pilot object to drive an app."""
 
-    def __init__(self, app: App[ReturnType]) -> None:
+    def __init__(self, app: App[T]) -> None:
         self._app = app
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "app", self._app
 
     @property
-    def app(self) -> App[ReturnType]:
+    def app(self) -> App[T]:
         """App: A reference to the application."""
         return self._app
 
@@ -149,7 +149,7 @@ class Pilot(Generic[ReturnType]):
         await self._app.animator.wait_until_complete()
         await wait_for_idle()
 
-    async def exit(self, result: ReturnType) -> None:
+    async def exit(self, result: T) -> None:
         """Exit the app with the given result.
 
         Args:
