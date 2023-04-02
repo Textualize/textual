@@ -6,6 +6,7 @@ from textual.worker import Worker, WorkerState
 
 
 async def test_work() -> None:
+    """Test basic usage of the @work decorator."""
     states: list[WorkerState] = []
     worker: Worker[str] | None = None
 
