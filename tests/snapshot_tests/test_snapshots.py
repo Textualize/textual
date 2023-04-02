@@ -381,3 +381,8 @@ def test_modal_dialog_bindings(snap_compare):
         SNAPSHOT_APPS_DIR / "modal_screen_bindings.py",
         press=["enter", "tab", "h", "i", "tab", "enter"],
     )
+
+
+def test_dock_scroll(snap_compare):
+    # https://github.com/Textualize/textual/issues/2188
+    assert snap_compare(SNAPSHOT_APPS_DIR / "dock_scroll.py", terminal_size=(80, 25))

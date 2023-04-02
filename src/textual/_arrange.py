@@ -128,4 +128,4 @@ def arrange(
 
         placements.extend(layout_placements)
 
-    return DockArrangeResult(placements, arrange_widgets)
+    return DockArrangeResult(placements, arrange_widgets, scroll_spacing)
