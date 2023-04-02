@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.17.3] - 2023-04-02
+
+### [Fixed]
+
+- Fixed scrollable area not taking in to account dock https://github.com/Textualize/textual/issues/2188
+
 ## [0.17.2] - 2023-04-02
 
 ### [Fixed]
@@ -693,6 +699,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.17.3]: https://github.com/Textualize/textual/compare/v0.17.2...v0.17.3
 [0.17.2]: https://github.com/Textualize/textual/compare/v0.17.1...v0.17.2
 [0.17.1]: https://github.com/Textualize/textual/compare/v0.17.0...v0.17.1
 [0.17.0]: https://github.com/Textualize/textual/compare/v0.16.0...v0.17.0
