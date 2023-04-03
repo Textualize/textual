@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.18.0] - Unreleased
+
+### Added
+
+- Added Worker APU
+
+### Changed
+
+- Markdown.update is no longer a coroutine
+
 ## [0.17.3] - 2023-04-02
 
 ### [Fixed]

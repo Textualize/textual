@@ -30,13 +30,12 @@ class DictionaryApp(App):
     async def on_input_changed(self, message: Input.Changed) -> None:
         """A coroutine to handle a text changed message."""
         if message.value:
-            worker = self.lookup_word(message.value)
-            result = worker.result
+            self.lookup_word(message.value)
         else:
             # Clear the results
             self.query_one("#results", Markdown).update("")
 
-    @work()
+    @work(exclusive=True)
     async def lookup_word(self, word: str) -> str:
         """Looks up a word."""
         url = f"https://api.dictionaryapi.dev/api/v2/entries/en/{word}"
