@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from rich.repr import Result
+import rich.repr
 
 from ..containers import Container
 from ..message import Message
@@ -30,6 +30,7 @@ class RadioSet(Container):
     }
     """
 
+    @rich.repr.auto
     class Changed(Message, bubble=True):
         """Posted when the pressed button in the set changes.
 
@@ -50,7 +51,7 @@ class RadioSet(Container):
             self.index = radio_set.pressed_index
             """The index of the `RadioButton` that was pressed to make the change."""
 
-        def __rich_repr__(self) -> Result:
+        def __rich_repr__(self) -> rich.repr.Result:
             yield "radio_set", self.radio_set
             yield "pressed", self.pressed
             yield "index", self.index
