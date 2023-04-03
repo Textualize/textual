@@ -78,8 +78,6 @@ class RadioSet(Container):
             it.
         """
         self._pressed_button: RadioButton | None = None
-        """Keeps track of which radio button is pressed."""
-        self._buttons: list[RadioButton] = []
         """Holds the radio buttons we're responsible for."""
         super().__init__(
             *[
@@ -95,18 +93,12 @@ class RadioSet(Container):
     def on_mount(self) -> None:
         """Perform some processing once mounted in the DOM."""
 
-        # Get the collection of buttons we're directly responsible for. We
-        # do this in here rather than in __init__ because someone might be
-        # composing the RadioSet using it as a context manager; point being
-        # there won't be any buttons being passed to __init__.
-        self._buttons = list(self.query(RadioButton))
-
         # It's possible for the user to pass in a collection of radio
         # buttons, with more than one set to on; they shouldn't, but we
         # can't stop them. So here we check for that and, for want of a
         # better approach, we keep the first one on and turn all the others
         # off.
-        switched_on = [button for button in self._buttons if button.value]
+        switched_on = [button for button in self.query(RadioButton) if button.value]
         with self.prevent(RadioButton.Changed):
             for button in switched_on[1:]:
                 button.value = False
