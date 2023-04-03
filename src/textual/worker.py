@@ -47,6 +47,10 @@ class WorkerFailed(WorkerError):
         super().__init__(f"Worker raise exception: {error!r}")
 
 
+class DeadlockError(WorkerError):
+    """The operation would result in a deadlock."""
+
+
 class WorkerCancelled(WorkerError):
     """The worker was cancelled and did not complete."""
 
@@ -359,6 +363,11 @@ class Worker(Generic[ResultType]):
         Returns:
             The return value of the work.
         """
+        if active_worker.get() is self:
+            raise DeadlockError(
+                "Can't call worker.wait from within the worker function!"
+            )
+
         if self.state == WorkerState.PENDING:
             raise WorkerError("Worker must be started before calling this method.")
         if self._task is not None:

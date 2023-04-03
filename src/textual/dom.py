@@ -227,8 +227,7 @@ class DOMNode(MessagePump):
     ) -> Worker[ResultType]:
         """Run work in a worker.
 
-        A worker runs code in the *background* as an async task or as a thread, so as
-        to avoid stalling the user interface.
+        A worker runs a function, coroutine, or awaitable, in the *background* as an async task or as a thread.
 
         Args:
             work: A function, async function, or an awaitable object.
@@ -238,7 +237,6 @@ class DOMNode(MessagePump):
             exit_on_error: Exit the app if the worker raises an error. Set to `False` to suppress exceptions.
             start: Start the worker immediately.
             exclusive: Cancel all workers in the same group.
-
 
         Returns:
             New Worker instance.
