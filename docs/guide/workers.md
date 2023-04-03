@@ -2,17 +2,17 @@
 
 In this chapter we will explore the topic of *concurrency* and how to use Textual's Worker API to make it easier.
 
-!!! tip "The worker API was added in version 0.18.0"
+!!! tip "The Worker API was added in version 0.18.0"
 
 ## Concurrency
 
 There are many interesting uses for Textual which required reading data from an internet service.
 When an app requests data from the network it is important that it doesn't prevent the user interface from updating.
-In other words, the requests should be concurrent (happen at the same time) with the UI updates.
+In other words, the requests should be concurrent (happen at the same time) as the UI updates.
 
 Managing this concurrency is a tricky topic, in any language or framework.
-Even for experienced developers, there are many gotchas which could make your app lock up or behave oddly.
-Textual's Worker API makes concurrency less error prone and easier to reason about.
+Even for experienced developers, there are gotchas which could make your app lock up or behave oddly.
+Textual's Worker API makes concurrency far less error prone and easier to reason about.
 
 ## Workers
 
@@ -43,7 +43,7 @@ This is because we are making a request to the weather API within a message hand
 
 To resolve this we can use the [run_worker][textual.dom.DOMNode.run_worker] function which runs the `update_weather` coroutine (async function) in the background. Here's the code:
 
-```python title="weather02.py" hl_lines="22"
+```python title="weather02.py" hl_lines="21"
 --8<-- "docs/examples/guide/workers/weather02.py"
 ```
 
@@ -53,7 +53,7 @@ The `run_worker` method schedules a new *worker* to run `update_weather`, and re
 This Worker object has a few useful methods on it, but you can often ignore it as we did in `weather02.py`.
 
 The call to `run_worker` also sets `exclusive=True` which solves an additional problem with concurrent network requests: when pulling data from the network there is no guarantee that you will receive the responses in the same order as the requests.
-For example if you start typing `Paris`, you may get the response for `Pari` *after* the response for `Paris`, which could show the wrong weather information.
+For instance, if you start typing `Paris`, you may get the response for `Pari` *after* the response for `Paris`, which could show the wrong weather information.
 The `exclusive` flag tells textual to cancel all previous workers before starting the new one.
 
 ### Work decorator
@@ -62,7 +62,7 @@ An alternative to calling `run_worker` manually is the [work][textual.work] deco
 
 Let's use this decorator in our weather app:
 
-```python title="weather03.py" hl_lines="3 23 25"
+```python title="weather03.py" hl_lines="4 22 24"
 --8<-- "docs/examples/guide/workers/weather03.py"
 ```
 
@@ -80,23 +80,28 @@ You can check the return value of a worker with the `worker.result` attribute wh
 
 If you need the return value you can call [worker.wait][textual.worker.Worker.wait] which is a coroutine that will wait for the work to complete.
 But note that if you do this in a message handler it will also prevent the widget from updating until the worker returns.
-Often a better approach is to handle [worker events](#worker-events).
+Often a better approach is to handle [worker events](#worker-events) which will notify your app when a worker completes, and the return value is available without waiting.
 
 ### Cancelling workers
 
 You can cancel a worker at any time before it is finished by calling [Worker.cancel][textual.worker.Worker.cancel].
-This will raise an [asyncio.CancelledError] within the coroutine, and should cause it to exit prematurely.
+This will raise an [CancelledError][asyncio.CancelledError] within the coroutine, and should cause it to exit prematurely.
+
+### Worker errors
+
+The default behavior when a worker encounters an exception is to exit the app and display the traceback in the terminal.
+You can also create workers which will *not* immediately exit on exception, by setting `exit_on_error=True` on the call to `run_worker` or the `@work` decorator.
 
 ### Worker lifetime
 
 Workers are managed by a single [WorkerManager][textual._worker_manager.WorkerManager] instance, which you can access via `app.workers`.
-This is a container like object which you can iterator over to sett all your currently active tasks.
+This is a container-like object which you iterator over to see your active workers.
 
 Workers are tied to the DOM node (widget, screen, or app) where they are created.
 This means that if you remove the widget or pop the screen when they are created, then the tasks will be cleaned up automatically.
 Similarly if you exit the app, any running tasks will be cancelled.
 
-Worker objects have a `state` attribute which will contain a [WorkerState][textual.worker.WorkerState] enumeration, which indicates what the worker is doing at any given time.
+Worker objects have a `state` attribute which will contain a [WorkerState][textual.worker.WorkerState] enumeration that indicates what the worker is doing at any given time.
 The `state` attribute will contain one of the following values:
 
 
@@ -108,6 +113,8 @@ The `state` attribute will contain one of the following values:
 | ERROR     | The worker raised an exception, and `worker.error` will contain the exception.      |
 | SUCCESS   | The worker completed successful, and `worker.result` will contain the return value. |
 
+
+
 <div class="excalidraw">
 --8<-- "docs/images/workers/lifetime.excalidraw.svg"
 </div>
@@ -118,7 +125,7 @@ When a worker changes state, it sends a [Worker.StateChanged][textual.worker.Wor
 You can handle this message by defining a `on_worker_state_changed` event handler.
 For instance, here is how we might log the state of the worker that updates the weather:
 
-```python title="weather04.py" hl_lines="4 41 43"
+```python title="weather04.py" hl_lines="4 40-42"
 --8<-- "docs/examples/guide/workers/weather04.py"
 ```
 
@@ -147,9 +154,9 @@ The second difference is that you can't cancel threads in the same way as corout
 
 Let's demonstrate thread workers by replacing `httpx` with `urllib.request` (in the standard library). The `urllib` module is not async aware, so we will need to use threads:
 
-```python title="weather05.py" hl_lines="1 4 27 30 34-39 42-43"
+```python title="weather05.py" hl_lines="1 26-43"
 --8<-- "docs/examples/guide/workers/weather05.py"
 ```
 
 The `update_weather` function doesn't have the `async` keyword, so the `@work` decorator will create a thread worker.
-Note the user of [get_current_worker][textual.worker.get_current_worker] which the function uses to check if it has been cancelled or not.
+Note the use of [get_current_worker][textual.worker.get_current_worker] which the function uses to check if it has been cancelled or not.

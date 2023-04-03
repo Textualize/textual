@@ -81,6 +81,7 @@ class WorkerManager:
         name: str | None = "",
         group: str = "default",
         description: str = "",
+        exit_on_error: bool = True,
         start: bool = True,
         exclusive: bool = False,
     ) -> Worker:
@@ -91,6 +92,7 @@ class WorkerManager:
             name: A name to identify the worker.
             group: The worker group.
             description: A description of the worker.
+            exit_on_error: Exit the app if the worker raises an error. Set to `False` to suppress exceptions.
             start: Automatically start the worker.
             exclusive: Cancel all workers in the same group.
 
@@ -103,6 +105,7 @@ class WorkerManager:
             name=name or getattr(work, "__name__", "") or "",
             group=group,
             description=description or repr(work),
+            exit_on_error=exit_on_error,
         )
         self.add_worker(worker, start=start, exclusive=exclusive)
         return worker

@@ -17,6 +17,7 @@ from typing import (
 )
 
 import rich.repr
+from rich.traceback import Traceback
 from typing_extensions import TypeAlias
 
 from .message import Message
@@ -110,6 +111,12 @@ class Worker(Generic[ResultType]):
         namespace = "worker"
 
         def __init__(self, worker: Worker, state: WorkerState) -> None:
+            """Initialize the StateChanged message.
+
+            Args:
+                worker: The worker object.
+                state: New state.
+            """
             self.worker = worker
             self.state = state
             super().__init__()
@@ -126,6 +133,7 @@ class Worker(Generic[ResultType]):
         name: str = "",
         group: str = "default",
         description: str = "",
+        exit_on_error: bool = True,
     ) -> None:
         """Initialize a worker.
 
@@ -134,12 +142,14 @@ class Worker(Generic[ResultType]):
             name: Name of the worker (short string to help identify when debugging).
             group: The worker group.
             description: Description of the worker (longer string with more details).
+            exit_on_error: Exit the app if the worker raises an error. Set to `False` to suppress exceptions.
         """
         self._node = node
         self._work = work
         self.name = name
         self.group = group
         self.description = description
+        self.exit_on_error = exit_on_error
         self._state = WorkerState.PENDING
         self.state = self._state
         self._error: BaseException | None = None
@@ -288,7 +298,9 @@ class Worker(Generic[ResultType]):
             self.state = WorkerState.ERROR
             self._error = error
             app.log.worker(self, "failed", repr(error))
-            app.fatal_error()
+            app.log.worker(Traceback())
+            if self.exit_on_error:
+                app.fatal_error()
         else:
             self.state = WorkerState.SUCCESS
             app.log.worker(self)

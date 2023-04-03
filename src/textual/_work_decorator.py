@@ -51,6 +51,7 @@ def work(
     name: str = "",
     group: str = "default",
     exclusive: bool = False,
+    exit_on_error: bool = True,
 ) -> Callable[FactoryParamSpec, Worker[ReturnType]] | Decorator:
     """Worker decorator factory."""
 
@@ -88,6 +89,7 @@ def work(
                     group=group,
                     description=worker_description,
                     exclusive=exclusive,
+                    exit_on_error=exit_on_error,
                 ),
             )
             return worker

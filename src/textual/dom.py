@@ -221,6 +221,7 @@ class DOMNode(MessagePump):
         name: str | None = "",
         group: str = "default",
         description: str = "",
+        exit_on_error: bool = True,
         start: bool = True,
         exclusive: bool = True,
     ) -> Worker[ResultType]:
@@ -234,8 +235,10 @@ class DOMNode(MessagePump):
             name: A short string to identify the worker (in logs and debugging).
             group: A short string to identify a group of workers.
             description: A longer string to store longer information on the worker.
+            exit_on_error: Exit the app if the worker raises an error. Set to `False` to suppress exceptions.
             start: Start the worker immediately.
             exclusive: Cancel all workers in the same group.
+
 
         Returns:
             New Worker instance.
@@ -246,6 +249,7 @@ class DOMNode(MessagePump):
             name=name,
             group=group,
             description=description,
+            exit_on_error=exit_on_error,
             start=start,
             exclusive=exclusive,
         )
