@@ -276,12 +276,12 @@ class Worker(Generic[ResultType]):
             assert callable(self._work)
             loop = asyncio.get_running_loop()
 
-            def run_work() -> ResultType:
+            def run_work(work: Callable[[], ResultType]) -> ResultType:
                 """Set the active worker, and run the work."""
                 active_worker.set(self)
-                return self._work()
+                return work()
 
-            result = await loop.run_in_executor(None, run_work)
+            result = await loop.run_in_executor(None, run_work, self._work)
         return result
 
     async def _run(self, app: App) -> None:
