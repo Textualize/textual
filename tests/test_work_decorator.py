@@ -27,6 +27,7 @@ async def test_work() -> None:
     async with app.run_test() as pilot:
         assert isinstance(worker, Worker)
         await app.workers.wait_for_complete()
-        assert await worker.wait() == "foo"
+        result = await worker.wait()
+        assert result == "foo"
         await pilot.pause()
     assert states == [WorkerState.PENDING, WorkerState.RUNNING, WorkerState.SUCCESS]
