@@ -7,6 +7,7 @@
 - [How can I select and copy text in a Textual app?](#how-can-i-select-and-copy-text-in-a-textual-app)
 - [How do I center a widget in a screen?](#how-do-i-center-a-widget-in-a-screen)
 - [How do I pass arguments to an app?](#how-do-i-pass-arguments-to-an-app)
+- [Why do some key combinations never make it to my app?](#why-do-some-key-combinations-never-make-it-to-my-app)
 - [Why doesn't Textual look good on macOS?](#why-doesn't-textual-look-good-on-macos)
 - [Why doesn't Textual support ANSI themes?](#why-doesn't-textual-support-ansi-themes)
 
@@ -172,6 +173,36 @@ Greetings(to_greet="davep").run()
 # Running with both positional arguments.
 Greetings("Well hello", "there").run()
 ```
+
+<a name="why-do-some-key-combinations-never-make-it-to-my-app"></a>
+## Why do some key combinations never make it to my app?
+
+Textual can only ever support key combinations that are passed on by your
+terminal application. Which keys get passed on can differ from terminal to
+terminal, and from operating system to operating system.
+
+Because of this it's best to stick to key combinations that are known to be
+universally-supported; these include:
+
+- Letters
+- Numbers
+- Numbered function keys (especially F1 through F10)
+- Space
+- Return
+- Arrow, home, end and page keys
+- Control
+- Shift
+
+When [creating bindings for your
+application](https://textual.textualize.io/guide/input/#bindings) we
+recommend picking keys and key combinations from the above.
+
+Keys that aren't normally passed through by terminals include Cmd and Option
+on macOS, and the Windows key on Windows.
+
+If you need to test what [key
+combinations](https://textual.textualize.io/guide/input/#keyboard-input)
+work in different environments you can try them out with `textual keys`.
 
 <a name="why-doesn't-textual-look-good-on-macos"></a>
 ## Why doesn't Textual look good on macOS?

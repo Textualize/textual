@@ -67,6 +67,10 @@ docs-deploy: clean-screenshot-cache docs-online-nav
 	$(run) mkdocs gh-deploy --config-file mkdocs-nav-online.yml
 	rm -f mkdocs-nav-online.yml
 
+.PHONY: faq
+faq:
+	$(run) faqtory build
+
 .PHONY: build
 build: docs-build-offline
 	poetry build
