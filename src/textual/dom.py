@@ -218,13 +218,28 @@ class DOMNode(MessagePump):
     def run_worker(
         self,
         work: WorkType[ResultType],
-        *,
         name: str | None = "",
         group: str = "default",
         description: str = "",
         start: bool = True,
         exclusive: bool = True,
     ) -> Worker[ResultType]:
+        """Run work in a worker.
+
+        A worker runs code in the *background* as an async task or as a thread, so as
+        to avoid stalling the user interface.
+
+        Args:
+            work: A function, async function, or an awaitable object.
+            name: A short string to identify the worker (in logs and debugging).
+            group: A short string to identify a group of workers.
+            description: A longer string to store longer information on the worker.
+            start: Start the worker immediately.
+            exclusive: Cancel all workers in the same group.
+
+        Returns:
+            New Worker instance.
+        """
         worker: Worker[ResultType] = self.workers._new_worker(
             work,
             self,

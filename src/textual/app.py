@@ -94,7 +94,8 @@ PLATFORM = platform.system()
 WINDOWS = PLATFORM == "Windows"
 
 # asyncio will warn against resources not being cleared
-warnings.simplefilter("always", ResourceWarning)
+if constants.DEBUG:
+    warnings.simplefilter("always", ResourceWarning)
 
 # `asyncio.get_event_loop()` is deprecated since Python 3.10:
 _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED = sys.version_info >= (3, 10, 0)

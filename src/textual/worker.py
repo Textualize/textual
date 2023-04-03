@@ -258,7 +258,13 @@ class Worker(Generic[ResultType]):
         else:
             assert callable(self._work)
             loop = asyncio.get_running_loop()
-            result = await loop.run_in_executor(None, self._work)
+
+            def run_work() -> None:
+                """Set the active worker, and run the work."""
+                active_worker.set(self)
+                return self._work()
+
+            result = await loop.run_in_executor(None, run_work)
         return result
 
     async def _run(self, app: App) -> None:
@@ -321,7 +327,11 @@ class Worker(Generic[ResultType]):
             self._task.cancel()
 
     async def wait(self) -> ResultType:
-        """Wait for the work to complete."""
+        """Wait for the work to complete.
+
+        Returns:
+            The return value of the work.
+        """
         if self.state == WorkerState.PENDING:
             raise WorkerError("Worker must be started before calling this method.")
         if self._task is not None:
