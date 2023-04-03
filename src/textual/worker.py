@@ -267,7 +267,11 @@ class Worker(Generic[ResultType]):
 
         """
 
-        if inspect.iscoroutinefunction(self._work):
+        if (
+            inspect.iscoroutinefunction(self._work)
+            or hasattr(self._work, "func")
+            and inspect.iscoroutinefunction(self._work.func)
+        ):
             # Coroutine, we can await it.
             result: ResultType = await self._work()
         elif inspect.isawaitable(self._work):
@@ -348,6 +352,10 @@ class Worker(Generic[ResultType]):
     async def wait(self) -> ResultType:
         """Wait for the work to complete.
 
+        Raises:
+            WorkerFailed: If the Worker raised an exception
+            WorkerCancelled: If the Worker was cancelled before it completed.
+
         Returns:
             The return value of the work.
         """
@@ -364,5 +372,4 @@ class Worker(Generic[ResultType]):
             raise WorkerFailed(self._error)
         elif self.state == WorkerState.CANCELLED:
             raise WorkerCancelled("Worker was cancelled, and did not complete.")
-
         return cast("ResultType", self._result)
