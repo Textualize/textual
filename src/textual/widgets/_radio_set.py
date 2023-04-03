@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+from rich.repr import Result
+
 from ..containers import Container
-from ..css.query import DOMQuery, QueryError
 from ..message import Message
 from ._radio_button import RadioButton
 
@@ -46,13 +47,13 @@ class RadioSet(Container):
             """A reference to the `RadioSet` that was changed."""
             self.pressed = pressed
             """The `RadioButton` that was pressed to make the change."""
-            # Note: it would be cleaner to use `sender.pressed_index` here,
-            # but we can't be 100% sure all of the updates have happened at
-            # this point, and so we can't go looking for the index of the
-            # pressed button via the normal route. So here we go under the
-            # hood.
-            self.index = radio_set._nodes.index(pressed)
+            self.index = radio_set.pressed_index
             """The index of the `RadioButton` that was pressed to make the change."""
+
+        def __rich_repr__(self) -> Result:
+            yield "radio_set", self.radio_set
+            yield "pressed", self.pressed
+            yield "index", self.index
 
     def __init__(
         self,
@@ -76,6 +77,10 @@ class RadioSet(Container):
             [RadioButton][textual.widgets.RadioButton] will be created from
             it.
         """
+        self._pressed_button: RadioButton | None = None
+        """Keeps track of which radio button is pressed."""
+        self._buttons: list[RadioButton] = []
+        """Holds the radio buttons we're responsible for."""
         super().__init__(
             *[
                 (button if isinstance(button, RadioButton) else RadioButton(button))
@@ -87,22 +92,28 @@ class RadioSet(Container):
             disabled=disabled,
         )
 
-    @property
-    def _buttons(self) -> DOMQuery[RadioButton]:
-        """The buttons within the set."""
-        return self.query(RadioButton)
-
     def on_mount(self) -> None:
         """Perform some processing once mounted in the DOM."""
+
+        # Get the collection of buttons we're directly responsible for. We
+        # do this in here rather than in __init__ because someone might be
+        # composing the RadioSet using it as a context manager; point being
+        # there won't be any buttons being passed to __init__.
+        self._buttons = list(self.query(RadioButton))
+
         # It's possible for the user to pass in a collection of radio
-        # buttons, with more than one set to on. So here we check for that
-        # and, for want of a better approach, we keep the first one on and
-        # turn all the others off.
-        switched_on = self._buttons.filter(".-on")
-        if len(switched_on) > 1:
-            with self.prevent(RadioButton.Changed):
-                for button in switched_on[1:]:
-                    button.value = False
+        # buttons, with more than one set to on; they shouldn't, but we
+        # can't stop them. So here we check for that and, for want of a
+        # better approach, we keep the first one on and turn all the others
+        # off.
+        switched_on = [button for button in self._buttons if button.value]
+        with self.prevent(RadioButton.Changed):
+            for button in switched_on[1:]:
+                button.value = False
+
+        # Keep track of which button is initially pressed.
+        if switched_on:
+            self._pressed_button = switched_on[0]
 
     def on_radio_button_changed(self, event: RadioButton.Changed) -> None:
         """Respond to the value of a button in the set being changed.
@@ -110,39 +121,39 @@ class RadioSet(Container):
         Args:
             event: The event.
         """
-        # If the button is changing to be the pressed button...
-        if event.radio_button.value:
-            # ...send off a message to say that the pressed state has
-            # changed.
-            self.post_message(self.Changed(self, event.radio_button))
-            # ...then look for the button that was previously the pressed
-            # one and unpress it.
-            for button in self._buttons.filter(".-on"):
-                if button != event.radio_button:
-                    button.value = False
-                    break
-        else:
-            # If this leaves us with no buttons checked, disallow that. Note
-            # that we stop the current event and (see below) we also prevent
-            # another Changed event being emitted. This should all be seen
-            # as a non-operation.
-            event.stop()
-            if not self._buttons.filter(".-on"):
-                with self.prevent(RadioButton.Changed):
-                    event.radio_button.value = True
+        # We're going to consume the underlying radio button events, making
+        # it appear as if they don't emit their own, as far as the caller is
+        # concerned. As such, stop the event bubbling and also prohibit the
+        # same event being sent out if/when we make a value change in here.
+        event.stop()
+        with self.prevent(RadioButton.Changed):
+            # If the message pertains to a button being clicked to on...
+            if event.radio_button.value:
+                # If there's a button pressed right now and it's not really a
+                # case of the user mashing on the same button...
+                if (
+                    self._pressed_button is not None
+                    and self._pressed_button != event.radio_button
+                ):
+                    self._pressed_button.value = False
+                # Make the pressed button this new button.
+                self._pressed_button = event.radio_button
+                # Emit a message to say our state has changed.
+                self.post_message(self.Changed(self, event.radio_button))
+            else:
+                # We're being clicked off, we don't want that.
+                event.radio_button.value = True
 
     @property
     def pressed_button(self) -> RadioButton | None:
         """The currently-pressed button, or `None` if none are pressed."""
-        try:
-            return self.query_one("RadioButton.-on", RadioButton)
-        except QueryError:
-            return None
+        return self._pressed_button
 
     @property
     def pressed_index(self) -> int:
         """The index of the currently-pressed button, or -1 if none are pressed."""
-        try:
-            return self._nodes.index(self.pressed_button)
-        except ValueError:
-            return -1
+        return (
+            self._nodes.index(self._pressed_button)
+            if self._pressed_button is not None
+            else -1
+        )
