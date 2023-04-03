@@ -28,6 +28,7 @@ if TYPE_CHECKING:
 
 
 active_worker: ContextVar[Worker] = ContextVar("active_worker")
+"""Currently active worker context var."""
 
 
 class NoActiveWorker(Exception):
@@ -135,9 +136,10 @@ class Worker(Generic[ResultType]):
         description: str = "",
         exit_on_error: bool = True,
     ) -> None:
-        """Initialize a worker.
+        """Initialize a Worker.
 
         Args:
+            node: THe widget, screen, or App that initiated the work.
             work: A callable, coroutine, or other awaitable.
             name: Name of the worker (short string to help identify when debugging).
             group: The worker group.
@@ -202,7 +204,7 @@ class Worker(Generic[ResultType]):
 
     @property
     def is_finished(self) -> bool:
-        """Has the task finished (cancelled, error, or success)."""
+        """Has the task finished (cancelled, error, or success)?"""
         return self.state in (
             WorkerState.CANCELLED,
             WorkerState.ERROR,
@@ -211,7 +213,7 @@ class Worker(Generic[ResultType]):
 
     @property
     def completed_steps(self) -> int:
-        """The  number of completed steps."""
+        """The number of completed steps."""
         return self._completed_steps
 
     @property
@@ -250,7 +252,12 @@ class Worker(Generic[ResultType]):
             self._total_steps = None if total_steps is None else min(0, total_steps)
 
     def advance(self, steps: int = 1) -> None:
-        """Advance the number of completed steps."""
+        """Advance the number of completed steps.
+
+        Args:
+            steps: Number of steps to advance.
+
+        """
         self._completed_steps += steps
 
     async def run(self) -> ResultType:
@@ -269,7 +276,7 @@ class Worker(Generic[ResultType]):
             assert callable(self._work)
             loop = asyncio.get_running_loop()
 
-            def run_work() -> None:
+            def run_work() -> ResultType:
                 """Set the active worker, and run the work."""
                 active_worker.set(self)
                 return self._work()
