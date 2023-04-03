@@ -36,7 +36,7 @@ class DictionaryApp(App):
             self.query_one("#results", Markdown).update("")
 
     @work(exclusive=True)
-    async def lookup_word(self, word: str) -> str:
+    async def lookup_word(self, word: str) -> None:
         """Looks up a word."""
         url = f"https://api.dictionaryapi.dev/api/v2/entries/en/{word}"
 
@@ -46,12 +46,10 @@ class DictionaryApp(App):
                 results = response.json()
             except Exception:
                 self.query_one("#results", Markdown).update(response.text)
-                return "foo"
 
         if word == self.query_one(Input).value:
             markdown = self.make_word_markdown(results)
             self.query_one("#results", Markdown).update(markdown)
-        return "foo"
 
     def make_word_markdown(self, results: object) -> str:
         """Convert the results in to markdown."""
