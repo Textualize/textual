@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Changed
+
+- Allowed border_title and border_subtitle to accept Text objects
+- Added additional line around titles
+
 ## [0.18.0] - 2023-04-04
 
 ### Added
