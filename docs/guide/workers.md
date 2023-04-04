@@ -18,7 +18,7 @@ Textual's Worker API makes concurrency far less error prone and easier to reason
 
 Before we go in to detail, lets see an example that demonstrates a common pitfall for apps that make network requests.
 
-The following app uses [httpx](https://www.python-httpx.org/) query the weather with [wttr.in](https://wttr.in/) for any city name you enter in to an input:
+The following app uses [httpx](https://www.python-httpx.org/) to get the current weather for any given city, by making a request to [wttr.in](https://wttr.in/).
 
 === "weather01.py"
 
