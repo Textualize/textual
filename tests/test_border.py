@@ -175,6 +175,33 @@ def test_render_border_label_wide_plain(label: str):
     assert original_text == Segment(label, _EMPTY_STYLE)
 
 
+@pytest.mark.parametrize(
+    "label",
+    [
+        "[b][/]",
+        "[i b][/]",
+        "[white on red][/]",
+        "[blue]",
+    ],
+)
+def test_render_border_empty_text_with_markup(label: str):
+    """Test label rendering if there is no text but some markup."""
+    assert [] == list(
+        render_border_label(
+            label,
+            True,
+            "round",
+            999,
+            _EMPTY_STYLE,
+            _EMPTY_STYLE,
+            _EMPTY_STYLE,
+            _WIDE_CONSOLE,
+            True,
+            True,
+        )
+    )
+
+
 def test_render_border_label():
     """Test label rendering with styling, with and without overflow."""
 

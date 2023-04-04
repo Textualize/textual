@@ -327,6 +327,8 @@ def render_border_label(
         return
 
     text_label = Text.from_markup(label)
+    if not text_label.cell_len:
+        return
     text_label.truncate(width - cells_reserved, overflow="ellipsis")
     segments = text_label.render(console)
 
