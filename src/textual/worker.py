@@ -67,7 +67,9 @@ def get_current_worker() -> Worker:
     try:
         return active_worker.get()
     except LookupError:
-        raise NoActiveWorker("There is no active worker in this task or thread.") from None
+        raise NoActiveWorker(
+            "There is no active worker in this task or thread."
+        ) from None
 
 
 class WorkerState(enum.Enum):
