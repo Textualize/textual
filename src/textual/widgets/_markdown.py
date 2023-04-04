@@ -587,7 +587,7 @@ class Markdown(Widget):
             self.href: str = href
             """The link that was selected."""
 
-    async def on_mount(self) -> None:
+    def on_mount(self) -> None:
         if self._markdown is not None:
             self.update(self._markdown)
 
