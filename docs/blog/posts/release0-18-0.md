@@ -24,7 +24,7 @@ It's not enough for us to point users at the asyncio docs, we needed a better an
 The new `run_worker` method provides an easy way of launching "Workers" (a wrapper over async tasks and threads) which also manages their lifetime.
 
 One of the challenges I've found with tasks and threads is ensuring that they are shut down in an orderly manner. Interestingly enough, Textual already implemented an orderly shutdown procedure to close the tasks that power widgets: children are shut down before parents, all the way up to the App (the root node).
-The new API piggy backs on to that existing mechanism to ensure that worker tasks are also shut down in the same order.
+The new API piggybacks on to that existing mechanism to ensure that worker tasks are also shut down in the same order.
 
 !!! tip
 

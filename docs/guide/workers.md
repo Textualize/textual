@@ -6,7 +6,7 @@ In this chapter we will explore the topic of *concurrency* and how to use Textua
 
 ## Concurrency
 
-There are many interesting uses for Textual which required reading data from an internet service.
+There are many interesting uses for Textual which require reading data from an internet service.
 When an app requests data from the network it is important that it doesn't prevent the user interface from updating.
 In other words, the requests should be concurrent (happen at the same time) as the UI updates.
 
@@ -16,7 +16,7 @@ Textual's Worker API makes concurrency far less error prone and easier to reason
 
 ## Workers
 
-Before we go in to detail, lets see an example that demonstrates a common pitfall for apps that make network requests.
+Before we go into detail, let's see an example that demonstrates a common pitfall for apps that make network requests.
 
 The following app uses [httpx](https://www.python-httpx.org/) to get the current weather for any given city, by making a request to [wttr.in](https://wttr.in/).
 
@@ -98,10 +98,10 @@ You can also create workers which will *not* immediately exit on exception, by s
 ### Worker lifetime
 
 Workers are managed by a single [WorkerManager][textual._worker_manager.WorkerManager] instance, which you can access via `app.workers`.
-This is a container-like object which you iterator over to see your active workers.
+This is a container-like object which you iterate over to see your active workers.
 
 Workers are tied to the DOM node (widget, screen, or app) where they are created.
-This means that if you remove the widget or pop the screen when they are created, then the tasks will be cleaned up automatically.
+This means that if you remove the widget or pop the screen where they are created, then the tasks will be cleaned up automatically.
 Similarly if you exit the app, any running tasks will be cancelled.
 
 Worker objects have a `state` attribute which will contain a [WorkerState][textual.worker.WorkerState] enumeration that indicates what the worker is doing at any given time.
@@ -125,7 +125,7 @@ Wokers start with a `PENDING` state, then go to `RUNNING`. From there, they will
 ### Worker events
 
 When a worker changes state, it sends a [Worker.StateChanged][textual.worker.Worker.StateChanged] event to the widget where the worker was created.
-You can handle this message by defining a `on_worker_state_changed` event handler.
+You can handle this message by defining an `on_worker_state_changed` event handler.
 For instance, here is how we might log the state of the worker that updates the weather:
 
 ```python title="weather04.py" hl_lines="4 40-42"
