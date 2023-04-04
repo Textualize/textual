@@ -148,7 +148,15 @@ class WorkerManager:
         return workers
 
     def cancel_node(self, node: DOMNode) -> list[Worker]:
-        """Cancel all workers associated with a given node."""
+        """Cancel all workers associated with a given node
+
+        Args:
+            node: A DOM node (widget, screen, or App).
+
+        Returns:
+            List of cancelled workers.
+
+        ."""
         workers = [worker for worker in self._workers if worker.node == node]
         for worker in workers:
             worker.cancel()

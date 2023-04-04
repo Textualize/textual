@@ -27,7 +27,7 @@ class AnimationError(Exception):
     """An issue prevented animation from starting."""
 
 
-ReturnType = TypeVar("T")
+ReturnType = TypeVar("ReturnType")
 
 
 @runtime_checkable
