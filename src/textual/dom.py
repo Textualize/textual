@@ -230,7 +230,7 @@ class DOMNode(MessagePump):
         A worker runs a function, coroutine, or awaitable, in the *background* as an async task or as a thread.
 
         Args:
-            work: A function, async function, or an awaitable object.
+            work: A function, async function, or an awaitable object to run in a worker.
             name: A short string to identify the worker (in logs and debugging).
             group: A short string to identify a group of workers.
             description: A longer string to store longer information on the worker.

@@ -146,7 +146,7 @@ class Worker(Generic[ResultType]):
 
         Args:
             node: The widget, screen, or App that initiated the work.
-            work: A callable, coroutine, or other awaitable.
+            work: A callable, coroutine, or other awaitable object to run in the worker.
             name: Name of the worker (short string to help identify when debugging).
             group: The worker group.
             description: Description of the worker (longer string with more details).
