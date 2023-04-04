@@ -1,4 +1,6 @@
+import asyncio
 import sys
+import threading
 
 import pytest
 
@@ -60,6 +62,8 @@ async def test_installed_screens():
 
 async def test_screens():
     app = App()
+    app._loop = asyncio.get_running_loop()
+    app._thread_id = threading.get_ident()
     # There should be nothing in the children since the app hasn't run yet
     assert not app._nodes
     assert not app.children

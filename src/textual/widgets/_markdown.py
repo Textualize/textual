@@ -587,9 +587,9 @@ class Markdown(Widget):
             self.href: str = href
             """The link that was selected."""
 
-    async def on_mount(self) -> None:
+    def on_mount(self) -> None:
         if self._markdown is not None:
-            await self.update(self._markdown)
+            self.update(self._markdown)
 
     async def load(self, path: Path) -> bool:
         """Load a new Markdown document.
@@ -605,10 +605,10 @@ class Markdown(Widget):
         except Exception:
             return False
 
-        await self.update(markdown)
+        self.update(markdown)
         return True
 
-    async def update(self, markdown: str) -> None:
+    def update(self, markdown: str) -> None:
         """Update the document with new Markdown.
 
         Args:
@@ -750,8 +750,8 @@ class Markdown(Widget):
 
         self.post_message(Markdown.TableOfContentsUpdated(table_of_contents))
         with self.app.batch_update():
-            await self.query("MarkdownBlock").remove()
-            await self.mount_all(output)
+            self.query("MarkdownBlock").remove()
+            self.mount_all(output)
 
 
 class MarkdownTableOfContents(Widget, can_focus_children=True):
@@ -874,7 +874,7 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
 
     async def on_mount(self) -> None:
         if self._markdown is not None:
-            await self.document.update(self._markdown)
+            self.document.update(self._markdown)
 
     async def go(self, location: str | PurePath) -> bool:
         """Navigate to a new document path."""

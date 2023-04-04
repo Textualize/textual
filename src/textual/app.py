@@ -58,6 +58,7 @@ from ._context import active_app, active_message_pump
 from ._event_broker import NoHandler, extract_handler_actions
 from ._path import _make_path_object_relative
 from ._wait import wait_for_idle
+from ._worker_manager import WorkerManager
 from .actions import ActionParseResult, SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding, Bindings
@@ -93,7 +94,8 @@ PLATFORM = platform.system()
 WINDOWS = PLATFORM == "Windows"
 
 # asyncio will warn against resources not being cleared
-warnings.simplefilter("always", ResourceWarning)
+if constants.DEBUG:
+    warnings.simplefilter("always", ResourceWarning)
 
 # `asyncio.get_event_loop()` is deprecated since Python 3.10:
 _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED = sys.version_info >= (3, 10, 0)
@@ -316,6 +318,7 @@ class App(Generic[ReturnType], DOMNode):
             legacy_windows=False,
             _environ=environ,
         )
+        self._workers = WorkerManager(self)
         self.error_console = Console(markup=False, stderr=True)
         self.driver_class = driver_class or self.get_driver_class()
         self._screen_stack: list[Screen] = []
@@ -411,7 +414,6 @@ class App(Generic[ReturnType], DOMNode):
                 self.devtools = DevtoolsClient()
 
         self._loop: asyncio.AbstractEventLoop | None = None
-        self._thread_id: int = 0
         self._return_value: ReturnType | None = None
         self._exit = False
 
@@ -426,6 +428,11 @@ class App(Generic[ReturnType], DOMNode):
         self._batch_count = 0
         self.set_class(self.dark, "-dark-mode")
         self.set_class(not self.dark, "-light-mode")
+
+    @property
+    def workers(self) -> WorkerManager:
+        """A worker manager."""
+        return self._workers
 
     @property
     def return_value(self) -> ReturnType | None:
@@ -933,6 +940,8 @@ class App(Generic[ReturnType], DOMNode):
             app_ready_event.set()
 
         async def run_app(app) -> None:
+            app._loop = asyncio.get_running_loop()
+            app._thread_id = threading.get_ident()
             await app._process_messages(
                 ready_callback=on_app_ready,
                 headless=headless,
@@ -1620,6 +1629,7 @@ class App(Generic[ReturnType], DOMNode):
             except asyncio.CancelledError:
                 pass
             finally:
+                self.workers.cancel_all()
                 self._running = False
                 try:
                     await self.animator.stop()
