@@ -4992,6 +4992,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -6268,6 +6270,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../api/work/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Work
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../api/worker/" class="md-nav__link">
         
   
@@ -7125,7 +7153,7 @@ This is because we are making a request to the weather API within a message hand
 For instance, if you start typing "Paris", you may get the response for "Pari" <em>after</em> the response for "Paris", which could show the wrong weather information.
 The <code>exclusive</code> flag tells Textual to cancel all previous workers before starting the new one.</p>
 <h3 id="work-decorator">Work decorator<a class="headerlink" href="#work-decorator" title="Permanent link">&para;</a></h3>
-<p>An alternative to calling <code>run_worker</code> manually is the [work][textual.work] decorator, which automatically generates a worker from the decorated method.</p>
+<p>An alternative to calling <code>run_worker</code> manually is the <a class="autorefs autorefs-internal" href="../../api/work/#textual.work">work</a> decorator, which automatically generates a worker from the decorated method.</p>
 <p>Let's use this decorator in our weather app:</p>
 <div class="highlight"><span class="filename">weather03.py</span><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">import</span> <span class="nn">httpx</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span> <span class="nn">rich.text</span> <span class="kn">import</span> <span class="n">Text</span>
