@@ -522,7 +522,7 @@ class DOMNode(MessagePump):
 
     @property
     def visible(self) -> bool:
-        """Is the DOM node visible?"""
+        """Is the visibility style set to a visible state?"""
         return self.styles.visibility != "hidden"
 
     @visible.setter
