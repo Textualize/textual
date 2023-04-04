@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import ClassVar
+from typing import Callable, ClassVar
 
 from rich.style import Style
 from rich.text import Text, TextType
@@ -30,6 +30,7 @@ class DirectoryTree(Tree[DirEntry]):
         id: The ID of the widget in the DOM, or None for no ID.
         classes: A space-separated list of classes, or None for no classes.
         disabled: Whether the directory tree is disabled or not.
+        path_filter: Optional function to filter the entries included in the tree.
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
@@ -89,9 +90,11 @@ class DirectoryTree(Tree[DirEntry]):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
+        path_filter: Callable[[Path],bool] | None = None
     ) -> None:
         str_path = os.fspath(path)
         self.path = str_path
+        self._path_filter = path_filter or (lambda _: True)
         super().__init__(
             str_path,
             data=DirEntry(str_path, True),
@@ -154,7 +157,7 @@ class DirectoryTree(Tree[DirEntry]):
         dir_path = Path(node.data.path)
         node.data.loaded = True
         directory = sorted(
-            list(dir_path.iterdir()),
+            [entry for entry in dir_path.iterdir() if self._path_filter(entry)],
             key=lambda path: (not path.is_dir(), path.name.lower()),
         )
         for path in directory:
