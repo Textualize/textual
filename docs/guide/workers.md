@@ -57,7 +57,7 @@ The `run_worker` method schedules a new *worker* to run `update_weather`, and re
 
 The call to `run_worker` also sets `exclusive=True` which solves an additional problem with concurrent network requests: when pulling data from the network, there is no guarantee that you will receive the responses in the same order as the requests.
 For instance, if you start typing "Paris", you may get the response for "Pari" *after* the response for "Paris", which could show the wrong weather information.
-The `exclusive` flag tells textual to cancel all previous workers before starting the new one.
+The `exclusive` flag tells Textual to cancel all previous workers before starting the new one.
 
 ### Work decorator
 
@@ -69,7 +69,7 @@ Let's use this decorator in our weather app:
 --8<-- "docs/examples/guide/workers/weather03.py"
 ```
 
-The addition of `@work(exclusive=True)` converts the `update_weather` coroutine in to a regular function which when called will create and start a worker.
+The addition of `@work(exclusive=True)` converts the `update_weather` coroutine into a regular function which when called will create and start a worker.
 Note that even though `update_weather` is an `async def` function, the decorator means that we don't need to use the `await` keyword when calling it.
 
 !!! tip
@@ -88,12 +88,12 @@ Often a better approach is to handle [worker events](#worker-events) which will 
 ### Cancelling workers
 
 You can cancel a worker at any time before it is finished by calling [Worker.cancel][textual.worker.Worker.cancel].
-This will raise an [CancelledError][asyncio.CancelledError] within the coroutine, and should cause it to exit prematurely.
+This will raise a [CancelledError][asyncio.CancelledError] within the coroutine, and should cause it to exit prematurely.
 
 ### Worker errors
 
 The default behavior when a worker encounters an exception is to exit the app and display the traceback in the terminal.
-You can also create workers which will *not* immediately exit on exception, by setting `exit_on_error=True` on the call to `run_worker` or the `@work` decorator.
+You can also create workers which will *not* immediately exit on exception, by setting `exit_on_error=False` on the call to `run_worker` or the `@work` decorator.
 
 ### Worker lifetime
 

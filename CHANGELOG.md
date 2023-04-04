@@ -19,9 +19,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - `RadioSet` is now far less likely to report `pressed_button` as `None` https://github.com/Textualize/textual/issues/2203
 
-## Unreleased
-
-
 ## [0.17.3] - 2023-04-02
 
 ### [Fixed]
