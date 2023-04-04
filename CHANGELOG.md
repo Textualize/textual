@@ -5,15 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.18.0] - Unreleased
+## [0.18.0] - 2023-04-04
 
 ### Added
 
-- Added Worker API
+- Added Worker API https://github.com/Textualize/textual/pull/2182
 
 ### Changed
 
-- Markdown.update is no longer a coroutine
+- Markdown.update is no longer a coroutine https://github.com/Textualize/textual/pull/2182
 
 ### [Fixed]
 
@@ -713,6 +713,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.18.0]: https://github.com/Textualize/textual/compare/v0.17.4...v0.18.0
 [0.17.3]: https://github.com/Textualize/textual/compare/v0.17.2...v0.17.3
 [0.17.2]: https://github.com/Textualize/textual/compare/v0.17.1...v0.17.2
 [0.17.1]: https://github.com/Textualize/textual/compare/v0.17.0...v0.17.1
