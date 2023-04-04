@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### [Fixed]
+
+- `RadioSet` is now far less likely to report `pressed_button` as `None` https://github.com/Textualize/textual/issues/2203
+
 ## [0.17.3] - 2023-04-02
 
 ### [Fixed]
