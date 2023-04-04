@@ -50,10 +50,19 @@ def work(
     *,
     name: str = "",
     group: str = "default",
-    exclusive: bool = False,
     exit_on_error: bool = True,
+    exclusive: bool = False,
 ) -> Callable[FactoryParamSpec, Worker[ReturnType]] | Decorator:
-    """Worker decorator factory."""
+    """Worker decorator factory.
+
+    Args:
+        method: A function or coroutine.
+        name: A short string to identify the worker (in logs and debugging).
+        group: A short string to identify a group of workers.
+        exit_on_error: Exit the app if the worker raises an error. Set to `False` to suppress exceptions.
+        exclusive: Cancel all workers in the same group.
+
+    """
 
     def decorator(
         method: (
