@@ -188,6 +188,28 @@ class PseudoClasses(NamedTuple):
     hover: bool
 
 
+class _BorderTitle:
+    """Descriptor to set border titles."""
+
+    def __set_name__(self, owner: Widget, name: str) -> None:
+        self._internal_name = f"_{name}"
+
+    def __set__(self, obj: Widget, title: str | Text | None) -> None:
+        if title is None:
+            setattr(obj, self._internal_name, None)
+        else:
+            new_title = obj.render_str(title)
+            new_title.expand_tabs(4)
+            new_title = new_title.split()[0]
+            setattr(obj, self._internal_name, new_title)
+
+    def __get__(self, obj: Widget, objtype: type[Widget] | None = None) -> str | None:
+        title: Text | None = getattr(obj, self._internal_name, None)
+        if title is None:
+            return None
+        return title.markup
+
+
 @rich.repr.auto
 class Widget(DOMNode):
     """
@@ -241,10 +263,6 @@ class Widget(DOMNode):
     """Widget will highlight links automatically."""
     disabled = Reactive(False)
     """The disabled state of the widget. `True` if disabled, `False` if not."""
-    border_title = Reactive("")
-    """The one-line border title, which may contain markup to be parsed."""
-    border_subtitle = Reactive("")
-    """The one-line border subtitle, which may contain markup to be parsed."""
 
     hover_style: Reactive[Style] = Reactive(Style, repaint=False)
     highlight_link_id: Reactive[str] = Reactive("")
@@ -269,6 +287,9 @@ class Widget(DOMNode):
         self._vertical_scrollbar: ScrollBar | None = None
         self._horizontal_scrollbar: ScrollBar | None = None
         self._scrollbar_corner: ScrollBarCorner | None = None
+
+        self._border_title: Text | None = None
+        self._border_subtitle: Text | None = None
 
         self._render_cache = RenderCache(Size(0, 0), [])
         # Regions which need to be updated (in Widget)
@@ -320,6 +341,9 @@ class Widget(DOMNode):
     scroll_target_y = Reactive(0.0, repaint=False)
     show_vertical_scrollbar = Reactive(False, layout=True)
     show_horizontal_scrollbar = Reactive(False, layout=True)
+
+    border_title = _BorderTitle()
+    border_subtitle = _BorderTitle()
 
     @property
     def siblings(self) -> list[Widget]:
@@ -2428,20 +2452,6 @@ class Widget(DOMNode):
     def watch_disabled(self) -> None:
         """Update the styles of the widget and its children when disabled is toggled."""
         self._update_styles()
-
-    def validate_border_title(self, title: str) -> str:
-        """Ensure we only use a single line for the border title."""
-        if not title:
-            return title
-        first, *_ = title.splitlines()
-        return first
-
-    def validate_border_subtitle(self, subtitle: str) -> str:
-        """Ensure we only use a single line for the border subtitle."""
-        if not subtitle:
-            return subtitle
-        first, *_ = subtitle.splitlines()
-        return first
 
     def _size_updated(
         self, size: Size, virtual_size: Size, container_size: Size, layout: bool = True

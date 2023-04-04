@@ -283,7 +283,7 @@ def get_box(
 
 
 def render_border_label(
-    label: str,
+    label: Text | None,
     is_title: bool,
     name: EdgeType,
     width: int,
@@ -326,7 +326,7 @@ def render_border_label(
     if not label or width <= cells_reserved:
         return
 
-    text_label = Text.from_markup(label)
+    text_label = label.copy()
     if not text_label.cell_len:
         return
     text_label.truncate(width - cells_reserved, overflow="ellipsis")
