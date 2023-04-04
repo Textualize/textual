@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Breaking change: Markdown.update is no longer a coroutine https://github.com/Textualize/textual/pull/2182
 
-### [Fixed]
+### Fixed
 
 - `RadioSet` is now far less likely to report `pressed_button` as `None` https://github.com/Textualize/textual/issues/2203
 
