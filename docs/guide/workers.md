@@ -39,7 +39,7 @@ The following app uses [httpx](https://www.python-httpx.org/) to get the current
 
 If you were to run this app, you should see weather information update as you type.
 But you may find that the input is not as responsive as usual, with a noticeable delay between pressing a key and seeing it echoed in screen.
-This is because we are making a request to the weather API within a message handler, and the app will not be able to process the next key until the request has completed (which may be anything from a few hundred milliseconds to several seconds later).
+This is because we are making a request to the weather API within a message handler, and the app will not be able to process other messages until the request has completed (which may be anything from a few hundred milliseconds to several seconds later).
 
 To resolve this we can use the [run_worker][textual.dom.DOMNode.run_worker] method which runs the `update_weather` coroutine (`async def` function) in the background. Here's the code:
 
@@ -49,8 +49,11 @@ To resolve this we can use the [run_worker][textual.dom.DOMNode.run_worker] meth
 
 This one line change will make typing as responsive as you would expect from any app.
 
-The `run_worker` method schedules a new *worker* to run `update_weather`, and returns a [Worker](textual.worker.Worker) object.
-This Worker object has a few useful methods on it, but you can often ignore it as we did in `weather02.py`.
+The `run_worker` method schedules a new *worker* to run `update_weather`, and returns a [Worker](textual.worker.Worker) object. This happens almost immediately, so it won't prevent other messages from being processed. The `update_weather` function is now running concurrently, and will finish a second or two later, and won't delay the rest of your app.
+
+!!! tip
+
+    This Worker object has a few useful methods on it, but you can often ignore it as we did in `weather02.py`.
 
 The call to `run_worker` sets `exclusive=True` which solves an additional problem with concurrent network requests: when pulling data from the network, there is no guarantee that you will receive the responses in the same order as the requests.
 For instance, if you start typing `Paris`, you may get the response for `Pari` *after* the response for `Paris`, which could show the wrong weather information.
