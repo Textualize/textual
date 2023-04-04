@@ -44,7 +44,7 @@ class WorkerFailed(WorkerError):
 
     def __init__(self, error: BaseException) -> None:
         self.error = error
-        super().__init__(f"Worker raise exception: {error!r}")
+        super().__init__(f"Worker raised exception: {error!r}")
 
 
 class DeadlockError(WorkerError):
@@ -67,7 +67,7 @@ def get_current_worker() -> Worker:
     try:
         return active_worker.get()
     except LookupError:
-        raise NoActiveWorker("There is no active worker in this task or thread.")
+        raise NoActiveWorker("There is no active worker in this task or thread.") from None
 
 
 class WorkerState(enum.Enum):
@@ -96,7 +96,7 @@ WorkType: TypeAlias = Union[
 
 
 class _ReprText:
-    """Shim to insert a word in to the Worker's repr."""
+    """Shim to insert a word into the Worker's repr."""
 
     def __init__(self, text: str) -> None:
         self.text = text
@@ -143,7 +143,7 @@ class Worker(Generic[ResultType]):
         """Initialize a Worker.
 
         Args:
-            node: THe widget, screen, or App that initiated the work.
+            node: The widget, screen, or App that initiated the work.
             work: A callable, coroutine, or other awaitable.
             name: Name of the worker (short string to help identify when debugging).
             group: The worker group.
