@@ -32,7 +32,7 @@ The new API piggy backs on to that existing mechanism to ensure that worker task
 
 
 I'm particularly pleased with the new `@work` decorator which can turn a coroutine OR a regular function in to a Textual Worker object, by scheduling it as either an asyncio task or a thread.
-I honestly think it will solve 90% of the concurrency issues we see with Textual apps.
+I suspect this will solve 90% of the concurrency issues we see with Textual apps.
 
 See the [Worker API](../../guide/workers.md) for the details.
 
