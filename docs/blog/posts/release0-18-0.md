@@ -19,7 +19,7 @@ This release adds a new [Worker API](../../guide/workers.md) designed to manage 
 An API to manage concurrency may seem like a strange addition to a library for building user interfaces, but on reflection it makes a lot of sense.
 People are building Textual apps to interface with REST APIs, websockets, and processes; and they are running in to predictable issues.
 These aren't specifically Textual problems, but rather general problems related to async tasks and threads.
-It's not enough for us to point users at the docs, we needed a better answer.
+It's not enough for us to point users at the asyncio docs, we needed a better answer.
 
 The new `run_worker` method provides an easy way of launching "Workers" (a wrapper over async tasks and threads) which also manages their lifetime.
 
@@ -31,7 +31,7 @@ The new API piggy backs on to that existing mechanism to ensure that worker task
     You won't need to worry about this [gnarly issue](https://textual.textualize.io/blog/2023/02/11/the-heisenbug-lurking-in-your-async-code/) with the new Worker API.
 
 
-I'm particularly pleased with the new `@work` decorator which can turn an coroutine OR a regular function in to a Textual Worker object, by scheduling it as either an asyncio task or a thread as appropriate.
+I'm particularly pleased with the new `@work` decorator which can turn a coroutine OR a regular function in to a Textual Worker object, by scheduling it as either an asyncio task or a thread.
 I honestly think it will solve 90% of the concurrency issues we see with Textual apps.
 
 See the [Worker API](../../guide/workers.md) for the details.
