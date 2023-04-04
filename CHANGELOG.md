@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Markdown.update is no longer a coroutine https://github.com/Textualize/textual/pull/2182
+- Breaking change: Markdown.update is no longer a coroutine https://github.com/Textualize/textual/pull/2182
 
 ### [Fixed]
 
