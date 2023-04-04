@@ -49,19 +49,19 @@ To resolve this we can use the [run_worker][textual.dom.DOMNode.run_worker] meth
 
 This one line change will make typing as responsive as you would expect from any app.
 
-The `run_worker` method schedules a new *worker* to run `update_weather`, and returns a [Worker](textual.worker.Worker) object. This happens almost immediately, so it won't prevent other messages from being processed. The `update_weather` function is now running concurrently, and will finish a second or two later, and won't delay the rest of your app.
+The `run_worker` method schedules a new *worker* to run `update_weather`, and returns a [Worker](textual.worker.Worker) object. This happens almost immediately, so it won't prevent other messages from being processed. The `update_weather` function is now running concurrently, and will finish a second or two later.
 
 !!! tip
 
-    This Worker object has a few useful methods on it, but you can often ignore it as we did in `weather02.py`.
+    The [Worker][textual.worker.Worker] object has a few useful methods on it, but you can often ignore it as we did in `weather02.py`.
 
-The call to `run_worker` sets `exclusive=True` which solves an additional problem with concurrent network requests: when pulling data from the network, there is no guarantee that you will receive the responses in the same order as the requests.
-For instance, if you start typing `Paris`, you may get the response for `Pari` *after* the response for `Paris`, which could show the wrong weather information.
+The call to `run_worker` also sets `exclusive=True` which solves an additional problem with concurrent network requests: when pulling data from the network, there is no guarantee that you will receive the responses in the same order as the requests.
+For instance, if you start typing "Paris", you may get the response for "Pari" *after* the response for "Paris", which could show the wrong weather information.
 The `exclusive` flag tells textual to cancel all previous workers before starting the new one.
 
 ### Work decorator
 
-An alternative to calling `run_worker` manually is the [work][textual.work] decorator, which automatically generates a worker from the decorator method.
+An alternative to calling `run_worker` manually is the [work][textual.work] decorator, which automatically generates a worker from the decorated method.
 
 Let's use this decorator in our weather app:
 
@@ -116,7 +116,7 @@ The `state` attribute will contain one of the following values:
 | ERROR     | The worker raised an exception, and `worker.error` will contain the exception.      |
 | SUCCESS   | The worker completed successful, and `worker.result` will contain the return value. |
 
-
+Wokers start with a `PENDING` state, then go to `RUNNING`. From there, they will go to `CANCELLED`, `ERROR` or `SUCCESS`.
 
 <div class="excalidraw">
 --8<-- "docs/images/workers/lifetime.excalidraw.svg"
