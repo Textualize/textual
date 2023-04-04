@@ -357,7 +357,7 @@ class Worker(Generic[ResultType]):
         """Wait for the work to complete.
 
         Raises:
-            WorkerFailed: If the Worker raised an exception
+            WorkerFailed: If the Worker raised an exception.
             WorkerCancelled: If the Worker was cancelled before it completed.
 
         Returns:
