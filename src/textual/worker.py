@@ -271,6 +271,9 @@ class Worker(Generic[ResultType]):
 
         Implement this method in a subclass, or pass a callable to the constructor.
 
+        Returns:
+            Return value of work.
+
         """
 
         if (
