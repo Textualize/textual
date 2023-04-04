@@ -90,7 +90,7 @@ class DirectoryTree(Tree[DirEntry]):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
-        path_filter: Callable[[Path],bool] | None = None
+        path_filter: Callable[[Path], bool] | None = None,
     ) -> None:
         str_path = os.fspath(path)
         self.path = str_path
