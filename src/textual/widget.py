@@ -195,18 +195,22 @@ class _BorderTitle:
         self._internal_name = f"_{name}"
 
     def __set__(self, obj: Widget, title: str | Text | None) -> None:
+        """Setting a title accepts a str, Text, or None."""
         if title is None:
             setattr(obj, self._internal_name, None)
         else:
+            # We store the title as Text
             new_title = obj.render_str(title)
             new_title.expand_tabs(4)
             new_title = new_title.split()[0]
             setattr(obj, self._internal_name, new_title)
 
     def __get__(self, obj: Widget, objtype: type[Widget] | None = None) -> str | None:
+        """Getting a title will return None or a str as console markup."""
         title: Text | None = getattr(obj, self._internal_name, None)
         if title is None:
             return None
+        # If we have a title, convert from Text to console markup
         return title.markup
 
 
@@ -343,7 +347,9 @@ class Widget(DOMNode):
     show_horizontal_scrollbar = Reactive(False, layout=True)
 
     border_title = _BorderTitle()
+    """A title to show in the top border (if there is one)."""
     border_subtitle = _BorderTitle()
+    """A title to show in the bottom border (if there is one)."""
 
     @property
     def siblings(self) -> list[Widget]:

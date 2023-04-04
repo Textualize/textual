@@ -311,7 +311,7 @@ class StylesCache:
                     border_label,
                     is_top,
                     border_edge_type,
-                    width,
+                    width - 2,
                     inner,
                     outer,
                     border_color_as_style,
