@@ -363,10 +363,14 @@ class Worker(Generic[ResultType]):
         Returns:
             The return value of the work.
         """
-        if active_worker.get() is self:
-            raise DeadlockError(
-                "Can't call worker.wait from within the worker function!"
-            )
+        try:
+            if active_worker.get() is self:
+                raise DeadlockError(
+                    "Can't call worker.wait from within the worker function!"
+                )
+        except LookupError:
+            # Not in a worker
+            pass
 
         if self.state == WorkerState.PENDING:
             raise WorkerError("Worker must be started before calling this method.")
