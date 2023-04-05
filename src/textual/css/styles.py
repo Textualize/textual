@@ -388,7 +388,10 @@ class StylesBase(ABC):
     def is_relative_width(self) -> bool:
         """Does the node have a relative width?"""
         width = self.width
-        return width is not None and width.unit in (Unit.FRACTION, Unit.PERCENT)
+        return width is not None and width.unit in (
+            Unit.FRACTION,
+            Unit.PERCENT,
+        )
 
     @property
     def is_relative_height(self) -> bool:

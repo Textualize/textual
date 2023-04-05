@@ -33,7 +33,6 @@ def resolve(
     Returns:
         List of (<OFFSET>, <LENGTH>)
     """
-
     resolved: list[tuple[Scalar, Fraction | None]] = [
         (
             (scalar, None)
@@ -83,6 +82,7 @@ def resolve_box_models(
     dimensions: list[Scalar | None],
     widgets: list[Widget],
     size: Size,
+    margin_size: Size,
     parent_size: Size,
     dimension: Literal["width", "height"] = "width",
 ) -> list[BoxModel]:
@@ -91,6 +91,7 @@ def resolve_box_models(
     Args:
         dimensions: A list of Scalars or Nones for each dimension.
         widgets: Widgets in resolve.
+        margin_size: Size of container minus margins.
         size: Size of container.
         parent_size: Size of parent.
         dimensions: Which dimension to resolve.
@@ -98,9 +99,8 @@ def resolve_box_models(
     Returns:
         List of resolved box models.
     """
-
-    fraction_width = Fraction(size.width)
-    fraction_height = Fraction(size.height)
+    fraction_width = Fraction(margin_size.width)
+    fraction_height = Fraction(margin_size.height)
     box_models: list[BoxModel | None] = [
         (
             None
@@ -116,12 +116,12 @@ def resolve_box_models(
         total_remaining = sum(
             box_model.width for box_model in box_models if box_model is not None
         )
-        remaining_space = max(0, size.width - total_remaining)
+        remaining_space = max(0, margin_size.width - total_remaining)
     else:
         total_remaining = sum(
             box_model.height for box_model in box_models if box_model is not None
         )
-        remaining_space = max(0, size.height - total_remaining)
+        remaining_space = max(0, margin_size.height - total_remaining)
 
     fraction_unit = Fraction(
         remaining_space,
@@ -136,9 +136,9 @@ def resolve_box_models(
     )
     if dimension == "width":
         width_fraction = fraction_unit
-        height_fraction = Fraction(size.height)
+        height_fraction = Fraction(margin_size.height)
     else:
-        width_fraction = Fraction(size.width)
+        width_fraction = Fraction(margin_size.width)
         height_fraction = fraction_unit
 
     box_models = [
