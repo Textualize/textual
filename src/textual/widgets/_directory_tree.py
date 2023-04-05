@@ -30,7 +30,6 @@ class DirectoryTree(Tree[DirEntry]):
         id: The ID of the widget in the DOM, or None for no ID.
         classes: A space-separated list of classes, or None for no classes.
         disabled: Whether the directory tree is disabled or not.
-        path_filter: Optional function to filter the entries included in the tree.
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
