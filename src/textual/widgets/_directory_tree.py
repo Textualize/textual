@@ -157,6 +157,10 @@ class DirectoryTree(Tree[DirEntry]):
 
         Returns:
             The filtered paths.
+
+        By default this method returns all of the paths provided. To create
+        a filtered `DirectoryTree` inherit from it and implement your own
+        version of this method.
         """
         return paths
 
