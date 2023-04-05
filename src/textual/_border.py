@@ -283,7 +283,7 @@ def get_box(
 
 
 def render_border_label(
-    label: str,
+    label: Text,
     is_title: bool,
     name: EdgeType,
     width: int,
@@ -323,12 +323,10 @@ def render_border_label(
     # How many cells do we need to reserve for surrounding blanks and corners?
     corners_needed = has_left_corner + has_right_corner
     cells_reserved = 2 * corners_needed
-    if not label or width <= cells_reserved:
+    if not label.cell_len or width <= cells_reserved:
         return
 
-    text_label = Text.from_markup(label)
-    if not text_label.cell_len:
-        return
+    text_label = label.copy()
     text_label.truncate(width - cells_reserved, overflow="ellipsis")
     segments = text_label.render(console)
 
@@ -401,13 +399,15 @@ def render_row(
     elif not label_length:
         yield Segment(box2.text * space_available, box2.style)
     elif label_alignment == "left" or label_alignment == "right":
-        edge = Segment(box2.text * space_available, box2.style)
+        edge = Segment(box2.text * (space_available - 1), box2.style)
         if label_alignment == "left":
+            yield Segment(box2.text, box2.style)
             yield from label_segments_list
             yield edge
         else:
             yield edge
             yield from label_segments_list
+            yield Segment(box2.text, box2.style)
     elif label_alignment == "center":
         length_on_left = space_available // 2
         length_on_right = space_available - length_on_left
