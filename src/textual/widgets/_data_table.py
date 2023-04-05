@@ -306,7 +306,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     cursor_coordinate: Reactive[Coordinate] = Reactive(
         Coordinate(0, 0), repaint=False, always_update=True
     )
-    hover_coordinate: Reactive[Coordinate] = Reactive(Coordinate(0, 0), repaint=False)
+    hover_coordinate: Reactive[Coordinate] = Reactive(
+        Coordinate(0, 0), repaint=False, always_update=True
+    )
 
     class CellHighlighted(Message, bubble=True):
         """Posted when the cursor moves to highlight a new cell.
@@ -1002,6 +1004,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             )
 
     def validate_cursor_coordinate(self, value: Coordinate) -> Coordinate:
+        print(f"validating cursor coordinate: {value}")
         return self._clamp_cursor_coordinate(value)
 
     def _clamp_cursor_coordinate(self, coordinate: Coordinate) -> Coordinate:
@@ -1326,7 +1329,27 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     def remove_row(self, row_key: RowKey) -> None:
         self._require_update_dimensions = True
-        self._rows_to_remove.add(row_key)
+
+        row_index = self._row_locations.get(row_key)
+        rows_below = self.ordered_rows[row_index + 1 :]
+        for row in rows_below:
+            # We also need to subtract from all the indices below
+            key_to_shift = row.key
+            old_index = self._row_locations.get(key_to_shift)
+            del self._row_locations[key_to_shift]
+            self._row_locations[key_to_shift] = max(0, old_index - 1)
+
+        del self._row_locations[row_key]
+        self._data.pop(row_key, None)
+        self.rows.pop(row_key, None)
+
+        self.cursor_coordinate = self.cursor_coordinate
+        self.hover_coordinate = self.hover_coordinate
+
+        print(self.ordered_rows)
+
+        self._update_count += 1
+        self.check_idle()
 
     def on_idle(self) -> None:
         """Runs when the message pump is empty.
@@ -1342,22 +1365,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             new_rows = self._new_rows.copy()
             self._new_rows.clear()
             self._update_dimensions(new_rows)
-
-        if self._rows_to_remove:
-            rows_to_remove = self._rows_to_remove.copy()
-            self._rows_to_remove.clear()
-            for row_key in rows_to_remove:
-                row_index = self._row_locations.get(row_key)
-                del self._row_locations[row_key]
-                for row in self.ordered_rows[row_index + 1 :]:
-                    # We also need to subtract from all the indices below
-                    key_to_shift = row.key
-                    old_index = self._row_locations.get(key_to_shift)
-                    del self._row_locations[key_to_shift]
-                    self._row_locations[key_to_shift] = max(0, old_index - 1)
-                self._data.pop(row_key, None)
-                self.rows.pop(row_key, None)
-            self._update_count += 1
 
         if self._updated_cells:
             # Cell contents have already been updated at this point.
@@ -1486,7 +1493,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             ordered_rows = []
             for row_index in row_indices:
                 row_key = self._row_locations.get_key(row_index)
-                print(f"getting {row_index} from row_locations")
                 print(self._row_locations._reverse)
                 row = self.rows[row_key]
                 ordered_rows.append(row)
