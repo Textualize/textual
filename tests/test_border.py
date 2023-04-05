@@ -38,6 +38,11 @@ def test_border_title_single_line():
     """The border_title gets set to a single line even when multiple lines are provided."""
     widget = Widget()
 
+    assert widget.border_title is None
+
+    widget.border_title = None
+    assert widget.border_title == None
+
     widget.border_title = ""
     assert widget.border_title == ""
 
