@@ -136,4 +136,10 @@ class Layout(ABC):
             # Use a height of zero to ignore relative heights
             arrangement = widget._arrange(Size(width, 0))
             height = arrangement.total_region.bottom
+
+            if widget.styles.max_height and any(
+                widget.styles.is_relative_height for widget in widget.children
+            ):
+                height = max(height, container.height)
+
         return height

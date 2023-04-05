@@ -316,6 +316,10 @@ class Widget(DOMNode):
         self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
         self._stabilize_scrollbar: tuple[Size, str, str] | None = None
         """Used to prevent scrollbar logic getting stuck in an infinite loop."""
+
+        self._relative_children_width: tuple[int, bool] = (-1, False)
+        self._relative_children_height: tuple[int, bool] = (-1, False)
+
         self._lock = Lock()
 
         super().__init__(
@@ -890,6 +894,7 @@ class Widget(DOMNode):
             The size and margin for this widget.
         """
         box_model = get_box_model(
+            self,
             self.styles,
             container,
             viewport,
@@ -1365,6 +1370,34 @@ class Widget(DOMNode):
 
         """
         return active_app.get().console
+
+    @property
+    def _has_relative_children_width(self) -> bool:
+        """Do any children have a relative width?"""
+        if not self.is_container:
+            return False
+        update_index, is_relative = self._relative_children_width
+
+        if self._nodes._updates == update_index:
+            return is_relative
+        is_relative = any(widget.styles.is_relative_width for widget in self.children)
+
+        self._relative_children_width = (update_index, is_relative)
+        return is_relative
+
+    @property
+    def _has_relative_children_height(self) -> bool:
+        """Do any children have a relative height?"""
+        if not self.is_container:
+            return False
+        update_index, is_relative = self._relative_children_height
+
+        if self._nodes._updates == update_index:
+            return is_relative
+        is_relative = any(widget.styles.is_relative_height for widget in self.children)
+
+        self._relative_children_height = (update_index, is_relative)
+        return is_relative
 
     def animate(
         self,

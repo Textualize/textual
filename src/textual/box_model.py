@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 from fractions import Fraction
-from typing import Callable, NamedTuple
+from typing import TYPE_CHECKING, Callable, NamedTuple, Sequence
 
 from .css.styles import StylesBase
 from .geometry import Size, Spacing
+
+if TYPE_CHECKING:
+    from .widget import Widget
 
 
 class BoxModel(NamedTuple):
@@ -17,6 +20,7 @@ class BoxModel(NamedTuple):
 
 
 def get_box_model(
+    widget: Widget,
     styles: StylesBase,
     container: Size,
     viewport: Size,
@@ -62,6 +66,8 @@ def get_box_model(
         content_width = Fraction(
             get_content_width(content_container - styles.margin.totals, viewport)
         )
+        if widget._has_relative_children_width:
+            content_height = max(content_width, Fraction(content_container.width))
         if styles.scrollbar_gutter == "stable" and styles.overflow_x == "auto":
             content_width += styles.scrollbar_size_vertical
     else:
@@ -96,11 +102,14 @@ def get_box_model(
         content_height = Fraction(content_container.height - margin.height)
     elif is_auto_height:
         # Calculate dimensions based on content
+
         content_height = Fraction(
             get_content_height(content_container, viewport, int(content_width))
         )
         if styles.scrollbar_gutter == "stable" and styles.overflow_y == "auto":
             content_height += styles.scrollbar_size_horizontal
+        if widget._has_relative_children_height:
+            content_height = max(content_height, Fraction(content_container.height))
     else:
         styles_height = styles.height
         # Explicit height set

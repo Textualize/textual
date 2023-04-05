@@ -384,6 +384,18 @@ class StylesBase(ABC):
             has_rule("height") and self.height.is_auto  # type: ignore
         )
 
+    @property
+    def is_relative_width(self) -> bool:
+        """Does the node have a relative width?"""
+        width = self.width
+        return width is not None and width.unit in (Unit.FRACTION, Unit.PERCENT)
+
+    @property
+    def is_relative_height(self) -> bool:
+        """Does the node have a relative width?"""
+        height = self.height
+        return height is not None and height.unit in (Unit.FRACTION, Unit.PERCENT)
+
     @abstractmethod
     def has_rule(self, rule: str) -> bool:
         """Check if a rule is set on this Styles object.
