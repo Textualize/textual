@@ -283,7 +283,7 @@ def get_box(
 
 
 def render_border_label(
-    label: Text | None,
+    label: Text,
     is_title: bool,
     name: EdgeType,
     width: int,
@@ -323,12 +323,10 @@ def render_border_label(
     # How many cells do we need to reserve for surrounding blanks and corners?
     corners_needed = has_left_corner + has_right_corner
     cells_reserved = 2 * corners_needed
-    if not label or width <= cells_reserved:
+    if not label.cell_len or width <= cells_reserved:
         return
 
     text_label = label.copy()
-    if not text_label.cell_len:
-        return
     text_label.truncate(width - cells_reserved, overflow="ellipsis")
     segments = text_label.render(console)
 
