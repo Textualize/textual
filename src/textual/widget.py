@@ -205,6 +205,7 @@ class _BorderTitle:
             new_title.expand_tabs(4)
             new_title = new_title.split()[0]
             setattr(obj, self._internal_name, new_title)
+        obj.refresh()
 
     def __get__(self, obj: Widget, objtype: type[Widget] | None = None) -> str | None:
         """Getting a title will return None or a str as console markup."""
