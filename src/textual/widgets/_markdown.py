@@ -778,11 +778,11 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
         yield tree
 
     def watch_table_of_contents(self, table_of_contents: TableOfContentsType) -> None:
-        """Triggered when the TOC changes."""
+        """Triggered when the table of contents changes."""
         self.set_table_of_contents(table_of_contents)
 
     def set_table_of_contents(self, table_of_contents: TableOfContentsType) -> None:
-        """Set the Table of Contents.
+        """Set the table of contents.
 
         Args:
             table_of_contents: Table of contents.
@@ -851,7 +851,7 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
 
         Args:
             markdown: String containing Markdown, or None to leave blank. Defaults to None.
-            show_table_of_contents: Show a Table of COntents in a sidebar. Defaults to True.
+            show_table_of_contents: Show a table of contents in a sidebar. Defaults to True.
             name: The name of the widget.
             id: The ID of the widget in the DOM.
             classes: The CSS classes of the widget.
@@ -869,7 +869,7 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
 
     @property
     def table_of_contents(self) -> MarkdownTableOfContents:
-        """The Table of Contents widget"""
+        """The table of contents widget"""
         return self.query_one(MarkdownTableOfContents)
 
     async def on_mount(self) -> None:
