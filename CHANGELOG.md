@@ -14,8 +14,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed margin not being respected when width or height is "auto"
-- When a container is auto, relative dimensions in children stretch the container.
+- Fixed margin not being respected when width or height is "auto" https://github.com/Textualize/textual/issues/2220
+- When a container is auto, relative dimensions in children stretch the container. https://github.com/Textualize/textual/pull/2221
 
 ## [0.18.0] - 2023-04-04
 
