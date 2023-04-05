@@ -32,6 +32,6 @@ Some rules may clamp the values between `0%` and `100%`.
 # Integer followed by %
 widget.styles.color = "red 70%"
 
-# The number can be negative/decimal, althought that may not make sense
+# The number can be negative/decimal, although that may not make sense
 widget.styles.offset = ("-30%", "12.5%")
 ```

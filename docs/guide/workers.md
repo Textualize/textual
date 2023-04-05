@@ -116,7 +116,7 @@ The `state` attribute will contain one of the following values:
 | ERROR     | The worker raised an exception, and `worker.error` will contain the exception.      |
 | SUCCESS   | The worker completed successful, and `worker.result` will contain the return value. |
 
-Wokers start with a `PENDING` state, then go to `RUNNING`. From there, they will go to `CANCELLED`, `ERROR` or `SUCCESS`.
+Workers start with a `PENDING` state, then go to `RUNNING`. From there, they will go to `CANCELLED`, `ERROR` or `SUCCESS`.
 
 <div class="excalidraw">
 --8<-- "docs/images/workers/lifetime.excalidraw.svg"

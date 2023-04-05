@@ -1011,6 +1011,8 @@ class App(Generic[ReturnType], DOMNode):
                 )
 
         try:
+            app._loop = asyncio.get_running_loop()
+            app._thread_id = threading.get_ident()
             await app._process_messages(
                 ready_callback=None if auto_pilot is None else app_ready,
                 headless=headless,
