@@ -192,6 +192,7 @@ class _BorderTitle:
     """Descriptor to set border titles."""
 
     def __set_name__(self, owner: Widget, name: str) -> None:
+        # The private name where we store the real data.
         self._internal_name = f"_{name}"
 
     def __set__(self, obj: Widget, title: str | Text | None) -> None:
