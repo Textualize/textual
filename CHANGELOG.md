@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+- Added support for filtering a `DirectoryTree` https://github.com/Textualize/textual/pull/2215
+
 ### Changed
 
 - Allowed border_title and border_subtitle to accept Text objects
