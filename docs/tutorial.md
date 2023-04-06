@@ -174,7 +174,7 @@ The Button constructor takes a label to be displayed in the button (`"Start"`, `
 
 To add widgets to our application we first need to yield them from the app's `compose()` method:
 
-The new line in `Stopwatch.compose()` yields a single `Container` object which will create a scrolling list of stopwatches. When classes contain other widgets (like `Container`) they will typically accept their child widgets as positional arguments. We want to start the app with three stopwatches, so we construct three `Stopwatch` instances and pass them to the container's constructor.
+The new line in `StopwatchApp.compose()` yields a single `Container` object which will create a scrolling list of stopwatches. When classes contain other widgets (like `Container`) they will typically accept their child widgets as positional arguments. We want to start the app with three stopwatches, so we construct three `Stopwatch` instances and pass them to the container's constructor.
 
 
 ### The unstyled app
