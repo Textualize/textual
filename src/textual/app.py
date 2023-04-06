@@ -211,12 +211,12 @@ class _WriterThread(threading.Thread):
         # Flush when there is a break.
         while True:
             text: str | None = get()
-            empty = qsize() == 0
             if text is None:
                 break
             write(text)
-            if empty:
+            if qsize() == 0:
                 flush()
+        flush()
 
     def stop(self) -> None:
         """Stop the thread, and block until it finished."""
@@ -1539,6 +1539,7 @@ class App(Generic[ReturnType], DOMNode):
         self._close_messages_no_wait()
 
     def _print_error_renderables(self) -> None:
+        """Print and clear exit renderables."""
         for renderable in self._exit_renderables:
             self.error_console.print(renderable)
         self._exit_renderables.clear()
