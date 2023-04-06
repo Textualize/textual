@@ -180,7 +180,7 @@ async def test_cursor_movement_with_home_pagedown_etc():
         table = app.query_one(DataTable)
         table.add_columns("A", "B")
         table.add_rows(ROWS)
-        await pilot.press("right,pagedown")
+        await pilot.press("right", "pagedown")
         await pilot.pause()
         assert table.cursor_coordinate == Coordinate(2, 1)
 
