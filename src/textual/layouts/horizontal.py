@@ -23,11 +23,28 @@ class HorizontalLayout(Layout):
         x = max_height = Fraction(0)
         parent_size = parent.outer_size
 
+        child_styles = [child.styles for child in children]
+        box_margins = [styles.margin for styles in child_styles]
+        if box_margins:
+            resolve_margin = Size(
+                (
+                    sum(
+                        max(margin1.right, margin2.left)
+                        for margin1, margin2 in zip(box_margins, box_margins[1:])
+                    )
+                    + (box_margins[0].left + box_margins[-1].right)
+                ),
+                max(margin.height for margin in box_margins),
+            )
+        else:
+            resolve_margin = Size(0, 0)
+
         box_models = resolve_box_models(
-            [child.styles.width for child in children],
+            [styles.width for styles in child_styles],
             children,
             size,
             parent_size,
+            resolve_margin,
             dimension="width",
         )
 

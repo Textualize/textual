@@ -50,7 +50,7 @@ from ._styles_cache import StylesCache
 from .actions import SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding
-from .box_model import BoxModel, get_box_model
+from .box_model import BoxModel
 from .css.query import NoMatches, WrongType
 from .css.scalar import ScalarOffset
 from .dom import DOMNode, NoScreen
@@ -316,6 +316,7 @@ class Widget(DOMNode):
         self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
         self._stabilize_scrollbar: tuple[Size, str, str] | None = None
         """Used to prevent scrollbar logic getting stuck in an infinite loop."""
+
         self._lock = Lock()
 
         super().__init__(
@@ -889,16 +890,110 @@ class Widget(DOMNode):
         Returns:
             The size and margin for this widget.
         """
-        box_model = get_box_model(
-            self.styles,
-            container,
-            viewport,
-            width_fraction,
-            height_fraction,
-            self.get_content_width,
-            self.get_content_height,
+        styles = self.styles
+        _content_width, _content_height = container
+        content_width = Fraction(_content_width)
+        content_height = Fraction(_content_height)
+        is_border_box = styles.box_sizing == "border-box"
+        gutter = styles.gutter
+        margin = styles.margin
+
+        is_auto_width = styles.width and styles.width.is_auto
+        is_auto_height = styles.height and styles.height.is_auto
+
+        # Container minus padding and border
+        content_container = container - gutter.totals
+        # The container including the content
+        sizing_container = content_container if is_border_box else container
+
+        if styles.width is None:
+            # No width specified, fill available space
+            content_width = Fraction(content_container.width - margin.width)
+        elif is_auto_width:
+            # When width is auto, we want enough space to always fit the content
+            content_width = Fraction(
+                self.get_content_width(
+                    content_container - styles.margin.totals, viewport
+                )
+            )
+            if styles.scrollbar_gutter == "stable" and styles.overflow_x == "auto":
+                content_width += styles.scrollbar_size_vertical
+            if (
+                content_width < content_container.width
+                and self._has_relative_children_width
+            ):
+                content_width = Fraction(content_container.width)
+        else:
+            # An explicit width
+            styles_width = styles.width
+            content_width = styles_width.resolve(
+                sizing_container - styles.margin.totals, viewport, width_fraction
+            )
+            if is_border_box and styles_width.excludes_border:
+                content_width -= gutter.width
+
+        if styles.min_width is not None:
+            # Restrict to minimum width, if set
+            min_width = styles.min_width.resolve(
+                content_container, viewport, width_fraction
+            )
+            content_width = max(content_width, min_width)
+
+        if styles.max_width is not None:
+            # Restrict to maximum width, if set
+            max_width = styles.max_width.resolve(
+                content_container, viewport, width_fraction
+            )
+            if is_border_box:
+                max_width -= gutter.width
+            content_width = min(content_width, max_width)
+
+        content_width = max(Fraction(0), content_width)
+
+        if styles.height is None:
+            # No height specified, fill the available space
+            content_height = Fraction(content_container.height - margin.height)
+        elif is_auto_height:
+            # Calculate dimensions based on content
+            content_height = Fraction(
+                self.get_content_height(content_container, viewport, int(content_width))
+            )
+            if styles.scrollbar_gutter == "stable" and styles.overflow_y == "auto":
+                content_height += styles.scrollbar_size_horizontal
+            if (
+                content_height < content_container.height
+                and self._has_relative_children_height
+            ):
+                content_height = Fraction(content_container.height)
+        else:
+            styles_height = styles.height
+            # Explicit height set
+            content_height = styles_height.resolve(
+                sizing_container - styles.margin.totals, viewport, height_fraction
+            )
+            if is_border_box and styles_height.excludes_border:
+                content_height -= gutter.height
+
+        if styles.min_height is not None:
+            # Restrict to minimum height, if set
+            min_height = styles.min_height.resolve(
+                content_container, viewport, height_fraction
+            )
+            content_height = max(content_height, min_height)
+
+        if styles.max_height is not None:
+            # Restrict maximum height, if set
+            max_height = styles.max_height.resolve(
+                content_container, viewport, height_fraction
+            )
+            content_height = min(content_height, max_height)
+
+        content_height = max(Fraction(0), content_height)
+
+        model = BoxModel(
+            content_width + gutter.width, content_height + gutter.height, margin
         )
-        return box_model
+        return model
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
         """Called by textual to get the width of the content area. May be overridden in a subclass.
@@ -1365,6 +1460,20 @@ class Widget(DOMNode):
 
         """
         return active_app.get().console
+
+    @property
+    def _has_relative_children_width(self) -> bool:
+        """Do any children have a relative width?"""
+        if not self.is_container:
+            return False
+        return any(widget.styles.is_relative_width for widget in self.children)
+
+    @property
+    def _has_relative_children_height(self) -> bool:
+        """Do any children have a relative height?"""
+        if not self.is_container:
+            return False
+        return any(widget.styles.is_relative_height for widget in self.children)
 
     def animate(
         self,

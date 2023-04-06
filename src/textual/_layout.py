@@ -136,4 +136,5 @@ class Layout(ABC):
             # Use a height of zero to ignore relative heights
             arrangement = widget._arrange(Size(width, 0))
             height = arrangement.total_region.bottom
+
         return height
