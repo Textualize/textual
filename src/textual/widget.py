@@ -2347,7 +2347,7 @@ class Widget(DOMNode):
         parent = self.parent
         if isinstance(parent, Widget):
             self.call_after_refresh(
-                parent.scroll_to_widget,
+                self.screen.scroll_to_widget,
                 self,
                 animate=animate,
                 speed=speed,

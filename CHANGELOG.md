@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+- Added support for filtering a `DirectoryTree` https://github.com/Textualize/textual/pull/2215
+
 ### Changed
 
 - Allowed border_title and border_subtitle to accept Text objects
@@ -16,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed margin not being respected when width or height is "auto" https://github.com/Textualize/textual/issues/2220
 - When a container is auto, relative dimensions in children stretch the container. https://github.com/Textualize/textual/pull/2221
+- Fixed issue which prevent scroll_visible from working https://github.com/Textualize/textual/issues/2181
 
 ## [0.18.0] - 2023-04-04
 
