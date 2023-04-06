@@ -91,7 +91,6 @@ def resolve_box_models(
     Args:
         dimensions: A list of Scalars or Nones for each dimension.
         widgets: Widgets in resolve.
-        margin_size: Size of container minus margins.
         size: Size of container.
         parent_size: Size of parent.
         margin: Total space occupied by margin
