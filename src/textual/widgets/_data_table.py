@@ -2025,12 +2025,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             super().action_page_up()
 
     def action_scroll_home(self) -> None:
-        # TODO
-        pass
+        """Scroll to the top of the data table."""
+        row_index, column_index = self.cursor_coordinate
+        self.cursor_coordinate = Coordinate(0, column_index)
 
     def action_scroll_end(self) -> None:
-        # TODO
-        pass
+        """Scroll to the bottom of the data table."""
+        row_index, column_index = self.cursor_coordinate
+        self.cursor_coordinate = Coordinate(self.row_count - 1, column_index)
 
     def action_cursor_up(self) -> None:
         self._set_hover_cursor(False)
