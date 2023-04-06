@@ -58,6 +58,7 @@ from ._context import active_app, active_message_pump
 from ._event_broker import NoHandler, extract_handler_actions
 from ._path import _make_path_object_relative
 from ._wait import wait_for_idle
+from ._worker_manager import WorkerManager
 from .actions import ActionParseResult, SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding, Bindings
@@ -93,7 +94,8 @@ PLATFORM = platform.system()
 WINDOWS = PLATFORM == "Windows"
 
 # asyncio will warn against resources not being cleared
-warnings.simplefilter("always", ResourceWarning)
+if constants.DEBUG:
+    warnings.simplefilter("always", ResourceWarning)
 
 # `asyncio.get_event_loop()` is deprecated since Python 3.10:
 _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED = sys.version_info >= (3, 10, 0)
@@ -279,11 +281,7 @@ class App(Generic[ReturnType], DOMNode):
     also the `sub_title` attribute.
     """
 
-    BINDINGS = [
-        Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
-        Binding("tab", "focus_next", "Focus Next", show=False),
-        Binding("shift+tab", "focus_previous", "Focus Previous", show=False),
-    ]
+    BINDINGS = [Binding("ctrl+c", "quit", "Quit", show=False, priority=True)]
 
     title: Reactive[str] = Reactive("", compute=False)
     sub_title: Reactive[str] = Reactive("", compute=False)
@@ -320,6 +318,7 @@ class App(Generic[ReturnType], DOMNode):
             legacy_windows=False,
             _environ=environ,
         )
+        self._workers = WorkerManager(self)
         self.error_console = Console(markup=False, stderr=True)
         self.driver_class = driver_class or self.get_driver_class()
         self._screen_stack: list[Screen] = []
@@ -415,7 +414,6 @@ class App(Generic[ReturnType], DOMNode):
                 self.devtools = DevtoolsClient()
 
         self._loop: asyncio.AbstractEventLoop | None = None
-        self._thread_id: int = 0
         self._return_value: ReturnType | None = None
         self._exit = False
 
@@ -432,8 +430,13 @@ class App(Generic[ReturnType], DOMNode):
         self.set_class(not self.dark, "-light-mode")
 
     @property
+    def workers(self) -> WorkerManager:
+        """A worker manager."""
+        return self._workers
+
+    @property
     def return_value(self) -> ReturnType | None:
-        """ReturnType | None: The return type of the app."""
+        """The return type of the app."""
         return self._return_value
 
     @property
@@ -512,7 +515,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def screen_stack(self) -> list[Screen]:
-        """list[Screen]: A *copy* of the screen stack."""
+        """A *copy* of the screen stack."""
         return self._screen_stack.copy()
 
     def exit(
@@ -532,7 +535,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def focused(self) -> Widget | None:
-        """Widget | None: the widget that is focused on the currently active screen."""
+        """The widget that is focused on the currently active screen."""
         return self.screen.focused
 
     @property
@@ -658,7 +661,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def size(self) -> Size:
-        """Size: The size of the terminal."""
+        """The size of the terminal."""
         if self._driver is not None and self._driver._size is not None:
             width, height = self._driver._size
         else:
@@ -667,7 +670,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def log(self) -> Logger:
-        """Logger: The logger object."""
+        """The logger object."""
         return self._logger
 
     def _log(
@@ -937,6 +940,8 @@ class App(Generic[ReturnType], DOMNode):
             app_ready_event.set()
 
         async def run_app(app) -> None:
+            app._loop = asyncio.get_running_loop()
+            app._thread_id = threading.get_ident()
             await app._process_messages(
                 ready_callback=on_app_ready,
                 headless=headless,
@@ -1006,6 +1011,8 @@ class App(Generic[ReturnType], DOMNode):
                 )
 
         try:
+            app._loop = asyncio.get_running_loop()
+            app._thread_id = threading.get_ident()
             await app._process_messages(
                 ready_callback=None if auto_pilot is None else app_ready,
                 headless=headless,
@@ -1624,6 +1631,7 @@ class App(Generic[ReturnType], DOMNode):
             except asyncio.CancelledError:
                 pass
             finally:
+                self.workers.cancel_all()
                 self._running = False
                 try:
                     await self.animator.stop()
@@ -1961,37 +1969,33 @@ class App(Generic[ReturnType], DOMNode):
     @property
     def _binding_chain(self) -> list[tuple[DOMNode, Bindings]]:
         """Get a chain of nodes and bindings to consider.
+
         If no widget is focused, returns the bindings from both the screen and the app level bindings.
         Otherwise, combines all the bindings from the currently focused node up the DOM to the root App.
-
-        Returns:
-            List of DOM nodes and their bindings.
         """
         focused = self.focused
         namespace_bindings: list[tuple[DOMNode, Bindings]]
-        screen = self.screen
 
         if focused is None:
-            if screen.is_modal:
-                namespace_bindings = [
-                    (self.screen, self.screen._bindings),
-                ]
-            else:
-                namespace_bindings = [
-                    (self.screen, self.screen._bindings),
-                    (self, self._bindings),
-                ]
+            namespace_bindings = [
+                (self.screen, self.screen._bindings),
+                (self, self._bindings),
+            ]
         else:
-            if screen.is_modal:
-                namespace_bindings = [
-                    (node, node._bindings) for node in focused.ancestors
-                ]
-            else:
-                namespace_bindings = [
-                    (node, node._bindings) for node in focused.ancestors_with_self
-                ]
+            namespace_bindings = [
+                (node, node._bindings) for node in focused.ancestors_with_self
+            ]
 
         return namespace_bindings
+
+    @property
+    def _modal_binding_chain(self) -> list[tuple[DOMNode, Bindings]]:
+        """The binding chain, ignoring everything before the last modal."""
+        binding_chain = self._binding_chain
+        for index, (node, _bindings) in enumerate(binding_chain, 1):
+            if node.is_modal:
+                return binding_chain[:index]
+        return binding_chain
 
     async def check_bindings(self, key: str, priority: bool = False) -> bool:
         """Handle a key press.
@@ -2004,7 +2008,7 @@ class App(Generic[ReturnType], DOMNode):
             True if the key was handled by a binding, otherwise False
         """
         for namespace, bindings in (
-            reversed(self._binding_chain) if priority else self._binding_chain
+            reversed(self._binding_chain) if priority else self._modal_binding_chain
         ):
             binding = bindings.keys.get(key)
             if binding is not None and binding.priority == priority:
@@ -2375,18 +2379,36 @@ class App(Generic[ReturnType], DOMNode):
         self.pop_screen()
 
     async def action_back(self) -> None:
+        """Go back to the previous screen (pop the current screen)."""
         try:
             self.pop_screen()
         except ScreenStackError:
             pass
 
     async def action_add_class_(self, selector: str, class_name: str) -> None:
+        """Add a CSS class on the selected widget.
+
+        Args:
+            selector: Selects the widget to add the class to.
+            class_name: The class to add to the selected widget.
+        """
         self.screen.query(selector).add_class(class_name)
 
     async def action_remove_class_(self, selector: str, class_name: str) -> None:
+        """Remove a CSS class on the selected widget.
+
+        Args:
+            selector: Selects the widget to remove the class from.
+            class_name: The class to remove from  the selected widget."""
         self.screen.query(selector).remove_class(class_name)
 
     async def action_toggle_class(self, selector: str, class_name: str) -> None:
+        """Toggle a CSS class on the selected widget.
+
+        Args:
+            selector: Selects the widget to toggle the class on.
+            class_name: The class to toggle on the selected widget.
+        """
         self.screen.query(selector).toggle_class(class_name)
 
     def action_focus_next(self) -> None:

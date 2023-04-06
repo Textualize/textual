@@ -5,6 +5,61 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Added
+
+- Added support for filtering a `DirectoryTree` https://github.com/Textualize/textual/pull/2215
+
+### Changed
+
+- Allowed border_title and border_subtitle to accept Text objects
+- Added additional line around titles
+
+### Fixed
+
+- Fixed issue which prevent scroll_visible from working https://github.com/Textualize/textual/issues/2181
+
+## [0.18.0] - 2023-04-04
+
+### Added
+
+- Added Worker API https://github.com/Textualize/textual/pull/2182
+
+### Changed
+
+- Breaking change: Markdown.update is no longer a coroutine https://github.com/Textualize/textual/pull/2182
+
+### Fixed
+
+- `RadioSet` is now far less likely to report `pressed_button` as `None` https://github.com/Textualize/textual/issues/2203
+
+## [0.17.3] - 2023-04-02
+
+### [Fixed]
+
+- Fixed scrollable area not taking in to account dock https://github.com/Textualize/textual/issues/2188
+
+## [0.17.2] - 2023-04-02
+
+### [Fixed]
+
+- Fixed bindings persistance https://github.com/Textualize/textual/issues/1613
+- The `Markdown` widget now auto-increments ordered lists https://github.com/Textualize/textual/issues/2002
+- Fixed modal bindings https://github.com/Textualize/textual/issues/2194
+- Fix binding enter to active button https://github.com/Textualize/textual/issues/2194
+
+### [Changed]
+
+- tab and shift+tab are now defined on Screen.
+
+## [0.17.1] - 2023-03-30
+
+### Fixed
+
+- Fix cursor not hiding on Windows https://github.com/Textualize/textual/issues/2170
+- Fixed freeze when ctrl-clicking links https://github.com/Textualize/textual/issues/2167 https://github.com/Textualize/textual/issues/2073
+
 ## [0.17.0] - 2023-03-29
 
 ### Fixed
@@ -673,6 +728,11 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.18.0]: https://github.com/Textualize/textual/compare/v0.17.4...v0.18.0
+[0.17.3]: https://github.com/Textualize/textual/compare/v0.17.2...v0.17.3
+[0.17.2]: https://github.com/Textualize/textual/compare/v0.17.1...v0.17.2
+[0.17.1]: https://github.com/Textualize/textual/compare/v0.17.0...v0.17.1
+[0.17.0]: https://github.com/Textualize/textual/compare/v0.16.0...v0.17.0
 [0.16.0]: https://github.com/Textualize/textual/compare/v0.15.1...v0.16.0
 [0.15.1]: https://github.com/Textualize/textual/compare/v0.15.0...v0.15.1
 [0.15.0]: https://github.com/Textualize/textual/compare/v0.14.0...v0.15.0

@@ -20,6 +20,7 @@ nav:
     - "guide/widgets.md"
     - "guide/animation.md"
     - "guide/screens.md"
+    - "guide/workers.md"
   - "widget_gallery.md"
   - Reference:
     - "reference/index.md"
@@ -196,6 +197,9 @@ nav:
     - "api/walk.md"
     - "api/welcome.md"
     - "api/widget.md"
+    - "api/work.md"
+    - "api/worker.md"
+    - "api/worker_manager.md"
   - "roadmap.md"
   - "Blog":
     - blog/index.md

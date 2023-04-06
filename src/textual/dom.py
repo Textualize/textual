@@ -24,6 +24,7 @@ from rich.tree import Tree
 from ._context import NoActiveAppError
 from ._node_list import NodeList
 from ._types import WatchCallbackType
+from ._worker_manager import WorkerManager
 from .binding import Binding, Bindings, BindingType
 from .color import BLACK, WHITE, Color
 from .css._error_tools import friendly_list
@@ -42,6 +43,7 @@ if TYPE_CHECKING:
     from .css.query import DOMQuery, QueryType
     from .screen import Screen
     from .widget import Widget
+    from .worker import Worker, WorkType, ResultType
     from typing_extensions import Self, TypeAlias
 
 from typing_extensions import Literal
@@ -165,7 +167,11 @@ class DOMNode(MessagePump):
         self._auto_refresh: float | None = None
         self._auto_refresh_timer: Timer | None = None
         self._css_types = {cls.__name__ for cls in self._css_bases(self.__class__)}
-        self._bindings = self._merged_bindings or Bindings()
+        self._bindings = (
+            Bindings()
+            if self._merged_bindings is None
+            else self._merged_bindings.copy()
+        )
         self._has_hover_style: bool = False
         self._has_focus_within: bool = False
 
@@ -203,6 +209,54 @@ class DOMNode(MessagePump):
                 interval, self._automatic_refresh, name=f"auto refresh {self!r}"
             )
         self._auto_refresh = interval
+
+    @property
+    def workers(self) -> WorkerManager:
+        """A worker manager."""
+        return self.app.workers
+
+    def run_worker(
+        self,
+        work: WorkType[ResultType],
+        name: str | None = "",
+        group: str = "default",
+        description: str = "",
+        exit_on_error: bool = True,
+        start: bool = True,
+        exclusive: bool = True,
+    ) -> Worker[ResultType]:
+        """Run work in a worker.
+
+        A worker runs a function, coroutine, or awaitable, in the *background* as an async task or as a thread.
+
+        Args:
+            work: A function, async function, or an awaitable object to run in a worker.
+            name: A short string to identify the worker (in logs and debugging).
+            group: A short string to identify a group of workers.
+            description: A longer string to store longer information on the worker.
+            exit_on_error: Exit the app if the worker raises an error. Set to `False` to suppress exceptions.
+            start: Start the worker immediately.
+            exclusive: Cancel all workers in the same group.
+
+        Returns:
+            New Worker instance.
+        """
+        worker: Worker[ResultType] = self.workers._new_worker(
+            work,
+            self,
+            name=name,
+            group=group,
+            description=description,
+            exit_on_error=exit_on_error,
+            start=start,
+            exclusive=exclusive,
+        )
+        return worker
+
+    @property
+    def is_modal(self) -> bool:
+        """Is the node a modal?"""
+        return False
 
     def _automatic_refresh(self) -> None:
         """Perform an automatic refresh (set with auto_refresh property)."""
@@ -513,7 +567,7 @@ class DOMNode(MessagePump):
 
     @property
     def visible(self) -> bool:
-        """Is the DOM node visible?"""
+        """Is the visibility style set to a visible state?"""
         return self.styles.visibility != "hidden"
 
     @visible.setter
@@ -890,6 +944,7 @@ class DOMNode(MessagePump):
         styles = self.styles
         for key, value in update_styles.items():
             setattr(styles, key, value)
+        return self
 
     def has_class(self, *class_names: str) -> bool:
         """Check if the Node has all the given class names.

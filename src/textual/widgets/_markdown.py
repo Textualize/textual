@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path, PurePath
-from typing import Iterable, Callable
+from typing import Callable, Iterable
 
 from markdown_it import MarkdownIt
 from rich import box
@@ -304,15 +304,22 @@ class MarkdownOrderedList(MarkdownList):
     """
 
     def compose(self) -> ComposeResult:
+        suffix = ". "
+        start = 1
+        if self._blocks and isinstance(self._blocks[0], MarkdownOrderedListItem):
+            try:
+                start = int(self._blocks[0].bullet)
+            except ValueError:
+                pass
         symbol_size = max(
-            len(block.bullet)
-            for block in self._blocks
+            len(f"{number}{suffix}")
+            for number, block in enumerate(self._blocks, start)
             if isinstance(block, MarkdownListItem)
         )
-        for block in self._blocks:
+        for number, block in enumerate(self._blocks, start):
             if isinstance(block, MarkdownListItem):
                 bullet = MarkdownBullet()
-                bullet.symbol = block.bullet.rjust(symbol_size + 1)
+                bullet.symbol = f"{number}{suffix}".rjust(symbol_size + 1)
                 yield Horizontal(bullet, VerticalScroll(*block._blocks))
 
         self._blocks.clear()
@@ -580,9 +587,9 @@ class Markdown(Widget):
             self.href: str = href
             """The link that was selected."""
 
-    async def on_mount(self) -> None:
+    def on_mount(self) -> None:
         if self._markdown is not None:
-            await self.update(self._markdown)
+            self.update(self._markdown)
 
     async def load(self, path: Path) -> bool:
         """Load a new Markdown document.
@@ -598,10 +605,10 @@ class Markdown(Widget):
         except Exception:
             return False
 
-        await self.update(markdown)
+        self.update(markdown)
         return True
 
-    async def update(self, markdown: str) -> None:
+    def update(self, markdown: str) -> None:
         """Update the document with new Markdown.
 
         Args:
@@ -636,7 +643,7 @@ class Markdown(Widget):
                 stack.append(MarkdownOrderedList())
             elif token.type == "list_item_open":
                 if token.info:
-                    stack.append(MarkdownOrderedListItem(f"{token.info}. "))
+                    stack.append(MarkdownOrderedListItem(token.info))
                 else:
                     item_count = sum(
                         1
@@ -743,8 +750,8 @@ class Markdown(Widget):
 
         self.post_message(Markdown.TableOfContentsUpdated(table_of_contents))
         with self.app.batch_update():
-            await self.query("MarkdownBlock").remove()
-            await self.mount_all(output)
+            self.query("MarkdownBlock").remove()
+            self.mount_all(output)
 
 
 class MarkdownTableOfContents(Widget, can_focus_children=True):
@@ -771,11 +778,11 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
         yield tree
 
     def watch_table_of_contents(self, table_of_contents: TableOfContentsType) -> None:
-        """Triggered when the TOC changes."""
+        """Triggered when the table of contents changes."""
         self.set_table_of_contents(table_of_contents)
 
     def set_table_of_contents(self, table_of_contents: TableOfContentsType) -> None:
-        """Set the Table of Contents.
+        """Set the table of contents.
 
         Args:
             table_of_contents: Table of contents.
@@ -844,7 +851,7 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
 
         Args:
             markdown: String containing Markdown, or None to leave blank. Defaults to None.
-            show_table_of_contents: Show a Table of COntents in a sidebar. Defaults to True.
+            show_table_of_contents: Show a table of contents in a sidebar. Defaults to True.
             name: The name of the widget.
             id: The ID of the widget in the DOM.
             classes: The CSS classes of the widget.
@@ -862,12 +869,12 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
 
     @property
     def table_of_contents(self) -> MarkdownTableOfContents:
-        """The Table of Contents widget"""
+        """The table of contents widget"""
         return self.query_one(MarkdownTableOfContents)
 
     async def on_mount(self) -> None:
         if self._markdown is not None:
-            await self.document.update(self._markdown)
+            self.document.update(self._markdown)
 
     async def go(self, location: str | PurePath) -> bool:
         """Navigate to a new document path."""

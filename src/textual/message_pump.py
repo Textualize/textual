@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import asyncio
 import inspect
+import threading
 from asyncio import CancelledError, Queue, QueueEmpty, Task
 from contextlib import contextmanager
 from functools import partial
@@ -69,9 +70,10 @@ class MessagePumpMeta(type):
 
 
 class MessagePump(metaclass=MessagePumpMeta):
+    """Base class which supplies a message pump."""
+
     def __init__(self, parent: MessagePump | None = None) -> None:
         self._message_queue: Queue[Message | None] = Queue()
-        self._active_message: Message | None = None
         self._parent = parent
         self._running: bool = False
         self._closing: bool = False
@@ -84,6 +86,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         self._max_idle: float | None = None
         self._mounted_event = asyncio.Event()
         self._next_callbacks: list[CallbackType] = []
+        self._thread_id: int = threading.get_ident()
 
     @property
     def _prevent_message_types_stack(self) -> list[set[type[Message]]]:
@@ -451,6 +454,7 @@ class MessagePump(metaclass=MessagePumpMeta):
     async def _process_messages_loop(self) -> None:
         """Process messages until the queue is closed."""
         _rich_traceback_guard = True
+        self._thread_id = threading.get_ident()
         while not self._closed:
             try:
                 message = await self._get_message()
@@ -474,40 +478,35 @@ class MessagePump(metaclass=MessagePumpMeta):
                 except MessagePumpClosed:
                     break
 
-            self._active_message = message
-
             try:
-                try:
-                    await self._dispatch_message(message)
-                except CancelledError:
-                    raise
-                except Exception as error:
-                    self._mounted_event.set()
-                    self.app._handle_exception(error)
-                    break
-                finally:
-                    self._message_queue.task_done()
-
-                    current_time = time()
-
-                    # Insert idle events
-                    if self._message_queue.empty() or (
-                        self._max_idle is not None
-                        and current_time - self._last_idle > self._max_idle
-                    ):
-                        self._last_idle = current_time
-                        if not self._closed:
-                            event = events.Idle()
-                            for _cls, method in self._get_dispatch_methods(
-                                "on_idle", event
-                            ):
-                                try:
-                                    await invoke(method, event)
-                                except Exception as error:
-                                    self.app._handle_exception(error)
-                                    break
+                await self._dispatch_message(message)
+            except CancelledError:
+                raise
+            except Exception as error:
+                self._mounted_event.set()
+                self.app._handle_exception(error)
+                break
             finally:
-                self._active_message = None
+                self._message_queue.task_done()
+
+                current_time = time()
+
+                # Insert idle events
+                if self._message_queue.empty() or (
+                    self._max_idle is not None
+                    and current_time - self._last_idle > self._max_idle
+                ):
+                    self._last_idle = current_time
+                    if not self._closed:
+                        event = events.Idle()
+                        for _cls, method in self._get_dispatch_methods(
+                            "on_idle", event
+                        ):
+                            try:
+                                await invoke(method, event)
+                            except Exception as error:
+                                self.app._handle_exception(error)
+                                break
 
     async def _flush_next_callbacks(self) -> None:
         """Invoke pending callbacks in next callbacks queue."""
@@ -631,7 +630,12 @@ class MessagePump(metaclass=MessagePumpMeta):
         # Add a copy of the prevented message types to the message
         # This is so that prevented messages are honoured by the event's handler
         message._prevent.update(self._get_prevented_messages())
-        self._message_queue.put_nowait(message)
+        if self._thread_id != threading.get_ident() and self.app._loop is not None:
+            # If we're not calling from the same thread, make it threadsafe
+            loop = self.app._loop
+            loop.call_soon_threadsafe(self._message_queue.put_nowait, message)
+        else:
+            self._message_queue.put_nowait(message)
         return True
 
     async def on_callback(self, event: events.Callback) -> None:

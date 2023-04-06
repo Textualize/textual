@@ -112,10 +112,11 @@ def import_app(import_name: str) -> App:
         except ImportError as error:
             raise AppFail(str(error))
 
+        find_app = name or "app"
         try:
-            app = getattr(module, name or "app")
+            app = getattr(module, find_app or "app")
         except AttributeError:
-            raise AppFail(f"Unable to find {name!r} in {module!r}")
+            raise AppFail(f"Unable to find {find_app!r} in {module!r}")
 
         sys.argv[:] = [import_name, *argv]
 

@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Callable, Iterable
 from rich.console import Console
 from rich.segment import Segment
 from rich.style import Style
+from rich.text import Text
 
 from ._border import get_box, render_border_label, render_row
 from ._opacity import _apply_opacity
@@ -115,8 +116,8 @@ class StylesCache:
             background,
             widget.render_line,
             widget.app.console,
-            widget.border_title,
-            widget.border_subtitle,
+            widget._border_title,
+            widget._border_subtitle,
             content_size=widget.content_region.size,
             padding=styles.padding,
             crop=crop,
@@ -146,8 +147,8 @@ class StylesCache:
         background: Color,
         render_content_line: RenderLineCallback,
         console: Console,
-        border_title: str,
-        border_subtitle: str,
+        border_title: Text | None,
+        border_subtitle: Text | None,
         content_size: Size | None = None,
         padding: Spacing | None = None,
         crop: Region | None = None,
@@ -228,8 +229,8 @@ class StylesCache:
         background: Color,
         render_content_line: Callable[[int], Strip],
         console: Console,
-        border_title: str,
-        border_subtitle: str,
+        border_title: Text | None,
+        border_subtitle: Text | None,
     ) -> Strip:
         """Render a styled line.
 
@@ -310,7 +311,7 @@ class StylesCache:
                     border_label,
                     is_top,
                     border_edge_type,
-                    width,
+                    width - 2,
                     inner,
                     outer,
                     border_color_as_style,

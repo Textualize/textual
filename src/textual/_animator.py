@@ -27,12 +27,14 @@ class AnimationError(Exception):
     """An issue prevented animation from starting."""
 
 
-T = TypeVar("T")
+ReturnType = TypeVar("ReturnType")
 
 
 @runtime_checkable
 class Animatable(Protocol):
-    def blend(self: T, destination: T, factor: float) -> T:  # pragma: no cover
+    def blend(
+        self: ReturnType, destination: ReturnType, factor: float
+    ) -> ReturnType:  # pragma: no cover
         ...
 
 
