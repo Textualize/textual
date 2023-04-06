@@ -106,6 +106,10 @@ Notice the `on_button_pressed` method which handles the [Button.Pressed][textual
 
 While composing is the preferred way of adding widgets when your app starts it is sometimes necessary to add new widget(s) in response to events. You can do this by calling [mount()][textual.widget.Widget.mount] which will add a new widget to the UI.
 
+!!! tip Optionally awaitable
+    `mount()` is a special, [optionally awaitable](blog/posts/await_me_maybe.md) method. Calling `mount()` adds new widgets, but does not block until the widgets finish mounting, which is sometimes necessary. For example, scrolling to the end of a `VerticalScroll` requires knowing the heights of all the widgets it contains. Therefore, you don't want to call `scroll_end()` until they have all been fully mounted. In that case, you can `await mount()` from an async coroutine to wait for each mounting operation to complete. 
+
+
 Here's an app which adds a welcome widget in response to any key press:
 
 ```python title="widgets02.py"
