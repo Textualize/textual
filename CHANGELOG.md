@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Allowed border_title and border_subtitle to accept Text objects
 - Added additional line around titles
 
+### Fixed
+
+- Fixed issue which prevent scroll_visible from working https://github.com/Textualize/textual/issues/2181
+
 ## [0.18.0] - 2023-04-04
 
 ### Added
