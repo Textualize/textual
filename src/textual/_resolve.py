@@ -44,12 +44,12 @@ def resolve(
 
     from_float = Fraction.from_float
     total_fraction = from_float(
-        sum(scalar.value for scalar, fraction in resolved if fraction is None)
+        sum([scalar.value for scalar, fraction in resolved if fraction is None])
     )
 
     if total_fraction:
         total_gutter = gutter * (len(dimensions) - 1)
-        consumed = sum(fraction for _, fraction in resolved if fraction is not None)
+        consumed = sum([fraction for _, fraction in resolved if fraction is not None])
         remaining = max(Fraction(0), Fraction(total - total_gutter) - consumed)
         fraction_unit = Fraction(remaining, total_fraction)
         resolved_fractions = [
@@ -118,23 +118,21 @@ def resolve_box_models(
     ]
 
     if dimension == "width":
-        total_remaining = sum(
-            box_model.width for box_model in box_models if box_model is not None
-        )
+        total_remaining = sum([width for width, _, _ in filter(None, box_models)])
         remaining_space = max(0, size.width - total_remaining - margin_width)
     else:
-        total_remaining = sum(
-            box_model.height for box_model in box_models if box_model is not None
-        )
+        total_remaining = sum([height for _, height, _ in filter(None, box_models)])
         remaining_space = max(0, size.height - total_remaining - margin_height)
 
     fraction_unit = Fraction(
         remaining_space,
         int(
             sum(
-                dimension.value
-                for dimension in dimensions
-                if dimension and dimension.is_fraction
+                [
+                    dimension.value
+                    for dimension in dimensions
+                    if dimension and dimension.is_fraction
+                ]
             )
         )
         or 1,

@@ -8,6 +8,7 @@ from .._resolve import resolve_box_models
 from ..geometry import Region, Size
 
 if TYPE_CHECKING:
+    from ..geometry import Spacing
     from ..widget import Widget
 
 
@@ -24,17 +25,22 @@ class VerticalLayout(Layout):
         parent_size = parent.outer_size
 
         child_styles = [child.styles for child in children]
-        box_margins = [styles.margin for styles in child_styles]
+        box_margins: list[Spacing] = [styles.margin for styles in child_styles]
         if box_margins:
             resolve_margin = Size(
-                max([margin.width for margin in box_margins]),
-                (
-                    sum(
-                        max(margin1.bottom, margin2.top)
-                        for margin1, margin2 in zip(box_margins, box_margins[1:])
-                    )
-                    + (box_margins[0].top + box_margins[-1].bottom)
+                max(
+                    [
+                        margin_right + margin_left
+                        for _, margin_right, _, margin_left in box_margins
+                    ]
                 ),
+                sum(
+                    [
+                        max(margin1[2], margin2[0])
+                        for margin1, margin2 in zip(box_margins, box_margins[1:])
+                    ]
+                )
+                + (box_margins[0].top + box_margins[-1].bottom),
             )
         else:
             resolve_margin = Size(0, 0)
