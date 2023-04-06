@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed margin not being respected when width or height is "auto" https://github.com/Textualize/textual/issues/2220
 - Fixed issue which prevent scroll_visible from working https://github.com/Textualize/textual/issues/2181
+- Fixed missing tracebacks on Windows https://github.com/Textualize/textual/issues/2027
 
 ## [0.18.0] - 2023-04-04
 
