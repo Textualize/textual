@@ -32,7 +32,7 @@ class FRApp(App):
         with Widget(id="container"):
             yield Label("Hello one line", id="top")
             yield Widget(id="child")
-            yield Label("Two\nLines with 2x2 margin", id="bottom")
+            yield Label("Two\nLines with 1x2 margin", id="bottom")
 
 
 if __name__ == "__main__":
