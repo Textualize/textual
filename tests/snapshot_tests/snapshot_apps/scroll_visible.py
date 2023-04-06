@@ -3,10 +3,11 @@ from textual.containers import VerticalScroll
 from textual.widgets import Label, Static
 
 
+# Checks  https://github.com/Textualize/textual/issues/2181
 class MyCustomWidget(Static):
     def compose(self) -> ComposeResult:
         yield Label(("|\n" * 100)[:-1])
-        yield Label("CAN'T GET HERE", id="target")
+        yield Label("SHOULD BE VISIBLE", id="target")
 
 
 class MyApp(App):
