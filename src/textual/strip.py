@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from itertools import chain
-from typing import Iterable, Iterator
+from typing import Iterable, Iterator, Sequence
 
 import rich.repr
 from rich.cells import cell_len, set_cell_size
@@ -348,7 +348,7 @@ class Strip:
         self._crop_cache[cache_key] = strip
         return strip
 
-    def divide(self, cuts: Iterable[int]) -> list[Strip]:
+    def divide(self, cuts: Iterable[int]) -> Sequence[Strip]:
         """Divide the strip in to multiple smaller strips by cutting at given (cell) indices.
 
         Args:
