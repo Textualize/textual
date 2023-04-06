@@ -118,14 +118,10 @@ def resolve_box_models(
     ]
 
     if dimension == "width":
-        total_remaining = sum(
-            [box_model.width for box_model in box_models if box_model is not None]
-        )
+        total_remaining = sum([width for width, _, _ in filter(None, box_models)])
         remaining_space = max(0, size.width - total_remaining - margin_width)
     else:
-        total_remaining = sum(
-            [box_model.height for box_model in box_models if box_model is not None]
-        )
+        total_remaining = sum([height for _, height, _ in filter(None, box_models)])
         remaining_space = max(0, size.height - total_remaining - margin_height)
 
     fraction_unit = Fraction(
