@@ -82,8 +82,8 @@ def resolve_box_models(
     dimensions: list[Scalar | None],
     widgets: list[Widget],
     size: Size,
-    margin_size: Size,
     parent_size: Size,
+    margin: Size,
     dimension: Literal["width", "height"] = "width",
 ) -> list[BoxModel]:
     """Resolve box models for a list of dimensions
@@ -94,13 +94,19 @@ def resolve_box_models(
         margin_size: Size of container minus margins.
         size: Size of container.
         parent_size: Size of parent.
+        margin: Total space occupied by margin
         dimensions: Which dimension to resolve.
 
     Returns:
         List of resolved box models.
     """
-    fraction_width = Fraction(margin_size.width)
-    fraction_height = Fraction(margin_size.height)
+    margin_width, margin_height = margin
+
+    fraction_width = Fraction(max(0, size.width - margin_width))
+    fraction_height = Fraction(max(0, size.height - margin_height))
+
+    margin_size = size - margin
+
     box_models: list[BoxModel | None] = [
         (
             None
@@ -116,12 +122,12 @@ def resolve_box_models(
         total_remaining = sum(
             box_model.width for box_model in box_models if box_model is not None
         )
-        remaining_space = max(0, margin_size.width - total_remaining)
+        remaining_space = max(0, size.width - total_remaining - margin_width)
     else:
         total_remaining = sum(
             box_model.height for box_model in box_models if box_model is not None
         )
-        remaining_space = max(0, margin_size.height - total_remaining)
+        remaining_space = max(0, size.height - total_remaining - margin_height)
 
     fraction_unit = Fraction(
         remaining_space,

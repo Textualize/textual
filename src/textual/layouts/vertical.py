@@ -26,22 +26,25 @@ class VerticalLayout(Layout):
         child_styles = [child.styles for child in children]
         box_margins = [styles.margin for styles in child_styles]
         if box_margins:
-            total_margin = sum(
-                max(margin1.bottom, margin2.top)
-                for margin1, margin2 in zip(box_margins, box_margins[1:])
+            resolve_margin = Size(
+                max([margin.width for margin in box_margins]),
+                (
+                    sum(
+                        max(margin1.bottom, margin2.top)
+                        for margin1, margin2 in zip(box_margins, box_margins[1:])
+                    )
+                    + (box_margins[0].top + box_margins[-1].bottom)
+                ),
             )
-            if len(box_margins) > 1:
-                total_margin += box_margins[0].top + box_margins[-1].bottom
-
         else:
-            total_margin = 0
+            resolve_margin = Size(0, 0)
 
         box_models = resolve_box_models(
             [styles.height for styles in child_styles],
             children,
             size,
-            size - Size(0, total_margin),
             parent_size,
+            resolve_margin,
             dimension="height",
         )
 

@@ -389,7 +389,13 @@ def test_dock_scroll(snap_compare):
 
 
 def test_auto_fr(snap_compare):
+    # https://github.com/Textualize/textual/issues/2220
     assert snap_compare(SNAPSHOT_APPS_DIR / "auto_fr.py", terminal_size=(80, 25))
+
+
+def test_fr_margins(snap_compare):
+    # https://github.com/Textualize/textual/issues/2220
+    assert snap_compare(SNAPSHOT_APPS_DIR / "fr_margins.py", terminal_size=(80, 25))
 
 
 def test_scroll_visible(snap_compare):
