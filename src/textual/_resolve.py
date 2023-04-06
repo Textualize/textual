@@ -119,12 +119,12 @@ def resolve_box_models(
 
     if dimension == "width":
         total_remaining = sum(
-            box_model.width for box_model in box_models if box_model is not None
+            [box_model.width for box_model in box_models if box_model is not None]
         )
         remaining_space = max(0, size.width - total_remaining - margin_width)
     else:
         total_remaining = sum(
-            box_model.height for box_model in box_models if box_model is not None
+            [box_model.height for box_model in box_models if box_model is not None]
         )
         remaining_space = max(0, size.height - total_remaining - margin_height)
 
@@ -132,9 +132,11 @@ def resolve_box_models(
         remaining_space,
         int(
             sum(
-                dimension.value
-                for dimension in dimensions
-                if dimension and dimension.is_fraction
+                [
+                    dimension.value
+                    for dimension in dimensions
+                    if dimension and dimension.is_fraction
+                ]
             )
         )
         or 1,

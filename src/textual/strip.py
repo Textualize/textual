@@ -25,7 +25,7 @@ def get_line_length(segments: Iterable[Segment]) -> int:
         Length of line in cells.
     """
     _cell_len = cell_len
-    return sum(_cell_len(text) for text, _, control in segments if not control)
+    return sum([_cell_len(text) for text, _, control in segments if not control])
 
 
 class StripRenderable:
