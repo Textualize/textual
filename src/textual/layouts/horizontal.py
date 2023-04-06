@@ -36,7 +36,7 @@ class HorizontalLayout(Layout):
             total_margin = 0
 
         box_models = resolve_box_models(
-            [child.styles.width for child in children],
+            [styles.width for styles in child_styles],
             children,
             size,
             size - Size(total_margin, 0),
