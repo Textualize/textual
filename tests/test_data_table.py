@@ -167,8 +167,34 @@ async def test_datatable_message_emission():
 async def test_empty_table_interactions():
     app = DataTableApp()
     async with app.run_test() as pilot:
-        await pilot.press("enter", "up", "down", "left", "right")
+        await pilot.press(
+            "enter", "up", "down", "left", "right", "home", "end", "pagedown", "pageup"
+        )
         assert app.message_names == []
+
+
+async def test_cursor_movement_with_home_pagedown_etc():
+    app = DataTableApp()
+
+    async with app.run_test() as pilot:
+        table = app.query_one(DataTable)
+        table.add_columns("A", "B")
+        table.add_rows(ROWS)
+        await pilot.press("right,pagedown")
+        await pilot.pause()
+        assert table.cursor_coordinate == Coordinate(2, 1)
+
+        await pilot.press("pageup")
+        await pilot.pause()
+        assert table.cursor_coordinate == Coordinate(0, 1)
+
+        await pilot.press("end")
+        await pilot.pause()
+        assert table.cursor_coordinate == Coordinate(2, 1)
+
+        await pilot.press("home")
+        await pilot.pause()
+        assert table.cursor_coordinate == Coordinate(0, 1)
 
 
 async def test_add_rows():
