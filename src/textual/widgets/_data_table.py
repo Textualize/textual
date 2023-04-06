@@ -1979,6 +1979,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             event.stop()
 
     def action_page_down(self) -> None:
+        """Move the cursor one page down."""
         self._set_hover_cursor(False)
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
@@ -2002,6 +2003,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             super().action_page_down()
 
     def action_page_up(self) -> None:
+        """Move the cursor one page up."""
         self._set_hover_cursor(False)
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
