@@ -44,12 +44,12 @@ def resolve(
 
     from_float = Fraction.from_float
     total_fraction = from_float(
-        sum(scalar.value for scalar, fraction in resolved if fraction is None)
+        sum([scalar.value for scalar, fraction in resolved if fraction is None])
     )
 
     if total_fraction:
         total_gutter = gutter * (len(dimensions) - 1)
-        consumed = sum(fraction for _, fraction in resolved if fraction is not None)
+        consumed = sum([fraction for _, fraction in resolved if fraction is not None])
         remaining = max(Fraction(0), Fraction(total - total_gutter) - consumed)
         fraction_unit = Fraction(remaining, total_fraction)
         resolved_fractions = [
