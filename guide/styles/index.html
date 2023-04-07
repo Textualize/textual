@@ -866,11 +866,28 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+        
           <li class="md-nav__item">
   <a href="#units" class="md-nav__link">
     <span class="md-ellipsis">
       
         Units
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Units">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fr-units" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FR units
       
     </span>
   </a>
@@ -6904,11 +6921,28 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+        
           <li class="md-nav__item">
   <a href="#units" class="md-nav__link">
     <span class="md-ellipsis">
       
         Units
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Units">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fr-units" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FR units
       
     </span>
   </a>
@@ -8180,7 +8214,7 @@
     </g>
 </svg>
 </p>
-<h4 id="units">Units<a class="headerlink" href="#units" title="Permanent link">&para;</a></h4>
+<h3 id="units">Units<a class="headerlink" href="#units" title="Permanent link">&para;</a></h3>
 <p>Textual offers a few different <em>units</em> which allow you to specify dimensions relative to the screen or container. Relative units can better make use of available space if the user resizes the terminal.</p>
 <ul>
 <li>Percentage units are given as a number followed by a percent (<code>%</code>) symbol and will set a dimension to a proportion of the widget's <em>parent</em> size. For instance, setting width to <code>"50%"</code> will cause a widget to be half the width of its parent.</li>
@@ -8756,6 +8790,7 @@
 </div>
 </div>
 </div>
+<h4 id="fr-units">FR units<a class="headerlink" href="#fr-units" title="Permanent link">&para;</a></h4>
 <p>Percentage units can be problematic for some relative values. For instance, if we want to divide the screen into thirds, we would have to set a dimension to <code>33.3333333333%</code> which is awkward. Textual supports <code>fr</code> units which are often better than percentage-based units for these situations.</p>
 <p>When specifying <code>fr</code> units for a given dimension, Textual will divide the available space by the sum of the <code>fr</code> units on that dimension. That space will then be divided amongst the widgets as a proportion of their individual <code>fr</code> values.</p>
 <p>Let's look at an example. We will create two widgets, one with a height of <code>"2fr"</code> and one with a height of <code>"1fr"</code>.</p>

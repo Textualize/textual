@@ -5,7 +5,7 @@ from textual.widgets import Button, Welcome
 class WelcomeApp(App):
     def on_key(self) -> None:
         self.mount(Welcome())
-        self.query_one(Button).label = "YES"
+        self.query_one(Button).label = "YES!"
 
 
 if __name__ == "__main__":
