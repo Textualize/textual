@@ -125,7 +125,7 @@ This may be a problem if you want to make any changes to the widget in the same 
 
 Let's first illustrate the problem with an example.
 The following code will mount the Welcome widget in response to a key press.
-It will also attempt to modify the Button in the Welcome widget by changing its label from "OK" to "YES".
+It will also attempt to modify the Button in the Welcome widget by changing its label from "OK" to "YES!".
 
 ```python hl_lines="2 8"
 from textual.app import App
@@ -172,7 +172,6 @@ Here's the output. Note the changed button text:
 
 ```{.textual path="docs/examples/app/widgets04.py" press=["a"]}
 ```
-
 
 ## Exiting
 
