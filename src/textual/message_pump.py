@@ -178,7 +178,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     @property
     def is_running(self) -> bool:
-        """Is the message pump running (potentially processing messages)."""
+        """Is the message pump running (potentially processing messages)?"""
         return self._running
 
     @property
@@ -192,7 +192,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     @property
     def is_attached(self) -> bool:
-        """Is the node is attached to the app via the DOM."""
+        """Is the node is attached to the app via the DOM?"""
         from .app import App
 
         node = self

@@ -436,7 +436,12 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def workers(self) -> WorkerManager:
-        """A worker manager."""
+        """A worker manager.
+
+        Returns:
+            An object to manage workers.
+
+        """
         return self._workers
 
     @property
@@ -446,7 +451,12 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def children(self) -> Sequence["Widget"]:
-        """A view on to the children which contains just the screen."""
+        """A view on to the App's children (just the screen).
+
+        Returns:
+            A sequence of widgets.
+
+        """
         try:
             return (self.screen,)
         except ScreenError:
@@ -520,7 +530,12 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def screen_stack(self) -> list[Screen]:
-        """A *copy* of the screen stack."""
+        """A *copy* of the screen stack.
+
+        Returns:
+            A snapshot of the current state of the screen stack.
+
+        """
         return self._screen_stack.copy()
 
     def exit(
@@ -540,7 +555,12 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def focused(self) -> Widget | None:
-        """The widget that is focused on the currently active screen."""
+        """The widget that is focused on the currently active screen.
+
+        Returns:
+            The currently focused widget, or `None` if nothing is focused.
+
+        """
         return self.screen.focused
 
     @property
@@ -666,7 +686,12 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def size(self) -> Size:
-        """The size of the terminal."""
+        """The size of the terminal.
+
+        Returns:
+            Size of the terminal.
+
+        """
         if self._driver is not None and self._driver._size is not None:
             width, height = self._driver._size
         else:
@@ -675,7 +700,12 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def log(self) -> Logger:
-        """The logger object."""
+        """Textual log interface.
+
+        Returns:
+            A Textual logger.
+
+        """
         return self._logger
 
     def _log(
