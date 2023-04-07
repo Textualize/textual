@@ -24,7 +24,7 @@
         <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../feed_rss_updated.xml">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.0+insiders-4.32.2">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.5+insiders-4.32.4">
     
     
       
@@ -32,7 +32,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.24f010b1.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.323870f8.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.6932e648.min.css">
@@ -247,6 +247,8 @@
       <a href="../../tutorial/" class="md-tabs__link">
         
   
+    
+  
   Tutorial
 
       </a>
@@ -281,6 +283,8 @@
     <li class="md-tabs__item">
       <a href="../../widget_gallery/" class="md-tabs__link">
         
+  
+    
   
   Widgets
 
@@ -321,6 +325,8 @@
         <a href="../app/" class="md-tabs__link md-tabs__link--active">
           
   
+    
+  
   API
 
         </a>
@@ -336,6 +342,8 @@
     <li class="md-tabs__item">
       <a href="../../roadmap/" class="md-tabs__link">
         
+  
+    
   
   Roadmap
 
@@ -5873,15 +5881,14 @@
   <a href="#textual.strip" class="md-nav__link">
     <span class="md-ellipsis">
       
-        strip
+        textual.strip
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="strip">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.strip.Strip" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6062,8 +6069,8 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#textual.strip.StripRenderable" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6073,8 +6080,8 @@
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#textual.strip.get_line_length" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6082,11 +6089,6 @@
       
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -6816,15 +6818,14 @@
   <a href="#textual.strip" class="md-nav__link">
     <span class="md-ellipsis">
       
-        strip
+        textual.strip
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="strip">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.strip.Strip" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7005,8 +7006,8 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#textual.strip.StripRenderable" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7016,8 +7017,8 @@
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#textual.strip.get_line_length" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7025,11 +7026,6 @@
       
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -7057,13 +7053,7 @@
 <div class="doc doc-object doc-module">
 
 
-
-<h2 id="textual.strip" class="doc doc-heading">
-          <code>strip</code>
-
-
-<a href="#textual.strip" class="headerlink" title="Permanent link">&para;</a></h2>
-
+<a id="textual.strip"></a>
   <div class="doc doc-contents first">
 
   
@@ -7081,12 +7071,16 @@
 
 
 
-<h3 id="textual.strip.Strip" class="doc doc-heading">
-        <code>Strip</code>
+<h2 id="textual.strip.Strip" class="doc doc-heading">
+        <span class="doc doc-object-name doc-class-name">Strip</span>
 
 
-<a href="#textual.strip.Strip" class="headerlink" title="Permanent link">&para;</a></h3>
-
+<a href="#textual.strip.Strip" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">Strip</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">segments</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Segment</span><span class="p">],</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">cell_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
 
   <div class="doc doc-contents ">
 
@@ -7094,7 +7088,7 @@
       <p>Represents a 'strip' (horizontal line) of a Textual Widget.</p>
 <p>A Strip is like an immutable list of Segments. The immutability allows for effective caching.</p>
 
-  <p><strong>Parameters:</strong></p>
+  <h5>Parameters</h5>
   <table>
     <thead>
       <tr>
@@ -7144,15 +7138,17 @@
 
 
 
-<h4 id="textual.strip.Strip.cell_length" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">cell_length</span><span class="p">:</span> <span class="nb">int</span></code>
+<h3 id="textual.strip.Strip.cell_length" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">cell_length</span>
+
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
-<a href="#textual.strip.Strip.cell_length" class="headerlink" title="Permanent link">&para;</a></h4>
-
+<a href="#textual.strip.Strip.cell_length" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">cell_length</span><span class="p">:</span> <span class="nb">int</span>
+</code></pre></div>
 
   <div class="doc doc-contents ">
   
@@ -7165,15 +7161,17 @@
 
 
 
-<h4 id="textual.strip.Strip.link_ids" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">link_ids</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></code>
+<h3 id="textual.strip.Strip.link_ids" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">link_ids</span>
+
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
-<a href="#textual.strip.Strip.link_ids" class="headerlink" title="Permanent link">&para;</a></h4>
-
+<a href="#textual.strip.Strip.link_ids" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">link_ids</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+</code></pre></div>
 
   <div class="doc doc-contents ">
   
@@ -7186,15 +7184,17 @@
 
 
 
-<h4 id="textual.strip.Strip.text" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">text</span><span class="p">:</span> <span class="nb">str</span></code>
+<h3 id="textual.strip.Strip.text" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">text</span>
+
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
-<a href="#textual.strip.Strip.text" class="headerlink" title="Permanent link">&para;</a></h4>
-
+<a href="#textual.strip.Strip.text" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">text</span><span class="p">:</span> <span class="nb">str</span>
+</code></pre></div>
 
   <div class="doc doc-contents ">
   
@@ -7209,17 +7209,21 @@
 
 
 
-<h4 id="textual.strip.Strip.adjust_cell_length" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">adjust_cell_length</span><span class="p">(</span><span class="n">cell_length</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<h3 id="textual.strip.Strip.adjust_cell_length" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">adjust_cell_length</span>
 
-<a href="#textual.strip.Strip.adjust_cell_length" class="headerlink" title="Permanent link">&para;</a></h4>
 
+<a href="#textual.strip.Strip.adjust_cell_length" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">adjust_cell_length</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">cell_length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">style</span><span class="p">:</span> <span class="n">Style</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Strip</span>
+</code></pre></div>
 
   <div class="doc doc-contents ">
   
       <p>Adjust the cell length, possibly truncating or extending.</p>
 
-  <p><strong>Parameters:</strong></p>
+  <h5>Parameters</h5>
   <table>
     <thead>
       <tr>
@@ -7253,7 +7257,7 @@
     </tbody>
   </table>
 
-  <p><strong>Returns:</strong></p>
+  <h5>Returns</h5>
   <table>
     <thead>
       <tr>
@@ -7279,17 +7283,19 @@
 
 
 
-<h4 id="textual.strip.Strip.apply_filter" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">apply_filter</span><span class="p">(</span><span class="nb">filter</span><span class="p">)</span></code>
+<h3 id="textual.strip.Strip.apply_filter" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">apply_filter</span>
 
-<a href="#textual.strip.Strip.apply_filter" class="headerlink" title="Permanent link">&para;</a></h4>
 
+<a href="#textual.strip.Strip.apply_filter" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">apply_filter</span><span class="p">(</span><span class="nb">filter</span><span class="p">:</span> <span class="n">LineFilter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Strip</span>
+</code></pre></div>
 
   <div class="doc doc-contents ">
   
       <p>Apply a filter to all segments in the strip.</p>
 
-  <p><strong>Parameters:</strong></p>
+  <h5>Parameters</h5>
   <table>
     <thead>
       <tr>
@@ -7313,7 +7319,7 @@
     </tbody>
   </table>
 
-  <p><strong>Returns:</strong></p>
+  <h5>Returns</h5>
   <table>
     <thead>
       <tr>
@@ -7339,17 +7345,19 @@
 
 
 
-<h4 id="textual.strip.Strip.apply_style" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">apply_style</span><span class="p">(</span><span class="n">style</span><span class="p">)</span></code>
+<h3 id="textual.strip.Strip.apply_style" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">apply_style</span>
 
-<a href="#textual.strip.Strip.apply_style" class="headerlink" title="Permanent link">&para;</a></h4>
 
+<a href="#textual.strip.Strip.apply_style" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">apply_style</span><span class="p">(</span><span class="n">style</span><span class="p">:</span> <span class="n">Style</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Strip</span>
+</code></pre></div>
 
   <div class="doc doc-contents ">
   
       <p>Apply a style to the Strip.</p>
 
-  <p><strong>Parameters:</strong></p>
+  <h5>Parameters</h5>
   <table>
     <thead>
       <tr>
@@ -7373,7 +7381,7 @@
     </tbody>
   </table>
 
-  <p><strong>Returns:</strong></p>
+  <h5>Returns</h5>
   <table>
     <thead>
       <tr>
@@ -7399,21 +7407,25 @@
 
 
 
-<h4 id="textual.strip.Strip.blank" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">blank</span><span class="p">(</span><span class="n">cell_length</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<h3 id="textual.strip.Strip.blank" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">blank</span>
+
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
 
-<a href="#textual.strip.Strip.blank" class="headerlink" title="Permanent link">&para;</a></h4>
-
+<a href="#textual.strip.Strip.blank" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">blank</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">cell_length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">style</span><span class="p">:</span> <span class="n">StyleType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Strip</span>
+</code></pre></div>
 
   <div class="doc doc-contents ">
   
       <p>Create a blank strip.</p>
 
-  <p><strong>Parameters:</strong></p>
+  <h5>Parameters</h5>
   <table>
     <thead>
       <tr>
@@ -7447,7 +7459,7 @@
     </tbody>
   </table>
 
-  <p><strong>Returns:</strong></p>
+  <h5>Returns</h5>
   <table>
     <thead>
       <tr>
@@ -7473,17 +7485,19 @@
 
 
 
-<h4 id="textual.strip.Strip.crop" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">crop</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span></code>
+<h3 id="textual.strip.Strip.crop" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">crop</span>
 
-<a href="#textual.strip.Strip.crop" class="headerlink" title="Permanent link">&para;</a></h4>
 
+<a href="#textual.strip.Strip.crop" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">crop</span><span class="p">(</span><span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Strip</span>
+</code></pre></div>
 
   <div class="doc doc-contents ">
   
       <p>Crop a strip between two cell positions.</p>
 
-  <p><strong>Parameters:</strong></p>
+  <h5>Parameters</h5>
   <table>
     <thead>
       <tr>
@@ -7517,7 +7531,7 @@
     </tbody>
   </table>
 
-  <p><strong>Returns:</strong></p>
+  <h5>Returns</h5>
   <table>
     <thead>
       <tr>
@@ -7543,17 +7557,19 @@
 
 
 
-<h4 id="textual.strip.Strip.divide" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">divide</span><span class="p">(</span><span class="n">cuts</span><span class="p">)</span></code>
+<h3 id="textual.strip.Strip.divide" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">divide</span>
 
-<a href="#textual.strip.Strip.divide" class="headerlink" title="Permanent link">&para;</a></h4>
 
+<a href="#textual.strip.Strip.divide" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">divide</span><span class="p">(</span><span class="n">cuts</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Strip</span><span class="p">]</span>
+</code></pre></div>
 
   <div class="doc doc-contents ">
   
       <p>Divide the strip in to multiple smaller strips by cutting at given (cell) indices.</p>
 
-  <p><strong>Parameters:</strong></p>
+  <h5>Parameters</h5>
   <table>
     <thead>
       <tr>
@@ -7577,7 +7593,7 @@
     </tbody>
   </table>
 
-  <p><strong>Returns:</strong></p>
+  <h5>Returns</h5>
   <table>
     <thead>
       <tr>
@@ -7603,17 +7619,21 @@
 
 
 
-<h4 id="textual.strip.Strip.extend_cell_length" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">extend_cell_length</span><span class="p">(</span><span class="n">cell_length</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<h3 id="textual.strip.Strip.extend_cell_length" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">extend_cell_length</span>
 
-<a href="#textual.strip.Strip.extend_cell_length" class="headerlink" title="Permanent link">&para;</a></h4>
 
+<a href="#textual.strip.Strip.extend_cell_length" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">extend_cell_length</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">cell_length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">style</span><span class="p">:</span> <span class="n">Style</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Strip</span>
+</code></pre></div>
 
   <div class="doc doc-contents ">
   
       <p>Extend the cell length if it is less than the given value.</p>
 
-  <p><strong>Parameters:</strong></p>
+  <h5>Parameters</h5>
   <table>
     <thead>
       <tr>
@@ -7647,7 +7667,7 @@
     </tbody>
   </table>
 
-  <p><strong>Returns:</strong></p>
+  <h5>Returns</h5>
   <table>
     <thead>
       <tr>
@@ -7673,21 +7693,26 @@
 
 
 
-<h4 id="textual.strip.Strip.from_lines" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">from_lines</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">cell_length</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<h3 id="textual.strip.Strip.from_lines" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">from_lines</span>
+
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
 
-<a href="#textual.strip.Strip.from_lines" class="headerlink" title="Permanent link">&para;</a></h4>
-
+<a href="#textual.strip.Strip.from_lines" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">from_lines</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Segment</span><span class="p">]],</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">cell_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Strip</span><span class="p">]</span>
+</code></pre></div>
 
   <div class="doc doc-contents ">
   
       <p>Convert lines (lists of segments) to a list of Strips.</p>
 
-  <p><strong>Parameters:</strong></p>
+  <h5>Parameters</h5>
   <table>
     <thead>
       <tr>
@@ -7721,7 +7746,7 @@
     </tbody>
   </table>
 
-  <p><strong>Returns:</strong></p>
+  <h5>Returns</h5>
   <table>
     <thead>
       <tr>
@@ -7747,11 +7772,13 @@
 
 
 
-<h4 id="textual.strip.Strip.index_to_cell_position" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">index_to_cell_position</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></code>
+<h3 id="textual.strip.Strip.index_to_cell_position" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">index_to_cell_position</span>
 
-<a href="#textual.strip.Strip.index_to_cell_position" class="headerlink" title="Permanent link">&para;</a></h4>
 
+<a href="#textual.strip.Strip.index_to_cell_position" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">index_to_cell_position</span><span class="p">(</span><span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span>
+</code></pre></div>
 
   <div class="doc doc-contents ">
   
@@ -7759,7 +7786,7 @@
 This is the sum of the cell lengths of all the characters <em>before</em> the character
 at <code>index</code>.</p>
 
-  <p><strong>Parameters:</strong></p>
+  <h5>Parameters</h5>
   <table>
     <thead>
       <tr>
@@ -7783,7 +7810,7 @@ at <code>index</code>.</p>
     </tbody>
   </table>
 
-  <p><strong>Returns:</strong></p>
+  <h5>Returns</h5>
   <table>
     <thead>
       <tr>
@@ -7809,21 +7836,23 @@ at <code>index</code>.</p>
 
 
 
-<h4 id="textual.strip.Strip.join" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">join</span><span class="p">(</span><span class="n">strips</span><span class="p">)</span></code>
+<h3 id="textual.strip.Strip.join" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">join</span>
+
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
 
-<a href="#textual.strip.Strip.join" class="headerlink" title="Permanent link">&para;</a></h4>
-
+<a href="#textual.strip.Strip.join" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">join</span><span class="p">(</span><span class="n">strips</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Strip</span> <span class="o">|</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Strip</span>
+</code></pre></div>
 
   <div class="doc doc-contents ">
   
       <p>Join a number of strips in to one.</p>
 
-  <p><strong>Parameters:</strong></p>
+  <h5>Parameters</h5>
   <table>
     <thead>
       <tr>
@@ -7847,7 +7876,7 @@ at <code>index</code>.</p>
     </tbody>
   </table>
 
-  <p><strong>Returns:</strong></p>
+  <h5>Returns</h5>
   <table>
     <thead>
       <tr>
@@ -7873,17 +7902,19 @@ at <code>index</code>.</p>
 
 
 
-<h4 id="textual.strip.Strip.simplify" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">simplify</span><span class="p">()</span></code>
+<h3 id="textual.strip.Strip.simplify" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">simplify</span>
 
-<a href="#textual.strip.Strip.simplify" class="headerlink" title="Permanent link">&para;</a></h4>
 
+<a href="#textual.strip.Strip.simplify" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">simplify</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Strip</span>
+</code></pre></div>
 
   <div class="doc doc-contents ">
   
       <p>Simplify the segments (join segments with same style)</p>
 
-  <p><strong>Returns:</strong></p>
+  <h5>Returns</h5>
   <table>
     <thead>
       <tr>
@@ -7909,17 +7940,19 @@ at <code>index</code>.</p>
 
 
 
-<h4 id="textual.strip.Strip.style_links" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">style_links</span><span class="p">(</span><span class="n">link_id</span><span class="p">,</span> <span class="n">link_style</span><span class="p">)</span></code>
+<h3 id="textual.strip.Strip.style_links" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">style_links</span>
 
-<a href="#textual.strip.Strip.style_links" class="headerlink" title="Permanent link">&para;</a></h4>
 
+<a href="#textual.strip.Strip.style_links" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">style_links</span><span class="p">(</span><span class="n">link_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">link_style</span><span class="p">:</span> <span class="n">Style</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Strip</span>
+</code></pre></div>
 
   <div class="doc doc-contents ">
   
       <p>Apply a style to Segments with the given link_id.</p>
 
-  <p><strong>Parameters:</strong></p>
+  <h5>Parameters</h5>
   <table>
     <thead>
       <tr>
@@ -7953,7 +7986,7 @@ at <code>index</code>.</p>
     </tbody>
   </table>
 
-  <p><strong>Returns:</strong></p>
+  <h5>Returns</h5>
   <table>
     <thead>
       <tr>
@@ -7987,12 +8020,13 @@ at <code>index</code>.</p>
 
 
 
-<h3 id="textual.strip.StripRenderable" class="doc doc-heading">
-        <code>StripRenderable</code>
+<h2 id="textual.strip.StripRenderable" class="doc doc-heading">
+        <span class="doc doc-object-name doc-class-name">StripRenderable</span>
 
 
-<a href="#textual.strip.StripRenderable" class="headerlink" title="Permanent link">&para;</a></h3>
-
+<a href="#textual.strip.StripRenderable" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">StripRenderable</span><span class="p">(</span><span class="n">strips</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Strip</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
 
   <div class="doc doc-contents ">
 
@@ -8026,17 +8060,19 @@ at <code>index</code>.</p>
 
 
 
-<h3 id="textual.strip.get_line_length" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_line_length</span><span class="p">(</span><span class="n">segments</span><span class="p">)</span></code>
+<h2 id="textual.strip.get_line_length" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">get_line_length</span>
 
-<a href="#textual.strip.get_line_length" class="headerlink" title="Permanent link">&para;</a></h3>
 
+<a href="#textual.strip.get_line_length" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">get_line_length</span><span class="p">(</span><span class="n">segments</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Segment</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span>
+</code></pre></div>
 
   <div class="doc doc-contents ">
   
       <p>Get the line length (total length of all segments).</p>
 
-  <p><strong>Parameters:</strong></p>
+  <h5>Parameters</h5>
   <table>
     <thead>
       <tr>
@@ -8060,7 +8096,7 @@ at <code>index</code>.</p>
     </tbody>
   </table>
 
-  <p><strong>Returns:</strong></p>
+  <h5>Returns</h5>
   <table>
     <thead>
       <tr>
@@ -8117,10 +8153,10 @@ at <code>index</code>.</p>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
             </div>
             <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
               <div class="md-ellipsis">
-                <span class="md-footer__direction">
-                  Previous
-                </span>
                 Static
               </div>
             </div>
@@ -8130,10 +8166,10 @@ at <code>index</code>.</p>
           
           <a href="../switch/" class="md-footer__link md-footer__link--next" aria-label="Next: Switch" rel="next">
             <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
               <div class="md-ellipsis">
-                <span class="md-footer__direction">
-                  Next
-                </span>
                 Switch
               </div>
             </div>
@@ -8201,7 +8237,7 @@ at <code>index</code>.</p>
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.tabs.sticky", "navigation.footer", "content.code.annotate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.6c7302c4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.96d2b699.min.js"></script>
+      <script src="../../assets/javascripts/bundle.a3190745.min.js"></script>
       
     
   </body>

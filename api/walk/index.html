@@ -24,7 +24,7 @@
         <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../feed_rss_updated.xml">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.0+insiders-4.32.2">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.5+insiders-4.32.4">
     
     
       
@@ -32,7 +32,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.24f010b1.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.323870f8.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.6932e648.min.css">
@@ -247,6 +247,8 @@
       <a href="../../tutorial/" class="md-tabs__link">
         
   
+    
+  
   Tutorial
 
       </a>
@@ -281,6 +283,8 @@
     <li class="md-tabs__item">
       <a href="../../widget_gallery/" class="md-tabs__link">
         
+  
+    
   
   Widgets
 
@@ -321,6 +325,8 @@
         <a href="../app/" class="md-tabs__link md-tabs__link--active">
           
   
+    
+  
   API
 
         </a>
@@ -336,6 +342,8 @@
     <li class="md-tabs__item">
       <a href="../../roadmap/" class="md-tabs__link">
         
+  
+    
   
   Roadmap
 
@@ -6081,15 +6089,14 @@
   <a href="#textual.walk" class="md-nav__link">
     <span class="md-ellipsis">
       
-        walk
+        textual.walk
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="walk">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.walk.walk_breadth_first" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6099,8 +6106,8 @@
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#textual.walk.walk_depth_first" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6108,11 +6115,6 @@
       
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -6634,15 +6636,14 @@
   <a href="#textual.walk" class="md-nav__link">
     <span class="md-ellipsis">
       
-        walk
+        textual.walk
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="walk">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.walk.walk_breadth_first" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6652,8 +6653,8 @@
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#textual.walk.walk_depth_first" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6661,11 +6662,6 @@
       
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -6693,13 +6689,7 @@
 <div class="doc doc-object doc-module">
 
 
-
-<h2 id="textual.walk" class="doc doc-heading">
-          <code>walk</code>
-
-
-<a href="#textual.walk" class="headerlink" title="Permanent link">&para;</a></h2>
-
+<a id="textual.walk"></a>
   <div class="doc doc-contents first">
 
   
@@ -6718,11 +6708,18 @@
 
 
 
-<h3 id="textual.walk.walk_breadth_first" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">walk_breadth_first</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">filter_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">with_root</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+<h2 id="textual.walk.walk_breadth_first" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">walk_breadth_first</span>
 
-<a href="#textual.walk.walk_breadth_first" class="headerlink" title="Permanent link">&para;</a></h3>
 
+<a href="#textual.walk.walk_breadth_first" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">walk_breadth_first</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">root</span><span class="p">:</span> <span class="n">DOMNode</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">filter_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">WalkType</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="o">*</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">with_root</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">DOMNode</span><span class="p">]</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">WalkType</span><span class="p">]</span>
+</code></pre></div>
 
   <div class="doc doc-contents ">
   
@@ -6733,7 +6730,7 @@
 Consider <a class="autorefs autorefs-internal" href="../dom_node/#textual.dom.DOMNode.walk_children">walk_children</a> which doesn't have this limitation.</p>
 </div>
 
-  <p><strong>Parameters:</strong></p>
+  <h5>Parameters</h5>
   <table>
     <thead>
       <tr>
@@ -6778,7 +6775,7 @@ Defaults to None.</p></td>
     </tbody>
   </table>
 
-  <p><strong>Returns:</strong></p>
+  <h5>Returns</h5>
   <table>
     <thead>
       <tr>
@@ -6804,11 +6801,18 @@ Defaults to None.</p></td>
 
 
 
-<h3 id="textual.walk.walk_depth_first" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">walk_depth_first</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">filter_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">with_root</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+<h2 id="textual.walk.walk_depth_first" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">walk_depth_first</span>
 
-<a href="#textual.walk.walk_depth_first" class="headerlink" title="Permanent link">&para;</a></h3>
 
+<a href="#textual.walk.walk_depth_first" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">walk_depth_first</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">root</span><span class="p">:</span> <span class="n">DOMNode</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">filter_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">WalkType</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="o">*</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">with_root</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">DOMNode</span><span class="p">]</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">WalkType</span><span class="p">]</span>
+</code></pre></div>
 
   <div class="doc doc-contents ">
   
@@ -6819,7 +6823,7 @@ Defaults to None.</p></td>
 Consider <a class="autorefs autorefs-internal" href="../dom_node/#textual.dom.DOMNode.walk_children">walk_children</a> which doesn't have this limitation.</p>
 </div>
 
-  <p><strong>Parameters:</strong></p>
+  <h5>Parameters</h5>
   <table>
     <thead>
       <tr>
@@ -6864,7 +6868,7 @@ Defaults to None.</p></td>
     </tbody>
   </table>
 
-  <p><strong>Returns:</strong></p>
+  <h5>Returns</h5>
   <table>
     <thead>
       <tr>
@@ -6921,10 +6925,10 @@ Defaults to None.</p></td>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
             </div>
             <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
               <div class="md-ellipsis">
-                <span class="md-footer__direction">
-                  Previous
-                </span>
                 Tree
               </div>
             </div>
@@ -6934,10 +6938,10 @@ Defaults to None.</p></td>
           
           <a href="../welcome/" class="md-footer__link md-footer__link--next" aria-label="Next: Welcome" rel="next">
             <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
               <div class="md-ellipsis">
-                <span class="md-footer__direction">
-                  Next
-                </span>
                 Welcome
               </div>
             </div>
@@ -7005,7 +7009,7 @@ Defaults to None.</p></td>
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.tabs.sticky", "navigation.footer", "content.code.annotate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.6c7302c4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.96d2b699.min.js"></script>
+      <script src="../../assets/javascripts/bundle.a3190745.min.js"></script>
       
     
   </body>

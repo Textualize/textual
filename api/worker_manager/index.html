@@ -24,7 +24,7 @@
         <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../feed_rss_updated.xml">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.0+insiders-4.32.2">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.5+insiders-4.32.4">
     
     
       
@@ -32,7 +32,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.24f010b1.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.323870f8.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.6932e648.min.css">
@@ -247,6 +247,8 @@
       <a href="../../tutorial/" class="md-tabs__link">
         
   
+    
+  
   Tutorial
 
       </a>
@@ -281,6 +283,8 @@
     <li class="md-tabs__item">
       <a href="../../widget_gallery/" class="md-tabs__link">
         
+  
+    
   
   Widgets
 
@@ -321,6 +325,8 @@
         <a href="../app/" class="md-tabs__link md-tabs__link--active">
           
   
+    
+  
   API
 
         </a>
@@ -336,6 +342,8 @@
     <li class="md-tabs__item">
       <a href="../../roadmap/" class="md-tabs__link">
         
+  
+    
   
   Roadmap
 
@@ -6211,15 +6219,14 @@
   <a href="#textual._worker_manager" class="md-nav__link">
     <span class="md-ellipsis">
       
-        _worker_manager
+        textual._worker_manager
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="_worker_manager">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual._worker_manager.WorkerManager" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6230,17 +6237,6 @@
   
     <nav class="md-nav" aria-label="WorkerManager">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#textual._worker_manager.WorkerManager.__init__" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        __init__()
-      
-    </span>
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#textual._worker_manager.WorkerManager.add_worker" class="md-nav__link">
@@ -6305,11 +6301,6 @@
       
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -6706,15 +6697,14 @@
   <a href="#textual._worker_manager" class="md-nav__link">
     <span class="md-ellipsis">
       
-        _worker_manager
+        textual._worker_manager
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="_worker_manager">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual._worker_manager.WorkerManager" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6725,17 +6715,6 @@
   
     <nav class="md-nav" aria-label="WorkerManager">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#textual._worker_manager.WorkerManager.__init__" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        __init__()
-      
-    </span>
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#textual._worker_manager.WorkerManager.add_worker" class="md-nav__link">
@@ -6807,11 +6786,6 @@
     </nav>
   
 </li>
-        
-      </ul>
-    </nav>
-  
-</li>
       
     </ul>
   
@@ -6837,13 +6811,7 @@
 <div class="doc doc-object doc-module">
 
 
-
-<h2 id="textual._worker_manager" class="doc doc-heading">
-          <code>_worker_manager</code>
-
-
-<a href="#textual._worker_manager" class="headerlink" title="Permanent link">&para;</a></h2>
-
+<a id="textual._worker_manager"></a>
   <div class="doc doc-contents first">
 
   
@@ -6861,12 +6829,13 @@
 
 
 
-<h3 id="textual._worker_manager.WorkerManager" class="doc doc-heading">
-        <code>WorkerManager</code>
+<h2 id="textual._worker_manager.WorkerManager" class="doc doc-heading">
+        <span class="doc doc-object-name doc-class-name">WorkerManager</span>
 
 
-<a href="#textual._worker_manager.WorkerManager" class="headerlink" title="Permanent link">&para;</a></h3>
-
+<a href="#textual._worker_manager.WorkerManager" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">WorkerManager</span><span class="p">(</span><span class="n">app</span><span class="p">:</span> <span class="n">App</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
 
   <div class="doc doc-contents ">
 
@@ -6875,35 +6844,9 @@
 <p>You will not have to construct this class manually, as widgets, screens, and apps
 have a worker manager accessibly via a <code>workers</code> attribute.</p>
 
-
-
   
 
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-<div class="doc doc-object doc-function">
-
-
-
-<h4 id="textual._worker_manager.WorkerManager.__init__" class="doc doc-heading">
-<code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">app</span><span class="p">)</span></code>
-
-<a href="#textual._worker_manager.WorkerManager.__init__" class="headerlink" title="Permanent link">&para;</a></h4>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Initialize a worker manager.</p>
-
-  <p><strong>Parameters:</strong></p>
+  <h5>Parameters</h5>
   <table>
     <thead>
       <tr>
@@ -6927,25 +6870,40 @@ have a worker manager accessibly via a <code>workers</code> attribute.</p>
     </tbody>
   </table>
 
-  </div>
 
-</div>
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
 
 <div class="doc doc-object doc-function">
 
 
 
-<h4 id="textual._worker_manager.WorkerManager.add_worker" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">add_worker</span><span class="p">(</span><span class="n">worker</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exclusive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+<h3 id="textual._worker_manager.WorkerManager.add_worker" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">add_worker</span>
 
-<a href="#textual._worker_manager.WorkerManager.add_worker" class="headerlink" title="Permanent link">&para;</a></h4>
 
+<a href="#textual._worker_manager.WorkerManager.add_worker" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">add_worker</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">worker</span><span class="p">:</span> <span class="n">Worker</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">start</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">exclusive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
 
   <div class="doc doc-contents ">
   
       <p>Add a new worker.</p>
 
-  <p><strong>Parameters:</strong></p>
+  <h5>Parameters</h5>
   <table>
     <thead>
       <tr>
@@ -6997,11 +6955,13 @@ have a worker manager accessibly via a <code>workers</code> attribute.</p>
 
 
 
-<h4 id="textual._worker_manager.WorkerManager.cancel_all" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">cancel_all</span><span class="p">()</span></code>
+<h3 id="textual._worker_manager.WorkerManager.cancel_all" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">cancel_all</span>
 
-<a href="#textual._worker_manager.WorkerManager.cancel_all" class="headerlink" title="Permanent link">&para;</a></h4>
 
+<a href="#textual._worker_manager.WorkerManager.cancel_all" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">cancel_all</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
 
   <div class="doc doc-contents ">
   
@@ -7015,17 +6975,19 @@ have a worker manager accessibly via a <code>workers</code> attribute.</p>
 
 
 
-<h4 id="textual._worker_manager.WorkerManager.cancel_group" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">cancel_group</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span></code>
+<h3 id="textual._worker_manager.WorkerManager.cancel_group" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">cancel_group</span>
 
-<a href="#textual._worker_manager.WorkerManager.cancel_group" class="headerlink" title="Permanent link">&para;</a></h4>
 
+<a href="#textual._worker_manager.WorkerManager.cancel_group" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">cancel_group</span><span class="p">(</span><span class="n">node</span><span class="p">:</span> <span class="n">DOMNode</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Worker</span><span class="p">]</span>
+</code></pre></div>
 
   <div class="doc doc-contents ">
   
       <p>Cancel a single group.</p>
 
-  <p><strong>Parameters:</strong></p>
+  <h5>Parameters</h5>
   <table>
     <thead>
       <tr>
@@ -7071,17 +7033,19 @@ have a worker manager accessibly via a <code>workers</code> attribute.</p>
 
 
 
-<h4 id="textual._worker_manager.WorkerManager.cancel_node" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">cancel_node</span><span class="p">(</span><span class="n">node</span><span class="p">)</span></code>
+<h3 id="textual._worker_manager.WorkerManager.cancel_node" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">cancel_node</span>
 
-<a href="#textual._worker_manager.WorkerManager.cancel_node" class="headerlink" title="Permanent link">&para;</a></h4>
 
+<a href="#textual._worker_manager.WorkerManager.cancel_node" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">cancel_node</span><span class="p">(</span><span class="n">node</span><span class="p">:</span> <span class="n">DOMNode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Worker</span><span class="p">]</span>
+</code></pre></div>
 
   <div class="doc doc-contents ">
   
       <p>Cancel all workers associated with a given node</p>
 
-  <p><strong>Parameters:</strong></p>
+  <h5>Parameters</h5>
   <table>
     <thead>
       <tr>
@@ -7105,7 +7069,7 @@ have a worker manager accessibly via a <code>workers</code> attribute.</p>
     </tbody>
   </table>
 
-  <p><strong>Returns:</strong></p>
+  <h5>Returns</h5>
   <table>
     <thead>
       <tr>
@@ -7132,11 +7096,13 @@ have a worker manager accessibly via a <code>workers</code> attribute.</p>
 
 
 
-<h4 id="textual._worker_manager.WorkerManager.start_all" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">start_all</span><span class="p">()</span></code>
+<h3 id="textual._worker_manager.WorkerManager.start_all" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">start_all</span>
 
-<a href="#textual._worker_manager.WorkerManager.start_all" class="headerlink" title="Permanent link">&para;</a></h4>
 
+<a href="#textual._worker_manager.WorkerManager.start_all" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">start_all</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
 
   <div class="doc doc-contents ">
   
@@ -7150,21 +7116,25 @@ have a worker manager accessibly via a <code>workers</code> attribute.</p>
 
 
 
-<h4 id="textual._worker_manager.WorkerManager.wait_for_complete" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">wait_for_complete</span><span class="p">(</span><span class="n">workers</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<h3 id="textual._worker_manager.WorkerManager.wait_for_complete" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">wait_for_complete</span>
+
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
   </span>
 
-<a href="#textual._worker_manager.WorkerManager.wait_for_complete" class="headerlink" title="Permanent link">&para;</a></h4>
-
+<a href="#textual._worker_manager.WorkerManager.wait_for_complete" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">wait_for_complete</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">workers</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Worker</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
 
   <div class="doc doc-contents ">
   
       <p>Wait for workers to complete.</p>
 
-  <p><strong>Parameters:</strong></p>
+  <h5>Parameters</h5>
   <table>
     <thead>
       <tr>
@@ -7236,10 +7206,10 @@ have a worker manager accessibly via a <code>workers</code> attribute.</p>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
             </div>
             <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
               <div class="md-ellipsis">
-                <span class="md-footer__direction">
-                  Previous
-                </span>
                 Worker
               </div>
             </div>
@@ -7249,10 +7219,10 @@ have a worker manager accessibly via a <code>workers</code> attribute.</p>
           
           <a href="../../roadmap/" class="md-footer__link md-footer__link--next" aria-label="Next: Roadmap" rel="next">
             <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
               <div class="md-ellipsis">
-                <span class="md-footer__direction">
-                  Next
-                </span>
                 Roadmap
               </div>
             </div>
@@ -7320,7 +7290,7 @@ have a worker manager accessibly via a <code>workers</code> attribute.</p>
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.tabs.sticky", "navigation.footer", "content.code.annotate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.6c7302c4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.96d2b699.min.js"></script>
+      <script src="../../assets/javascripts/bundle.a3190745.min.js"></script>
       
     
   </body>

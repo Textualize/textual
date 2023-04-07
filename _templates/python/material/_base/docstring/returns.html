@@ -1,0 +1,91 @@
+{{ log.debug("Rendering returns section") }}
+{% if config.docstring_section_style == "table" %}
+  {% block table_style %}
+  {% set name_column = section.value|selectattr("name")|any %}
+  <h5>{{ section.title or "Returns" }}</h5>
+  <table>
+    <thead>
+      <tr>
+        {% if name_column %}<th>Name</th>{% endif %}
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for returns in section.value %}
+        <tr>
+          {% if name_column %}<td>{% if returns.name %}<code>{{ returns.name }}</code>{% endif %}</td>{% endif %}
+          <td>
+            {% if returns.annotation %}
+              {% with expression = returns.annotation %}
+                <code>{% include "expression.html" with context %}</code>
+              {% endwith %}
+            {% endif %}
+          </td>
+          <td>{{ returns.description|convert_markdown(heading_level, html_id) }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endblock table_style %}
+{% elif config.docstring_section_style == "list" %}
+  {% block list_style %}
+  <p>{{ section.title or "Returns:" }}</p>
+  <ul>
+    {% for returns in section.value %}
+      <li class="field-body">
+        {% if returns.name %}<b>{{ returns.name }}</b>{% endif %}
+        {% if returns.annotation %}
+          {% with expression = returns.annotation %}
+            {% if returns.name %}({% endif %}
+            <code>{% include "expression.html" with context %}</code>
+            {% if returns.name %}){% endif %}
+          {% endwith %}
+        {% endif %}
+        – {{ returns.description|convert_markdown(heading_level, html_id) }}
+      </li>
+    {% endfor %}
+  </ul>
+  {% endblock list_style %}
+{% elif config.docstring_section_style == "spacy" %}
+  {% block spacy_style %}
+  <table>
+    <thead>
+      <tr>
+        <th><b>{{ (section.title or "RETURNS").rstrip(":").upper() }}</b></th>
+        <th><b>DESCRIPTION</b></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for returns in section.value %}
+        <tr>
+          <td>
+            {% if returns.name %}
+              <code>{{ returns.name }}</code>
+            {% elif returns.annotation %}
+              <span class="doc-returns-annotation">
+                {% with expression = returns.annotation %}
+                  <code>{% include "expression.html" with context %}</code>
+                {% endwith %}
+              </span>
+            {% endif %}
+          </td>
+          <td class="doc-returns-details">
+            {{ returns.description|convert_markdown(heading_level, html_id) }}
+            {% if returns.name and returns.annotation %}
+              <p>
+                <span class="doc-returns-annotation">
+                  <b>TYPE:</b>
+                  {% with expression = returns.annotation %}
+                    <code>{% include "expression.html" with context %}</code>
+                  {% endwith %}
+                </span>
+              </p>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endblock spacy_style %}
+{% endif %}
