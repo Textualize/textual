@@ -7034,9 +7034,7 @@ disabled: Whether the ListView is disabled or not.
 
 
 <a href="#textual.widgets._list_view.ListView.Highlighted" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">Highlighted</span><span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">list_view</span><span class="p">:</span> <span class="n">ListView</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">ListItem</span> <span class="o">|</span> <span class="kc">None</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">class</span> <span class="nc">Highlighted</span><span class="p">(</span><span class="n">list_view</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -7100,7 +7098,7 @@ or in a parent widget in the DOM.</p>
 
 
 <a href="#textual.widgets._list_view.ListView.Selected" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">Selected</span><span class="p">(</span><span class="n">list_view</span><span class="p">:</span> <span class="n">ListView</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">ListItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">class</span> <span class="nc">Selected</span><span class="p">(</span><span class="n">list_view</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -7164,7 +7162,7 @@ a parent widget in the DOM.</p>
 
 
 <a href="#textual.widgets._list_view.ListView.action_cursor_down" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">action_cursor_down</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">action_cursor_down</span><span class="p">()</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -7184,7 +7182,7 @@ a parent widget in the DOM.</p>
 
 
 <a href="#textual.widgets._list_view.ListView.action_cursor_up" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">action_cursor_up</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">action_cursor_up</span><span class="p">()</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -7204,7 +7202,7 @@ a parent widget in the DOM.</p>
 
 
 <a href="#textual.widgets._list_view.ListView.action_select_cursor" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">action_select_cursor</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">action_select_cursor</span><span class="p">()</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -7224,7 +7222,7 @@ a parent widget in the DOM.</p>
 
 
 <a href="#textual.widgets._list_view.ListView.append" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">ListItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AwaitMount</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -7287,7 +7285,7 @@ until the DOM has been updated with the new child item.</p></td>
 
 
 <a href="#textual.widgets._list_view.ListView.clear" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">clear</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">AwaitRemove</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">clear</span><span class="p">()</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -7326,7 +7324,7 @@ the DOM has been updated to reflect all children being removed.</p></td>
 
 
 <a href="#textual.widgets._list_view.ListView.on_mount" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">on_mount</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">on_mount</span><span class="p">()</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -7346,7 +7344,7 @@ the DOM has been updated to reflect all children being removed.</p></td>
 
 
 <a href="#textual.widgets._list_view.ListView.validate_index" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">validate_index</span><span class="p">(</span><span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">validate_index</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -7408,7 +7406,7 @@ the DOM has been updated to reflect all children being removed.</p></td>
 
 
 <a href="#textual.widgets._list_view.ListView.watch_index" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">watch_index</span><span class="p">(</span><span class="n">old_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">new_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">watch_index</span><span class="p">(</span><span class="n">old_index</span><span class="p">,</span> <span class="n">new_index</span><span class="p">)</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
