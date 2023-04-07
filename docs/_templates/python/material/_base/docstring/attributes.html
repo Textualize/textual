@@ -1,0 +1,78 @@
+{{ log.debug("Rendering attributes section") }}
+{% if config.docstring_section_style == "table" %}
+  {% block table_style %}
+  <h5>{{ section.title or "Attributes" }}</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for attribute in section.value %}
+        <tr>
+          <td><code>{{ attribute.name }}</code></td>
+          <td>
+            {% if attribute.annotation %}
+              {% with expression = attribute.annotation %}
+                <code>{% include "expression.html" with context %}</code>
+              {% endwith %}
+            {% endif %}
+          </td>
+          <td>{{ attribute.description|convert_markdown(heading_level, html_id) }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endblock table_style %}
+{% elif config.docstring_section_style == "list" %}
+  {% block list_style %}
+  <p>{{ section.title or "Attributes:" }}</p>
+  <ul>
+    {% for attribute in section.value %}
+      <li class="field-body">
+        <b>{{ attribute.name }}</b>
+        {% if attribute.annotation %}
+          {% with expression = attribute.annotation %}
+            (<code>{% include "expression.html" with context %}</code>)
+          {% endwith %}
+        {% endif %}
+        – {{ attribute.description|convert_markdown(heading_level, html_id) }}
+      </li>
+    {% endfor %}
+  </ul>
+  {% endblock list_style %}
+{% elif config.docstring_section_style == "spacy" %}
+  {% block spacy_style %}
+  <table>
+    <thead>
+      <tr>
+        <th><b>{{ (section.title or "ATTRIBUTE").rstrip(":").upper() }}</b></th>
+        <th><b>DESCRIPTION</b></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for attribute in section.value %}
+        <tr>
+          <td><code>{{ attribute.name }}</code></td>
+          <td class="doc-attribute-details">
+            {{ attribute.description|convert_markdown(heading_level, html_id) }}
+            <p>
+              {% if attribute.annotation %}
+                <span class="doc-attribute-annotation">
+                  <b>TYPE:</b>
+                  {% with expression = attribute.annotation %}
+                    <code>{% include "expression.html" with context %}</code>
+                  {% endwith %}
+                </span>
+              {% endif %}
+            </p>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endblock spacy_style %}
+{% endif %}
