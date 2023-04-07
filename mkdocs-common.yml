@@ -71,8 +71,11 @@ plugins:
           - https://docs.python.org/3/objects.inv
           - https://rich.readthedocs.io/en/stable/objects.inv
         options:
-          show_root_heading: true
-          show_root_full_path: false
+          show_signature_annotations: true
+          separate_signature: true
+          merge_init_into_class: true
+          docstring_options:
+            ignore_init_summary: true
           show_source: false
           filters:
             - "!^_"

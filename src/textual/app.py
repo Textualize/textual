@@ -1,3 +1,8 @@
+"""
+The base class for all Textual apps.
+
+"""
+
 from __future__ import annotations
 
 import asyncio
@@ -268,14 +273,14 @@ class App(Generic[ReturnType], DOMNode):
     CSS_PATH: CSSPathType | None = None
 
     TITLE: str | None = None
-    """str | None: The default title for the application.
+    """The default title for the application.
 
     If set to a string, this sets the default title for the application. See
     also the `title` attribute.
     """
 
     SUB_TITLE: str | None = None
-    """str | None: The default sub-title for the application.
+    """The default sub-title for the application.
 
     If set to a string, this sets the default sub-title for the application. See
     also the `sub_title` attribute.

@@ -1,0 +1,72 @@
+{{ log.debug("Rendering raises section") }}
+{% if config.docstring_section_style == "table" %}
+  {% block table_style %}
+  <h5>{{ section.title or "Raises" }}</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for raises in section.value %}
+        <tr>
+          <td>
+            {% if raises.annotation %}
+              {% with expression = raises.annotation %}
+                <code>{% include "expression.html" with context %}</code>
+              {% endwith %}
+            {% endif %}
+          </td>
+          <td>{{ raises.description|convert_markdown(heading_level, html_id) }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endblock table_style %}
+{% elif config.docstring_section_style == "list" %}
+  {% block list_style %}
+  <p>{{ section.title or "Raises:" }}</p>
+  <ul>
+    {% for raises in section.value %}
+      <li class="field-body">
+        {% if raises.annotation %}
+          {% with expression = raises.annotation %}
+            <code>{% include "expression.html" with context %}</code>
+          {% endwith %}
+          –
+        {% endif %}
+        {{ raises.description|convert_markdown(heading_level, html_id) }}
+      </li>
+    {% endfor %}
+  </ul>
+  {% endblock list_style %}
+{% elif config.docstring_section_style == "spacy" %}
+  {% block spacy_style %}
+  <table>
+    <thead>
+      <tr>
+        <th><b>{{ (section.title or "RAISES").rstrip(":").upper() }}</b></th>
+        <th><b>DESCRIPTION</b></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for raises in section.value %}
+        <tr>
+          <td>
+            <span class="doc-raises-annotation">
+              {% with expression = raises.annotation %}
+                <code>{% include "expression.html" with context %}</code>
+              {% endwith %}
+            </span>
+          </td>
+          <td class="doc-raises-details">
+            {{ raises.description|convert_markdown(heading_level, html_id) }}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endblock spacy_style %}
+{% endif %}
