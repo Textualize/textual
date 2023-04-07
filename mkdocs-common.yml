@@ -71,7 +71,7 @@ plugins:
           - https://docs.python.org/3/objects.inv
           - https://rich.readthedocs.io/en/stable/objects.inv
         options:
-          show_signature_annotations: true
+          show_signature_annotations: false
           separate_signature: true
           merge_init_into_class: true
           docstring_options:
