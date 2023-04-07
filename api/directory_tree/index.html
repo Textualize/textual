@@ -5226,6 +5226,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._directory_tree.DirectoryTree.filter_paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        filter_paths()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._directory_tree.DirectoryTree.process_label" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6676,6 +6687,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._directory_tree.DirectoryTree.filter_paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        filter_paths()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._directory_tree.DirectoryTree.process_label" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6916,6 +6938,69 @@
 
 </div>
 
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._directory_tree.DirectoryTree.filter_paths" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">filter_paths</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span></code>
+
+<a href="#textual.widgets._directory_tree.DirectoryTree.filter_paths" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Filter the paths before adding them to the tree.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>paths</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a>]</code>
+          </td>
+          <td><p>The paths to be filtered.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-external" title="pathlib.Path" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a>]</code>
+          </td>
+          <td><p>The filtered paths.</p></td>
+        </tr>
+    </tbody>
+  </table>
+      <p>By default this method returns all of the paths provided. To create
+a filtered <code>DirectoryTree</code> inherit from it and implement your own
+version of this method.</p>
+
+  </div>
+
+</div>
 
 <div class="doc doc-object doc-function">
 

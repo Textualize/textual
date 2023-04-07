@@ -832,6 +832,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Mounting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#awaiting-mount" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Awaiting mount
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
       </ul>
@@ -6858,6 +6875,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Mounting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#awaiting-mount" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Awaiting mount
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
       </ul>
@@ -7715,27 +7749,228 @@
     </g>
 </svg>
 </p>
+<h4 id="awaiting-mount">Awaiting mount<a class="headerlink" href="#awaiting-mount" title="Permanent link">&para;</a></h4>
+<p>When you mount a widget, Textual will mount everything the widget <em>composes</em>.
+Textual guarantees that the mounting will be complete by the <em>next</em> message handler, but not immediately after the call to <code>mount()</code>.
+This may be a problem if you want to make any changes to the widget in the same message handler.</p>
+<p>Let's first illustrate the problem with an example.
+The following code will mount the Welcome widget in response to a key press.
+It will also attempt to modify the Button in the Welcome widget by changing its label from "OK" to "YES".</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="hll"><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Button</span><span class="p">,</span> <span class="n">Welcome</span>
+</span><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="k">class</span> <span class="nc">WelcomeApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    <span class="k">def</span> <span class="nf">on_key</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="n">Welcome</span><span class="p">())</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="hll">        <span class="bp">self</span><span class="o">.</span><span class="n">query_one</span><span class="p">(</span><span class="n">Button</span><span class="p">)</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;YES!&quot;</span> <span class="c1"># (1)!</span>
+</span><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">WelcomeApp</span><span class="p">()</span>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+<ol>
+<li>See <a href="../queries/">queries</a> for more information on the <code>query_one</code> method.</li>
+</ol>
+<p>If you run this example, you will find that Textual raises a <a class="autorefs autorefs-internal" href="../../api/query/#textual.css.query.NoMatches">NoMatches</a> exception when you press a key.
+This is because the mount process has not yet completed when we attempt to change the button.</p>
+<p>To solve this we can optionally await the result of <code>mount()</code>, which requires we make the function <code>async</code>.
+This guarantees that by the following line, the Button has been mounted, and we can change its label.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Button</span><span class="p">,</span> <span class="n">Welcome</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="k">class</span> <span class="nc">WelcomeApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="hll">    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_key</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="hll">        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="n">Welcome</span><span class="p">())</span>
+</span><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">query_one</span><span class="p">(</span><span class="n">Button</span><span class="p">)</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;YES!&quot;</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">WelcomeApp</span><span class="p">()</span>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+<p>Here's the output. Note the changed button text:</p>
+<p><svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
+    <!-- Generated with Rich https://www.textualize.io -->
+    <style>
+
+    @font-face {
+        font-family: "Fira Code";
+        src: local("FiraCode-Regular"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Regular.woff2") format("woff2"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Regular.woff") format("woff");
+        font-style: normal;
+        font-weight: 400;
+    }
+    @font-face {
+        font-family: "Fira Code";
+        src: local("FiraCode-Bold"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Bold.woff2") format("woff2"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Bold.woff") format("woff");
+        font-style: bold;
+        font-weight: 700;
+    }
+
+    .terminal-77384823-matrix {
+        font-family: Fira Code, monospace;
+        font-size: 20px;
+        line-height: 24.4px;
+        font-variant-east-asian: full-width;
+    }
+
+    .terminal-77384823-title {
+        font-size: 18px;
+        font-weight: bold;
+        font-family: arial;
+    }
+
+    .terminal-77384823-r1 { fill: #c5c8c6 }
+.terminal-77384823-r2 { fill: #e2e3e3 }
+.terminal-77384823-r3 { fill: #e2e3e3;font-weight: bold }
+.terminal-77384823-r4 { fill: #e2e3e3;font-style: italic; }
+.terminal-77384823-r5 { fill: #e2e3e3;font-weight: bold;text-decoration: underline; }
+.terminal-77384823-r6 { fill: #98729f }
+.terminal-77384823-r7 { fill: #7ae998 }
+.terminal-77384823-r8 { fill: #0a180e;font-weight: bold }
+.terminal-77384823-r9 { fill: #008139 }
+    </style>
+
+    <defs>
+    <clipPath id="terminal-77384823-clip-terminal">
+      <rect x="0" y="0" width="975.0" height="584.5999999999999" />
+    </clipPath>
+    <clipPath id="terminal-77384823-line-0">
+    <rect x="0" y="1.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-77384823-line-1">
+    <rect x="0" y="25.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-77384823-line-2">
+    <rect x="0" y="50.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-77384823-line-3">
+    <rect x="0" y="74.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-77384823-line-4">
+    <rect x="0" y="99.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-77384823-line-5">
+    <rect x="0" y="123.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-77384823-line-6">
+    <rect x="0" y="147.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-77384823-line-7">
+    <rect x="0" y="172.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-77384823-line-8">
+    <rect x="0" y="196.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-77384823-line-9">
+    <rect x="0" y="221.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-77384823-line-10">
+    <rect x="0" y="245.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-77384823-line-11">
+    <rect x="0" y="269.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-77384823-line-12">
+    <rect x="0" y="294.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-77384823-line-13">
+    <rect x="0" y="318.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-77384823-line-14">
+    <rect x="0" y="343.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-77384823-line-15">
+    <rect x="0" y="367.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-77384823-line-16">
+    <rect x="0" y="391.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-77384823-line-17">
+    <rect x="0" y="416.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-77384823-line-18">
+    <rect x="0" y="440.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-77384823-line-19">
+    <rect x="0" y="465.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-77384823-line-20">
+    <rect x="0" y="489.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-77384823-line-21">
+    <rect x="0" y="513.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-77384823-line-22">
+    <rect x="0" y="538.3" width="976" height="24.65"/>
+            </clipPath>
+    </defs>
+
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-77384823-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">WelcomeApp</text>
+            <g transform="translate(26,22)">
+            <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
+            <circle cx="22" cy="0" r="7" fill="#febc2e"/>
+            <circle cx="44" cy="0" r="7" fill="#28c840"/>
+            </g>
+        
+    <g transform="translate(9, 41)" clip-path="url(#terminal-77384823-clip-terminal)">
+    <rect fill="#24292f" x="0" y="1.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="0" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="12.2" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="25.9" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="951.6" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="963.8" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="0" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="12.2" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="36.6" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="48.8" y="50.3" width="390.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="439.2" y="50.3" width="97.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="536.8" y="50.3" width="390.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="927.2" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="939.4" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="951.6" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="963.8" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="0" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="12.2" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="74.7" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="951.6" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="963.8" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="0" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="12.2" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="99.1" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="951.6" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="963.8" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="0" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="12.2" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="123.5" width="256.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="280.6" y="123.5" width="231.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="512.4" y="123.5" width="427" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="939.4" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="951.6" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="963.8" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="0" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="12.2" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="147.9" width="292.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="317.2" y="147.9" width="390.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="707.6" y="147.9" width="244" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="951.6" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="963.8" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="0" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="12.2" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="172.3" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="951.6" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="963.8" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="0" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="12.2" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="196.7" width="0" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="196.7" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="951.6" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="963.8" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="0" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="12.2" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="221.1" width="402.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="427" y="221.1" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="549" y="221.1" width="402.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="951.6" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="963.8" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="0" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="12.2" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="245.5" width="927.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="951.6" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="963.8" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="0" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="12.2" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="48.8" y="269.9" width="207.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="256.2" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="268.4" y="269.9" width="292.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="561.2" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="573.4" y="269.9" width="353.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="927.2" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="951.6" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="963.8" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="0" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="12.2" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="294.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="48.8" y="294.3" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="366" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="378.2" y="294.3" width="244" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="622.2" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="634.4" y="294.3" width="292.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="927.2" y="294.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="951.6" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="963.8" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="0" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="12.2" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="318.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="48.8" y="318.7" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="329.4" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="341.6" y="318.7" width="585.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="927.2" y="318.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="951.6" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="963.8" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="0" y="343.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="12.2" y="343.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="343.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="48.8" y="343.1" width="244" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="292.8" y="343.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="305" y="343.1" width="622.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="927.2" y="343.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="951.6" y="343.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="963.8" y="343.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="0" y="367.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="12.2" y="367.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="367.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="48.8" y="367.5" width="183" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="231.8" y="367.5" width="695.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="927.2" y="367.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="951.6" y="367.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="963.8" y="367.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="0" y="391.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="12.2" y="391.9" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="963.8" y="391.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="0" y="416.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="12.2" y="416.3" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="963.8" y="416.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="0" y="440.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="12.2" y="440.7" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="963.8" y="440.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="0" y="465.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="12.2" y="465.1" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="963.8" y="465.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="0" y="489.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4ebf71" x="0" y="513.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#4ebf71" x="0" y="538.3" width="451.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#4ebf71" x="451.4" y="538.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#4ebf71" x="463.6" y="538.3" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#4ebf71" x="500.2" y="538.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#4ebf71" x="512.4" y="538.3" width="463.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#4ebf71" x="0" y="562.7" width="976" height="24.65" shape-rendering="crispEdges"/>
+    <g class="terminal-77384823-matrix">
+    <text class="terminal-77384823-r1" x="976" y="20" textLength="12.2" clip-path="url(#terminal-77384823-line-0)">
+</text><text class="terminal-77384823-r2" x="24.4" y="44.4" textLength="927.2" clip-path="url(#terminal-77384823-line-1)">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓</text><text class="terminal-77384823-r1" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-77384823-line-1)">
+</text><text class="terminal-77384823-r2" x="24.4" y="68.8" textLength="12.2" clip-path="url(#terminal-77384823-line-2)">┃</text><text class="terminal-77384823-r3" x="439.2" y="68.8" textLength="97.6" clip-path="url(#terminal-77384823-line-2)">Welcome!</text><text class="terminal-77384823-r2" x="939.4" y="68.8" textLength="12.2" clip-path="url(#terminal-77384823-line-2)">┃</text><text class="terminal-77384823-r1" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-77384823-line-2)">
+</text><text class="terminal-77384823-r2" x="24.4" y="93.2" textLength="927.2" clip-path="url(#terminal-77384823-line-3)">┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛</text><text class="terminal-77384823-r1" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-77384823-line-3)">
+</text><text class="terminal-77384823-r1" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-77384823-line-4)">
+</text><text class="terminal-77384823-r2" x="24.4" y="142" textLength="256.2" clip-path="url(#terminal-77384823-line-5)">Textual&#160;is&#160;a&#160;TUI,&#160;or&#160;</text><text class="terminal-77384823-r4" x="280.6" y="142" textLength="231.8" clip-path="url(#terminal-77384823-line-5)">Text&#160;User&#160;Interface</text><text class="terminal-77384823-r2" x="512.4" y="142" textLength="427" clip-path="url(#terminal-77384823-line-5)">,&#160;framework&#160;for&#160;Python&#160;inspired&#160;by&#160;</text><text class="terminal-77384823-r1" x="976" y="142" textLength="12.2" clip-path="url(#terminal-77384823-line-5)">
+</text><text class="terminal-77384823-r2" x="24.4" y="166.4" textLength="292.8" clip-path="url(#terminal-77384823-line-6)">modern&#160;web&#160;development.&#160;</text><text class="terminal-77384823-r3" x="317.2" y="166.4" textLength="390.4" clip-path="url(#terminal-77384823-line-6)">We&#160;hope&#160;you&#160;enjoy&#160;using&#160;Textual!</text><text class="terminal-77384823-r1" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-77384823-line-6)">
+</text><text class="terminal-77384823-r1" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-77384823-line-7)">
+</text><text class="terminal-77384823-r1" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-77384823-line-8)">
+</text><text class="terminal-77384823-r5" x="427" y="239.6" textLength="122" clip-path="url(#terminal-77384823-line-9)">Dune&#160;quote</text><text class="terminal-77384823-r1" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-77384823-line-9)">
+</text><text class="terminal-77384823-r1" x="976" y="264" textLength="12.2" clip-path="url(#terminal-77384823-line-10)">
+</text><text class="terminal-77384823-r6" x="24.4" y="288.4" textLength="24.4" clip-path="url(#terminal-77384823-line-11)">▌&#160;</text><text class="terminal-77384823-r6" x="48.8" y="288.4" textLength="207.4" clip-path="url(#terminal-77384823-line-11)">&quot;I&#160;must&#160;not&#160;fear.</text><text class="terminal-77384823-r6" x="268.4" y="288.4" textLength="292.8" clip-path="url(#terminal-77384823-line-11)">Fear&#160;is&#160;the&#160;mind-killer.</text><text class="terminal-77384823-r6" x="573.4" y="288.4" textLength="353.8" clip-path="url(#terminal-77384823-line-11)">Fear&#160;is&#160;the&#160;little-death&#160;that</text><text class="terminal-77384823-r1" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-77384823-line-11)">
+</text><text class="terminal-77384823-r6" x="24.4" y="312.8" textLength="24.4" clip-path="url(#terminal-77384823-line-12)">▌&#160;</text><text class="terminal-77384823-r6" x="48.8" y="312.8" textLength="317.2" clip-path="url(#terminal-77384823-line-12)">brings&#160;total&#160;obliteration.</text><text class="terminal-77384823-r6" x="378.2" y="312.8" textLength="244" clip-path="url(#terminal-77384823-line-12)">I&#160;will&#160;face&#160;my&#160;fear.</text><text class="terminal-77384823-r6" x="634.4" y="312.8" textLength="292.8" clip-path="url(#terminal-77384823-line-12)">I&#160;will&#160;permit&#160;it&#160;to&#160;pass</text><text class="terminal-77384823-r1" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-77384823-line-12)">
+</text><text class="terminal-77384823-r6" x="24.4" y="337.2" textLength="24.4" clip-path="url(#terminal-77384823-line-13)">▌&#160;</text><text class="terminal-77384823-r6" x="48.8" y="337.2" textLength="280.6" clip-path="url(#terminal-77384823-line-13)">over&#160;me&#160;and&#160;through&#160;me.</text><text class="terminal-77384823-r6" x="341.6" y="337.2" textLength="585.6" clip-path="url(#terminal-77384823-line-13)">And&#160;when&#160;it&#160;has&#160;gone&#160;past,&#160;I&#160;will&#160;turn&#160;the&#160;inner</text><text class="terminal-77384823-r1" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-77384823-line-13)">
+</text><text class="terminal-77384823-r6" x="24.4" y="361.6" textLength="24.4" clip-path="url(#terminal-77384823-line-14)">▌&#160;</text><text class="terminal-77384823-r6" x="48.8" y="361.6" textLength="244" clip-path="url(#terminal-77384823-line-14)">eye&#160;to&#160;see&#160;its&#160;path.</text><text class="terminal-77384823-r6" x="305" y="361.6" textLength="622.2" clip-path="url(#terminal-77384823-line-14)">Where&#160;the&#160;fear&#160;has&#160;gone&#160;there&#160;will&#160;be&#160;nothing.&#160;Only</text><text class="terminal-77384823-r1" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-77384823-line-14)">
+</text><text class="terminal-77384823-r6" x="24.4" y="386" textLength="24.4" clip-path="url(#terminal-77384823-line-15)">▌&#160;</text><text class="terminal-77384823-r6" x="48.8" y="386" textLength="183" clip-path="url(#terminal-77384823-line-15)">I&#160;will&#160;remain.&quot;</text><text class="terminal-77384823-r1" x="976" y="386" textLength="12.2" clip-path="url(#terminal-77384823-line-15)">
+</text><text class="terminal-77384823-r1" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-77384823-line-16)">
+</text><text class="terminal-77384823-r1" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-77384823-line-17)">
+</text><text class="terminal-77384823-r1" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-77384823-line-18)">
+</text><text class="terminal-77384823-r1" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-77384823-line-19)">
+</text><text class="terminal-77384823-r1" x="976" y="508" textLength="12.2" clip-path="url(#terminal-77384823-line-20)">
+</text><text class="terminal-77384823-r7" x="0" y="532.4" textLength="976" clip-path="url(#terminal-77384823-line-21)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-77384823-r1" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-77384823-line-21)">
+</text><text class="terminal-77384823-r8" x="463.6" y="556.8" textLength="36.6" clip-path="url(#terminal-77384823-line-22)">YES</text><text class="terminal-77384823-r1" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-77384823-line-22)">
+</text><text class="terminal-77384823-r9" x="0" y="581.2" textLength="976" clip-path="url(#terminal-77384823-line-23)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text>
+    </g>
+    </g>
+</svg>
+</p>
 <h2 id="exiting">Exiting<a class="headerlink" href="#exiting" title="Permanent link">&para;</a></h2>
 <p>An app will run until you call <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.exit">App.exit()</a> which will exit application mode and the <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.run">run</a> method will return. If this is the last line in your code you will return to the command prompt.</p>
 <p>The exit method will also accept an optional positional value to be returned by <code>run()</code>. The following example uses this to return the <code>id</code> (identifier) of a clicked button.</p>
-<div class="highlight"><span class="filename">question01.py</span><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Label</span><span class="p">,</span> <span class="n">Button</span>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="k">class</span> <span class="nc">QuestionApp</span><span class="p">(</span><span class="n">App</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
-<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
-<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>        <span class="k">yield</span> <span class="n">Label</span><span class="p">(</span><span class="s2">&quot;Do you love Textual?&quot;</span><span class="p">)</span>
-<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>        <span class="k">yield</span> <span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Yes&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;yes&quot;</span><span class="p">,</span> <span class="n">variant</span><span class="o">=</span><span class="s2">&quot;primary&quot;</span><span class="p">)</span>
-<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>        <span class="k">yield</span> <span class="n">Button</span><span class="p">(</span><span class="s2">&quot;No&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;no&quot;</span><span class="p">,</span> <span class="n">variant</span><span class="o">=</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>
-<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>
-<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>    <span class="k">def</span> <span class="nf">on_button_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Button</span><span class="o">.</span><span class="n">Pressed</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
-<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>
-<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>
-<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">QuestionApp</span><span class="p">()</span>
-<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>    <span class="n">reply</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-<a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
+<div class="highlight"><span class="filename">question01.py</span><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Label</span><span class="p">,</span> <span class="n">Button</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="k">class</span> <span class="nc">QuestionApp</span><span class="p">(</span><span class="n">App</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>        <span class="k">yield</span> <span class="n">Label</span><span class="p">(</span><span class="s2">&quot;Do you love Textual?&quot;</span><span class="p">)</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>        <span class="k">yield</span> <span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Yes&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;yes&quot;</span><span class="p">,</span> <span class="n">variant</span><span class="o">=</span><span class="s2">&quot;primary&quot;</span><span class="p">)</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>        <span class="k">yield</span> <span class="n">Button</span><span class="p">(</span><span class="s2">&quot;No&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;no&quot;</span><span class="p">,</span> <span class="n">variant</span><span class="o">=</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>    <span class="k">def</span> <span class="nf">on_button_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Button</span><span class="o">.</span><span class="n">Pressed</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>
+<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">QuestionApp</span><span class="p">()</span>
+<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>    <span class="n">reply</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
 </code></pre></div>
 <p>Running this app will give you the following:</p>
 <p><svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
@@ -7898,24 +8133,24 @@
 <p>Clicking either of those buttons will exit the app, and the <code>run()</code> method will return either <code>"yes"</code> or <code>"no"</code> depending on button clicked.</p>
 <h3 id="return-type">Return type<a class="headerlink" href="#return-type" title="Permanent link">&para;</a></h3>
 <p>You may have noticed that we subclassed <code>App[str]</code> rather than the usual <code>App</code>.</p>
-<div class="highlight"><span class="filename">question01.py</span><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Label</span><span class="p">,</span> <span class="n">Button</span>
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
-<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
-<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="hll"><span class="k">class</span> <span class="nc">QuestionApp</span><span class="p">(</span><span class="n">App</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
-</span><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
-<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>        <span class="k">yield</span> <span class="n">Label</span><span class="p">(</span><span class="s2">&quot;Do you love Textual?&quot;</span><span class="p">)</span>
-<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>        <span class="k">yield</span> <span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Yes&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;yes&quot;</span><span class="p">,</span> <span class="n">variant</span><span class="o">=</span><span class="s2">&quot;primary&quot;</span><span class="p">)</span>
-<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>        <span class="k">yield</span> <span class="n">Button</span><span class="p">(</span><span class="s2">&quot;No&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;no&quot;</span><span class="p">,</span> <span class="n">variant</span><span class="o">=</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>
-<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>
-<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>    <span class="k">def</span> <span class="nf">on_button_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Button</span><span class="o">.</span><span class="n">Pressed</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
-<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>
-<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>
-<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">QuestionApp</span><span class="p">()</span>
-<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>    <span class="n">reply</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-<a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
+<div class="highlight"><span class="filename">question01.py</span><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Label</span><span class="p">,</span> <span class="n">Button</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="hll"><span class="k">class</span> <span class="nc">QuestionApp</span><span class="p">(</span><span class="n">App</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+</span><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>        <span class="k">yield</span> <span class="n">Label</span><span class="p">(</span><span class="s2">&quot;Do you love Textual?&quot;</span><span class="p">)</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>        <span class="k">yield</span> <span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Yes&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;yes&quot;</span><span class="p">,</span> <span class="n">variant</span><span class="o">=</span><span class="s2">&quot;primary&quot;</span><span class="p">)</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>        <span class="k">yield</span> <span class="n">Button</span><span class="p">(</span><span class="s2">&quot;No&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;no&quot;</span><span class="p">,</span> <span class="n">variant</span><span class="o">=</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>    <span class="k">def</span> <span class="nf">on_button_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Button</span><span class="o">.</span><span class="n">Pressed</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>
+<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>
+<a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">QuestionApp</span><span class="p">()</span>
+<a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a>    <span class="n">reply</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
 </code></pre></div>
 <p>The addition of <code>[str]</code> tells mypy that <code>run()</code> is expected to return a string. It may also return <code>None</code> if <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.exit">App.exit()</a> is called without a return value, so the return type of <code>run</code> will be <code>str | None</code>. Replace the <code>str</code> in <code>[str]</code> with the type of the value you intend to call the exit method with.</p>
 <div class="admonition note">
@@ -7926,49 +8161,49 @@
 <p>Textual apps can reference <a href="../CSS/">CSS</a> files which define how your app and widgets will look, while keeping your Python code free of display related code (which tends to be messy).</p>
 <p>The chapter on <a href="../CSS/">Textual CSS</a> describes how to use CSS in detail. For now let's look at how your app references external CSS files.</p>
 <p>The following example enables loading of CSS by adding a <code>CSS_PATH</code> class variable:</p>
-<div class="highlight"><span class="filename">question02.py</span><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Label</span><span class="p">,</span> <span class="n">Button</span>
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="k">class</span> <span class="nc">QuestionApp</span><span class="p">(</span><span class="n">App</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
-<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="hll">    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;question02.css&quot;</span>
-</span><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>
-<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
-<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="hll">        <span class="k">yield</span> <span class="n">Label</span><span class="p">(</span><span class="s2">&quot;Do you love Textual?&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;question&quot;</span><span class="p">)</span>
-</span><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>        <span class="k">yield</span> <span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Yes&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;yes&quot;</span><span class="p">,</span> <span class="n">variant</span><span class="o">=</span><span class="s2">&quot;primary&quot;</span><span class="p">)</span>
-<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>        <span class="k">yield</span> <span class="n">Button</span><span class="p">(</span><span class="s2">&quot;No&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;no&quot;</span><span class="p">,</span> <span class="n">variant</span><span class="o">=</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>
-<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>
-<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>    <span class="k">def</span> <span class="nf">on_button_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Button</span><span class="o">.</span><span class="n">Pressed</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
-<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>
-<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>
-<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">QuestionApp</span><span class="p">()</span>
-<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a>    <span class="n">reply</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
+<div class="highlight"><span class="filename">question02.py</span><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Label</span><span class="p">,</span> <span class="n">Button</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="k">class</span> <span class="nc">QuestionApp</span><span class="p">(</span><span class="n">App</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="hll">    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;question02.css&quot;</span>
+</span><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="hll">        <span class="k">yield</span> <span class="n">Label</span><span class="p">(</span><span class="s2">&quot;Do you love Textual?&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;question&quot;</span><span class="p">)</span>
+</span><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>        <span class="k">yield</span> <span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Yes&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;yes&quot;</span><span class="p">,</span> <span class="n">variant</span><span class="o">=</span><span class="s2">&quot;primary&quot;</span><span class="p">)</span>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>        <span class="k">yield</span> <span class="n">Button</span><span class="p">(</span><span class="s2">&quot;No&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;no&quot;</span><span class="p">,</span> <span class="n">variant</span><span class="o">=</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>    <span class="k">def</span> <span class="nf">on_button_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Button</span><span class="o">.</span><span class="n">Pressed</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>
+<a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>
+<a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">QuestionApp</span><span class="p">()</span>
+<a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a>    <span class="n">reply</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>We also added an <code>id</code> to the <code>Label</code>, because we want to style it in the CSS.</p>
 </div>
 <p>If the path is relative (as it is above) then it is taken as relative to where the app is defined. Hence this example references <code>"question01.css"</code> in the same directory as the Python code. Here is that CSS file:</p>
-<div class="highlight"><span class="filename">question02.css</span><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nt">Screen</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">    </span><span class="na">layout</span><span class="o">:</span><span class="w"> </span><span class="no">grid</span><span class="err">;</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="na">grid-size</span><span class="o">:</span><span class="w"> </span><span class="mi">2</span><span class="err">;</span>
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span><span class="na">grid-gutter</span><span class="o">:</span><span class="w"> </span><span class="mi">2</span><span class="err">;</span><span class="w"> </span>
-<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">    </span><span class="na">padding</span><span class="o">:</span><span class="w"> </span><span class="mi">2</span><span class="err">;</span><span class="w">   </span>
-<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="err">}</span>
-<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="nn">#question</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">    </span><span class="na">width</span><span class="o">:</span><span class="w"> </span><span class="mi">100</span><span class="kt">%</span><span class="err">;</span>
-<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">    </span><span class="na">height</span><span class="o">:</span><span class="w"> </span><span class="mi">100</span><span class="kt">%</span><span class="err">;</span>
-<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">    </span><span class="na">column-span</span><span class="o">:</span><span class="w"> </span><span class="mi">2</span><span class="err">;</span>
-<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">    </span><span class="na">content-align</span><span class="o">:</span><span class="w"> </span><span class="no">center</span><span class="w"> </span><span class="no">bottom</span><span class="err">;</span>
-<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">    </span><span class="na">text-style</span><span class="o">:</span><span class="w"> </span><span class="no">bold</span><span class="err">;</span>
-<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="err">}</span><span class="w"> </span>
-<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>
-<a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a><span class="nt">Button</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a><span class="w">    </span><span class="na">width</span><span class="o">:</span><span class="w"> </span><span class="mi">100</span><span class="kt">%</span><span class="err">;</span>
-<a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a><span class="err">}</span>
+<div class="highlight"><span class="filename">question02.css</span><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nt">Screen</span><span class="w"> </span><span class="err">{</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">    </span><span class="na">layout</span><span class="o">:</span><span class="w"> </span><span class="no">grid</span><span class="err">;</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span><span class="na">grid-size</span><span class="o">:</span><span class="w"> </span><span class="mi">2</span><span class="err">;</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">    </span><span class="na">grid-gutter</span><span class="o">:</span><span class="w"> </span><span class="mi">2</span><span class="err">;</span><span class="w"> </span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">    </span><span class="na">padding</span><span class="o">:</span><span class="w"> </span><span class="mi">2</span><span class="err">;</span><span class="w">   </span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="err">}</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="nn">#question</span><span class="w"> </span><span class="err">{</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">    </span><span class="na">width</span><span class="o">:</span><span class="w"> </span><span class="mi">100</span><span class="kt">%</span><span class="err">;</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">    </span><span class="na">height</span><span class="o">:</span><span class="w"> </span><span class="mi">100</span><span class="kt">%</span><span class="err">;</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">    </span><span class="na">column-span</span><span class="o">:</span><span class="w"> </span><span class="mi">2</span><span class="err">;</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="w">    </span><span class="na">content-align</span><span class="o">:</span><span class="w"> </span><span class="no">center</span><span class="w"> </span><span class="no">bottom</span><span class="err">;</span>
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="w">    </span><span class="na">text-style</span><span class="o">:</span><span class="w"> </span><span class="no">bold</span><span class="err">;</span>
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="err">}</span><span class="w"> </span>
+<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>
+<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="nt">Button</span><span class="w"> </span><span class="err">{</span>
+<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="w">    </span><span class="na">width</span><span class="o">:</span><span class="w"> </span><span class="mi">100</span><span class="kt">%</span><span class="err">;</span>
+<a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a><span class="err">}</span>
 </code></pre></div>
 <p>When <code>"question02.py"</code> runs it will load <code>"question02.css"</code> and update the app and widgets accordingly. Even though the code is almost identical to the previous sample, the app now looks quite different:</p>
 <p><svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
@@ -8133,72 +8368,72 @@
 <p>While external CSS files are recommended for most applications, and enable some cool features like <em>live editing</em>, you can also specify the CSS directly within the Python code.</p>
 <p>To do this set a <code>CSS</code> class variable on the app to a string containing your CSS.</p>
 <p>Here's the question app with classvar CSS:</p>
-<div class="highlight"><span class="filename">question03.py</span><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Label</span><span class="p">,</span> <span class="n">Button</span>
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
-<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>
-<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="k">class</span> <span class="nc">QuestionApp</span><span class="p">(</span><span class="n">App</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
-<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="hll">    <span class="n">CSS</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-</span><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="hll"><span class="s2">    Screen {</span>
-</span><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="hll"><span class="s2">        layout: grid;</span>
-</span><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="hll"><span class="s2">        grid-size: 2;</span>
-</span><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="hll"><span class="s2">        grid-gutter: 2;</span>
-</span><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="hll"><span class="s2">        padding: 2;</span>
-</span><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="hll"><span class="s2">    }</span>
-</span><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="hll"><span class="s2">    #question {</span>
-</span><a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a><span class="hll"><span class="s2">        width: 100%;</span>
-</span><a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a><span class="hll"><span class="s2">        height: 100%;</span>
-</span><a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a><span class="hll"><span class="s2">        column-span: 2;</span>
-</span><a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a><span class="hll"><span class="s2">        content-align: center bottom;</span>
-</span><a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a><span class="hll"><span class="s2">        text-style: bold;</span>
-</span><a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a><span class="hll"><span class="s2">    }</span>
-</span><a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a><span class="hll">
-</span><a id="__codelineno-9-21" name="__codelineno-9-21" href="#__codelineno-9-21"></a><span class="hll"><span class="s2">    Button {</span>
-</span><a id="__codelineno-9-22" name="__codelineno-9-22" href="#__codelineno-9-22"></a><span class="hll"><span class="s2">        width: 100%;</span>
-</span><a id="__codelineno-9-23" name="__codelineno-9-23" href="#__codelineno-9-23"></a><span class="hll"><span class="s2">    }</span>
-</span><a id="__codelineno-9-24" name="__codelineno-9-24" href="#__codelineno-9-24"></a><span class="hll"><span class="s2">    &quot;&quot;&quot;</span>
-</span><a id="__codelineno-9-25" name="__codelineno-9-25" href="#__codelineno-9-25"></a>
-<a id="__codelineno-9-26" name="__codelineno-9-26" href="#__codelineno-9-26"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
-<a id="__codelineno-9-27" name="__codelineno-9-27" href="#__codelineno-9-27"></a>        <span class="k">yield</span> <span class="n">Label</span><span class="p">(</span><span class="s2">&quot;Do you love Textual?&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;question&quot;</span><span class="p">)</span>
-<a id="__codelineno-9-28" name="__codelineno-9-28" href="#__codelineno-9-28"></a>        <span class="k">yield</span> <span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Yes&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;yes&quot;</span><span class="p">,</span> <span class="n">variant</span><span class="o">=</span><span class="s2">&quot;primary&quot;</span><span class="p">)</span>
-<a id="__codelineno-9-29" name="__codelineno-9-29" href="#__codelineno-9-29"></a>        <span class="k">yield</span> <span class="n">Button</span><span class="p">(</span><span class="s2">&quot;No&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;no&quot;</span><span class="p">,</span> <span class="n">variant</span><span class="o">=</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>
-<a id="__codelineno-9-30" name="__codelineno-9-30" href="#__codelineno-9-30"></a>
-<a id="__codelineno-9-31" name="__codelineno-9-31" href="#__codelineno-9-31"></a>    <span class="k">def</span> <span class="nf">on_button_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Button</span><span class="o">.</span><span class="n">Pressed</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-9-32" name="__codelineno-9-32" href="#__codelineno-9-32"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
-<a id="__codelineno-9-33" name="__codelineno-9-33" href="#__codelineno-9-33"></a>
-<a id="__codelineno-9-34" name="__codelineno-9-34" href="#__codelineno-9-34"></a>
-<a id="__codelineno-9-35" name="__codelineno-9-35" href="#__codelineno-9-35"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-<a id="__codelineno-9-36" name="__codelineno-9-36" href="#__codelineno-9-36"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">QuestionApp</span><span class="p">()</span>
-<a id="__codelineno-9-37" name="__codelineno-9-37" href="#__codelineno-9-37"></a>    <span class="n">reply</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-<a id="__codelineno-9-38" name="__codelineno-9-38" href="#__codelineno-9-38"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
+<div class="highlight"><span class="filename">question03.py</span><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Label</span><span class="p">,</span> <span class="n">Button</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="k">class</span> <span class="nc">QuestionApp</span><span class="p">(</span><span class="n">App</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="hll">    <span class="n">CSS</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+</span><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="hll"><span class="s2">    Screen {</span>
+</span><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="hll"><span class="s2">        layout: grid;</span>
+</span><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="hll"><span class="s2">        grid-size: 2;</span>
+</span><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="hll"><span class="s2">        grid-gutter: 2;</span>
+</span><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="hll"><span class="s2">        padding: 2;</span>
+</span><a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a><span class="hll"><span class="s2">    }</span>
+</span><a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a><span class="hll"><span class="s2">    #question {</span>
+</span><a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a><span class="hll"><span class="s2">        width: 100%;</span>
+</span><a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a><span class="hll"><span class="s2">        height: 100%;</span>
+</span><a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a><span class="hll"><span class="s2">        column-span: 2;</span>
+</span><a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a><span class="hll"><span class="s2">        content-align: center bottom;</span>
+</span><a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a><span class="hll"><span class="s2">        text-style: bold;</span>
+</span><a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a><span class="hll"><span class="s2">    }</span>
+</span><a id="__codelineno-11-20" name="__codelineno-11-20" href="#__codelineno-11-20"></a><span class="hll">
+</span><a id="__codelineno-11-21" name="__codelineno-11-21" href="#__codelineno-11-21"></a><span class="hll"><span class="s2">    Button {</span>
+</span><a id="__codelineno-11-22" name="__codelineno-11-22" href="#__codelineno-11-22"></a><span class="hll"><span class="s2">        width: 100%;</span>
+</span><a id="__codelineno-11-23" name="__codelineno-11-23" href="#__codelineno-11-23"></a><span class="hll"><span class="s2">    }</span>
+</span><a id="__codelineno-11-24" name="__codelineno-11-24" href="#__codelineno-11-24"></a><span class="hll"><span class="s2">    &quot;&quot;&quot;</span>
+</span><a id="__codelineno-11-25" name="__codelineno-11-25" href="#__codelineno-11-25"></a>
+<a id="__codelineno-11-26" name="__codelineno-11-26" href="#__codelineno-11-26"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+<a id="__codelineno-11-27" name="__codelineno-11-27" href="#__codelineno-11-27"></a>        <span class="k">yield</span> <span class="n">Label</span><span class="p">(</span><span class="s2">&quot;Do you love Textual?&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;question&quot;</span><span class="p">)</span>
+<a id="__codelineno-11-28" name="__codelineno-11-28" href="#__codelineno-11-28"></a>        <span class="k">yield</span> <span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Yes&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;yes&quot;</span><span class="p">,</span> <span class="n">variant</span><span class="o">=</span><span class="s2">&quot;primary&quot;</span><span class="p">)</span>
+<a id="__codelineno-11-29" name="__codelineno-11-29" href="#__codelineno-11-29"></a>        <span class="k">yield</span> <span class="n">Button</span><span class="p">(</span><span class="s2">&quot;No&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;no&quot;</span><span class="p">,</span> <span class="n">variant</span><span class="o">=</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>
+<a id="__codelineno-11-30" name="__codelineno-11-30" href="#__codelineno-11-30"></a>
+<a id="__codelineno-11-31" name="__codelineno-11-31" href="#__codelineno-11-31"></a>    <span class="k">def</span> <span class="nf">on_button_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Button</span><span class="o">.</span><span class="n">Pressed</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-11-32" name="__codelineno-11-32" href="#__codelineno-11-32"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+<a id="__codelineno-11-33" name="__codelineno-11-33" href="#__codelineno-11-33"></a>
+<a id="__codelineno-11-34" name="__codelineno-11-34" href="#__codelineno-11-34"></a>
+<a id="__codelineno-11-35" name="__codelineno-11-35" href="#__codelineno-11-35"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-11-36" name="__codelineno-11-36" href="#__codelineno-11-36"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">QuestionApp</span><span class="p">()</span>
+<a id="__codelineno-11-37" name="__codelineno-11-37" href="#__codelineno-11-37"></a>    <span class="n">reply</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<a id="__codelineno-11-38" name="__codelineno-11-38" href="#__codelineno-11-38"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="title-and-subtitle">Title and subtitle<a class="headerlink" href="#title-and-subtitle" title="Permanent link">&para;</a></h2>
 <p>Textual apps have a <code>title</code> attribute which is typically the name of your application, and an optional <code>sub_title</code> attribute which adds additional context (such as the file your are working on).
 By default, <code>title</code> will be set to the name of your App class, and <code>sub_title</code> is empty.
 You can change these defaults by defining <code>TITLE</code> and <code>SUB_TITLE</code> class variables. Here's an example of that:</p>
-<div class="highlight"><span class="filename">question_title01.py</span><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Button</span><span class="p">,</span> <span class="n">Header</span><span class="p">,</span> <span class="n">Label</span>
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
-<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>
-<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="k">class</span> <span class="nc">MyApp</span><span class="p">(</span><span class="n">App</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
-<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;question02.css&quot;</span>
-<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="hll">    <span class="n">TITLE</span> <span class="o">=</span> <span class="s2">&quot;A Question App&quot;</span>
-</span><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="hll">    <span class="n">SUB_TITLE</span> <span class="o">=</span> <span class="s2">&quot;The most important question&quot;</span>
-</span><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>
-<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
-<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="hll">        <span class="k">yield</span> <span class="n">Header</span><span class="p">()</span>
-</span><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>        <span class="k">yield</span> <span class="n">Label</span><span class="p">(</span><span class="s2">&quot;Do you love Textual?&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;question&quot;</span><span class="p">)</span>
-<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a>        <span class="k">yield</span> <span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Yes&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;yes&quot;</span><span class="p">,</span> <span class="n">variant</span><span class="o">=</span><span class="s2">&quot;primary&quot;</span><span class="p">)</span>
-<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>        <span class="k">yield</span> <span class="n">Button</span><span class="p">(</span><span class="s2">&quot;No&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;no&quot;</span><span class="p">,</span> <span class="n">variant</span><span class="o">=</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>
-<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a>
-<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a>    <span class="k">def</span> <span class="nf">on_button_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Button</span><span class="o">.</span><span class="n">Pressed</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
-<a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a>
-<a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a>
-<a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-<a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">MyApp</span><span class="p">()</span>
-<a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a>    <span class="n">reply</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-<a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
+<div class="highlight"><span class="filename">question_title01.py</span><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Button</span><span class="p">,</span> <span class="n">Header</span><span class="p">,</span> <span class="n">Label</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="k">class</span> <span class="nc">MyApp</span><span class="p">(</span><span class="n">App</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;question02.css&quot;</span>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="hll">    <span class="n">TITLE</span> <span class="o">=</span> <span class="s2">&quot;A Question App&quot;</span>
+</span><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="hll">    <span class="n">SUB_TITLE</span> <span class="o">=</span> <span class="s2">&quot;The most important question&quot;</span>
+</span><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="hll">        <span class="k">yield</span> <span class="n">Header</span><span class="p">()</span>
+</span><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>        <span class="k">yield</span> <span class="n">Label</span><span class="p">(</span><span class="s2">&quot;Do you love Textual?&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;question&quot;</span><span class="p">)</span>
+<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>        <span class="k">yield</span> <span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Yes&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;yes&quot;</span><span class="p">,</span> <span class="n">variant</span><span class="o">=</span><span class="s2">&quot;primary&quot;</span><span class="p">)</span>
+<a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a>        <span class="k">yield</span> <span class="n">Button</span><span class="p">(</span><span class="s2">&quot;No&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;no&quot;</span><span class="p">,</span> <span class="n">variant</span><span class="o">=</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>
+<a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a>
+<a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a>    <span class="k">def</span> <span class="nf">on_button_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Button</span><span class="o">.</span><span class="n">Pressed</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+<a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a>
+<a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a>
+<a id="__codelineno-12-20" name="__codelineno-12-20" href="#__codelineno-12-20"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-12-21" name="__codelineno-12-21" href="#__codelineno-12-21"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">MyApp</span><span class="p">()</span>
+<a id="__codelineno-12-22" name="__codelineno-12-22" href="#__codelineno-12-22"></a>    <span class="n">reply</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<a id="__codelineno-12-23" name="__codelineno-12-23" href="#__codelineno-12-23"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
 </code></pre></div>
 <p>Note that the title and subtitle are displayed by the builtin <a href="../../widgets/header/">Header</a> widget at the top of the screen:</p>
 <p><svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
@@ -8362,34 +8597,34 @@ You can change these defaults by defining <code>TITLE</code> and <code>SUB_TITLE
 </svg>
 </p>
 <p>You can also set the title attributes dynamically within a method of your app. The following example sets the title and subtitle in response to a key press:</p>
-<div class="highlight"><span class="filename">question_title02.py</span><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="kn">from</span> <span class="nn">textual.events</span> <span class="kn">import</span> <span class="n">Key</span>
-<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Button</span><span class="p">,</span> <span class="n">Header</span><span class="p">,</span> <span class="n">Label</span>
-<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>
-<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>
-<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="k">class</span> <span class="nc">MyApp</span><span class="p">(</span><span class="n">App</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
-<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;question02.css&quot;</span>
-<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>    <span class="n">TITLE</span> <span class="o">=</span> <span class="s2">&quot;A Question App&quot;</span>
-<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>    <span class="n">SUB_TITLE</span> <span class="o">=</span> <span class="s2">&quot;The most important question&quot;</span>
-<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>
-<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
-<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>        <span class="k">yield</span> <span class="n">Header</span><span class="p">()</span>
-<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>        <span class="k">yield</span> <span class="n">Label</span><span class="p">(</span><span class="s2">&quot;Do you love Textual?&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;question&quot;</span><span class="p">)</span>
-<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a>        <span class="k">yield</span> <span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Yes&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;yes&quot;</span><span class="p">,</span> <span class="n">variant</span><span class="o">=</span><span class="s2">&quot;primary&quot;</span><span class="p">)</span>
-<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a>        <span class="k">yield</span> <span class="n">Button</span><span class="p">(</span><span class="s2">&quot;No&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;no&quot;</span><span class="p">,</span> <span class="n">variant</span><span class="o">=</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>
-<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>
-<a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a>    <span class="k">def</span> <span class="nf">on_button_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Button</span><span class="o">.</span><span class="n">Pressed</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
-<a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a>
-<a id="__codelineno-11-20" name="__codelineno-11-20" href="#__codelineno-11-20"></a><span class="hll">    <span class="k">def</span> <span class="nf">on_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Key</span><span class="p">):</span>
-</span><a id="__codelineno-11-21" name="__codelineno-11-21" href="#__codelineno-11-21"></a><span class="hll">        <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span>
-</span><a id="__codelineno-11-22" name="__codelineno-11-22" href="#__codelineno-11-22"></a><span class="hll">        <span class="bp">self</span><span class="o">.</span><span class="n">sub_title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;You just pressed </span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2">!&quot;</span>
-</span><a id="__codelineno-11-23" name="__codelineno-11-23" href="#__codelineno-11-23"></a>
-<a id="__codelineno-11-24" name="__codelineno-11-24" href="#__codelineno-11-24"></a>
-<a id="__codelineno-11-25" name="__codelineno-11-25" href="#__codelineno-11-25"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-<a id="__codelineno-11-26" name="__codelineno-11-26" href="#__codelineno-11-26"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">MyApp</span><span class="p">()</span>
-<a id="__codelineno-11-27" name="__codelineno-11-27" href="#__codelineno-11-27"></a>    <span class="n">reply</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-<a id="__codelineno-11-28" name="__codelineno-11-28" href="#__codelineno-11-28"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
+<div class="highlight"><span class="filename">question_title02.py</span><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="kn">from</span> <span class="nn">textual.events</span> <span class="kn">import</span> <span class="n">Key</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Button</span><span class="p">,</span> <span class="n">Header</span><span class="p">,</span> <span class="n">Label</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="k">class</span> <span class="nc">MyApp</span><span class="p">(</span><span class="n">App</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;question02.css&quot;</span>
+<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>    <span class="n">TITLE</span> <span class="o">=</span> <span class="s2">&quot;A Question App&quot;</span>
+<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>    <span class="n">SUB_TITLE</span> <span class="o">=</span> <span class="s2">&quot;The most important question&quot;</span>
+<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>
+<a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+<a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>        <span class="k">yield</span> <span class="n">Header</span><span class="p">()</span>
+<a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a>        <span class="k">yield</span> <span class="n">Label</span><span class="p">(</span><span class="s2">&quot;Do you love Textual?&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;question&quot;</span><span class="p">)</span>
+<a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a>        <span class="k">yield</span> <span class="n">Button</span><span class="p">(</span><span class="s2">&quot;Yes&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;yes&quot;</span><span class="p">,</span> <span class="n">variant</span><span class="o">=</span><span class="s2">&quot;primary&quot;</span><span class="p">)</span>
+<a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a>        <span class="k">yield</span> <span class="n">Button</span><span class="p">(</span><span class="s2">&quot;No&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;no&quot;</span><span class="p">,</span> <span class="n">variant</span><span class="o">=</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>
+<a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a>
+<a id="__codelineno-13-17" name="__codelineno-13-17" href="#__codelineno-13-17"></a>    <span class="k">def</span> <span class="nf">on_button_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Button</span><span class="o">.</span><span class="n">Pressed</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-13-18" name="__codelineno-13-18" href="#__codelineno-13-18"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+<a id="__codelineno-13-19" name="__codelineno-13-19" href="#__codelineno-13-19"></a>
+<a id="__codelineno-13-20" name="__codelineno-13-20" href="#__codelineno-13-20"></a><span class="hll">    <span class="k">def</span> <span class="nf">on_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Key</span><span class="p">):</span>
+</span><a id="__codelineno-13-21" name="__codelineno-13-21" href="#__codelineno-13-21"></a><span class="hll">        <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span>
+</span><a id="__codelineno-13-22" name="__codelineno-13-22" href="#__codelineno-13-22"></a><span class="hll">        <span class="bp">self</span><span class="o">.</span><span class="n">sub_title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;You just pressed </span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2">!&quot;</span>
+</span><a id="__codelineno-13-23" name="__codelineno-13-23" href="#__codelineno-13-23"></a>
+<a id="__codelineno-13-24" name="__codelineno-13-24" href="#__codelineno-13-24"></a>
+<a id="__codelineno-13-25" name="__codelineno-13-25" href="#__codelineno-13-25"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-13-26" name="__codelineno-13-26" href="#__codelineno-13-26"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">MyApp</span><span class="p">()</span>
+<a id="__codelineno-13-27" name="__codelineno-13-27" href="#__codelineno-13-27"></a>    <span class="n">reply</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<a id="__codelineno-13-28" name="__codelineno-13-28" href="#__codelineno-13-28"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
 </code></pre></div>
 <p>If you run this app and press the <span class="keys"><kbd class="key-t">T</kbd></span> key, you should see the header update accordingly:</p>
 <p><svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
