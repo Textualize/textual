@@ -14,7 +14,15 @@ without having to render the entire screen.
 from __future__ import annotations
 
 from operator import itemgetter
-from typing import TYPE_CHECKING, Callable, Iterable, NamedTuple, cast
+from typing import (
+    TYPE_CHECKING,
+    Callable,
+    Iterable,
+    Mapping,
+    NamedTuple,
+    Sequence,
+    cast,
+)
 
 import rich.repr
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
@@ -105,7 +113,7 @@ class ChopsUpdate:
 
     def __init__(
         self,
-        chops: list[dict[int, Strip | None]],
+        chops: Sequence[Mapping[int, Strip | None]],
         spans: list[tuple[int, int, int]],
         chop_ends: list[list[int]],
     ) -> None:
@@ -876,7 +884,7 @@ class Compositor:
         self,
         crop: Region,
         is_rendered_line: Callable[[int], bool],
-    ) -> list[dict[int, Strip | None]]:
+    ) -> Sequence[Mapping[int, Strip | None]]:
         """Render update 'chops'.
 
         Args:
@@ -907,10 +915,8 @@ class Compositor:
                 chops_line = chops[y]
 
                 first_cut, last_cut = render_region.column_span
-                cuts_line = cuts[y]
-                final_cuts = [
-                    cut for cut in cuts_line if (last_cut >= cut >= first_cut)
-                ]
+                final_cuts = [cut for cut in cuts[y] if (last_cut >= cut >= first_cut)]
+
                 if len(final_cuts) <= 2:
                     # Two cuts, which means the entire line
                     cut_strips = [strip]
@@ -920,8 +926,9 @@ class Compositor:
                     cut_strips = strip.divide(relative_cuts)
 
                 # Since we are painting front to back, the first segments for a cut "wins"
+                get_chops_line = chops_line.get
                 for cut, strip in zip(final_cuts, cut_strips):
-                    if chops_line[cut] is None:
+                    if get_chops_line(cut) is None:
                         chops_line[cut] = strip
 
         return chops
