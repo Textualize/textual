@@ -19,6 +19,8 @@ from typing import (
     cast,
 )
 
+from typing_extensions import Final
+
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
 
@@ -53,8 +55,9 @@ def clamp(value: T, minimum: T, maximum: T) -> T:
 
 
 class Offset(NamedTuple):
-    """A cell offset defined by x and y coordinates. Offsets are typically relative to the
-    top left of the terminal or other container.
+    """A cell offset defined by x and y coordinates.
+
+    Offsets are typically relative to the top left of the terminal or other container.
 
     Textual prefers the names `x` and `y`, but you could consider `x` to be the _column_ and `y` to be the _row_.
 
@@ -113,7 +116,7 @@ class Offset(NamedTuple):
         return Offset(-x, -y)
 
     def blend(self, destination: Offset, factor: float) -> Offset:
-        """Blend (interpolate) to a new point.
+        """Calculate a new offset on a line between this offset and a destination offset.
 
         Args:
             destination: Point where factor would be 1.0.
@@ -159,31 +162,18 @@ class Size(NamedTuple):
 
     @property
     def area(self) -> int:
-        """Get the area of the size.
-
-        Returns:
-            Area in cells.
-        """
+        """The area occupied by a region of this size."""
         return self.width * self.height
 
     @property
     def region(self) -> Region:
-        """Get a region of the same size.
-
-        Returns:
-            A region with the same size at (0, 0).
-
-        """
+        """A region of the same size, at the origin."""
         width, height = self
         return Region(0, 0, width, height)
 
     @property
     def line_range(self) -> range:
-        """Get a range covering lines.
-
-        Returns:
-            A builtin range object.
-        """
+        """A range object that covers values between 0 and `height`."""
         return range(self.height)
 
     def __add__(self, other: object) -> Size:
@@ -376,118 +366,68 @@ class Region(NamedTuple):
 
     @property
     def column_span(self) -> tuple[int, int]:
-        """Get the start and end columns (x coord).
+        """A pair of integers for the start and end columns (x coordinates) in this region.
 
-        The end value is exclusive.
-
-        Returns:
-            Pair of x coordinates (column numbers).
+        The end value is *exclusive*.
 
         """
         return (self.x, self.x + self.width)
 
     @property
     def line_span(self) -> tuple[int, int]:
-        """Get the start and end line number (y coord).
+        """A pair of integers for the start and end lines (y coordinates) in this region.
 
-        The end value is exclusive.
-
-        Returns:
-            Pair of y coordinates (line numbers).
+        The end value is *exclusive*.
 
         """
         return (self.y, self.y + self.height)
 
     @property
     def right(self) -> int:
-        """Maximum X value (non inclusive).
-
-        Returns:
-            x coordinate.
-
-        """
+        """Maximum X value (non inclusive)."""
         return self.x + self.width
 
     @property
     def bottom(self) -> int:
-        """Maximum Y value (non inclusive).
-
-        Returns:
-            y coordinate.
-
-        """
+        """Maximum Y value (non inclusive)."""
         return self.y + self.height
 
     @property
     def area(self) -> int:
-        """Get the area within the region.
-
-        Returns:
-            Area covered by this region.
-
-        """
+        """The are under the region."""
         return self.width * self.height
 
     @property
     def offset(self) -> Offset:
-        """Get the start point of the region.
-
-        Returns:
-            Top left offset.
-
-        """
+        """The top left corner of the region."""
         return Offset(*self[:2])
 
     @property
     def bottom_left(self) -> Offset:
-        """Bottom left offset of the region.
-
-        Returns:
-            Bottom left offset.
-
-        """
+        """Bottom left offset of the region."""
         x, y, _width, height = self
         return Offset(x, y + height)
 
     @property
     def top_right(self) -> Offset:
-        """Top right offset of the region.
-
-        Returns:
-            Top right.
-
-        """
+        """Top right offset of the region."""
         x, y, width, _height = self
         return Offset(x + width, y)
 
     @property
     def bottom_right(self) -> Offset:
-        """Bottom right of the region.
-
-        Returns:
-            Bottom right.
-
-        """
+        """Bottom right offset of the region."""
         x, y, width, height = self
         return Offset(x + width, y + height)
 
     @property
     def size(self) -> Size:
-        """Get the size of the region.
-
-        Returns:
-            Size of the region.
-
-        """
+        """Get the size of the region."""
         return Size(*self[2:])
 
     @property
     def corners(self) -> tuple[int, int, int, int]:
-        """Get the top left and bottom right coordinates as a tuple of integers.
-
-        Returns:
-            A tuple of `(<left>, <top>, <right>, <bottom>)`.
-        """
+        """The top left and bottom right coordinates as a tuple of four integers."""
         x, y, width, height = self
         return x, y, x + width, y + height
 
@@ -503,12 +443,7 @@ class Region(NamedTuple):
 
     @property
     def reset_offset(self) -> Region:
-        """An region of the same size at (0, 0).
-
-        Returns:
-            Reset region.
-
-        """
+        """An region of the same size at (0, 0)."""
         _, _, width, height = self
         return Region(0, 0, width, height)
 
@@ -897,63 +832,35 @@ class Spacing(NamedTuple):
 
     @property
     def width(self) -> int:
-        """Total space in width.
-
-        Returns:
-            Width.
-
-        """
+        """Total space in the x axis."""
         return self.left + self.right
 
     @property
     def height(self) -> int:
-        """Total space in height.
-
-        Returns:
-            Height.
-
-        """
+        """Total space in the y axis."""
         return self.top + self.bottom
 
     @property
     def top_left(self) -> tuple[int, int]:
-        """Top left space.
-
-        Returns:
-            `(<left>, <top>)`
-
-        """
+        """A pair of integers for the left, and top space."""
         return (self.left, self.top)
 
     @property
     def bottom_right(self) -> tuple[int, int]:
-        """Bottom right space.
-
-        Returns:
-            `(<right>, <bottom>)`
-
-        """
+        """A pair of integers for the right, and bottom space."""
         return (self.right, self.bottom)
 
     @property
     def totals(self) -> tuple[int, int]:
-        """Get total horizontal and vertical space.
-
-        Returns:
-            `(<horizontal>, <vertical>)`
-
-
-        """
+        """A pair of integers for the total horizontal and vertical space."""
         top, right, bottom, left = self
         return (left + right, top + bottom)
 
     @property
     def css(self) -> str:
-        """Gets a string containing the spacing in CSS format.
+        """A string containing the spacing in CSS format.
 
-        Returns:
-            Spacing in CSS format.
-
+        For example: "1" or "2 4" or "4 2 8 2".
         """
         top, right, bottom, left = self
         if top == right == bottom == left:
@@ -1067,4 +974,5 @@ class Spacing(NamedTuple):
         )
 
 
-NULL_OFFSET = Offset(0, 0)
+NULL_OFFSET: Final = Offset(0, 0)
+"""An Offset constant for the origin (0, 0)"""
