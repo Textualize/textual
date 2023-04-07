@@ -141,6 +141,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://textual.textualize.io/api/logger/</loc>
+         <lastmod>2023-04-07</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://textual.textualize.io/api/logging/</loc>
          <lastmod>2023-04-07</lastmod>
          <changefreq>daily</changefreq>

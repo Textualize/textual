@@ -4834,6 +4834,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
@@ -6288,6 +6290,32 @@
     
   
     Loading indicator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logger/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Logger
   
 
     
@@ -8487,7 +8515,25 @@ also the <code>title</code> attribute.</p>
 
   <div class="doc doc-contents ">
   
-      <p>A view on to the children which contains just the screen.</p>
+      <p>A view on to the App's children (just the screen).</p>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-external" title="typing.Sequence" href="https://docs.python.org/3/library/typing.html#typing.Sequence">Sequence</a>[<a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a>]</code>
+          </td>
+          <td><p>A sequence of widgets.</p></td>
+        </tr>
+    </tbody>
+  </table>
   </div>
 
 </div>
@@ -8534,6 +8580,24 @@ also the <code>title</code> attribute.</p>
   <div class="doc doc-contents ">
   
       <p>The widget that is focused on the currently active screen.</p>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a> | None</code>
+          </td>
+          <td><p>The currently focused widget, or <code>None</code> if nothing is focused.</p></td>
+        </tr>
+    </tbody>
+  </table>
   </div>
 
 </div>
@@ -8579,7 +8643,25 @@ also the <code>title</code> attribute.</p>
 
   <div class="doc doc-contents ">
   
-      <p>The logger object.</p>
+      <p>Textual log interface.</p>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.Logger" href="../logger/#textual.Logger">Logger</a></code>
+          </td>
+          <td><p>A Textual logger.</p></td>
+        </tr>
+    </tbody>
+  </table>
   </div>
 
 </div>
@@ -8692,6 +8774,24 @@ screen and app are merged and returned.</p>
   <div class="doc doc-contents ">
   
       <p>A <em>copy</em> of the screen stack.</p>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a>[<a class="autorefs autorefs-internal" title="textual.screen.Screen" href="../screen/#textual.screen.Screen">Screen</a>]</code>
+          </td>
+          <td><p>A snapshot of the current state of the screen stack.</p></td>
+        </tr>
+    </tbody>
+  </table>
   </div>
 
 </div>
@@ -8761,6 +8861,24 @@ screen and app are merged and returned.</p>
   <div class="doc doc-contents ">
   
       <p>The size of the terminal.</p>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.geometry.Size" href="../geometry/#textual.geometry.Size">Size</a></code>
+          </td>
+          <td><p>Size of the terminal.</p></td>
+        </tr>
+    </tbody>
+  </table>
   </div>
 
 </div>
@@ -8836,6 +8954,24 @@ the title.</p>
   <div class="doc doc-contents ">
   
       <p>A worker manager.</p>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual._worker_manager.WorkerManager" href="../worker_manager/#textual._worker_manager.WorkerManager">WorkerManager</a></code>
+          </td>
+          <td><p>An object to manage workers.</p></td>
+        </tr>
+    </tbody>
+  </table>
   </div>
 
 </div>
