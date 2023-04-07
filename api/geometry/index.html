@@ -5315,6 +5315,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.geometry.NULL_OFFSET" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NULL_OFFSET
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.geometry.Offset" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7438,6 +7449,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.geometry.NULL_OFFSET" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NULL_OFFSET
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.geometry.Offset" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -8292,6 +8314,29 @@
 
 
 
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="textual.geometry.NULL_OFFSET" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">NULL_OFFSET</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+<a href="#textual.geometry.NULL_OFFSET" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">NULL_OFFSET</span><span class="p">:</span> <span class="n">Final</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>An Offset constant for (0, 0).</p>
+  </div>
+
+</div>
+
 
 <div class="doc doc-object doc-class">
 
@@ -8309,8 +8354,8 @@
         Bases: <code><a class="autorefs autorefs-external" title="typing.NamedTuple" href="https://docs.python.org/3/library/typing.html#typing.NamedTuple">NamedTuple</a></code></p>
 
   
-      <p>A cell offset defined by x and y coordinates. Offsets are typically relative to the
-top left of the terminal or other container.</p>
+      <p>A cell offset defined by x and y coordinates.</p>
+<p>Offsets are typically relative to the top left of the terminal or other container.</p>
 <p>Textual prefers the names <code>x</code> and <code>y</code>, but you could consider <code>x</code> to be the <em>column</em> and <code>y</code> to be the <em>row</em>.</p>
 
 
@@ -8343,25 +8388,7 @@ top left of the terminal or other container.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Ensure x and y are above zero.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="#textual.geometry.Offset">Offset</a></code>
-          </td>
-          <td><p>New offset.</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>This offset with <code>x</code> and <code>y</code> restricted to values above zero.</p>
   </div>
 
 </div>
@@ -8384,25 +8411,7 @@ top left of the terminal or other container.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Check if the point is at the origin (0, 0).</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
-          </td>
-          <td><p>True if the offset is the origin.</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>Is the offset at (0, 0)?</p>
   </div>
 
 </div>
@@ -8469,7 +8478,7 @@ top left of the terminal or other container.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Blend (interpolate) to a new point.</p>
+      <p>Calculate a new offset on a line between this offset and a destination offset.</p>
 
   <h5>Parameters</h5>
   <table>
@@ -8656,25 +8665,7 @@ top left of the terminal or other container.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Get the area within the region.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
-          </td>
-          <td><p>Area covered by this region.</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>The are under the region.</p>
   </div>
 
 </div>
@@ -8698,24 +8689,6 @@ top left of the terminal or other container.</p>
   <div class="doc doc-contents ">
   
       <p>Maximum Y value (non inclusive).</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
-          </td>
-          <td><p>y coordinate.</p></td>
-        </tr>
-    </tbody>
-  </table>
   </div>
 
 </div>
@@ -8739,24 +8712,6 @@ top left of the terminal or other container.</p>
   <div class="doc doc-contents ">
   
       <p>Bottom left offset of the region.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="#textual.geometry.Offset">Offset</a></code>
-          </td>
-          <td><p>Bottom left offset.</p></td>
-        </tr>
-    </tbody>
-  </table>
   </div>
 
 </div>
@@ -8779,25 +8734,7 @@ top left of the terminal or other container.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Bottom right of the region.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="#textual.geometry.Offset">Offset</a></code>
-          </td>
-          <td><p>Bottom right.</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>Bottom right offset of the region.</p>
   </div>
 
 </div>
@@ -8843,26 +8780,8 @@ top left of the terminal or other container.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Get the start and end columns (x coord).</p>
-<p>The end value is exclusive.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
-          </td>
-          <td><p>Pair of x coordinates (column numbers).</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>A pair of integers for the start and end columns (x coordinates) in this region.</p>
+<p>The end value is <em>exclusive</em>.</p>
   </div>
 
 </div>
@@ -8885,25 +8804,7 @@ top left of the terminal or other container.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Get the top left and bottom right coordinates as a tuple of integers.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
-          </td>
-          <td><p>A tuple of <code>(&lt;left&gt;, &lt;top&gt;, &lt;right&gt;, &lt;bottom&gt;)</code>.</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>The top left and bottom right coordinates as a tuple of four integers.</p>
   </div>
 
 </div>
@@ -8972,26 +8873,8 @@ top left of the terminal or other container.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Get the start and end line number (y coord).</p>
-<p>The end value is exclusive.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
-          </td>
-          <td><p>Pair of y coordinates (line numbers).</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>A pair of integers for the start and end lines (y coordinates) in this region.</p>
+<p>The end value is <em>exclusive</em>.</p>
   </div>
 
 </div>
@@ -9014,25 +8897,7 @@ top left of the terminal or other container.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Get the start point of the region.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="#textual.geometry.Offset">Offset</a></code>
-          </td>
-          <td><p>Top left offset.</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>The top left corner of the region.</p>
   </div>
 
 </div>
@@ -9056,24 +8921,6 @@ top left of the terminal or other container.</p>
   <div class="doc doc-contents ">
   
       <p>An region of the same size at (0, 0).</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Region" href="#textual.geometry.Region">Region</a></code>
-          </td>
-          <td><p>Reset region.</p></td>
-        </tr>
-    </tbody>
-  </table>
   </div>
 
 </div>
@@ -9097,24 +8944,6 @@ top left of the terminal or other container.</p>
   <div class="doc doc-contents ">
   
       <p>Maximum X value (non inclusive).</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
-          </td>
-          <td><p>x coordinate.</p></td>
-        </tr>
-    </tbody>
-  </table>
   </div>
 
 </div>
@@ -9138,24 +8967,6 @@ top left of the terminal or other container.</p>
   <div class="doc doc-contents ">
   
       <p>Get the size of the region.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Size" href="#textual.geometry.Size">Size</a></code>
-          </td>
-          <td><p>Size of the region.</p></td>
-        </tr>
-    </tbody>
-  </table>
   </div>
 
 </div>
@@ -9179,24 +8990,6 @@ top left of the terminal or other container.</p>
   <div class="doc doc-contents ">
   
       <p>Top right offset of the region.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="#textual.geometry.Offset">Offset</a></code>
-          </td>
-          <td><p>Top right.</p></td>
-        </tr>
-    </tbody>
-  </table>
   </div>
 
 </div>
@@ -10806,25 +10599,7 @@ it is taken from the right edge.</p></td>
 
   <div class="doc doc-contents ">
   
-      <p>Get the area of the size.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
-          </td>
-          <td><p>Area in cells.</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>The area occupied by a region of this size.</p>
   </div>
 
 </div>
@@ -10870,25 +10645,7 @@ it is taken from the right edge.</p></td>
 
   <div class="doc doc-contents ">
   
-      <p>Get a range covering lines.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#range">range</a></code>
-          </td>
-          <td><p>A builtin range object.</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>A range object that covers values between 0 and <code>height</code>.</p>
   </div>
 
 </div>
@@ -10911,25 +10668,7 @@ it is taken from the right edge.</p></td>
 
   <div class="doc doc-contents ">
   
-      <p>Get a region of the same size.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Region" href="#textual.geometry.Region">Region</a></code>
-          </td>
-          <td><p>A region with the same size at (0, 0).</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>A region of the same size, at the origin.</p>
   </div>
 
 </div>
@@ -11172,25 +10911,7 @@ it is taken from the right edge.</p></td>
 
   <div class="doc doc-contents ">
   
-      <p>Bottom right space.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
-          </td>
-          <td><p><code>(&lt;right&gt;, &lt;bottom&gt;)</code></p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>A pair of integers for the right, and bottom space.</p>
   </div>
 
 </div>
@@ -11213,25 +10934,8 @@ it is taken from the right edge.</p></td>
 
   <div class="doc doc-contents ">
   
-      <p>Gets a string containing the spacing in CSS format.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
-          </td>
-          <td><p>Spacing in CSS format.</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>A string containing the spacing in CSS format.</p>
+<p>For example: "1" or "2 4" or "4 2 8 2".</p>
   </div>
 
 </div>
@@ -11254,25 +10958,7 @@ it is taken from the right edge.</p></td>
 
   <div class="doc doc-contents ">
   
-      <p>Total space in height.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
-          </td>
-          <td><p>Height.</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>Total space in the y axis.</p>
   </div>
 
 </div>
@@ -11364,25 +11050,7 @@ it is taken from the right edge.</p></td>
 
   <div class="doc doc-contents ">
   
-      <p>Top left space.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
-          </td>
-          <td><p><code>(&lt;left&gt;, &lt;top&gt;)</code></p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>A pair of integers for the left, and top space.</p>
   </div>
 
 </div>
@@ -11405,25 +11073,7 @@ it is taken from the right edge.</p></td>
 
   <div class="doc doc-contents ">
   
-      <p>Get total horizontal and vertical space.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
-          </td>
-          <td><p><code>(&lt;horizontal&gt;, &lt;vertical&gt;)</code></p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>A pair of integers for the total horizontal and vertical space.</p>
   </div>
 
 </div>
@@ -11446,25 +11096,7 @@ it is taken from the right edge.</p></td>
 
   <div class="doc doc-contents ">
   
-      <p>Total space in width.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
-          </td>
-          <td><p>Width.</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>Total space in the x axis.</p>
   </div>
 
 </div>

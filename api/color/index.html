@@ -5098,6 +5098,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.color.BLACK" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BLACK
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.color.WHITE" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WHITE
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.color.Color" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5547,6 +5569,45 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Lab">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.color.Lab.L" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        L
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.color.Lab.a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        a
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.color.Lab.b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        b
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -7131,6 +7192,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.color.BLACK" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BLACK
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.color.WHITE" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WHITE
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.color.Color" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7580,6 +7663,45 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Lab">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.color.Lab.L" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        L
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.color.Lab.a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        a
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.color.Lab.b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        b
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -8380,6 +8502,52 @@ You can convert from a Textual color to a Rich color with the <a class="autorefs
 
 
 
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="textual.color.BLACK" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">BLACK</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+<a href="#textual.color.BLACK" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">BLACK</span><span class="p">:</span> <span class="n">Final</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>A constant for pure black.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="textual.color.WHITE" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">WHITE</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+<a href="#textual.color.WHITE" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">WHITE</span><span class="p">:</span> <span class="n">Final</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>A constant for pure white.</p>
+  </div>
+
+</div>
+
 
 <div class="doc doc-object doc-class">
 
@@ -8397,7 +8565,9 @@ You can convert from a Textual color to a Rich color with the <a class="autorefs
         Bases: <code><a class="autorefs autorefs-external" title="typing.NamedTuple" href="https://docs.python.org/3/library/typing.html#typing.NamedTuple">NamedTuple</a></code></p>
 
   
-      <p>A class to represent a RGB color with an alpha component.</p>
+      <p>A class to represent a color.</p>
+<p>Colors are stored as three values representing the degree of red, green, and blue in a color, and a
+fourth "alpha" value which defines where the color lies on a gradient of opaque to transparent.</p>
 
 
 
@@ -8429,7 +8599,7 @@ You can convert from a Textual color to a Rich color with the <a class="autorefs
 
   <div class="doc doc-contents ">
   
-      <p>Alpha component (0-1)</p>
+      <p>Alpha component in range 0 to 1.</p>
   </div>
 
 </div>
@@ -8452,7 +8622,7 @@ You can convert from a Textual color to a Rich color with the <a class="autorefs
 
   <div class="doc doc-contents ">
   
-      <p>Blue component (0-255)</p>
+      <p>Blue component in range 0 to 255.</p>
   </div>
 
 </div>
@@ -8475,25 +8645,9 @@ You can convert from a Textual color to a Rich color with the <a class="autorefs
 
   <div class="doc doc-contents ">
   
-      <p>Get the human perceptual brightness.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
-          </td>
-          <td><p>Brightness value (0-1).</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>The human perceptual brightness.</p>
+<p>A value of 1 is returned for pure white, and 0 for pure black.
+Other colors lie on a gradient between the two extremes.</p>
   </div>
 
 </div>
@@ -8516,25 +8670,7 @@ You can convert from a Textual color to a Rich color with the <a class="autorefs
 
   <div class="doc doc-contents ">
   
-      <p>Get a color with all components saturated to maximum and minimum values.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.color.Color" href="#textual.color.Color">Color</a></code>
-          </td>
-          <td><p>A color object.</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>A clamped color (this color with all values in expected range).</p>
   </div>
 
 </div>
@@ -8557,25 +8693,8 @@ You can convert from a Textual color to a Rich color with the <a class="autorefs
 
   <div class="doc doc-contents ">
   
-      <p>The color in CSS rgb or rgba form.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
-          </td>
-          <td><p>A CSS style color, e.g. <code>"rgb(10,20,30)"</code> or <code>"rgb(50,70,80,0.5)"</code></p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>The color in CSS RGB or RGBA form.</p>
+<p>For example, <code>"rgb(10,20,30)"</code> for an RGB color, or <code>"rgb(50,70,80,0.5)"</code> for an RGBA color.</p>
   </div>
 
 </div>
@@ -8598,7 +8717,7 @@ You can convert from a Textual color to a Rich color with the <a class="autorefs
 
   <div class="doc doc-contents ">
   
-      <p>Green component (0-255)</p>
+      <p>Green component in range 0 to 255.</p>
   </div>
 
 </div>
@@ -8622,24 +8741,7 @@ You can convert from a Textual color to a Rich color with the <a class="autorefs
   <div class="doc doc-contents ">
   
       <p>The color in CSS hex form, with 6 digits for RGB, and 8 digits for RGBA.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
-          </td>
-          <td><p>A CSS hex-style color, e.g. <code>"#46b3de"</code> or <code>"#3342457f"</code></p></td>
-        </tr>
-    </tbody>
-  </table>
+<p>For example, <code>"#46b3de"</code> for an RGB color, or <code>"#3342457f"</code> for a color with alpha.</p>
   </div>
 
 </div>
@@ -8663,24 +8765,7 @@ You can convert from a Textual color to a Rich color with the <a class="autorefs
   <div class="doc doc-contents ">
   
       <p>The color in CSS hex form, with 6 digits for RGB. Alpha is ignored.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
-          </td>
-          <td><p>A CSS hex-style color, e.g. "#46b3de"</p></td>
-        </tr>
-    </tbody>
-  </table>
+<p>For example, <code>"#46b3de"</code>.</p>
   </div>
 
 </div>
@@ -8703,25 +8788,8 @@ You can convert from a Textual color to a Rich color with the <a class="autorefs
 
   <div class="doc doc-contents ">
   
-      <p>Get the color as HSL.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.color.HSL" href="#textual.color.HSL">HSL</a></code>
-          </td>
-          <td><p>Color in HSL format.</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>This color in HSL format.</p>
+<p>HSL color is an alternative way of representing a color, which can be used in certain color calculations.</p>
   </div>
 
 </div>
@@ -8767,25 +8835,7 @@ You can convert from a Textual color to a Rich color with the <a class="autorefs
 
   <div class="doc doc-contents ">
   
-      <p>Check if the color is transparent, i.e. has 0 alpha.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
-          </td>
-          <td><p>True if transparent, otherwise False.</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>Is the color transparent (i.e. has 0 alpha)?</p>
   </div>
 
 </div>
@@ -8808,25 +8858,7 @@ You can convert from a Textual color to a Rich color with the <a class="autorefs
 
   <div class="doc doc-contents ">
   
-      <p>Get a monochrome version of this color.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.color.Color" href="#textual.color.Color">Color</a></code>
-          </td>
-          <td><p>A new monochrome color.</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>A monochrome version of this color.</p>
   </div>
 
 </div>
@@ -8890,7 +8922,7 @@ You can convert from a Textual color to a Rich color with the <a class="autorefs
 
   <div class="doc doc-contents ">
   
-      <p>Red component (0-255)</p>
+      <p>Red component in range 0 to 255.</p>
   </div>
 
 </div>
@@ -8913,25 +8945,7 @@ You can convert from a Textual color to a Rich color with the <a class="autorefs
 
   <div class="doc doc-contents ">
   
-      <p>Get just the red, green, and blue components.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
-          </td>
-          <td><p>Color components</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>A tuple of the red, gree, and blue color components.</p>
   </div>
 
 </div>
@@ -8994,6 +9008,9 @@ You can convert from a Textual color to a Rich color with the <a class="autorefs
   <div class="doc doc-contents ">
   
       <p>Generate a new color between two colors.</p>
+<p>This method calculates a new color on a gradient.
+The position on the gradient is given by <code>factor</code>, which is a float between 0 and 1, where 0 is the original color, and 1 is the <code>destination</code> color.
+A value of <code>gradient</code> between the two extremes produces a color somewhere between the two end points.</p>
 
   <h5>Parameters</h5>
   <table>
@@ -9031,7 +9048,7 @@ You can convert from a Textual color to a Rich color with the <a class="autorefs
           <td>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a> | None</code>
           </td>
-          <td><p>New alpha for result. Defaults to None.</p></td>
+          <td><p>New alpha for result.</p></td>
           <td>
                 <code>None</code>
           </td>
@@ -9259,7 +9276,7 @@ You can convert from a Textual color to a Rich color with the <a class="autorefs
           <td>
                 <code><a class="autorefs autorefs-external" title="rich.color.Color" href="https://rich.readthedocs.io/en/stable/reference/color.html#rich.color.Color">RichColor</a></code>
           </td>
-          <td><p>An instance of rich.color.Color.</p></td>
+          <td><p>An instance of <a class="autorefs autorefs-external" href="https://rich.readthedocs.io/en/stable/reference/color.html#rich.color.Color">Rich color</a>.</p></td>
           <td>
               <em>required</em>
           </td>
@@ -9280,7 +9297,7 @@ You can convert from a Textual color to a Rich color with the <a class="autorefs
           <td>
                 <code><a class="autorefs autorefs-internal" title="textual.color.Color" href="#textual.color.Color">Color</a></code>
           </td>
-          <td><p>A new Color.</p></td>
+          <td><p>A new Color instance.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9324,8 +9341,7 @@ You can convert from a Textual color to a Rich color with the <a class="autorefs
           <td><code>alpha</code></td>
           <td>
           </td>
-          <td><p>An alpha value to adjust the pure white / black by.
-Defaults to 0.95.</p></td>
+          <td><p>An alpha value to apply to the result.</p></td>
           <td>
                 <code>0.95</code>
           </td>
@@ -9914,7 +9930,7 @@ The stop indicate the color at that point on a spectrum between 0 and 1.</p>
         Bases: <code><a class="autorefs autorefs-external" title="typing.NamedTuple" href="https://docs.python.org/3/library/typing.html#typing.NamedTuple">NamedTuple</a></code></p>
 
   
-      <p>A color in HLS format.</p>
+      <p>A color in HLS (Hue, Saturation, Lightness) format.</p>
 
 
 
@@ -9969,7 +9985,7 @@ The stop indicate the color at that point on a spectrum between 0 and 1.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Hue</p>
+      <p>Hue in range 0 to 1.</p>
   </div>
 
 </div>
@@ -9992,7 +10008,7 @@ The stop indicate the color at that point on a spectrum between 0 and 1.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Lightness</p>
+      <p>Lightness in range 0 to 1.</p>
   </div>
 
 </div>
@@ -10015,7 +10031,7 @@ The stop indicate the color at that point on a spectrum between 0 and 1.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Saturation</p>
+      <p>Saturation in range 0 to 1.</p>
   </div>
 
 </div>
@@ -10046,7 +10062,7 @@ The stop indicate the color at that point on a spectrum between 0 and 1.</p>
         Bases: <code><a class="autorefs autorefs-external" title="typing.NamedTuple" href="https://docs.python.org/3/library/typing.html#typing.NamedTuple">NamedTuple</a></code></p>
 
   
-      <p>A color in HSV format.</p>
+      <p>A color in HSV (Hue, Saturation, Value) format.</p>
 
 
 
@@ -10078,7 +10094,7 @@ The stop indicate the color at that point on a spectrum between 0 and 1.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Hue</p>
+      <p>Hue in range 0 to 1.</p>
   </div>
 
 </div>
@@ -10101,7 +10117,7 @@ The stop indicate the color at that point on a spectrum between 0 and 1.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Saturation</p>
+      <p>Saturation in range 0 to 1</p>
   </div>
 
 </div>
@@ -10124,7 +10140,7 @@ The stop indicate the color at that point on a spectrum between 0 and 1.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Value</p>
+      <p>Value un range 0 to 1.</p>
   </div>
 
 </div>
@@ -10168,6 +10184,75 @@ The stop indicate the color at that point on a spectrum between 0 and 1.</p>
 
 
 
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.color.Lab.L" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">L</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+  </span>
+
+<a href="#textual.color.Lab.L" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">L</span><span class="p">:</span> <span class="nb">float</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Lightness in range 0 to 100.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.color.Lab.a" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">a</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+  </span>
+
+<a href="#textual.color.Lab.a" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">a</span><span class="p">:</span> <span class="nb">float</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>A axis in range -127 to 128.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.color.Lab.b" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">b</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+  </span>
+
+<a href="#textual.color.Lab.b" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">b</span><span class="p">:</span> <span class="nb">float</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>B axis in range -127 to 128.</p>
+  </div>
+
+</div>
 
 
 
