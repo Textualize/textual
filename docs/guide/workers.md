@@ -112,7 +112,7 @@ The `state` attribute will contain one of the following values:
 | --------- | ----------------------------------------------------------------------------------- |
 | PENDING   | The worker was created, but not yet started.                                        |
 | RUNNING   | The worker is currently running.                                                    |
-| CANCELLED | The worker was cancelled and is not longer running.                                 |
+| CANCELLED | The worker was cancelled and is no longer running.                                  |
 | ERROR     | The worker raised an exception, and `worker.error` will contain the exception.      |
 | SUCCESS   | The worker completed successful, and `worker.result` will contain the return value. |
 
