@@ -70,21 +70,12 @@ class Offset(NamedTuple):
 
     @property
     def is_origin(self) -> bool:
-        """Check if the point is at the origin (0, 0).
-
-        Returns:
-            True if the offset is the origin.
-
-        """
+        """Is the offset at (0, 0)?"""
         return self == (0, 0)
 
     @property
     def clamped(self) -> Offset:
-        """Ensure x and y are above zero.
-
-        Returns:
-            New offset.
-        """
+        """This offset with `x` and `y` restricted to values above zero."""
         x, y = self
         return Offset(0 if x < 0 else x, 0 if y < 0 else y)
 
@@ -975,4 +966,4 @@ class Spacing(NamedTuple):
 
 
 NULL_OFFSET: Final = Offset(0, 0)
-"""An Offset constant for the origin (0, 0)"""
+"""An Offset constant for (0, 0)."""
