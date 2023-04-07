@@ -117,6 +117,63 @@ When you first run this you will get a blank screen. Press any key to add the we
 ```{.textual path="docs/examples/app/widgets02.py" press="a,a,a,down,down,down,down,down,down"}
 ```
 
+#### Awaiting mount
+
+When you mount a widget, Textual will mount everything the widget *composes*.
+Textual guarantees that the mounting will be complete by the *next* message handler, but not immediately after the call to `mount()`.
+This may be a problem if you want to make any changes to the widget in the same message handler.
+
+Let's first illustrate the problem with an example.
+The following code will mount the Welcome widget in response to a key press.
+It will also attempt to modify the Button in the Welcome widget by changing its label from "OK" to "YES".
+
+```python hl_lines="2 8"
+from textual.app import App
+from textual.widgets import Button, Welcome
+
+
+class WelcomeApp(App):
+    def on_key(self) -> None:
+        self.mount(Welcome())
+        self.query_one(Button).label = "YES!" # (1)!
+
+
+if __name__ == "__main__":
+    app = WelcomeApp()
+    app.run()
+```
+
+1. See [queries](./queries.md) for more information on the `query_one` method.
+
+If you run this example, you will find that Textual raises a [NoMatches][textual.css.query.NoMatches] exception when you press a key.
+This is because the mount process has not yet completed when we attempt to change the button.
+
+To solve this we can optionally await the result of `mount()`, which requires we make the function `async`.
+This guarantees that by the following line, the Button has been mounted, and we can change its label.
+
+
+```python hl_lines="6 7"
+from textual.app import App
+from textual.widgets import Button, Welcome
+
+
+class WelcomeApp(App):
+    async def on_key(self) -> None:
+        await self.mount(Welcome())
+        self.query_one(Button).label = "YES!"
+
+
+if __name__ == "__main__":
+    app = WelcomeApp()
+    app.run()
+```
+
+Here's the output. Note the changed button text:
+
+```{.textual path="docs/examples/app/widgets04.py" press=["a"]}
+```
+
+
 ## Exiting
 
 An app will run until you call [App.exit()][textual.app.App.exit] which will exit application mode and the [run][textual.app.App.run] method will return. If this is the last line in your code you will return to the command prompt.
