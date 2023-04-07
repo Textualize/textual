@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Allowed border_title and border_subtitle to accept Text objects
 - Added additional line around titles
 - When a container is auto, relative dimensions in children stretch the container. https://github.com/Textualize/textual/pull/2221
+- DataTable page up / down now move cursor
 
 ### Fixed
 
