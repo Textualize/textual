@@ -135,7 +135,7 @@ class WorkerManager:
             node: Worker DOM node.
             group: A group name.
 
-        Return:
+        Returns:
             A list of workers that were cancelled.
         """
         workers = [
@@ -156,7 +156,7 @@ class WorkerManager:
         Returns:
             List of cancelled workers.
 
-        ."""
+        """
         workers = [worker for worker in self._workers if worker.node == node]
         for worker in workers:
             worker.cancel()

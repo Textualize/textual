@@ -168,7 +168,9 @@ class RenderCache(NamedTuple):
     """Stores results of a previous render."""
 
     size: Size
+    """The size of the render."""
     lines: list[Strip]
+    """Contents of the render."""
 
 
 class WidgetError(Exception):
@@ -184,8 +186,11 @@ class PseudoClasses(NamedTuple):
     cache-key."""
 
     enabled: bool
+    """Is 'enabled' applied?"""
     focus: bool
+    """Is 'focus' applied?"""
     hover: bool
+    """Is 'hover' applied?"""
 
 
 class _BorderTitle:
