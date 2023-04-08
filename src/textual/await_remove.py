@@ -1,4 +1,9 @@
-"""Provides the type of an awaitable remove."""
+"""
+
+An *optionally* awaitable object returned by methods that remove widgets.
+
+
+"""
 
 from asyncio import Event, Task
 from typing import Generator

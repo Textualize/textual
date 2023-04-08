@@ -1,3 +1,12 @@
+"""
+Functions for *walking* the DOM.
+
+!!! note
+
+    For most purposes you would be better off using [query][textual.dom.DOMNode.query], which uses these functions internally.
+
+"""
+
 from __future__ import annotations
 
 from collections import deque

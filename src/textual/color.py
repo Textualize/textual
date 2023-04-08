@@ -1,9 +1,6 @@
 """
 This module contains a powerful Color class which Textual uses to expose colors.
 
-The only exception would be for Rich renderables, which require a rich.color.Color instance.
-You can convert from a Textual color to a Rich color with the [rich_color][textual.color.Color.rich_color] property.
-
 ## Named colors
 
 The following named colors are used by the [parse][textual.color.Color.parse] method.

@@ -1,3 +1,10 @@
+"""
+
+A decorator used to create [workers](/guide/workers).
+
+"""
+
+
 from __future__ import annotations
 
 from functools import partial, wraps
@@ -53,7 +60,7 @@ def work(
     exit_on_error: bool = True,
     exclusive: bool = False,
 ) -> Callable[FactoryParamSpec, Worker[ReturnType]] | Decorator:
-    """Worker decorator factory.
+    """A decorator used to create [workers](/guide/workers).
 
     Args:
         method: A function or coroutine.

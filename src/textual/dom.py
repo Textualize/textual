@@ -1,3 +1,12 @@
+"""
+
+A DOMNode is a base class for any object within the Textual Document Object Model,
+which includes all Widgets, Screens, and Apps.
+
+
+"""
+
+
 from __future__ import annotations
 
 import re
@@ -25,7 +34,7 @@ from ._context import NoActiveAppError
 from ._node_list import NodeList
 from ._types import WatchCallbackType
 from ._worker_manager import WorkerManager
-from .binding import Binding, Bindings, BindingType
+from .binding import Binding, BindingType, _Bindings
 from .color import BLACK, WHITE, Color
 from .css._error_tools import friendly_list
 from .css.constants import VALID_DISPLAY, VALID_VISIBILITY
@@ -134,7 +143,7 @@ class DOMNode(MessagePump):
     _css_type_names: ClassVar[frozenset[str]] = frozenset()
 
     # Generated list of bindings
-    _merged_bindings: ClassVar[Bindings | None] = None
+    _merged_bindings: ClassVar[_Bindings | None] = None
 
     _reactives: ClassVar[dict[str, Reactive]]
 
@@ -168,7 +177,7 @@ class DOMNode(MessagePump):
         self._auto_refresh_timer: Timer | None = None
         self._css_types = {cls.__name__ for cls in self._css_bases(self.__class__)}
         self._bindings = (
-            Bindings()
+            _Bindings()
             if self._merged_bindings is None
             else self._merged_bindings.copy()
         )
@@ -351,27 +360,27 @@ class DOMNode(MessagePump):
         return classes
 
     @classmethod
-    def _merge_bindings(cls) -> Bindings:
+    def _merge_bindings(cls) -> _Bindings:
         """Merge bindings from base classes.
 
         Returns:
             Merged bindings.
         """
-        bindings: list[Bindings] = []
+        bindings: list[_Bindings] = []
 
         for base in reversed(cls.__mro__):
             if issubclass(base, DOMNode):
                 if not base._inherit_bindings:
                     bindings.clear()
                 bindings.append(
-                    Bindings(
+                    _Bindings(
                         base.__dict__.get("BINDINGS", []),
                     )
                 )
         keys: dict[str, Binding] = {}
         for bindings_ in bindings:
             keys.update(bindings_.keys)
-        return Bindings(keys.values())
+        return _Bindings(keys.values())
 
     def _post_register(self, app: App) -> None:
         """Called when the widget is registered

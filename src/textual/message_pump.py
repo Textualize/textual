@@ -1,8 +1,6 @@
 """
 
-A message pump is a class that processes messages.
-
-It is a base class for the App, Screen, and Widgets.
+A message pump is a base class for any object which processes messages, which includes Widget, Screen, and App.
 
 """
 from __future__ import annotations
@@ -46,7 +44,7 @@ class MessagePumpClosed(Exception):
     pass
 
 
-class MessagePumpMeta(type):
+class _MessagePumpMeta(type):
     """Metaclass for message pump. This exists to populate a Message inner class of a Widget with the
     parent classes' name.
 
@@ -69,7 +67,7 @@ class MessagePumpMeta(type):
         return class_obj
 
 
-class MessagePump(metaclass=MessagePumpMeta):
+class MessagePump(metaclass=_MessagePumpMeta):
     """Base class which supplies a message pump."""
 
     def __init__(self, parent: MessagePump | None = None) -> None:
@@ -143,6 +141,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     @property
     def has_parent(self) -> bool:
+        """Does this object have a parent?"""
         return self._parent is not None
 
     @property

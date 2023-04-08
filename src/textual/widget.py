@@ -1,3 +1,8 @@
+"""
+The base class for widgets.
+
+"""
+
 from __future__ import annotations
 
 from asyncio import Lock, wait
@@ -84,10 +89,12 @@ _JUSTIFY_MAP: dict[str, JustifyMethod] = {
 
 
 class AwaitMount:
-    """An awaitable returned by mount() and mount_all().
+    """An *optional* awaitable returned by [mount][textual.widget.Widget.mount] and [mount_all][textual.widget.Widget.mount_all].
 
     Example:
+        ```python
         await self.mount(Static("foo"))
+        ```
 
     """
 

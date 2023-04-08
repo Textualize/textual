@@ -453,7 +453,12 @@ class Region(NamedTuple):
 
     @property
     def reset_offset(self) -> Region:
-        """An region of the same size at (0, 0)."""
+        """An region of the same size at (0, 0).
+
+        Returns:
+            A region at the origin.
+
+        """
         _, _, width, height = self
         return Region(0, 0, width, height)
 

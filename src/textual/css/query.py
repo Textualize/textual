@@ -72,6 +72,21 @@ class DOMQuery(Generic[QueryType]):
         exclude: str | None = None,
         parent: DOMQuery | None = None,
     ) -> None:
+        """Initialize a query object.
+
+        !!! warning
+
+            You won't need to construct this manually, as `DOMQuery` objects are returned by [query][textual.dom.DOMNode.query].
+
+        Args:
+            node: A DOM node.
+            filter: Query to filter children in the node.
+            exclude: Query to exclude children in the node.
+            parent: The parent query, if this is the result of filtering another query.
+
+        Raises:
+            InvalidQueryFormat: If the format of the query is invalid.
+        """
         self._node = node
         self._nodes: list[QueryType] | None = None
         self._filters: list[tuple[SelectorSet, ...]] = (
@@ -95,6 +110,7 @@ class DOMQuery(Generic[QueryType]):
 
     @property
     def node(self) -> DOMNode:
+        """The node being queried."""
         return self._node
 
     @property

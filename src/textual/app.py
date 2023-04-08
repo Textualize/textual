@@ -66,7 +66,7 @@ from ._wait import wait_for_idle
 from ._worker_manager import WorkerManager
 from .actions import ActionParseResult, SkipAction
 from .await_remove import AwaitRemove
-from .binding import Binding, Bindings
+from .binding import Binding, _Bindings
 from .css.query import NoMatches
 from .css.stylesheet import Stylesheet
 from .design import ColorSystem
@@ -1058,6 +1058,7 @@ class App(Generic[ReturnType], DOMNode):
                 if auto_pilot_task is not None:
                     await auto_pilot_task
             finally:
+                print("SHUTDOWN", app)
                 await app._shutdown()
 
         return app.return_value
@@ -2003,14 +2004,14 @@ class App(Generic[ReturnType], DOMNode):
             self.console.bell()
 
     @property
-    def _binding_chain(self) -> list[tuple[DOMNode, Bindings]]:
+    def _binding_chain(self) -> list[tuple[DOMNode, _Bindings]]:
         """Get a chain of nodes and bindings to consider.
 
         If no widget is focused, returns the bindings from both the screen and the app level bindings.
         Otherwise, combines all the bindings from the currently focused node up the DOM to the root App.
         """
         focused = self.focused
-        namespace_bindings: list[tuple[DOMNode, Bindings]]
+        namespace_bindings: list[tuple[DOMNode, _Bindings]]
 
         if focused is None:
             namespace_bindings = [
@@ -2025,7 +2026,7 @@ class App(Generic[ReturnType], DOMNode):
         return namespace_bindings
 
     @property
-    def _modal_binding_chain(self) -> list[tuple[DOMNode, Bindings]]:
+    def _modal_binding_chain(self) -> list[tuple[DOMNode, _Bindings]]:
         """The binding chain, ignoring everything before the last modal."""
         binding_chain = self._binding_chain
         for index, (node, _bindings) in enumerate(binding_chain, 1):

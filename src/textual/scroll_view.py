@@ -1,3 +1,8 @@
+"""
+`ScrollView` is a base class for [line api](/guide/widgets#line-api) widgets.
+
+"""
+
 from __future__ import annotations
 
 from rich.console import RenderableType

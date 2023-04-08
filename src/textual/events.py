@@ -1,3 +1,9 @@
+"""
+
+Builtin events sent by Textual.
+
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Type, TypeVar
@@ -55,6 +61,8 @@ class Load(Event, bubble=False):
     Use this event to run any set up that doesn't require any visuals such as loading
     configuration and binding keys.
 
+    - [ ] Bubbles
+    - [ ] Verbose
 
     """
 
@@ -64,6 +72,9 @@ class Idle(Event, bubble=False):
 
     This is a pseudo-event in that it is created by the Textual system and doesn't go
     through the usual message queue.
+
+    - [ ] Bubbles
+    - [ ] Verbose
 
     """
 
@@ -81,6 +92,10 @@ class Action(Event):
 
 class Resize(Event, bubble=False):
     """Sent when the app or widget has been resized.
+
+    - [ ] Bubbles
+    - [ ] Verbose
+
     Args:
         size: The new size of the Widget.
         virtual_size: The virtual size (scrollable size) of the Widget.
@@ -111,23 +126,46 @@ class Resize(Event, bubble=False):
 
 
 class Compose(Event, bubble=False, verbose=True):
-    """Sent to a widget to request it to compose and mount children."""
+    """Sent to a widget to request it to compose and mount children.
+
+    - [ ] Bubbles
+    - [X] Verbose
+
+    """
 
 
 class Mount(Event, bubble=False, verbose=False):
-    """Sent when a widget is *mounted* and may receive messages."""
+    """Sent when a widget is *mounted* and may receive messages.
+
+    - [ ] Bubbles
+    - [ ] Verbose
+
+    """
 
 
 class Unmount(Mount, bubble=False, verbose=False):
-    """Sent when a widget is unmounted and may not longer receive messages."""
+    """Sent when a widget is unmounted and may not longer receive messages.
+
+    - [ ] Bubbles
+    - [ ] Verbose
+
+    """
 
 
 class Show(Event, bubble=False):
-    """Sent when a widget has become visible."""
+    """Sent when a widget has become visible.
+
+    - [ ] Bubbles
+    - [ ] Verbose
+
+    """
 
 
 class Hide(Event, bubble=False):
     """Sent when a widget has been hidden.
+
+    - [ ] Bubbles
+    - [ ] Verbose
 
     A widget may be hidden by setting its `visible` flag to `False`, if it is no longer in a layout,
     or if it has been offset beyond the edges of the terminal.
@@ -136,15 +174,22 @@ class Hide(Event, bubble=False):
 
 
 class Ready(Event, bubble=False):
-    """Sent to the app when the DOM is ready."""
+    """Sent to the app when the DOM is ready.
+
+    - [ ] Bubbles
+    - [ ] Verbose
+
+    """
 
 
 @rich.repr.auto
 class MouseCapture(Event, bubble=False):
     """Sent when the mouse has been captured.
 
-    When a mouse has been captured, all further mouse events will be sent to the capturing widget.
+    - [ ] Bubbles
+    - [ ] Verbose
 
+    When a mouse has been captured, all further mouse events will be sent to the capturing widget.
 
     Args:
         mouse_position: The position of the mouse when captured.
@@ -162,6 +207,9 @@ class MouseCapture(Event, bubble=False):
 @rich.repr.auto
 class MouseRelease(Event, bubble=False):
     """Mouse has been released.
+
+    - [ ] Bubbles
+    - [ ] Verbose
 
     Args:
         mouse_position: The position of the mouse when released.
@@ -182,6 +230,9 @@ class InputEvent(Event):
 @rich.repr.auto
 class Key(InputEvent):
     """Sent when the user hits a key on the keyboard.
+
+    - [X] Bubbles
+    - [ ] Verbose
 
     Args:
         key: The key that was pressed.
@@ -238,6 +289,9 @@ def _key_to_identifier(key: str) -> str:
 @rich.repr.auto
 class MouseEvent(InputEvent, bubble=True):
     """Sent in response to a mouse event.
+
+    - [X] Bubbles
+    - [ ] Verbose
 
     Args:
         x: The relative x coordinate.
@@ -395,35 +449,73 @@ class MouseEvent(InputEvent, bubble=True):
 
 @rich.repr.auto
 class MouseMove(MouseEvent, bubble=False, verbose=True):
-    """Sent when the mouse cursor moves."""
+    """Sent when the mouse cursor moves.
+
+    - [ ] Bubbles
+    - [X] Verbose
+
+    """
 
 
 @rich.repr.auto
 class MouseDown(MouseEvent, bubble=True, verbose=True):
-    pass
+    """Sent when a mouse button is pressed.
+
+    - [X] Bubbles
+    - [X] Verbose
+
+    """
 
 
 @rich.repr.auto
 class MouseUp(MouseEvent, bubble=True, verbose=True):
-    pass
+    """Sent when a mouse button is released.
+
+    - [X] Bubbles
+    - [X] Verbose
+
+    """
 
 
 @rich.repr.auto
 class MouseScrollDown(MouseEvent, bubble=True):
-    pass
+    """Sent when the mouse wheel is scrolled *down*.
+
+    - [X] Bubbles
+    - [ ] Verbose
+
+    """
 
 
 @rich.repr.auto
 class MouseScrollUp(MouseEvent, bubble=True):
-    pass
+    """Sent when the mouse wheel is scrolled *up*.
+
+    - [X] Bubbles
+    - [ ] Verbose
+
+    """
 
 
 class Click(MouseEvent, bubble=True):
-    pass
+    """Sent when a widget is clicked.
+
+    - [X] Bubbles
+    - [ ] Verbose
+
+    """
 
 
 @rich.repr.auto
 class Timer(Event, bubble=False, verbose=True):
+    """Sent in response to a timer.
+
+    - [ ] Bubbles
+    - [X] Verbose
+
+
+    """
+
     __slots__ = ["time", "count", "callback"]
 
     def __init__(
@@ -445,27 +537,57 @@ class Timer(Event, bubble=False, verbose=True):
 
 
 class Enter(Event, bubble=False, verbose=True):
-    pass
+    """Sent when the mouse is moved over a widget.
+
+    - [ ] Bubbles
+    - [X] Verbose
+
+    """
 
 
 class Leave(Event, bubble=False, verbose=True):
-    pass
+    """Sent when the mouse is moved away from a widget.
+
+    - [ ] Bubbles
+    - [X] Verbose
+
+    """
 
 
 class Focus(Event, bubble=False):
-    pass
+    """Sent when a widget is focussed.
+
+    - [X] Bubbles
+    - [ ] Verbose
+
+    """
 
 
 class Blur(Event, bubble=False):
-    pass
+    """Sent when a widget is blurred (un-focussed).
+
+    - [X] Bubbles
+    - [ ] Verbose
+
+    """
 
 
 class DescendantFocus(Event, bubble=True, verbose=True):
-    pass
+    """Sent when a child widget is focussed.
+
+    - [X] Bubbles
+    - [X] Verbose
+
+    """
 
 
 class DescendantBlur(Event, bubble=True, verbose=True):
-    pass
+    """Sent when a child widget is blurred.
+
+    - [X] Bubbles
+    - [X] Verbose
+
+    """
 
 
 @rich.repr.auto
@@ -474,6 +596,10 @@ class Paste(Event, bubble=True):
     This event will only appear when running in a terminal emulator that supports
     bracketed paste mode. Textual will enable bracketed pastes when an app starts,
     and disable it when the app shuts down.
+
+    - [X] Bubbles
+    - [ ] Verbose
+
 
     Args:
         text: The text that has been pasted.
@@ -488,8 +614,18 @@ class Paste(Event, bubble=True):
 
 
 class ScreenResume(Event, bubble=False):
-    pass
+    """Sent to screen that has been made active.
+
+    - [ ] Bubbles
+    - [ ] Verbose
+
+    """
 
 
 class ScreenSuspend(Event, bubble=False):
-    pass
+    """Sent to screen when it is no longer active.
+
+    - [ ] Bubbles
+    - [ ] Verbose
+
+    """

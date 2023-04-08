@@ -1,3 +1,9 @@
+"""
+
+The `Reactive` class implements [reactivity](/guide/reactivity/).
+
+"""
+
 from __future__ import annotations
 
 from functools import partial
