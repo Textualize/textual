@@ -106,7 +106,7 @@ class Message:
 
         Args:
             prevent: True if the default action should be suppressed,
-                or False if the default actions should be performed. Defaults to True.
+                or False if the default actions should be performed.
         """
         self._no_default_action = prevent
         return self
@@ -115,7 +115,7 @@ class Message:
         """Stop propagation of the message to parent.
 
         Args:
-            stop: The stop flag. Defaults to True.
+            stop: The stop flag.
         """
         self._stop_propagation = stop
         return self

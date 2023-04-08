@@ -128,7 +128,7 @@ class ColorParseError(Exception):
 
     Args:
         message: The error message
-        suggested_color: A close color we can suggest. Defaults to None.
+        suggested_color: A close color we can suggest.
     """
 
     def __init__(self, message: str, suggested_color: str | None = None):
@@ -506,7 +506,7 @@ class Color(NamedTuple):
 
         Args:
             amount: Value between 0-1 to reduce luminance by.
-            alpha: Alpha component for new color or None to copy alpha. Defaults to None.
+            alpha: Alpha component for new color or None to copy alpha.
 
         Returns:
             New color.
@@ -520,7 +520,7 @@ class Color(NamedTuple):
 
         Args:
             amount: Value between 0-1 to increase luminance by.
-            alpha: Alpha component for new color or None to copy alpha. Defaults to None.
+            alpha: Alpha component for new color or None to copy alpha.
 
         Returns:
             New color.

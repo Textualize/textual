@@ -308,7 +308,7 @@ class Region(NamedTuple):
         Args:
             window_region: The window region.
             region: The region to move inside the window.
-            top: Get offset to top of window. Defaults to False
+            top: Get offset to top of window.
 
         Returns:
             An offset required to add to region to move it inside window_region.

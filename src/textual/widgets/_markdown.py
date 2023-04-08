@@ -553,7 +553,7 @@ class Markdown(Widget):
         """A Markdown widget.
 
         Args:
-            markdown: String containing Markdown or None to leave blank for now. Defaults to None.
+            markdown: String containing Markdown or None to leave blank for now.
             name: The name of the widget.
             id: The ID of the widget in the DOM.
             classes: The CSS classes of the widget.
@@ -850,8 +850,8 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
         """Create a Markdown Viewer object.
 
         Args:
-            markdown: String containing Markdown, or None to leave blank. Defaults to None.
-            show_table_of_contents: Show a table of contents in a sidebar. Defaults to True.
+            markdown: String containing Markdown, or None to leave blank.
+            show_table_of_contents: Show a table of contents in a sidebar.
             name: The name of the widget.
             id: The ID of the widget in the DOM.
             classes: The CSS classes of the widget.

@@ -242,10 +242,10 @@ CallThreadReturnType = TypeVar("CallThreadReturnType")
 class App(Generic[ReturnType], DOMNode):
     """The base class for Textual Applications.
     Args:
-        driver_class: Driver class or ``None`` to auto-detect. Defaults to None.
+        driver_class: Driver class or ``None`` to auto-detect.
         css_path: Path to CSS or ``None`` for no CSS file.
-            Defaults to None. To load multiple CSS files, pass a list of strings or paths which will be loaded in order.
-        watch_css: Watch CSS for changes. Defaults to False.
+            To load multiple CSS files, pass a list of strings or paths which will be loaded in order.
+        watch_css: Watch CSS for changes.
 
     Raises:
         CssPathError: When the supplied CSS path(s) are an unexpected type.
@@ -436,7 +436,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def workers(self) -> WorkerManager:
-        """A worker manager.
+        """The worker manager.
 
         Returns:
             An object to manage workers.
@@ -499,12 +499,12 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             attribute: Name of the attribute to animate.
             value: The value to animate to.
-            final_value: The final value of the animation. Defaults to `value` if not set.
-            duration: The duration of the animate. Defaults to None.
-            speed: The speed of the animation. Defaults to None.
-            delay: A delay (in seconds) before the animation starts. Defaults to 0.0.
-            easing: An easing method. Defaults to "in_out_cubic".
-            on_complete: A callable to invoke when the animation is finished. Defaults to None.
+            final_value: The final value of the animation.
+            duration: The duration of the animate.
+            speed: The speed of the animation.
+            delay: A delay (in seconds) before the animation starts.
+            easing: An easing method.
+            on_complete: A callable to invoke when the animation is finished.
 
         """
         self._animate(
@@ -544,7 +544,7 @@ class App(Generic[ReturnType], DOMNode):
         """Exit the app, and return the supplied result.
 
         Args:
-            result: Return value. Defaults to None.
+            result: Return value.
             message: Optional message to display on exit.
         """
         self._exit = True
@@ -729,7 +729,7 @@ class App(Generic[ReturnType], DOMNode):
             ```
 
         Args:
-            verbosity: Verbosity level 0-3. Defaults to 1.
+            verbosity: Verbosity level 0-3.
         """
 
         devtools = self.devtools
@@ -816,7 +816,7 @@ class App(Generic[ReturnType], DOMNode):
         """Save an SVG "screenshot". This action will save an SVG file containing the current contents of the screen.
 
         Args:
-            filename: Filename of screenshot, or None to auto-generate. Defaults to None.
+            filename: Filename of screenshot, or None to auto-generate.
             path: Path to directory. Defaults to current working directory.
         """
         self.save_screenshot(filename, path)
@@ -826,7 +826,7 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             title: The title of the exported screenshot or None
-                to use app title. Defaults to None.
+                to use app title.
 
         """
         assert self._driver is not None, "App must be running"
@@ -856,7 +856,7 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             filename: Filename of SVG screenshot, or None to auto-generate
-                a filename with the date and time. Defaults to None.
+                a filename with the date and time.
             path: Path to directory for output. Defaults to current working directory.
             time_format: Date and time format to use if filename is None.
                 Defaults to a format like ISO 8601 with some reserved characters replaced with underscores.
@@ -895,9 +895,9 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             keys: A comma separated list of keys, i.e.
             action: Action to bind to.
-            description: Short description of action. Defaults to "".
-            show: Show key in UI. Defaults to True.
-            key_display: Replacement text for key, or None to use default. Defaults to None.
+            description: Short description of action.
+            show: Show key in UI.
+            key_display: Replacement text for key, or None to use default.
         """
         self._bindings.bind(
             keys, action, description, show=show, key_display=key_display
@@ -960,9 +960,9 @@ class App(Generic[ReturnType], DOMNode):
         """An asynchronous context manager for testing app.
 
         Args:
-            headless: Run in headless mode (no output or input). Defaults to True.
+            headless: Run in headless mode (no output or input).
             size: Force terminal size to `(WIDTH, HEIGHT)`,
-                or None to auto-detect. Defaults to None.
+                or None to auto-detect.
 
         """
         from .pilot import Pilot
@@ -1011,9 +1011,9 @@ class App(Generic[ReturnType], DOMNode):
         """Run the app asynchronously.
 
         Args:
-            headless: Run in headless mode (no output). Defaults to False.
+            headless: Run in headless mode (no output).
             size: Force terminal size to `(WIDTH, HEIGHT)`,
-                or None to auto-detect. Defaults to None.
+                or None to auto-detect.
             auto_pilot: An auto pilot coroutine.
 
         Returns:
@@ -1058,7 +1058,6 @@ class App(Generic[ReturnType], DOMNode):
                 if auto_pilot_task is not None:
                     await auto_pilot_task
             finally:
-                print("SHUTDOWN", app)
                 await app._shutdown()
 
         return app.return_value
@@ -1073,9 +1072,9 @@ class App(Generic[ReturnType], DOMNode):
         """Run the app.
 
         Args:
-            headless: Run in headless mode (no output). Defaults to False.
+            headless: Run in headless mode (no output).
             size: Force terminal size to `(WIDTH, HEIGHT)`,
-                or None to auto-detect. Defaults to None.
+                or None to auto-detect.
             auto_pilot: An auto pilot coroutine.
 
         Returns:
@@ -1150,7 +1149,6 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             id: The ID of the node to search for.
             expect_type: Require the object be of the supplied type, or None for any type.
-                Defaults to None.
 
         Returns:
             The first child of this node with the specified ID.
@@ -1949,7 +1947,7 @@ class App(Generic[ReturnType], DOMNode):
         """Refresh CSS.
 
         Args:
-            animate: Also execute CSS animations. Defaults to True.
+            animate: Also execute CSS animations.
         """
         stylesheet = self.app.stylesheet
         stylesheet.set_variables(self.get_css_variables())
@@ -2092,7 +2090,7 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             action: Action encoded in a string.
             default_namespace: Namespace to use if not provided in the action,
-                or None to use app. Defaults to None.
+                or None to use app.
 
         Returns:
             True if the event has handled.

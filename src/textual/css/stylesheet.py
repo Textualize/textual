@@ -275,7 +275,6 @@ class Stylesheet:
         Args:
             css: String with CSS source.
             path: The path of the source if a file, or some other identifier.
-                Defaults to None.
             is_default_css: True if the CSS is defined in the Widget, False if the CSS is defined
                 in a user stylesheet.
             tie_breaker: Integer representing the priority of this source.
@@ -365,12 +364,12 @@ class Stylesheet:
         """Apply the stylesheet to a DOM node.
 
         Args:
-            node: The ``DOMNode`` to apply the stylesheet to.
-                Applies the styles defined in this ``Stylesheet`` to the node.
+            node: The `DOMNode` to apply the stylesheet to.
+                Applies the styles defined in this `Stylesheet` to the node.
                 If the same rule is defined multiple times for the node (e.g. multiple
                 classes modifying the same CSS property), then only the most specific
                 rule will be applied.
-            animate: Animate changed rules. Defaults to ``False``.
+            animate: Animate changed rules.
         """
         # Dictionary of rule attribute names e.g. "text_background" to list of tuples.
         # The tuples contain the rule specificity, and the value for that rule.
@@ -447,7 +446,7 @@ class Stylesheet:
         Args:
             node: A DOM node.
             rules: Mapping of rules.
-            animate: Enable animation. Defaults to False.
+            animate: Enable animation.
         """
 
         # Alias styles and base styles
@@ -519,7 +518,7 @@ class Stylesheet:
 
         Args:
             root: Root note to update.
-            animate: Enable CSS animation. Defaults to False.
+            animate: Enable CSS animation.
         """
 
         self.update_nodes(root.walk_children(with_self=True), animate=animate)
@@ -529,7 +528,7 @@ class Stylesheet:
 
         Args:
             nodes: Nodes to update.
-            animate: Enable CSS animation. Defaults to False.
+            animate: Enable CSS animation.
         """
 
         rules_map = self.rules_map

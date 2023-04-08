@@ -74,7 +74,7 @@ class HelpText:
     Attributes:
         summary: A succinct summary of the issue.
         bullets: Bullet points which provide additional
-            context around the issue. These are rendered below the summary. Defaults to None.
+            context around the issue. These are rendered below the summary.
     """
 
     def __init__(

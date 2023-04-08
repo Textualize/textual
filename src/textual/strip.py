@@ -57,7 +57,7 @@ class Strip:
 
     Args:
         segments: An iterable of segments.
-        cell_length: The cell length if known, or None to calculate on demand. Defaults to None.
+        cell_length: The cell length if known, or None to calculate on demand.
     """
 
     __slots__ = [
@@ -123,7 +123,7 @@ class Strip:
 
         Args:
             lines: List of lines, where a line is a list of segments.
-            cell_length: Cell length of lines (must be same) or None if not known. Defaults to None.
+            cell_length: Cell length of lines (must be same) or None if not known.
 
         Returns:
             List of strips.
@@ -211,7 +211,7 @@ class Strip:
 
         Args:
             cell_length: New desired cell length.
-            style: Style when extending, or `None`. Defaults to `None`.
+            style: Style when extending, or `None`.
 
         Returns:
             A new strip with the supplied cell length.

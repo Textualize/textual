@@ -99,7 +99,7 @@ class Resize(Event, bubble=False):
     Args:
         size: The new size of the Widget.
         virtual_size: The virtual size (scrollable size) of the Widget.
-        container_size: The size of the Widget's container widget. Defaults to None.
+        container_size: The size of the Widget's container widget.
 
     """
 

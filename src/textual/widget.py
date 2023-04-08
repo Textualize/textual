@@ -485,7 +485,6 @@ class Widget(DOMNode):
         Args:
             id: The ID of the child.
             expect_type: Require the object be of the supplied type, or None for any type.
-                Defaults to None.
 
         Returns:
             The first child of this node with the ID.
@@ -1514,11 +1513,11 @@ class Widget(DOMNode):
             attribute: Name of the attribute to animate.
             value: The value to animate to.
             final_value: The final value of the animation. Defaults to `value` if not set.
-            duration: The duration of the animate. Defaults to None.
-            speed: The speed of the animation. Defaults to None.
-            delay: A delay (in seconds) before the animation starts. Defaults to 0.0.
-            easing: An easing method. Defaults to "in_out_cubic".
-            on_complete: A callable to invoke when the animation is finished. Defaults to None.
+            duration: The duration of the animate.
+            speed: The speed of the animation.
+            delay: A delay (in seconds) before the animation starts.
+            easing: An easing method.
+            on_complete: A callable to invoke when the animation is finished.
 
         """
         if self._animate is None:
@@ -2902,7 +2901,7 @@ class Widget(DOMNode):
         When captured, mouse events will go to this widget even when the pointer is not directly over the widget.
 
         Args:
-            capture: True to capture or False to release. Defaults to True.
+            capture: True to capture or False to release.
         """
         self.app.capture_mouse(self if capture else None)
 

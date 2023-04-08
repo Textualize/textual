@@ -209,7 +209,7 @@ class DOMQuery(Generic[QueryType]):
 
         Args:
             expect_type: Require matched node is of this type,
-                or None for any type. Defaults to None.
+                or None for any type.
 
         Raises:
             WrongType: If the wrong type was found.
@@ -244,7 +244,7 @@ class DOMQuery(Generic[QueryType]):
 
         Args:
             expect_type: Require matched node is of this type,
-                or None for any type. Defaults to None.
+                or None for any type.
 
         Raises:
             WrongType: If the wrong type was found.
@@ -288,7 +288,7 @@ class DOMQuery(Generic[QueryType]):
 
         Args:
             expect_type: Require matched node is of this type,
-                or None for any type. Defaults to None.
+                or None for any type.
 
         Raises:
             WrongType: If the wrong type was found.
@@ -321,7 +321,7 @@ class DOMQuery(Generic[QueryType]):
 
         Args:
             filter_type: A Widget class to filter results,
-                or None for no filter. Defaults to None.
+                or None for no filter.
 
         Yields:
             Iterator[Widget | ExpectType]: An iterator of Widget instances.
@@ -399,7 +399,7 @@ class DOMQuery(Generic[QueryType]):
         """Set styles on matched nodes.
 
         Args:
-            css: CSS declarations to parser, or None. Defaults to None.
+            css: CSS declarations to parser, or None.
         """
         _rich_traceback_omit = True
 
@@ -421,8 +421,8 @@ class DOMQuery(Generic[QueryType]):
         """Refresh matched nodes.
 
         Args:
-            repaint: Repaint node(s). defaults to True.
-            layout: Layout node(s). Defaults to False.
+            repaint: Repaint node(s).
+            layout: Layout node(s).
 
         Returns:
             Query for chaining.

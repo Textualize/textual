@@ -288,9 +288,9 @@ class MessagePump(metaclass=_MessagePumpMeta):
 
         Args:
             delay: Time to wait before invoking callback.
-            callback: Callback to call after time has expired. Defaults to None.
-            name: Name of the timer (for debug). Defaults to None.
-            pause: Start timer paused. Defaults to False.
+            callback: Callback to call after time has expired.
+            name: Name of the timer (for debug).
+            pause: Start timer paused.
 
         Returns:
             A timer object.
@@ -320,10 +320,10 @@ class MessagePump(metaclass=_MessagePumpMeta):
 
         Args:
             interval: Time between calls.
-            callback: Function to call. Defaults to None.
-            name: Name of the timer object. Defaults to None.
-            repeat: Number of times to repeat the call or 0 for continuous. Defaults to 0.
-            pause: Start the timer paused. Defaults to False.
+            callback: Function to call.
+            name: Name of the timer object.
+            repeat: Number of times to repeat the call or 0 for continuous.
+            pause: Start the timer paused.
 
         Returns:
             A timer object.

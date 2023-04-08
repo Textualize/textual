@@ -13,7 +13,7 @@ def friendly_list(
 
     Args:
         words: A list of words.
-        joiner: The last joiner word. Defaults to "or".
+        joiner: The last joiner word.
 
     Returns:
         List as prose.

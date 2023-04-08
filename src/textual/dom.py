@@ -226,7 +226,7 @@ class DOMNode(MessagePump):
 
     @property
     def workers(self) -> WorkerManager:
-        """A worker manager."""
+        """The app's worker manager. Shortcut for `self.app.workers`."""
         return self.app.workers
 
     def run_worker(
@@ -872,10 +872,9 @@ class DOMNode(MessagePump):
 
         Args:
             filter_type: Filter only this type, or None for no filter.
-                Defaults to None.
-            with_self: Also yield self in addition to descendants. Defaults to False.
-            method: One of "depth" or "breadth". Defaults to "depth".
-            reverse: Reverse the order (bottom up). Defaults to False.
+            with_self: Also yield self in addition to descendants.
+            method: One of "depth" or "breadth".
+            reverse: Reverse the order (bottom up).
 
         Returns:
             A list of nodes.
@@ -910,7 +909,7 @@ class DOMNode(MessagePump):
         """Get a DOM query matching a selector.
 
         Args:
-            selector: A CSS selector or `None` for all nodes. Defaults to None.
+            selector: A CSS selector or `None` for all nodes.
 
         Returns:
             A query object.
@@ -945,7 +944,6 @@ class DOMNode(MessagePump):
         Args:
             selector: A selector.
             expect_type: Require the object be of the supplied type, or None for any type.
-                Defaults to None.
 
         Raises:
             WrongType: If the wrong type was found.
