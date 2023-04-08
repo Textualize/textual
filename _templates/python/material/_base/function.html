@@ -29,8 +29,7 @@
           {% include "signature.html" with context %}
         {% endfilter %}
       {% endif %}
-
-      {% with labels = function.labels %}
+      {% with labels = function.labels or [(function.parameters._parameters_list and function.parameters._parameters_list[0].name == 'self') and 'method' or 'function'] %}
         {% include "labels.html" with context %}
       {% endwith %}
 
@@ -41,7 +40,7 @@
 def {% filter format_signature(config.line_length) %}
           {% if show_full_path %}{{ function.path }}{% else %}{{ function.name }}{% endif %}
           {% include "signature.html" with context %}
-        {% endfilter %}
+        {% endfilter %}:
       {% endfilter %}
     {% endif %}
 
