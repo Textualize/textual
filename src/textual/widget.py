@@ -297,10 +297,10 @@ class Widget(DOMNode):
 
         Args:
             *children: Child widgets.
-            name: The name of the button.
-            id: The ID of the button in the DOM.
-            classes: The CSS classes of the button.
-            disabled: Whether the button is disabled or not.
+            name: The name of the widget.
+            id: The ID of the widget in the DOM.
+            classes: The CSS classes for the widget.
+            disabled: Whether the widget is disabled or not.
         """
         self._size = Size(0, 0)
         self._container_size = Size(0, 0)
