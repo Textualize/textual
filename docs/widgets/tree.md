@@ -36,13 +36,10 @@ Tree widgets have a "root" attribute which is an instance of a [TreeNode][textua
 
 ## Messages
 
-### ::: textual.widgets.Tree.NodeCollapsed
-
-### ::: textual.widgets.Tree.NodeExpanded
-
-### ::: textual.widgets.Tree.NodeHighlighted
-
-### ::: textual.widgets.Tree.NodeSelected
+- [Tree.NodeCollapsed][textual.widgets.Tree.NodeCollapsed]
+- [Tree.NodeExpanded][textual.widgets.Tree.NodeExpanded]
+- [Tree.NodeHighlighted][textual.widgets.Tree.NodeHighlighted]
+- [Tree.NodeSelected][textual.widgets.Tree.NodeSelected]
 
 ## Bindings
 
