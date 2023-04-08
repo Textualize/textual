@@ -2,6 +2,14 @@
 
 Builtin events sent by Textual.
 
+Events may be marked as "Bubbles" and "Verbose".
+See the [events guide](/guide/events/#bubbling) for an explanation of bubbling.
+Verbose events are excluded from the textual console, unless you explicit request them with the `-v` switch as follows:
+
+```
+textual console -v
+```
+
 """
 
 from __future__ import annotations
