@@ -1900,7 +1900,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             row: tuple[RowKey, dict[ColumnKey | str, CellType]]
         ) -> Any:
             _, row_data = row
-            result = itemgetter(*columns)(row_data)
+            result = str(itemgetter(*columns)(row_data))
             return result
 
         ordered_rows = sorted(
