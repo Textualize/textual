@@ -191,7 +191,12 @@ class DOMNode(MessagePump):
 
     @property
     def children(self) -> Sequence["Widget"]:
-        """A view on to the children."""
+        """A view on to the children.
+
+        Returns:
+            The node's children.
+
+        """
         return self._nodes
 
     @property
@@ -503,6 +508,7 @@ class DOMNode(MessagePump):
         return tokens
 
     classes = _ClassesDescriptor()
+    """CSS class names for this node."""
 
     @property
     def pseudo_classes(self) -> frozenset[str]:
@@ -584,9 +590,15 @@ class DOMNode(MessagePump):
 
     @property
     def tree(self) -> Tree:
-        """Get a Rich tree object which will recursively render the structure of the node tree."""
+        """Get a Rich tree object which will recursively render the structure of the node tree.
+
+        Returns:
+            A Rich Tree renderable.
+
+        """
 
         def render_info(node: DOMNode) -> Pretty:
+            """Render a node for the tree."""
             return Pretty(node)
 
         tree = Tree(render_info(self))
@@ -605,6 +617,9 @@ class DOMNode(MessagePump):
     def css_tree(self) -> Tree:
         """Get a Rich tree object which will recursively render the structure of the node tree,
         which also displays CSS and size information.
+
+        Returns:
+            A Rich Tree renderable.
         """
         from rich.columns import Columns
         from rich.console import Group
@@ -613,6 +628,7 @@ class DOMNode(MessagePump):
         from .widget import Widget
 
         def render_info(node: DOMNode) -> Columns:
+            """Render a node for the tree."""
             if isinstance(node, Widget):
                 info = Columns(
                     [
@@ -659,7 +675,7 @@ class DOMNode(MessagePump):
         the child will also be bold.
 
         Returns:
-            Rich Style object.
+            A Rich Style.
         """
         return Style.combine(
             node.styles.text_style for node in reversed(self.ancestors_with_self)
@@ -667,7 +683,12 @@ class DOMNode(MessagePump):
 
     @property
     def rich_style(self) -> Style:
-        """Get a Rich Style object for this DOMNode."""
+        """Get a Rich Style object for this DOMNode.
+
+        Returns:
+            A Rich style.
+
+        """
         background = Color(0, 0, 0, 0)
         color = Color(255, 255, 255, 0)
         style = Style()
@@ -720,6 +741,9 @@ class DOMNode(MessagePump):
 
         Note:
             This is inclusive of ``self``.
+
+        Returns:
+            A list of nodes.
         """
         nodes: list[MessagePump | None] = []
         add_node = nodes.append
@@ -731,12 +755,22 @@ class DOMNode(MessagePump):
 
     @property
     def ancestors(self) -> list[DOMNode]:
-        """A list of ancestor nodes Nodes by tracing ancestors all the way back to App."""
+        """A list of ancestor nodes Nodes by tracing ancestors all the way back to App.
+
+        Returns:
+            A list of nodes.
+
+        """
         return self.ancestors_with_self[1:]
 
     @property
     def displayed_children(self) -> list[Widget]:
-        """The children which don't have display: none set."""
+        """The children which don't have display: none set.
+
+        Returns:
+            A list of nodes.
+
+        """
         return [child for child in self._nodes if child.display]
 
     def watch(

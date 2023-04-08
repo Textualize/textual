@@ -103,6 +103,22 @@ The following example contains a `TabbedContent` with three tabs.
 
 ## See also
 
-- [TabbedContent](../api/tabbed_content.md) code reference.
-- [Tabs](../api/tabs.md) code reference.
-- [ContentSwitcher](../api/content_switcher.md) code reference.
+
+- [Tabs](tabs.md)
+- [ContentSwitcher](content_switcher.md)
+
+
+---
+
+
+::: textual.widgets.TabbedContent
+    options:
+      heading_level: 2
+
+
+---
+
+
+::: textual.widgets.TabPane
+    options:
+      heading_level: 2

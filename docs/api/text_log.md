@@ -1,1 +1,0 @@
-::: textual.widgets.TextLog

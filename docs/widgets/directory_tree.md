@@ -36,7 +36,7 @@ and directories:
 
 ## Messages
 
-### ::: textual.widgets.DirectoryTree.FileSelected
+- [DirectoryTree.FileSelected][textual.widgets.DirectoryTree.FileSelected]
 
 ## Reactive Attributes
 
@@ -57,5 +57,13 @@ The directory tree widget provides the following component classes:
 
 ## See Also
 
-* [DirectoryTree][textual.widgets.DirectoryTree] code reference
 * [Tree][textual.widgets.Tree] code reference
+
+
+
+---
+
+
+::: textual.widgets.DirectoryTree
+    options:
+      heading_level: 2

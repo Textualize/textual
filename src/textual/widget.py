@@ -164,7 +164,7 @@ class _Styled:
         return Measurement.get(console, options, self.renderable)
 
 
-class RenderCache(NamedTuple):
+class _RenderCache(NamedTuple):
     """Stores results of a previous render."""
 
     size: Size
@@ -286,6 +286,15 @@ class Widget(DOMNode):
         classes: str | None = None,
         disabled: bool = False,
     ) -> None:
+        """Initialize a Widget.
+
+        Args:
+            *children: Child widgets.
+            name: The name of the button.
+            id: The ID of the button in the DOM.
+            classes: The CSS classes of the button.
+            disabled: Whether the button is disabled or not.
+        """
         self._size = Size(0, 0)
         self._container_size = Size(0, 0)
         self._layout_required = False
@@ -302,7 +311,7 @@ class Widget(DOMNode):
         self._border_title: Text | None = None
         self._border_subtitle: Text | None = None
 
-        self._render_cache = RenderCache(Size(0, 0), [])
+        self._render_cache = _RenderCache(Size(0, 0), [])
         # Regions which need to be updated (in Widget)
         self._dirty_regions: set[Region] = set()
         # Regions which need to be transferred from cache to screen
@@ -2663,7 +2672,7 @@ class Widget(DOMNode):
             )
         )
         strips = [Strip(line, width) for line in lines]
-        self._render_cache = RenderCache(self.size, strips)
+        self._render_cache = _RenderCache(self.size, strips)
         self._dirty_regions.clear()
 
     def render_line(self, y: int) -> Strip:

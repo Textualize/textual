@@ -26,16 +26,19 @@ of multiple `ListItem`s. The arrow keys can be used to navigate the list.
 ## Reactive Attributes
 
 | Name          | Type   | Default | Description                          |
-|---------------|--------|---------|--------------------------------------|
+| ------------- | ------ | ------- | ------------------------------------ |
 | `highlighted` | `bool` | `False` | True if this ListItem is highlighted |
 
 
 #### Attributes
 
 | attribute | type       | purpose                     |
-|-----------|------------|-----------------------------|
+| --------- | ---------- | --------------------------- |
 | `item`    | `ListItem` | The item that was selected. |
 
-## See Also
+---
 
-* [ListItem](../api/list_item.md) code reference
+
+::: textual.widgets.ListItem
+    options:
+      heading_level: 2

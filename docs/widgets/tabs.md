@@ -61,8 +61,8 @@ The following example adds a `Tabs` widget above a text label. Press ++a++ to ad
 
 ## Messages
 
-### ::: textual.widgets.Tabs.TabActivated
-### ::: textual.widgets.Tabs.Cleared
+- [Tabs.TabActivate][textual.widgets.Tabs.TabActivated]
+- [Tabs.Cleared][textual.widgets.Tabs.Cleared]
 
 ## Bindings
 
@@ -73,6 +73,17 @@ The Tabs widget defines the following bindings:
       show_root_heading: false
       show_root_toc_entry: false
 
-## See Also
 
-- [Tabs](../api/tabs.md) code reference
+---
+
+
+::: textual.widgets.Tabs
+    options:
+      heading_level: 2
+
+
+---
+
+::: textual.widgets.Tab
+    options:
+      heading_level: 2

@@ -46,6 +46,10 @@ The footer widget provides the following component classes:
 * You can prevent keybindings from appearing in the footer by setting the `show` argument of the `Binding` to `False`.
 * You can customize the text that appears for the key itself in the footer using the `key_display` argument of `Binding`.
 
-## See Also
 
-* [Footer](../api/footer.md) code reference
+---
+
+
+::: textual.widgets.Footer
+    options:
+      heading_level: 2

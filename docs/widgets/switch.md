@@ -52,12 +52,15 @@ The switch widget provides the following component classes:
 
 ## Messages
 
-### ::: textual.widgets.Switch.Changed
+- [Switch.Changed][textual.widgets.Switch.Changed]
 
 ## Additional Notes
 
 - To remove the spacing around a `Switch`, set `border: none;` and `padding: 0;`.
 
-## See Also
+---
 
-- [Switch](../api/switch.md) code reference
+
+::: textual.widgets.Switch
+    options:
+      heading_level: 2

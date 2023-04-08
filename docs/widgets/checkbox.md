@@ -54,8 +54,12 @@ The checkbox widget provides the following component classes:
 
 ## Messages
 
-### ::: textual.widgets.Checkbox.Changed
+- [Checkbox.Changed][textual.widgets.Checkbox.Changed]
 
-## See Also
 
-- [Checkbox](../api/checkbox.md) code reference
+---
+
+
+::: textual.widgets.Checkbox
+    options:
+      heading_level: 2

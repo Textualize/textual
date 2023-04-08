@@ -31,7 +31,7 @@ The example below shows two radio sets, one built using a collection of
 
 ## Messages
 
-### ::: textual.widgets.RadioSet.Changed
+-  [RadioSet.Changed][textual.widgets.RadioSet.Changed]
 
 #### Example
 
@@ -56,5 +56,12 @@ Here is an example of using the message to react to changes in a `RadioSet`:
 
 ## See Also
 
-- [RadioSet](../api/radioset.md) code reference
+
 - [RadioButton](./radiobutton.md)
+
+---
+
+
+::: textual.widgets.RadioSet
+    options:
+      heading_level: 2

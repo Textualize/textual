@@ -45,7 +45,7 @@ body[data-md-color-primary="black"] .excalidraw svg rect {
 
 
 /* Indentation. */
-div.doc-contents:not(.first) .doc-contents {
+div.doc-contents:not(.first) {
   padding-left: 25px;
   border-left: .05rem solid var(--md-typeset-table-color);
 }

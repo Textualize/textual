@@ -32,9 +32,8 @@ The example below shows how you might create a simple form using two `Input` wid
 
 ## Messages
 
-### ::: textual.widgets.Input.Changed
-
-### ::: textual.widgets.Input.Submitted
+- [Input.Changed][textual.widgets.Input.Changed]
+- [Input.Submitted][textual.widgets.Input.Submitted]
 
 ## Bindings
 
@@ -58,6 +57,9 @@ The input widget provides the following component classes:
 
 * The spacing around the text content is due to border. To remove it, set `border: none;` in your CSS.
 
-## See Also
+---
 
-* [Input](../api/input.md) code reference
+
+::: textual.widgets.Input
+    options:
+      heading_level: 2

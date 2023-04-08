@@ -31,5 +31,12 @@ This widget sends no messages.
 
 ## See Also
 
-* [Static](../api/static.md) code reference
 * [Label](./label.md)
+
+
+---
+
+
+::: textual.widgets.Static
+    options:
+      heading_level: 2

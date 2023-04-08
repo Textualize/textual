@@ -33,7 +33,7 @@ T = TypeVar("T", int, float)
 
 
 def clamp(value: T, minimum: T, maximum: T) -> T:
-    """Adjust a value to it is not less than a minimum and not greater
+    """Adjust a value so it is not less than a minimum and not greater
     than a maximum value.
 
     Args:
@@ -390,24 +390,43 @@ class Region(NamedTuple):
 
     @property
     def offset(self) -> Offset:
-        """The top left corner of the region."""
+        """The top left corner of the region.
+
+        Returns:
+            An offset.
+
+        """
         return Offset(*self[:2])
 
     @property
     def bottom_left(self) -> Offset:
-        """Bottom left offset of the region."""
+        """Bottom left offset of the region.
+
+        Returns:
+            An offset.
+        """
         x, y, _width, height = self
         return Offset(x, y + height)
 
     @property
     def top_right(self) -> Offset:
-        """Top right offset of the region."""
+        """Top right offset of the region.
+
+        Returns:
+            An offset.
+
+        """
         x, y, width, _height = self
         return Offset(x + width, y)
 
     @property
     def bottom_right(self) -> Offset:
-        """Bottom right offset of the region."""
+        """Bottom right offset of the region.
+
+        Returns:
+            An offset.
+
+        """
         x, y, width, height = self
         return Offset(x + width, y + height)
 

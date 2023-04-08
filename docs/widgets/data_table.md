@@ -36,19 +36,13 @@ The example below populates a table with CSV data.
 
 ## Messages
 
-### ::: textual.widgets.DataTable.CellHighlighted
-
-### ::: textual.widgets.DataTable.CellSelected
-
-### ::: textual.widgets.DataTable.RowHighlighted
-
-### ::: textual.widgets.DataTable.RowSelected
-
-### ::: textual.widgets.DataTable.ColumnHighlighted
-
-### ::: textual.widgets.DataTable.ColumnSelected
-
-### ::: textual.widgets.DataTable.HeaderSelected
+- [DataTable.CellHighlighted][textual.widgets.DataTable.CellHighlighted]
+- [DataTable.CellSelected][textual.widgets.DataTable.CellSelected]
+- [DataTable.RowHighlighted][textual.widgets.DataTable.RowHighlighted]
+- [DataTable.RowSelected][textual.widgets.DataTable.RowSelected]
+- [DataTable.ColumnHighlighted][textual.widgets.DataTable.ColumnHighlighted]
+- [DataTable.ColumnSelected][textual.widgets.DataTable.ColumnSelected]
+- [DataTable.HeaderSelected][textual.widgets.DataTable.HeaderSelected]
 
 ## Bindings
 
@@ -68,6 +62,9 @@ The data table widget provides the following component classes:
       show_root_heading: false
       show_root_toc_entry: false
 
-## See Also
+---
 
-* [DataTable][textual.widgets.DataTable] code reference
+
+::: textual.widgets.DataTable
+    options:
+      heading_level: 2

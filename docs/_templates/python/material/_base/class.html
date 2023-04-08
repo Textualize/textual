@@ -13,7 +13,9 @@
     {% set show_full_path = config.show_object_full_path %}
   {% endif %}
 
-  {% if not root or config.show_root_heading %}
+
+
+  {% if 1 %}
 
     {% filter heading(heading_level,
         role="class",
@@ -34,7 +36,7 @@
         <code>{% if show_full_path %}{{ class.path }}{% else %}{{ class.name }}{% endif %}</code>
       {% endif %}
 
-      {% with labels = class.labels %}
+      {% with labels = ['class'] %}
         {% include "labels.html" with context %}
       {% endwith %}
 
@@ -43,11 +45,10 @@
     {% if config.separate_signature and config.merge_init_into_class %}
       {% if "__init__" in class.members %}
         {% with function = class.members["__init__"] %}
-          {% filter highlight(language="python", inline=False) %}
-class {% filter format_signature(config.line_length) %}
-              {% if show_full_path %}{{ class.path }}{% else %}{{ class.name }}{% endif %}
-              {% include "signature.html" with context %}
-            {% endfilter %}
+          {% filter highlight(language="python", inline=False) -%}
+            def {% filter format_signature(config.line_length) %}
+__init__{% include "signature.html" with context %}
+            {% endfilter %}:
           {% endfilter %}
         {% endwith %}
       {% endif %}
