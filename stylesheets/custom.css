@@ -44,7 +44,7 @@ body[data-md-color-primary="black"] .excalidraw svg rect {
 }
 
 .doc-object code {
-  font-family: "Roboto Mono", "SFMono-Regular", Consolas, "Courier New", Courier,
+  font-family: "Fira Code", "SFMono-Regular", Consolas, "Courier New", Courier,
     monospace;
 }
 
