@@ -7695,6 +7695,24 @@
   <div class="doc doc-contents ">
   
       <p>This offset with <code>x</code> and <code>y</code> restricted to values above zero.</p>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="#textual.geometry.Offset">Offset</a></code>
+          </td>
+          <td><p>Clamped offset.</p></td>
+        </tr>
+    </tbody>
+  </table>
   </div>
 
 </div>
@@ -8044,7 +8062,7 @@
           <td>
                 <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="#textual.geometry.Offset">Offset</a></code>
           </td>
-          <td><p>An offset.</p></td>
+          <td><p>An Offset.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8085,7 +8103,7 @@
           <td>
                 <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="#textual.geometry.Offset">Offset</a></code>
           </td>
-          <td><p>An offset.</p></td>
+          <td><p>An Offset.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8266,7 +8284,7 @@
           <td>
                 <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="#textual.geometry.Offset">Offset</a></code>
           </td>
-          <td><p>An offset.</p></td>
+          <td><p>An Offset.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8356,7 +8374,25 @@
 
   <div class="doc doc-contents ">
   
-      <p>Get the size of the region.</p>
+      <p>The size of the region.</p>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.geometry.Size" href="#textual.geometry.Size">Size</a></code>
+          </td>
+          <td><p>The size of the region.</p></td>
+        </tr>
+    </tbody>
+  </table>
   </div>
 
 </div>
@@ -8394,7 +8430,7 @@
           <td>
                 <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="#textual.geometry.Offset">Offset</a></code>
           </td>
-          <td><p>An offset.</p></td>
+          <td><p>An Offset.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8604,7 +8640,7 @@
           <td>
                 <code><a class="autorefs autorefs-internal" title="textual.geometry.Region" href="#textual.geometry.Region">Region</a></code>
           </td>
-          <td><p>Clipped region.</p></td>
+          <td><p>Clipped Region.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8669,7 +8705,7 @@
           <td>
                 <code><a class="autorefs autorefs-internal" title="textual.geometry.Region" href="#textual.geometry.Region">Region</a></code>
           </td>
-          <td><p>No region, not bigger than size.</p></td>
+          <td><p>New Region, no bigger than <code>size</code>.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8939,7 +8975,7 @@
           <td>
                 <code><a class="autorefs autorefs-internal" title="textual.geometry.Region" href="#textual.geometry.Region">Region</a></code>
           </td>
-          <td><p>New region that could fit within <code>size</code>.</p></td>
+          <td><p>New Region that could fit within <code>size</code>.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9004,7 +9040,7 @@
           <td>
                 <code><a class="autorefs autorefs-internal" title="textual.geometry.Region" href="#textual.geometry.Region">Region</a></code>
           </td>
-          <td><p>A new region.</p></td>
+          <td><p>A new Region.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9174,7 +9210,7 @@
           <td>
                 <code><a class="autorefs autorefs-internal" title="textual.geometry.Region" href="#textual.geometry.Region">Region</a></code>
           </td>
-          <td><p>A region instance.</p></td>
+          <td><p>A new Region.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9510,24 +9546,6 @@ another region.</p>
     </tbody>
   </table>
 
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
-          </td>
-          <td><p>True if other region shares any cells with this region.</p></td>
-        </tr>
-    </tbody>
-  </table>
-
   </div>
 
 </div>
@@ -9588,7 +9606,7 @@ another region.</p>
           <td>
                 <code><a class="autorefs autorefs-internal" title="textual.geometry.Region" href="#textual.geometry.Region">Region</a></code>
           </td>
-          <td><p>The new, smaller region.</p></td>
+          <td><p>The new, smaller Region.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9701,7 +9719,7 @@ is taken from the lower edge.</p></td>
 
   <div class="doc doc-contents ">
   
-      <p>Split a region in to two, from a given x offset.</p>
+      <p>Split this Region in to two, from a given x offset.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>            ┌─────────┐
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>            │    0    │
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>            │         │
@@ -9886,7 +9904,7 @@ it is taken from the right edge.</p></td>
           <td>
                 <code><a class="autorefs autorefs-internal" title="textual.geometry.Region" href="#textual.geometry.Region">Region</a></code>
           </td>
-          <td><p>A new region shifted by (x, y)</p></td>
+          <td><p>A new Region shifted by (x, y)</p></td>
         </tr>
     </tbody>
   </table>
@@ -9951,7 +9969,7 @@ it is taken from the right edge.</p></td>
           <td>
                 <code><a class="autorefs autorefs-internal" title="textual.geometry.Region" href="#textual.geometry.Region">Region</a></code>
           </td>
-          <td><p>An optimally sized region to cover both regions.</p></td>
+          <td><p>An optimally sized Region to cover both regions.</p></td>
         </tr>
     </tbody>
   </table>
