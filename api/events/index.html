@@ -6853,6 +6853,11 @@
   <div class="doc doc-contents first">
   
       <p>Builtin events sent by Textual.</p>
+<p>Events may be marked as "Bubbles" and "Verbose".
+See the <a href="/guide/events/#bubbling">events guide</a> for an explanation of bubbling.
+Verbose events are excluded from the textual console, unless you explicit request them with the <code>-v</code> switch as follows:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>textual console -v
+</code></pre></div>
 
   
 
@@ -7997,8 +8002,8 @@ configuration and binding keys.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
       <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 <a href="#textual.events.MouseEvent.style" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -8475,7 +8480,7 @@ and disable it when the app shuts down.</p>
           <td>
                 <code><a class="autorefs autorefs-internal" title="textual.geometry.Size" href="../geometry/#textual.geometry.Size">Size</a> | None</code>
           </td>
-          <td><p>The size of the Widget's container widget. Defaults to None.</p></td>
+          <td><p>The size of the Widget's container widget.</p></td>
           <td>
                 <code>None</code>
           </td>
