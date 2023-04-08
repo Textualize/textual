@@ -51,7 +51,12 @@ class Callback(Event, bubble=False, verbose=True):
 
 
 class InvokeCallbacks(Event, bubble=False, verbose=True):
-    """Sent after the Screen is updated"""
+    """An internal event, sent to the screen to run callbacks.
+
+    - [ ] Bubbles
+    - [X] Verbose
+
+    """
 
 
 class ShutdownRequest(Event):
