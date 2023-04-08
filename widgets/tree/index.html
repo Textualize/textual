@@ -4777,56 +4777,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Messages">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.Tree.NodeCollapsed" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        NodeCollapsed
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.Tree.NodeExpanded" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        NodeExpanded
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.Tree.NodeHighlighted" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        NodeHighlighted
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.Tree.NodeSelected" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        NodeSelected
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -6682,56 +6632,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Messages">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.Tree.NodeCollapsed" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        NodeCollapsed
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.Tree.NodeExpanded" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        NodeExpanded
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.Tree.NodeHighlighted" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        NodeHighlighted
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._tree.Tree.NodeSelected" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        NodeSelected
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -7638,283 +7538,13 @@
 </tbody>
 </table>
 <h2 id="messages">Messages<a class="headerlink" href="#messages" title="Permanent link">&para;</a></h2>
-
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h3 id="textual.widgets._tree.Tree.NodeCollapsed" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">textual.widgets._tree.Tree.NodeCollapsed</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.widgets._tree.Tree.NodeCollapsed" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
-</code></pre></div>
-
-  <div class="doc doc-contents first">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-external" title="typing.Generic" href="https://docs.python.org/3/library/typing.html#typing.Generic">Generic</a>[<span title="textual.widgets._tree.EventTreeDataType">EventTreeDataType</span>]</code>, <code><a class="autorefs autorefs-internal" title="textual.message.Message" href="../../api/message/#textual.message.Message">Message</a></code></p>
-
-  
-      <p>Event sent when a node is collapsed.</p>
-<p>Can be handled using <code>on_tree_node_collapsed</code> in a subclass of <code>Tree</code> or in a
-parent node in the DOM.</p>
-
-  <h5>Attributes</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>node</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.widgets._tree.TreeNode" href="#textual.widgets.tree.TreeNode">TreeNode</a>[<span title="textual.widgets._tree.EventTreeDataType">EventTreeDataType</span>]</code>
-          </td>
-          <td><p>The node that was collapsed.</p></td>
-        </tr>
-    </tbody>
-  </table>
-
-
-
-  
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h3 id="textual.widgets._tree.Tree.NodeExpanded" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">textual.widgets._tree.Tree.NodeExpanded</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.widgets._tree.Tree.NodeExpanded" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
-</code></pre></div>
-
-  <div class="doc doc-contents first">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-external" title="typing.Generic" href="https://docs.python.org/3/library/typing.html#typing.Generic">Generic</a>[<span title="textual.widgets._tree.EventTreeDataType">EventTreeDataType</span>]</code>, <code><a class="autorefs autorefs-internal" title="textual.message.Message" href="../../api/message/#textual.message.Message">Message</a></code></p>
-
-  
-      <p>Event sent when a node is expanded.</p>
-<p>Can be handled using <code>on_tree_node_expanded</code> in a subclass of <code>Tree</code> or in a
-parent node in the DOM.</p>
-
-  <h5>Attributes</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>node</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.widgets._tree.TreeNode" href="#textual.widgets.tree.TreeNode">TreeNode</a>[<span title="textual.widgets._tree.EventTreeDataType">EventTreeDataType</span>]</code>
-          </td>
-          <td><p>The node that was expanded.</p></td>
-        </tr>
-    </tbody>
-  </table>
-
-
-
-  
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h3 id="textual.widgets._tree.Tree.NodeHighlighted" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">textual.widgets._tree.Tree.NodeHighlighted</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.widgets._tree.Tree.NodeHighlighted" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
-</code></pre></div>
-
-  <div class="doc doc-contents first">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-external" title="typing.Generic" href="https://docs.python.org/3/library/typing.html#typing.Generic">Generic</a>[<span title="textual.widgets._tree.EventTreeDataType">EventTreeDataType</span>]</code>, <code><a class="autorefs autorefs-internal" title="textual.message.Message" href="../../api/message/#textual.message.Message">Message</a></code></p>
-
-  
-      <p>Event sent when a node is highlighted.</p>
-<p>Can be handled using <code>on_tree_node_highlighted</code> in a subclass of <code>Tree</code> or in a
-parent node in the DOM.</p>
-
-  <h5>Attributes</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>node</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.widgets._tree.TreeNode" href="#textual.widgets.tree.TreeNode">TreeNode</a>[<span title="textual.widgets._tree.EventTreeDataType">EventTreeDataType</span>]</code>
-          </td>
-          <td><p>The node that was highlighted.</p></td>
-        </tr>
-    </tbody>
-  </table>
-
-
-
-  
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h3 id="textual.widgets._tree.Tree.NodeSelected" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">textual.widgets._tree.Tree.NodeSelected</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.widgets._tree.Tree.NodeSelected" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
-</code></pre></div>
-
-  <div class="doc doc-contents first">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-external" title="typing.Generic" href="https://docs.python.org/3/library/typing.html#typing.Generic">Generic</a>[<span title="textual.widgets._tree.EventTreeDataType">EventTreeDataType</span>]</code>, <code><a class="autorefs autorefs-internal" title="textual.message.Message" href="../../api/message/#textual.message.Message">Message</a></code></p>
-
-  
-      <p>Event sent when a node is selected.</p>
-<p>Can be handled using <code>on_tree_node_selected</code> in a subclass of <code>Tree</code> or in a
-parent node in the DOM.</p>
-
-  <h5>Attributes</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>node</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.widgets._tree.TreeNode" href="#textual.widgets.tree.TreeNode">TreeNode</a>[<span title="textual.widgets._tree.EventTreeDataType">EventTreeDataType</span>]</code>
-          </td>
-          <td><p>The node that was selected.</p></td>
-        </tr>
-    </tbody>
-  </table>
-
-
-
-  
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-  </div>
-
-</div><h2 id="bindings">Bindings<a class="headerlink" href="#bindings" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a class="autorefs autorefs-internal" href="#textual.widgets._tree.Tree.NodeCollapsed">Tree.NodeCollapsed</a></li>
+<li><a class="autorefs autorefs-internal" href="#textual.widgets._tree.Tree.NodeExpanded">Tree.NodeExpanded</a></li>
+<li><a class="autorefs autorefs-internal" href="#textual.widgets._tree.Tree.NodeHighlighted">Tree.NodeHighlighted</a></li>
+<li><a class="autorefs autorefs-internal" href="#textual.widgets._tree.Tree.NodeSelected">Tree.NodeSelected</a></li>
+</ul>
+<h2 id="bindings">Bindings<a class="headerlink" href="#bindings" title="Permanent link">&para;</a></h2>
 <p>The tree widget defines the following bindings:</p>
 
 
@@ -9864,8 +9494,8 @@ overridden in a sub-class if it can be done more efficiently.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
       <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
   </span>
 
 <a href="#textual.widgets._tree.TreeNode.allow_expand" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -10003,8 +9633,8 @@ overridden in a sub-class if it can be done more efficiently.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
       <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
   </span>
 
 <a href="#textual.widgets._tree.TreeNode.label" class="headerlink" title="Permanent link">&para;</a></h3>
