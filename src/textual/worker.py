@@ -1,3 +1,8 @@
+"""
+A class to manage concurrent [work](/guide/workers).
+
+"""
+
 from __future__ import annotations
 
 import asyncio

@@ -28,7 +28,9 @@ LoadingIndicator {
     ```python
     --8<-- "docs/examples/widgets/loading_indicator.py"
     ```
+---
 
-## See Also
 
-* [LoadingIndicator](../api/loading_indicator.md) code reference
+::: textual.widgets.LoadingIndicator
+    options:
+      heading_level: 2

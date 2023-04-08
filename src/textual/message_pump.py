@@ -1,8 +1,6 @@
 """
 
-A message pump is a class that processes messages.
-
-It is a base class for the App, Screen, and Widgets.
+A message pump is a base class for any object which processes messages, which includes Widget, Screen, and App.
 
 """
 from __future__ import annotations
@@ -46,7 +44,7 @@ class MessagePumpClosed(Exception):
     pass
 
 
-class MessagePumpMeta(type):
+class _MessagePumpMeta(type):
     """Metaclass for message pump. This exists to populate a Message inner class of a Widget with the
     parent classes' name.
 
@@ -69,7 +67,7 @@ class MessagePumpMeta(type):
         return class_obj
 
 
-class MessagePump(metaclass=MessagePumpMeta):
+class MessagePump(metaclass=_MessagePumpMeta):
     """Base class which supplies a message pump."""
 
     def __init__(self, parent: MessagePump | None = None) -> None:
@@ -143,6 +141,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     @property
     def has_parent(self) -> bool:
+        """Does this object have a parent?"""
         return self._parent is not None
 
     @property
@@ -178,7 +177,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     @property
     def is_running(self) -> bool:
-        """Is the message pump running (potentially processing messages)."""
+        """Is the message pump running (potentially processing messages)?"""
         return self._running
 
     @property
@@ -192,7 +191,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     @property
     def is_attached(self) -> bool:
-        """Is the node is attached to the app via the DOM."""
+        """Is the node is attached to the app via the DOM?"""
         from .app import App
 
         node = self
@@ -289,9 +288,9 @@ class MessagePump(metaclass=MessagePumpMeta):
 
         Args:
             delay: Time to wait before invoking callback.
-            callback: Callback to call after time has expired. Defaults to None.
-            name: Name of the timer (for debug). Defaults to None.
-            pause: Start timer paused. Defaults to False.
+            callback: Callback to call after time has expired.
+            name: Name of the timer (for debug).
+            pause: Start timer paused.
 
         Returns:
             A timer object.
@@ -321,10 +320,10 @@ class MessagePump(metaclass=MessagePumpMeta):
 
         Args:
             interval: Time between calls.
-            callback: Function to call. Defaults to None.
-            name: Name of the timer object. Defaults to None.
-            repeat: Number of times to repeat the call or 0 for continuous. Defaults to 0.
-            pause: Start the timer paused. Defaults to False.
+            callback: Function to call.
+            name: Name of the timer object.
+            repeat: Number of times to repeat the call or 0 for continuous.
+            pause: Start the timer paused.
 
         Returns:
             A timer object.

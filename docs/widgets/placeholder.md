@@ -34,15 +34,18 @@ The example below shows each placeholder variant.
 
 ## Reactive Attributes
 
-| Name       | Type   | Default     | Description                                        |
-| ---------- | ------ | ----------- | -------------------------------------------------- |
-| `variant`  | `str`  | `"default"` | Styling variant. One of `default`, `size`, `text`. |
+| Name      | Type  | Default     | Description                                        |
+| --------- | ----- | ----------- | -------------------------------------------------- |
+| `variant` | `str` | `"default"` | Styling variant. One of `default`, `size`, `text`. |
 
 
 ## Messages
 
 This widget sends no messages.
 
-## See Also
+---
 
-* [Placeholder](../api/placeholder.md) code reference
+
+::: textual.widgets.Placeholder
+    options:
+      heading_level: 2

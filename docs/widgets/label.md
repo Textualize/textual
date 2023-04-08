@@ -30,6 +30,9 @@ This widget has no reactive attributes.
 
 This widget sends no messages.
 
-## See Also
+---
 
-* [Label](../api/label.md) code reference
+
+::: textual.widgets.Label
+    options:
+      heading_level: 2

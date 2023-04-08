@@ -1,3 +1,12 @@
+"""
+
+A DOMNode is a base class for any object within the Textual Document Object Model,
+which includes all Widgets, Screens, and Apps.
+
+
+"""
+
+
 from __future__ import annotations
 
 import re
@@ -25,7 +34,7 @@ from ._context import NoActiveAppError
 from ._node_list import NodeList
 from ._types import WatchCallbackType
 from ._worker_manager import WorkerManager
-from .binding import Binding, Bindings, BindingType
+from .binding import Binding, BindingType, _Bindings
 from .color import BLACK, WHITE, Color
 from .css._error_tools import friendly_list
 from .css.constants import VALID_DISPLAY, VALID_VISIBILITY
@@ -134,7 +143,7 @@ class DOMNode(MessagePump):
     _css_type_names: ClassVar[frozenset[str]] = frozenset()
 
     # Generated list of bindings
-    _merged_bindings: ClassVar[Bindings | None] = None
+    _merged_bindings: ClassVar[_Bindings | None] = None
 
     _reactives: ClassVar[dict[str, Reactive]]
 
@@ -168,7 +177,7 @@ class DOMNode(MessagePump):
         self._auto_refresh_timer: Timer | None = None
         self._css_types = {cls.__name__ for cls in self._css_bases(self.__class__)}
         self._bindings = (
-            Bindings()
+            _Bindings()
             if self._merged_bindings is None
             else self._merged_bindings.copy()
         )
@@ -191,7 +200,12 @@ class DOMNode(MessagePump):
 
     @property
     def children(self) -> Sequence["Widget"]:
-        """A view on to the children."""
+        """A view on to the children.
+
+        Returns:
+            The node's children.
+
+        """
         return self._nodes
 
     @property
@@ -212,7 +226,7 @@ class DOMNode(MessagePump):
 
     @property
     def workers(self) -> WorkerManager:
-        """A worker manager."""
+        """The app's worker manager. Shortcut for `self.app.workers`."""
         return self.app.workers
 
     def run_worker(
@@ -346,27 +360,27 @@ class DOMNode(MessagePump):
         return classes
 
     @classmethod
-    def _merge_bindings(cls) -> Bindings:
+    def _merge_bindings(cls) -> _Bindings:
         """Merge bindings from base classes.
 
         Returns:
             Merged bindings.
         """
-        bindings: list[Bindings] = []
+        bindings: list[_Bindings] = []
 
         for base in reversed(cls.__mro__):
             if issubclass(base, DOMNode):
                 if not base._inherit_bindings:
                     bindings.clear()
                 bindings.append(
-                    Bindings(
+                    _Bindings(
                         base.__dict__.get("BINDINGS", []),
                     )
                 )
         keys: dict[str, Binding] = {}
         for bindings_ in bindings:
             keys.update(bindings_.keys)
-        return Bindings(keys.values())
+        return _Bindings(keys.values())
 
     def _post_register(self, app: App) -> None:
         """Called when the widget is registered
@@ -503,6 +517,7 @@ class DOMNode(MessagePump):
         return tokens
 
     classes = _ClassesDescriptor()
+    """CSS class names for this node."""
 
     @property
     def pseudo_classes(self) -> frozenset[str]:
@@ -584,9 +599,15 @@ class DOMNode(MessagePump):
 
     @property
     def tree(self) -> Tree:
-        """Get a Rich tree object which will recursively render the structure of the node tree."""
+        """Get a Rich tree object which will recursively render the structure of the node tree.
+
+        Returns:
+            A Rich Tree renderable.
+
+        """
 
         def render_info(node: DOMNode) -> Pretty:
+            """Render a node for the tree."""
             return Pretty(node)
 
         tree = Tree(render_info(self))
@@ -605,6 +626,9 @@ class DOMNode(MessagePump):
     def css_tree(self) -> Tree:
         """Get a Rich tree object which will recursively render the structure of the node tree,
         which also displays CSS and size information.
+
+        Returns:
+            A Rich Tree renderable.
         """
         from rich.columns import Columns
         from rich.console import Group
@@ -613,6 +637,7 @@ class DOMNode(MessagePump):
         from .widget import Widget
 
         def render_info(node: DOMNode) -> Columns:
+            """Render a node for the tree."""
             if isinstance(node, Widget):
                 info = Columns(
                     [
@@ -659,7 +684,7 @@ class DOMNode(MessagePump):
         the child will also be bold.
 
         Returns:
-            Rich Style object.
+            A Rich Style.
         """
         return Style.combine(
             node.styles.text_style for node in reversed(self.ancestors_with_self)
@@ -667,7 +692,12 @@ class DOMNode(MessagePump):
 
     @property
     def rich_style(self) -> Style:
-        """Get a Rich Style object for this DOMNode."""
+        """Get a Rich Style object for this DOMNode.
+
+        Returns:
+            A Rich style.
+
+        """
         background = Color(0, 0, 0, 0)
         color = Color(255, 255, 255, 0)
         style = Style()
@@ -720,6 +750,9 @@ class DOMNode(MessagePump):
 
         Note:
             This is inclusive of ``self``.
+
+        Returns:
+            A list of nodes.
         """
         nodes: list[MessagePump | None] = []
         add_node = nodes.append
@@ -731,12 +764,22 @@ class DOMNode(MessagePump):
 
     @property
     def ancestors(self) -> list[DOMNode]:
-        """A list of ancestor nodes Nodes by tracing ancestors all the way back to App."""
+        """A list of ancestor nodes Nodes by tracing ancestors all the way back to App.
+
+        Returns:
+            A list of nodes.
+
+        """
         return self.ancestors_with_self[1:]
 
     @property
     def displayed_children(self) -> list[Widget]:
-        """The children which don't have display: none set."""
+        """The children which don't have display: none set.
+
+        Returns:
+            A list of nodes.
+
+        """
         return [child for child in self._nodes if child.display]
 
     def watch(
@@ -829,10 +872,9 @@ class DOMNode(MessagePump):
 
         Args:
             filter_type: Filter only this type, or None for no filter.
-                Defaults to None.
-            with_self: Also yield self in addition to descendants. Defaults to False.
-            method: One of "depth" or "breadth". Defaults to "depth".
-            reverse: Reverse the order (bottom up). Defaults to False.
+            with_self: Also yield self in addition to descendants.
+            method: One of "depth" or "breadth".
+            reverse: Reverse the order (bottom up).
 
         Returns:
             A list of nodes.
@@ -867,7 +909,7 @@ class DOMNode(MessagePump):
         """Get a DOM query matching a selector.
 
         Args:
-            selector: A CSS selector or `None` for all nodes. Defaults to None.
+            selector: A CSS selector or `None` for all nodes.
 
         Returns:
             A query object.
@@ -902,7 +944,6 @@ class DOMNode(MessagePump):
         Args:
             selector: A selector.
             expect_type: Require the object be of the supplied type, or None for any type.
-                Defaults to None.
 
         Raises:
             WrongType: If the wrong type was found.

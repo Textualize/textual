@@ -1,3 +1,9 @@
+"""
+
+The `Reactive` class implements [reactivity](/guide/reactivity/).
+
+"""
+
 from __future__ import annotations
 
 from functools import partial
@@ -33,11 +39,11 @@ class Reactive(Generic[ReactiveType]):
 
     Args:
         default: A default value or callable that returns a default.
-        layout: Perform a layout on change. Defaults to False.
-        repaint: Perform a repaint on change. Defaults to True.
-        init: Call watchers on initialize (post mount). Defaults to False.
-        always_update: Call watchers even when the new value equals the old value. Defaults to False.
-        compute: Run compute methods when attribute is changed. Defaults to True.
+        layout: Perform a layout on change.
+        repaint: Perform a repaint on change.
+        init: Call watchers on initialize (post mount).
+        always_update: Call watchers even when the new value equals the old value.
+        compute: Run compute methods when attribute is changed.
     """
 
     _reactives: ClassVar[dict[str, object]] = {}
@@ -280,10 +286,10 @@ class reactive(Reactive[ReactiveType]):
 
     Args:
         default: A default value or callable that returns a default.
-        layout: Perform a layout on change. Defaults to False.
-        repaint: Perform a repaint on change. Defaults to True.
-        init: Call watchers on initialize (post mount). Defaults to True.
-        always_update: Call watchers even when the new value equals the old value. Defaults to False.
+        layout: Perform a layout on change.
+        repaint: Perform a repaint on change.
+        init: Call watchers on initialize (post mount).
+        always_update: Call watchers even when the new value equals the old value.
     """
 
     def __init__(
@@ -309,7 +315,7 @@ class var(Reactive[ReactiveType]):
 
     Args:
         default: A default value or callable that returns a default.
-        init: Call watchers on initialize (post mount). Defaults to True.
+        init: Call watchers on initialize (post mount).
     """
 
     def __init__(
@@ -339,7 +345,7 @@ def _watch(
         obj: The parent object.
         attribute_name: The attribute to watch.
         callback: A callable to call when the attribute changes.
-        init: True to call watcher initialization. Defaults to True.
+        init: True to call watcher initialization.
     """
     if not hasattr(obj, "__watchers"):
         setattr(obj, "__watchers", {})

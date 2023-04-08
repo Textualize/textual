@@ -29,14 +29,20 @@ The following example displays Markdown from a string.
 
 ## Messages
 
-### ::: textual.widgets.Markdown.TableOfContentsUpdated
-
-### ::: textual.widgets.Markdown.TableOfContentsSelected
-
-### ::: textual.widgets.Markdown.LinkClicked
+- [Markdown.TableOfContentsUpdated][textual.widgets.Markdown.TableOfContentsUpdated]
+- [Markdown.TableOfContentsSelected][textual.widgets.Markdown.TableOfContentsSelected]
+- [Markdown.LinkClicked][textual.widgets.Markdown.LinkClicked]
 
 
 ## See Also
 
-* [Markdown][textual.widgets.Markdown] code reference
+
 * [MarkdownViewer][textual.widgets.MarkdownViewer] code reference
+
+
+---
+
+
+::: textual.widgets.Markdown
+    options:
+      heading_level: 2

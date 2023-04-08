@@ -113,8 +113,8 @@ class Switch(Widget, can_focus=True):
         """Initialise the switch.
 
         Args:
-            value: The initial value of the switch. Defaults to False.
-            animate: True if the switch should animate when toggled. Defaults to True.
+            value: The initial value of the switch.
+            animate: True if the switch should animate when toggled.
             name: The name of the switch.
             id: The ID of the switch in the DOM.
             classes: The CSS classes of the switch.

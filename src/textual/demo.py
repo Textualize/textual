@@ -410,8 +410,8 @@ class DemoApp(App[None]):
         """Save an SVG "screenshot". This action will save an SVG file containing the current contents of the screen.
 
         Args:
-            filename: Filename of screenshot, or None to auto-generate. Defaults to None.
-            path: Path to directory. Defaults to "./".
+            filename: Filename of screenshot, or None to auto-generate.
+            path: Path to directory.
         """
         self.bell()
         path = self.save_screenshot(filename, path)

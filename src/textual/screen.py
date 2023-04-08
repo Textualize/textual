@@ -1,3 +1,9 @@
+"""
+
+The `Screen` class is a special widget which represents the content in the terminal. See [Screens](/guide/screens/) for details.
+
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Iterable, Iterator

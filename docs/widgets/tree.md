@@ -62,7 +62,16 @@ The tree widget provides the following component classes:
       show_root_heading: false
       show_root_toc_entry: false
 
-## See Also
 
-* [Tree][textual.widgets.Tree] code reference
-* [TreeNode][textual.widgets.tree.TreeNode] code reference
+---
+
+
+::: textual.widgets.Tree
+    options:
+      heading_level: 2
+
+---
+
+::: textual.widgets.tree.TreeNode
+    options:
+      heading_level: 2

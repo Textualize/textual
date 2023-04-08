@@ -309,8 +309,8 @@ class TreeNode(Generic[TreeDataType]):
         Args:
             label: The new node's label.
             data: Data associated with the new node.
-            expand: Node should be expanded. Defaults to True.
-            allow_expand: Allow use to expand the node via keyboard or mouse. Defaults to True.
+            expand: Node should be expanded.
+            allow_expand: Allow use to expand the node via keyboard or mouse.
 
         Returns:
             A new Tree node

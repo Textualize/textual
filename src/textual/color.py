@@ -1,9 +1,6 @@
 """
 This module contains a powerful Color class which Textual uses to expose colors.
 
-The only exception would be for Rich renderables, which require a rich.color.Color instance.
-You can convert from a Textual color to a Rich color with the [rich_color][textual.color.Color.rich_color] property.
-
 ## Named colors
 
 The following named colors are used by the [parse][textual.color.Color.parse] method.
@@ -46,6 +43,7 @@ from rich.color import ColorType
 from rich.color_triplet import ColorTriplet
 from rich.style import Style
 from rich.text import Text
+from typing_extensions import Final
 
 from textual.css.scalar import percentage_string_to_float
 from textual.css.tokenize import CLOSE_BRACE, COMMA, DECIMAL, OPEN_BRACE, PERCENT
@@ -58,14 +56,14 @@ _TRUECOLOR = ColorType.TRUECOLOR
 
 
 class HSL(NamedTuple):
-    """A color in HLS format."""
+    """A color in HLS (Hue, Saturation, Lightness) format."""
 
     h: float
-    """Hue"""
+    """Hue in range 0 to 1."""
     s: float
-    """Saturation"""
+    """Saturation in range 0 to 1."""
     l: float
-    """Lightness"""
+    """Lightness in range 0 to 1."""
 
     @property
     def css(self) -> str:
@@ -73,28 +71,32 @@ class HSL(NamedTuple):
         h, s, l = self
 
         def as_str(number: float) -> str:
+            """Format a float."""
             return f"{number:.1f}".rstrip("0").rstrip(".")
 
         return f"hsl({as_str(h*360)},{as_str(s*100)}%,{as_str(l*100)}%)"
 
 
 class HSV(NamedTuple):
-    """A color in HSV format."""
+    """A color in HSV (Hue, Saturation, Value) format."""
 
     h: float
-    """Hue"""
+    """Hue in range 0 to 1."""
     s: float
-    """Saturation"""
+    """Saturation in range 0 to 1"""
     v: float
-    """Value"""
+    """Value un range 0 to 1."""
 
 
 class Lab(NamedTuple):
     """A color in CIE-L*ab format."""
 
     L: float
+    """Lightness in range 0 to 100."""
     a: float
+    """A axis in range -127 to 128."""
     b: float
+    """B axis in range -127 to 128."""
 
 
 RE_COLOR = re.compile(
@@ -126,7 +128,7 @@ class ColorParseError(Exception):
 
     Args:
         message: The error message
-        suggested_color: A close color we can suggest. Defaults to None.
+        suggested_color: A close color we can suggest.
     """
 
     def __init__(self, message: str, suggested_color: str | None = None):
@@ -136,26 +138,32 @@ class ColorParseError(Exception):
 
 @rich.repr.auto
 class Color(NamedTuple):
-    """A class to represent a RGB color with an alpha component."""
+    """A class to represent a color.
+
+    Colors are stored as three values representing the degree of red, green, and blue in a color, and a
+    fourth "alpha" value which defines where the color lies on a gradient of opaque to transparent.
+
+
+    """
 
     r: int
-    """Red component (0-255)"""
+    """Red component in range 0 to 255."""
     g: int
-    """Green component (0-255)"""
+    """Green component in range 0 to 255."""
     b: int
-    """Blue component (0-255)"""
+    """Blue component in range 0 to 255."""
     a: float = 1.0
-    """Alpha component (0-1)"""
+    """Alpha component in range 0 to 1."""
 
     @classmethod
     def from_rich_color(cls, rich_color: RichColor) -> Color:
         """Create a new color from Rich's Color class.
 
         Args:
-            rich_color: An instance of rich.color.Color.
+            rich_color: An instance of [Rich color][rich.color.Color].
 
         Returns:
-            A new Color.
+            A new Color instance.
         """
         r, g, b = rich_color.get_truecolor()
         return cls(r, g, b)
@@ -192,22 +200,12 @@ class Color(NamedTuple):
 
     @property
     def is_transparent(self) -> bool:
-        """Check if the color is transparent, i.e. has 0 alpha.
-
-        Returns:
-            True if transparent, otherwise False.
-
-        """
+        """Is the color transparent (i.e. has 0 alpha)?"""
         return self.a == 0
 
     @property
     def clamped(self) -> Color:
-        """Get a color with all components saturated to maximum and minimum values.
-
-        Returns:
-            A color object.
-
-        """
+        """A clamped color (this color with all values in expected range)."""
         r, g, b, a = self
         _clamp = clamp
         color = Color(
@@ -243,20 +241,16 @@ class Color(NamedTuple):
 
     @property
     def rgb(self) -> tuple[int, int, int]:
-        """Get just the red, green, and blue components.
-
-        Returns:
-            Color components
-        """
+        """A tuple of the red, gree, and blue color components."""
         r, g, b, _ = self
         return (r, g, b)
 
     @property
     def hsl(self) -> HSL:
-        """Get the color as HSL.
+        """This color in HSL format.
 
-        Returns:
-            Color in HSL format.
+        HSL color is an alternative way of representing a color, which can be used in certain color calculations.
+
         """
         r, g, b = self.normalized
         h, l, s = rgb_to_hls(r, g, b)
@@ -264,10 +258,10 @@ class Color(NamedTuple):
 
     @property
     def brightness(self) -> float:
-        """Get the human perceptual brightness.
+        """The human perceptual brightness.
 
-        Returns:
-            Brightness value (0-1).
+        A value of 1 is returned for pure white, and 0 for pure black.
+        Other colors lie on a gradient between the two extremes.
 
         """
         r, g, b = self.normalized
@@ -278,8 +272,7 @@ class Color(NamedTuple):
     def hex(self) -> str:
         """The color in CSS hex form, with 6 digits for RGB, and 8 digits for RGBA.
 
-        Returns:
-            A CSS hex-style color, e.g. `"#46b3de"` or `"#3342457f"`
+        For example, `"#46b3de"` for an RGB color, or `"#3342457f"` for a color with alpha.
 
         """
         r, g, b, a = self.clamped
@@ -293,8 +286,7 @@ class Color(NamedTuple):
     def hex6(self) -> str:
         """The color in CSS hex form, with 6 digits for RGB. Alpha is ignored.
 
-        Returns:
-            A CSS hex-style color, e.g. "#46b3de"
+        For example, `"#46b3de"`.
 
         """
         r, g, b, _a = self.clamped
@@ -302,10 +294,9 @@ class Color(NamedTuple):
 
     @property
     def css(self) -> str:
-        """The color in CSS rgb or rgba form.
+        """The color in CSS RGB or RGBA form.
 
-        Returns:
-            A CSS style color, e.g. `"rgb(10,20,30)"` or `"rgb(50,70,80,0.5)"`
+        For example, `"rgb(10,20,30)"` for an RGB color, or `"rgb(50,70,80,0.5)"` for an RGBA color.
 
         """
         r, g, b, a = self
@@ -313,11 +304,7 @@ class Color(NamedTuple):
 
     @property
     def monochrome(self) -> Color:
-        """Get a monochrome version of this color.
-
-        Returns:
-            A new monochrome color.
-        """
+        """A monochrome version of this color."""
         r, g, b, a = self
         gray = round(r * 0.2126 + g * 0.7152 + b * 0.0722)
         return Color(gray, gray, gray, a)
@@ -358,10 +345,14 @@ class Color(NamedTuple):
     ) -> Color:
         """Generate a new color between two colors.
 
+        This method calculates a new color on a gradient.
+        The position on the gradient is given by `factor`, which is a float between 0 and 1, where 0 is the original color, and 1 is the `destination` color.
+        A value of `gradient` between the two extremes produces a color somewhere between the two end points.
+
         Args:
             destination: Another color.
             factor: A blend factor, 0 -> 1.
-            alpha: New alpha for result. Defaults to None.
+            alpha: New alpha for result.
 
         Returns:
             A new color.
@@ -515,7 +506,7 @@ class Color(NamedTuple):
 
         Args:
             amount: Value between 0-1 to reduce luminance by.
-            alpha: Alpha component for new color or None to copy alpha. Defaults to None.
+            alpha: Alpha component for new color or None to copy alpha.
 
         Returns:
             New color.
@@ -529,7 +520,7 @@ class Color(NamedTuple):
 
         Args:
             amount: Value between 0-1 to increase luminance by.
-            alpha: Alpha component for new color or None to copy alpha. Defaults to None.
+            alpha: Alpha component for new color or None to copy alpha.
 
         Returns:
             New color.
@@ -541,8 +532,7 @@ class Color(NamedTuple):
         """Get a light or dark color that best contrasts this color, for use with text.
 
         Args:
-            alpha: An alpha value to adjust the pure white / black by.
-                Defaults to 0.95.
+            alpha: An alpha value to apply to the result.
 
         Returns:
             A new color, either an off-white or off-black
@@ -597,8 +587,10 @@ class Gradient:
 
 
 # Color constants
-WHITE = Color(255, 255, 255)
-BLACK = Color(0, 0, 0)
+WHITE: Final = Color(255, 255, 255)
+"""A constant for pure white."""
+BLACK: Final = Color(0, 0, 0)
+"""A constant for pure black."""
 
 
 def rgb_to_lab(rgb: Color) -> Lab:

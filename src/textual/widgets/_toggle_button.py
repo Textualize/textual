@@ -127,7 +127,7 @@ class ToggleButton(Static, can_focus=True):
 
         Args:
             label: The label for the toggle.
-            value: The initial value of the toggle. Defaults to `False`.
+            value: The initial value of the toggle.
             button_first: Should the button come before the label, or after?
             name: The name of the toggle.
             id: The ID of the toggle in the DOM.

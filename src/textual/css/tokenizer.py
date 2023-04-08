@@ -32,7 +32,7 @@ class TokenError(Exception):
             code: The code being parsed.
             start: Line number of the error.
             message: A message associated with the error.
-            end: End location of token, or None if not known. Defaults to None.
+            end: End location of token, or None if not known.
         """
 
         self.path = path

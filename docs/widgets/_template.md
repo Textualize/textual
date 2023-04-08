@@ -61,6 +61,13 @@ The WIDGET widget provides the following component classes:
 
 ## See also
 
-- [WIDGET](../api/WIDGET.md) code reference.
 - Another related API.
 - Something else useful.
+
+
+---
+
+
+::: textual.widgets.WIDGET
+    options:
+      heading_level: 2

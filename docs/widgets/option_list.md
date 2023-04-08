@@ -82,14 +82,13 @@ tables](https://rich.readthedocs.io/en/latest/tables.html):
 ## Reactive Attributes
 
 | Name          | Type            | Default | Description                                                               |
-|---------------|-----------------|---------|---------------------------------------------------------------------------|
+| ------------- | --------------- | ------- | ------------------------------------------------------------------------- |
 | `highlighted` | `int` \| `None` | `None`  | The index of the highlighted option. `None` means nothing is highlighted. |
 
 ## Messages
 
-### ::: textual.widgets.OptionList.OptionHighlighted
-
-### ::: textual.widgets.OptionList.OptionSelected
+- [OptionList.OptionHighlight][textual.widgets.OptionList.OptionHighlighted]
+- [OptionList.OptionSelected][textual.widgets.OptionList.OptionSelected]
 
 Both of the messages above inherit from this common base, which makes
 available the following properties relating to the `OptionList` and the
@@ -122,6 +121,8 @@ The option list provides the following component classes:
       show_root_heading: false
       show_root_toc_entry: false
 
-## See Also
 
-* [OptionList][textual.widgets.OptionList] code reference
+
+::: textual.widgets.OptionList
+    options:
+      heading_level: 2

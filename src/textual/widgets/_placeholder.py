@@ -100,7 +100,7 @@ class Placeholder(Widget):
             label: The label to identify the placeholder.
                 If no label is present, uses the placeholder ID instead.
             variant: The variant of the placeholder.
-            name: The name of the placeholder. Defaults to None.
+            name: The name of the placeholder.
             id: The ID of the placeholder in the DOM.
             classes: A space separated string with the CSS classes
                 of the placeholder, if any.

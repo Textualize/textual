@@ -94,12 +94,6 @@ class ColorSystem:
     def generate(self) -> dict[str, str]:
         """Generate a mapping of color name on to a CSS color.
 
-        Args:
-            dark: Enable dark mode. Defaults to False.
-            luminosity_spread: Amount of luminosity to subtract and add to generate
-                shades. Defaults to 0.2.
-            text_alpha: Alpha value for text. Defaults to 0.9.
-
         Returns:
             A mapping of color name on to a CSS-style encoded color
 

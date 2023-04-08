@@ -10,14 +10,14 @@
 
     (
       {%- for parameter in function.parameters -%}
-        {%- if parameter.name not in ("self", "cls") or loop.index0 > 0 or not (function.parent and function.parent.is_class) -%}
+        {%- if 1 -%}
 
           {%- if parameter.kind.value == "positional-only" -%}
             {%- set ns.has_pos_only = True -%}
           {%- else -%}
             {%- if ns.has_pos_only and ns.render_pos_only_separator -%}
               {%- set ns.render_pos_only_separator = False %}/, {% endif -%}
-            {%- if parameter.kind.value == "keyword-only" -%}
+          {%- if parameter.kind.value == "keyword-only" -%}
               {%- if ns.render_kw_only_separator -%}
                 {%- set ns.render_kw_only_separator = False %}*, {% endif -%}
             {%- endif -%}
