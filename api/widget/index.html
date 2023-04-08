@@ -4749,8 +4749,6 @@
         
       
         
-      
-        
           
         
       
@@ -4949,32 +4947,6 @@
     
   
     Containers
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../content_switcher/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Content switcher
   
 
     
@@ -8177,6 +8149,8 @@
 
 <a id="textual.widget"></a>
   <div class="doc doc-contents first">
+  
+      <p>The base class for widgets.</p>
 
   
 
@@ -8210,11 +8184,12 @@
   <div class="doc doc-contents ">
 
   
-      <p>An awaitable returned by mount() and mount_all().</p>
+      <p>An <em>optional</em> awaitable returned by <a class="autorefs autorefs-internal" href="#textual.widget.Widget.mount">mount</a> and <a class="autorefs autorefs-internal" href="#textual.widget.Widget.mount_all">mount_all</a>.</p>
 
-<details class="example">
+<details class="example" open>
   <summary>Example</summary>
-  <p>await self.mount(Static("foo"))</p>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="n">Static</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">))</span>
+</code></pre></div>
 </details>
 
 
@@ -10344,7 +10319,7 @@ depending on the scroll offset.</p>
       <p>Called by Textual to create child widgets.</p>
 <p>Extend this to build a UI.</p>
 
-<details class="example">
+<details class="example" open>
   <summary>Example</summary>
   <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="k">yield</span> <span class="n">Header</span><span class="p">()</span>
@@ -11201,7 +11176,7 @@ find the widget to mount after.</p></td>
     </tbody>
   </table>
 
-<details class="note">
+<details class="note" open>
   <summary>Note</summary>
   <p>Only one of <code>before</code> or <code>after</code> can be provided. If both are
 provided a <code>MountError</code> will be raised.</p>
@@ -11313,7 +11288,7 @@ find the widget to mount after.</p></td>
     </tbody>
   </table>
 
-<details class="note">
+<details class="note" open>
   <summary>Note</summary>
   <p>Only one of <code>before</code> or <code>after</code> can be provided. If both are
 provided a <code>MountError</code> will be raised.</p>
@@ -11407,7 +11382,7 @@ find the widget to move after.</p></td>
     </tbody>
   </table>
 
-<details class="note">
+<details class="note" open>
   <summary>Note</summary>
   <p>Only one of <code>before</code> or <code>after</code> can be provided. If neither
 or both are provided a <code>WidgetError</code> will be raised.</p>
@@ -13091,7 +13066,7 @@ do this automatically.</p>
     </tbody>
   </table>
 
-<details class="note">
+<details class="note" open>
   <summary>Note</summary>
   <p>The call to scroll is made after the next refresh.</p>
 </details>

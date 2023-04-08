@@ -4749,8 +4749,6 @@
         
       
         
-      
-        
           
         
       
@@ -4949,32 +4947,6 @@
     
   
     Containers
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../content_switcher/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Content switcher
   
 
     
@@ -5240,6 +5212,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.message_pump.MessagePump.has_parent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        has_parent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.message_pump.MessagePump.is_attached" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5428,17 +5411,6 @@
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.message_pump.MessagePumpMeta" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MessagePumpMeta
-      
-    </span>
-  </a>
   
 </li>
       
@@ -6199,6 +6171,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.message_pump.MessagePump.has_parent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        has_parent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.message_pump.MessagePump.is_attached" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6390,17 +6373,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#textual.message_pump.MessagePumpMeta" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MessagePumpMeta
-      
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -6422,18 +6394,13 @@
 
   <h1>Message pump</h1>
 
-<p>A message pump is a class that processes messages.</p>
-<p>It is a base class for the <code>App</code>, <code>Screen</code>, and <code>Widget</code> classes.</p>
-
-
 <div class="doc doc-object doc-module">
 
 
 <a id="textual.message_pump"></a>
   <div class="doc doc-contents first">
   
-      <p>A message pump is a class that processes messages.</p>
-<p>It is a base class for the App, Screen, and Widgets.</p>
+      <p>A message pump is a base class for any object which processes messages, which includes Widget, Screen, and App.</p>
 
   
 
@@ -6536,6 +6503,29 @@
         </tr>
     </tbody>
   </table>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.message_pump.MessagePump.has_parent" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">has_parent</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.message_pump.MessagePump.has_parent" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">has_parent</span><span class="p">:</span> <span class="nb">bool</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Does this object have a parent?</p>
   </div>
 
 </div>
@@ -7182,7 +7172,7 @@ If multiple handlers exist that match the key, an exception is raised.</p>
   
       <p>A context manager to <em>temporarily</em> prevent the given message types from being posted.</p>
 
-<details class="example">
+<details class="example" open>
   <summary>Example</summary>
   <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_one</span><span class="p">(</span><span class="n">Input</span><span class="p">)</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">prevent</span><span class="p">(</span><span class="n">Input</span><span class="o">.</span><span class="n">Changed</span><span class="p">):</span>
@@ -7402,53 +7392,6 @@ If multiple handlers exist that match the key, an exception is raised.</p>
   </div>
 
 </div>
-
-
-
-  </div>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.message_pump.MessagePumpMeta" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">MessagePumpMeta</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.message_pump.MessagePumpMeta" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#type">type</a></code></p>
-
-  
-      <p>Metaclass for message pump. This exists to populate a Message inner class of a Widget with the
-parent classes' name.</p>
-
-
-
-  
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
 
 
 

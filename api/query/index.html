@@ -4749,8 +4749,6 @@
         
       
         
-      
-        
           
         
       
@@ -4949,32 +4947,6 @@
     
   
     Containers
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../content_switcher/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    Content switcher
   
 
     
@@ -5305,6 +5277,17 @@
   
     <nav class="md-nav" aria-label="DOMQuery">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.css.query.DOMQuery.node" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        node
+      
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#textual.css.query.DOMQuery.nodes" class="md-nav__link">
@@ -6199,6 +6182,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#textual.css.query.DOMQuery.node" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        node
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.css.query.DOMQuery.nodes" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6494,6 +6488,83 @@ a method which evaluates the query, such as first() and last().</p>
         Bases: <code><a class="autorefs autorefs-external" title="typing.Generic" href="https://docs.python.org/3/library/typing.html#typing.Generic">Generic</a>[<span title="textual.css.query.QueryType">QueryType</span>]</code></p>
 
 
+  
+      <div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>You won't need to construct this manually, as <code>DOMQuery</code> objects are returned by <a class="autorefs autorefs-internal" href="../dom_node/#textual.dom.DOMNode.query">query</a>.</p>
+</div>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>node</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.dom.DOMNode" href="../dom_node/#textual.dom.DOMNode">DOMNode</a></code>
+          </td>
+          <td><p>A DOM node.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>filter</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td><p>Query to filter children in the node.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>exclude</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td><p>Query to exclude children in the node.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>parent</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.css.query.DOMQuery" href="#textual.css.query.DOMQuery">DOMQuery</a> | None</code>
+          </td>
+          <td><p>The parent query, if this is the result of filtering another query.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Raises</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.css.query.InvalidQueryFormat" href="#textual.css.query.InvalidQueryFormat">InvalidQueryFormat</a></code>
+          </td>
+          <td><p>If the format of the query is invalid.</p></td>
+        </tr>
+    </tbody>
+  </table>
 
 
   
@@ -6505,6 +6576,29 @@ a method which evaluates the query, such as first() and last().</p>
 
 
 
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.css.query.DOMQuery.node" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">node</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.css.query.DOMQuery.node" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">node</span><span class="p">:</span> <span class="n">DOMNode</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>The node being queried.</p>
+  </div>
+
+</div>
 
 <div class="doc doc-object doc-attribute">
 
