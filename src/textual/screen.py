@@ -638,7 +638,12 @@ class Screen(Widget):
 
 @rich.repr.auto
 class ModalScreen(Screen):
-    """A screen with bindings that take precedence over the App's key bindings."""
+    """A screen with bindings that take precedence over the App's key bindings.
+
+    The default styling of a modal screen will dim the screen underneath.
+
+
+    """
 
     DEFAULT_CSS = """
     ModalScreen {

@@ -1425,7 +1425,7 @@ class App(Generic[ReturnType], DOMNode):
         return screen
 
     def push_screen(self, screen: Screen | str) -> AwaitMount:
-        """Push a new screen on the screen stack, making it the current screen.
+        """Push a new [screen](/guide/screens) on the screen stack, making it the current screen.
 
         Args:
             screen: A Screen instance or the name of an installed screen.
@@ -1446,7 +1446,7 @@ class App(Generic[ReturnType], DOMNode):
         return await_mount
 
     def switch_screen(self, screen: Screen | str) -> AwaitMount:
-        """Switch to another screen by replacing the top of the screen stack with a new screen.
+        """Switch to another [screen](/guide/screens) by replacing the top of the screen stack with a new screen.
 
         Args:
             screen: Either a Screen object or screen name (the `name` argument when installed).
@@ -1527,7 +1527,7 @@ class App(Generic[ReturnType], DOMNode):
         return None
 
     def pop_screen(self) -> Screen:
-        """Pop the current screen from the stack, and switch to the previous screen.
+        """Pop the current [screen](/guide/screens) from the stack, and switch to the previous screen.
 
         Returns:
             The screen that was replaced.
@@ -1575,10 +1575,10 @@ class App(Generic[ReturnType], DOMNode):
                     self.mouse_over = widget
 
     def capture_mouse(self, widget: Widget | None) -> None:
-        """Send all mouse events to the given widget, disable mouse capture.
+        """Send all mouse events to the given widget or disable mouse capture.
 
         Args:
-            widget: If a widget, capture mouse event, or None to end mouse capture.
+            widget: If a widget, capture mouse event, or `None` to end mouse capture.
         """
         if widget == self.mouse_captured:
             return
@@ -1589,10 +1589,13 @@ class App(Generic[ReturnType], DOMNode):
             widget.post_message(events.MouseCapture(self.mouse_position))
 
     def panic(self, *renderables: RenderableType) -> None:
-        """Exits the app then displays a message.
+        """Exits the app and display error message(s).
+
+        Used in response to unexpected errors.
+        For a more graceful exit, see the [exit][textual.app.App.exit] method.
 
         Args:
-            *renderables: Rich renderables to display on exit.
+            *renderables: Text or Rich renderable(s) to display on exit.
         """
 
         assert all(
@@ -1619,9 +1622,9 @@ class App(Generic[ReturnType], DOMNode):
             self.panic(error)
         else:
             # Use default exception rendering
-            self.fatal_error()
+            self._fatal_error()
 
-    def fatal_error(self) -> None:
+    def _fatal_error(self) -> None:
         """Exits the app after an unhandled exception."""
         self.bell()
         traceback = Traceback(
@@ -2057,7 +2060,13 @@ class App(Generic[ReturnType], DOMNode):
         return self.screen.get_widget_at(x, y)
 
     def bell(self) -> None:
-        """Play the console 'bell'."""
+        """Play the console 'bell'.
+
+        For terminals that support a bell, this typically makes a notification or error sound.
+        Some terminals may make no sound or display a visual bell indicator, depending on configuration.
+
+
+        """
         if not self.is_headless:
             self.console.bell()
 
@@ -2094,6 +2103,9 @@ class App(Generic[ReturnType], DOMNode):
 
     async def check_bindings(self, key: str, priority: bool = False) -> bool:
         """Handle a key press.
+
+        This method is used internally by the bindings system, but may be called directly
+        if you wish to *simulate* a key being pressed.
 
         Args:
             key: A key.
@@ -2145,7 +2157,9 @@ class App(Generic[ReturnType], DOMNode):
         action: str | ActionParseResult,
         default_namespace: object | None = None,
     ) -> bool:
-        """Perform an action.
+        """Perform an [action](/guide/actions).
+
+        Actions are typically associated with key bindings, where you wouldn't need to call this method manually.
 
         Args:
             action: Action encoded in a string.
@@ -2429,18 +2443,18 @@ class App(Generic[ReturnType], DOMNode):
             await self.check_bindings(key, priority=False)
 
     async def action_quit(self) -> None:
-        """Quit the app as soon as possible."""
+        """An [action](/guide/actions) to quit the app as soon as possible."""
         self.exit()
 
     async def action_bang(self) -> None:
         1 / 0
 
     async def action_bell(self) -> None:
-        """Play the terminal 'bell'."""
+        """An [action](/guide/actions) to play the terminal 'bell'."""
         self.bell()
 
     async def action_focus(self, widget_id: str) -> None:
-        """Focus the given widget.
+        """An [action](/guide/actions) to focus the given widget.
 
         Args:
             widget_id: ID of widget to focus.
@@ -2454,7 +2468,7 @@ class App(Generic[ReturnType], DOMNode):
                 self.set_focus(node)
 
     async def action_switch_screen(self, screen: str) -> None:
-        """Switches to another screen.
+        """An [action](/guide/actions) to switch screens.
 
         Args:
             screen: Name of the screen.
@@ -2462,7 +2476,7 @@ class App(Generic[ReturnType], DOMNode):
         self.switch_screen(screen)
 
     async def action_push_screen(self, screen: str) -> None:
-        """Pushes a screen on to the screen stack and makes it active.
+        """An [action](/guide/actions) to push a new screen on to the stack and make it active.
 
         Args:
             screen: Name of the screen.
@@ -2470,18 +2484,18 @@ class App(Generic[ReturnType], DOMNode):
         self.push_screen(screen)
 
     async def action_pop_screen(self) -> None:
-        """Removes the topmost screen and makes the new topmost screen active."""
+        """An [action](/guide/actions) to remove the topmost screen and makes the new topmost screen active."""
         self.pop_screen()
 
     async def action_back(self) -> None:
-        """Go back to the previous screen (pop the current screen)."""
+        """An [action](/guide/actions) to go back to the previous screen (pop the current screen)."""
         try:
             self.pop_screen()
         except ScreenStackError:
             pass
 
     async def action_add_class_(self, selector: str, class_name: str) -> None:
-        """Add a CSS class on the selected widget.
+        """An [action](/guide/actions) to add a CSS class to the selected widget.
 
         Args:
             selector: Selects the widget to add the class to.
@@ -2490,7 +2504,7 @@ class App(Generic[ReturnType], DOMNode):
         self.screen.query(selector).add_class(class_name)
 
     async def action_remove_class_(self, selector: str, class_name: str) -> None:
-        """Remove a CSS class on the selected widget.
+        """An [action](/guide/actions) to remove a CSS class from the selected widget.
 
         Args:
             selector: Selects the widget to remove the class from.
@@ -2498,7 +2512,7 @@ class App(Generic[ReturnType], DOMNode):
         self.screen.query(selector).remove_class(class_name)
 
     async def action_toggle_class(self, selector: str, class_name: str) -> None:
-        """Toggle a CSS class on the selected widget.
+        """An [action](/guide/actions) to toggle a CSS class on the selected widget.
 
         Args:
             selector: Selects the widget to toggle the class on.
@@ -2507,11 +2521,11 @@ class App(Generic[ReturnType], DOMNode):
         self.screen.query(selector).toggle_class(class_name)
 
     def action_focus_next(self) -> None:
-        """Focus the next widget."""
+        """An [action](/guide/actions) to focus the next widget."""
         self.screen.focus_next()
 
     def action_focus_previous(self) -> None:
-        """Focus the previous widget."""
+        """An [action](/guide/actions) to focus the previous widget."""
         self.screen.focus_previous()
 
     def _on_terminal_supports_synchronized_output(
