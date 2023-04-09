@@ -859,11 +859,11 @@ class App(Generic[ReturnType], DOMNode):
         return result
 
     def action_toggle_dark(self) -> None:
-        """Action to toggle dark mode."""
+        """An [action](/guide/actions) to toggle dark mode."""
         self.dark = not self.dark
 
     def action_screenshot(self, filename: str | None = None, path: str = "./") -> None:
-        """This action will save an SVG file containing the current contents of the screen.
+        """This [action](/guide/actions) will save an SVG file containing the current contents of the screen.
 
         Args:
             filename: Filename of screenshot, or None to auto-generate.
