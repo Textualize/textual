@@ -183,15 +183,6 @@ class Color(NamedTuple):
         r, g, b = hls_to_rgb(h, l, s)
         return cls(int(r * 255 + 0.5), int(g * 255 + 0.5), int(b * 255 + 0.5))
 
-    def __rich__(self) -> Text:
-        """A Rich method to show the color."""
-        return Text(
-            f" {self!r} ",
-            style=Style.from_color(
-                self.get_contrast_text().rich_color, self.rich_color
-            ),
-        )
-
     @property
     def inverse(self) -> Color:
         """The inverse of this color."""
@@ -241,7 +232,7 @@ class Color(NamedTuple):
 
     @property
     def rgb(self) -> tuple[int, int, int]:
-        """A tuple of the red, gree, and blue color components."""
+        """The red, green, and blue color components as a tuple of ints."""
         r, g, b, _ = self
         return (r, g, b)
 
@@ -314,7 +305,7 @@ class Color(NamedTuple):
         yield r
         yield g
         yield b
-        yield "a", a
+        yield "a", a, 1.0
 
     def with_alpha(self, alpha: float) -> Color:
         """Create a new color with the given alpha.
@@ -329,10 +320,10 @@ class Color(NamedTuple):
         return Color(r, g, b, alpha)
 
     def multiply_alpha(self, alpha: float) -> Color:
-        """Create a new color, multiplying the alpha with a new alpha.
+        """Create a new color, multiplying the alpha by a constant.
 
         Args:
-            alpha: The alpha value to multiple by.
+            alpha: A value to multiple the alpha by (expected to be in the range 0 to 1).
 
         Returns:
             A new color.
