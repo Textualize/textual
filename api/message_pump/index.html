@@ -7105,7 +7105,7 @@ If multiple handlers exist that match the key, an exception is raised.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Posts a message on the queue.</p>
+      <p>Posts a message on to this widget's queue.</p>
 
   <h5>Parameters</h5>
   <table>
@@ -7123,7 +7123,7 @@ If multiple handlers exist that match the key, an exception is raised.</p>
           <td>
                 <code><a class="autorefs autorefs-internal" title="textual.message.Message" href="../message/#textual.message.Message">Message</a></code>
           </td>
-          <td><p>A message (or Event).</p></td>
+          <td><p>A message (including Event).</p></td>
           <td>
               <em>required</em>
           </td>
@@ -7144,7 +7144,7 @@ If multiple handlers exist that match the key, an exception is raised.</p>
           <td>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>True if the messages was processed, False if it wasn't.</p></td>
+          <td><p><code>True</code> if the messages was processed, <code>False</code> if it wasn't.</p></td>
         </tr>
     </tbody>
   </table>
