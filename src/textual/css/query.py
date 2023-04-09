@@ -1,16 +1,12 @@
 """
-A DOMQuery is a set of DOM nodes associated with a given CSS selector.
+A DOMQuery is a set of DOM nodes returned by [query][textual.dom.DOMNode.query].
 
-This set of nodes may be further filtered with the filter method. Additional methods apply
-actions to the nodes in the query.
+The set of nodes may be further refined with [filter][textual.css.query.DOMQuery.filter] and [exclude][textual.css.query.DOMQuery.exclude].
+Additional methods apply actions to all nodes in the query.
 
-If this sounds like JQuery, a (once) popular JS library, it is no coincidence.
+!!! info
 
-DOMQuery objects are typically created by Widget.query method.
-
-Queries are *lazy*. Results will be calculated at the point you iterate over the query, or call
-a method which evaluates the query, such as first() and last().
-
+    If this sounds like JQuery, a (once) popular JS library, it is no coincidence.
 """
 
 
