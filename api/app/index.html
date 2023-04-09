@@ -8097,6 +8097,24 @@ In the case of the App, it will only every contain a single child, which will be
 <p>If no widget is focused, then app-level bindings are returned.
 If a widget is focused, then any bindings present in the active screen and app are merged and returned.</p>
 <p>This property may be used to inspect current bindings.</p>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-internal" title="textual.dom.DOMNode" href="../dom_node/#textual.dom.DOMNode">DOMNode</a>, <a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../binding/#textual.binding.Binding">Binding</a>]]</code>
+          </td>
+          <td><p>A mapping of keys on to node + binding.</p></td>
+        </tr>
+    </tbody>
+  </table>
   </div>
 
 </div>
@@ -8752,7 +8770,7 @@ the name of the app if it doesn't.</p>
 
   <div class="doc doc-contents ">
   
-      <p>This action will save an SVG file containing the current contents of the screen.</p>
+      <p>This <a href="/guide/actions">action</a> will save an SVG file containing the current contents of the screen.</p>
 
   <h5>Parameters</h5>
   <table>
@@ -8913,7 +8931,7 @@ the name of the app if it doesn't.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Action to toggle dark mode.</p>
+      <p>An <a href="/guide/actions">action</a> to toggle dark mode.</p>
 
   </div>
 
@@ -9732,6 +9750,7 @@ to use app title.</p></td>
   <div class="doc doc-contents ">
   
       <p>Get a mapping of variables used to pre-populate CSS.</p>
+<p>May be implemented in a subclass to add new CSS variables.</p>
 
   <h5>Returns</h5>
   <table>
