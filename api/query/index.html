@@ -6444,13 +6444,12 @@
 <a id="textual.css.query"></a>
   <div class="doc doc-contents first">
   
-      <p>A DOMQuery is a set of DOM nodes associated with a given CSS selector.</p>
-<p>This set of nodes may be further filtered with the filter method. Additional methods apply
-actions to the nodes in the query.</p>
-<p>If this sounds like JQuery, a (once) popular JS library, it is no coincidence.</p>
-<p>DOMQuery objects are typically created by Widget.query method.</p>
-<p>Queries are <em>lazy</em>. Results will be calculated at the point you iterate over the query, or call
-a method which evaluates the query, such as first() and last().</p>
+      <p>A DOMQuery is a set of DOM nodes returned by <a class="autorefs autorefs-internal" href="../dom_node/#textual.dom.DOMNode.query">query</a>.</p>
+<p>The set of nodes may be further refined with [filter][textual.dom.DOMNode.filter] and [exclude][textual.dom.DOMNode.exclude].
+Additional methods apply actions to all nodes in the query.</p>
+<p>!!! info:</p>
+<div class="highlight"><pre><span></span><code>If this sounds like JQuery, a (once) popular JS library, it is no coincidence.
+</code></pre></div>
 
   
 
