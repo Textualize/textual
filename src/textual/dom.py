@@ -48,6 +48,7 @@ from .timer import Timer
 from .walk import walk_breadth_first, walk_depth_first
 
 if TYPE_CHECKING:
+    from rich.console import RenderableType
     from .app import App
     from .css.query import DOMQuery, QueryType
     from .screen import Screen
@@ -72,10 +73,8 @@ def check_identifiers(description: str, *names: str) -> None:
 
     Args:
         description: Description of where identifier is used for error message.
-        names: Identifiers to check.
+        *names: Identifiers to check.
 
-    Returns:
-        True if the name is valid.
     """
     match = _re_identifier.match
     for name in names:
@@ -87,11 +86,11 @@ def check_identifiers(description: str, *names: str) -> None:
 
 
 class DOMError(Exception):
-    pass
+    """Base exception class for errors relating to the DOM."""
 
 
 class NoScreen(DOMError):
-    pass
+    """Raised when the node has no associated screen."""
 
 
 class _ClassesDescriptor:
@@ -210,7 +209,7 @@ class DOMNode(MessagePump):
 
     @property
     def auto_refresh(self) -> float | None:
-        """Interval to refresh widget, or `None` for no automatic refresh."""
+        """Number of seconds between automatic refresh, or `None` for no automatic refresh."""
         return self._auto_refresh
 
     @auto_refresh.setter
@@ -326,7 +325,11 @@ class DOMNode(MessagePump):
         Reactive._initialize_object(self)
 
     def notify_style_update(self) -> None:
-        """Called after styles are updated."""
+        """Called after styles are updated.
+
+        Implement this in a subclass if you want to clear any cached data when the CSS is reloaded.
+
+        """
 
     @property
     def _node_bases(self) -> Sequence[Type[DOMNode]]:
@@ -444,15 +447,23 @@ class DOMNode(MessagePump):
 
     @property
     def parent(self) -> DOMNode | None:
-        """The parent node."""
+        """The parent node.
+
+        All nodes have parent once added to the DOM, with the exception of the App which is the *root* node.
+
+        """
         return cast("DOMNode | None", self._parent)
 
     @property
     def screen(self) -> "Screen":
-        """The screen that this node is contained within.
+        """The screen containing this node.
 
-        Note:
-            This may not be the currently active screen within the app.
+        Returns:
+            A screen object.
+
+        Raises:
+            NoScreen: If this node isn't mounted (and has no screen).
+
         """
         # Get the node by looking up a chain of parents
         # Note that self.screen may not be the same as self.app.screen
@@ -505,7 +516,12 @@ class DOMNode(MessagePump):
 
     @property
     def css_identifier_styled(self) -> Text:
-        """A stylized CSS identifier."""
+        """A syntax highlighted CSS identifier.
+
+        Returns:
+            A Rich Text object.
+
+        """
         tokens = Text.styled(self.__class__.__name__)
         if self.id is not None:
             tokens.append(f"#{self.id}", style="bold")
@@ -521,13 +537,17 @@ class DOMNode(MessagePump):
 
     @property
     def pseudo_classes(self) -> frozenset[str]:
-        """A set of all pseudo classes"""
-        pseudo_classes = frozenset({*self.get_pseudo_classes()})
+        """A (frozen) set of all pseudo classes."""
+        pseudo_classes = frozenset(self.get_pseudo_classes())
         return pseudo_classes
 
     @property
     def css_path_nodes(self) -> list[DOMNode]:
-        """A list of nodes from the root to this node, forming a "path"."""
+        """A list of nodes from the App to this node, forming a "path".
+
+        Returns:
+            A list of nodes, where the first item is the App, and the last is this node.
+        """
         result: list[DOMNode] = [self]
         append = result.append
 
@@ -556,7 +576,11 @@ class DOMNode(MessagePump):
 
     @property
     def display(self) -> bool:
-        """Should the DOM node be displayed?"""
+        """Should the DOM node be displayed?
+
+        May be set to a boolean to show or hide the node, or to any valid value for the `display` rule.
+
+        """
         return self.styles.display != "none" and not (self._closing or self._closed)
 
     @display.setter
@@ -582,7 +606,11 @@ class DOMNode(MessagePump):
 
     @property
     def visible(self) -> bool:
-        """Is the visibility style set to a visible state?"""
+        """Is the visibility style set to a visible state?
+
+        May be set to a boolean to make the node visible (`True`) or invisible (`False`), or to any valid value for the `visibility` rule.
+
+        """
         return self.styles.visibility != "hidden"
 
     @visible.setter
@@ -599,10 +627,17 @@ class DOMNode(MessagePump):
 
     @property
     def tree(self) -> Tree:
-        """Get a Rich tree object which will recursively render the structure of the node tree.
+        """A Rich tree to display the DOM.
+
+        Log this to visualize your app in the textual console.
+
+        Example:
+            ```python
+            self.log(self.tree)
+            ```
 
         Returns:
-            A Rich Tree renderable.
+            A Tree renderable.
 
         """
 
@@ -624,11 +659,17 @@ class DOMNode(MessagePump):
 
     @property
     def css_tree(self) -> Tree:
-        """Get a Rich tree object which will recursively render the structure of the node tree,
-        which also displays CSS and size information.
+        """A Rich tree to display the DOM, annotated with the node's CSS.
+
+        Log this to visualize your app in the textual console.
+
+        Example:
+            ```python
+            self.log(self.css_tree)
+            ```
 
         Returns:
-            A Rich Tree renderable.
+            A Tree renderable.
         """
         from rich.columns import Columns
         from rich.console import Group
@@ -655,9 +696,10 @@ class DOMNode(MessagePump):
         highlighter = ReprHighlighter()
         tree = Tree(render_info(self))
 
-        def add_children(tree, node):
+        def add_children(tree: Tree, node: DOMNode) -> None:
+            """Add children to the tree."""
             for child in node.children:
-                info = render_info(child)
+                info: RenderableType = render_info(child)
                 css = child.styles.css
                 if css:
                     info = Group(
@@ -718,7 +760,12 @@ class DOMNode(MessagePump):
 
     @property
     def background_colors(self) -> tuple[Color, Color]:
-        """The background color and the color of the parent's background."""
+        """The background color and the color of the parent's background.
+
+        Returns:
+            `(<background color>, <color>)`
+
+        """
         base_background = background = BLACK
         for node in reversed(self.ancestors_with_self):
             styles = node.styles
@@ -728,7 +775,12 @@ class DOMNode(MessagePump):
 
     @property
     def colors(self) -> tuple[Color, Color, Color, Color]:
-        """The widget's foreground and background colors, and its parent's (base) colors."""
+        """The widget's background and foreground colors, and the parent's background and foreground colors.
+
+        Returns:
+            `(<parent background>, <parent color>, <background>, <color>)`
+
+        """
         base_background = background = WHITE
         base_color = color = BLACK
         for node in reversed(self.ancestors_with_self):
@@ -774,7 +826,7 @@ class DOMNode(MessagePump):
 
     @property
     def displayed_children(self) -> list[Widget]:
-        """The children which don't have display: none set.
+        """The child nodes which will be displayed.
 
         Returns:
             A list of nodes.
@@ -790,6 +842,18 @@ class DOMNode(MessagePump):
         init: bool = True,
     ) -> None:
         """Watches for modifications to reactive attributes on another object.
+
+        Example:
+
+            Here's how you could detect when the app changes from dark to light mode (and visa versa).
+
+            ```python
+            def on_dark_change(old_value:bool, new_value:bool):
+                # Called when app.dark changes.
+                print("App.dark when from {old_value} to {new_value}")
+
+            self.watch(self.app, "dark", self.on_dark_change, init=False)
+            ```
 
         Args:
             obj: Object containing attribute to watch.
