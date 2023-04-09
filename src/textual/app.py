@@ -1,5 +1,8 @@
 """
-The base class for all Textual apps.
+
+Here you will find the [App][textual.app.App] class, which is the base class for Textual apps.
+
+See [app basics](/guide/app) for how to build Textual apps.
 
 """
 
@@ -31,8 +34,10 @@ from time import perf_counter
 from typing import (
     TYPE_CHECKING,
     Any,
+    AsyncGenerator,
     Awaitable,
     Callable,
+    ClassVar,
     Generator,
     Generic,
     Iterable,
@@ -135,15 +140,15 @@ AutopilotCallbackType: TypeAlias = "Callable[[Pilot], Coroutine[Any, Any, None]]
 
 
 class AppError(Exception):
-    pass
+    """Base class for general App related exceptions."""
 
 
 class ActionError(Exception):
-    pass
+    """Base class for exceptions relating to actions."""
 
 
 class ScreenError(Exception):
-    pass
+    """Base class for exceptions that relate to screens."""
 
 
 class ScreenStackError(ScreenError):
@@ -241,22 +246,25 @@ CallThreadReturnType = TypeVar("CallThreadReturnType")
 @rich.repr.auto
 class App(Generic[ReturnType], DOMNode):
     """The base class for Textual Applications.
+
     Args:
-        driver_class: Driver class or ``None`` to auto-detect.
-        css_path: Path to CSS or ``None`` for no CSS file.
+        driver_class: Driver class or `None` to auto-detect. This will be used by some Textual tools.
+        css_path: Path to CSS or `None` to use the `CSS_PATH` class variable.
             To load multiple CSS files, pass a list of strings or paths which will be loaded in order.
-        watch_css: Watch CSS for changes.
+        watch_css: Reload CSS if the files changed. This is set automatically if you are using `textual run` with the `dev` switch.
 
     Raises:
         CssPathError: When the supplied CSS path(s) are an unexpected type.
     """
 
-    CSS = ""
+    CSS: ClassVar[str] = ""
     """Inline CSS, useful for quick scripts. This is loaded after CSS_PATH,
     and therefore takes priority in the event of a specificity clash."""
 
     # Default (the lowest priority) CSS
-    DEFAULT_CSS = """
+    DEFAULT_CSS: ClassVar[
+        str
+    ] = """
     App {
         background: $background;
         color: $text;
@@ -268,29 +276,33 @@ class App(Generic[ReturnType], DOMNode):
     }
     """
 
-    SCREENS: dict[str, Screen | Callable[[], Screen]] = {}
+    SCREENS: ClassVar[dict[str, Screen | Callable[[], Screen]]] = {}
     _BASE_PATH: str | None = None
-    CSS_PATH: CSSPathType | None = None
+    CSS_PATH: ClassVar[CSSPathType | None] = None
 
     TITLE: str | None = None
-    """The default title for the application.
+    """A class variable to set the *default* title for the application.
 
-    If set to a string, this sets the default title for the application. See
-    also the `title` attribute.
+    To update the title while the app is running, you can set the [title][textual.app.App.title] attribute
     """
 
     SUB_TITLE: str | None = None
-    """The default sub-title for the application.
+    """A class variable to set the default sub-title for the application.
 
-    If set to a string, this sets the default sub-title for the application. See
-    also the `sub_title` attribute.
+    To update the sub-title while the app is running, you can set the [sub_title][textual.app.App.sub_title] attribute.
     """
 
     BINDINGS = [Binding("ctrl+c", "quit", "Quit", show=False, priority=True)]
 
     title: Reactive[str] = Reactive("", compute=False)
     sub_title: Reactive[str] = Reactive("", compute=False)
+
     dark: Reactive[bool] = Reactive(True, compute=False)
+    """Use a dark theme if `True`, otherwise use a light theme.
+
+    Modify this attribute to switch between light and dark themes.
+
+    """
 
     def __init__(
         self,
@@ -344,17 +356,19 @@ class App(Generic[ReturnType], DOMNode):
         )
         """The title for the application.
 
-        The initial value in a running application will be that set in `TITLE`
-        (if one is set). Assign new values to this instance attribute to change
-        the title.
+        The initial value for `title` will be set to the `TITLE` class variable if it exists, or
+        the name of the app if it doesn't.
+
+        Assign a new value to this attribute to change the title.
         """
 
         self.sub_title = self.SUB_TITLE if self.SUB_TITLE is not None else ""
         """The sub-title for the application.
 
-        The initial value in a running application will be that set in `SUB_TITLE`
-        (if one is set). Assign new values to this instance attribute to change
-        the sub-title.
+        The initial value for `sub_title` will be set to the `SUB_TITLE` class variable if it exists, or
+        an empty string if it doesn't/
+
+        Assign a new value to this attribute to change the sub-title.
         """
 
         self._logger = Logger(self._log)
@@ -436,7 +450,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def workers(self) -> WorkerManager:
-        """The worker manager.
+        """The [worker](guide/workers/) manager.
 
         Returns:
             An object to manage workers.
@@ -446,12 +460,19 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def return_value(self) -> ReturnType | None:
-        """The return type of the app."""
+        """The return value of the app, or `None` if it as not yet been set.
+
+        The return value is set when calling [exit][textual.app.App.exit].
+
+        """
         return self._return_value
 
     @property
     def children(self) -> Sequence["Widget"]:
-        """A view on to the App's children (just the screen).
+        """A view on to the App's children.
+
+        This attribute exists on all widgets.
+        In the case of the App, it will only every contain a single child, which will be the currently active screen.
 
         Returns:
             A sequence of widgets.
@@ -496,6 +517,8 @@ class App(Generic[ReturnType], DOMNode):
     ) -> None:
         """Animate an attribute.
 
+        See the guide for how to use the [animation](/guide/animation) system.
+
         Args:
             attribute: Name of the attribute to animate.
             value: The value to animate to.
@@ -525,12 +548,16 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def is_headless(self) -> bool:
-        """Is the driver running in 'headless' mode?"""
+        """Is the driver running in 'headless' mode?
+
+        Headless mode is used when running tests with [run_test][textual.app.App.run_test].
+
+        """
         return False if self._driver is None else self._driver.is_headless
 
     @property
-    def screen_stack(self) -> list[Screen]:
-        """A *copy* of the screen stack.
+    def screen_stack(self) -> Sequence[Screen]:
+        """The current screen stack.
 
         Returns:
             A snapshot of the current state of the screen stack.
@@ -557,6 +584,8 @@ class App(Generic[ReturnType], DOMNode):
     def focused(self) -> Widget | None:
         """The widget that is focused on the currently active screen.
 
+        Focused widgets receive keyboard input.
+
         Returns:
             The currently focused widget, or `None` if nothing is focused.
 
@@ -565,9 +594,14 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def namespace_bindings(self) -> dict[str, tuple[DOMNode, Binding]]:
-        """Get current bindings. If no widget is focused, then the app-level bindings
-        are returned. If a widget is focused, then any bindings present in the active
-        screen and app are merged and returned."""
+        """Get current bindings.
+
+        If no widget is focused, then app-level bindings are returned.
+        If a widget is focused, then any bindings present in the active screen and app are merged and returned.
+
+        This property may be used to inspect current bindings.
+
+        """
 
         namespace_binding_map: dict[str, tuple[DOMNode, Binding]] = {}
         for namespace, bindings in reversed(self._binding_chain):
@@ -581,7 +615,11 @@ class App(Generic[ReturnType], DOMNode):
         active_app.set(self)
 
     def compose(self) -> ComposeResult:
-        """Yield child widgets for a container."""
+        """Yield child widgets for a container.
+
+        This method should be implemented in a subclass.
+
+        """
         yield from ()
 
     def get_css_variables(self) -> dict[str, str]:
@@ -594,7 +632,12 @@ class App(Generic[ReturnType], DOMNode):
         return variables
 
     def watch_dark(self, dark: bool) -> None:
-        """Watches the dark bool."""
+        """Watches the dark bool.
+
+        This method handles the transition between light and dark mode when you
+        change the [dark][textual.app.App.dark] attribute.
+
+        """
         self.set_class(dark, "-dark-mode")
         self.set_class(not dark, "-light-mode")
         try:
@@ -609,7 +652,8 @@ class App(Generic[ReturnType], DOMNode):
     def get_driver_class(self) -> Type[Driver]:
         """Get a driver class for this platform.
 
-        Called by the constructor.
+        This method is called by the constructor, and unlikely to be required when
+        building a Textual app.
 
         Returns:
             A Driver class which manages input and display.
@@ -701,6 +745,12 @@ class App(Generic[ReturnType], DOMNode):
     @property
     def log(self) -> Logger:
         """Textual log interface.
+
+        Example:
+            ```python
+            self.log("Hello, World!")
+            self.log(self.tree)
+            ```
 
         Returns:
             A Textual logger.
@@ -813,7 +863,7 @@ class App(Generic[ReturnType], DOMNode):
         self.dark = not self.dark
 
     def action_screenshot(self, filename: str | None = None, path: str = "./") -> None:
-        """Save an SVG "screenshot". This action will save an SVG file containing the current contents of the screen.
+        """This action will save an SVG file containing the current contents of the screen.
 
         Args:
             filename: Filename of screenshot, or None to auto-generate.
@@ -823,6 +873,8 @@ class App(Generic[ReturnType], DOMNode):
 
     def export_screenshot(self, *, title: str | None = None) -> str:
         """Export an SVG screenshot of the current screen.
+
+        See also [save_screenshot][textual.app.App.save_screenshot] which writes the screenshot to a file.
 
         Args:
             title: The title of the exported screenshot or None
@@ -956,13 +1008,24 @@ class App(Generic[ReturnType], DOMNode):
         *,
         headless: bool = True,
         size: tuple[int, int] | None = (80, 24),
-    ):
+    ) -> AsyncGenerator[Pilot, None]:
         """An asynchronous context manager for testing app.
+
+        Use this to run your app in "headless" (no output) mode and driver the app via a [Pilot][textual.pilot.Pilot] object.
+
+        Example:
+
+            ```python
+            async with app.run_test() as pilot:
+                await pilot.click("#Button.ok")
+                assert ...
+            ```
 
         Args:
             headless: Run in headless mode (no output or input).
             size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect.
+
 
         """
         from .pilot import Pilot
@@ -1142,9 +1205,7 @@ class App(Generic[ReturnType], DOMNode):
     def get_child_by_id(
         self, id: str, expect_type: type[ExpectType] | None = None
     ) -> ExpectType | Widget:
-        """Shorthand for self.screen.get_child(id: str)
-        Returns the first child (immediate descendent) of this DOMNode
-        with the given ID.
+        """Get the first child (immediate descendent) of this DOMNode with the given ID.
 
         Args:
             id: The ID of the node to search for.
@@ -1174,8 +1235,7 @@ class App(Generic[ReturnType], DOMNode):
     def get_widget_by_id(
         self, id: str, expect_type: type[ExpectType] | None = None
     ) -> ExpectType | Widget:
-        """Shorthand for self.screen.get_widget_by_id(id)
-        Return the first descendant widget with the given ID.
+        """Get the first descendant widget with the given ID.
 
         Performs a breadth-first search rooted at the current screen.
         It will not return the Screen if that matches the ID.
