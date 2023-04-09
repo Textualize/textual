@@ -715,6 +715,9 @@ class App(Generic[ReturnType], DOMNode):
     def screen(self) -> Screen:
         """Screen: The current screen.
 
+        Returns:
+            The currently active (visible) screen.
+
         Raises:
             ScreenStackError: If there are no screens on the stack.
         """
