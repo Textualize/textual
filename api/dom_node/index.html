@@ -5068,6 +5068,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.dom.DOMError" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DOMError
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.dom.DOMNode" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5543,6 +5554,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.dom.NoScreen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NoScreen
+      
+    </span>
+  </a>
   
 </li>
       
@@ -6434,6 +6456,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.dom.DOMError" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DOMError
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.dom.DOMNode" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6913,6 +6946,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.dom.NoScreen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NoScreen
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.dom.check_identifiers" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6987,6 +7031,36 @@ which includes all Widgets, Screens, and Apps.</p>
 
   
       <p>raised by check_identifiers.</p>
+
+
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+
+
+<h2 id="textual.dom.DOMError" class="doc doc-heading">
+        <span class="doc doc-object-name doc-class-name">DOMError</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class"><code>class</code></small>
+  </span>
+
+<a href="#textual.dom.DOMError" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+      <p class="doc doc-class-bases">
+        Bases: <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#Exception">Exception</a></code></p>
+
+  
+      <p>Base exception class for errors relating to the DOM.</p>
 
 
 
@@ -7136,7 +7210,7 @@ which includes all Widgets, Screens, and Apps.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Interval to refresh widget, or <code>None</code> for no automatic refresh.</p>
+      <p>Number of seconds between automatic refresh, or <code>None</code> for no automatic refresh.</p>
   </div>
 
 </div>
@@ -7160,6 +7234,24 @@ which includes all Widgets, Screens, and Apps.</p>
   <div class="doc doc-contents ">
   
       <p>The background color and the color of the parent's background.</p>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-internal" title="textual.color.Color" href="../color/#textual.color.Color">Color</a>, <a class="autorefs autorefs-internal" title="textual.color.Color" href="../color/#textual.color.Color">Color</a>]</code>
+          </td>
+          <td><p><code>(&lt;background color&gt;, &lt;color&gt;)</code></p></td>
+        </tr>
+    </tbody>
+  </table>
   </div>
 
 </div>
@@ -7246,7 +7338,25 @@ which includes all Widgets, Screens, and Apps.</p>
 
   <div class="doc doc-contents ">
   
-      <p>The widget's foreground and background colors, and its parent's (base) colors.</p>
+      <p>The widget's background and foreground colors, and the parent's background and foreground colors.</p>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-internal" title="textual.color.Color" href="../color/#textual.color.Color">Color</a>, <a class="autorefs autorefs-internal" title="textual.color.Color" href="../color/#textual.color.Color">Color</a>, <a class="autorefs autorefs-internal" title="textual.color.Color" href="../color/#textual.color.Color">Color</a>, <a class="autorefs autorefs-internal" title="textual.color.Color" href="../color/#textual.color.Color">Color</a>]</code>
+          </td>
+          <td><p><code>(&lt;parent background&gt;, &lt;parent color&gt;, &lt;background&gt;, &lt;color&gt;)</code></p></td>
+        </tr>
+    </tbody>
+  </table>
   </div>
 
 </div>
@@ -7292,7 +7402,25 @@ which includes all Widgets, Screens, and Apps.</p>
 
   <div class="doc doc-contents ">
   
-      <p>A stylized CSS identifier.</p>
+      <p>A syntax highlighted CSS identifier.</p>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-external" title="rich.text.Text" href="https://rich.readthedocs.io/en/stable/reference/text.html#rich.text.Text">Text</a></code>
+          </td>
+          <td><p>A Rich Text object.</p></td>
+        </tr>
+    </tbody>
+  </table>
   </div>
 
 </div>
@@ -7315,7 +7443,25 @@ which includes all Widgets, Screens, and Apps.</p>
 
   <div class="doc doc-contents ">
   
-      <p>A list of nodes from the root to this node, forming a "path".</p>
+      <p>A list of nodes from the App to this node, forming a "path".</p>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a>[<a class="autorefs autorefs-internal" title="textual.dom.DOMNode" href="#textual.dom.DOMNode">DOMNode</a>]</code>
+          </td>
+          <td><p>A list of nodes, where the first item is the App, and the last is this node.</p></td>
+        </tr>
+    </tbody>
+  </table>
   </div>
 
 </div>
@@ -7338,9 +7484,14 @@ which includes all Widgets, Screens, and Apps.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Get a Rich tree object which will recursively render the structure of the node tree,
-which also displays CSS and size information.</p>
+      <p>A Rich tree to display the DOM, annotated with the node's CSS.</p>
+<p>Log this to visualize your app in the textual console.</p>
 
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">css_tree</span><span class="p">)</span>
+</code></pre></div>
+</details>
   <h5>Returns</h5>
   <table>
     <thead>
@@ -7354,7 +7505,7 @@ which also displays CSS and size information.</p>
           <td>
                 <code><a class="autorefs autorefs-external" title="rich.tree.Tree" href="https://rich.readthedocs.io/en/stable/reference/tree.html#rich.tree.Tree">Tree</a></code>
           </td>
-          <td><p>A Rich Tree renderable.</p></td>
+          <td><p>A Tree renderable.</p></td>
         </tr>
     </tbody>
   </table>
@@ -7382,6 +7533,7 @@ which also displays CSS and size information.</p>
   <div class="doc doc-contents ">
   
       <p>Should the DOM node be displayed?</p>
+<p>May be set to a boolean to show or hide the node, or to any valid value for the <code>display</code> rule.</p>
   </div>
 
 </div>
@@ -7404,7 +7556,7 @@ which also displays CSS and size information.</p>
 
   <div class="doc doc-contents ">
   
-      <p>The children which don't have display: none set.</p>
+      <p>The child nodes which will be displayed.</p>
 
   <h5>Returns</h5>
   <table>
@@ -7516,6 +7668,7 @@ which also displays CSS and size information.</p>
   <div class="doc doc-contents ">
   
       <p>The parent node.</p>
+<p>All nodes have parent once added to the DOM, with the exception of the App which is the <em>root</em> node.</p>
   </div>
 
 </div>
@@ -7538,7 +7691,7 @@ which also displays CSS and size information.</p>
 
   <div class="doc doc-contents ">
   
-      <p>A set of all pseudo classes</p>
+      <p>A (frozen) set of all pseudo classes.</p>
   </div>
 
 </div>
@@ -7602,12 +7755,44 @@ which also displays CSS and size information.</p>
 
   <div class="doc doc-contents ">
   
-      <p>The screen that this node is contained within.</p>
+      <p>The screen containing this node.</p>
 
-<details class="note" open>
-  <summary>Note</summary>
-  <p>This may not be the currently active screen within the app.</p>
-</details>  </div>
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.screen.Screen" href="../screen/#textual.screen.Screen">Screen</a></code>
+          </td>
+          <td><p>A screen object.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Raises</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.dom.NoScreen" href="#textual.dom.NoScreen">NoScreen</a></code>
+          </td>
+          <td><p>If this node isn't mounted (and has no screen).</p></td>
+        </tr>
+    </tbody>
+  </table>
+  </div>
 
 </div>
 
@@ -7672,8 +7857,14 @@ the child will also be bold.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Get a Rich tree object which will recursively render the structure of the node tree.</p>
+      <p>A Rich tree to display the DOM.</p>
+<p>Log this to visualize your app in the textual console.</p>
 
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="p">)</span>
+</code></pre></div>
+</details>
   <h5>Returns</h5>
   <table>
     <thead>
@@ -7687,7 +7878,7 @@ the child will also be bold.</p>
           <td>
                 <code><a class="autorefs autorefs-external" title="rich.tree.Tree" href="https://rich.readthedocs.io/en/stable/reference/tree.html#rich.tree.Tree">Tree</a></code>
           </td>
-          <td><p>A Rich Tree renderable.</p></td>
+          <td><p>A Tree renderable.</p></td>
         </tr>
     </tbody>
   </table>
@@ -7715,6 +7906,7 @@ the child will also be bold.</p>
   <div class="doc doc-contents ">
   
       <p>Is the visibility style set to a visible state?</p>
+<p>May be set to a boolean to make the node visible (<code>True</code>) or invisible (<code>False</code>), or to any valid value for the <code>visibility</code> rule.</p>
   </div>
 
 </div>
@@ -8131,6 +8323,7 @@ if you want children to be attached to a different node.</p>
   <div class="doc doc-contents ">
   
       <p>Called after styles are updated.</p>
+<p>Implement this in a subclass if you want to clear any cached data when the CSS is reloaded.</p>
 
   </div>
 
@@ -8895,6 +9088,16 @@ if you want children to be attached to a different node.</p>
   
       <p>Watches for modifications to reactive attributes on another object.</p>
 
+<details class="example" open>
+  <summary>Example</summary>
+  <p>Here's how you could detect when the app changes from dark to light mode (and visa versa).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">on_dark_change</span><span class="p">(</span><span class="n">old_value</span><span class="p">:</span><span class="nb">bool</span><span class="p">,</span> <span class="n">new_value</span><span class="p">:</span><span class="nb">bool</span><span class="p">):</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="c1"># Called when app.dark changes.</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;App.dark when from </span><span class="si">{old_value}</span><span class="s2"> to </span><span class="si">{new_value}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="bp">self</span><span class="o">.</span><span class="n">watch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">,</span> <span class="s2">&quot;dark&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_dark_change</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+</details>
   <h5>Parameters</h5>
   <table>
     <thead>
@@ -8961,6 +9164,36 @@ if you want children to be attached to a different node.</p>
 
 </div>
 
+<div class="doc doc-object doc-class">
+
+
+
+
+
+<h2 id="textual.dom.NoScreen" class="doc doc-heading">
+        <span class="doc doc-object-name doc-class-name">NoScreen</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class"><code>class</code></small>
+  </span>
+
+<a href="#textual.dom.NoScreen" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+      <p class="doc doc-class-bases">
+        Bases: <code><a class="autorefs autorefs-internal" title="textual.dom.DOMError" href="#textual.dom.DOMError">DOMError</a></code></p>
+
+  
+      <p>Raised when the node has no associated screen.</p>
+
+
+
+  </div>
+
+</div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -9003,7 +9236,7 @@ if you want children to be attached to a different node.</p>
           </td>
         </tr>
         <tr>
-          <td><code>names</code></td>
+          <td><code>*names</code></td>
           <td>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
@@ -9011,24 +9244,6 @@ if you want children to be attached to a different node.</p>
           <td>
                 <code>()</code>
           </td>
-        </tr>
-    </tbody>
-  </table>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code>None</code>
-          </td>
-          <td><p>True if the name is valid.</p></td>
         </tr>
     </tbody>
   </table>

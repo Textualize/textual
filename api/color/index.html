@@ -8249,7 +8249,7 @@ Other colors lie on a gradient between the two extremes.</p>
 
   <div class="doc doc-contents ">
   
-      <p>A tuple of the red, gree, and blue color components.</p>
+      <p>The red, green, and blue color components as a tuple of ints.</p>
   </div>
 
 </div>
@@ -8766,7 +8766,7 @@ A value of <code>gradient</code> between the two extremes produces a color somew
 
   <div class="doc doc-contents ">
   
-      <p>Create a new color, multiplying the alpha with a new alpha.</p>
+      <p>Create a new color, multiplying the alpha by a constant.</p>
 
   <h5>Parameters</h5>
   <table>
@@ -8784,7 +8784,7 @@ A value of <code>gradient</code> between the two extremes produces a color somew
           <td>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
           </td>
-          <td><p>The alpha value to multiple by.</p></td>
+          <td><p>A value to multiple the alpha by (expected to be in the range 0 to 1).</p></td>
           <td>
               <em>required</em>
           </td>
@@ -8822,8 +8822,8 @@ A value of <code>gradient</code> between the two extremes produces a color somew
         <span class="doc doc-object-name doc-function-name">parse</span>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-cached"><code>cached</code></small>
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+      <small class="doc doc-label doc-label-cached"><code>cached</code></small>
   </span>
 
 <a href="#textual.color.Color.parse" class="headerlink" title="Permanent link">&para;</a></h3>
