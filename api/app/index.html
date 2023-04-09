@@ -4901,6 +4901,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.app.ActionError" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ActionError
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.app.App" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4950,6 +4961,17 @@
     <span class="md-ellipsis">
       
         children
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.dark" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dark
       
     </span>
   </a>
@@ -5699,10 +5721,32 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.app.AppError" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AppError
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.app.CssPathError" class="md-nav__link">
     <span class="md-ellipsis">
       
         CssPathError
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.app.ScreenError" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ScreenError
       
     </span>
   </a>
@@ -6742,6 +6786,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.app.ActionError" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ActionError
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.app.App" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6791,6 +6846,17 @@
     <span class="md-ellipsis">
       
         children
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.dark" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dark
       
     </span>
   </a>
@@ -7540,10 +7606,32 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.app.AppError" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AppError
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.app.CssPathError" class="md-nav__link">
     <span class="md-ellipsis">
       
         CssPathError
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.app.ScreenError" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ScreenError
       
     </span>
   </a>
@@ -7588,7 +7676,8 @@
 <a id="textual.app"></a>
   <div class="doc doc-contents first">
   
-      <p>The base class for all Textual apps.</p>
+      <p>Here you will find the <a class="autorefs autorefs-internal" href="#textual.app.App">App</a> class, which is the base class for Textual apps.</p>
+<p>See <a href="/guide/app">app basics</a> for how to build Textual apps.</p>
 
   
 
@@ -7600,6 +7689,36 @@
 
 
 
+
+<div class="doc doc-object doc-class">
+
+
+
+
+
+<h2 id="textual.app.ActionError" class="doc doc-heading">
+        <span class="doc doc-object-name doc-class-name">ActionError</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class"><code>class</code></small>
+  </span>
+
+<a href="#textual.app.ActionError" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+      <p class="doc doc-class-bases">
+        Bases: <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#Exception">Exception</a></code></p>
+
+  
+      <p>Base class for exceptions relating to actions.</p>
+
+
+
+  </div>
+
+</div>
 
 <div class="doc doc-object doc-class">
 
@@ -7644,7 +7763,7 @@
           <td>
                 <code><a class="autorefs autorefs-external" title="typing.Type" href="https://docs.python.org/3/library/typing.html#typing.Type">Type</a>[<span title="textual.driver.Driver">Driver</span>] | None</code>
           </td>
-          <td><p>Driver class or <code>None</code> to auto-detect.</p></td>
+          <td><p>Driver class or <code>None</code> to auto-detect. This will be used by some Textual tools.</p></td>
           <td>
                 <code>None</code>
           </td>
@@ -7654,7 +7773,7 @@
           <td>
                 <code><span title="textual.app.CSSPathType">CSSPathType</span> | None</code>
           </td>
-          <td><p>Path to CSS or <code>None</code> for no CSS file.
+          <td><p>Path to CSS or <code>None</code> to use the <code>CSS_PATH</code> class variable.
 To load multiple CSS files, pass a list of strings or paths which will be loaded in order.</p></td>
           <td>
                 <code>None</code>
@@ -7665,7 +7784,7 @@ To load multiple CSS files, pass a list of strings or paths which will be loaded
           <td>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>Watch CSS for changes.</p></td>
+          <td><p>Reload CSS if the files changed. This is set automatically if you are using <code>textual run</code> with the <code>dev</code> switch.</p></td>
           <td>
                 <code>False</code>
           </td>
@@ -7716,7 +7835,7 @@ To load multiple CSS files, pass a list of strings or paths which will be loaded
   </span>
 
 <a href="#textual.app.App.CSS" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">CSS</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">CSS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -7745,9 +7864,8 @@ and therefore takes priority in the event of a specificity clash.</p>
 
   <div class="doc doc-contents ">
   
-      <p>The default sub-title for the application.</p>
-<p>If set to a string, this sets the default sub-title for the application. See
-also the <code>sub_title</code> attribute.</p>
+      <p>A class variable to set the default sub-title for the application.</p>
+<p>To update the sub-title while the app is running, you can set the <a class="autorefs autorefs-internal" href="#textual.app.App.sub_title">sub_title</a> attribute.</p>
   </div>
 
 </div>
@@ -7770,9 +7888,8 @@ also the <code>sub_title</code> attribute.</p>
 
   <div class="doc doc-contents ">
   
-      <p>The default title for the application.</p>
-<p>If set to a string, this sets the default title for the application. See
-also the <code>title</code> attribute.</p>
+      <p>A class variable to set the <em>default</em> title for the application.</p>
+<p>To update the title while the app is running, you can set the <a class="autorefs autorefs-internal" href="#textual.app.App.title">title</a> attribute</p>
   </div>
 
 </div>
@@ -7795,7 +7912,9 @@ also the <code>title</code> attribute.</p>
 
   <div class="doc doc-contents ">
   
-      <p>A view on to the App's children (just the screen).</p>
+      <p>A view on to the App's children.</p>
+<p>This attribute exists on all widgets.
+In the case of the App, it will only every contain a single child, which will be the currently active screen.</p>
 
   <h5>Returns</h5>
   <table>
@@ -7814,6 +7933,30 @@ also the <code>title</code> attribute.</p>
         </tr>
     </tbody>
   </table>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.app.App.dark" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">dark</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+  </span>
+
+<a href="#textual.app.App.dark" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">dark</span><span class="p">:</span> <span class="n">Reactive</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Use a dark theme if <code>True</code>, otherwise use a light theme.</p>
+<p>Modify this attribute to switch between light and dark themes.</p>
   </div>
 
 </div>
@@ -7860,6 +8003,7 @@ also the <code>title</code> attribute.</p>
   <div class="doc doc-contents ">
   
       <p>The widget that is focused on the currently active screen.</p>
+<p>Focused widgets receive keyboard input.</p>
 
   <h5>Returns</h5>
   <table>
@@ -7901,6 +8045,7 @@ also the <code>title</code> attribute.</p>
   <div class="doc doc-contents ">
   
       <p>Is the driver running in 'headless' mode?</p>
+<p>Headless mode is used when running tests with <a class="autorefs autorefs-internal" href="#textual.app.App.run_test">run_test</a>.</p>
   </div>
 
 </div>
@@ -7925,6 +8070,12 @@ also the <code>title</code> attribute.</p>
   
       <p>Textual log interface.</p>
 
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;Hello, World!&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="p">)</span>
+</code></pre></div>
+</details>
   <h5>Returns</h5>
   <table>
     <thead>
@@ -7964,9 +8115,10 @@ also the <code>title</code> attribute.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Get current bindings. If no widget is focused, then the app-level bindings
-are returned. If a widget is focused, then any bindings present in the active
-screen and app are merged and returned.</p>
+      <p>Get current bindings.</p>
+<p>If no widget is focused, then app-level bindings are returned.
+If a widget is focused, then any bindings present in the active screen and app are merged and returned.</p>
+<p>This property may be used to inspect current bindings.</p>
   </div>
 
 </div>
@@ -7989,7 +8141,8 @@ screen and app are merged and returned.</p>
 
   <div class="doc doc-contents ">
   
-      <p>The return type of the app.</p>
+      <p>The return value of the app, or <code>None</code> if it as not yet been set.</p>
+<p>The return value is set when calling <a class="autorefs autorefs-internal" href="#textual.app.App.exit">exit</a>.</p>
   </div>
 
 </div>
@@ -8048,12 +8201,12 @@ screen and app are merged and returned.</p>
   </span>
 
 <a href="#textual.app.App.screen_stack" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">screen_stack</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Screen</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">screen_stack</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Screen</span><span class="p">]</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
   
-      <p>A <em>copy</em> of the screen stack.</p>
+      <p>The current screen stack.</p>
 
   <h5>Returns</h5>
   <table>
@@ -8066,7 +8219,7 @@ screen and app are merged and returned.</p>
     <tbody>
         <tr>
           <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a>[<a class="autorefs autorefs-internal" title="textual.screen.Screen" href="../screen/#textual.screen.Screen">Screen</a>]</code>
+                <code><a class="autorefs autorefs-external" title="typing.Sequence" href="https://docs.python.org/3/library/typing.html#typing.Sequence">Sequence</a>[<a class="autorefs autorefs-internal" title="textual.screen.Screen" href="../screen/#textual.screen.Screen">Screen</a>]</code>
           </td>
           <td><p>A snapshot of the current state of the screen stack.</p></td>
         </tr>
@@ -8182,9 +8335,9 @@ screen and app are merged and returned.</p>
   <div class="doc doc-contents ">
   
       <p>The sub-title for the application.</p>
-<p>The initial value in a running application will be that set in <code>SUB_TITLE</code>
-(if one is set). Assign new values to this instance attribute to change
-the sub-title.</p>
+<p>The initial value for <code>sub_title</code> will be set to the <code>SUB_TITLE</code> class variable if it exists, or
+an empty string if it doesn't/</p>
+<p>Assign a new value to this attribute to change the sub-title.</p>
   </div>
 
 </div>
@@ -8208,9 +8361,9 @@ the sub-title.</p>
   <div class="doc doc-contents ">
   
       <p>The title for the application.</p>
-<p>The initial value in a running application will be that set in <code>TITLE</code>
-(if one is set). Assign new values to this instance attribute to change
-the title.</p>
+<p>The initial value for <code>title</code> will be set to the <code>TITLE</code> class variable if it exists, or
+the name of the app if it doesn't.</p>
+<p>Assign a new value to this attribute to change the title.</p>
   </div>
 
 </div>
@@ -8233,7 +8386,7 @@ the title.</p>
 
   <div class="doc doc-contents ">
   
-      <p>The worker manager.</p>
+      <p>The <a href="guide/workers/">worker</a> manager.</p>
 
   <h5>Returns</h5>
   <table>
@@ -8621,7 +8774,7 @@ the title.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Save an SVG "screenshot". This action will save an SVG file containing the current contents of the screen.</p>
+      <p>This action will save an SVG file containing the current contents of the screen.</p>
 
   <h5>Parameters</h5>
   <table>
@@ -8817,6 +8970,7 @@ the title.</p>
   <div class="doc doc-contents ">
   
       <p>Animate an attribute.</p>
+<p>See the guide for how to use the <a href="/guide/animation">animation</a> system.</p>
 
   <h5>Parameters</h5>
   <table>
@@ -9284,6 +9438,7 @@ thread where the app is running.</p></td>
   <div class="doc doc-contents ">
   
       <p>Yield child widgets for a container.</p>
+<p>This method should be implemented in a subclass.</p>
 
   </div>
 
@@ -9364,6 +9519,7 @@ thread where the app is running.</p></td>
   <div class="doc doc-contents ">
   
       <p>Export an SVG screenshot of the current screen.</p>
+<p>See also <a class="autorefs autorefs-internal" href="#textual.app.App.save_screenshot">save_screenshot</a> which writes the screenshot to a file.</p>
 
   <h5>Parameters</h5>
   <table>
@@ -9434,9 +9590,7 @@ to use app title.</p></td>
 
   <div class="doc doc-contents ">
   
-      <p>Shorthand for self.screen.get_child(id: str)
-Returns the first child (immediate descendent) of this DOMNode
-with the given ID.</p>
+      <p>Get the first child (immediate descendent) of this DOMNode with the given ID.</p>
 
   <h5>Parameters</h5>
   <table>
@@ -9660,7 +9814,8 @@ with the given ID.</p>
   <div class="doc doc-contents ">
   
       <p>Get a driver class for this platform.</p>
-<p>Called by the constructor.</p>
+<p>This method is called by the constructor, and unlikely to be required when
+building a Textual app.</p>
 
   <h5>Returns</h5>
   <table>
@@ -9929,8 +10084,7 @@ needing to add a key_display to every binding.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Shorthand for self.screen.get_widget_by_id(id)
-Return the first descendant widget with the given ID.</p>
+      <p>Get the first descendant widget with the given ID.</p>
 <p>Performs a breadth-first search rooted at the current screen.
 It will not return the Screen if that matches the ID.
 To get the screen, use <code>self.screen</code>.</p>
@@ -10083,7 +10237,7 @@ or <a class="autorefs autorefs-internal" href="#textual.app.App.switch_screen">s
     <tbody>
         <tr>
           <td>
-                <code><span title="textual.app.ScreenError">ScreenError</span></code>
+                <code><a class="autorefs autorefs-internal" title="textual.app.ScreenError" href="#textual.app.ScreenError">ScreenError</a></code>
           </td>
           <td><p>If the screen can't be installed.</p></td>
         </tr>
@@ -10939,7 +11093,15 @@ or None to auto-detect.</p></td>
   <div class="doc doc-contents ">
   
       <p>An asynchronous context manager for testing app.</p>
+<p>Use this to run your app in "headless" (no output) mode and driver the app via a <a class="autorefs autorefs-internal" href="../pilot/#textual.pilot.Pilot">Pilot</a> object.</p>
 
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">async</span> <span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">run_test</span><span class="p">()</span> <span class="k">as</span> <span class="n">pilot</span><span class="p">:</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="k">await</span> <span class="n">pilot</span><span class="o">.</span><span class="n">click</span><span class="p">(</span><span class="s2">&quot;#Button.ok&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="k">assert</span> <span class="o">...</span>
+</code></pre></div>
+</details>
   <h5>Parameters</h5>
   <table>
     <thead>
@@ -11284,6 +11446,8 @@ Textual will also uninstall screens automatically on exit.</p>
   <div class="doc doc-contents ">
   
       <p>Watches the dark bool.</p>
+<p>This method handles the transition between light and dark mode when you
+change the <a class="autorefs autorefs-internal" href="#textual.app.App.dark">dark</a> attribute.</p>
 
   </div>
 
@@ -11292,6 +11456,36 @@ Textual will also uninstall screens automatically on exit.</p>
 
 
   </div>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+
+
+<h2 id="textual.app.AppError" class="doc doc-heading">
+        <span class="doc doc-object-name doc-class-name">AppError</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class"><code>class</code></small>
+  </span>
+
+<a href="#textual.app.AppError" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+      <p class="doc doc-class-bases">
+        Bases: <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#Exception">Exception</a></code></p>
+
+  
+      <p>Base class for general App related exceptions.</p>
+
+
 
   </div>
 
@@ -11333,6 +11527,36 @@ Textual will also uninstall screens automatically on exit.</p>
 
 
 
+<h2 id="textual.app.ScreenError" class="doc doc-heading">
+        <span class="doc doc-object-name doc-class-name">ScreenError</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class"><code>class</code></small>
+  </span>
+
+<a href="#textual.app.ScreenError" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+      <p class="doc doc-class-bases">
+        Bases: <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#Exception">Exception</a></code></p>
+
+  
+      <p>Base class for exceptions that relate to screens.</p>
+
+
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+
+
 <h2 id="textual.app.ScreenStackError" class="doc doc-heading">
         <span class="doc doc-object-name doc-class-name">ScreenStackError</span>
 
@@ -11346,7 +11570,7 @@ Textual will also uninstall screens automatically on exit.</p>
 
   <div class="doc doc-contents ">
       <p class="doc doc-class-bases">
-        Bases: <code><span title="textual.app.ScreenError">ScreenError</span></code></p>
+        Bases: <code><a class="autorefs autorefs-internal" title="textual.app.ScreenError" href="#textual.app.ScreenError">ScreenError</a></code></p>
 
   
       <p>Raised when attempting to pop the last screen from the stack.</p>
