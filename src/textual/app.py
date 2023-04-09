@@ -601,6 +601,10 @@ class App(Generic[ReturnType], DOMNode):
 
         This property may be used to inspect current bindings.
 
+        Returns:
+
+            A mapping of keys on to node + binding.
+
         """
 
         namespace_binding_map: dict[str, tuple[DOMNode, Binding]] = {}
@@ -624,6 +628,8 @@ class App(Generic[ReturnType], DOMNode):
 
     def get_css_variables(self) -> dict[str, str]:
         """Get a mapping of variables used to pre-populate CSS.
+
+        May be implemented in a subclass to add new CSS variables.
 
         Returns:
             A mapping of variable name to value.
