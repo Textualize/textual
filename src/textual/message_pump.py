@@ -614,13 +614,13 @@ class MessagePump(metaclass=_MessagePumpMeta):
         return self.post_message(message)
 
     def post_message(self, message: Message) -> bool:
-        """Posts a message on the queue.
+        """Posts a message on to this widget's queue.
 
         Args:
-            message: A message (or Event).
+            message: A message (including Event).
 
         Returns:
-            True if the messages was processed, False if it wasn't.
+            `True` if the messages was processed, `False` if it wasn't.
         """
         if self._closing or self._closed:
             return False
