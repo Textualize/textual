@@ -16,6 +16,7 @@ from typing import (
     ClassVar,
     Collection,
     Generator,
+    Generic,
     Iterable,
     NamedTuple,
     Sequence,
@@ -273,17 +274,19 @@ class Widget(DOMNode):
     """Widget may receive focus."""
     can_focus_children: bool = True
     """Widget's children may receive focus."""
-    expand = Reactive(False)
-    """Rich renderable may expand."""
-    shrink = Reactive(True)
-    """Rich renderable may shrink."""
-    auto_links = Reactive(True)
+    expand: Reactive[bool] = Reactive(False)
+    """Rich renderable may expand beyond optimal size."""
+    shrink: Reactive[bool] = Reactive(True)
+    """Rich renderable may shrink below optimal size."""
+    auto_links: Reactive[bool] = Reactive(True)
     """Widget will highlight links automatically."""
-    disabled = Reactive(False)
-    """The disabled state of the widget. `True` if disabled, `False` if not."""
+    disabled: Reactive[bool] = Reactive(False)
+    """Is the widget disabled? Disabled widgets can not be interacted with, and are typically styled to look dimmer."""
 
     hover_style: Reactive[Style] = Reactive(Style, repaint=False)
+    """The current hover style (style under the mouse cursor). Read only."""
     highlight_link_id: Reactive[str] = Reactive("")
+    """The currently highlighted link id. Read only."""
 
     def __init__(
         self,
@@ -358,21 +361,33 @@ class Widget(DOMNode):
         self._add_children(*children)
         self.disabled = disabled
 
-    virtual_size = Reactive(Size(0, 0), layout=True)
-    auto_width = Reactive(True)
-    auto_height = Reactive(True)
-    has_focus = Reactive(False, repaint=False)
-    mouse_over = Reactive(False, repaint=False)
-    scroll_x = Reactive(0.0, repaint=False, layout=False)
-    scroll_y = Reactive(0.0, repaint=False, layout=False)
+    virtual_size: Reactive[Size] = Reactive(Size(0, 0), layout=True)
+    """The virtual (scrollable) [size][textual.geometry.Size] of the widget."""
+
+    has_focus: Reactive[bool] = Reactive(False, repaint=False)
+    """Does this widget have focus? Read only."""
+
+    mouse_over: Reactive[bool] = Reactive(False, repaint=False)
+    """Is the mouse over this widget? Read only."""
+
+    scroll_x: Reactive[float] = Reactive(0.0, repaint=False, layout=False)
+    """The scroll position on the X axis."""
+
+    scroll_y: Reactive[float] = Reactive(0.0, repaint=False, layout=False)
+    """The scroll position on the Y axis."""
+
     scroll_target_x = Reactive(0.0, repaint=False)
     scroll_target_y = Reactive(0.0, repaint=False)
-    show_vertical_scrollbar = Reactive(False, layout=True)
-    show_horizontal_scrollbar = Reactive(False, layout=True)
 
-    border_title = _BorderTitle()
+    show_vertical_scrollbar: Reactive[bool] = Reactive(False, layout=True)
+    """Show a horizontal scrollbar?"""
+
+    show_horizontal_scrollbar: Reactive[bool] = Reactive(False, layout=True)
+    """SHow a vertical scrollbar?"""
+
+    border_title: str | Text | None = _BorderTitle()  # type: ignore
     """A title to show in the top border (if there is one)."""
-    border_subtitle = _BorderTitle()
+    border_subtitle: str | Text | None = _BorderTitle()  # type: ignore
     """A title to show in the bottom border (if there is one)."""
 
     @property
@@ -408,8 +423,6 @@ class Widget(DOMNode):
 
         May be overridden if you want different logic regarding allowing scrolling.
 
-        Returns:
-            True if the widget may scroll _vertically_.
         """
         return self.is_scrollable and self.show_vertical_scrollbar
 
@@ -419,8 +432,6 @@ class Widget(DOMNode):
 
         May be overridden if you want different logic regarding allowing scrolling.
 
-        Returns:
-            True if the widget may scroll _horizontally_.
         """
         return self.is_scrollable and self.show_horizontal_scrollbar
 
@@ -1129,8 +1140,14 @@ class Widget(DOMNode):
 
     @property
     def scrollbar_corner(self) -> ScrollBarCorner:
-        """Return the ScrollBarCorner - the cells that appear between the
-        horizontal and vertical scrollbars (only when both are visible).
+        """The scrollbar corner.
+
+        Note:
+            This will *create* a scrollbar corner if one doesn't exist.
+
+        Returns:
+            ScrollBarCorner Widget.
+
         """
         from .scrollbar import ScrollBarCorner
 
@@ -1142,7 +1159,10 @@ class Widget(DOMNode):
 
     @property
     def vertical_scrollbar(self) -> ScrollBar:
-        """Get a vertical scrollbar (create if necessary).
+        """The vertical scrollbar (create if necessary).
+
+        Note:
+            This will *create* a scrollbar if one doesn't exist.
 
         Returns:
             ScrollBar Widget.
@@ -1160,7 +1180,10 @@ class Widget(DOMNode):
 
     @property
     def horizontal_scrollbar(self) -> ScrollBar:
-        """Get a vertical scrollbar (create if necessary).
+        """The a horizontal scrollbar.
+
+        Note:
+            This will *create* a scrollbar if one doesn't exist.
 
         Returns:
             ScrollBar Widget.
@@ -1356,7 +1379,12 @@ class Widget(DOMNode):
 
     @property
     def content_size(self) -> Size:
-        """Get the size of the content area."""
+        """The size of the content area.
+
+        Returns:
+            Content area size.
+
+        """
         return self.region.shrink(self.styles.gutter).size
 
     @property
@@ -1391,8 +1419,13 @@ class Widget(DOMNode):
 
     @property
     def virtual_region(self) -> Region:
-        """The widget region relative to it's container. Which may not be visible,
-        depending on scroll offset.
+        """The widget region relative to it's container (which may not be visible,
+        depending on scroll offset).
+
+
+        Returns:
+            The virtual region.
+
         """
         try:
             return self.screen.find_widget(self).virtual_region
@@ -1432,7 +1465,7 @@ class Widget(DOMNode):
 
     @property
     def focusable(self) -> bool:
-        """Can this widget currently receive focus?"""
+        """Can this widget currently be focused?"""
         return self.can_focus and not self._self_or_ancestors_disabled
 
     @property
@@ -1464,11 +1497,7 @@ class Widget(DOMNode):
 
     @property
     def is_transparent(self) -> bool:
-        """Check if the background styles is not set.
-
-        Returns:
-            ``True`` if there is background color, otherwise ``False``.
-        """
+        """Does this widget have a transparent background?"""
         return self.is_scrollable and self.styles.background.is_transparent
 
     @property
@@ -1546,20 +1575,12 @@ class Widget(DOMNode):
 
     @property
     def is_container(self) -> bool:
-        """Check if this widget is a container (contains other widgets).
-
-        Returns:
-            True if this widget is a container.
-        """
+        """Is this widget a container (contains other widgets)?"""
         return self.styles.layout is not None or bool(self._nodes)
 
     @property
     def is_scrollable(self) -> bool:
-        """Check if this Widget may be scrolled.
-
-        Returns:
-            True if this widget may be scrolled.
-        """
+        """Can this widget be scrolled?"""
         return self.styles.layout is not None or bool(self._nodes)
 
     @property
@@ -1588,7 +1609,12 @@ class Widget(DOMNode):
 
     @property
     def link_style(self) -> Style:
-        """Style of links."""
+        """Style of links.
+
+        Returns:
+            Rich style.
+
+        """
         styles = self.styles
         _, background = self.background_colors
         link_background = background + styles.link_background
@@ -1605,7 +1631,12 @@ class Widget(DOMNode):
 
     @property
     def link_hover_style(self) -> Style:
-        """Style of links with mouse hover."""
+        """Style of links underneath the mouse cursor.
+
+        Returns:
+            Rich Style.
+
+        """
         styles = self.styles
         _, background = self.background_colors
         hover_background = background + styles.link_hover_background
