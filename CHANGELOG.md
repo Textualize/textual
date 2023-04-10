@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fix viewport units using wrong viewport size  https://github.com/Textualize/textual/pull/2247
-- Fixed layout not clearing arrangement cache
+- Fixed layout not clearing arrangement cache https://github.com/Textualize/textual/pull/2249
 
 
 ## [0.19.0] - 2023-04-07
@@ -740,6 +740,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.19.1]: https://github.com/Textualize/textual/compare/v0.19.0...v0.19.1
+[0.19.0]: https://github.com/Textualize/textual/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/Textualize/textual/compare/v0.17.4...v0.18.0
 [0.17.3]: https://github.com/Textualize/textual/compare/v0.17.2...v0.17.3
 [0.17.2]: https://github.com/Textualize/textual/compare/v0.17.1...v0.17.2
