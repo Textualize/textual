@@ -7054,7 +7054,7 @@
 <a id="textual.color"></a>
   <div class="doc doc-contents first">
   
-      <p>This module contains a powerful Color class which Textual uses to expose colors.</p>
+      <p>This module contains a powerful <a class="autorefs autorefs-internal" href="#textual.color.Color">Color</a> class which Textual uses to manipulate colors.</p>
 <h3 id="textual.color--named-colors">Named colors<a class="headerlink" href="#textual.color--named-colors" title="Permanent link">&para;</a></h3>
 <p>The following named colors are used by the <a class="autorefs autorefs-internal" href="#textual.color.Color.parse">parse</a> method.</p>
 <p><svg class="rich-terminal" viewBox="0 0 994 4149.2" xmlns="http://www.w3.org/2000/svg">
@@ -7873,6 +7873,23 @@
 <p>Colors are stored as three values representing the degree of red, green, and blue in a color, and a
 fourth "alpha" value which defines where the color lies on a gradient of opaque to transparent.</p>
 
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">textual.color</span> <span class="kn">import</span> <span class="n">Color</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">color</span> <span class="o">=</span> <span class="n">Color</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">color</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">Color</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">color</span><span class="o">.</span><span class="n">darken</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">Color</span><span class="p">(</span><span class="mi">98</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">color</span> <span class="o">+</span> <span class="n">Color</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="n">Color</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">color_with_alpha</span> <span class="o">=</span> <span class="n">Color</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">color_with_alpha</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="n">Color</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">color</span> <span class="o">+</span> <span class="n">color_with_alpha</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="n">Color</span><span class="p">(</span><span class="mi">177</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+</code></pre></div>
+</details>
 
 
   
@@ -8094,6 +8111,24 @@ Other colors lie on a gradient between the two extremes.</p>
   
       <p>This color in HSL format.</p>
 <p>HSL color is an alternative way of representing a color, which can be used in certain color calculations.</p>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.color.HSL" href="#textual.color.HSL">HSL</a></code>
+          </td>
+          <td><p>Color encoded in HSL format.</p></td>
+        </tr>
+    </tbody>
+  </table>
   </div>
 
 </div>
@@ -8117,6 +8152,24 @@ Other colors lie on a gradient between the two extremes.</p>
   <div class="doc doc-contents ">
   
       <p>The inverse of this color.</p>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.color.Color" href="#textual.color.Color">Color</a></code>
+          </td>
+          <td><p>Inverse color.</p></td>
+        </tr>
+    </tbody>
+  </table>
   </div>
 
 </div>
@@ -8163,6 +8216,24 @@ Other colors lie on a gradient between the two extremes.</p>
   <div class="doc doc-contents ">
   
       <p>A monochrome version of this color.</p>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.color.Color" href="#textual.color.Color">Color</a></code>
+          </td>
+          <td><p>The monochrome (black and white) version of this color.</p></td>
+        </tr>
+    </tbody>
+  </table>
   </div>
 
 </div>
@@ -8822,8 +8893,8 @@ A value of <code>gradient</code> between the two extremes produces a color somew
         <span class="doc doc-object-name doc-function-name">parse</span>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-cached"><code>cached</code></small>
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+      <small class="doc doc-label doc-label-cached"><code>cached</code></small>
   </span>
 
 <a href="#textual.color.Color.parse" class="headerlink" title="Permanent link">&para;</a></h3>
