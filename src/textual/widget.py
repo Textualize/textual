@@ -2795,7 +2795,7 @@ class Widget(DOMNode):
         Returns:
             The `Widget` instance.
         """
-        if layout and not self._layout_required:
+        if layout:
             self._layout_required = True
             self._stabilize_scrollbar = None
             for ancestor in self.ancestors:
