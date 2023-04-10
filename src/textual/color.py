@@ -1,9 +1,10 @@
 """
-This module contains a powerful Color class which Textual uses to expose colors.
+This module contains a powerful [Color][textual.color.Color] class which Textual uses to manipulate colors.
 
 ## Named colors
 
 The following named colors are used by the [parse][textual.color.Color.parse] method.
+
 
 ```{.rich columns="80" title="colors"}
 from textual._color_constants import COLOR_NAME_TO_RGB
@@ -41,8 +42,6 @@ import rich.repr
 from rich.color import Color as RichColor
 from rich.color import ColorType
 from rich.color_triplet import ColorTriplet
-from rich.style import Style
-from rich.text import Text
 from typing_extensions import Final
 
 from textual.css.scalar import percentage_string_to_float
@@ -143,6 +142,22 @@ class Color(NamedTuple):
     Colors are stored as three values representing the degree of red, green, and blue in a color, and a
     fourth "alpha" value which defines where the color lies on a gradient of opaque to transparent.
 
+    Example:
+        ```python
+        >>> from textual.color import Color
+        >>> color = Color.parse("red")
+        >>> color
+        Color(255, 0, 0)
+        >>> color.darken(0.5)
+        Color(98, 0, 0)
+        >>> color + Color.parse("green")
+        Color(0, 128, 0)
+        >>> color_with_alpha = Color(100, 50, 25, 0.5)
+        >>> color_with_alpha
+        Color(100, 50, 25, a=0.5)
+        >>> color + color_with_alpha
+        Color(177, 25, 12)
+        ```
 
     """
 
@@ -185,7 +200,12 @@ class Color(NamedTuple):
 
     @property
     def inverse(self) -> Color:
-        """The inverse of this color."""
+        """The inverse of this color.
+
+        Returns:
+            Inverse color.
+
+        """
         r, g, b, a = self
         return Color(255 - r, 255 - g, 255 - b, a)
 
@@ -242,6 +262,9 @@ class Color(NamedTuple):
 
         HSL color is an alternative way of representing a color, which can be used in certain color calculations.
 
+        Returns:
+            Color encoded in HSL format.
+
         """
         r, g, b = self.normalized
         h, l, s = rgb_to_hls(r, g, b)
@@ -295,7 +318,12 @@ class Color(NamedTuple):
 
     @property
     def monochrome(self) -> Color:
-        """A monochrome version of this color."""
+        """A monochrome version of this color.
+
+        Returns:
+            The monochrome (black and white) version of this color.
+
+        """
         r, g, b, a = self
         gray = round(r * 0.2126 + g * 0.7152 + b * 0.0722)
         return Color(gray, gray, gray, a)

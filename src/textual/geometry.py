@@ -61,6 +61,21 @@ class Offset(NamedTuple):
 
     Textual prefers the names `x` and `y`, but you could consider `x` to be the _column_ and `y` to be the _row_.
 
+    Offsets support addition, subtraction, multiplication, and negation.
+
+    Example:
+        ```python
+        >>> from textual.geometry import Offset
+        >>> offset = Offset(3, 2)
+        >>> offset
+        Offset(x=3, y=2)
+        >>> offset += Offset(10, 0)
+        >>> offset
+        Offset(x=13, y=2)
+        >>> -offset
+        Offset(x=-13, y=-2)
+        ```
+
     """
 
     x: int = 0
@@ -139,7 +154,21 @@ class Offset(NamedTuple):
 
 
 class Size(NamedTuple):
-    """The dimensions of a rectangular region."""
+    """The dimensions (width and height) of a rectangular region.
+
+    Example:
+        ```python
+        >>> from textual.geometry import Size
+        >>> size = Size(2, 3)
+        >>> size
+        Size(width=2, height=3)
+        >>> size.area
+        6
+        >>> size + Size(10, 20)
+        Size(width=12, height=23)
+        ```
+
+    """
 
     width: int = 0
     """The width in cells."""
@@ -236,6 +265,24 @@ class Region(NamedTuple):
         └────────────────────┘ ▼
         ◀─────── width ──────▶
     ```
+
+    Example:
+        ```python
+        >>> from textual.geometry import Region
+        >>> region = Region(4, 5, 20, 10)
+        >>> region
+        Region(x=4, y=5, width=20, height=10)
+        >>> region.area
+        200
+        >>> region.size
+        Size(width=20, height=10)
+        >>> region.offset
+        Offset(x=4, y=5)
+        >>> region.contains(1, 2)
+        False
+        >>> region.contains(10, 8)
+        True
+        ```
 
     """
 
@@ -831,7 +878,24 @@ class Region(NamedTuple):
 
 
 class Spacing(NamedTuple):
-    """The spacing around a renderable."""
+    """The spacing around a renderable, such as padding and border
+
+    Spacing is defined by four integers for the space at the top, right, bottom, and left of a region,
+
+    Example:
+        ```python
+        >>> from textual.geometry import Region, Spacing
+        >>> region = Region(2, 3, 20, 10)
+        >>> spacing = Spacing(1, 2, 3, 4)
+        >>> region.grow(spacing)
+        Region(x=-2, y=2, width=26, height=14)
+        >>> region.shrink(spacing)
+        Region(x=6, y=4, width=14, height=6)
+        >>> spacing.css
+        '1 2 3 4'
+        ```
+
+    """
 
     top: int = 0
     """Space from the top of a region."""
