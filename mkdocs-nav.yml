@@ -161,6 +161,7 @@ nav:
     - "api/index.md"
     - "api/logger.md"
     - "api/logging.md"
+    - "api/map_geometry.md"
     - "api/message_pump.md"
     - "api/message.md"
     - "api/pilot.md"
