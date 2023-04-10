@@ -5,11 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.19.1] - 2023-04-10
 
 ### Fixed
 
 - Fix viewport units using wrong viewport size  https://github.com/Textualize/textual/pull/2247
+- Fixed layout not clearing arrangement cache
 
 
 ## [0.19.0] - 2023-04-07
