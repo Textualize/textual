@@ -5397,17 +5397,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#textual.screen.Screen.update_timer" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        update_timer
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#textual.screen.Screen.find_widget" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6182,17 +6171,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#textual.screen.Screen.update_timer" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        update_timer
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#textual.screen.Screen.find_widget" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6396,8 +6374,53 @@
         Bases: <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code></p>
 
   
-      <p>A widget for the root of the app.</p>
+      <p>The base class for screens.</p>
 
+  
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>name</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td><p>The name of the screen.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>id</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td><p>The ID of the screen in the DOM.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>classes</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td><p>The CSS classes for the screen.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
 
 
   
@@ -6451,7 +6474,7 @@
 
   <div class="doc doc-contents ">
   
-      <p>The focused widget or <code>None</code> for no focus.</p>
+      <p>The focused <a class="autorefs autorefs-internal" href="../widget/#textual.widget.Widget">widget</a> or <code>None</code> for no focus.</p>
   </div>
 
 </div>
@@ -6521,29 +6544,6 @@
   <div class="doc doc-contents ">
   
       <p>An integer that updates when the screen is resumed.</p>
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-attribute">
-
-
-
-<h3 id="textual.screen.Screen.update_timer" class="doc doc-heading">
-        <span class="doc doc-object-name doc-attribute-name">update_timer</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
-  </span>
-
-<a href="#textual.screen.Screen.update_timer" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">update_timer</span><span class="p">:</span> <span class="n">Timer</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-  
-      <p>Timer used to perform updates.</p>
   </div>
 
 </div>
