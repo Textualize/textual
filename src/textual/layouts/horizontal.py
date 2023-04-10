@@ -25,7 +25,6 @@ class HorizontalLayout(Layout):
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
         x = max_height = Fraction(0)
-        parent_size = parent.outer_size
 
         child_styles = [child.styles for child in children]
         box_margins: list[Spacing] = [styles.margin for styles in child_styles]
@@ -52,7 +51,7 @@ class HorizontalLayout(Layout):
             [styles.width for styles in child_styles],
             children,
             size,
-            parent_size,
+            parent.app.size,
             resolve_margin,
             dimension="width",
         )

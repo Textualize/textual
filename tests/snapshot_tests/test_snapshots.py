@@ -211,6 +211,11 @@ def test_css_property(file_name, snap_compare):
     assert snap_compare(path_to_app)
 
 
+def test_viewport_height_and_width_properties(snap_compare):
+    path_to_app = SNAPSHOT_APPS_DIR / "viewport_units.py"
+    assert snap_compare(path_to_app)
+
+
 def test_multiple_css(snap_compare):
     # Interaction between multiple CSS files and app-level/classvar CSS
     assert snap_compare("snapshot_apps/multiple_css/multiple_css.py")

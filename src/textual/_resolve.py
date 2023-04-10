@@ -82,7 +82,7 @@ def resolve_box_models(
     dimensions: list[Scalar | None],
     widgets: list[Widget],
     size: Size,
-    parent_size: Size,
+    viewport_size: Size,
     margin: Size,
     dimension: Literal["width", "height"] = "width",
 ) -> list[BoxModel]:
@@ -92,7 +92,7 @@ def resolve_box_models(
         dimensions: A list of Scalars or Nones for each dimension.
         widgets: Widgets in resolve.
         size: Size of container.
-        parent_size: Size of parent.
+        viewport_size: Viewport size.
         margin: Total space occupied by margin
         dimensions: Which dimension to resolve.
 
@@ -111,7 +111,7 @@ def resolve_box_models(
             None
             if dimension is not None and dimension.is_fraction
             else widget._get_box_model(
-                size, parent_size, fraction_width, fraction_height
+                size, viewport_size, fraction_width, fraction_height
             )
         )
         for (dimension, widget) in zip(dimensions, widgets)
@@ -148,7 +148,7 @@ def resolve_box_models(
         box_model
         or widget._get_box_model(
             size,
-            parent_size,
+            viewport_size,
             width_fraction,
             height_fraction,
         )

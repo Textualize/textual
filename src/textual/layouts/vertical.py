@@ -22,7 +22,6 @@ class VerticalLayout(Layout):
     ) -> ArrangeResult:
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
-        parent_size = parent.outer_size
 
         child_styles = [child.styles for child in children]
         box_margins: list[Spacing] = [styles.margin for styles in child_styles]
@@ -49,7 +48,7 @@ class VerticalLayout(Layout):
             [styles.height for styles in child_styles],
             children,
             size,
-            parent_size,
+            parent.app.size,
             resolve_margin,
             dimension="height",
         )
