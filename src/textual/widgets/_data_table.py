@@ -308,7 +308,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     cursor_coordinate: Reactive[Coordinate] = Reactive(
         Coordinate(0, 0), repaint=False, always_update=True
     )
-    hover_coordinate: Reactive[Coordinate] = Reactive(Coordinate(0, 0), repaint=False)
+    hover_coordinate: Reactive[Coordinate] = Reactive(
+        Coordinate(0, 0), repaint=False, always_update=True
+    )
 
     class CellHighlighted(Message, bubble=True):
         """Posted when the cursor moves to highlight a new cell.
