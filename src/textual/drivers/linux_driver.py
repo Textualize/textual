@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Any
 
 import rich.repr
 
-from .. import constants, events, log
+from .. import events, log
 from .._xterm_parser import XTermParser
 from ..driver import Driver
 from ..geometry import Size
