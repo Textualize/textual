@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import pytest
 
+from textual.css.parse import parse
 from textual.css.tokenize import tokenize
 from textual.css.tokenizer import Token, TokenError
 
@@ -173,6 +174,127 @@ def test_variable_declaration_multiple_values():
             referenced_by=None,
         ),
     ]
+
+
+def test_single_line_comment():
+    css = """\
+# Ignored
+#foo { # Ignored
+    color: red; # Also ignored
+} # Nada"""
+    # Check the css parses
+    # list(parse(css, "<foo>"))
+    result = list(tokenize(css, ""))
+
+    print(result)
+    expected = [
+        Token(
+            name="whitespace",
+            value="\n",
+            path="",
+            code=css,
+            location=(0, 9),
+        ),
+        Token(
+            name="selector_start_id",
+            value="#foo",
+            path="",
+            code=css,
+            location=(1, 0),
+        ),
+        Token(
+            name="whitespace",
+            value=" ",
+            path="",
+            code=css,
+            location=(1, 4),
+        ),
+        Token(
+            name="declaration_set_start",
+            value="{",
+            path="",
+            code=css,
+            location=(1, 5),
+        ),
+        Token(
+            name="whitespace",
+            value=" ",
+            path="",
+            code=css,
+            location=(1, 6),
+        ),
+        Token(
+            name="whitespace",
+            value="\n",
+            path="",
+            code=css,
+            location=(1, 16),
+        ),
+        Token(
+            name="whitespace",
+            value="    ",
+            path="",
+            code=css,
+            location=(2, 0),
+        ),
+        Token(
+            name="declaration_name",
+            value="color:",
+            path="",
+            code=css,
+            location=(2, 4),
+        ),
+        Token(
+            name="whitespace",
+            value=" ",
+            path="",
+            code=css,
+            location=(2, 10),
+        ),
+        Token(
+            name="token",
+            value="red",
+            path="",
+            code=css,
+            location=(2, 11),
+        ),
+        Token(
+            name="declaration_end",
+            value=";",
+            path="",
+            code=css,
+            location=(2, 14),
+        ),
+        Token(
+            name="whitespace",
+            value=" ",
+            path="",
+            code=css,
+            location=(2, 15),
+        ),
+        Token(
+            name="whitespace",
+            value="\n",
+            path="",
+            code=css,
+            location=(2, 30),
+        ),
+        Token(
+            name="declaration_set_end",
+            value="}",
+            path="",
+            code=css,
+            location=(3, 0),
+        ),
+        Token(
+            name="whitespace",
+            value=" ",
+            path="",
+            code=css,
+            location=(3, 1),
+        ),
+    ]
+    assert result == expected
 
 
 def test_variable_declaration_comment_ignored():
