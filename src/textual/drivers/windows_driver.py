@@ -81,10 +81,8 @@ class WindowsDriver(Driver):
         self.write("\033[?1003h\n")
         self._enable_bracketed_paste()
 
-        app = active_app.get()
-
         self._event_thread = win32.EventMonitor(
-            loop, app, self._app, self.exit_event, self.process_event
+            loop, self._app, self.exit_event, self.process_event
         )
         self._event_thread.start()
 
