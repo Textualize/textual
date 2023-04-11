@@ -14,7 +14,7 @@ async def test_tabbed_content_switch():
                     yield Label("Foo", id="foo-label")
                 with TabPane("bar", id="bar"):
                     yield Label("Bar", id="bar-label")
-                with TabPane("baz`", id="baz"):
+                with TabPane("baz", id="baz"):
                     yield Label("Baz", id="baz-label")
 
     app = TabbedApp()
@@ -73,11 +73,11 @@ async def test_tabbed_content_initial():
                     yield Label("Foo", id="foo-label")
                 with TabPane("bar", id="bar"):
                     yield Label("Bar", id="bar-label")
-                with TabPane("baz`", id="baz"):
+                with TabPane("baz", id="baz"):
                     yield Label("Baz", id="baz-label")
 
     app = TabbedApp()
-    async with app.run_test() as pilot:
+    async with app.run_test():
         tabbed_content = app.query_one(TabbedContent)
         assert tabbed_content.active == "bar"
 
@@ -85,3 +85,31 @@ async def test_tabbed_content_initial():
         assert not app.query_one("#foo-label").region
         assert app.query_one("#bar-label").region
         assert not app.query_one("#baz-label").region
+
+
+async def test_tabbed_content_messages():
+    class TabbedApp(App):
+        message = None
+
+        def compose(self) -> ComposeResult:
+            with TabbedContent(initial="bar"):
+                with TabPane("foo", id="foo"):
+                    yield Label("Foo", id="foo-label")
+
+                with TabPane("bar", id="bar"):
+                    yield Label("Bar", id="bar-label")
+                with TabPane("baz", id="baz"):
+                    yield Label("Baz", id="baz-label")
+
+        def on_tabbed_content_tab_activated(
+            self, event: TabbedContent.TabActivated
+        ) -> None:
+            self.message = event
+
+    app = TabbedApp()
+    async with app.run_test() as pilot:
+        tabbed_content = app.query_one(TabbedContent)
+        tabbed_content.active = "bar"
+        await pilot.pause()
+        assert isinstance(app.message, TabbedContent.TabActivated)
+        assert app.message.tab.label.plain == "bar"
