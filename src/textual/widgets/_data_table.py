@@ -1117,8 +1117,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         row_index, column_index = coordinate
         row_key = self._row_locations.get_key(row_index)
         row = self.rows.get(row_key)
-        if not row:
-            return Region(0, 0, 0, 0)
 
         # The x-coordinate of a cell is the sum of widths of the data cells to the left
         # plus the width of the render width of the longest row label.
