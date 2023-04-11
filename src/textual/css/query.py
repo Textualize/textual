@@ -1,22 +1,18 @@
 """
-A DOMQuery is a set of DOM nodes associated with a given CSS selector.
+A DOMQuery is a set of DOM nodes returned by [query][textual.dom.DOMNode.query].
 
-This set of nodes may be further filtered with the filter method. Additional methods apply
-actions to the nodes in the query.
+The set of nodes may be further refined with [filter][textual.css.query.DOMQuery.filter] and [exclude][textual.css.query.DOMQuery.exclude].
+Additional methods apply actions to all nodes in the query.
 
-If this sounds like JQuery, a (once) popular JS library, it is no coincidence.
+!!! info
 
-DOMQuery objects are typically created by Widget.query method.
-
-Queries are *lazy*. Results will be calculated at the point you iterate over the query, or call
-a method which evaluates the query, such as first() and last().
-
+    If this sounds like JQuery, a (once) popular JS library, it is no coincidence.
 """
 
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generic, Iterator, TypeVar, cast, overload
+from typing import TYPE_CHECKING, Generic, Iterable, Iterator, TypeVar, cast, overload
 
 import rich.repr
 
@@ -72,6 +68,21 @@ class DOMQuery(Generic[QueryType]):
         exclude: str | None = None,
         parent: DOMQuery | None = None,
     ) -> None:
+        """Initialize a query object.
+
+        !!! warning
+
+            You won't need to construct this manually, as `DOMQuery` objects are returned by [query][textual.dom.DOMNode.query].
+
+        Args:
+            node: A DOM node.
+            filter: Query to filter children in the node.
+            exclude: Query to exclude children in the node.
+            parent: The parent query, if this is the result of filtering another query.
+
+        Raises:
+            InvalidQueryFormat: If the format of the query is invalid.
+        """
         self._node = node
         self._nodes: list[QueryType] | None = None
         self._filters: list[tuple[SelectorSet, ...]] = (
@@ -95,6 +106,7 @@ class DOMQuery(Generic[QueryType]):
 
     @property
     def node(self) -> DOMNode:
+        """The node being queried."""
         return self._node
 
     @property
@@ -193,7 +205,7 @@ class DOMQuery(Generic[QueryType]):
 
         Args:
             expect_type: Require matched node is of this type,
-                or None for any type. Defaults to None.
+                or None for any type.
 
         Raises:
             WrongType: If the wrong type was found.
@@ -228,7 +240,7 @@ class DOMQuery(Generic[QueryType]):
 
         Args:
             expect_type: Require matched node is of this type,
-                or None for any type. Defaults to None.
+                or None for any type.
 
         Raises:
             WrongType: If the wrong type was found.
@@ -272,7 +284,7 @@ class DOMQuery(Generic[QueryType]):
 
         Args:
             expect_type: Require matched node is of this type,
-                or None for any type. Defaults to None.
+                or None for any type.
 
         Raises:
             WrongType: If the wrong type was found.
@@ -305,7 +317,7 @@ class DOMQuery(Generic[QueryType]):
 
         Args:
             filter_type: A Widget class to filter results,
-                or None for no filter. Defaults to None.
+                or None for no filter.
 
         Yields:
             Iterator[Widget | ExpectType]: An iterator of Widget instances.
@@ -328,6 +340,25 @@ class DOMQuery(Generic[QueryType]):
         """
         for node in self:
             node.set_class(add, *class_names)
+        return self
+
+    def set_classes(self, classes: str | Iterable[str]) -> DOMQuery[QueryType]:
+        """Set the classes on nodes to exactly the given set.
+
+        Args:
+            classes: A string of space separated classes, or an iterable of class names.
+
+        Returns:
+            Self.
+        """
+
+        if isinstance(classes, str):
+            for node in self:
+                node.set_classes(classes)
+        else:
+            class_names = list(classes)
+            for node in self:
+                node.set_classes(class_names)
         return self
 
     def add_class(self, *class_names: str) -> DOMQuery[QueryType]:
@@ -364,7 +395,7 @@ class DOMQuery(Generic[QueryType]):
         """Set styles on matched nodes.
 
         Args:
-            css: CSS declarations to parser, or None. Defaults to None.
+            css: CSS declarations to parser, or None.
         """
         _rich_traceback_omit = True
 
@@ -386,8 +417,8 @@ class DOMQuery(Generic[QueryType]):
         """Refresh matched nodes.
 
         Args:
-            repaint: Repaint node(s). defaults to True.
-            layout: Layout node(s). Defaults to False.
+            repaint: Repaint node(s).
+            layout: Layout node(s).
 
         Returns:
             Query for chaining.

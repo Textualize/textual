@@ -45,6 +45,39 @@ def test_validate():
         node.toggle_class("1")
 
 
+def test_classes_setter():
+    node = DOMNode(classes="foo bar")
+    assert node.classes == frozenset({"foo", "bar"})
+    node.classes = "baz egg"
+    assert node.classes == frozenset({"baz", "egg"})
+    node.classes = ""
+    assert node.classes == frozenset({})
+
+
+def test_classes_setter_iterable():
+    node = DOMNode(classes="foo bar")
+    assert node.classes == frozenset({"foo", "bar"})
+    node.classes = "baz", "egg"
+    assert node.classes == frozenset({"baz", "egg"})
+    node.classes = []
+    assert node.classes == frozenset({})
+
+
+def test_classes_set_classes():
+    node = DOMNode(classes="foo bar")
+    assert node.classes == frozenset({"foo", "bar"})
+    node.set_classes("baz egg")
+    assert node.classes == frozenset({"baz", "egg"})
+    node.set_classes([])
+    assert node.classes == frozenset({})
+    node.set_classes(["paul"])
+    assert node.classes == frozenset({"paul"})
+    with pytest.raises(BadIdentifier):
+        node.classes = "foo 25"
+    with pytest.raises(BadIdentifier):
+        node.classes = ["foo", "25"]
+
+
 def test_inherited_bindings():
     """Test if binding merging is done correctly when (not) inheriting bindings."""
 

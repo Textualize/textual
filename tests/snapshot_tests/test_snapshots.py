@@ -187,6 +187,12 @@ def test_tabbed_content(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "tabbed_content.py")
 
 
+def test_option_list(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_strings.py")
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_options.py")
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_tables.py")
+
+
 # --- CSS properties ---
 # We have a canonical example for each CSS property that is shown in their docs.
 # If any of these change, something has likely broken, so snapshot each of them.
@@ -202,6 +208,11 @@ PATHS = [
 def test_css_property(file_name, snap_compare):
     path_to_app = STYLES_EXAMPLES_DIR / file_name
     Placeholder.reset_color_cycle()
+    assert snap_compare(path_to_app)
+
+
+def test_viewport_height_and_width_properties(snap_compare):
+    path_to_app = SNAPSHOT_APPS_DIR / "viewport_units.py"
     assert snap_compare(path_to_app)
 
 
@@ -340,3 +351,58 @@ def test_scrollbar_thumb_height(snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "scrollbar_thumb_height.py",
     )
+
+
+def test_css_hot_reloading(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/2063."""
+
+    async def run_before(pilot):
+        css_file = pilot.app.CSS_PATH
+        with open(css_file, "w") as f:
+            f.write("/* This file is purposefully empty. */\n")  # Clear all the CSS.
+        await pilot.app._on_css_change()
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "hot_reloading_app.py", run_before=run_before
+    )
+
+
+def test_layer_fix(snap_compare):
+    # Check https://github.com/Textualize/textual/issues/1358
+    assert snap_compare(SNAPSHOT_APPS_DIR / "layer_fix.py", press=["d"])
+
+
+def test_modal_dialog_bindings_input(snap_compare):
+    # Check https://github.com/Textualize/textual/issues/2194
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "modal_screen_bindings.py",
+        press=["enter", "tab", "h", "!", "left", "i", "tab"],
+    )
+
+
+def test_modal_dialog_bindings(snap_compare):
+    # Check https://github.com/Textualize/textual/issues/2194
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "modal_screen_bindings.py",
+        press=["enter", "tab", "h", "i", "tab", "enter"],
+    )
+
+
+def test_dock_scroll(snap_compare):
+    # https://github.com/Textualize/textual/issues/2188
+    assert snap_compare(SNAPSHOT_APPS_DIR / "dock_scroll.py", terminal_size=(80, 25))
+
+
+def test_auto_fr(snap_compare):
+    # https://github.com/Textualize/textual/issues/2220
+    assert snap_compare(SNAPSHOT_APPS_DIR / "auto_fr.py", terminal_size=(80, 25))
+
+
+def test_fr_margins(snap_compare):
+    # https://github.com/Textualize/textual/issues/2220
+    assert snap_compare(SNAPSHOT_APPS_DIR / "fr_margins.py", terminal_size=(80, 25))
+
+
+def test_scroll_visible(snap_compare):
+    # https://github.com/Textualize/textual/issues/2181
+    assert snap_compare(SNAPSHOT_APPS_DIR / "scroll_visible.py", press=["t"])

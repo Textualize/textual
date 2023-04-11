@@ -29,13 +29,12 @@ class Static(Widget, inherit_bindings=False):
 
     Args:
         renderable: A Rich renderable, or string containing console markup.
-            Defaults to "".
-        expand: Expand content if required to fill container. Defaults to False.
-        shrink: Shrink content if required to fill container. Defaults to False.
-        markup: True if markup should be parsed and rendered. Defaults to True.
-        name: Name of widget. Defaults to None.
-        id: ID of Widget. Defaults to None.
-        classes: Space separated list of class names. Defaults to None.
+        expand: Expand content if required to fill container.
+        shrink: Shrink content if required to fill container.
+        markup: True if markup should be parsed and rendered.
+        name: Name of widget.
+        id: ID of Widget.
+        classes: Space separated list of class names.
         disabled: Whether the static is disabled or not.
     """
 

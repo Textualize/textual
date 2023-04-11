@@ -33,7 +33,6 @@ def resolve(
     Returns:
         List of (<OFFSET>, <LENGTH>)
     """
-
     resolved: list[tuple[Scalar, Fraction | None]] = [
         (
             (scalar, None)
@@ -45,12 +44,12 @@ def resolve(
 
     from_float = Fraction.from_float
     total_fraction = from_float(
-        sum(scalar.value for scalar, fraction in resolved if fraction is None)
+        sum([scalar.value for scalar, fraction in resolved if fraction is None])
     )
 
     if total_fraction:
         total_gutter = gutter * (len(dimensions) - 1)
-        consumed = sum(fraction for _, fraction in resolved if fraction is not None)
+        consumed = sum([fraction for _, fraction in resolved if fraction is not None])
         remaining = max(Fraction(0), Fraction(total - total_gutter) - consumed)
         fraction_unit = Fraction(remaining, total_fraction)
         resolved_fractions = [
@@ -83,7 +82,8 @@ def resolve_box_models(
     dimensions: list[Scalar | None],
     widgets: list[Widget],
     size: Size,
-    parent_size: Size,
+    viewport_size: Size,
+    margin: Size,
     dimension: Literal["width", "height"] = "width",
 ) -> list[BoxModel]:
     """Resolve box models for a list of dimensions
@@ -92,60 +92,63 @@ def resolve_box_models(
         dimensions: A list of Scalars or Nones for each dimension.
         widgets: Widgets in resolve.
         size: Size of container.
-        parent_size: Size of parent.
+        viewport_size: Viewport size.
+        margin: Total space occupied by margin
         dimensions: Which dimension to resolve.
 
     Returns:
         List of resolved box models.
     """
+    margin_width, margin_height = margin
 
-    fraction_width = Fraction(size.width)
-    fraction_height = Fraction(size.height)
+    fraction_width = Fraction(max(0, size.width - margin_width))
+    fraction_height = Fraction(max(0, size.height - margin_height))
+
+    margin_size = size - margin
+
     box_models: list[BoxModel | None] = [
         (
             None
             if dimension is not None and dimension.is_fraction
             else widget._get_box_model(
-                size, parent_size, fraction_width, fraction_height
+                size, viewport_size, fraction_width, fraction_height
             )
         )
         for (dimension, widget) in zip(dimensions, widgets)
     ]
 
     if dimension == "width":
-        total_remaining = sum(
-            box_model.width for box_model in box_models if box_model is not None
-        )
-        remaining_space = max(0, size.width - total_remaining)
+        total_remaining = sum([width for width, _, _ in filter(None, box_models)])
+        remaining_space = max(0, size.width - total_remaining - margin_width)
     else:
-        total_remaining = sum(
-            box_model.height for box_model in box_models if box_model is not None
-        )
-        remaining_space = max(0, size.height - total_remaining)
+        total_remaining = sum([height for _, height, _ in filter(None, box_models)])
+        remaining_space = max(0, size.height - total_remaining - margin_height)
 
     fraction_unit = Fraction(
         remaining_space,
         int(
             sum(
-                dimension.value
-                for dimension in dimensions
-                if dimension and dimension.is_fraction
+                [
+                    dimension.value
+                    for dimension in dimensions
+                    if dimension and dimension.is_fraction
+                ]
             )
         )
         or 1,
     )
     if dimension == "width":
         width_fraction = fraction_unit
-        height_fraction = Fraction(size.height)
+        height_fraction = Fraction(margin_size.height)
     else:
-        width_fraction = Fraction(size.width)
+        width_fraction = Fraction(margin_size.width)
         height_fraction = fraction_unit
 
     box_models = [
         box_model
         or widget._get_box_model(
             size,
-            parent_size,
+            viewport_size,
             width_fraction,
             height_fraction,
         )

@@ -34,11 +34,11 @@ class Timer:
     Args:
         event_target: The object which will receive the timer events.
         interval: The time between timer events, in seconds.
-        name: A name to assign the event (for debugging). Defaults to None.
-        callback: A optional callback to invoke when the event is handled. Defaults to None.
-        repeat: The number of times to repeat the timer, or None to repeat forever. Defaults to None.
-        skip: Enable skipping of scheduled events that couldn't be sent in time. Defaults to True.
-        pause: Start the timer paused. Defaults to False.
+        name: A name to assign the event (for debugging).
+        callback: A optional callback to invoke when the event is handled.
+        repeat: The number of times to repeat the timer, or None to repeat forever.
+        skip: Enable skipping of scheduled events that couldn't be sent in time.
+        pause: Start the timer paused.
     """
 
     _timer_count: int = 1

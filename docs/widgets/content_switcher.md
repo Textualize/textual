@@ -30,7 +30,7 @@ between the different views.
     1. A `Horizontal` to hold the buttons, each with a unique ID.
     2. This button will select the `DataTable` in the `ContentSwitcher`.
     3. This button will select the `Markdown` in the `ContentSwitcher`.
-    4. Note that the intial visible content is set by its ID, see below.
+    4. Note that the initial visible content is set by its ID, see below.
     5. When a button is pressed, its ID is used to switch to a different widget in the `ContentSwitcher`. Remember that IDs are unique within parent, so the buttons and the widgets in the `ContentSwitcher` can share IDs.
 
 === "content_switcher.css"
@@ -46,11 +46,14 @@ When the user presses the "Markdown" button the view is switched:
 
 ## Reactive Attributes
 
-| Name      | Type            | Default | Description                                                          |
-|-----------|-----------------|---------|----------------------------------------------------------------------|
+| Name      | Type            | Default | Description                                                             |
+| --------- | --------------- | ------- | ----------------------------------------------------------------------- |
 | `current` | `str` \| `None` | `None`  | The ID of the currently-visible child. `None` means nothing is visible. |
 
 
-## See Also
+---
 
-* [ContentSwitcher][textual.widgets.ContentSwitcher] code reference
+
+::: textual.widgets.ContentSwitcher
+    options:
+      heading_level: 2

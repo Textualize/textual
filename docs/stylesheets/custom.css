@@ -13,7 +13,7 @@ h3 .doc-heading code {
     monospace;
 }
 
-body[data-md-color-primary="black"] .excalidraw  svg  {  
+body[data-md-color-primary="black"] .excalidraw  svg  {
   filter: invert(100%) hue-rotate(180deg);
 }
 
@@ -41,4 +41,34 @@ body[data-md-color-primary="black"] .excalidraw svg rect {
   width: 100%;
   height: 100%;
   border: 0;
+}
+
+.doc-object code {
+  font-family: "Fira Code", "SFMono-Regular", Consolas, "Courier New", Courier,
+    monospace;
+}
+
+
+/* Indentation. */
+div.doc-contents:not(.first) {
+  padding-left: 25px;
+  border-left: .05rem solid var(--md-typeset-table-color);
+}
+
+/* Avoid breaking parameters name, etc. in table cells. */
+td code {
+  word-break: normal !important;
+}
+
+
+.doc-label code {
+  background: transparent;
+  opacity: 0.8;
+  float: right;
+}
+
+
+.doc-function p strong {
+  opacity: 0.85;
+
 }

@@ -1,3 +1,8 @@
+"""
+The base class for widgets.
+
+"""
+
 from __future__ import annotations
 
 from asyncio import Lock, wait
@@ -11,6 +16,7 @@ from typing import (
     ClassVar,
     Collection,
     Generator,
+    Generic,
     Iterable,
     NamedTuple,
     Sequence,
@@ -50,7 +56,7 @@ from ._styles_cache import StylesCache
 from .actions import SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding
-from .box_model import BoxModel, get_box_model
+from .box_model import BoxModel
 from .css.query import NoMatches, WrongType
 from .css.scalar import ScalarOffset
 from .dom import DOMNode, NoScreen
@@ -84,10 +90,12 @@ _JUSTIFY_MAP: dict[str, JustifyMethod] = {
 
 
 class AwaitMount:
-    """An awaitable returned by mount() and mount_all().
+    """An *optional* awaitable returned by [mount][textual.widget.Widget.mount] and [mount_all][textual.widget.Widget.mount_all].
 
     Example:
+        ```python
         await self.mount(Static("foo"))
+        ```
 
     """
 
@@ -164,11 +172,13 @@ class _Styled:
         return Measurement.get(console, options, self.renderable)
 
 
-class RenderCache(NamedTuple):
+class _RenderCache(NamedTuple):
     """Stores results of a previous render."""
 
     size: Size
+    """The size of the render."""
     lines: list[Strip]
+    """Contents of the render."""
 
 
 class WidgetError(Exception):
@@ -184,8 +194,39 @@ class PseudoClasses(NamedTuple):
     cache-key."""
 
     enabled: bool
+    """Is 'enabled' applied?"""
     focus: bool
+    """Is 'focus' applied?"""
     hover: bool
+    """Is 'hover' applied?"""
+
+
+class _BorderTitle:
+    """Descriptor to set border titles."""
+
+    def __set_name__(self, owner: Widget, name: str) -> None:
+        # The private name where we store the real data.
+        self._internal_name = f"_{name}"
+
+    def __set__(self, obj: Widget, title: str | Text | None) -> None:
+        """Setting a title accepts a str, Text, or None."""
+        if title is None:
+            setattr(obj, self._internal_name, None)
+        else:
+            # We store the title as Text
+            new_title = obj.render_str(title)
+            new_title.expand_tabs(4)
+            new_title = new_title.split()[0]
+            setattr(obj, self._internal_name, new_title)
+        obj.refresh()
+
+    def __get__(self, obj: Widget, objtype: type[Widget] | None = None) -> str | None:
+        """Getting a title will return None or a str as console markup."""
+        title: Text | None = getattr(obj, self._internal_name, None)
+        if title is None:
+            return None
+        # If we have a title, convert from Text to console markup
+        return title.markup
 
 
 @rich.repr.auto
@@ -233,21 +274,19 @@ class Widget(DOMNode):
     """Widget may receive focus."""
     can_focus_children: bool = True
     """Widget's children may receive focus."""
-    expand = Reactive(False)
-    """Rich renderable may expand."""
-    shrink = Reactive(True)
-    """Rich renderable may shrink."""
-    auto_links = Reactive(True)
+    expand: Reactive[bool] = Reactive(False)
+    """Rich renderable may expand beyond optimal size."""
+    shrink: Reactive[bool] = Reactive(True)
+    """Rich renderable may shrink below optimal size."""
+    auto_links: Reactive[bool] = Reactive(True)
     """Widget will highlight links automatically."""
-    disabled = Reactive(False)
-    """The disabled state of the widget. `True` if disabled, `False` if not."""
-    border_title = Reactive("")
-    """The one-line border title, which may contain markup to be parsed."""
-    border_subtitle = Reactive("")
-    """The one-line border subtitle, which may contain markup to be parsed."""
+    disabled: Reactive[bool] = Reactive(False)
+    """Is the widget disabled? Disabled widgets can not be interacted with, and are typically styled to look dimmer."""
 
     hover_style: Reactive[Style] = Reactive(Style, repaint=False)
+    """The current hover style (style under the mouse cursor). Read only."""
     highlight_link_id: Reactive[str] = Reactive("")
+    """The currently highlighted link id. Read only."""
 
     def __init__(
         self,
@@ -257,6 +296,15 @@ class Widget(DOMNode):
         classes: str | None = None,
         disabled: bool = False,
     ) -> None:
+        """Initialize a Widget.
+
+        Args:
+            *children: Child widgets.
+            name: The name of the widget.
+            id: The ID of the widget in the DOM.
+            classes: The CSS classes for the widget.
+            disabled: Whether the widget is disabled or not.
+        """
         self._size = Size(0, 0)
         self._container_size = Size(0, 0)
         self._layout_required = False
@@ -270,7 +318,10 @@ class Widget(DOMNode):
         self._horizontal_scrollbar: ScrollBar | None = None
         self._scrollbar_corner: ScrollBarCorner | None = None
 
-        self._render_cache = RenderCache(Size(0, 0), [])
+        self._border_title: Text | None = None
+        self._border_subtitle: Text | None = None
+
+        self._render_cache = _RenderCache(Size(0, 0), [])
         # Regions which need to be updated (in Widget)
         self._dirty_regions: set[Region] = set()
         # Regions which need to be transferred from cache to screen
@@ -289,6 +340,7 @@ class Widget(DOMNode):
         self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
         self._stabilize_scrollbar: tuple[Size, str, str] | None = None
         """Used to prevent scrollbar logic getting stuck in an infinite loop."""
+
         self._lock = Lock()
 
         super().__init__(
@@ -309,17 +361,34 @@ class Widget(DOMNode):
         self._add_children(*children)
         self.disabled = disabled
 
-    virtual_size = Reactive(Size(0, 0), layout=True)
-    auto_width = Reactive(True)
-    auto_height = Reactive(True)
-    has_focus = Reactive(False, repaint=False)
-    mouse_over = Reactive(False, repaint=False)
-    scroll_x = Reactive(0.0, repaint=False, layout=False)
-    scroll_y = Reactive(0.0, repaint=False, layout=False)
+    virtual_size: Reactive[Size] = Reactive(Size(0, 0), layout=True)
+    """The virtual (scrollable) [size][textual.geometry.Size] of the widget."""
+
+    has_focus: Reactive[bool] = Reactive(False, repaint=False)
+    """Does this widget have focus? Read only."""
+
+    mouse_over: Reactive[bool] = Reactive(False, repaint=False)
+    """Is the mouse over this widget? Read only."""
+
+    scroll_x: Reactive[float] = Reactive(0.0, repaint=False, layout=False)
+    """The scroll position on the X axis."""
+
+    scroll_y: Reactive[float] = Reactive(0.0, repaint=False, layout=False)
+    """The scroll position on the Y axis."""
+
     scroll_target_x = Reactive(0.0, repaint=False)
     scroll_target_y = Reactive(0.0, repaint=False)
-    show_vertical_scrollbar = Reactive(False, layout=True)
-    show_horizontal_scrollbar = Reactive(False, layout=True)
+
+    show_vertical_scrollbar: Reactive[bool] = Reactive(False, layout=True)
+    """Show a horizontal scrollbar?"""
+
+    show_horizontal_scrollbar: Reactive[bool] = Reactive(False, layout=True)
+    """SHow a vertical scrollbar?"""
+
+    border_title: str | Text | None = _BorderTitle()  # type: ignore
+    """A title to show in the top border (if there is one)."""
+    border_subtitle: str | Text | None = _BorderTitle()  # type: ignore
+    """A title to show in the bottom border (if there is one)."""
 
     @property
     def siblings(self) -> list[Widget]:
@@ -354,8 +423,6 @@ class Widget(DOMNode):
 
         May be overridden if you want different logic regarding allowing scrolling.
 
-        Returns:
-            True if the widget may scroll _vertically_.
         """
         return self.is_scrollable and self.show_vertical_scrollbar
 
@@ -365,8 +432,6 @@ class Widget(DOMNode):
 
         May be overridden if you want different logic regarding allowing scrolling.
 
-        Returns:
-            True if the widget may scroll _horizontally_.
         """
         return self.is_scrollable and self.show_horizontal_scrollbar
 
@@ -431,7 +496,6 @@ class Widget(DOMNode):
         Args:
             id: The ID of the child.
             expect_type: Require the object be of the supplied type, or None for any type.
-                Defaults to None.
 
         Returns:
             The first child of this node with the ID.
@@ -857,16 +921,110 @@ class Widget(DOMNode):
         Returns:
             The size and margin for this widget.
         """
-        box_model = get_box_model(
-            self.styles,
-            container,
-            viewport,
-            width_fraction,
-            height_fraction,
-            self.get_content_width,
-            self.get_content_height,
+        styles = self.styles
+        _content_width, _content_height = container
+        content_width = Fraction(_content_width)
+        content_height = Fraction(_content_height)
+        is_border_box = styles.box_sizing == "border-box"
+        gutter = styles.gutter
+        margin = styles.margin
+
+        is_auto_width = styles.width and styles.width.is_auto
+        is_auto_height = styles.height and styles.height.is_auto
+
+        # Container minus padding and border
+        content_container = container - gutter.totals
+        # The container including the content
+        sizing_container = content_container if is_border_box else container
+
+        if styles.width is None:
+            # No width specified, fill available space
+            content_width = Fraction(content_container.width - margin.width)
+        elif is_auto_width:
+            # When width is auto, we want enough space to always fit the content
+            content_width = Fraction(
+                self.get_content_width(
+                    content_container - styles.margin.totals, viewport
+                )
+            )
+            if styles.scrollbar_gutter == "stable" and styles.overflow_x == "auto":
+                content_width += styles.scrollbar_size_vertical
+            if (
+                content_width < content_container.width
+                and self._has_relative_children_width
+            ):
+                content_width = Fraction(content_container.width)
+        else:
+            # An explicit width
+            styles_width = styles.width
+            content_width = styles_width.resolve(
+                sizing_container - styles.margin.totals, viewport, width_fraction
+            )
+            if is_border_box and styles_width.excludes_border:
+                content_width -= gutter.width
+
+        if styles.min_width is not None:
+            # Restrict to minimum width, if set
+            min_width = styles.min_width.resolve(
+                content_container, viewport, width_fraction
+            )
+            content_width = max(content_width, min_width)
+
+        if styles.max_width is not None:
+            # Restrict to maximum width, if set
+            max_width = styles.max_width.resolve(
+                content_container, viewport, width_fraction
+            )
+            if is_border_box:
+                max_width -= gutter.width
+            content_width = min(content_width, max_width)
+
+        content_width = max(Fraction(0), content_width)
+
+        if styles.height is None:
+            # No height specified, fill the available space
+            content_height = Fraction(content_container.height - margin.height)
+        elif is_auto_height:
+            # Calculate dimensions based on content
+            content_height = Fraction(
+                self.get_content_height(content_container, viewport, int(content_width))
+            )
+            if styles.scrollbar_gutter == "stable" and styles.overflow_y == "auto":
+                content_height += styles.scrollbar_size_horizontal
+            if (
+                content_height < content_container.height
+                and self._has_relative_children_height
+            ):
+                content_height = Fraction(content_container.height)
+        else:
+            styles_height = styles.height
+            # Explicit height set
+            content_height = styles_height.resolve(
+                sizing_container - styles.margin.totals, viewport, height_fraction
+            )
+            if is_border_box and styles_height.excludes_border:
+                content_height -= gutter.height
+
+        if styles.min_height is not None:
+            # Restrict to minimum height, if set
+            min_height = styles.min_height.resolve(
+                content_container, viewport, height_fraction
+            )
+            content_height = max(content_height, min_height)
+
+        if styles.max_height is not None:
+            # Restrict maximum height, if set
+            max_height = styles.max_height.resolve(
+                content_container, viewport, height_fraction
+            )
+            content_height = min(content_height, max_height)
+
+        content_height = max(Fraction(0), content_height)
+
+        model = BoxModel(
+            content_width + gutter.width, content_height + gutter.height, margin
         )
-        return box_model
+        return model
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
         """Called by textual to get the width of the content area. May be overridden in a subclass.
@@ -929,7 +1087,7 @@ class Widget(DOMNode):
             options = self._console.options.update_width(width).update(highlight=False)
             segments = self._console.render(renderable, options)
             # Cheaper than counting the lines returned from render_lines!
-            height = sum(text.count("\n") for text, _, _ in segments)
+            height = sum([text.count("\n") for text, _, _ in segments])
             self._content_height_cache = (cache_key, height)
 
         return height
@@ -982,8 +1140,14 @@ class Widget(DOMNode):
 
     @property
     def scrollbar_corner(self) -> ScrollBarCorner:
-        """Return the ScrollBarCorner - the cells that appear between the
-        horizontal and vertical scrollbars (only when both are visible).
+        """The scrollbar corner.
+
+        Note:
+            This will *create* a scrollbar corner if one doesn't exist.
+
+        Returns:
+            ScrollBarCorner Widget.
+
         """
         from .scrollbar import ScrollBarCorner
 
@@ -995,7 +1159,10 @@ class Widget(DOMNode):
 
     @property
     def vertical_scrollbar(self) -> ScrollBar:
-        """Get a vertical scrollbar (create if necessary).
+        """The vertical scrollbar (create if necessary).
+
+        Note:
+            This will *create* a scrollbar if one doesn't exist.
 
         Returns:
             ScrollBar Widget.
@@ -1013,7 +1180,10 @@ class Widget(DOMNode):
 
     @property
     def horizontal_scrollbar(self) -> ScrollBar:
-        """Get a vertical scrollbar (create if necessary).
+        """The a horizontal scrollbar.
+
+        Note:
+            This will *create* a scrollbar if one doesn't exist.
 
         Returns:
             ScrollBar Widget.
@@ -1209,7 +1379,12 @@ class Widget(DOMNode):
 
     @property
     def content_size(self) -> Size:
-        """Get the size of the content area."""
+        """The size of the content area.
+
+        Returns:
+            Content area size.
+
+        """
         return self.region.shrink(self.styles.gutter).size
 
     @property
@@ -1244,8 +1419,13 @@ class Widget(DOMNode):
 
     @property
     def virtual_region(self) -> Region:
-        """The widget region relative to it's container. Which may not be visible,
-        depending on scroll offset.
+        """The widget region relative to it's container (which may not be visible,
+        depending on scroll offset).
+
+
+        Returns:
+            The virtual region.
+
         """
         try:
             return self.screen.find_widget(self).virtual_region
@@ -1285,7 +1465,7 @@ class Widget(DOMNode):
 
     @property
     def focusable(self) -> bool:
-        """Can this widget currently receive focus?"""
+        """Can this widget currently be focused?"""
         return self.can_focus and not self._self_or_ancestors_disabled
 
     @property
@@ -1317,11 +1497,7 @@ class Widget(DOMNode):
 
     @property
     def is_transparent(self) -> bool:
-        """Check if the background styles is not set.
-
-        Returns:
-            ``True`` if there is background color, otherwise ``False``.
-        """
+        """Does this widget have a transparent background?"""
         return self.is_scrollable and self.styles.background.is_transparent
 
     @property
@@ -1333,6 +1509,20 @@ class Widget(DOMNode):
 
         """
         return active_app.get().console
+
+    @property
+    def _has_relative_children_width(self) -> bool:
+        """Do any children have a relative width?"""
+        if not self.is_container:
+            return False
+        return any(widget.styles.is_relative_width for widget in self.children)
+
+    @property
+    def _has_relative_children_height(self) -> bool:
+        """Do any children have a relative height?"""
+        if not self.is_container:
+            return False
+        return any(widget.styles.is_relative_height for widget in self.children)
 
     def animate(
         self,
@@ -1352,11 +1542,11 @@ class Widget(DOMNode):
             attribute: Name of the attribute to animate.
             value: The value to animate to.
             final_value: The final value of the animation. Defaults to `value` if not set.
-            duration: The duration of the animate. Defaults to None.
-            speed: The speed of the animation. Defaults to None.
-            delay: A delay (in seconds) before the animation starts. Defaults to 0.0.
-            easing: An easing method. Defaults to "in_out_cubic".
-            on_complete: A callable to invoke when the animation is finished. Defaults to None.
+            duration: The duration of the animate.
+            speed: The speed of the animation.
+            delay: A delay (in seconds) before the animation starts.
+            easing: An easing method.
+            on_complete: A callable to invoke when the animation is finished.
 
         """
         if self._animate is None:
@@ -1385,20 +1575,12 @@ class Widget(DOMNode):
 
     @property
     def is_container(self) -> bool:
-        """Check if this widget is a container (contains other widgets).
-
-        Returns:
-            True if this widget is a container.
-        """
+        """Is this widget a container (contains other widgets)?"""
         return self.styles.layout is not None or bool(self._nodes)
 
     @property
     def is_scrollable(self) -> bool:
-        """Check if this Widget may be scrolled.
-
-        Returns:
-            True if this widget may be scrolled.
-        """
+        """Can this widget be scrolled?"""
         return self.styles.layout is not None or bool(self._nodes)
 
     @property
@@ -1427,7 +1609,12 @@ class Widget(DOMNode):
 
     @property
     def link_style(self) -> Style:
-        """Style of links."""
+        """Style of links.
+
+        Returns:
+            Rich style.
+
+        """
         styles = self.styles
         _, background = self.background_colors
         link_background = background + styles.link_background
@@ -1444,7 +1631,12 @@ class Widget(DOMNode):
 
     @property
     def link_hover_style(self) -> Style:
-        """Style of links with mouse hover."""
+        """Style of links underneath the mouse cursor.
+
+        Returns:
+            Rich Style.
+
+        """
         styles = self.styles
         _, background = self.background_colors
         hover_background = background + styles.link_hover_background
@@ -2206,7 +2398,7 @@ class Widget(DOMNode):
         parent = self.parent
         if isinstance(parent, Widget):
             self.call_after_refresh(
-                parent.scroll_to_widget,
+                self.screen.scroll_to_widget,
                 self,
                 animate=animate,
                 speed=speed,
@@ -2429,20 +2621,6 @@ class Widget(DOMNode):
         """Update the styles of the widget and its children when disabled is toggled."""
         self._update_styles()
 
-    def validate_border_title(self, title: str) -> str:
-        """Ensure we only use a single line for the border title."""
-        if not title:
-            return title
-        first, *_ = title.splitlines()
-        return first
-
-    def validate_border_subtitle(self, subtitle: str) -> str:
-        """Ensure we only use a single line for the border subtitle."""
-        if not subtitle:
-            return subtitle
-        first, *_ = subtitle.splitlines()
-        return first
-
     def _size_updated(
         self, size: Size, virtual_size: Size, container_size: Size, layout: bool = True
     ) -> bool:
@@ -2531,7 +2709,7 @@ class Widget(DOMNode):
             )
         )
         strips = [Strip(line, width) for line in lines]
-        self._render_cache = RenderCache(self.size, strips)
+        self._render_cache = _RenderCache(self.size, strips)
         self._dirty_regions.clear()
 
     def render_line(self, y: int) -> Strip:
@@ -2617,7 +2795,7 @@ class Widget(DOMNode):
         Returns:
             The `Widget` instance.
         """
-        if layout and not self._layout_required:
+        if layout:
             self._layout_required = True
             self._stabilize_scrollbar = None
             for ancestor in self.ancestors:
@@ -2754,7 +2932,7 @@ class Widget(DOMNode):
         When captured, mouse events will go to this widget even when the pointer is not directly over the widget.
 
         Args:
-            capture: True to capture or False to release. Defaults to True.
+            capture: True to capture or False to release.
         """
         self.app.capture_mouse(self if capture else None)
 
@@ -2903,6 +3081,9 @@ class Widget(DOMNode):
 
     def _on_scroll_to_region(self, message: messages.ScrollToRegion) -> None:
         self.scroll_to_region(message.region, animate=True)
+
+    def _on_unmount(self) -> None:
+        self.workers.cancel_node(self)
 
     def action_scroll_home(self) -> None:
         if not self._allow_scroll:

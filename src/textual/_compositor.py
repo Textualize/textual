@@ -14,7 +14,15 @@ without having to render the entire screen.
 from __future__ import annotations
 
 from operator import itemgetter
-from typing import TYPE_CHECKING, Callable, Iterable, NamedTuple, cast
+from typing import (
+    TYPE_CHECKING,
+    Callable,
+    Iterable,
+    Mapping,
+    NamedTuple,
+    Sequence,
+    cast,
+)
 
 import rich.repr
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
@@ -105,7 +113,7 @@ class ChopsUpdate:
 
     def __init__(
         self,
-        chops: list[dict[int, Strip | None]],
+        chops: Sequence[Mapping[int, Strip | None]],
         spans: list[tuple[int, int, int]],
         chop_ends: list[list[int]],
     ) -> None:
@@ -484,7 +492,6 @@ class Compositor:
                     # Arrange the layout
                     arrange_result = widget._arrange(child_region.size)
                     arranged_widgets = arrange_result.widgets
-                    spacing = arrange_result.spacing
                     widgets.update(arranged_widgets)
 
                     if visible_only:
@@ -505,26 +512,25 @@ class Compositor:
                     }
                     get_layer_index = layers_to_index.get
 
+                    scroll_spacing = arrange_result.scroll_spacing
+
                     # Add all the widgets
                     for sub_region, margin, sub_widget, z, fixed in reversed(
                         placements
                     ):
+                        layer_index = get_layer_index(sub_widget.layer, 0)
                         # Combine regions with children to calculate the "virtual size"
                         if fixed:
                             widget_region = sub_region + placement_offset
                         else:
                             total_region = total_region.union(
-                                sub_region.grow(spacing + margin)
+                                sub_region.grow(
+                                    margin if layer_index else margin + scroll_spacing
+                                )
                             )
                             widget_region = sub_region + placement_scroll_offset
 
-                        widget_order = order + (
-                            (
-                                get_layer_index(sub_widget.layer, 0),
-                                z,
-                                layer_order,
-                            ),
-                        )
+                        widget_order = order + ((layer_index, z, layer_order),)
 
                         add_widget(
                             sub_widget,
@@ -852,6 +858,7 @@ class Compositor:
         """
         screen_region = self.size.region
         update_regions = self._dirty_regions.copy()
+        self._dirty_regions.clear()
         if update_regions:
             # Create a crop region that surrounds all updates.
             crop = Region.from_union(update_regions).intersection(screen_region)
@@ -877,7 +884,7 @@ class Compositor:
         self,
         crop: Region,
         is_rendered_line: Callable[[int], bool],
-    ) -> list[dict[int, Strip | None]]:
+    ) -> Sequence[Mapping[int, Strip | None]]:
         """Render update 'chops'.
 
         Args:
@@ -908,10 +915,8 @@ class Compositor:
                 chops_line = chops[y]
 
                 first_cut, last_cut = render_region.column_span
-                cuts_line = cuts[y]
-                final_cuts = [
-                    cut for cut in cuts_line if (last_cut >= cut >= first_cut)
-                ]
+                final_cuts = [cut for cut in cuts[y] if (last_cut >= cut >= first_cut)]
+
                 if len(final_cuts) <= 2:
                     # Two cuts, which means the entire line
                     cut_strips = [strip]
@@ -921,8 +926,9 @@ class Compositor:
                     cut_strips = strip.divide(relative_cuts)
 
                 # Since we are painting front to back, the first segments for a cut "wins"
+                get_chops_line = chops_line.get
                 for cut, strip in zip(final_cuts, cut_strips):
-                    if chops_line[cut] is None:
+                    if get_chops_line(cut) is None:
                         chops_line[cut] = strip
 
         return chops

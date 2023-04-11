@@ -138,6 +138,15 @@ Display a markdown document.
 ```{.textual path="docs/examples/widgets/markdown.py"}
 ```
 
+## OptionList
+
+Display a vertical list of options (options may be Rich renderables).
+
+[OptionList reference](./widgets/option_list.md){ .md-button .md-button--primary }
+
+
+```{.textual path="docs/examples/widgets/option_list_options.py"}
+```
 
 ## Placeholder
 

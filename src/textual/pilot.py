@@ -1,3 +1,9 @@
+"""
+
+The pilot object is used by [App.run_test][textual.app.App.run_test] to programmatically operate an app.
+
+"""
+
 from __future__ import annotations
 
 import asyncio

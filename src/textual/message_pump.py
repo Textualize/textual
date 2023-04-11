@@ -1,14 +1,13 @@
 """
 
-A message pump is a class that processes messages.
-
-It is a base class for the App, Screen, and Widgets.
+A message pump is a base class for any object which processes messages, which includes Widget, Screen, and App.
 
 """
 from __future__ import annotations
 
 import asyncio
 import inspect
+import threading
 from asyncio import CancelledError, Queue, QueueEmpty, Task
 from contextlib import contextmanager
 from functools import partial
@@ -45,7 +44,7 @@ class MessagePumpClosed(Exception):
     pass
 
 
-class MessagePumpMeta(type):
+class _MessagePumpMeta(type):
     """Metaclass for message pump. This exists to populate a Message inner class of a Widget with the
     parent classes' name.
 
@@ -68,10 +67,11 @@ class MessagePumpMeta(type):
         return class_obj
 
 
-class MessagePump(metaclass=MessagePumpMeta):
+class MessagePump(metaclass=_MessagePumpMeta):
+    """Base class which supplies a message pump."""
+
     def __init__(self, parent: MessagePump | None = None) -> None:
         self._message_queue: Queue[Message | None] = Queue()
-        self._active_message: Message | None = None
         self._parent = parent
         self._running: bool = False
         self._closing: bool = False
@@ -84,6 +84,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         self._max_idle: float | None = None
         self._mounted_event = asyncio.Event()
         self._next_callbacks: list[CallbackType] = []
+        self._thread_id: int = threading.get_ident()
 
     @property
     def _prevent_message_types_stack(self) -> list[set[type[Message]]]:
@@ -140,6 +141,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     @property
     def has_parent(self) -> bool:
+        """Does this object have a parent?"""
         return self._parent is not None
 
     @property
@@ -175,7 +177,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     @property
     def is_running(self) -> bool:
-        """Is the message pump running (potentially processing messages)."""
+        """Is the message pump running (potentially processing messages)?"""
         return self._running
 
     @property
@@ -189,7 +191,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     @property
     def is_attached(self) -> bool:
-        """Is the node is attached to the app via the DOM."""
+        """Is the node is attached to the app via the DOM?"""
         from .app import App
 
         node = self
@@ -286,9 +288,9 @@ class MessagePump(metaclass=MessagePumpMeta):
 
         Args:
             delay: Time to wait before invoking callback.
-            callback: Callback to call after time has expired. Defaults to None.
-            name: Name of the timer (for debug). Defaults to None.
-            pause: Start timer paused. Defaults to False.
+            callback: Callback to call after time has expired.
+            name: Name of the timer (for debug).
+            pause: Start timer paused.
 
         Returns:
             A timer object.
@@ -318,10 +320,10 @@ class MessagePump(metaclass=MessagePumpMeta):
 
         Args:
             interval: Time between calls.
-            callback: Function to call. Defaults to None.
-            name: Name of the timer object. Defaults to None.
-            repeat: Number of times to repeat the call or 0 for continuous. Defaults to 0.
-            pause: Start the timer paused. Defaults to False.
+            callback: Function to call.
+            name: Name of the timer object.
+            repeat: Number of times to repeat the call or 0 for continuous.
+            pause: Start the timer paused.
 
         Returns:
             A timer object.
@@ -437,6 +439,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         try:
             await self._dispatch_message(events.Compose())
             await self._dispatch_message(events.Mount())
+            self.check_idle()
             self._post_mount()
         except Exception as error:
             self.app._handle_exception(error)
@@ -450,6 +453,7 @@ class MessagePump(metaclass=MessagePumpMeta):
     async def _process_messages_loop(self) -> None:
         """Process messages until the queue is closed."""
         _rich_traceback_guard = True
+        self._thread_id = threading.get_ident()
         while not self._closed:
             try:
                 message = await self._get_message()
@@ -473,40 +477,35 @@ class MessagePump(metaclass=MessagePumpMeta):
                 except MessagePumpClosed:
                     break
 
-            self._active_message = message
-
             try:
-                try:
-                    await self._dispatch_message(message)
-                except CancelledError:
-                    raise
-                except Exception as error:
-                    self._mounted_event.set()
-                    self.app._handle_exception(error)
-                    break
-                finally:
-                    self._message_queue.task_done()
-
-                    current_time = time()
-
-                    # Insert idle events
-                    if self._message_queue.empty() or (
-                        self._max_idle is not None
-                        and current_time - self._last_idle > self._max_idle
-                    ):
-                        self._last_idle = current_time
-                        if not self._closed:
-                            event = events.Idle()
-                            for _cls, method in self._get_dispatch_methods(
-                                "on_idle", event
-                            ):
-                                try:
-                                    await invoke(method, event)
-                                except Exception as error:
-                                    self.app._handle_exception(error)
-                                    break
+                await self._dispatch_message(message)
+            except CancelledError:
+                raise
+            except Exception as error:
+                self._mounted_event.set()
+                self.app._handle_exception(error)
+                break
             finally:
-                self._active_message = None
+                self._message_queue.task_done()
+
+                current_time = time()
+
+                # Insert idle events
+                if self._message_queue.empty() or (
+                    self._max_idle is not None
+                    and current_time - self._last_idle > self._max_idle
+                ):
+                    self._last_idle = current_time
+                    if not self._closed:
+                        event = events.Idle()
+                        for _cls, method in self._get_dispatch_methods(
+                            "on_idle", event
+                        ):
+                            try:
+                                await invoke(method, event)
+                            except Exception as error:
+                                self.app._handle_exception(error)
+                                break
 
     async def _flush_next_callbacks(self) -> None:
         """Invoke pending callbacks in next callbacks queue."""
@@ -597,7 +596,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     def check_idle(self) -> None:
         """Prompt the message pump to call idle if the queue is empty."""
-        if self._message_queue.empty():
+        if self._running and self._message_queue.empty():
             self.post_message(messages.Prompt())
 
     async def _post_message(self, message: Message) -> bool:
@@ -615,13 +614,13 @@ class MessagePump(metaclass=MessagePumpMeta):
         return self.post_message(message)
 
     def post_message(self, message: Message) -> bool:
-        """Posts a message on the queue.
+        """Posts a message on to this widget's queue.
 
         Args:
-            message: A message (or Event).
+            message: A message (including Event).
 
         Returns:
-            True if the messages was processed, False if it wasn't.
+            `True` if the messages was processed, `False` if it wasn't.
         """
         if self._closing or self._closed:
             return False
@@ -630,7 +629,12 @@ class MessagePump(metaclass=MessagePumpMeta):
         # Add a copy of the prevented message types to the message
         # This is so that prevented messages are honoured by the event's handler
         message._prevent.update(self._get_prevented_messages())
-        self._message_queue.put_nowait(message)
+        if self._thread_id != threading.get_ident() and self.app._loop is not None:
+            # If we're not calling from the same thread, make it threadsafe
+            loop = self.app._loop
+            loop.call_soon_threadsafe(self._message_queue.put_nowait, message)
+        else:
+            self._message_queue.put_nowait(message)
         return True
 
     async def on_callback(self, event: events.Callback) -> None:

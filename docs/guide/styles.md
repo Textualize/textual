@@ -151,7 +151,7 @@ If you run this you will see the height of the widget now grows to accommodate t
 ```{.textual path="docs/examples/guide/styles/dimensions02.py"}
 ```
 
-#### Units
+### Units
 
 Textual offers a few different *units* which allow you to specify dimensions relative to the screen or container. Relative units can better make use of available space if the user resizes the terminal.
 
@@ -184,6 +184,8 @@ With the width set to `"50%"` and the height set to `"80%"`, the widget will kee
 
     ```{.textual path="docs/examples/guide/styles/dimensions03.py" columns="120" lines="40"}
     ```
+
+#### FR units
 
 Percentage units can be problematic for some relative values. For instance, if we want to divide the screen into thirds, we would have to set a dimension to `33.3333333333%` which is awkward. Textual supports `fr` units which are often better than percentage-based units for these situations.
 

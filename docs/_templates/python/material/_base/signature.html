@@ -1,0 +1,48 @@
+{%- if config.show_signature -%}
+  {{ log.debug("Rendering signature") }}
+  {%- with -%}
+
+    {%- set ns = namespace(has_pos_only=False, render_pos_only_separator=True, render_kw_only_separator=True, equal="=") -%}
+
+    {%- if config.show_signature_annotations -%}
+      {%- set ns.equal = " = " -%}
+    {%- endif -%}
+
+    (
+      {%- for parameter in function.parameters -%}
+        {%- if 1 -%}
+
+          {%- if parameter.kind.value == "positional-only" -%}
+            {%- set ns.has_pos_only = True -%}
+          {%- else -%}
+            {%- if ns.has_pos_only and ns.render_pos_only_separator -%}
+              {%- set ns.render_pos_only_separator = False %}/, {% endif -%}
+          {%- if parameter.kind.value == "keyword-only" -%}
+              {%- if ns.render_kw_only_separator -%}
+                {%- set ns.render_kw_only_separator = False %}*, {% endif -%}
+            {%- endif -%}
+          {%- endif -%}
+
+          {%- if config.show_signature_annotations and parameter.annotation is not none -%}
+            {%- set annotation = ": " + parameter.annotation|safe -%}
+          {%- endif -%}
+
+          {%- if parameter.default is not none and parameter.kind.value != "variadic positional" and parameter.kind.value != "variadic keyword" -%}
+            {%- set default = ns.equal + parameter.default|safe -%}
+          {%- endif -%}
+
+          {%- if parameter.kind.value == "variadic positional" -%}
+            {%- set ns.render_kw_only_separator = False -%}
+          {%- endif -%}
+
+          {% if parameter.kind.value == "variadic positional" %}*{% elif parameter.kind.value == "variadic keyword" %}**{% endif -%}
+          {{ parameter.name }}{{ annotation }}{{ default }}
+          {%- if not loop.last %}, {% endif -%}
+
+        {%- endif -%}
+      {%- endfor -%}
+    )
+    {%- if config.show_signature_annotations and function.annotation %} -> {{ function.annotation|safe }}{%- endif -%}
+
+  {%- endwith -%}
+{%- endif -%}

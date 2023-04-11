@@ -17,7 +17,7 @@ class BitSwitch(Widget):
     }
     BitSwitch > Label {
         text-align: center;
-        width: 1fr;
+        width: 100%;
     }
     """
 

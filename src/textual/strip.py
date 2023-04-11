@@ -1,7 +1,13 @@
+"""
+A Strip contains the result of rendering a widget.
+See [line API](/guide/widgets#line-api) for how to use Strips.
+"""
+
+
 from __future__ import annotations
 
 from itertools import chain
-from typing import Iterable, Iterator
+from typing import Iterable, Iterator, Sequence
 
 import rich.repr
 from rich.cells import cell_len, set_cell_size
@@ -25,7 +31,7 @@ def get_line_length(segments: Iterable[Segment]) -> int:
         Length of line in cells.
     """
     _cell_len = cell_len
-    return sum(_cell_len(text) for text, _, control in segments if not control)
+    return sum([_cell_len(text) for text, _, control in segments if not control])
 
 
 class StripRenderable:
@@ -51,7 +57,7 @@ class Strip:
 
     Args:
         segments: An iterable of segments.
-        cell_length: The cell length if known, or None to calculate on demand. Defaults to None.
+        cell_length: The cell length if known, or None to calculate on demand.
     """
 
     __slots__ = [
@@ -117,7 +123,7 @@ class Strip:
 
         Args:
             lines: List of lines, where a line is a list of segments.
-            cell_length: Cell length of lines (must be same) or None if not known. Defaults to None.
+            cell_length: Cell length of lines (must be same) or None if not known.
 
         Returns:
             List of strips.
@@ -205,7 +211,7 @@ class Strip:
 
         Args:
             cell_length: New desired cell length.
-            style: Style when extending, or `None`. Defaults to `None`.
+            style: Style when extending, or `None`.
 
         Returns:
             A new strip with the supplied cell length.
@@ -348,7 +354,7 @@ class Strip:
         self._crop_cache[cache_key] = strip
         return strip
 
-    def divide(self, cuts: Iterable[int]) -> list[Strip]:
+    def divide(self, cuts: Iterable[int]) -> Sequence[Strip]:
         """Divide the strip in to multiple smaller strips by cutting at given (cell) indices.
 
         Args:

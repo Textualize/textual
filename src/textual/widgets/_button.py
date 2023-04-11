@@ -7,6 +7,7 @@ from rich.text import Text, TextType
 from typing_extensions import Literal, Self
 
 from .. import events
+from ..binding import Binding
 from ..css._error_tools import friendly_list
 from ..message import Message
 from ..reactive import reactive
@@ -145,6 +146,8 @@ class Button(Static, can_focus=True):
 
     """
 
+    BINDINGS = [Binding("enter", "press", "Press Button", show=False)]
+
     ACTIVE_EFFECT_DURATION = 0.3
     """When buttons are clicked they get the `-active` class for this duration (in seconds)"""
 
@@ -252,10 +255,9 @@ class Button(Static, can_focus=True):
             self.ACTIVE_EFFECT_DURATION, partial(self.remove_class, "-active")
         )
 
-    async def _on_key(self, event: events.Key) -> None:
-        if event.key == "enter" and not self.disabled:
-            self._start_active_affect()
-            self.post_message(Button.Pressed(self))
+    def action_press(self) -> None:
+        """Activate a press of the button."""
+        self.press()
 
     @classmethod
     def success(

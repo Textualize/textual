@@ -1,0 +1,16 @@
+Input {
+    dock: top;
+    width: 100%;
+}
+
+#weather-container {
+    width: 100%;
+    height: 1fr;
+    align: center middle;
+    overflow: auto;
+}
+
+#weather {
+    width: auto;
+    height: auto;
+}

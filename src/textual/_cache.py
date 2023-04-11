@@ -142,7 +142,7 @@ class LRUCache(Generic[CacheKey, CacheValue]):
 
         Args:
             key: Key
-            default: Default to return if key is not present. Defaults to None.
+            default: Default to return if key is not present.
 
         Returns:
             Either the value or a default.
@@ -256,7 +256,7 @@ class FIFOCache(Generic[CacheKey, CacheValue]):
 
         Args:
             key: Key
-            default: Default to return if key is not present. Defaults to None.
+            default: Default to return if key is not present.
 
         Returns:
             Either the value or a default.

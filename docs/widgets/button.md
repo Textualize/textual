@@ -39,12 +39,15 @@ Clicking any of the non-disabled buttons in the example app below will result in
 
 ## Messages
 
-### ::: textual.widgets.Button.Pressed
+- [Button.Pressed][textual.widgets.Button.Pressed]
 
 ## Additional Notes
 
 * The spacing between the text and the edges of a button are due to border, _not_ padding. To create a button with zero visible padding, use the `border: none;` declaration.
 
-## See Also
+---
 
-* [Button](../api/button.md) code reference
+
+::: textual.widgets.Button
+    options:
+      heading_level: 2

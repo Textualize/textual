@@ -384,6 +384,21 @@ class StylesBase(ABC):
             has_rule("height") and self.height.is_auto  # type: ignore
         )
 
+    @property
+    def is_relative_width(self) -> bool:
+        """Does the node have a relative width?"""
+        width = self.width
+        return width is not None and width.unit in (
+            Unit.FRACTION,
+            Unit.PERCENT,
+        )
+
+    @property
+    def is_relative_height(self) -> bool:
+        """Does the node have a relative width?"""
+        height = self.height
+        return height is not None and height.unit in (Unit.FRACTION, Unit.PERCENT)
+
     @abstractmethod
     def has_rule(self, rule: str) -> bool:
         """Check if a rule is set on this Styles object.
@@ -432,7 +447,7 @@ class StylesBase(ABC):
 
         Args:
             rule: Name of rule.
-            default: Default if rule does not exists. Defaults to None.
+            default: Default if rule does not exists.
 
         Returns:
             Rule value or default.
@@ -496,7 +511,7 @@ class StylesBase(ABC):
         Args:
             css: Textual CSS.
             path: Path or string indicating source of CSS.
-            node: Node to associate with the Styles. Defaults to None.
+            node: Node to associate with the Styles.
 
         Returns:
             A Styles instance containing result of parsing CSS.
@@ -1063,11 +1078,11 @@ class RenderStyles(StylesBase):
             attribute: Name of the attribute to animate.
             value: The value to animate to.
             final_value: The final value of the animation. Defaults to `value` if not set.
-            duration: The duration of the animate. Defaults to None.
-            speed: The speed of the animation. Defaults to None.
-            delay: A delay (in seconds) before the animation starts. Defaults to 0.0.
-            easing: An easing method. Defaults to "in_out_cubic".
-            on_complete: A callable to invoke when the animation is finished. Defaults to None.
+            duration: The duration of the animate.
+            speed: The speed of the animation.
+            delay: A delay (in seconds) before the animation starts.
+            easing: An easing method.
+            on_complete: A callable to invoke when the animation is finished.
 
         """
         if self._animate is None:

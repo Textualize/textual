@@ -1,3 +1,9 @@
+"""
+
+The `Screen` class is a special widget which represents the content in the terminal. See [Screens](/guide/screens/) for details.
+
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Iterable, Iterator
@@ -11,6 +17,7 @@ from ._callback import invoke
 from ._compositor import Compositor, MapGeometry
 from ._context import visible_screen_stack
 from ._types import CallbackType
+from .binding import Binding
 from .css.match import match
 from .css.parse import parse_selectors
 from .css.query import QueryType
@@ -30,7 +37,7 @@ UPDATE_PERIOD: Final[float] = 1 / 120
 
 @rich.repr.auto
 class Screen(Widget):
-    """A widget for the root of the app."""
+    """The base class for screens."""
 
     DEFAULT_CSS = """
     Screen {
@@ -41,9 +48,14 @@ class Screen(Widget):
     """
 
     focused: Reactive[Widget | None] = Reactive(None)
-    """The focused widget or `None` for no focus."""
+    """The focused [widget][textual.widget.Widget] or `None` for no focus."""
     stack_updates: Reactive[int] = Reactive(0, repaint=False)
     """An integer that updates when the screen is resumed."""
+
+    BINDINGS = [
+        Binding("tab", "focus_next", "Focus Next", show=False),
+        Binding("shift+tab", "focus_previous", "Focus Previous", show=False),
+    ]
 
     def __init__(
         self,
@@ -51,11 +63,19 @@ class Screen(Widget):
         id: str | None = None,
         classes: str | None = None,
     ) -> None:
+        """
+        Initialize the screen.
+
+        Args:
+            name: The name of the screen.
+            id: The ID of the screen in the DOM.
+            classes: The CSS classes for the screen.
+        """
         self._modal = False
         super().__init__(name=name, id=id, classes=classes)
         self._compositor = Compositor()
         self._dirty_widgets: set[Widget] = set()
-        self._update_timer: Timer | None = None
+        self.__update_timer: Timer | None = None
         self._callbacks: list[CallbackType] = []
 
     @property
@@ -78,13 +98,13 @@ class Screen(Widget):
             return False
 
     @property
-    def update_timer(self) -> Timer:
+    def _update_timer(self) -> Timer:
         """Timer used to perform updates."""
-        if self._update_timer is None:
-            self._update_timer = self.set_interval(
+        if self.__update_timer is None:
+            self.__update_timer = self.set_interval(
                 UPDATE_PERIOD, self._on_timer_update, name="screen_update", pause=True
             )
-        return self._update_timer
+        return self.__update_timer
 
     def render(self) -> RenderableType:
         background = self.styles.background
@@ -382,8 +402,7 @@ class Screen(Widget):
                         self._repaint_required = False
 
                     if self._dirty_widgets:
-                        self._on_timer_update()
-                        self.update_timer.resume()
+                        self._update_timer.resume()
 
         # The Screen is idle - a good opportunity to invoke the scheduled callbacks
         await self._invoke_and_clear_callbacks()
@@ -401,7 +420,7 @@ class Screen(Widget):
         if self._callbacks:
             self.post_message(events.InvokeCallbacks())
 
-        self.update_timer.pause()
+        self._update_timer.pause()
 
     async def _on_invoke_callbacks(self, event: events.InvokeCallbacks) -> None:
         """Handle PostScreenUpdate events, which are sent after the screen is updated"""
@@ -438,7 +457,7 @@ class Screen(Widget):
         if not size:
             return
         self._compositor.update_widgets(self._dirty_widgets)
-        self.update_timer.pause()
+        self._update_timer.pause()
         ResizeEvent = events.Resize
 
         try:
@@ -627,7 +646,12 @@ class Screen(Widget):
 
 @rich.repr.auto
 class ModalScreen(Screen):
-    """A screen with bindings that take precedence over the App's key bindings."""
+    """A screen with bindings that take precedence over the App's key bindings.
+
+    The default styling of a modal screen will dim the screen underneath.
+
+
+    """
 
     DEFAULT_CSS = """
     ModalScreen {

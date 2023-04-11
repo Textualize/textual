@@ -25,7 +25,7 @@ This will be a simple yet **fully featured** app &mdash; you could distribute th
 Here's what the finished app will look like:
 
 
-```{.textual path="docs/examples/tutorial/stopwatch.py" press="tab,enter,tab,enter,tab,enter,tab,enter"}
+```{.textual path="docs/examples/tutorial/stopwatch.py" title="stopwatch.py" press="tab,enter,tab,enter,tab,enter,tab,enter"}
 ```
 
 ### Get the code
@@ -90,12 +90,12 @@ The first step in building a Textual app is to import and extend the `App` class
 If you run this code, you should see something like the following:
 
 
-```{.textual path="docs/examples/tutorial/stopwatch01.py"}
+```{.textual path="docs/examples/tutorial/stopwatch01.py" title="stopwatch01.py"}
 ```
 
 Hit the ++d++ key to toggle between light and dark mode.
 
-```{.textual path="docs/examples/tutorial/stopwatch01.py" press="d" title="StopwatchApp + dark"}
+```{.textual path="docs/examples/tutorial/stopwatch01.py" press="d" title="stopwatch01.py"}
 ```
 
 Hit ++ctrl+c++ to exit the app and return to the command prompt.
@@ -174,7 +174,7 @@ The Button constructor takes a label to be displayed in the button (`"Start"`, `
 
 To add widgets to our application we first need to yield them from the app's `compose()` method:
 
-The new line in `Stopwatch.compose()` yields a single `Container` object which will create a scrolling list of stopwatches. When classes contain other widgets (like `Container`) they will typically accept their child widgets as positional arguments. We want to start the app with three stopwatches, so we construct three `Stopwatch` instances and pass them to the container's constructor.
+The new line in `StopwatchApp.compose()` yields a single `Container` object which will create a scrolling list of stopwatches. When classes contain other widgets (like `Container`) they will typically accept their child widgets as positional arguments. We want to start the app with three stopwatches, so we construct three `Stopwatch` instances and pass them to the container's constructor.
 
 
 ### The unstyled app
@@ -449,7 +449,7 @@ The `action_remove_stopwatch` function calls [query()][textual.dom.DOMNode.query
 
 If you run `stopwatch.py` now you can add a new stopwatch with the ++a++ key and remove a stopwatch with ++r++.
 
-```{.textual path="docs/examples/tutorial/stopwatch.py" press="d,a,a,a,a,a,a,a,tab,enter,tab"}
+```{.textual path="docs/examples/tutorial/stopwatch.py" title="stopwatch.py" press="d,a,a,a,a,a,a,a,tab,enter,tab"}
 ```
 
 ## What next?

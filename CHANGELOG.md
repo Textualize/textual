@@ -5,13 +5,82 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.19.1] - 2023-04-10
+
+### Fixed
+
+- Fix viewport units using wrong viewport size  https://github.com/Textualize/textual/pull/2247
+- Fixed layout not clearing arrangement cache https://github.com/Textualize/textual/pull/2249
+
+
+## [0.19.0] - 2023-04-07
+
+### Added
+
+- Added support for filtering a `DirectoryTree` https://github.com/Textualize/textual/pull/2215
+
+### Changed
+
+- Allowed border_title and border_subtitle to accept Text objects
+- Added additional line around titles
+- When a container is auto, relative dimensions in children stretch the container. https://github.com/Textualize/textual/pull/2221
+- DataTable page up / down now move cursor
+
+### Fixed
+
+- Fixed margin not being respected when width or height is "auto" https://github.com/Textualize/textual/issues/2220
+- Fixed issue which prevent scroll_visible from working https://github.com/Textualize/textual/issues/2181
+- Fixed missing tracebacks on Windows https://github.com/Textualize/textual/issues/2027
+
+## [0.18.0] - 2023-04-04
+
+### Added
+
+- Added Worker API https://github.com/Textualize/textual/pull/2182
+
+### Changed
+
+- Breaking change: Markdown.update is no longer a coroutine https://github.com/Textualize/textual/pull/2182
+
+### Fixed
+
+- `RadioSet` is now far less likely to report `pressed_button` as `None` https://github.com/Textualize/textual/issues/2203
+
+## [0.17.3] - 2023-04-02
+
+### [Fixed]
+
+- Fixed scrollable area not taking in to account dock https://github.com/Textualize/textual/issues/2188
+
+## [0.17.2] - 2023-04-02
+
+### [Fixed]
+
+- Fixed bindings persistance https://github.com/Textualize/textual/issues/1613
+- The `Markdown` widget now auto-increments ordered lists https://github.com/Textualize/textual/issues/2002
+- Fixed modal bindings https://github.com/Textualize/textual/issues/2194
+- Fix binding enter to active button https://github.com/Textualize/textual/issues/2194
+
+### [Changed]
+
+- tab and shift+tab are now defined on Screen.
+
+## [0.17.1] - 2023-03-30
+
+### Fixed
+
+- Fix cursor not hiding on Windows https://github.com/Textualize/textual/issues/2170
+- Fixed freeze when ctrl-clicking links https://github.com/Textualize/textual/issues/2167 https://github.com/Textualize/textual/issues/2073
+
+## [0.17.0] - 2023-03-29
 
 ### Fixed
 
 - Issue with parsing action strings whose arguments contained quoted closing parenthesis https://github.com/Textualize/textual/pull/2112
 - Issues with parsing action strings with tuple arguments https://github.com/Textualize/textual/pull/2112
+- Issue with watching for CSS file changes https://github.com/Textualize/textual/pull/2128
 - Fix for tabs not invalidating https://github.com/Textualize/textual/issues/2125
+- Fixed scrollbar layers issue https://github.com/Textualize/textual/issues/1358
 - Fix for interaction between pseudo-classes and widget-level render caches https://github.com/Textualize/textual/pull/2155
 
 ### Changed
@@ -31,6 +100,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Screens with alpha in their background color will now blend with the background. https://github.com/Textualize/textual/pull/2139
 - Added "thick" border style. https://github.com/Textualize/textual/pull/2139
 - message_pump.app will now set the active app if it is not already set.
+- DataTable now has max height set to 100vh
 
 ### Added
 
@@ -40,6 +110,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added Screen.ModalScreen which prevents App from handling bindings. https://github.com/Textualize/textual/pull/2139
 - Added TEXTUAL_LOG env var which should be a path that Textual will write verbose logs to (textual devtools is generally preferred) https://github.com/Textualize/textual/pull/2148
 - Added textual.logging.TextualHandler logging handler
+- Added Query.set_classes, DOMNode.set_classes, and `classes` setter for Widget https://github.com/Textualize/textual/issues/1081
+- Added `OptionList` https://github.com/Textualize/textual/pull/2154
 
 ## [0.16.0] - 2023-03-22
 
@@ -668,6 +740,13 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.19.1]: https://github.com/Textualize/textual/compare/v0.19.0...v0.19.1
+[0.19.0]: https://github.com/Textualize/textual/compare/v0.18.0...v0.19.0
+[0.18.0]: https://github.com/Textualize/textual/compare/v0.17.4...v0.18.0
+[0.17.3]: https://github.com/Textualize/textual/compare/v0.17.2...v0.17.3
+[0.17.2]: https://github.com/Textualize/textual/compare/v0.17.1...v0.17.2
+[0.17.1]: https://github.com/Textualize/textual/compare/v0.17.0...v0.17.1
+[0.17.0]: https://github.com/Textualize/textual/compare/v0.16.0...v0.17.0
 [0.16.0]: https://github.com/Textualize/textual/compare/v0.15.1...v0.16.0
 [0.15.1]: https://github.com/Textualize/textual/compare/v0.15.0...v0.15.1
 [0.15.0]: https://github.com/Textualize/textual/compare/v0.14.0...v0.15.0

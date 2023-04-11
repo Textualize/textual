@@ -21,8 +21,8 @@ class DockArrangeResult:
     """A `WidgetPlacement` for every widget to describe it's location on screen."""
     widgets: set[Widget]
     """A set of widgets in the arrangement."""
-    spacing: Spacing
-    """Shared spacing around the widgets."""
+    scroll_spacing: Spacing
+    """Spacing to reduce scrollable area."""
 
     _spatial_map: SpatialMap[WidgetPlacement] | None = None
     """A Spatial map to query widget placements."""
@@ -113,7 +113,7 @@ class Layout(ABC):
         else:
             # Use a size of 0, 0 to ignore relative sizes, since those are flexible anyway
             arrangement = widget._arrange(Size(0, 0))
-            return arrangement.total_region.right + arrangement.spacing.right
+            return arrangement.total_region.right
         return width
 
     def get_content_height(
@@ -135,5 +135,6 @@ class Layout(ABC):
         else:
             # Use a height of zero to ignore relative heights
             arrangement = widget._arrange(Size(width, 0))
-            height = arrangement.total_region.bottom + arrangement.spacing.bottom
+            height = arrangement.total_region.bottom
+
         return height

@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import ast
 import re
+from typing import Any
 
-from typing_extensions import Any, TypeAlias
+from typing_extensions import TypeAlias
 
 ActionParseResult: TypeAlias = "tuple[str, tuple[Any, ...]]"
 """An action is its name and the arbitrary tuple of its arguments."""

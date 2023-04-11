@@ -60,12 +60,12 @@ class Footer(Widget):
         self._key_text: Text | None = None
         self.auto_links = False
 
-    async def watch_highlight_key(self, value) -> None:
+    async def watch_highlight_key(self, value: str | None) -> None:
         """If highlight key changes we need to regenerate the text."""
         self._key_text = None
         self.refresh()
 
-    def on_mount(self) -> None:
+    def _on_mount(self) -> None:
         self.watch(self.screen, "focused", self._bindings_changed)
         self.watch(self.screen, "stack_updates", self._bindings_changed)
 
@@ -73,11 +73,11 @@ class Footer(Widget):
         self._key_text = None
         self.refresh()
 
-    async def on_mouse_move(self, event: events.MouseMove) -> None:
+    def _on_mouse_move(self, event: events.MouseMove) -> None:
         """Store any key we are moving over."""
         self.highlight_key = event.style.meta.get("key")
 
-    async def on_leave(self, event: events.Leave) -> None:
+    def _on_leave(self, event: events.Leave) -> None:
         """Clear any highlight when the mouse leaves the widget"""
         if self.screen.is_current:
             self.highlight_key = None
@@ -85,7 +85,7 @@ class Footer(Widget):
     def __rich_repr__(self) -> rich.repr.Result:
         yield from super().__rich_repr__()
 
-    def make_key_text(self) -> Text:
+    def _make_key_text(self) -> Text:
         """Create text containing all the keys."""
         base_style = self.rich_style
         text = Text(
@@ -140,5 +140,5 @@ class Footer(Widget):
 
     def render(self) -> RenderableType:
         if self._key_text is None:
-            self._key_text = self.make_key_text()
+            self._key_text = self._make_key_text()
         return self._key_text

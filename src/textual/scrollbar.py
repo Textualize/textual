@@ -298,17 +298,21 @@ class ScrollBar(Widget):
         self.mouse_over = False
 
     def action_scroll_down(self) -> None:
+        """Scroll vertical scrollbars down, horizontal scrollbars right."""
         if not self.grabbed:
             self.post_message(ScrollDown() if self.vertical else ScrollRight())
 
     def action_scroll_up(self) -> None:
+        """Scroll vertical scrollbars up, horizontal scrollbars left."""
         if not self.grabbed:
             self.post_message(ScrollUp() if self.vertical else ScrollLeft())
 
     def action_grab(self) -> None:
+        """Begin capturing the mouse cursor."""
         self.capture_mouse()
 
     def action_released(self) -> None:
+        """Finish capturing the mouse cursor"""
         self.capture_mouse(False)
 
     async def _on_mouse_up(self, event: events.MouseUp) -> None:

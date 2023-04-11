@@ -1,0 +1,96 @@
+{{ log.debug("Rendering parameters section") }}
+{% if config.docstring_section_style == "table" %}
+  {% block table_style %}
+  <h5>{{ section.title or "Parameters" }}</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for parameter in section.value %}
+        <tr>
+          <td><code>{{ parameter.name }}</code></td>
+          <td>
+            {% if parameter.annotation %}
+              {% with expression = parameter.annotation %}
+                <code>{% include "expression.html" with context %}</code>
+              {% endwith %}
+            {% endif %}
+          </td>
+          <td>{{ parameter.description|convert_markdown(heading_level, html_id) }}</td>
+          <td>
+            {% if parameter.default %}
+              {% with expression = parameter.default %}
+                <code>{% include "expression.html" with context %}</code>
+              {% endwith %}
+            {% else %}
+              <em>required</em>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endblock table_style %}
+{% elif config.docstring_section_style == "list" %}
+  {% block list_style %}
+  <p>{{ section.title or "Parameters:" }}</p>
+  <ul>
+    {% for parameter in section.value %}
+      <li class="field-body">
+        <b>{{ parameter.name }}</b>
+        {% if parameter.annotation %}
+          {% with expression = parameter.annotation %}
+            (<code>{% include "expression.html" with context %}</code>)
+          {% endwith %}
+        {% endif %}
+        – {{ parameter.description|convert_markdown(heading_level, html_id) }}
+      </li>
+    {% endfor %}
+  </ul>
+  {% endblock list_style %}
+{% elif config.docstring_section_style == "spacy" %}
+  {% block spacy_style %}
+  <table>
+    <thead>
+      <tr>
+        <th><b>{{ (section.title or "PARAMETER").rstrip(":").upper() }}</b></th>
+        <th><b>DESCRIPTION</b></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for parameter in section.value %}
+        <tr>
+          <td><code>{{ parameter.name }}</code></td>
+          <td class="doc-param-details">
+            {{ parameter.description|convert_markdown(heading_level, html_id) }}
+            <p>
+              {% if parameter.annotation %}
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                  {% with expression = parameter.annotation %}
+                    <code>{% include "expression.html" with context %}</code>
+                  {% endwith %}
+                </span>
+              {% endif %}
+              {% if parameter.default %}
+                <span class="doc-param-default">
+                  <b>DEFAULT:</b>
+                  {% with expression = parameter.default %}
+                    <code>{% include "expression.html" with context %}</code>
+                  {% endwith %}
+                </span>
+              {% endif %}
+            </p>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endblock spacy_style %}
+{% endif %}

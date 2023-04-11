@@ -1,3 +1,12 @@
+"""
+Functions for *walking* the DOM.
+
+!!! note
+
+    For most purposes you would be better off using [query][textual.dom.DOMNode.query], which uses these functions internally.
+
+"""
+
 from __future__ import annotations
 
 from collections import deque
@@ -44,8 +53,7 @@ def walk_depth_first(
     Args:
         root: The root note (starting point).
         filter_type: Optional DOMNode subclass to filter by, or ``None`` for no filter.
-            Defaults to None.
-        with_root: Include the root in the walk. Defaults to True.
+        with_root: Include the root in the walk.
 
     Returns:
         An iterable of DOMNodes, or the type specified in ``filter_type``.
@@ -106,8 +114,7 @@ def walk_breadth_first(
     Args:
         root: The root note (starting point).
         filter_type: Optional DOMNode subclass to filter by, or ``None`` for no filter.
-            Defaults to None.
-        with_root: Include the root in the walk. Defaults to True.
+        with_root: Include the root in the walk.
 
     Returns:
         An iterable of DOMNodes, or the type specified in ``filter_type``.

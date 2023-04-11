@@ -72,13 +72,24 @@ textual run --dev my_app.py
 Anything you `print` from your application will be displayed in the console window. Textual will also write log messages to this window which may be helpful when debugging your application.
 
 
-### Verbosity
+### Increasing verbosity
 
 Textual writes log messages to inform you about certain events, such as when the user presses a key or clicks on the terminal. To avoid swamping you with too much information, some events are marked as "verbose" and will be excluded from the logs. If you want to see these log messages, you can add the `-v` switch.
 
 ```bash
 textual console -v
 ```
+
+### Decreasing verbosity
+
+Log messages are classififed in to groups, and the `-x` flag can be used to **exclude** all message from a group. The groups are: `EVENT`, `DEBUG`, `INFO`, `WARNING`, `ERROR`, `PRINT`, `SYSTEM`, and `LOGGING`. The group a message belongs to is printed after its timestamp.
+
+Multiple groups may be excluded, for example to exclude everything except warning, errors, and `print` statements:
+
+```bash
+textual console -x SYSTEM -x EVENT -x DEBUG -x INFO
+```
+
 
 ## Textual log
 

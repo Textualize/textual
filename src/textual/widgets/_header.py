@@ -126,8 +126,8 @@ class Header(Widget):
 
     DEFAULT_CLASSES = ""
 
-    tall = Reactive(False)
-    """Track if the `Header` is in a tall state or not."""
+    tall: Reactive[bool] = Reactive(False)
+    """Set to `True` for a taller header or `False` for a single line header."""
 
     def __init__(
         self,

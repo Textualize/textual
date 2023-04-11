@@ -1,3 +1,9 @@
+"""
+Container widgets for quick styling.
+
+"""
+
+
 from .widget import Widget
 
 

@@ -38,7 +38,7 @@ Additionally there are new [update_cell][textual.widgets.DataTable.update_cell] 
 
 ## Tree control
 
-The [Tree](../../api/tree.md) widget has grown a few methods to programmatically expand, collapse and toggle tree nodes.
+The [Tree](../../widgets/tree.md) widget has grown a few methods to programmatically expand, collapse and toggle tree nodes.
 
 ## Breaking changes
 

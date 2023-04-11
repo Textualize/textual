@@ -68,7 +68,7 @@ def _join_tokens(tokens: Iterable[Token], joiner: str = "") -> str:
 
     Args:
         tokens: Tokens to join
-        joiner: String to join on, defaults to ""
+        joiner: String to join on.
 
     Returns:
         The tokens, joined together to form a string.

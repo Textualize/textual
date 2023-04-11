@@ -1,7 +1,16 @@
+"""
+
+A binding maps a key press on to an action.
+
+See [bindings](/guide/input#bindings) in the guide for details.
+
+"""
+
+
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Iterable, MutableMapping
+from typing import TYPE_CHECKING, Iterable
 
 import rich.repr
 
@@ -44,7 +53,7 @@ class Binding:
 
 
 @rich.repr.auto
-class Bindings:
+class _Bindings:
     """Manage a set of bindings."""
 
     def __init__(
@@ -92,17 +101,27 @@ class Bindings:
                         priority=binding.priority,
                     )
 
-        self.keys: MutableMapping[str, Binding] = (
+        self.keys: dict[str, Binding] = (
             {binding.key: binding for binding in make_bindings(bindings)}
             if bindings
             else {}
         )
 
+    def copy(self) -> _Bindings:
+        """Return a copy of this instance.
+
+        Return:
+            New bindings object.
+        """
+        copy = _Bindings()
+        copy.keys = self.keys.copy()
+        return copy
+
     def __rich_repr__(self) -> rich.repr.Result:
         yield self.keys
 
     @classmethod
-    def merge(cls, bindings: Iterable[Bindings]) -> Bindings:
+    def merge(cls, bindings: Iterable[_Bindings]) -> _Bindings:
         """Merge a bindings. Subsequent bound keys override initial keys.
 
         Args:
@@ -114,7 +133,7 @@ class Bindings:
         keys: dict[str, Binding] = {}
         for _bindings in bindings:
             keys.update(_bindings.keys)
-        return Bindings(keys.values())
+        return _Bindings(keys.values())
 
     @property
     def shown_keys(self) -> list[Binding]:

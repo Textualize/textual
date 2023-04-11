@@ -9,11 +9,12 @@ from rich.console import RenderableType
 from . import constants
 from ._context import active_app
 from ._log import LogGroup, LogVerbosity
+from ._work_decorator import work as work
 
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
 
-__all__ = ["log", "panic", "__version__"]  # type: ignore
+__all__ = ["log", "panic", "__version__", "work"]  # type: ignore
 
 
 LogCallable: TypeAlias = "Callable"
@@ -146,6 +147,11 @@ class Logger:
     def logging(self) -> Logger:
         """Logs from stdlib logging module."""
         return Logger(self._log, LogGroup.LOGGING)
+
+    @property
+    def worker(self) -> Logger:
+        """Logs worker information."""
+        return Logger(self._log, LogGroup.WORKER)
 
 
 log = Logger(None)

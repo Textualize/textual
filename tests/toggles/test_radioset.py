@@ -39,8 +39,8 @@ async def test_radio_sets_initial_state():
 async def test_radio_sets_toggle():
     """Test the status of the radio sets after they've been toggled."""
     async with RadioSetApp().run_test() as pilot:
-        pilot.app.query_one("#from_buttons", RadioSet)._buttons[0].toggle()
-        pilot.app.query_one("#from_strings", RadioSet)._buttons[2].toggle()
+        pilot.app.query_one("#from_buttons", RadioSet)._nodes[0].toggle()
+        pilot.app.query_one("#from_strings", RadioSet)._nodes[2].toggle()
         await pilot.pause()
         assert pilot.app.query_one("#from_buttons", RadioSet).pressed_index == 0
         assert pilot.app.query_one("#from_buttons", RadioSet).pressed_button is not None

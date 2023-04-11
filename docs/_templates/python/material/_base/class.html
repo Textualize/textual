@@ -1,0 +1,114 @@
+{{ log.debug("Rendering " + class.path) }}
+
+<div class="doc doc-object doc-class">
+{% with html_id = class.path %}
+
+  {% if root %}
+    {% set show_full_path = config.show_root_full_path %}
+    {% set root_members = True %}
+  {% elif root_members %}
+    {% set show_full_path = config.show_root_members_full_path or config.show_object_full_path %}
+    {% set root_members = False %}
+  {% else %}
+    {% set show_full_path = config.show_object_full_path %}
+  {% endif %}
+
+
+
+  {% if 1 %}
+
+    {% filter heading(heading_level,
+        role="class",
+        id=html_id,
+        class="doc doc-heading",
+        toc_label=class.name) %}
+
+      {% if config.separate_signature %}
+        <span class="doc doc-object-name doc-class-name">{% if show_full_path %}{{ class.path }}{% else %}{{ class.name }}{% endif %}</span>
+      {% elif config.merge_init_into_class and "__init__" in class.members -%}
+        {%- with function = class.members["__init__"] -%}
+          {%- filter highlight(language="python", inline=True) -%}
+            {% if show_full_path %}{{ class.path }}{% else %}{{ class.name }}{% endif %}
+            {%- include "signature.html" with context -%}
+          {%- endfilter -%}
+        {%- endwith -%}
+      {% else %}
+        <code>{% if show_full_path %}{{ class.path }}{% else %}{{ class.name }}{% endif %}</code>
+      {% endif %}
+
+      {% with labels = ['class'] %}
+        {% include "labels.html" with context %}
+      {% endwith %}
+
+    {% endfilter %}
+
+    {% if config.separate_signature and config.merge_init_into_class %}
+      {% if "__init__" in class.members %}
+        {% with function = class.members["__init__"] %}
+          {% filter highlight(language="python", inline=False) -%}
+            def {% filter format_signature(config.line_length) %}
+__init__{% include "signature.html" with context %}
+            {% endfilter %}:
+          {% endfilter %}
+        {% endwith %}
+      {% endif %}
+    {% endif %}
+
+  {% else %}
+    {% if config.show_root_toc_entry %}
+      {% filter heading(heading_level,
+          role="class",
+          id=html_id,
+          toc_label=class.path if config.show_root_full_path else class.name,
+          hidden=True) %}
+      {% endfilter %}
+    {% endif %}
+    {% set heading_level = heading_level - 1 %}
+  {% endif %}
+
+  <div class="doc doc-contents {% if root %}first{% endif %}">
+    {% if config.show_bases and class.bases %}
+      <p class="doc doc-class-bases">
+        Bases: {% for expression in class.bases -%}
+          <code>{% include "expression.html" with context %}</code>{% if not loop.last %}, {% endif %}
+        {% endfor -%}
+      </p>
+    {% endif %}
+
+    {% with docstring_sections = class.docstring.parsed %}
+      {% include "docstring.html" with context %}
+    {% endwith %}
+
+    {% if config.merge_init_into_class %}
+      {% if "__init__" in class.members and class.members["__init__"].has_docstring %}
+        {% with docstring_sections = class.members["__init__"].docstring.parsed %}
+          {% include "docstring.html" with context %}
+        {% endwith %}
+      {% endif %}
+    {% endif %}
+
+    {% if config.show_source %}
+      {% if config.merge_init_into_class %}
+        {% if "__init__" in class.members and class.members["__init__"].source %}
+          <details class="quote">
+            <summary>Source code in <code>{{ class.relative_filepath }}</code></summary>
+            {{ class.members["__init__"].source|highlight(language="python", linestart=class.members["__init__"].lineno, linenums=True) }}
+          </details>
+        {% endif %}
+      {% elif class.source %}
+        <details class="quote">
+          <summary>Source code in <code>{{ class.relative_filepath }}</code></summary>
+          {{ class.source|highlight(language="python", linestart=class.lineno, linenums=True) }}
+        </details>
+      {% endif %}
+    {% endif %}
+
+    {% with obj = class %}
+      {% set root = False %}
+      {% set heading_level = heading_level + 1 %}
+      {% include "children.html" with context %}
+    {% endwith %}
+  </div>
+
+{% endwith %}
+</div>

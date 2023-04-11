@@ -30,6 +30,9 @@ The example below shows an app with a `Header`.
 
 This widget sends no messages.
 
-## See Also
+---
 
-* [Header](../api/header.md) code reference
+
+::: textual.widgets.Header
+    options:
+      heading_level: 2

@@ -1,11 +1,15 @@
 from __future__ import annotations
 
 from fractions import Fraction
+from typing import TYPE_CHECKING
 
 from .._layout import ArrangeResult, Layout, WidgetPlacement
 from .._resolve import resolve_box_models
 from ..geometry import Region, Size
-from ..widget import Widget
+
+if TYPE_CHECKING:
+    from ..geometry import Spacing
+    from ..widget import Widget
 
 
 class HorizontalLayout(Layout):
@@ -21,13 +25,34 @@ class HorizontalLayout(Layout):
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
         x = max_height = Fraction(0)
-        parent_size = parent.outer_size
+
+        child_styles = [child.styles for child in children]
+        box_margins: list[Spacing] = [styles.margin for styles in child_styles]
+        if box_margins:
+            resolve_margin = Size(
+                sum(
+                    [
+                        max(margin1[1], margin2[3])
+                        for margin1, margin2 in zip(box_margins, box_margins[1:])
+                    ]
+                )
+                + (box_margins[0].left + box_margins[-1].right),
+                max(
+                    [
+                        margin_top + margin_bottom
+                        for margin_top, _, margin_bottom, _ in box_margins
+                    ]
+                ),
+            )
+        else:
+            resolve_margin = Size(0, 0)
 
         box_models = resolve_box_models(
-            [child.styles.width for child in children],
+            [styles.width for styles in child_styles],
             children,
             size,
-            parent_size,
+            parent.app.size,
+            resolve_margin,
             dimension="width",
         )
 

@@ -3,7 +3,7 @@ from string import ascii_lowercase
 import pytest
 
 from textual.app import App
-from textual.binding import Binding, BindingError, Bindings, InvalidBinding, NoBinding
+from textual.binding import Binding, BindingError, InvalidBinding, NoBinding, _Bindings
 
 BINDING1 = Binding("a,b", action="action1", description="description1")
 BINDING2 = Binding("c", action="action2", description="description2")
@@ -12,12 +12,12 @@ BINDING3 = Binding(" d   , e ", action="action3", description="description3")
 
 @pytest.fixture
 def bindings():
-    yield Bindings([BINDING1, BINDING2])
+    yield _Bindings([BINDING1, BINDING2])
 
 
 @pytest.fixture
 def more_bindings():
-    yield Bindings([BINDING1, BINDING2, BINDING3])
+    yield _Bindings([BINDING1, BINDING2, BINDING3])
 
 
 def test_bindings_get_key(bindings):
@@ -34,17 +34,17 @@ def test_bindings_get_key_spaced_list(more_bindings):
 
 
 def test_bindings_merge_simple(bindings):
-    left = Bindings([BINDING1])
-    right = Bindings([BINDING2])
-    assert Bindings.merge([left, right]).keys == bindings.keys
+    left = _Bindings([BINDING1])
+    right = _Bindings([BINDING2])
+    assert _Bindings.merge([left, right]).keys == bindings.keys
 
 
 def test_bindings_merge_overlap():
-    left = Bindings([BINDING1])
+    left = _Bindings([BINDING1])
     another_binding = Binding(
         "a", action="another_action", description="another_description"
     )
-    assert Bindings.merge([left, Bindings([another_binding])]).keys == {
+    assert _Bindings.merge([left, _Bindings([another_binding])]).keys == {
         "a": another_binding,
         "b": Binding("b", action="action1", description="description1"),
     }
@@ -52,20 +52,20 @@ def test_bindings_merge_overlap():
 
 def test_bad_binding_tuple():
     with pytest.raises(BindingError):
-        _ = Bindings((("a", "action"),))
+        _ = _Bindings((("a", "action"),))
     with pytest.raises(BindingError):
-        _ = Bindings((("a", "action", "description", "too much"),))
+        _ = _Bindings((("a", "action", "description", "too much"),))
 
 
 def test_binding_from_tuples():
     assert (
-        Bindings(((BINDING2.key, BINDING2.action, BINDING2.description),)).get_key("c")
+        _Bindings(((BINDING2.key, BINDING2.action, BINDING2.description),)).get_key("c")
         == BINDING2
     )
 
 
 def test_shown():
-    bindings = Bindings(
+    bindings = _Bindings(
         [
             Binding(
                 key,

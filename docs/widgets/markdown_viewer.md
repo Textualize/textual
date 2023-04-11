@@ -35,5 +35,13 @@ The following example displays Markdown from a string and a Table of Contents.
 
 ## See Also
 
-* [MarkdownViewer][textual.widgets.MarkdownViewer] code reference
 * [Markdown][textual.widgets.Markdown] code reference
+
+
+
+---
+
+
+::: textual.widgets.MarkdownViewer
+    options:
+      heading_level: 2

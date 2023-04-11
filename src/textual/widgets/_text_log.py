@@ -155,7 +155,7 @@ class TextLog(ScrollView, can_focus=True):
 
         self.max_width = max(
             self.max_width,
-            max(sum(segment.cell_length for segment in _line) for _line in lines),
+            max(sum([segment.cell_length for segment in _line]) for _line in lines),
         )
         strips = Strip.from_lines(lines)
         for strip in strips:

@@ -13,10 +13,6 @@ def test_rich_color():
     )
 
 
-def test_rich_color_rich_output():
-    assert isinstance(Color(10, 20, 30).__rich__(), Text)
-
-
 def test_normalized():
     assert Color(255, 128, 64).normalized == pytest.approx((1.0, 128 / 255, 64 / 255))
 

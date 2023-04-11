@@ -39,6 +39,9 @@ The example below shows an application showing a `TextLog` with different kinds 
 This widget sends no messages.
 
 
-## See Also
+---
 
-* [TextLog](../api/text_log.md) code reference
+
+::: textual.widgets.TextLog
+    options:
+      heading_level: 2

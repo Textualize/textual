@@ -78,6 +78,8 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         disabled: bool = False,
     ) -> None:
         """
+        Initialize a ListView.
+
         Args:
             *children: The ListItems to display in the list.
             initial_index: The index that should be highlighted when the list is first mounted.

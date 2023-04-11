@@ -56,9 +56,15 @@ The radio button widget provides the following component classes:
 
 ## Messages
 
-### ::: textual.widgets.RadioButton.Changed
+- [RadioButton.Changed][textual.widgets.RadioButton.Changed]
 
 ## See Also
 
-- [RadioButton](../api/radiobutton.md) code reference
 - [RadioSet](./radioset.md)
+
+---
+
+
+::: textual.widgets.RadioButton
+    options:
+      heading_level: 2

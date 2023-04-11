@@ -1,0 +1,73 @@
+{{ log.debug("Rendering " + function.path) }}
+
+<div class="doc doc-object doc-function">
+{% with html_id = function.path %}
+
+  {% if root %}
+    {% set show_full_path = config.show_root_full_path %}
+    {% set root_members = True %}
+  {% elif root_members %}
+    {% set show_full_path = config.show_root_members_full_path or config.show_object_full_path %}
+    {% set root_members = False %}
+  {% else %}
+    {% set show_full_path = config.show_object_full_path %}
+  {% endif %}
+
+  {% if not root or config.show_root_heading %}
+
+    {% filter heading(heading_level,
+        role="function",
+        id=html_id,
+        class="doc doc-heading",
+        toc_label=function.name ~ "()") %}
+
+      {% if config.separate_signature %}
+        <span class="doc doc-object-name doc-function-name">{% if show_full_path %}{{ function.path }}{% else %}{{ function.name }}{% endif %}</span>
+      {% else %}
+        {% filter highlight(language="python", inline=True) %}
+          {% if show_full_path %}{{ function.path }}{% else %}{{ function.name }}{% endif %}
+          {% include "signature.html" with context %}
+        {% endfilter %}
+      {% endif %}
+      {% with labels = function.labels or [(function.parameters._parameters_list and function.parameters._parameters_list[0].name == 'self') and 'method' or 'function'] %}
+        {% include "labels.html" with context %}
+      {% endwith %}
+
+    {% endfilter %}
+
+    {% if config.separate_signature %}
+      {% filter highlight(language="python", inline=False) %}
+def {% filter format_signature(config.line_length) %}
+          {% if show_full_path %}{{ function.path }}{% else %}{{ function.name }}{% endif %}
+          {% include "signature.html" with context %}
+        {% endfilter %}:
+      {% endfilter %}
+    {% endif %}
+
+  {% else %}
+    {% if config.show_root_toc_entry %}
+      {% filter heading(heading_level,
+          role="function",
+          id=html_id,
+          toc_label=function.path if config.show_root_full_path else function.name,
+          hidden=True) %}
+      {% endfilter %}
+    {% endif %}
+    {% set heading_level = heading_level - 1 %}
+  {% endif %}
+
+  <div class="doc doc-contents {% if root %}first{% endif %}">
+    {% with docstring_sections = function.docstring.parsed %}
+      {% include "docstring.html" with context %}
+    {% endwith %}
+
+    {% if config.show_source and function.source %}
+      <details class="quote">
+        <summary>Source code in <code>{{ function.relative_filepath }}</code></summary>
+        {{ function.source|highlight(language="python", linestart=function.lineno, linenums=True) }}
+      </details>
+    {% endif %}
+  </div>
+
+{% endwith %}
+</div>

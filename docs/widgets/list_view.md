@@ -37,9 +37,8 @@ The example below shows an app with a simple `ListView`.
 
 ## Messages
 
-### ::: textual.widgets.ListView.Highlighted
-
-### ::: textual.widgets.ListView.Selected
+- [ListView.Highlighted][textual.widgets.ListView.Highlighted]
+- [ListView.Selected][textual.widgets.ListView.Selected]
 
 ## Bindings
 
@@ -50,6 +49,9 @@ The list view widget defines the following bindings:
       show_root_heading: false
       show_root_toc_entry: false
 
-## See Also
+---
 
-* [ListView](../api/list_view.md) code reference
+
+::: textual.widgets.ListView
+    options:
+      heading_level: 2
