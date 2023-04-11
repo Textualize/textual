@@ -619,8 +619,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Set to re-calculate dimensions on idle."""
         self._new_rows: set[RowKey] = set()
         """Tracking newly added rows to be used in calculation of dimensions on idle."""
-        self._rows_to_remove: set[RowKey] = set()
-        """Tracking rows which have are to be removed on idle."""
         self._updated_cells: set[CellKey] = set()
         """Track which cells were updated, so that we can refresh them once on idle."""
 
@@ -1328,8 +1326,26 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     def remove_row(self, row_key: RowKey) -> None:
         self._require_update_dimensions = True
-        self._rows_to_remove.add(row_key)
+
+        index_to_delete = self._row_locations.get(row_key)
+        new_row_locations = TwoWayDict({})
+        for row_location_key in self._row_locations:
+            row_index = self._row_locations.get(row_location_key)
+            if row_index > index_to_delete:
+                new_row_locations[row_location_key] = row_index - 1
+            elif row_index < index_to_delete:
+                new_row_locations[row_location_key] = row_index
+
+        self._row_locations = new_row_locations
+
+        del self.rows[row_key]
+        del self._data[row_key]
+
+        self.cursor_coordinate = self.cursor_coordinate
+        self.hover_coordinate = self.hover_coordinate
+
         self._update_count += 1
+        self.refresh(layout=True)
 
     def on_idle(self) -> None:
         """Runs when the message pump is empty.
@@ -1345,24 +1361,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             new_rows = self._new_rows.copy()
             self._new_rows.clear()
             self._update_dimensions(new_rows)
-
-        if self._rows_to_remove:
-            rows_to_remove = self._rows_to_remove.copy()
-            self._rows_to_remove.clear()
-            for row_key in rows_to_remove:
-                print(f"removing {row_key} (index={self._row_locations.get(row_key)})")
-                self._data.pop(row_key, None)
-                self.rows.pop(row_key, None)
-                row_index = self._row_locations.get(row_key)
-                del self._row_locations[row_key]
-                for row in self.ordered_rows[row_index + 1 :]:
-                    # We also need to subtract from all the indices below
-                    key_to_shift = row.key
-                    old_index = self._row_locations.get(key_to_shift)
-                    self._row_locations[key_to_shift] = old_index - 1
-                    print(old_index, "->", old_index - 1)
-
-            print(self._row_locations._forward)
 
         if self._updated_cells:
             # Cell contents have already been updated at this point.
