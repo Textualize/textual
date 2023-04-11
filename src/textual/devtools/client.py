@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import inspect
 import json
+import os
 import pickle
 from asyncio import Queue, QueueFull, Task
 from io import StringIO
@@ -17,9 +18,18 @@ from rich.segment import Segment
 
 from .._log import LogGroup, LogVerbosity
 
-DEVTOOLS_PORT = 8081
+DEVTOOLS_PORT_ENVIRON_VARIABLE = "TEXTUAL_CONSOLE_PORT"
+DEFAULT_DEVTOOLS_PORT = 8081
 WEBSOCKET_CONNECT_TIMEOUT = 3
 LOG_QUEUE_MAXSIZE = 512
+
+
+def get_port_for_devtools() -> int:
+    """Get the port to run the devtools on from the environment or the default."""
+    try:
+        return int(os.environ[DEVTOOLS_PORT_ENVIRON_VARIABLE])
+    except (KeyError, ValueError):
+        return DEFAULT_DEVTOOLS_PORT
 
 
 class DevtoolsLog(NamedTuple):
@@ -88,10 +98,13 @@ class DevtoolsClient:
 
     Args:
         host: The host the devtools server is running on, defaults to "127.0.0.1"
-        port: The port the devtools server is accessed via, defaults to 8081
+        port: The port the devtools server is accessed via,
+            retrieved by `get_port_for_devtools` by default.
     """
 
-    def __init__(self, host: str = "127.0.0.1", port: int = DEVTOOLS_PORT) -> None:
+    def __init__(self, host: str = "127.0.0.1", port: int | None = None) -> None:
+        if port is None:
+            port = get_port_for_devtools()
         self.url: str = f"ws://{host}:{port}"
         self.session: aiohttp.ClientSession | None = None
         self.log_queue_task: Task | None = None

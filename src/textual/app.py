@@ -58,6 +58,8 @@ from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
 from rich.traceback import Traceback
 
+from textual.devtools.client import get_port_for_devtools
+
 from . import Logger, LogGroup, LogVerbosity, actions, constants, events, log, messages
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START

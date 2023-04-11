@@ -90,6 +90,14 @@ Multiple groups may be excluded, for example to exclude everything except warnin
 textual console -x SYSTEM -x EVENT -x DEBUG -x INFO
 ```
 
+### Custom port
+
+You can use the option `--port` to specify a custom port to run the console on, which comes in handy if you have other software running on the port that Textual uses by default:
+
+```bash
+textual console --port 7342
+```
+
 
 ## Textual log
 
