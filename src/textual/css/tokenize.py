@@ -16,6 +16,7 @@ HEX_COLOR = r"\#[0-9a-fA-F]{8}|\#[0-9a-fA-F]{6}|\#[0-9a-fA-F]{4}|\#[0-9a-fA-F]{3
 RGB_COLOR = rf"rgb{OPEN_BRACE}{DECIMAL}{COMMA}{DECIMAL}{COMMA}{DECIMAL}{CLOSE_BRACE}|rgba{OPEN_BRACE}{DECIMAL}{COMMA}{DECIMAL}{COMMA}{DECIMAL}{COMMA}{DECIMAL}{CLOSE_BRACE}"
 HSL_COLOR = rf"hsl{OPEN_BRACE}{DECIMAL}{COMMA}{PERCENT}{COMMA}{PERCENT}{CLOSE_BRACE}|hsla{OPEN_BRACE}{DECIMAL}{COMMA}{PERCENT}{COMMA}{PERCENT}{COMMA}{DECIMAL}{CLOSE_BRACE}"
 
+COMMENT_LINE = r"\# .*$"
 COMMENT_START = r"\/\*"
 SCALAR = rf"{DECIMAL}(?:fr|%|w|h|vw|vh)"
 DURATION = r"\d+\.?\d*(?:ms|s)"
@@ -46,6 +47,7 @@ DECLARATION_VALUES = {
 expect_root_scope = Expect(
     whitespace=r"\s+",
     comment_start=COMMENT_START,
+    comment_line=COMMENT_LINE,
     selector_start_id=r"\#" + IDENTIFIER,
     selector_start_class=r"\." + IDENTIFIER,
     selector_start_universal=r"\*",
@@ -59,6 +61,7 @@ expect_variable_name_continue = Expect(
     variable_value_end=r"\n|;",
     whitespace=r"\s+",
     comment_start=COMMENT_START,
+    comment_line=COMMENT_LINE,
     **DECLARATION_VALUES,
 ).expect_eof(True)
 
@@ -71,6 +74,7 @@ expect_comment_end = Expect(
 expect_selector_continue = Expect(
     whitespace=r"\s+",
     comment_start=COMMENT_START,
+    comment_line=COMMENT_LINE,
     pseudo_class=r"\:[a-zA-Z_-]+",
     selector_id=r"\#[a-zA-Z_\-][a-zA-Z0-9_\-]*",
     selector_class=r"\.[a-zA-Z_\-][a-zA-Z0-9_\-]*",
@@ -86,6 +90,7 @@ expect_selector_continue = Expect(
 expect_declaration = Expect(
     whitespace=r"\s+",
     comment_start=COMMENT_START,
+    comment_line=COMMENT_LINE,
     declaration_name=r"[a-zA-Z_\-]+\:",
     declaration_set_end=r"\}",
 )
@@ -93,6 +98,7 @@ expect_declaration = Expect(
 expect_declaration_solo = Expect(
     whitespace=r"\s+",
     comment_start=COMMENT_START,
+    comment_line=COMMENT_LINE,
     declaration_name=r"[a-zA-Z_\-]+\:",
     declaration_set_end=r"\}",
 ).expect_eof(True)
@@ -103,6 +109,7 @@ expect_declaration_content = Expect(
     declaration_end=r";",
     whitespace=r"\s+",
     comment_start=COMMENT_START,
+    comment_line=COMMENT_LINE,
     **DECLARATION_VALUES,
     important=r"\!important",
     comma=",",
@@ -113,6 +120,7 @@ expect_declaration_content_solo = Expect(
     declaration_end=r";",
     whitespace=r"\s+",
     comment_start=COMMENT_START,
+    comment_line=COMMENT_LINE,
     **DECLARATION_VALUES,
     important=r"\!important",
     comma=",",
@@ -157,7 +165,9 @@ class TokenizerState:
         while True:
             token = get_token(expect)
             name = token.name
-            if name == "comment_start":
+            if name == "comment_line":
+                continue
+            elif name == "comment_start":
                 tokenizer.skip_to(expect_comment_end)
                 continue
             elif name == "eof":

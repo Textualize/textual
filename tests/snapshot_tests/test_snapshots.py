@@ -406,3 +406,13 @@ def test_fr_margins(snap_compare):
 def test_scroll_visible(snap_compare):
     # https://github.com/Textualize/textual/issues/2181
     assert snap_compare(SNAPSHOT_APPS_DIR / "scroll_visible.py", press=["t"])
+
+
+def test_scroll_to_center(snap_compare):
+    # READ THIS IF THIS TEST FAILS:
+    # While https://github.com/Textualize/textual/issues/2254 is open, the snapshot
+    # this is being compared against is INCORRECT.
+    # The correct output for this snapshot test would show a couple of containers
+    # scrolled so that the red string >>bullseye<< is centered on the screen.
+    # When this snapshot "breaks" because #2254 is fixed, this snapshot can be updated.
+    assert snap_compare(SNAPSHOT_APPS_DIR / "scroll_to_center.py", press=["s"])

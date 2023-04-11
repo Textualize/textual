@@ -2408,6 +2408,100 @@ class Widget(DOMNode):
                 force=force,
             )
 
+    async def _scroll_to_center_of(
+        self,
+        widget: Widget,
+        animate: bool = True,
+        *,
+        speed: float | None = None,
+        duration: float | None = None,
+        easing: EasingFunction | str | None = None,
+        force: bool = False,
+    ) -> None:
+        """Scroll a widget to the center of this container.
+
+        Args:
+            widget: The widget to center.
+            animate: Whether to animate the scroll.
+            speed: Speed of scroll if animate is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
+        """
+
+        central_point = Offset(
+            widget.virtual_region.x + (1 + widget.virtual_region.width) // 2,
+            widget.virtual_region.y + (1 + widget.virtual_region.height) // 2,
+        )
+
+        container = widget.parent
+        while isinstance(container, Widget) and widget is not self:
+            container_virtual_region = container.virtual_region
+            # The region we want to scroll to must be centered around the central point.
+            # We make it as big as possible because `scroll_to_region` scrolls as little
+            # as possible.
+            target_region = Region(
+                central_point.x - container_virtual_region.width // 2,
+                central_point.y - container_virtual_region.height // 2,
+                container_virtual_region.width,
+                container_virtual_region.height,
+            )
+            scroll = container.scroll_to_region(
+                target_region,
+                animate=animate,
+                speed=speed,
+                duration=duration,
+                easing=easing,
+                force=force,
+            )
+
+            # We scroll `widget` within `container` with the central point written in
+            # the frame of reference of `container`. However, we need to update it so
+            # that we are ready to scroll `container` within _its_ container.
+            # To do this, notice that
+            # (central_point.y - container.scroll_offset.y - scroll.y) is the number
+            # of rows of `widget` that are visible within `container`.
+            # We add that to `container_virtual_region.y` to find the total vertical
+            # offset of the central point with respect to the container of `container`.
+            # A similar calculation is made for the horizontal update.
+            central_point = (
+                container_virtual_region.offset
+                + central_point
+                - container.scroll_offset
+                - scroll
+            )
+            widget = container
+            container = widget.parent
+
+    def scroll_to_center(
+        self,
+        animate: bool = True,
+        *,
+        speed: float | None = None,
+        duration: float | None = None,
+        easing: EasingFunction | str | None = None,
+        force: bool = False,
+    ) -> None:
+        """Scroll this widget to the center of the screen.
+
+        Args:
+            animate: Whether to animate the scroll.
+            speed: Speed of scroll if animate is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
+        """
+
+        self.call_after_refresh(
+            self.screen._scroll_to_center_of,
+            widget=self,
+            animate=animate,
+            speed=speed,
+            duration=duration,
+            easing=easing,
+            force=force,
+        )
+
     def __init_subclass__(
         cls,
         can_focus: bool | None = None,
