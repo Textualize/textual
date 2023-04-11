@@ -2464,15 +2464,11 @@ class Widget(DOMNode):
             # We add that to `container_virtual_region.y` to find the total vertical
             # offset of the central point with respect to the container of `container`.
             # A similar calculation is made for the horizontal update.
-            central_point = Offset(
-                container_virtual_region.x
-                + central_point.x
-                - container.scroll_offset.x
-                - scroll.x,
-                container_virtual_region.y
-                + central_point.y
-                - container.scroll_offset.y
-                - scroll.y,
+            central_point = (
+                container_virtual_region.offset
+                + central_point
+                - container.scroll_offset
+                - scroll
             )
             widget = container
             container = widget.parent
