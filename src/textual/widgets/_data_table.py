@@ -1073,7 +1073,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             else:
                 column.content_width = max(new_content_width, label_width)
 
-    def _update_dimensions(self, new_rows: set[RowKey]) -> None:
+    def _update_dimensions(self, new_rows: Iterable[RowKey]) -> None:
         """Called to recalculate the virtual (scrollable) size."""
         console = self.app.console
         for row_key in new_rows:
