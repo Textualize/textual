@@ -1324,7 +1324,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             row_keys.append(row_key)
         return row_keys
 
-    def remove_row(self, row_key: RowKey) -> None:
+    def remove_row(self, row_key: RowKey | str) -> None:
         self._require_update_dimensions = True
 
         index_to_delete = self._row_locations.get(row_key)
