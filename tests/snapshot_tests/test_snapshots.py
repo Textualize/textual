@@ -406,3 +406,7 @@ def test_fr_margins(snap_compare):
 def test_scroll_visible(snap_compare):
     # https://github.com/Textualize/textual/issues/2181
     assert snap_compare(SNAPSHOT_APPS_DIR / "scroll_visible.py", press=["t"])
+
+
+def test_scroll_to_center(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "scroll_to_center.py", press=["s"])
