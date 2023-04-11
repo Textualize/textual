@@ -1188,6 +1188,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._label_column = Column(self._label_column_key, Text(), auto_width=True)
         self._labelled_row_exists = False
         self.refresh()
+        self.scroll_x = 0
+        self.scroll_y = 0
+        self.scroll_target_x = 0
+        self.scroll_target_y = 0
         return self
 
     def add_column(
@@ -1337,6 +1341,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             raise RowDoesNotExist(f"Row key {row_key!r} is not valid.")
 
         self._require_update_dimensions = True
+        self.check_idle()
 
         index_to_delete = self._row_locations.get(row_key)
         new_row_locations = TwoWayDict({})
