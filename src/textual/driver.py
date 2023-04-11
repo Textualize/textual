@@ -113,13 +113,8 @@ class Driver(ABC):
             data: Raw data.
         """
 
-    def set_terminal_size(self, size: tuple[int, int]) -> None:
-        """Set the terminal size.
-
-        Args:
-            size: Width and height of the terminal, in cells.
-
-        """
+    def flush(self) -> None:
+        """Flush any buffered data."""
 
     @abstractmethod
     def start_application_mode(self) -> None:
