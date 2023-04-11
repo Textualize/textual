@@ -19,7 +19,6 @@ class WindowsDriver(Driver):
         self,
         app: App,
         *,
-        debug: bool = False,
         size: tuple[int, int] | None = None,
     ) -> None:
         """Initialize a driver.
@@ -30,7 +29,7 @@ class WindowsDriver(Driver):
             debug: Enabled debug mode.
             size: Initial size of the terminal or `None` to detect.
         """
-        super().__init__(app, debug=debug, size=size)
+        super().__init__(app, size=size)
 
         self.exit_event = Event()
         self._event_thread: Thread | None = None

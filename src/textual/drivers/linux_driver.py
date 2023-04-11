@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Any
 
 import rich.repr
 
-from .. import events, log
+from .. import constants, events, log
 from .._xterm_parser import XTermParser
 from ..driver import Driver
 from ..geometry import Size
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from ..app import App
 
 
-@rich.repr.auto
+@rich.repr.auto(angular=True)
 class LinuxDriver(Driver):
     """Powers display and input for Linux / MacOS"""
 
@@ -41,7 +41,7 @@ class LinuxDriver(Driver):
             debug: Enabled debug mode.
             size: Initial size of the terminal or `None` to detect.
         """
-        super().__init__(app, debug=debug, size=size)
+        super().__init__(app, size=size)
         self._file = app.console.file
         self.fileno = sys.stdin.fileno()
         self.attrs_before: list[Any] | None = None
@@ -49,7 +49,7 @@ class LinuxDriver(Driver):
         self._key_thread: Thread | None = None
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield "debug", self._debug
+        yield self._app
 
     def _get_terminal_size(self) -> tuple[int, int]:
         """Detect the terminal size.
@@ -237,7 +237,7 @@ class LinuxDriver(Driver):
                     return True
             return False
 
-        parser = XTermParser(more_data, self._debug)
+        parser = XTermParser(more_data, constants.DEBUG)
         feed = parser.feed
 
         utf8_decoder = getincrementaldecoder("utf-8")().decode

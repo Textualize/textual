@@ -18,7 +18,6 @@ class Driver(ABC):
         self,
         app: App,
         *,
-        debug: bool = False,
         size: tuple[int, int] | None = None,
     ) -> None:
         """Initialize a driver.
@@ -31,7 +30,6 @@ class Driver(ABC):
         """
         self._file = app.console.file
         self._app = app
-        self._debug = debug
         self._size = size
         self._loop = asyncio.get_running_loop()
         self._mouse_down_time = _time.get_time()
