@@ -671,7 +671,7 @@ class App(Generic[ReturnType], DOMNode):
         if driver_import is not None:
             # The driver class is set from the environment
             # Syntax should be foo.bar.baz:MyDriver
-            module_import, colon, driver_symbol = driver_import.partition(":")
+            module_import, _colon, driver_symbol = driver_import.partition(":")
             driver_module = importlib.import_module(module_import)
             driver_class = getattr(driver_module, driver_symbol)
             if not inspect.isclass(driver_class) or not issubclass(
@@ -1756,9 +1756,7 @@ class App(Generic[ReturnType], DOMNode):
                 "type[Driver]",
                 HeadlessDriver if headless else self.driver_class,
             )
-            driver = self._driver = driver_class(
-                self.console.file, self, size=terminal_size
-            )
+            driver = self._driver = driver_class(self, size=terminal_size)
 
             if not self._exit:
                 driver.start_application_mode()

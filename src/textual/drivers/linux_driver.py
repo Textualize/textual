@@ -9,15 +9,17 @@ import termios
 import tty
 from codecs import getincrementaldecoder
 from threading import Event, Thread
-from typing import IO, Any
+from typing import TYPE_CHECKING, Any
 
 import rich.repr
 
 from .. import events, log
-from .._types import MessageTarget
 from .._xterm_parser import XTermParser
 from ..driver import Driver
 from ..geometry import Size
+
+if TYPE_CHECKING:
+    from ..app import App
 
 
 @rich.repr.auto
@@ -26,8 +28,7 @@ class LinuxDriver(Driver):
 
     def __init__(
         self,
-        file: IO[str],
-        target: "MessageTarget",
+        app: App,
         *,
         debug: bool = False,
         size: tuple[int, int] | None = None,
@@ -40,8 +41,8 @@ class LinuxDriver(Driver):
             debug: Enabled debug mode.
             size: Initial size of the terminal or `None` to detect.
         """
-        super().__init__(file, target, debug=debug, size=size)
-        self._file = file
+        super().__init__(app, debug=debug, size=size)
+        self._file = app.console.file
         self.fileno = sys.stdin.fileno()
         self.attrs_before: list[Any] | None = None
         self.exit_event = Event()
@@ -120,7 +121,7 @@ class LinuxDriver(Driver):
             textual_size = Size(width, height)
             event = events.Resize(textual_size, textual_size)
             asyncio.run_coroutine_threadsafe(
-                self._target._post_message(event),
+                self._app._post_message(event),
                 loop=loop,
             )
 
