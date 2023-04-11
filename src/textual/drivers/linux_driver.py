@@ -33,7 +33,7 @@ class LinuxDriver(Driver):
         debug: bool = False,
         size: tuple[int, int] | None = None,
     ) -> None:
-        """Initialize a driver.
+        """Initialize Linux driver.
 
         Args:
             app: The App instance.
