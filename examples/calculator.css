@@ -2,7 +2,7 @@ Screen {
     overflow: auto;
 }
 
-#calculator {    
+#calculator {
     layout: grid;
     grid-size: 4;
     grid-gutter: 1 2;
