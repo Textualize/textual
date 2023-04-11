@@ -1325,6 +1325,17 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return row_keys
 
     def remove_row(self, row_key: RowKey | str) -> None:
+        """Remove a row (identified by a key) from the DataTable.
+
+        Args:
+            row_key: The key identifying the row to remove.
+
+        Raises:
+            RowDoesNotExist: If the row key does not exist.
+        """
+        if row_key not in self._row_locations:
+            raise RowDoesNotExist(f"Row key {row_key!r} is not valid.")
+
         self._require_update_dimensions = True
 
         index_to_delete = self._row_locations.get(row_key)
