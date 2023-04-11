@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - `Widget.scroll_to_center` now scrolls the widget to the center of the screen https://github.com/Textualize/textual/pull/2255
+- option `--port` to the command `textual console` to specify which port the console should connect to https://github.com/Textualize/textual/pull/2258
 
 ## [0.19.1] - 2023-04-10
 
