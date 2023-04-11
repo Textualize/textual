@@ -87,6 +87,8 @@ class TabbedContent(Widget):
     """The ID of the active tab, or empty string if none are active."""
 
     class TabActivated(Message):
+        """Posted when the active tab changes."""
+
         def __init__(self, tabbed_content: TabbedContent, tab: Tab) -> None:
             """Initialize message.
 
