@@ -1756,7 +1756,11 @@ class App(Generic[ReturnType], DOMNode):
                 "type[Driver]",
                 HeadlessDriver if headless else self.driver_class,
             )
-            driver = self._driver = driver_class(self, size=terminal_size)
+            driver = self._driver = driver_class(
+                self,
+                debug=constants.DEBUG,
+                size=terminal_size,
+            )
 
             if not self._exit:
                 driver.start_application_mode()

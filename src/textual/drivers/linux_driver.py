@@ -36,12 +36,10 @@ class LinuxDriver(Driver):
         """Initialize a driver.
 
         Args:
-            file: A file-like object open for writing unicode.
-            target: The message target (expected to be the app).
-            debug: Enabled debug mode.
+            app: The App instance.
             size: Initial size of the terminal or `None` to detect.
         """
-        super().__init__(app, size=size)
+        super().__init__(app, debug=debug, size=size)
         self._file = app.console.file
         self.fileno = sys.stdin.fileno()
         self.attrs_before: list[Any] | None = None
@@ -237,7 +235,7 @@ class LinuxDriver(Driver):
                     return True
             return False
 
-        parser = XTermParser(more_data, constants.DEBUG)
+        parser = XTermParser(more_data, self._debug)
         feed = parser.feed
 
         utf8_decoder = getincrementaldecoder("utf-8")().decode

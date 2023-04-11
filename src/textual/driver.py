@@ -18,18 +18,19 @@ class Driver(ABC):
         self,
         app: App,
         *,
+        debug: bool = False,
         size: tuple[int, int] | None = None,
     ) -> None:
         """Initialize a driver.
 
         Args:
-            file: A file-like object open for writing unicode.
-            target: The message target (expected to be the app).
-            debug: Enabled debug mode.
+            app: The App instance.
+            debug: Enable debug mode.
             size: Initial size of the terminal or `None` to detect.
         """
         self._file = app.console.file
         self._app = app
+        self._debug = debug
         self._size = size
         self._loop = asyncio.get_running_loop()
         self._mouse_down_time = _time.get_time()
