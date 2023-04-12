@@ -171,6 +171,19 @@ CSSPathType = Union[
 CallThreadReturnType = TypeVar("CallThreadReturnType")
 
 
+class _NullFile:
+    """A file-like where writes go nowhere."""
+
+    def write(self, text: str) -> None:
+        pass
+
+    def flush(self) -> None:
+        pass
+
+    def isatty(self) -> bool:
+        return True
+
+
 @rich.repr.auto
 class App(Generic[ReturnType], DOMNode):
     """The base class for Textual Applications.
@@ -253,7 +266,7 @@ class App(Generic[ReturnType], DOMNode):
             self._filter = Monochrome()
 
         self.console = Console(
-            file=sys.__stdout__,
+            file=_NullFile(),
             markup=True,
             highlight=False,
             emoji=False,
@@ -822,6 +835,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         assert self._driver is not None, "App must be running"
         width, height = self.size
+
         console = Console(
             width=width,
             height=height,
