@@ -95,7 +95,7 @@ from .screen import Screen
 from .widget import AwaitMount, Widget
 
 if TYPE_CHECKING:
-    from typing_extensions import Coroutine, Final, TypeAlias
+    from typing_extensions import Coroutine, TypeAlias
 
     from .devtools.client import DevtoolsClient
     from .pilot import Pilot
@@ -830,6 +830,7 @@ class App(Generic[ReturnType], DOMNode):
             color_system="truecolor",
             record=True,
             legacy_windows=False,
+            safe_box=False,
         )
         screen_render = self.screen._compositor.render_update(
             full=True, screen_stack=self.app._background_screens
