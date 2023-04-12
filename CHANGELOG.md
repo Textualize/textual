@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Changed signature of Driver. Technically a breaking change, but unlikely to affect anyone.
+- Breaking change: Timer.start is now private, and returns No
 
 ### Added
 

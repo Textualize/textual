@@ -80,14 +80,9 @@ class Timer:
             raise EventTargetGone()
         return target
 
-    def start(self) -> Task:
-        """Start the timer return the task.
-
-        Returns:
-            A Task instance for the timer.
-        """
+    def _start(self) -> None:
+        """Start the timer."""
         self._task = create_task(self._run_timer(), name=self.name)
-        return self._task
 
     def stop(self) -> None:
         """Stop the timer."""

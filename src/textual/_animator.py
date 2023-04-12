@@ -197,7 +197,7 @@ class Animator:
         """Start the animator task."""
         self._idle_event.set()
         self._complete_event.set()
-        self._timer.start()
+        self._timer._start()
 
     async def stop(self) -> None:
         """Stop the animator task."""
