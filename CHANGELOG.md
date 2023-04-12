@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Breaking change: Timer.start() now returns `None` (it previously returned an asyncio Task).
+- Breaking change: Timer.start is now private, and returns None
 
 ## [0.19.1] - 2023-04-10
 

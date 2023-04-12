@@ -303,7 +303,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
             repeat=0,
             pause=pause,
         )
-        timer.start()
+        timer._start()
         self._timers.add(timer)
         return timer
 
@@ -336,7 +336,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
             repeat=repeat or None,
             pause=pause,
         )
-        timer.start()
+        timer._start()
         self._timers.add(timer)
         return timer
 
