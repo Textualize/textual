@@ -1,3 +1,5 @@
+from itertools import cycle
+
 from textual.app import App, ComposeResult
 from textual.widgets import DataTable
 
@@ -23,6 +25,8 @@ class TableApp(App):
         table = self.query_one(DataTable)
         table.add_columns(*ROWS[0])
         table.add_rows(ROWS[1:])
+        table.fixed_rows = 2
+        table.fixed_columns = 1
 
 
 app = TableApp()
