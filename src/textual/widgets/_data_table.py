@@ -27,6 +27,7 @@ from ..geometry import Region, Size, Spacing, clamp
 from ..message import Message
 from ..reactive import Reactive
 from ..render import measure
+from ..renderables.styled import Styled
 from ..scroll_view import ScrollView
 from ..strip import Strip
 from ..widget import PseudoClasses
@@ -1554,7 +1555,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self,
         row_index: int,
         column_index: int,
-        style: Style,
+        base_style: Style,
         width: int,
         cursor: bool = False,
         hover: bool = False,
@@ -1564,7 +1565,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Args:
             row_index: Index of the row.
             column_index: Index of the column.
-            style: Style to apply.
+            base_style: Style to apply.
             width: Width of the cell.
             cursor: Is this cell affected by cursor highlighting?
             hover: Is this cell affected by hover cursor highlighting?
@@ -1581,24 +1582,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             and (row_index < self.fixed_rows or column_index < self.fixed_columns)
         )
 
-        get_component = self.get_component_styles
-        show_cursor = self.show_cursor
-
-        if hover and show_cursor and self._show_hover_cursor:
-            style += get_component("datatable--hover").rich_style
-            if is_header_cell or is_row_label_cell:
-                # Apply subtle variation in style for the header/label (blue background by
-                # default) rows and columns affected by the cursor, to ensure we can
-                # still differentiate between the labels and the data.
-                style += get_component("datatable--header-hover").rich_style
-
-        if cursor and show_cursor:
-            style += get_component("datatable--cursor").rich_style
-            if is_header_cell or is_row_label_cell:
-                style += get_component("datatable--header-cursor").rich_style
-            elif is_fixed_style_cell:
-                style += get_component("datatable--fixed-cursor").rich_style
-
         if is_header_cell:
             row_key = self._header_row_key
         else:
@@ -1608,7 +1591,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         cell_cache_key = (
             row_key,
             column_key,
-            style,
+            base_style,
             cursor,
             hover,
             self._update_count,
@@ -1616,7 +1599,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         )
 
         if cell_cache_key not in self._cell_render_cache:
-            style += Style.from_meta({"row": row_index, "column": column_index})
+            base_style += Style.from_meta({"row": row_index, "column": column_index})
             height = self.header_height if is_header_cell else self.rows[row_key].height
             row_label, row_cells = self._get_row_renderables(row_index)
 
@@ -1625,10 +1608,40 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             else:
                 cell = row_cells[column_index]
 
+            get_component = self.get_component_styles
+            show_cursor = self.show_cursor
+
+            component_style = Style()
+
+            if hover and show_cursor and self._show_hover_cursor:
+                component_style += get_component("datatable--hover").rich_style
+                if is_header_cell or is_row_label_cell:
+                    # Apply subtle variation in style for the header/label (blue background by
+                    # default) rows and columns affected by the cursor, to ensure we can
+                    # still differentiate between the labels and the data.
+                    component_style += get_component(
+                        "datatable--header-hover"
+                    ).rich_style
+
+            if cursor and show_cursor:
+                cursor_style = get_component("datatable--cursor").rich_style
+                component_style += cursor_style
+                if is_header_cell or is_row_label_cell:
+                    component_style += get_component(
+                        "datatable--header-cursor"
+                    ).rich_style
+                elif is_fixed_style_cell:
+                    component_style += get_component(
+                        "datatable--fixed-cursor"
+                    ).rich_style
+
             lines = self.app.console.render_lines(
-                Padding(cell, (0, 1)),
+                Styled(
+                    Padding(cell, (0, 1)),
+                    pre_style=base_style,
+                    post_style=component_style,
+                ),
                 self.app.console.options.update_dimensions(width, height),
-                style=style,
             )
 
             self._cell_render_cache[cell_cache_key] = lines
