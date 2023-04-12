@@ -2448,15 +2448,13 @@ class App(Generic[ReturnType], DOMNode):
         self._unregister(root)
 
     async def action_check_bindings(self, key: str) -> None:
+        """Handle a key press using the bindings system."""
         if not await self.check_bindings(key, priority=True):
             await self.check_bindings(key, priority=False)
 
     async def action_quit(self) -> None:
         """An [action](/guide/actions) to quit the app as soon as possible."""
         self.exit()
-
-    async def action_bang(self) -> None:
-        1 / 0
 
     async def action_bell(self) -> None:
         """An [action](/guide/actions) to play the terminal 'bell'."""
