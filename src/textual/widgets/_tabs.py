@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from time import monotonic
 from typing import TYPE_CHECKING, ClassVar
 
 import rich.repr
@@ -20,6 +21,10 @@ from ..widgets import Static
 
 if TYPE_CHECKING:
     from typing_extensions import Self
+
+
+THROTTLE_DELTA = 0.005
+"""Don't call `watch_active` more than once every THROTTLE_DELTA seconds."""
 
 
 class Underline(Widget):
@@ -174,6 +179,9 @@ class Tabs(Widget, can_focus=True):
     | left | Move to the previous tab. |
     | right | Move to the next tab. |
     """
+
+    _last_update: float = -1
+    """Time of last update to throttle updates."""
 
     class TabActivated(Message):
         """Sent when a new tab is activated."""
@@ -399,7 +407,16 @@ class Tabs(Widget, can_focus=True):
                 yield Underline()
 
     def watch_active(self, previously_active: str, active: str) -> None:
-        """Handle a change to the active tab."""
+        """Handle a change to the active tab.
+
+        This function is throttled to only run once every THROTTLE_DELTA seconds.
+        """
+
+        now = monotonic()
+        if now < self._last_update + THROTTLE_DELTA:
+            return
+        self._last_update = now
+
         if active:
             active_tab = self.query_one(f"#tabs-list > #{active}", Tab)
             self.query("#tabs-list > Tab.-active").remove_class("-active")
@@ -420,7 +437,7 @@ class Tabs(Widget, can_focus=True):
         """
         underline = self.query_one(Underline)
         try:
-            active_tab = self.query_one(f"#tabs-list > Tab.-active")
+            active_tab = self.query_one("#tabs-list > Tab.-active")
         except NoMatches:
             underline.highlight_start = 0
             underline.highlight_end = 0
@@ -504,5 +521,6 @@ class Tabs(Widget, can_focus=True):
             return
         tab_count = len(tabs)
         new_tab_index = (tabs.index(active_tab) + direction) % tab_count
+        print(tabs[new_tab_index].id or "")
         self.active = tabs[new_tab_index].id or ""
         self._scroll_active_tab()
