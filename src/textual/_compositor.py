@@ -107,6 +107,18 @@ class LayoutUpdate:
             if not last:
                 yield new_line
 
+    def render_segments(self, console: Console) -> str:
+        sequences: list[str] = []
+        append = sequences.append
+        x = self.region.x
+        move_to = Control.move_to
+        for last, (y, line) in loop_last(enumerate(self.strips, self.region.y)):
+            append(move_to(x, y).segment.text)
+            append(line.render(console))
+            if not last:
+                append("\n")
+        return "".join(sequences)
+
     def __rich_repr__(self) -> rich.repr.Result:
         yield self.region
 
@@ -184,6 +196,66 @@ class ChopsUpdate:
 
             if y != last_y:
                 yield new_line
+
+    def render_segments(self, console: Console) -> str:
+        """Get an iterable of segments."""
+
+        sequences: list[str] = []
+        append = sequences.append
+
+        move_to = Control.move_to
+        new_line = Segment.line()
+        chops = self.chops
+        chop_ends = self.chop_ends
+        last_y = self.spans[-1][0]
+
+        _cell_len = cell_len
+        for y, x1, x2 in self.spans:
+            line = chops[y]
+            ends = chop_ends[y]
+            for end, (x, strip) in zip(ends, line.items()):
+                # TODO: crop to x extents
+                if strip is None:
+                    continue
+
+                if x > x2 or end <= x1:
+                    continue
+
+                if x2 > x >= x1 and end <= x2:
+                    append(move_to(x, y).segment.text)
+                    append(strip.render(console))
+                    continue
+
+                strip = strip.adjust_cell_length(x2 - x1)
+                append(move_to(x, y).segment.text)
+                append(strip.crop(x - x1, x - x2).render(console))
+
+                # append(strip.crop(x1 - x, end).render(console))
+                # append(strip.crop(x1, end).render(console))
+
+                # iter_segments = iter(strip)
+                # if x < x1:
+                #     for segment in iter_segments:
+                #         next_x = x + _cell_len(segment.text)
+                #         if next_x > x1:
+                #             yield move_to(x, y).segment
+                #             yield segment
+                #             break
+                #         x = next_x
+                # else:
+                #     yield move_to(x, y).segment
+                # if end <= x2:
+                #     yield from iter_segments
+                # else:
+                #     for segment in iter_segments:
+                #         if x >= x2:
+                #             break
+                #         yield segment
+                #         x += _cell_len(segment.text)
+
+            if y != last_y:
+                append("\n")
+        return "".join(sequences)
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield from ()

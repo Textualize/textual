@@ -1996,12 +1996,15 @@ class App(Generic[ReturnType], DOMNode):
                 self._begin_update()
                 try:
                     try:
-                        segments = (
-                            renderable.iter_segments()
-                            if hasattr(renderable, "iter_segments")
-                            else console.render(renderable)
-                        )
-                        terminal_sequence = console._render_buffer(segments)
+                        if hasattr(renderable, "render_segments"):
+                            terminal_sequence = renderable.render_segments(console)
+                        else:
+                            segments = (
+                                renderable.iter_segments()
+                                if hasattr(renderable, "iter_segments")
+                                else console.render(renderable)
+                            )
+                            terminal_sequence = console._render_buffer(segments)
                     except Exception as error:
                         self._handle_exception(error)
                     else:

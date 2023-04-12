@@ -66,6 +66,7 @@ class Strip:
         "_divide_cache",
         "_crop_cache",
         "_style_cache",
+        "_render_cache",
         "_link_ids",
     ]
 
@@ -77,6 +78,7 @@ class Strip:
         self._divide_cache: FIFOCache[tuple[int, ...], list[Strip]] = FIFOCache(4)
         self._crop_cache: FIFOCache[tuple[int, int], Strip] = FIFOCache(4)
         self._style_cache: FIFOCache[Style, Strip] = FIFOCache(4)
+        self._render_cache: str | None = None
         self._link_ids: set[str] | None = None
 
         if DEBUG and cell_length is not None:
@@ -396,3 +398,8 @@ class Strip:
         )
         self._style_cache[style] = styled_strip
         return styled_strip
+
+    def render(self, console: Console) -> str:
+        if self._render_cache is None:
+            self._render_cache = console._render_buffer(self._segments)
+        return self._render_cache
