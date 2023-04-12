@@ -9,46 +9,46 @@ import termios
 import tty
 from codecs import getincrementaldecoder
 from threading import Event, Thread
-from typing import IO, Any
+from typing import TYPE_CHECKING, Any
 
 import rich.repr
 
 from .. import events, log
-from .._types import MessageTarget
 from .._xterm_parser import XTermParser
 from ..driver import Driver
 from ..geometry import Size
 
+if TYPE_CHECKING:
+    from ..app import App
 
-@rich.repr.auto
+
+@rich.repr.auto(angular=True)
 class LinuxDriver(Driver):
     """Powers display and input for Linux / MacOS"""
 
     def __init__(
         self,
-        file: IO[str],
-        target: "MessageTarget",
+        app: App,
         *,
         debug: bool = False,
         size: tuple[int, int] | None = None,
     ) -> None:
-        """Initialize a driver.
+        """Initialize Linux driver.
 
         Args:
-            file: A file-like object open for writing unicode.
-            target: The message target (expected to be the app).
-            debug: Enabled debug mode.
+            app: The App instance.
+            debug: Enable debug mode.
             size: Initial size of the terminal or `None` to detect.
         """
-        super().__init__(file, target, debug=debug, size=size)
-        self._file = file
+        super().__init__(app, debug=debug, size=size)
+        self._file = app.console.file
         self.fileno = sys.stdin.fileno()
         self.attrs_before: list[Any] | None = None
         self.exit_event = Event()
         self._key_thread: Thread | None = None
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield "debug", self._debug
+        yield self._app
 
     def _get_terminal_size(self) -> tuple[int, int]:
         """Detect the terminal size.
@@ -120,7 +120,7 @@ class LinuxDriver(Driver):
             textual_size = Size(width, height)
             event = events.Resize(textual_size, textual_size)
             asyncio.run_coroutine_threadsafe(
-                self._target._post_message(event),
+                self._app._post_message(event),
                 loop=loop,
             )
 

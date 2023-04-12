@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import asyncio
 from threading import Event, Thread
-from typing import IO, Callable
+from typing import TYPE_CHECKING, Callable
 
 from .._context import active_app
-from .._types import MessageTarget
 from ..driver import Driver
 from . import win32
+
+if TYPE_CHECKING:
+    from ..app import App
 
 
 class WindowsDriver(Driver):
@@ -15,21 +17,19 @@ class WindowsDriver(Driver):
 
     def __init__(
         self,
-        file: IO[str],
-        target: "MessageTarget",
+        app: App,
         *,
         debug: bool = False,
         size: tuple[int, int] | None = None,
     ) -> None:
-        """Initialize a driver.
+        """Initialize Windows driver.
 
         Args:
-            file: A file-like object open for writing unicode.
-            target: The message target (expected to be the app).
-            debug: Enabled debug mode.
+            app: The App instance.
+            debug: Enable debug mode.
             size: Initial size of the terminal or `None` to detect.
         """
-        super().__init__(file, target, debug=debug, size=size)
+        super().__init__(app, debug=debug, size=size)
 
         self.exit_event = Event()
         self._event_thread: Thread | None = None
@@ -81,10 +81,8 @@ class WindowsDriver(Driver):
         self.write("\033[?1003h\n")
         self._enable_bracketed_paste()
 
-        app = active_app.get()
-
         self._event_thread = win32.EventMonitor(
-            loop, app, self._target, self.exit_event, self.process_event
+            loop, self._app, self.exit_event, self.process_event
         )
         self._event_thread.start()
 

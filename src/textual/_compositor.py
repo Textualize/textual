@@ -56,7 +56,7 @@ class MapGeometry(NamedTuple):
     """Defines the absolute location of a Widget."""
 
     region: Region
-    """The (screen) region occupied by the widget."""
+    """The (screen) [region][textual.geometry.Region] occupied by the widget."""
     order: tuple[tuple[int, int, int], ...]
     """Tuple of tuples defining the painting order of the widget.
 
@@ -65,13 +65,13 @@ class MapGeometry(NamedTuple):
     information for this specific widget.
     """
     clip: Region
-    """A region to clip the widget by (if a Widget is within a container)."""
+    """A [region][textual.geometry.Region] to clip the widget by (if a Widget is within a container)."""
     virtual_size: Size
-    """The virtual size (scrollable region) of a widget if it is a container."""
+    """The virtual [size][textual.geometry.Size] (scrollable area) of a widget if it is a container."""
     container_size: Size
-    """The container size (area not occupied by scrollbars)."""
+    """The container [size][textual.geometry.Size] (area not occupied by scrollbars)."""
     virtual_region: Region
-    """The region relative to the container (but not necessarily visible)."""
+    """The [region][textual.geometry.Region] relative to the container (but not necessarily visible)."""
 
     @property
     def visible_region(self) -> Region:

@@ -5,13 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-
 ## Unreleased
+
+### Changed
+
+- Changed signature of Driver. Technically a breaking change, but unlikely to affect anyone.
+- Breaking change: Timer.start is now private, and returns No
 
 ### Added
 
+- Added `DataTable.remove_row` method https://github.com/Textualize/textual/pull/2253
 - `Widget.scroll_to_center` now scrolls the widget to the center of the screen https://github.com/Textualize/textual/pull/2255
 - option `--port` to the command `textual console` to specify which port the console should connect to https://github.com/Textualize/textual/pull/2258
+- Added `TabActivated` message to `TabbedContent` https://github.com/Textualize/textual/pull/2260
+
+### Fixed
+
+- Fixed order styles are applied in DataTable - allows combining of renderable styles and component classes https://github.com/Textualize/textual/pull/2272
+
 
 ## [0.19.1] - 2023-04-10
 

@@ -302,6 +302,11 @@ class App(Generic[ReturnType], DOMNode):
 
     Modify this attribute to switch between light and dark themes.
 
+    Example:
+        ```python
+        self.app.dark = not self.app.dark  # Toggle dark mode
+        ```
+
     """
 
     def __init__(
@@ -366,7 +371,10 @@ class App(Generic[ReturnType], DOMNode):
         """The sub-title for the application.
 
         The initial value for `sub_title` will be set to the `SUB_TITLE` class variable if it exists, or
-        an empty string if it doesn't/
+        an empty string if it doesn't.
+
+        Sub-titles are typically used to show the high-level state of the app, such as the current mode, or path to
+        the file being worker on.
 
         Assign a new value to this attribute to change the sub-title.
         """
@@ -671,7 +679,7 @@ class App(Generic[ReturnType], DOMNode):
         if driver_import is not None:
             # The driver class is set from the environment
             # Syntax should be foo.bar.baz:MyDriver
-            module_import, colon, driver_symbol = driver_import.partition(":")
+            module_import, _, driver_symbol = driver_import.partition(":")
             driver_module = importlib.import_module(module_import)
             driver_class = getattr(driver_module, driver_symbol)
             if not inspect.isclass(driver_class) or not issubclass(
@@ -1757,7 +1765,9 @@ class App(Generic[ReturnType], DOMNode):
                 HeadlessDriver if headless else self.driver_class,
             )
             driver = self._driver = driver_class(
-                self.console.file, self, size=terminal_size
+                self,
+                debug=constants.DEBUG,
+                size=terminal_size,
             )
 
             if not self._exit:
@@ -2448,15 +2458,13 @@ class App(Generic[ReturnType], DOMNode):
         self._unregister(root)
 
     async def action_check_bindings(self, key: str) -> None:
+        """An [action](/guide/actions) to handle a key press using the binding system."""
         if not await self.check_bindings(key, priority=True):
             await self.check_bindings(key, priority=False)
 
     async def action_quit(self) -> None:
         """An [action](/guide/actions) to quit the app as soon as possible."""
         self.exit()
-
-    async def action_bang(self) -> None:
-        1 / 0
 
     async def action_bell(self) -> None:
         """An [action](/guide/actions) to play the terminal 'bell'."""
