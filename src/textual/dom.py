@@ -580,6 +580,11 @@ class DOMNode(MessagePump):
 
         May be set to a boolean to show or hide the node, or to any valid value for the `display` rule.
 
+        Example:
+            ```python
+            my_widget.display = False  # Hide my_widget
+            ```
+
         """
         return self.styles.display != "none" and not (self._closing or self._closed)
 
@@ -609,6 +614,8 @@ class DOMNode(MessagePump):
         """Is the visibility style set to a visible state?
 
         May be set to a boolean to make the node visible (`True`) or invisible (`False`), or to any valid value for the `visibility` rule.
+
+        When a node is invisible, Textual will reserve space for it, but won't display anything there.
 
         """
         return self.styles.visibility != "hidden"
@@ -872,7 +879,7 @@ class DOMNode(MessagePump):
         return ()
 
     def reset_styles(self) -> None:
-        """Reset styles back to their initial state"""
+        """Reset styles back to their initial state."""
         from .widget import Widget
 
         for node in self.walk_children(with_self=True):
