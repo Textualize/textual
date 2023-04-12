@@ -128,3 +128,6 @@ class Driver(ABC):
     @abstractmethod
     def stop_application_mode(self) -> None:
         """Stop application mode, restore state."""
+
+    def close(self) -> None:
+        """Perform any final cleanup."""

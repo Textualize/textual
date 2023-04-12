@@ -4,9 +4,9 @@ import asyncio
 from threading import Event, Thread
 from typing import TYPE_CHECKING, Callable
 
-from .._context import active_app
 from ..driver import Driver
 from . import win32
+from ._writer_thread import WriterThread
 
 if TYPE_CHECKING:
     from ..app import App
@@ -34,6 +34,7 @@ class WindowsDriver(Driver):
         self.exit_event = Event()
         self._event_thread: Thread | None = None
         self._restore_console: Callable[[], None] | None = None
+        self._writer_thread: WriterThread | None = None
 
     def write(self, data: str) -> None:
         """Write data to the output device.
@@ -41,7 +42,8 @@ class WindowsDriver(Driver):
         Args:
             data: Raw data.
         """
-        self._file.write(data)
+        assert self._writer_thread is not None, "Driver must be in application mode"
+        self._writer_thread.write(data)
 
     def _enable_mouse_support(self) -> None:
         """Enable reporting of mouse events."""
@@ -72,6 +74,9 @@ class WindowsDriver(Driver):
     def start_application_mode(self) -> None:
         """Start application mode."""
         loop = asyncio.get_running_loop()
+
+        self._writer_thread = WriterThread(self._file)
+        self._writer_thread.start()
 
         self._restore_console = win32.enable_application_mode()
 
@@ -110,3 +115,8 @@ class WindowsDriver(Driver):
         # Disable alt screen, show cursor
         self.write("\x1b[?1049l" + "\x1b[?25h")
         self.flush()
+
+    def close(self) -> None:
+        """Perform cleanup."""
+        if self._writer_thread is not None:
+            self._writer_thread.stop()

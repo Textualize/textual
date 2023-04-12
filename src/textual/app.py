@@ -95,7 +95,7 @@ from .screen import Screen
 from .widget import AwaitMount, Widget
 
 if TYPE_CHECKING:
-    from typing_extensions import Coroutine, Final, TypeAlias
+    from typing_extensions import Coroutine, TypeAlias
 
     from .devtools.client import DevtoolsClient
     from .pilot import Pilot
@@ -162,6 +162,15 @@ class CssPathError(Exception):
 ReturnType = TypeVar("ReturnType")
 
 
+CSSPathType = Union[
+    str,
+    PurePath,
+    List[Union[str, PurePath]],
+]
+
+CallThreadReturnType = TypeVar("CallThreadReturnType")
+
+
 class _NullFile:
     """A file-like where writes go nowhere."""
 
@@ -171,76 +180,8 @@ class _NullFile:
     def flush(self) -> None:
         pass
 
-
-MAX_QUEUED_WRITES: Final[int] = 30
-
-
-class _WriterThread(threading.Thread):
-    """A thread / file-like to do writes to stdout in the background."""
-
-    def __init__(self) -> None:
-        super().__init__(daemon=True)
-        self._queue: Queue[str | None] = Queue(MAX_QUEUED_WRITES)
-        self._file = sys.__stdout__
-
-    def write(self, text: str) -> None:
-        """Write text. Text will be enqueued for writing.
-
-        Args:
-            text: Text to write to the file.
-        """
-        self._queue.put(text)
-
     def isatty(self) -> bool:
-        """Pretend to be a terminal.
-
-        Returns:
-            True if this is a tty.
-        """
         return True
-
-    def fileno(self) -> int:
-        """Get file handle number.
-
-        Returns:
-            File number of proxied file.
-        """
-        return self._file.fileno()
-
-    def flush(self) -> None:
-        """Flush the file (a no-op, because flush is done in the thread)."""
-        return
-
-    def run(self) -> None:
-        """Run the thread."""
-        write = self._file.write
-        flush = self._file.flush
-        get = self._queue.get
-        qsize = self._queue.qsize
-        # Read from the queue, write to the file.
-        # Flush when there is a break.
-        while True:
-            text: str | None = get()
-            if text is None:
-                break
-            write(text)
-            if qsize() == 0:
-                flush()
-        flush()
-
-    def stop(self) -> None:
-        """Stop the thread, and block until it finished."""
-        self._queue.put(None)
-        self.join()
-
-
-CSSPathType = Union[
-    str,
-    PurePath,
-    List[Union[str, PurePath]],
-]
-
-CallThreadReturnType = TypeVar("CallThreadReturnType")
 
 
 @rich.repr.auto
@@ -324,21 +265,15 @@ class App(Generic[ReturnType], DOMNode):
         if no_color is not None:
             self._filter = Monochrome()
 
-        self._writer_thread: _WriterThread | None = None
-        if sys.__stdout__ is None:
-            file = _NullFile()
-        else:
-            self._writer_thread = _WriterThread()
-            self._writer_thread.start()
-            file = self._writer_thread
-
         self.console = Console(
-            file=file,
+            file=_NullFile(),
             markup=True,
             highlight=False,
             emoji=False,
             legacy_windows=False,
             _environ=environ,
+            force_terminal=True,
+            safe_box=False,
         )
         self._workers = WorkerManager(self)
         self.error_console = Console(markup=False, stderr=True)
@@ -900,6 +835,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         assert self._driver is not None, "App must be running"
         width, height = self.size
+
         console = Console(
             width=width,
             height=height,
@@ -908,6 +844,7 @@ class App(Generic[ReturnType], DOMNode):
             color_system="truecolor",
             record=True,
             legacy_windows=False,
+            safe_box=False,
         )
         screen_render = self.screen._compositor.render_update(
             full=True, screen_stack=self.app._background_screens
@@ -2011,8 +1948,8 @@ class App(Generic[ReturnType], DOMNode):
         if self.devtools is not None and self.devtools.is_connected:
             await self._disconnect_devtools()
 
-        if self._writer_thread is not None:
-            self._writer_thread.stop()
+        if self._driver is not None:
+            self._driver.close()
 
         self._print_error_renderables()
 
@@ -2049,17 +1986,29 @@ class App(Generic[ReturnType], DOMNode):
             if screen is not self.screen or renderable is None:
                 return
 
-            if self._running and not self._closed and not self.is_headless:
+            if (
+                self._running
+                and not self._closed
+                and not self.is_headless
+                and self._driver is not None
+            ):
                 console = self.console
                 self._begin_update()
                 try:
                     try:
-                        console.print(renderable)
+                        segments = (
+                            renderable.iter_segments()
+                            if hasattr(renderable, "iter_segments")
+                            else console.render(renderable)
+                        )
+                        terminal_sequence = console._render_buffer(segments)
                     except Exception as error:
                         self._handle_exception(error)
+                    else:
+                        self._driver.write(terminal_sequence)
                 finally:
                     self._end_update()
-                console.file.flush()
+                self._driver.flush()
         finally:
             self.post_display_hook()
 
@@ -2552,9 +2501,9 @@ class App(Generic[ReturnType], DOMNode):
         self._sync_available = True
 
     def _begin_update(self) -> None:
-        if self._sync_available:
-            self.console.file.write(SYNC_START)
+        if self._sync_available and self._driver is not None:
+            self._driver.write(SYNC_START)
 
     def _end_update(self) -> None:
-        if self._sync_available:
-            self.console.file.write(SYNC_END)
+        if self._sync_available and self._driver is not None:
+            self._driver.write(SYNC_END)
