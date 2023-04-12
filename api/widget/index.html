@@ -4784,6 +4784,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
@@ -5105,6 +5107,32 @@
     
   
     Logging
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../map_geometry/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Map geometry
   
 
     
@@ -6549,6 +6577,17 @@
     <span class="md-ellipsis">
       
         scroll_to()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.scroll_to_center" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scroll_to_center()
       
     </span>
   </a>
@@ -8222,6 +8261,17 @@
     <span class="md-ellipsis">
       
         scroll_to()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.scroll_to_center" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        scroll_to_center()
       
     </span>
   </a>
@@ -13485,6 +13535,101 @@ do this automatically.</p>
   <summary>Note</summary>
   <p>The call to scroll is made after the next refresh.</p>
 </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widget.Widget.scroll_to_center" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">scroll_to_center</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widget.Widget.scroll_to_center" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">scroll_to_center</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="bp">self</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">animate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="o">*</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Scroll this widget to the center of the screen.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>animate</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td><p>Whether to animate the scroll.</p></td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>speed</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a> | None</code>
+          </td>
+          <td><p>Speed of scroll if animate is <code>True</code>; or <code>None</code> to use <code>duration</code>.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>duration</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a> | None</code>
+          </td>
+          <td><p>Duration of animation, if <code>animate</code> is <code>True</code> and <code>speed</code> is <code>None</code>.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>easing</code></td>
+          <td>
+                <code><span title="textual._animator.EasingFunction">EasingFunction</span> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td><p>An easing method for the scrolling animation.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>force</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td><p>Force scrolling even when prohibited by overflow styling.</p></td>
+          <td>
+                <code>False</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
   </div>
 
 </div>

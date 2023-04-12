@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://textual.textualize.io/api/events/">
+        <link rel="canonical" href="https://textual.textualize.io/api/map_geometry/">
       
       
-        <link rel="prev" href="../dom_node/">
+        <link rel="prev" href="../logging/">
       
       
-        <link rel="next" href="../geometry/">
+        <link rel="next" href="../message_pump/">
       
       
         
@@ -28,7 +28,7 @@
     
     
       
-        <title>Events - Textual</title>
+        <title>Map geometry - Textual</title>
       
     
     
@@ -71,9 +71,9 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@textualizeio">
 <meta name="twitter:creator" content="@willmcgugan">
-<meta property="og:title" content="Textual - Events">
+<meta property="og:title" content="Textual - Map geometry">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://textual.textualize.io/api/events/">
+<meta property="og:url" content="https://textual.textualize.io/api/map_geometry/">
 <meta property="og:site_name" content="Textual Documentation">
 <meta property="og:description" content="Textual is a TUI framework for Python, inspired by modern web development.">
 <meta property="og:image" content="https://raw.githubusercontent.com/Textualize/textual/main/imgs/textual.png">
@@ -98,7 +98,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#textual.events" class="md-skip">
+        <a href="#textual._compositor.MapGeometry" class="md-skip">
           Skip to content
         </a>
       
@@ -133,7 +133,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Events
+              Map geometry
             
           </span>
         </div>
@@ -5018,33 +5018,9 @@
                 
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    
-  
-    Events
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../events/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5059,487 +5035,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        textual.events
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Blur" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Blur
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Click" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Click
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Compose" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Compose
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.DescendantBlur" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DescendantBlur
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.DescendantFocus" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DescendantFocus
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Enter" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Enter
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Event" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Event
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Focus" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Focus
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Hide" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Hide
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Idle" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Idle
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.InputEvent" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        InputEvent
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.InvokeCallbacks" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        InvokeCallbacks
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Key" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Key
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Key">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Key.is_printable" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        is_printable
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Key.name" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        name
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.Key.name_aliases" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        name_aliases
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Leave" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Leave
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Load" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Load
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Mount" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Mount
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.MouseCapture" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MouseCapture
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.MouseDown" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MouseDown
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.MouseEvent" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MouseEvent
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="MouseEvent">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.MouseEvent.delta" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        delta
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.MouseEvent.offset" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        offset
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.MouseEvent.screen_offset" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        screen_offset
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.MouseEvent.style" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        style
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.MouseEvent.get_content_offset" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        get_content_offset()
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.MouseMove" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MouseMove
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.MouseRelease" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MouseRelease
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.MouseScrollDown" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MouseScrollDown
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.MouseScrollUp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MouseScrollUp
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.MouseUp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MouseUp
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Paste" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Paste
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Ready" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Ready
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Resize" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Resize
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.ScreenResume" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ScreenResume
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.ScreenSuspend" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ScreenSuspend
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Show" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Show
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Timer" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Timer
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Unmount" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Unmount
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -5629,9 +5124,33 @@
                 
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../map_geometry/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    
+  
+    Map geometry
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -5646,6 +5165,118 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#textual._compositor.MapGeometry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MapGeometry
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MapGeometry">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual._compositor.MapGeometry.clip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clip
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual._compositor.MapGeometry.container_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        container_size
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual._compositor.MapGeometry.order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        order
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual._compositor.MapGeometry.region" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        region
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual._compositor.MapGeometry.virtual_region" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        virtual_region
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual._compositor.MapGeometry.virtual_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        virtual_size
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual._compositor.MapGeometry.visible_region" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        visible_region
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -6391,165 +6022,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#textual.events" class="md-nav__link">
+  <a href="#textual._compositor.MapGeometry" class="md-nav__link">
     <span class="md-ellipsis">
       
-        textual.events
+        MapGeometry
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Blur" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Blur
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Click" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Click
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Compose" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Compose
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.DescendantBlur" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DescendantBlur
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.DescendantFocus" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DescendantFocus
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Enter" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Enter
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Event" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Event
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Focus" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Focus
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Hide" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Hide
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Idle" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Idle
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.InputEvent" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        InputEvent
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.InvokeCallbacks" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        InvokeCallbacks
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Key" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Key
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Key">
+    <nav class="md-nav" aria-label="MapGeometry">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#textual.events.Key.is_printable" class="md-nav__link">
+  <a href="#textual._compositor.MapGeometry.clip" class="md-nav__link">
     <span class="md-ellipsis">
       
-        is_printable
+        clip
       
     </span>
   </a>
@@ -6557,10 +6045,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#textual.events.Key.name" class="md-nav__link">
+  <a href="#textual._compositor.MapGeometry.container_size" class="md-nav__link">
     <span class="md-ellipsis">
       
-        name
+        container_size
       
     </span>
   </a>
@@ -6568,10 +6056,54 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#textual.events.Key.name_aliases" class="md-nav__link">
+  <a href="#textual._compositor.MapGeometry.order" class="md-nav__link">
     <span class="md-ellipsis">
       
-        name_aliases
+        order
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual._compositor.MapGeometry.region" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        region
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual._compositor.MapGeometry.virtual_region" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        virtual_region
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual._compositor.MapGeometry.virtual_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        virtual_size
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual._compositor.MapGeometry.visible_region" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        visible_region
       
     </span>
   </a>
@@ -6580,276 +6112,6 @@
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Leave" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Leave
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Load" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Load
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Mount" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Mount
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.MouseCapture" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MouseCapture
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.MouseDown" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MouseDown
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.MouseEvent" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MouseEvent
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="MouseEvent">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.MouseEvent.delta" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        delta
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.MouseEvent.offset" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        offset
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.MouseEvent.screen_offset" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        screen_offset
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.MouseEvent.style" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        style
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.events.MouseEvent.get_content_offset" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        get_content_offset()
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.MouseMove" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MouseMove
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.MouseRelease" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MouseRelease
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.MouseScrollDown" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MouseScrollDown
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.MouseScrollUp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MouseScrollUp
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.MouseUp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MouseUp
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Paste" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Paste
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Ready" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Ready
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Resize" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Resize
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.ScreenResume" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ScreenResume
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.ScreenSuspend" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ScreenSuspend
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Show" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Show
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Timer" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Timer
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Unmount" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Unmount
-      
-    </span>
-  </a>
   
 </li>
       
@@ -6872,534 +6134,31 @@
   
 
 
-  <h1>Events</h1>
+  <h1>Map geometry</h1>
 
-<div class="doc doc-object doc-module">
+<div class="doc doc-object doc-class">
 
 
-<a id="textual.events"></a>
+
+
+
+<h2 id="textual._compositor.MapGeometry" class="doc doc-heading">
+        <span class="doc doc-object-name doc-class-name">textual._compositor.MapGeometry</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class"><code>class</code></small>
+  </span>
+
+<a href="#textual._compositor.MapGeometry" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
   <div class="doc doc-contents first">
-  
-      <p>Builtin events sent by Textual.</p>
-<p>Events may be marked as "Bubbles" and "Verbose".
-See the <a href="/guide/events/#bubbling">events guide</a> for an explanation of bubbling.
-Verbose events are excluded from the textual console, unless you explicit request them with the <code>-v</code> switch as follows:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>textual console -v
-</code></pre></div>
-
-  
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.Blur" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">Blur</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.Blur" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
       <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
+        Bases: <code><a class="autorefs autorefs-external" title="typing.NamedTuple" href="https://docs.python.org/3/library/typing.html#typing.NamedTuple">NamedTuple</a></code></p>
 
   
-      <p>Sent when a widget is blurred (un-focussed).</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.Click" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">Click</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.Click" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.MouseEvent" href="#textual.events.MouseEvent">MouseEvent</a></code></p>
-
-  
-      <p>Sent when a widget is clicked.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.Compose" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">Compose</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.Compose" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Sent to a widget to request it to compose and mount children.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.DescendantBlur" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">DescendantBlur</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.DescendantBlur" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Sent when a child widget is blurred.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.DescendantFocus" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">DescendantFocus</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.DescendantFocus" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Sent when a child widget is focussed.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.Enter" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">Enter</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.Enter" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Sent when the mouse is moved over a widget.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.Event" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">Event</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.Event" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.message.Message" href="../message/#textual.message.Message">Message</a></code></p>
-
-  
-      <p>The base class for all events.</p>
-
-
-
-  
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.Focus" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">Focus</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.Focus" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Sent when a widget is focussed.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.Hide" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">Hide</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.Hide" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Sent when a widget has been hidden.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-<p>A widget may be hidden by setting its <code>visible</code> flag to <code>False</code>, if it is no longer in a layout,
-or if it has been offset beyond the edges of the terminal.</p>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.Idle" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">Idle</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.Idle" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Sent when there are no more items in the message queue.</p>
-<p>This is a pseudo-event in that it is created by the Textual system and doesn't go
-through the usual message queue.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.InputEvent" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">InputEvent</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.InputEvent" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Base class for input events.</p>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.InvokeCallbacks" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">InvokeCallbacks</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.InvokeCallbacks" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>An internal event, sent to the screen to run callbacks.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.Key" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">Key</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.Key" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">character</span><span class="p">):</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.InputEvent" href="#textual.events.InputEvent">InputEvent</a></code></p>
-
-  
-      <p>Sent when the user hits a key on the keyboard.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-
-  <h5>Parameters</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>key</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
-          </td>
-          <td><p>The key that was pressed.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>character</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
-          </td>
-          <td><p>A printable character or <code>None</code> if it is not printable.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-  <h5>Attributes</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>aliases</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#list">list</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>
-          </td>
-          <td><p>The aliases for the key, including the key itself.</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>Defines the absolute location of a Widget.</p>
 
 
 
@@ -7417,39 +6176,21 @@ through the usual message queue.</p>
 
 
 
-<h3 id="textual.events.Key.is_printable" class="doc doc-heading">
-        <span class="doc doc-object-name doc-attribute-name">is_printable</span>
+<h3 id="textual._compositor.MapGeometry.clip" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">clip</span>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
-<a href="#textual.events.Key.is_printable" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">is_printable</span><span class="p">:</span> <span class="nb">bool</span>
+<a href="#textual._compositor.MapGeometry.clip" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">clip</span><span class="p">:</span> <span class="n">Region</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
   
-      <p>Check if the key is printable (produces a unicode character).</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
-          </td>
-          <td><p>True if the key is printable.</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>A region to clip the widget by (if a Widget is within a container).</p>
   </div>
 
 </div>
@@ -7458,21 +6199,21 @@ through the usual message queue.</p>
 
 
 
-<h3 id="textual.events.Key.name" class="doc doc-heading">
-        <span class="doc doc-object-name doc-attribute-name">name</span>
+<h3 id="textual._compositor.MapGeometry.container_size" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">container_size</span>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
-<a href="#textual.events.Key.name" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+<a href="#textual._compositor.MapGeometry.container_size" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">container_size</span><span class="p">:</span> <span class="n">Size</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
   
-      <p>Name of a key suitable for use as a Python identifier.</p>
+      <p>The container size (area not occupied by scrollbars).</p>
   </div>
 
 </div>
@@ -7481,464 +6222,24 @@ through the usual message queue.</p>
 
 
 
-<h3 id="textual.events.Key.name_aliases" class="doc doc-heading">
-        <span class="doc doc-object-name doc-attribute-name">name_aliases</span>
+<h3 id="textual._compositor.MapGeometry.order" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">order</span>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
-<a href="#textual.events.Key.name_aliases" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">name_aliases</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<a href="#textual._compositor.MapGeometry.order" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">order</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
   
-      <p>The corresponding name for every alias in <code>aliases</code> list.</p>
-  </div>
-
-</div>
-
-
-
-
-
-  </div>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.Leave" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">Leave</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.Leave" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Sent when the mouse is moved away from a widget.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.Load" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">Load</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.Load" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Sent when the App is running but <em>before</em> the terminal is in application mode.</p>
-<p>Use this event to run any set up that doesn't require any visuals such as loading
-configuration and binding keys.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.Mount" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">Mount</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.Mount" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Sent when a widget is <em>mounted</em> and may receive messages.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.MouseCapture" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">MouseCapture</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.MouseCapture" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mouse_position</span><span class="p">):</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Sent when the mouse has been captured.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-<p>When a mouse has been captured, all further mouse events will be sent to the capturing widget.</p>
-
-  <h5>Parameters</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>mouse_position</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="../geometry/#textual.geometry.Offset">Offset</a></code>
-          </td>
-          <td><p>The position of the mouse when captured.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-
-
-  
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.MouseDown" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">MouseDown</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.MouseDown" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.MouseEvent" href="#textual.events.MouseEvent">MouseEvent</a></code></p>
-
-  
-      <p>Sent when a mouse button is pressed.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.MouseEvent" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">MouseEvent</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.MouseEvent" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="bp">self</span><span class="p">,</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">x</span><span class="p">,</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">y</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">delta_x</span><span class="p">,</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">delta_y</span><span class="p">,</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">button</span><span class="p">,</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">shift</span><span class="p">,</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">meta</span><span class="p">,</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">ctrl</span><span class="p">,</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">screen_x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">screen_y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="n">style</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="p">):</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.InputEvent" href="#textual.events.InputEvent">InputEvent</a></code></p>
-
-  
-      <p>Sent in response to a mouse event.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-
-  <h5>Parameters</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>x</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
-          </td>
-          <td><p>The relative x coordinate.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>y</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
-          </td>
-          <td><p>The relative y coordinate.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>delta_x</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
-          </td>
-          <td><p>Change in x since the last message.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>delta_y</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
-          </td>
-          <td><p>Change in y since the last message.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>button</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
-          </td>
-          <td><p>Indexed of the pressed button.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>shift</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
-          </td>
-          <td><p>True if the shift key is pressed.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>meta</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
-          </td>
-          <td><p>True if the meta key is pressed.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>ctrl</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
-          </td>
-          <td><p>True if the ctrl key is pressed.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>screen_x</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> | None</code>
-          </td>
-          <td><p>The absolute x coordinate.</p></td>
-          <td>
-                <code>None</code>
-          </td>
-        </tr>
-        <tr>
-          <td><code>screen_y</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> | None</code>
-          </td>
-          <td><p>The absolute y coordinate.</p></td>
-          <td>
-                <code>None</code>
-          </td>
-        </tr>
-        <tr>
-          <td><code>style</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" title="rich.style.Style" href="https://rich.readthedocs.io/en/stable/reference/style.html#rich.style.Style">Style</a> | None</code>
-          </td>
-          <td><p>The Rich Style under the mouse cursor.</p></td>
-          <td>
-                <code>None</code>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-
-
-  
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-<div class="doc doc-object doc-attribute">
-
-
-
-<h3 id="textual.events.MouseEvent.delta" class="doc doc-heading">
-        <span class="doc doc-object-name doc-attribute-name">delta</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
-  </span>
-
-<a href="#textual.events.MouseEvent.delta" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">delta</span><span class="p">:</span> <span class="n">Offset</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-  
-      <p>Mouse coordinate delta (change since last event).</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="../geometry/#textual.geometry.Offset">Offset</a></code>
-          </td>
-          <td><p>Mouse coordinate.</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>Tuple of tuples defining the painting order of the widget.</p>
+<p>Each successive triple represents painting order information with regards to
+ancestors in the DOM hierarchy and the last triple provides painting order
+information for this specific widget.</p>
   </div>
 
 </div>
@@ -7947,39 +6248,21 @@ configuration and binding keys.</p>
 
 
 
-<h3 id="textual.events.MouseEvent.offset" class="doc doc-heading">
-        <span class="doc doc-object-name doc-attribute-name">offset</span>
+<h3 id="textual._compositor.MapGeometry.region" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">region</span>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
-<a href="#textual.events.MouseEvent.offset" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">offset</span><span class="p">:</span> <span class="n">Offset</span>
+<a href="#textual._compositor.MapGeometry.region" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">region</span><span class="p">:</span> <span class="n">Region</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
   
-      <p>The mouse coordinate as an offset.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="../geometry/#textual.geometry.Offset">Offset</a></code>
-          </td>
-          <td><p>Mouse coordinate.</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>The (screen) region occupied by the widget.</p>
   </div>
 
 </div>
@@ -7988,39 +6271,21 @@ configuration and binding keys.</p>
 
 
 
-<h3 id="textual.events.MouseEvent.screen_offset" class="doc doc-heading">
-        <span class="doc doc-object-name doc-attribute-name">screen_offset</span>
+<h3 id="textual._compositor.MapGeometry.virtual_region" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">virtual_region</span>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
-<a href="#textual.events.MouseEvent.screen_offset" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">screen_offset</span><span class="p">:</span> <span class="n">Offset</span>
+<a href="#textual._compositor.MapGeometry.virtual_region" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">virtual_region</span><span class="p">:</span> <span class="n">Region</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
   
-      <p>Mouse coordinate relative to the screen.</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="../geometry/#textual.geometry.Offset">Offset</a></code>
-          </td>
-          <td><p>Mouse coordinate.</p></td>
-        </tr>
-    </tbody>
-  </table>
+      <p>The region relative to the container (but not necessarily visible).</p>
   </div>
 
 </div>
@@ -8029,705 +6294,48 @@ configuration and binding keys.</p>
 
 
 
-<h3 id="textual.events.MouseEvent.style" class="doc doc-heading">
-        <span class="doc doc-object-name doc-attribute-name">style</span>
+<h3 id="textual._compositor.MapGeometry.virtual_size" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">virtual_size</span>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+  </span>
+
+<a href="#textual._compositor.MapGeometry.virtual_size" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">virtual_size</span><span class="p">:</span> <span class="n">Size</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>The virtual size (scrollable region) of a widget if it is a container.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual._compositor.MapGeometry.visible_region" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">visible_region</span>
+
+  
+  <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
-<a href="#textual.events.MouseEvent.style" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">style</span><span class="p">:</span> <span class="n">Style</span>
+<a href="#textual._compositor.MapGeometry.visible_region" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">visible_region</span><span class="p">:</span> <span class="n">Region</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
   
-      <p>The (Rich) Style under the cursor.</p>
+      <p>The Widget region after clipping.</p>
   </div>
 
 </div>
 
-
-
-<div class="doc doc-object doc-function">
-
-
-
-<h3 id="textual.events.MouseEvent.get_content_offset" class="doc doc-heading">
-        <span class="doc doc-object-name doc-function-name">get_content_offset</span>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-method"><code>method</code></small>
-  </span>
-
-<a href="#textual.events.MouseEvent.get_content_offset" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">get_content_offset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-  
-      <p>Get offset within a widget's content area, or None if offset is not in content (i.e. padding or border).</p>
-
-  <h5>Parameters</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>widget</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code>
-          </td>
-          <td><p>Widget receiving the event.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="../geometry/#textual.geometry.Offset">Offset</a> | None</code>
-          </td>
-          <td><p>An offset where the origin is at the top left of the content area.</p></td>
-        </tr>
-    </tbody>
-  </table>
-
-  </div>
-
-</div>
-
-
-
-  </div>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.MouseMove" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">MouseMove</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.MouseMove" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.MouseEvent" href="#textual.events.MouseEvent">MouseEvent</a></code></p>
-
-  
-      <p>Sent when the mouse cursor moves.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.MouseRelease" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">MouseRelease</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.MouseRelease" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mouse_position</span><span class="p">):</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Mouse has been released.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-
-  <h5>Parameters</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>mouse_position</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="../geometry/#textual.geometry.Offset">Offset</a></code>
-          </td>
-          <td><p>The position of the mouse when released.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-
-
-  
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.MouseScrollDown" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">MouseScrollDown</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.MouseScrollDown" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.MouseEvent" href="#textual.events.MouseEvent">MouseEvent</a></code></p>
-
-  
-      <p>Sent when the mouse wheel is scrolled <em>down</em>.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.MouseScrollUp" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">MouseScrollUp</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.MouseScrollUp" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.MouseEvent" href="#textual.events.MouseEvent">MouseEvent</a></code></p>
-
-  
-      <p>Sent when the mouse wheel is scrolled <em>up</em>.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.MouseUp" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">MouseUp</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.MouseUp" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.MouseEvent" href="#textual.events.MouseEvent">MouseEvent</a></code></p>
-
-  
-      <p>Sent when a mouse button is released.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.Paste" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">Paste</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.Paste" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Event containing text that was pasted into the Textual application.
-This event will only appear when running in a terminal emulator that supports
-bracketed paste mode. Textual will enable bracketed pastes when an app starts,
-and disable it when the app shuts down.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-
-  <h5>Parameters</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>text</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
-          </td>
-          <td><p>The text that has been pasted.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-
-
-  
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.Ready" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">Ready</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.Ready" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Sent to the app when the DOM is ready.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.Resize" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">Resize</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.Resize" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">virtual_size</span><span class="p">,</span> <span class="n">container_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Sent when the app or widget has been resized.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-
-  <h5>Parameters</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>size</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Size" href="../geometry/#textual.geometry.Size">Size</a></code>
-          </td>
-          <td><p>The new size of the Widget.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>virtual_size</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Size" href="../geometry/#textual.geometry.Size">Size</a></code>
-          </td>
-          <td><p>The virtual size (scrollable size) of the Widget.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>container_size</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Size" href="../geometry/#textual.geometry.Size">Size</a> | None</code>
-          </td>
-          <td><p>The size of the Widget's container widget.</p></td>
-          <td>
-                <code>None</code>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-
-
-  
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.ScreenResume" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">ScreenResume</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.ScreenResume" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Sent to screen that has been made active.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.ScreenSuspend" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">ScreenSuspend</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.ScreenSuspend" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Sent to screen when it is no longer active.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.Show" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">Show</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.Show" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Sent when a widget has become visible.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.Timer" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">Timer</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.Timer" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timer</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
-
-  
-      <p>Sent in response to a timer.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-
-
-
-  
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.events.Unmount" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">Unmount</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.events.Unmount" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Mount" href="../../events/mount/#textual.events.Mount">Mount</a></code></p>
-
-  
-      <p>Sent when a widget is unmounted and may not longer receive messages.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-
-
-
-  </div>
-
-</div>
 
 
 
@@ -8760,7 +6368,7 @@ and disable it when the app shuts down.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../dom_node/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Dom node" rel="prev">
+          <a href="../logging/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Logging" rel="prev">
             <div class="md-footer__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
             </div>
@@ -8769,20 +6377,20 @@ and disable it when the app shuts down.</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Dom node
+                Logging
               </div>
             </div>
           </a>
         
         
           
-          <a href="../geometry/" class="md-footer__link md-footer__link--next" aria-label="Next: Geometry" rel="next">
+          <a href="../message_pump/" class="md-footer__link md-footer__link--next" aria-label="Next: Message pump" rel="next">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Geometry
+                Message pump
               </div>
             </div>
             <div class="md-footer__button md-icon">

@@ -4784,6 +4784,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
@@ -5159,6 +5161,17 @@
     <span class="md-ellipsis">
       
         action_bell()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.action_check_bindings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        action_check_bindings()
       
     </span>
   </a>
@@ -6011,6 +6024,32 @@
     
   
     Logging
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../map_geometry/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Map geometry
   
 
     
@@ -7040,6 +7079,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.action_check_bindings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        action_check_bindings()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.action_focus" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7935,7 +7985,12 @@ In the case of the App, it will only every contain a single child, which will be
   
       <p>Use a dark theme if <code>True</code>, otherwise use a light theme.</p>
 <p>Modify this attribute to switch between light and dark themes.</p>
-  </div>
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">dark</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">dark</span>  <span class="c1"># Toggle dark mode</span>
+</code></pre></div>
+</details>  </div>
 
 </div>
 
@@ -8350,7 +8405,9 @@ If a widget is focused, then any bindings present in the active screen and app a
   
       <p>The sub-title for the application.</p>
 <p>The initial value for <code>sub_title</code> will be set to the <code>SUB_TITLE</code> class variable if it exists, or
-an empty string if it doesn't/</p>
+an empty string if it doesn't.</p>
+<p>Sub-titles are typically used to show the high-level state of the app, such as the current mode, or path to
+the file being worker on.</p>
 <p>Assign a new value to this attribute to change the sub-title.</p>
   </div>
 
@@ -8523,6 +8580,29 @@ the name of the app if it doesn't.</p>
   <div class="doc doc-contents ">
   
       <p>An <a href="/guide/actions">action</a> to play the terminal 'bell'.</p>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.app.App.action_check_bindings" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">action_check_bindings</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+<a href="#textual.app.App.action_check_bindings" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">action_check_bindings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>An <a href="/guide/actions">action</a> to handle a key press using the binding system.</p>
 
   </div>
 

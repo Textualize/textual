@@ -5297,6 +5297,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._data_table.DataTable.remove_row" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        remove_row()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._data_table.DataTable.sort" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5942,6 +5953,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -6263,6 +6276,32 @@
     
   
     Logging
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/map_geometry/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Map geometry
   
 
     
@@ -8083,6 +8122,17 @@
     <span class="md-ellipsis">
       
         refresh_row()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._data_table.DataTable.remove_row" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        remove_row()
       
     </span>
   </a>
@@ -11847,6 +11897,71 @@ and column metadata from the segments present in the cells.</p>
                 <code><span title="typing_extensions.Self">Self</span></code>
           </td>
           <td><p>The <code>DataTable</code> instance.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._data_table.DataTable.remove_row" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">remove_row</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._data_table.DataTable.remove_row" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">remove_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_key</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Remove a row (identified by a key) from the DataTable.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>row_key</code></td>
+          <td>
+                <code><span title="textual.widgets._data_table.RowKey">RowKey</span> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+          </td>
+          <td><p>The key identifying the row to remove.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Raises</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="textual.widgets._data_table.RowDoesNotExist">RowDoesNotExist</span></code>
+          </td>
+          <td><p>If the row key does not exist.</p></td>
         </tr>
     </tbody>
   </table>
