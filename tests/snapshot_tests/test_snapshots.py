@@ -126,6 +126,11 @@ def test_datatable_labels_and_fixed_data(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_row_labels.py")
 
 
+def test_datatable_style_ordering(snap_compare):
+    # Regression test for https://github.com/Textualize/textual/issues/2061
+    assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_style_order.py")
+
+
 def test_footer_render(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "footer.py")
 
