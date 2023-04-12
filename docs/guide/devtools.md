@@ -98,6 +98,12 @@ You can use the option `--port` to specify a custom port to run the console on, 
 textual console --port 7342
 ```
 
+Then, use the command `run` with the same `--port` option:
+
+```bash
+textual run --dev --port 7342 my_app.py
+```
+
 
 ## Textual log
 

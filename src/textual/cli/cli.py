@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sys
 
-from textual.devtools.client import DEVTOOLS_PORT_ENVIRON_VARIABLE
+from ..constants import DEFAULT_DEVTOOLS_PORT, DEVTOOLS_PORT_ENVIRON_VARIABLE
 
 try:
     import click
@@ -29,7 +29,7 @@ def run():
     type=int,
     default=None,
     metavar="PORT",
-    help="Port to use for the development mode console",
+    help=f"Port to use for the development mode console. Defaults to {DEFAULT_DEVTOOLS_PORT}.",
 )
 @click.option("-v", "verbose", help="Enable verbose logs.", is_flag=True)
 @click.option("-x", "--exclude", "exclude", help="Exclude log group(s)", multiple=True)
@@ -93,6 +93,14 @@ def _post_run_warnings() -> None:
 )
 @click.argument("import_name", metavar="FILE or FILE:APP")
 @click.option("--dev", "dev", help="Enable development mode", is_flag=True)
+@click.option(
+    "--port",
+    "port",
+    type=int,
+    default=None,
+    metavar="PORT",
+    help=f"Port to use for the development mode console. Defaults to {DEFAULT_DEVTOOLS_PORT}.",
+)
 @click.option("--press", "press", help="Comma separated keys to simulate press")
 @click.option(
     "--screenshot",
@@ -132,6 +140,9 @@ def run_app(
 
     from textual.features import parse_features
 
+    if port is not None:
+        os.environ[DEVTOOLS_PORT_ENVIRON_VARIABLE] = str(port)
+
     features = set(parse_features(os.environ.get("TEXTUAL", "")))
     if dev:
         features.add("debug")
@@ -146,9 +157,6 @@ def run_app(
         console = Console(stderr=True)
         console.print(str(error))
         sys.exit(1)
-
-    if port is not None:
-        os.environ[DEVTOOLS_PORT_ENVIRON_VARIABLE] = str(port)
 
     press_keys = press.split(",") if press else None
 

@@ -10,7 +10,8 @@ from rich.console import ConsoleDimensions
 from rich.panel import Panel
 
 from tests.utilities.render import wait_for_predicate
-from textual.devtools.client import DEFAULT_DEVTOOLS_PORT, DevtoolsClient
+from textual.constants import DEFAULT_DEVTOOLS_PORT
+from textual.devtools.client import DevtoolsClient
 from textual.devtools.redirect_output import DevtoolsLog
 
 CALLER_LINENO = 123

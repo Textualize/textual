@@ -3,7 +3,6 @@ from __future__ import annotations
 import asyncio
 import inspect
 import json
-import os
 import pickle
 from asyncio import Queue, QueueFull, Task
 from io import StringIO
@@ -17,19 +16,10 @@ from rich.console import Console
 from rich.segment import Segment
 
 from .._log import LogGroup, LogVerbosity
+from ..constants import get_port_for_devtools
 
-DEVTOOLS_PORT_ENVIRON_VARIABLE = "TEXTUAL_CONSOLE_PORT"
-DEFAULT_DEVTOOLS_PORT = 8081
 WEBSOCKET_CONNECT_TIMEOUT = 3
 LOG_QUEUE_MAXSIZE = 512
-
-
-def get_port_for_devtools() -> int:
-    """Get the port to run the devtools on from the environment or the default."""
-    try:
-        return int(os.environ[DEVTOOLS_PORT_ENVIRON_VARIABLE])
-    except (KeyError, ValueError):
-        return DEFAULT_DEVTOOLS_PORT
 
 
 class DevtoolsLog(NamedTuple):
