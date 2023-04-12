@@ -37,6 +37,7 @@ class LinuxDriver(Driver):
 
         Args:
             app: The App instance.
+            debug: Enable debug mode.
             size: Initial size of the terminal or `None` to detect.
         """
         super().__init__(app, debug=debug, size=size)

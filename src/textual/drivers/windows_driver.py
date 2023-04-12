@@ -22,7 +22,7 @@ class WindowsDriver(Driver):
         debug: bool = False,
         size: tuple[int, int] | None = None,
     ) -> None:
-        """Initialize windows driver.
+        """Initialize Windows driver.
 
         Args:
             app: The App instance.
