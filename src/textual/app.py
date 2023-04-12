@@ -542,18 +542,6 @@ class App(Generic[ReturnType], DOMNode):
 
         return namespace_binding_map
 
-    @property
-    def driver(self) -> Driver:
-        """The Textual driver.
-
-        Warning:
-
-            Here be dragons! The driver object is not something most apps will use directly
-
-        """
-        assert self._driver is not None
-        return self._driver
-
     def _set_active(self) -> None:
         """Set this app to be the currently active app."""
         active_app.set(self)
@@ -1724,7 +1712,6 @@ class App(Generic[ReturnType], DOMNode):
 
                 finally:
                     driver.stop_application_mode()
-                    driver.close()
         except Exception as error:
             self._handle_exception(error)
 
@@ -1945,7 +1932,7 @@ class App(Generic[ReturnType], DOMNode):
             await self._disconnect_devtools()
 
         if self._driver is not None:
-            self.driver.flush()
+            self._driver.close()
 
         self._print_error_renderables()
 
@@ -1997,10 +1984,10 @@ class App(Generic[ReturnType], DOMNode):
                     except Exception as error:
                         self._handle_exception(error)
                     else:
-                        self.driver.write(terminal_sequence)
+                        self._driver.write(terminal_sequence)
                 finally:
                     self._end_update()
-                self.driver.flush()
+                self._driver.flush()
         finally:
             self.post_display_hook()
 
@@ -2493,9 +2480,9 @@ class App(Generic[ReturnType], DOMNode):
         self._sync_available = True
 
     def _begin_update(self) -> None:
-        if self._sync_available:
-            self.driver.write(SYNC_START)
+        if self._sync_available and self._driver is not None:
+            self._driver.write(SYNC_START)
 
     def _end_update(self) -> None:
-        if self._sync_available:
-            self.driver.write(SYNC_END)
+        if self._sync_available and self._driver is not None:
+            self._driver.write(SYNC_END)
