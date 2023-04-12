@@ -29,6 +29,9 @@ class TwoWayDict(Generic[Key, Value]):
         self._forward.__delitem__(key)
         self._reverse.__delitem__(value)
 
+    def __iter__(self):
+        return iter(self._forward)
+
     def get(self, key: Key) -> Value:
         """Given a key, efficiently lookup and return the associated value.
 

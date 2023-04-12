@@ -61,7 +61,7 @@ The following example adds a `Tabs` widget above a text label. Press ++a++ to ad
 
 ## Messages
 
-- [Tabs.TabActivate][textual.widgets.Tabs.TabActivated]
+- [Tabs.TabActivated][textual.widgets.Tabs.TabActivated]
 - [Tabs.Cleared][textual.widgets.Tabs.Cleared]
 
 ## Bindings

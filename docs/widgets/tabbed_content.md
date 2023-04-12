@@ -101,6 +101,10 @@ The following example contains a `TabbedContent` with three tabs.
 | `active` | `str` | `""`    | The `id` attribute of the active tab. Set this to switch tabs. |
 
 
+## Messages
+
+- [TabbedContent.TabActivated][textual.widgets.TabbedContent.TabActivated]
+
 ## See also
 
 

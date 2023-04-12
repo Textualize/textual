@@ -2,9 +2,11 @@ from __future__ import annotations
 
 from itertools import zip_longest
 
+from rich.repr import Result
 from rich.text import Text, TextType
 
 from ..app import ComposeResult
+from ..message import Message
 from ..reactive import reactive
 from ..widget import Widget
 from ._content_switcher import ContentSwitcher
@@ -83,6 +85,24 @@ class TabbedContent(Widget):
 
     active: reactive[str] = reactive("", init=False)
     """The ID of the active tab, or empty string if none are active."""
+
+    class TabActivated(Message):
+        """Posted when the active tab changes."""
+
+        def __init__(self, tabbed_content: TabbedContent, tab: Tab) -> None:
+            """Initialize message.
+
+            Args:
+                tabbed_content: The TabbedContent widget.
+                tab: The Tab widget that was selected (contains the tab label).
+            """
+            self.tabbed_content = tabbed_content
+            self.tab = tab
+            super().__init__()
+
+        def __rich_repr__(self) -> Result:
+            yield self.tabbed_content
+            yield self.tab
 
     def __init__(self, *titles: TextType, initial: str = "") -> None:
         """Initialize a TabbedContent widgets.
@@ -167,6 +187,12 @@ class TabbedContent(Widget):
         assert isinstance(event.tab, ContentTab)
         switcher.current = event.tab.id
         self.active = event.tab.id
+        self.post_message(
+            TabbedContent.TabActivated(
+                tabbed_content=self,
+                tab=event.tab,
+            )
+        )
 
     def _on_tabs_cleared(self, event: Tabs.Cleared) -> None:
         """All tabs were removed."""

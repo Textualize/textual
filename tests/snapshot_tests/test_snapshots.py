@@ -116,6 +116,11 @@ def test_datatable_sort_multikey(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_sort.py", press=press)
 
 
+def test_datatable_remove_row(snap_compare):
+    press = ["r"]
+    assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_remove_row.py", press=press)
+
+
 def test_datatable_labels_and_fixed_data(snap_compare):
     # Ensure that we render correctly when there are fixed rows/cols and labels.
     assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_row_labels.py")
@@ -406,3 +411,13 @@ def test_fr_margins(snap_compare):
 def test_scroll_visible(snap_compare):
     # https://github.com/Textualize/textual/issues/2181
     assert snap_compare(SNAPSHOT_APPS_DIR / "scroll_visible.py", press=["t"])
+
+
+def test_scroll_to_center(snap_compare):
+    # READ THIS IF THIS TEST FAILS:
+    # While https://github.com/Textualize/textual/issues/2254 is open, the snapshot
+    # this is being compared against is INCORRECT.
+    # The correct output for this snapshot test would show a couple of containers
+    # scrolled so that the red string >>bullseye<< is centered on the screen.
+    # When this snapshot "breaks" because #2254 is fixed, this snapshot can be updated.
+    assert snap_compare(SNAPSHOT_APPS_DIR / "scroll_to_center.py", press=["s"])

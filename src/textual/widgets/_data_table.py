@@ -308,7 +308,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     cursor_coordinate: Reactive[Coordinate] = Reactive(
         Coordinate(0, 0), repaint=False, always_update=True
     )
-    hover_coordinate: Reactive[Coordinate] = Reactive(Coordinate(0, 0), repaint=False)
+    hover_coordinate: Reactive[Coordinate] = Reactive(
+        Coordinate(0, 0), repaint=False, always_update=True
+    )
 
     class CellHighlighted(Message, bubble=True):
         """Posted when the cursor moves to highlight a new cell.
@@ -1186,6 +1188,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._label_column = Column(self._label_column_key, Text(), auto_width=True)
         self._labelled_row_exists = False
         self.refresh()
+        self.scroll_x = 0
+        self.scroll_y = 0
+        self.scroll_target_x = 0
+        self.scroll_target_y = 0
         return self
 
     def add_column(
@@ -1321,6 +1327,41 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             row_key = self.add_row(*row)
             row_keys.append(row_key)
         return row_keys
+
+    def remove_row(self, row_key: RowKey | str) -> None:
+        """Remove a row (identified by a key) from the DataTable.
+
+        Args:
+            row_key: The key identifying the row to remove.
+
+        Raises:
+            RowDoesNotExist: If the row key does not exist.
+        """
+        if row_key not in self._row_locations:
+            raise RowDoesNotExist(f"Row key {row_key!r} is not valid.")
+
+        self._require_update_dimensions = True
+        self.check_idle()
+
+        index_to_delete = self._row_locations.get(row_key)
+        new_row_locations = TwoWayDict({})
+        for row_location_key in self._row_locations:
+            row_index = self._row_locations.get(row_location_key)
+            if row_index > index_to_delete:
+                new_row_locations[row_location_key] = row_index - 1
+            elif row_index < index_to_delete:
+                new_row_locations[row_location_key] = row_index
+
+        self._row_locations = new_row_locations
+
+        del self.rows[row_key]
+        del self._data[row_key]
+
+        self.cursor_coordinate = self.cursor_coordinate
+        self.hover_coordinate = self.hover_coordinate
+
+        self._update_count += 1
+        self.refresh(layout=True)
 
     def on_idle(self) -> None:
         """Runs when the message pump is empty.

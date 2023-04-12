@@ -289,6 +289,19 @@ async def test_add_columns_user_defined_keys():
         assert key == key
 
 
+async def test_remove_row():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_columns("A", "B")
+        for row in ROWS:
+            table.add_row(row, key=row[0])
+
+        assert len(table.rows) == 3
+        table.remove_row(ROWS[0][0])
+        assert len(table.rows) == 2
+
+
 async def test_clear():
     app = DataTableApp()
     async with app.run_test():
