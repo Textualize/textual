@@ -65,7 +65,7 @@ WalkMethod: TypeAlias = Literal["depth", "breadth"]
 
 
 class BadIdentifier(Exception):
-    """raised by check_identifiers."""
+    """Exception raised if you supply a `id` attribute or class name in the wrong format."""
 
 
 def check_identifiers(description: str, *names: str) -> None:
