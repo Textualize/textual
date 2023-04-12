@@ -418,6 +418,9 @@ def test_scroll_visible(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "scroll_visible.py", press=["t"])
 
 
+@pytest.mark.xfail(
+    reason="Unpredictable while https://github.com/Textualize/textual/issues/2254 is open."
+)
 def test_scroll_to_center(snap_compare):
     # READ THIS IF THIS TEST FAILS:
     # While https://github.com/Textualize/textual/issues/2254 is open, the snapshot
