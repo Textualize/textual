@@ -302,6 +302,11 @@ class App(Generic[ReturnType], DOMNode):
 
     Modify this attribute to switch between light and dark themes.
 
+    Example:
+        ```python
+        self.app.dark = not self.app.dark  # Toggle dark mode
+        ```
+
     """
 
     def __init__(
@@ -366,7 +371,10 @@ class App(Generic[ReturnType], DOMNode):
         """The sub-title for the application.
 
         The initial value for `sub_title` will be set to the `SUB_TITLE` class variable if it exists, or
-        an empty string if it doesn't/
+        an empty string if it doesn't.
+
+        Sub-titles are typically used to show the high-level state of the app, such as the current mode, or path to
+        the file being worker on.
 
         Assign a new value to this attribute to change the sub-title.
         """
