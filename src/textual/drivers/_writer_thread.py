@@ -30,7 +30,7 @@ class WriterThread(threading.Thread):
         """Pretend to be a terminal.
 
         Returns:
-            True if this is a tty.
+            True.
         """
         return True
 
