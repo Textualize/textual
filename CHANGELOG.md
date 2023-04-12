@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `DataTable.remove_row` method https://github.com/Textualize/textual/pull/2253
 - `Widget.scroll_to_center` now scrolls the widget to the center of the screen https://github.com/Textualize/textual/pull/2255
 
+### Fixed
+
+- Fixed order styles are applied in DataTable - allows combining of renderable styles and component classes https://github.com/Textualize/textual/pull/2272
+
 ## [0.19.1] - 2023-04-10
 
 ### Fixed
