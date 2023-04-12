@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `DataTable.remove_row` method https://github.com/Textualize/textual/pull/2253
 - `Widget.scroll_to_center` now scrolls the widget to the center of the screen https://github.com/Textualize/textual/pull/2255
+- Added `TabActivated` message to `TabbedContent` https://github.com/Textualize/textual/pull/2260
 
 ## [0.19.1] - 2023-04-10
 
