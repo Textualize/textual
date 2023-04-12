@@ -94,11 +94,15 @@ class LayoutUpdate:
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
+        return self.iter_segments()
+
+    def iter_segments(self) -> Iterable[Segment]:
+        """Get an iterable of segments."""
         x = self.region.x
         new_line = Segment.line()
         move_to = Control.move_to
         for last, (y, line) in loop_last(enumerate(self.strips, self.region.y)):
-            yield move_to(x, y)
+            yield move_to(x, y).segment
             yield from line
             if not last:
                 yield new_line
@@ -131,6 +135,10 @@ class ChopsUpdate:
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
+        return self.iter_segments()
+
+    def iter_segments(self) -> Iterable[Segment]:
+        """Get an iterable of segments."""
         move_to = Control.move_to
         new_line = Segment.line()
         chops = self.chops
@@ -150,7 +158,7 @@ class ChopsUpdate:
                     continue
 
                 if x2 > x >= x1 and end <= x2:
-                    yield move_to(x, y)
+                    yield move_to(x, y).segment
                     yield from strip
                     continue
 
@@ -159,12 +167,12 @@ class ChopsUpdate:
                     for segment in iter_segments:
                         next_x = x + _cell_len(segment.text)
                         if next_x > x1:
-                            yield move_to(x, y)
+                            yield move_to(x, y).segment
                             yield segment
                             break
                         x = next_x
                 else:
-                    yield move_to(x, y)
+                    yield move_to(x, y).segment
                 if end <= x2:
                     yield from iter_segments
                 else:
