@@ -17,6 +17,7 @@ from .. import events, log
 from .._xterm_parser import XTermParser
 from ..driver import Driver
 from ..geometry import Size
+from ._writer_thread import WriterThread
 
 if TYPE_CHECKING:
     from ..app import App
@@ -41,11 +42,12 @@ class LinuxDriver(Driver):
             size: Initial size of the terminal or `None` to detect.
         """
         super().__init__(app, debug=debug, size=size)
-        self._file = app.console.file
+        self._file = sys.__stdout__
         self.fileno = sys.stdin.fileno()
         self.attrs_before: list[Any] | None = None
         self.exit_event = Event()
         self._key_thread: Thread | None = None
+        self._writer_thread: WriterThread | None = None
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._app
@@ -108,7 +110,8 @@ class LinuxDriver(Driver):
         Args:
             data: Raw data.
         """
-        self._file.write(data)
+        assert self._writer_thread is not None, "Driver must be in application mode"
+        self._writer_thread.write(data)
 
     def start_application_mode(self):
         """Start application mode."""
@@ -123,6 +126,9 @@ class LinuxDriver(Driver):
                 self._app._post_message(event),
                 loop=loop,
             )
+
+        self._writer_thread = WriterThread(self._file)
+        self._writer_thread.start()
 
         def on_terminal_resize(signum, stack) -> None:
             send_size_event()
@@ -221,6 +227,11 @@ class LinuxDriver(Driver):
             # Alt screen false, show cursor
             self.write("\x1b[?1049l" + "\x1b[?25h")
             self.flush()
+
+    def close(self) -> None:
+        """Perform cleanup."""
+        if self._writer_thread is not None:
+            self._writer_thread.stop()
 
     def run_input_thread(self) -> None:
         """Wait for input and dispatch events."""

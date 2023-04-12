@@ -162,78 +162,6 @@ class CssPathError(Exception):
 ReturnType = TypeVar("ReturnType")
 
 
-class _NullFile:
-    """A file-like where writes go nowhere."""
-
-    def write(self, text: str) -> None:
-        pass
-
-    def flush(self) -> None:
-        pass
-
-
-MAX_QUEUED_WRITES: Final[int] = 30
-
-
-class _WriterThread(threading.Thread):
-    """A thread / file-like to do writes to stdout in the background."""
-
-    def __init__(self) -> None:
-        super().__init__(daemon=True)
-        self._queue: Queue[str | None] = Queue(MAX_QUEUED_WRITES)
-        self._file = sys.__stdout__
-
-    def write(self, text: str) -> None:
-        """Write text. Text will be enqueued for writing.
-
-        Args:
-            text: Text to write to the file.
-        """
-        self._queue.put(text)
-
-    def isatty(self) -> bool:
-        """Pretend to be a terminal.
-
-        Returns:
-            True if this is a tty.
-        """
-        return True
-
-    def fileno(self) -> int:
-        """Get file handle number.
-
-        Returns:
-            File number of proxied file.
-        """
-        return self._file.fileno()
-
-    def flush(self) -> None:
-        """Flush the file (a no-op, because flush is done in the thread)."""
-        return
-
-    def run(self) -> None:
-        """Run the thread."""
-        write = self._file.write
-        flush = self._file.flush
-        get = self._queue.get
-        qsize = self._queue.qsize
-        # Read from the queue, write to the file.
-        # Flush when there is a break.
-        while True:
-            text: str | None = get()
-            if text is None:
-                break
-            write(text)
-            if qsize() == 0:
-                flush()
-        flush()
-
-    def stop(self) -> None:
-        """Stop the thread, and block until it finished."""
-        self._queue.put(None)
-        self.join()
-
-
 CSSPathType = Union[
     str,
     PurePath,
@@ -324,16 +252,8 @@ class App(Generic[ReturnType], DOMNode):
         if no_color is not None:
             self._filter = Monochrome()
 
-        self._writer_thread: _WriterThread | None = None
-        if sys.__stdout__ is None:
-            file = _NullFile()
-        else:
-            self._writer_thread = _WriterThread()
-            self._writer_thread.start()
-            file = self._writer_thread
-
         self.console = Console(
-            file=file,
+            file=sys.__stdout__,
             markup=True,
             highlight=False,
             emoji=False,
@@ -621,6 +541,18 @@ class App(Generic[ReturnType], DOMNode):
                 namespace_binding_map[key] = (namespace, binding)
 
         return namespace_binding_map
+
+    @property
+    def driver(self) -> Driver:
+        """The Textual driver.
+
+        Warning:
+
+            Here be dragons! The driver object is not something most apps will use directly
+
+        """
+        assert self._driver is not None
+        return self._driver
 
     def _set_active(self) -> None:
         """Set this app to be the currently active app."""
@@ -1792,6 +1724,7 @@ class App(Generic[ReturnType], DOMNode):
 
                 finally:
                     driver.stop_application_mode()
+                    driver.close()
         except Exception as error:
             self._handle_exception(error)
 
@@ -2011,8 +1944,8 @@ class App(Generic[ReturnType], DOMNode):
         if self.devtools is not None and self.devtools.is_connected:
             await self._disconnect_devtools()
 
-        if self._writer_thread is not None:
-            self._writer_thread.stop()
+        if self._driver is not None:
+            self.driver.flush()
 
         self._print_error_renderables()
 
@@ -2049,17 +1982,25 @@ class App(Generic[ReturnType], DOMNode):
             if screen is not self.screen or renderable is None:
                 return
 
-            if self._running and not self._closed and not self.is_headless:
+            if (
+                self._running
+                and not self._closed
+                and not self.is_headless
+                and self._driver is not None
+            ):
                 console = self.console
                 self._begin_update()
                 try:
                     try:
-                        console.print(renderable)
+                        segments = console.render(renderable)
+                        terminal_sequence = console._render_buffer(segments)
                     except Exception as error:
                         self._handle_exception(error)
+                    else:
+                        self.driver.write(terminal_sequence)
                 finally:
                     self._end_update()
-                console.file.flush()
+                self.driver.flush()
         finally:
             self.post_display_hook()
 
@@ -2553,8 +2494,8 @@ class App(Generic[ReturnType], DOMNode):
 
     def _begin_update(self) -> None:
         if self._sync_available:
-            self.console.file.write(SYNC_START)
+            self.driver.write(SYNC_START)
 
     def _end_update(self) -> None:
         if self._sync_available:
-            self.console.file.write(SYNC_END)
+            self.driver.write(SYNC_END)
