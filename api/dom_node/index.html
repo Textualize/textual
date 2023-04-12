@@ -7058,7 +7058,7 @@ which includes all Widgets, Screens, and Apps.</p>
         Bases: <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#Exception">Exception</a></code></p>
 
   
-      <p>raised by check_identifiers.</p>
+      <p>Exception raised if you supply a <code>id</code> attribute or class name in the wrong format.</p>
 
 
 
@@ -7228,8 +7228,8 @@ which includes all Widgets, Screens, and Apps.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
       <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
   </span>
 
 <a href="#textual.dom.DOMNode.auto_refresh" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -7550,8 +7550,8 @@ which includes all Widgets, Screens, and Apps.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
       <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
   </span>
 
 <a href="#textual.dom.DOMNode.display" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -7562,7 +7562,12 @@ which includes all Widgets, Screens, and Apps.</p>
   
       <p>Should the DOM node be displayed?</p>
 <p>May be set to a boolean to show or hide the node, or to any valid value for the <code>display</code> rule.</p>
-  </div>
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">my_widget</span><span class="o">.</span><span class="n">display</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Hide my_widget</span>
+</code></pre></div>
+</details>  </div>
 
 </div>
 
@@ -7616,8 +7621,8 @@ which includes all Widgets, Screens, and Apps.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
       <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
   </span>
 
 <a href="#textual.dom.DOMNode.id" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -7923,8 +7928,8 @@ the child will also be bold.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
       <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
   </span>
 
 <a href="#textual.dom.DOMNode.visible" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -7935,6 +7940,7 @@ the child will also be bold.</p>
   
       <p>Is the visibility style set to a visible state?</p>
 <p>May be set to a boolean to make the node visible (<code>True</code>) or invisible (<code>False</code>), or to any valid value for the <code>visibility</code> rule.</p>
+<p>When a node is invisible, Textual will reserve space for it, but won't display anything there.</p>
   </div>
 
 </div>
@@ -8609,7 +8615,7 @@ if you want children to be attached to a different node.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Reset styles back to their initial state</p>
+      <p>Reset styles back to their initial state.</p>
 
   </div>
 
