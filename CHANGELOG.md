@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `Widget.scroll_to_center` now scrolls the widget to the center of the screen https://github.com/Textualize/textual/pull/2255
 - Added `TabActivated` message to `TabbedContent` https://github.com/Textualize/textual/pull/2260
 
+### Changed
+
+- Breaking change: Timer.start() now returns `None` (it previously returned an asyncio Task).
+
 ## [0.19.1] - 2023-04-10
 
 ### Fixed
