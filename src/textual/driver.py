@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import asyncio
 from abc import ABC, abstractmethod
-from typing import IO
+from typing import TYPE_CHECKING
 
 from . import _time, events
-from ._types import MessageTarget
 from .events import MouseUp
+
+if TYPE_CHECKING:
+    from .app import App
 
 
 class Driver(ABC):
@@ -14,8 +16,7 @@ class Driver(ABC):
 
     def __init__(
         self,
-        file: IO[str],
-        target: "MessageTarget",
+        app: App,
         *,
         debug: bool = False,
         size: tuple[int, int] | None = None,
@@ -23,13 +24,12 @@ class Driver(ABC):
         """Initialize a driver.
 
         Args:
-            file: A file-like object open for writing unicode.
-            target: The message target (expected to be the app).
-            debug: Enabled debug mode.
+            app: The App instance.
+            debug: Enable debug mode.
             size: Initial size of the terminal or `None` to detect.
         """
-        self._file = file
-        self._target = target
+        self._file = app.console.file
+        self._app = app
         self._debug = debug
         self._size = size
         self._loop = asyncio.get_running_loop()
@@ -49,7 +49,7 @@ class Driver(ABC):
             event: An event.
         """
         asyncio.run_coroutine_threadsafe(
-            self._target._post_message(event), loop=self._loop
+            self._app._post_message(event), loop=self._loop
         )
 
     def process_event(self, event: events.Event) -> None:
@@ -58,7 +58,7 @@ class Driver(ABC):
         Args:
             event: An event to send.
         """
-        event._set_sender(self._target)
+        event._set_sender(self._app)
         if isinstance(event, events.MouseDown):
             self._mouse_down_time = event.time
             if event.button:
@@ -106,9 +106,6 @@ class Driver(ABC):
             click_event = events.Click.from_event(event)
             self.send_event(click_event)
 
-    def flush(self) -> None:
-        """Flush any buffered data."""
-
     @abstractmethod
     def write(self, data: str) -> None:
         """Write data to the output device.
@@ -116,6 +113,9 @@ class Driver(ABC):
         Args:
             data: Raw data.
         """
+
+    def flush(self) -> None:
+        """Flush any buffered data."""
 
     @abstractmethod
     def start_application_mode(self) -> None:

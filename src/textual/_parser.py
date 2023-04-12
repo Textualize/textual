@@ -114,7 +114,8 @@ class Parser(Generic[T]):
                     _awaiting.remaining = remaining
                 else:
                     _awaiting = self._gen.send(_buffer.getvalue())
-                    _buffer.truncate(0)
+                    _buffer.seek(0)
+                    _buffer.truncate()
 
             elif isinstance(_awaiting, _ReadUntil):
                 chunk = data[pos:]
@@ -139,7 +140,8 @@ class Parser(Generic[T]):
                     data = _buffer.getvalue()[sep_index:]
                     pos = 0
                     self._awaiting = self._gen.send(_buffer.getvalue()[:sep_index])
-                    _buffer.truncate(0)
+                    _buffer.seek(0)
+                    _buffer.truncate()
 
             while tokens:
                 yield popleft()

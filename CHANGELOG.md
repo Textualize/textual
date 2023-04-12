@@ -7,15 +7,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Changed
+
+- Changed signature of Driver. Technically a breaking change, but unlikely to affect anyone.
+- Breaking change: Timer.start is now private, and returns No
+
 ### Added
 
 - Added `DataTable.remove_row` method https://github.com/Textualize/textual/pull/2253
 - `Widget.scroll_to_center` now scrolls the widget to the center of the screen https://github.com/Textualize/textual/pull/2255
 - Added `TabActivated` message to `TabbedContent` https://github.com/Textualize/textual/pull/2260
 
-### Changed
-
-- Breaking change: Timer.start is now private, and returns None
 
 ## [0.19.1] - 2023-04-10
 
