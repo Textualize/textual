@@ -64,6 +64,7 @@ from ._ansi_sequences import SYNC_END, SYNC_START
 from ._asyncio import create_task
 from ._callback import invoke
 from ._compose import compose
+from ._compositor import CompositorUpdate
 from ._context import active_app, active_message_pump
 from ._event_broker import NoHandler, extract_handler_actions
 from ._path import _make_path_object_relative
@@ -1996,14 +1997,10 @@ class App(Generic[ReturnType], DOMNode):
                 self._begin_update()
                 try:
                     try:
-                        if hasattr(renderable, "render_segments"):
+                        if isinstance(renderable, CompositorUpdate):
                             terminal_sequence = renderable.render_segments(console)
                         else:
-                            segments = (
-                                renderable.iter_segments()
-                                if hasattr(renderable, "iter_segments")
-                                else console.render(renderable)
-                            )
+                            segments = console.render(renderable)
                             terminal_sequence = console._render_buffer(segments)
                     except Exception as error:
                         self._handle_exception(error)

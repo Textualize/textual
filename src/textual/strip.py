@@ -76,8 +76,8 @@ class Strip:
         self._segments = list(segments)
         self._cell_length = cell_length
         self._divide_cache: FIFOCache[tuple[int, ...], list[Strip]] = FIFOCache(4)
-        self._crop_cache: FIFOCache[tuple[int, int], Strip] = FIFOCache(4)
-        self._style_cache: FIFOCache[Style, Strip] = FIFOCache(4)
+        self._crop_cache: FIFOCache[tuple[int, int], Strip] = FIFOCache(16)
+        self._style_cache: FIFOCache[Style, Strip] = FIFOCache(16)
         self._render_cache: str | None = None
         self._link_ids: set[str] | None = None
 
@@ -313,6 +313,8 @@ class Strip:
         Returns:
             A new Strip.
         """
+        start = max(0, start)
+        end = min(self.cell_length, end)
         if start == 0 and end == self.cell_length:
             return self
         cache_key = (start, end)
@@ -400,6 +402,14 @@ class Strip:
         return styled_strip
 
     def render(self, console: Console) -> str:
+        """Render the strip in to terminal sequences.
+
+        Args:
+            console: Console instance
+
+        Returns:
+            Rendered sequences.
+        """
         if self._render_cache is None:
             self._render_cache = console._render_buffer(self._segments)
         return self._render_cache
