@@ -260,6 +260,7 @@ class App(Generic[ReturnType], DOMNode):
             legacy_windows=False,
             _environ=environ,
             force_terminal=True,
+            safe_box=False,
         )
         self._workers = WorkerManager(self)
         self.error_console = Console(markup=False, stderr=True)
