@@ -44,7 +44,8 @@ Cells can contain more than just plain strings - [Rich](https://rich.readthedocs
 
 ### Keys
 
-When adding a row to the table, you can supply a _key_ to [add_row][textual.widgets.DataTable.add_row], which is a unique identifier for that row.
+When adding a row to the table, you can supply a _key_ to [add_row][textual.widgets.DataTable.add_row].
+A key is a unique identifier for that row.
 If you don't supply a key, Textual will generate one for you and return it from `add_row`.
 This key can later be used to reference the row, regardless of its current position in the table.
 
@@ -52,7 +53,7 @@ When working with data from a database for example, you make wish to set the row
 The [add_column][textual.widgets.DataTable.add_column] also accepts a `key` argument and works similarly.
 
 Keys are important because cells in a data table can change location due factors like row deletion and sorting.
-Thus, using keys instead of coordinates allows us to refer to data without worrying changing coordinates.
+Thus, using keys instead of coordinates allows us to refer to data without worrying about its current location in the table.
 
 Sometimes you wish to perform an operation on a cell/row/column based solely on coordinates, without regard for the data that is currently visible at those coordinates.
 In these cases you can make use of the [coordinate_to_cell_key][textual.widgets.DataTable.coordinate_to_cell_key] method to convert
