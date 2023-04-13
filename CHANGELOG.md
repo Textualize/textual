@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
-### Changed
+### Changed
 
 - Changed signature of Driver. Technically a breaking change, but unlikely to affect anyone.
 - Breaking change: Timer.start is now private, and returns No
@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed order styles are applied in DataTable - allows combining of renderable styles and component classes https://github.com/Textualize/textual/pull/2272
+- Fix empty ListView preventing bindings from firing https://github.com/Textualize/textual/pull/2281
 
 
 ## [0.19.1] - 2023-04-10
