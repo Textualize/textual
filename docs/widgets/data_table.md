@@ -26,8 +26,21 @@ After that, we use the [add_rows][textual.widgets.DataTable.add_rows] method to 
 
 To add rows and columns one-at-a-time, use [add_row][textual.widgets.DataTable.add_row] and [add_column][textual.widgets.DataTable.add_column].
 
-Note that `DataTable` cells can contain more than just plain strings - Rich renderables such as `Text` are also supported,
-and this is a common way to apply simple styles to the text in a cell.
+#### Styling and justifying cells
+
+Cells can contain more than just plain strings - [Rich](https://rich.readthedocs.io/en/stable/introduction.html) renderables such as [`Text`](https://rich.readthedocs.io/en/stable/text.html?highlight=Text#rich-text) are also supported.
+`Text` objects provide an easy way to style and justify cell content:
+
+=== "Output"
+
+    ```{.textual path="docs/examples/widgets/data_table_renderables.py"}
+    ```
+
+=== "data_table_renderables.py"
+
+    ```python
+    --8<-- "docs/examples/widgets/data_table_renderables.py"
+    ```
 
 ### Keys
 
