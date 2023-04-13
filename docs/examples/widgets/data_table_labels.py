@@ -1,3 +1,5 @@
+from rich.text import Text
+
 from textual.app import App, ComposeResult
 from textual.widgets import DataTable
 
@@ -22,7 +24,9 @@ class TableApp(App):
     def on_mount(self) -> None:
         table = self.query_one(DataTable)
         table.add_columns(*ROWS[0])
-        table.add_rows(ROWS[1:])
+        for number, row in enumerate(ROWS[1:], start=1):
+            label = Text(str(number), style="#B0FC38 italic")
+            table.add_row(*row, label=label)
 
 
 app = TableApp()
