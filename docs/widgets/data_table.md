@@ -137,11 +137,30 @@ when you added it.
 You can then pass this key to the `sort` method to sort by that column.
 Additionally, you can sort by multiple columns by passing multiple keys to `sort`.
 
+### Labelled rows
+
+A "label" can be attached to rows using the [add_row][textual.widgets.DataTable.add_row] method.
+This will add an extra column to the left of the table which the cursor cannot interact with.
+This column is similar to the leftmost column in a spreadsheet containing the row numbers.
+The example below shows how to attach simple numbered labels to rows.
+
+=== "Labelled rows"
+
+    ```{.textual path="docs/examples/widgets/data_table_labels.py"}
+    ```
+
+=== "data_table_labels.py"
+
+    ```python
+    --8<-- "docs/examples/widgets/data_table_labels.py"
+    ```
+
 ## Reactive Attributes
 
 | Name                | Type                                        | Default            | Description                                           |
 |---------------------|---------------------------------------------|--------------------|-------------------------------------------------------|
 | `show_header`       | `bool`                                      | `True`             | Show the table header                                 |
+| `show_row_labels`   | `bool`                                      | `True`             | Show the row labels (if applicable)                   |
 | `fixed_rows`        | `int`                                       | `0`                | Number of fixed rows (rows which do not scroll)       |
 | `fixed_columns`     | `int`                                       | `0`                | Number of fixed columns (columns which do not scroll) |
 | `zebra_stripes`     | `bool`                                      | `False`            | Display alternating colors on rows                    |
@@ -160,6 +179,7 @@ Additionally, you can sort by multiple columns by passing multiple keys to `sort
 - [DataTable.ColumnHighlighted][textual.widgets.DataTable.ColumnHighlighted]
 - [DataTable.ColumnSelected][textual.widgets.DataTable.ColumnSelected]
 - [DataTable.HeaderSelected][textual.widgets.DataTable.HeaderSelected]
+- [DataTable.RowLabelSelected][textual.widgets.DataTable.RowLabelSelected]
 
 ## Bindings
 
