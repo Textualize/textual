@@ -61,7 +61,7 @@ a coordinate to a _cell key_, which is a `(row_key, column_key)` pair.
 
 ### Cursors
 
-You can retrieve the current coordinate of the cursor from the `cursor_coordinate` reactive attribute.
+The coordinate of the cursor is exposed via the `cursor_coordinate` reactive attribute.
 Three types of cursor are supported: `cell`, `row`, and `column`.
 Change the cursor type by assigning to the `cursor_type` reactive attribute.
 
