@@ -114,7 +114,7 @@ To do this, assign an integer to the `fixed_rows` or `fixed_columns` reactive at
 
 === "Fixed data"
 
-    ```{.textual path="docs/examples/widgets/data_table_fixed.py"}
+    ```{.textual path="docs/examples/widgets/data_table_fixed.py" press="end"}
     ```
 
 === "data_table_fixed.py"
