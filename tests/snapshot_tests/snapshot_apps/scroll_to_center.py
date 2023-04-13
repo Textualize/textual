@@ -18,7 +18,7 @@ class MyApp(App[None]):
 
     def compose(self) -> ComposeResult:
         with VerticalScroll():
-            yield Label(("SPAM\n" * 25)[:-1])
+            yield Label(("SPAM\n" * 205)[:-1])
             with VerticalScroll():
                 yield Label(("SPAM\n" * 53)[:-1])
                 with VerticalScroll(id="vertical"):

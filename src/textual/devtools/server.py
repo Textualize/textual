@@ -46,7 +46,10 @@ def _run_devtools(verbose: bool, exclude: list[str] | None = None) -> None:
 
     try:
         run_app(
-            app, port=DEVTOOLS_PORT, print=noop_print, loop=asyncio.get_event_loop()
+            app,
+            port=DEVTOOLS_PORT,
+            print=noop_print,
+            loop=asyncio.get_event_loop(),
         )
     except OSError:
         from rich import print

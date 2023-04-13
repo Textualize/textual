@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import sys
 
+from ..constants import DEFAULT_DEVTOOLS_PORT, DEVTOOLS_PORT_ENVIRON_VARIABLE
+
 try:
     import click
 except ImportError:
@@ -21,13 +23,26 @@ def run():
 
 
 @run.command(help="Run the Textual Devtools console.")
+@click.option(
+    "--port",
+    "port",
+    type=int,
+    default=None,
+    metavar="PORT",
+    help=f"Port to use for the development mode console. Defaults to {DEFAULT_DEVTOOLS_PORT}.",
+)
 @click.option("-v", "verbose", help="Enable verbose logs.", is_flag=True)
 @click.option("-x", "--exclude", "exclude", help="Exclude log group(s)", multiple=True)
-def console(verbose: bool, exclude: list[str]) -> None:
+def console(port: int | None, verbose: bool, exclude: list[str]) -> None:
     """Launch the textual console."""
+    import os
+
     from rich.console import Console
 
     from textual.devtools.server import _run_devtools
+
+    if port is not None:
+        os.environ[DEVTOOLS_PORT_ENVIRON_VARIABLE] = str(port)
 
     console = Console()
     console.clear()
@@ -78,6 +93,14 @@ def _post_run_warnings() -> None:
 )
 @click.argument("import_name", metavar="FILE or FILE:APP")
 @click.option("--dev", "dev", help="Enable development mode", is_flag=True)
+@click.option(
+    "--port",
+    "port",
+    type=int,
+    default=None,
+    metavar="PORT",
+    help=f"Port to use for the development mode console. Defaults to {DEFAULT_DEVTOOLS_PORT}.",
+)
 @click.option("--press", "press", help="Comma separated keys to simulate press")
 @click.option(
     "--screenshot",
@@ -86,7 +109,9 @@ def _post_run_warnings() -> None:
     metavar="DELAY",
     help="Take screenshot after DELAY seconds",
 )
-def run_app(import_name: str, dev: bool, press: str, screenshot: int | None) -> None:
+def run_app(
+    import_name: str, dev: bool, port: int | None, press: str, screenshot: int | None
+) -> None:
     """Run a Textual app.
 
     The code to run may be given as a path (ending with .py) or as a Python
@@ -107,7 +132,6 @@ def run_app(import_name: str, dev: bool, press: str, screenshot: int | None) -> 
     in quotes:
 
         textual run "foo.py arg --option"
-
     """
 
     import os
@@ -115,6 +139,9 @@ def run_app(import_name: str, dev: bool, press: str, screenshot: int | None) -> 
     from asyncio import sleep
 
     from textual.features import parse_features
+
+    if port is not None:
+        os.environ[DEVTOOLS_PORT_ENVIRON_VARIABLE] = str(port)
 
     features = set(parse_features(os.environ.get("TEXTUAL", "")))
     if dev:
