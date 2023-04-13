@@ -405,7 +405,7 @@ class Strip:
         """Render the strip in to terminal sequences.
 
         Args:
-            console: Console instance
+            console: Console instance.
 
         Returns:
             Rendered sequences.
