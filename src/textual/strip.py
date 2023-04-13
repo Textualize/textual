@@ -7,10 +7,11 @@ See [line API](/guide/widgets#line-api) for how to use Strips.
 from __future__ import annotations
 
 from itertools import chain
-from typing import Iterable, Iterator, Sequence
+from typing import Iterable, Iterator, Sequence, cast
 
 import rich.repr
 from rich.cells import cell_len, set_cell_size
+from rich.color import ColorSystem
 from rich.console import Console, ConsoleOptions, RenderResult
 from rich.segment import Segment
 from rich.style import Style, StyleType
@@ -411,5 +412,12 @@ class Strip:
             Rendered sequences.
         """
         if self._render_cache is None:
-            self._render_cache = console._render_buffer(self._segments)
+            color_system = cast(ColorSystem, console.color_system)
+            self._render_cache = "".join(
+                [
+                    style.render(text, color_system=color_system)
+                    for text, style, _ in self._segments
+                    if style is not None
+                ]
+            )
         return self._render_cache
