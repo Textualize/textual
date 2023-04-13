@@ -137,7 +137,7 @@ Additionally, you can sort by multiple columns by passing multiple keys to `sort
 
 ### Labelled rows
 
-A "label" can be attached to rows using the [add_row][textual.widgets.DataTable.add_row] method.
+A "label" can be attached to a row using the [add_row][textual.widgets.DataTable.add_row] method.
 This will add an extra column to the left of the table which the cursor cannot interact with.
 This column is similar to the leftmost column in a spreadsheet containing the row numbers.
 The example below shows how to attach simple numbered labels to rows.
