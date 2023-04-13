@@ -50,7 +50,7 @@ If you don't supply a key, Textual will generate one for you and return it from 
 This key can later be used to reference the row, regardless of its current position in the table.
 
 When working with data from a database, for example, you may wish to set the row `key` to the primary key of the data to ensure uniqueness.
-The [add_column][textual.widgets.DataTable.add_column] also accepts a `key` argument and works similarly.
+The method [add_column][textual.widgets.DataTable.add_column] also accepts a `key` argument and works similarly.
 
 Keys are important because cells in a data table can change location due to factors like row deletion and sorting.
 Thus, using keys instead of coordinates allows us to refer to data without worrying about its current location in the table.
