@@ -2035,8 +2035,8 @@ class App(Generic[ReturnType], DOMNode):
 
 
         """
-        if not self.is_headless:
-            self.console.bell()
+        if not self.is_headless and self._driver is not None:
+            self._driver.write("\07")
 
     @property
     def _binding_chain(self) -> list[tuple[DOMNode, _Bindings]]:
