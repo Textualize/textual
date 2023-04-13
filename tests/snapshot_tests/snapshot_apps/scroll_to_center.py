@@ -33,7 +33,7 @@ class MyApp(App[None]):
             yield Label(("SPAM\n" * 59)[:-1])
 
     def key_s(self) -> None:
-        self.query_one("#bullseye").scroll_to_center()
+        self.screen.scroll_to_center(self.query_one("#bullseye"))
 
 
 if __name__ == "__main__":

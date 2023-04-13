@@ -11,11 +11,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Changed signature of Driver. Technically a breaking change, but unlikely to affect anyone.
 - Breaking change: Timer.start is now private, and returns No
+- A clicked tab will now be scrolled to the center of its tab container https://github.com/Textualize/textual/pull/2276
 
 ### Added
 
 - Added `DataTable.remove_row` method https://github.com/Textualize/textual/pull/2253
-- `Widget.scroll_to_center` now scrolls the widget to the center of the screen https://github.com/Textualize/textual/pull/2255
+- `Widget.scroll_to_center` method to scroll children to the center of container widget https://github.com/Textualize/textual/pull/2255 and https://github.com/Textualize/textual/pull/2276
 - Added `TabActivated` message to `TabbedContent` https://github.com/Textualize/textual/pull/2260
 
 
