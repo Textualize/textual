@@ -2475,6 +2475,7 @@ class Widget(DOMNode):
 
     def scroll_to_center(
         self,
+        widget: Widget,
         animate: bool = True,
         *,
         speed: float | None = None,
@@ -2493,8 +2494,8 @@ class Widget(DOMNode):
         """
 
         self.call_after_refresh(
-            self.screen._scroll_to_center_of,
-            widget=self,
+            self._scroll_to_center_of,
+            widget=widget,
             animate=animate,
             speed=speed,
             duration=duration,
