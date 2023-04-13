@@ -24,7 +24,7 @@ After that, we use the [add_rows][textual.widgets.DataTable.add_rows] method to 
     --8<-- "docs/examples/widgets/data_table.py"
     ```
 
-To add rows and columns one-at-a-time, use [add_row][textual.widgets.DataTable.add_row] and [add_column][textual.widgets.DataTable.add_column].
+To add a single row or column use [add_row][textual.widgets.DataTable.add_row] and [add_column][textual.widgets.DataTable.add_column], respectively.
 
 #### Styling and justifying cells
 
