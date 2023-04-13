@@ -16,7 +16,7 @@ from rich.console import Console
 from rich.segment import Segment
 
 from .._log import LogGroup, LogVerbosity
-from ..constants import get_port_for_devtools
+from ..constants import DEVTOOLS_PORT
 
 WEBSOCKET_CONNECT_TIMEOUT = 3
 LOG_QUEUE_MAXSIZE = 512
@@ -88,13 +88,12 @@ class DevtoolsClient:
 
     Args:
         host: The host the devtools server is running on, defaults to "127.0.0.1"
-        port: The port the devtools server is accessed via,
-            retrieved by `get_port_for_devtools` by default.
+        port: The port the devtools server is accessed via, `DEVTOOLS_PORT` by default.
     """
 
     def __init__(self, host: str = "127.0.0.1", port: int | None = None) -> None:
         if port is None:
-            port = get_port_for_devtools()
+            port = DEVTOOLS_PORT
         self.url: str = f"ws://{host}:{port}"
         self.session: aiohttp.ClientSession | None = None
         self.log_queue_task: Task | None = None
