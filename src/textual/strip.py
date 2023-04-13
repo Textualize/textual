@@ -402,7 +402,7 @@ class Strip:
         return styled_strip
 
     def render(self, console: Console) -> str:
-        """Render the strip in to terminal sequences.
+        """Render the strip into terminal sequences.
 
         Args:
             console: Console instance.
