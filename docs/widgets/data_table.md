@@ -5,7 +5,9 @@ A table widget optimized for displaying a lot of data.
 - [x] Focusable
 - [ ] Container
 
-## Adding data
+## Guide
+
+### Adding data
 
 The following example shows how to fill a table with data.
 First, we use [add_columns][textual.widgets.DataTable.add_rows] to include the `lane`, `swimmer`, `country`, and `time` columns in the table.
@@ -22,7 +24,12 @@ After that, we use the [add_rows][textual.widgets.DataTable.add_rows] method to 
     --8<-- "docs/examples/widgets/data_table.py"
     ```
 
-## Keys
+To add rows and columns one-at-a-time, use [add_row][textual.widgets.DataTable.add_row] and [add_column][textual.widgets.DataTable.add_column].
+
+Note that `DataTable` cells can contain more than just plain strings - Rich renderables such as `Text` are also supported,
+and this is a common way to apply simple styles to the text in a cell.
+
+### Keys
 
 When adding a row to the table, you can supply a _key_ to [add_row][textual.widgets.DataTable.add_row], which is a unique identifier for that row.
 If you don't supply a key, Textual will generate one for you and return it from `add_row`.
@@ -38,7 +45,7 @@ Sometimes you wish to perform an operation on a cell/row/column based solely on 
 In these cases you can make use of the [coordinate_to_cell_key][textual.widgets.DataTable.coordinate_to_cell_key] method to convert
 a coordinate to a _cell key_, which is a `(row_key, column_key)` pair.
 
-## Cursors
+### Cursors
 
 You can retrieve the current coordinate of the cursor from the `cursor_coordinate` reactive attribute.
 Three types of cursor are supported: `cell`, `row`, and `column`.
@@ -68,11 +75,11 @@ Change the cursor type by assigning to the `cursor_type` reactive attribute.
 You can change the position of the cursor using the arrow keys, ++page-up++, ++page-down++, ++home++ and ++end++,
 or by assigning to the `cursor_coordinate` reactive attribute.
 
-## Updating data
+### Updating data
 
 Cells can be updated in the `DataTable` by using the [update_cell][textual.widgets.DataTable.update_cell] and [update_cell_at][textual.widgets.DataTable.update_cell_at] methods.
 
-## Removing data
+### Removing data
 
 To remove all data in the table, use the [clear][textual.widgets.DataTable.clear] method.
 To remove individual rows, use [remove_row][textual.widgets.DataTable.remove_row].
@@ -88,7 +95,7 @@ row_key, _ = table.coordinate_to_cell_key(table.cursor_coordinate)
 table.remove_row(row_key)
 ```
 
-## Fixed data
+### Fixed data
 
 You can fix a number of rows and columns in place, keeping them pinned to the top and left of the table respectively.
 To do this, assign an integer to the `fixed_rows` or `fixed_columns` reactive attributes of the `DataTable`.
@@ -108,7 +115,7 @@ In the example above, we set `fixed_rows` to `2`, and `fixed_columns` to `1`,
 meaning the first two rows and the leftmost column do not scroll - they always remain
 visible as you scroll through the data table.
 
-## Sorting
+### Sorting
 
 The `DataTable` can be sorted using the [sort][textual.widgets.DataTable.sort] method.
 In order to sort your data by a column, you must have supplied a `key` to the `add_column` method
