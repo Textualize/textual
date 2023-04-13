@@ -49,7 +49,7 @@ A key is a unique identifier for that row.
 If you don't supply a key, Textual will generate one for you and return it from `add_row`.
 This key can later be used to reference the row, regardless of its current position in the table.
 
-When working with data from a database for example, you make wish to set the row `key` to the primary key of the data to ensure uniqueness.
+When working with data from a database, for example, you may wish to set the row `key` to the primary key of the data to ensure uniqueness.
 The [add_column][textual.widgets.DataTable.add_column] also accepts a `key` argument and works similarly.
 
 Keys are important because cells in a data table can change location due factors like row deletion and sorting.
