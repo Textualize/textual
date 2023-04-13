@@ -52,7 +52,7 @@ This key can later be used to reference the row, regardless of its current posit
 When working with data from a database, for example, you may wish to set the row `key` to the primary key of the data to ensure uniqueness.
 The [add_column][textual.widgets.DataTable.add_column] also accepts a `key` argument and works similarly.
 
-Keys are important because cells in a data table can change location due factors like row deletion and sorting.
+Keys are important because cells in a data table can change location due to factors like row deletion and sorting.
 Thus, using keys instead of coordinates allows us to refer to data without worrying about its current location in the table.
 
 If you want to change the table based solely on coordinates, you can use the [coordinate_to_cell_key][textual.widgets.DataTable.coordinate_to_cell_key] method to convert a coordinate to a _cell key_, which is a `(row_key, column_key)` pair.
