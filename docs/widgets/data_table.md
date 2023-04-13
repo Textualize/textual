@@ -55,9 +55,7 @@ The [add_column][textual.widgets.DataTable.add_column] also accepts a `key` argu
 Keys are important because cells in a data table can change location due factors like row deletion and sorting.
 Thus, using keys instead of coordinates allows us to refer to data without worrying about its current location in the table.
 
-Sometimes you wish to perform an operation on a cell/row/column based solely on coordinates, without regard for the data that is currently visible at those coordinates.
-In these cases you can make use of the [coordinate_to_cell_key][textual.widgets.DataTable.coordinate_to_cell_key] method to convert
-a coordinate to a _cell key_, which is a `(row_key, column_key)` pair.
+If you want to change the table based solely on coordinates, you can use the [coordinate_to_cell_key][textual.widgets.DataTable.coordinate_to_cell_key] method to convert a coordinate to a _cell key_, which is a `(row_key, column_key)` pair.
 
 ### Cursors
 
