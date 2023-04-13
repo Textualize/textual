@@ -119,7 +119,7 @@ class LayoutUpdate(CompositorUpdate):
                 yield new_line
 
     def render_segments(self, console: Console) -> str:
-        """Render the updating to raw data, suitable for writing to terminal.
+        """Render the update to raw data, suitable for writing to terminal.
 
         Args:
             console: Console instance.
