@@ -26,10 +26,17 @@ After that, we use the [add_rows][textual.widgets.DataTable.add_rows] method to 
 
 When adding a row to the table, you can supply a _key_ to [add_row][textual.widgets.DataTable.add_row], which is a unique identifier for that row.
 If you don't supply a key, Textual will generate one for you and return it from `add_row`.
-This key can later be used to reference the row, regardless of its current position in the table (rows
-can change location due to sorting) - they are a stable reference to data within the table.
+This key can later be used to reference the row, regardless of its current position in the table.
+
 When working with data from a database for example, you make wish to set the row `key` to the primary key of the data to ensure uniqueness.
 The [add_column][textual.widgets.DataTable.add_column] also accepts a `key` argument and works similarly.
+
+Keys are important because cells in a data table can change location due factors like row deletion and sorting.
+Thus, using keys instead of coordinates allows us to refer to data without worrying changing coordinates.
+
+Sometimes you wish to perform an operation on a cell/row/column based solely on coordinates, without regard for the data that is currently visible at those coordinates.
+In these cases you can make use of the [coordinate_to_cell_key][textual.widgets.DataTable.coordinate_to_cell_key] method to convert
+a coordinate to a _cell key_, which is a `(row_key, column_key)` pair.
 
 ## Cursors
 
@@ -60,11 +67,25 @@ Change the cursor type by assigning to the `cursor_type` reactive attribute.
 You can change the position of the cursor using the arrow keys, ++page-up++, ++page-down++, ++home++ and ++end++,
 or by assigning to the `cursor_coordinate` reactive attribute.
 
+## Updating data
+
+Cells can be updated in the `DataTable` by using the [update_cell][textual.widgets.DataTable.update_cell] and [update_cell_at][textual.widgets.DataTable.update_cell_at] methods.
+
 ## Removing data
 
 To remove all data in the table, use the [clear][textual.widgets.DataTable.clear] method.
 To remove individual rows, use [remove_row][textual.widgets.DataTable.remove_row].
 The `remove_row` method accepts a `key` argument, which identifies the row to be removed.
+
+If you wish to remove the row below the cursor in the `DataTable`, use `coordinate_to_cell_key` to get the row key of
+the row under the current `cursor_coordinate`, then supply this key to `remove_row`:
+
+```python
+# Get the keys for the row and column under the cursor.
+row_key, _ = table.coordinate_to_cell_key(table.cursor_coordinate)
+# Supply the row key to `remove_row` to delete the row.
+table.remove_row(row_key)
+```
 
 ## Fixed data
 
@@ -82,13 +103,17 @@ To do this, assign an integer to the `fixed_rows` or `fixed_columns` reactive at
     --8<-- "docs/examples/widgets/data_table_fixed.py"
     ```
 
+In the example above, we set `fixed_rows` to `2`, and `fixed_columns` to `1`,
+meaning the first two rows and the leftmost column do not scroll - they always remain
+visible as you scroll through the data table.
+
 ## Sorting
 
 The `DataTable` can be sorted using the [sort][textual.widgets.DataTable.sort] method.
 In order to sort your data by a column, you must have supplied a `key` to the `add_column` method
 when you added it.
-You can then pass this key to the sort method to sort by that column.
-Additionally, you can pass multiple keys to break ties.
+You can then pass this key to the `sort` method to sort by that column.
+Additionally, you can sort by multiple columns by passing multiple keys to `sort`.
 
 ## Reactive Attributes
 
