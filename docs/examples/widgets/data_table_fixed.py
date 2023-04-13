@@ -17,6 +17,7 @@ class TableApp(App):
         table.fixed_rows = 2
         table.fixed_columns = 1
         table.cursor_type = "row"
+        table.zebra_stripes = True
 
 
 app = TableApp()

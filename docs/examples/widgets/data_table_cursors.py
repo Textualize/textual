@@ -26,6 +26,7 @@ class TableApp(App):
     def on_mount(self) -> None:
         table = self.query_one(DataTable)
         table.cursor_type = next(cursors)
+        table.zebra_stripes = True
         table.add_columns(*ROWS[0])
         table.add_rows(ROWS[1:])
 
