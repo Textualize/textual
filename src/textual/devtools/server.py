@@ -8,7 +8,7 @@ from aiohttp.web_request import Request
 from aiohttp.web_routedef import get
 from aiohttp.web_ws import WebSocketResponse
 
-from textual.devtools.client import DEVTOOLS_PORT
+from textual.devtools.client import get_devtools_port
 from textual.devtools.service import DevtoolsService
 
 DEFAULT_SIZE_CHANGE_POLL_DELAY_SECONDS = 2
@@ -44,10 +44,12 @@ def _run_devtools(verbose: bool, exclude: list[str] | None = None) -> None:
     def noop_print(_: str) -> None:
         pass
 
+    from rich import print
+
     try:
         run_app(
             app,
-            port=DEVTOOLS_PORT,
+            port=get_devtools_port(),
             print=noop_print,
             loop=asyncio.get_event_loop(),
         )
@@ -56,7 +58,9 @@ def _run_devtools(verbose: bool, exclude: list[str] | None = None) -> None:
 
         print()
         print("[bold red]Couldn't start server")
-        print("Is there another instance of [reverse]textual console[/] running?")
+        print(
+            "Is there another instance of [reverse]textual console[/] running on this port?"
+        )
 
 
 def _make_devtools_aiohttp_app(
