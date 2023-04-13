@@ -7,10 +7,11 @@ See [line API](/guide/widgets#line-api) for how to use Strips.
 from __future__ import annotations
 
 from itertools import chain
-from typing import Iterable, Iterator, Sequence
+from typing import Iterable, Iterator, Sequence, cast
 
 import rich.repr
 from rich.cells import cell_len, set_cell_size
+from rich.color import ColorSystem
 from rich.console import Console, ConsoleOptions, RenderResult
 from rich.segment import Segment
 from rich.style import Style, StyleType
@@ -66,6 +67,7 @@ class Strip:
         "_divide_cache",
         "_crop_cache",
         "_style_cache",
+        "_render_cache",
         "_link_ids",
     ]
 
@@ -75,8 +77,9 @@ class Strip:
         self._segments = list(segments)
         self._cell_length = cell_length
         self._divide_cache: FIFOCache[tuple[int, ...], list[Strip]] = FIFOCache(4)
-        self._crop_cache: FIFOCache[tuple[int, int], Strip] = FIFOCache(4)
-        self._style_cache: FIFOCache[Style, Strip] = FIFOCache(4)
+        self._crop_cache: FIFOCache[tuple[int, int], Strip] = FIFOCache(16)
+        self._style_cache: FIFOCache[Style, Strip] = FIFOCache(16)
+        self._render_cache: str | None = None
         self._link_ids: set[str] | None = None
 
         if DEBUG and cell_length is not None:
@@ -311,6 +314,8 @@ class Strip:
         Returns:
             A new Strip.
         """
+        start = max(0, start)
+        end = min(self.cell_length, end)
         if start == 0 and end == self.cell_length:
             return self
         cache_key = (start, end)
@@ -396,3 +401,23 @@ class Strip:
         )
         self._style_cache[style] = styled_strip
         return styled_strip
+
+    def render(self, console: Console) -> str:
+        """Render the strip into terminal sequences.
+
+        Args:
+            console: Console instance.
+
+        Returns:
+            Rendered sequences.
+        """
+        if self._render_cache is None:
+            color_system = cast(ColorSystem, console.color_system)
+            self._render_cache = "".join(
+                [
+                    style.render(text, color_system=color_system)
+                    for text, style, _ in self._segments
+                    if style is not None
+                ]
+            )
+        return self._render_cache
