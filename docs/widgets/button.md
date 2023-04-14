@@ -31,11 +31,11 @@ Clicking any of the non-disabled buttons in the example app below will result in
 
 ## Reactive Attributes
 
-| Name       | Type   | Default     | Description                                                                                                                       |
-| ---------- | ------ | ----------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `label`    | `str`  | `""`        | The text that appears inside the button.                                                                                          |
-| `variant`  | `str`  | `"default"` | Semantic styling variant. One of `default`, `primary`, `success`, `warning`, `error`.                                             |
-| `disabled` | `bool` | `False`     | Whether the button is disabled or not. Disabled buttons cannot be focused or clicked, and are styled in a way that suggests this. |
+| Name       | Type            | Default     | Description                                                                                                                       |
+|------------|-----------------|-------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| `label`    | `str`           | `""`        | The text that appears inside the button.                                                                                          |
+| `variant`  | `ButtonVariant` | `"default"` | Semantic styling variant. One of `default`, `primary`, `success`, `warning`, `error`.                                             |
+| `disabled` | `bool`          | `False`     | Whether the button is disabled or not. Disabled buttons cannot be focused or clicked, and are styled in a way that suggests this. |
 
 ## Messages
 
@@ -51,3 +51,8 @@ Clicking any of the non-disabled buttons in the example app below will result in
 ::: textual.widgets.Button
     options:
       heading_level: 2
+
+::: textual.widgets.button
+    options:
+      show_root_heading: true
+      show_root_toc_entry: true

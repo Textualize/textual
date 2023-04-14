@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Changed signature of Driver. Technically a breaking change, but unlikely to affect anyone.
 - Breaking change: Timer.start is now private, and returns No
 - A clicked tab will now be scrolled to the center of its tab container https://github.com/Textualize/textual/pull/2276
+- `ButtonVariant` is now exported from `textual.widgets.button` https://github.com/Textualize/textual/issues/2264
 
 ### Added
 
