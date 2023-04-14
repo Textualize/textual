@@ -29,7 +29,6 @@ from contextlib import (
 from datetime import datetime
 from functools import partial
 from pathlib import Path, PurePath
-from queue import Queue
 from time import perf_counter
 from typing import (
     TYPE_CHECKING,
@@ -248,7 +247,13 @@ class App(Generic[ReturnType], DOMNode):
         ```python
         self.app.dark = not self.app.dark  # Toggle dark mode
         ```
+    """
 
+    _devtools_port: int = constants.DEFAULT_DEVTOOLS_PORT
+    """Port to use if/when connecting to the devtools server.
+
+    You never need to set this manually. To connect to the devtools in a non-default
+    port, use the option `--port` in the command `textual run`.
     """
 
     def __init__(
@@ -374,7 +379,7 @@ class App(Generic[ReturnType], DOMNode):
                 # Dev dependencies not installed
                 pass
             else:
-                self.devtools = DevtoolsClient()
+                self.devtools = DevtoolsClient(port=self._devtools_port)
 
         self._loop: asyncio.AbstractEventLoop | None = None
         self._return_value: ReturnType | None = None

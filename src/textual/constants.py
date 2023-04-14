@@ -16,12 +16,6 @@ __all__ = ["BORDERS"]
 get_environ = os.environ.get
 
 
-DEVTOOLS_PORT_ENVIRON_VARIABLE: Final[str] = "TEXTUAL_CONSOLE_PORT"
-"""The name of the environment variable that sets the port for the devtools."""
-DEFAULT_DEVTOOLS_PORT: Final[int] = 8081
-"""The default port to use for the devtools."""
-
-
 def get_environ_bool(name: str) -> bool:
     """Check an environment variable switch.
 
@@ -35,36 +29,6 @@ def get_environ_bool(name: str) -> bool:
     return has_environ
 
 
-def get_environ_int(name: str, default: int) -> int:
-    """Retrieves an integer environment variable.
-
-    Args:
-        name: Name of environment variable.
-        default: The value to use if the value is not set, or set to something other
-            than a valid integer.
-
-    Returns:
-        The integer associated with the environment variable if it's set to a valid int
-            or the default value otherwise.
-    """
-    try:
-        return int(get_environ(name, default))
-    except ValueError:
-        return default
-
-
-def get_devtools_port() -> int:
-    """Retrieve the port to be used by the devtools.
-
-    This reads from the environment variable set in DEVTOOLS_PORT_ENVIRON_VARIABLE
-    and defaults to DEFAULT_DEVTOOLS_PORT.
-
-    Returns:
-        The port to be used.
-    """
-    return get_environ_int(DEVTOOLS_PORT_ENVIRON_VARIABLE, DEFAULT_DEVTOOLS_PORT)
-
-
 BORDERS = list(BORDER_CHARS)
 
 DEBUG: Final[bool] = get_environ_bool("TEXTUAL_DEBUG")
@@ -73,3 +37,6 @@ DRIVER: Final[str | None] = get_environ("TEXTUAL_DRIVER", None)
 
 LOG_FILE: Final[str | None] = get_environ("TEXTUAL_LOG", None)
 """A last resort log file that appends all logs, when devtools isn't working."""
+
+DEFAULT_DEVTOOLS_PORT: Final[int] = 8081
+"""The default port to use for the devtools."""

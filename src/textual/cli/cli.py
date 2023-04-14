@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sys
 
-from ..constants import DEFAULT_DEVTOOLS_PORT, DEVTOOLS_PORT_ENVIRON_VARIABLE
+from ..constants import DEFAULT_DEVTOOLS_PORT
 
 try:
     import click
@@ -13,6 +13,7 @@ except ImportError:
 from importlib_metadata import version
 
 from textual._import_app import AppFail, import_app
+from textual.app import App
 from textual.pilot import Pilot
 
 
@@ -27,28 +28,23 @@ def run():
     "--port",
     "port",
     type=int,
-    default=None,
+    default=DEFAULT_DEVTOOLS_PORT,
     metavar="PORT",
     help=f"Port to use for the development mode console. Defaults to {DEFAULT_DEVTOOLS_PORT}.",
 )
 @click.option("-v", "verbose", help="Enable verbose logs.", is_flag=True)
 @click.option("-x", "--exclude", "exclude", help="Exclude log group(s)", multiple=True)
-def console(port: int | None, verbose: bool, exclude: list[str]) -> None:
+def console(port: int, verbose: bool, exclude: list[str]) -> None:
     """Launch the textual console."""
-    import os
-
     from rich.console import Console
 
     from textual.devtools.server import _run_devtools
-
-    if port is not None:
-        os.environ[DEVTOOLS_PORT_ENVIRON_VARIABLE] = str(port)
 
     console = Console()
     console.clear()
     console.show_cursor(False)
     try:
-        _run_devtools(verbose=verbose, exclude=exclude)
+        _run_devtools(verbose=verbose, exclude=exclude, port=port)
     finally:
         console.show_cursor(True)
 
@@ -97,7 +93,7 @@ def _post_run_warnings() -> None:
     "--port",
     "port",
     type=int,
-    default=None,
+    default=DEFAULT_DEVTOOLS_PORT,
     metavar="PORT",
     help=f"Port to use for the development mode console. Defaults to {DEFAULT_DEVTOOLS_PORT}.",
 )
@@ -110,7 +106,7 @@ def _post_run_warnings() -> None:
     help="Take screenshot after DELAY seconds",
 )
 def run_app(
-    import_name: str, dev: bool, port: int | None, press: str, screenshot: int | None
+    import_name: str, dev: bool, port: int, press: str, screenshot: int | None
 ) -> None:
     """Run a Textual app.
 
@@ -140,8 +136,7 @@ def run_app(
 
     from textual.features import parse_features
 
-    if port is not None:
-        os.environ[DEVTOOLS_PORT_ENVIRON_VARIABLE] = str(port)
+    App._devtools_port = port
 
     features = set(parse_features(os.environ.get("TEXTUAL", "")))
     if dev:

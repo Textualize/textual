@@ -8,8 +8,8 @@ from aiohttp.web_request import Request
 from aiohttp.web_routedef import get
 from aiohttp.web_ws import WebSocketResponse
 
-from textual.devtools.client import get_devtools_port
-from textual.devtools.service import DevtoolsService
+from ..constants import DEFAULT_DEVTOOLS_PORT
+from .service import DevtoolsService
 
 DEFAULT_SIZE_CHANGE_POLL_DELAY_SECONDS = 2
 
@@ -38,7 +38,9 @@ async def _on_startup(app: Application) -> None:
     await service.start()
 
 
-def _run_devtools(verbose: bool, exclude: list[str] | None = None) -> None:
+def _run_devtools(
+    verbose: bool, exclude: list[str] | None = None, port: int = DEFAULT_DEVTOOLS_PORT
+) -> None:
     app = _make_devtools_aiohttp_app(verbose=verbose, exclude=exclude)
 
     def noop_print(_: str) -> None:
@@ -49,7 +51,7 @@ def _run_devtools(verbose: bool, exclude: list[str] | None = None) -> None:
     try:
         run_app(
             app,
-            port=get_devtools_port(),
+            port=port,
             print=noop_print,
             loop=asyncio.get_event_loop(),
         )
