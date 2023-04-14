@@ -338,11 +338,12 @@ def render_border_label(
     if not text_label.cell_len or width <= cells_reserved:
         return
 
-    text_label, label_style = label
     text_label = text_label.copy()
     text_label.truncate(width - cells_reserved, overflow="ellipsis")
-    text_label.pad_left(1)
-    text_label.pad_right(1)
+    if has_left_corner:
+        text_label.pad_left(1)
+    if has_right_corner:
+        text_label.pad_right(1)
     text_label.stylize_before(label_style)
 
     label_style_location = BORDER_LABEL_LOCATIONS[name][0 if is_title else 1]
@@ -368,12 +369,7 @@ def render_border_label(
     styled_segments = [
         Segment(segment.text, base_style + segment.style) for segment in segments
     ]
-    # blank = Segment(" ", base_style)
-    # if has_left_corner:
-    #     yield blank
     yield from styled_segments
-    # if has_right_corner:
-    #     yield blank
 
 
 def render_row(

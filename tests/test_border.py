@@ -105,7 +105,7 @@ def test_render_border_label_empty_label_skipped(
 
     assert [] == list(
         render_border_label(
-            Text(""),
+            (Text(""), Style()),
             True,
             "round",
             width,
@@ -142,7 +142,7 @@ def test_render_border_label_skipped_if_narrow(
 
     assert [] == list(
         render_border_label(
-            Text.from_markup(label),
+            (Text.from_markup(label), Style()),
             True,
             "round",
             width,
@@ -180,11 +180,10 @@ def test_render_border_label_wide_plain(label: str):
         True,
         True,
     )
-    left, original_text, right = render_border_label(Text.from_markup(label), *args)
+    segments = render_border_label((Text.from_markup(label), Style()), *args)
+    (segment,) = segments
 
-    assert left == _BLANK_SEGMENT
-    assert right == _BLANK_SEGMENT
-    assert original_text == Segment(label, _EMPTY_STYLE)
+    assert segment == Segment(f" {label} ", _EMPTY_STYLE)
 
 
 @pytest.mark.parametrize(
@@ -200,7 +199,7 @@ def test_render_border_empty_text_with_markup(label: str):
     """Test label rendering if there is no text but some markup."""
     assert [] == list(
         render_border_label(
-            Text.from_markup(label),
+            (Text.from_markup(label), Style()),
             True,
             "round",
             999,
@@ -222,7 +221,7 @@ def test_render_border_label():
 
     # Implicit test on the number of segments returned:
     blank1, what, is_up, with_you, blank2 = render_border_label(
-        Text.from_markup(label),
+        (Text.from_markup(label), Style()),
         True,
         "round",
         9999,
@@ -251,7 +250,7 @@ def test_render_border_label():
     assert with_you == expected_with_you
 
     blank1, what, blank2 = render_border_label(
-        Text.from_markup(label),
+        (Text.from_markup(label), Style()),
         True,
         "round",
         5 + 4,  # 5 where "What…" fits + 2 for the blank spaces + 2 for the corners.
