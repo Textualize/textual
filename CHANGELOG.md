@@ -20,6 +20,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - option `--port` to the command `textual console` to specify which port the console should connect to https://github.com/Textualize/textual/pull/2258
 - `Widget.scroll_to_center` method to scroll children to the center of container widget https://github.com/Textualize/textual/pull/2255 and https://github.com/Textualize/textual/pull/2276
 - Added `TabActivated` message to `TabbedContent` https://github.com/Textualize/textual/pull/2260
+- Added "panel" border style
+- Added `border-title-color`, `border-title-background`, `border-title-style` rules
+- Added `border-subtitle-color`, `border-subtitle-background`, `border-subtitle-style` rules
 
 ### Fixed
 

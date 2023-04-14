@@ -787,9 +787,15 @@ class DOMNode(MessagePump):
         if has_rule("border_title_background"):
             background += styles.border_title_background
         if has_rule("border_title_color"):
-            color += styles.border_title_color
+            if (
+                styles.has_rule("auto_border_title_color")
+                and styles.auto_border_title_color
+            ):
+                color = background.get_contrast_text(color.a)
+            else:
+                color = styles.border_title_color
         style += Style.from_color(
-            (background + color).rich_color if (color.a) else None,
+            (background + color).rich_color if color.a else None,
             background.rich_color if background.a else None,
         )
         if has_rule("border_title_style"):
@@ -818,9 +824,15 @@ class DOMNode(MessagePump):
         if has_rule("border_subtitle_background"):
             background += styles.border_subtitle_background
         if has_rule("border_subtitle_color"):
-            color += styles.border_subtitle_color
+            if (
+                styles.has_rule("auto_border_subtitle_color")
+                and styles.auto_border_subtitle_color
+            ):
+                color = background.get_contrast_text(color.a)
+            else:
+                color = styles.border_title_color
         style += Style.from_color(
-            (background + color).rich_color if (color.a) else None,
+            (background + color).rich_color if color.a else None,
             background.rich_color if background.a else None,
         )
         if has_rule("border_subtitle_style"):

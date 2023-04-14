@@ -2,9 +2,11 @@
 
 The `border` style enables the drawing of a box around a widget.
 
+A border style may also be applied to individual edges with `border-top`, `border-right`, `border-bottom`, and `border-left`.
+
 !!! note
 
-    Due to a Textual limitation, [`border`](./border.md) and [`outline`](./outline.md) cannot coexist in the same edge of a widget.
+    [`border`](./border.md) and [`outline`](./outline.md) cannot coexist in the same edge of a widget.
 
 ## Syntax
 
@@ -17,31 +19,10 @@ border-bottom: [<a href="../../css_types/border">&lt;border&gt;</a>] [<a href=".
 border-left: [<a href="../../css_types/border">&lt;border&gt;</a>] [<a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>]];
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The `border` style accepts an optional [`<border>`](../../css_types/border) that sets the visual style of the widget border, an optional [`<color>`](../../css_types/color) to set the color of the border, and an optional [`<percentage>`](../../css_types/percentage) to specify the color transparency.
+In CSS, the border is set with a [border style](./border.md) and a color. Both are optional. An optional percentage may be added to blend the border with the background color.
 
-Borders may also be set individually for the four edges of a widget with the `border-top`, `border-right`, `border-bottom` and `border-left` rules.
+In Python, the border is set with a tuple of [border style](./border.md) and a color.
 
-### Multiple edge rules
-
-If multiple border styles target the same edge, the last style that targets a specific edge is the one that is applied to that edge.
-For example, consider the CSS below:
-
-```sass
-Static {
-    border-top: dashed red;
-    border: solid green;  /* overrides the border-top rule above */
-    /* Change the border but just for the bottom edge: */
-    border-bottom: double blue;
-}
-```
-
-The CSS snippet above will add a solid green border around `Static` widgets, except for the bottom edge, which will be double blue.
-
-### Defaults
-
-If `<color>` is specified but `<border>` is not, it defaults to `"solid"`.
-If `<border>` is specified but `<color>`is not, it defaults to green (RGB color `"#00FF00"`).
-If `<percentage>` is not specified it defaults to `100%`.
 
 ## Border command
 
@@ -128,3 +109,4 @@ widget.styles.border_left = ("outer", "red")
 
  - [`box-sizing`](./box_sizing.md) to specify how to account for the border in a widget's dimensions.
  - [`outline`](./outline.md) to add an outline around the content of a widget.
+--8<-- "docs/snippets/see_also_border.md"

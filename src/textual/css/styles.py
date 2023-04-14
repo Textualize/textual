@@ -167,10 +167,12 @@ class RulesMap(TypedDict, total=False):
     link_hover_background: Color
     link_hover_style: Style
 
+    auto_border_title_color: bool
     border_title_color: Color
     border_title_background: Color
     border_title_style: Style
 
+    auto_border_subtitle_color: Color
     border_subtitle_color: Color
     border_subtitle_background: Color
     border_subtitle_style: Style
@@ -329,10 +331,12 @@ class StylesBase(ABC):
     link_hover_background = ColorProperty("transparent")
     link_hover_style = StyleFlagsProperty()
 
+    auto_border_title_color = BooleanProperty(default=False)
     border_title_color = ColorProperty(Color(255, 255, 255))
     border_title_background = ColorProperty(Color(0, 0, 0))
     border_title_style = StyleFlagsProperty()
 
+    auto_border_subtitle_color = BooleanProperty(default=False)
     border_subtitle_color = ColorProperty(Color(255, 255, 255))
     border_subtitle_background = ColorProperty(Color(0, 0, 0))
     border_subtitle_style = StyleFlagsProperty()

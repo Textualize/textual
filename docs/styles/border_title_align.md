@@ -60,3 +60,7 @@ widget.styles.border_title_align = "left"
 widget.styles.border_title_align = "center"
 widget.styles.border_title_align = "right"
 ```
+
+## See also
+
+--8<-- "docs/snippets/see_also_border.md"
