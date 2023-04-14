@@ -102,6 +102,11 @@ BORDER_CHARS: dict[
         ("▊", " ", "▎"),
         ("▊", "▁", "▎"),
     ),
+    "panel": (
+        ("▊", "█", "▎"),
+        ("▊", " ", "▎"),
+        ("▊", "▁", "▎"),
+    ),
     "wide": (
         ("▁", "▁", "▁"),
         ("▎", " ", "▋"),
@@ -195,6 +200,11 @@ BORDER_LOCATIONS: dict[
         (2, 0, 1),
         (2, 0, 1),
     ),
+    "panel": (
+        (2, 0, 1),
+        (2, 0, 1),
+        (2, 0, 1),
+    ),
     "wide": (
         (1, 1, 1),
         (0, 1, 3),
@@ -283,7 +293,7 @@ def get_box(
 
 
 def render_border_label(
-    label: Text,
+    label: tuple[Text, Style],
     is_title: bool,
     name: EdgeType,
     width: int,
@@ -300,7 +310,7 @@ def render_border_label(
     account the inner, outer, and border-specific, styles.
 
     Args:
-        label: The label to display (that may contain markup).
+        label: Tuple of label and style to render in the border.
         is_title: Whether we are rendering the title (`True`) or the subtitle (`False`).
         name: Name of the box type.
         width: The width, in cells, of the space available for the whole edge.
@@ -323,12 +333,17 @@ def render_border_label(
     # How many cells do we need to reserve for surrounding blanks and corners?
     corners_needed = has_left_corner + has_right_corner
     cells_reserved = 2 * corners_needed
-    if not label.cell_len or width <= cells_reserved:
+
+    text_label, label_style = label
+    if not text_label.cell_len or width <= cells_reserved:
         return
 
-    text_label = label.copy()
+    text_label, label_style = label
+    text_label = text_label.copy()
     text_label.truncate(width - cells_reserved, overflow="ellipsis")
-    segments = text_label.render(console)
+    text_label.pad_left(1)
+    text_label.pad_right(1)
+    text_label.stylize_before(label_style)
 
     label_style_location = BORDER_LABEL_LOCATIONS[name][0 if is_title else 1]
 
@@ -347,15 +362,18 @@ def render_border_label(
     else:
         assert False
 
+    text_label.stylize_before(base_style)
+    segments = text_label.render(console)
+
     styled_segments = [
         Segment(segment.text, base_style + segment.style) for segment in segments
     ]
-    blank = Segment(" ", base_style)
-    if has_left_corner:
-        yield blank
+    # blank = Segment(" ", base_style)
+    # if has_left_corner:
+    #     yield blank
     yield from styled_segments
-    if has_right_corner:
-        yield blank
+    # if has_right_corner:
+    #     yield blank
 
 
 def render_row(

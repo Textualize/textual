@@ -640,6 +640,11 @@ class StylesBuilder:
     process_link_hover_color = process_color
     process_link_hover_background = process_color
 
+    process_border_title_color = process_color
+    process_border_title_background = process_color
+    process_border_subtitle_color = process_color
+    process_border_subtitle_background = process_color
+
     def process_text_style(self, name: str, tokens: list[Token]) -> None:
         for token in tokens:
             value = token.value
@@ -655,6 +660,9 @@ class StylesBuilder:
 
     process_link_style = process_text_style
     process_link_hover_style = process_text_style
+
+    process_border_title_style = process_text_style
+    process_border_subtitle_style = process_text_style
 
     def process_text_align(self, name: str, tokens: list[Token]) -> None:
         """Process a text-align declaration"""

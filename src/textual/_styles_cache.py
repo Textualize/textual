@@ -107,6 +107,14 @@ class StylesCache:
         Returns:
             Rendered lines.
         """
+
+        border_title = widget._border_title
+        if border_title is not None:
+            border_title.stylize_before(widget.title_rich_style)
+        border_subtitle = widget._border_subtitle
+        if border_subtitle is not None:
+            border_subtitle.stylize_before(widget.subtitle_rich_style)
+
         base_background, background = widget.background_colors
         styles = widget.styles
         strips = self.render(
@@ -116,8 +124,16 @@ class StylesCache:
             background,
             widget.render_line,
             widget.app.console,
-            widget._border_title,
-            widget._border_subtitle,
+            (
+                border_title
+                if border_title is None
+                else (border_title, widget.title_rich_style)
+            ),
+            (
+                border_subtitle
+                if border_subtitle is None
+                else (border_subtitle, widget.subtitle_rich_style)
+            ),
             content_size=widget.content_region.size,
             padding=styles.padding,
             crop=crop,
@@ -147,8 +163,8 @@ class StylesCache:
         background: Color,
         render_content_line: RenderLineCallback,
         console: Console,
-        border_title: Text | None,
-        border_subtitle: Text | None,
+        border_title: tuple[Text, Style] | None,
+        border_subtitle: tuple[Text, Style] | None,
         content_size: Size | None = None,
         padding: Spacing | None = None,
         crop: Region | None = None,
@@ -163,8 +179,8 @@ class StylesCache:
             background: Background color of widget.
             render_content_line: Callback to render content line.
             console: The console in use by the app.
-            border_title: The title for the widget border.
-            border_subtitle: The subtitle for the widget border.
+            border_title: The title and style for the widget border.
+            border_subtitle: The subtitle and style for the widget border.
             content_size: Size of content or None to assume full size.
             padding: Override padding from Styles, or None to use styles.padding.
             crop: Region to crop to.
@@ -229,8 +245,8 @@ class StylesCache:
         background: Color,
         render_content_line: Callable[[int], Strip],
         console: Console,
-        border_title: Text | None,
-        border_subtitle: Text | None,
+        border_title: tuple[Text, Style] | None,
+        border_subtitle: tuple[Text, Style] | None,
     ) -> Strip:
         """Render a styled line.
 
@@ -244,8 +260,8 @@ class StylesCache:
             background: Background color of widget.
             render_content_line: Callback to render a line of content.
             console: The console in use by the app.
-            border_title: The title for the widget border.
-            border_subtitle: The subtitle for the widget border.
+            border_title: Optional title and style for the widget border.
+            border_subtitle: Optional subtitle and style for the widget border.
 
         Returns:
             A line of segments.

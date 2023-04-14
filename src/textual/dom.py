@@ -766,6 +766,68 @@ class DOMNode(MessagePump):
         return style
 
     @property
+    def title_rich_style(self) -> Style:
+        """Get a Rich Style object for for titles.
+
+        Returns:
+            A Rich style.
+
+        """
+        background = Color(0, 0, 0, 0)
+        color = Color(255, 255, 255, 0)
+        style = Style()
+        for node in reversed(self.ancestors_with_self):
+            styles = node.styles
+            if styles.has_rule("background"):
+                background += styles.background
+            style += styles.text_style
+
+        styles = self.styles
+        has_rule = self.styles.has_rule
+        if has_rule("border_title_background"):
+            background += styles.border_title_background
+        if has_rule("border_title_color"):
+            color += styles.border_title_color
+        style += Style.from_color(
+            (background + color).rich_color if (color.a) else None,
+            background.rich_color if background.a else None,
+        )
+        if has_rule("border_title_style"):
+            style += self.styles.border_title_style
+        return style
+
+    @property
+    def subtitle_rich_style(self) -> Style:
+        """Get a Rich Style object for for titles.
+
+        Returns:
+            A Rich style.
+
+        """
+        background = Color(0, 0, 0, 0)
+        color = Color(255, 255, 255, 0)
+        style = Style()
+        for node in reversed(self.ancestors_with_self):
+            styles = node.styles
+            if styles.has_rule("background"):
+                background += styles.background
+            style += styles.text_style
+
+        styles = self.styles
+        has_rule = styles.has_rule
+        if has_rule("border_subtitle_background"):
+            background += styles.border_subtitle_background
+        if has_rule("border_subtitle_color"):
+            color += styles.border_subtitle_color
+        style += Style.from_color(
+            (background + color).rich_color if (color.a) else None,
+            background.rich_color if background.a else None,
+        )
+        if has_rule("border_subtitle_style"):
+            style += self.styles.border_subtitle_style
+        return style
+
+    @property
     def background_colors(self) -> tuple[Color, Color]:
         """The background color and the color of the parent's background.
 
