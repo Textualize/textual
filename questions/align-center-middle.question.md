@@ -69,22 +69,14 @@ If you want them more like this:
 +---------------+
 ```
 
-the best approach is to wrap each widget in a container that individually
-centers it. For example:
+the best approach is to wrap each widget in a [`Center`
+container](https://textual.textualize.io/api/containers/#textual.containers.Center)
+that individually centers it. For example:
 
 ```python
 from textual.app import App, ComposeResult
-from textual.containers import Container
+from textual.containers import Center
 from textual.widgets import Button
-
-class Center( Container ):
-    DEFAULT_CSS = """
-    Center {
-        height: auto;
-        width: 100%;
-        align: center middle;
-    }
-    """
 
 class ButtonApp(App):
 
