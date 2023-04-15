@@ -109,7 +109,7 @@ BORDER_CHARS: dict[
     ),
     "wide": (
         ("▁", "▁", "▁"),
-        ("▎", " ", "▋"),
+        ("▎", " ", "▊"),
         ("▔", "▔", "▔"),
     ),
 }
@@ -211,6 +211,11 @@ BORDER_LOCATIONS: dict[
         (1, 1, 1),
     ),
 }
+
+# Some borders (such as panel) require that the title (and subtitle) be draw in reverse.
+# This is a mapping of the border type on to a tuple for the top and bottom borders, to indicate
+# reverse colors is required.
+BORDER_TITLE_FLIP: dict[str, tuple[bool, bool]] = {"panel": (True, False)}
 
 # In a similar fashion, we extract the border _label_ locations for easier access when
 # rendering a border label.
@@ -347,6 +352,7 @@ def render_border_label(
     text_label.stylize_before(label_style)
 
     label_style_location = BORDER_LABEL_LOCATIONS[name][0 if is_title else 1]
+    flip_top, flip_bottom = BORDER_TITLE_FLIP.get(name, (False, False))
 
     inner = inner_style + style
     outer = outer_style + style
@@ -363,13 +369,14 @@ def render_border_label(
     else:
         assert False
 
-    text_label.stylize_before(base_style)
-    segments = text_label.render(console)
+    if (flip_top and is_title) or (flip_bottom and not is_title):
+        base_style = base_style.without_color + Style.from_color(
+            base_style.bgcolor, base_style.color
+        )
 
-    styled_segments = [
-        Segment(segment.text, base_style + segment.style) for segment in segments
-    ]
-    yield from styled_segments
+    text_label.stylize_before(base_style + label_style)
+    segments = text_label.render(console)
+    yield from segments
 
 
 def render_row(

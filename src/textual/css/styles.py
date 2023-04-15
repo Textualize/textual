@@ -332,13 +332,13 @@ class StylesBase(ABC):
     link_hover_style = StyleFlagsProperty()
 
     auto_border_title_color = BooleanProperty(default=False)
-    border_title_color = ColorProperty(Color(255, 255, 255))
-    border_title_background = ColorProperty(Color(0, 0, 0))
+    border_title_color = ColorProperty(Color(255, 255, 255, 0))
+    border_title_background = ColorProperty(Color(0, 0, 0, 0))
     border_title_style = StyleFlagsProperty()
 
     auto_border_subtitle_color = BooleanProperty(default=False)
-    border_subtitle_color = ColorProperty(Color(255, 255, 255))
-    border_subtitle_background = ColorProperty(Color(0, 0, 0))
+    border_subtitle_color = ColorProperty(Color(255, 255, 255, 0))
+    border_subtitle_background = ColorProperty(Color(0, 0, 0, 0))
     border_subtitle_style = StyleFlagsProperty()
 
     def __textual_animation__(

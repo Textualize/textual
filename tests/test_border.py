@@ -183,7 +183,7 @@ def test_render_border_label_wide_plain(label: str):
     segments = render_border_label((Text.from_markup(label), Style()), *args)
     (segment,) = segments
 
-    assert segment == Segment(f" {label} ", _EMPTY_STYLE)
+    assert segment == Segment(f" {label} ", None)
 
 
 @pytest.mark.parametrize(
