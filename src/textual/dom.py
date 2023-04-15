@@ -765,8 +765,9 @@ class DOMNode(MessagePump):
         )
         return style
 
-    @property
-    def _title_style_information(self) -> tuple[Color, Color, Style]:
+    def _get_title_style_information(
+        self, background: Color
+    ) -> tuple[Color, Color, Style]:
         """Get a Rich Style object for for titles.
 
         Returns:
@@ -774,14 +775,19 @@ class DOMNode(MessagePump):
 
         """
         styles = self.styles
+        if styles.auto_border_title_color:
+            color = background.get_contrast_text(styles.border_title_color.a)
+        else:
+            color = styles.border_title_color
         return (
-            styles.border_title_color,
+            color,
             styles.border_title_background,
             styles.border_title_style,
         )
 
-    @property
-    def _subtitle_style_information(self) -> tuple[Color, Color, Style]:
+    def _get_subtitle_style_information(
+        self, background: Color
+    ) -> tuple[Color, Color, Style]:
         """Get a Rich Style object for for titles.
 
         Returns:
@@ -789,8 +795,12 @@ class DOMNode(MessagePump):
 
         """
         styles = self.styles
+        if styles.auto_border_title_color:
+            color = background.get_contrast_text(styles.border_subtitle_color.a)
+        else:
+            color = styles.border_subtitle_color
         return (
-            styles.border_subtitle_color,
+            color,
             styles.border_subtitle_background,
             styles.border_subtitle_style,
         )

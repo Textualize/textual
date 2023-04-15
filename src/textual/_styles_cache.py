@@ -123,12 +123,18 @@ class StylesCache:
             (
                 None
                 if border_title is None
-                else (border_title, *widget._title_style_information)
+                else (
+                    border_title,
+                    *widget._get_title_style_information(base_background),
+                )
             ),
             (
                 None
                 if border_subtitle is None
-                else (border_subtitle, *widget._subtitle_style_information)
+                else (
+                    border_subtitle,
+                    *widget._get_subtitle_style_information(base_background),
+                )
             ),
             content_size=widget.content_region.size,
             padding=styles.padding,

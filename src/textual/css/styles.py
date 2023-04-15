@@ -172,7 +172,7 @@ class RulesMap(TypedDict, total=False):
     border_title_background: Color
     border_title_style: Style
 
-    auto_border_subtitle_color: Color
+    auto_border_subtitle_color: bool
     border_subtitle_color: Color
     border_subtitle_background: Color
     border_subtitle_style: Style
