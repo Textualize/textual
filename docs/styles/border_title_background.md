@@ -9,6 +9,25 @@ border-title-background: (<a href="../../css_types/color">&lt;color&gt;</a> | au
 --8<-- "docs/snippets/syntax_block_end.md"
 
 
+
+## Example
+
+--8<-- "docs/snippets/border_title_color.md"
+
+
+## CSS
+
+```sass
+border-title-background: blue;
+```
+
+## Python
+
+```python
+widget.styles.border_title_background = "blue"
+```
+
+
 ## See also
 
 --8<-- "docs/snippets/see_also_border.md"

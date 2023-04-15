@@ -323,10 +323,14 @@ class StylesCache:
                 label, label_color, label_background, style = border_label
                 base_label_background = base_background + background
                 style += Style.from_color(
-                    (base_label_background + label_color).rich_color
-                    if label_color.a
+                    (
+                        (base_label_background + label_color).rich_color
+                        if label_color.a
+                        else None
+                    ),
+                    (base_label_background + label_background).rich_color
+                    if label_background.a
                     else None,
-                    base_label_background.rich_color if label_background.a else None,
                 )
                 render_label = (label, style)
             # Try to save time with expensive call to `render_border_label`:
