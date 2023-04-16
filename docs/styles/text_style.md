@@ -1,6 +1,6 @@
 # Text-style
 
-The `text-style` sets the style for the text in a widget.
+The `text-style` style sets the style for the text in a widget.
 
 ## Syntax
 

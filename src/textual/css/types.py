@@ -25,6 +25,7 @@ EdgeType = Literal[
     "hkey",
     "vkey",
     "tall",
+    "panel",
     "wide",
 ]
 Visibility = Literal["visible", "hidden", "initial", "inherit"]
