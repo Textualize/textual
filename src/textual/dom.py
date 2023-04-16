@@ -770,6 +770,9 @@ class DOMNode(MessagePump):
     ) -> tuple[Color, Color, Style]:
         """Get a Rich Style object for for titles.
 
+        Args:
+            background: The background color.
+
         Returns:
             A Rich style.
 
@@ -790,12 +793,15 @@ class DOMNode(MessagePump):
     ) -> tuple[Color, Color, Style]:
         """Get a Rich Style object for for titles.
 
+        Args:
+            background: The background color.
+
         Returns:
             A Rich style.
 
         """
         styles = self.styles
-        if styles.auto_border_title_color:
+        if styles.auto_border_subtitle_color:
             color = background.get_contrast_text(styles.border_subtitle_color.a)
         else:
             color = styles.border_subtitle_color
