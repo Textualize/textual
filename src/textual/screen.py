@@ -6,7 +6,17 @@ The `Screen` class is a special widget which represents the content in the termi
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterable, Iterator
+from inspect import isawaitable
+from typing import (
+    TYPE_CHECKING,
+    Awaitable,
+    Callable,
+    Generic,
+    Iterable,
+    Iterator,
+    TypeVar,
+    Union,
+)
 
 import rich.repr
 from rich.console import RenderableType
@@ -34,9 +44,17 @@ if TYPE_CHECKING:
 # Screen updates will be batched so that they don't happen more often than 120 times per second:
 UPDATE_PERIOD: Final[float] = 1 / 120
 
+ScreenResultType = TypeVar("ScreenResultType")
+"""The result type of a screen."""
+
+ScreenResultCallbackType = Union[
+    Callable[[ScreenResultType], None], Callable[[ScreenResultType], Awaitable[None]]
+]
+"""Type of a screen result callback function."""
+
 
 @rich.repr.auto
-class Screen(Widget):
+class Screen(Generic[ScreenResultType], Widget):
     """The base class for screens."""
 
     DEFAULT_CSS = """
@@ -77,6 +95,7 @@ class Screen(Widget):
         self._dirty_widgets: set[Widget] = set()
         self.__update_timer: Timer | None = None
         self._callbacks: list[CallbackType] = []
+        self._result_callback: ScreenResultCallbackType | None = None
 
     @property
     def is_modal(self) -> bool:
@@ -643,9 +662,33 @@ class Screen(Widget):
         else:
             self.post_message(event)
 
+    def dismiss(self) -> None:
+        """Dismiss the screen."""
+        self.app.pop_screen()
+
+    def action_dismiss(self) -> None:
+        self.dismiss()
+
+    def dismiss_with(self, result: ScreenResultType) -> None:
+        """Dismiss the screen with the given result.
+
+        Args:
+            result: The result to be passed to the result callback.
+        """
+        if self._result_callback is not None:
+            try:
+                callback_screen = self.app.screen_stack[-2]
+            except IndexError:
+                callback_screen = self
+            callback_screen.call_next(self._result_callback, result)
+        self.dismiss()
+
+    def action_dismiss_with(self, result: ScreenResultType) -> None:
+        self.dismiss_with(result)
+
 
 @rich.repr.auto
-class ModalScreen(Screen):
+class ModalScreen(Screen[ScreenResultType]):
     """A screen with bindings that take precedence over the App's key bindings.
 
     The default styling of a modal screen will dim the screen underneath.

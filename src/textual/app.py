@@ -92,7 +92,7 @@ from .keys import (
 from .messages import CallbackType
 from .reactive import Reactive
 from .renderables.blank import Blank
-from .screen import Screen
+from .screen import Screen, ScreenResultCallbackType
 from .widget import AwaitMount, Widget
 
 if TYPE_CHECKING:
@@ -1379,7 +1379,9 @@ class App(Generic[ReturnType], DOMNode):
             self.log.system(f"{screen} REMOVED")
         return screen
 
-    def push_screen(self, screen: Screen | str) -> AwaitMount:
+    def push_screen(
+        self, screen: Screen | str, callback: ScreenResultCallbackType | None = None
+    ) -> AwaitMount:
         """Push a new [screen](/guide/screens) on the screen stack, making it the current screen.
 
         Args:
@@ -1395,6 +1397,7 @@ class App(Generic[ReturnType], DOMNode):
             self.screen.post_message(events.ScreenSuspend())
             self.screen.refresh()
         next_screen, await_mount = self._get_screen(screen)
+        next_screen._result_callback = callback
         self._screen_stack.append(next_screen)
         next_screen.post_message(events.ScreenResume())
         self.log.system(f"{self.screen} is current (PUSHED)")
