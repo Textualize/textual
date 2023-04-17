@@ -137,7 +137,7 @@ def run_app(
     from textual.features import parse_features
 
     features = set(parse_features(os.environ.get("TEXTUAL", "")))
-    if dev:
+    if dev or port != DEFAULT_DEVTOOLS_PORT:
         features.add("debug")
         features.add("devtools")
     features_string = ",".join(sorted(features))
