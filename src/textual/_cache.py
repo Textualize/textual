@@ -72,9 +72,7 @@ class LRUCache(Generic[CacheKey, CacheValue]):
         return len(self._cache)
 
     def __repr__(self) -> str:
-        return (
-            f"<LRUCache maxsize={self._maxsize} hits={self.hits} misses={self.misses}>"
-        )
+        return f"<LRUCache size={len(self)} maxsize={self._maxsize} hits={self.hits} misses={self.misses}>"
 
     def grow(self, maxsize: int) -> None:
         """Grow the maximum size to at least `maxsize` elements.

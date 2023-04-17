@@ -531,6 +531,8 @@ class Stylesheet:
             animate: Enable CSS animation.
         """
 
+        print(f"nodes getting updated = {nodes}")
+
         rules_map = self.rules_map
         apply = self.apply
 

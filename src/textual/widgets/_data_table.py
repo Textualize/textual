@@ -269,7 +269,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         background: $primary 10%;
     }
 
-    DataTable >  .datatable--cursor {
+    DataTable > .datatable--cursor {
         background: $secondary;
         color: $text;
     }
@@ -1625,6 +1625,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
             if cursor and show_cursor:
                 cursor_style = get_component("datatable--cursor").rich_style
+                print(f"retrieved cursor style = {cursor_style}")
                 component_style += cursor_style
                 if is_header_cell or is_row_label_cell:
                     component_style += get_component(
@@ -1858,6 +1859,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self._pseudo_class_state,
         )
         if cache_key in self._line_cache:
+            print(f"getting cached line {cache_key}")
             return self._line_cache[cache_key]
 
         fixed, scrollable = self._render_line_in_row(

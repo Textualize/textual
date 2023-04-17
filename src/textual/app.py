@@ -1235,7 +1235,14 @@ class App(Generic[ReturnType], DOMNode):
 
         """
         self._require_stylesheet_update.add(self.screen if node is None else node)
-        self.check_idle()
+        if self._require_stylesheet_update and not self._batch_count:
+            nodes: set[DOMNode] = {
+                child
+                for node in self._require_stylesheet_update
+                for child in node.walk_children(with_self=True)
+            }
+            self._require_stylesheet_update.clear()
+            self.stylesheet.update_nodes(nodes, animate=True)
 
     def mount(
         self,
@@ -1772,14 +1779,6 @@ class App(Generic[ReturnType], DOMNode):
 
     def _on_idle(self) -> None:
         """Perform actions when there are no messages in the queue."""
-        if self._require_stylesheet_update and not self._batch_count:
-            nodes: set[DOMNode] = {
-                child
-                for node in self._require_stylesheet_update
-                for child in node.walk_children(with_self=True)
-            }
-            self._require_stylesheet_update.clear()
-            self.stylesheet.update_nodes(nodes, animate=True)
 
     def _register_child(
         self, parent: DOMNode, child: Widget, before: int | None, after: int | None
