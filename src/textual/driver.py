@@ -28,7 +28,6 @@ class Driver(ABC):
             debug: Enable debug mode.
             size: Initial size of the terminal or `None` to detect.
         """
-        self._file = app.console.file
         self._app = app
         self._debug = debug
         self._size = size
