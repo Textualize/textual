@@ -71,6 +71,27 @@ class TabPane(Widget):
         )
 
 
+class _ActiveTabProxyDescriptor:
+    """Descriptor to proxy the attribute `active` from `Tabs` to the `TabbedContent`.
+
+    For the rationale that prompted the implementation of this descriptor, refer to
+    https://github.com/Textualize/textual/issues/2229 and, in particular, this comment:
+    https://github.com/Textualize/textual/issues/2229#issuecomment-1511636895.
+    """
+
+    def __get__(
+        self, obj: TabbedContent, objtype: type[TabbedContent] | None = None
+    ) -> str:
+        """Get the active tab by proxy."""
+        return obj.get_child_by_type(Tabs).active
+
+    def __set__(self, obj: TabbedContent, active: str) -> None:
+        """Set the active tab by proxy."""
+        if not active:
+            raise ValueError("'active' tab must not be empty string.")
+        obj.get_child_by_type(Tabs).active = active
+
+
 class TabbedContent(Widget):
     """A container with associated tabs to toggle content visibility."""
 
@@ -83,7 +104,7 @@ class TabbedContent(Widget):
     }
     """
 
-    active: reactive[str] = reactive("", init=False)
+    active = _ActiveTabProxyDescriptor()
     """The ID of the active tab, or empty string if none are active."""
 
     class TabActivated(Message):
@@ -115,22 +136,6 @@ class TabbedContent(Widget):
         self._tab_content: list[Widget] = []
         self._initial = initial
         super().__init__()
-
-    def validate_active(self, active: str) -> str:
-        """It doesn't make sense for `active` to be an empty string.
-
-        Args:
-            active: Attribute to be validated.
-
-        Returns:
-            Value of `active`.
-
-        Raises:
-            ValueError: If the active attribute is set to empty string.
-        """
-        if not active:
-            raise ValueError("'active' tab must not be empty string.")
-        return active
 
     def compose(self) -> ComposeResult:
         """Compose the tabbed content."""
@@ -186,7 +191,6 @@ class TabbedContent(Widget):
         switcher = self.get_child_by_type(ContentSwitcher)
         assert isinstance(event.tab, ContentTab)
         switcher.current = event.tab.id
-        self.active = event.tab.id
         self.post_message(
             TabbedContent.TabActivated(
                 tabbed_content=self,
@@ -197,7 +201,3 @@ class TabbedContent(Widget):
     def _on_tabs_cleared(self, event: Tabs.Cleared) -> None:
         """All tabs were removed."""
         event.stop()
-
-    def watch_active(self, active: str) -> None:
-        """Switch tabs when the active attributes changes."""
-        self.get_child_by_type(Tabs).active = active

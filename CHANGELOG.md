@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed order styles are applied in DataTable - allows combining of renderable styles and component classes https://github.com/Textualize/textual/pull/2272
 - Fix empty ListView preventing bindings from firing https://github.com/Textualize/textual/pull/2281
 - Fixed `active_message_pump.get` sometimes resulting in a `LookupError` https://github.com/Textualize/textual/issues/2301
+- Fixed issue arising when active tab was changed too quickly in succession https://github.com/Textualize/textual/pull/2305
 
 
 ## [0.19.1] - 2023-04-10
