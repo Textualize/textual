@@ -263,7 +263,10 @@ class App(Generic[ReturnType], DOMNode):
     _features_string: str = ""
     """A string with unparsed features for the app instance."""
     _features: frozenset[FeatureFlag] | None = None
-    """The features associated with the app instance."""
+    """The features associated with the app instance.
+
+    This must be set before running the app.
+    """
     _css_monitor: FileMonitor | None = None
     """The CSS monitor for this app, if any."""
 
