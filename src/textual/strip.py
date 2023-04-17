@@ -304,7 +304,7 @@ class Strip:
         ]
         return Strip(segments, self._cell_length)
 
-    def crop(self, start: int, end: int) -> Strip:
+    def crop(self, start: int, end: int | None = None) -> Strip:
         """Crop a strip between two cell positions.
 
         Args:
@@ -315,7 +315,7 @@ class Strip:
             A new Strip.
         """
         start = max(0, start)
-        end = min(self.cell_length, end)
+        end = self.cell_length if end is None else min(self.cell_length, end)
         if start == 0 and end == self.cell_length:
             return self
         cache_key = (start, end)
