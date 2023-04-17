@@ -71,27 +71,6 @@ class TabPane(Widget):
         )
 
 
-class _ActiveTabProxyDescriptor:
-    """Descriptor to proxy the attribute `active` from `Tabs` to the `TabbedContent`.
-
-    For the rationale that prompted the implementation of this descriptor, refer to
-    https://github.com/Textualize/textual/issues/2229 and, in particular, this comment:
-    https://github.com/Textualize/textual/issues/2229#issuecomment-1511636895.
-    """
-
-    def __get__(
-        self, obj: TabbedContent, objtype: type[TabbedContent] | None = None
-    ) -> str:
-        """Get the active tab by proxy."""
-        return obj.get_child_by_type(Tabs).active
-
-    def __set__(self, obj: TabbedContent, active: str) -> None:
-        """Set the active tab by proxy."""
-        if not active:
-            raise ValueError("'active' tab must not be empty string.")
-        obj.get_child_by_type(Tabs).active = active
-
-
 class TabbedContent(Widget):
     """A container with associated tabs to toggle content visibility."""
 
@@ -103,9 +82,6 @@ class TabbedContent(Widget):
         height: auto;
     }
     """
-
-    active = _ActiveTabProxyDescriptor()
-    """The ID of the active tab, or empty string if none are active."""
 
     class TabActivated(Message):
         """Posted when the active tab changes."""
@@ -136,6 +112,15 @@ class TabbedContent(Widget):
         self._tab_content: list[Widget] = []
         self._initial = initial
         super().__init__()
+
+    @property
+    def active(self) -> str:
+        """The ID of the active tab, or empty string if none are active."""
+        return self.get_child_by_type(Tabs).active
+
+    @active.setter
+    def active(self, active: str) -> None:
+        self.get_child_by_type(Tabs).active = active
 
     def compose(self) -> ComposeResult:
         """Compose the tabbed content."""
