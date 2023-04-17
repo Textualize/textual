@@ -249,14 +249,23 @@ class App(Generic[ReturnType], DOMNode):
         ```
     """
 
-    _devtools: DevtoolsClient | None = None
-    """The devtools client associated with this app, if any."""
     _devtools_port: int = constants.DEFAULT_DEVTOOLS_PORT
     """Port to use if/when connecting to the devtools server.
 
     You never need to set this manually. To connect to the devtools in a non-default
     port, use the option `--port` in the command `textual run`.
     """
+
+    # Series of auxiliary attributes used to provide properties that load the actual
+    # values lazily.
+    _devtools: DevtoolsClient | None = None
+    """The devtools client associated with this app, if any."""
+    _features_string: str = ""
+    """A string with unparsed features for the app instance."""
+    _features: frozenset[FeatureFlag] | None = None
+    """The features associated with the app instance."""
+    _css_monitor: FileMonitor | None = None
+    """The CSS monitor for this app, if any."""
 
     def __init__(
         self,
@@ -265,7 +274,7 @@ class App(Generic[ReturnType], DOMNode):
         watch_css: bool = False,
     ):
         super().__init__()
-        self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
+        self.watch_css = watch_css
 
         self._filter: LineFilter | None = None
         environ = dict(os.environ)
@@ -377,17 +386,28 @@ class App(Generic[ReturnType], DOMNode):
         self._return_value: ReturnType | None = None
         self._exit = False
 
-        self.css_monitor = (
-            FileMonitor(self.css_path, self._on_css_change)
-            if ((watch_css or self.debug) and self.css_path)
-            else None
-        )
         self._screenshot: str | None = None
         self._dom_lock = asyncio.Lock()
         self._dom_ready = False
         self._batch_count = 0
         self.set_class(self.dark, "-dark-mode")
         self.set_class(not self.dark, "-light-mode")
+
+    @property
+    def css_monitor(self) -> FileMonitor | None:
+        """The CSS monitor associated with the app instance."""
+        if self._css_monitor is None and (
+            (self.watch_css or self.debug) and self.css_path
+        ):
+            self._css_monitor = FileMonitor(self.css_path, self._on_css_change)
+        return self._css_monitor
+
+    @property
+    def features(self) -> frozenset[FeatureFlag]:
+        """The features associated with the app instance."""
+        if self._features is None:
+            self._features = parse_features(self._features_string)
+        return self._features
 
     @property
     def devtools(self) -> DevtoolsClient | None:

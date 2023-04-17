@@ -140,8 +140,8 @@ def run_app(
     if dev:
         features.add("debug")
         features.add("devtools")
+    features_string = ",".join(sorted(features))
 
-    os.environ["TEXTUAL"] = ",".join(sorted(features))
     try:
         app = import_app(import_name)
     except AppFail as error:
@@ -152,6 +152,7 @@ def run_app(
         sys.exit(1)
 
     app._devtools_port = port
+    app._features_string = features_string
 
     press_keys = press.split(",") if press else None
 
