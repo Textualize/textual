@@ -765,6 +765,52 @@ class DOMNode(MessagePump):
         )
         return style
 
+    def _get_title_style_information(
+        self, background: Color
+    ) -> tuple[Color, Color, Style]:
+        """Get a Rich Style object for for titles.
+
+        Args:
+            background: The background color.
+
+        Returns:
+            A Rich style.
+
+        """
+        styles = self.styles
+        if styles.auto_border_title_color:
+            color = background.get_contrast_text(styles.border_title_color.a)
+        else:
+            color = styles.border_title_color
+        return (
+            color,
+            styles.border_title_background,
+            styles.border_title_style,
+        )
+
+    def _get_subtitle_style_information(
+        self, background: Color
+    ) -> tuple[Color, Color, Style]:
+        """Get a Rich Style object for for titles.
+
+        Args:
+            background: The background color.
+
+        Returns:
+            A Rich style.
+
+        """
+        styles = self.styles
+        if styles.auto_border_subtitle_color:
+            color = background.get_contrast_text(styles.border_subtitle_color.a)
+        else:
+            color = styles.border_subtitle_color
+        return (
+            color,
+            styles.border_subtitle_background,
+            styles.border_subtitle_style,
+        )
+
     @property
     def background_colors(self) -> tuple[Color, Color]:
         """The background color and the color of the parent's background.

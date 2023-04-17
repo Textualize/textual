@@ -72,8 +72,8 @@ def test_border():
         Color.parse("green"),
         content.__getitem__,
         Console(),
-        "",
-        "",
+        None,
+        None,
         content_size=Size(3, 3),
     )
 
@@ -106,8 +106,8 @@ def test_padding():
         Color.parse("green"),
         content.__getitem__,
         Console(),
-        "",
-        "",
+        None,
+        None,
         content_size=Size(3, 3),
     )
 
@@ -141,8 +141,8 @@ def test_padding_border():
         Color.parse("green"),
         content.__getitem__,
         Console(),
-        "",
-        "",
+        None,
+        None,
         content_size=Size(3, 3),
     )
 
@@ -177,8 +177,8 @@ def test_outline():
         Color.parse("green"),
         content.__getitem__,
         Console(),
-        "",
-        "",
+        None,
+        None,
         content_size=Size(3, 3),
     )
 
@@ -208,8 +208,8 @@ def test_crop():
         Color.parse("green"),
         content.__getitem__,
         Console(),
-        "",
-        "",
+        None,
+        None,
         content_size=Size(3, 3),
         crop=Region(2, 2, 3, 3),
     )
@@ -247,8 +247,8 @@ def test_dirty_cache() -> None:
         Color.parse("green"),
         get_content_line,
         Console(),
-        "",
-        "",
+        None,
+        None,
         content_size=Size(3, 3),
     )
     assert rendered_lines == [0, 1, 2]
@@ -275,8 +275,8 @@ def test_dirty_cache() -> None:
         Color.parse("green"),
         get_content_line,
         Console(),
-        "",
-        "",
+        None,
+        None,
         content_size=Size(3, 3),
     )
     assert rendered_lines == []
@@ -294,8 +294,8 @@ def test_dirty_cache() -> None:
         Color.parse("green"),
         get_content_line,
         Console(),
-        "",
-        "",
+        None,
+        None,
         content_size=Size(3, 3),
     )
     assert rendered_lines == [0, 1]

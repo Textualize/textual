@@ -7,11 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
-### Changed
+### Changed
 
 - Changed signature of Driver. Technically a breaking change, but unlikely to affect anyone.
 - Breaking change: Timer.start is now private, and returns No
 - A clicked tab will now be scrolled to the center of its tab container https://github.com/Textualize/textual/pull/2276
+- `ButtonVariant` is now exported from `textual.widgets.button` https://github.com/Textualize/textual/issues/2264
 
 ### Added
 
@@ -19,11 +20,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - option `--port` to the command `textual console` to specify which port the console should connect to https://github.com/Textualize/textual/pull/2258
 - `Widget.scroll_to_center` method to scroll children to the center of container widget https://github.com/Textualize/textual/pull/2255 and https://github.com/Textualize/textual/pull/2276
 - Added `TabActivated` message to `TabbedContent` https://github.com/Textualize/textual/pull/2260
+- Added "panel" border style https://github.com/Textualize/textual/pull/2292
+- Added `border-title-color`, `border-title-background`, `border-title-style` rules https://github.com/Textualize/textual/issues/2289
+- Added `border-subtitle-color`, `border-subtitle-background`, `border-subtitle-style` rules https://github.com/Textualize/textual/issues/2289
 
 ### Fixed
 
 - Fixed order styles are applied in DataTable - allows combining of renderable styles and component classes https://github.com/Textualize/textual/pull/2272
 - Fixed key combos with up/down keys in some terminals https://github.com/Textualize/textual/pull/2280
+- Fix empty ListView preventing bindings from firing https://github.com/Textualize/textual/pull/2281
 
 
 ## [0.19.1] - 2023-04-10

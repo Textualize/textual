@@ -2149,7 +2149,7 @@ class App(Generic[ReturnType], DOMNode):
             action_target = getattr(self, destination)
             implicit_destination = True
         else:
-            action_target = default_namespace or self
+            action_target = default_namespace if default_namespace is not None else self
             action_name = target
 
         handled = await self._dispatch_action(action_target, action_name, params)

@@ -1,0 +1,16 @@
+Screen {
+    align: center middle;
+}
+
+Label {
+    padding: 4 8;
+    border: heavy red;
+
+    border-title-color: green;
+    border-title-background: white;
+    border-title-style: bold;
+
+    border-subtitle-color: magenta;
+    border-subtitle-background: yellow;
+    border-subtitle-style: italic;
+}

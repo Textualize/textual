@@ -413,9 +413,10 @@ class Strip:
         """
         if self._render_cache is None:
             color_system = cast(ColorSystem, console.color_system)
+            render = Style.render
             self._render_cache = "".join(
                 [
-                    style.render(text, color_system=color_system)
+                    render(style, text, color_system=color_system)
                     for text, style, _ in self._segments
                     if style is not None
                 ]
