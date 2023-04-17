@@ -120,6 +120,8 @@ class TabbedContent(Widget):
 
     @active.setter
     def active(self, active: str) -> None:
+        if not active:
+            raise ValueError("'active' tab must not be empty string.")
         self.get_child_by_type(Tabs).active = active
 
     def compose(self) -> ComposeResult:
