@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import sys
 from threading import Event, Thread
 from typing import TYPE_CHECKING, Callable
 
@@ -30,7 +31,7 @@ class WindowsDriver(Driver):
             size: Initial size of the terminal or `None` to detect.
         """
         super().__init__(app, debug=debug, size=size)
-
+        self._file = sys.__stdout__
         self.exit_event = Event()
         self._event_thread: Thread | None = None
         self._restore_console: Callable[[], None] | None = None
