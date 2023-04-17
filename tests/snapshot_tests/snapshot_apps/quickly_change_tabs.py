@@ -1,22 +1,17 @@
 """Regression test for https://github.com/Textualize/textual/issues/2229."""
 from textual.app import App, ComposeResult
-from textual.widgets import TabbedContent, TabPane, Tabs, DirectoryTree
+from textual.widgets import TabbedContent, TabPane, Tabs, Label
 
 
 class QuicklyChangeTabsApp(App[None]):
-    CSS = """
-    DirectoryTree {
-        min-height: 10;
-    }"""
-
     def compose(self) -> ComposeResult:
         with TabbedContent():
             with TabPane("one"):
-                yield DirectoryTree("./")
+                yield Label("one")
             with TabPane("two"):
-                yield DirectoryTree("./")
+                yield Label("two")
             with TabPane("three", id="three"):
-                yield DirectoryTree("./")
+                yield Label("three")
 
     def key_p(self) -> None:
         self.query_one(Tabs).action_next_tab()
