@@ -136,8 +136,6 @@ def run_app(
 
     from textual.features import parse_features
 
-    App._devtools_port = port
-
     features = set(parse_features(os.environ.get("TEXTUAL", "")))
     if dev:
         features.add("debug")
@@ -152,6 +150,8 @@ def run_app(
         console = Console(stderr=True)
         console.print(str(error))
         sys.exit(1)
+
+    app._devtools_port = port
 
     press_keys = press.split(",") if press else None
 

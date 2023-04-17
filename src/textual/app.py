@@ -249,6 +249,8 @@ class App(Generic[ReturnType], DOMNode):
         ```
     """
 
+    _devtools: DevtoolsClient | None = None
+    """The devtools client associated with this app, if any."""
     _devtools_port: int = constants.DEFAULT_DEVTOOLS_PORT
     """Port to use if/when connecting to the devtools server.
 
@@ -371,16 +373,6 @@ class App(Generic[ReturnType], DOMNode):
         self._compose_stacks: list[list[Widget]] = []
         self._composed: list[list[Widget]] = []
 
-        self.devtools: DevtoolsClient | None = None
-        if "devtools" in self.features:
-            try:
-                from .devtools.client import DevtoolsClient
-            except ImportError:
-                # Dev dependencies not installed
-                pass
-            else:
-                self.devtools = DevtoolsClient(port=self._devtools_port)
-
         self._loop: asyncio.AbstractEventLoop | None = None
         self._return_value: ReturnType | None = None
         self._exit = False
@@ -396,6 +388,19 @@ class App(Generic[ReturnType], DOMNode):
         self._batch_count = 0
         self.set_class(self.dark, "-dark-mode")
         self.set_class(not self.dark, "-light-mode")
+
+    @property
+    def devtools(self) -> DevtoolsClient | None:
+        """The devtools associated with this app."""
+        if self._devtools is None and "devtools" in self.features:
+            try:
+                from .devtools.client import DevtoolsClient
+            except ImportError:
+                # Dev dependencies not installed
+                pass
+            else:
+                self._devtools = DevtoolsClient(port=self._devtools_port)
+        return self._devtools
 
     @property
     def workers(self) -> WorkerManager:
