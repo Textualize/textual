@@ -21,9 +21,8 @@ class TableApp(App):
 
     def on_mount(self) -> None:
         table = self.query_one(DataTable)
-        rows = iter(ROWS)
-        table.add_columns(*next(rows))
-        table.add_rows(rows)
+        table.add_columns(*ROWS[0])
+        table.add_rows(ROWS[1:])
 
 
 app = TableApp()
