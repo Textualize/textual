@@ -1,4 +1,5 @@
-from textual.app import App
+from textual.app import App, ComposeResult
+from textual.widgets import Button
 
 
 def test_batch_update():
@@ -15,3 +16,23 @@ def test_batch_update():
         assert app._batch_count == 1  # Exiting decrements
 
     assert app._batch_count == 0  # Back to zero
+
+
+class MyApp(App):
+    def compose(self) -> ComposeResult:
+        yield Button("Click me!")
+
+
+async def test_hover_update_styles():
+    app = MyApp()
+    async with app.run_test() as pilot:
+        button = app.query_one(Button)
+        assert button.pseudo_classes == {"enabled"}
+
+        # Take note of the initial background colour
+        initial_background = button.styles.background
+        await pilot.hover(Button)
+
+        # We've hovered, so ensure the pseudoclass is present and background changed
+        assert button.pseudo_classes == {"enabled", "hover"}
+        assert button.styles.background != initial_background

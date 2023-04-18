@@ -87,7 +87,7 @@ def test_input_and_focus(snap_compare):
 
 def test_buttons_render(snap_compare):
     # Testing button rendering. We press tab to focus the first button too.
-    assert snap_compare(WIDGET_EXAMPLES_DIR / "button.py", press=["tab"])
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "button.py", press=["tab", "tab"])
 
 
 def test_placeholder_render(snap_compare):
@@ -269,7 +269,7 @@ def test_programmatic_scrollbar_gutter_change(snap_compare):
 
 
 def test_borders_preview(snap_compare):
-    assert snap_compare(CLI_PREVIEWS_DIR / "borders.py", press=["tab", "enter"])
+    assert snap_compare(CLI_PREVIEWS_DIR / "borders.py", press=["tab", "tab", "enter"])
 
 
 def test_colors_preview(snap_compare):
@@ -325,7 +325,9 @@ def test_disabled_widgets(snap_compare):
 
 
 def test_focus_component_class(snap_compare):
-    assert snap_compare(SNAPSHOT_APPS_DIR / "focus_component_class.py", press=["tab"])
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "focus_component_class.py", press=["tab", "tab"]
+    )
 
 
 def test_line_api_scrollbars(snap_compare):
@@ -429,3 +431,8 @@ def test_scroll_to_center(snap_compare):
     # scrolled so that the red string >>bullseye<< is centered on the screen.
     # When this snapshot "breaks" because #2254 is fixed, this snapshot can be updated.
     assert snap_compare(SNAPSHOT_APPS_DIR / "scroll_to_center.py", press=["s"])
+
+
+def test_quickly_change_tabs(snap_compare):
+    # https://github.com/Textualize/textual/issues/2229
+    assert snap_compare(SNAPSHOT_APPS_DIR / "quickly_change_tabs.py", press=["p"])
