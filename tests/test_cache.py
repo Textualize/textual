@@ -8,7 +8,7 @@ from textual._cache import FIFOCache, LRUCache
 def test_lru_cache():
     cache = LRUCache(3)
 
-    assert str(cache) == "<LRUCache maxsize=3 hits=0 misses=0>"
+    assert str(cache) == "<LRUCache size=0 maxsize=3 hits=0 misses=0>"
 
     # insert some values
     cache["foo"] = 1
@@ -65,7 +65,7 @@ def test_lru_cache_hits():
     assert cache.hits == 3
     assert cache.misses == 2
 
-    assert str(cache) == "<LRUCache maxsize=4 hits=3 misses=2>"
+    assert str(cache) == "<LRUCache size=1 maxsize=4 hits=3 misses=2>"
 
 
 def test_lru_cache_get():

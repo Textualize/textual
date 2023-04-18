@@ -5,14 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.20.1] - 2023-04-18
+
+### Fix
+
+- New fix for stuck tabs underline https://github.com/Textualize/textual/issues/2229
+
+## [0.20.0] - 2023-04-18
 
 ### Changed
 
 - Changed signature of Driver. Technically a breaking change, but unlikely to affect anyone.
-- Breaking change: Timer.start is now private, and returns No
+- Breaking change: Timer.start is now private, and returns None. There was no reason to call this manually, so unlikely to affect anyone.
 - A clicked tab will now be scrolled to the center of its tab container https://github.com/Textualize/textual/pull/2276
+- Style updates are now done immediately rather than on_idle https://github.com/Textualize/textual/pull/2304
 - `ButtonVariant` is now exported from `textual.widgets.button` https://github.com/Textualize/textual/issues/2264
+- `HorizontalScroll` and `VerticalScroll` are now focusable by default https://github.com/Textualize/textual/pull/2317
 
 ### Added
 
@@ -28,8 +36,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed order styles are applied in DataTable - allows combining of renderable styles and component classes https://github.com/Textualize/textual/pull/2272
 - Fix empty ListView preventing bindings from firing https://github.com/Textualize/textual/pull/2281
+- Fix `get_component_styles` returning incorrect values on first call when combined with pseudoclasses https://github.com/Textualize/textual/pull/2304
 - Fixed `active_message_pump.get` sometimes resulting in a `LookupError` https://github.com/Textualize/textual/issues/2301
-
 
 ## [0.19.1] - 2023-04-10
 
@@ -766,6 +774,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.20.1]: https://github.com/Textualize/textual/compare/v0.20.0...v0.20.1
+[0.20.0]: https://github.com/Textualize/textual/compare/v0.19.1...v0.20.0
 [0.19.1]: https://github.com/Textualize/textual/compare/v0.19.0...v0.19.1
 [0.19.0]: https://github.com/Textualize/textual/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/Textualize/textual/compare/v0.17.4...v0.18.0

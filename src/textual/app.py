@@ -322,7 +322,6 @@ class App(Generic[ReturnType], DOMNode):
         self.design = DEFAULT_COLORS
 
         self.stylesheet = Stylesheet(variables=self.get_css_variables())
-        self._require_stylesheet_update: set[DOMNode] = set()
 
         css_path = css_path or self.CSS_PATH
         if css_path is not None:
@@ -1229,13 +1228,15 @@ class App(Generic[ReturnType], DOMNode):
         return self.screen.get_child_by_type(expect_type)
 
     def update_styles(self, node: DOMNode | None = None) -> None:
-        """Request update of styles.
+        """Immediately update the styles of this node and all descendant nodes.
 
         Should be called whenever CSS classes / pseudo classes change.
-
+        For example, when you hover over a button, the :hover pseudo class
+        will be added, and this method is called to apply the corresponding
+        :hover styles.
         """
-        self._require_stylesheet_update.add(self.screen if node is None else node)
-        self.check_idle()
+        descendants = node.walk_children(with_self=True)
+        self.stylesheet.update_nodes(descendants, animate=True)
 
     def mount(
         self,
@@ -1773,14 +1774,6 @@ class App(Generic[ReturnType], DOMNode):
 
     def _on_idle(self) -> None:
         """Perform actions when there are no messages in the queue."""
-        if self._require_stylesheet_update and not self._batch_count:
-            nodes: set[DOMNode] = {
-                child
-                for node in self._require_stylesheet_update
-                for child in node.walk_children(with_self=True)
-            }
-            self._require_stylesheet_update.clear()
-            self.stylesheet.update_nodes(nodes, animate=True)
 
     def _register_child(
         self, parent: DOMNode, child: Widget, before: int | None, after: int | None
