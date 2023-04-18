@@ -6,7 +6,6 @@ The `Screen` class is a special widget which represents the content in the termi
 
 from __future__ import annotations
 
-from inspect import isawaitable
 from typing import (
     TYPE_CHECKING,
     Awaitable,
@@ -53,6 +52,38 @@ ScreenResultCallbackType = Union[
 """Type of a screen result callback function."""
 
 
+class ResultCallback(Generic[ScreenResultType]):
+    """Holds the details of a callback."""
+
+    def __init__(
+        self,
+        requester: Widget,
+        callback: ScreenResultCallbackType[ScreenResultType] | None,
+    ) -> None:
+        """Initialise the result callback object.
+
+        Args:
+            requester: The object making a request for the callback.
+            callback: The callback function.
+        """
+        self.requester: Widget = requester
+        """The object in the DOM that requested the callback."""
+        self.callback: ScreenResultCallbackType | None = callback
+        """The callback function."""
+
+    def __call__(self, result: ScreenResultType) -> None:
+        """Call the callback, passing the given result.
+
+        Args:
+            result: The result to pass to the callback.
+
+        Note:
+            If the callback is `None` this will be a no-op.
+        """
+        if self.callback is not None:
+            self.requester.call_next(self.callback, result)
+
+
 @rich.repr.auto
 class Screen(Generic[ScreenResultType], Widget):
     """The base class for screens."""
@@ -95,7 +126,7 @@ class Screen(Generic[ScreenResultType], Widget):
         self._dirty_widgets: set[Widget] = set()
         self.__update_timer: Timer | None = None
         self._callbacks: list[CallbackType] = []
-        self._result_callback: ScreenResultCallbackType | None = None
+        self._result_callbacks: list[ResultCallback[ScreenResultType]] = []
 
     @property
     def is_modal(self) -> bool:
@@ -468,6 +499,25 @@ class Screen(Generic[ScreenResultType], Widget):
         self._callbacks.append(callback)
         self.check_idle()
 
+    def _push_result_callback(
+        self,
+        requester: Widget,
+        callback: ScreenResultCallbackType[ScreenResultType] | None,
+    ) -> None:
+        """Add a result callback to the screen.
+
+        Args:
+            requester: The object requesting the callback.
+            callback: The callback.
+        """
+        self._result_callbacks.append(
+            ResultCallback[ScreenResultType](requester, callback)
+        )
+
+    def _pop_result_callback(self) -> None:
+        """Remove the latest result callback from the stack."""
+        self._result_callbacks.pop()
+
     def _refresh_layout(
         self, size: Size | None = None, full: bool = False, scroll: bool = False
     ) -> None:
@@ -663,10 +713,24 @@ class Screen(Generic[ScreenResultType], Widget):
             self.post_message(event)
 
     def dismiss(self) -> None:
-        """Dismiss the screen."""
+        """Dismiss the screen.
+
+        This is a convenience wrapper around
+        [`App.pop_screen`][textual.app.App.pop_screen].
+
+        Note:
+            If the screen was pushed with a callback it will *not* be called
+            when using `dismiss`. Callbacks are only called when using
+            [`dismiss_with`][textual.screen.Screen.dismiss_with].
+        """
         self.app.pop_screen()
 
     def action_dismiss(self) -> None:
+        """A wrapper around [`dismiss`][textual.screen.Screen.dismiss] that can be called as an action.
+
+        This allows for easily dismissing a screen from a keyboard binding,
+        for example.
+        """
         self.dismiss()
 
     def dismiss_with(self, result: ScreenResultType) -> None:
@@ -674,16 +738,31 @@ class Screen(Generic[ScreenResultType], Widget):
 
         Args:
             result: The result to be passed to the result callback.
+
+        Note:
+            If the screen was pushed with a callback, the callback will be
+            called with the given result and then a call to
+            [`App.pop_screen`][textual.app.App.pop_screen] is performed. If
+            no callback was provided calling this method is the same as
+            simply calling [`dismiss`][textual.screen.Screen.dismiss].
         """
-        if self._result_callback is not None:
-            try:
-                callback_screen = self.app.screen_stack[-2]
-            except IndexError:
-                callback_screen = self
-            callback_screen.call_next(self._result_callback, result)
+        if self._result_callbacks:
+            self._result_callbacks[-1](result)
         self.dismiss()
 
     def action_dismiss_with(self, result: ScreenResultType) -> None:
+        """A wrapper around [`dismiss_with`][textual.screen.Screen.dismiss_with] that can be called as an action.
+
+        Args:
+            result: The result to be passed to the result callback.
+
+        Note:
+            If the screen was pushed with a callback, the callback will be
+            called with the given result and then a call to
+            [`App.pop_screen`][textual.app.App.pop_screen] is performed. If
+            no callback was provided calling this method is the same as
+            simply calling [`dismiss`][textual.screen.Screen.dismiss].
+        """
         self.dismiss_with(result)
 
 
