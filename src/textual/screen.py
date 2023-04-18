@@ -396,35 +396,34 @@ class Screen(Widget):
         # The Screen is idle - a good opportunity to invoke the scheduled callbacks
         await self._invoke_and_clear_callbacks()
 
-    async def _on_timer_update(self) -> None:
+    def _on_timer_update(self) -> None:
         """Called by the _update_timer."""
         # Render widgets together
 
         self._update_timer.pause()
-        async with self.app._dom_lock:
-            if self.is_current:
-                if self._layout_required:
-                    self._refresh_layout()
-                    self._layout_required = False
-                    self._scroll_required = False
-                    self._dirty_widgets.clear()
-                elif self._scroll_required:
-                    self._refresh_layout(scroll=True)
-                    self._scroll_required = False
+        if self.is_current:
+            if self._layout_required:
+                self._refresh_layout()
+                self._layout_required = False
+                self._scroll_required = False
+                self._dirty_widgets.clear()
+            elif self._scroll_required:
+                self._refresh_layout(scroll=True)
+                self._scroll_required = False
 
-                if self._repaint_required:
-                    self._update_timer.resume()
-                    self._dirty_widgets.clear()
-                    self._dirty_widgets.add(self)
-                    self._repaint_required = False
+            if self._repaint_required:
+                self._update_timer.resume()
+                self._dirty_widgets.clear()
+                self._dirty_widgets.add(self)
+                self._repaint_required = False
 
-                if self._dirty_widgets and self.is_current:
-                    self._compositor.update_widgets(self._dirty_widgets)
-                    update = self._compositor.render_update(
-                        screen_stack=self.app._background_screens
-                    )
-                    self.app._display(self, update)
-                    self._dirty_widgets.clear()
+            if self._dirty_widgets and self.is_current:
+                self._compositor.update_widgets(self._dirty_widgets)
+                update = self._compositor.render_update(
+                    screen_stack=self.app._background_screens
+                )
+                self.app._display(self, update)
+                self._dirty_widgets.clear()
 
         if self._callbacks:
             self.post_message(events.InvokeCallbacks())
