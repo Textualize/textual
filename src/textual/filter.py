@@ -67,7 +67,7 @@ def dim_color(background: RichColor, color: RichColor, factor: float) -> RichCol
         factor: Blend factor
 
     Returns:
-        _type_: _description_
+        New dimmer color.
     """
     red1, green1, blue1 = background.triplet
     red2, green2, blue2 = color.triplet
