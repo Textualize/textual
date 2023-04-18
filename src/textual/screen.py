@@ -66,7 +66,7 @@ class ResultCallback(Generic[ScreenResultType]):
             requester: The object making a request for the callback.
             callback: The callback function.
         """
-        self.requester: Widget = requester
+        self.requester: Widget | None = requester
         """The object in the DOM that requested the callback."""
         self.callback: ScreenResultCallbackType | None = callback
         """The callback function."""
@@ -78,9 +78,9 @@ class ResultCallback(Generic[ScreenResultType]):
             result: The result to pass to the callback.
 
         Note:
-            If the callback is `None` this will be a no-op.
+            If the requested or the callback are `None` this will be a no-op.
         """
-        if self.callback is not None:
+        if self.requester is not None and self.callback is not None:
             self.requester.call_next(self.callback, result)
 
 
@@ -501,7 +501,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _push_result_callback(
         self,
-        requester: Widget,
+        requester: Widget | None,
         callback: ScreenResultCallbackType[ScreenResultType] | None,
     ) -> None:
         """Add a result callback to the screen.

@@ -1402,7 +1402,9 @@ class App(Generic[ReturnType], DOMNode):
             self.screen.post_message(events.ScreenSuspend())
             self.screen.refresh()
         next_screen, await_mount = self._get_screen(screen)
-        next_screen._push_result_callback(self.screen, callback)
+        next_screen._push_result_callback(
+            self.screen if self._screen_stack else None, callback
+        )
         self._screen_stack.append(next_screen)
         next_screen.post_message(events.ScreenResume())
         self.log.system(f"{self.screen} is current (PUSHED)")
