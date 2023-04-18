@@ -31,7 +31,7 @@ class Vertical(Widget):
     """
 
 
-class VerticalScroll(Widget):
+class VerticalScroll(Widget, can_focus=True):
     """A container which arranges children vertically, with an automatic vertical scrollbar."""
 
     DEFAULT_CSS = """
@@ -55,7 +55,7 @@ class Horizontal(Widget):
     """
 
 
-class HorizontalScroll(Widget):
+class HorizontalScroll(Widget, can_focus=True):
     """A container which arranges children horizontally, with an automatic horizontal scrollbar."""
 
     DEFAULT_CSS = """
