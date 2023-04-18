@@ -46,11 +46,11 @@ Refer to the documentation for your terminal emulator, if it is not listed above
 <a name="how-can-i-set-a-transparent-app-background"></a>
 ## How can I set a transparent app background?
 
-Textual does not provide a mechanism to make your applications have a transparent background.
-Some terminals _do_ provide this functionality but it is not guaranteed that Textual apps will have a transparent background in those cases.
+Textual does not use the ANSI background colors that some terminals use.
+As a consequence, even if your terminal supports transparent backgrounds, it is not guaranteed that Textual apps will have their background transparent.
 
-The reason this may not work in Textual is that we _intentionally_ do not use the ANSI background colours.
-For the rationale behind this design decision, refer to the FAQ about why Textual doesn't support ANSI themes.
+The decision of not using ANSI background colors is intentional and it is because we need to ensure Textual apps look consistently good on all terminals.
+For the full rationale behind this design decision, refer to the FAQ about why Textual doesn't support ANSI themes.
 
 <a name="how-do-i-center-a-widget-in-a-screen"></a>
 ## How do I center a widget in a screen?
