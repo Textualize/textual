@@ -13,8 +13,10 @@ from typing import (
     Generic,
     Iterable,
     Iterator,
+    Type,
     TypeVar,
     Union,
+    cast,
 )
 
 import rich.repr
@@ -712,58 +714,35 @@ class Screen(Generic[ScreenResultType], Widget):
         else:
             self.post_message(event)
 
-    def dismiss(self) -> None:
-        """Dismiss the screen.
+    class _NoResult:
+        """Class used to mark that there is no result."""
 
-        This is a convenience wrapper around
-        [`App.pop_screen`][textual.app.App.pop_screen].
+    def dismiss(self, result: ScreenResultType | Type[_NoResult] = _NoResult) -> None:
+        """Dismiss the screen, optionally with a result.
+
+        Args:
+            result: The optional result to be passed to the result callback.
 
         Note:
-            If the screen was pushed with a callback it will *not* be called
-            when using `dismiss`. Callbacks are only called when using
-            [`dismiss_with`][textual.screen.Screen.dismiss_with].
+            If the screen was pushed with a callback, the callback will be
+            called with the given result and then a call to
+            [`App.pop_screen`][textual.app.App.pop_screen] is performed. If
+            no callback was provided calling this method is the same as
+            simply calling [`App.pop_screen`][textual.app.App.pop_screen].
         """
+        if result is not self._NoResult and self._result_callbacks:
+            self._result_callbacks[-1](cast(ScreenResultType, result))
         self.app.pop_screen()
 
-    def action_dismiss(self) -> None:
+    def action_dismiss(
+        self, result: ScreenResultType | Type[_NoResult] = _NoResult
+    ) -> None:
         """A wrapper around [`dismiss`][textual.screen.Screen.dismiss] that can be called as an action.
 
-        This allows for easily dismissing a screen from a keyboard binding,
-        for example.
-        """
-        self.dismiss()
-
-    def dismiss_with(self, result: ScreenResultType) -> None:
-        """Dismiss the screen with the given result.
-
         Args:
-            result: The result to be passed to the result callback.
-
-        Note:
-            If the screen was pushed with a callback, the callback will be
-            called with the given result and then a call to
-            [`App.pop_screen`][textual.app.App.pop_screen] is performed. If
-            no callback was provided calling this method is the same as
-            simply calling [`dismiss`][textual.screen.Screen.dismiss].
+            result: The optional result to be passed to the result callback.
         """
-        if self._result_callbacks:
-            self._result_callbacks[-1](result)
-        self.dismiss()
-
-    def action_dismiss_with(self, result: ScreenResultType) -> None:
-        """A wrapper around [`dismiss_with`][textual.screen.Screen.dismiss_with] that can be called as an action.
-
-        Args:
-            result: The result to be passed to the result callback.
-
-        Note:
-            If the screen was pushed with a callback, the callback will be
-            called with the given result and then a call to
-            [`App.pop_screen`][textual.app.App.pop_screen] is performed. If
-            no callback was provided calling this method is the same as
-            simply calling [`dismiss`][textual.screen.Screen.dismiss].
-        """
-        self.dismiss_with(result)
+        self.dismiss(result)
 
 
 @rich.repr.auto
