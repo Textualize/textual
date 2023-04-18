@@ -385,15 +385,12 @@ class Screen(Widget):
         event.prevent_default()
 
         if not self.app._batch_count and self.is_current:
-            if self._layout_required:
-                self._update_timer.resume()
-            elif self._scroll_required:
-                self._update_timer.resume()
-
-            if self._repaint_required:
-                self._update_timer.resume()
-
-            if self._dirty_widgets:
+            if (
+                self._layout_required
+                or self._scroll_required
+                or self._repaint_required
+                or self._dirty_widgets
+            ):
                 self._update_timer.resume()
 
         # The Screen is idle - a good opportunity to invoke the scheduled callbacks
@@ -403,6 +400,7 @@ class Screen(Widget):
         """Called by the _update_timer."""
         # Render widgets together
 
+        self._update_timer.pause()
         async with self.app._dom_lock:
             if self.is_current:
                 if self._layout_required:
@@ -428,10 +426,8 @@ class Screen(Widget):
                     self.app._display(self, update)
                     self._dirty_widgets.clear()
 
-                if self._callbacks:
-                    self.post_message(events.InvokeCallbacks())
-
-        self._update_timer.pause()
+        if self._callbacks:
+            self.post_message(events.InvokeCallbacks())
 
     async def _on_invoke_callbacks(self, event: events.InvokeCallbacks) -> None:
         """Handle PostScreenUpdate events, which are sent after the screen is updated"""
