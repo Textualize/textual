@@ -108,20 +108,3 @@ class DimFilter(LineFilter):
             )
             for segment in segments
         ]
-
-
-if __name__ == "__main__":
-    from rich.segment import Segments
-    from rich.text import Text
-
-    text = Text.from_markup("[dim #ffffff on #0000ff]Hello World!")
-
-    from rich.console import Console
-
-    console = Console()
-
-    segments = list(text.render(console))
-    console.print(Segments(segments))
-    console.print()
-    filter = DimFilter().apply
-    console.print(Segments(filter(segments)))
