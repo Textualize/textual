@@ -269,7 +269,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         background: $primary 10%;
     }
 
-    DataTable >  .datatable--cursor {
+    DataTable > .datatable--cursor {
         background: $secondary;
         color: $text;
     }

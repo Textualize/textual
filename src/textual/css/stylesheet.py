@@ -530,7 +530,6 @@ class Stylesheet:
             nodes: Nodes to update.
             animate: Enable CSS animation.
         """
-
         rules_map = self.rules_map
         apply = self.apply
 

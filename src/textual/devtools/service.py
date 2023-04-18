@@ -252,6 +252,7 @@ class ClientHandler:
                     ):
                         await self.incoming_queue.put(message)
                 elif websocket_message.type == WSMsgType.ERROR:
+                    self.service.console.print(websocket_message.data)
                     self.service.console.print(
                         DevConsoleNotice("Websocket error occurred", level="error")
                     )
