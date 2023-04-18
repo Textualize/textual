@@ -8,7 +8,7 @@ alt_titles:
 
 Some terminal emulators have a translucent background feature which allows the desktop underneath to be partially visible.
 
-This feature is unlikely to work with Textual, as the translucency effect requires the use ANSI background colors.
+This feature is unlikely to work with Textual, as the translucency effect requires the use of ANSI background colors.
 Textual uses 16.7 million colors where available which enables consistent colors across all platforms and additional effects which aren't possible with ANSI colors.
 
 For more information on ANSI themes in Textual, see [Why no Ansi Themes?](#why-no-ansi-themes).
