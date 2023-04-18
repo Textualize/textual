@@ -57,7 +57,7 @@ class ResultCallback(Generic[ScreenResultType]):
 
     def __init__(
         self,
-        requester: Widget,
+        requester: Widget | None,
         callback: ScreenResultCallbackType[ScreenResultType] | None,
     ) -> None:
         """Initialise the result callback object.
