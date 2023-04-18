@@ -47,6 +47,7 @@ class Monochrome(LineFilter):
     """Convert all colors to monochrome."""
 
     def apply(self, segments: list[Segment]) -> list[Segment]:
+        """Apply monochrome style to all segments."""
         _monochrome_style = monochrome_style
         _Segment = Segment
         return [
