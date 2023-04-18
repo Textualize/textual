@@ -11,7 +11,7 @@ To build the faq, install [faqtory](https://github.com/willmcgugan/faqtory) if y
 pip install faqtory
 ```
 
-The run the following from the top of the repository:
+Then run the following from the top of the repository:
 
 ```
 faqtory build
