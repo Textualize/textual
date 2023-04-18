@@ -90,6 +90,7 @@ plugins:
   exclude:
     glob:
       - "**/_template.md"
+      - "snippets/*"
 
 
 extra_css:

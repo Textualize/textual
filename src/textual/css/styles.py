@@ -167,6 +167,16 @@ class RulesMap(TypedDict, total=False):
     link_hover_background: Color
     link_hover_style: Style
 
+    auto_border_title_color: bool
+    border_title_color: Color
+    border_title_background: Color
+    border_title_style: Style
+
+    auto_border_subtitle_color: bool
+    border_subtitle_color: Color
+    border_subtitle_background: Color
+    border_subtitle_style: Style
+
 
 RULE_NAMES = list(RulesMap.__annotations__.keys())
 RULE_NAMES_SET = frozenset(RULE_NAMES)
@@ -320,6 +330,16 @@ class StylesBase(ABC):
     auto_link_hover_color = BooleanProperty(False)
     link_hover_background = ColorProperty("transparent")
     link_hover_style = StyleFlagsProperty()
+
+    auto_border_title_color = BooleanProperty(default=False)
+    border_title_color = ColorProperty(Color(255, 255, 255, 0))
+    border_title_background = ColorProperty(Color(0, 0, 0, 0))
+    border_title_style = StyleFlagsProperty()
+
+    auto_border_subtitle_color = BooleanProperty(default=False)
+    border_subtitle_color = ColorProperty(Color(255, 255, 255, 0))
+    border_subtitle_background = ColorProperty(Color(0, 0, 0, 0))
+    border_subtitle_style = StyleFlagsProperty()
 
     def __textual_animation__(
         self,
@@ -989,6 +1009,22 @@ class Styles(StylesBase):
             append_declaration("link-hover-background", self.link_hover_background.css)
         if "link_hover_style" in rules:
             append_declaration("link-hover-style", str(self.link_hover_style))
+
+        if "border_title_color" in rules:
+            append_declaration("title-color", self.border_title_color.css)
+        if "border_title_background" in rules:
+            append_declaration("title-background", self.border_title_background.css)
+        if "border_title_style" in rules:
+            append_declaration("title-text-style", str(self.border_title_style))
+
+        if "border_subtitle_color" in rules:
+            append_declaration("subtitle-color", self.border_subtitle_color.css)
+        if "border_subtitle_background" in rules:
+            append_declaration(
+                "subtitle-background", self.border_subtitle_background.css
+            )
+        if "border_subtitle_text_style" in rules:
+            append_declaration("subtitle-text-style", str(self.border_subtitle_style))
 
         lines.sort()
         return lines

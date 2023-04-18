@@ -4,7 +4,7 @@ The `outline` style enables the drawing of a box around the content of a widget,
 
 !!! note
 
-    Due to a Textual limitation, [`border`](./border.md) and [`outline`](./outline.md) cannot coexist in the same edge of a widget.
+    [`border`](./border.md) and [`outline`](./outline.md) cannot coexist in the same edge of a widget.
 
 ## Syntax
 

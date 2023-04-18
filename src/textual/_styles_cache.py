@@ -107,6 +107,10 @@ class StylesCache:
         Returns:
             Rendered lines.
         """
+
+        border_title = widget._border_title
+        border_subtitle = widget._border_subtitle
+
         base_background, background = widget.background_colors
         styles = widget.styles
         strips = self.render(
@@ -116,8 +120,22 @@ class StylesCache:
             background,
             widget.render_line,
             widget.app.console,
-            widget._border_title,
-            widget._border_subtitle,
+            (
+                None
+                if border_title is None
+                else (
+                    border_title,
+                    *widget._get_title_style_information(base_background),
+                )
+            ),
+            (
+                None
+                if border_subtitle is None
+                else (
+                    border_subtitle,
+                    *widget._get_subtitle_style_information(base_background),
+                )
+            ),
             content_size=widget.content_region.size,
             padding=styles.padding,
             crop=crop,
@@ -147,8 +165,8 @@ class StylesCache:
         background: Color,
         render_content_line: RenderLineCallback,
         console: Console,
-        border_title: Text | None,
-        border_subtitle: Text | None,
+        border_title: tuple[Text, Color, Color, Style] | None,
+        border_subtitle: tuple[Text, Color, Color, Style] | None,
         content_size: Size | None = None,
         padding: Spacing | None = None,
         crop: Region | None = None,
@@ -163,8 +181,8 @@ class StylesCache:
             background: Background color of widget.
             render_content_line: Callback to render content line.
             console: The console in use by the app.
-            border_title: The title for the widget border.
-            border_subtitle: The subtitle for the widget border.
+            border_title: Optional tuple of (title, color, background, style).
+            border_subtitle: Optional tuple of (subtitle, color, background, style).
             content_size: Size of content or None to assume full size.
             padding: Override padding from Styles, or None to use styles.padding.
             crop: Region to crop to.
@@ -229,8 +247,8 @@ class StylesCache:
         background: Color,
         render_content_line: Callable[[int], Strip],
         console: Console,
-        border_title: Text | None,
-        border_subtitle: Text | None,
+        border_title: tuple[Text, Color, Color, Style] | None,
+        border_subtitle: tuple[Text, Color, Color, Style] | None,
     ) -> Strip:
         """Render a styled line.
 
@@ -244,8 +262,8 @@ class StylesCache:
             background: Background color of widget.
             render_content_line: Callback to render a line of content.
             console: The console in use by the app.
-            border_title: The title for the widget border.
-            border_subtitle: The subtitle for the widget border.
+            border_title: Optional tuple of (title, color, background, style).
+            border_subtitle: Optional tuple of (subtitle, color, background, style).
 
         Returns:
             A line of segments.
@@ -305,10 +323,26 @@ class StylesCache:
             has_left = border_left != ""
             has_right = border_right != ""
             border_label = border_title if is_top else border_subtitle
+            if border_label is None:
+                render_label = None
+            else:
+                label, label_color, label_background, style = border_label
+                base_label_background = base_background + background
+                style += Style.from_color(
+                    (
+                        (base_label_background + label_color).rich_color
+                        if label_color.a
+                        else None
+                    ),
+                    (base_label_background + label_background).rich_color
+                    if label_background.a
+                    else None,
+                )
+                render_label = (label, style)
             # Try to save time with expensive call to `render_border_label`:
-            if border_label:
+            if render_label:
                 label_segments = render_border_label(
-                    border_label,
+                    render_label,
                     is_top,
                     border_edge_type,
                     width - 2,

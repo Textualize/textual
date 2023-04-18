@@ -1604,6 +1604,7 @@ class App(Generic[ReturnType], DOMNode):
         terminal_size: tuple[int, int] | None = None,
     ) -> None:
         self._set_active()
+        active_message_pump.set(self)
 
         if self.devtools is not None:
             from .devtools.client import DevtoolsConnectionError
