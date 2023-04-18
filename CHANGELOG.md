@@ -5,12 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.20.0] - 2023-04-18
 
 ### Changed
 
 - Changed signature of Driver. Technically a breaking change, but unlikely to affect anyone.
-- Breaking change: Timer.start is now private, and returns No
+- Breaking change: Timer.start is now private, and returns None. There was no reason to call this manually, so unlikely to affect anyone.
 - A clicked tab will now be scrolled to the center of its tab container https://github.com/Textualize/textual/pull/2276
 - Style updates are now done immediately rather than on_idle https://github.com/Textualize/textual/pull/2304
 - `ButtonVariant` is now exported from `textual.widgets.button` https://github.com/Textualize/textual/issues/2264
@@ -769,6 +769,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.20.0]: https://github.com/Textualize/textual/compare/v0.19.1...v0.20.0
 [0.19.1]: https://github.com/Textualize/textual/compare/v0.19.0...v0.19.1
 [0.19.0]: https://github.com/Textualize/textual/compare/v0.18.0...v0.19.0
 [0.18.0]: https://github.com/Textualize/textual/compare/v0.17.4...v0.18.0
