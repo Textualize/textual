@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: Timer.start is now private, and returns No
 - A clicked tab will now be scrolled to the center of its tab container https://github.com/Textualize/textual/pull/2276
 - `ButtonVariant` is now exported from `textual.widgets.button` https://github.com/Textualize/textual/issues/2264
+- `HorizontalScroll` and `VerticalScroll` are now focusable by default https://github.com/Textualize/textual/pull/2317
 
 ### Added
 
