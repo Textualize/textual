@@ -5,6 +5,7 @@
 - [Does Textual support images?](#does-textual-support-images)
 - [How can I fix ImportError cannot import name ComposeResult from textual.app ?](#how-can-i-fix-importerror-cannot-import-name-composeresult-from-textualapp-)
 - [How can I select and copy text in a Textual app?](#how-can-i-select-and-copy-text-in-a-textual-app)
+- [How can I set a transparent app background?](#how-can-i-set-a-transparent-app-background)
 - [How do I center a widget in a screen?](#how-do-i-center-a-widget-in-a-screen)
 - [How do I pass arguments to an app?](#how-do-i-pass-arguments-to-an-app)
 - [Why do some key combinations never make it to my app?](#why-do-some-key-combinations-never-make-it-to-my-app)
@@ -41,6 +42,15 @@ may expect from the command line. The exact modifier key depends on the terminal
 - **Windows Terminal** Hold the SHIFT key.
 
 Refer to the documentation for your terminal emulator, if it is not listed above.
+
+<a name="how-can-i-set-a-transparent-app-background"></a>
+## How can I set a transparent app background?
+
+Textual does not provide a mechanism to make your applications have a transparent background.
+Some terminals _do_ provide this functionality but it is not guaranteed that Textual apps will have a transparent background in those cases.
+
+The reason this may not work in Textual is that we _intentionally_ do not use the ANSI background colours.
+For the rationale behind this design decision, refer to the FAQ about why Textual doesn't support ANSI themes.
 
 <a name="how-do-i-center-a-widget-in-a-screen"></a>
 ## How do I center a widget in a screen?
@@ -211,7 +221,7 @@ terminal such as [iTerm2](https://iterm2.com/),
 
 Textual will not generate escape sequences for the 16 themeable *ANSI* colors.
 
-This is an intentional design decision we took for for the following reasons:
+This is an intentional design decision we took for the following reasons:
 
 - Not everyone has a carefully chosen ANSI color theme. Color combinations which may look fine on your system, may be unreadable on another machine. There is very little an app author or Textual can do to resolve this. Asking users to simply pick a better theme is not a good solution, since not all users will know how.
 - ANSI colors can't be manipulated in the way Textual can do with other colors. Textual can blend colors and produce light and dark shades from an original color, which is used to create more readable text and user interfaces. Color blending will also be used to power future accessibility features.
