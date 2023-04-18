@@ -398,7 +398,6 @@ class Screen(Widget):
 
     def _on_timer_update(self) -> None:
         """Called by the _update_timer."""
-        # Render widgets together
 
         self._update_timer.pause()
         if self.is_current:
