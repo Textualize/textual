@@ -431,3 +431,8 @@ def test_scroll_to_center(snap_compare):
     # scrolled so that the red string >>bullseye<< is centered on the screen.
     # When this snapshot "breaks" because #2254 is fixed, this snapshot can be updated.
     assert snap_compare(SNAPSHOT_APPS_DIR / "scroll_to_center.py", press=["s"])
+
+
+def test_quickly_change_tabs(snap_compare):
+    # https://github.com/Textualize/textual/issues/2229
+    assert snap_compare(SNAPSHOT_APPS_DIR / "quickly_change_tabs.py", press=["p"])
