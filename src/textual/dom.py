@@ -317,8 +317,6 @@ class DOMNode(MessagePump):
         if name not in self._component_styles:
             raise KeyError(f"No {name!r} key in COMPONENT_CLASSES")
         styles = self._component_styles[name]
-        # print(f"{self} {name} has_focus={self.has_focus} \n\n component_styles = {styles}")
-        # print(self._component_styles)
         return styles
 
     def _post_mount(self):
