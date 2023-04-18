@@ -141,6 +141,7 @@ class Pilot(Generic[ReturnType]):
             delay: Seconds to pause, or None to wait for cpu idle.
         """
         # These sleep zeros, are to force asyncio to give up a time-slice,
+        self.app.screen._on_timer_update()  # Force one last repaint
         if delay is None:
             await wait_for_idle(0)
         else:
