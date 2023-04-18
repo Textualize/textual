@@ -322,7 +322,6 @@ class App(Generic[ReturnType], DOMNode):
         self.design = DEFAULT_COLORS
 
         self.stylesheet = Stylesheet(variables=self.get_css_variables())
-        self._require_stylesheet_update: set[DOMNode] = set()
 
         css_path = css_path or self.CSS_PATH
         if css_path is not None:
