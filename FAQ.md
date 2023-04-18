@@ -5,6 +5,7 @@
 - [Does Textual support images?](#does-textual-support-images)
 - [How can I fix ImportError cannot import name ComposeResult from textual.app ?](#how-can-i-fix-importerror-cannot-import-name-composeresult-from-textualapp-)
 - [How can I select and copy text in a Textual app?](#how-can-i-select-and-copy-text-in-a-textual-app)
+- [How can I set a translucent app background?](#how-can-i-set-a-translucent-app-background)
 - [How do I center a widget in a screen?](#how-do-i-center-a-widget-in-a-screen)
 - [How do I pass arguments to an app?](#how-do-i-pass-arguments-to-an-app)
 - [Why do some key combinations never make it to my app?](#why-do-some-key-combinations-never-make-it-to-my-app)
@@ -41,6 +42,16 @@ may expect from the command line. The exact modifier key depends on the terminal
 - **Windows Terminal** Hold the SHIFT key.
 
 Refer to the documentation for your terminal emulator, if it is not listed above.
+
+<a name="how-can-i-set-a-translucent-app-background"></a>
+## How can I set a translucent app background?
+
+Some terminal emulators have a translucent background feature which allows the desktop underneath to be partially visible.
+
+This feature is unlikely to work with Textual, as the translucency effect requires the use of ANSI background colors, which Textual doesn't use.
+Textual uses 16.7 million colors where available which enables consistent colors across all platforms and additional effects which aren't possible with ANSI colors.
+
+For more information on ANSI colors in Textual, see [Why no Ansi Themes?](#why-doesnt-textual-support-ansi-themes).
 
 <a name="how-do-i-center-a-widget-in-a-screen"></a>
 ## How do I center a widget in a screen?
