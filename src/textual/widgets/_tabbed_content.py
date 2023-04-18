@@ -83,6 +83,9 @@ class TabbedContent(Widget):
     }
     """
 
+    active: reactive[str] = reactive("", init=False)
+    """The ID of the active tab, or empty string if none are active."""
+
     class TabActivated(Message):
         """Posted when the active tab changes."""
 
@@ -113,16 +116,21 @@ class TabbedContent(Widget):
         self._initial = initial
         super().__init__()
 
-    @property
-    def active(self) -> str:
-        """The ID of the active tab, or empty string if none are active."""
-        return self.get_child_by_type(Tabs).active
+    def validate_active(self, active: str) -> str:
+        """It doesn't make sense for `active` to be an empty string.
 
-    @active.setter
-    def active(self, active: str) -> None:
+        Args:
+            active: Attribute to be validated.
+
+        Returns:
+            Value of `active`.
+
+        Raises:
+            ValueError: If the active attribute is set to empty string.
+        """
         if not active:
             raise ValueError("'active' tab must not be empty string.")
-        self.get_child_by_type(Tabs).active = active
+        return active
 
     def compose(self) -> ComposeResult:
         """Compose the tabbed content."""
@@ -178,6 +186,7 @@ class TabbedContent(Widget):
         switcher = self.get_child_by_type(ContentSwitcher)
         assert isinstance(event.tab, ContentTab)
         switcher.current = event.tab.id
+        self.active = event.tab.id
         self.post_message(
             TabbedContent.TabActivated(
                 tabbed_content=self,
@@ -188,3 +197,7 @@ class TabbedContent(Widget):
     def _on_tabs_cleared(self, event: Tabs.Cleared) -> None:
         """All tabs were removed."""
         event.stop()
+
+    def watch_active(self, active: str) -> None:
+        """Switch tabs when the active attributes changes."""
+        self.get_child_by_type(Tabs).active = active

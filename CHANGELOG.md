@@ -32,7 +32,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix empty ListView preventing bindings from firing https://github.com/Textualize/textual/pull/2281
 - Fix `get_component_styles` returning incorrect values on first call when combined with pseudoclasses https://github.com/Textualize/textual/pull/2304
 - Fixed `active_message_pump.get` sometimes resulting in a `LookupError` https://github.com/Textualize/textual/issues/2301
-- Fixed issue arising when active tab was changed too quickly in succession https://github.com/Textualize/textual/pull/2305
 
 ## [0.19.1] - 2023-04-10
 
