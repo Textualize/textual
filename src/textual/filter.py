@@ -72,10 +72,14 @@ class DimFilter(LineFilter):
     @lru_cache(1024)
     def dim_color(self, background: RichColor, color: RichColor) -> RichColor:
         """Dim a color by blending towards the background."""
-        return (
-            Color.from_rich_color(background)
-            .blend(Color.from_rich_color(color), self.dim_factor)
-            .rich_color
+        red1, green1, blue1 = background.triplet
+        red2, green2, blue2 = color.triplet
+
+        factor = self.dim_factor
+        return RichColor.from_rgb(
+            red1 + (red2 - red1) * factor,
+            green1 + (green2 - green1) * factor,
+            blue1 + (blue2 - blue1) * factor,
         )
 
     @lru_cache(1024)
@@ -83,7 +87,7 @@ class DimFilter(LineFilter):
         """Replace dim attribute with a dim color"""
         return (
             style
-            + Style.from_color(color=self.dim_color(style.bgcolor, style.color))
+            + Style.from_color(self.dim_color(style.bgcolor, style.color), None)
             + NO_DIM
         )
 
