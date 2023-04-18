@@ -57,6 +57,46 @@ NO_DIM = Style(dim=False)
 """A Style to set dim to False."""
 
 
+@lru_cache(1024)
+def dim_color(background: RichColor, color: RichColor, factor: float) -> RichColor:
+    """Dim a color by blending towards the background
+
+    Args:
+        background: background color.
+        color: Foreground color.
+        factor: Blend factor
+
+    Returns:
+        _type_: _description_
+    """
+    red1, green1, blue1 = background.triplet
+    red2, green2, blue2 = color.triplet
+
+    return RichColor.from_rgb(
+        red1 + (red2 - red1) * factor,
+        green1 + (green2 - green1) * factor,
+        blue1 + (blue2 - blue1) * factor,
+    )
+
+
+@lru_cache(1024)
+def dim_style(style: Style, factor: float) -> Style:
+    """Replace dim attribute with a dim color.
+
+    Args:
+        style: Style to dim.
+        factor: Blend factor.
+
+    Returns:
+        New dimmed style.
+    """
+    return (
+        style
+        + Style.from_color(dim_color(style.bgcolor, style.color, factor), None)
+        + NO_DIM
+    )
+
+
 # Can be used as a workaround for https://github.com/xtermjs/xterm.js/issues/4161
 class DimFilter(LineFilter):
     """Replace dim attributes with modified colors."""
@@ -69,38 +109,17 @@ class DimFilter(LineFilter):
         """
         self.dim_factor = dim_factor
 
-    @lru_cache(1024)
-    def dim_color(self, background: RichColor, color: RichColor) -> RichColor:
-        """Dim a color by blending towards the background."""
-        red1, green1, blue1 = background.triplet
-        red2, green2, blue2 = color.triplet
-
-        factor = self.dim_factor
-        return RichColor.from_rgb(
-            red1 + (red2 - red1) * factor,
-            green1 + (green2 - green1) * factor,
-            blue1 + (blue2 - blue1) * factor,
-        )
-
-    @lru_cache(1024)
-    def dim_style(self, style: Style) -> Style:
-        """Replace dim attribute with a dim color"""
-        return (
-            style
-            + Style.from_color(self.dim_color(style.bgcolor, style.color), None)
-            + NO_DIM
-        )
-
     def apply(self, segments: list[Segment]) -> list[Segment]:
         """Modify color of segments with dim style."""
         _Segment = Segment
-        dim_style = self.dim_style
+        _dim_style = dim_style
+        factor = self.dim_factor
 
         return [
             (
                 _Segment(
                     segment.text,
-                    dim_style(segment.style),
+                    _dim_style(segment.style, factor),
                     None,
                 )
                 if segment.style is not None and segment.style.dim
