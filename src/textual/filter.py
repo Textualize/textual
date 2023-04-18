@@ -18,39 +18,41 @@ class LineFilter(ABC):
         """Transform a list of segments."""
 
 
+@lru_cache(1024)
+def monochrome_style(style: Style) -> Style:
+    """Convert colors in a style to monochrome.
+
+    Args:
+        style: A Rich Style.
+
+    Returns:
+        A new Rich style.
+    """
+    style_color = style.color
+    style_background = style.bgcolor
+    color = (
+        None
+        if style_color is None
+        else Color.from_rich_color(style_color).monochrome.rich_color
+    )
+    background = (
+        None
+        if style_background is None
+        else Color.from_rich_color(style_background).monochrome.rich_color
+    )
+    return style + Style.from_color(color, background)
+
+
 class Monochrome(LineFilter):
     """Convert all colors to monochrome."""
 
     def apply(self, segments: list[Segment]) -> list[Segment]:
-        to_monochrome = self.to_monochrome
+        _monochrome_style = monochrome_style
         _Segment = Segment
         return [
-            _Segment(text, to_monochrome(style), None) for text, style, _ in segments
+            _Segment(text, _monochrome_style(style), None)
+            for text, style, _ in segments
         ]
-
-    @lru_cache(1024)
-    def to_monochrome(self, style: Style) -> Style:
-        """Convert colors in a style to monochrome.
-
-        Args:
-            style: A Rich Style.
-
-        Returns:
-            A new Rich style.
-        """
-        style_color = style.color
-        style_background = style.bgcolor
-        color = (
-            None
-            if style_color is None
-            else Color.from_rich_color(style_color).monochrome.rich_color
-        )
-        background = (
-            None
-            if style_background is None
-            else Color.from_rich_color(style_background).monochrome.rich_color
-        )
-        return style + Style.from_color(color, background)
 
 
 NO_DIM = Style(dim=False)
