@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.20.1] - 2023-04-18
+
+### Fix
+
+- New fix for stuck tabs underline https://github.com/Textualize/textual/issues/2229
+
 ## [0.20.0] - 2023-04-18
 
 ### Changed
@@ -32,7 +38,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix empty ListView preventing bindings from firing https://github.com/Textualize/textual/pull/2281
 - Fix `get_component_styles` returning incorrect values on first call when combined with pseudoclasses https://github.com/Textualize/textual/pull/2304
 - Fixed `active_message_pump.get` sometimes resulting in a `LookupError` https://github.com/Textualize/textual/issues/2301
-- Fixed issue arising when active tab was changed too quickly in succession https://github.com/Textualize/textual/pull/2305
 
 ## [0.19.1] - 2023-04-10
 
@@ -769,6 +774,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.20.1]: https://github.com/Textualize/textual/compare/v0.20.0...v0.20.1
 [0.20.0]: https://github.com/Textualize/textual/compare/v0.19.1...v0.20.0
 [0.19.1]: https://github.com/Textualize/textual/compare/v0.19.0...v0.19.1
 [0.19.0]: https://github.com/Textualize/textual/compare/v0.18.0...v0.19.0
