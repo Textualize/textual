@@ -37,7 +37,7 @@ def get_line_length(segments: Iterable[Segment]) -> int:
 
 
 class StripRenderable:
-    """A renderable which renders a list of strips in to lines.."""
+    """A renderable which renders a list of strips in to lines."""
 
     def __init__(self, strips: list[Strip]) -> None:
         self._strips = strips
