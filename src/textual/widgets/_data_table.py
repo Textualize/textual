@@ -887,11 +887,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             return self.header_height
         return self.rows[row_key].height
 
-    async def on_styles_updated(self) -> None:
+    async def _on_styles_updated(self) -> None:
         self._clear_caches()
         self.refresh()
 
-    def on_resize(self, event: events.Resize) -> None:
+    def _on_resize(self, _: events.Resize) -> None:
         self._update_count += 1
 
     def watch_show_cursor(self, show_cursor: bool) -> None:
@@ -1364,7 +1364,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._update_count += 1
         self.refresh(layout=True)
 
-    def on_idle(self) -> None:
+    async def _on_idle(self, _: events.Idle) -> None:
         """Runs when the message pump is empty.
 
         We use this for some expensive calculations like re-computing dimensions of the
@@ -1904,7 +1904,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         return self._render_line(y, scroll_x, scroll_x + width, self.rich_style)
 
-    def on_mouse_move(self, event: events.MouseMove):
+    def _on_mouse_move(self, event: events.MouseMove):
         """If the hover cursor is visible, display it by extracting the row
         and column metadata from the segments present in the cells."""
         self._set_hover_cursor(True)
@@ -1916,7 +1916,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             except KeyError:
                 pass
 
-    def on_leave(self, event: events.Leave) -> None:
+    def _on_leave(self, _: events.Leave) -> None:
         self._set_hover_cursor(False)
 
     def _get_fixed_offset(self) -> Spacing:
@@ -2001,7 +2001,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         elif cursor_type == "cell":
             self.refresh_coordinate(self.hover_coordinate)
 
-    def on_click(self, event: events.Click) -> None:
+    async def _on_click(self, event: events.Click) -> None:
         self._set_hover_cursor(True)
         meta = event.style.meta
         if not meta:

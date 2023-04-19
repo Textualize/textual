@@ -12,6 +12,7 @@ from rich.text import Text
 from .. import events
 from .._segment_tools import line_crop
 from ..binding import Binding, BindingType
+from ..events import Blur, Focus, Mount
 from ..geometry import Size
 from ..message import Message
 from ..reactive import reactive
@@ -299,22 +300,22 @@ class Input(Widget, can_focus=True):
         """Toggle visibility of cursor."""
         self._cursor_visible = not self._cursor_visible
 
-    def on_mount(self) -> None:
+    def _on_mount(self, _: Mount) -> None:
         self.blink_timer = self.set_interval(
             0.5,
             self._toggle_cursor,
             pause=not (self.cursor_blink and self.has_focus),
         )
 
-    def on_blur(self) -> None:
+    def _on_blur(self, _: Blur) -> None:
         self.blink_timer.pause()
 
-    def on_focus(self) -> None:
+    def _on_focus(self, _: Focus) -> None:
         self.cursor_position = len(self.value)
         if self.cursor_blink:
             self.blink_timer.resume()
 
-    async def on_key(self, event: events.Key) -> None:
+    async def _on_key(self, event: events.Key) -> None:
         self._cursor_visible = True
         if self.cursor_blink:
             self.blink_timer.reset()
@@ -330,12 +331,12 @@ class Input(Widget, can_focus=True):
             self.insert_text_at_cursor(event.character)
             event.prevent_default()
 
-    def on_paste(self, event: events.Paste) -> None:
+    def _on_paste(self, event: events.Paste) -> None:
         line = event.text.splitlines()[0]
         self.insert_text_at_cursor(line)
         event.stop()
 
-    def on_click(self, event: events.Click) -> None:
+    async def _on_click(self, event: events.Click) -> None:
         offset = event.get_content_offset(self)
         if offset is None:
             return

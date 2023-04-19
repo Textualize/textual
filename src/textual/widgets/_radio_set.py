@@ -5,6 +5,7 @@ from __future__ import annotations
 import rich.repr
 
 from ..containers import Container
+from ..events import Mount
 from ..message import Message
 from ._radio_button import RadioButton
 
@@ -91,7 +92,7 @@ class RadioSet(Container):
             disabled=disabled,
         )
 
-    def on_mount(self) -> None:
+    def _on_mount(self, _: Mount) -> None:
         """Perform some processing once mounted in the DOM."""
 
         # It's possible for the user to pass in a collection of radio
@@ -108,7 +109,7 @@ class RadioSet(Container):
         if switched_on:
             self._pressed_button = switched_on[0]
 
-    def on_radio_button_changed(self, event: RadioButton.Changed) -> None:
+    def _on_radio_button_changed(self, event: RadioButton.Changed) -> None:
         """Respond to the value of a button in the set being changed.
 
         Args:

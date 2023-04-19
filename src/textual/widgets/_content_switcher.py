@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Optional
 
 from ..containers import Container
+from ..events import Mount
 from ..reactive import reactive
 from ..widget import Widget
 
@@ -58,7 +59,7 @@ class ContentSwitcher(Container):
         )
         self._initial = initial
 
-    def on_mount(self) -> None:
+    def _on_mount(self, _: Mount) -> None:
         """Perform the initial setup of the widget once the DOM is ready."""
         initial = self._initial
         with self.app.batch_update():

@@ -7,6 +7,7 @@ from datetime import datetime
 from rich.text import Text
 
 from ..app import RenderResult
+from ..events import Mount
 from ..reactive import Reactive
 from ..widget import Widget
 
@@ -67,7 +68,7 @@ class HeaderClock(HeaderClockSpace):
     }
     """
 
-    def on_mount(self) -> None:
+    def _on_mount(self, _: Mount) -> None:
         self.set_interval(1, callback=self.refresh, name=f"update header clock")
 
     def render(self) -> RenderResult:
@@ -156,10 +157,10 @@ class Header(Widget):
     def watch_tall(self, tall: bool) -> None:
         self.set_class(tall, "-tall")
 
-    def on_click(self):
+    def _on_click(self):
         self.toggle_class("-tall")
 
-    def on_mount(self) -> None:
+    def _on_mount(self, _: Mount) -> None:
         def set_title(title: str) -> None:
             self.query_one(HeaderTitle).text = title
 
