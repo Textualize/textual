@@ -7,6 +7,7 @@ from rich.style import Style
 from rich.text import Text
 
 from ..color import Gradient
+from ..events import Mount
 from ..widget import Widget
 
 
@@ -22,7 +23,7 @@ class LoadingIndicator(Widget):
     }
     """
 
-    def on_mount(self) -> None:
+    def _on_mount(self, _: Mount) -> None:
         self._start_time = time()
         self.auto_refresh = 1 / 16
 
