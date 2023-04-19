@@ -18,6 +18,7 @@ from rich.style import Style, StyleType
 
 from ._cache import FIFOCache
 from ._segment_tools import index_to_cell_position
+from .color import Color
 from .constants import DEBUG
 from .filter import LineFilter
 
@@ -67,6 +68,7 @@ class Strip:
         "_divide_cache",
         "_crop_cache",
         "_style_cache",
+        "_filter_cache",
         "_render_cache",
         "_link_ids",
     ]
@@ -79,6 +81,7 @@ class Strip:
         self._divide_cache: FIFOCache[tuple[int, ...], list[Strip]] = FIFOCache(4)
         self._crop_cache: FIFOCache[tuple[int, int], Strip] = FIFOCache(16)
         self._style_cache: FIFOCache[Style, Strip] = FIFOCache(16)
+        self._filter_cache: FIFOCache[tuple[LineFilter, Color], Strip] = FIFOCache(4)
         self._render_cache: str | None = None
         self._link_ids: set[str] | None = None
 
@@ -265,7 +268,7 @@ class Strip:
         )
         return line
 
-    def apply_filter(self, filter: LineFilter) -> Strip:
+    def apply_filter(self, filter: LineFilter, background: Color) -> Strip:
         """Apply a filter to all segments in the strip.
 
         Args:
@@ -274,7 +277,12 @@ class Strip:
         Returns:
             A new Strip.
         """
-        return Strip(filter.apply(self._segments), self._cell_length)
+        cached_strip = self._filter_cache.get((filter, background))
+        if cached_strip is None:
+            cached_strip = Strip(
+                filter.apply(self._segments, background), self._cell_length
+            )
+        return cached_strip
 
     def style_links(self, link_id: str, link_style: Style) -> Strip:
         """Apply a style to Segments with the given link_id.

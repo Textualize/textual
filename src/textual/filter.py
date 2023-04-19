@@ -6,6 +6,7 @@ from functools import lru_cache
 from rich.color import Color as RichColor
 from rich.segment import Segment
 from rich.style import Style
+from rich.terminal_theme import TerminalTheme
 
 from .color import Color
 
@@ -14,11 +15,12 @@ class LineFilter(ABC):
     """Base class for a line filter."""
 
     @abstractmethod
-    def apply(self, segments: list[Segment]) -> list[Segment]:
+    def apply(self, segments: list[Segment], background: Color) -> list[Segment]:
         """Transform a list of segments.
 
         Args:
             segments: A list of segments.
+            background: The background color.
 
         Returns:
             A new list of segments.
@@ -53,11 +55,12 @@ def monochrome_style(style: Style) -> Style:
 class Monochrome(LineFilter):
     """Convert all colors to monochrome."""
 
-    def apply(self, segments: list[Segment]) -> list[Segment]:
+    def apply(self, segments: list[Segment], background: Color) -> list[Segment]:
         """Transform a list of segments.
 
         Args:
             segments: A list of segments.
+            background: The background color.
 
         Returns:
             A new list of segments.
@@ -96,8 +99,11 @@ def dim_color(background: RichColor, color: RichColor, factor: float) -> RichCol
     )
 
 
+DEFAULT_COLOR = RichColor.default()
+
+
 @lru_cache(1024)
-def dim_style(style: Style, factor: float) -> Style:
+def dim_style(style: Style, background: Color, factor: float) -> Style:
     """Replace dim attribute with a dim color.
 
     Args:
@@ -109,9 +115,19 @@ def dim_style(style: Style, factor: float) -> Style:
     """
     return (
         style
-        + Style.from_color(dim_color(style.bgcolor, style.color, factor), None)
-        + NO_DIM
-    )
+        + Style.from_color(
+            dim_color(
+                (
+                    background.rich_color
+                    if style.bgcolor.is_default
+                    else (style.bgcolor or DEFAULT_COLOR)
+                ),
+                style.color or DEFAULT_COLOR,
+                factor,
+            ),
+            None,
+        )
+    ) + NO_DIM
 
 
 # Can be used as a workaround for https://github.com/xtermjs/xterm.js/issues/4161
@@ -126,11 +142,12 @@ class DimFilter(LineFilter):
         """
         self.dim_factor = dim_factor
 
-    def apply(self, segments: list[Segment]) -> list[Segment]:
+    def apply(self, segments: list[Segment], background: Color) -> list[Segment]:
         """Transform a list of segments.
 
         Args:
             segments: A list of segments.
+            background: The background color.
 
         Returns:
             A new list of segments.
@@ -143,11 +160,68 @@ class DimFilter(LineFilter):
             (
                 _Segment(
                     segment.text,
-                    _dim_style(segment.style, factor),
+                    _dim_style(segment.style, background, factor),
                     None,
                 )
                 if segment.style is not None and segment.style.dim
                 else segment
             )
             for segment in segments
+        ]
+
+
+class ANSIToTruecolor(LineFilter):
+    """Convert ANSI colors to their truecolor equivalents."""
+
+    def __init__(self, terminal_theme: TerminalTheme):
+        """Initialise filter.
+
+        Args:
+            terminal_theme: A rich terminal theme.
+        """
+        self.terminal_theme = terminal_theme
+
+    @lru_cache(1024)
+    def truecolor_style(self, style: Style) -> Style:
+        """Replace system colors with truecolor equivalent.
+
+        Args:
+            style: Style to apply truecolor filter to.
+
+        Returns:
+            New style.
+        """
+        terminal_theme = self.terminal_theme
+        color = style.color
+        if color is not None and color.is_system_defined:
+            color = RichColor.from_rgb(
+                *color.get_truecolor(terminal_theme, foreground=True)
+            )
+        bgcolor = style.bgcolor
+        if bgcolor is not None and bgcolor.is_system_defined:
+            bgcolor = RichColor.from_rgb(
+                *bgcolor.get_truecolor(terminal_theme, foreground=False)
+            )
+        return style + Style.from_color(color, bgcolor)
+
+    def apply(self, segments: list[Segment], background: Color) -> list[Segment]:
+        """Transform a list of segments.
+
+        Args:
+            segments: A list of segments.
+            background: The background color.
+
+        Returns:
+            A new list of segments.
+        """
+        _Segment = Segment
+        truecolor_style = self.truecolor_style
+
+        return [
+            _Segment(
+                text,
+                None if style is None else truecolor_style(style),
+                None,
+            )
+            for text, style, _ in segments
         ]
