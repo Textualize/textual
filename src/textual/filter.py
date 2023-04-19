@@ -89,7 +89,7 @@ def dim_color(background: RichColor, color: RichColor, factor: float) -> RichCol
     Returns:
         New dimmer color.
     """
-    red1, green1, blue1 = background.get_truecolor(foreground=True)
+    red1, green1, blue1 = background.get_truecolor(foreground=False)
     red2, green2, blue2 = color.get_truecolor(foreground=True)
 
     return RichColor.from_rgb(
