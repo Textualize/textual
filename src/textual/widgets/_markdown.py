@@ -13,6 +13,7 @@ from typing_extensions import TypeAlias
 
 from ..app import ComposeResult
 from ..containers import Horizontal, VerticalScroll
+from ..events import Mount
 from ..message import Message
 from ..reactive import reactive, var
 from ..widget import Widget
@@ -587,7 +588,7 @@ class Markdown(Widget):
             self.href: str = href
             """The link that was selected."""
 
-    def on_mount(self) -> None:
+    def _on_mount(self, _: Mount) -> None:
         if self._markdown is not None:
             self.update(self._markdown)
 
@@ -801,7 +802,7 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
                     node = node.add(NUMERALS[level], expand=True)
             node.add_leaf(f"[dim]{NUMERALS[level]}[/] {name}", {"block_id": block_id})
 
-    async def on_tree_node_selected(self, message: Tree.NodeSelected) -> None:
+    async def _on_tree_node_selected(self, message: Tree.NodeSelected) -> None:
         node_data = message.node.data
         if node_data is not None:
             await self._post_message(
@@ -872,7 +873,7 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
         """The table of contents widget"""
         return self.query_one(MarkdownTableOfContents)
 
-    async def on_mount(self) -> None:
+    def _on_mount(self, _: Mount) -> None:
         if self._markdown is not None:
             self.document.update(self._markdown)
 
@@ -890,7 +891,7 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
         if self.navigator.forward():
             await self.document.load(self.navigator.location)
 
-    async def on_markdown_link_clicked(self, message: Markdown.LinkClicked) -> None:
+    async def _on_markdown_link_clicked(self, message: Markdown.LinkClicked) -> None:
         message.stop()
         await self.go(message.href)
 
@@ -901,7 +902,7 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
         yield MarkdownTableOfContents()
         yield Markdown(parser_factory=self._parser_factory)
 
-    def on_markdown_table_of_contents_updated(
+    def _on_markdown_table_of_contents_updated(
         self, message: Markdown.TableOfContentsUpdated
     ) -> None:
         self.query_one(
@@ -909,7 +910,7 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
         ).table_of_contents = message.table_of_contents
         message.stop()
 
-    def on_markdown_table_of_contents_selected(
+    def _on_markdown_table_of_contents_selected(
         self, message: Markdown.TableOfContentsSelected
     ) -> None:
         block_selector = f"#{message.block_id}"
