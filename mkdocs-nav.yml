@@ -177,6 +177,7 @@ nav:
     - "api/scroll_view.md"
     - "api/strip.md"
     - "api/timer.md"
+    - "api/types.md"
     - "api/walk.md"
     - "api/widget.md"
     - "api/work.md"

@@ -98,8 +98,11 @@ from .widget import AwaitMount, Widget
 if TYPE_CHECKING:
     from typing_extensions import Coroutine, TypeAlias
 
+    # Imports needed for the docs to link to these objects:
+    from .css.query import WrongType  # type: ignore  # noqa: F401
     from .devtools.client import DevtoolsClient
     from .pilot import Pilot
+    from .widget import MountError  # type: ignore  # noqa: F401
 
 PLATFORM = platform.system()
 WINDOWS = PLATFORM == "Windows"
@@ -138,6 +141,7 @@ ComposeResult = Iterable[Widget]
 RenderResult = RenderableType
 
 AutopilotCallbackType: TypeAlias = "Callable[[Pilot], Coroutine[Any, Any, None]]"
+"""Signature for valid callbacks that can be used to control apps."""
 
 
 class AppError(Exception):
@@ -168,6 +172,7 @@ CSSPathType = Union[
     PurePath,
     List[Union[str, PurePath]],
 ]
+"""Valid ways of specifying paths to CSS files."""
 
 CallThreadReturnType = TypeVar("CallThreadReturnType")
 
@@ -187,17 +192,7 @@ class _NullFile:
 
 @rich.repr.auto
 class App(Generic[ReturnType], DOMNode):
-    """The base class for Textual Applications.
-
-    Args:
-        driver_class: Driver class or `None` to auto-detect. This will be used by some Textual tools.
-        css_path: Path to CSS or `None` to use the `CSS_PATH` class variable.
-            To load multiple CSS files, pass a list of strings or paths which will be loaded in order.
-        watch_css: Reload CSS if the files changed. This is set automatically if you are using `textual run` with the `dev` switch.
-
-    Raises:
-        CssPathError: When the supplied CSS path(s) are an unexpected type.
-    """
+    """The base class for Textual Applications."""
 
     CSS: ClassVar[str] = ""
     """Inline CSS, useful for quick scripts. This is loaded after CSS_PATH,
@@ -219,8 +214,10 @@ class App(Generic[ReturnType], DOMNode):
     """
 
     SCREENS: ClassVar[dict[str, Screen | Callable[[], Screen]]] = {}
+    """Screens associated with the app for the lifetime of the app."""
     _BASE_PATH: str | None = None
     CSS_PATH: ClassVar[CSSPathType | None] = None
+    """File paths to load CSS from."""
 
     TITLE: str | None = None
     """A class variable to set the *default* title for the application.
@@ -248,7 +245,6 @@ class App(Generic[ReturnType], DOMNode):
         ```python
         self.app.dark = not self.app.dark  # Toggle dark mode
         ```
-
     """
 
     def __init__(
@@ -257,6 +253,20 @@ class App(Generic[ReturnType], DOMNode):
         css_path: CSSPathType | None = None,
         watch_css: bool = False,
     ):
+        """Create an instance of an app.
+
+        Args:
+            driver_class: Driver class or `None` to auto-detect.
+                This will be used by some Textual tools.
+            css_path: Path to CSS or `None` to use the `CSS_PATH` class variable.
+                To load multiple CSS files, pass a list of strings or paths which
+                will be loaded in order.
+            watch_css: Reload CSS if the files changed. This is set automatically if
+                you are using `textual run` with the `dev` switch.
+
+        Raises:
+            CssPathError: When the supplied CSS path(s) are an unexpected type.
+        """
         super().__init__()
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
@@ -399,33 +409,24 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def workers(self) -> WorkerManager:
-        """The [worker](guide/workers/) manager.
-
-        Returns:
-            An object to manage workers.
-
-        """
+        """The [worker](guide/workers/) manager."""
         return self._workers
 
     @property
     def return_value(self) -> ReturnType | None:
-        """The return value of the app, or `None` if it as not yet been set.
+        """The return value of the app, or `None` if it has not yet been set.
 
         The return value is set when calling [exit][textual.app.App.exit].
-
         """
         return self._return_value
 
     @property
     def children(self) -> Sequence["Widget"]:
-        """A view on to the App's children.
+        """A view onto the app's direct children.
 
         This attribute exists on all widgets.
-        In the case of the App, it will only every contain a single child, which will be the currently active screen.
-
-        Returns:
-            A sequence of widgets.
-
+        In the case of the App, it will only ever contain a single child, which will
+        be the currently active screen.
         """
         try:
             return (self.screen,)
@@ -477,7 +478,6 @@ class App(Generic[ReturnType], DOMNode):
             delay: A delay (in seconds) before the animation starts.
             easing: An easing method.
             on_complete: A callable to invoke when the animation is finished.
-
         """
         self._animate(
             attribute,
@@ -500,18 +500,12 @@ class App(Generic[ReturnType], DOMNode):
         """Is the driver running in 'headless' mode?
 
         Headless mode is used when running tests with [run_test][textual.app.App.run_test].
-
         """
         return False if self._driver is None else self._driver.is_headless
 
     @property
     def screen_stack(self) -> Sequence[Screen]:
-        """The current screen stack.
-
-        Returns:
-            A snapshot of the current state of the screen stack.
-
-        """
+        """A snapshot of the current screen stack."""
         return self._screen_stack.copy()
 
     def exit(
@@ -531,29 +525,20 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def focused(self) -> Widget | None:
-        """The widget that is focused on the currently active screen.
+        """The widget that is focused on the currently active screen, or `None`.
 
         Focused widgets receive keyboard input.
-
-        Returns:
-            The currently focused widget, or `None` if nothing is focused.
-
         """
         return self.screen.focused
 
     @property
     def namespace_bindings(self) -> dict[str, tuple[DOMNode, Binding]]:
-        """Get current bindings.
+        """Get currently active bindings.
 
         If no widget is focused, then app-level bindings are returned.
         If a widget is focused, then any bindings present in the active screen and app are merged and returned.
 
         This property may be used to inspect current bindings.
-
-        Returns:
-
-            A mapping of keys on to node + binding.
-
         """
 
         namespace_binding_map: dict[str, tuple[DOMNode, Binding]] = {}
@@ -571,7 +556,6 @@ class App(Generic[ReturnType], DOMNode):
         """Yield child widgets for a container.
 
         This method should be implemented in a subclass.
-
         """
         yield from ()
 
@@ -591,7 +575,6 @@ class App(Generic[ReturnType], DOMNode):
 
         This method handles the transition between light and dark mode when you
         change the [dark][textual.app.App.dark] attribute.
-
         """
         self.set_class(dark, "-dark-mode")
         self.set_class(not dark, "-light-mode")
@@ -662,10 +645,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def screen(self) -> Screen:
-        """Screen: The current screen.
-
-        Returns:
-            The currently active (visible) screen.
+        """The current active screen.
 
         Raises:
             ScreenStackError: If there are no screens on the stack.
@@ -688,12 +668,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def size(self) -> Size:
-        """The size of the terminal.
-
-        Returns:
-            Size of the terminal.
-
-        """
+        """The size of the terminal."""
         if self._driver is not None and self._driver._size is not None:
             width, height = self._driver._size
         else:
@@ -702,17 +677,13 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def log(self) -> Logger:
-        """Textual log interface.
+        """The textual logger.
 
         Example:
             ```python
             self.log("Hello, World!")
             self.log(self.tree)
             ```
-
-        Returns:
-            A Textual logger.
-
         """
         return self._logger
 
@@ -837,7 +808,6 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             title: The title of the exported screenshot or None
                 to use app title.
-
         """
         assert self._driver is not None, "App must be running"
         width, height = self.size
@@ -985,8 +955,6 @@ class App(Generic[ReturnType], DOMNode):
             headless: Run in headless mode (no output or input).
             size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect.
-
-
         """
         from .pilot import Pilot
 
@@ -1169,14 +1137,15 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             id: The ID of the node to search for.
-            expect_type: Require the object be of the supplied type, or None for any type.
+            expect_type: Require the object be of the supplied type,
+                or use `None` to apply no type restriction.
 
         Returns:
             The first child of this node with the specified ID.
 
         Raises:
-            NoMatches: if no children could be found for this ID
-            WrongType: if the wrong type was found.
+            NoMatches: If no children could be found for this ID.
+            WrongType: If the wrong type was found.
         """
         return (
             self.screen.get_child_by_id(id)
@@ -1354,7 +1323,6 @@ class App(Generic[ReturnType], DOMNode):
 
         Returns:
             A screen instance and an awaitable that awaits the children mounting.
-
         """
         _screen = self.get_screen(screen)
         if not _screen.is_running:
@@ -1375,7 +1343,6 @@ class App(Generic[ReturnType], DOMNode):
 
         Returns:
             The screen that was replaced.
-
         """
         if self._screen_stack:
             self.screen.refresh()
@@ -1422,7 +1389,6 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             screen: Either a Screen object or screen name (the `name` argument when installed).
-
         """
         if not isinstance(screen, (Screen, str)):
             raise TypeError(
@@ -1472,7 +1438,6 @@ class App(Generic[ReturnType], DOMNode):
         Note that uninstalling a screen is only required if you have previously installed it
         with [install_screen][textual.app.App.install_screen].
         Textual will also uninstall screens automatically on exit.
-
 
         Args:
             screen: The screen to uninstall or the name of a installed screen.
@@ -1760,7 +1725,6 @@ class App(Generic[ReturnType], DOMNode):
         """Called immediately prior to processing messages.
 
         May be used as a hook for any operations that should run first.
-
         """
         try:
             screenshot_timer = float(os.environ.get("TEXTUAL_SCREENSHOT", "0"))
@@ -1854,9 +1818,9 @@ class App(Generic[ReturnType], DOMNode):
             *widgets: The widget(s) to register.
             before: A location to mount before.
             after: A location to mount after.
+
         Returns:
             List of modified widgets.
-
         """
 
         if not widgets:
@@ -2044,8 +2008,6 @@ class App(Generic[ReturnType], DOMNode):
 
         For terminals that support a bell, this typically makes a notification or error sound.
         Some terminals may make no sound or display a visual bell indicator, depending on configuration.
-
-
         """
         if not self.is_headless and self._driver is not None:
             self._driver.write("\07")
@@ -2147,7 +2109,7 @@ class App(Generic[ReturnType], DOMNode):
                 or None to use app.
 
         Returns:
-            True if the event has handled.
+            True if the event has been handled.
         """
         if isinstance(action, str):
             target, params = actions.parse(action)
@@ -2328,7 +2290,6 @@ class App(Generic[ReturnType], DOMNode):
 
         Returns:
             The child widgets of root.
-
         """
         stack: list[Widget] = [root]
         pop = stack.pop

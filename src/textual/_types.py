@@ -25,6 +25,7 @@ class EventTarget(Protocol):
 
 SegmentLines = List[List["Segment"]]
 CallbackType = Union[Callable[[], Awaitable[None]], Callable[[], None]]
+"""Type used for arbitrary callables used in callbacks."""
 WatchCallbackType = Union[
     Callable[[], Awaitable[None]],
     Callable[[Any], Awaitable[None]],
@@ -33,3 +34,4 @@ WatchCallbackType = Union[
     Callable[[Any], None],
     Callable[[Any, Any], None],
 ]
+"""Type used for callbacks passed to the `watch` method of widgets."""
