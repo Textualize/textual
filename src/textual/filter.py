@@ -6,6 +6,7 @@ from functools import lru_cache
 from rich.color import Color as RichColor
 from rich.segment import Segment
 from rich.style import Style
+from rich.terminal_theme import TerminalTheme
 
 from .color import Color
 
@@ -14,7 +15,7 @@ class LineFilter(ABC):
     """Base class for a line filter."""
 
     @abstractmethod
-    def apply(self, segments: list[Segment]) -> list[Segment]:
+    def apply(self, segments: list[Segment], background: Color) -> list[Segment]:
         """Transform a list of segments.
 
         Args:
@@ -53,7 +54,7 @@ def monochrome_style(style: Style) -> Style:
 class Monochrome(LineFilter):
     """Convert all colors to monochrome."""
 
-    def apply(self, segments: list[Segment]) -> list[Segment]:
+    def apply(self, segments: list[Segment], background: Color) -> list[Segment]:
         """Transform a list of segments.
 
         Args:
@@ -86,8 +87,8 @@ def dim_color(background: RichColor, color: RichColor, factor: float) -> RichCol
     Returns:
         New dimmer color.
     """
-    red1, green1, blue1 = background.triplet
-    red2, green2, blue2 = color.triplet
+    red1, green1, blue1 = background.get_truecolor(foreground=True)
+    red2, green2, blue2 = color.get_truecolor(foreground=True)
 
     return RichColor.from_rgb(
         red1 + (red2 - red1) * factor,
@@ -97,7 +98,7 @@ def dim_color(background: RichColor, color: RichColor, factor: float) -> RichCol
 
 
 @lru_cache(1024)
-def dim_style(style: Style, factor: float) -> Style:
+def dim_style(style: Style, background: Color, factor: float) -> Style:
     """Replace dim attribute with a dim color.
 
     Args:
@@ -109,9 +110,19 @@ def dim_style(style: Style, factor: float) -> Style:
     """
     return (
         style
-        + Style.from_color(dim_color(style.bgcolor, style.color, factor), None)
-        + NO_DIM
-    )
+        + Style.from_color(
+            dim_color(
+                (
+                    background.rich_color
+                    if style.bgcolor.is_default
+                    else (style.bgcolor or RichColor.default())
+                ),
+                style.color or RichColor.default(),
+                factor,
+            ),
+            None,
+        )
+    ) + NO_DIM
 
 
 # Can be used as a workaround for https://github.com/xtermjs/xterm.js/issues/4161
@@ -126,7 +137,7 @@ class DimFilter(LineFilter):
         """
         self.dim_factor = dim_factor
 
-    def apply(self, segments: list[Segment]) -> list[Segment]:
+    def apply(self, segments: list[Segment], background: Color) -> list[Segment]:
         """Transform a list of segments.
 
         Args:
@@ -143,11 +154,44 @@ class DimFilter(LineFilter):
             (
                 _Segment(
                     segment.text,
-                    _dim_style(segment.style, factor),
+                    _dim_style(segment.style, background, factor),
                     None,
                 )
                 if segment.style is not None and segment.style.dim
                 else segment
             )
             for segment in segments
+        ]
+
+
+class ANSIToTruecolor(LineFilter):
+    def __init__(self, terminal_theme: TerminalTheme):
+        self.terminal_theme = terminal_theme
+
+    @lru_cache(1024)
+    def truecolor_style(self, style: Style) -> Style:
+        terminal_theme = self.terminal_theme
+        color = style.color
+        if color is not None and color.is_system_defined:
+            color = RichColor.from_rgb(
+                *color.get_truecolor(terminal_theme, foreground=True)
+            )
+        bgcolor = style.bgcolor
+        if bgcolor is not None and bgcolor.is_system_defined:
+            bgcolor = RichColor.from_rgb(
+                *bgcolor.get_truecolor(terminal_theme, foreground=False)
+            )
+        return style + Style.from_color(color, bgcolor)
+
+    def apply(self, segments: list[Segment], background: Color) -> list[Segment]:
+        _Segment = Segment
+        truecolor_style = self.truecolor_style
+
+        return [
+            _Segment(
+                text,
+                None if style is None else truecolor_style(style),
+                None,
+            )
+            for text, style, _ in segments
         ]

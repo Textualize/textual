@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 from sys import intern
-from typing import TYPE_CHECKING, Callable, Iterable
+from typing import TYPE_CHECKING, Callable, Iterable, Sequence
 
 from rich.console import Console
 from rich.segment import Segment
@@ -139,7 +139,7 @@ class StylesCache:
             content_size=widget.content_region.size,
             padding=styles.padding,
             crop=crop,
-            filter=widget.app._filter,
+            filters=widget.app._filters,
         )
         if widget.auto_links:
             hover_style = widget.hover_style
@@ -170,7 +170,7 @@ class StylesCache:
         content_size: Size | None = None,
         padding: Spacing | None = None,
         crop: Region | None = None,
-        filter: LineFilter | None = None,
+        filters: Sequence[LineFilter] | None = None,
     ) -> list[Strip]:
         """Render a widget content plus CSS styles.
 
@@ -186,7 +186,7 @@ class StylesCache:
             content_size: Size of content or None to assume full size.
             padding: Override padding from Styles, or None to use styles.padding.
             crop: Region to crop to.
-            filter: Additional post-processing for the segments.
+            filters: Additional post-processing for the segments.
 
         Returns:
             Rendered lines.
@@ -225,8 +225,9 @@ class StylesCache:
                 self._cache[y] = strip
             else:
                 strip = self._cache[y]
-            if filter:
-                strip = strip.apply_filter(filter)
+            if filters:
+                for filter in filters:
+                    strip = strip.apply_filter(filter, background)
             add_strip(strip)
         self._dirty_lines.difference_update(crop.line_range)
 

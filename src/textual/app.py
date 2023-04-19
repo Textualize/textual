@@ -29,7 +29,6 @@ from contextlib import (
 from datetime import datetime
 from functools import partial
 from pathlib import Path, PurePath
-from queue import Queue
 from time import perf_counter
 from typing import (
     TYPE_CHECKING,
@@ -53,6 +52,7 @@ from weakref import WeakSet
 
 import rich
 import rich.repr
+from rich import terminal_theme
 from rich.console import Console, RenderableType
 from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
@@ -81,7 +81,7 @@ from .driver import Driver
 from .drivers.headless_driver import HeadlessDriver
 from .features import FeatureFlag, parse_features
 from .file_monitor import FileMonitor
-from .filter import LineFilter, Monochrome
+from .filter import ANSIToTruecolor, DimFilter, LineFilter, Monochrome
 from .geometry import Offset, Region, Size
 from .keys import (
     REPLACED_KEYS,
@@ -260,11 +260,17 @@ class App(Generic[ReturnType], DOMNode):
         super().__init__()
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
-        self._filter: LineFilter | None = None
+        self._filters: list[LineFilter] = []
         environ = dict(os.environ)
         no_color = environ.pop("NO_COLOR", None)
         if no_color is not None:
-            self._filter = Monochrome()
+            self._filters.append(Monochrome())
+
+        for filter_name in constants.FILTERS.split(","):
+            filter = filter_name.lower().strip()
+            if filter == "dim":
+                self._filters.append(ANSIToTruecolor(terminal_theme.DIMMED_MONOKAI))
+                self._filters.append(DimFilter())
 
         self.console = Console(
             file=_NullFile(),

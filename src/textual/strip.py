@@ -18,6 +18,7 @@ from rich.style import Style, StyleType
 
 from ._cache import FIFOCache
 from ._segment_tools import index_to_cell_position
+from .color import Color
 from .constants import DEBUG
 from .filter import LineFilter
 
@@ -265,7 +266,7 @@ class Strip:
         )
         return line
 
-    def apply_filter(self, filter: LineFilter) -> Strip:
+    def apply_filter(self, filter: LineFilter, background: Color) -> Strip:
         """Apply a filter to all segments in the strip.
 
         Args:
@@ -274,7 +275,7 @@ class Strip:
         Returns:
             A new Strip.
         """
-        return Strip(filter.apply(self._segments), self._cell_length)
+        return Strip(filter.apply(self._segments, background), self._cell_length)
 
     def style_links(self, link_id: str, link_style: Style) -> Strip:
         """Apply a style to Segments with the given link_id.
