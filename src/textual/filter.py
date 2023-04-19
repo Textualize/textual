@@ -117,12 +117,8 @@ def dim_style(style: Style, background: Color, factor: float) -> Style:
         style
         + Style.from_color(
             dim_color(
-                (
-                    background.rich_color
-                    if style.bgcolor.is_default
-                    else (style.bgcolor or DEFAULT_COLOR)
-                ),
-                style.color or DEFAULT_COLOR,
+                (background.rich_color if style.bgcolor.is_default else style.bgcolor),
+                style.color,
                 factor,
             ),
             None,
