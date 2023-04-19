@@ -12,6 +12,7 @@ from rich.text import Text, TextType
 
 from ..app import RenderResult
 from ..binding import Binding, BindingType
+from ..events import Click
 from ..geometry import Size
 from ..message import Message
 from ..reactive import reactive
@@ -220,7 +221,7 @@ class ToggleButton(Static, can_focus=True):
         """
         self.toggle()
 
-    def on_click(self) -> None:
+    async def _on_click(self, _: Click) -> None:
         """Toggle the value of the widget when clicked with the mouse."""
         self.toggle()
 
