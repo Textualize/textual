@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import ClassVar
+from typing import ClassVar, Optional
 
 import rich.repr
 from rich.console import RenderableType
 from rich.text import Text
 
 from .. import events
-from ..reactive import Reactive
+from ..reactive import reactive
 from ..widget import Widget
 
 
@@ -53,23 +53,23 @@ class Footer(Widget):
     }
     """
 
-    highlight_key: Reactive[str | None] = Reactive(None)
+    highlight_key: reactive[str | None] = reactive[Optional[str]](None)
 
     def __init__(self) -> None:
         super().__init__()
         self._key_text: Text | None = None
         self.auto_links = False
 
-    async def watch_highlight_key(self, value: str | None) -> None:
+    async def watch_highlight_key(self) -> None:
         """If highlight key changes we need to regenerate the text."""
         self._key_text = None
         self.refresh()
 
-    def _on_mount(self) -> None:
+    def _on_mount(self, _: events.Mount) -> None:
         self.watch(self.screen, "focused", self._bindings_changed)
         self.watch(self.screen, "stack_updates", self._bindings_changed)
 
-    def _bindings_changed(self, focused: Widget | None) -> None:
+    def _bindings_changed(self, _: Widget | None) -> None:
         self._key_text = None
         self.refresh()
 
@@ -77,7 +77,7 @@ class Footer(Widget):
         """Store any key we are moving over."""
         self.highlight_key = event.style.meta.get("key")
 
-    def _on_leave(self, event: events.Leave) -> None:
+    def _on_leave(self, _: events.Leave) -> None:
         """Clear any highlight when the mouse leaves the widget"""
         if self.screen.is_current:
             self.highlight_key = None
@@ -101,7 +101,7 @@ class Footer(Widget):
 
         bindings = [
             binding
-            for (_namespace, binding) in self.app.namespace_bindings.values()
+            for (_, binding) in self.app.namespace_bindings.values()
             if binding.show
         ]
 
@@ -109,7 +109,7 @@ class Footer(Widget):
         for binding in bindings:
             action_to_bindings[binding.action].append(binding)
 
-        for action, bindings in action_to_bindings.items():
+        for _, bindings in action_to_bindings.items():
             binding = bindings[0]
             if binding.key_display is None:
                 key_display = self.app.get_key_display(binding.key)
