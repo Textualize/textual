@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, ClassVar
 from rich.console import RenderableType
 
 from ..binding import Binding, BindingType
+from ..events import Click
 from ..geometry import Size
 from ..message import Message
 from ..reactive import reactive
@@ -153,7 +154,7 @@ class Switch(Widget, can_focus=True):
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
         return 1
 
-    def on_click(self) -> None:
+    async def _on_click(self, _: Click) -> None:
         """Toggle the state of the switch."""
         self.toggle()
 
