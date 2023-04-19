@@ -171,7 +171,7 @@ class DimFilter(LineFilter):
 
 
 class ANSIToTruecolor(LineFilter):
-    """Convert an ANSI colors to their truecolor equivalents."""
+    """Convert ANSI colors to their truecolor equivalents."""
 
     def __init__(self, terminal_theme: TerminalTheme):
         """Initialise filter.
