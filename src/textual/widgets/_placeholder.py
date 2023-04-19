@@ -156,11 +156,11 @@ class Placeholder(Widget):
             )
         return variant
 
-    def on_click(self) -> None:
+    async def _on_click(self, _: events.Click) -> None:
         """Click handler to cycle through the placeholder variants."""
         self.cycle_variant()
 
-    def on_resize(self, event: events.Resize) -> None:
+    def _on_resize(self, event: events.Resize) -> None:
         """Update the placeholder "size" variant with the new placeholder size."""
         self._renderables["size"] = self._SIZE_RENDER_TEMPLATE.format(*event.size)
         if self.variant == "size":
