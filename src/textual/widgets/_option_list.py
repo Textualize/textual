@@ -16,7 +16,7 @@ from rich.style import Style
 from typing_extensions import Literal, Self, TypeAlias
 
 from ..binding import Binding, BindingType
-from ..events import Click, MouseMove
+from ..events import Click, Idle, Leave, MouseMove
 from ..geometry import Region, Size
 from ..message import Message
 from ..reactive import reactive
@@ -363,7 +363,7 @@ class OptionList(ScrollView, can_focus=True):
         self._needs_to_scroll_to_highlight = rescroll_to_highlight
         self.check_idle()
 
-    def on_idle(self) -> None:
+    async def _on_idle(self, _: Idle) -> None:
         """Perform content tracking data refresh when idle."""
         self._refresh_content_tracking()
         if self._needs_to_scroll_to_highlight:
@@ -380,11 +380,11 @@ class OptionList(ScrollView, can_focus=True):
         """
         self._request_content_tracking_refresh()
 
-    def on_resize(self) -> None:
+    def _on_resize(self) -> None:
         """Refresh the layout of the renderables in the list when resized."""
         self._request_content_tracking_refresh(rescroll_to_highlight=True)
 
-    def on_mouse_move(self, event: MouseMove) -> None:
+    def _on_mouse_move(self, event: MouseMove) -> None:
         """React to the mouse moving.
 
         Args:
@@ -392,11 +392,11 @@ class OptionList(ScrollView, can_focus=True):
         """
         self._mouse_hovering_over = event.style.meta.get("option")
 
-    def on_leave(self) -> None:
+    def _on_leave(self, _: Leave) -> None:
         """React to the mouse leaving the widget."""
         self._mouse_hovering_over = None
 
-    def on_click(self, event: Click) -> None:
+    async def _on_click(self, event: Click) -> None:
         """React to the mouse being clicked on an item.
 
         Args:
