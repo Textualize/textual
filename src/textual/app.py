@@ -1423,7 +1423,8 @@ class App(Generic[ReturnType], DOMNode):
                 f"switch_screen requires a Screen instance or str; not {screen!r}"
             )
         if self.screen is not screen:
-            self._replace_screen(self._screen_stack.pop())
+            previous_screen = self._replace_screen(self._screen_stack.pop())
+            previous_screen._pop_result_callback()
             next_screen, await_mount = self._get_screen(screen)
             self._screen_stack.append(next_screen)
             self.screen.post_message(events.ScreenResume())
