@@ -282,6 +282,7 @@ class Strip:
             cached_strip = Strip(
                 filter.apply(self._segments, background), self._cell_length
             )
+            self._filter_cache[(filter, background)] = cached_strip
         return cached_strip
 
     def style_links(self, link_id: str, link_style: Style) -> Strip:
