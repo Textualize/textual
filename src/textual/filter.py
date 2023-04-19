@@ -15,7 +15,14 @@ class LineFilter(ABC):
 
     @abstractmethod
     def apply(self, segments: list[Segment]) -> list[Segment]:
-        """Transform a list of segments."""
+        """Transform a list of segments.
+
+        Args:
+            segments: A list of segments.
+
+        Returns:
+            A new list of segments.
+        """
 
 
 @lru_cache(1024)
@@ -47,7 +54,14 @@ class Monochrome(LineFilter):
     """Convert all colors to monochrome."""
 
     def apply(self, segments: list[Segment]) -> list[Segment]:
-        """Apply monochrome style to all segments."""
+        """Transform a list of segments.
+
+        Args:
+            segments: A list of segments.
+
+        Returns:
+            A new list of segments.
+        """
         _monochrome_style = monochrome_style
         _Segment = Segment
         return [
@@ -113,7 +127,14 @@ class DimFilter(LineFilter):
         self.dim_factor = dim_factor
 
     def apply(self, segments: list[Segment]) -> list[Segment]:
-        """Modify color of segments with dim style."""
+        """Transform a list of segments.
+
+        Args:
+            segments: A list of segments.
+
+        Returns:
+            A new list of segments.
+        """
         _Segment = Segment
         _dim_style = dim_style
         factor = self.dim_factor
