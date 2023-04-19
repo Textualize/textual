@@ -3,6 +3,7 @@ from rich.segment import Segment
 from rich.style import Style
 
 from textual._segment_tools import NoCellPositionForIndex
+from textual.color import Color
 from textual.filter import Monochrome
 from textual.strip import Strip
 
@@ -102,7 +103,7 @@ def test_apply_filter():
     expected = Strip([Segment("foo", Style.parse("#1b1b1b"))])
     print(repr(strip))
     print(repr(expected))
-    assert strip.apply_filter(Monochrome()) == expected
+    assert strip.apply_filter(Monochrome(), Color(0, 0, 0)) == expected
 
 
 def test_style_links():

@@ -8,6 +8,7 @@ from typing import ClassVar, Iterable
 from rich.style import Style
 from rich.text import Text, TextType
 
+from ..events import Mount
 from ..message import Message
 from ._tree import TOGGLE_STYLE, Tree, TreeNode
 
@@ -180,10 +181,10 @@ class DirectoryTree(Tree[DirEntry]):
             )
         node.expand()
 
-    def on_mount(self) -> None:
+    def _on_mount(self, _: Mount) -> None:
         self.load_directory(self.root)
 
-    def on_tree_node_expanded(self, event: Tree.NodeSelected) -> None:
+    def _on_tree_node_expanded(self, event: Tree.NodeSelected) -> None:
         event.stop()
         dir_entry = event.node.data
         if dir_entry is None:
@@ -194,7 +195,7 @@ class DirectoryTree(Tree[DirEntry]):
         else:
             self.post_message(self.FileSelected(dir_entry.path))
 
-    def on_tree_node_selected(self, event: Tree.NodeSelected) -> None:
+    def _on_tree_node_selected(self, event: Tree.NodeSelected) -> None:
         event.stop()
         dir_entry = event.node.data
         if dir_entry is None:

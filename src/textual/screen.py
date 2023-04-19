@@ -6,7 +6,18 @@ The `Screen` class is a special widget which represents the content in the termi
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterable, Iterator
+from typing import (
+    TYPE_CHECKING,
+    Awaitable,
+    Callable,
+    Generic,
+    Iterable,
+    Iterator,
+    Type,
+    TypeVar,
+    Union,
+    cast,
+)
 
 import rich.repr
 from rich.console import RenderableType
@@ -34,9 +45,49 @@ if TYPE_CHECKING:
 # Screen updates will be batched so that they don't happen more often than 60 times per second:
 UPDATE_PERIOD: Final[float] = 1 / 60
 
+ScreenResultType = TypeVar("ScreenResultType")
+"""The result type of a screen."""
+
+ScreenResultCallbackType = Union[
+    Callable[[ScreenResultType], None], Callable[[ScreenResultType], Awaitable[None]]
+]
+"""Type of a screen result callback function."""
+
+
+class ResultCallback(Generic[ScreenResultType]):
+    """Holds the details of a callback."""
+
+    def __init__(
+        self,
+        requester: Widget | None,
+        callback: ScreenResultCallbackType[ScreenResultType] | None,
+    ) -> None:
+        """Initialise the result callback object.
+
+        Args:
+            requester: The object making a request for the callback.
+            callback: The callback function.
+        """
+        self.requester: Widget | None = requester
+        """The object in the DOM that requested the callback."""
+        self.callback: ScreenResultCallbackType | None = callback
+        """The callback function."""
+
+    def __call__(self, result: ScreenResultType) -> None:
+        """Call the callback, passing the given result.
+
+        Args:
+            result: The result to pass to the callback.
+
+        Note:
+            If the requested or the callback are `None` this will be a no-op.
+        """
+        if self.requester is not None and self.callback is not None:
+            self.requester.call_next(self.callback, result)
+
 
 @rich.repr.auto
-class Screen(Widget):
+class Screen(Generic[ScreenResultType], Widget):
     """The base class for screens."""
 
     DEFAULT_CSS = """
@@ -77,6 +128,7 @@ class Screen(Widget):
         self._dirty_widgets: set[Widget] = set()
         self.__update_timer: Timer | None = None
         self._callbacks: list[CallbackType] = []
+        self._result_callbacks: list[ResultCallback[ScreenResultType]] = []
 
     @property
     def is_modal(self) -> bool:
@@ -457,6 +509,25 @@ class Screen(Widget):
         self._callbacks.append(callback)
         self.check_idle()
 
+    def _push_result_callback(
+        self,
+        requester: Widget | None,
+        callback: ScreenResultCallbackType[ScreenResultType] | None,
+    ) -> None:
+        """Add a result callback to the screen.
+
+        Args:
+            requester: The object requesting the callback.
+            callback: The callback.
+        """
+        self._result_callbacks.append(
+            ResultCallback[ScreenResultType](requester, callback)
+        )
+
+    def _pop_result_callback(self) -> None:
+        """Remove the latest result callback from the stack."""
+        self._result_callbacks.pop()
+
     def _refresh_layout(
         self, size: Size | None = None, full: bool = False, scroll: bool = False
     ) -> None:
@@ -651,9 +722,39 @@ class Screen(Widget):
         else:
             self.post_message(event)
 
+    class _NoResult:
+        """Class used to mark that there is no result."""
+
+    def dismiss(self, result: ScreenResultType | Type[_NoResult] = _NoResult) -> None:
+        """Dismiss the screen, optionally with a result.
+
+        Args:
+            result: The optional result to be passed to the result callback.
+
+        Note:
+            If the screen was pushed with a callback, the callback will be
+            called with the given result and then a call to
+            [`App.pop_screen`][textual.app.App.pop_screen] is performed. If
+            no callback was provided calling this method is the same as
+            simply calling [`App.pop_screen`][textual.app.App.pop_screen].
+        """
+        if result is not self._NoResult and self._result_callbacks:
+            self._result_callbacks[-1](cast(ScreenResultType, result))
+        self.app.pop_screen()
+
+    def action_dismiss(
+        self, result: ScreenResultType | Type[_NoResult] = _NoResult
+    ) -> None:
+        """A wrapper around [`dismiss`][textual.screen.Screen.dismiss] that can be called as an action.
+
+        Args:
+            result: The optional result to be passed to the result callback.
+        """
+        self.dismiss(result)
+
 
 @rich.repr.auto
-class ModalScreen(Screen):
+class ModalScreen(Screen[ScreenResultType]):
     """A screen with bindings that take precedence over the App's key bindings.
 
     The default styling of a modal screen will dim the screen underneath.

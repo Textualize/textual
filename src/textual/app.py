@@ -29,7 +29,6 @@ from contextlib import (
 from datetime import datetime
 from functools import partial
 from pathlib import Path, PurePath
-from queue import Queue
 from time import perf_counter
 from typing import (
     TYPE_CHECKING,
@@ -53,6 +52,7 @@ from weakref import WeakSet
 
 import rich
 import rich.repr
+from rich import terminal_theme
 from rich.console import Console, RenderableType
 from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
@@ -81,7 +81,7 @@ from .driver import Driver
 from .drivers.headless_driver import HeadlessDriver
 from .features import FeatureFlag, parse_features
 from .file_monitor import FileMonitor
-from .filter import LineFilter, Monochrome
+from .filter import ANSIToTruecolor, DimFilter, LineFilter, Monochrome
 from .geometry import Offset, Region, Size
 from .keys import (
     REPLACED_KEYS,
@@ -92,7 +92,7 @@ from .keys import (
 from .messages import CallbackType
 from .reactive import Reactive
 from .renderables.blank import Blank
-from .screen import Screen
+from .screen import Screen, ScreenResultCallbackType, ScreenResultType
 from .widget import AwaitMount, Widget
 
 if TYPE_CHECKING:
@@ -260,11 +260,17 @@ class App(Generic[ReturnType], DOMNode):
         super().__init__()
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
-        self._filter: LineFilter | None = None
+        self._filters: list[LineFilter] = []
         environ = dict(os.environ)
         no_color = environ.pop("NO_COLOR", None)
         if no_color is not None:
-            self._filter = Monochrome()
+            self._filters.append(Monochrome())
+
+        for filter_name in constants.FILTERS.split(","):
+            filter = filter_name.lower().strip()
+            if filter == "dim":
+                self._filters.append(ANSIToTruecolor(terminal_theme.DIMMED_MONOKAI))
+                self._filters.append(DimFilter())
 
         self.console = Console(
             file=_NullFile(),
@@ -1380,12 +1386,19 @@ class App(Generic[ReturnType], DOMNode):
             self.log.system(f"{screen} REMOVED")
         return screen
 
-    def push_screen(self, screen: Screen | str) -> AwaitMount:
+    def push_screen(
+        self,
+        screen: Screen[ScreenResultType] | str,
+        callback: ScreenResultCallbackType[ScreenResultType] | None = None,
+    ) -> AwaitMount:
         """Push a new [screen](/guide/screens) on the screen stack, making it the current screen.
 
         Args:
             screen: A Screen instance or the name of an installed screen.
+            callback: An optional callback function that is called if the screen is dismissed with a result.
 
+        Returns:
+            An optional awaitable that awaits the mounting of the screen and its children.
         """
         if not isinstance(screen, (Screen, str)):
             raise TypeError(
@@ -1396,6 +1409,9 @@ class App(Generic[ReturnType], DOMNode):
             self.screen.post_message(events.ScreenSuspend())
             self.screen.refresh()
         next_screen, await_mount = self._get_screen(screen)
+        next_screen._push_result_callback(
+            self.screen if self._screen_stack else None, callback
+        )
         self._screen_stack.append(next_screen)
         next_screen.post_message(events.ScreenResume())
         self.log.system(f"{self.screen} is current (PUSHED)")
@@ -1413,7 +1429,8 @@ class App(Generic[ReturnType], DOMNode):
                 f"switch_screen requires a Screen instance or str; not {screen!r}"
             )
         if self.screen is not screen:
-            self._replace_screen(self._screen_stack.pop())
+            previous_screen = self._replace_screen(self._screen_stack.pop())
+            previous_screen._pop_result_callback()
             next_screen, await_mount = self._get_screen(screen)
             self._screen_stack.append(next_screen)
             self.screen.post_message(events.ScreenResume())
@@ -1494,6 +1511,7 @@ class App(Generic[ReturnType], DOMNode):
                 "Can't pop screen; there must be at least one screen on the stack"
             )
         previous_screen = self._replace_screen(screen_stack.pop())
+        previous_screen._pop_result_callback()
         self.screen._screen_resized(self.size)
         self.screen.post_message(events.ScreenResume())
         self.log.system(f"{self.screen} is active")

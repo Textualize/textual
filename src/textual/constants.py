@@ -53,6 +53,9 @@ DEBUG: Final[bool] = get_environ_bool("TEXTUAL_DEBUG")
 
 DRIVER: Final[str | None] = get_environ("TEXTUAL_DRIVER", None)
 
+FILTERS: Final[str] = get_environ("TEXTUAL_FILTERS", "")
+"""A list of filters to apply to renderables."""
+
 LOG_FILE: Final[str | None] = get_environ("TEXTUAL_LOG", None)
 """A last resort log file that appends all logs, when devtools isn't working."""
 

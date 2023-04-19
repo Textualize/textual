@@ -5,6 +5,7 @@ from typing import ClassVar, Optional
 from textual.await_remove import AwaitRemove
 from textual.binding import Binding, BindingType
 from textual.containers import VerticalScroll
+from textual.events import Mount
 from textual.geometry import clamp
 from textual.message import Message
 from textual.reactive import reactive
@@ -93,7 +94,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         )
         self._index = initial_index
 
-    def on_mount(self) -> None:
+    def _on_mount(self, _: Mount) -> None:
         """Ensure the ListView is fully-settled after mounting."""
         self.index = self._index
 
@@ -196,7 +197,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
             return
         self.index -= 1
 
-    def on_list_item__child_clicked(self, event: ListItem._ChildClicked) -> None:
+    def _on_list_item__child_clicked(self, event: ListItem._ChildClicked) -> None:
         self.focus()
         self.index = self._nodes.index(event.item)
         self.post_message(self.Selected(self, event.item))

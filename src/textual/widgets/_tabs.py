@@ -11,6 +11,7 @@ from ..app import ComposeResult, RenderResult
 from ..binding import Binding, BindingType
 from ..containers import Container, Horizontal, Vertical
 from ..css.query import NoMatches
+from ..events import Mount
 from ..geometry import Offset
 from ..message import Message
 from ..reactive import reactive
@@ -73,7 +74,7 @@ class Underline(Widget):
             background_style=Style.from_color(bar_style.bgcolor),
         )
 
-    def on_click(self, event: events.Click):
+    def _on_click(self, event: events.Click):
         """Catch clicks, so that the underline can activate the tabs."""
         event.stop()
         self.post_message(self.Clicked(event.screen_offset))
@@ -379,7 +380,7 @@ class Tabs(Widget, can_focus=True):
         except NoMatches:
             return None
 
-    def on_mount(self) -> None:
+    def _on_mount(self, _: Mount) -> None:
         """Make the first tab active."""
         if self._first_active is not None:
             self.active = self._first_active
