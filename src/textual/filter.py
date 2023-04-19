@@ -20,6 +20,7 @@ class LineFilter(ABC):
 
         Args:
             segments: A list of segments.
+            background: The background color.
 
         Returns:
             A new list of segments.
@@ -59,6 +60,7 @@ class Monochrome(LineFilter):
 
         Args:
             segments: A list of segments.
+            background: The background color.
 
         Returns:
             A new list of segments.
@@ -142,6 +144,7 @@ class DimFilter(LineFilter):
 
         Args:
             segments: A list of segments.
+            background: The background color.
 
         Returns:
             A new list of segments.
@@ -165,11 +168,26 @@ class DimFilter(LineFilter):
 
 
 class ANSIToTruecolor(LineFilter):
+    """Convert an ANSI colors to their truecolor equivalents."""
+
     def __init__(self, terminal_theme: TerminalTheme):
+        """Initialise filter.
+
+        Args:
+            terminal_theme: A rich terminal theme.
+        """
         self.terminal_theme = terminal_theme
 
     @lru_cache(1024)
     def truecolor_style(self, style: Style) -> Style:
+        """Replace system colors with truecolor equivalent.
+
+        Args:
+            style: Style to apply truecolor filter to.
+
+        Returns:
+            New style.
+        """
         terminal_theme = self.terminal_theme
         color = style.color
         if color is not None and color.is_system_defined:
@@ -184,6 +202,15 @@ class ANSIToTruecolor(LineFilter):
         return style + Style.from_color(color, bgcolor)
 
     def apply(self, segments: list[Segment], background: Color) -> list[Segment]:
+        """Transform a list of segments.
+
+        Args:
+            segments: A list of segments.
+            background: The background color.
+
+        Returns:
+            A new list of segments.
+        """
         _Segment = Segment
         truecolor_style = self.truecolor_style
 
