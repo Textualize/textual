@@ -99,6 +99,9 @@ def dim_color(background: RichColor, color: RichColor, factor: float) -> RichCol
     )
 
 
+DEFAULT_COLOR = RichColor.default()
+
+
 @lru_cache(1024)
 def dim_style(style: Style, background: Color, factor: float) -> Style:
     """Replace dim attribute with a dim color.
@@ -117,9 +120,9 @@ def dim_style(style: Style, background: Color, factor: float) -> Style:
                 (
                     background.rich_color
                     if style.bgcolor.is_default
-                    else (style.bgcolor or RichColor.default())
+                    else (style.bgcolor or DEFAULT_COLOR)
                 ),
-                style.color or RichColor.default(),
+                style.color or DEFAULT_COLOR,
                 factor,
             ),
             None,
