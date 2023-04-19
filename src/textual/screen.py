@@ -449,7 +449,6 @@ class Screen(Generic[ScreenResultType], Widget):
 
         if self._callbacks:
             self._on_timer_update()
-            # self.post_message(events.InvokeCallbacks())
 
     def _on_timer_update(self) -> None:
         """Called by the _update_timer."""
