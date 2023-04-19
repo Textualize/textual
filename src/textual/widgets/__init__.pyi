@@ -16,6 +16,7 @@ from ._markdown import MarkdownViewer as MarkdownViewer
 from ._option_list import OptionList as OptionList
 from ._placeholder import Placeholder as Placeholder
 from ._pretty import Pretty as Pretty
+from ._progress_bar import ProgressBar as ProgressBar
 from ._radio_button import RadioButton as RadioButton
 from ._radio_set import RadioSet as RadioSet
 from ._static import Static as Static

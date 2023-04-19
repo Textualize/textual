@@ -26,6 +26,7 @@ if typing.TYPE_CHECKING:
     from ._option_list import OptionList
     from ._placeholder import Placeholder
     from ._pretty import Pretty
+    from ._progress_bar import ProgressBar
     from ._radio_button import RadioButton
     from ._radio_set import RadioSet
     from ._static import Static
@@ -55,6 +56,7 @@ __all__ = [
     "OptionList",
     "Placeholder",
     "Pretty",
+    "ProgressBar",
     "RadioButton",
     "RadioSet",
     "Static",
