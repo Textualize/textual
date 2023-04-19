@@ -1392,7 +1392,7 @@ class App(Generic[ReturnType], DOMNode):
             callback: An optional callback function that is called if the screen is dismissed with a result.
 
         Returns:
-            An awaitable that awaits the mounting of the screen and its children.
+            An optional awaitable that awaits the mounting of the screen and its children.
         """
         if not isinstance(screen, (Screen, str)):
             raise TypeError(
