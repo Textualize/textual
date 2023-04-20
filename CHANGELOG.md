@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.20.1] - 2023-04-18
 
+### Changed
+
+- Breaking change: standard keyboard scrollable navigation bindings have been moved off `Widget` and onto a new base class for scrollable containers (see also below addition) https://github.com/Textualize/textual/issues/2332
+
+### Added
+
+- Added `ScrollableContainer`; a container class that binds the common navigation keys to scroll actions (see also above breaking change) https://github.com/Textualize/textual/issues/2332
+
 ### Fix
 
 - New fix for stuck tabs underline https://github.com/Textualize/textual/issues/2229
