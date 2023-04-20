@@ -49,7 +49,7 @@ DEBUG: Final[bool] = get_environ_bool("TEXTUAL_DEBUG")
 """Enable debug mode."""
 
 DRIVER: Final[str | None] = get_environ("TEXTUAL_DRIVER", None)
-"""Import to replacement driver."""
+"""Import for replacement driver."""
 
 FILTERS: Final[str] = get_environ("TEXTUAL_FILTERS", "")
 """A list of filters to apply to renderables."""
