@@ -159,7 +159,7 @@ def _run_app(
 
         textual run "foo.py arg --option"
 
-    If your Textual app isn't easily accessible via a script or import, you can add the -c switch
+    If your Textual app isn't easily accessible via a script or import, you can add the -c switch.
 
         textual run -c "textual colors"
     """
