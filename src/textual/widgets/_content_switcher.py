@@ -25,7 +25,7 @@ class ContentSwitcher(Container):
 
     Note:
         If set to an unknown ID, this will result in
-        [NoMatches][textual.css.query.NoMatches] being raised.
+        [`NoMatches`][textual.css.query.NoMatches] being raised.
     """
 
     def __init__(
