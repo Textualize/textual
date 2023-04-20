@@ -23,7 +23,7 @@ class Container(Widget):
     """
 
 
-class ScrollableContainer(Widget):
+class ScrollableContainer(Widget, inherit_bindings=False):
     """Base container widget that binds navigation keys for scrolling."""
 
     BINDINGS: ClassVar[list[BindingType]] = [
@@ -51,7 +51,7 @@ class ScrollableContainer(Widget):
     """
 
 
-class Vertical(Widget):
+class Vertical(Widget, inherit_bindings=False):
     """A container which arranges children vertically."""
 
     DEFAULT_CSS = """
@@ -75,7 +75,7 @@ class VerticalScroll(ScrollableContainer, can_focus=True):
     """
 
 
-class Horizontal(Widget):
+class Horizontal(Widget, inherit_bindings=False):
     """A container which arranges children horizontally."""
 
     DEFAULT_CSS = """
@@ -99,7 +99,7 @@ class HorizontalScroll(ScrollableContainer, can_focus=True):
     """
 
 
-class Center(Widget):
+class Center(Widget, inherit_bindings=False):
     """A container which centers children horizontally."""
 
     DEFAULT_CSS = """
@@ -111,7 +111,7 @@ class Center(Widget):
     """
 
 
-class Middle(Widget):
+class Middle(Widget, inherit_bindings=False):
     """A container which aligns children vertically in the middle."""
 
     DEFAULT_CSS = """
@@ -123,7 +123,7 @@ class Middle(Widget):
     """
 
 
-class Grid(Widget):
+class Grid(Widget, inherit_bindings=False):
     """A container with grid alignment."""
 
     DEFAULT_CSS = """
@@ -134,7 +134,7 @@ class Grid(Widget):
     """
 
 
-class Content(Widget, can_focus=True, can_focus_children=False):
+class Content(Widget, can_focus=True, can_focus_children=False, inherit_bindings=False):
     """A container for content such as text."""
 
     DEFAULT_CSS = """
