@@ -3,11 +3,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, ClassVar
 
 import rich.repr
-from rich.style import Style
 from rich.text import Text, TextType
 
 from .. import events
-from ..app import ComposeResult, RenderResult
+from ..app import ComposeResult
 from ..binding import Binding, BindingType
 from ..containers import Container, Horizontal, Vertical
 from ..css.query import NoMatches
@@ -15,40 +14,22 @@ from ..events import Mount
 from ..geometry import Offset
 from ..message import Message
 from ..reactive import reactive
-from ..renderables.bar import RenderableBar
 from ..widget import Widget
 from ..widgets import Static
+from ._bar import Bar
 
 if TYPE_CHECKING:
     from typing_extensions import Self
 
 
-class Underline(Widget):
+class Underline(Bar):
     """The animated underline beneath tabs."""
 
     DEFAULT_CSS = """
-    Underline {
-        width: 1fr;
-        height: 1;
-    }
-    Underline > .underline--bar {
-        background: $foreground 10%;
+    Underline > .bar--bar {
         color: $accent;
     }
     """
-
-    COMPONENT_CLASSES = {"underline--bar"}
-    """
-    | Class | Description |
-    | :- | :- |
-    | `underline-bar` | Style of the bar (may be used to change the color). |
-
-    """
-
-    highlight_start = reactive(0)
-    """First cell in highlight."""
-    highlight_end = reactive(0)
-    """Last cell (inclusive) in highlight."""
 
     class Clicked(Message):
         """Inform ancestors the underline was clicked."""
@@ -59,20 +40,6 @@ class Underline(Widget):
         def __init__(self, offset: Offset) -> None:
             self.offset = offset
             super().__init__()
-
-    @property
-    def _highlight_range(self) -> tuple[int, int]:
-        """Highlighted range for underline bar."""
-        return (self.highlight_start, self.highlight_end)
-
-    def render(self) -> RenderResult:
-        """Render the bar."""
-        bar_style = self.get_component_rich_style("underline--bar")
-        return RenderableBar(
-            highlight_range=self._highlight_range,
-            highlight_style=Style.from_color(bar_style.color),
-            background_style=Style.from_color(bar_style.bgcolor),
-        )
 
     def _on_click(self, event: events.Click):
         """Catch clicks, so that the underline can activate the tabs."""
@@ -160,7 +127,7 @@ class Tabs(Widget, can_focus=True):
         min-width: 100%;
         overflow: hidden hidden;
     }
-    Tabs:focus .underline--bar {
+    Tabs:focus .bar--bar {
         background: $foreground 20%;
     }
     """
