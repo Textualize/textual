@@ -212,8 +212,6 @@ BORDER_LOCATIONS: dict[
     ),
 }
 
-BORDER_NAMES = list(BORDER_CHARS)
-
 # Some borders (such as panel) require that the title (and subtitle) be draw in reverse.
 # This is a mapping of the border type on to a tuple for the top and bottom borders, to indicate
 # reverse colors is required.
