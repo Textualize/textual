@@ -1,5 +1,6 @@
 import os
 import platform
+import shlex
 import sys
 from string import Template
 from typing import NoReturn
@@ -20,9 +21,7 @@ else:
 )
 
 
-def run(
-    import_name: str, args: list[str], environment: dict[str, str] | None = None
-) -> NoReturn:
+def run_app(command_args: str, environment: dict[str, str] | None = None) -> NoReturn:
     """Run a textual app.
 
     Note:
@@ -33,6 +32,7 @@ def run(
         args: Arguments to pass to the Textual app.
         environment: Environment variables, or None to use current process.
     """
+    import_name, *args = shlex.split(command_args, posix=not WINDOWS)
     if environment is None:
         app_environment = dict(os.environ)
     else:
@@ -40,8 +40,7 @@ def run(
 
     if _is_python_path(import_name):
         # If it is a Python path we can exec it now
-        path = import_name
-        exec_python([path, *args], app_environment)
+        exec_python([import_name, *args], app_environment)
     else:
         # Otherwise it is assumed to be a Python import
         exec_import(import_name, args, app_environment)
@@ -63,7 +62,7 @@ def _is_python_path(path: str) -> bool:
             first_line = source.readline()
     except IOError:
         return False
-    return first_line.startswith("#!") and "python" in first_line
+    return first_line.startswith("#!") and "py" in first_line
 
 
 def exec_python(args: list[str], environment: dict[str, str]) -> NoReturn:
@@ -75,7 +74,20 @@ def exec_python(args: list[str], environment: dict[str, str]) -> NoReturn:
         environment: Environment variables.
 
     """
+    sys.stdout.flush()
     os.execvpe(sys.executable, ["python", *args], environment)
+
+
+def exec_command(command: str, environment: dict[str, str]) -> NoReturn:
+    """Execute a command with the given environment.
+
+    Args:
+        command: Command to execute.
+        environment: Environment variables.
+    """
+    sys.stdout.flush()
+    command, *args = shlex.split(command, posix=not WINDOWS)
+    os.execvpe(command, [command, *args], environment)
 
 
 def exec_import(

@@ -9,10 +9,6 @@ import os
 
 from typing_extensions import Final
 
-from ._border import BORDER_CHARS
-
-__all__ = ["BORDERS"]
-
 get_environ = os.environ.get
 
 
@@ -42,16 +38,18 @@ def get_environ_int(name: str, default: int) -> int:
             or the default value otherwise.
     """
     try:
-        return int(get_environ(name, default))
+        return int(os.environ[name])
+    except KeyError:
+        return default
     except ValueError:
         return default
 
 
-BORDERS = list(BORDER_CHARS)
-
 DEBUG: Final[bool] = get_environ_bool("TEXTUAL_DEBUG")
+"""Enable debug mode."""
 
 DRIVER: Final[str | None] = get_environ("TEXTUAL_DRIVER", None)
+"""Import to replacement driver."""
 
 FILTERS: Final[str] = get_environ("TEXTUAL_FILTERS", "")
 """A list of filters to apply to renderables."""
@@ -59,12 +57,14 @@ FILTERS: Final[str] = get_environ("TEXTUAL_FILTERS", "")
 LOG_FILE: Final[str | None] = get_environ("TEXTUAL_LOG", None)
 """A last resort log file that appends all logs, when devtools isn't working."""
 
-
-DEVTOOLS_PORT_ENVIRON_VARIABLE: Final[str] = "TEXTUAL_CONSOLE_PORT"
-"""The name of the environment variable that sets the port for the devtools."""
-DEFAULT_DEVTOOLS_PORT: Final[int] = 8081
-"""The default port to use for the devtools."""
-DEVTOOLS_PORT: Final[int] = get_environ_int(
-    DEVTOOLS_PORT_ENVIRON_VARIABLE, DEFAULT_DEVTOOLS_PORT
-)
+DEVTOOLS_PORT: Final[int] = get_environ_int("TEXTUAL_DEVTOOLS_PORT", 8081)
 """Constant with the port that the devtools will connect to."""
+
+SCREENSHOT_DELAY: Final[int] = get_environ_int("TEXTUAL_SCREENSHOT", -1)
+"""Seconds delay before taking screenshot."""
+
+PRESS: Final[str] = get_environ("TEXTUAL_PRESS", "")
+"""Keys to automatically press."""
+
+SHOW_RETURN: Final[bool] = get_environ_bool("TEXTUAL_SHOW_RETURN")
+"""Write the return value on exit."""

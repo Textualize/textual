@@ -1048,9 +1048,19 @@ class App(Generic[ReturnType], DOMNode):
 
         auto_pilot_task: Task | None = None
 
+        if auto_pilot is None and constants.PRESS:
+            keys = constants.PRESS.split(",")
+
+            async def press_keys(pilot: Pilot) -> None:
+                """Auto press keys."""
+                await pilot.press(*keys)
+
+            auto_pilot = press_keys
+
         async def app_ready() -> None:
             """Called by the message loop when the app is ready."""
             nonlocal auto_pilot_task
+
             if auto_pilot is not None:
 
                 async def run_auto_pilot(
@@ -1762,23 +1772,15 @@ class App(Generic[ReturnType], DOMNode):
         May be used as a hook for any operations that should run first.
 
         """
-        try:
-            screenshot_timer = float(os.environ.get("TEXTUAL_SCREENSHOT", "0"))
-        except ValueError:
-            return
 
-        screenshot_title = os.environ.get("TEXTUAL_SCREENSHOT_TITLE")
-
-        if not screenshot_timer:
-            return
-
-        async def on_screenshot():
-            """Used by docs plugin."""
-            svg = self.export_screenshot(title=screenshot_title)
-            self._screenshot = svg  # type: ignore
+        async def take_screenshot() -> None:
+            """Take a screenshot and exit."""
+            self.save_screenshot()
             self.exit()
 
-        self.set_timer(screenshot_timer, on_screenshot, name="screenshot timer")
+        self.set_timer(
+            constants.SCREENSHOT_DELAY, take_screenshot, name="screenshot timer"
+        )
 
     async def _on_compose(self) -> None:
         try:
@@ -1965,6 +1967,14 @@ class App(Generic[ReturnType], DOMNode):
             self._driver.close()
 
         self._print_error_renderables()
+
+        if constants.SHOW_RETURN and self._exit and self._return_value is not None:
+            from rich.console import Console
+            from rich.pretty import Pretty
+
+            console = Console()
+            console.print("[b]The app returned:")
+            console.print(Pretty(self._return_value))
 
     async def _on_exit_app(self) -> None:
         self._begin_batch()  # Prevent repaint / layout while shutting down
