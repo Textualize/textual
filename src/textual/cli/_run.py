@@ -89,6 +89,7 @@ def exec_python(args: list[str], environment: dict[str, str]) -> NoReturn:
         environment: Environment variables.
 
     """
+    sys.stderr.flush()
     sys.stdout.flush()
     os.execvpe(sys.executable, ["python", *args], environment)
 
@@ -100,6 +101,7 @@ def exec_command(command: str, environment: dict[str, str]) -> NoReturn:
         command: Command to execute.
         environment: Environment variables.
     """
+    sys.stderr.flush()
     sys.stdout.flush()
     command, *args = shlex.split(command, posix=not WINDOWS)
     os.execvpe(command, [command, *args], environment)
@@ -122,5 +124,6 @@ def exec_import(
     module, _colon, app = import_name.partition(":")
     script = EXEC_SCRIPT.substitute(MODULE=module, APP=app or "app")
     compile(script, "textual-exec", "exec")
+    sys.stderr.flush()
     sys.stdout.flush()
     exec_python(["-c", script], environment)
