@@ -16,7 +16,6 @@ from typing import (
     ClassVar,
     Collection,
     Generator,
-    Generic,
     Iterable,
     NamedTuple,
     Sequence,
