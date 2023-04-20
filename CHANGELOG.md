@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed dark mode toggles in a "child" screen not updating a "parent" screen https://github.com/Textualize/textual/issues/1999
+
 ## [0.20.1] - 2023-04-18
 
 ### Fix
