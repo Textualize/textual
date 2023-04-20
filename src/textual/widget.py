@@ -55,7 +55,6 @@ from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
 from .actions import SkipAction
 from .await_remove import AwaitRemove
-from .binding import Binding
 from .box_model import BoxModel
 from .css.query import NoMatches, WrongType
 from .css.scalar import ScalarOffset
@@ -237,17 +236,6 @@ class Widget(DOMNode):
     See also [static][textual.widgets._static.Static] for starting point for your own widgets.
 
     """
-
-    BINDINGS = [
-        Binding("up", "scroll_up", "Scroll Up", show=False),
-        Binding("down", "scroll_down", "Scroll Down", show=False),
-        Binding("left", "scroll_left", "Scroll Up", show=False),
-        Binding("right", "scroll_right", "Scroll Right", show=False),
-        Binding("home", "scroll_home", "Scroll Home", show=False),
-        Binding("end", "scroll_end", "Scroll End", show=False),
-        Binding("pageup", "page_up", "Page Up", show=False),
-        Binding("pagedown", "page_down", "Page Down", show=False),
-    ]
 
     DEFAULT_CSS = """
     Widget{
