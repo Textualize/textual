@@ -7,6 +7,8 @@ This means that they will never return.
 
 """
 
+from __future__ import annotations
+
 import os
 import platform
 import shlex
