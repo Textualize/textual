@@ -3,7 +3,11 @@ Container widgets for quick styling.
 
 """
 
+from __future__ import annotations
 
+from typing import ClassVar
+
+from .binding import Binding, BindingType
 from .widget import Widget
 
 
@@ -19,7 +23,35 @@ class Container(Widget):
     """
 
 
-class Vertical(Widget):
+class ScrollableContainer(Widget, inherit_bindings=False):
+    """Base container widget that binds navigation keys for scrolling."""
+
+    BINDINGS: ClassVar[list[BindingType]] = [
+        Binding("up", "scroll_up", "Scroll Up", show=False),
+        Binding("down", "scroll_down", "Scroll Down", show=False),
+        Binding("left", "scroll_left", "Scroll Up", show=False),
+        Binding("right", "scroll_right", "Scroll Right", show=False),
+        Binding("home", "scroll_home", "Scroll Home", show=False),
+        Binding("end", "scroll_end", "Scroll End", show=False),
+        Binding("pageup", "page_up", "Page Up", show=False),
+        Binding("pagedown", "page_down", "Page Down", show=False),
+    ]
+    """Keyboard bindings for scrollable containers.
+
+    | Key(s) | Description |
+    | :- | :- |
+    | up | Scroll up, if vertical scrolling is available. |
+    | down | Scroll down, if vertical scrolling is available. |
+    | left | Scroll left, if horizontal scrolling is available. |
+    | right | Scroll right, if horizontal scrolling is available. |
+    | home | Scroll to the home position, if scrolling is available. |
+    | end | Scroll to the end position, if scrolling is available. |
+    | pageup | Scroll up one page, if vertical scrolling is available. |
+    | pagedown | Scroll down one page, if vertical scrolling is available. |
+    """
+
+
+class Vertical(Widget, inherit_bindings=False):
     """A container which arranges children vertically."""
 
     DEFAULT_CSS = """
@@ -31,7 +63,7 @@ class Vertical(Widget):
     """
 
 
-class VerticalScroll(Widget, can_focus=True):
+class VerticalScroll(ScrollableContainer, can_focus=True):
     """A container which arranges children vertically, with an automatic vertical scrollbar."""
 
     DEFAULT_CSS = """
@@ -43,7 +75,7 @@ class VerticalScroll(Widget, can_focus=True):
     """
 
 
-class Horizontal(Widget):
+class Horizontal(Widget, inherit_bindings=False):
     """A container which arranges children horizontally."""
 
     DEFAULT_CSS = """
@@ -55,7 +87,7 @@ class Horizontal(Widget):
     """
 
 
-class HorizontalScroll(Widget, can_focus=True):
+class HorizontalScroll(ScrollableContainer, can_focus=True):
     """A container which arranges children horizontally, with an automatic horizontal scrollbar."""
 
     DEFAULT_CSS = """
@@ -67,7 +99,7 @@ class HorizontalScroll(Widget, can_focus=True):
     """
 
 
-class Center(Widget):
+class Center(Widget, inherit_bindings=False):
     """A container which centers children horizontally."""
 
     DEFAULT_CSS = """
@@ -79,7 +111,7 @@ class Center(Widget):
     """
 
 
-class Middle(Widget):
+class Middle(Widget, inherit_bindings=False):
     """A container which aligns children vertically in the middle."""
 
     DEFAULT_CSS = """
@@ -91,7 +123,7 @@ class Middle(Widget):
     """
 
 
-class Grid(Widget):
+class Grid(Widget, inherit_bindings=False):
     """A container with grid alignment."""
 
     DEFAULT_CSS = """
@@ -102,7 +134,7 @@ class Grid(Widget):
     """
 
 
-class Content(Widget, can_focus=True, can_focus_children=False):
+class Content(Widget, can_focus=True, can_focus_children=False, inherit_bindings=False):
     """A container for content such as text."""
 
     DEFAULT_CSS = """
