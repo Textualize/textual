@@ -3,7 +3,7 @@
 Functions to run Textual apps with an updated environment.
 
 Note that these methods will execute apps in a new process, and abandon the current process.
-This means that they will never return.
+This means that (if they succeed) they will never return.
 
 """
 
