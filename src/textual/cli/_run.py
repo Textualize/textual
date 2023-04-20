@@ -17,6 +17,7 @@ from string import Template
 from typing import NoReturn
 
 WINDOWS = platform.system() == "Windows"
+"""True if we're running on Windows."""
 
 EXEC_SCRIPT = Template(
     """\
@@ -30,6 +31,7 @@ else:
     app().run()
 """
 )
+"""A template script to import and run an app."""
 
 
 def run_app(command_args: str, environment: dict[str, str] | None = None) -> None:
