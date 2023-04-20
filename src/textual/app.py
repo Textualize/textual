@@ -1969,7 +1969,7 @@ class App(Generic[ReturnType], DOMNode):
 
         self._print_error_renderables()
 
-        if constants.SHOW_RETURN and self._exit and self._return_value is not None:
+        if constants.SHOW_RETURN:
             from rich.console import Console
             from rich.pretty import Pretty
 
