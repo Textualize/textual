@@ -29,5 +29,5 @@ class RadioButton(ToggleButton):
 
         @property
         def control(self) -> RadioButton:
-            """Alias for self.radio_button"""
+            """Alias for [Changed.radio_button][textual.widgets.RadioButton.Changed.radio_button]."""
             return self.radio_button

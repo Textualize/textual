@@ -13,7 +13,7 @@ from ._radio_button import RadioButton
 class RadioSet(Container):
     """Widget for grouping a collection of radio buttons into a set.
 
-    When a collection of [RadioButton][textual.widgets.RadioButton]s are
+    When a collection of [`RadioButton`][textual.widgets.RadioButton]s are
     grouped with this widget, they will be treated as a mutually-exclusive
     grouping. If one button is turned on, the previously-on button will be
     turned off.
@@ -46,11 +46,11 @@ class RadioSet(Container):
             """
             super().__init__()
             self.radio_set = radio_set
-            """A reference to the `RadioSet` that was changed."""
+            """A reference to the [`RadioSet`][textual.widgets.RadioSet] that was changed."""
             self.pressed = pressed
-            """The `RadioButton` that was pressed to make the change."""
+            """The [`RadioButton`][textual.widgets.RadioButton] that was pressed to make the change."""
             self.index = radio_set.pressed_index
-            """The index of the `RadioButton` that was pressed to make the change."""
+            """The index of the [`RadioButton`][textual.widgets.RadioButton] that was pressed to make the change."""
 
         def __rich_repr__(self) -> rich.repr.Result:
             yield "radio_set", self.radio_set
@@ -68,7 +68,7 @@ class RadioSet(Container):
         """Initialise the radio set.
 
         Args:
-            buttons: A collection of labels or [RadioButton][textual.widgets.RadioButton]s to group together.
+            buttons: A collection of labels or [`RadioButton`][textual.widgets.RadioButton]s to group together.
             name: The name of the radio set.
             id: The ID of the radio set in the DOM.
             classes: The CSS classes of the radio set.
@@ -140,12 +140,12 @@ class RadioSet(Container):
 
     @property
     def pressed_button(self) -> RadioButton | None:
-        """The currently-pressed button, or `None` if none are pressed."""
+        """The currently-pressed [`RadioButton`][textual.widgets.RadioButton], or `None` if none are pressed."""
         return self._pressed_button
 
     @property
     def pressed_index(self) -> int:
-        """The index of the currently-pressed button, or -1 if none are pressed."""
+        """The index of the currently-pressed [`RadioButton`][textual.widgets.RadioButton], or -1 if none are pressed."""
         return (
             self._nodes.index(self._pressed_button)
             if self._pressed_button is not None
