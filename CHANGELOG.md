@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Breaking change: standard keyboard scrollable navigation bindings have been moved off `Widget` and onto a new base class for scrollable containers (see also below addition) https://github.com/Textualize/textual/issues/2332
 - `ScrollView` now inherits from `Scrollablecontainer` rather than `Widget` https://github.com/Textualize/textual/issues/2332
+- Containers no longer inherit any bindings from `Widget` https://github.com/Textualize/textual/issues/2331
 
 ### Added
 
