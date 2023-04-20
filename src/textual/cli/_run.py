@@ -46,8 +46,7 @@ def run_app(command_args: str, environment: dict[str, str] | None = None) -> Non
         The current process is abandoned.
 
     Args:
-        import_name: Path or import:App of Textual app.
-        args: Arguments to pass to the Textual app.
+        command_args: Arguments to pass to the Textual app.
         environment: Environment variables, or None to use current process.
     """
     import_name, *args = shlex.split(command_args, posix=not WINDOWS)
