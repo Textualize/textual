@@ -80,17 +80,21 @@ def _is_python_path(path: str) -> bool:
     return first_line.startswith("#!") and "py" in first_line
 
 
+def _flush() -> None:
+    """Flush output before exec."""
+    sys.stderr.flush()
+    sys.stdout.flush()
+
+
 def exec_python(args: list[str], environment: dict[str, str]) -> NoReturn:
-    """Execute the app.
+    """Execute a Python script.
 
     Args:
-        path: Path to the Python file.
-        args: CLI arguments.
+        args: Additional arguments.
         environment: Environment variables.
 
     """
-    sys.stderr.flush()
-    sys.stdout.flush()
+    _flush()
     os.execvpe(sys.executable, ["python", *args], environment)
 
 
@@ -101,8 +105,7 @@ def exec_command(command: str, environment: dict[str, str]) -> NoReturn:
         command: Command to execute.
         environment: Environment variables.
     """
-    sys.stderr.flush()
-    sys.stdout.flush()
+    _flush()
     command, *args = shlex.split(command, posix=not WINDOWS)
     os.execvpe(command, [command, *args], environment)
 
@@ -123,7 +126,7 @@ def exec_import(
     """
     module, _colon, app = import_name.partition(":")
     script = EXEC_SCRIPT.substitute(MODULE=module, APP=app or "app")
+    # Compiling the script will raise a SyntaxError if there are any invalid symbols
     compile(script, "textual-exec", "exec")
-    sys.stderr.flush()
-    sys.stdout.flush()
-    exec_python(["-c", script], environment)
+    _flush()
+    exec_python(["-c", script, *args], environment)
