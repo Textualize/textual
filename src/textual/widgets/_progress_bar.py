@@ -109,16 +109,7 @@ class Bar(Widget, can_focus=False):
         )
 
 
-class PercentageStatus(Label):
-    """A label to display the percentage status of the progress bar."""
-
-    DEFAULT_CSS = """
-    PercentageStatus {
-        width: 4;
-        content-align-horizontal: right;
-    }
-    """
-
+class ProgressAwareLabel(Label):
     _completion_percentage: reactive[float | None] = reactive[Optional[float]](None)
     """The percentage of progress that has been completed or `None` if indeterminate."""
 
@@ -133,11 +124,36 @@ class PercentageStatus(Label):
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._completion_percentage = completion_percentage
 
+
+class PercentageStatus(ProgressAwareLabel):
+    """A label to display the percentage status of the progress bar."""
+
+    DEFAULT_CSS = """
+    PercentageStatus {
+        width: 5;
+        content-align-horizontal: right;
+    }
+    """
+
     def watch__completion_percentage(self, percentage: float | None) -> None:
         if percentage is None:
             self.renderable = "--%"
         else:
             self.renderable = f"{int(100 * percentage)}%"
+
+
+class ETAStatus(ProgressAwareLabel):
+    """A label to display the estimated time until completion of the progress bar."""
+
+    DEFAULT_CSS = """
+    ETAStatus {
+        width: 9;
+        content-align-horizontal: right;
+    }
+    """
+
+    def watch__completion_percentage(self, percentage: float | None) -> None:
+        ...
 
 
 class ProgressBar(Widget, can_focus=False):
