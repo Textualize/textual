@@ -117,7 +117,7 @@ def _pre_run_warnings() -> None:
     "command",
     type=bool,
     default=False,
-    help="Run as command rather that a file / module",
+    help="Run as command rather that a file / module.",
     is_flag=True,
 )
 @click.option(
@@ -126,7 +126,7 @@ def _pre_run_warnings() -> None:
     "show_return",
     type=bool,
     default=False,
-    help="Show any return value on exit",
+    help="Show any return value on exit.",
     is_flag=True,
 )
 def _run_app(
@@ -227,7 +227,7 @@ def keys():
 
 @run.command("diagnose")
 def run_diagnose():
-    """Print information about the Textual environment"""
+    """Print information about the Textual environment."""
     from textual.cli.tools.diagnose import diagnose
 
     diagnose()
