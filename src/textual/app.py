@@ -1996,6 +1996,12 @@ class App(Generic[ReturnType], DOMNode):
         stylesheet.reparse()
         stylesheet.update(self.app, animate=animate)
         self.screen._refresh_layout(self.size, full=True)
+        # The other screens in the stack will need to know about some style
+        # changes, as a final pass let's check in on every screen that isn't
+        # the current one and update them too.
+        for screen in self.screen_stack:
+            if screen != self.screen:
+                stylesheet.update(screen, animate=animate)
 
     def _display(self, screen: Screen, renderable: RenderableType | None) -> None:
         """Display a renderable within a sync.

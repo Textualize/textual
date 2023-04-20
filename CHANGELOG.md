@@ -7,7 +7,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
-
 ### Changed
 
 - `textual run` execs apps in a new context.
@@ -15,6 +14,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `-c` switch to `textual run` which runs commands in a Textual dev environment.
+
+### Fixed
+
+- Fixed dark mode toggles in a "child" screen not updating a "parent" screen https://github.com/Textualize/textual/issues/1999
 
 ## [0.20.1] - 2023-04-18
 
