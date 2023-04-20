@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.20.1] - 2023-04-18
+## Unreleased
 
 ### Changed
 
@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `ScrollableContainer`; a container class that binds the common navigation keys to scroll actions (see also above breaking change) https://github.com/Textualize/textual/issues/2332
+
+## [0.20.1] - 2023-04-18
 
 ### Fix
 
