@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `ScrollableContainer`; a container class that binds the common navigation keys to scroll actions (see also above breaking change) https://github.com/Textualize/textual/issues/2332
 
+### Fixed
+
+- Fixed dark mode toggles in a "child" screen not updating a "parent" screen https://github.com/Textualize/textual/issues/1999
+
 ## [0.20.1] - 2023-04-18
 
 ### Fix

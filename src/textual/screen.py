@@ -42,8 +42,8 @@ from .widget import Widget
 if TYPE_CHECKING:
     from typing_extensions import Final
 
-# Screen updates will be batched so that they don't happen more often than 120 times per second:
-UPDATE_PERIOD: Final[float] = 1 / 120
+# Screen updates will be batched so that they don't happen more often than 60 times per second:
+UPDATE_PERIOD: Final[float] = 1 / 60
 
 ScreenResultType = TypeVar("ScreenResultType")
 """The result type of a screen."""
@@ -437,42 +437,49 @@ class Screen(Generic[ScreenResultType], Widget):
         event.prevent_default()
 
         if not self.app._batch_count and self.is_current:
-            async with self.app._dom_lock:
-                if self.is_current:
-                    if self._layout_required:
-                        self._refresh_layout()
-                        self._layout_required = False
-                        self._scroll_required = False
-                        self._dirty_widgets.clear()
-                    elif self._scroll_required:
-                        self._refresh_layout(scroll=True)
-                        self._scroll_required = False
-
-                    if self._repaint_required:
-                        self._dirty_widgets.clear()
-                        self._dirty_widgets.add(self)
-                        self._repaint_required = False
-
-                    if self._dirty_widgets:
-                        self._update_timer.resume()
+            if (
+                self._layout_required
+                or self._scroll_required
+                or self._repaint_required
+                or self._dirty_widgets
+            ):
+                self._update_timer.resume()
 
         # The Screen is idle - a good opportunity to invoke the scheduled callbacks
-        await self._invoke_and_clear_callbacks()
+
+        if self._callbacks:
+            self._on_timer_update()
 
     def _on_timer_update(self) -> None:
         """Called by the _update_timer."""
-        # Render widgets together
-        if self._dirty_widgets and self.is_current:
-            self._compositor.update_widgets(self._dirty_widgets)
-            update = self._compositor.render_update(
-                screen_stack=self.app._background_screens
-            )
-            self.app._display(self, update)
-            self._dirty_widgets.clear()
-        if self._callbacks:
-            self.post_message(events.InvokeCallbacks())
 
         self._update_timer.pause()
+        if self.is_current:
+            if self._layout_required:
+                self._refresh_layout()
+                self._layout_required = False
+                self._scroll_required = False
+                self._dirty_widgets.clear()
+            elif self._scroll_required:
+                self._refresh_layout(scroll=True)
+                self._scroll_required = False
+
+            if self._repaint_required:
+                self._update_timer.resume()
+                self._dirty_widgets.clear()
+                self._dirty_widgets.add(self)
+                self._repaint_required = False
+
+            if self._dirty_widgets and self.is_current:
+                self._compositor.update_widgets(self._dirty_widgets)
+                update = self._compositor.render_update(
+                    screen_stack=self.app._background_screens
+                )
+                self.app._display(self, update)
+                self._dirty_widgets.clear()
+
+        if self._callbacks:
+            self.post_message(events.InvokeCallbacks())
 
     async def _on_invoke_callbacks(self, event: events.InvokeCallbacks) -> None:
         """Handle PostScreenUpdate events, which are sent after the screen is updated"""
