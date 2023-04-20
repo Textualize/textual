@@ -1778,9 +1778,10 @@ class App(Generic[ReturnType], DOMNode):
             self.save_screenshot()
             self.exit()
 
-        self.set_timer(
-            constants.SCREENSHOT_DELAY, take_screenshot, name="screenshot timer"
-        )
+        if constants.SCREENSHOT_DELAY >= 0:
+            self.set_timer(
+                constants.SCREENSHOT_DELAY, take_screenshot, name="screenshot timer"
+            )
 
     async def _on_compose(self) -> None:
         try:
