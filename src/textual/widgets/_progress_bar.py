@@ -155,7 +155,7 @@ class ProgressBar(Widget, can_focus=False):
 
     progress: reactive[float] = reactive(0.0)
     """The progress of the progress bar so far."""
-    total: reactive[float | None] = reactive[Optional[float]](100.0)
+    total: reactive[float | None] = reactive[Optional[float]](100.0, init=False)
     """The total number of steps associated with this progress bar."""
 
     def __init__(
@@ -193,7 +193,10 @@ class ProgressBar(Widget, can_focus=False):
             disabled: Whether the widget is disabled or not.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
-        self._total = total
+        total_to_use = None if total is None else 0
+        self._bar = Bar(total_to_use)
+        self._percentage_status = PercentageStatus(total_to_use)
+        self.total = total
         self.hide_bar = hide_bar
         self.hide_percentage = hide_percentage
         self.hide_eta = hide_eta
@@ -201,12 +204,46 @@ class ProgressBar(Widget, can_focus=False):
     def compose(self) -> ComposeResult:
         with Horizontal():
             if not self.hide_bar:
-                yield Bar(None if self._total is None else 0)
+                yield self._bar
             if not self.hide_percentage:
-                yield PercentageStatus(None if self._total is None else 0)
+                yield self._percentage_status
             if not self.hide_eta:
                 yield Label()
+
+    def validate_progress(self, progress: float) -> float:
+        if self.total is not None:
+            return min(progress, self.total)
+        return progress
+
+    def watch_progress(self, progress: float) -> None:
+        if self.total is not None:
+            completion_percentage = progress / self.total
+            self._bar._completion_percentage = completion_percentage
+            self._percentage_status._completion_percentage = completion_percentage
+
+    def watch_total(self, total: float | None) -> None:
+        if total is None:
+            self._bar._completion_percentage = None
+            self._percentage_status._completion_percentage = None
+        else:
+            percentage = self.progress / total
+            self._bar._completion_percentage = percentage
+            self._percentage_status._completion_percentage = percentage
 
     def advance(self, advance: float = 1) -> None:
         """Advance the progress of the progress bar by the given amount."""
         self.progress += advance
+
+    def update(
+        self,
+        *,
+        total: float | None = None,
+        progress: float | None = None,
+        advance: float | None = None,
+    ) -> None:
+        if total is not None:
+            self.total = total
+        if progress is not None:
+            self.progress = progress
+        if advance is not None:
+            self.progress += advance
