@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+
+### Changed
+
+- `textual run` execs apps in a new context.
+
+### Added
+
+- Added `-c` switch to `textual run` which runs commands in a Textual dev environment.
+
 ## [0.20.1] - 2023-04-18
 
 ### Fix
