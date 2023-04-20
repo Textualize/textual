@@ -40,7 +40,7 @@ async def _on_startup(app: Application) -> None:
 
 
 def _run_devtools(
-    verbose: bool, exclude: list[str] | None = None, port: int = DEVTOOLS_PORT
+    verbose: bool, exclude: list[str] | None = None, port: int | None = None
 ) -> None:
     app = _make_devtools_aiohttp_app(verbose=verbose, exclude=exclude)
 
@@ -50,7 +50,7 @@ def _run_devtools(
     try:
         run_app(
             app,
-            port=port,
+            port=DEVTOOLS_PORT if port is None else port,
             print=noop_print,
             loop=asyncio.get_event_loop(),
         )

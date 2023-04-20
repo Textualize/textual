@@ -46,7 +46,7 @@ def console(port: int | None, verbose: bool, exclude: list[str]) -> None:
     console.clear()
     console.show_cursor(False)
     try:
-        _run_devtools(verbose=verbose, exclude=exclude)
+        _run_devtools(verbose=verbose, exclude=exclude, port=port)
     finally:
         console.show_cursor(True)
 
@@ -71,8 +71,10 @@ def _pre_run_warnings() -> None:
     # second item is a message to show the user on exit from `textual run`.
     warnings = [
         (
-            platform.system() == "Darwin"
-            and os.environ.get("TERM_PROGRAM") == "Apple_Terminal",
+            (
+                platform.system() == "Darwin"
+                and os.environ.get("TERM_PROGRAM") == "Apple_Terminal"
+            ),
             "The default terminal app on macOS is limited to 256 colors. See our FAQ for more details:\n\n"
             "https://github.com/Textualize/textual/blob/main/FAQ.md#why-doesn't-textual-look-good-on-macos",
         )
@@ -115,6 +117,7 @@ def _pre_run_warnings() -> None:
 )
 @click.option(
     "-c",
+    "--command",
     "command",
     type=bool,
     default=False,
@@ -123,6 +126,7 @@ def _pre_run_warnings() -> None:
 )
 @click.option(
     "-r",
+    "--show-return",
     "show_return",
     type=bool,
     default=False,
@@ -158,13 +162,17 @@ def _run_app(
     in quotes:
 
         textual run "foo.py arg --option"
+
+    If your Textual app isn't easily accessible via a script or import, you can add the -c switch
+
+        textual run -c "textual colors"
     """
 
     import os
 
     from textual.features import parse_features
 
-    environment = dict(os.environ.items())
+    environment = dict(os.environ)
 
     features = set(parse_features(environment.get("TEXTUAL", "")))
     if dev:

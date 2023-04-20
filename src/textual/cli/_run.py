@@ -1,3 +1,12 @@
+"""
+
+Functions to run Textual apps with an updated environment.
+
+Note that these methods will execute apps in a new process, and abandon the current process.
+This means that they will never return.
+
+"""
+
 import os
 import platform
 import shlex
@@ -21,7 +30,7 @@ else:
 )
 
 
-def run_app(command_args: str, environment: dict[str, str] | None = None) -> NoReturn:
+def run_app(command_args: str, environment: dict[str, str] | None = None) -> None:
     """Run a textual app.
 
     Note:
@@ -41,9 +50,13 @@ def run_app(command_args: str, environment: dict[str, str] | None = None) -> NoR
     if _is_python_path(import_name):
         # If it is a Python path we can exec it now
         exec_python([import_name, *args], app_environment)
+
     else:
         # Otherwise it is assumed to be a Python import
-        exec_import(import_name, args, app_environment)
+        try:
+            exec_import(import_name, args, app_environment)
+        except SyntaxError:
+            print(f"Unable to import Textual app from {import_name!r}")
 
 
 def _is_python_path(path: str) -> bool:
@@ -95,6 +108,9 @@ def exec_import(
 ) -> NoReturn:
     """Import and execute an app.
 
+    Raises:
+        SyntaxError: If any imports are not valid Python symbols.
+
     Args:
         import_name: The Python import.
         args: Command line arguments.
@@ -103,4 +119,6 @@ def exec_import(
     """
     module, _colon, app = import_name.partition(":")
     script = EXEC_SCRIPT.substitute(MODULE=module, APP=app or "app")
+    compile(script, "textual-exec", "exec")
+    sys.stdout.flush()
     exec_python(["-c", script], environment)
