@@ -13,9 +13,6 @@ except ImportError:
 
 from importlib_metadata import version
 
-from textual._import_app import AppFail, import_app
-from textual.pilot import Pilot
-
 
 @click.group()
 @click.version_option(version("textual"))
@@ -36,7 +33,6 @@ def run():
 @click.option("-x", "--exclude", "exclude", help="Exclude log group(s)", multiple=True)
 def console(port: int | None, verbose: bool, exclude: list[str]) -> None:
     """Launch the textual console."""
-    import os
 
     from rich.console import Console
 
@@ -186,7 +182,8 @@ def _run_app(
         environment["TEXTUAL_PRESS"] = str(press)
     if screenshot is not None:
         environment["TEXTUAL_SCREENSHOT"] = str(screenshot)
-    environment["TEXTUAL_SHOW_RETURN"] = "1" if show_return else "0"
+    if show_return:
+        environment["TEXTUAL_SHOW_RETURN"] = "1"
 
     _pre_run_warnings()
 
