@@ -9,17 +9,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Breaking change: standard keyboard scrollable navigation bindings have been moved off `Widget` and onto a new base class for scrollable containers (see also below addition) https://github.com/Textualize/textual/issues/2332
-- `ScrollView` now inherits from `ScrollableContainer` rather than `Widget` https://github.com/Textualize/textual/issues/2332
-- Containers no longer inherit any bindings from `Widget` https://github.com/Textualize/textual/issues/2331
+- `textual run` execs apps in a new context.
 
 ### Added
 
+- Added `-c` switch to `textual run` which runs commands in a Textual dev environment.
+- Breaking change: standard keyboard scrollable navigation bindings have been moved off `Widget` and onto a new base class for scrollable containers (see also below addition) https://github.com/Textualize/textual/issues/2332
+- `ScrollView` now inherits from `ScrollableContainer` rather than `Widget` https://github.com/Textualize/textual/issues/2332
+- Containers no longer inherit any bindings from `Widget` https://github.com/Textualize/textual/issues/2331
 - Added `ScrollableContainer`; a container class that binds the common navigation keys to scroll actions (see also above breaking change) https://github.com/Textualize/textual/issues/2332
 
 ### Fixed
 
 - Fixed dark mode toggles in a "child" screen not updating a "parent" screen https://github.com/Textualize/textual/issues/1999
+- Fixed "panel" border not exposed via CSS
 
 ## [0.20.1] - 2023-04-18
 

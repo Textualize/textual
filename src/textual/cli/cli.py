@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import sys
 
-from ..constants import DEFAULT_DEVTOOLS_PORT, DEVTOOLS_PORT_ENVIRON_VARIABLE
+from ..constants import DEVTOOLS_PORT
+from ._run import exec_command, run_app
 
 try:
     import click
@@ -11,9 +12,6 @@ except ImportError:
     sys.exit(1)
 
 from importlib_metadata import version
-
-from textual._import_app import AppFail, import_app
-from textual.pilot import Pilot
 
 
 @click.group()
@@ -29,31 +27,27 @@ def run():
     type=int,
     default=None,
     metavar="PORT",
-    help=f"Port to use for the development mode console. Defaults to {DEFAULT_DEVTOOLS_PORT}.",
+    help=f"Port to use for the development mode console. Defaults to {DEVTOOLS_PORT}.",
 )
 @click.option("-v", "verbose", help="Enable verbose logs.", is_flag=True)
 @click.option("-x", "--exclude", "exclude", help="Exclude log group(s)", multiple=True)
 def console(port: int | None, verbose: bool, exclude: list[str]) -> None:
     """Launch the textual console."""
-    import os
 
     from rich.console import Console
 
     from textual.devtools.server import _run_devtools
 
-    if port is not None:
-        os.environ[DEVTOOLS_PORT_ENVIRON_VARIABLE] = str(port)
-
     console = Console()
     console.clear()
     console.show_cursor(False)
     try:
-        _run_devtools(verbose=verbose, exclude=exclude)
+        _run_devtools(verbose=verbose, exclude=exclude, port=port)
     finally:
         console.show_cursor(True)
 
 
-def _post_run_warnings() -> None:
+def _pre_run_warnings() -> None:
     """Look for and report any issues with the environment.
 
     This is the right place to add code that looks at the terminal, or other
@@ -73,8 +67,10 @@ def _post_run_warnings() -> None:
     # second item is a message to show the user on exit from `textual run`.
     warnings = [
         (
-            platform.system() == "Darwin"
-            and os.environ.get("TERM_PROGRAM") == "Apple_Terminal",
+            (
+                platform.system() == "Darwin"
+                and os.environ.get("TERM_PROGRAM") == "Apple_Terminal"
+            ),
             "The default terminal app on macOS is limited to 256 colors. See our FAQ for more details:\n\n"
             "https://github.com/Textualize/textual/blob/main/FAQ.md#why-doesn't-textual-look-good-on-macos",
         )
@@ -82,7 +78,11 @@ def _post_run_warnings() -> None:
 
     for concerning, concern in warnings:
         if concerning:
-            console.print(Panel.fit(f"⚠️ [bold green] {concern}[/]", style="cyan"))
+            console.print(
+                Panel.fit(
+                    f"⚠️  {concern}", style="yellow", border_style="red", padding=(1, 2)
+                )
+            )
 
 
 @run.command(
@@ -92,25 +92,51 @@ def _post_run_warnings() -> None:
     },
 )
 @click.argument("import_name", metavar="FILE or FILE:APP")
-@click.option("--dev", "dev", help="Enable development mode", is_flag=True)
+@click.option("--dev", "dev", help="Enable development mode.", is_flag=True)
 @click.option(
     "--port",
     "port",
     type=int,
     default=None,
     metavar="PORT",
-    help=f"Port to use for the development mode console. Defaults to {DEFAULT_DEVTOOLS_PORT}.",
+    help=f"Port to use for the development mode console. Defaults to {DEVTOOLS_PORT}.",
 )
-@click.option("--press", "press", help="Comma separated keys to simulate press")
+@click.option(
+    "--press", "press", default=None, help="Comma separated keys to simulate press."
+)
 @click.option(
     "--screenshot",
     type=int,
     default=None,
     metavar="DELAY",
-    help="Take screenshot after DELAY seconds",
+    help="Take screenshot after DELAY seconds.",
 )
-def run_app(
-    import_name: str, dev: bool, port: int | None, press: str, screenshot: int | None
+@click.option(
+    "-c",
+    "--command",
+    "command",
+    type=bool,
+    default=False,
+    help="Run as command rather that a file / module.",
+    is_flag=True,
+)
+@click.option(
+    "-r",
+    "--show-return",
+    "show_return",
+    type=bool,
+    default=False,
+    help="Show any return value on exit.",
+    is_flag=True,
+)
+def _run_app(
+    import_name: str,
+    dev: bool,
+    port: int | None,
+    press: str | None,
+    screenshot: int | None,
+    command: bool = False,
+    show_return: bool = False,
 ) -> None:
     """Run a Textual app.
 
@@ -132,53 +158,39 @@ def run_app(
     in quotes:
 
         textual run "foo.py arg --option"
+
+    Use the -c switch to run a command that launches a Textual app.
+
+        textual run -c "textual colors"
     """
 
     import os
-    import sys
-    from asyncio import sleep
 
     from textual.features import parse_features
 
-    if port is not None:
-        os.environ[DEVTOOLS_PORT_ENVIRON_VARIABLE] = str(port)
+    environment = dict(os.environ)
 
-    features = set(parse_features(os.environ.get("TEXTUAL", "")))
+    features = set(parse_features(environment.get("TEXTUAL", "")))
     if dev:
         features.add("debug")
         features.add("devtools")
 
-    os.environ["TEXTUAL"] = ",".join(sorted(features))
-    try:
-        app = import_app(import_name)
-    except AppFail as error:
-        from rich.console import Console
+    environment["TEXTUAL"] = ",".join(sorted(features))
+    if port is not None:
+        environment["TEXTUAL_DEVTOOLS_PORT"] = str(port)
+    if press is not None:
+        environment["TEXTUAL_PRESS"] = str(press)
+    if screenshot is not None:
+        environment["TEXTUAL_SCREENSHOT"] = str(screenshot)
+    if show_return:
+        environment["TEXTUAL_SHOW_RETURN"] = "1"
 
-        console = Console(stderr=True)
-        console.print(str(error))
-        sys.exit(1)
+    _pre_run_warnings()
 
-    press_keys = press.split(",") if press else None
-
-    async def run_press_keys(pilot: Pilot) -> None:
-        if press_keys is not None:
-            await pilot.press(*press_keys)
-        if screenshot is not None:
-            await sleep(screenshot)
-            filename = pilot.app.save_screenshot()
-            pilot.app.exit(message=f"Saved {filename!r}")
-
-    result = app.run(auto_pilot=run_press_keys)
-
-    if result is not None:
-        from rich.console import Console
-        from rich.pretty import Pretty
-
-        console = Console()
-        console.print("[b]The app returned:")
-        console.print(Pretty(result))
-
-    _post_run_warnings()
+    if command:
+        exec_command(import_name, environment)
+    else:
+        run_app(import_name, environment)
 
 
 @run.command("borders")
@@ -215,7 +227,7 @@ def keys():
 
 @run.command("diagnose")
 def run_diagnose():
-    """Print information about the Textual environment"""
+    """Print information about the Textual environment."""
     from textual.cli.tools.diagnose import diagnose
 
     diagnose()

@@ -20,6 +20,7 @@ VALID_BORDER: Final = {
     "inner",
     "none",
     "outer",
+    "panel",
     "round",
     "solid",
     "tall",
