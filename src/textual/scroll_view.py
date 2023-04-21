@@ -7,13 +7,13 @@ from __future__ import annotations
 
 from rich.console import RenderableType
 
+from .containers import ScrollableContainer
 from .geometry import Size
-from .widget import Widget
 
 
-class ScrollView(Widget):
+class ScrollView(ScrollableContainer):
     """
-    A base class for a Widget that handles it's own scrolling (i.e. doesn't rely
+    A base class for a Widget that handles its own scrolling (i.e. doesn't rely
     on the compositor to render children).
 
     """

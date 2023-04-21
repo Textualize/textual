@@ -10,7 +10,7 @@ from rich.console import ConsoleDimensions
 from rich.panel import Panel
 
 from tests.utilities.render import wait_for_predicate
-from textual.constants import DEFAULT_DEVTOOLS_PORT
+from textual.constants import DEVTOOLS_PORT
 from textual.devtools.client import DevtoolsClient
 from textual.devtools.redirect_output import DevtoolsLog
 
@@ -22,7 +22,7 @@ TIMESTAMP = 1649166819
 
 def test_devtools_client_initialize_defaults():
     devtools = DevtoolsClient()
-    assert devtools.url == f"ws://127.0.0.1:{DEFAULT_DEVTOOLS_PORT}"
+    assert devtools.url == f"ws://127.0.0.1:{DEVTOOLS_PORT}"
 
 
 async def test_devtools_client_is_connected(devtools):

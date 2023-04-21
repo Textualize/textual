@@ -22,5 +22,5 @@ class Checkbox(ToggleButton):
 
         @property
         def control(self) -> Checkbox:
-            """An alias for self.checkbox"""
+            """An alias for [Changed.checkbox][textual.widgets.Checkbox.Changed.checkbox]."""
             return self.checkbox

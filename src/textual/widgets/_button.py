@@ -16,7 +16,7 @@ from ..widgets import Static
 ButtonVariant = Literal["default", "primary", "success", "warning", "error"]
 """The names of the valid button variants.
 
-These are the variants that can be used with a [Button][textual.widgets.Button].
+These are the variants that can be used with a [`Button`][textual.widgets.Button].
 """
 
 _VALID_BUTTON_VARIANTS = {"default", "primary", "success", "warning", "error"}
@@ -160,20 +160,21 @@ class Button(Static, can_focus=True):
     class Pressed(Message, bubble=True):
         """Event sent when a `Button` is pressed.
 
-        Can be handled using `on_button_pressed` in a subclass of `Button` or
-        in a parent widget in the DOM.
-
-        Attributes:
-            button: The button that was pressed.
+        Can be handled using `on_button_pressed` in a subclass of
+        [`Button`][textual.widgets.Button] or in a parent widget in the DOM.
         """
 
         def __init__(self, button: Button) -> None:
-            self.button = button
+            self.button: Button = button
+            """The button that was pressed."""
             super().__init__()
 
         @property
         def control(self) -> Button:
-            """Alias for the button."""
+            """An alias for [Pressed.button][textual.widgets.Button.Pressed.button].
+
+            This will be the same value as [Pressed.button][textual.widgets.Button.Pressed.button].
+            """
             return self.button
 
     def __init__(
@@ -280,7 +281,8 @@ class Button(Static, can_focus=True):
             disabled: Whether the button is disabled or not.
 
         Returns:
-            A Button widget of the 'success' variant.
+            A [`Button`][textual.widgets.Button] widget of the 'success'
+                [variant][textual.widgets.button.ButtonVariant].
         """
         return Button(
             label=label,
@@ -312,7 +314,8 @@ class Button(Static, can_focus=True):
             disabled: Whether the button is disabled or not.
 
         Returns:
-            A Button widget of the 'warning' variant.
+            A [`Button`][textual.widgets.Button] widget of the 'warning'
+                [variant][textual.widgets.button.ButtonVariant].
         """
         return Button(
             label=label,
@@ -344,7 +347,8 @@ class Button(Static, can_focus=True):
             disabled: Whether the button is disabled or not.
 
         Returns:
-            A Button widget of the 'error' variant.
+            A [`Button`][textual.widgets.Button] widget of the 'error'
+                [variant][textual.widgets.button.ButtonVariant].
         """
         return Button(
             label=label,
