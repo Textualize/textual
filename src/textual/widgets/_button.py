@@ -34,13 +34,16 @@ class Button(Static, can_focus=True):
         width: auto;
         min-width: 16;
         height: 3;
-        background: $panel;
+        background: $boost;
         color: $text;
-        border: none;
-        border-top: tall $panel-lighten-2;
-        border-bottom: tall $panel-darken-3;
+        border: tall $background;
+
         content-align: center middle;
         text-style: bold;
+    }
+
+    App.-dark-mode Button:disabled {
+        border: tall transparent;
     }
 
     Button:focus {
@@ -48,101 +51,108 @@ class Button(Static, can_focus=True):
     }
 
     Button:hover {
-        border-top: tall $panel-lighten-1;
-        background: $panel-darken-2;
-        color: $text;
+        border: tall $accent 60%;
     }
 
     Button.-active {
-        background: $panel;
-        border-bottom: tall $panel-lighten-2;
-        border-top: tall $panel-darken-2;
-        tint: $background 30%;
+        opacity: 0.5;
     }
+
+    App.-light-mode Button.-default {
+        border: tall $foreground;
+    }
+
+    App.-light-mode Button.-default:hover {
+        border: tall $accent;
+    }
+
 
     /* Primary variant */
     Button.-primary {
         background: $primary;
         color: $text;
-        border-top: tall $primary-lighten-3;
-        border-bottom: tall $primary-darken-3;
+    }
 
+    App.-light-mode Button.-primary {
+        background: $primary;
+        color: $text;
     }
 
     Button.-primary:hover {
-        background: $primary-darken-2;
-        color: $text;
-        border-top: tall $primary-lighten-2;
+        background: $primary-darken-1;
     }
 
-    Button.-primary.-active {
-        background: $primary;
-        border-bottom: tall $primary-lighten-3;
-        border-top: tall $primary-darken-3;
+    App.-light-mode Button.-primary:hover {
+        border: tall $foreground;
+        background: $primary-lighten-1;
     }
 
 
     /* Success variant */
     Button.-success {
-        background: $success;
-        color: $text;
-        border-top: tall $success-lighten-2;
-        border-bottom: tall $success-darken-3;
-    }
-
-    Button.-success:hover {
-        background: $success-darken-2;
-        color: $text;
+        color: $success 90%;
+        background: $success 20%;
     }
 
     Button.-success.-active {
-        background: $success;
-        border-bottom: tall $success-lighten-2;
-        border-top: tall $success-darken-2;
+
     }
 
+    Button.-success:hover {
+        border: tall $success 60%;
+    }
+
+    App.-light-mode Button.-success {
+        background: $success 80%;
+        color: $text;
+    }
+
+    App.-light-mode Button.-success:hover {
+        border: tall $foreground;
+    }
 
     /* Warning variant */
     Button.-warning {
-        background: $warning;
-        color: $text;
-        border-top: tall $warning-lighten-2;
-        border-bottom: tall $warning-darken-3;
+        background: $warning 15%;
+        color: $warning 90%;
+
     }
 
     Button.-warning:hover {
-        background: $warning-darken-2;
-        color: $text;
-
+        border: tall $warning 60%;
     }
 
-    Button.-warning.-active {
-        background: $warning;
-        border-bottom: tall $warning-lighten-2;
-        border-top: tall $warning-darken-2;
+    App.-light-mode Button.-warning {
+        background: $warning 80%;
+        color: $text;
+    }
+
+    App.-light-mode Button.-warning:hover {
+        border: tall $foreground;
     }
 
 
     /* Error variant */
     Button.-error {
-        background: $error;
-        color: $text;
-        border-top: tall $error-lighten-2;
-        border-bottom: tall $error-darken-3;
-
+        background: $error 20%;
+        color: $error 90%;
     }
 
     Button.-error:hover {
-        background: $error-darken-1;
-        color: $text;
-
+       border: tall $error 60%;
     }
 
-    Button.-error.-active {
+    App.-light-mode Button.-error {
         background: $error;
-        border-bottom: tall $error-lighten-2;
-        border-top: tall $error-darken-2;
+        color: $text;
     }
+
+    App.-light-mode Button.-error:hover {
+        border: tall $foreground;
+    }
+
+
+
 
     """
 

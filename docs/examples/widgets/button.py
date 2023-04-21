@@ -6,6 +6,8 @@ from textual.widgets import Button, Static
 class ButtonsApp(App[str]):
     CSS_PATH = "button.css"
 
+    BINDINGS = [("d", "toggle_dark", "Dark mode")]
+
     def compose(self) -> ComposeResult:
         yield Horizontal(
             VerticalScroll(
@@ -27,6 +29,7 @@ class ButtonsApp(App[str]):
         )
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
+        return
         self.exit(str(event.button))
 
 

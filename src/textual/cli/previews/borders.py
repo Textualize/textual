@@ -22,6 +22,7 @@ class BorderButtons(VerticalScroll):
 
     BorderButtons > Button {
         width: 100%;
+        margin: 1 0;
     }
     """
 

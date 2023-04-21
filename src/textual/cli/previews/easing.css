@@ -4,11 +4,12 @@ Label {
 
 EasingButtons > Button {
     width: 100%;
+    margin: 1 0;
 }
 EasingButtons {
     dock: left;
     overflow-y: scroll;
-    width: 20;
+    width: 26;
 }
 
 #bar-container {
