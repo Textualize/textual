@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from math import ceil
 from time import monotonic
 from typing import Optional
 
@@ -152,8 +153,48 @@ class ETAStatus(ProgressAwareLabel):
     }
     """
 
+    _refresh_timer: Timer | None = None
+    """Timer to update ETA status even when progress stalls."""
+    _start_time: float | None = None
+    """The time at which the progress started being tracked."""
+
     def watch__completion_percentage(self, percentage: float | None) -> None:
-        ...
+        if percentage is None:
+            self.renderable = "--:--:--"
+        else:
+            if self._start_time is None:
+                self._start_time = monotonic()
+
+            if self._refresh_timer is None:
+                self._refresh_timer = self.set_interval(1 / 2, self.update_eta)
+
+            self._refresh_timer.reset()
+            self.update_eta()
+
+    def update_eta(self) -> None:
+        """Update the ETA display."""
+        percentage = self._completion_percentage
+        if not percentage or percentage >= 1 or self._start_time is None:
+            self.renderable = "--:--:--"
+            if (
+                percentage is not None
+                and percentage >= 1
+                and self._refresh_timer is not None
+            ):
+                self._refresh_timer.stop()
+                self._refresh_timer = None
+        else:
+            delta = monotonic() - self._start_time
+            left = ceil((delta / percentage) * (1 - percentage))
+            minutes, seconds = divmod(left, 60)
+            hours, minutes = divmod(minutes, 60)
+            if hours > 999999:
+                self.renderable = "+999999h"
+            elif hours > 99:
+                self.renderable = f"{hours}h"
+            else:
+                self.renderable = f"{hours:02}:{minutes:02}:{seconds:02}"
+        self.refresh()
 
 
 class ProgressBar(Widget, can_focus=False):
@@ -212,6 +253,7 @@ class ProgressBar(Widget, can_focus=False):
         total_to_use = None if total is None else 0
         self._bar = Bar(total_to_use)
         self._percentage_status = PercentageStatus(total_to_use)
+        self._eta_status = ETAStatus(total_to_use)
         self.total = total
         self.hide_bar = hide_bar
         self.hide_percentage = hide_percentage
@@ -224,7 +266,7 @@ class ProgressBar(Widget, can_focus=False):
             if not self.hide_percentage:
                 yield self._percentage_status
             if not self.hide_eta:
-                yield Label()
+                yield self._eta_status
 
     def validate_progress(self, progress: float) -> float:
         if self.total is not None:
@@ -236,15 +278,18 @@ class ProgressBar(Widget, can_focus=False):
             completion_percentage = progress / self.total
             self._bar._completion_percentage = completion_percentage
             self._percentage_status._completion_percentage = completion_percentage
+            self._eta_status._completion_percentage = completion_percentage
 
     def watch_total(self, total: float | None) -> None:
         if total is None:
             self._bar._completion_percentage = None
             self._percentage_status._completion_percentage = None
+            self._eta_status._completion_percentage = None
         else:
             percentage = self.progress / total
             self._bar._completion_percentage = percentage
             self._percentage_status._completion_percentage = percentage
+            self._eta_status._completion_percentage = percentage
 
     def advance(self, advance: float = 1) -> None:
         """Advance the progress of the progress bar by the given amount."""
