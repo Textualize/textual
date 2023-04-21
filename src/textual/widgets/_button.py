@@ -160,20 +160,21 @@ class Button(Static, can_focus=True):
     class Pressed(Message, bubble=True):
         """Event sent when a `Button` is pressed.
 
-        Can be handled using `on_button_pressed` in a subclass of `Button` or
-        in a parent widget in the DOM.
-
-        Attributes:
-            button: The button that was pressed.
+        Can be handled using `on_button_pressed` in a subclass of
+        [`Button`][textual.widgets.Button] or in a parent widget in the DOM.
         """
 
         def __init__(self, button: Button) -> None:
-            self.button = button
+            self.button: Button = button
+            """The button that was pressed."""
             super().__init__()
 
         @property
         def control(self) -> Button:
-            """Alias for the button."""
+            """An alias for [Pressed.button][textual.widgets.Button.Pressed.button].
+
+            This will be the same value as [Pressed.button][textual.widgets.Button.Pressed.button].
+            """
             return self.button
 
     def __init__(
