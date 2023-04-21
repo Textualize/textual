@@ -504,7 +504,6 @@ class Timer(Event, bubble=False, verbose=True):
 
     - [ ] Bubbles
     - [X] Verbose
-
     """
 
     __slots__ = ["time", "count", "callback"]

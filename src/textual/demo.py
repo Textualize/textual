@@ -82,7 +82,6 @@ Textual is built on **Rich**, the popular Python library for advanced terminal o
 Add content to your Textual App with Rich *renderables* (this text is written in Markdown and formatted with Rich's Markdown class).
 
 Here are some examples:
-
 """
 
 CSS_MD = """

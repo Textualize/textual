@@ -970,7 +970,6 @@ class App(Generic[ReturnType], DOMNode):
             headless: Run in headless mode (no output or input).
             size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect.
-
         """
         from .pilot import Pilot
 
@@ -2040,7 +2039,6 @@ class App(Generic[ReturnType], DOMNode):
 
         For terminals that support a bell, this typically makes a notification or error sound.
         Some terminals may make no sound or display a visual bell indicator, depending on configuration.
-
         """
         if not self.is_headless and self._driver is not None:
             self._driver.write("\07")

@@ -2,7 +2,6 @@
 
 A DOMNode is a base class for any object within the Textual Document Object Model,
 which includes all Widgets, Screens, and Apps.
-
 """
 
 

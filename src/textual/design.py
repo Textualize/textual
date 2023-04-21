@@ -25,7 +25,6 @@ class ColorSystem:
 
     Primary is the main theme color
     Secondary is a second theme color
-
     """
 
     COLOR_NAMES = [

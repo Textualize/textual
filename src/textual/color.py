@@ -26,7 +26,6 @@ for name, triplet in sorted(COLOR_NAME_TO_RGB.items()):
     )
 output = table
 ```
-
 """
 
 from __future__ import annotations
