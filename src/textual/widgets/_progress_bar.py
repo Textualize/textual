@@ -54,17 +54,6 @@ class Bar(Widget, can_focus=False):
     _refresh_timer: Timer | None
     """Internal timer used to render the bar when it's in the indeterminate state."""
 
-    def __init__(
-        self,
-        completion_percentage: float | None,
-        name: str | None = None,
-        id: str | None = None,
-        classes: str | None = None,
-        disabled: bool = False,
-    ):
-        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
-        self._completion_percentage = completion_percentage
-
     def watch__completion_percentage(self, percentage: float | None) -> None:
         if percentage is not None:
             if self._refresh_timer:
@@ -110,24 +99,11 @@ class Bar(Widget, can_focus=False):
         )
 
 
-class ProgressAwareLabel(Label):
+class PercentageStatus(Label):
+    """A label to display the percentage status of the progress bar."""
+
     _completion_percentage: reactive[float | None] = reactive[Optional[float]](None)
     """The percentage of progress that has been completed or `None` if indeterminate."""
-
-    def __init__(
-        self,
-        completion_percentage: float | None,
-        name: str | None = None,
-        id: str | None = None,
-        classes: str | None = None,
-        disabled: bool = False,
-    ):
-        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
-        self._completion_percentage = completion_percentage
-
-
-class PercentageStatus(ProgressAwareLabel):
-    """A label to display the percentage status of the progress bar."""
 
     DEFAULT_CSS = """
     PercentageStatus {
@@ -143,8 +119,11 @@ class PercentageStatus(ProgressAwareLabel):
             self.renderable = f"{int(100 * percentage)}%"
 
 
-class ETAStatus(ProgressAwareLabel):
+class ETAStatus(Label):
     """A label to display the estimated time until completion of the progress bar."""
+
+    _completion_percentage: reactive[float | None] = reactive[Optional[float]](None)
+    """The percentage of progress that has been completed or `None` if indeterminate."""
 
     DEFAULT_CSS = """
     ETAStatus {
@@ -213,7 +192,11 @@ class ProgressBar(Widget, can_focus=False):
     progress: reactive[float] = reactive(0.0)
     """The progress of the progress bar so far."""
     total: reactive[float | None] = reactive[Optional[float]](100.0, init=False)
-    """The total number of steps associated with this progress bar."""
+    """The total number of steps associated with this progress bar, when known.
+
+    The value `None` will render an indeterminate progress bar.
+    Once `total` is set to a numerical value, it cannot be set back to `None`
+    """
 
     def __init__(
         self,
@@ -229,6 +212,8 @@ class ProgressBar(Widget, can_focus=False):
     ):
         """Create a Progress Bar widget.
 
+        The progress bar uses "steps" as the measurement unit.
+
         Example:
             ```py
             class MyApp(App):
@@ -242,7 +227,7 @@ class ProgressBar(Widget, can_focus=False):
         Args:
             total: The total number of steps in the progress if known.
             hide_bar: Whether to hide the bar portion from the progress bar.
-            hide_percentage: Whether to hide the percentage status from the progress bar.
+            hide_percentage: Whether to hide the percentage status from the bar.
             hide_eta: Whether to hide the ETA countdown from the progress bar.
             name: The name of the widget.
             id: The ID of the widget in the DOM.
@@ -250,10 +235,9 @@ class ProgressBar(Widget, can_focus=False):
             disabled: Whether the widget is disabled or not.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
-        total_to_use = None if total is None else 0
-        self._bar = Bar(total_to_use)
-        self._percentage_status = PercentageStatus(total_to_use)
-        self._eta_status = ETAStatus(total_to_use)
+        self._bar = Bar()
+        self._percentage_status = PercentageStatus()
+        self._eta_status = ETAStatus()
         self.total = total
         self.hide_bar = hide_bar
         self.hide_percentage = hide_percentage
@@ -275,24 +259,31 @@ class ProgressBar(Widget, can_focus=False):
 
     def watch_progress(self, progress: float) -> None:
         if self.total is not None:
-            completion_percentage = progress / self.total
-            self._bar._completion_percentage = completion_percentage
-            self._percentage_status._completion_percentage = completion_percentage
-            self._eta_status._completion_percentage = completion_percentage
+            percentage = progress / self.total
+            self._publish_completion_percentage(percentage)
 
     def watch_total(self, total: float | None) -> None:
         if total is None:
-            self._bar._completion_percentage = None
-            self._percentage_status._completion_percentage = None
-            self._eta_status._completion_percentage = None
+            self._publish_completion_percentage(None)
         else:
             percentage = self.progress / total
-            self._bar._completion_percentage = percentage
-            self._percentage_status._completion_percentage = percentage
-            self._eta_status._completion_percentage = percentage
+            self._publish_completion_percentage(percentage)
+
+    def _publish_completion_percentage(self, percentage: float | None) -> None:
+        self._bar._completion_percentage = percentage
+        self._percentage_status._completion_percentage = percentage
+        self._eta_status._completion_percentage = percentage
 
     def advance(self, advance: float = 1) -> None:
-        """Advance the progress of the progress bar by the given amount."""
+        """Advance the progress of the progress bar by the given amount.
+
+        Example:
+            ```py
+            progress_bar.advance(10)  # Advance 10 steps.
+            ```
+        Args:
+            advance: Number of steps to advance progress by.
+        """
         self.progress += advance
 
     def update(
@@ -302,6 +293,23 @@ class ProgressBar(Widget, can_focus=False):
         progress: float | None = None,
         advance: float | None = None,
     ) -> None:
+        """Update the progress bar with the given options.
+
+        Options only affect the progress bar if they are not `None`.
+
+        Example:
+            ```py
+            progress_bar.update(
+                total=200,  # Set new total to 200 steps.
+                progress=None,  # This has no effect.
+            )
+            ```
+
+        Args:
+            total: New total number of steps (if not `None`).
+            progress: Set the progress to the given number of steps (if not `None`).
+            advance: Advance the progress by this number of steps (if not `None`).
+        """
         if total is not None:
             self.total = total
         if progress is not None:
