@@ -58,9 +58,7 @@ class Button(Static, can_focus=True):
         opacity: 0.5;
     }
 
-    App.-light-mode Button.-default {
-        border: tall $foreground;
-    }
+
 
     App.-light-mode Button.-default:hover {
         border: tall $accent;
@@ -143,7 +141,7 @@ class Button(Static, can_focus=True):
     }
 
     App.-light-mode Button.-error {
-        background: $error;
+        background: $error 80%;
         color: $text;
     }
 
