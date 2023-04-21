@@ -21,6 +21,7 @@ from ._time import sleep
 from ._types import MessageTarget
 
 TimerCallback = Union[Callable[[], Awaitable[None]], Callable[[], None]]
+"""Type of valid callbacks to be used with timers."""
 
 
 class EventTargetGone(Exception):

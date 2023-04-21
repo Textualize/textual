@@ -98,7 +98,7 @@ from .widget import AwaitMount, Widget
 if TYPE_CHECKING:
     from typing_extensions import Coroutine, TypeAlias
 
-    # Imports needed for the docs to link to these objects:
+    # Unused & ignored imports are needed for the docs to link to these objects:
     from .css.query import WrongType  # type: ignore  # noqa: F401
     from .devtools.client import DevtoolsClient
     from .pilot import Pilot

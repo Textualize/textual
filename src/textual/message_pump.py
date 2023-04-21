@@ -340,7 +340,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         self._timers.add(timer)
         return timer
 
-    def call_after_refresh(self, callback: Callable, *args, **kwargs) -> None:
+    def call_after_refresh(self, callback: Callable, *args: Any, **kwargs: Any) -> None:
         """Schedule a callback to run after all messages are processed and the screen
         has been refreshed. Positional and keyword arguments are passed to the callable.
 
@@ -353,7 +353,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         message = messages.InvokeLater(partial(callback, *args, **kwargs))
         self.post_message(message)
 
-    def call_later(self, callback: Callable, *args, **kwargs) -> None:
+    def call_later(self, callback: Callable, *args: Any, **kwargs: Any) -> None:
         """Schedule a callback to run after all messages are processed in this object.
         Positional and keywords arguments are passed to the callable.
 
@@ -365,7 +365,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         message = events.Callback(callback=partial(callback, *args, **kwargs))
         self.post_message(message)
 
-    def call_next(self, callback: Callable, *args, **kwargs) -> None:
+    def call_next(self, callback: Callable, *args: Any, **kwargs: Any) -> None:
         """Schedule a callback to run immediately after processing the current message.
 
         Args:

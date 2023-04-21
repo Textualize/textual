@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 class NoActiveAppError(RuntimeError):
-    pass
+    """Runtime error raised if we try to retrieve the active app when there is none."""
 
 
 active_app: ContextVar["App"] = ContextVar("active_app")

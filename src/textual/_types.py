@@ -8,6 +8,8 @@ if TYPE_CHECKING:
 
 
 class MessageTarget(Protocol):
+    """Protocol that must be followed by objects that can receive messages."""
+
     async def _post_message(self, message: "Message") -> bool:
         ...
 

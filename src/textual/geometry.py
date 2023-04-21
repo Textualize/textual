@@ -28,6 +28,7 @@ if TYPE_CHECKING:
 SpacingDimensions: TypeAlias = Union[
     int, Tuple[int], Tuple[int, int], Tuple[int, int, int, int]
 ]
+"""The valid ways in which you can specify spacing."""
 
 T = TypeVar("T", int, float)
 
@@ -1054,4 +1055,4 @@ class Spacing(NamedTuple):
 
 
 NULL_OFFSET: Final = Offset(0, 0)
-"""An Offset constant for (0, 0)."""
+"""An [offset][textual.geometry.Offset] constant for (0, 0)."""

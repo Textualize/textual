@@ -42,6 +42,9 @@ from .widget import Widget
 if TYPE_CHECKING:
     from typing_extensions import Final
 
+    # Unused & ignored imports are needed for the docs to link to these objects:
+    from .errors import NoWidget  # type: ignore  # noqa: F401
+
 # Screen updates will be batched so that they don't happen more often than 60 times per second:
 UPDATE_PERIOD: Final[float] = 1 / 60
 
