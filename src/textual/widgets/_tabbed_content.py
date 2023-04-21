@@ -36,7 +36,6 @@ class TabPane(Widget):
     """A container for switchable content, with additional title.
 
     This widget is intended to be used with [TabbedContent][textual.widgets.TabbedContent].
-
     """
 
     DEFAULT_CSS = """

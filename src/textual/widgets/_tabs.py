@@ -42,7 +42,6 @@ class Underline(Widget):
     | Class | Description |
     | :- | :- |
     | `underline-bar` | Style of the bar (may be used to change the color). |
-
     """
 
     highlight_start = reactive(0)

@@ -19,7 +19,6 @@ class NodeList(Sequence["Widget"]):
     A container for widgets that forms one level of hierarchy.
 
     Although named a list, widgets may appear only once, making them more like a set.
-
     """
 
     def __init__(self) -> None:

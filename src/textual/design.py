@@ -26,7 +26,6 @@ class ColorSystem:
     Primary is the main theme color
     Secondary is a second theme color
 
-
     """
 
     COLOR_NAMES = [
@@ -96,7 +95,6 @@ class ColorSystem:
 
         Returns:
             A mapping of color name on to a CSS-style encoded color
-
         """
 
         primary = self.primary
@@ -134,7 +132,6 @@ class ColorSystem:
 
             Returns:
                 Iterable of tuples (<SHADE SUFFIX, LUMINOSITY DELTA>)
-
             """
             luminosity_step = spread / 2
             for n in range(-NUMBER_OF_SHADES, +NUMBER_OF_SHADES + 1):
@@ -196,7 +193,6 @@ def show_design(light: ColorSystem, dark: ColorSystem) -> Table:
 
     Returns:
         Table showing all colors.
-
     """
 
     @group()

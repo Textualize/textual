@@ -2,7 +2,6 @@
 
 The base class for all messages (including events).
 
-
 """
 
 from __future__ import annotations

@@ -29,7 +29,6 @@ class ScrollViewTester(App[None]):
         background: $primary-darken-2;
         border: round red;
     }
-
     """
 
     def compose(self) -> ComposeResult:

@@ -1,6 +1,5 @@
 """
 `ScrollView` is a base class for [line api](/guide/widgets#line-api) widgets.
-
 """
 
 from __future__ import annotations
@@ -15,7 +14,6 @@ class ScrollView(ScrollableContainer):
     """
     A base class for a Widget that handles its own scrolling (i.e. doesn't rely
     on the compositor to render children).
-
     """
 
     DEFAULT_CSS = """

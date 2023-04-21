@@ -2,7 +2,6 @@
 A version of `time.sleep` that is more accurate than the standard library (even on Python 3.11).
 
 This should only be imported on Windows.
-
 """
 
 from time import sleep as time_sleep

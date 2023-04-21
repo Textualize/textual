@@ -1,6 +1,5 @@
 """
 Timer context manager, only used in debug.
-
 """
 
 import contextlib

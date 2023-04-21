@@ -9,7 +9,6 @@ Verbose events are excluded from the textual console, unless you explicit reques
 ```
 textual console -v
 ```
-
 """
 
 from __future__ import annotations
@@ -55,7 +54,6 @@ class InvokeCallbacks(Event, bubble=False, verbose=True):
 
     - [ ] Bubbles
     - [X] Verbose
-
     """
 
 
@@ -76,7 +74,6 @@ class Load(Event, bubble=False):
 
     - [ ] Bubbles
     - [ ] Verbose
-
     """
 
 
@@ -88,7 +85,6 @@ class Idle(Event, bubble=False):
 
     - [ ] Bubbles
     - [ ] Verbose
-
     """
 
 
@@ -113,7 +109,6 @@ class Resize(Event, bubble=False):
         size: The new size of the Widget.
         virtual_size: The virtual size (scrollable size) of the Widget.
         container_size: The size of the Widget's container widget.
-
     """
 
     __slots__ = ["size", "virtual_size", "container_size"]
@@ -143,7 +138,6 @@ class Compose(Event, bubble=False, verbose=True):
 
     - [ ] Bubbles
     - [X] Verbose
-
     """
 
 
@@ -152,7 +146,6 @@ class Mount(Event, bubble=False, verbose=False):
 
     - [ ] Bubbles
     - [ ] Verbose
-
     """
 
 
@@ -161,7 +154,6 @@ class Unmount(Mount, bubble=False, verbose=False):
 
     - [ ] Bubbles
     - [ ] Verbose
-
     """
 
 
@@ -170,7 +162,6 @@ class Show(Event, bubble=False):
 
     - [ ] Bubbles
     - [ ] Verbose
-
     """
 
 
@@ -182,7 +173,6 @@ class Hide(Event, bubble=False):
 
     A widget may be hidden by setting its `visible` flag to `False`, if it is no longer in a layout,
     or if it has been offset beyond the edges of the terminal.
-
     """
 
 
@@ -191,7 +181,6 @@ class Ready(Event, bubble=False):
 
     - [ ] Bubbles
     - [ ] Verbose
-
     """
 
 
@@ -206,7 +195,6 @@ class MouseCapture(Event, bubble=False):
 
     Args:
         mouse_position: The position of the mouse when captured.
-
     """
 
     def __init__(self, mouse_position: Offset) -> None:
@@ -318,7 +306,6 @@ class MouseEvent(InputEvent, bubble=True):
         screen_x: The absolute x coordinate.
         screen_y: The absolute y coordinate.
         style: The Rich Style under the mouse cursor.
-
     """
 
     __slots__ = [
@@ -399,7 +386,6 @@ class MouseEvent(InputEvent, bubble=True):
 
         Returns:
             Mouse coordinate.
-
         """
         return Offset(self.x, self.y)
 
@@ -418,7 +404,6 @@ class MouseEvent(InputEvent, bubble=True):
 
         Returns:
             Mouse coordinate.
-
         """
         return Offset(self.delta_x, self.delta_y)
 
@@ -466,7 +451,6 @@ class MouseMove(MouseEvent, bubble=False, verbose=True):
 
     - [ ] Bubbles
     - [X] Verbose
-
     """
 
 
@@ -476,7 +460,6 @@ class MouseDown(MouseEvent, bubble=True, verbose=True):
 
     - [X] Bubbles
     - [X] Verbose
-
     """
 
 
@@ -486,7 +469,6 @@ class MouseUp(MouseEvent, bubble=True, verbose=True):
 
     - [X] Bubbles
     - [X] Verbose
-
     """
 
 
@@ -496,7 +478,6 @@ class MouseScrollDown(MouseEvent, bubble=True):
 
     - [X] Bubbles
     - [ ] Verbose
-
     """
 
 
@@ -506,7 +487,6 @@ class MouseScrollUp(MouseEvent, bubble=True):
 
     - [X] Bubbles
     - [ ] Verbose
-
     """
 
 
@@ -515,7 +495,6 @@ class Click(MouseEvent, bubble=True):
 
     - [X] Bubbles
     - [ ] Verbose
-
     """
 
 
@@ -525,7 +504,6 @@ class Timer(Event, bubble=False, verbose=True):
 
     - [ ] Bubbles
     - [X] Verbose
-
 
     """
 
@@ -554,7 +532,6 @@ class Enter(Event, bubble=False, verbose=True):
 
     - [ ] Bubbles
     - [X] Verbose
-
     """
 
 
@@ -563,7 +540,6 @@ class Leave(Event, bubble=False, verbose=True):
 
     - [ ] Bubbles
     - [X] Verbose
-
     """
 
 
@@ -572,7 +548,6 @@ class Focus(Event, bubble=False):
 
     - [X] Bubbles
     - [ ] Verbose
-
     """
 
 
@@ -581,7 +556,6 @@ class Blur(Event, bubble=False):
 
     - [X] Bubbles
     - [ ] Verbose
-
     """
 
 
@@ -590,7 +564,6 @@ class DescendantFocus(Event, bubble=True, verbose=True):
 
     - [X] Bubbles
     - [X] Verbose
-
     """
 
 
@@ -599,7 +572,6 @@ class DescendantBlur(Event, bubble=True, verbose=True):
 
     - [X] Bubbles
     - [X] Verbose
-
     """
 
 
@@ -631,7 +603,6 @@ class ScreenResume(Event, bubble=False):
 
     - [ ] Bubbles
     - [ ] Verbose
-
     """
 
 
@@ -640,5 +611,4 @@ class ScreenSuspend(Event, bubble=False):
 
     - [ ] Bubbles
     - [ ] Verbose
-
     """

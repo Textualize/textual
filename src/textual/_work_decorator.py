@@ -1,7 +1,6 @@
 """
 
 A decorator used to create [workers](/guide/workers).
-
 """
 
 
@@ -68,7 +67,6 @@ def work(
         group: A short string to identify a group of workers.
         exit_on_error: Exit the app if the worker raises an error. Set to `False` to suppress exceptions.
         exclusive: Cancel all workers in the same group.
-
     """
 
     def decorator(

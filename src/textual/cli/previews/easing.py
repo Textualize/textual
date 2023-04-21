@@ -38,7 +38,6 @@ class Bar(Widget):
         background: $surface;
         color: $success;
     }
-
     """
 
     def watch_animation_running(self, running: bool) -> None:

@@ -46,7 +46,6 @@ class ListViewExample(App):
         yield Footer()
 ```
 
-
 """
 
 

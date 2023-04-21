@@ -5,7 +5,6 @@ TEXT = """\
 Docking a widget removes it from the layout and fixes its position, aligned to either the top, right, bottom, or left edges of a container.
 
 Docked widgets will not scroll out of view, making them ideal for sticky headers, footers, and sidebars.
-
 """
 
 

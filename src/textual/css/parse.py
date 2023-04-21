@@ -227,7 +227,6 @@ def _unresolved(variable_name: str, variables: Iterable[str], token: Token) -> N
 
     Raises:
         UnresolvedVariableError: Always raises a TokenError.
-
     """
     message = f"reference to undefined variable '${variable_name}'"
     suggested_variable = get_suggestion(variable_name, list(variables))

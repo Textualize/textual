@@ -1,6 +1,5 @@
 """
 A class to store a coordinate, used by the [DataTable][textual.widgets.DataTable].
-
 """
 
 from __future__ import annotations

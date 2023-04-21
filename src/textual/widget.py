@@ -1,6 +1,5 @@
 """
 The base class for widgets.
-
 """
 
 from __future__ import annotations
@@ -94,7 +93,6 @@ class AwaitMount:
         ```python
         await self.mount(Static("foo"))
         ```
-
     """
 
     def __init__(self, parent: Widget, widgets: Sequence[Widget]) -> None:
@@ -233,7 +231,6 @@ class Widget(DOMNode):
     A Widget is the base class for Textual widgets.
 
     See also [static][textual.widgets._static.Static] for starting point for your own widgets.
-
     """
 
     DEFAULT_CSS = """
@@ -409,7 +406,6 @@ class Widget(DOMNode):
         """Check if vertical scroll is permitted.
 
         May be overridden if you want different logic regarding allowing scrolling.
-
         """
         return self.is_scrollable and self.show_vertical_scrollbar
 
@@ -418,7 +414,6 @@ class Widget(DOMNode):
         """Check if horizontal scroll is permitted.
 
         May be overridden if you want different logic regarding allowing scrolling.
-
         """
         return self.is_scrollable and self.show_horizontal_scrollbar
 
@@ -635,7 +630,6 @@ class Widget(DOMNode):
 
         Returns:
             An iterable of Widgets.
-
         """
         if self._horizontal_scrollbar is not None:
             yield self._horizontal_scrollbar
@@ -874,7 +868,6 @@ class Widget(DOMNode):
                 )
                 yield Footer()
             ```
-
         """
         yield from ()
 
@@ -1134,7 +1127,6 @@ class Widget(DOMNode):
 
         Returns:
             ScrollBarCorner Widget.
-
         """
         from .scrollbar import ScrollBarCorner
 
@@ -1248,7 +1240,6 @@ class Widget(DOMNode):
 
         Returns:
             A tuple of (<vertical scrollbar enabled>, <horizontal scrollbar enabled>)
-
         """
         if not self.is_scrollable:
             return False, False
@@ -1300,7 +1291,6 @@ class Widget(DOMNode):
 
         Returns:
             Additional spacing around content area.
-
         """
         return self.styles.gutter + self.scrollbar_gutter
 
@@ -1359,7 +1349,6 @@ class Widget(DOMNode):
 
         Returns:
             Offset from widget's origin.
-
         """
         x, y = self.gutter.top_left
         return Offset(x, y)
@@ -1370,7 +1359,6 @@ class Widget(DOMNode):
 
         Returns:
             Content area size.
-
         """
         return self.region.shrink(self.styles.gutter).size
 
@@ -1412,7 +1400,6 @@ class Widget(DOMNode):
 
         Returns:
             The virtual region.
-
         """
         try:
             return self.screen.find_widget(self).virtual_region
@@ -1461,7 +1448,6 @@ class Widget(DOMNode):
 
         Returns:
             List of widgets that can receive focus.
-
         """
         focusable = [child for child in self._nodes if child.display and child.visible]
         return sorted(focusable, key=attrgetter("_focus_sort_key"))
@@ -1493,7 +1479,6 @@ class Widget(DOMNode):
 
         Returns:
             A Rich console object.
-
         """
         return active_app.get().console
 
@@ -1534,7 +1519,6 @@ class Widget(DOMNode):
             delay: A delay (in seconds) before the animation starts.
             easing: An easing method.
             on_complete: A callable to invoke when the animation is finished.
-
         """
         if self._animate is None:
             self._animate = self.app.animator.bind(self)
@@ -1556,7 +1540,6 @@ class Widget(DOMNode):
 
         Returns:
             A layout object.
-
         """
         return self.styles.layout or self._default_layout
 
@@ -1576,7 +1559,6 @@ class Widget(DOMNode):
 
         Returns:
             Name of layer.
-
         """
         return self.styles.layer or "default"
 
@@ -1600,7 +1582,6 @@ class Widget(DOMNode):
 
         Returns:
             Rich style.
-
         """
         styles = self.styles
         _, background = self.background_colors
@@ -1622,7 +1603,6 @@ class Widget(DOMNode):
 
         Returns:
             Rich Style.
-
         """
         styles = self.styles
         _, background = self.background_colors
@@ -1646,7 +1626,6 @@ class Widget(DOMNode):
 
         Args:
             *regions: Regions which require a repaint.
-
         """
         if regions:
             content_offset = self.content_offset
@@ -2559,7 +2538,6 @@ class Widget(DOMNode):
 
         Returns:
             Tuples of scrollbar Widget and region.
-
         """
         show_vertical_scrollbar, show_horizontal_scrollbar = self.scrollbars_enabled
 
@@ -2613,7 +2591,6 @@ class Widget(DOMNode):
 
         Returns:
             Names of the pseudo classes.
-
         """
         node: MessagePump | None = self
         while isinstance(node, Widget):
