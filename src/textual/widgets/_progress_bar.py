@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from functools import partial
 from math import ceil
 from time import monotonic
 from typing import Optional
@@ -250,11 +251,30 @@ class ProgressBar(Widget, can_focus=False):
     def compose(self) -> ComposeResult:
         with Horizontal():
             if not self.hide_bar:
-                yield self._bar
+                bar = Bar()
+                # Notify the bar when the percentage is updated.
+                self.watch(
+                    self, "percentage", partial(setattr, bar, "_completion_percentage")
+                )
+                yield bar
             if not self.hide_percentage:
-                yield self._percentage_status
+                percentage_status = PercentageStatus()
+                # Notify the percentage status label when the percentage is updated.
+                self.watch(
+                    self,
+                    "percentage",
+                    partial(setattr, percentage_status, "_completion_percentage"),
+                )
+                yield percentage_status
             if not self.hide_eta:
-                yield self._eta_status
+                eta_status = ETAStatus()
+                # Notify the ETA status label when the percentage is updated.
+                self.watch(
+                    self,
+                    "percentage",
+                    partial(setattr, eta_status, "_completion_percentage"),
+                )
+                yield eta_status
 
     def validate_progress(self, progress: float) -> float:
         if self.total is not None:
@@ -265,11 +285,6 @@ class ProgressBar(Widget, can_focus=False):
         if self.total is not None:
             return self.progress / self.total
         return None
-
-    def watch_percentage(self, percentage: float | None) -> None:
-        self._bar._completion_percentage = percentage
-        self._percentage_status._completion_percentage = percentage
-        self._eta_status._completion_percentage = percentage
 
     def advance(self, advance: float = 1) -> None:
         """Advance the progress of the progress bar by the given amount.
