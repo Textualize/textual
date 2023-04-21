@@ -190,13 +190,15 @@ class ProgressBar(Widget, can_focus=False):
     """
 
     progress: reactive[float] = reactive(0.0)
-    """The progress of the progress bar so far."""
-    total: reactive[float | None] = reactive[Optional[float]](100.0, init=False)
+    """The progress so far, in number of steps."""
+    total: reactive[float | None] = reactive[Optional[float]](100.0)
     """The total number of steps associated with this progress bar, when known.
 
     The value `None` will render an indeterminate progress bar.
     Once `total` is set to a numerical value, it cannot be set back to `None`
     """
+    percentage: reactive[float | None] = reactive[Optional[float]](None)
+    """The percentage of progress that has been completed."""
 
     def __init__(
         self,
@@ -238,10 +240,12 @@ class ProgressBar(Widget, can_focus=False):
         self._bar = Bar()
         self._percentage_status = PercentageStatus()
         self._eta_status = ETAStatus()
-        self.total = total
         self.hide_bar = hide_bar
         self.hide_percentage = hide_percentage
         self.hide_eta = hide_eta
+
+        self.percentage = None  # Without this, assigning self.total breaks. 🤔
+        self.total = total
 
     def compose(self) -> ComposeResult:
         with Horizontal():
@@ -257,19 +261,12 @@ class ProgressBar(Widget, can_focus=False):
             return min(progress, self.total)
         return progress
 
-    def watch_progress(self, progress: float) -> None:
+    def compute_percentage(self) -> float | None:
         if self.total is not None:
-            percentage = progress / self.total
-            self._publish_completion_percentage(percentage)
+            return self.progress / self.total
+        return None
 
-    def watch_total(self, total: float | None) -> None:
-        if total is None:
-            self._publish_completion_percentage(None)
-        else:
-            percentage = self.progress / total
-            self._publish_completion_percentage(percentage)
-
-    def _publish_completion_percentage(self, percentage: float | None) -> None:
+    def watch_percentage(self, percentage: float | None) -> None:
         self._bar._completion_percentage = percentage
         self._percentage_status._completion_percentage = percentage
         self._eta_status._completion_percentage = percentage
