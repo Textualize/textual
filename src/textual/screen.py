@@ -479,11 +479,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 self._dirty_widgets.clear()
 
         if self._callbacks:
-            self.post_message(events.InvokeCallbacks())
-
-    async def _on_invoke_callbacks(self, event: events.InvokeCallbacks) -> None:
-        """Handle PostScreenUpdate events, which are sent after the screen is updated"""
-        await self._invoke_and_clear_callbacks()
+            self.call_next(self._invoke_and_clear_callbacks)
 
     async def _invoke_and_clear_callbacks(self) -> None:
         """If there are scheduled callbacks to run, call them and clear
