@@ -448,6 +448,7 @@ class Screen(Generic[ScreenResultType], Widget):
         # The Screen is idle - a good opportunity to invoke the scheduled callbacks
 
         if self._callbacks:
+            await self._invoke_and_clear_callbacks()
             self._on_timer_update()
 
     def _on_timer_update(self) -> None:
@@ -465,12 +466,11 @@ class Screen(Generic[ScreenResultType], Widget):
                 self._scroll_required = False
 
             if self._repaint_required:
-                self._update_timer.resume()
                 self._dirty_widgets.clear()
                 self._dirty_widgets.add(self)
                 self._repaint_required = False
 
-            if self._dirty_widgets and self.is_current:
+            if self._dirty_widgets:
                 self._compositor.update_widgets(self._dirty_widgets)
                 update = self._compositor.render_update(
                     screen_stack=self.app._background_screens
