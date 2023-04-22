@@ -22,6 +22,7 @@ async def test_tabbed_content_switch_via_ui():
         tabbed_content = app.query_one(TabbedContent)
         # Check first tab
         assert tabbed_content.active == "foo"
+        await pilot.pause()
         assert app.query_one("#foo-label").region
         assert not app.query_one("#bar-label").region
         assert not app.query_one("#baz-label").region
@@ -29,6 +30,7 @@ async def test_tabbed_content_switch_via_ui():
         # Click second tab
         await pilot.click("Tab#bar")
         assert tabbed_content.active == "bar"
+        await pilot.pause()
         assert not app.query_one("#foo-label").region
         assert app.query_one("#bar-label").region
         assert not app.query_one("#baz-label").region
@@ -36,6 +38,7 @@ async def test_tabbed_content_switch_via_ui():
         # Click third tab
         await pilot.click("Tab#baz")
         assert tabbed_content.active == "baz"
+        await pilot.pause()
         assert not app.query_one("#foo-label").region
         assert not app.query_one("#bar-label").region
         assert app.query_one("#baz-label").region
@@ -43,6 +46,7 @@ async def test_tabbed_content_switch_via_ui():
         # Press left
         await pilot.press("left")
         assert tabbed_content.active == "bar"
+        await pilot.pause()
         assert not app.query_one("#foo-label").region
         assert app.query_one("#bar-label").region
         assert not app.query_one("#baz-label").region
@@ -50,6 +54,7 @@ async def test_tabbed_content_switch_via_ui():
         # Press right
         await pilot.press("right")
         assert tabbed_content.active == "baz"
+        await pilot.pause()
         assert not app.query_one("#foo-label").region
         assert not app.query_one("#bar-label").region
         assert app.query_one("#baz-label").region
