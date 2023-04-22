@@ -16,7 +16,7 @@ from ..widgets import Static
 ButtonVariant = Literal["default", "primary", "success", "warning", "error"]
 """The names of the valid button variants.
 
-These are the variants that can be used with a [Button][textual.widgets.Button].
+These are the variants that can be used with a [`Button`][textual.widgets.Button].
 """
 
 _VALID_BUTTON_VARIANTS = {"default", "primary", "success", "warning", "error"}
@@ -281,7 +281,8 @@ class Button(Static, can_focus=True):
             disabled: Whether the button is disabled or not.
 
         Returns:
-            A Button widget of the 'success' variant.
+            A [`Button`][textual.widgets.Button] widget of the 'success'
+                [variant][textual.widgets.button.ButtonVariant].
         """
         return Button(
             label=label,
@@ -313,7 +314,8 @@ class Button(Static, can_focus=True):
             disabled: Whether the button is disabled or not.
 
         Returns:
-            A Button widget of the 'warning' variant.
+            A [`Button`][textual.widgets.Button] widget of the 'warning'
+                [variant][textual.widgets.button.ButtonVariant].
         """
         return Button(
             label=label,
@@ -345,7 +347,8 @@ class Button(Static, can_focus=True):
             disabled: Whether the button is disabled or not.
 
         Returns:
-            A Button widget of the 'error' variant.
+            A [`Button`][textual.widgets.Button] widget of the 'error'
+                [variant][textual.widgets.button.ButtonVariant].
         """
         return Button(
             label=label,
