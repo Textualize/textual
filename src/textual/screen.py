@@ -445,8 +445,6 @@ class Screen(Generic[ScreenResultType], Widget):
             ):
                 self._update_timer.resume()
 
-        # The Screen is idle - a good opportunity to invoke the scheduled callbacks
-
         if self._callbacks:
             self._on_timer_update()
             await self._invoke_and_clear_callbacks()
