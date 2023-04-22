@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from rich.console import RenderableType
 
+from ._animator import EasingFunction
 from .containers import ScrollableContainer
 from .geometry import Size
 
@@ -111,3 +112,39 @@ class ScrollView(ScrollableContainer):
         from rich.panel import Panel
 
         return Panel(f"{self.scroll_offset} {self.show_vertical_scrollbar}")
+
+    def scroll_to(
+        self,
+        x: float | None = None,
+        y: float | None = None,
+        *,
+        animate: bool = True,
+        speed: float | None = None,
+        duration: float | None = None,
+        easing: EasingFunction | str | None = None,
+        force: bool = False,
+    ) -> None:
+        """Scroll to a given (absolute) coordinate, optionally animating.
+
+        Args:
+            x: X coordinate (column) to scroll to, or `None` for no change.
+            y: Y coordinate (row) to scroll to, or `None` for no change.
+            animate: Animate to new scroll position.
+            speed: Speed of scroll if `animate` is `True`; or `None` to use `duration`.
+            duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
+            easing: An easing method for the scrolling animation.
+            force: Force scrolling even when prohibited by overflow styling.
+
+        Note:
+            The call to scroll is made after the next refresh.
+        """
+
+        self._scroll_to(
+            x,
+            y,
+            animate=animate,
+            speed=speed,
+            duration=duration,
+            easing=easing,
+            force=force,
+        )
