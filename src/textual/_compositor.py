@@ -245,15 +245,19 @@ class ChopsUpdate(CompositorUpdate):
                     append(strip.render(console))
                     continue
 
-                strip = strip.crop(0, min(end, x2) - x)
-                append(move_to(x, y).segment.text)
+                if x < x1:
+                    strip = strip.crop(x1 - x, x2 - x)
+                    append(move_to(x1, y).segment.text)
+                else:
+                    strip = strip.crop(0, x2 - x)
+                    append(move_to(x, y).segment.text)
+
                 append(strip.render(console))
 
             if y != last_y:
                 append("\n")
 
-        terminal_sequences = "".join(sequences)
-        return terminal_sequences
+        return "".join(sequences)
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield from ()
