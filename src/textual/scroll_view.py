@@ -113,6 +113,7 @@ class ScrollView(ScrollableContainer):
 
         return Panel(f"{self.scroll_offset} {self.show_vertical_scrollbar}")
 
+    # Custom scroll to which doesn't require call_after_refresh
     def scroll_to(
         self,
         x: float | None = None,
