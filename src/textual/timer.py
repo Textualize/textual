@@ -131,20 +131,18 @@ class Timer:
                 continue
             now = _time.get_time()
             wait_time = max(0, next_timer - now)
-            if wait_time > 1 / 1000:
-                await sleep(wait_time)
-
+            await sleep(wait_time)
             count += 1
+            try:
+                await self._tick(next_timer=next_timer, count=count)
+            except EventTargetGone:
+                break
             await self._active.wait()
             if self._reset:
                 start = _time.get_time()
                 count = 0
                 self._reset = False
                 continue
-            try:
-                await self._tick(next_timer=next_timer, count=count)
-            except EventTargetGone:
-                break
 
     async def _tick(self, *, next_timer: float, count: int) -> None:
         """Triggers the Timer's action: either call its callback, or sends an event to its target"""
