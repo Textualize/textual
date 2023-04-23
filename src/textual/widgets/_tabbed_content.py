@@ -202,3 +202,4 @@ class TabbedContent(Widget):
         """Switch tabs when the active attributes changes."""
         with self.prevent(Tabs.TabActivated):
             self.get_child_by_type(Tabs).active = active
+            self.get_child_by_type(ContentSwitcher).current = active
