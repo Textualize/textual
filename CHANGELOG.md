@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: `Container` no longer shows required scrollbars by default https://github.com/Textualize/textual/issues/2361
 - Breaking change: `VerticalScroll` no longer shows a required horizontal scrollbar by default
 - Breaking change: `HorizontalScroll` no longer shows a required vertical scrollbar by default
+- Breaking change: Renamed `App.action_add_class_` to `App.action_add_class`
+- Breaking change: Renamed `App.action_remove_class_` to `App.action_remove_class`
 
 ### Added
 
