@@ -9,13 +9,12 @@ from typing import Optional
 
 from rich.style import Style
 
-from textual.timer import Timer
-
 from ..app import ComposeResult, RenderResult
 from ..containers import Horizontal
 from ..message import Message
 from ..reactive import reactive
 from ..renderables.bar import RenderableBar
+from ..timer import Timer
 from ..widget import Widget
 from ..widgets import Label
 
@@ -203,6 +202,7 @@ class ProgressBar(Widget, can_focus=False):
         height: auto;
     }
     ProgressBar {
+        width: auto;
         height: 1;
     }
     """
@@ -215,8 +215,12 @@ class ProgressBar(Widget, can_focus=False):
     The value `None` will render an indeterminate progress bar.
     Once `total` is set to a numerical value, it cannot be set back to `None`.
     """
-    percentage: reactive[float | None] = reactive[Optional[float]](None)
-    """The percentage of progress that has been completed."""
+    _percentage: reactive[float | None] = reactive[Optional[float]](None)
+    """The percentage of progress that has been completed.
+
+    We keep this private to prevent the user from having multiple reactive attributes
+    that can be used to advance the progress of the bar.
+    """
     _started = False
     """Whether the total was set to a non-`None` value before."""
 
@@ -225,12 +229,14 @@ class ProgressBar(Widget, can_focus=False):
 
         Can be handled using `on_progress_bar_completed` in a subclass of
         [`ProgressBar`][textual.widgets.ProgressBar] or in a parent widget in the DOM.
-
-        Attributes:
-            progress_bar: The progress bar that reached 100% completion.
         """
 
         def __init__(self, progress_bar: ProgressBar) -> None:
+            """Create the message instance.
+
+            Args:
+                progress_bar: The progress bar that reached 100% completion.
+            """
             self.progress_bar = progress_bar
             super().__init__()
 
@@ -243,20 +249,22 @@ class ProgressBar(Widget, can_focus=False):
 
         Can be handled using `on_progress_bar_started` in a subclass of
         [`ProgressBar`][textual.widgets.ProgressBar] or in a parent widget in the DOM.
-
-        Attributes:
-            progress_bar: The progress bar that started tracking progress.
-            total: The total number of steps that the bar will track.
         """
 
         def __init__(self, progress_bar: ProgressBar, total: float) -> None:
+            """Create a message instance.
+
+            Args:
+                progress_bar: The progress bar that started tracking progress.
+                total: The total number of steps that the bar will track.
+            """
             self.progress_bar = progress_bar
             self.total = total
             super().__init__()
 
     def __init__(
         self,
-        total: float | None = 100,
+        total: float | None = None,
         *,
         hide_bar: bool = False,
         hide_percentage: bool = False,
@@ -274,7 +282,7 @@ class ProgressBar(Widget, can_focus=False):
             ```py
             class MyApp(App):
                 def compose(self):
-                    yield ProgressBar()
+                    yield ProgressBar(total=100)
 
                 def key_space(self):
                     self.query_one(ProgressBar).advance()
@@ -298,6 +306,7 @@ class ProgressBar(Widget, can_focus=False):
         self.hide_percentage = hide_percentage
         self.hide_eta = hide_eta
 
+        self._percentage = None
         self.total = total
 
     def compose(self) -> ComposeResult:
@@ -306,7 +315,7 @@ class ProgressBar(Widget, can_focus=False):
                 bar = Bar()
                 # Notify the bar when the percentage is updated.
                 self.watch(
-                    self, "percentage", partial(setattr, bar, "_completion_percentage")
+                    self, "_percentage", partial(setattr, bar, "_completion_percentage")
                 )
                 yield bar
             if not self.hide_percentage:
@@ -314,7 +323,7 @@ class ProgressBar(Widget, can_focus=False):
                 # Notify the percentage status label when the percentage is updated.
                 self.watch(
                     self,
-                    "percentage",
+                    "_percentage",
                     partial(setattr, percentage_status, "_completion_percentage"),
                 )
                 yield percentage_status
@@ -323,7 +332,7 @@ class ProgressBar(Widget, can_focus=False):
                 # Notify the ETA status label when the percentage is updated.
                 self.watch(
                     self,
-                    "percentage",
+                    "_percentage",
                     partial(setattr, eta_status, "_completion_percentage"),
                 )
                 yield eta_status
@@ -335,19 +344,19 @@ class ProgressBar(Widget, can_focus=False):
         return progress
 
     def watch_total(self, total: float | None) -> None:
-        """Post the message [Started][textual.widgets.ProgressBar.Started]."""
+        """Post the message [`ProgressBar.Started`][textual.widgets.ProgressBar.Started]."""
         if total is None:
             return
         if not self._started:
             self.post_message(ProgressBar.Started(self, total))
             self._started = True
 
-    def compute_percentage(self) -> float | None:
+    def compute__percentage(self) -> float | None:
         """Keep the percentage of progress updated automatically.
 
         This compute method will also post the message
-        [Completed][textual.widgets.ProgressBar.Completed] when the percentage
-        reaches 1.
+        [`ProgressBar.Completed`][textual.widgets.ProgressBar.Completed]
+        when the percentage reaches 1.
         """
         if self.total is not None:
             percentage = self.progress / self.total
@@ -355,6 +364,29 @@ class ProgressBar(Widget, can_focus=False):
                 self.post_message(ProgressBar.Completed(self))
             return percentage
         return None
+
+    @property
+    def percentage(self) -> float | None:
+        """The progress percentage, or `None` if not available.
+
+        The percentage is a value between 0 and 1 and the returned value is only
+        `None` if the total progress of the bar hasn't been set yet.
+        In other words, after the progress bar emits the message
+        [`ProgressBar.Started`][textual.widgets.ProgressBar.Started],
+        the value of `percentage` is always not `None`.
+
+        Example:
+            ```pycon
+            pb = ProgressBar()
+            print(pb.percentage)  # None
+            pb.update(total=100)
+            pb.advance(50)
+            print(pb.percentage)  # 0.5
+            ```
+        """
+        if self.total is None:
+            return None
+        return self.progress / self.total
 
     def advance(self, advance: float = 1) -> None:
         """Advance the progress of the progress bar by the given amount.
