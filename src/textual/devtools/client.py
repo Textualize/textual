@@ -211,9 +211,9 @@ class DevtoolsClient:
             log: The log to write to devtools
         """
         if isinstance(log.objects_or_string, str):
-            self.console.print(log.objects_or_string)
+            self.console.print(log.objects_or_string, markup=False)
         else:
-            self.console.print(*log.objects_or_string)
+            self.console.print(*log.objects_or_string, markup=False)
 
         segments = self.console.export_segments()
 

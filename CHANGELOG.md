@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - `textual run` execs apps in a new context.
+- Textual console no longer parses console markup.
 
 ### Added
 
