@@ -18,13 +18,20 @@ class Container(Widget):
     Container {
         height: 1fr;
         layout: vertical;
-        overflow: auto;
+        overflow: hidden hidden;
     }
     """
 
 
 class ScrollableContainer(Widget, inherit_bindings=False):
     """Base container widget that binds navigation keys for scrolling."""
+
+    DEFAULT_CSS = """
+    ScrollableContainer {
+        layout: vertical;
+        overflow: auto auto;
+    }
+    """
 
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("up", "scroll_up", "Scroll Up", show=False),
