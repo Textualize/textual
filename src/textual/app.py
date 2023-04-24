@@ -2474,7 +2474,7 @@ class App(Generic[ReturnType], DOMNode):
         except ScreenStackError:
             pass
 
-    async def action_add_class_(self, selector: str, class_name: str) -> None:
+    async def action_add_class(self, selector: str, class_name: str) -> None:
         """An [action](/guide/actions) to add a CSS class to the selected widget.
 
         Args:
