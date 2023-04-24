@@ -303,8 +303,6 @@ class StylesCache:
             Returns:
                 New list of segments
             """
-            if styles.text_opacity != 1.0:
-                segments = TextOpacity.process_segments(segments, styles.text_opacity)
             if styles.tint.a:
                 segments = Tint.process_segments(segments, styles.tint)
             if styles.opacity != 1.0:
@@ -404,6 +402,8 @@ class StylesCache:
                 line = [make_blank(content_width, inner)]
             if inner:
                 line = Segment.apply_style(line, inner)
+            if styles.text_opacity != 1.0:
+                line = TextOpacity.process_segments(line, styles.text_opacity)
             line = line_pad(line, pad_left, pad_right, inner)
 
             if border_left or border_right:

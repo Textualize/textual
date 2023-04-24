@@ -371,6 +371,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
             **kwargs: Keyword arguments to pass to the callable.
         """
         self._next_callbacks.append(partial(callback, *args, **kwargs))
+        self.check_idle()
 
     def _on_invoke_later(self, message: messages.InvokeLater) -> None:
         # Forward InvokeLater message to the Screen
@@ -503,6 +504,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
                             except Exception as error:
                                 self.app._handle_exception(error)
                                 break
+                    await self._flush_next_callbacks()
 
     async def _flush_next_callbacks(self) -> None:
         """Invoke pending callbacks in next callbacks queue."""

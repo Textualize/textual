@@ -421,7 +421,7 @@ class Strip:
             Rendered sequences.
         """
         if self._render_cache is None:
-            color_system = cast(ColorSystem, console.color_system)
+            color_system = console._color_system
             render = Style.render
             self._render_cache = "".join(
                 [

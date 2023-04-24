@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - `textual run` execs apps in a new context.
+- Textual console no longer parses console markup.
 
 ### Added
 
@@ -23,6 +24,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed dark mode toggles in a "child" screen not updating a "parent" screen https://github.com/Textualize/textual/issues/1999
 - Fixed "panel" border not exposed via CSS
+- Fixed `TabbedContent.active` changes not changing the actual content https://github.com/Textualize/textual/issues/2352
+- Fixed broken color on macOS Terminal https://github.com/Textualize/textual/issues
 
 ## [0.20.1] - 2023-04-18
 
@@ -54,6 +57,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed order styles are applied in DataTable - allows combining of renderable styles and component classes https://github.com/Textualize/textual/pull/2272
+- Fixed key combos with up/down keys in some terminals https://github.com/Textualize/textual/pull/2280
 - Fix empty ListView preventing bindings from firing https://github.com/Textualize/textual/pull/2281
 - Fix `get_component_styles` returning incorrect values on first call when combined with pseudoclasses https://github.com/Textualize/textual/pull/2304
 - Fixed `active_message_pump.get` sometimes resulting in a `LookupError` https://github.com/Textualize/textual/issues/2301

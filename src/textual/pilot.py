@@ -98,11 +98,11 @@ class Pilot(Generic[ReturnType]):
             target_widget, offset, button=1, shift=shift, meta=meta, control=control
         )
         app.post_message(MouseDown(**message_arguments))
-        await self.pause()
+        await self.pause(0.1)
         app.post_message(MouseUp(**message_arguments))
-        await self.pause()
+        await self.pause(0.1)
         app.post_message(Click(**message_arguments))
-        await self.pause()
+        await self.pause(0.1)
 
     async def hover(
         self,

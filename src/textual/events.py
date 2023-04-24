@@ -49,14 +49,6 @@ class Callback(Event, bubble=False, verbose=True):
         yield "callback", self.callback
 
 
-class InvokeCallbacks(Event, bubble=False, verbose=True):
-    """An internal event, sent to the screen to run callbacks.
-
-    - [ ] Bubbles
-    - [X] Verbose
-    """
-
-
 class ShutdownRequest(Event):
     pass
 
