@@ -376,7 +376,7 @@ class ProgressBar(Widget, can_focus=False):
         the value of `percentage` is always not `None`.
 
         Example:
-            ```pycon
+            ```py
             pb = ProgressBar()
             print(pb.percentage)  # None
             pb.update(total=100)
