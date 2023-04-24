@@ -101,6 +101,7 @@ class HorizontalScroll(ScrollableContainer, can_focus=True):
     HorizontalScroll {
         height: 1fr;
         layout: horizontal;
+        overflow-y: hidden;
         overflow-x: auto;
     }
     """
