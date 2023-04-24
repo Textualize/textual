@@ -77,6 +77,7 @@ class VerticalScroll(ScrollableContainer, can_focus=True):
     VerticalScroll {
         width: 1fr;
         layout: vertical;
+        overflow-x: hidden;
         overflow-y: auto;
     }
     """
