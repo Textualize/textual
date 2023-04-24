@@ -46,7 +46,10 @@ class JupyterDriver(Driver):
         # loop.call_soon_threadsafe(self.websocket.send_bytes, data.encode("utf-8"))
 
     def flush(self) -> None:
-        pass
+        asyncio.run_coroutine_threadsafe(
+            self.websocket.drain(),
+            loop=self._loop,
+        )
 
     def _enable_mouse_support(self) -> None:
         """Enable reporting of mouse events."""
