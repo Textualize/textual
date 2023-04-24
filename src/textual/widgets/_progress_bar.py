@@ -13,6 +13,7 @@ from textual.timer import Timer
 
 from ..app import ComposeResult, RenderResult
 from ..containers import Horizontal
+from ..message import Message
 from ..reactive import reactive
 from ..renderables.bar import RenderableBar
 from ..widget import Widget
@@ -33,16 +34,20 @@ class Bar(Widget, can_focus=False):
 
     DEFAULT_CSS = """
     Bar {
-        width: 1fr;
+        width: 32;
         height: 1;
     }
-    Bar > .bar--bar, Bar > .bar--indeterminate {
-        background: $foreground 10%;
+    Bar > .bar--bar {
         color: $warning;
+        background: $foreground 10%;
+    }
+    Bar > .bar--indeterminate {
+        color: $error;
+        background: $foreground 10%;
     }
     Bar > .bar--complete {
-        background: $foreground 10%;
         color: $success;
+        background: $foreground 10%;
     }
     """
 
@@ -56,6 +61,7 @@ class Bar(Widget, can_focus=False):
     """Internal timer used to render the bar when it's in the indeterminate state."""
 
     def watch__completion_percentage(self, percentage: float | None) -> None:
+        """Manage the timer that enables the indeterminate bar animation."""
         if percentage is not None:
             if self._refresh_timer:
                 self._refresh_timer.stop()
@@ -65,30 +71,34 @@ class Bar(Widget, can_focus=False):
             self._refresh_timer = self.set_interval(1 / 60, self.refresh)
 
     def render(self) -> RenderResult:
+        """Render the bar with the correct portion filled."""
         if self._completion_percentage is None:
             return self.render_indeterminate()
         else:
-            width = self.size.width
             bar_style = (
                 self.get_component_rich_style("bar--bar")
                 if self._completion_percentage < 1
                 else self.get_component_rich_style("bar--complete")
             )
             return RenderableBar(
-                highlight_range=(0, width * self._completion_percentage),
+                highlight_range=(0, self.size.width * self._completion_percentage),
                 highlight_style=Style.from_color(bar_style.color),
                 background_style=Style.from_color(bar_style.bgcolor),
             )
 
     def render_indeterminate(self) -> RenderResult:
+        """Render a frame of the indeterminate progress bar animation."""
         width = self.size.width
         highlighted_bar_width = 0.25 * width
+        # Width used to enable the visual effect of the bar going into the corners.
         total_imaginary_width = width + highlighted_bar_width
 
         speed = 30  # Cells per second.
+        # Compute the position of the bar.
         start = (speed * monotonic()) % (2 * total_imaginary_width)
         if start > total_imaginary_width:
-            start = 2 * total_imaginary_width - start
+            # If the bar is to the right of its width, wrap it back from right to left.
+            start = 2 * total_imaginary_width - start  # = (tiw - (start - tiw))
         start -= highlighted_bar_width
         end = start + highlighted_bar_width
 
@@ -142,9 +152,11 @@ class ETAStatus(Label):
         if percentage is None:
             self.renderable = "--:--:--"
         else:
+            # Keep track of the starting time.
             if self._start_time is None:
                 self._start_time = monotonic()
-
+            # If we are not notified of progress for some time, periodically refresh
+            # the countdown so that the ETA is updated either way.
             if self._refresh_timer is None:
                 self._refresh_timer = self.set_interval(1 / 2, self.update_eta)
 
@@ -154,8 +166,12 @@ class ETAStatus(Label):
     def update_eta(self) -> None:
         """Update the ETA display."""
         percentage = self._completion_percentage
+        # We display --:--:-- if we haven't started, if we are done,
+        # or if we don't know when we started keeping track of time.
         if not percentage or percentage >= 1 or self._start_time is None:
             self.renderable = "--:--:--"
+            # If we are done, we can delete the timer that periodically refreshes
+            # the countdown display.
             if (
                 percentage is not None
                 and percentage >= 1
@@ -163,6 +179,7 @@ class ETAStatus(Label):
             ):
                 self._refresh_timer.stop()
                 self._refresh_timer = None
+        # Render a countdown timer with hh:mm:ss, unless it's a LONG time.
         else:
             delta = monotonic() - self._start_time
             left = ceil((delta / percentage) * (1 - percentage))
@@ -192,14 +209,50 @@ class ProgressBar(Widget, can_focus=False):
 
     progress: reactive[float] = reactive(0.0)
     """The progress so far, in number of steps."""
-    total: reactive[float | None] = reactive[Optional[float]](100.0)
+    total: reactive[float | None] = reactive[Optional[float]](None)
     """The total number of steps associated with this progress bar, when known.
 
     The value `None` will render an indeterminate progress bar.
-    Once `total` is set to a numerical value, it cannot be set back to `None`
+    Once `total` is set to a numerical value, it cannot be set back to `None`.
     """
     percentage: reactive[float | None] = reactive[Optional[float]](None)
     """The percentage of progress that has been completed."""
+    _started = False
+    """Whether the total was set to a non-`None` value before."""
+
+    class Completed(Message):
+        """Sent when the progress reaches 100%.
+
+        Can be handled using `on_progress_bar_completed` in a subclass of
+        [`ProgressBar`][textual.widgets.ProgressBar] or in a parent widget in the DOM.
+
+        Attributes:
+            progress_bar: The progress bar that reached 100% completion.
+        """
+
+        def __init__(self, progress_bar: ProgressBar) -> None:
+            self.progress_bar = progress_bar
+            super().__init__()
+
+    class Started(Message):
+        """Sent when the progress bar starts tracking progress.
+
+        This message is sent when the total progress is set to a non-`None` value.
+        This message may be sent _before_ the progress bar is mounted if the progress
+        bar is instantiated with a non-`None` value for the total number of steps.
+
+        Can be handled using `on_progress_bar_started` in a subclass of
+        [`ProgressBar`][textual.widgets.ProgressBar] or in a parent widget in the DOM.
+
+        Attributes:
+            progress_bar: The progress bar that started tracking progress.
+            total: The total number of steps that the bar will track.
+        """
+
+        def __init__(self, progress_bar: ProgressBar, total: float) -> None:
+            self.progress_bar = progress_bar
+            self.total = total
+            super().__init__()
 
     def __init__(
         self,
@@ -245,7 +298,6 @@ class ProgressBar(Widget, can_focus=False):
         self.hide_percentage = hide_percentage
         self.hide_eta = hide_eta
 
-        self.percentage = None  # Without this, assigning self.total breaks. 🤔
         self.total = total
 
     def compose(self) -> ComposeResult:
@@ -277,13 +329,31 @@ class ProgressBar(Widget, can_focus=False):
                 yield eta_status
 
     def validate_progress(self, progress: float) -> float:
+        """Prevent the progress to go over the total number of steps."""
         if self.total is not None:
             return min(progress, self.total)
         return progress
 
+    def watch_total(self, total: float | None) -> None:
+        """Post the message [Started][textual.widgets.ProgressBar.Started]."""
+        if total is None:
+            return
+        if not self._started:
+            self.post_message(ProgressBar.Started(self, total))
+            self._started = True
+
     def compute_percentage(self) -> float | None:
+        """Keep the percentage of progress updated automatically.
+
+        This compute method will also post the message
+        [Completed][textual.widgets.ProgressBar.Completed] when the percentage
+        reaches 1.
+        """
         if self.total is not None:
-            return self.progress / self.total
+            percentage = self.progress / self.total
+            if percentage >= 1:
+                self.post_message(ProgressBar.Completed(self))
+            return percentage
         return None
 
     def advance(self, advance: float = 1) -> None:
