@@ -284,7 +284,7 @@ class App(Generic[ReturnType], DOMNode):
         )
         self._workers = WorkerManager(self)
         self.error_console = Console(markup=False, stderr=True)
-        self.driver_class = driver_class or self.get_driver_class()
+        self._driver_class = driver_class
         self._screen_stack: list[Screen] = []
         self._sync_available = False
 
@@ -604,7 +604,7 @@ class App(Generic[ReturnType], DOMNode):
             # screen is spun up anyway.
             pass
 
-    def get_driver_class(self) -> Type[Driver]:
+    def _get_driver_class(self) -> Type[Driver]:
         """Get a driver class for this platform.
 
         This method is called by the constructor, and unlikely to be required when
@@ -651,6 +651,11 @@ class App(Generic[ReturnType], DOMNode):
         pseudo_classes = self.pseudo_classes
         if pseudo_classes:
             yield "pseudo_classes", set(pseudo_classes)
+
+    def _repr_html_(self) -> str:
+        from .jupyter.embed import generate_embed
+
+        return generate_embed(self)
 
     @property
     def is_transparent(self) -> bool:
@@ -1030,6 +1035,7 @@ class App(Generic[ReturnType], DOMNode):
         headless: bool = False,
         size: tuple[int, int] | None = None,
         auto_pilot: AutopilotCallbackType | None = None,
+        driver: Driver | None = None,
     ) -> ReturnType | None:
         """Run the app asynchronously.
 
@@ -1038,10 +1044,12 @@ class App(Generic[ReturnType], DOMNode):
             size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect.
             auto_pilot: An auto pilot coroutine.
+            driver_class: Optional alternative driver class.
 
         Returns:
             App return value.
         """
+        self._driver = driver
         from .pilot import Pilot
 
         app = self
@@ -1085,6 +1093,7 @@ class App(Generic[ReturnType], DOMNode):
                 ready_callback=None if auto_pilot is None else app_ready,
                 headless=headless,
                 terminal_size=size,
+                driver=driver,
             )
         finally:
             try:
@@ -1101,6 +1110,7 @@ class App(Generic[ReturnType], DOMNode):
         headless: bool = False,
         size: tuple[int, int] | None = None,
         auto_pilot: AutopilotCallbackType | None = None,
+        driver_class: type[Driver] | None = None,
     ) -> ReturnType | None:
         """Run the app.
 
@@ -1109,6 +1119,7 @@ class App(Generic[ReturnType], DOMNode):
             size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect.
             auto_pilot: An auto pilot coroutine.
+            driver_class: Optional alternative driver class.
 
         Returns:
             App return value.
@@ -1123,6 +1134,7 @@ class App(Generic[ReturnType], DOMNode):
                     headless=headless,
                     size=size,
                     auto_pilot=auto_pilot,
+                    driver_class=driver_class,
                 )
             finally:
                 self._loop = None
@@ -1630,6 +1642,7 @@ class App(Generic[ReturnType], DOMNode):
         ready_callback: CallbackType | None = None,
         headless: bool = False,
         terminal_size: tuple[int, int] | None = None,
+        driver: Driver | None = None,
     ) -> None:
         self._set_active()
         active_message_pump.set(self)
@@ -1645,7 +1658,21 @@ class App(Generic[ReturnType], DOMNode):
 
         self.log.system("---")
 
-        self.log.system(driver=self.driver_class)
+        if driver is None:
+            _driver_class: type[Driver]
+            _driver_class = (
+                cast(type[Driver], HeadlessDriver)
+                if headless
+                else self._get_driver_class()
+            )
+            assert _driver_class is not None
+            driver = _driver_class(
+                self,
+                debug=constants.DEBUG,
+                size=terminal_size,
+            )
+
+        self.log.system(driver=driver)
         self.log.system(loop=asyncio.get_running_loop())
         self.log.system(features=self.features)
 
@@ -1727,17 +1754,6 @@ class App(Generic[ReturnType], DOMNode):
             load_event = events.Load()
             await self._dispatch_message(load_event)
 
-            driver: Driver
-            driver_class = cast(
-                "type[Driver]",
-                HeadlessDriver if headless else self.driver_class,
-            )
-            driver = self._driver = driver_class(
-                self,
-                debug=constants.DEBUG,
-                size=terminal_size,
-            )
-
             if not self._exit:
                 driver.start_application_mode()
                 try:
@@ -1755,7 +1771,7 @@ class App(Generic[ReturnType], DOMNode):
                                     await run_process_messages()
                         else:
                             with redirect_stderr(None):
-                                with redirect_stdout(None):
+                                with redirect_stdout(None):  # type: ignore
                                     await run_process_messages()
 
                 finally:

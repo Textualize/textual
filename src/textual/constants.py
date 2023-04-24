@@ -51,7 +51,7 @@ DEBUG: Final[bool] = get_environ_bool("TEXTUAL_DEBUG")
 DRIVER: Final[str | None] = get_environ("TEXTUAL_DRIVER", None)
 """Import for replacement driver."""
 
-FILTERS: Final[str] = get_environ("TEXTUAL_FILTERS", "")
+FILTERS: Final[str] = get_environ("TEXTUAL_FILTERS", "dim")
 """A list of filters to apply to renderables."""
 
 LOG_FILE: Final[str | None] = get_environ("TEXTUAL_LOG", None)
