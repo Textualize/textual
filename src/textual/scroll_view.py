@@ -135,9 +135,6 @@ class ScrollView(ScrollableContainer):
             duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
-
-        Note:
-            The call to scroll is made after the next refresh.
         """
 
         self._scroll_to(
