@@ -72,7 +72,6 @@ WELCOME_MD = """
 ## Textual Demo
 
 **Welcome**! Textual is a framework for creating sophisticated applications with the terminal.
-
 """
 
 
@@ -83,8 +82,6 @@ Textual is built on **Rich**, the popular Python library for advanced terminal o
 Add content to your Textual App with Rich *renderables* (this text is written in Markdown and formatted with Rich's Markdown class).
 
 Here are some examples:
-
-
 """
 
 CSS_MD = """
@@ -95,7 +92,6 @@ Textual uses Cascading Stylesheets (CSS) to create Rich interactive User Interfa
 - **Live editing** - see your changes without restarting the app!
 
 Here's an example of some CSS used in this app:
-
 """
 
 
@@ -143,7 +139,6 @@ Build your own or use the builtin widgets.
 - **Tree** An generic tree with expandable nodes.
 - **DirectoryTree** A tree of file and folders.
 - *... many more planned ...*
-
 """
 
 
@@ -160,7 +155,6 @@ Here are some links. You can click these!
 
 
 Built with ♥  by [@click="app.open_link('https://www.textualize.io')"]Textualize.io[/]
-
 """
 
 

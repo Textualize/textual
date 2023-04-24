@@ -1,8 +1,6 @@
 """
 
 An *optionally* awaitable object returned by methods that remove widgets.
-
-
 """
 
 from asyncio import Event, Task

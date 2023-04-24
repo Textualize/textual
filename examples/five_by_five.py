@@ -131,7 +131,6 @@ class GameCell(Button):
         Args:
             row (int): The row of the cell.
             col (int): The column of the cell.
-
         """
         super().__init__("", id=self.at(row, col))
         self.row = row

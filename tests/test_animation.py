@@ -9,7 +9,6 @@ class AnimApp(App):
     #foo {
         height: 1;
     }
-
     """
 
     def compose(self) -> ComposeResult:

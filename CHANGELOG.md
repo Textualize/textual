@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - `textual run` execs apps in a new context.
+- Textual console no longer parses console markup.
 - Breaking change: `Container` no longer shows required scrollbars by default https://github.com/Textualize/textual/issues/2361
 - Breaking change: `VerticalScroll` no longer shows a required horizontal scrollbar by default
 - Breaking change: `HorizontalScroll` no longer shows a required vertical scrollbar by default

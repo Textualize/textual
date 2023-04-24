@@ -1,7 +1,6 @@
 """
 
 A message pump is a base class for any object which processes messages, which includes Widget, Screen, and App.
-
 """
 from __future__ import annotations
 
@@ -47,7 +46,6 @@ class MessagePumpClosed(Exception):
 class _MessagePumpMeta(type):
     """Metaclass for message pump. This exists to populate a Message inner class of a Widget with the
     parent classes' name.
-
     """
 
     def __new__(
@@ -122,7 +120,6 @@ class MessagePump(metaclass=_MessagePumpMeta):
             with self.prevent(Input.Changed):
                 input.value = "foo"
             ```
-
         """
         if message_types:
             prevent_stack = self._prevent_message_types_stack
@@ -374,6 +371,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
             **kwargs: Keyword arguments to pass to the callable.
         """
         self._next_callbacks.append(partial(callback, *args, **kwargs))
+        self.check_idle()
 
     def _on_invoke_later(self, message: messages.InvokeLater) -> None:
         # Forward InvokeLater message to the Screen
@@ -506,6 +504,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
                             except Exception as error:
                                 self.app._handle_exception(error)
                                 break
+                    await self._flush_next_callbacks()
 
     async def _flush_next_callbacks(self) -> None:
         """Invoke pending callbacks in next callbacks queue."""
@@ -545,7 +544,6 @@ class MessagePump(metaclass=_MessagePumpMeta):
         Args:
             method_name: Handler method name.
             message: Message object.
-
         """
         private_method = f"_{method_name}"
         for cls in self.__class__.__mro__:

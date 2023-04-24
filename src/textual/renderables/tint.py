@@ -38,7 +38,6 @@ class Tint:
 
         Returns:
             Segments with applied tint.
-
         """
         from_rich_color = Color.from_rich_color
         style_from_color = Style.from_color

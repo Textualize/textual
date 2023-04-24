@@ -9,7 +9,6 @@ Note that stdlib's @lru_cache is implemented in C and faster! It's best to use
 @lru_cache where you are caching things that are fairly quick and called many times.
 Use LRUCache where you want increased flexibility and you are caching slow operations
 where the overhead of the cache is a small fraction of the total processing time.
-
 """
 
 from __future__ import annotations
@@ -35,7 +34,6 @@ class LRUCache(Generic[CacheKey, CacheValue]):
 
     Each entry is stored as [PREV, NEXT, KEY, VALUE] where PREV is a reference
     to the previous entry, and NEXT is a reference to the next value.
-
     """
 
     __slots__ = [
