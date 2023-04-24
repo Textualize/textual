@@ -2462,7 +2462,13 @@ class App(Generic[ReturnType], DOMNode):
         self.pop_screen()
 
     async def action_back(self) -> None:
-        """An [action](/guide/actions) to go back to the previous screen (pop the current screen)."""
+        """An [action](/guide/actions) to go back to the previous screen (pop the current screen).
+
+        Note:
+            If there is no screen to go back to, this is a non-operation (in
+            other words it's safe to call even if there are no other screens
+            on the stack.)
+        """
         try:
             self.pop_screen()
         except ScreenStackError:
