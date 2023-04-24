@@ -1,9 +1,9 @@
 from time import monotonic
 
 from textual.app import App, ComposeResult
-from textual.containers import Container
+from textual.containers import ScrollableContainer
 from textual.reactive import reactive
-from textual.widgets import Button, Header, Footer, Static
+from textual.widgets import Button, Footer, Header, Static
 
 
 class TimeDisplay(Static):
@@ -83,7 +83,7 @@ class StopwatchApp(App):
         """Called to add widgets to the app."""
         yield Header()
         yield Footer()
-        yield Container(Stopwatch(), Stopwatch(), Stopwatch(), id="timers")
+        yield ScrollableContainer(Stopwatch(), Stopwatch(), Stopwatch(), id="timers")
 
     def action_add_stopwatch(self) -> None:
         """An action to add a timer."""

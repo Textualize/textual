@@ -157,7 +157,7 @@ Let's add those to the app. Just a skeleton for now, we will add the rest of the
 --8<-- "docs/examples/tutorial/stopwatch02.py"
 ```
 
-We've imported two new widgets in this code: `Button`, which creates a clickable button, and `Static` which is a base class for a simple control. We've also imported `Container` from `textual.containers` which (as the name suggests) is a `Widget` which contains other widgets.
+We've imported two new widgets in this code: `Button`, which creates a clickable button, and `Static` which is a base class for a simple control. We've also imported `ScrollableContainer` from `textual.containers` which (as the name suggests) is a `Widget` which contains other widgets.
 
 We've defined an empty `TimeDisplay` widget by extending `Static`. We will flesh this out later.
 
@@ -174,7 +174,7 @@ The Button constructor takes a label to be displayed in the button (`"Start"`, `
 
 To add widgets to our application we first need to yield them from the app's `compose()` method:
 
-The new line in `StopwatchApp.compose()` yields a single `Container` object which will create a scrolling list of stopwatches. When classes contain other widgets (like `Container`) they will typically accept their child widgets as positional arguments. We want to start the app with three stopwatches, so we construct three `Stopwatch` instances and pass them to the container's constructor.
+The new line in `StopwatchApp.compose()` yields a single `ScrollableContainer` object which will create a scrolling list of stopwatches. When classes contain other widgets (like `ScrollableContainer`) they will typically accept their child widgets as positional arguments. We want to start the app with three stopwatches, so we construct three `Stopwatch` instances and pass them to the container's constructor.
 
 
 ### The unstyled app
@@ -438,7 +438,7 @@ Let's use these methods to implement adding and removing stopwatches to our app.
 
 Here's a summary of the changes:
 
-- The `Container` object in `StopWatchApp` grew a `"timers"` ID.
+- The `ScrollableContainer` object in `StopWatchApp` grew a `"timers"` ID.
 - Added `action_add_stopwatch` to add a new stopwatch.
 - Added `action_remove_stopwatch` to remove a stopwatch.
 - Added keybindings for the actions.
