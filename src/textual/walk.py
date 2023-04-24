@@ -4,7 +4,6 @@ Functions for *walking* the DOM.
 !!! note
 
     For most purposes you would be better off using [query][textual.dom.DOMNode.query], which uses these functions internally.
-
 """
 
 from __future__ import annotations
@@ -57,7 +56,6 @@ def walk_depth_first(
 
     Returns:
         An iterable of DOMNodes, or the type specified in ``filter_type``.
-
     """
     from textual.dom import DOMNode
 
@@ -118,7 +116,6 @@ def walk_breadth_first(
 
     Returns:
         An iterable of DOMNodes, or the type specified in ``filter_type``.
-
     """
     from textual.dom import DOMNode
 

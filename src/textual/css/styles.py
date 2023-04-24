@@ -770,7 +770,6 @@ class Styles(StylesBase):
 
         Returns:
             An iterable of CSS declarations.
-
         """
 
         has_rule = rules.__contains__
@@ -1119,7 +1118,6 @@ class RenderStyles(StylesBase):
             delay: A delay (in seconds) before the animation starts.
             easing: An easing method.
             on_complete: A callable to invoke when the animation is finished.
-
         """
         if self._animate is None:
             assert self.node is not None

@@ -1,7 +1,6 @@
 """
 
 The `Screen` class is a special widget which represents the content in the terminal. See [Screens](/guide/screens/) for details.
-
 """
 
 from __future__ import annotations
@@ -745,8 +744,6 @@ class ModalScreen(Screen[ScreenResultType]):
     """A screen with bindings that take precedence over the App's key bindings.
 
     The default styling of a modal screen will dim the screen underneath.
-
-
     """
 
     DEFAULT_CSS = """

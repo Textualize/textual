@@ -418,7 +418,6 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     Tree > .tree--highlight-line {
         background: $boost;
     }
-
     """
 
     show_root = reactive(True)

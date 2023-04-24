@@ -1,6 +1,5 @@
 """
 Container widgets for quick styling.
-
 """
 
 from __future__ import annotations

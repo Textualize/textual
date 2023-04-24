@@ -65,7 +65,6 @@ class StylesCache:
     ┃                      ┃
     ┗━━━━━━━━━━━━━━━━━━━━━━┛
     ```
-
     """
 
     def __init__(self) -> None:

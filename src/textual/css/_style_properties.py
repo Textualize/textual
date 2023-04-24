@@ -4,7 +4,6 @@ setting attributes. This gives the developer more freedom in how to express styl
 
 Descriptors also play nicely with Mypy, which is aware that attributes can have different types
 when setting and getting.
-
 """
 
 from __future__ import annotations
@@ -383,7 +382,6 @@ class BorderProperty:
 
     Args:
         layout: True if the layout should be refreshed after setting, False otherwise.
-
     """
 
     def __init__(self, layout: bool) -> None:

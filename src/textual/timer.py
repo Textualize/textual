@@ -2,7 +2,6 @@
 
 Timer objects are created by [set_interval][textual.message_pump.MessagePump.set_interval] or
     [set_timer][textual.message_pump.MessagePump.set_timer].
-
 """
 
 from __future__ import annotations
@@ -95,7 +94,6 @@ class Timer:
         """Pause the timer.
 
         A paused timer will not send events until it is resumed.
-
         """
         self._active.clear()
 

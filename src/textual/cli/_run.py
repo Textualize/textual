@@ -4,7 +4,6 @@ Functions to run Textual apps with an updated environment.
 
 Note that these methods will execute apps in a new process, and abandon the current process.
 This means that (if they succeed) they will never return.
-
 """
 
 from __future__ import annotations
@@ -98,7 +97,6 @@ def exec_python(args: list[str], environment: dict[str, str]) -> NoReturn:
     Args:
         args: Additional arguments.
         environment: Environment variables.
-
     """
     _flush()
     os.execvpe(sys.executable, ["python", *args], environment)
@@ -148,7 +146,6 @@ def exec_import(
         import_name: The Python import.
         args: Command line arguments.
         environment: Environment variables.
-
     """
     module, _colon, app = import_name.partition(":")
     app = app or "app"
