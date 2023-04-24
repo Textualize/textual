@@ -1,5 +1,7 @@
+from rich.align import VerticalCenter
+
 from textual.app import App, ComposeResult
-from textual.containers import Horizontal
+from textual.containers import Horizontal, VerticalScroll
 from textual.widgets import Button, ContentSwitcher, DataTable, Markdown
 
 MARKDOWN_EXAMPLE = """# Three Flavours Cornetto
@@ -37,7 +39,8 @@ class ContentSwitcherApp(App[None]):
 
         with ContentSwitcher(initial="data-table"):  # (4)!
             yield DataTable(id="data-table")
-            yield Markdown(MARKDOWN_EXAMPLE, id="markdown")
+            with VerticalScroll(id="markdown"):
+                yield Markdown(MARKDOWN_EXAMPLE)
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         self.query_one(ContentSwitcher).current = event.button.id  # (5)!
