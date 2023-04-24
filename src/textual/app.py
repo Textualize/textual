@@ -2483,7 +2483,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         self.screen.query(selector).add_class(class_name)
 
-    async def action_remove_class_(self, selector: str, class_name: str) -> None:
+    async def action_remove_class(self, selector: str, class_name: str) -> None:
         """An [action](/guide/actions) to remove a CSS class from the selected widget.
 
         Args:
