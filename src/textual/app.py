@@ -2411,7 +2411,11 @@ class App(Generic[ReturnType], DOMNode):
         self._unregister(root)
 
     async def action_check_bindings(self, key: str) -> None:
-        """An [action](/guide/actions) to handle a key press using the binding system."""
+        """An [action](/guide/actions) to handle a key press using the binding system.
+
+        Args:
+            key: The key to process.
+        """
         if not await self.check_bindings(key, priority=True):
             await self.check_bindings(key, priority=False)
 
