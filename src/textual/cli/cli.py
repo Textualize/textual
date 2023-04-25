@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import platform
 import shlex
 import sys
 
@@ -13,6 +14,9 @@ except ImportError:
     sys.exit(1)
 
 from importlib_metadata import version
+
+WINDOWS = platform.system() == "Windows"
+"""True if we're running on Windows."""
 
 
 @click.group()
@@ -190,7 +194,7 @@ def _run_app(
 
     _pre_run_warnings()
 
-    import_name, *args = [*shlex.split(import_name), *extra_args]
+    import_name, *args = [*shlex.split(import_name, posix=not WINDOWS), *extra_args]
 
     if command:
         exec_command(import_name, args, environment)
