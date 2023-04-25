@@ -26,6 +26,10 @@ class RadioSet(Container):
         width: auto;
     }
 
+    RadioSet:focus-within {
+        border: round $accent;
+    }
+
     App.-light-mode RadioSet {
         border: round #CCC;
     }
