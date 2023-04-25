@@ -20,7 +20,7 @@ class RadioChoicesApp(App[None]):
             yield RadioButton("Wing Commander")
 
     def on_mount(self) -> None:
-        self.query_one("#focus_me", RadioButton).focus()
+        self.query_one(RadioSet).focus()
 
 
 if __name__ == "__main__":

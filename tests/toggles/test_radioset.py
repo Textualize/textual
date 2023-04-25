@@ -57,13 +57,10 @@ async def test_radioset_inner_navigation():
     async with RadioSetApp().run_test() as pilot:
         assert pilot.app.screen.focused is None
         await pilot.press("tab")
-        assert (
-            pilot.app.screen.focused == pilot.app.query_one("#from_buttons").children[0]
-        )
         for key, landing in (("down", 1), ("up", 0), ("right", 1), ("left", 0)):
-            await pilot.press(key)
+            await pilot.press(key, "enter")
             assert (
-                pilot.app.screen.focused
+                pilot.app.query_one("#from_buttons", RadioSet).pressed_button
                 == pilot.app.query_one("#from_buttons").children[landing]
             )
 
@@ -73,11 +70,11 @@ async def test_radioset_breakout_navigation():
     async with RadioSetApp().run_test() as pilot:
         assert pilot.app.screen.focused is None
         await pilot.press("tab")
-        assert pilot.app.screen.focused.parent is pilot.app.query_one("#from_buttons")
+        assert pilot.app.screen.focused is pilot.app.query_one("#from_buttons")
         await pilot.press("tab")
-        assert pilot.app.screen.focused.parent is pilot.app.query_one("#from_strings")
+        assert pilot.app.screen.focused is pilot.app.query_one("#from_strings")
         await pilot.press("shift+tab")
-        assert pilot.app.screen.focused.parent is pilot.app.query_one("#from_buttons")
+        assert pilot.app.screen.focused is pilot.app.query_one("#from_buttons")
 
 
 class BadRadioSetApp(App[None]):

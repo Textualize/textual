@@ -9,7 +9,7 @@ class RadioSetChangedApp(App[None]):
     def compose(self) -> ComposeResult:
         with VerticalScroll():
             with Horizontal():
-                with RadioSet():
+                with RadioSet(id="focus_me"):
                     yield RadioButton("Battlestar Galactica")
                     yield RadioButton("Dune 1984")
                     yield RadioButton("Dune 2021")
@@ -18,8 +18,7 @@ class RadioSetChangedApp(App[None]):
                     yield RadioButton("Star Wars: A New Hope")
                     yield RadioButton("The Last Starfighter")
                     yield RadioButton(
-                        "Total Recall :backhand_index_pointing_right: :red_circle:",
-                        id="focus_me",
+                        "Total Recall :backhand_index_pointing_right: :red_circle:"
                     )
                     yield RadioButton("Wing Commander")
             with Horizontal():
@@ -28,7 +27,7 @@ class RadioSetChangedApp(App[None]):
                 yield Label(id="index")
 
     def on_mount(self) -> None:
-        self.query_one("#focus_me", RadioButton).focus()
+        self.query_one(RadioSet).focus()
 
     def on_radio_set_changed(self, event: RadioSet.Changed) -> None:
         self.query_one("#pressed", Label).update(
