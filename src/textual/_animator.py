@@ -39,7 +39,7 @@ class Animatable(Protocol):
     """Protocol for objects that can have their intrinsic values animated.
 
     For example, the transition between two colors can be animated
-    because the class [Color][textual.color.Color.blend] satisfies this protocol.
+    because the class [`Color`][textual.color.Color.blend] satisfies this protocol.
     """
 
     def blend(

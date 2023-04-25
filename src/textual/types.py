@@ -1,5 +1,5 @@
 """
-Exports some types that are used by Textual and that help document other features.
+Export some objects that are used by Textual and that help document other features.
 """
 
 from ._animator import Animatable, EasingFunction
