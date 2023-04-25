@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+from typing import ClassVar
+
 import rich.repr
 
+from ..binding import Binding, BindingType
 from ..containers import Container
 from ..events import Mount
 from ..message import Message
@@ -33,6 +36,21 @@ class RadioSet(Container):
     App.-light-mode RadioSet {
         border: round #CCC;
     }
+    """
+
+    BINDINGS: ClassVar[list[BindingType]] = [
+        Binding("down,right", "next_button", "", show=False),
+        Binding("shift+tab", "breakout_previous", "", show=False),
+        Binding("tab", "breakout_next", "", show=False),
+        Binding("up,left", "previous_button", "", show=False),
+    ]
+    """
+    | Key(s) | Description |
+    | :- | :- |
+    | left, up | Select the previous radio button in the set. |
+    | right, down | Select the next radio button in the set. |
+    | shift+tab | Move focus to the previous focusable widget relative to the set. |
+    | tab | Move focus to the next focusable widget relative to the set. |
     """
 
     @rich.repr.auto
@@ -155,3 +173,37 @@ class RadioSet(Container):
             if self._pressed_button is not None
             else -1
         )
+
+    def action_previous_button(self) -> None:
+        """Navigate to the previous button in the set.
+
+        Note that this will wrap around to the end if at the start.
+        """
+        if self.children:
+            if self.screen.focused == self.children[0]:
+                self.screen.set_focus(self.children[-1])
+            else:
+                self.screen.focus_previous()
+
+    def action_next_button(self) -> None:
+        """Navigate to the next button in the set.
+
+        Note that this will wrap around to the start if at the end.
+        """
+        if self.children:
+            if self.screen.focused == self.children[-1]:
+                self.screen.set_focus(self.children[0])
+            else:
+                self.screen.focus_next()
+
+    def action_breakout_previous(self) -> None:
+        """Break out of the radio set to the previous widget in the focus chain."""
+        if self.children:
+            self.screen.set_focus(self.children[0])
+        self.screen.focus_previous()
+
+    def action_breakout_next(self) -> None:
+        """Break out of the radio set to the next widget in the focus chain."""
+        if self.children:
+            self.screen.set_focus(self.children[-1])
+        self.screen.focus_next()
