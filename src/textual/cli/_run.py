@@ -10,13 +10,9 @@ from __future__ import annotations
 
 import importlib
 import os
-import platform
 import sys
 from string import Template
 from typing import NoReturn, Sequence
-
-WINDOWS = platform.system() == "Windows"
-"""True if we're running on Windows."""
 
 EXEC_SCRIPT = Template(
     """\
