@@ -52,6 +52,31 @@ async def test_radio_sets_toggle():
         ]
 
 
+async def test_radioset_inner_navigation():
+    """Using the cursor keys should navigate between buttons in a set."""
+    async with RadioSetApp().run_test() as pilot:
+        assert pilot.app.screen.focused is None
+        await pilot.press("tab")
+        for key, landing in (("down", 1), ("up", 0), ("right", 1), ("left", 0)):
+            await pilot.press(key, "enter")
+            assert (
+                pilot.app.query_one("#from_buttons", RadioSet).pressed_button
+                == pilot.app.query_one("#from_buttons").children[landing]
+            )
+
+
+async def test_radioset_breakout_navigation():
+    """Shift/Tabbing while in a radioset should move to the previous/next focsuable after the set itself."""
+    async with RadioSetApp().run_test() as pilot:
+        assert pilot.app.screen.focused is None
+        await pilot.press("tab")
+        assert pilot.app.screen.focused is pilot.app.query_one("#from_buttons")
+        await pilot.press("tab")
+        assert pilot.app.screen.focused is pilot.app.query_one("#from_strings")
+        await pilot.press("shift+tab")
+        assert pilot.app.screen.focused is pilot.app.query_one("#from_buttons")
+
+
 class BadRadioSetApp(App[None]):
     def compose(self) -> ComposeResult:
         with RadioSet():

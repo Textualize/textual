@@ -2,15 +2,19 @@
 
 from __future__ import annotations
 
+from typing import ClassVar, Optional
+
 import rich.repr
 
+from ..binding import Binding, BindingType
 from ..containers import Container
-from ..events import Mount
+from ..events import Click, Mount
 from ..message import Message
+from ..reactive import var
 from ._radio_button import RadioButton
 
 
-class RadioSet(Container):
+class RadioSet(Container, can_focus=True, can_focus_children=False):
     """Widget for grouping a collection of radio buttons into a set.
 
     When a collection of [`RadioButton`][textual.widgets.RadioButton]s are
@@ -26,10 +30,46 @@ class RadioSet(Container):
         width: auto;
     }
 
+    RadioSet:focus {
+        border: round $accent;
+    }
+
     App.-light-mode RadioSet {
         border: round #CCC;
     }
+
+    /* The following rules/styles mimic similar ToggleButton:focus rules in
+     * ToggleButton. If those styles ever get updated, these should be too.
+     */
+
+    RadioSet:focus > RadioButton.-selected > .toggle--label {
+        text-style: underline;
+    }
+
+    RadioSet:focus ToggleButton.-selected > .toggle--button {
+        background: $foreground 25%;
+    }
+
+    RadioSet:focus > RadioButton.-on.-selected > .toggle--button {
+        background: $foreground 25%;
+    }
     """
+
+    BINDINGS: ClassVar[list[BindingType]] = [
+        Binding("down,right", "next_button", "", show=False),
+        Binding("enter,space", "toggle", "Toggle", show=False),
+        Binding("up,left", "previous_button", "", show=False),
+    ]
+    """
+    | Key(s) | Description |
+    | :- | :- |
+    | enter, space | Toggle the currently-selected button. |
+    | left, up | Select the previous radio button in the set. |
+    | right, down | Select the next radio button in the set. |
+    """
+
+    _selected: var[int | None] = var[Optional[int]](None)
+    """The index of the currently-selected radio button."""
 
     @rich.repr.auto
     class Changed(Message, bubble=True):
@@ -95,12 +135,26 @@ class RadioSet(Container):
     def _on_mount(self, _: Mount) -> None:
         """Perform some processing once mounted in the DOM."""
 
+        # If there are radio buttons, select the first one.
+        if self._nodes:
+            self._selected = 0
+
+        # Get all the buttons within us; we'll be doing a couple of things
+        # with that list.
+        buttons = list(self.query(RadioButton))
+
+        # RadioButtons can have focus, by default. But we're going to take
+        # that over and handle movement between them. So here we tell them
+        # all they can't focus.
+        for button in buttons:
+            button.can_focus = False
+
         # It's possible for the user to pass in a collection of radio
         # buttons, with more than one set to on; they shouldn't, but we
         # can't stop them. So here we check for that and, for want of a
         # better approach, we keep the first one on and turn all the others
         # off.
-        switched_on = [button for button in self.query(RadioButton) if button.value]
+        switched_on = [button for button in buttons if button.value]
         with self.prevent(RadioButton.Changed):
             for button in switched_on[1:]:
                 button.value = False
@@ -108,6 +162,11 @@ class RadioSet(Container):
         # Keep track of which button is initially pressed.
         if switched_on:
             self._pressed_button = switched_on[0]
+
+    def watch__selected(self) -> None:
+        self.query(RadioButton).remove_class("-selected")
+        if self._selected is not None:
+            self._nodes[self._selected].add_class("-selected")
 
     def _on_radio_button_changed(self, event: RadioButton.Changed) -> None:
         """Respond to the value of a button in the set being changed.
@@ -138,6 +197,22 @@ class RadioSet(Container):
                 # We're being clicked off, we don't want that.
                 event.radio_button.value = True
 
+    def _on_radio_set_changed(self, event: RadioSet.Changed) -> None:
+        """Handle a change to which button in the set is pressed.
+
+        This handler ensures that, when a button is pressed, it's also the
+        selected button.
+        """
+        self._selected = event.index
+
+    async def _on_click(self, _: Click) -> None:
+        """Handle a click on or within the radio set.
+
+        This handler ensures that focus moves to the clicked radio set, even
+        if there's a click on one of the radio buttons it contains.
+        """
+        self.focus()
+
     @property
     def pressed_button(self) -> RadioButton | None:
         """The currently-pressed [`RadioButton`][textual.widgets.RadioButton], or `None` if none are pressed."""
@@ -151,3 +226,34 @@ class RadioSet(Container):
             if self._pressed_button is not None
             else -1
         )
+
+    def action_previous_button(self) -> None:
+        """Navigate to the previous button in the set.
+
+        Note that this will wrap around to the end if at the start.
+        """
+        if self._nodes:
+            if self._selected == 0:
+                self._selected = len(self.children) - 1
+            elif self._selected is None:
+                self._selected = 0
+            else:
+                self._selected -= 1
+
+    def action_next_button(self) -> None:
+        """Navigate to the next button in the set.
+
+        Note that this will wrap around to the start if at the end.
+        """
+        if self._nodes:
+            if self._selected is None or self._selected == len(self._nodes) - 1:
+                self._selected = 0
+            else:
+                self._selected += 1
+
+    def action_toggle(self) -> None:
+        """Toggle the state of the currently-selected button."""
+        if self._selected is not None:
+            button = self._nodes[self._selected]
+            assert isinstance(button, RadioButton)
+            button.toggle()
