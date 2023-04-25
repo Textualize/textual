@@ -408,7 +408,11 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def workers(self) -> WorkerManager:
-        """The [worker](guide/workers/) manager."""
+        """The [worker](guide/workers/) manager.
+
+        Returns:
+            An object to manage workers.
+        """
         return self._workers
 
     @property
@@ -421,11 +425,14 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def children(self) -> Sequence["Widget"]:
-        """A view onto the app's direct children.
+        """A view onto the app's immediate children.
 
         This attribute exists on all widgets.
         In the case of the App, it will only ever contain a single child, which will
         be the currently active screen.
+
+        Returns:
+            A sequence of widgets.
         """
         try:
             return (self.screen,)
@@ -504,7 +511,11 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def screen_stack(self) -> Sequence[Screen]:
-        """A snapshot of the current screen stack."""
+        """A snapshot of the current screen stack.
+
+        Returns:
+            A snapshot of the current state of the screen stack.
+        """
         return self._screen_stack.copy()
 
     def exit(
@@ -527,6 +538,9 @@ class App(Generic[ReturnType], DOMNode):
         """The widget that is focused on the currently active screen, or `None`.
 
         Focused widgets receive keyboard input.
+
+        Returns:
+            The currently focused widget, or `None` if nothing is focused.
         """
         return self.screen.focused
 
@@ -538,6 +552,9 @@ class App(Generic[ReturnType], DOMNode):
         If a widget is focused, then any bindings present in the active screen and app are merged and returned.
 
         This property may be used to inspect current bindings.
+
+        Returns:
+            A mapping of keys onto pairs of nodes and bindings.
         """
 
         namespace_binding_map: dict[str, tuple[DOMNode, Binding]] = {}
@@ -646,6 +663,9 @@ class App(Generic[ReturnType], DOMNode):
     def screen(self) -> Screen:
         """The current active screen.
 
+        Returns:
+            The currently active (visible) screen.
+
         Raises:
             ScreenStackError: If there are no screens on the stack.
         """
@@ -667,7 +687,11 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def size(self) -> Size:
-        """The size of the terminal."""
+        """The size of the terminal.
+
+        Returns:
+            Size of the terminal.
+        """
         if self._driver is not None and self._driver._size is not None:
             width, height = self._driver._size
         else:
@@ -683,6 +707,9 @@ class App(Generic[ReturnType], DOMNode):
             self.log("Hello, World!")
             self.log(self.tree)
             ```
+
+        Returns:
+            A Textual logger.
         """
         return self._logger
 
