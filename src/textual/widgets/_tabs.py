@@ -15,7 +15,7 @@ from ..events import Mount
 from ..geometry import Offset
 from ..message import Message
 from ..reactive import reactive
-from ..renderables.bar import RenderableBar
+from ..renderables.bar import Bar
 from ..widget import Widget
 from ..widgets import Static
 
@@ -68,7 +68,7 @@ class Underline(Widget):
     def render(self) -> RenderResult:
         """Render the bar."""
         bar_style = self.get_component_rich_style("underline--bar")
-        return RenderableBar(
+        return Bar(
             highlight_range=self._highlight_range,
             highlight_style=Style.from_color(bar_style.color),
             background_style=Style.from_color(bar_style.bgcolor),

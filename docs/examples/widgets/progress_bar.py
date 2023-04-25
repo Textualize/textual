@@ -12,7 +12,7 @@ class FundingProgressApp(App[None]):
         yield Header()
         with Center():
             yield Label("Funding: ")
-            yield ProgressBar(total=100, hide_eta=True)  # (1)!
+            yield ProgressBar(total=100, show_eta=False)  # (1)!
         with Center():
             yield Input(placeholder="$$$")
             yield Button("Donate")
