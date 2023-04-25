@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.widgets import Static, Header
+from textual.widgets import Header, Static
 
 TEXT = """\
 Docking a widget removes it from the layout and fixes its position, aligned to either the top, right, bottom, or left edges of a container.

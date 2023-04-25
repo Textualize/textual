@@ -143,7 +143,6 @@ class Button(Static, can_focus=True):
         border-bottom: tall $error-lighten-2;
         border-top: tall $error-darken-2;
     }
-
     """
 
     BINDINGS = [Binding("enter", "press", "Press Button", show=False)]

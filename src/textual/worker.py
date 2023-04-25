@@ -1,6 +1,5 @@
 """
 A class to manage concurrent [work](/guide/workers).
-
 """
 
 from __future__ import annotations
@@ -205,7 +204,6 @@ class Worker(Generic[ResultType]):
         """Has the work been cancelled?
 
         Note that cancelled work may still be running.
-
         """
         return self._cancelled
 
@@ -238,7 +236,6 @@ class Worker(Generic[ResultType]):
         """Progress as a percentage.
 
         If the total steps is None, then this will return 0. The percentage will be clamped between 0 and 100.
-
         """
         if not self._total_steps:
             return 0.0
@@ -268,7 +265,6 @@ class Worker(Generic[ResultType]):
 
         Args:
             steps: Number of steps to advance.
-
         """
         self._completed_steps += steps
 
@@ -279,7 +275,6 @@ class Worker(Generic[ResultType]):
 
         Returns:
             Return value of work.
-
         """
 
         if (

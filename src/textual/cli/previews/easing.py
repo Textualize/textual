@@ -38,7 +38,6 @@ class Bar(Widget):
         background: $surface;
         color: $success;
     }
-
     """
 
     def watch_animation_running(self, running: bool) -> None:
@@ -79,7 +78,7 @@ class EasingApp(App):
                 yield duration_input
             with Horizontal():
                 yield self.animated_bar
-                yield Container(self.opacity_widget, id="other")
+                yield VerticalScroll(self.opacity_widget, id="other")
             yield Footer()
 
     def on_button_pressed(self, event: Button.Pressed) -> None:

@@ -1,7 +1,6 @@
 """
 
 The `Screen` class is a special widget which represents the content in the terminal. See [Screens](/guide/screens/) for details.
-
 """
 
 from __future__ import annotations
@@ -447,15 +446,12 @@ class Screen(Generic[ScreenResultType], Widget):
                 or self._dirty_widgets
             ):
                 self._update_timer.resume()
+                return
 
-        # The Screen is idle - a good opportunity to invoke the scheduled callbacks
-
-        if self._callbacks:
-            self._on_timer_update()
+        await self._invoke_and_clear_callbacks()
 
     def _on_timer_update(self) -> None:
         """Called by the _update_timer."""
-
         self._update_timer.pause()
         if self.is_current:
             if self._layout_required:
@@ -468,12 +464,11 @@ class Screen(Generic[ScreenResultType], Widget):
                 self._scroll_required = False
 
             if self._repaint_required:
-                self._update_timer.resume()
                 self._dirty_widgets.clear()
                 self._dirty_widgets.add(self)
                 self._repaint_required = False
 
-            if self._dirty_widgets and self.is_current:
+            if self._dirty_widgets:
                 self._compositor.update_widgets(self._dirty_widgets)
                 update = self._compositor.render_update(
                     screen_stack=self.app._background_screens
@@ -482,20 +477,12 @@ class Screen(Generic[ScreenResultType], Widget):
                 self._dirty_widgets.clear()
 
         if self._callbacks:
-            self.post_message(events.InvokeCallbacks())
-
-    async def _on_invoke_callbacks(self, event: events.InvokeCallbacks) -> None:
-        """Handle PostScreenUpdate events, which are sent after the screen is updated"""
-        await self._invoke_and_clear_callbacks()
+            self.call_next(self._invoke_and_clear_callbacks)
 
     async def _invoke_and_clear_callbacks(self) -> None:
         """If there are scheduled callbacks to run, call them and clear
         the callback queue."""
         if self._callbacks:
-            display_update = self._compositor.render_update(
-                screen_stack=self.app._background_screens
-            )
-            self.app._display(self, display_update)
             callbacks = self._callbacks[:]
             self._callbacks.clear()
             for callback in callbacks:
@@ -760,8 +747,6 @@ class ModalScreen(Screen[ScreenResultType]):
     """A screen with bindings that take precedence over the App's key bindings.
 
     The default styling of a modal screen will dim the screen underneath.
-
-
     """
 
     DEFAULT_CSS = """

@@ -4,7 +4,6 @@ Code browser example.
 Run with:
 
     python code_browser.py PATH
-
 """
 
 import sys

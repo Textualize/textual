@@ -2,7 +2,6 @@
 A class to manage [workers](/guide/workers) for an app.
 
 You access this object via [App.workers][textual.app.App.workers] or [Widget.workers][textual.dom.DOMNode.workers].
-
 """
 
 
@@ -28,7 +27,6 @@ class WorkerManager:
 
     You will not have to construct this class manually, as widgets, screens, and apps
     have a worker manager accessibly via a `workers` attribute.
-
     """
 
     def __init__(self, app: App) -> None:
@@ -163,7 +161,6 @@ class WorkerManager:
 
         Returns:
             List of cancelled workers.
-
         """
         workers = [worker for worker in self._workers if worker.node == node]
         for worker in workers:

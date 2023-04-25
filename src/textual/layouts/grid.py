@@ -34,7 +34,6 @@ class GridLayout(Layout):
 
             Args:
                 column_count: Number of columns
-
             """
             row = 0
             while True:

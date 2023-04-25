@@ -26,8 +26,6 @@ for name, triplet in sorted(COLOR_NAME_TO_RGB.items()):
     )
 output = table
 ```
-
-
 """
 
 from __future__ import annotations
@@ -158,7 +156,6 @@ class Color(NamedTuple):
         >>> color + color_with_alpha
         Color(177, 25, 12)
         ```
-
     """
 
     r: int
@@ -204,7 +201,6 @@ class Color(NamedTuple):
 
         Returns:
             Inverse color.
-
         """
         r, g, b, a = self
         return Color(255 - r, 255 - g, 255 - b, a)
@@ -245,7 +241,6 @@ class Color(NamedTuple):
 
         Returns:
             Normalized components.
-
         """
         r, g, b, _a = self
         return (r / 255, g / 255, b / 255)
@@ -264,7 +259,6 @@ class Color(NamedTuple):
 
         Returns:
             Color encoded in HSL format.
-
         """
         r, g, b = self.normalized
         h, l, s = rgb_to_hls(r, g, b)
@@ -276,7 +270,6 @@ class Color(NamedTuple):
 
         A value of 1 is returned for pure white, and 0 for pure black.
         Other colors lie on a gradient between the two extremes.
-
         """
         r, g, b = self.normalized
         brightness = (299 * r + 587 * g + 114 * b) / 1000
@@ -287,7 +280,6 @@ class Color(NamedTuple):
         """The color in CSS hex form, with 6 digits for RGB, and 8 digits for RGBA.
 
         For example, `"#46b3de"` for an RGB color, or `"#3342457f"` for a color with alpha.
-
         """
         r, g, b, a = self.clamped
         return (
@@ -301,7 +293,6 @@ class Color(NamedTuple):
         """The color in CSS hex form, with 6 digits for RGB. Alpha is ignored.
 
         For example, `"#46b3de"`.
-
         """
         r, g, b, _a = self.clamped
         return f"#{r:02X}{g:02X}{b:02X}"
@@ -311,7 +302,6 @@ class Color(NamedTuple):
         """The color in CSS RGB or RGBA form.
 
         For example, `"rgb(10,20,30)"` for an RGB color, or `"rgb(50,70,80,0.5)"` for an RGBA color.
-
         """
         r, g, b, a = self
         return f"rgb({r},{g},{b})" if a == 1 else f"rgba({r},{g},{b},{a})"
@@ -322,7 +312,6 @@ class Color(NamedTuple):
 
         Returns:
             The monochrome (black and white) version of this color.
-
         """
         r, g, b, a = self
         gray = round(r * 0.2126 + g * 0.7152 + b * 0.0722)

@@ -2,8 +2,6 @@
 
 A DOMNode is a base class for any object within the Textual Document Object Model,
 which includes all Widgets, Screens, and Apps.
-
-
 """
 
 
@@ -78,7 +76,6 @@ def check_identifiers(description: str, *names: str) -> None:
     Args:
         description: Description of where identifier is used for error message.
         *names: Identifiers to check.
-
     """
     match = _re_identifier.match
     for name in names:
@@ -207,7 +204,6 @@ class DOMNode(MessagePump):
 
         Returns:
             The node's children.
-
         """
         return self._nodes
 
@@ -332,7 +328,6 @@ class DOMNode(MessagePump):
         """Called after styles are updated.
 
         Implement this in a subclass if you want to clear any cached data when the CSS is reloaded.
-
         """
 
     @property
@@ -454,7 +449,6 @@ class DOMNode(MessagePump):
         """The parent node.
 
         All nodes have parent once added to the DOM, with the exception of the App which is the *root* node.
-
         """
         return cast("DOMNode | None", self._parent)
 
@@ -467,7 +461,6 @@ class DOMNode(MessagePump):
 
         Raises:
             NoScreen: If this node isn't mounted (and has no screen).
-
         """
         # Get the node by looking up a chain of parents
         # Note that self.screen may not be the same as self.app.screen
@@ -494,7 +487,6 @@ class DOMNode(MessagePump):
 
         Raises:
             ValueError: If the ID has already been set.
-
         """
         check_identifiers("id", new_id)
 
@@ -524,7 +516,6 @@ class DOMNode(MessagePump):
 
         Returns:
             A Rich Text object.
-
         """
         tokens = Text.styled(self.__class__.__name__)
         if self.id is not None:
@@ -588,7 +579,6 @@ class DOMNode(MessagePump):
             ```python
             my_widget.display = False  # Hide my_widget
             ```
-
         """
         return self.styles.display != "none" and not (self._closing or self._closed)
 
@@ -620,7 +610,6 @@ class DOMNode(MessagePump):
         May be set to a boolean to make the node visible (`True`) or invisible (`False`), or to any valid value for the `visibility` rule.
 
         When a node is invisible, Textual will reserve space for it, but won't display anything there.
-
         """
         return self.styles.visibility != "hidden"
 
@@ -649,7 +638,6 @@ class DOMNode(MessagePump):
 
         Returns:
             A Tree renderable.
-
         """
 
         def render_info(node: DOMNode) -> Pretty:
@@ -749,7 +737,6 @@ class DOMNode(MessagePump):
 
         Returns:
             A Rich style.
-
         """
         background = Color(0, 0, 0, 0)
         color = Color(255, 255, 255, 0)
@@ -779,7 +766,6 @@ class DOMNode(MessagePump):
 
         Returns:
             A Rich style.
-
         """
         styles = self.styles
         if styles.auto_border_title_color:
@@ -802,7 +788,6 @@ class DOMNode(MessagePump):
 
         Returns:
             A Rich style.
-
         """
         styles = self.styles
         if styles.auto_border_subtitle_color:
@@ -821,7 +806,6 @@ class DOMNode(MessagePump):
 
         Returns:
             `(<background color>, <color>)`
-
         """
         base_background = background = BLACK
         for node in reversed(self.ancestors_with_self):
@@ -836,7 +820,6 @@ class DOMNode(MessagePump):
 
         Returns:
             `(<parent background>, <parent color>, <background>, <color>)`
-
         """
         base_background = background = WHITE
         base_color = color = BLACK
@@ -877,7 +860,6 @@ class DOMNode(MessagePump):
 
         Returns:
             A list of nodes.
-
         """
         return self.ancestors_with_self[1:]
 
@@ -887,7 +869,6 @@ class DOMNode(MessagePump):
 
         Returns:
             A list of nodes.
-
         """
         return [child for child in self._nodes if child.display]
 
@@ -999,7 +980,6 @@ class DOMNode(MessagePump):
 
         Returns:
             A list of nodes.
-
         """
         check_type = filter_type or DOMNode
 

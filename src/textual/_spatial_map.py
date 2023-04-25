@@ -21,7 +21,6 @@ class SpatialMap(Generic[ValueType]):
 
     The SpatialMap is able to quickly retrieve the values under a given "window" region
     by combining the values in the grid squares under the visible area.
-
     """
 
     def __init__(self, grid_width: int = 100, grid_height: int = 20) -> None:

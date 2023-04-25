@@ -3,7 +3,6 @@
 Here you will find the [App][textual.app.App] class, which is the base class for Textual apps.
 
 See [app basics](/guide/app) for how to build Textual apps.
-
 """
 
 from __future__ import annotations
@@ -2397,7 +2396,11 @@ class App(Generic[ReturnType], DOMNode):
         self._unregister(root)
 
     async def action_check_bindings(self, key: str) -> None:
-        """An [action](/guide/actions) to handle a key press using the binding system."""
+        """An [action](/guide/actions) to handle a key press using the binding system.
+
+        Args:
+            key: The key to process.
+        """
         if not await self.check_bindings(key, priority=True):
             await self.check_bindings(key, priority=False)
 
@@ -2444,13 +2447,19 @@ class App(Generic[ReturnType], DOMNode):
         self.pop_screen()
 
     async def action_back(self) -> None:
-        """An [action](/guide/actions) to go back to the previous screen (pop the current screen)."""
+        """An [action](/guide/actions) to go back to the previous screen (pop the current screen).
+
+        Note:
+            If there is no screen to go back to, this is a non-operation (in
+            other words it's safe to call even if there are no other screens
+            on the stack.)
+        """
         try:
             self.pop_screen()
         except ScreenStackError:
             pass
 
-    async def action_add_class_(self, selector: str, class_name: str) -> None:
+    async def action_add_class(self, selector: str, class_name: str) -> None:
         """An [action](/guide/actions) to add a CSS class to the selected widget.
 
         Args:
@@ -2459,7 +2468,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         self.screen.query(selector).add_class(class_name)
 
-    async def action_remove_class_(self, selector: str, class_name: str) -> None:
+    async def action_remove_class(self, selector: str, class_name: str) -> None:
         """An [action](/guide/actions) to remove a CSS class from the selected widget.
 
         Args:
