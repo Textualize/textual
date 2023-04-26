@@ -94,25 +94,6 @@ Textual uses Cascading Stylesheets (CSS) to create Rich interactive User Interfa
 Here's an example of some CSS used in this app:
 """
 
-
-EXAMPLE_CSS = """\
-Screen {
-    layers: base overlay notes;
-    overflow: hidden;
-}
-
-Sidebar {
-    width: 40;
-    background: $panel;
-    transition: offset 500ms in_out_cubic;
-    layer: overlay;
-
-}
-
-Sidebar.-hidden {
-    offset-x: -100%;
-}"""
-
 DATA = {
     "foo": [
         3.1427,
