@@ -22,6 +22,11 @@ class Bar(Widget, can_focus=False):
 
     COMPONENT_CLASSES = {"bar--bar", "bar--complete", "bar--indeterminate"}
     """
+    The bar sub-widget provides the component classes that follow.
+
+    These component classes let you modify the foreground and background color of the
+    bar in its different states.
+
     | Class | Description |
     | :- | :- |
     | `bar--bar` | Style of the bar (may be used to change the color). |
@@ -335,7 +340,7 @@ class ProgressBar(Widget, can_focus=False):
         # We create a closure so that we can determine what are the sub-widgets
         # that are present and, therefore, will need to be notified about changes
         # to the percentage.
-        def update_percentage(widget: HasPercentage):
+        def update_percentage(widget: Widget):
             """Closure to allow updating the percentage of a given widget."""
 
             def updater(percentage: float | None):
