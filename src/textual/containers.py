@@ -122,9 +122,9 @@ class Middle(Widget, inherit_bindings=False):
 
     DEFAULT_CSS = """
     Middle {
-        height: 1fr;
         align-vertical: middle;
         width: auto;
+        height: 1fr;
     }
     """
 
