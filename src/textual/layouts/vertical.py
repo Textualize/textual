@@ -50,7 +50,7 @@ class VerticalLayout(Layout):
             size,
             parent.app.size,
             resolve_margin,
-            dimension="height",
+            resolve_dimension="height",
         )
 
         margins = [
