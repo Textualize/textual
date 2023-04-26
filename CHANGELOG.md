@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- All `textual.containers` are now `1fr` in relevant dimensions by default
+- All `textual.containers` are now `1fr` in relevant dimensions by default https://github.com/Textualize/textual/pull/2386
 
 ## [0.21.0] - 2023-04-26
 
