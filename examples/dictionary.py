@@ -8,7 +8,7 @@ except ImportError:
 
 from textual import work
 from textual.app import App, ComposeResult
-from textual.containers import Content
+from textual.containers import VerticalScroll
 from textual.widgets import Input, Markdown
 
 
@@ -19,7 +19,7 @@ class DictionaryApp(App):
 
     def compose(self) -> ComposeResult:
         yield Input(placeholder="Search for a word")
-        with Content(id="results-container"):
+        with VerticalScroll(id="results-container"):
             yield Markdown(id="results")
 
     def on_mount(self) -> None:
