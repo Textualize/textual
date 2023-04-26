@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: Renamed `App.action_add_class_` to `App.action_add_class`
 - Breaking change: Renamed `App.action_remove_class_` to `App.action_remove_class`
 - Breaking change: `RadioSet` is now a single focusable widget https://github.com/Textualize/textual/pull/2372
+- Breaking change: Removed `containers.Content` (use `containers.VerticalScroll` now)
 
 ### Added
 
