@@ -65,7 +65,6 @@ class Pilot(Generic[ReturnType]):
         """
         if keys:
             await self._app._press_keys(keys)
-            self.app.screen._on_timer_update()
 
     async def click(
         self,
@@ -140,22 +139,20 @@ class Pilot(Generic[ReturnType]):
             delay: Seconds to pause, or None to wait for cpu idle.
         """
         # These sleep zeros, are to force asyncio to give up a time-slice,
+        self.app.screen._on_timer_update()  # Force one last repaint
         if delay is None:
             await wait_for_idle(0)
         else:
             await asyncio.sleep(delay)
-        self.app.screen._on_timer_update()
 
     async def wait_for_animation(self) -> None:
         """Wait for any current animation to complete."""
         await self._app.animator.wait_for_idle()
-        self.app.screen._on_timer_update()
 
     async def wait_for_scheduled_animations(self) -> None:
         """Wait for any current and scheduled animations to complete."""
         await self._app.animator.wait_until_complete()
         await wait_for_idle()
-        self.app.screen._on_timer_update()
 
     async def exit(self, result: ReturnType) -> None:
         """Exit the app with the given result.

@@ -109,12 +109,12 @@ def resolve_box_models(
     box_models: list[BoxModel | None] = [
         (
             None
-            if dimension is not None and dimension.is_fraction
+            if _dimension is not None and _dimension.is_fraction
             else widget._get_box_model(
                 size, viewport_size, fraction_width, fraction_height
             )
         )
-        for (dimension, widget) in zip(dimensions, widgets)
+        for (_dimension, widget) in zip(dimensions, widgets)
     ]
 
     if dimension == "width":
