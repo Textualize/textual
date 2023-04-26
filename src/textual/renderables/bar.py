@@ -5,7 +5,7 @@ from rich.style import StyleType
 from rich.text import Text
 
 
-class UnderlineBar:
+class Bar:
     """Thin horizontal bar with a portion highlighted.
 
     Args:
@@ -119,18 +119,18 @@ if __name__ == "__main__":
     end_range = frange(10, 20, step)
     ranges = zip(start_range, end_range)
 
-    console.print(UnderlineBar(width=20), f"   (.0, .0)")
+    console.print(Bar(width=20), f"   (.0, .0)")
 
     for range in ranges:
         color = random.choice(list(ANSI_COLOR_NAMES.keys()))
         console.print(
-            UnderlineBar(range, highlight_style=color, width=20),
+            Bar(range, highlight_style=color, width=20),
             f"   {range}",
         )
 
     from rich.live import Live
 
-    bar = UnderlineBar(highlight_range=(0, 4.5), width=80)
+    bar = Bar(highlight_range=(0, 4.5), width=80)
     with Live(bar, refresh_per_second=60) as live:
         while True:
             bar.highlight_range = (

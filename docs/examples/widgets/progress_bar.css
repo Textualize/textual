@@ -1,0 +1,22 @@
+Container {
+    overflow: hidden hidden;
+    height: auto;
+}
+
+Center {
+    margin-top: 1;
+    margin-bottom: 1;
+    layout: horizontal;
+}
+
+ProgressBar {
+    padding-left: 3;
+}
+
+Input {
+    width: 16;
+}
+
+VerticalScroll {
+    height: auto;
+}

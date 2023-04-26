@@ -203,6 +203,30 @@ def test_option_list(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_tables.py")
 
 
+def test_progress_bar_indeterminate(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "progress_bar_isolated_.py", press=["f"])
+
+
+def test_progress_bar_indeterminate_styled(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "progress_bar_styled_.py", press=["f"])
+
+
+def test_progress_bar_halfway(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "progress_bar_isolated_.py", press=["t"])
+
+
+def test_progress_bar_halfway_styled(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "progress_bar_styled_.py", press=["t"])
+
+
+def test_progress_bar_completed(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "progress_bar_isolated_.py", press=["u"])
+
+
+def test_progress_bar_completed_styled(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "progress_bar_styled_.py", press=["u"])
+
+
 # --- CSS properties ---
 # We have a canonical example for each CSS property that is shown in their docs.
 # If any of these change, something has likely broken, so snapshot each of them.

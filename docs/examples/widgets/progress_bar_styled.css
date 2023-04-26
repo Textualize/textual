@@ -1,0 +1,22 @@
+Bar > .bar--indeterminate {
+    color: $primary;
+    background: $secondary;
+}
+
+Bar > .bar--bar {
+    color: $primary;
+    background: $primary 30%;
+}
+
+Bar > .bar--complete {
+    color: $error;
+}
+
+PercentageStatus {
+    text-style: reverse;
+    color: $secondary;
+}
+
+ETAStatus {
+    text-style: underline;
+}

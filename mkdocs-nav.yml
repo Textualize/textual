@@ -146,6 +146,7 @@ nav:
       - "widgets/markdown.md"
       - "widgets/option_list.md"
       - "widgets/placeholder.md"
+      - "widgets/progress_bar.md"
       - "widgets/radiobutton.md"
       - "widgets/radioset.md"
       - "widgets/static.md"
