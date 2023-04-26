@@ -1,7 +1,7 @@
 """
 Container widgets for quick styling.
 
-Containers will, by default, take up all remaining space in both width and height.
+With the exception of `Center` and `Middle` containers will fill all of the space in the parent widget.
 
 """
 
