@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed dark mode toggles in a "child" screen not updating a "parent" screen https://github.com/Textualize/textual/issues/1999
 - Fixed "panel" border not exposed via CSS
 - Fixed `TabbedContent.active` changes not changing the actual content https://github.com/Textualize/textual/issues/2352
-- Fixed broken color on macOS Terminal https://github.com/Textualize/textual/issues
+- Fixed broken color on macOS Terminal https://github.com/Textualize/textual/issues/2359
 
 ## [0.20.1] - 2023-04-18
 
