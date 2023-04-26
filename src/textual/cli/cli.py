@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import platform
+import shlex
 import sys
 
 from ..constants import DEVTOOLS_PORT
@@ -12,6 +14,9 @@ except ImportError:
     sys.exit(1)
 
 from importlib_metadata import version
+
+WINDOWS = platform.system() == "Windows"
+"""True if we're running on Windows."""
 
 
 @click.group()
@@ -129,12 +134,14 @@ def _pre_run_warnings() -> None:
     help="Show any return value on exit.",
     is_flag=True,
 )
+@click.argument("extra_args", nargs=-1, type=click.UNPROCESSED)
 def _run_app(
     import_name: str,
     dev: bool,
     port: int | None,
     press: str | None,
     screenshot: int | None,
+    extra_args: tuple[str],
     command: bool = False,
     show_return: bool = False,
 ) -> None:
@@ -154,14 +161,14 @@ def _run_app(
 
         textual run module.foo:MyApp
 
-    If you are running a file and want to pass command line arguments, wrap the filename and arguments
-    in quotes:
+    Add the --dev switch to enable the textual console.
 
-        textual run "foo.py arg --option"
+        textual run --dev foo.py
 
     Use the -c switch to run a command that launches a Textual app.
 
-        textual run -c "textual colors"
+        textual run -c textual colors
+
     """
 
     import os
@@ -187,10 +194,12 @@ def _run_app(
 
     _pre_run_warnings()
 
+    import_name, *args = [*shlex.split(import_name, posix=not WINDOWS), *extra_args]
+
     if command:
-        exec_command(import_name, environment)
+        exec_command(import_name, args, environment)
     else:
-        run_app(import_name, environment)
+        run_app(import_name, args, environment)
 
 
 @run.command("borders")

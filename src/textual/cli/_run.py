@@ -10,14 +10,9 @@ from __future__ import annotations
 
 import importlib
 import os
-import platform
-import shlex
 import sys
 from string import Template
-from typing import NoReturn
-
-WINDOWS = platform.system() == "Windows"
-"""True if we're running on Windows."""
+from typing import NoReturn, Sequence
 
 EXEC_SCRIPT = Template(
     """\
@@ -38,7 +33,9 @@ class ExecImportError(Exception):
     """Raised if a Python import is invalid."""
 
 
-def run_app(command_args: str, environment: dict[str, str] | None = None) -> None:
+def run_app(
+    import_name: str, args: Sequence[str], environment: dict[str, str] | None = None
+) -> None:
     """Run a textual app.
 
     Note:
@@ -48,7 +45,6 @@ def run_app(command_args: str, environment: dict[str, str] | None = None) -> Non
         command_args: Arguments to pass to the Textual app.
         environment: Environment variables, or None to use current process.
     """
-    import_name, *args = shlex.split(command_args, posix=not WINDOWS)
     if environment is None:
         app_environment = dict(os.environ)
     else:
@@ -91,7 +87,7 @@ def _flush() -> None:
     sys.stdout.flush()
 
 
-def exec_python(args: list[str], environment: dict[str, str]) -> NoReturn:
+def exec_python(args: Sequence[str], environment: dict[str, str]) -> NoReturn:
     """Execute a Python script.
 
     Args:
@@ -102,7 +98,9 @@ def exec_python(args: list[str], environment: dict[str, str]) -> NoReturn:
     os.execvpe(sys.executable, ["python", *args], environment)
 
 
-def exec_command(command: str, environment: dict[str, str]) -> NoReturn:
+def exec_command(
+    command: str, args: Sequence[str], environment: dict[str, str]
+) -> NoReturn:
     """Execute a command with the given environment.
 
     Args:
@@ -110,7 +108,6 @@ def exec_command(command: str, environment: dict[str, str]) -> NoReturn:
         environment: Environment variables.
     """
     _flush()
-    command, *args = shlex.split(command, posix=not WINDOWS)
     os.execvpe(command, [command, *args], environment)
 
 
@@ -134,7 +131,7 @@ def check_import(module_name: str, app_name: str) -> bool:
 
 
 def exec_import(
-    import_name: str, args: list[str], environment: dict[str, str]
+    import_name: str, args: Sequence[str], environment: dict[str, str]
 ) -> NoReturn:
     """Import and execute an app.
 
