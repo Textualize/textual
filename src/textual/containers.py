@@ -18,6 +18,8 @@ class Container(Widget):
 
     DEFAULT_CSS = """
     Container {
+        width: 1fr;
+        height: 1fr;
         layout: vertical;
         overflow: hidden hidden;
     }
@@ -29,6 +31,8 @@ class ScrollableContainer(Widget, inherit_bindings=False):
 
     DEFAULT_CSS = """
     ScrollableContainer {
+        width: 1fr;
+        height: 1fr;
         layout: vertical;
         overflow: auto auto;
     }
@@ -64,6 +68,8 @@ class Vertical(Widget, inherit_bindings=False):
 
     DEFAULT_CSS = """
     Vertical {
+        width: 1fr;
+        height: 1fr;
         layout: vertical;
         overflow: hidden hidden;
     }
@@ -87,6 +93,8 @@ class Horizontal(Widget, inherit_bindings=False):
 
     DEFAULT_CSS = """
     Horizontal {
+        width: 1fr;
+        height: 1fr;
         layout: horizontal;
         overflow: hidden hidden;
     }
@@ -134,6 +142,8 @@ class Grid(Widget, inherit_bindings=False):
 
     DEFAULT_CSS = """
     Grid {
+        width: 1fr;
+        height: 1fr;
         layout: grid;
     }
     """
