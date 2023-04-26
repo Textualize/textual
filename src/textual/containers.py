@@ -1,5 +1,8 @@
 """
 Container widgets for quick styling.
+
+Containers will, by default, take up all remaining space in both width and height.
+
 """
 
 from __future__ import annotations
@@ -15,7 +18,6 @@ class Container(Widget):
 
     DEFAULT_CSS = """
     Container {
-        height: 1fr;
         layout: vertical;
         overflow: hidden hidden;
     }
@@ -23,7 +25,7 @@ class Container(Widget):
 
 
 class ScrollableContainer(Widget, inherit_bindings=False):
-    """Base container widget that binds navigation keys for scrolling."""
+    """A scrollable container with vertical layout, and auto scrollbars on both axis."""
 
     DEFAULT_CSS = """
     ScrollableContainer {
@@ -58,11 +60,10 @@ class ScrollableContainer(Widget, inherit_bindings=False):
 
 
 class Vertical(Widget, inherit_bindings=False):
-    """A container which arranges children vertically."""
+    """A container with vertical layout and no scrollbars."""
 
     DEFAULT_CSS = """
     Vertical {
-        width: 1fr;
         layout: vertical;
         overflow: hidden hidden;
     }
@@ -70,11 +71,10 @@ class Vertical(Widget, inherit_bindings=False):
 
 
 class VerticalScroll(ScrollableContainer, can_focus=True):
-    """A container which arranges children vertically, with an automatic vertical scrollbar."""
+    """A container with vertical layout and an automatic scrollbar on the Y axis."""
 
     DEFAULT_CSS = """
     VerticalScroll {
-        width: 1fr;
         layout: vertical;
         overflow-x: hidden;
         overflow-y: auto;
@@ -83,11 +83,10 @@ class VerticalScroll(ScrollableContainer, can_focus=True):
 
 
 class Horizontal(Widget, inherit_bindings=False):
-    """A container which arranges children horizontally."""
+    """A container with horizontal layout and no scrollbars."""
 
     DEFAULT_CSS = """
     Horizontal {
-        height: 1fr;
         layout: horizontal;
         overflow: hidden hidden;
     }
@@ -95,11 +94,10 @@ class Horizontal(Widget, inherit_bindings=False):
 
 
 class HorizontalScroll(ScrollableContainer, can_focus=True):
-    """A container which arranges children horizontally, with an automatic horizontal scrollbar."""
+    """A container with horizontal layout and an automatic scrollbar on the Y axis."""
 
     DEFAULT_CSS = """
     HorizontalScroll {
-        height: 1fr;
         layout: horizontal;
         overflow-y: hidden;
         overflow-x: auto;
@@ -108,47 +106,34 @@ class HorizontalScroll(ScrollableContainer, can_focus=True):
 
 
 class Center(Widget, inherit_bindings=False):
-    """A container which centers children horizontally."""
+    """A container which aligns children on the X axis."""
 
     DEFAULT_CSS = """
     Center {
         align-horizontal: center;
-        height: auto;
         width: 1fr;
+        height: auto;
     }
     """
 
 
 class Middle(Widget, inherit_bindings=False):
-    """A container which aligns children vertically in the middle."""
+    """A container which aligns children on the Y axis."""
 
     DEFAULT_CSS = """
     Middle {
+        height: 1fr;
         align-vertical: middle;
         width: auto;
-        height: 1fr;
     }
     """
 
 
 class Grid(Widget, inherit_bindings=False):
-    """A container with grid alignment."""
+    """A container with grid layout."""
 
     DEFAULT_CSS = """
     Grid {
-        height: 1fr;
         layout: grid;
-    }
-    """
-
-
-class Content(Widget, can_focus=True, can_focus_children=False, inherit_bindings=False):
-    """A container for content such as text."""
-
-    DEFAULT_CSS = """
-    VerticalScroll {
-        height: 1fr;
-        layout: vertical;
-        overflow-y: auto;
     }
     """
