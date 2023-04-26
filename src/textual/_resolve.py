@@ -86,6 +86,18 @@ def resolve_fraction_unit(
     remaining_space: Fraction,
     resolve_dimension: Literal["width", "height"] = "width",
 ) -> Fraction:
+    """Calculate the fraction
+
+    Args:
+        widget_styles: Styles for widgets with fraction units.
+        size: Container size.
+        viewport_size: Viewport size.
+        remaining_space: Remaining space for fr units.
+        resolve_dimension: Which dimension to resolve.
+
+    Returns:
+        The value of 1fr.
+    """
     if not remaining_space or not widget_styles:
         return Fraction(1)
 
@@ -128,8 +140,7 @@ def resolve_fraction_unit(
             for styles in widget_styles
         ]
 
-    resolved: list[Fraction | None] = [None for _ in resolve]
-
+    resolved: list[Fraction | None] = [None] * len(resolve)
     remaining_fraction = Fraction(sum(scalar.value for scalar, _, _ in resolve))
 
     while True:
@@ -178,7 +189,7 @@ def resolve_box_models(
         size: Size of container.
         viewport_size: Viewport size.
         margin: Total space occupied by margin
-        dimensions: Which dimension to resolve.
+        resolve_dimension: Which dimension to resolve.
 
     Returns:
         List of resolved box models.

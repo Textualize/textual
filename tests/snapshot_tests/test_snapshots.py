@@ -460,3 +460,8 @@ def test_scroll_to_center(snap_compare):
 def test_quickly_change_tabs(snap_compare):
     # https://github.com/Textualize/textual/issues/2229
     assert snap_compare(SNAPSHOT_APPS_DIR / "quickly_change_tabs.py", press=["p"])
+
+
+def test_fr_unit_with_min(snap_compare):
+    # https://github.com/Textualize/textual/issues/2378
+    assert snap_compare(SNAPSHOT_APPS_DIR / "fr_with_min.py")
