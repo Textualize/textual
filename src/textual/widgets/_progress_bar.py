@@ -375,15 +375,19 @@ class ProgressBar(Widget, can_focus=False):
             return total
         return max(0, total)
 
+    def watch_total(self, total: float | None) -> None:
+        """Re-validate progress."""
+        self.progress = self.progress
+
     def compute_percentage(self) -> float | None:
         """Keep the percentage of progress updated automatically.
 
-        This compute method will also post the message
-        [`ProgressBar.Completed`][textual.widgets.ProgressBar.Completed]
-        when the percentage reaches 1.
+        This will report a percentage of `1` if the total is zero.
         """
-        if self.total is not None:
+        if self.total:
             return self.progress / self.total
+        elif self.total == 0:
+            return 1
         return None
 
     def advance(self, advance: float = 1) -> None:
