@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unrelased
+
+### Changed
+
+- All `textual.containers` are now `1fr` in relevant dimensions by default
+
 ## [0.21.0] - 2023-04-26
 
 ### Changed
