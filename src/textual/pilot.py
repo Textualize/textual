@@ -65,6 +65,7 @@ class Pilot(Generic[ReturnType]):
         """
         if keys:
             await self._app._press_keys(keys)
+            self.app.screen._on_timer_update()
 
     async def click(
         self,
