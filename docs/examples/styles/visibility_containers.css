@@ -1,6 +1,7 @@
 Horizontal {
     padding: 1 2;     /* (1)! */
     background: white;
+    height: 1fr;
 }
 
 #top {}               /* (2)! */
