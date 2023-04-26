@@ -4,9 +4,11 @@ from __future__ import annotations
 
 from math import ceil
 from time import monotonic
-from typing import Optional
+from typing import Callable, Optional
 
 from rich.style import Style
+
+from textual.geometry import clamp
 
 from ..app import ComposeResult, RenderResult
 from ..containers import Horizontal
@@ -102,7 +104,7 @@ class Bar(Widget, can_focus=False):
 
         speed = 30  # Cells per second.
         # Compute the position of the bar.
-        start = (speed * self._elapsed_time()) % (2 * total_imaginary_width)
+        start = (speed * self._get_elapsed_time()) % (2 * total_imaginary_width)
         if start > total_imaginary_width:
             # If the bar is to the right of its width, wrap it back from right to left.
             start = 2 * total_imaginary_width - start  # = (tiw - (start - tiw))
@@ -116,7 +118,7 @@ class Bar(Widget, can_focus=False):
             background_style=Style.from_color(bar_style.bgcolor),
         )
 
-    def _elapsed_time(self) -> float:
+    def _get_elapsed_time(self) -> float:
         """Get time for the indeterminate progress animation.
 
         This method ensures that the progress bar animation always starts at the
@@ -159,6 +161,7 @@ class PercentageStatus(Label):
         self._label_text = "--%"
 
     def watch__percentage(self, percentage: float | None) -> None:
+        """Manage the text that shows the percentage of progress."""
         if percentage is None:
             self._label_text = "--%"
         else:
@@ -214,7 +217,7 @@ class ETAStatus(Label):
     def update_eta(self) -> None:
         """Update the ETA display."""
         percentage = self._percentage
-        delta = self._elapsed_time()
+        delta = self._get_elapsed_time()
         # We display --:--:-- if we haven't started, if we are done,
         # or if we don't know when we started keeping track of time.
         if not percentage or percentage >= 1 or not delta:
@@ -235,7 +238,7 @@ class ETAStatus(Label):
             else:
                 self._label_text = f"{hours:02}:{minutes:02}:{seconds:02}"
 
-    def _elapsed_time(self) -> float:
+    def _get_elapsed_time(self) -> float:
         """Get time to estimate time to progress completion.
 
         Returns:
@@ -340,10 +343,10 @@ class ProgressBar(Widget, can_focus=False):
         # We create a closure so that we can determine what are the sub-widgets
         # that are present and, therefore, will need to be notified about changes
         # to the percentage.
-        def update_percentage(widget: Widget):
+        def update_percentage(widget: Widget) -> Callable[[float | None], None]:
             """Closure to allow updating the percentage of a given widget."""
 
-            def updater(percentage: float | None):
+            def updater(percentage: float | None) -> None:
                 """Update the percentage reactive of the enclosed widget."""
                 widget._percentage = percentage
 
@@ -366,7 +369,7 @@ class ProgressBar(Widget, can_focus=False):
     def validate_progress(self, progress: float) -> float:
         """Clamp the progress between 0 and the maximum total."""
         if self.total is not None:
-            return max(0, min(progress, self.total))
+            return clamp(progress, 0, self.total)
         return progress
 
     def validate_total(self, total: float | None) -> float | None:

@@ -31,11 +31,11 @@ class IndeterminateProgressBar(App[None]):
 
     def key_f(self) -> None:
         # Freeze time for the indeterminate progress bar.
-        self.query_one(ProgressBar).query_one("#bar")._elapsed_time = lambda: 5
+        self.query_one(ProgressBar).query_one("#bar")._get_elapsed_time = lambda: 5
 
     def key_t(self) -> None:
         # Freeze time to show always the same ETA.
-        self.query_one(ProgressBar).query_one("#eta")._elapsed_time = lambda: 3.9
+        self.query_one(ProgressBar).query_one("#eta")._get_elapsed_time = lambda: 3.9
         self.query_one(ProgressBar).update(total=100, progress=39)
 
     def key_u(self) -> None:
