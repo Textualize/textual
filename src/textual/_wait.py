@@ -2,7 +2,7 @@ from asyncio import sleep
 from time import monotonic, process_time
 
 SLEEP_GRANULARITY: float = 1 / 50
-SLEEP_IDLE: float = SLEEP_GRANULARITY / 10.0
+SLEEP_IDLE: float = SLEEP_GRANULARITY / 20.0
 
 
 async def wait_for_idle(
