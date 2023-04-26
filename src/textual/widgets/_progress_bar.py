@@ -258,7 +258,7 @@ class ProgressBar(Widget, can_focus=False):
     """A progress bar widget."""
 
     DEFAULT_CSS = """
-    Horizontal {
+    ProgressBar > Horizontal {
         width: auto;
         height: auto;
     }
