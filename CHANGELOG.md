@@ -5,11 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
 ## [0.22.0] - Unreleased
 
 ### Fixed
 
 - Fixed broken fr units when there is a min or max dimension https://github.com/Textualize/textual/issues/2378
+
+### Added
+
+- Added `ProgressBar` widget https://github.com/Textualize/textual/pull/2333
+
+### Changed
+
+- All `textual.containers` are now `1fr` in relevant dimensions by default https://github.com/Textualize/textual/pull/2386
+
 
 ## [0.21.0] - 2023-04-26
 
@@ -32,7 +42,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `ScrollView` now inherits from `ScrollableContainer` rather than `Widget` https://github.com/Textualize/textual/issues/2332
 - Containers no longer inherit any bindings from `Widget` https://github.com/Textualize/textual/issues/2331
 - Added `ScrollableContainer`; a container class that binds the common navigation keys to scroll actions (see also above breaking change) https://github.com/Textualize/textual/issues/2332
-- Added `ProgressBar` widget https://github.com/Textualize/textual/pull/2333
 
 ### Fixed
 
