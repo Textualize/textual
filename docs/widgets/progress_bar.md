@@ -19,17 +19,17 @@ It shows the progress bar in:
 
 === "Indeterminate state"
 
-    ```{.textual path="docs/examples/widgets/progress_bar_isolated.py" press="f"}
+    ```{.textual path="docs/examples/widgets/progress_bar_isolated_.py" press="f"}
     ```
 
 === "39% done"
 
-    ```{.textual path="docs/examples/widgets/progress_bar_isolated.py" press="t"}
+    ```{.textual path="docs/examples/widgets/progress_bar_isolated_.py" press="t"}
     ```
 
 === "Completed"
 
-    ```{.textual path="docs/examples/widgets/progress_bar_isolated.py" press="u"}
+    ```{.textual path="docs/examples/widgets/progress_bar_isolated_.py" press="u"}
     ```
 
 === "progress_bar_isolated.py"
@@ -79,17 +79,17 @@ Refer to the [section below](#styling-the-progress-bar) for more information.
 
 === "Indeterminate state"
 
-    ```{.textual path="docs/examples/widgets/progress_bar_styled.py" press="f"}
+    ```{.textual path="docs/examples/widgets/progress_bar_styled_.py" press="f"}
     ```
 
 === "39% done"
 
-    ```{.textual path="docs/examples/widgets/progress_bar_styled.py" press="t"}
+    ```{.textual path="docs/examples/widgets/progress_bar_styled_.py" press="t"}
     ```
 
 === "Completed"
 
-    ```{.textual path="docs/examples/widgets/progress_bar_styled.py" press="u"}
+    ```{.textual path="docs/examples/widgets/progress_bar_styled_.py" press="u"}
     ```
 
 === "progress_bar_styled.py"
