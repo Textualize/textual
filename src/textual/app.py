@@ -3,7 +3,6 @@
 Here you will find the [App][textual.app.App] class, which is the base class for Textual apps.
 
 See [app basics](/guide/app) for how to build Textual apps.
-
 """
 
 from __future__ import annotations
@@ -248,7 +247,6 @@ class App(Generic[ReturnType], DOMNode):
         ```python
         self.app.dark = not self.app.dark  # Toggle dark mode
         ```
-
     """
 
     def __init__(
@@ -403,7 +401,6 @@ class App(Generic[ReturnType], DOMNode):
 
         Returns:
             An object to manage workers.
-
         """
         return self._workers
 
@@ -412,7 +409,6 @@ class App(Generic[ReturnType], DOMNode):
         """The return value of the app, or `None` if it as not yet been set.
 
         The return value is set when calling [exit][textual.app.App.exit].
-
         """
         return self._return_value
 
@@ -425,7 +421,6 @@ class App(Generic[ReturnType], DOMNode):
 
         Returns:
             A sequence of widgets.
-
         """
         try:
             return (self.screen,)
@@ -477,7 +472,6 @@ class App(Generic[ReturnType], DOMNode):
             delay: A delay (in seconds) before the animation starts.
             easing: An easing method.
             on_complete: A callable to invoke when the animation is finished.
-
         """
         self._animate(
             attribute,
@@ -500,7 +494,6 @@ class App(Generic[ReturnType], DOMNode):
         """Is the driver running in 'headless' mode?
 
         Headless mode is used when running tests with [run_test][textual.app.App.run_test].
-
         """
         return False if self._driver is None else self._driver.is_headless
 
@@ -510,7 +503,6 @@ class App(Generic[ReturnType], DOMNode):
 
         Returns:
             A snapshot of the current state of the screen stack.
-
         """
         return self._screen_stack.copy()
 
@@ -537,7 +529,6 @@ class App(Generic[ReturnType], DOMNode):
 
         Returns:
             The currently focused widget, or `None` if nothing is focused.
-
         """
         return self.screen.focused
 
@@ -553,7 +544,6 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
 
             A mapping of keys on to node + binding.
-
         """
 
         namespace_binding_map: dict[str, tuple[DOMNode, Binding]] = {}
@@ -571,7 +561,6 @@ class App(Generic[ReturnType], DOMNode):
         """Yield child widgets for a container.
 
         This method should be implemented in a subclass.
-
         """
         yield from ()
 
@@ -591,7 +580,6 @@ class App(Generic[ReturnType], DOMNode):
 
         This method handles the transition between light and dark mode when you
         change the [dark][textual.app.App.dark] attribute.
-
         """
         self.set_class(dark, "-dark-mode")
         self.set_class(not dark, "-light-mode")
@@ -692,7 +680,6 @@ class App(Generic[ReturnType], DOMNode):
 
         Returns:
             Size of the terminal.
-
         """
         if self._driver is not None and self._driver._size is not None:
             width, height = self._driver._size
@@ -712,7 +699,6 @@ class App(Generic[ReturnType], DOMNode):
 
         Returns:
             A Textual logger.
-
         """
         return self._logger
 
@@ -837,7 +823,6 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             title: The title of the exported screenshot or None
                 to use app title.
-
         """
         assert self._driver is not None, "App must be running"
         width, height = self.size
@@ -985,8 +970,6 @@ class App(Generic[ReturnType], DOMNode):
             headless: Run in headless mode (no output or input).
             size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect.
-
-
         """
         from .pilot import Pilot
 
@@ -1048,9 +1031,19 @@ class App(Generic[ReturnType], DOMNode):
 
         auto_pilot_task: Task | None = None
 
+        if auto_pilot is None and constants.PRESS:
+            keys = constants.PRESS.split(",")
+
+            async def press_keys(pilot: Pilot) -> None:
+                """Auto press keys."""
+                await pilot.press(*keys)
+
+            auto_pilot = press_keys
+
         async def app_ready() -> None:
             """Called by the message loop when the app is ready."""
             nonlocal auto_pilot_task
+
             if auto_pilot is not None:
 
                 async def run_auto_pilot(
@@ -1354,7 +1347,6 @@ class App(Generic[ReturnType], DOMNode):
 
         Returns:
             A screen instance and an awaitable that awaits the children mounting.
-
         """
         _screen = self.get_screen(screen)
         if not _screen.is_running:
@@ -1375,7 +1367,6 @@ class App(Generic[ReturnType], DOMNode):
 
         Returns:
             The screen that was replaced.
-
         """
         if self._screen_stack:
             self.screen.refresh()
@@ -1422,7 +1413,6 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             screen: Either a Screen object or screen name (the `name` argument when installed).
-
         """
         if not isinstance(screen, (Screen, str)):
             raise TypeError(
@@ -1760,25 +1750,17 @@ class App(Generic[ReturnType], DOMNode):
         """Called immediately prior to processing messages.
 
         May be used as a hook for any operations that should run first.
-
         """
-        try:
-            screenshot_timer = float(os.environ.get("TEXTUAL_SCREENSHOT", "0"))
-        except ValueError:
-            return
 
-        screenshot_title = os.environ.get("TEXTUAL_SCREENSHOT_TITLE")
-
-        if not screenshot_timer:
-            return
-
-        async def on_screenshot():
-            """Used by docs plugin."""
-            svg = self.export_screenshot(title=screenshot_title)
-            self._screenshot = svg  # type: ignore
+        async def take_screenshot() -> None:
+            """Take a screenshot and exit."""
+            self.save_screenshot()
             self.exit()
 
-        self.set_timer(screenshot_timer, on_screenshot, name="screenshot timer")
+        if constants.SCREENSHOT_DELAY >= 0:
+            self.set_timer(
+                constants.SCREENSHOT_DELAY, take_screenshot, name="screenshot timer"
+            )
 
     async def _on_compose(self) -> None:
         try:
@@ -1856,7 +1838,6 @@ class App(Generic[ReturnType], DOMNode):
             after: A location to mount after.
         Returns:
             List of modified widgets.
-
         """
 
         if not widgets:
@@ -1966,6 +1947,14 @@ class App(Generic[ReturnType], DOMNode):
 
         self._print_error_renderables()
 
+        if constants.SHOW_RETURN:
+            from rich.console import Console
+            from rich.pretty import Pretty
+
+            console = Console()
+            console.print("[b]The app returned:")
+            console.print(Pretty(self._return_value))
+
     async def _on_exit_app(self) -> None:
         self._begin_batch()  # Prevent repaint / layout while shutting down
         await self._message_queue.put(None)
@@ -1986,6 +1975,12 @@ class App(Generic[ReturnType], DOMNode):
         stylesheet.reparse()
         stylesheet.update(self.app, animate=animate)
         self.screen._refresh_layout(self.size, full=True)
+        # The other screens in the stack will need to know about some style
+        # changes, as a final pass let's check in on every screen that isn't
+        # the current one and update them too.
+        for screen in self.screen_stack:
+            if screen != self.screen:
+                stylesheet.update(screen, animate=animate)
 
     def _display(self, screen: Screen, renderable: RenderableType | None) -> None:
         """Display a renderable within a sync.
@@ -2044,8 +2039,6 @@ class App(Generic[ReturnType], DOMNode):
 
         For terminals that support a bell, this typically makes a notification or error sound.
         Some terminals may make no sound or display a visual bell indicator, depending on configuration.
-
-
         """
         if not self.is_headless and self._driver is not None:
             self._driver.write("\07")
@@ -2328,7 +2321,6 @@ class App(Generic[ReturnType], DOMNode):
 
         Returns:
             The child widgets of root.
-
         """
         stack: list[Widget] = [root]
         pop = stack.pop
@@ -2419,7 +2411,11 @@ class App(Generic[ReturnType], DOMNode):
         self._unregister(root)
 
     async def action_check_bindings(self, key: str) -> None:
-        """An [action](/guide/actions) to handle a key press using the binding system."""
+        """An [action](/guide/actions) to handle a key press using the binding system.
+
+        Args:
+            key: The key to process.
+        """
         if not await self.check_bindings(key, priority=True):
             await self.check_bindings(key, priority=False)
 
@@ -2466,13 +2462,19 @@ class App(Generic[ReturnType], DOMNode):
         self.pop_screen()
 
     async def action_back(self) -> None:
-        """An [action](/guide/actions) to go back to the previous screen (pop the current screen)."""
+        """An [action](/guide/actions) to go back to the previous screen (pop the current screen).
+
+        Note:
+            If there is no screen to go back to, this is a non-operation (in
+            other words it's safe to call even if there are no other screens
+            on the stack.)
+        """
         try:
             self.pop_screen()
         except ScreenStackError:
             pass
 
-    async def action_add_class_(self, selector: str, class_name: str) -> None:
+    async def action_add_class(self, selector: str, class_name: str) -> None:
         """An [action](/guide/actions) to add a CSS class to the selected widget.
 
         Args:
@@ -2481,7 +2483,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         self.screen.query(selector).add_class(class_name)
 
-    async def action_remove_class_(self, selector: str, class_name: str) -> None:
+    async def action_remove_class(self, selector: str, class_name: str) -> None:
         """An [action](/guide/actions) to remove a CSS class from the selected widget.
 
         Args:

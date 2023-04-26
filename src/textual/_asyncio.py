@@ -1,6 +1,5 @@
 """
 Compatibility layer for asyncio.
-
 """
 
 from __future__ import annotations

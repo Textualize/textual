@@ -69,7 +69,6 @@ class Placeholder(Widget):
     Placeholder.-text {
         padding: 1;
     }
-
     """
 
     # Consecutive placeholders get assigned consecutive colors.

@@ -144,7 +144,6 @@ class BoundAnimator:
             delay: A delay (in seconds) before the animation starts.
             easing: An easing method.
             on_complete: A callable to invoke when the animation is finished.
-
         """
         start_value = getattr(self._obj, attribute)
         if isinstance(value, str) and hasattr(start_value, "parse"):

@@ -9,6 +9,6 @@ Label {
     scrollbar-corner-color: blue;
 }
 
-Horizontal > Container {
+Horizontal > ScrollableContainer {
     width: 50%;
 }

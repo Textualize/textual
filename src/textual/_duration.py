@@ -25,7 +25,6 @@ def _duration_as_seconds(duration: str) -> float:
         DurationParseError: If the argument ``duration`` is not a valid duration string.
     Returns:
         The duration in seconds.
-
     """
     match = _match_duration(duration)
 

@@ -1,7 +1,6 @@
 """
 
 The pilot object is used by [App.run_test][textual.app.App.run_test] to programmatically operate an app.
-
 """
 
 from __future__ import annotations
@@ -63,7 +62,6 @@ class Pilot(Generic[ReturnType]):
 
         Args:
             *keys: Keys to press.
-
         """
         if keys:
             await self._app._press_keys(keys)
@@ -100,11 +98,11 @@ class Pilot(Generic[ReturnType]):
             target_widget, offset, button=1, shift=shift, meta=meta, control=control
         )
         app.post_message(MouseDown(**message_arguments))
-        await self.pause()
+        await self.pause(0.1)
         app.post_message(MouseUp(**message_arguments))
-        await self.pause()
+        await self.pause(0.1)
         app.post_message(Click(**message_arguments))
-        await self.pause()
+        await self.pause(0.1)
 
     async def hover(
         self,

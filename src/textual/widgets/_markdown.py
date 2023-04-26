@@ -130,7 +130,6 @@ class MarkdownH1(MarkdownHeader):
         text-style: bold;
         color: $text;
     }
-
     """
 
 
@@ -148,7 +147,6 @@ class MarkdownH2(MarkdownHeader):
         padding: 1;
         text-style: bold;
     }
-
     """
 
 
@@ -378,7 +376,6 @@ class MarkdownTable(MarkdownBlock):
         background: $panel;
         border: wide $background;
     }
-
     """
 
     def compose(self) -> ComposeResult:
@@ -830,7 +827,6 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
     MarkdownViewer.-show-table-of-contents > MarkdownTableOfContents {
         display: block;
     }
-
     """
 
     show_table_of_contents = reactive(True)

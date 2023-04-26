@@ -8,7 +8,6 @@ queries regarding the widget under an offset, or the style under an offset.
 
 Additionally, the compositor can render portions of the screen which may have updated,
 without having to render the entire screen.
-
 """
 
 from __future__ import annotations
@@ -410,7 +409,6 @@ class Compositor:
 
         Returns:
             Set of widgets that were exposed by the scroll.
-
         """
         self._cuts = None
         self._layers = None
@@ -790,7 +788,6 @@ class Compositor:
 
         Returns:
             Widget's composition information.
-
         """
         if self.root is None:
             raise errors.NoWidget("Widget is not in layout")
@@ -932,7 +929,6 @@ class Compositor:
 
         Returns:
             A ChopsUpdate if there is anything to update, otherwise `None`.
-
         """
         screen_region = self.size.region
         update_regions = self._dirty_regions.copy()
@@ -1019,7 +1015,6 @@ class Compositor:
 
         Args:
             widgets: Set of Widgets to update.
-
         """
         # If there are any *new* widgets we need to invalidate the full map
         if not self._full_map_invalidated and not widgets.issubset(

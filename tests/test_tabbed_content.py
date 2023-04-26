@@ -4,8 +4,8 @@ from textual.app import App, ComposeResult
 from textual.widgets import Label, TabbedContent, TabPane
 
 
-async def test_tabbed_content_switch():
-    """Check tab navigation."""
+async def test_tabbed_content_switch_via_ui():
+    """Check tab navigation via the user interface."""
 
     class TabbedApp(App):
         def compose(self) -> ComposeResult:
@@ -22,6 +22,7 @@ async def test_tabbed_content_switch():
         tabbed_content = app.query_one(TabbedContent)
         # Check first tab
         assert tabbed_content.active == "foo"
+        await pilot.pause()
         assert app.query_one("#foo-label").region
         assert not app.query_one("#bar-label").region
         assert not app.query_one("#baz-label").region
@@ -29,6 +30,7 @@ async def test_tabbed_content_switch():
         # Click second tab
         await pilot.click("Tab#bar")
         assert tabbed_content.active == "bar"
+        await pilot.pause()
         assert not app.query_one("#foo-label").region
         assert app.query_one("#bar-label").region
         assert not app.query_one("#baz-label").region
@@ -36,6 +38,7 @@ async def test_tabbed_content_switch():
         # Click third tab
         await pilot.click("Tab#baz")
         assert tabbed_content.active == "baz"
+        await pilot.pause()
         assert not app.query_one("#foo-label").region
         assert not app.query_one("#bar-label").region
         assert app.query_one("#baz-label").region
@@ -43,6 +46,7 @@ async def test_tabbed_content_switch():
         # Press left
         await pilot.press("left")
         assert tabbed_content.active == "bar"
+        await pilot.pause()
         assert not app.query_one("#foo-label").region
         assert app.query_one("#bar-label").region
         assert not app.query_one("#baz-label").region
@@ -50,6 +54,45 @@ async def test_tabbed_content_switch():
         # Press right
         await pilot.press("right")
         assert tabbed_content.active == "baz"
+        await pilot.pause()
+        assert not app.query_one("#foo-label").region
+        assert not app.query_one("#bar-label").region
+        assert app.query_one("#baz-label").region
+
+
+async def test_tabbed_content_switch_via_code():
+    """Check tab navigation via code."""
+
+    class TabbedApp(App):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                with TabPane("foo", id="foo"):
+                    yield Label("Foo", id="foo-label")
+                with TabPane("bar", id="bar"):
+                    yield Label("Bar", id="bar-label")
+                with TabPane("baz", id="baz"):
+                    yield Label("Baz", id="baz-label")
+
+    app = TabbedApp()
+    async with app.run_test() as pilot:
+        tabbed_content = app.query_one(TabbedContent)
+
+        # Check first tab
+        assert tabbed_content.active == "foo"
+        assert app.query_one("#foo-label").region
+        assert not app.query_one("#bar-label").region
+        assert not app.query_one("#baz-label").region
+
+        # Click second tab
+        tabbed_content.active = "bar"
+        await pilot.pause()
+        assert not app.query_one("#foo-label").region
+        assert app.query_one("#bar-label").region
+        assert not app.query_one("#baz-label").region
+
+        # Click third tab
+        tabbed_content.active = "baz"
+        await pilot.pause()
         assert not app.query_one("#foo-label").region
         assert not app.query_one("#bar-label").region
         assert app.query_one("#baz-label").region

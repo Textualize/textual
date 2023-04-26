@@ -1,7 +1,6 @@
 """
 
 The `Reactive` class implements [reactivity](/guide/reactivity/).
-
 """
 
 from __future__ import annotations
@@ -227,7 +226,6 @@ class Reactive(Generic[ReactiveType]):
                 watch_function: A watch function, which may be sync or async.
                 old_value: The old value of the attribute.
                 value: The new value of the attribute.
-
             """
             _rich_traceback_omit = True
             param_count = count_parameters(watch_function)

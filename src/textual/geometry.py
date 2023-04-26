@@ -1,7 +1,6 @@
 """
 
 Functions and classes to manage terminal geometry (anything involving coordinates or dimensions).
-
 """
 
 from __future__ import annotations
@@ -75,7 +74,6 @@ class Offset(NamedTuple):
         >>> -offset
         Offset(x=-13, y=-2)
         ```
-
     """
 
     x: int = 0
@@ -167,7 +165,6 @@ class Size(NamedTuple):
         >>> size + Size(10, 20)
         Size(width=12, height=23)
         ```
-
     """
 
     width: int = 0
@@ -283,7 +280,6 @@ class Region(NamedTuple):
         >>> region.contains(10, 8)
         True
         ```
-
     """
 
     x: int = 0
@@ -407,7 +403,6 @@ class Region(NamedTuple):
         """A pair of integers for the start and end columns (x coordinates) in this region.
 
         The end value is *exclusive*.
-
         """
         return (self.x, self.x + self.width)
 
@@ -416,7 +411,6 @@ class Region(NamedTuple):
         """A pair of integers for the start and end lines (y coordinates) in this region.
 
         The end value is *exclusive*.
-
         """
         return (self.y, self.y + self.height)
 
@@ -441,7 +435,6 @@ class Region(NamedTuple):
 
         Returns:
             An offset.
-
         """
         return Offset(*self[:2])
 
@@ -461,7 +454,6 @@ class Region(NamedTuple):
 
         Returns:
             An offset.
-
         """
         x, y, width, _height = self
         return Offset(x + width, y)
@@ -472,7 +464,6 @@ class Region(NamedTuple):
 
         Returns:
             An offset.
-
         """
         x, y, width, height = self
         return Offset(x + width, y + height)
@@ -504,7 +495,6 @@ class Region(NamedTuple):
 
         Returns:
             A region at the origin.
-
         """
         _, _, width, height = self
         return Region(0, 0, width, height)
@@ -894,7 +884,6 @@ class Spacing(NamedTuple):
         >>> spacing.css
         '1 2 3 4'
         ```
-
     """
 
     top: int = 0

@@ -1,6 +1,6 @@
 from textual.app import App, ComposeResult
-from textual.constants import BORDERS
 from textual.containers import VerticalScroll
+from textual.css.constants import VALID_BORDER
 from textual.widgets import Button, Label
 
 TEXT = """I must not fear.
@@ -26,7 +26,7 @@ class BorderButtons(VerticalScroll):
     """
 
     def compose(self) -> ComposeResult:
-        for border in BORDERS:
+        for border in sorted(VALID_BORDER):
             if border:
                 yield Button(border, id=border)
 

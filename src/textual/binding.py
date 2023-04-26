@@ -3,7 +3,6 @@
 A binding maps a key press on to an action.
 
 See [bindings](/guide/input#bindings) in the guide for details.
-
 """
 
 
