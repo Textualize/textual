@@ -294,7 +294,7 @@ class DemoApp(App[None]):
         self.query_one(TextLog).write(renderable)
 
     def compose(self) -> ComposeResult:
-        example_css = "\n".join(Path(self.css_path[0]).read_text().splitlines())
+        example_css = Path(self.css_path[0]).read_text()
         yield Container(
             Sidebar(classes="-hidden"),
             Header(show_clock=False),
