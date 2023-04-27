@@ -104,7 +104,7 @@ def resolve_fraction_unit(
     def resolve_scalar(
         scalar: Scalar | None, fraction_unit: Fraction = Fraction(1)
     ) -> Fraction | None:
-        """Resolve a scaler if it is not None.
+        """Resolve a scalar if it is not None.
 
         Args:
             scalar: Optional scalar to resolve.
@@ -145,12 +145,11 @@ def resolve_fraction_unit(
 
     while True:
         remaining_space_changed = False
+        resolve_fraction = Fraction(remaining_space, remaining_fraction)
         for index, (scalar, min_value, max_value) in enumerate(resolve):
             value = resolved[index]
             if value is None:
-                resolved_scalar = scalar.resolve(
-                    size, viewport_size, Fraction(remaining_space, remaining_fraction)
-                )
+                resolved_scalar = scalar.resolve(size, viewport_size, resolve_fraction)
                 if min_value is not None and resolved_scalar < min_value:
                     remaining_space -= min_value
                     remaining_fraction -= Fraction(scalar.value)
@@ -161,8 +160,7 @@ def resolve_fraction_unit(
                     remaining_fraction -= Fraction(scalar.value)
                     resolved[index] = max_value
                     remaining_space_changed = True
-                else:
-                    resolved[index] = resolved_scalar
+
         if not remaining_space_changed:
             break
 
