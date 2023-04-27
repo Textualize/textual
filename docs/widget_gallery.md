@@ -158,6 +158,17 @@ Display placeholder content while you are designing a UI.
 ```{.textual path="docs/examples/widgets/placeholder.py"}
 ```
 
+## ProgressBar
+
+A configurable progress bar with ETA and percentage complete.
+
+[ProgressBar reference](./widgets/progress_bar.md){ .md-button .md-button--primary }
+
+
+```{.textual path="docs/examples/widgets/progress_bar.py" press="tab,5,0,tab,enter"}
+```
+
+
 ## RadioButton
 
 A simple radio button.
