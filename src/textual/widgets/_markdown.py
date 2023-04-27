@@ -476,6 +476,7 @@ class MarkdownFence(MarkdownBlock):
         width: 100%;
         height: auto;
         max-height: 20;
+        color: rgb(210,210,210);
     }
 
     MarkdownFence > * {
