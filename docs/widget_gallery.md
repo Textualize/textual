@@ -160,7 +160,7 @@ Display placeholder content while you are designing a UI.
 
 ## ProgressBar
 
-A configurable progress bar with ETA and percentage.
+A configurable progress bar with ETA and percentage complete.
 
 [ProgressBar reference](./widgets/progress_bar.md){ .md-button .md-button--primary }
 

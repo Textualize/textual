@@ -106,11 +106,11 @@ Refer to the [section below](#styling-the-progress-bar) for more information.
 
 ## Reactive Attributes
 
-| Name         | Type    | Default | Description                                   |
-| ------------ | ------- | ------- | --------------------------------------------- |
-| `percentage` | `float  | None`   | `None`                                        | The read-only percentage of progress that has been made. This is `None` if the `total` hasn't been set. |
-| `progress`   | `float` | `0`     | The number of steps of progress already made. |
-| `total`      | `float  | None`   | `None`                                        | The total number of steps that we are keeping track of.                                                 |
+| Name         | Type    | Default | Description                                                                                             |
+| ------------ | ------- | ------- | ------------------------------------------------------------------------------------------------------- |
+| `percentage` | `float  | None`   | The read-only percentage of progress that has been made. This is `None` if the `total` hasn't been set. |
+| `progress`   | `float` | `0`     | The number of steps of progress already made.                                                           |
+| `total`      | `float  | None`   | The total number of steps that we are keeping track of.                                                 |
 
 
 ## Styling the Progress Bar
