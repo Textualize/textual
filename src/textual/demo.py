@@ -94,25 +94,6 @@ Textual uses Cascading Stylesheets (CSS) to create Rich interactive User Interfa
 Here's an example of some CSS used in this app:
 """
 
-
-EXAMPLE_CSS = """\
-Screen {
-    layers: base overlay notes;
-    overflow: hidden;
-}
-
-Sidebar {
-    width: 40;
-    background: $panel;
-    transition: offset 500ms in_out_cubic;
-    layer: overlay;
-
-}
-
-Sidebar.-hidden {
-    offset-x: -100%;
-}"""
-
 DATA = {
     "foo": [
         3.1427,
@@ -313,7 +294,7 @@ class DemoApp(App[None]):
         self.query_one(TextLog).write(renderable)
 
     def compose(self) -> ComposeResult:
-        example_css = "\n".join(Path(self.css_path[0]).read_text().splitlines()[:50])
+        example_css = Path(self.css_path[0]).read_text()
         yield Container(
             Sidebar(classes="-hidden"),
             Header(show_clock=False),
