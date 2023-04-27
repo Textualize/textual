@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - All `textual.containers` are now `1fr` in relevant dimensions by default https://github.com/Textualize/textual/pull/2386
 
+### Fixed
+
+- Fixed plain text in Markdown code blocks with no syntax being difficult to read https://github.com/Textualize/textual/issues/2400
+
 ## [0.21.0] - 2023-04-26
 
 ### Changed
