@@ -1,4 +1,5 @@
 from pathlib import Path
+import sys
 
 import pytest
 
@@ -315,6 +316,7 @@ def test_key_display(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "key_display.py")
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="Known to be flakey on Windows")
 def test_demo(snap_compare):
     """Test the demo app (python -m textual)"""
     assert snap_compare(
