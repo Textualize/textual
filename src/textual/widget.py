@@ -2699,6 +2699,8 @@ class Widget(DOMNode):
             or self.virtual_size != virtual_size
             or self._container_size != container_size
         ):
+            if self._size != size:
+                self._set_dirty()
             self._size = size
             if layout:
                 self.virtual_size = virtual_size

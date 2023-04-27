@@ -53,7 +53,7 @@ class HorizontalLayout(Layout):
             size,
             parent.app.size,
             resolve_margin,
-            dimension="width",
+            resolve_dimension="width",
         )
 
         margins = [

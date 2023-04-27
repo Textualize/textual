@@ -2,12 +2,13 @@ from __future__ import annotations
 
 from fractions import Fraction
 from itertools import accumulate
-from typing import TYPE_CHECKING, Sequence, cast
+from typing import TYPE_CHECKING, Iterable, Sequence, cast
 
 from typing_extensions import Literal
 
 from .box_model import BoxModel
 from .css.scalar import Scalar
+from .css.styles import RenderStyles
 from .geometry import Size
 
 if TYPE_CHECKING:
@@ -78,13 +79,105 @@ def resolve(
     return results
 
 
+def resolve_fraction_unit(
+    widget_styles: Iterable[RenderStyles],
+    size: Size,
+    viewport_size: Size,
+    remaining_space: Fraction,
+    resolve_dimension: Literal["width", "height"] = "width",
+) -> Fraction:
+    """Calculate the fraction
+
+    Args:
+        widget_styles: Styles for widgets with fraction units.
+        size: Container size.
+        viewport_size: Viewport size.
+        remaining_space: Remaining space for fr units.
+        resolve_dimension: Which dimension to resolve.
+
+    Returns:
+        The value of 1fr.
+    """
+    if not remaining_space or not widget_styles:
+        return Fraction(1)
+
+    def resolve_scalar(
+        scalar: Scalar | None, fraction_unit: Fraction = Fraction(1)
+    ) -> Fraction | None:
+        """Resolve a scalar if it is not None.
+
+        Args:
+            scalar: Optional scalar to resolve.
+            fraction_unit: Size of 1fr.
+
+        Returns:
+            Fraction if resolved, otherwise None.
+        """
+        return (
+            None
+            if scalar is None
+            else scalar.resolve(size, viewport_size, fraction_unit)
+        )
+
+    resolve: list[tuple[Scalar, Fraction | None, Fraction | None]] = []
+
+    if resolve_dimension == "width":
+        resolve = [
+            (
+                cast(Scalar, styles.width),
+                resolve_scalar(styles.min_width),
+                resolve_scalar(styles.max_width),
+            )
+            for styles in widget_styles
+        ]
+    else:
+        resolve = [
+            (
+                cast(Scalar, styles.height),
+                resolve_scalar(styles.min_height),
+                resolve_scalar(styles.max_height),
+            )
+            for styles in widget_styles
+        ]
+
+    resolved: list[Fraction | None] = [None] * len(resolve)
+    remaining_fraction = Fraction(sum(scalar.value for scalar, _, _ in resolve))
+
+    while True:
+        remaining_space_changed = False
+        resolve_fraction = Fraction(remaining_space, remaining_fraction)
+        for index, (scalar, min_value, max_value) in enumerate(resolve):
+            value = resolved[index]
+            if value is None:
+                resolved_scalar = scalar.resolve(size, viewport_size, resolve_fraction)
+                if min_value is not None and resolved_scalar < min_value:
+                    remaining_space -= min_value
+                    remaining_fraction -= Fraction(scalar.value)
+                    resolved[index] = min_value
+                    remaining_space_changed = True
+                elif max_value is not None and resolved_scalar > max_value:
+                    remaining_space -= max_value
+                    remaining_fraction -= Fraction(scalar.value)
+                    resolved[index] = max_value
+                    remaining_space_changed = True
+
+        if not remaining_space_changed:
+            break
+
+    return (
+        Fraction(remaining_space, remaining_fraction)
+        if remaining_space
+        else Fraction(1)
+    )
+
+
 def resolve_box_models(
     dimensions: list[Scalar | None],
     widgets: list[Widget],
     size: Size,
     viewport_size: Size,
     margin: Size,
-    dimension: Literal["width", "height"] = "width",
+    resolve_dimension: Literal["width", "height"] = "width",
 ) -> list[BoxModel]:
     """Resolve box models for a list of dimensions
 
@@ -94,7 +187,7 @@ def resolve_box_models(
         size: Size of container.
         viewport_size: Viewport size.
         margin: Total space occupied by margin
-        dimensions: Which dimension to resolve.
+        resolve_dimension: Which dimension to resolve.
 
     Returns:
         List of resolved box models.
@@ -106,6 +199,7 @@ def resolve_box_models(
 
     margin_size = size - margin
 
+    # Fixed box models
     box_models: list[BoxModel | None] = [
         (
             None
@@ -117,30 +211,46 @@ def resolve_box_models(
         for (_dimension, widget) in zip(dimensions, widgets)
     ]
 
-    if dimension == "width":
-        total_remaining = sum([width for width, _, _ in filter(None, box_models)])
-        remaining_space = max(0, size.width - total_remaining - margin_width)
-    else:
-        total_remaining = sum([height for _, height, _ in filter(None, box_models)])
-        remaining_space = max(0, size.height - total_remaining - margin_height)
+    if None not in box_models:
+        # No fr units, so we're done
+        return cast("list[BoxModel]", box_models)
 
-    fraction_unit = Fraction(
-        remaining_space,
-        int(
-            sum(
-                [
-                    dimension.value
-                    for dimension in dimensions
-                    if dimension and dimension.is_fraction
-                ]
-            )
+    # If all box models have been calculated
+    widget_styles = [widget.styles for widget in widgets]
+    if resolve_dimension == "width":
+        total_remaining = int(
+            sum([width for width, _, _ in filter(None, box_models)], start=Fraction())
         )
-        or 1,
-    )
-    if dimension == "width":
+        remaining_space = int(max(0, size.width - total_remaining - margin_width))
+        fraction_unit = resolve_fraction_unit(
+            [
+                styles
+                for styles in widget_styles
+                if styles.width is not None and styles.width.is_fraction
+            ],
+            size,
+            viewport_size,
+            Fraction(remaining_space),
+            resolve_dimension,
+        )
         width_fraction = fraction_unit
         height_fraction = Fraction(margin_size.height)
     else:
+        total_remaining = int(
+            sum([height for _, height, _ in filter(None, box_models)], start=Fraction())
+        )
+        remaining_space = int(max(0, size.height - total_remaining - margin_height))
+        fraction_unit = resolve_fraction_unit(
+            [
+                styles
+                for styles in widget_styles
+                if styles.height is not None and styles.height.is_fraction
+            ],
+            size,
+            viewport_size,
+            Fraction(remaining_space),
+            resolve_dimension,
+        )
         width_fraction = Fraction(margin_size.width)
         height_fraction = fraction_unit
 

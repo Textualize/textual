@@ -5,7 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.22.0] - Unreleased
+
+### Fixed
+
+- Fixed broken fr units when there is a min or max dimension https://github.com/Textualize/textual/issues/2378
+- Fixed plain text in Markdown code blocks with no syntax being difficult to read https://github.com/Textualize/textual/issues/2400
 
 ### Added
 
@@ -15,9 +20,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - All `textual.containers` are now `1fr` in relevant dimensions by default https://github.com/Textualize/textual/pull/2386
 
-### Fixed
-
-- Fixed plain text in Markdown code blocks with no syntax being difficult to read https://github.com/Textualize/textual/issues/2400
 
 ## [0.21.0] - 2023-04-26
 
