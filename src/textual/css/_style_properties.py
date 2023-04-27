@@ -187,7 +187,7 @@ class ScalarProperty:
                 new_value = Scalar.parse(value)
             except ScalarParseError:
                 raise StyleValueError(
-                    "unable to parse scalar from {value!r}",
+                    f"unable to parse scalar from {value!r}",
                     help_text=scalar_help_text(
                         property_name=self.name, context="inline"
                     ),

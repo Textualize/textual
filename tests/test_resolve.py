@@ -1,8 +1,11 @@
+from fractions import Fraction
+
 import pytest
 
-from textual._resolve import resolve
+from textual._resolve import resolve, resolve_fraction_unit
 from textual.css.scalar import Scalar
 from textual.geometry import Size
+from textual.widget import Widget
 
 
 def test_resolve_empty():
@@ -56,3 +59,66 @@ def test_resolve(scalars, total, gutter, result):
         )
         == result
     )
+
+
+def test_resolve_fraction_unit():
+    """Test resolving fraction units in combination with minimum widths."""
+    widget1 = Widget()
+    widget2 = Widget()
+    widget3 = Widget()
+
+    widget1.styles.width = "1fr"
+    widget1.styles.min_width = 20
+
+    widget2.styles.width = "2fr"
+    widget2.styles.min_width = 10
+
+    widget3.styles.width = "1fr"
+
+    styles = (widget1.styles, widget2.styles, widget3.styles)
+
+    # Try with width 80.
+    # Fraction unit should one fourth of width
+    assert resolve_fraction_unit(
+        styles,
+        Size(80, 24),
+        Size(80, 24),
+        Fraction(80),
+        resolve_dimension="width",
+    ) == Fraction(20)
+
+    # Try with width 50
+    # First widget is fixed at 20
+    # Remaining three widgets have 30 to play with
+    # Fraction is 10
+    assert resolve_fraction_unit(
+        styles,
+        Size(80, 24),
+        Size(80, 24),
+        Fraction(50),
+        resolve_dimension="width",
+    ) == Fraction(10)
+
+    # Try with width 35
+    # First widget fixed at 20
+    # Fraction is 5
+    assert resolve_fraction_unit(
+        styles,
+        Size(80, 24),
+        Size(80, 24),
+        Fraction(35),
+        resolve_dimension="width",
+    ) == Fraction(5)
+
+    # Try with width 32
+    # First widget fixed at 20
+    # Second widget is fixed at 10
+    # Remaining widget has all the space
+    # Fraction is 2
+    assert resolve_fraction_unit(
+        styles,
+        Size(80, 24),
+        Size(80, 24),
+        Fraction(32),
+        resolve_dimension="width",
+    ) == Fraction(2)
