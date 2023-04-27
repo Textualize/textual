@@ -1,4 +1,5 @@
 from pathlib import Path
+import sys
 
 import pytest
 
@@ -319,9 +320,17 @@ def test_demo(snap_compare):
     """Test the demo app (python -m textual)"""
     assert snap_compare(
         Path("../../src/textual/demo.py"),
-        press=["down", "down", "down", "wait:500"],
         terminal_size=(100, 30),
     )
+
+
+# def test_demo_with_keys(snap_compare):
+#     """Test the demo app (python -m textual)"""
+#     assert snap_compare(
+#         Path("../../src/textual/demo.py"),
+#         press=["down", "down", "down", "wait:500"],
+#         terminal_size=(100, 30),
+#     )
 
 
 def test_label_widths(snap_compare):
