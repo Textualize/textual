@@ -88,7 +88,7 @@ class Switch(Widget, can_focus=True):
 
         Attributes:
             value: The value that the switch was changed to.
-            input: The `Switch` widget that was changed.
+            switch: The `Switch` widget that was changed.
         """
 
         def __init__(self, switch: Switch, value: bool) -> None:
