@@ -106,27 +106,22 @@ Refer to the [section below](#styling-the-progress-bar) for more information.
 
 ## Reactive Attributes
 
-| Name | Type | Default | Description |
-|------|------|---------|-------------|
-| `percentage` | `float | None` | `None` | The read-only percentage of progress that has been made. This is `None` if the `total` hasn't been set. |
-| `progress` | `float` | `0` | The number of steps of progress already made. |
-| `total` | `float | None` | `None` | The total number of steps that we are keeping track of. |
-
-## Messages
-
-- [ProgressBar.Completed][textual.widgets.ProgressBar.Completed]
-- [ProgressBar.Started][textual.widgets.ProgressBar.Started]
+| Name         | Type    | Default | Description                                   |
+| ------------ | ------- | ------- | --------------------------------------------- |
+| `percentage` | `float  | None`   | `None`                                        | The read-only percentage of progress that has been made. This is `None` if the `total` hasn't been set. |
+| `progress`   | `float` | `0`     | The number of steps of progress already made. |
+| `total`      | `float  | None`   | `None`                                        | The total number of steps that we are keeping track of.                                                 |
 
 
 ## Styling the Progress Bar
 
 The progress bar is composed of three sub-widgets that can be styled independently:
 
-| Widget name | ID | Description |
-|-------------|----|-------------|
-| `Bar` | `#bar` | The bar that visually represents the progress made. |
-| `PercentageStatus` | `#percentage` | [Label](./label.md) that shows the percentage of completion. |
-| `ETAStatus` | `#eta` | [Label](./label.md) that shows the estimated time to completion. |
+| Widget name        | ID            | Description                                                      |
+| ------------------ | ------------- | ---------------------------------------------------------------- |
+| `Bar`              | `#bar`        | The bar that visually represents the progress made.              |
+| `PercentageStatus` | `#percentage` | [Label](./label.md) that shows the percentage of completion.     |
+| `ETAStatus`        | `#eta`        | [Label](./label.md) that shows the estimated time to completion. |
 
 ### Bar Component Classes
 
