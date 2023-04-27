@@ -218,9 +218,7 @@ def resolve_box_models(
     # If all box models have been calculated
     widget_styles = [widget.styles for widget in widgets]
     if resolve_dimension == "width":
-        total_remaining = int(
-            sum([width for width, _, _ in filter(None, box_models)], start=Fraction())
-        )
+        total_remaining = int(sum([width for width, _, _ in filter(None, box_models)]))
         remaining_space = int(max(0, size.width - total_remaining - margin_width))
         fraction_unit = resolve_fraction_unit(
             [
@@ -237,7 +235,7 @@ def resolve_box_models(
         height_fraction = Fraction(margin_size.height)
     else:
         total_remaining = int(
-            sum([height for _, height, _ in filter(None, box_models)], start=Fraction())
+            sum([height for _, height, _ in filter(None, box_models)])
         )
         remaining_space = int(max(0, size.height - total_remaining - margin_height))
         fraction_unit = resolve_fraction_unit(
