@@ -9,7 +9,7 @@ class RadioChoicesApp(App[None]):
     def compose(self) -> ComposeResult:
         with Horizontal():
             # A RadioSet built up from RadioButtons.
-            with RadioSet():
+            with RadioSet(id="focus_me"):
                 yield RadioButton("Battlestar Galactica")
                 yield RadioButton("Dune 1984")
                 yield RadioButton("Dune 2021")
@@ -18,8 +18,7 @@ class RadioChoicesApp(App[None]):
                 yield RadioButton("Star Wars: A New Hope")
                 yield RadioButton("The Last Starfighter")
                 yield RadioButton(
-                    "Total Recall :backhand_index_pointing_right: :red_circle:",
-                    id="focus_me",
+                    "Total Recall :backhand_index_pointing_right: :red_circle:"
                 )
                 yield RadioButton("Wing Commander")
             # A RadioSet built up from a collection of strings.
@@ -36,7 +35,7 @@ class RadioChoicesApp(App[None]):
             )
 
     def on_mount(self) -> None:
-        self.query_one("#focus_me", RadioButton).focus()
+        self.query_one("#focus_me").focus()
 
 
 if __name__ == "__main__":

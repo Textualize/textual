@@ -1,6 +1,6 @@
 from textual.app import App, ComposeResult
-from textual.containers import Container
-from textual.widgets import Button, Header, Footer, Static
+from textual.containers import ScrollableContainer
+from textual.widgets import Button, Footer, Header, Static
 
 
 class TimeDisplay(Static):
@@ -27,7 +27,7 @@ class StopwatchApp(App):
         """Create child widgets for the app."""
         yield Header()
         yield Footer()
-        yield Container(Stopwatch(), Stopwatch(), Stopwatch())
+        yield ScrollableContainer(Stopwatch(), Stopwatch(), Stopwatch())
 
     def action_toggle_dark(self) -> None:
         """An action to toggle dark mode."""
