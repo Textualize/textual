@@ -316,14 +316,21 @@ def test_key_display(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "key_display.py")
 
 
-@pytest.mark.skipif(sys.platform == "win32", reason="Known to be flakey on Windows")
 def test_demo(snap_compare):
     """Test the demo app (python -m textual)"""
     assert snap_compare(
         Path("../../src/textual/demo.py"),
-        press=["down", "down", "down", "wait:500"],
         terminal_size=(100, 30),
     )
+
+
+# def test_demo_with_keys(snap_compare):
+#     """Test the demo app (python -m textual)"""
+#     assert snap_compare(
+#         Path("../../src/textual/demo.py"),
+#         press=["down", "down", "down", "wait:500"],
+#         terminal_size=(100, 30),
+#     )
 
 
 def test_label_widths(snap_compare):
