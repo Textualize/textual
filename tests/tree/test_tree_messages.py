@@ -16,18 +16,26 @@ class TreeApp(App[None]):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.messages: list[str] = []
+        self.messages: list[tuple[str, str]] = []
 
     def compose(self) -> ComposeResult:
         """Compose the child widgets."""
-        yield MyTree("Root")
+        yield MyTree("Root", id="test-tree")
 
     def on_mount(self) -> None:
         self.query_one(MyTree).root.add("Child")
         self.query_one(MyTree).focus()
 
-    def record(self, event: Message) -> None:
-        self.messages.append(event.__class__.__name__)
+    def record(
+        self,
+        event: Tree.NodeSelected[None]
+        | Tree.NodeExpanded[None]
+        | Tree.NodeCollapsed[None]
+        | Tree.NodeHighlighted[None],
+    ) -> None:
+        self.messages.append(
+            (event.__class__.__name__, event.node.tree.id or "Unknown")
+        )
 
     def on_tree_node_selected(self, event: Tree.NodeSelected[None]) -> None:
         self.record(event)
@@ -47,7 +55,10 @@ async def test_tree_node_selected_message() -> None:
     async with TreeApp().run_test() as pilot:
         await pilot.press("enter")
         await pilot.pause()
-        assert pilot.app.messages == ["NodeExpanded", "NodeSelected"]
+        assert pilot.app.messages == [
+            ("NodeExpanded", "test-tree"),
+            ("NodeSelected", "test-tree"),
+        ]
 
 
 async def test_tree_node_selected_message_no_auto() -> None:
@@ -56,7 +67,7 @@ async def test_tree_node_selected_message_no_auto() -> None:
         pilot.app.query_one(MyTree).auto_expand = False
         await pilot.press("enter")
         await pilot.pause()
-        assert pilot.app.messages == ["NodeSelected"]
+        assert pilot.app.messages == [("NodeSelected", "test-tree")]
 
 
 async def test_tree_node_expanded_message() -> None:
@@ -64,7 +75,7 @@ async def test_tree_node_expanded_message() -> None:
     async with TreeApp().run_test() as pilot:
         await pilot.press("space")
         await pilot.pause()
-        assert pilot.app.messages == ["NodeExpanded"]
+        assert pilot.app.messages == [("NodeExpanded", "test-tree")]
 
 
 async def test_tree_node_collapsed_message() -> None:
@@ -72,7 +83,10 @@ async def test_tree_node_collapsed_message() -> None:
     async with TreeApp().run_test() as pilot:
         await pilot.press("space", "space")
         await pilot.pause()
-        assert pilot.app.messages == ["NodeExpanded", "NodeCollapsed"]
+        assert pilot.app.messages == [
+            ("NodeExpanded", "test-tree"),
+            ("NodeCollapsed", "test-tree"),
+        ]
 
 
 async def test_tree_node_highlighted_message() -> None:
@@ -80,4 +94,8 @@ async def test_tree_node_highlighted_message() -> None:
     async with TreeApp().run_test() as pilot:
         await pilot.press("enter", "down")
         await pilot.pause()
-        assert pilot.app.messages == ["NodeExpanded", "NodeSelected", "NodeHighlighted"]
+        assert pilot.app.messages == [
+            ("NodeExpanded", "test-tree"),
+            ("NodeSelected", "test-tree"),
+            ("NodeHighlighted", "test-tree"),
+        ]
