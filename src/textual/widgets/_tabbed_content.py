@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from itertools import zip_longest
+from typing import Optional
 
 from rich.repr import Result
 from rich.text import Text, TextType
@@ -113,6 +114,8 @@ class TabbedContent(Widget):
         self.titles = [self.render_str(title) for title in titles]
         self._tab_content: list[Widget] = []
         self._initial = initial
+        self._tabs: Optional[Tabs] = None
+        self._content_switcher = ContentSwitcher(initial=self._initial or None)
         super().__init__()
 
     def validate_active(self, active: str) -> str:
@@ -131,27 +134,27 @@ class TabbedContent(Widget):
             raise ValueError("'active' tab must not be empty string.")
         return active
 
+    def _set_id(self, content: TabPane, new_id: str) -> TabPane:
+        """Set an id on the content, if not already present.
+
+        Args:
+            content: a TabPane.
+            new_id: New `is` attribute, if it is not already set.
+
+        Returns:
+            The same TabPane.
+        """
+        if content.id is None:
+            content.id = new_id
+        return content
+
     def compose(self) -> ComposeResult:
         """Compose the tabbed content."""
-
-        def set_id(content: TabPane, new_id: str) -> TabPane:
-            """Set an id on the content, if not already present.
-
-            Args:
-                content: a TabPane.
-                new_id: New `is` attribute, if it is not already set.
-
-            Returns:
-                The same TabPane.
-            """
-            if content.id is None:
-                content.id = new_id
-            return content
 
         # Wrap content in a `TabPane` if required.
         pane_content = [
             (
-                set_id(content, f"tab-{index}")
+                self._set_id(content, f"tab-{index}")
                 if isinstance(content, TabPane)
                 else TabPane(
                     title or self.render_str(f"Tab {index}"), content, id=f"tab-{index}"
@@ -166,10 +169,30 @@ class TabbedContent(Widget):
             ContentTab(content._title, content.id or "") for content in pane_content
         ]
         # Yield the tabs
-        yield Tabs(*tabs, active=self._initial or None)
+        self._tabs = Tabs(*tabs, active=self._initial or None)
+        yield self._tabs
         # Yield the content switcher and panes
-        with ContentSwitcher(initial=self._initial or None):
+        with self._content_switcher:
             yield from pane_content
+
+    async def append(self, content: TabPane):
+        """Add a new TabPane to the end of the tab list.
+
+        Args:
+            content: The new TabPane object to add.
+        """
+        self.titles.append(content._title)
+        self._tab_content.append(content)
+        tab_pane_with_id = self._set_id(content, f"tab-{len(self._content_switcher.children) + 1}")
+        content_tab = ContentTab(tab_pane_with_id._title, tab_pane_with_id.id or "")
+        await self._content_switcher.mount(tab_pane_with_id)
+        # Incase _initial is not set (empty TabbedContent), set it to the active tab
+        self._content_switcher._initial = self.active
+        initial = self._content_switcher._initial
+        with self._content_switcher.app.batch_update():
+            for child in self._content_switcher.children:
+                child.display = bool(initial) and child.id == initial
+        self._tabs.add_tab(content_tab)
 
     def compose_add_child(self, widget: Widget) -> None:
         """When using the context manager compose syntax, we want to attach nodes to the switcher.
@@ -185,7 +208,6 @@ class TabbedContent(Widget):
         switcher = self.get_child_by_type(ContentSwitcher)
         assert isinstance(event.tab, ContentTab)
         switcher.current = event.tab.id
-        self.active = event.tab.id
         self.post_message(
             TabbedContent.TabActivated(
                 tabbed_content=self,
