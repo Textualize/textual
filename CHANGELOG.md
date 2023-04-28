@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `TreeNode.tree` as a read-only public attribute https://github.com/Textualize/textual/issues/2413
 
+## [0.22.1] - 2023-04-28
+
+### Fixed
+
+- Fixed timer issue https://github.com/Textualize/textual/issues/2416
+- Fixed `textual run` issue https://github.com/Textualize/textual/issues/2391
+
 ## [0.22.0] - 2023-04-27
 
 ### Fixed
