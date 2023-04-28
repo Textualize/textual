@@ -48,7 +48,7 @@ class Button(Static, can_focus=True):
     }
 
     Button:hover {
-        border-top: tall $panel-lighten-1;
+        border-top: tall $panel;
         background: $panel-darken-2;
         color: $text;
     }
@@ -72,7 +72,7 @@ class Button(Static, can_focus=True):
     Button.-primary:hover {
         background: $primary-darken-2;
         color: $text;
-        border-top: tall $primary-lighten-2;
+        border-top: tall $primary;
     }
 
     Button.-primary.-active {
@@ -93,6 +93,7 @@ class Button(Static, can_focus=True):
     Button.-success:hover {
         background: $success-darken-2;
         color: $text;
+        border-top: tall $success;
     }
 
     Button.-success.-active {
@@ -113,6 +114,7 @@ class Button(Static, can_focus=True):
     Button.-warning:hover {
         background: $warning-darken-2;
         color: $text;
+        border-top: tall $warning;
 
     }
 
@@ -135,7 +137,7 @@ class Button(Static, can_focus=True):
     Button.-error:hover {
         background: $error-darken-1;
         color: $text;
-
+        border-top: tall $error;
     }
 
     Button.-error.-active {
