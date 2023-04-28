@@ -8,7 +8,7 @@
 
 Textual comes with a command line application of the same name. The `textual` command is a super useful tool that will help you to build apps.
 
-Take a moment to look through the available sub-commands. There will be even more helpful tools here in the future.
+Take a moment to look through the available subcommands. There will be even more helpful tools here in the future.
 
 ```bash
 textual --help
@@ -17,24 +17,47 @@ textual --help
 
 ## Run
 
-You can run Textual apps with the `run` subcommand. If you supply a path to a Python file it will load and run the application.
+The `run` sub-command runs Textual apps. If you supply a path to a Python file it will load and run the app.
 
 ```bash
 textual run my_app.py
 ```
 
-The `run` sub-command will first look for a `App` instance called `app` in the global scope of your Python file. If there is no `app`, it will create an instance of the first `App` class it finds and run that.
+This is equivalent to running `python my_app.py` from the command prompt, but will allow you to set various switches which can help you debug, such as `--dev` which enable the [Console](#console).
 
-Alternatively, you can add the name of an `App` instance or class after a colon to run a specific app in the Python file. Here's an example:
+See the `run` subcommand's help for details:
 
 ```bash
-textual run my_app.py:alternative_app
+textual run --help
+```
+
+You can also run Textual apps from a python import.
+The following command would import `music.play` and run a Textual app in that module:
+
+```bash
+textual run music.play
+```
+
+This assumes you have a Textual app instance called `app` in `music.play`.
+If your app has a different name, you can append it after a colon:
+
+```bash
+textual run music.play:MusicPlayerApp
 ```
 
 !!! note
 
-    If the Python file contains a call to app.run() then you can launch the file as you normally would any other Python program. Running your app via `textual run` will give you access to a few Textual features such as live editing of CSS files.
+    This works for both Textual app *instances* and *classes*.
 
+
+### Running from commands
+
+If your app is installed as a command line script, you can use the `-c` switch to run it.
+For instance, the following will run the `textual colors` command:
+
+```bash
+textual run -c textual colors
+```
 
 ## Live editing
 

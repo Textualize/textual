@@ -5,11 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.22.1] - Unreleased
+## [0.22.1] - 2023-04-28
 
-## Fixed
+### Fixed
 
 - Fixed timer issue https://github.com/Textualize/textual/issues/2416
+- Fixed `textual run` issue https://github.com/Textualize/textual/issues/2391
+
 
 ## [0.22.0] - 2023-04-27
 
