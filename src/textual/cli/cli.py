@@ -153,7 +153,6 @@ def _run_app(
     In the case of an import, you can import and run an alternative app by appending a colon followed
     by the name of the app instance or class.
 
-
     Here are some examples:
 
         textual run foo.py

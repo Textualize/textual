@@ -8,7 +8,7 @@
 
 Textual comes with a command line application of the same name. The `textual` command is a super useful tool that will help you to build apps.
 
-Take a moment to look through the available sub-commands. There will be even more helpful tools here in the future.
+Take a moment to look through the available subcommands. There will be even more helpful tools here in the future.
 
 ```bash
 textual --help
@@ -17,13 +17,13 @@ textual --help
 
 ## Run
 
-You can run Textual apps with the `run` subcommand. If you supply a path to a Python file it will load and run the application.
+The `run` sub-command runs Textual apps. If you supply a path to a Python file it will load and run the app.
 
 ```bash
 textual run my_app.py
 ```
 
-This will be equivalent to running `python my_app.py` from the command prompt, but will allow you to set various switches which can help you debug, such as `--dev` which enable the [Console](#console).
+This is equivalent to running `python my_app.py` from the command prompt, but will allow you to set various switches which can help you debug, such as `--dev` which enable the [Console](#console).
 
 See the `run` subcommand's help for details:
 
@@ -45,7 +45,7 @@ If your app has a different name, you can append it after a colon:
 textual run music.play:MusicPlayerApp
 ```
 
-!!! note:
+!!! note
 
     This works for both Textual app *instances* and *classes*.
 
