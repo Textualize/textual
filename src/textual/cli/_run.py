@@ -20,15 +20,7 @@ from textual.app import App
 try:
     from $MODULE import $APP as app;
 except ImportError:
-    from inspect import isclass
-    import $MODULE as module
-    for symbol in dir(module):
-        if (isclass(symbol) and issubclass(symbol, App)) or isinstance(symbol, App):
-            app = symbol
-            break
-    else:
-        raise SystemExit("Unable locate a Textual app in module '$MODULE'") from None
-
+    raise SystemExit("Unable to import '$APP' from module '$MODULE'") from None
 
 if isinstance(app, App):
     # If we imported an app, run it
@@ -135,7 +127,7 @@ def check_import(module_name: str, app_name: str) -> bool:
     """
 
     try:
-        sys.path.insert(0, ".")
+        sys.path.insert(0, "")
         module = importlib.import_module(module_name)
     except ImportError as error:
         return False
@@ -158,9 +150,6 @@ def exec_import(
     """
     module, _colon, app = import_name.partition(":")
     app = app or "app"
-
-    if not check_import(module, app):
-        raise ExecImportError(f"Unable to import {app!r} from  {import_name!r}")
 
     script = EXEC_SCRIPT.substitute(MODULE=module, APP=app)
     # Compiling the script will raise a SyntaxError if there are any invalid symbols
