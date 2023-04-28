@@ -5,11 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.22.2] - 2023-04-29
 
 ### Added
 
 - Added `TreeNode.tree` as a read-only public attribute https://github.com/Textualize/textual/issues/2413
+
+### Fixed
+
+- Fixed superfluous style updates for focus-within pseudo-selector
 
 ## [0.22.1] - 2023-04-28
 
@@ -833,6 +837,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.22.2]: https://github.com/Textualize/textual/compare/v0.22.1...v0.22.2
+[0.22.1]: https://github.com/Textualize/textual/compare/v0.22.0...v0.22.1
 [0.22.0]: https://github.com/Textualize/textual/compare/v0.21.0...v0.22.0
 [0.21.0]: https://github.com/Textualize/textual/compare/v0.20.1...v0.21.0
 [0.20.1]: https://github.com/Textualize/textual/compare/v0.20.0...v0.20.1

@@ -1226,7 +1226,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         return self.screen.get_child_by_type(expect_type)
 
-    def update_styles(self, node: DOMNode | None = None) -> None:
+    def update_styles(self, node: DOMNode) -> None:
         """Immediately update the styles of this node and all descendant nodes.
 
         Should be called whenever CSS classes / pseudo classes change.
