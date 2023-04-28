@@ -134,7 +134,8 @@ class TabbedContent(Widget):
             raise ValueError("'active' tab must not be empty string.")
         return active
 
-    def _set_id(self, content: TabPane, new_id: str) -> TabPane:
+    @classmethod
+    def _set_id(cls, content: TabPane, new_id: str) -> TabPane:
         """Set an id on the content, if not already present.
 
         Args:
