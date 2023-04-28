@@ -17,7 +17,19 @@ from typing import NoReturn, Sequence
 EXEC_SCRIPT = Template(
     """\
 from textual.app import App
-from $MODULE import $APP as app;
+try:
+    from $MODULE import $APP as app;
+except ImportError:
+    from inspect import isclass
+    import $MODULE as module
+    for symbol in dir(module):
+        if (isclass(symbol) and issubclass(symbol, App)) or isinstance(symbol, App):
+            app = symbol
+            break
+    else:
+        raise SystemExit("Unable locate a Textual app in module '$MODULE'") from None
+
+
 if isinstance(app, App):
     # If we imported an app, run it
     app.run()
@@ -123,7 +135,7 @@ def check_import(module_name: str, app_name: str) -> bool:
     """
 
     try:
-        sys.path.insert(0, "")
+        sys.path.insert(0, ".")
         module = importlib.import_module(module_name)
     except ImportError as error:
         return False
