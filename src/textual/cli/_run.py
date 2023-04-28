@@ -9,12 +9,11 @@ This means that (if they succeed) they will never return.
 from __future__ import annotations
 
 import os
-import sys
 import platform
-from string import Template
 import subprocess
+import sys
+from string import Template
 from typing import NoReturn, Sequence
-
 
 WINDOWS = platform.system() == "Windows"
 
@@ -127,7 +126,7 @@ def exec_command(
 
 def exec_import(
     import_name: str, args: Sequence[str], environment: dict[str, str]
-) -> NoReturn:
+) -> None:
     """Import and execute an app.
 
     Raises:
