@@ -10,8 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed `textual run` on Windows
-
+- Fixed `textual run` on Windows https://github.com/Textualize/textual/issues/2406
+- Fixed top border of button hover state
 
 ## [0.22.2] - 2023-04-29
 
