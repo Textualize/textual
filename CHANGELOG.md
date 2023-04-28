@@ -9,7 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fixed timer issue https://github.com/Textualize/textual/issues/2416
 - Fixed `textual run` issue https://github.com/Textualize/textual/issues/2391
+
 
 ## [0.22.0] - 2023-04-27
 
