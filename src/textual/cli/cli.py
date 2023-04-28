@@ -147,15 +147,16 @@ def _run_app(
 ) -> None:
     """Run a Textual app.
 
-    The code to run may be given as a path (ending with .py) or as a Python
-    import, which will load the code and run an app called "app". You may optionally
-    add a colon plus the class or class instance you want to run.
+    The app to run may be given as a path (ending with .py) which will be equivalent to running the
+    script with python, or as a Python import which will import and run an app called "app".
+
+    In the case of an import, you can import and run an alternative app by appending a colon followed
+    by the name of the app instance or class.
+
 
     Here are some examples:
 
         textual run foo.py
-
-        textual run foo.py:MyApp
 
         textual run module.foo
 
