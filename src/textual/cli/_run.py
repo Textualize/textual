@@ -115,25 +115,6 @@ def exec_command(
     os.execvpe(command, [command, *args], environment)
 
 
-def check_import(module_name: str, app_name: str) -> bool:
-    """Check if a symbol can be imported.
-
-    Args:
-        module_name: Name of the module
-        app_name: Name of the app.
-
-    Returns:
-        True if the app may be imported from the module.
-    """
-
-    try:
-        sys.path.insert(0, "")
-        module = importlib.import_module(module_name)
-    except ImportError as error:
-        return False
-    return hasattr(module, app_name)
-
-
 def exec_import(
     import_name: str, args: Sequence[str], environment: dict[str, str]
 ) -> NoReturn:
