@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Added
+
+- Added `TreeNode.tree` as a read-only public attribute https://github.com/Textualize/textual/issues/2413
+
 ## [0.22.0] - 2023-04-27
 
 ### Fixed

@@ -126,6 +126,11 @@ class TreeNode(Generic[TreeDataType]):
         self._updates += 1
 
     @property
+    def tree(self) -> Tree[TreeDataType]:
+        """The tree that this node is attached to."""
+        return self._tree
+
+    @property
     def children(self) -> TreeNodes[TreeDataType]:
         """The child nodes of a TreeNode."""
         return TreeNodes(self._children)
