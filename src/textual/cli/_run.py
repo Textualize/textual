@@ -8,11 +8,15 @@ This means that (if they succeed) they will never return.
 
 from __future__ import annotations
 
-import importlib
 import os
 import sys
+import platform
 from string import Template
+import subprocess
 from typing import NoReturn, Sequence
+
+
+WINDOWS = platform.system() == "Windows"
 
 EXEC_SCRIPT = Template(
     """\
@@ -91,7 +95,7 @@ def _flush() -> None:
     sys.stdout.flush()
 
 
-def exec_python(args: Sequence[str], environment: dict[str, str]) -> NoReturn:
+def exec_python(args: Sequence[str], environment: dict[str, str]) -> None:
     """Execute a Python script.
 
     Args:
@@ -99,12 +103,15 @@ def exec_python(args: Sequence[str], environment: dict[str, str]) -> NoReturn:
         environment: Environment variables.
     """
     _flush()
-    os.execvpe(sys.executable, ["python", *args], environment)
+    if WINDOWS:
+        subprocess.call([sys.executable, *args], env=environment)
+    else:
+        os.execvpe(sys.executable, ["python", *args], environment)
 
 
 def exec_command(
     command: str, args: Sequence[str], environment: dict[str, str]
-) -> NoReturn:
+) -> None:
     """Execute a command with the given environment.
 
     Args:
@@ -112,7 +119,10 @@ def exec_command(
         environment: Environment variables.
     """
     _flush()
-    os.execvpe(command, [command, *args], environment)
+    if WINDOWS:
+        subprocess.call([command, *args], env=environment)
+    else:
+        os.execvpe(command, [command, *args], environment)
 
 
 def exec_import(
