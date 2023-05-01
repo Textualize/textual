@@ -25,6 +25,8 @@ from ._context import (
 from ._time import time
 from ._types import CallbackType
 from .case import camel_to_snake
+from .css.match import match
+from .css.parse import parse_selectors
 from .errors import DuplicateKeyHandlers
 from .events import Event
 from .message import Message
@@ -549,6 +551,18 @@ class MessagePump(metaclass=_MessagePumpMeta):
         for cls in self.__class__.__mro__:
             if message._no_default_action:
                 break
+            decorated_handlers = cls.__dict__.get("_decorated_handlers")
+            if decorated_handlers is not None:
+                for method, selector in decorated_handlers.get(type(message), []):
+                    if selector is None:
+                        yield cls, method.__get__(self, cls)
+                    else:
+                        selector_sets = parse_selectors(selector)
+                        if message._sender is not None and match(
+                            selector_sets, message._sender
+                        ):
+                            yield cls, method.__get__(self, cls)
+
             method = cls.__dict__.get(private_method) or cls.__dict__.get(method_name)
             if method is not None:
                 yield cls, method.__get__(self, cls)

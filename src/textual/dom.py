@@ -12,6 +12,7 @@ from functools import lru_cache
 from inspect import getfile
 from typing import (
     TYPE_CHECKING,
+    Callable,
     ClassVar,
     Iterable,
     Sequence,
@@ -49,6 +50,7 @@ if TYPE_CHECKING:
     from rich.console import RenderableType
     from .app import App
     from .css.query import DOMQuery, QueryType
+    from .message import Message
     from .screen import Screen
     from .widget import Widget
     from .worker import Worker, WorkType, ResultType
@@ -142,6 +144,8 @@ class DOMNode(MessagePump):
     _merged_bindings: ClassVar[_Bindings | None] = None
 
     _reactives: ClassVar[dict[str, Reactive]]
+
+    _decorated_handlers: dict[type[Message], list[tuple[Callable, str | None]]]
 
     def __init__(
         self,
@@ -278,6 +282,14 @@ class DOMNode(MessagePump):
         inherit_component_classes: bool = True,
     ) -> None:
         super().__init_subclass__()
+
+        # Get any handlers decorated by @On
+        handlers: dict[type[Message], list[tuple[Callable, str | None]]] = {}
+        for method in cls.__dict__.values():
+            if callable(method) and hasattr(method, "_textual_on"):
+                for message_type, selector in getattr(method, "_textual_on"):
+                    handlers.setdefault(message_type, []).append((method, selector))
+        cls._decorated_handlers = handlers
 
         reactives = cls._reactives = {}
         for base in reversed(cls.__mro__):
