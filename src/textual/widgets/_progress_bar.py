@@ -336,7 +336,6 @@ class ProgressBar(Widget, can_focus=False):
         self.show_percentage = show_percentage
         self.show_eta = show_eta
 
-        self.percentage = None
         self.total = total
 
     def compose(self) -> ComposeResult:
