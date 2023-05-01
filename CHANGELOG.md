@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed `!important` not applying to `border` https://github.com/Textualize/textual/issues/2420
+- Fixed `!important` not applying to `outline` https://github.com/Textualize/textual/issues/2420
 
 ## [0.22.3] - 2023-04-29
 
