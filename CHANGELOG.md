@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Watch methods can now optionally be private https://github.com/Textualize/textual/issues/2382
 
+### Changed
+
+- Unknown psuedo-selectors will now raise a tokenizer error (previously they were silently ignored) https://github.com/Textualize/textual/pull/2445
+
 ## [0.22.3] - 2023-04-29
 
 ### Fixed
