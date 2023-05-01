@@ -526,6 +526,7 @@ class StylesBuilder:
         rules = self.styles._rules
         rules["outline_top"] = rules["outline_right"] = border
         rules["outline_bottom"] = rules["outline_left"] = border
+        self._distribute_edge_importance("outline")
 
     def process_outline_top(self, name: str, tokens: list[Token]) -> None:
         self._process_outline("top", name, tokens)
