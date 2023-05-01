@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 
 import pytest
@@ -386,3 +388,25 @@ async def test_watch_compute():
         assert app.show_ac is False
 
     assert watch_called == [True, True, False, False, True, True, False, False]
+
+
+async def test_public_and_private_watch() -> None:
+    """If a reactive/var has public and private watches both should get called."""
+
+    calls: dict[str, bool] = {"private": False, "public": False}
+
+    class PrivateWatchTest(App):
+        counter = var(0, init=False)
+
+        def watch_counter(self) -> None:
+            calls["public"] = True
+
+        def _watch_counter(self) -> None:
+            calls["private"] = True
+
+    async with PrivateWatchTest().run_test() as pilot:
+        assert calls["private"] is False
+        assert calls["public"] is False
+        pilot.app.counter += 1
+        assert calls["private"] is True
+        assert calls["public"] is True
