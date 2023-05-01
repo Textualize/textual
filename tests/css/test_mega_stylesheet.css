@@ -140,52 +140,52 @@ A1
 
 /**********************************************************************/
 
-A:foo {}
-A:foo:bar {}
+A:focus {}
+A:focus:hover {}
 A
-:foo {}
+:focus {}
 A
-:foo:bar {}
+:focus:hover {}
 A
-:foo
-:bar {}
-A:foo-bar {}
+:focus
+:hover {}
+A:enabled {}
 A
-:foo-bar {}
+:enabled {}
 
-A :foo {}
-A :foo :bar {}
-A :foo-bar {}
+A :focus {}
+A :focus :hover {}
+A :enabled {}
 
-.A:foo {}
-.A:foo:bar {}
+.A:focus {}
+.A:focus:hover {}
 .A
-:foo {}
+:focus {}
 .A
-:foo:bar {}
+:focus:hover {}
 .A
-:foo
-:bar {}
-.A:foo-bar {}
+:focus
+:hover {}
+.A:enabled {}
 .A
-:foo-bar {}
+:enabled {}
 
-#A:foo {}
-#A:foo:bar {}
+#A:focus {}
+#A:focus:hover {}
 #A
-:foo {}
+:focus {}
 #A
-:foo:bar {}
+:focus:hover {}
 #A
-:foo
-:bar {}
-#A:foo-bar {}
+:focus
+:hover {}
+#A:enabled {}
 #A
-:foo-bar {}
+:enabled {}
 
-A1.A1.A1:foo {}
-A1.A1#A1:foo {}
-A1:foo.A1:foo#A1:foo {}
+A1.A1.A1:focus {}
+A1.A1#A1:focus {}
+A1:focus.A1:focus#A1:focus {}
 
 /**********************************************************************/
 

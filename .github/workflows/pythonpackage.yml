@@ -22,7 +22,7 @@ jobs:
       - name: Install and configure Poetry
         uses: snok/install-poetry@v1.3.3
         with:
-          version: 1.2.2
+          version: 1.4.2
           virtualenvs-in-project: true
       - name: Install dependencies
         run: poetry install --extras "dev"
