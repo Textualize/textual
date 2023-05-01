@@ -61,6 +61,14 @@ VALID_STYLE_FLAGS: Final = {
     "underline",
     "uu",
 }
+VALID_PSEUDO_CLASSES: Final = {
+    "blur",
+    "disabled",
+    "enabled",
+    "focus-within",
+    "focus",
+    "hover",
+}
 
 
 NULL_SPACING: Final = Spacing.all(0)
