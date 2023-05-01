@@ -241,7 +241,9 @@ class Reactive(Generic[ReactiveType]):
                     events.Callback(callback=partial(await_watcher, watch_result))
                 )
 
-        watch_function = getattr(obj, f"watch_{name}", None)
+        watch_function = getattr(
+            obj, f"_watch_{name}", getattr(obj, f"watch_{name}", None)
+        )
         if callable(watch_function):
             invoke_watcher(watch_function, old_value, value)
 
