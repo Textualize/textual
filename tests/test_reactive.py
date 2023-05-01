@@ -354,6 +354,9 @@ async def test_compute():
         app.start = 10
         assert app.count_double == 14
 
+        with pytest.raises(AttributeError):
+            app.count_double = 100
+
 
 async def test_watch_compute():
     """Check that watching a computed attribute works."""

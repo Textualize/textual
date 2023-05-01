@@ -174,6 +174,12 @@ class Reactive(Generic[ReactiveType]):
         _rich_traceback_omit = True
 
         self._initialize_reactive(obj, self.name)
+
+        if hasattr(obj, f"compute_{self.name}"):
+            raise AttributeError(
+                "Reactive attributes with a compute method are read-only"
+            )
+
         name = self.name
         current_value = getattr(obj, name)
         # Check for validate function
