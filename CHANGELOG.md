@@ -10,11 +10,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Setting attributes with a `compute_` method will now raise an `AttributeError` https://github.com/Textualize/textual/issues/2383
+- Unknown psuedo-selectors will now raise a tokenizer error (previously they were silently ignored) https://github.com/Textualize/textual/pull/2445
 
 ### Added
 
 - Watch methods can now optionally be private https://github.com/Textualize/textual/issues/2382
-
 
 ## [0.22.3] - 2023-04-29
 
