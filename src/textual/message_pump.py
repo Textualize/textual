@@ -547,13 +547,14 @@ class MessagePump(metaclass=_MessagePumpMeta):
             method_name: Handler method name.
             message: Message object.
         """
-        private_method = f"_{method_name}"
+
         for cls in self.__class__.__mro__:
             if message._no_default_action:
                 break
             decorated_handlers = cls.__dict__.get("_decorated_handlers")
             if decorated_handlers is not None:
-                for method, selector in decorated_handlers.get(type(message), []):
+                handlers = decorated_handlers.get(type(message), [])
+                for method, selector in handlers:
                     if selector is None:
                         yield cls, method.__get__(self, cls)
                     else:
@@ -562,8 +563,12 @@ class MessagePump(metaclass=_MessagePumpMeta):
                             selector_sets, message._sender
                         ):
                             yield cls, method.__get__(self, cls)
+                if handlers:
+                    return
 
-            method = cls.__dict__.get(private_method) or cls.__dict__.get(method_name)
+            method = cls.__dict__.get(f"_{method_name}") or cls.__dict__.get(
+                method_name
+            )
             if method is not None:
                 yield cls, method.__get__(self, cls)
 

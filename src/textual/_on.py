@@ -2,9 +2,15 @@ from __future__ import annotations
 
 from typing import Callable, TypeVar
 
+from .css.parse import parse_selectors
+from .css.tokenizer import TokenError
 from .message import Message
 
 DecoratedType = TypeVar("DecoratedType")
+
+
+class OnDecoratorSelectorError(Exception):
+    """The selector in the 'on' decorator failed to parse."""
 
 
 def on(
@@ -14,8 +20,17 @@ def on(
 
     Args:
         message: The message type (i.e. the class).
-        selector: An optional selector to match against.
+        selector: An optional selector. If supplied, the handler will only be called if `selector`
+            matches the sender of the message.
     """
+
+    if selector is not None:
+        try:
+            parse_selectors(selector)
+        except TokenError as error:
+            raise OnDecoratorSelectorError(
+                f"Unable to parse selector {selector!r}; check for syntax errors"
+            ) from None
 
     def decorator(method: DecoratedType) -> DecoratedType:
         if not hasattr(method, "_textual_on"):
@@ -37,8 +52,12 @@ if __name__ == "__main__":
             yield Button("Cancel", id="cancel")
 
         @on(Button.Pressed, "#ok")
-        def _(self):
+        def ok_pressed(self):
             self.app.bell()
+
+        @on(Button.Pressed, "#cancel")
+        def cancel_pressed(self):
+            self.app.exit()
 
     app = TestApp()
     app.run()
