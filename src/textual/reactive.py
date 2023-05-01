@@ -241,11 +241,13 @@ class Reactive(Generic[ReactiveType]):
                     events.Callback(callback=partial(await_watcher, watch_result))
                 )
 
-        watch_function = getattr(
-            obj, f"_watch_{name}", getattr(obj, f"watch_{name}", None)
-        )
-        if callable(watch_function):
-            invoke_watcher(watch_function, old_value, value)
+        private_watch_function = getattr(obj, f"_watch_{name}", None)
+        if callable(private_watch_function):
+            invoke_watcher(private_watch_function, old_value, value)
+
+        public_watch_function = getattr(obj, f"watch_{name}", None)
+        if callable(public_watch_function):
+            invoke_watcher(public_watch_function, old_value, value)
 
         # Process "global" watchers
         watchers: list[tuple[Reactable, Callable]]

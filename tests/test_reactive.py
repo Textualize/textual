@@ -390,8 +390,8 @@ async def test_watch_compute():
     assert watch_called == [True, True, False, False, True, True, False, False]
 
 
-async def test_private_watch() -> None:
-    """A private watch method should win over a public watch method."""
+async def test_public_and_private_watch() -> None:
+    """If a reactive/var has public and private watches both should get called."""
 
     calls: dict[str, bool] = {"private": False, "public": False}
 
@@ -409,4 +409,4 @@ async def test_private_watch() -> None:
         assert calls["public"] is False
         pilot.app.counter += 1
         assert calls["private"] is True
-        assert calls["public"] is False
+        assert calls["public"] is True
