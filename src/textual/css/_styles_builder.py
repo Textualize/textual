@@ -531,7 +531,7 @@ class StylesBuilder:
     def process_outline_top(self, name: str, tokens: list[Token]) -> None:
         self._process_outline("top", name, tokens)
 
-    def process_parse_border_right(self, name: str, tokens: list[Token]) -> None:
+    def process_outline_right(self, name: str, tokens: list[Token]) -> None:
         self._process_outline("right", name, tokens)
 
     def process_outline_bottom(self, name: str, tokens: list[Token]) -> None:
