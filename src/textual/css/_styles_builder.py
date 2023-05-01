@@ -481,21 +481,29 @@ class StylesBuilder:
         border = self._parse_border(name, tokens)
         self.styles._rules[f"border_{edge}"] = border  # type: ignore
 
+    def _distribute_edge_importance(self, style_name: str) -> None:
+        """Distribute importance amongst all edges of a rule.
+
+        Args:
+            style_name: The style name that has edges.
+
+        Styles such as border and outline don't really result in `border` or
+        `outline` as rules, instead splitting out the style equally to the
+        edged versions. This method, upon finding the style name in the
+        important set, removes it and adds the edged versions there instead.
+        """
+        if style_name in self.styles.important:
+            self.styles.important.remove(style_name)
+            self.styles.important.update(
+                f"{style_name}_{edge}" for edge in ("top", "left", "bottom", "right")
+            )
+
     def process_border(self, name: str, tokens: list[Token]) -> None:
         border = self._parse_border(name, tokens)
         rules = self.styles._rules
         rules["border_top"] = rules["border_right"] = border
         rules["border_bottom"] = rules["border_left"] = border
-        # If border is marked as important...
-        if "border" in self.styles.important:
-            # ...border alone at this depth isn't really a thing, only
-            # border edges (that's to say, border gets expanded out to all 4
-            # edges). So we remove "border" as important and mark all the
-            # edges as important.
-            self.styles.important.remove("border")
-            self.styles.important.update(
-                f"border_{edge}" for edge in ("top", "left", "bottom", "right")
-            )
+        self._distribute_edge_importance("border")
 
     def process_border_top(self, name: str, tokens: list[Token]) -> None:
         self._process_border_edge("top", name, tokens)
