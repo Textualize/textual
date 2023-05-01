@@ -486,6 +486,16 @@ class StylesBuilder:
         rules = self.styles._rules
         rules["border_top"] = rules["border_right"] = border
         rules["border_bottom"] = rules["border_left"] = border
+        # If border is marked as important...
+        if "border" in self.styles.important:
+            # ...border alone at this depth isn't really a thing, only
+            # border edges (that's to say, border gets expanded out to all 4
+            # edges). So we remove "border" as important and mark all the
+            # edges as important.
+            self.styles.important.remove("border")
+            self.styles.important.update(
+                f"border_{edge}" for edge in ("top", "left", "bottom", "right")
+            )
 
     def process_border_top(self, name: str, tokens: list[Token]) -> None:
         self._process_border_edge("top", name, tokens)
