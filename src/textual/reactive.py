@@ -174,6 +174,12 @@ class Reactive(Generic[ReactiveType]):
         _rich_traceback_omit = True
 
         self._initialize_reactive(obj, self.name)
+
+        if hasattr(obj, self.compute_name):
+            raise AttributeError(
+                f"Can't set {obj}.{self.name!r}; reactive attributes with a compute method are read-only"
+            )
+
         name = self.name
         current_value = getattr(obj, name)
         # Check for validate function
@@ -241,9 +247,13 @@ class Reactive(Generic[ReactiveType]):
                     events.Callback(callback=partial(await_watcher, watch_result))
                 )
 
-        watch_function = getattr(obj, f"watch_{name}", None)
-        if callable(watch_function):
-            invoke_watcher(watch_function, old_value, value)
+        private_watch_function = getattr(obj, f"_watch_{name}", None)
+        if callable(private_watch_function):
+            invoke_watcher(private_watch_function, old_value, value)
+
+        public_watch_function = getattr(obj, f"watch_{name}", None)
+        if callable(public_watch_function):
+            invoke_watcher(public_watch_function, old_value, value)
 
         # Process "global" watchers
         watchers: list[tuple[Reactable, Callable]]
@@ -272,7 +282,9 @@ class Reactive(Generic[ReactiveType]):
                 compute_method = getattr(obj, f"compute_{compute}")
             except AttributeError:
                 continue
-            current_value = getattr(obj, f"_reactive_{compute}")
+            current_value = getattr(
+                obj, f"_reactive_{compute}", getattr(obj, f"_default_{compute}", None)
+            )
             value = compute_method()
             setattr(obj, f"_reactive_{compute}", value)
             if value != current_value:

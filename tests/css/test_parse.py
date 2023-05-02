@@ -1226,3 +1226,21 @@ class TestTypeNames:
             stylesheet.add_source(f"StartType {separator} 1TestType {{}}")
             with pytest.raises(TokenError):
                 stylesheet.parse()
+
+
+def test_parse_bad_psuedo_selector():
+    """Check unknown selector raises a token error."""
+
+    bad_selector = """\
+Widget:foo{
+    border: red;
+}
+    """
+
+    stylesheet = Stylesheet()
+    stylesheet.add_source(bad_selector, "foo")
+
+    with pytest.raises(TokenError) as error:
+        stylesheet.parse()
+
+    assert error.value.start == (0, 6)
