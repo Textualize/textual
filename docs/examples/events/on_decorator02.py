@@ -15,17 +15,17 @@ class OnDecoratorApp(App):
     @on(Button.Pressed, "#bell")  # (1)!
     def play_bell(self):
         """Called when the bell button is pressed."""
-        self.app.bell()
+        self.bell()
 
     @on(Button.Pressed, ".toggle.dark")  # (2)!
     def toggle_dark(self):
         """Called when the 'toggle dark' button is pressed."""
-        self.app.dark = not self.app.dark
+        self.dark = not self.dark
 
     @on(Button.Pressed, "#quit")  # (3)!
     def quit(self):
         """Called when the quit button is pressed."""
-        self.app.exit()
+        self.exit()
 
 
 if __name__ == "__main__":

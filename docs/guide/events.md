@@ -187,7 +187,7 @@ In the following example we have three buttons, each of which does something dif
     ```
 
 Note how the message handler has a chained `if` statement to match the action to the button.
-While this works just fine, it can be a little hard to follow, especially when the number of buttons grows.
+While this works just fine, it can be a little hard to follow when the number of buttons grows.
 
 The `on` decorator takes a [CSS selector](./CSS.md#selectors) in addition to the event type which will be used to select which controls the handler should work with.
 We can use this to write a handler per control rather than manage them all in a single handler.
@@ -208,6 +208,8 @@ The following example uses the decorator approach to write individual message ha
 
     ```{.textual path="docs/examples/events/on_decorator02.py"}
     ```
+
+While there are a few more lines of code, it is easier to read and maintain.
 
 Note that the decorator requires that the message class has a `control` attribute which should the widget associated with the message.
 This is true of the builtin controls.

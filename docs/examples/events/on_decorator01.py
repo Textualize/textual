@@ -15,11 +15,11 @@ class OnDecoratorApp(App):
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Handle all button pressed events."""
         if event.button.id == "bell":
-            self.app.bell()
+            self.bell()
         elif event.button.has_class("toggle", "dark"):
-            self.app.dark = not self.app.dark
+            self.dark = not self.dark
         elif event.button.id == "quit":
-            self.app.exit()
+            self.exit()
 
 
 if __name__ == "__main__":
