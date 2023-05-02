@@ -157,7 +157,7 @@ Textual uses the following scheme to map messages classes on to a Python method.
 
 ### On decorator
 
-In addition to the naming convention, message handlers may be created with the [on][textual.on] decorator, which turns a method in to a handler for the given message or event.
+In addition to the naming convention, message handlers may be created with the [`on`][textual.on] decorator, which turns a method into a handler for the given message or event.
 
 For instance, the two methods declared below are equivalent:
 
