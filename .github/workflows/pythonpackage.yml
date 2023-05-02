@@ -1,6 +1,14 @@
 name: Test Textual module
 
-on: [pull_request]
+on:
+  pull_request:
+    paths:
+      - '**.py'
+      - '**.pyi'
+      - '**.css'
+      - '**.ambr'
+      - '**.lock'
+      - 'Makefile'
 
 jobs:
   build:
