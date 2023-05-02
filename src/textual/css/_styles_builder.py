@@ -321,6 +321,7 @@ class StylesBuilder:
         )
         rules["overflow_x"] = cast(Overflow, overflow_x)
         rules["overflow_y"] = cast(Overflow, overflow_y)
+        self._distribute_importance("overflow", ("x", "y"))
 
     def process_overflow_x(self, name: str, tokens: list[Token]) -> None:
         self.styles._rules["overflow_x"] = cast(
