@@ -100,7 +100,7 @@ class DirectoryTree(Tree[DirEntry]):
             disabled=disabled,
         )
 
-    def process_label(self, label: TextType):
+    def process_label(self, label: TextType) -> Text:
         """Process a str or Text into a label. Maybe overridden in a subclass to modify how labels are rendered.
 
         Args:
