@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Watch methods can now optionally be private https://github.com/Textualize/textual/issues/2382
+- Added textual.on decorator https://github.com/Textualize/textual/issues/2398
 
 ## [0.22.3] - 2023-04-29
 

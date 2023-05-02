@@ -2927,6 +2927,7 @@ class Widget(DOMNode):
                 self.log.warning(self, f"IS NOT RUNNING, {message!r} not sent")
             except NoActiveAppError:
                 pass
+
         return super().post_message(message)
 
     async def _on_idle(self, event: events.Idle) -> None:
