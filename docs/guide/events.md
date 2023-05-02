@@ -214,6 +214,11 @@ While there are a few more lines of code, it is clearer what will happen when yo
 Note that the decorator requires that the message class has a `control` attribute which should be the widget associated with the message.
 Messages from builtin controls will have this attribute, but you may need to add `control` to any [custom messages](#custom-messages) you write.
 
+!!! note
+
+    If multiple decorated handlers match the `control`, then they will *all* be called in the order they are defined.
+
+    The naming convention handler will be called *after* any decorated handlers.
 
 ### Handler arguments
 
