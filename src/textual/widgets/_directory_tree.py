@@ -124,7 +124,7 @@ class DirectoryTree(Tree[DirEntry]):
         """
         self.path = Path(new_path)
         self.reset(str(self.path), DirEntry(self.path))
-        self.load_directory(self.root)
+        self._load_directory(self.root)
 
     def process_label(self, label: TextType) -> Text:
         """Process a str or Text into a label. Maybe overridden in a subclass to modify how labels are rendered.
@@ -189,7 +189,7 @@ class DirectoryTree(Tree[DirEntry]):
         """
         return paths
 
-    def load_directory(self, node: TreeNode[DirEntry]) -> None:
+    def _load_directory(self, node: TreeNode[DirEntry]) -> None:
         assert node.data is not None
         dir_path = Path(node.data.path)
         node.data.loaded = True
@@ -206,7 +206,7 @@ class DirectoryTree(Tree[DirEntry]):
         node.expand()
 
     def _on_mount(self, _: Mount) -> None:
-        self.load_directory(self.root)
+        self._load_directory(self.root)
 
     def _on_tree_node_expanded(self, event: Tree.NodeExpanded) -> None:
         event.stop()
@@ -215,7 +215,7 @@ class DirectoryTree(Tree[DirEntry]):
             return
         if dir_entry.path.is_dir():
             if not dir_entry.loaded:
-                self.load_directory(event.node)
+                self._load_directory(event.node)
         else:
             self.post_message(self.FileSelected(dir_entry.path))
 
