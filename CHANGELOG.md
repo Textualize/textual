@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Fixed
+
+- Fixed `!important` not applying to `align` https://github.com/Textualize/textual/issues/2420
+- Fixed `!important` not applying to `border` https://github.com/Textualize/textual/issues/2420
+- Fixed `!important` not applying to `content-align` https://github.com/Textualize/textual/issues/2420
+- Fixed `!important` not applying to `outline` https://github.com/Textualize/textual/issues/2420
+- Fixed `!important` not applying to `overflow` https://github.com/Textualize/textual/issues/2420
+- Fixed `!important` not applying to `scrollbar-size` https://github.com/Textualize/textual/issues/2420
+- Fixed `outline-right` not being recognised https://github.com/Textualize/textual/issues/2446
+
 ### Changed
 
 - Setting attributes with a `compute_` method will now raise an `AttributeError` https://github.com/Textualize/textual/issues/2383
