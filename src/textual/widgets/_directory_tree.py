@@ -48,10 +48,6 @@ class DirectoryTree(Tree[DirEntry]):
         text-style: bold;
     }
 
-    DirectoryTree > .directory-tree--file {
-
-    }
-
     DirectoryTree > .directory-tree--extension {
         text-style: italic;
     }
