@@ -1253,6 +1253,7 @@ class App(Generic[ReturnType], DOMNode):
         will be added, and this method is called to apply the corresponding
         :hover styles.
         """
+
         descendants = node.walk_children(with_self=True)
         self.stylesheet.update_nodes(descendants, animate=True)
 

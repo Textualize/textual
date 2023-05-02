@@ -3077,21 +3077,11 @@ class Widget(DOMNode):
     def _on_focus(self, event: events.Focus) -> None:
         self.has_focus = True
         self.refresh()
-        for widget in reversed(self.ancestors_with_self):
-            if widget._has_focus_within:
-                widget._update_styles()
-                break
-
         self.post_message(events.DescendantFocus())
 
     def _on_blur(self, event: events.Blur) -> None:
         self.has_focus = False
         self.refresh()
-        for widget in reversed(self.ancestors_with_self):
-            if widget._has_focus_within:
-                widget._update_styles()
-                break
-
         self.post_message(events.DescendantBlur())
 
     def _on_mouse_scroll_down(self, event: events.MouseScrollDown) -> None:
