@@ -66,6 +66,9 @@ class DirectoryTree(Tree[DirEntry]):
 
         def __init__(self, path: Path) -> None:
             super().__init__()
+            # TODO: Add the node here too to mimic what Tree provides.
+            # Without it there's no sensible way of knowing which tree sent
+            # the message.
             self.path: Path = path
             """The path of the file that was selected."""
 
