@@ -10,7 +10,11 @@ DecoratedType = TypeVar("DecoratedType")
 
 
 class OnDecoratorError(Exception):
-    """The selector in the 'on' decorator failed to parse."""
+    """Errors related to the `on` decorator.
+
+    Typically raised at import time as an early warning system.
+
+    """
 
 
 def on(
