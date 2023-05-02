@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `!important` not applying to `outline` https://github.com/Textualize/textual/issues/2420
 - Fixed `outline-right` not being recognised https://github.com/Textualize/textual/issues/2446
 
+### Changed
+
+- Setting attributes with a `compute_` method will now raise an `AttributeError` https://github.com/Textualize/textual/issues/2383
+- Unknown psuedo-selectors will now raise a tokenizer error (previously they were silently ignored) https://github.com/Textualize/textual/pull/2445
+
 ### Added
 
 - Watch methods can now optionally be private https://github.com/Textualize/textual/issues/2382
