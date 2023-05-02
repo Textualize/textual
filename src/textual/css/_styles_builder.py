@@ -252,6 +252,23 @@ class StylesBuilder:
         else:
             scalar_error()
 
+    def _distribute_importance(self, prefix: str, suffixes: tuple[str, ...]) -> None:
+        """Distribute importance amongst all aspects of the given style.
+
+        Args:
+            prefix: The prefix of the style.
+            siffixes: The suffixes to distribute amongst.
+
+        A number of styles can be set with the 'prefix' of the style,
+        providing the values as a series of parameters; or they can be set
+        with specific suffixes. Think `border` vs `border-left`, etc. This
+        method is used to ensure that if the former is set, `!important` is
+        distributed amongst all the suffixes.
+        """
+        if prefix in self.styles.important:
+            self.styles.important.remove(prefix)
+            self.styles.important.update(f"{prefix}_{suffix}" for suffix in suffixes)
+
     def process_box_sizing(self, name: str, tokens: list[Token]) -> None:
         for token in tokens:
             name, value, _, _, location, _ = token
@@ -481,29 +498,12 @@ class StylesBuilder:
         border = self._parse_border(name, tokens)
         self.styles._rules[f"border_{edge}"] = border  # type: ignore
 
-    def _distribute_edge_importance(self, style_name: str) -> None:
-        """Distribute importance amongst all edges of a rule.
-
-        Args:
-            style_name: The style name that has edges.
-
-        Styles such as border and outline don't really result in `border` or
-        `outline` as rules, instead splitting out the style equally to the
-        edged versions. This method, upon finding the style name in the
-        important set, removes it and adds the edged versions there instead.
-        """
-        if style_name in self.styles.important:
-            self.styles.important.remove(style_name)
-            self.styles.important.update(
-                f"{style_name}_{edge}" for edge in ("top", "left", "bottom", "right")
-            )
-
     def process_border(self, name: str, tokens: list[Token]) -> None:
         border = self._parse_border(name, tokens)
         rules = self.styles._rules
         rules["border_top"] = rules["border_right"] = border
         rules["border_bottom"] = rules["border_left"] = border
-        self._distribute_edge_importance("border")
+        self._distribute_importance("border", ("top", "left", "bottom", "right"))
 
     def process_border_top(self, name: str, tokens: list[Token]) -> None:
         self._process_border_edge("top", name, tokens)
@@ -526,7 +526,7 @@ class StylesBuilder:
         rules = self.styles._rules
         rules["outline_top"] = rules["outline_right"] = border
         rules["outline_bottom"] = rules["outline_left"] = border
-        self._distribute_edge_importance("outline")
+        self._distribute_importance("outline", ("top", "left", "bottom", "right"))
 
     def process_outline_top(self, name: str, tokens: list[Token]) -> None:
         self._process_outline("top", name, tokens)
