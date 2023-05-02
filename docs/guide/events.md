@@ -217,7 +217,7 @@ This is true of the builtin controls, but you may need to add `control` to any [
 
 ### Handler arguments
 
-Message handler methods can be written with or without a positional argument. If you add a positional argument, Textual will call the handler with the event object. The following handler (taken from custom01.py above) contains a `message` parameter. The body of the code makes use of the message to set a preset color.
+Message handler methods can be written with or without a positional argument. If you add a positional argument, Textual will call the handler with the event object. The following handler (taken from `custom01.py` above) contains a `message` parameter. The body of the code makes use of the message to set a preset color.
 
 ```python
     def on_color_button_selected(self, message: ColorButton.Selected) -> None:
