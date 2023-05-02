@@ -811,7 +811,7 @@ class StylesBuilder:
         self.styles._rules[f"{name}_horizontal"] = token_horizontal.value  # type: ignore
         self.styles._rules[f"{name}_vertical"] = token_vertical.value  # type: ignore
 
-        self._distribute_importance("align", ("horizontal", "vertical"))
+        self._distribute_importance(name, ("horizontal", "vertical"))
 
     def process_align_horizontal(self, name: str, tokens: list[Token]) -> None:
         try:
