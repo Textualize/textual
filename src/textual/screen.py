@@ -469,7 +469,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 self._update_focus_styles(self.focused, widget)
                 self.log.debug(widget, "was focused")
 
-        self.call_later(self._update_focus_styles, focused, blurred)
+        self._update_focus_styles(focused, blurred)
 
     async def _on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)
