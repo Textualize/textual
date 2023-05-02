@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed `outline` top and bottom not handling alpha - https://github.com/Textualize/textual/issues/2371
 
 ## [0.22.3] - 2023-04-29
 
