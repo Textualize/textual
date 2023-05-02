@@ -774,12 +774,16 @@ class App(Generic[ReturnType], DOMNode):
         *args,
         **kwargs,
     ) -> CallThreadReturnType:
-        """Run a callback from another thread.
+        """Run a callable from another thread, and return the result.
 
         Like asyncio apps in general, Textual apps are not thread-safe. If you call methods
         or set attributes on Textual objects from a thread, you may get unpredictable results.
 
         This method will ensure that your code runs within the correct context.
+
+        !!! tip
+
+            Consider using [post_message][textual.message_pump.MessagePump.post_message] which is also thread-safe.
 
         Args:
             callback: A callable to run.
@@ -789,6 +793,9 @@ class App(Generic[ReturnType], DOMNode):
         Raises:
             RuntimeError: If the app isn't running or if this method is called from the same
                 thread where the app is running.
+
+        Returns:
+            The result of the callback.
         """
 
         if self._loop is None:
