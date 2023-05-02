@@ -1,6 +1,11 @@
 name: Test Textual module
 
-on: [pull_request]
+on:
+  pull_request:
+    paths:
+      - '**.py'
+      - '**.pyi'
+      - '**.css'
 
 jobs:
   build:
