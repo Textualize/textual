@@ -881,6 +881,7 @@ class StylesBuilder:
                 scrollbar_size_error(name, token2)
             self.styles._rules["scrollbar_size_horizontal"] = horizontal
             self.styles._rules["scrollbar_size_vertical"] = vertical
+            self._distribute_importance("scrollbar_size", ("horizontal", "vertical"))
 
     def process_scrollbar_size_vertical(self, name: str, tokens: list[Token]) -> None:
         if not tokens:
