@@ -130,30 +130,29 @@ textual run --dev --port 7342 my_app.py
 
 ## Textual log
 
-In addition to simple strings, Textual console supports [Rich](https://rich.readthedocs.io/en/latest/) formatting. To write rich logs, import `log` as follows:
+Use the `log` function to pretty-print data structures and anything that [Rich](https://rich.readthedocs.io/en/latest/) can display.
+
+You can import the log function as follows:
 
 ```python
 from textual import log
 ```
 
-This method will pretty print data structures (like lists and dicts) as well as [Rich renderables](https://rich.readthedocs.io/en/stable/protocol.html). Here are some examples:
+Here's a few examples of writing to the console, with `log`:
+
+
 
 ```python
-log("Hello, World")  # simple string
-log(locals())  # Log local variables
-log(children=self.children, pi=3.141592)  # key/values
-log(self.tree)  # Rich renderables
-```
-
-Textual log messages may contain [console Markup](https://rich.readthedocs.io/en/stable/markup.html):
-
-```python
-log("[bold red]DANGER![/] We're having too much fun")
+def on_mount(self) -> None:
+    log("Hello, World")  # simple string
+    log(locals())  # Log local variables
+    log(children=self.children, pi=3.141592)  # key/values
+    log(self.tree)  # Rich renderables
 ```
 
 ### Log method
 
-There's a convenient shortcut to `log` available on the `App` and `Widget` objects. This is useful in event handlers. Here's an example:
+There's a convenient shortcut to `log` on the `App` and `Widget` objects. This is useful in event handlers. Here's an example:
 
 ```python
 from textual.app import App
@@ -170,7 +169,7 @@ if __name__ == "__main__":
     LogApp().run()
 ```
 
-### Logging handler
+## Logging handler
 
 Textual has a [logging handler][textual.logging.TextualHandler] which will write anything logged via the builtin logging library to the devtools.
 This may be useful if you have a third-party library that uses the logging module, and you want to see those logs with Textual logs.
