@@ -171,6 +171,7 @@ nav:
     - "api/map_geometry.md"
     - "api/message_pump.md"
     - "api/message.md"
+    - "api/on.md"
     - "api/pilot.md"
     - "api/query.md"
     - "api/reactive.md"

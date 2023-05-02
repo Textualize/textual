@@ -1,6 +1,6 @@
 from textual.app import App, ComposeResult
 from textual.color import Color
-from textual.message import Message, MessageTarget
+from textual.message import Message
 from textual.widgets import Static
 
 

@@ -283,14 +283,6 @@ class DOMNode(MessagePump):
     ) -> None:
         super().__init_subclass__()
 
-        # Get any handlers decorated by @On
-        handlers: dict[type[Message], list[tuple[Callable, str | None]]] = {}
-        for method in cls.__dict__.values():
-            if callable(method) and hasattr(method, "_textual_on"):
-                for message_type, selector in getattr(method, "_textual_on"):
-                    handlers.setdefault(message_type, []).append((method, selector))
-        cls._decorated_handlers = handlers
-
         reactives = cls._reactives = {}
         for base in reversed(cls.__mro__):
             reactives.update(
