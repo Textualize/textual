@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import ClassVar, Iterable
@@ -10,6 +9,7 @@ from rich.text import Text, TextType
 
 from ..events import Mount
 from ..message import Message
+from ..reactive import var
 from ._tree import TOGGLE_STYLE, Tree, TreeNode
 
 
@@ -17,21 +17,14 @@ from ._tree import TOGGLE_STYLE, Tree, TreeNode
 class DirEntry:
     """Attaches directory information to a node."""
 
-    path: str
-    is_dir: bool
+    path: Path
+    """The path of the directory entry."""
     loaded: bool = False
+    """Has this been loaded?"""
 
 
 class DirectoryTree(Tree[DirEntry]):
-    """A Tree widget that presents files and directories.
-
-    Args:
-        path: Path to directory.
-        name: The name of the widget, or None for no name.
-        id: The ID of the widget in the DOM, or None for no ID.
-        classes: A space-separated list of classes, or None for no classes.
-        disabled: Whether the directory tree is disabled or not.
-    """
+    """A Tree widget that presents files and directories."""
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
         "directory-tree--extension",
@@ -75,10 +68,18 @@ class DirectoryTree(Tree[DirEntry]):
         `DirectoryTree` or in a parent widget in the DOM.
         """
 
-        def __init__(self, path: str) -> None:
+        def __init__(self, path: Path) -> None:
             super().__init__()
-            self.path: str = path
+            self.path: Path = path
             """The path of the file that was selected."""
+
+    path: var[str | Path] = var["str | Path"](Path("."), init=False)
+    """The path that is the root of the directory tree.
+
+    Note:
+        This can be set to either a `str` or a `pathlib.Path` object, but
+        the value will always be a `pathlib.Path` object.
+    """
 
     def __init__(
         self,
@@ -89,16 +90,41 @@ class DirectoryTree(Tree[DirEntry]):
         classes: str | None = None,
         disabled: bool = False,
     ) -> None:
-        str_path = os.fspath(path)
-        self.path = str_path
+        """Initialise the directory tree.
+
+        Args:
+            path: Path to directory.
+            name: The name of the widget, or None for no name.
+            id: The ID of the widget in the DOM, or None for no ID.
+            classes: A space-separated list of classes, or None for no classes.
+            disabled: Whether the directory tree is disabled or not.
+        """
+        self.path = path
         super().__init__(
-            str_path,
-            data=DirEntry(str_path, True),
+            str(path),
+            data=DirEntry(Path(path)),
             name=name,
             id=id,
             classes=classes,
             disabled=disabled,
         )
+
+    def validate_path(self, path: str | Path) -> Path:
+        """Ensure that the path is of the `Path` type."""
+        return Path(path)
+
+    def watch_path(self, new_path: str | Path) -> None:
+        """Watch for changes to the `path` of the directory tree.
+
+        Args:
+            new_path: The new path being set.
+
+        If the path is changed the directory tree will be repopulated using
+        the new value as the root.
+        """
+        self.path = Path(new_path)
+        self.reset(str(self.path), DirEntry(self.path))
+        self.load_directory(self.root)
 
     def process_label(self, label: TextType) -> Text:
         """Process a str or Text into a label. Maybe overridden in a subclass to modify how labels are rendered.
@@ -174,7 +200,7 @@ class DirectoryTree(Tree[DirEntry]):
         for path in directory:
             node.add(
                 path.name,
-                data=DirEntry(str(path), path.is_dir()),
+                data=DirEntry(path),
                 allow_expand=path.is_dir(),
             )
         node.expand()
@@ -187,7 +213,7 @@ class DirectoryTree(Tree[DirEntry]):
         dir_entry = event.node.data
         if dir_entry is None:
             return
-        if dir_entry.is_dir:
+        if dir_entry.path.is_dir():
             if not dir_entry.loaded:
                 self.load_directory(event.node)
         else:
@@ -198,5 +224,5 @@ class DirectoryTree(Tree[DirEntry]):
         dir_entry = event.node.data
         if dir_entry is None:
             return
-        if not dir_entry.is_dir:
+        if not dir_entry.path.is_dir():
             self.post_message(self.FileSelected(dir_entry.path))
