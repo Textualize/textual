@@ -432,7 +432,7 @@ class StylesCache:
                 outline_top if y == 0 else outline_bottom,
                 inner,
                 outer,
-                from_color(color=outline_color.rich_color),
+                from_color(color=(base_background + outline_color).rich_color),
             )
             line = render_row(
                 box_segments[0 if y == 0 else 2],
