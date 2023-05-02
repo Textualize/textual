@@ -211,7 +211,7 @@ The following example uses the decorator approach to write individual message ha
 
 While there are a few more lines of code, it is clearer what will happen when you click any given button.
 
-Note that the decorator requires that the message class has a `control` attribute which should the widget associated with the message.
+Note that the decorator requires that the message class has a `control` attribute which should be the widget associated with the message.
 This is true of the builtin controls, but you may need to add `control` to any [custom messages](#custom-messages) you write.
 
 
