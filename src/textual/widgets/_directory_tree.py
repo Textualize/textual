@@ -182,7 +182,7 @@ class DirectoryTree(Tree[DirEntry]):
     def _on_mount(self, _: Mount) -> None:
         self.load_directory(self.root)
 
-    def _on_tree_node_expanded(self, event: Tree.NodeSelected) -> None:
+    def _on_tree_node_expanded(self, event: Tree.NodeExpanded) -> None:
         event.stop()
         dir_entry = event.node.data
         if dir_entry is None:
