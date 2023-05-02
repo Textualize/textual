@@ -1,5 +1,9 @@
+import pytest
+
 from textual import on
+from textual._on import OnDecoratorError
 from textual.app import App, ComposeResult
+from textual.message import Message
 from textual.widget import Widget
 from textual.widgets import Button
 
@@ -75,3 +79,26 @@ async def test_on_inheritance() -> None:
 
     expected = ["MyWidget.ok derived", "MyWidget.ok base"]
     assert pressed == expected
+
+
+def test_on_bad_selector() -> None:
+    """Check bad selectors raise an error."""
+
+    with pytest.raises(OnDecoratorError):
+
+        @on(Button.Pressed, "@")
+        def foo():
+            pass
+
+
+def test_on_no_control() -> None:
+    """Check messages with no 'control' attribute raise an error."""
+
+    class CustomMessage(Message):
+        pass
+
+    with pytest.raises(OnDecoratorError):
+
+        @on(CustomMessage, "#foo")
+        def foo():
+            pass
