@@ -536,7 +536,7 @@ class Color(NamedTuple):
         return self.darken(-amount, alpha)
 
     @lru_cache(maxsize=1024)
-    def get_contrast_text(self, alpha=0.95) -> Color:
+    def get_contrast_text(self, alpha: float = 0.95) -> Color:
         """Get a light or dark color that best contrasts this color, for use with text.
 
         Args:
@@ -576,9 +576,8 @@ class Gradient:
 
         Positions that are between stops will return a blended color.
 
-
         Args:
-            factor: A number between 0 and 1, where 0 is the first stop, and 1 is the last.
+            position: A number between 0 and 1, where 0 is the first stop, and 1 is the last.
 
         Returns:
             A color.

@@ -99,6 +99,7 @@ WorkType: TypeAlias = Union[
     Callable[[], ResultType],
     Awaitable[ResultType],
 ]
+"""Type used for [workers](/guide/workers/)."""
 
 
 class _ReprText:

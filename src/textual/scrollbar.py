@@ -1,3 +1,8 @@
+"""
+Implements the scrollbar-related widgets for internal use.
+
+You will not need to use the widgets defined in this module.
+"""
 from __future__ import annotations
 
 from math import ceil
@@ -18,7 +23,7 @@ from .widget import Widget
 
 
 class ScrollMessage(Message, bubble=False):
-    pass
+    """Base class for all scrollbar messages."""
 
 
 @rich.repr.auto
