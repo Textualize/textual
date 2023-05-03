@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - The DataTable cursor is now scrolled into view when the cursor coordinate is changed programmatically https://github.com/Textualize/textual/issues/2459
-- run_worker exclusive parameter is now `False` by default
+- run_worker exclusive parameter is now `False` by default https://github.com/Textualize/textual/pull/2470
 
 ## [0.23.0] - 2023-05-03
 
