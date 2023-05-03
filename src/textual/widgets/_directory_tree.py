@@ -216,10 +216,9 @@ class DirectoryTree(Tree[DirEntry]):
 
     def _load_directory(self, node: TreeNode[DirEntry]) -> None:
         assert node.data is not None
-        dir_path = Path(node.data.path)
         node.data.loaded = True
         directory = sorted(
-            self.filter_paths(dir_path.iterdir()),
+            self.filter_paths(node.data.path.iterdir()),
             key=lambda path: (not path.is_dir(), path.name.lower()),
         )
         for path in directory:
