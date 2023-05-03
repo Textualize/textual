@@ -418,7 +418,7 @@ class DOMNode(MessagePump):
             """Get a path to the DOM Node"""
             try:
                 return f"{getfile(base)}:{base.__name__}"
-            except TypeError:
+            except (TypeError, OSError):
                 return f"{base.__name__}"
 
         for tie_breaker, base in enumerate(self._node_bases):

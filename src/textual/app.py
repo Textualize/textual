@@ -1660,7 +1660,7 @@ class App(Generic[ReturnType], DOMNode):
                     app_css_path = (
                         f"{inspect.getfile(self.__class__)}:{self.__class__.__name__}"
                     )
-                except TypeError:
+                except (TypeError, OSError):
                     app_css_path = f"{self.__class__.__name__}"
                 self.stylesheet.add_source(
                     self.CSS, path=app_css_path, is_default_css=False
