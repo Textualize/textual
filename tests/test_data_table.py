@@ -991,3 +991,28 @@ def test_key_string_lookup():
     assert dictionary[RowKey("foo")] == "bar"
     assert dictionary["hello"] == "world"
     assert dictionary[RowKey("hello")] == "world"
+
+
+async def test_scrolling_cursor_into_view():
+    """Regression test for https://github.com/Textualize/textual/issues/2459"""
+
+    class TableApp(App):
+        CSS = "DataTable { height: 100%; }"
+
+        def compose(self):
+            yield DataTable()
+
+        def on_mount(self) -> None:
+            table = self.query_one(DataTable)
+            table.add_column("n")
+            table.add_rows([(n,) for n in range(300)])
+
+        def key_c(self):
+            self.query_one(DataTable).cursor_coordinate = Coordinate(200, 0)
+
+    app = TableApp()
+
+    async with app.run_test() as pilot:
+        await pilot.press("c")
+        await pilot.pause()
+        assert app.query_one(DataTable).scroll_y > 100
