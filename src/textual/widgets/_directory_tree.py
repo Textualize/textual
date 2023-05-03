@@ -64,11 +64,16 @@ class DirectoryTree(Tree[DirEntry]):
         `DirectoryTree` or in a parent widget in the DOM.
         """
 
-        def __init__(self, path: Path) -> None:
+        def __init__(self, node: TreeNode[DirEntry], path: Path) -> None:
+            """Initialise the FileSelected object.
+
+            Args:
+                node: The tree node for the file that was selected.
+                path: The path of the file that was selected.
+            """
             super().__init__()
-            # TODO: Add the node here too to mimic what Tree provides.
-            # Without it there's no sensible way of knowing which tree sent
-            # the message.
+            self.node: TreeNode[DirEntry] = node
+            """The tree node of the file that was selected."""
             self.path: Path = path
             """The path of the file that was selected."""
 
@@ -216,7 +221,7 @@ class DirectoryTree(Tree[DirEntry]):
             if not dir_entry.loaded:
                 self._load_directory(event.node)
         else:
-            self.post_message(self.FileSelected(dir_entry.path))
+            self.post_message(self.FileSelected(event.node, dir_entry.path))
 
     def _on_tree_node_selected(self, event: Tree.NodeSelected) -> None:
         event.stop()
@@ -224,4 +229,4 @@ class DirectoryTree(Tree[DirEntry]):
         if dir_entry is None:
             return
         if not dir_entry.path.is_dir():
-            self.post_message(self.FileSelected(dir_entry.path))
+            self.post_message(self.FileSelected(event.node, dir_entry.path))
