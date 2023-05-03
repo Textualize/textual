@@ -25,6 +25,8 @@ from ._context import (
 from ._time import time
 from ._types import CallbackType
 from .case import camel_to_snake
+from .css.match import match
+from .css.parse import parse_selectors
 from .errors import DuplicateKeyHandlers
 from .events import Event
 from .message import Message
@@ -57,7 +59,16 @@ class _MessagePumpMeta(type):
     ):
         namespace = camel_to_snake(name)
         isclass = inspect.isclass
+        handlers: dict[
+            type[Message], list[tuple[Callable, str | None]]
+        ] = class_dict.get("_decorated_handlers", {})
+
+        class_dict["_decorated_handlers"] = handlers
+
         for value in class_dict.values():
+            if callable(value) and hasattr(value, "_textual_on"):
+                for message_type, selector in getattr(value, "_textual_on"):
+                    handlers.setdefault(message_type, []).append((value, selector))
             if isclass(value) and issubclass(value, Message):
                 if "namespace" not in value.__dict__:
                     value.namespace = namespace
@@ -337,7 +348,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         self._timers.add(timer)
         return timer
 
-    def call_after_refresh(self, callback: Callable, *args, **kwargs) -> None:
+    def call_after_refresh(self, callback: Callable, *args: Any, **kwargs: Any) -> None:
         """Schedule a callback to run after all messages are processed and the screen
         has been refreshed. Positional and keyword arguments are passed to the callable.
 
@@ -350,7 +361,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         message = messages.InvokeLater(partial(callback, *args, **kwargs))
         self.post_message(message)
 
-    def call_later(self, callback: Callable, *args, **kwargs) -> None:
+    def call_later(self, callback: Callable, *args: Any, **kwargs: Any) -> None:
         """Schedule a callback to run after all messages are processed in this object.
         Positional and keywords arguments are passed to the callable.
 
@@ -362,7 +373,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         message = events.Callback(callback=partial(callback, *args, **kwargs))
         self.post_message(message)
 
-    def call_next(self, callback: Callable, *args, **kwargs) -> None:
+    def call_next(self, callback: Callable, *args: Any, **kwargs: Any) -> None:
         """Schedule a callback to run immediately after processing the current message.
 
         Args:
@@ -545,12 +556,29 @@ class MessagePump(metaclass=_MessagePumpMeta):
             method_name: Handler method name.
             message: Message object.
         """
-        private_method = f"_{method_name}"
         for cls in self.__class__.__mro__:
             if message._no_default_action:
                 break
-            method = cls.__dict__.get(private_method) or cls.__dict__.get(method_name)
-            if method is not None:
+            # Try decorated handlers first
+            decorated_handlers = cls.__dict__.get("_decorated_handlers")
+            if decorated_handlers is not None:
+                handlers = decorated_handlers.get(type(message), [])
+                for method, selector in handlers:
+                    if selector is None:
+                        yield cls, method.__get__(self, cls)
+                    else:
+                        selector_sets = parse_selectors(selector)
+                        if message._sender is not None and match(
+                            selector_sets, message.control
+                        ):
+                            yield cls, method.__get__(self, cls)
+
+            # Fall back to the naming convention
+            # But avoid calling the handler if it was decorated
+            method = cls.__dict__.get(f"_{method_name}") or cls.__dict__.get(
+                method_name
+            )
+            if method is not None and not getattr(method, "_textual_on", None):
                 yield cls, method.__get__(self, cls)
 
     async def on_event(self, event: events.Event) -> None:

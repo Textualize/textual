@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Unknown psuedo-selectors will now raise a tokenizer error (previously they were silently ignored) https://github.com/Textualize/textual/pull/2445
 - Breaking change: `DirectoryTree.FileSelected.path` is now always a `Path` https://github.com/Textualize/textual/issues/2448
 - Breaking change: `Directorytree.load_directory` renamed to `Directorytree._load_directory` https://github.com/Textualize/textual/issues/2448
+- Unknown pseudo-selectors will now raise a tokenizer error (previously they were silently ignored) https://github.com/Textualize/textual/pull/2445
 
 ### Added
 
@@ -31,6 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `DirectoryTree.path` reactive attribute https://github.com/Textualize/textual/issues/2448
 - Added `DirectoryTree.FileSelected.node`
 - Added `DirectoryTree.reload` https://github.com/Textualize/textual/issues/2448
+- Added textual.on decorator https://github.com/Textualize/textual/issues/2398
 
 ## [0.22.3] - 2023-04-29
 

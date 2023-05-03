@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import difflib
 import os
 from dataclasses import dataclass
 from datetime import datetime
@@ -107,7 +106,6 @@ class SvgSnapshotDiff:
     snapshot: Optional[str]
     actual: Optional[str]
     test_name: str
-    file_similarity: float
     path: PathLike
     line_number: int
     app: App
@@ -132,17 +130,10 @@ def pytest_sessionfinish(
 
         if app:
             path, line_index, name = item.reportinfo()
-            similarity = (
-                100
-                * difflib.SequenceMatcher(
-                    a=str(snapshot_svg), b=str(actual_svg)
-                ).ratio()
-            )
             diffs.append(
                 SvgSnapshotDiff(
                     snapshot=str(snapshot_svg),
                     actual=str(actual_svg),
-                    file_similarity=similarity,
                     test_name=name,
                     path=path,
                     line_number=line_index + 1,
@@ -152,7 +143,7 @@ def pytest_sessionfinish(
             )
 
     if diffs:
-        diff_sort_key = attrgetter("file_similarity")
+        diff_sort_key = attrgetter("test_name")
         diffs = sorted(diffs, key=diff_sort_key)
 
         conftest_path = Path(__file__)

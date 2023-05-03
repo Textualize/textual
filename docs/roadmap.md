@@ -68,7 +68,7 @@ Widgets are key to making user-friendly interfaces. The builtin widgets should c
     * [ ] bar chart
     * [ ] line chart
     * [ ] Candlestick chars
-- [ ] Progress bars
+- [X] Progress bars
     * [ ] Style variants (solid, thin etc)
 - [X] Radio boxes
 - [ ] Spark-lines

@@ -9,12 +9,19 @@ from rich.console import RenderableType
 from . import constants
 from ._context import active_app
 from ._log import LogGroup, LogVerbosity
+from ._on import on
 from ._work_decorator import work as work
 
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
 
-__all__ = ["log", "panic", "__version__", "work"]  # type: ignore
+__all__ = [
+    "__version__",  # type: ignore
+    "log",
+    "on",
+    "panic",
+    "work",
+]
 
 
 LogCallable: TypeAlias = "Callable"

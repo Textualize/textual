@@ -155,9 +155,74 @@ Textual uses the following scheme to map messages classes on to a Python method.
 --8<-- "docs/images/events/naming.excalidraw.svg"
 </div>
 
+### On decorator
+
+In addition to the naming convention, message handlers may be created with the [`on`][textual.on] decorator, which turns a method into a handler for the given message or event.
+
+For instance, the two methods declared below are equivalent:
+
+```python
+@on(Button.Pressed)
+def handle_button_pressed(self):
+    ...
+
+def on_button_pressed(self):
+    ...
+```
+
+While this allows you to name your method handlers anything you want, the main advantage of the decorator approach over the naming convention is that you can specify *which* widget(s) you want to handle messages for.
+
+Let's first explore where this can be useful.
+In the following example we have three buttons, each of which does something different; one plays the bell, one toggles dark mode, and the other quits the app.
+
+=== "on_decorator01.py"
+
+    ```python title="on_decorator01.py"
+    --8<-- "docs/examples/events/on_decorator01.py"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/events/on_decorator01.py"}
+    ```
+
+Note how the message handler has a chained `if` statement to match the action to the button.
+While this works just fine, it can be a little hard to follow when the number of buttons grows.
+
+The `on` decorator takes a [CSS selector](./CSS.md#selectors) in addition to the event type which will be used to select which controls the handler should work with.
+We can use this to write a handler per control rather than manage them all in a single handler.
+
+The following example uses the decorator approach to write individual message handlers for each of the three buttons:
+
+=== "on_decorator02.py"
+
+    ```python title="on_decorator02.py"
+    --8<-- "docs/examples/events/on_decorator02.py"
+    ```
+
+    1. Matches the button with an id of "bell" (note the `#` to match the id)
+    2. Matches the button with class names "toggle" *and* "dark"
+    3. Matches the button with an id of "quit"
+
+=== "Output"
+
+    ```{.textual path="docs/examples/events/on_decorator02.py"}
+    ```
+
+While there are a few more lines of code, it is clearer what will happen when you click any given button.
+
+Note that the decorator requires that the message class has a `control` attribute which should be the widget associated with the message.
+Messages from builtin controls will have this attribute, but you may need to add `control` to any [custom messages](#custom-messages) you write.
+
+!!! note
+
+    If multiple decorated handlers match the `control`, then they will *all* be called in the order they are defined.
+
+    The naming convention handler will be called *after* any decorated handlers.
+
 ### Handler arguments
 
-Message handler methods can be written with or without a positional argument. If you add a positional argument, Textual will call the handler with the event object. The following handler (taken from custom01.py above) contains a `message` parameter. The body of the code makes use of the message to set a preset color.
+Message handler methods can be written with or without a positional argument. If you add a positional argument, Textual will call the handler with the event object. The following handler (taken from `custom01.py` above) contains a `message` parameter. The body of the code makes use of the message to set a preset color.
 
 ```python
     def on_color_button_selected(self, message: ColorButton.Selected) -> None:

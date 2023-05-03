@@ -12,6 +12,7 @@ from functools import lru_cache
 from inspect import getfile
 from typing import (
     TYPE_CHECKING,
+    Callable,
     ClassVar,
     Iterable,
     Sequence,
@@ -49,10 +50,14 @@ if TYPE_CHECKING:
     from rich.console import RenderableType
     from .app import App
     from .css.query import DOMQuery, QueryType
+    from .message import Message
     from .screen import Screen
     from .widget import Widget
     from .worker import Worker, WorkType, ResultType
     from typing_extensions import Self, TypeAlias
+
+    # Unused & ignored imports are needed for the docs to link to these objects:
+    from .css.query import NoMatches, TooManyMatches, WrongType  # type: ignore  # noqa: F401
 
 from typing_extensions import Literal
 
@@ -60,6 +65,7 @@ _re_identifier = re.compile(IDENTIFIER)
 
 
 WalkMethod: TypeAlias = Literal["depth", "breadth"]
+"""Valid walking methods for the [`DOMNode.walk_children` method][textual.dom.DOMNode.walk_children]."""
 
 
 class BadIdentifier(Exception):
@@ -142,6 +148,8 @@ class DOMNode(MessagePump):
     _merged_bindings: ClassVar[_Bindings | None] = None
 
     _reactives: ClassVar[dict[str, Reactive]]
+
+    _decorated_handlers: dict[type[Message], list[tuple[Callable, str | None]]]
 
     def __init__(
         self,
