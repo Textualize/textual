@@ -157,7 +157,9 @@ class DirectoryTree(Tree[DirEntry]):
         first_line = text_label.split()[0]
         return first_line
 
-    def render_label(self, node: TreeNode[DirEntry], base_style: Style, style: Style):
+    def render_label(
+        self, node: TreeNode[DirEntry], base_style: Style, style: Style
+    ) -> Text:
         """Render a label for the given node.
 
         Args:
