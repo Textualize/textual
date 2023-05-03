@@ -133,16 +133,12 @@ class DirectoryTree(Tree[DirEntry]):
         """
         return Path(path)
 
-    def watch_path(self, new_path: str | Path) -> None:
+    def watch_path(self) -> None:
         """Watch for changes to the `path` of the directory tree.
-
-        Args:
-            new_path: The new path being set.
 
         If the path is changed the directory tree will be repopulated using
         the new value as the root.
         """
-        self.path = Path(new_path)
         self.reload()
 
     def process_label(self, label: TextType) -> Text:
