@@ -14,7 +14,7 @@
         <link rel="prev" href="../strip/">
       
       
-        <link rel="next" href="../walk/">
+        <link rel="next" href="../types/">
       
       
         
@@ -4945,7 +4945,17 @@
         
       
         
+      
+        
+      
+        
           
+        
+      
+        
+      
+        
+      
         
       
         
@@ -5242,6 +5252,58 @@
   
   
     <li class="md-nav__item">
+      <a href="../errors/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Errors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../filter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Filter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../geometry/" class="md-nav__link">
         
   
@@ -5400,6 +5462,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../on/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    On
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../pilot/" class="md-nav__link">
         
   
@@ -5485,6 +5573,32 @@
     
   
     Screen
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scrollbar/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Scrollbar
   
 
     
@@ -5621,6 +5735,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.timer.TimerCallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TimerCallback
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.timer.Timer" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5685,6 +5810,32 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../types/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Types
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -6207,6 +6358,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.timer.TimerCallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TimerCallback
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.timer.Timer" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6307,6 +6469,31 @@
 
 
 
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="textual.timer.TimerCallback" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">TimerCallback</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+<a href="#textual.timer.TimerCallback" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">TimerCallback</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Awaitable</span><span class="p">[</span><span class="kc">None</span><span class="p">]],</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="kc">None</span><span class="p">]</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">]</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Type of valid callbacks to be used with timers.</p>
+  </div>
+
+</div>
+
 
 <div class="doc doc-object doc-class">
 
@@ -6355,7 +6542,7 @@
         <tr>
           <td><code>event_target</code></td>
           <td>
-                <code><span title="textual._types.MessageTarget">MessageTarget</span></code>
+                <code><a class="autorefs autorefs-internal" title="textual._types.MessageTarget" href="../types/#textual.types.MessageTarget">MessageTarget</a></code>
           </td>
           <td><p>The object which will receive the timer events.</p></td>
           <td>
@@ -6385,7 +6572,7 @@
         <tr>
           <td><code>callback</code></td>
           <td>
-                <code><span title="textual.timer.TimerCallback">TimerCallback</span> | None</code>
+                <code><a class="autorefs autorefs-internal" title="textual.timer.TimerCallback" href="#textual.timer.TimerCallback">TimerCallback</a> | None</code>
           </td>
           <td><p>A optional callback to invoke when the event is handled.</p></td>
           <td>
@@ -6587,13 +6774,13 @@
         
         
           
-          <a href="../walk/" class="md-footer__link md-footer__link--next" aria-label="Next: Walk" rel="next">
+          <a href="../types/" class="md-footer__link md-footer__link--next" aria-label="Next: Types" rel="next">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Walk
+                Types
               </div>
             </div>
             <div class="md-footer__button md-icon">

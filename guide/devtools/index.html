@@ -735,6 +735,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Run">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#running-from-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Running from commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -821,7 +838,12 @@
   
 </li>
         
-          <li class="md-nav__item">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#logging-handler" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -829,11 +851,6 @@
       
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -5102,7 +5119,17 @@
         
       
         
+      
+        
+      
+        
           
+        
+      
+        
+      
+        
+      
         
       
         
@@ -5399,6 +5426,58 @@
   
   
     <li class="md-nav__item">
+      <a href="../../api/errors/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Errors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/filter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Filter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../api/geometry/" class="md-nav__link">
         
   
@@ -5557,6 +5636,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../api/on/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    On
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../api/pilot/" class="md-nav__link">
         
   
@@ -5661,6 +5766,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../api/scrollbar/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Scrollbar
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../api/scroll_view/" class="md-nav__link">
         
   
@@ -5720,6 +5851,32 @@
     
   
     Timer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/types/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Types
   
 
     
@@ -6249,6 +6406,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Run">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#running-from-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Running from commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -6335,7 +6509,12 @@
   
 </li>
         
-          <li class="md-nav__item">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#logging-handler" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6343,11 +6522,6 @@
       
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -6377,31 +6551,44 @@
 <p>See <a href="../../getting_started/#installation">getting started</a> for details.</p>
 </div>
 <p>Textual comes with a command line application of the same name. The <code>textual</code> command is a super useful tool that will help you to build apps.</p>
-<p>Take a moment to look through the available sub-commands. There will be even more helpful tools here in the future.</p>
+<p>Take a moment to look through the available subcommands. There will be even more helpful tools here in the future.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>textual<span class="w"> </span>--help
 </code></pre></div>
 <h2 id="run">Run<a class="headerlink" href="#run" title="Permanent link">&para;</a></h2>
-<p>You can run Textual apps with the <code>run</code> subcommand. If you supply a path to a Python file it will load and run the application.</p>
+<p>The <code>run</code> sub-command runs Textual apps. If you supply a path to a Python file it will load and run the app.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>textual<span class="w"> </span>run<span class="w"> </span>my_app.py
 </code></pre></div>
-<p>The <code>run</code> sub-command will first look for a <code>App</code> instance called <code>app</code> in the global scope of your Python file. If there is no <code>app</code>, it will create an instance of the first <code>App</code> class it finds and run that.</p>
-<p>Alternatively, you can add the name of an <code>App</code> instance or class after a colon to run a specific app in the Python file. Here's an example:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>textual<span class="w"> </span>run<span class="w"> </span>my_app.py:alternative_app
+<p>This is equivalent to running <code>python my_app.py</code> from the command prompt, but will allow you to set various switches which can help you debug, such as <code>--dev</code> which enable the <a href="#console">Console</a>.</p>
+<p>See the <code>run</code> subcommand's help for details:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>textual<span class="w"> </span>run<span class="w"> </span>--help
+</code></pre></div>
+<p>You can also run Textual apps from a python import.
+The following command would import <code>music.play</code> and run a Textual app in that module:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>textual<span class="w"> </span>run<span class="w"> </span>music.play
+</code></pre></div>
+<p>This assumes you have a Textual app instance called <code>app</code> in <code>music.play</code>.
+If your app has a different name, you can append it after a colon:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>textual<span class="w"> </span>run<span class="w"> </span>music.play:MusicPlayerApp
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If the Python file contains a call to app.run() then you can launch the file as you normally would any other Python program. Running your app via <code>textual run</code> will give you access to a few Textual features such as live editing of CSS files.</p>
+<p>This works for both Textual app <em>instances</em> and <em>classes</em>.</p>
 </div>
+<h3 id="running-from-commands">Running from commands<a class="headerlink" href="#running-from-commands" title="Permanent link">&para;</a></h3>
+<p>If your app is installed as a command line script, you can use the <code>-c</code> switch to run it.
+For instance, the following will run the <code>textual colors</code> command:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>textual<span class="w"> </span>run<span class="w"> </span>-c<span class="w"> </span>textual<span class="w"> </span>colors
+</code></pre></div>
 <h2 id="live-editing">Live editing<a class="headerlink" href="#live-editing" title="Permanent link">&para;</a></h2>
 <p>If you combine the <code>run</code> command with the <code>--dev</code> switch your app will run in <em>development mode</em>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>textual<span class="w"> </span>run<span class="w"> </span>--dev<span class="w"> </span>my_app.py
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>textual<span class="w"> </span>run<span class="w"> </span>--dev<span class="w"> </span>my_app.py
 </code></pre></div>
 <p>One of the features of <em>dev</em> mode is live editing of CSS files: any changes to your CSS will be reflected in the terminal a few milliseconds later.</p>
 <p>This is a great feature for iterating on your app's look and feel. Open the CSS in your editor and have your app running in a terminal. Edits to your CSS will appear almost immediately after you save.</p>
 <h2 id="console">Console<a class="headerlink" href="#console" title="Permanent link">&para;</a></h2>
 <p>When building a typical terminal application you are generally unable to use <code>print</code> when debugging (or log to the console). This is because anything you write to standard output will overwrite application content. Textual has a solution to this in the form of a debug console which restores <code>print</code> and adds a few additional features to help you debug.</p>
 <p>To use the console, open up <strong>two</strong> terminal emulators. Run the following in one of the terminals:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>textual<span class="w"> </span>console
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>textual<span class="w"> </span>console
 </code></pre></div>
 <p>You should see the Textual devtools welcome message:</p>
 <p><svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
@@ -6560,54 +6747,53 @@
 </svg>
 </p>
 <p>In the other console, run your application with <code>textual run</code> and the <code>--dev</code> switch:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>textual<span class="w"> </span>run<span class="w"> </span>--dev<span class="w"> </span>my_app.py
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>textual<span class="w"> </span>run<span class="w"> </span>--dev<span class="w"> </span>my_app.py
 </code></pre></div>
 <p>Anything you <code>print</code> from your application will be displayed in the console window. Textual will also write log messages to this window which may be helpful when debugging your application.</p>
 <h3 id="increasing-verbosity">Increasing verbosity<a class="headerlink" href="#increasing-verbosity" title="Permanent link">&para;</a></h3>
 <p>Textual writes log messages to inform you about certain events, such as when the user presses a key or clicks on the terminal. To avoid swamping you with too much information, some events are marked as "verbose" and will be excluded from the logs. If you want to see these log messages, you can add the <code>-v</code> switch.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>textual<span class="w"> </span>console<span class="w"> </span>-v
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>textual<span class="w"> </span>console<span class="w"> </span>-v
 </code></pre></div>
 <h3 id="decreasing-verbosity">Decreasing verbosity<a class="headerlink" href="#decreasing-verbosity" title="Permanent link">&para;</a></h3>
 <p>Log messages are classififed in to groups, and the <code>-x</code> flag can be used to <strong>exclude</strong> all message from a group. The groups are: <code>EVENT</code>, <code>DEBUG</code>, <code>INFO</code>, <code>WARNING</code>, <code>ERROR</code>, <code>PRINT</code>, <code>SYSTEM</code>, and <code>LOGGING</code>. The group a message belongs to is printed after its timestamp.</p>
 <p>Multiple groups may be excluded, for example to exclude everything except warning, errors, and <code>print</code> statements:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>textual<span class="w"> </span>console<span class="w"> </span>-x<span class="w"> </span>SYSTEM<span class="w"> </span>-x<span class="w"> </span>EVENT<span class="w"> </span>-x<span class="w"> </span>DEBUG<span class="w"> </span>-x<span class="w"> </span>INFO
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>textual<span class="w"> </span>console<span class="w"> </span>-x<span class="w"> </span>SYSTEM<span class="w"> </span>-x<span class="w"> </span>EVENT<span class="w"> </span>-x<span class="w"> </span>DEBUG<span class="w"> </span>-x<span class="w"> </span>INFO
 </code></pre></div>
 <h3 id="custom-port">Custom port<a class="headerlink" href="#custom-port" title="Permanent link">&para;</a></h3>
 <p>You can use the option <code>--port</code> to specify a custom port to run the console on, which comes in handy if you have other software running on the port that Textual uses by default:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>textual<span class="w"> </span>console<span class="w"> </span>--port<span class="w"> </span><span class="m">7342</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>textual<span class="w"> </span>console<span class="w"> </span>--port<span class="w"> </span><span class="m">7342</span>
 </code></pre></div>
 <p>Then, use the command <code>run</code> with the same <code>--port</code> option:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>textual<span class="w"> </span>run<span class="w"> </span>--dev<span class="w"> </span>--port<span class="w"> </span><span class="m">7342</span><span class="w"> </span>my_app.py
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>textual<span class="w"> </span>run<span class="w"> </span>--dev<span class="w"> </span>--port<span class="w"> </span><span class="m">7342</span><span class="w"> </span>my_app.py
 </code></pre></div>
 <h2 id="textual-log">Textual log<a class="headerlink" href="#textual-log" title="Permanent link">&para;</a></h2>
-<p>In addition to simple strings, Textual console supports <a href="https://rich.readthedocs.io/en/latest/">Rich</a> formatting. To write rich logs, import <code>log</code> as follows:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">from</span> <span class="nn">textual</span> <span class="kn">import</span> <span class="n">log</span>
+<p>Use the <code>log</code> function to pretty-print data structures and anything that <a href="https://rich.readthedocs.io/en/latest/">Rich</a> can display.</p>
+<p>You can import the log function as follows:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="kn">from</span> <span class="nn">textual</span> <span class="kn">import</span> <span class="n">log</span>
 </code></pre></div>
-<p>This method will pretty print data structures (like lists and dicts) as well as <a href="https://rich.readthedocs.io/en/stable/protocol.html">Rich renderables</a>. Here are some examples:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">log</span><span class="p">(</span><span class="s2">&quot;Hello, World&quot;</span><span class="p">)</span>  <span class="c1"># simple string</span>
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">log</span><span class="p">(</span><span class="nb">locals</span><span class="p">())</span>  <span class="c1"># Log local variables</span>
-<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="n">log</span><span class="p">(</span><span class="n">children</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">,</span> <span class="n">pi</span><span class="o">=</span><span class="mf">3.141592</span><span class="p">)</span>  <span class="c1"># key/values</span>
-<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="p">)</span>  <span class="c1"># Rich renderables</span>
-</code></pre></div>
-<p>Textual log messages may contain <a href="https://rich.readthedocs.io/en/stable/markup.html">console Markup</a>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">log</span><span class="p">(</span><span class="s2">&quot;[bold red]DANGER![/] We&#39;re having too much fun&quot;</span><span class="p">)</span>
+<p>Here's a few examples of writing to the console, with <code>log</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">def</span> <span class="nf">on_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>    <span class="n">log</span><span class="p">(</span><span class="s2">&quot;Hello, World&quot;</span><span class="p">)</span>  <span class="c1"># simple string</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>    <span class="n">log</span><span class="p">(</span><span class="nb">locals</span><span class="p">())</span>  <span class="c1"># Log local variables</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>    <span class="n">log</span><span class="p">(</span><span class="n">children</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">,</span> <span class="n">pi</span><span class="o">=</span><span class="mf">3.141592</span><span class="p">)</span>  <span class="c1"># key/values</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>    <span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="p">)</span>  <span class="c1"># Rich renderables</span>
 </code></pre></div>
 <h3 id="log-method">Log method<a class="headerlink" href="#log-method" title="Permanent link">&para;</a></h3>
-<p>There's a convenient shortcut to <code>log</code> available on the <code>App</code> and <code>Widget</code> objects. This is useful in event handlers. Here's an example:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span>
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>
-<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="k">class</span> <span class="nc">LogApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
-<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>
-<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>    <span class="k">def</span> <span class="nf">on_load</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;In the log handler!&quot;</span><span class="p">,</span> <span class="n">pi</span><span class="o">=</span><span class="mf">3.141529</span><span class="p">)</span>
-<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>
-<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>    <span class="k">def</span> <span class="nf">on_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="p">)</span>
-<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>
-<a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-<a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>    <span class="n">LogApp</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<p>There's a convenient shortcut to <code>log</code> on the <code>App</code> and <code>Widget</code> objects. This is useful in event handlers. Here's an example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="k">class</span> <span class="nc">LogApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>    <span class="k">def</span> <span class="nf">on_load</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;In the log handler!&quot;</span><span class="p">,</span> <span class="n">pi</span><span class="o">=</span><span class="mf">3.141529</span><span class="p">)</span>
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>    <span class="k">def</span> <span class="nf">on_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="p">)</span>
+<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a>
+<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a>    <span class="n">LogApp</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
-<h3 id="logging-handler">Logging handler<a class="headerlink" href="#logging-handler" title="Permanent link">&para;</a></h3>
+<h2 id="logging-handler">Logging handler<a class="headerlink" href="#logging-handler" title="Permanent link">&para;</a></h2>
 <p>Textual has a <a class="autorefs autorefs-internal" href="../../api/logging/#textual.logging.TextualHandler">logging handler</a> which will write anything logged via the builtin logging library to the devtools.
 This may be useful if you have a third-party library that uses the logging module, and you want to see those logs with Textual logs.</p>
 <div class="admonition note">
@@ -6615,25 +6801,25 @@ This may be useful if you have a third-party library that uses the logging modul
 <p>The logging library works with strings only, so you won't be able to log Rich renderables such as <code>self.tree</code> with the logging handler.</p>
 </div>
 <p>Here's an example of configuring logging to use the <code>TextualHandler</code>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="kn">import</span> <span class="nn">logging</span>
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span>
-<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="kn">from</span> <span class="nn">textual.logging</span> <span class="kn">import</span> <span class="n">TextualHandler</span>
-<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>
-<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
-<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>    <span class="n">level</span><span class="o">=</span><span class="s2">&quot;NOTSET&quot;</span><span class="p">,</span>
-<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>    <span class="n">handlers</span><span class="o">=</span><span class="p">[</span><span class="n">TextualHandler</span><span class="p">()],</span>
-<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="p">)</span>
-<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>
-<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a>
-<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a><span class="k">class</span> <span class="nc">LogApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
-<a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Using logging with Textual.&quot;&quot;&quot;</span>
-<a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a>
-<a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a>    <span class="k">def</span> <span class="nf">on_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a>        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Logged via TextualHandler&quot;</span><span class="p">)</span>
-<a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a>
-<a id="__codelineno-14-17" name="__codelineno-14-17" href="#__codelineno-14-17"></a>
-<a id="__codelineno-14-18" name="__codelineno-14-18" href="#__codelineno-14-18"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-<a id="__codelineno-14-19" name="__codelineno-14-19" href="#__codelineno-14-19"></a>    <span class="n">LogApp</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="kn">import</span> <span class="nn">logging</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="kn">from</span> <span class="nn">textual.logging</span> <span class="kn">import</span> <span class="n">TextualHandler</span>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>    <span class="n">level</span><span class="o">=</span><span class="s2">&quot;NOTSET&quot;</span><span class="p">,</span>
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>    <span class="n">handlers</span><span class="o">=</span><span class="p">[</span><span class="n">TextualHandler</span><span class="p">()],</span>
+<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="p">)</span>
+<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>
+<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a>
+<a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a><span class="k">class</span> <span class="nc">LogApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
+<a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Using logging with Textual.&quot;&quot;&quot;</span>
+<a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a>
+<a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a>    <span class="k">def</span> <span class="nf">on_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a>        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Logged via TextualHandler&quot;</span><span class="p">)</span>
+<a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a>
+<a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a>
+<a id="__codelineno-16-18" name="__codelineno-16-18" href="#__codelineno-16-18"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-16-19" name="__codelineno-16-19" href="#__codelineno-16-19"></a>    <span class="n">LogApp</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
 
 

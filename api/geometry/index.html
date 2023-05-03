@@ -11,7 +11,7 @@
         <link rel="canonical" href="https://textual.textualize.io/api/geometry/">
       
       
-        <link rel="prev" href="../events/">
+        <link rel="prev" href="../filter/">
       
       
         <link rel="next" href="../">
@@ -4945,7 +4945,17 @@
         
       
         
+      
+        
+      
+        
           
+        
+      
+        
+      
+        
+      
         
       
         
@@ -5240,6 +5250,58 @@
                 
   
   
+  
+    <li class="md-nav__item">
+      <a href="../errors/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Errors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../filter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Filter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -5311,6 +5373,17 @@
     <span class="md-ellipsis">
       
         NULL_OFFSET
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.geometry.SpacingDimensions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SpacingDimensions
       
     </span>
   </a>
@@ -6280,6 +6353,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../on/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    On
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../pilot/" class="md-nav__link">
         
   
@@ -6384,6 +6483,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../scrollbar/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Scrollbar
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../scroll_view/" class="md-nav__link">
         
   
@@ -6443,6 +6568,32 @@
     
   
     Timer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../types/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Types
   
 
     
@@ -6977,6 +7128,17 @@
     <span class="md-ellipsis">
       
         NULL_OFFSET
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.geometry.SpacingDimensions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SpacingDimensions
       
     </span>
   </a>
@@ -7851,12 +8013,40 @@
   </span>
 
 <a href="#textual.geometry.NULL_OFFSET" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">NULL_OFFSET</span><span class="p">:</span> <span class="n">Final</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">NULL_OFFSET</span><span class="p">:</span> <span class="n">Final</span> <span class="o">=</span> <span class="n">Offset</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
   
-      <p>An Offset constant for (0, 0).</p>
+      <p>An <a class="autorefs autorefs-internal" href="#textual.geometry.Offset">offset</a> constant for (0, 0).</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="textual.geometry.SpacingDimensions" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">SpacingDimensions</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+<a href="#textual.geometry.SpacingDimensions" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">SpacingDimensions</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="nb">int</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">]</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>The valid ways in which you can specify spacing.</p>
   </div>
 
 </div>
@@ -7973,7 +8163,7 @@
   </span>
 
 <a href="#textual.geometry.Offset.x" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">x</span><span class="p">:</span> <span class="nb">int</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">x</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -7996,7 +8186,7 @@
   </span>
 
 <a href="#textual.geometry.Offset.y" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">y</span><span class="p">:</span> <span class="nb">int</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">y</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -8432,7 +8622,7 @@
   </span>
 
 <a href="#textual.geometry.Region.height" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">height</span><span class="p">:</span> <span class="nb">int</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -8671,7 +8861,7 @@
   </span>
 
 <a href="#textual.geometry.Region.width" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">width</span><span class="p">:</span> <span class="nb">int</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -8694,7 +8884,7 @@
   </span>
 
 <a href="#textual.geometry.Region.x" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">x</span><span class="p">:</span> <span class="nb">int</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">x</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -8717,7 +8907,7 @@
   </span>
 
 <a href="#textual.geometry.Region.y" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">y</span><span class="p">:</span> <span class="nb">int</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">y</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -10308,7 +10498,7 @@ it is taken from the right edge.</p></td>
   </span>
 
 <a href="#textual.geometry.Size.height" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">height</span><span class="p">:</span> <span class="nb">int</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -10377,7 +10567,7 @@ it is taken from the right edge.</p></td>
   </span>
 
 <a href="#textual.geometry.Size.width" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">width</span><span class="p">:</span> <span class="nb">int</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -10600,7 +10790,7 @@ it is taken from the right edge.</p></td>
   </span>
 
 <a href="#textual.geometry.Spacing.bottom" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">bottom</span><span class="p">:</span> <span class="nb">int</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">bottom</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -10693,7 +10883,7 @@ it is taken from the right edge.</p></td>
   </span>
 
 <a href="#textual.geometry.Spacing.left" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">left</span><span class="p">:</span> <span class="nb">int</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">left</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -10716,7 +10906,7 @@ it is taken from the right edge.</p></td>
   </span>
 
 <a href="#textual.geometry.Spacing.right" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">right</span><span class="p">:</span> <span class="nb">int</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">right</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -10739,7 +10929,7 @@ it is taken from the right edge.</p></td>
   </span>
 
 <a href="#textual.geometry.Spacing.top" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">top</span><span class="p">:</span> <span class="nb">int</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">top</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -11049,7 +11239,7 @@ and no vertical spacing.</p>
         <tr>
           <td><code>pad</code></td>
           <td>
-                <code><span title="textual.geometry.SpacingDimensions">SpacingDimensions</span></code>
+                <code><a class="autorefs autorefs-internal" title="textual.geometry.SpacingDimensions" href="#textual.geometry.SpacingDimensions">SpacingDimensions</a></code>
           </td>
           <td><p>An integer, or tuple of 1, 2, or 4 integers.</p></td>
           <td>
@@ -11290,7 +11480,7 @@ than a maximum value.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../events/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Events" rel="prev">
+          <a href="../filter/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Filter" rel="prev">
             <div class="md-footer__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
             </div>
@@ -11299,7 +11489,7 @@ than a maximum value.</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Events
+                Filter
               </div>
             </div>
           </a>

@@ -5258,7 +5258,17 @@
         
       
         
+      
+        
+      
+        
           
+        
+      
+        
+      
+        
+      
         
       
         
@@ -5555,6 +5565,58 @@
   
   
     <li class="md-nav__item">
+      <a href="../../api/errors/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Errors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/filter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Filter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../api/geometry/" class="md-nav__link">
         
   
@@ -5713,6 +5775,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../api/on/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    On
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../api/pilot/" class="md-nav__link">
         
   
@@ -5817,6 +5905,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../api/scrollbar/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Scrollbar
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../api/scroll_view/" class="md-nav__link">
         
   
@@ -5876,6 +5990,32 @@
     
   
     Timer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/types/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Types
   
 
     
@@ -7150,7 +7290,12 @@ You can then use <code>event.tab.id</code> attribute to perform any related acti
   </span>
 
 <a href="#textual.widgets._tabs.Tabs.BINDINGS" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">BINDINGS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">BindingType</span><span class="p">]]</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">BINDINGS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">BindingType</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">Binding</span><span class="p">(</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>        <span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;previous_tab&quot;</span><span class="p">,</span> <span class="s2">&quot;Previous tab&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="p">),</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">Binding</span><span class="p">(</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="s2">&quot;next_tab&quot;</span><span class="p">,</span> <span class="s2">&quot;Next tab&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">]</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -7190,7 +7335,7 @@ You can then use <code>event.tab.id</code> attribute to perform any related acti
   </span>
 
 <a href="#textual.widgets._tabs.Tabs.active" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">active</span><span class="p">:</span> <span class="n">reactive</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">active</span><span class="p">:</span> <span class="n">reactive</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">reactive</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">

@@ -5170,7 +5170,17 @@
         
       
         
+      
+        
+      
+        
           
+        
+      
+        
+      
+        
+      
         
       
         
@@ -5467,6 +5477,58 @@
   
   
     <li class="md-nav__item">
+      <a href="../../api/errors/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Errors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/filter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Filter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../api/geometry/" class="md-nav__link">
         
   
@@ -5625,6 +5687,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../api/on/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    On
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../api/pilot/" class="md-nav__link">
         
   
@@ -5729,6 +5817,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../api/scrollbar/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Scrollbar
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../api/scroll_view/" class="md-nav__link">
         
   
@@ -5788,6 +5902,32 @@
     
   
     Timer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/types/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Types
   
 
     
@@ -6962,7 +7102,9 @@ that enable more customization.</p>
   </span>
 
 <a href="#textual.widgets._switch.Switch.BINDINGS" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">BINDINGS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">BindingType</span><span class="p">]]</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">BINDINGS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">BindingType</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">Binding</span><span class="p">(</span><span class="s2">&quot;enter,space&quot;</span><span class="p">,</span> <span class="s2">&quot;toggle&quot;</span><span class="p">,</span> <span class="s2">&quot;Toggle&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">]</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -6998,7 +7140,7 @@ that enable more customization.</p>
   </span>
 
 <a href="#textual.widgets._switch.Switch.COMPONENT_CLASSES" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">COMPONENT_CLASSES</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">COMPONENT_CLASSES</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;switch--slider&#39;</span><span class="p">}</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -7034,7 +7176,7 @@ that enable more customization.</p>
   </span>
 
 <a href="#textual.widgets._switch.Switch.slider_pos" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">slider_pos</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">slider_pos</span> <span class="o">=</span> <span class="n">reactive</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -7057,7 +7199,7 @@ that enable more customization.</p>
   </span>
 
 <a href="#textual.widgets._switch.Switch.value" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">value</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">value</span> <span class="o">=</span> <span class="n">reactive</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -7113,9 +7255,9 @@ or in a parent widget in the DOM.</p>
           <td><p>The value that the switch was changed to.</p></td>
         </tr>
         <tr>
-          <td><code>input</code></td>
+          <td><code>switch</code></td>
           <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+                <code><a class="autorefs autorefs-internal" title="textual.widgets._switch.Switch" href="#textual.widgets.Switch">Switch</a></code>
           </td>
           <td><p>The <code>Switch</code> widget that was changed.</p></td>
         </tr>

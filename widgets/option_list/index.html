@@ -5540,7 +5540,17 @@
         
       
         
+      
+        
+      
+        
           
+        
+      
+        
+      
+        
+      
         
       
         
@@ -5837,6 +5847,58 @@
   
   
     <li class="md-nav__item">
+      <a href="../../api/errors/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Errors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/filter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Filter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../api/geometry/" class="md-nav__link">
         
   
@@ -5995,6 +6057,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../api/on/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    On
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../api/pilot/" class="md-nav__link">
         
   
@@ -6099,6 +6187,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../api/scrollbar/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Scrollbar
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../api/scroll_view/" class="md-nav__link">
         
   
@@ -6158,6 +6272,32 @@
     
   
     Timer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/types/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Types
   
 
     
@@ -8217,7 +8357,17 @@ related <code>Option</code>:</p>
   </span>
 
 <a href="#textual.widgets._option_list.OptionList.BINDINGS" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">BINDINGS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">BindingType</span><span class="p">]]</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">BINDINGS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">BindingType</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">Binding</span><span class="p">(</span><span class="s2">&quot;down&quot;</span><span class="p">,</span> <span class="s2">&quot;cursor_down&quot;</span><span class="p">,</span> <span class="s2">&quot;Down&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">Binding</span><span class="p">(</span><span class="s2">&quot;end&quot;</span><span class="p">,</span> <span class="s2">&quot;last&quot;</span><span class="p">,</span> <span class="s2">&quot;Last&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">Binding</span><span class="p">(</span><span class="s2">&quot;enter&quot;</span><span class="p">,</span> <span class="s2">&quot;select&quot;</span><span class="p">,</span> <span class="s2">&quot;Select&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">Binding</span><span class="p">(</span><span class="s2">&quot;home&quot;</span><span class="p">,</span> <span class="s2">&quot;first&quot;</span><span class="p">,</span> <span class="s2">&quot;First&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">Binding</span><span class="p">(</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="s2">&quot;page_down&quot;</span><span class="p">,</span> <span class="s2">&quot;page_down&quot;</span><span class="p">,</span> <span class="s2">&quot;Page Down&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="p">),</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">Binding</span><span class="p">(</span><span class="s2">&quot;page_up&quot;</span><span class="p">,</span> <span class="s2">&quot;page_up&quot;</span><span class="p">,</span> <span class="s2">&quot;Page Up&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">Binding</span><span class="p">(</span><span class="s2">&quot;up&quot;</span><span class="p">,</span> <span class="s2">&quot;cursor_up&quot;</span><span class="p">,</span> <span class="s2">&quot;Up&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">]</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -8277,7 +8427,16 @@ related <code>Option</code>:</p>
   </span>
 
 <a href="#textual.widgets._option_list.OptionList.COMPONENT_CLASSES" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">COMPONENT_CLASSES</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">COMPONENT_CLASSES</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="s2">&quot;option-list--option-disabled&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="s2">&quot;option-list--option-highlighted&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="s2">&quot;option-list--option-highlighted-disabled&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="s2">&quot;option-list--option-hover&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="s2">&quot;option-list--option-hover-disabled&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="s2">&quot;option-list--option-hover-highlighted&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="s2">&quot;option-list--option-hover-highlighted-disabled&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="s2">&quot;option-list--separator&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">}</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -8341,7 +8500,7 @@ related <code>Option</code>:</p>
   </span>
 
 <a href="#textual.widgets._option_list.OptionList.DEFAULT_CSS" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">DEFAULT_CSS</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">DEFAULT_CSS</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">    OptionList {</span><span class="se">\n</span><span class="s2">        background: $panel-lighten-1;</span><span class="se">\n</span><span class="s2">        color: $text;</span><span class="se">\n</span><span class="s2">        overflow-x: hidden;</span><span class="se">\n</span><span class="s2">    }</span><span class="se">\n\n</span><span class="s2">    OptionList &gt; .option-list--separator {</span><span class="se">\n</span><span class="s2">        color: $foreground 15%;</span><span class="se">\n</span><span class="s2">    }</span><span class="se">\n\n</span><span class="s2">    OptionList &gt; .option-list--option-highlighted {</span><span class="se">\n</span><span class="s2">        background: $accent 50%;</span><span class="se">\n</span><span class="s2">        color: $text;</span><span class="se">\n</span><span class="s2">        text-style: bold;</span><span class="se">\n</span><span class="s2">    }</span><span class="se">\n\n</span><span class="s2">    OptionList:focus &gt; .option-list--option-highlighted {</span><span class="se">\n</span><span class="s2">        background: $accent;</span><span class="se">\n</span><span class="s2">    }</span><span class="se">\n\n</span><span class="s2">    OptionList &gt; .option-list--option-disabled {</span><span class="se">\n</span><span class="s2">        color: $text-disabled;</span><span class="se">\n</span><span class="s2">    }</span><span class="se">\n\n</span><span class="s2">    OptionList &gt; .option-list--option-highlighted-disabled {</span><span class="se">\n</span><span class="s2">        color: $text-disabled;</span><span class="se">\n</span><span class="s2">        background: $accent 30%;</span><span class="se">\n</span><span class="s2">    }</span><span class="se">\n\n</span><span class="s2">    OptionList:focus &gt; .option-list--option-highlighted-disabled {</span><span class="se">\n</span><span class="s2">        background: $accent 40%;</span><span class="se">\n</span><span class="s2">    }</span><span class="se">\n\n</span><span class="s2">    OptionList &gt; .option-list--option-hover {</span><span class="se">\n</span><span class="s2">        background: $boost;</span><span class="se">\n</span><span class="s2">    }</span><span class="se">\n\n</span><span class="s2">    OptionList &gt; .option-list--option-hover-disabled {</span><span class="se">\n</span><span class="s2">        color: $text-disabled;</span><span class="se">\n</span><span class="s2">        background: $boost;</span><span class="se">\n</span><span class="s2">    }</span><span class="se">\n\n</span><span class="s2">    OptionList &gt; .option-list--option-hover-highlighted {</span><span class="se">\n</span><span class="s2">        background: $accent 60%;</span><span class="se">\n</span><span class="s2">        color: $text;</span><span class="se">\n</span><span class="s2">        text-style: bold;</span><span class="se">\n</span><span class="s2">    }</span><span class="se">\n\n</span><span class="s2">    OptionList:focus &gt; .option-list--option-hover-highlighted {</span><span class="se">\n</span><span class="s2">        background: $accent;</span><span class="se">\n</span><span class="s2">        color: $text;</span><span class="se">\n</span><span class="s2">        text-style: bold;</span><span class="se">\n</span><span class="s2">    }</span><span class="se">\n\n</span><span class="s2">    OptionList &gt; .option-list--option-hover-highlighted-disabled {</span><span class="se">\n</span><span class="s2">        color: $text-disabled;</span><span class="se">\n</span><span class="s2">        background: $accent 60%;</span><span class="se">\n</span><span class="s2">    }</span><span class="se">\n</span><span class="s2">    &quot;</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -8492,7 +8651,7 @@ related <code>Option</code>:</p>
   </span>
 
 <a href="#textual.widgets._option_list.OptionList.OptionMessage.option" class="headerlink" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">option</span><span class="p">:</span> <span class="n">Option</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">option</span><span class="p">:</span> <span class="n">Option</span> <span class="o">=</span> <span class="n">option_list</span><span class="o">.</span><span class="n">get_option_at_index</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -8515,7 +8674,7 @@ related <code>Option</code>:</p>
   </span>
 
 <a href="#textual.widgets._option_list.OptionList.OptionMessage.option_id" class="headerlink" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">option_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">option_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">id</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -8538,7 +8697,7 @@ related <code>Option</code>:</p>
   </span>
 
 <a href="#textual.widgets._option_list.OptionList.OptionMessage.option_index" class="headerlink" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">option_index</span><span class="p">:</span> <span class="nb">int</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">option_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">index</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -8561,7 +8720,7 @@ related <code>Option</code>:</p>
   </span>
 
 <a href="#textual.widgets._option_list.OptionList.OptionMessage.option_list" class="headerlink" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">option_list</span><span class="p">:</span> <span class="n">OptionList</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">option_list</span><span class="p">:</span> <span class="n">OptionList</span> <span class="o">=</span> <span class="n">option_list</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">

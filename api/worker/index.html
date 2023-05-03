@@ -4945,7 +4945,17 @@
         
       
         
+      
+        
+      
+        
           
+        
+      
+        
+      
+        
+      
         
       
         
@@ -5242,6 +5252,58 @@
   
   
     <li class="md-nav__item">
+      <a href="../errors/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Errors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../filter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Filter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../geometry/" class="md-nav__link">
         
   
@@ -5400,6 +5462,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../on/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    On
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../pilot/" class="md-nav__link">
         
   
@@ -5504,6 +5592,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../scrollbar/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Scrollbar
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../scroll_view/" class="md-nav__link">
         
   
@@ -5563,6 +5677,32 @@
     
   
     Timer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../types/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Types
   
 
     
@@ -5718,6 +5858,17 @@
     <span class="md-ellipsis">
       
         textual.worker
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.worker.WorkType" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WorkType
       
     </span>
   </a>
@@ -6477,6 +6628,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.worker.WorkType" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WorkType
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.worker.active_worker" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6850,6 +7012,33 @@
 
 
 
+<h2 id="textual.worker.WorkType" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">WorkType</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+<a href="#textual.worker.WorkType" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">WorkType</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Coroutine</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ResultType</span><span class="p">]],</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">Callable</span><span class="p">[[],</span> <span class="n">ResultType</span><span class="p">],</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">Awaitable</span><span class="p">[</span><span class="n">ResultType</span><span class="p">],</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">]</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Type used for <a href="/guide/workers/">workers</a>.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
 <h2 id="textual.worker.active_worker" class="doc doc-heading">
         <span class="doc doc-object-name doc-attribute-name">active_worker</span>
 
@@ -6859,7 +7048,9 @@
   </span>
 
 <a href="#textual.worker.active_worker" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">active_worker</span><span class="p">:</span> <span class="n">ContextVar</span><span class="p">[</span><span class="n">Worker</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">active_worker</span><span class="p">:</span> <span class="n">ContextVar</span><span class="p">[</span><span class="n">Worker</span><span class="p">]</span> <span class="o">=</span> <span class="n">ContextVar</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="s2">&quot;active_worker&quot;</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -6990,7 +7181,7 @@
         <tr>
           <td><code>work</code></td>
           <td>
-                <code><span title="textual.worker.WorkType">WorkType</span> | None</code>
+                <code><a class="autorefs autorefs-internal" title="textual.worker.WorkType" href="#textual.worker.WorkType">WorkType</a> | None</code>
           </td>
           <td><p>A callable, coroutine, or other awaitable object to run in the worker.</p></td>
           <td>
@@ -7743,7 +7934,7 @@
   </span>
 
 <a href="#textual.worker.WorkerState.CANCELLED" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">CANCELLED</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">CANCELLED</span> <span class="o">=</span> <span class="mi">3</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -7766,7 +7957,7 @@
   </span>
 
 <a href="#textual.worker.WorkerState.ERROR" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ERROR</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ERROR</span> <span class="o">=</span> <span class="mi">4</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -7789,7 +7980,7 @@
   </span>
 
 <a href="#textual.worker.WorkerState.PENDING" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">PENDING</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">PENDING</span> <span class="o">=</span> <span class="mi">1</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -7812,7 +8003,7 @@
   </span>
 
 <a href="#textual.worker.WorkerState.RUNNING" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">RUNNING</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">RUNNING</span> <span class="o">=</span> <span class="mi">2</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -7835,7 +8026,7 @@
   </span>
 
 <a href="#textual.worker.WorkerState.SUCCESS" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">SUCCESS</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">SUCCESS</span> <span class="o">=</span> <span class="mi">5</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
