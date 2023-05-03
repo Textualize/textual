@@ -38,7 +38,7 @@ If you have multiple buttons you typically ended up writing a large `if` stateme
 
 ## On decorator
 
-Version 0.23.0 introduces the [`@on`](/guide/events/#on-decorator) decorator which allows you to dispatch events based on widget that initiated them.
+Version 0.23.0 introduces the [`@on`](/guide/events/#on-decorator) decorator which allows you to dispatch events based on the widget that initiated them.
 
 This is probably best explained in code.
 The following two listings respond to buttons being pressed.
