@@ -158,6 +158,16 @@ class DirectoryTree(Tree[DirEntry]):
         return first_line
 
     def render_label(self, node: TreeNode[DirEntry], base_style: Style, style: Style):
+        """Render a label for the given node.
+
+        Args:
+            node: A tree node.
+            base_style: The base style of the widget.
+            style: The additional style for the label.
+
+        Returns:
+            A Rich Text object containing the label.
+        """
         node_label = node._label.copy()
         node_label.stylize(style)
 
