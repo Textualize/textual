@@ -114,7 +114,18 @@ class DirectoryTree(Tree[DirEntry]):
         )
 
     def validate_path(self, path: str | Path) -> Path:
-        """Ensure that the path is of the `Path` type."""
+        """Ensure that the path is of the `Path` type.
+
+        Args:
+            path: The path to validate.
+
+        Returns:
+            The validated Path value.
+
+        Note:
+            The result will always be a Python `Path` object, regardless of
+            the value given.
+        """
         return Path(path)
 
     def watch_path(self, new_path: str | Path) -> None:
