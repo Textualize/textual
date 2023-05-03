@@ -31,6 +31,7 @@ from .binding import Binding
 from .css.match import match
 from .css.parse import parse_selectors
 from .css.query import QueryType
+from .dom import DOMNode
 from .geometry import Offset, Region, Size
 from .reactive import Reactive
 from .renderables.background_screen import BackgroundScreen
@@ -404,6 +405,32 @@ class Screen(Generic[ScreenResultType], Widget):
         # Go with the what was found.
         self.set_focus(chosen)
 
+    def _update_focus_styles(
+        self, focused: Widget | None = None, blurred: Widget | None = None
+    ) -> None:
+        """Update CSS for focus changes.
+
+        Args:
+            focused: The widget that was focused.
+            blurred: The widget that was blurred.
+        """
+        widgets: set[DOMNode] = set()
+
+        if focused is not None:
+            for widget in reversed(focused.ancestors_with_self):
+                if widget._has_focus_within:
+                    widgets.update(widget.walk_children(with_self=True))
+                    break
+        if blurred is not None:
+            for widget in reversed(blurred.ancestors_with_self):
+                if widget._has_focus_within:
+                    widgets.update(widget.walk_children(with_self=True))
+                    break
+        if widgets:
+            self.app.stylesheet.update_nodes(
+                [widget for widget in widgets if widget._has_focus_within], animate=True
+            )
+
     def set_focus(self, widget: Widget | None, scroll_visible: bool = True) -> None:
         """Focus (or un-focus) a widget. A focused widget will receive key events first.
 
@@ -415,24 +442,34 @@ class Screen(Generic[ScreenResultType], Widget):
             # Widget is already focused
             return
 
+        focused: Widget | None = None
+        blurred: Widget | None = None
+
         if widget is None:
             # No focus, so blur currently focused widget if it exists
             if self.focused is not None:
                 self.focused.post_message(events.Blur())
                 self.focused = None
+                blurred = self.focused
             self.log.debug("focus was removed")
         elif widget.focusable:
             if self.focused != widget:
                 if self.focused is not None:
                     # Blur currently focused widget
                     self.focused.post_message(events.Blur())
+                    blurred = self.focused
                 # Change focus
                 self.focused = widget
                 # Send focus event
                 if scroll_visible:
                     self.screen.scroll_to_widget(widget)
                 widget.post_message(events.Focus())
+                focused = widget
+
+                self._update_focus_styles(self.focused, widget)
                 self.log.debug(widget, "was focused")
+
+        self._update_focus_styles(focused, blurred)
 
     async def _on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)

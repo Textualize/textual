@@ -294,7 +294,7 @@ def test_programmatic_scrollbar_gutter_change(snap_compare):
 
 
 def test_borders_preview(snap_compare):
-    assert snap_compare(CLI_PREVIEWS_DIR / "borders.py", press=["tab", "tab", "enter"])
+    assert snap_compare(CLI_PREVIEWS_DIR / "borders.py", press=["tab", "enter"])
 
 
 def test_colors_preview(snap_compare):
