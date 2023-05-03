@@ -113,6 +113,11 @@ class DirectoryTree(Tree[DirEntry]):
             disabled=disabled,
         )
 
+    def reload(self) -> None:
+        """Reload the `DirectoryTree` contents."""
+        self.reset(str(self.path), DirEntry(Path(self.path)))
+        self._load_directory(self.root)
+
     def validate_path(self, path: str | Path) -> Path:
         """Ensure that the path is of the `Path` type.
 
@@ -138,8 +143,7 @@ class DirectoryTree(Tree[DirEntry]):
         the new value as the root.
         """
         self.path = Path(new_path)
-        self.reset(str(self.path), DirEntry(self.path))
-        self._load_directory(self.root)
+        self.reload()
 
     def process_label(self, label: TextType) -> Text:
         """Process a str or Text into a label. Maybe overridden in a subclass to modify how labels are rendered.
