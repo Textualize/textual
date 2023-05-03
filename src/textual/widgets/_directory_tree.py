@@ -103,7 +103,6 @@ class DirectoryTree(Tree[DirEntry]):
             classes: A space-separated list of classes, or None for no classes.
             disabled: Whether the directory tree is disabled or not.
         """
-        self.path = path
         super().__init__(
             str(path),
             data=DirEntry(Path(path)),
@@ -112,6 +111,7 @@ class DirectoryTree(Tree[DirEntry]):
             classes=classes,
             disabled=disabled,
         )
+        self.path = path
 
     def reload(self) -> None:
         """Reload the `DirectoryTree` contents."""
