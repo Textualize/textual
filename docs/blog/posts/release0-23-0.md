@@ -3,7 +3,7 @@ draft: false
 date: 2023-05-03
 categories:
   - Release
-title: "Textual 0.23.0 improves message handing"
+title: "Textual 0.23.0 improves message handling"
 authors:
   - willmcgugan
 ---
