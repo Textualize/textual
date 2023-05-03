@@ -215,6 +215,11 @@ class DirectoryTree(Tree[DirEntry]):
         return paths
 
     def _load_directory(self, node: TreeNode[DirEntry]) -> None:
+        """Load the directory contents for a given node.
+
+        Args:
+            node: The node to load the directory contents for.
+        """
         assert node.data is not None
         node.data.loaded = True
         directory = sorted(
