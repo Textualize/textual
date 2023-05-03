@@ -11,11 +11,12 @@
 - [Why do some key combinations never make it to my app?](#why-do-some-key-combinations-never-make-it-to-my-app)
 - [Why doesn't Textual look good on macOS?](#why-doesn't-textual-look-good-on-macos)
 - [Why doesn't Textual support ANSI themes?](#why-doesn't-textual-support-ansi-themes)
+- [Why doesn't the `DataTable` scroll programmatically?](#why-doesn't-the-`datatable`-scroll-programmatically)
 
 <a name="does-textual-support-images"></a>
 ## Does Textual support images?
 
-Textual doesn't have built in support for images yet, but it is on the [Roadmap](https://textual.textualize.io/roadmap/).
+Textual doesn't have built-in support for images yet, but it is on the [Roadmap](https://textual.textualize.io/roadmap/).
 
 See also the [rich-pixels](https://github.com/darrenburns/rich-pixels) project for a Rich renderable for images that works with Textual.
 
@@ -230,6 +231,48 @@ This is an intentional design decision we took for for the following reasons:
 Textual has a design system which guarantees apps will be readable on all platforms and terminals, and produces better results than ANSI colors.
 
 There is currently a light and dark version of the design system, but more are planned. It will also be possible for users to customize the source colors on a per-app or per-system basis. This means that in the future you will be able to modify the core colors to blend in with your chosen terminal theme.
+
+<a name="why-doesn't-the-`datatable`-scroll-programmatically"></a>
+## Why doesn't the `DataTable` scroll programmatically?
+
+If it looks like the scrolling in your `DataTable` is broken, it may be because your `DataTable` does not have its height set, which means it is using the default value of `height: auto`.
+In turn, this means that the `DataTable` itself does not have a scrollbar and, hence, it cannot scroll.
+
+If it looks like your `DataTable` has scrollbars, those might belong to the container(s) of the `DataTable`, which in turn makes it look like the scrolling of the `DataTable` is broken.
+
+To see the difference, try running the app below with and without the comment in the attribute `TableApp.CSS`.
+Press <kbd>E</kbd> to scroll the `DataTable` to the end.
+If the `CSS` is commented out, the `DataTable` does not have a scrollbar and, therefore, there is nothing to scroll.
+
+<details>
+<summary>Example app.</summary>
+
+```py
+from textual.app import App, ComposeResult
+from textual.widgets import DataTable
+
+
+class TableApp(App):
+    # CSS = "DataTable { height: 100% }"
+
+    def compose(self) -> ComposeResult:
+        yield DataTable()
+
+    def on_mount(self) -> None:
+        table = self.query_one(DataTable)
+        table.add_column("n")
+        table.add_rows([(n,) for n in range(300)])
+
+    def key_e(self) -> None:
+        self.query_one(DataTable).action_scroll_end()
+
+
+app = TableApp()
+if __name__ == "__main__":
+    app.run()
+```
+
+</details>
 
 <hr>
 
