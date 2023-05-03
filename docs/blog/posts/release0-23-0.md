@@ -33,8 +33,9 @@ To respond to those messages, you implement a message handler with a naming conv
 For instance, the [Button](/widget_gallery/#button) widget sends a `Pressed` event.
 To handle that event, you implement a method called `on_button_pressed`.
 
-Simple enough, but that method will be called to handle *all* pressed events.
-If you have multiple buttons you typically ended up writing a large `if` statement.
+Simple enough, but handler methods are called to handle pressed events from *all* Buttons.
+To manage multiple buttons you typically had to write a large `if` statement to wire up each button to the code it should run.
+It didn't take many Buttons before the handler became hard to follow.
 
 ## On decorator
 
@@ -42,7 +43,7 @@ Version 0.23.0 introduces the [`@on`](/guide/events/#on-decorator) decorator whi
 
 This is probably best explained in code.
 The following two listings respond to buttons being pressed.
-The second uses the decorator:
+The first uses a single message handler, the second uses the decorator approach:
 
 === "on_decorator01.py"
 
