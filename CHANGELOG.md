@@ -30,7 +30,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Watch methods can now optionally be private https://github.com/Textualize/textual/issues/2382
 - Added `DirectoryTree.path` reactive attribute https://github.com/Textualize/textual/issues/2448
-- Added `DirectoryTree.FileSelected.node`
+- Added `DirectoryTree.FileSelected.node` https://github.com/Textualize/textual/pull/2463
 - Added `DirectoryTree.reload` https://github.com/Textualize/textual/issues/2448
 - Added textual.on decorator https://github.com/Textualize/textual/issues/2398
 
