@@ -22,10 +22,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Setting attributes with a `compute_` method will now raise an `AttributeError` https://github.com/Textualize/textual/issues/2383
 - Unknown psuedo-selectors will now raise a tokenizer error (previously they were silently ignored) https://github.com/Textualize/textual/pull/2445
+- Breaking change: `DirectoryTree.FileSelected.path` is now always a `Path` https://github.com/Textualize/textual/issues/2448
+- Breaking change: `Directorytree.load_directory` renamed to `Directorytree._load_directory` https://github.com/Textualize/textual/issues/2448
 
 ### Added
 
 - Watch methods can now optionally be private https://github.com/Textualize/textual/issues/2382
+- Added `DirectoryTree.path` reactive attribute https://github.com/Textualize/textual/issues/2448
+- Added `DirectoryTree.FileSelected.node`
+- Added `DirectoryTree.reload` https://github.com/Textualize/textual/issues/2448
 
 ## [0.22.3] - 2023-04-29
 
