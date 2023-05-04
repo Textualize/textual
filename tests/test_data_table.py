@@ -1021,28 +1021,9 @@ async def test_move_cursor():
         table.add_columns(*"These are some columns in your nice table".split())
         table.add_rows(["These are some columns in your nice table".split()] * 10)
 
-        table.move_cursor(Coordinate(5, 7))
-        assert table.cursor_coordinate == Coordinate(5, 7)
-        table.move_cursor(row=3)
-        assert table.cursor_coordinate == Coordinate(3, 7)
         table.move_cursor(row=4, column=6)
         assert table.cursor_coordinate == Coordinate(4, 6)
+        table.move_cursor(row=3)
+        assert table.cursor_coordinate == Coordinate(3, 6)
         table.move_cursor(column=3)
-        assert table.cursor_coordinate == Coordinate(4, 3)
-
-
-async def test_move_cursor_raises_error():
-    app = DataTableApp()
-
-    async with app.run_test():
-        table = app.query_one(DataTable)
-        table.add_columns(*"These are some columns in your nice table".split())
-        table.add_rows(["These are some columns in your nice table".split()] * 10)
-
-        coordinate = Coordinate(0, 0)
-        with pytest.raises(RuntimeError):
-            table.move_cursor(coordinate, row=1)
-        with pytest.raises(RuntimeError):
-            table.move_cursor(coordinate, column=1)
-        with pytest.raises(RuntimeError):
-            table.move_cursor(coordinate, row=1, column=1)
+        assert table.cursor_coordinate == Coordinate(3, 3)
