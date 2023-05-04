@@ -11,7 +11,7 @@ class RadioSetApp(App[None]):
 
     def compose(self) -> ComposeResult:
         with RadioSet(id="from_buttons"):
-            yield RadioButton()
+            yield RadioButton(id="clickme")
             yield RadioButton()
             yield RadioButton(value=True)
         yield RadioSet("One", "True", "Three", id="from_strings")
@@ -34,6 +34,14 @@ async def test_radio_sets_initial_state():
         assert pilot.app.query_one("#from_strings", RadioSet).pressed_index == -1
         assert pilot.app.query_one("#from_strings", RadioSet).pressed_button is None
         assert pilot.app.events_received == []
+
+
+async def test_click_sets_focus():
+    """Clicking within a radio set should set focus."""
+    async with RadioSetApp().run_test() as pilot:
+        assert pilot.app.screen.focused is None
+        await pilot.click("#clickme")
+        assert pilot.app.screen.focused == pilot.app.query_one("#from_buttons")
 
 
 async def test_radio_sets_toggle():
