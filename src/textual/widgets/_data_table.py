@@ -2113,7 +2113,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self.cursor_coordinate = Coordinate(
                 row_index + rows_to_scroll - 1, column_index
             )
-            self._scroll_cursor_into_view()
         else:
             super().action_page_down()
 
@@ -2137,7 +2136,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self.cursor_coordinate = Coordinate(
                 row_index - rows_to_scroll + 1, column_index
             )
-            self._scroll_cursor_into_view()
         else:
             super().action_page_up()
 
@@ -2148,7 +2146,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
             row_index, column_index = self.cursor_coordinate
             self.cursor_coordinate = Coordinate(0, column_index)
-            self._scroll_cursor_into_view()
         else:
             super().action_scroll_home()
 
@@ -2159,7 +2156,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
             row_index, column_index = self.cursor_coordinate
             self.cursor_coordinate = Coordinate(self.row_count - 1, column_index)
-            self._scroll_cursor_into_view()
         else:
             super().action_scroll_end()
 
@@ -2168,7 +2164,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
             self.cursor_coordinate = self.cursor_coordinate.up()
-            self._scroll_cursor_into_view()
         else:
             # If the cursor doesn't move up (e.g. column cursor can't go up),
             # then ensure that we instead scroll the DataTable.
@@ -2179,7 +2174,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
             self.cursor_coordinate = self.cursor_coordinate.down()
-            self._scroll_cursor_into_view()
         else:
             super().action_scroll_down()
 
@@ -2187,8 +2181,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._set_hover_cursor(False)
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "column"):
-            self.cursor_coordinate = self.cursor_coordinate.right()
-            self._scroll_cursor_into_view(animate=True)
+            self.move_cursor(self.cursor_coordinate.right(), animate=True)
         else:
             super().action_scroll_right()
 
@@ -2196,8 +2189,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._set_hover_cursor(False)
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "column"):
-            self.cursor_coordinate = self.cursor_coordinate.left()
-            self._scroll_cursor_into_view(animate=True)
+            self.move_cursor(self.cursor_coordinate.left(), animate=True)
         else:
             super().action_scroll_left()
 
