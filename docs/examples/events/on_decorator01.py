@@ -12,7 +12,7 @@ class OnDecoratorApp(App):
         yield Button("Toggle dark", classes="toggle dark")
         yield Button("Quit", id="quit")
 
-    def on_button_pressed(self, event: Button.Pressed) -> None:
+    def on_button_pressed(self, event: Button.Pressed) -> None:  # (1)!
         """Handle all button pressed events."""
         if event.button.id == "bell":
             self.bell()

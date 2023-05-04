@@ -181,6 +181,8 @@ In the following example we have three buttons, each of which does something dif
     --8<-- "docs/examples/events/on_decorator01.py"
     ```
 
+    1. The message handler is called when any button is pressed
+
 === "Output"
 
     ```{.textual path="docs/examples/events/on_decorator01.py"}
