@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - The DataTable cursor is now scrolled into view when the cursor coordinate is changed programmatically https://github.com/Textualize/textual/issues/2459
+- Added `always_update` as an optional argument for `reactive.var`
 
 ## [0.23.0] - 2023-05-03
 
