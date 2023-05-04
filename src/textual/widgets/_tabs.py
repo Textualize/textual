@@ -383,7 +383,7 @@ class Tabs(Widget, can_focus=True):
         """Make the first tab active."""
         if self._first_active is not None:
             self.active = self._first_active
-        if not self.active:
+        if self.active is not None:
             try:
                 tab = self.query("#tabs-list > Tab").first(Tab)
             except NoMatches:
