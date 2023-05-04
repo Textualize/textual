@@ -240,7 +240,7 @@ class DOMNode(MessagePump):
         description: str = "",
         exit_on_error: bool = True,
         start: bool = True,
-        exclusive: bool = True,
+        exclusive: bool = False,
     ) -> Worker[ResultType]:
         """Run work in a worker.
 
