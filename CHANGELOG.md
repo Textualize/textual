@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - `DirectoryTree.FileSelected`
   - `ListView.Highlighted` and `ListView.Selected`
   - `Markdown.TableOfContentsUpdated`, `Markdown.TableOfContentsSelected`, and `Markdown.LinkClicked`
+  - `RadioSet.Changed`
 
 ## [0.23.0] - 2023-05-03
 
