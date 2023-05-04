@@ -19,7 +19,7 @@ class RadioButtonApp(App[None]):
             (
                 event.radio_button.id,
                 event.radio_button.value,
-                event.radio_button is event.control,
+                event.radio_button == event.control,
             )
         )
 

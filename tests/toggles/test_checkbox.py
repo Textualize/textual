@@ -16,7 +16,7 @@ class CheckboxApp(App[None]):
 
     def on_checkbox_changed(self, event: Checkbox.Changed) -> None:
         self.events_received.append(
-            (event.checkbox.id, event.checkbox.value, event.checkbox is event.control)
+            (event.checkbox.id, event.checkbox.value, event.checkbox == event.control)
         )
 
 
