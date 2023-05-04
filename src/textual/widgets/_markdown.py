@@ -105,7 +105,7 @@ class MarkdownBlock(Static):
 
     async def action_link(self, href: str) -> None:
         """Called on link click."""
-        self.post_message(Markdown.LinkClicked(href))
+        self.post_message(Markdown.LinkClicked(self._markdown, href))
 
 
 class MarkdownHeader(MarkdownBlock):
@@ -567,26 +567,61 @@ class Markdown(Widget):
     class TableOfContentsUpdated(Message, bubble=True):
         """The table of contents was updated."""
 
-        def __init__(self, table_of_contents: TableOfContentsType) -> None:
+        def __init__(
+            self, markdown: Markdown, table_of_contents: TableOfContentsType
+        ) -> None:
             super().__init__()
+            self.markdown: Markdown = markdown
+            """The `Markdown` widget associated with the table of contents."""
             self.table_of_contents: TableOfContentsType = table_of_contents
             """Table of contents."""
+
+        @property
+        def control(self) -> Markdown:
+            """The `Markdown` widget associated with the table of contents.
+
+            This is an alias for [`TableOfContentsUpdated.markdown`][textual.widgets.Markdown.TableOfContentsSelected.markdown]
+            and is used by the [`on`][textual.on] decorator.
+            """
+            return self.markdown
 
     class TableOfContentsSelected(Message, bubble=True):
         """An item in the TOC was selected."""
 
-        def __init__(self, block_id: str) -> None:
+        def __init__(self, markdown: Markdown, block_id: str) -> None:
             super().__init__()
-            self.block_id = block_id
+            self.markdown: Markdown = markdown
+            """The `Markdown` widget where the selected item is."""
+            self.block_id: str = block_id
             """ID of the block that was selected."""
+
+        @property
+        def control(self) -> Markdown:
+            """The `Markdown` widget where the selected item is.
+
+            This is an alias for [`TableOfContentsSelected.markdown`][textual.widgets.Markdown.TableOfContentsSelected.markdown]
+            and is used by the [`on`][textual.on] decorator.
+            """
+            return self.markdown
 
     class LinkClicked(Message, bubble=True):
         """A link in the document was clicked."""
 
-        def __init__(self, href: str) -> None:
+        def __init__(self, markdown: Markdown, href: str) -> None:
             super().__init__()
+            self.markdown: Markdown = markdown
+            """The `Markdown` widget containing the link clicked."""
             self.href: str = href
             """The link that was selected."""
+
+        @property
+        def control(self) -> Markdown:
+            """The `Markdown` widget containing the link clicked.
+
+            This is an alias for [`LinkClicked.markdown`][textual.widgets.Markdown.LinkClicked.markdown]
+            and is used by the [`on`][textual.on] decorator.
+            """
+            return self.markdown
 
     def _on_mount(self, _: Mount) -> None:
         if self._markdown is not None:
