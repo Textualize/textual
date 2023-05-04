@@ -52,6 +52,15 @@ async def test_radio_sets_toggle():
         ]
 
 
+async def test_radioset_same_button_mash():
+    """Mashing the same button should have no effect."""
+    async with RadioSetApp().run_test() as pilot:
+        assert pilot.app.query_one("#from_buttons", RadioSet).pressed_index == 2
+        pilot.app.query_one("#from_buttons", RadioSet)._nodes[2].toggle()
+        assert pilot.app.query_one("#from_buttons", RadioSet).pressed_index == 2
+        assert pilot.app.events_received == []
+
+
 async def test_radioset_inner_navigation():
     """Using the cursor keys should navigate between buttons in a set."""
     async with RadioSetApp().run_test() as pilot:
