@@ -253,6 +253,15 @@ class OptionList(ScrollView, can_focus=True):
             self.option_index: int = index
             """The index of the option that the message relates to."""
 
+        @property
+        def control(self) -> OptionList:
+            """The option list that sent the message.
+
+            This is an alias for [`OptionMessage.option_list`][textual.widgets.OptionList.OptionMessage.option_list]
+            and is used by the [`on`][textual.on] decorator.
+            """
+            return self.option_list
+
         def __rich_repr__(self) -> Result:
             yield "option_list", self.option_list
             yield "option", self.option
