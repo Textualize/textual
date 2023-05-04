@@ -66,7 +66,13 @@ async def test_radioset_inner_navigation():
     async with RadioSetApp().run_test() as pilot:
         assert pilot.app.screen.focused is None
         await pilot.press("tab")
-        for key, landing in (("down", 1), ("up", 0), ("right", 1), ("left", 0)):
+        for key, landing in (
+            ("down", 1),
+            ("up", 0),
+            ("right", 1),
+            ("left", 0),
+            ("up", 2),
+        ):
             await pilot.press(key, "enter")
             assert (
                 pilot.app.query_one("#from_buttons", RadioSet).pressed_button
