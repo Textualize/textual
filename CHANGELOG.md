@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - `OptionList.OptionHighlighted` and `OptionList.OptionSelected`
   - `Tree.NodeSelected`, `Tree.NodeHighlighted`, `Tree.NodeExpanded`, and `Tree.NodeCollapsed`
   - `DirectoryTree.FileSelected`
+  - `ListView.Highlighted` and `ListView.Selected`
 
 ## [0.23.0] - 2023-05-03
 
