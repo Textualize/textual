@@ -21,12 +21,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Markdown document sub-widgets now reference the container document
 - Table of contents of a markdown document now references the document
 - Added the `control` property to messages
-  - `OptionList.OptionHighlighted` and `OptionList.OptionSelected`
-  - `Tree.NodeSelected`, `Tree.NodeHighlighted`, `Tree.NodeExpanded`, and `Tree.NodeCollapsed`
   - `DirectoryTree.FileSelected`
-  - `ListView.Highlighted` and `ListView.Selected`
-  - `Markdown.TableOfContentsUpdated`, `Markdown.TableOfContentsSelected`, and `Markdown.LinkClicked`
+  - `ListView`
+    - `Highlighted`
+    - `Selected`
+  - `Markdown`
+    - `TableOfContentsUpdated`
+    - `TableOfContentsSelected`
+    - `LinkClicked`
+  - `OptionList`
+    - `OptionHighlighted`
+    - `OptionSelected`
   - `RadioSet.Changed`
+  - `TabContent.TabActivated`
+  - `Tree`
+    - `NodeSelected`
+    - `NodeHighlighted`
+    - `NodeExpanded`
+    - `NodeCollapsed`
 
 ## [0.23.0] - 2023-05-03
 

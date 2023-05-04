@@ -96,8 +96,19 @@ class TabbedContent(Widget):
                 tab: The Tab widget that was selected (contains the tab label).
             """
             self.tabbed_content = tabbed_content
+            """The `TabbedContent` widget that contains the tab activated."""
             self.tab = tab
+            """The `Tab` widget that was selected (contains the tab label)."""
             super().__init__()
+
+        @property
+        def control(self) -> TabbedContent:
+            """The `TabbedContent` widget that contains the tab activated.
+
+            This is an alias for [`TabActivated.tabbed_content`][textual.widgets.TabbedContent.TabActivated.tabbed_content]
+            and is used by the [`on`][textual.on] decorator.
+            """
+            return self.tabbed_content
 
         def __rich_repr__(self) -> Result:
             yield self.tabbed_content
