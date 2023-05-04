@@ -72,6 +72,7 @@ async def test_radioset_inner_navigation():
             ("right", 1),
             ("left", 0),
             ("up", 2),
+            ("down", 0),
         ):
             await pilot.press(key, "enter")
             assert (
