@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed crash when creating a `DirectoryTree` starting anywhere other than `.`
+- Fixed line drawing in `Tree` when `Tree.show_root` is `True` https://github.com/Textualize/textual/issues/2397
+- Fixed line drawing in `Tree` not marking branches as selected when first getting focus https://github.com/Textualize/textual/issues/2397
 
 ### Changed
 
