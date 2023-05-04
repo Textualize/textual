@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.containers import VerticalScroll
+from textual.containers import Vertical
 from textual.css.constants import VALID_BORDER
 from textual.widgets import Button, Label
 
@@ -12,7 +12,7 @@ And when it has gone past, I will turn the inner eye to see its path.
 Where the fear has gone there will be nothing. Only I will remain."""
 
 
-class BorderButtons(VerticalScroll):
+class BorderButtons(Vertical):
     DEFAULT_CSS = """
     BorderButtons {
         dock: left;
