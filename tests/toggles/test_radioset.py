@@ -79,6 +79,15 @@ async def test_radioset_inner_navigation():
                 pilot.app.query_one("#from_buttons", RadioSet).pressed_button
                 == pilot.app.query_one("#from_buttons").children[landing]
             )
+    async with RadioSetApp().run_test() as pilot:
+        assert pilot.app.screen.focused is None
+        await pilot.press("tab")
+        assert pilot.app.screen.focused is pilot.app.screen.query_one("#from_buttons")
+        await pilot.press("tab")
+        assert pilot.app.screen.focused is pilot.app.screen.query_one("#from_strings")
+        assert pilot.app.query_one("#from_strings", RadioSet)._selected == 0
+        await pilot.press("down")
+        assert pilot.app.query_one("#from_strings", RadioSet)._selected == 1
 
 
 async def test_radioset_breakout_navigation():
