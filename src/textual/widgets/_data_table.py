@@ -309,6 +309,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     cursor_coordinate: Reactive[Coordinate] = Reactive(
         Coordinate(0, 0), repaint=False, always_update=True
     )
+    """Current cursor [`Coordinate`][textual.coordinate.Coordinate].
+
+    This can be set programmatically or changed via the method
+    [`move_cursor`][textual.widgets.DataTable.move_cursor].
+    """
     hover_coordinate: Reactive[Coordinate] = Reactive(
         Coordinate(0, 0), repaint=False, always_update=True
     )
@@ -951,6 +956,60 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 self.refresh_column(old_coordinate.column)
                 self._highlight_column(new_coordinate.column)
             self._scroll_cursor_into_view()
+
+    def move_cursor(
+        self,
+        coordinate: Coordinate | None = None,
+        *,
+        row: int | None = None,
+        column: int | None = None,
+        animate: bool = False,
+    ) -> None:
+        """Move the cursor to the given position.
+
+        The new cursor position can be specified as a coordinate or you can specify
+        only the new row/column for the cursor.
+        Specifying a coordinate is mutually exclusive with specifying either a new
+        row or new column.
+
+        Example:
+            ```py
+            datatable = app.query_one(DataTable)
+            datatable.move_cursor(Coordinate(5, 7))
+            # datatable.cursor_coordinate == Coordinate(5, 7)
+            datatable.move_cursor(row=3)
+            # datatable.cursor_coordinate == Coordinate(3, 7)
+            datatable.move_cursor(row=4, column=6)
+            # datatable.cursor_coordinate == Coordinate(4, 6)
+            datatable.move_cursor(Coordinate(0, 0), row=3)  # RuntimeError
+            ```
+
+        Args:
+            coordinate: The new coordinate to move the cursor to.
+            row: The new row to move the cursor to.
+            column: The new column to move the cursor to.
+            animate: Whether to animate the change of coordinates.
+
+        Raises:
+            RuntimeError: If the parameter `coordinate` is specified together with any
+                of `row` or `column`, or if no new position is specified.
+        """
+        if coordinate is not None and (row is not None or column is not None):
+            raise RuntimeError("Can't specify `coordinate` and `row`/`column`.")
+        if coordinate is None and row is None and column is None:
+            raise RuntimeError("You must specify a new position to move the cursor to.")
+
+        if coordinate is not None:
+            destination = coordinate
+        else:
+            cursor_row, cursor_column = self.cursor_coordinate
+            if row is not None:
+                cursor_row = row
+            if column is not None:
+                cursor_column = column
+            destination = Coordinate(cursor_row, cursor_column)
+        self.cursor_coordinate = destination
+        self._scroll_cursor_into_view(animate=animate)
 
     def _highlight_coordinate(self, coordinate: Coordinate) -> None:
         """Apply highlighting to the cell at the coordinate, and post event."""

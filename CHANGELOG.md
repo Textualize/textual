@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - The DataTable cursor is now scrolled into view when the cursor coordinate is changed programmatically https://github.com/Textualize/textual/issues/2459
 
+
+### Added
+
+- Method `DataTable.move_cursor` https://github.com/Textualize/textual/issues/2472
+
 ## [0.23.0] - 2023-05-03
 
 ### Fixed

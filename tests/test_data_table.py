@@ -996,23 +996,53 @@ def test_key_string_lookup():
 async def test_scrolling_cursor_into_view():
     """Regression test for https://github.com/Textualize/textual/issues/2459"""
 
-    class TableApp(App):
+    class ScrollingApp(DataTableApp):
         CSS = "DataTable { height: 100%; }"
-
-        def compose(self):
-            yield DataTable()
-
-        def on_mount(self) -> None:
-            table = self.query_one(DataTable)
-            table.add_column("n")
-            table.add_rows([(n,) for n in range(300)])
 
         def key_c(self):
             self.query_one(DataTable).cursor_coordinate = Coordinate(200, 0)
 
-    app = TableApp()
+    app = ScrollingApp()
 
     async with app.run_test() as pilot:
+        table = app.query_one(DataTable)
+        table.add_column("n")
+        table.add_rows([(n,) for n in range(300)])
+
         await pilot.press("c")
-        await pilot.pause()
-        assert app.query_one(DataTable).scroll_y > 100
+        assert table.scroll_y > 100
+
+
+async def test_move_cursor():
+    app = DataTableApp()
+
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_columns(*"These are some columns in your nice table".split())
+        table.add_rows(["These are some columns in your nice table".split()] * 10)
+
+        table.move_cursor(Coordinate(5, 7))
+        assert table.cursor_coordinate == Coordinate(5, 7)
+        table.move_cursor(row=3)
+        assert table.cursor_coordinate == Coordinate(3, 7)
+        table.move_cursor(row=4, column=6)
+        assert table.cursor_coordinate == Coordinate(4, 6)
+        table.move_cursor(column=3)
+        assert table.cursor_coordinate == Coordinate(4, 3)
+
+
+async def test_move_cursor_raises_error():
+    app = DataTableApp()
+
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_columns(*"These are some columns in your nice table".split())
+        table.add_rows(["These are some columns in your nice table".split()] * 10)
+
+        coordinate = Coordinate(0, 0)
+        with pytest.raises(RuntimeError):
+            table.move_cursor(coordinate, row=1)
+        with pytest.raises(RuntimeError):
+            table.move_cursor(coordinate, column=1)
+        with pytest.raises(RuntimeError):
+            table.move_cursor(coordinate, row=1, column=1)
