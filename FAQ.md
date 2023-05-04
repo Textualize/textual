@@ -2,16 +2,17 @@
 <!-- Do not edit by hand! -->
 
 # Frequently Asked Questions
-- [Does Textual support images?](#does-textual-support-images)
-- [How can I fix ImportError cannot import name ComposeResult from textual.app ?](#how-can-i-fix-importerror-cannot-import-name-composeresult-from-textualapp-)
-- [How can I select and copy text in a Textual app?](#how-can-i-select-and-copy-text-in-a-textual-app)
-- [How can I set a translucent app background?](#how-can-i-set-a-translucent-app-background)
-- [How do I center a widget in a screen?](#how-do-i-center-a-widget-in-a-screen)
-- [How do I pass arguments to an app?](#how-do-i-pass-arguments-to-an-app)
-- [Why do some key combinations never make it to my app?](#why-do-some-key-combinations-never-make-it-to-my-app)
-- [Why doesn't Textual look good on macOS?](#why-doesn't-textual-look-good-on-macos)
-- [Why doesn't Textual support ANSI themes?](#why-doesn't-textual-support-ansi-themes)
-- [Why doesn't the `DataTable` scroll programmatically?](#why-doesn't-the-`datatable`-scroll-programmatically)
+- [Frequently Asked Questions](#frequently-asked-questions)
+  - [Does Textual support images?](#does-textual-support-images)
+  - [How can I fix ImportError cannot import name ComposeResult from textual.app ?](#how-can-i-fix-importerror-cannot-import-name-composeresult-from-textualapp-)
+  - [How can I select and copy text in a Textual app?](#how-can-i-select-and-copy-text-in-a-textual-app)
+  - [How can I set a translucent app background?](#how-can-i-set-a-translucent-app-background)
+  - [How do I center a widget in a screen?](#how-do-i-center-a-widget-in-a-screen)
+  - [How do I pass arguments to an app?](#how-do-i-pass-arguments-to-an-app)
+  - [Why do some key combinations never make it to my app?](#why-do-some-key-combinations-never-make-it-to-my-app)
+  - [Why doesn't Textual look good on macOS?](#why-doesnt-textual-look-good-on-macos)
+  - [Why doesn't Textual support ANSI themes?](#why-doesnt-textual-support-ansi-themes)
+  - [Why doesn't the `DataTable` scroll programmatically?](#why-doesnt-the-datatable-scroll-programmatically)
 
 <a name="does-textual-support-images"></a>
 ## Does Textual support images?
@@ -237,7 +238,7 @@ There is currently a light and dark version of the design system, but more are p
 
 If scrolling in your `DataTable` is _apparently_ broken, it may be because your `DataTable` is using the default value of `height: auto`.
 This means that the table will be sized to fit its rows without scrolling, which may cause the *container* (typically the screen) to scroll.
-If you would like the table itself to scroll, set the height to something other than `auto`.
+If you would like the table itself to scroll, set the height to something other than `auto`, like `100%`.
 
 <hr>
 
