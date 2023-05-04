@@ -6,8 +6,9 @@ alt_titles:
 ---
 
 If scrolling in your `DataTable` is _apparently_ broken, it may be because your `DataTable` is using the default value of `height: auto`.
-This means that the `DataTable` itself does not have a scrollbar and it cannot scroll itself.
-The scrollbar(s) you see belong to the container(s) of the `DataTable`.
+This means that the table will be sized to fit its rows without scrolling, which may cause the *container* (typically the screen) to scroll.
+If you would like the table itself to scroll, set the height to something other than `auto`. 
+For instance, `100%` which will be the height of the container.
 
 To see the difference, try running the app below with and without the comment in the attribute `TableApp.CSS`.
 Press <kbd>E</kbd> to scroll the `DataTable` to the end.
