@@ -976,8 +976,8 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 "tree--guides-selected", partial=True
             )
 
-            hover = self.root._hover
-            selected = self.root._selected and self.has_focus
+            hover = line.path[0]._hover
+            selected = line.path[0]._selected and self.has_focus
 
             def get_guides(style: Style) -> tuple[str, str, str, str]:
                 """Get the guide strings for a given style.
