@@ -955,7 +955,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             elif self.cursor_type == "column":
                 self.refresh_column(old_coordinate.column)
                 self._highlight_column(new_coordinate.column)
-            self._scroll_cursor_into_view()
+            # If the coordinate was changed via `move_cursor`, give priority to its
+            # scrolling because it may be animated.
+            self.call_next(self._scroll_cursor_into_view)
 
     def move_cursor(
         self,
