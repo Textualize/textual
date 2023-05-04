@@ -57,7 +57,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         def control(self) -> ListView:
             """The view that contains the item highlighted.
 
-            This is an alias for [`ListView.Highlighted`][textual.widgets.ListView.Highlighted.list_view]
+            This is an alias for [`Highlighted.list_view`][textual.widgets.ListView.Highlighted.list_view]
             and is used by the [`on`][textual.on] decorator.
             """
             return self.list_view
@@ -80,7 +80,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         def control(self) -> ListView:
             """The view that contains the item selected.
 
-            This is an alias for [`ListView.Selected`][textual.widgets.ListView.Selected.list_view]
+            This is an alias for [`Selected.list_view`][textual.widgets.ListView.Selected.list_view]
             and is used by the [`on`][textual.on] decorator.
             """
             return self.list_view
