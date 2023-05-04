@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added the `control` property to messages
   - `OptionList.OptionHighlighted` and `OptionList.OptionSelected`
+  - `Tree.NodeSelected`, `Tree.NodeHighlighted`, `Tree.NodeExpanded`, and `Tree.NodeCollapsed`
+  - `DirectoryTree.FileSelected`
 
 ## [0.23.0] - 2023-05-03
 
