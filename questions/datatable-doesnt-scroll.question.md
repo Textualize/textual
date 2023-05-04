@@ -5,14 +5,13 @@ alt_titles:
   - "Datatable cursor goes off screen and doesn't scroll."
 ---
 
-If it looks like the scrolling in your `DataTable` is broken, it may be because your `DataTable` does not have its height set, which means it is using the default value of `height: auto`.
-In turn, this means that the `DataTable` itself does not have a scrollbar and, hence, it cannot scroll.
-
-If it looks like your `DataTable` has scrollbars, those might belong to the container(s) of the `DataTable`, which in turn makes it look like the scrolling of the `DataTable` is broken.
+If scrolling in your `DataTable` is _apparently_ broken, it may be because your `DataTable` is using the default value of `height: auto`.
+This means that the `DataTable` itself does not have a scrollbar and it cannot scroll itself.
+The scrollbar(s) you see belong to the container(s) of the `DataTable`.
 
 To see the difference, try running the app below with and without the comment in the attribute `TableApp.CSS`.
 Press <kbd>E</kbd> to scroll the `DataTable` to the end.
-If the `CSS` is commented out, the `DataTable` does not have a scrollbar and, therefore, there is nothing to scroll.
+If the `CSS` is commented out, the `DataTable` does not have its own scrollbar and it cannot scroll.
 
 <details>
 <summary>Example app.</summary>
