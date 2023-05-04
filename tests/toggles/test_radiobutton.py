@@ -15,7 +15,13 @@ class RadioButtonApp(App[None]):
         yield RadioButton(value=True, id="rb3")
 
     def on_radio_button_changed(self, event: RadioButton.Changed) -> None:
-        self.events_received.append((event.radio_button.id, event.radio_button.value))
+        self.events_received.append(
+            (
+                event.radio_button.id,
+                event.radio_button.value,
+                event.radio_button is event.control,
+            )
+        )
 
 
 async def test_radio_button_initial_state() -> None:
@@ -51,7 +57,7 @@ async def test_radio_button_toggle() -> None:
         ]
         await pilot.pause()
         assert pilot.app.events_received == [
-            ("rb1", True),
-            ("rb2", True),
-            ("rb3", False),
+            ("rb1", True, True),
+            ("rb2", True, True),
+            ("rb3", False, True),
         ]
