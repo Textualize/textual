@@ -38,6 +38,7 @@ CellCacheKey: TypeAlias = (
 LineCacheKey: TypeAlias = "tuple[int, int, int, int, Coordinate, Coordinate, Style, CursorType, bool, int, PseudoClasses]"
 RowCacheKey: TypeAlias = "tuple[RowKey, int, Style, Coordinate, Coordinate, CursorType, bool, bool, int, PseudoClasses]"
 CursorType = Literal["cell", "row", "column", "none"]
+"""The legal types of cursors for [`DataTable.cursor_type`][DataTable.cursor_type]."""
 CellType = TypeVar("CellType")
 
 CELL_X_PADDING = 2
@@ -304,7 +305,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     zebra_stripes = Reactive(False)
     header_height = Reactive(1)
     show_cursor = Reactive(True)
-    cursor_type = Reactive("cell")
+    cursor_type: Reactive[CursorType] = Reactive[CursorType]("cell")
+    """The type of the cursor of the `DataTable`."""
 
     cursor_coordinate: Reactive[Coordinate] = Reactive(
         Coordinate(0, 0), repaint=False, always_update=True
@@ -312,6 +314,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     hover_coordinate: Reactive[Coordinate] = Reactive(
         Coordinate(0, 0), repaint=False, always_update=True
     )
+    """The coordinate of the `DataTable` that is being hovered."""
 
     class CellHighlighted(Message, bubble=True):
         """Posted when the cursor moves to highlight a new cell.
