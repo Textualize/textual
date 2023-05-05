@@ -29,7 +29,7 @@ from rich.control import Control
 from rich.segment import Segment
 from rich.style import Style
 
-from . import errors
+from . import errors, log
 from ._cells import cell_len
 from ._context import visible_screen_stack
 from ._loop import loop_last
@@ -935,6 +935,7 @@ class Compositor:
         """
         screen_region = self.size.region
         update_regions = self._dirty_regions.copy()
+        log(update_regions)
         self._dirty_regions.clear()
         if update_regions:
             # Create a crop region that surrounds all updates.

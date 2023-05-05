@@ -1641,8 +1641,19 @@ class Widget(DOMNode):
             self._dirty_regions.clear()
             self._repaint_regions.clear()
             self._styles_cache.clear()
-            self._dirty_regions.add(self.outer_size.region)
-            self._repaint_regions.add(self.outer_size.region)
+
+            outer_size = self.outer_size
+            if outer_size:
+                self._dirty_regions.add(outer_size.region)
+
+            # self._dirty_regions.add(self.app.size.region)
+            # self._repaint_regions.add(self.app.size.region)
+            # if self.styles.flow == "overlay":
+            #     self._repaint_regions.add(self.app.size.region)
+
+            self._repaint_regions.add(
+                outer_size.region if outer_size else self.app.size.region
+            )
 
     def _exchange_repaint_regions(self) -> Collection[Region]:
         """Get a copy of the regions which need a repaint, and clear internal cache.

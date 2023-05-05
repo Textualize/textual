@@ -227,7 +227,7 @@ class StylesBase(ABC):
     node: DOMNode | None = None
 
     display = StringEnumProperty(
-        VALID_DISPLAY, "block", layout=True, refresh_parent=True
+        VALID_DISPLAY, "block", layout=True, refresh_parent=True, refresh_children=True
     )
     visibility = StringEnumProperty(
         VALID_VISIBILITY, "visible", layout=True, refresh_parent=True

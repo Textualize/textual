@@ -10,6 +10,7 @@ from __future__ import annotations
 from typing import ClassVar, NamedTuple
 
 from rich.console import RenderableType
+from rich.padding import Padding
 from rich.repr import Result
 from rich.rule import Rule
 from rich.style import Style
@@ -146,6 +147,7 @@ class OptionList(ScrollView, can_focus=True):
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
+        "option-list--option",
         "option-list--option-disabled",
         "option-list--option-highlighted",
         "option-list--option-highlighted-disabled",
@@ -474,6 +476,7 @@ class OptionList(ScrollView, can_focus=True):
         # also set up the tracking of the actual options.
         line = 0
         option = 0
+        padding = self.get_component_styles("option-list--option").padding
         for content in self._contents:
             if isinstance(content, Option):
                 # The content is an option, so render out the prompt and
@@ -483,7 +486,9 @@ class OptionList(ScrollView, can_focus=True):
                         Strip(prompt_line).apply_style(Style(meta={"option": option})),
                         option,
                     )
-                    for prompt_line in lines_from(content.prompt, options)
+                    for prompt_line in lines_from(
+                        Padding(content.prompt, padding), options
+                    )
                 ]
                 # Record the span information for the option.
                 add_span(OptionLineSpan(line, len(new_lines)))
