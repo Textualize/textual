@@ -1569,12 +1569,16 @@ class Widget(DOMNode):
         Returns:
             Tuple of layer names.
         """
+        layers: tuple[str, ...] = ("default",)
         for node in self.ancestors_with_self:
             if not isinstance(node, Widget):
                 break
             if node.styles.has_rule("layers"):
-                return node.styles.layers
-        return ("default",)
+                layers = node.styles.layers
+        return layers
+        return layers
+        layers = tuple([_layer for layer in layers for _layer in (layer, f"_{layer}")])
+        return layers
 
     @property
     def link_style(self) -> Style:

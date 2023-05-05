@@ -98,6 +98,7 @@ class Screen(Generic[ScreenResultType], Widget):
         layout: vertical;
         overflow-y: auto;
         background: $surface;
+        layers: default overlay;
     }
     """
 

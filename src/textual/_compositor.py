@@ -512,6 +512,8 @@ class Compositor:
         add_new_widget = widgets.add
         layer_order: int = 0
 
+        no_clip = size.region
+
         def add_widget(
             widget: Widget,
             virtual_region: Region,
@@ -586,12 +588,13 @@ class Compositor:
                     layers_to_index = {
                         layer_name: index for index, layer_name in enumerate(_layers)
                     }
+
                     get_layer_index = layers_to_index.get
 
                     scroll_spacing = arrange_result.scroll_spacing
 
                     # Add all the widgets
-                    for sub_region, margin, sub_widget, z, fixed in reversed(
+                    for sub_region, margin, sub_widget, z, fixed, overlay in reversed(
                         placements
                     ):
                         layer_index = get_layer_index(sub_widget.layer, 0)
@@ -612,9 +615,9 @@ class Compositor:
                             sub_widget,
                             sub_region,
                             widget_region,
-                            widget_order,
+                            ((1, 0, 0),) if overlay else widget_order,
                             layer_order,
-                            sub_clip,
+                            no_clip if overlay else sub_clip,
                             visible,
                         )
 
