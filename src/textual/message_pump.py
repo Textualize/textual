@@ -60,15 +60,15 @@ class _MessagePumpMeta(type):
         namespace = camel_to_snake(name)
         isclass = inspect.isclass
         handlers: dict[
-            type[Message], list[tuple[Callable, str | None]]
+            type[Message], list[tuple[Callable, dict[str, str]]]
         ] = class_dict.get("_decorated_handlers", {})
 
         class_dict["_decorated_handlers"] = handlers
 
         for value in class_dict.values():
             if callable(value) and hasattr(value, "_textual_on"):
-                for message_type, selector in getattr(value, "_textual_on"):
-                    handlers.setdefault(message_type, []).append((value, selector))
+                for message_type, selectors in getattr(value, "_textual_on"):
+                    handlers.setdefault(message_type, []).append((value, selectors))
             if isclass(value) and issubclass(value, Message):
                 if "namespace" not in value.__dict__:
                     value.namespace = namespace
@@ -563,14 +563,25 @@ class MessagePump(metaclass=_MessagePumpMeta):
             decorated_handlers = cls.__dict__.get("_decorated_handlers")
             if decorated_handlers is not None:
                 handlers = decorated_handlers.get(type(message), [])
-                for method, selector in handlers:
-                    if selector is None:
+                _sentinel = object()
+                for method, selectors in handlers:
+                    if not selectors:
                         yield cls, method.__get__(self, cls)
                     else:
-                        selector_sets = parse_selectors(selector)
-                        if message._sender is not None and match(
-                            selector_sets, message.control
-                        ):
+                        print("===")
+                        print(message)
+                        print(selectors)
+                        if not message._sender:
+                            continue
+                        for attribute, selector in selectors.items():
+                            node = getattr(message, attribute, _sentinel)
+                            print(f"Matching {node} against {selector}")
+                            if node is _sentinel:
+                                break
+                            if not match(parse_selectors(selector), node):
+                                break
+                            print("passed")
+                        else:
                             yield cls, method.__get__(self, cls)
 
             # Fall back to the naming convention
