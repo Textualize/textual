@@ -5,7 +5,7 @@ from textual._on import OnDecoratorError
 from textual.app import App, ComposeResult
 from textual.message import Message
 from textual.widget import Widget
-from textual.widgets import Button
+from textual.widgets import Button, TabbedContent, TabPane
 
 
 async def test_on_button_pressed() -> None:
@@ -102,3 +102,63 @@ def test_on_no_control() -> None:
         @on(CustomMessage, "#foo")
         def foo():
             pass
+
+
+async def test_on_arbitrary_attributes() -> None:
+    log: list[str] = []
+
+    class OnArbitraryAttributesApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield TabPane("One", id="one")
+                yield TabPane("Two", id="two")
+                yield TabPane("Three", id="three")
+
+        def on_mount(self) -> None:
+            self.query_one(TabbedContent).add_class("tabs")
+
+        @on(TabbedContent.TabActivated, tab="#one")
+        def one(self) -> None:
+            log.append("one")
+
+        # @on(TabbedContent.TabActivated, ".tabs", tab="#two")
+        # def two(self) -> None:
+        #     log.append("two")
+
+        @on(TabbedContent.TabActivated, tabbed_content=".tabs", tab="#three")
+        def three(self) -> None:
+            log.append("three")
+
+    app = OnArbitraryAttributesApp()
+    async with app.run_test() as pilot:
+        await pilot.press("tab", "right", "right")
+
+    assert log == ["one", "three"]
+
+
+async def test_on_extra_attributes() -> None:
+    """@on shouldn't trigger when there are selectors for non-existing attributes."""
+    log: list[str] = []
+
+    class OnExtraAttributes(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield TabPane("One", id="one")
+
+        @on(TabbedContent.TabActivated, tab="#one", hello="#world")
+        def one_hello_world(self) -> None:
+            log.append("one hello world")
+
+        @on(TabbedContent.TabActivated, hello="#world")
+        def hello_world(self) -> None:
+            log.append("hello world")
+
+        @on(TabbedContent.TabActivated, tab="#one")
+        def one(self) -> None:
+            log.append("control")
+
+    app = OnExtraAttributes()
+    async with app.run_test():
+        pass
+
+    assert log == ["control"]
