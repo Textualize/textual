@@ -1646,11 +1646,6 @@ class Widget(DOMNode):
             if outer_size:
                 self._dirty_regions.add(outer_size.region)
 
-            # self._dirty_regions.add(self.app.size.region)
-            # self._repaint_regions.add(self.app.size.region)
-            # if self.styles.flow == "overlay":
-            #     self._repaint_regions.add(self.app.size.region)
-
             self._repaint_regions.add(
                 outer_size.region if outer_size else self.app.size.region
             )
@@ -2937,6 +2932,8 @@ class Widget(DOMNode):
             True if the message was posted, False if this widget was closed / closing.
         """
         _rich_traceback_omit = True
+        # Catch a common error.
+        # This will error anyway, but at least we can offer a helpful message here.
         if not hasattr(message, "_prevent"):
             raise RuntimeError(
                 f"{type(message)!r} is missing expected attributes; did you forget to call super().__init__() in the constructor?"

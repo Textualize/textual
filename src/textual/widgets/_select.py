@@ -29,7 +29,6 @@ class SelectOverlay(OptionList):
         color: $text;
         width: 100%;
         padding: 0 1;
-
     }
     SelectOverlay > .option-list--option {
         padding: 0 1;
@@ -134,7 +133,6 @@ class Select(Generic[SelectType], Widget, can_focus=True):
     BINDINGS = [("enter", "show_overlay")]
     DEFAULT_CSS = """
     Select {
-
         height: auto;
     }
 
@@ -230,7 +228,7 @@ class Select(Generic[SelectType], Widget, can_focus=True):
                 self.query_one(SelectCurrent).has_value = False
             else:
                 value = self.value
-                for index, (prompt, prompt_value) in enumerate(self._options):
+                for index, (_prompt, prompt_value) in enumerate(self._options):
                     if value == prompt_value:
                         overlay.select(index)
                         break
@@ -253,8 +251,6 @@ class Select(Generic[SelectType], Widget, can_focus=True):
     def update_selection(self, event: SelectOverlay.UpdateSelection) -> None:
         value = self._options[event.option_index][1]
         self.value = value
-
-        # select_current.update(event.option.prompt)
 
         self.show_overlay = False
         self.focus()
