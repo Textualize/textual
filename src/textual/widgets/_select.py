@@ -89,6 +89,7 @@ class SelectCurrent(Horizontal):
         width: 1;
         height: 1;
         padding: 0 0 0 1;
+        color: $text-muted;
     }
 
     """
