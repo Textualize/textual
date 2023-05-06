@@ -37,6 +37,7 @@ BoxSizing = Literal["border-box", "content-box"]
 Overflow = Literal["scroll", "hidden", "auto"]
 EdgeStyle = Tuple[EdgeType, Color]
 TextAlign = Literal["left", "start", "center", "right", "end", "justify"]
+Constrain = Literal["none", "x", "y", "both"]
 Overlay = Literal["none", "screen"]
 
 Specificity3 = Tuple[int, int, int]

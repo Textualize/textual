@@ -37,7 +37,9 @@ class SelectOverlay(OptionList):
     """
 
     class Dismiss(Message):
-        pass
+        def __init__(self, lost_focus: bool = False) -> None:
+            self.lost_focus = lost_focus
+            super().__init__()
 
     class UpdateSelection(Message):
         def __init__(self, option_index: int) -> None:
@@ -54,10 +56,11 @@ class SelectOverlay(OptionList):
 
     def _on_blur(self, _event: events.Blur) -> None:
         """On blur we want to dismiss the overlay."""
-        self.post_message(self.Dismiss())
+        self.post_message(self.Dismiss(lost_focus=True))
 
     def on_option_list_option_selected(self, event: OptionList.OptionSelected) -> None:
         """Inform parent when an option is selected."""
+        event.stop()
         self.post_message(self.UpdateSelection(event.option_index))
 
 
@@ -149,6 +152,7 @@ class Select(Generic[SelectType], Widget, can_focus=True):
         height: auto;
         max-height: 10;
         overlay: screen;
+        constrain: y;
     }
 
     SelectOverlay.-show-overlay {
@@ -234,15 +238,16 @@ class Select(Generic[SelectType], Widget, can_focus=True):
 
         else:
             overlay.remove_class("-show-overlay")
-            self.focus()
 
     @on(SelectCurrent.Toggle)
     def select_current_toggle(self) -> None:
         self.show_overlay = not self.show_overlay
 
     @on(SelectOverlay.Dismiss)
-    def select_overlay_dismiss(self) -> None:
+    def select_overlay_dismiss(self, event: SelectOverlay.Dismiss) -> None:
         self.show_overlay = False
+        if not event.lost_focus:
+            self.focus()
 
     @on(SelectOverlay.UpdateSelection)
     def update_selection(self, event: SelectOverlay.UpdateSelection) -> None:
@@ -252,6 +257,7 @@ class Select(Generic[SelectType], Widget, can_focus=True):
         # select_current.update(event.option.prompt)
 
         self.show_overlay = False
+        self.focus()
 
     def action_show_overlay(self) -> None:
         select_current = self.query_one(SelectCurrent)

@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- Added "overlay" rule
+- Added "constrain" rule
 - Added textual.widgets.Select
 - Added Region.translate_inside
 

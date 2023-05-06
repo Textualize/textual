@@ -39,6 +39,7 @@ from .constants import (
     VALID_ALIGN_VERTICAL,
     VALID_BORDER,
     VALID_BOX_SIZING,
+    VALID_CONSTRAIN,
     VALID_DISPLAY,
     VALID_EDGE,
     VALID_OVERFLOW,
@@ -1012,6 +1013,18 @@ class StylesBuilder:
                 name,
                 tokens[0],
                 string_enum_help_text(name, VALID_OVERLAY, context="css"),
+            )
+        else:
+            self.styles._rules[name] = value  # type: ignore
+
+    def process_constrain(self, name: str, tokens: list[Token]) -> None:
+        try:
+            value = self._process_enum(name, tokens, VALID_CONSTRAIN)
+        except StyleValueError:
+            self.error(
+                name,
+                tokens[0],
+                string_enum_help_text(name, VALID_CONSTRAIN, context="css"),
             )
         else:
             self.styles._rules[name] = value  # type: ignore

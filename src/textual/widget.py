@@ -2936,6 +2936,11 @@ class Widget(DOMNode):
         Returns:
             True if the message was posted, False if this widget was closed / closing.
         """
+        _rich_traceback_omit = True
+        if not hasattr(message, "_prevent"):
+            raise RuntimeError(
+                f"{type(message)!r} is missing expected attributes; did you forget to call super().__init__() in the constructor?"
+            )
 
         if constants.DEBUG and not self.is_running and not message.no_dispatch:
             try:

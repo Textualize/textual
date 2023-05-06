@@ -39,6 +39,7 @@ from .constants import (
     VALID_ALIGN_HORIZONTAL,
     VALID_ALIGN_VERTICAL,
     VALID_BOX_SIZING,
+    VALID_CONSTRAIN,
     VALID_DISPLAY,
     VALID_OVERFLOW,
     VALID_OVERLAY,
@@ -53,6 +54,7 @@ from .types import (
     AlignHorizontal,
     AlignVertical,
     BoxSizing,
+    Constrain,
     Display,
     Edge,
     Overflow,
@@ -180,6 +182,7 @@ class RulesMap(TypedDict, total=False):
     border_subtitle_style: Style
 
     overlay: Overlay
+    constrain: Constrain
 
 
 RULE_NAMES = list(RulesMap.__annotations__.keys())
@@ -348,6 +351,7 @@ class StylesBase(ABC):
     overlay = StringEnumProperty(
         VALID_OVERLAY, "none", layout=True, refresh_parent=True
     )
+    constrain = StringEnumProperty(VALID_CONSTRAIN, "none")
 
     def __textual_animation__(
         self,
@@ -1034,6 +1038,8 @@ class Styles(StylesBase):
             append_declaration("subtitle-text-style", str(self.border_subtitle_style))
         if "overlay" in rules:
             append_declaration("overlay", str(self.overlay))
+        if "constrain" in rules:
+            append_declaration("constrain", str(self.constrain))
         lines.sort()
         return lines
 
