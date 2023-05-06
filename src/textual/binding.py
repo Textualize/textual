@@ -18,7 +18,7 @@ from .keys import _character_to_key
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
 
-BindingType: TypeAlias = "Binding | tuple[str, str, str]"
+BindingType: TypeAlias = "Binding | tuple[str, str] | tuple[str, str, str]"
 
 
 class BindingError(Exception):
@@ -41,7 +41,7 @@ class Binding:
     """Key to bind. This can also be a comma-separated list of keys to map multiple keys to a single action."""
     action: str
     """Action to bind to."""
-    description: str
+    description: str = ""
     """Description of action."""
     show: bool = True
     """Show the action in Footer, or False to hide."""
@@ -74,7 +74,7 @@ class _Bindings:
             for binding in bindings:
                 # If it's a tuple of length 3, convert into a Binding first
                 if isinstance(binding, tuple):
-                    if len(binding) != 3:
+                    if len(binding) not in (2, 3):
                         raise BindingError(
                             f"BINDINGS must contain a tuple of three strings, not {binding!r}"
                         )
@@ -95,7 +95,7 @@ class _Bindings:
                         key=key,
                         action=binding.action,
                         description=binding.description,
-                        show=binding.show,
+                        show=bool(binding.description and binding.show),
                         key_display=binding.key_display,
                         priority=binding.priority,
                     )
@@ -165,7 +165,7 @@ class _Bindings:
                 key,
                 action,
                 description,
-                show=show,
+                show=bool(description and show),
                 key_display=key_display,
                 priority=priority,
             )
