@@ -130,7 +130,7 @@ class SelectCurrent(Horizontal):
     def _watch_has_value(self, has_value: bool) -> None:
         self.set_class(has_value, "-has-value")
 
-    def _on_click(self) -> None:
+    async def _on_click(self) -> None:
         self.post_message(self.Toggle())
 
 
@@ -220,6 +220,7 @@ class Select(Generic[SelectType], Widget, can_focus=True):
 
     @property
     def value(self) -> SelectType | None:
+        """Current value of the Select, or None for no selection."""
         return self._value
 
     @value.setter
