@@ -40,8 +40,8 @@ from .constants import (
     VALID_ALIGN_VERTICAL,
     VALID_BOX_SIZING,
     VALID_DISPLAY,
-    VALID_FLOW,
     VALID_OVERFLOW,
+    VALID_OVERLAY,
     VALID_SCROLLBAR_GUTTER,
     VALID_TEXT_ALIGN,
     VALID_VISIBILITY,
@@ -55,8 +55,8 @@ from .types import (
     BoxSizing,
     Display,
     Edge,
-    Flow,
     Overflow,
+    Overlay,
     ScrollbarGutter,
     Specificity3,
     Specificity6,
@@ -179,7 +179,7 @@ class RulesMap(TypedDict, total=False):
     border_subtitle_background: Color
     border_subtitle_style: Style
 
-    flow: Flow
+    overlay: Overlay
 
 
 RULE_NAMES = list(RulesMap.__annotations__.keys())
@@ -345,7 +345,9 @@ class StylesBase(ABC):
     border_subtitle_background = ColorProperty(Color(0, 0, 0, 0))
     border_subtitle_style = StyleFlagsProperty()
 
-    flow = StringEnumProperty(VALID_FLOW, "inline", layout=True, refresh_parent=True)
+    overlay = StringEnumProperty(
+        VALID_OVERLAY, "none", layout=True, refresh_parent=True
+    )
 
     def __textual_animation__(
         self,
@@ -1030,8 +1032,8 @@ class Styles(StylesBase):
             )
         if "border_subtitle_text_style" in rules:
             append_declaration("subtitle-text-style", str(self.border_subtitle_style))
-        if "flow" in rules:
-            append_declaration("flow", str(self.flow))
+        if "overlay" in rules:
+            append_declaration("overlay", str(self.overlay))
         lines.sort()
         return lines
 

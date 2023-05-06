@@ -66,7 +66,7 @@ class VerticalLayout(Layout):
         _WidgetPlacement = WidgetPlacement
 
         for widget, box_model, margin in zip(children, box_models, margins):
-            overlay = widget.styles.flow == "overlay"
+            overlay = widget.styles.overlay == "screen"
             content_width, content_height, box_margin = box_model
             next_y = y + content_height
 

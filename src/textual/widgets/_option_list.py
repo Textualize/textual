@@ -826,8 +826,13 @@ class OptionList(ScrollView, can_focus=True):
         # It's a normal option line.
         return strip.apply_style(self.rich_style)
 
-    def scroll_to_highlight(self) -> None:
-        """Ensure that the highlighted option is in view."""
+    def scroll_to_highlight(self, top: bool = False) -> None:
+        """Ensure that the highlighted option is in view.
+
+        Args:
+            top: Scroll highlight to top of the list.
+
+        """
         highlighted = self.highlighted
         if highlighted is None:
             return
@@ -844,6 +849,7 @@ class OptionList(ScrollView, can_focus=True):
             ),
             force=True,
             animate=False,
+            top=top,
         )
 
     def validate_highlighted(self, highlighted: int | None) -> int | None:

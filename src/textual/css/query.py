@@ -153,9 +153,8 @@ class DOMQuery(Generic[QueryType]):
         return self.nodes[index]
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield self.node
         if self._filters:
-            yield "filter", " AND ".join(
+            yield "query", " AND ".join(
                 ",".join(selector.css for selector in selectors)
                 for selectors in self._filters
             )
@@ -214,6 +213,7 @@ class DOMQuery(Generic[QueryType]):
         Returns:
             The matching Widget.
         """
+        _rich_traceback_omit = True
         if self.nodes:
             first = self.nodes[0]
             if expect_type is not None:
@@ -250,6 +250,7 @@ class DOMQuery(Generic[QueryType]):
         Returns:
             The matching Widget.
         """
+        _rich_traceback_omit = True
         # Call on first to get the first item. Here we'll use all of the
         # testing and checking it provides.
         the_one = self.first(expect_type) if expect_type is not None else self.first()

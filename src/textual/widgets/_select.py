@@ -1,28 +1,35 @@
 from __future__ import annotations
 
-from rich.text import Text, TextType
+from typing import TYPE_CHECKING, Generic, TypeVar
 
-from .. import on
+from rich.console import RenderableType
+
+from .. import events, on
 from ..app import ComposeResult
-from ..binding import Binding
 from ..containers import Horizontal, Vertical
 from ..message import Message
 from ..reactive import var
 from ..widget import Widget
 from ..widgets import Static
-from ._option_list import NewOptionListContent, OptionList
+from ._option_list import NewOptionListContent, Option, OptionList
+
+if TYPE_CHECKING:
+    from typing_extensions import TypeAlias
 
 
 class SelectOverlay(OptionList):
+    """"""
+
     BINDINGS = [("escape", "dismiss")]
 
     DEFAULT_CSS = """
     SelectOverlay {
         border: tall $background;
-        background: $boost;
+        background: $panel;
         color: $text;
         width: 100%;
-        padding: 0 0;
+        padding: 0 1;
+
     }
     SelectOverlay > .option-list--option {
         padding: 0 1;
@@ -32,14 +39,29 @@ class SelectOverlay(OptionList):
     class Dismiss(Message):
         pass
 
+    class UpdateSelection(Message):
+        def __init__(self, option_index: int) -> None:
+            self.option_index = option_index
+            super().__init__()
+
+    def select(self, index: int | None) -> None:
+        self.highlighted = index
+        self.scroll_to_highlight(top=True)
+
     def action_dismiss(self) -> None:
+        """Dismiss the overlay."""
         self.post_message(self.Dismiss())
 
-    def on_blur(self) -> None:
+    def _on_blur(self, _event: events.Blur) -> None:
+        """On blur we want to dismiss the overlay."""
         self.post_message(self.Dismiss())
 
+    def on_option_list_option_selected(self, event: OptionList.OptionSelected) -> None:
+        """Inform parent when an option is selected."""
+        self.post_message(self.UpdateSelection(event.option_index))
 
-class SelectCurrent(Static):
+
+class SelectCurrent(Horizontal):
     DEFAULT_CSS = """
 
     SelectCurrent {
@@ -47,14 +69,15 @@ class SelectCurrent(Static):
         background: $boost;
         color: $text;
         width: 100%;
-        padding: 0 1;
+        height: auto;
+        padding: 0 2;
     }
 
 
     SelectCurrent Static#label {
         width: 1fr;
         height: 1;
-        color: $text-muted;
+        color: $text-disabled;
     }
     SelectCurrent.-has-value Static#label {
         color: $text;
@@ -65,7 +88,7 @@ class SelectCurrent(Static):
 
         width: 1;
         height: 1;
-        padding: 0 1;
+        padding: 0 0 0 1;
     }
 
     """
@@ -75,14 +98,21 @@ class SelectCurrent(Static):
     class Toggle(Message):
         """Request toggle overlay."""
 
-    def __init__(self, label: Text) -> None:
+    def __init__(self, placeholder: str) -> None:
         super().__init__()
+        self.placeholder = placeholder
+        self.label: RenderableType | None = None
+
+    def update(self, label: RenderableType | None) -> None:
         self.label = label
+        self.has_value = label is not None
+        self.query_one("#label", Static).update(
+            self.placeholder if label is None else label
+        )
 
     def compose(self) -> ComposeResult:
-        with Horizontal():
-            yield Static(self.label, id="label")
-            yield Static(Text("▼"), id="down-arrow")
+        yield Static(self.placeholder, id="label")
+        yield Static("▼", id="down-arrow")
 
     def watch_has_value(self, has_value: bool) -> None:
         self.set_class(has_value, "-has-value")
@@ -91,7 +121,12 @@ class SelectCurrent(Static):
         self.post_message(self.Toggle())
 
 
-class Select(Widget, can_focus=True):
+SelectOption: TypeAlias = tuple[str, object]
+
+SelectType = TypeVar("SelectType")
+
+
+class Select(Generic[SelectType], Widget, can_focus=True):
     BINDINGS = [("enter", "show_overlay")]
     DEFAULT_CSS = """
     Select {
@@ -110,8 +145,9 @@ class Select(Widget, can_focus=True):
     SelectOverlay {
         width: 1fr;
         display: none;
-        height: 10;
-        flow: overlay;
+        height: auto;
+        max-height: 10;
+        overlay: screen;
     }
 
     SelectOverlay.-show-overlay {
@@ -124,29 +160,77 @@ class Select(Widget, can_focus=True):
 
     def __init__(
         self,
-        *content: NewOptionListContent,
+        *options: str | SelectOption,
         prompt: str = "Select",
+        allow_blank: bool = True,
+        value: SelectType | None = None,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
     ):
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
-        self.content = content
+        self._options = [
+            (option, option) if isinstance(option, str) else option
+            for option in options
+        ]
+        if allow_blank:
+            self._options.insert(0, ("", None))
+
         self.prompt = prompt
+        self._select_options: list[Option] = [
+            Option(prompt) for prompt, _ in self._options
+        ]
+        self._value = value
+
+    @property
+    def option_list(self) -> OptionList:
+        """The option list."""
+        option_list = self.query_one(SelectOverlay)
+        return option_list
+
+    @property
+    def value(self) -> SelectType | None:
+        return self._value
+
+    @value.setter
+    def value(self, value: SelectType | None) -> None:
+        self._value = value
+        if value is None:
+            self.query_one(SelectCurrent).update(None)
+        else:
+            for index, (prompt, _value) in enumerate(self._options):
+                if _value == value:
+                    select_overlay = self.query_one(SelectOverlay)
+                    select_overlay.highlighted = index
+                    self.query_one(SelectCurrent).update(prompt)
+                    break
+            else:
+                self.query_one(SelectCurrent).update(None)
 
     def compose(self) -> ComposeResult:
         with Vertical():
-            yield SelectOverlay(*self.content)
-            yield SelectCurrent(Text("Click Me"))
+            yield SelectOverlay(*self._select_options)
+            yield SelectCurrent(self.prompt)
 
-    async def _watch_prompt(self, prompt: str | None) -> None:
-        self.query_one(SelectCurrent).update("Select" if prompt is None else prompt)
+    def on_mount(self) -> None:
+        self.value = self._value
 
     def _watch_show_overlay(self, show_overlay: bool) -> None:
         overlay = self.query_one(SelectOverlay)
         if show_overlay:
             overlay.add_class("-show-overlay").focus()
+            if self.value is None:
+                overlay.select(None)
+                self.query_one(SelectCurrent).has_value = False
+            else:
+                value = self.value
+                for index, (prompt, prompt_value) in enumerate(self._options):
+                    if value == prompt_value:
+                        overlay.select(index)
+                        break
+                self.query_one(SelectCurrent).has_value = True
+
         else:
             overlay.remove_class("-show-overlay")
             self.focus()
@@ -159,12 +243,24 @@ class Select(Widget, can_focus=True):
     def select_overlay_dismiss(self) -> None:
         self.show_overlay = False
 
+    @on(SelectOverlay.UpdateSelection)
+    def update_selection(self, event: SelectOverlay.UpdateSelection) -> None:
+        value = self._options[event.option_index][1]
+        self.value = value
+
+        # select_current.update(event.option.prompt)
+
+        self.show_overlay = False
+
     def action_show_overlay(self) -> None:
+        select_current = self.query_one(SelectCurrent)
+        select_current.has_value = True
         self.show_overlay = True
 
 
 if __name__ == "__main__":
     from textual.app import App
+    from textual.widgets import Input
 
     class SelectApp(App):
         CSS = """
@@ -175,11 +271,18 @@ if __name__ == "__main__":
         Select {
             width: 30;
         }
+        Input {
+            width: 30;
+        }
 
         """
 
         def compose(self) -> ComposeResult:
-            yield Select("Hello", "World")
+            yield Input(placeholder="Unrelated")
+            yield Select(
+                *("Paul", "Jessica", "Leto", "Alia", "Chani"), allow_blank=False
+            )
+            yield Input(placeholder="Second unrelated")
 
     app = SelectApp()
     app.run()

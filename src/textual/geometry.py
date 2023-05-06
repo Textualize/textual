@@ -867,6 +867,40 @@ class Region(NamedTuple):
             Region(x, y + cut, width, height - cut),
         )
 
+    def translate_inside(self, container: Region) -> Region:
+        """Translate this region, so it fits within a container.
+
+        This will ensure that there is as little overlap as possible.
+        The top left of the returned region is guaranteed to be within the container.
+
+        ```
+        ┌──────────────────┐         ┌──────────────────┐
+        │    container     │         │    container     │
+        │                  │         │    ┌─────────────┤
+        │                  │   ──▶   │    │    return   │
+        │       ┌──────────┴──┐      │    │             │
+        │       │    self     │      │    │             │
+        └───────┤             │      └────┴─────────────┘
+                │             │
+                └─────────────┘
+        ```
+
+
+        Args:
+            container: A container region.
+
+        Returns:
+            A new region with same dimensions that fits with inside container.
+        """
+        x1, y1, width1, height1 = container
+        x2, y2, width2, height2 = self
+        return Region(
+            max(min(x2, x1 + width1 - width2), x1),
+            max(min(y2, y1 + height1 - height2), y1),
+            width2,
+            height2,
+        )
+
 
 class Spacing(NamedTuple):
     """The spacing around a renderable, such as padding and border

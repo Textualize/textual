@@ -69,6 +69,6 @@ VALID_PSEUDO_CLASSES: Final = {
     "focus",
     "hover",
 }
-VALID_FLOW: Final = {"inline", "overlay"}
+VALID_OVERLAY: Final = {"none", "screen"}
 
 NULL_SPACING: Final = Spacing.all(0)

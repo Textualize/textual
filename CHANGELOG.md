@@ -20,6 +20,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `always_update` as an optional argument for `reactive.var`
 - Made Binding description default to empty string, which is equivalent to show=False
 
+### Added
+
+- Added textual.widgets.Select
+- Added Region.translate_inside
+
 ## [0.23.0] - 2023-05-03
 
 ### Fixed

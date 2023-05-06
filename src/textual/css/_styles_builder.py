@@ -41,8 +41,8 @@ from .constants import (
     VALID_BOX_SIZING,
     VALID_DISPLAY,
     VALID_EDGE,
-    VALID_FLOW,
     VALID_OVERFLOW,
+    VALID_OVERLAY,
     VALID_SCROLLBAR_GUTTER,
     VALID_STYLE_FLAGS,
     VALID_TEXT_ALIGN,
@@ -1004,14 +1004,14 @@ class StylesBuilder:
         else:
             self.error(name, tokens[0], "expected two integers here")
 
-    def process_flow(self, name: str, tokens: list[Token]) -> None:
+    def process_overlay(self, name: str, tokens: list[Token]) -> None:
         try:
-            value = self._process_enum(name, tokens, VALID_FLOW)
+            value = self._process_enum(name, tokens, VALID_OVERLAY)
         except StyleValueError:
             self.error(
                 name,
                 tokens[0],
-                string_enum_help_text(name, VALID_FLOW, context="css"),
+                string_enum_help_text(name, VALID_OVERLAY, context="css"),
             )
         else:
             self.styles._rules[name] = value  # type: ignore

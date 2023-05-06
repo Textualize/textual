@@ -447,3 +447,9 @@ def test_split_horizontal_negative():
         Region(10, 5, 22, 14),
         Region(10, 19, 22, 1),
     )
+
+
+def test_translate_inside():
+    assert Region(10, 20, 10, 20).translate_inside(Region(0, 0, 30, 25)) == Region(
+        10, 5, 10, 20
+    )

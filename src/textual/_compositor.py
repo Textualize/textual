@@ -611,6 +611,11 @@ class Compositor:
 
                         widget_order = order + ((layer_index, z, layer_order),)
 
+                        if overlay:
+                            # Ensure that region isn't clipped
+                            # TODO: This functionality should be optional
+                            widget_region = widget_region.translate_inside(no_clip)
+
                         add_widget(
                             sub_widget,
                             sub_region,
