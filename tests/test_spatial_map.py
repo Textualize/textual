@@ -44,9 +44,9 @@ def test_get_values_in_region() -> None:
 
     spatial_map.insert(
         [
-            (Region(10, 5, 5, 5), False, "foo"),
-            (Region(5, 20, 5, 5), False, "bar"),
-            (Region(0, 0, 40, 1), True, "title"),
+            (Region(10, 5, 5, 5), False, False, "foo"),
+            (Region(5, 20, 5, 5), False, False, "bar"),
+            (Region(0, 0, 40, 1), True, False, "title"),
         ]
     )
 
