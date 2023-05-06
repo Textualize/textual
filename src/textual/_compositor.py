@@ -29,7 +29,7 @@ from rich.control import Control
 from rich.segment import Segment
 from rich.style import Style
 
-from . import errors, log
+from . import errors
 from ._cells import cell_len
 from ._context import visible_screen_stack
 from ._loop import loop_last

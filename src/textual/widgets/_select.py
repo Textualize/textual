@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generic, TypeVar
+from typing import TYPE_CHECKING, Generic, TypeVar, cast
 
 from rich.console import RenderableType
+from rich.text import Text
 
 from .. import events, on
 from ..app import ComposeResult
@@ -11,14 +12,14 @@ from ..message import Message
 from ..reactive import var
 from ..widget import Widget
 from ..widgets import Static
-from ._option_list import NewOptionListContent, Option, OptionList
+from ._option_list import Option, OptionList
 
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
 
 
 class SelectOverlay(OptionList):
-    """"""
+    """The 'pop-up' overlay for the Select control."""
 
     BINDINGS = [("escape", "dismiss")]
 
@@ -64,8 +65,9 @@ class SelectOverlay(OptionList):
 
 
 class SelectCurrent(Horizontal):
-    DEFAULT_CSS = """
+    """Displays the currently selected option."""
 
+    DEFAULT_CSS = """
     SelectCurrent {
         border: tall $background;
         background: $boost;
@@ -74,17 +76,15 @@ class SelectCurrent(Horizontal):
         height: auto;
         padding: 0 2;
     }
-
-
     SelectCurrent Static#label {
         width: 1fr;
-        height: 1;
+        height: auto;
         color: $text-disabled;
+        background: transparent;
     }
     SelectCurrent.-has-value Static#label {
         color: $text;
     }
-
     SelectCurrent Static#down-arrow {
         box-sizing: content-box;
 
@@ -92,8 +92,8 @@ class SelectCurrent(Horizontal):
         height: 1;
         padding: 0 0 0 1;
         color: $text-muted;
+        background: transparent;
     }
-
     """
 
     has_value = var(False)
@@ -102,11 +102,21 @@ class SelectCurrent(Horizontal):
         """Request toggle overlay."""
 
     def __init__(self, placeholder: str) -> None:
+        """Initialize the SelectCurrent.
+
+        Args:
+            placeholder: A string to display when there is nothing selected.
+        """
         super().__init__()
         self.placeholder = placeholder
         self.label: RenderableType | None = None
 
     def update(self, label: RenderableType | None) -> None:
+        """Update the content in the widget.
+
+        Args:
+            label: A renderable to display, or `None` for the placeholder.
+        """
         self.label = label
         self.has_value = label is not None
         self.query_one("#label", Static).update(
@@ -117,10 +127,10 @@ class SelectCurrent(Horizontal):
         yield Static(self.placeholder, id="label")
         yield Static("▼", id="down-arrow")
 
-    def watch_has_value(self, has_value: bool) -> None:
+    def _watch_has_value(self, has_value: bool) -> None:
         self.set_class(has_value, "-has-value")
 
-    def on_click(self) -> None:
+    def _on_click(self) -> None:
         self.post_message(self.Toggle())
 
 
@@ -172,6 +182,17 @@ class Select(Generic[SelectType], Widget, can_focus=True):
         classes: str | None = None,
         disabled: bool = False,
     ):
+        """Initialize the Select control
+
+        Args:
+            prompt: Text to show in the control when no option is select.
+            allow_blank: Allow the selection of a blank option.
+            value: Initial value.
+            name: The name of the select control.
+            id: The ID of the control the DOM.
+            classes: The CSS classes of the control.
+            disabled: Whether the control is disabled or not.
+        """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._options = [
             (option, option) if isinstance(option, str) else option
@@ -182,7 +203,12 @@ class Select(Generic[SelectType], Widget, can_focus=True):
 
         self.prompt = prompt
         self._select_options: list[Option] = [
-            Option(prompt) for prompt, _ in self._options
+            (
+                Option(Text(self.prompt, style="dim"))
+                if value is None
+                else Option(prompt)
+            )
+            for prompt, value in self._options
         ]
         self._value = value
 
@@ -249,9 +275,8 @@ class Select(Generic[SelectType], Widget, can_focus=True):
 
     @on(SelectOverlay.UpdateSelection)
     def update_selection(self, event: SelectOverlay.UpdateSelection) -> None:
-        value = self._options[event.option_index][1]
+        value = cast("SelectType", self._options[event.option_index][1])
         self.value = value
-
         self.show_overlay = False
         self.focus()
 
@@ -264,6 +289,14 @@ class Select(Generic[SelectType], Widget, can_focus=True):
 if __name__ == "__main__":
     from textual.app import App
     from textual.widgets import Input
+
+    LINES = """I must not fear.
+Fear is the mind-killer.
+Fear is the little-death that brings total obliteration.
+I will face my fear.
+I will permit it to pass over me and through me.
+And when it has gone past, I will turn the inner eye to see its path.
+Where the fear has gone there will be nothing. Only I will remain.""".splitlines()
 
     class SelectApp(App):
         CSS = """
@@ -283,7 +316,14 @@ if __name__ == "__main__":
         def compose(self) -> ComposeResult:
             yield Input(placeholder="Unrelated")
             yield Select(
-                *("Paul", "Jessica", "Leto", "Alia", "Chani"), allow_blank=False
+                *(
+                    *LINES,
+                    "Paul",
+                    "Leto",
+                    "Alia",
+                    "Chani",
+                ),
+                allow_blank=True,
             )
             yield Input(placeholder="Second unrelated")
 

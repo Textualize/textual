@@ -1576,9 +1576,6 @@ class Widget(DOMNode):
             if node.styles.has_rule("layers"):
                 layers = node.styles.layers
         return layers
-        return layers
-        layers = tuple([_layer for layer in layers for _layer in (layer, f"_{layer}")])
-        return layers
 
     @property
     def link_style(self) -> Style:
