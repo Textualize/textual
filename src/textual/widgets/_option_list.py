@@ -487,7 +487,8 @@ class OptionList(ScrollView, can_focus=True):
                         option,
                     )
                     for prompt_line in lines_from(
-                        Padding(content.prompt, padding), options
+                        Padding(content.prompt, padding) if padding else content.prompt,
+                        options,
                     )
                 ]
                 # Record the span information for the option.
