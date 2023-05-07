@@ -223,7 +223,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     """True to show the overlay, otherwise False."""
     prompt: var[str] = var[str]("Select")
     """The prompt to show when no value is selected."""
-    value: var[SelectType | str | None] = var[SelectType | str | None](None)
+    value: var[SelectType | None] = var[SelectType | None](None)
     """The value of the select."""
 
     class Changed(Message, bubble=True):
@@ -242,7 +242,8 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
 
     def __init__(
         self,
-        *options: str | tuple[str, SelectType],
+        options: Iterable[tuple[str, SelectType]],
+        *,
         prompt: str = "Select",
         allow_blank: bool = True,
         value: SelectType | None = None,
@@ -266,18 +267,15 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         self._allow_blank = allow_blank
         self.prompt = prompt
         self._initial_options = list(options)
-        self._value: str | SelectType | None = value
+        self._value: SelectType | None = value
 
-    def set_options(self, options: Iterable[str | tuple[str, SelectType]]) -> None:
+    def set_options(self, options: Iterable[tuple[str, SelectType]]) -> None:
         """Set the options for the Select.
 
         Args:
             options: A sequence of strings or tuple of (STRING, VALUE).
         """
-        self._options: list[tuple[str, str] | tuple[str, SelectType | None]] = [
-            (option, option) if isinstance(option, str) else option
-            for option in options
-        ]
+        self._options: list[tuple[str, SelectType | None]] = list(options)
 
         if self._allow_blank:
             self._options.insert(0, ("", None))
@@ -296,7 +294,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         for option in self._select_options:
             option_list.add_option(option)
 
-    def _watch_value(self, value: SelectType | str | None) -> None:
+    def _watch_value(self, value: SelectType | None) -> None:
         self._value = value
         if value is None:
             self.query_one(SelectCurrent).update(None)
@@ -372,48 +370,3 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         select_current = self.query_one(SelectCurrent)
         select_current.has_value = True
         self.expanded = True
-
-
-if __name__ == "__main__":
-    from textual.app import App
-    from textual.widgets import Input
-
-    LINES = """I must not fear.
-Fear is the mind-killer.
-Fear is the little-death that brings total obliteration.
-I will face my fear.
-I will permit it to pass over me and through me.
-And when it has gone past, I will turn the inner eye to see its path.
-Where the fear has gone there will be nothing. Only I will remain.""".splitlines()
-
-    class SelectApp(App):
-        CSS = """
-        Screen {
-            align: center middle;
-        }
-
-        Select {
-            width: 30;
-        }
-        Input {
-            width: 30;
-        }
-
-        """
-
-        def compose(self) -> ComposeResult:
-            yield Input(placeholder="Unrelated")
-            yield Select(
-                *(
-                    *LINES,
-                    "Paul",
-                    "Leto",
-                    "Alia",
-                    "Chani",
-                ),
-                allow_blank=True,
-            )
-            yield Input(placeholder="Second unrelated")
-
-    app = SelectApp()
-    app.run()

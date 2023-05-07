@@ -188,6 +188,16 @@ A collection of radio buttons, that enforces uniqueness.
 ```{.textual path="docs/examples/widgets/radio_set.py"}
 ```
 
+## Select
+
+Select from a number of possible options.
+
+[Select reference](./widgets/select.md){ .md-button .md-button--primary }
+
+```{.textual path="docs/examples/widgets/select_widget.py" press="tab,enter,down,down"}
+```
+
+
 ## Static
 
 Displays simple static content. Typically used as a base class.
