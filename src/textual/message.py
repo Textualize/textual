@@ -38,6 +38,9 @@ class Message:
     namespace: ClassVar[str] = ""  # Namespace to disambiguate messages
 
     def __init__(self) -> None:
+        self.__post_init__()
+
+    def __post_init__(self) -> None:
         self._sender: MessageTarget | None = active_message_pump.get(None)
         self.time: float = _time.get_time()
         self._forwarded = False
@@ -71,6 +74,7 @@ class Message:
 
     @property
     def is_forwarded(self) -> bool:
+        """Has the message been forwarded?"""
         return self._forwarded
 
     @property

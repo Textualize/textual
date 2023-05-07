@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Generic, TypeVar, cast
 
 from rich.console import RenderableType
@@ -10,7 +11,6 @@ from ..app import ComposeResult
 from ..containers import Horizontal, Vertical
 from ..message import Message
 from ..reactive import var
-from ..widget import Widget
 from ..widgets import Static
 from ._option_list import Option, OptionList
 
@@ -36,30 +36,19 @@ class SelectOverlay(OptionList):
     }
     """
 
+    @dataclass
     class Dismiss(Message):
         """Inform ancestor the overlay should be dismissed."""
 
-        def __init__(self, lost_focus: bool = False) -> None:
-            """Initialize the message.
+        lost_focus: bool = False
+        """True if the overlay lost focus."""
 
-            Args:
-                lost_focus: True if the overlay lost focus.
-            """
-            self.lost_focus = lost_focus
-            super().__init__()
-
+    @dataclass
     class UpdateSelection(Message):
         """Inform ancestor the selection was changed."""
 
-        def __init__(self, option_index: int) -> None:
-            """Initialize the  message.
-
-            Args:
-                option_index: The index of the new selection.
-
-            """
-            self.option_index = option_index
-            super().__init__()
+        option_index: int
+        """The index of the new selection."""
 
     def select(self, index: int | None) -> None:
         """Move selection.
@@ -152,7 +141,7 @@ class SelectCurrent(Horizontal):
         """Toggle the class."""
         self.set_class(has_value, "-has-value")
 
-    async def _on_click(self) -> None:
+    async def _on_click(self, event: events.Click) -> None:
         """Inform ancestor we want to toggle."""
         self.post_message(self.Toggle())
 
@@ -164,7 +153,20 @@ SelectOption: TypeAlias = tuple[str, SelectType]
 
 
 class Select(Generic[SelectType], Vertical, can_focus=True):
+    """Widget to select from a list of possible options.
+
+    A Select displays the current selection.
+    When activated with ++enter++ the widget displays an overlay with a list of all possible options.
+
+    """
+
     BINDINGS = [("enter", "show_overlay")]
+    """
+    | Key(s) | Description |
+    | :- | :- |
+    | enter | Activate the overlay |
+    """
+
     DEFAULT_CSS = """
     Select {
         height: auto;
@@ -196,6 +198,18 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     """True to show the overlay, otherwise False."""
     prompt: var[str] = var[str]("Select")
     """The prompt to show when no value is selected."""
+
+    class Changed(Message, bubble=True):
+        """Posted when the select value was changed.
+
+        This message can be handled using a `on_select_changed` method.
+
+        """
+
+        def __init__(self, value: SelectType | str | None) -> None:
+            super().__init__()
+            self.value = value
+            """The value of the Select when it changed."""
 
     def __init__(
         self,
@@ -269,7 +283,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         yield SelectOverlay(*self._select_options)
         yield SelectCurrent(self.prompt)
 
-    def _on_mount(self) -> None:
+    def _on_mount(self, _event: events.Mount) -> None:
         """Set initial value."""
         self.value = self._value
 
@@ -293,13 +307,15 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             overlay.remove_class("-show-overlay")
 
     @on(SelectCurrent.Toggle)
-    def _select_current_toggle(self) -> None:
+    def _select_current_toggle(self, event: SelectCurrent.Toggle) -> None:
         """Show the overlay when toggled."""
+        event.stop()
         self._show_overlay = not self._show_overlay
 
     @on(SelectOverlay.Dismiss)
     def _select_overlay_dismiss(self, event: SelectOverlay.Dismiss) -> None:
         """Dismiss the overlay."""
+        event.stop()
         self._show_overlay = False
         if not event.lost_focus:
             """If the overlay didn't lose focus, we want to re-focus the select."""
@@ -308,10 +324,12 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     @on(SelectOverlay.UpdateSelection)
     def _update_selection(self, event: SelectOverlay.UpdateSelection) -> None:
         """Update the current selection."""
+        event.stop()
         value = self._options[event.option_index][1]
         self.value = value
         self._show_overlay = False
         self.focus()
+        self.post_message(self.Changed(value))
 
     def action_show_overlay(self) -> None:
         """Show the overlay."""
