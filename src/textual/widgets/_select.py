@@ -273,7 +273,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         """Set the options for the Select.
 
         Args:
-            options: A sequence of strings or tuple of (STRING, VALUE).
+            options: An iterable of tuples containing (STRING, VALUE).
         """
         self._options: list[tuple[str, SelectType | None]] = list(options)
 
@@ -295,6 +295,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             option_list.add_option(option)
 
     def _watch_value(self, value: SelectType | None) -> None:
+        """Update the current value when it changes."""
         self._value = value
         if value is None:
             self.query_one(SelectCurrent).update(None)
@@ -314,7 +315,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         yield SelectOverlay()
 
     def _on_mount(self, _event: events.Mount) -> None:
-        """Set initial value."""
+        """Set initial values."""
         self.set_options(self._initial_options)
         self.value = self._value
 
