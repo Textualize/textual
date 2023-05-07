@@ -76,11 +76,13 @@ class Reactive(Generic[ReactiveType]):
     def var(
         cls,
         default: ReactiveType | Callable[[], ReactiveType],
+        always_update: bool = False,
     ) -> Reactive:
         """A reactive variable that doesn't update or layout.
 
         Args:
             default: A default value or callable that returns a default.
+            always_update: Call watchers even when the new value equals the old value.
 
         Returns:
             A Reactive descriptor.
@@ -326,18 +328,21 @@ class var(Reactive[ReactiveType]):
     Args:
         default: A default value or callable that returns a default.
         init: Call watchers on initialize (post mount).
+        always_update: Call watchers even when the new value equals the old value.
     """
 
     def __init__(
         self,
         default: ReactiveType | Callable[[], ReactiveType],
         init: bool = True,
+        always_update: bool = False,
     ) -> None:
         super().__init__(
             default,
             layout=False,
             repaint=False,
             init=init,
+            always_update=always_update,
         )
 
 

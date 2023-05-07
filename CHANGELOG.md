@@ -7,9 +7,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Fixed
+
+- Fixed crash when creating a `DirectoryTree` starting anywhere other than `.`
+- Fixed line drawing in `Tree` when `Tree.show_root` is `True` https://github.com/Textualize/textual/issues/2397
+- Fixed line drawing in `Tree` not marking branches as selected when first getting focus https://github.com/Textualize/textual/issues/2397
+
 ### Changed
 
 - The DataTable cursor is now scrolled into view when the cursor coordinate is changed programmatically https://github.com/Textualize/textual/issues/2459
+- run_worker exclusive parameter is now `False` by default https://github.com/Textualize/textual/pull/2470
+- Added `always_update` as an optional argument for `reactive.var`
 
 ## [0.23.0] - 2023-05-03
 

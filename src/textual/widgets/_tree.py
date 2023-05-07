@@ -429,7 +429,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     """Show the root of the tree."""
     hover_line = var(-1)
     """The line number under the mouse pointer, or -1 if not under the mouse pointer."""
-    cursor_line = var(-1)
+    cursor_line = var(-1, always_update=True)
     """The line with the cursor, or -1 if no cursor."""
     show_guides = reactive(True)
     """Enable display of tree guide lines."""
@@ -976,8 +976,8 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 "tree--guides-selected", partial=True
             )
 
-            hover = self.root._hover
-            selected = self.root._selected and self.has_focus
+            hover = line.path[0]._hover
+            selected = line.path[0]._selected and self.has_focus
 
             def get_guides(style: Style) -> tuple[str, str, str, str]:
                 """Get the guide strings for a given style.

@@ -11,7 +11,7 @@ class RadioSetApp(App[None]):
 
     def compose(self) -> ComposeResult:
         with RadioSet(id="from_buttons"):
-            yield RadioButton()
+            yield RadioButton(id="clickme")
             yield RadioButton()
             yield RadioButton(value=True)
         yield RadioSet("One", "True", "Three", id="from_strings")
@@ -36,6 +36,14 @@ async def test_radio_sets_initial_state():
         assert pilot.app.events_received == []
 
 
+async def test_click_sets_focus():
+    """Clicking within a radio set should set focus."""
+    async with RadioSetApp().run_test() as pilot:
+        assert pilot.app.screen.focused is None
+        await pilot.click("#clickme")
+        assert pilot.app.screen.focused == pilot.app.query_one("#from_buttons")
+
+
 async def test_radio_sets_toggle():
     """Test the status of the radio sets after they've been toggled."""
     async with RadioSetApp().run_test() as pilot:
@@ -52,17 +60,42 @@ async def test_radio_sets_toggle():
         ]
 
 
+async def test_radioset_same_button_mash():
+    """Mashing the same button should have no effect."""
+    async with RadioSetApp().run_test() as pilot:
+        assert pilot.app.query_one("#from_buttons", RadioSet).pressed_index == 2
+        pilot.app.query_one("#from_buttons", RadioSet)._nodes[2].toggle()
+        assert pilot.app.query_one("#from_buttons", RadioSet).pressed_index == 2
+        assert pilot.app.events_received == []
+
+
 async def test_radioset_inner_navigation():
     """Using the cursor keys should navigate between buttons in a set."""
     async with RadioSetApp().run_test() as pilot:
         assert pilot.app.screen.focused is None
         await pilot.press("tab")
-        for key, landing in (("down", 1), ("up", 0), ("right", 1), ("left", 0)):
+        for key, landing in (
+            ("down", 1),
+            ("up", 0),
+            ("right", 1),
+            ("left", 0),
+            ("up", 2),
+            ("down", 0),
+        ):
             await pilot.press(key, "enter")
             assert (
                 pilot.app.query_one("#from_buttons", RadioSet).pressed_button
                 == pilot.app.query_one("#from_buttons").children[landing]
             )
+    async with RadioSetApp().run_test() as pilot:
+        assert pilot.app.screen.focused is None
+        await pilot.press("tab")
+        assert pilot.app.screen.focused is pilot.app.screen.query_one("#from_buttons")
+        await pilot.press("tab")
+        assert pilot.app.screen.focused is pilot.app.screen.query_one("#from_strings")
+        assert pilot.app.query_one("#from_strings", RadioSet)._selected == 0
+        await pilot.press("down")
+        assert pilot.app.query_one("#from_strings", RadioSet)._selected == 1
 
 
 async def test_radioset_breakout_navigation():
