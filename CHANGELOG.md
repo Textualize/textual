@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - run_worker exclusive parameter is now `False` by default https://github.com/Textualize/textual/pull/2470
 - Added `always_update` as an optional argument for `reactive.var`
 - Made Binding description default to empty string, which is equivalent to show=False
+- Modified Message to allow it to be used as a dataclass
 
 ### Added
 
