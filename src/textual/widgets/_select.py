@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Generic, Iterable, TypeVar
+from typing import TYPE_CHECKING, Generic, Iterable, Optional, TypeVar
 
 from rich.console import RenderableType
 from rich.text import Text
@@ -223,7 +223,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     """True to show the overlay, otherwise False."""
     prompt: var[str] = var[str]("Select")
     """The prompt to show when no value is selected."""
-    value: var[SelectType | None] = var[SelectType | None](None)
+    value: var[SelectType | None] = var[Optional[SelectType]](None)
     """The value of the select."""
 
     class Changed(Message, bubble=True):
