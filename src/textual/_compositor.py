@@ -628,7 +628,7 @@ class Compositor:
                             widget_region,
                             ((1, 0, 0),) if overlay else widget_order,
                             layer_order,
-                            clip if overlay else sub_clip,
+                            no_clip if overlay else sub_clip,
                             visible,
                         )
 

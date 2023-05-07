@@ -23,10 +23,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Experimental: Added "overlay" rule
-- Experimental: Added "constrain" rule
-- Added textual.widgets.Select
-- Added Region.translate_inside
+- Experimental: Added "overlay" rule https://github.com/Textualize/textual/pull/2501
+- Experimental: Added "constrain" rule https://github.com/Textualize/textual/pull/2501
+- Added textual.widgets.Select https://github.com/Textualize/textual/pull/2501
+- Added Region.translate_inside https://github.com/Textualize/textual/pull/2501
 
 ## [0.23.0] - 2023-05-03
 
