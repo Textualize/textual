@@ -628,7 +628,7 @@ class Compositor:
                             widget_region,
                             ((1, 0, 0),) if overlay else widget_order,
                             layer_order,
-                            no_clip if overlay else sub_clip,
+                            clip if overlay else sub_clip,
                             visible,
                         )
 
@@ -1005,13 +1005,9 @@ class Compositor:
                 first_cut, last_cut = render_region.column_span
                 final_cuts = [cut for cut in cuts[y] if (last_cut >= cut >= first_cut)]
 
-                if len(final_cuts) <= 2:
-                    # Two cuts, which means the entire line
-                    cut_strips = [strip]
-                else:
-                    render_x = render_region.x
-                    relative_cuts = [cut - render_x for cut in final_cuts[1:]]
-                    cut_strips = strip.divide(relative_cuts)
+                render_x = render_region.x
+                relative_cuts = [cut - render_x for cut in final_cuts[1:]]
+                cut_strips = strip.divide(relative_cuts)
 
                 # Since we are painting front to back, the first segments for a cut "wins"
                 get_chops_line = chops_line.get
