@@ -528,9 +528,7 @@ class OptionList(ScrollView, can_focus=True):
             self._contents.extend(content)
             # Pull out the content that is genuine options and add them to the
             # list of options.
-            options = [item for item in content if isinstance(item, Option)]
-            if options:
-                self._options.extend(options)
+            self._options.extend([item for item in content if isinstance(item, Option)])
             self._refresh_content_tracking(force=True)
             self.refresh()
         return self
