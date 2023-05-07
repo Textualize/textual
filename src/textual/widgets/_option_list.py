@@ -520,16 +520,19 @@ class OptionList(ScrollView, can_focus=True):
         Raises:
             DuplicateID: If there is an attempt to use a duplicate ID.
         """
-        # Turn any incoming values into valid content for the list.
-        content = [self._make_content(item) for item in items]
-        self._contents.extend(content)
-        # Pull out the content that is genuine options and add them to the
-        # list of options.
-        options = [item for item in content if isinstance(item, Option)]
-        if options:
-            self._options.extend(options)
-        self._refresh_content_tracking(force=True)
-        self.refresh()
+        # Only work if we have items to add; but don't make a fuss out of
+        # zero items to add, just carry on like nothing happened.
+        if items:
+            # Turn any incoming values into valid content for the list.
+            content = [self._make_content(item) for item in items]
+            self._contents.extend(content)
+            # Pull out the content that is genuine options and add them to the
+            # list of options.
+            options = [item for item in content if isinstance(item, Option)]
+            if options:
+                self._options.extend(options)
+            self._refresh_content_tracking(force=True)
+            self.refresh()
         return self
 
     def add_option(self, item: NewOptionListContent = None) -> Self:

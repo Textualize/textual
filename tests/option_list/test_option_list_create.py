@@ -110,6 +110,10 @@ async def test_add_later() -> None:
             [Option("more still"), "Yet more options", "so many options!"]
         )
         assert option_list.option_count == 10
+        option_list.add_option(None)
+        assert option_list.option_count == 10
+        option_list.add_options([])
+        assert option_list.option_count == 10
 
 
 async def test_create_with_duplicate_id() -> None:
