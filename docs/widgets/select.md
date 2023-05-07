@@ -66,10 +66,10 @@ Example app showing the widget:
 ## Reactive attributes
 
 
-| Name       | Type   | Default | Description                         |
-| ---------- | ------ | ------- | ----------------------------------- |
-| `expanded` | `bool` | `False` | True to expand the options overlay. |
-| `value`    | ?      |         | Current value of the Select.        |
+| Name       | Type                 | Default | Description                         |
+| ---------- | -------------------- | ------- | ----------------------------------- |
+| `expanded` | `bool`               | `False` | True to expand the options overlay. |
+| `value`    | `SelectType \| None` | `None`  | Current value of the Select.        |
 
 
 ## Bindings
@@ -80,7 +80,6 @@ The WIDGET widget defines the following bindings:
     options:
       show_root_heading: false
       show_root_toc_entry: false
-
 
 
 ---
