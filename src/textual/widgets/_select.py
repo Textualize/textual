@@ -257,9 +257,10 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         """Initialize the Select control
 
         Args:
+            options: Options to select from.
             prompt: Text to show in the control when no option is select.
             allow_blank: Allow the selection of a blank option.
-            value: Initial value.
+            value: Initial value (should be one of the values in `options`).
             name: The name of the select control.
             id: The ID of the control the DOM.
             classes: The CSS classes of the control.
