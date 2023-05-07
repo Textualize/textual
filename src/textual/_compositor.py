@@ -614,12 +614,12 @@ class Compositor:
                         if overlay:
                             constrain = sub_widget.styles.constrain
                             if constrain != "none":
-                                x_axis = constrain in ("x", "both")
-                                y_axis = constrain in ("y", "both")
                                 # Ensure that region isn't clipped
                                 # TODO: This functionality should be optional
                                 widget_region = widget_region.translate_inside(
-                                    no_clip, x_axis, y_axis
+                                    no_clip,
+                                    constrain in ("x", "both"),
+                                    constrain in ("y", "both"),
                                 )
 
                         add_widget(
