@@ -7,7 +7,7 @@ forms of bounce-bar menu.
 
 from __future__ import annotations
 
-from typing import ClassVar, NamedTuple
+from typing import ClassVar, Iterable, NamedTuple
 
 from rich.console import RenderableType
 from rich.repr import Result
@@ -508,6 +508,30 @@ class OptionList(ScrollView, can_focus=True):
         # list, set the virtual size.
         self.virtual_size = Size(self.scrollable_content_region.width, len(self._lines))
 
+    def add_options(self, items: Iterable[NewOptionListContent]) -> Self:
+        """Add new options to the end of the option list.
+
+        Args:
+            items: The new items to add.
+
+        Returns:
+            The `OptionList` instance.
+
+        Raises:
+            DuplicateID: If there is an attempt to use a duplicate ID.
+        """
+        # Turn any incoming values into valid content for the list.
+        content = [self._make_content(item) for item in items]
+        self._contents.extend(content)
+        # Pull out the content that is genuine options and add them to the
+        # list of options.
+        options = [item for item in content if isinstance(item, Option)]
+        if options:
+            self._options.extend(options)
+        self._refresh_content_tracking(force=True)
+        self.refresh()
+        return self
+
     def add_option(self, item: NewOptionListContent = None) -> Self:
         """Add a new option to the end of the option list.
 
@@ -520,15 +544,7 @@ class OptionList(ScrollView, can_focus=True):
         Raises:
             DuplicateID: If there is an attempt to use a duplicate ID.
         """
-        # Turn any incoming value into valid content for the list.
-        content = self._make_content(item)
-        self._contents.append(content)
-        # If the content is a genuine option, add it to the list of options.
-        if isinstance(content, Option):
-            self._options.append(content)
-        self._refresh_content_tracking(force=True)
-        self.refresh()
-        return self
+        return self.add_options([item])
 
     def _remove_option(self, index: int) -> None:
         """Remove an option from the option list.
