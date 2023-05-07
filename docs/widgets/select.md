@@ -17,7 +17,7 @@ The value of the currently selected option is stored in the `value` attribute of
 
 ## Typing
 
-The `Select` control is a typing Generic which allows you to set the type of option value.
+The `Select` control is a typing Generic which allows you to set the type of the option values.
 For instance, if the data type for your values is an integer, you would type the widget as follows:
 
 ```python
@@ -33,7 +33,7 @@ my_select: Select[int] =  Select(options)
 
 ## Example
 
-The following example presents a `Select` which a number of options.
+The following example presents a `Select` with a number of options.
 
 === "Output"
 
@@ -74,7 +74,7 @@ The following example presents a `Select` which a number of options.
 
 ## Bindings
 
-The WIDGET widget defines the following bindings:
+The Select widget defines the following bindings:
 
 ::: textual.widgets.Select.BINDINGS
     options:
