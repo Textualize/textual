@@ -233,7 +233,9 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
 
         """
 
-        def __init__(self, control: Select, value: SelectType | str | None) -> None:
+        def __init__(
+            self, control: Select, value: SelectType | RenderableType | None
+        ) -> None:
             super().__init__()
             self.control = control
             """The select control."""
@@ -269,13 +271,13 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         self._initial_options = list(options)
         self._value: SelectType | None = value
 
-    def set_options(self, options: Iterable[tuple[str, SelectType]]) -> None:
+    def set_options(self, options: Iterable[tuple[RenderableType, SelectType]]) -> None:
         """Set the options for the Select.
 
         Args:
             options: An iterable of tuples containing (STRING, VALUE).
         """
-        self._options: list[tuple[str, SelectType | None]] = list(options)
+        self._options: list[tuple[RenderableType, SelectType | None]] = list(options)
 
         if self._allow_blank:
             self._options.insert(0, ("", None))
