@@ -10,7 +10,7 @@ A Select widget is a compact control to allow the user to select between a numbe
 
 
 The options in a select control may be passed in to the constructor or set later with [set_options][textual.widgets.Select.set_options].
-Options should be given as sequence of tuples consisting of two values: the first is the string to display, the second is the value option.
+Options should be given as sequence of tuples consisting of two values: the first is the string to display, the second is the value of option.
 
 The value of the currently selected option is stored in the `value` attribute of the widget, and the `value` attribute of the [Changed][textual.widgets.Select.Changed] message.
 
@@ -33,7 +33,7 @@ my_select: Select[int] =  Select(options)
 
 ## Example
 
-Example app showing the widget:
+The following example presents a `Select` which a number of options.
 
 === "Output"
 

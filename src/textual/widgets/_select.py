@@ -157,7 +157,7 @@ class SelectCurrent(Horizontal):
 
 SelectType = TypeVar("SelectType")
 """The type used for data in the Select."""
-SelectOption: TypeAlias = tuple[str, SelectType]
+SelectOption: TypeAlias = "tuple[str, SelectType]"
 """The type used for options in the Select."""
 
 
