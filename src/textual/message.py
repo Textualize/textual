@@ -41,6 +41,7 @@ class Message:
         self.__post_init__()
 
     def __post_init__(self) -> None:
+        """Allow dataclasses to initialize the object."""
         self._sender: MessageTarget | None = active_message_pump.get(None)
         self.time: float = _time.get_time()
         self._forwarded = False
@@ -51,7 +52,6 @@ class Message:
             f"on_{self.namespace}_{name}" if self.namespace else f"on_{name}"
         )
         self._prevent: set[type[Message]] = set()
-        super().__init__()
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield from ()
