@@ -349,6 +349,21 @@ class TreeNode(Generic[TreeDataType]):
         node = self.add(label, data, expand=False, allow_expand=False)
         return node
 
+    class RemoveRootError(Exception):
+        """Exception raised when trying to remove a tree's root node."""
+
+    def remove(self) -> None:
+        """Remove this node from the tree.
+
+        Raises:
+            TreeNode.RemoveRootError: If there is an attempt to remove the root.
+        """
+        if self.is_root:
+            raise self.RemoveRootError("Attempt to remove the root node of a Tree.")
+        assert self._parent is not None
+        del self._parent._children[self._parent._children.index(self)]
+        self._tree._invalidate()
+
 
 class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     """A widget for displaying and navigating data in a tree."""
