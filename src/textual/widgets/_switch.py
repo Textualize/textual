@@ -91,9 +91,6 @@ class Switch(Widget, can_focus=True):
             switch: The `Switch` widget that was changed.
         """
 
-        ALLOW_SELECTOR_MATCH = {"control"}
-        """Message attributes that can be used with the [`on` decorator][textual.on]."""
-
         def __init__(self, switch: Switch, value: bool) -> None:
             super().__init__()
             self.value: bool = value

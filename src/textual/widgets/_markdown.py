@@ -567,9 +567,6 @@ class Markdown(Widget):
     class TableOfContentsUpdated(Message, bubble=True):
         """The table of contents was updated."""
 
-        ALLOW_SELECTOR_MATCH = {"control"}
-        """Message attributes that can be used with the [`on` decorator][textual.on]."""
-
         def __init__(
             self, markdown: Markdown, table_of_contents: TableOfContentsType
         ) -> None:
@@ -591,9 +588,6 @@ class Markdown(Widget):
     class TableOfContentsSelected(Message, bubble=True):
         """An item in the TOC was selected."""
 
-        ALLOW_SELECTOR_MATCH = {"control"}
-        """Message attributes that can be used with the [`on` decorator][textual.on]."""
-
         def __init__(self, markdown: Markdown, block_id: str) -> None:
             super().__init__()
             self.markdown: Markdown = markdown
@@ -612,9 +606,6 @@ class Markdown(Widget):
 
     class LinkClicked(Message, bubble=True):
         """A link in the document was clicked."""
-
-        ALLOW_SELECTOR_MATCH = {"control"}
-        """Message attributes that can be used with the [`on` decorator][textual.on]."""
 
         def __init__(self, markdown: Markdown, href: str) -> None:
             super().__init__()

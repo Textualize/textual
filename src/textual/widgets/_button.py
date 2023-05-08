@@ -165,9 +165,6 @@ class Button(Static, can_focus=True):
         [`Button`][textual.widgets.Button] or in a parent widget in the DOM.
         """
 
-        ALLOW_SELECTOR_MATCH = {"control"}
-        """Message attributes that can be used with the [`on` decorator][textual.on]."""
-
         def __init__(self, button: Button) -> None:
             self.button: Button = button
             """The button that was pressed."""

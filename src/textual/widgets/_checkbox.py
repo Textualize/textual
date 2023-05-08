@@ -14,9 +14,6 @@ class Checkbox(ToggleButton):
         This message can be handled using an `on_checkbox_changed` method.
         """
 
-        ALLOW_SELECTOR_MATCH = {"control"}
-        """Message attributes that can be used with the [`on` decorator][textual.on]."""
-
         @property
         def checkbox(self) -> Checkbox:
             """The checkbox that was changed."""

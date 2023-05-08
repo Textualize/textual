@@ -21,9 +21,6 @@ class RadioButton(ToggleButton):
         This message can be handled using an `on_radio_button_changed` method.
         """
 
-        ALLOW_SELECTOR_MATCH = {"control"}
-        """Message attributes that can be used with the [`on` decorator][textual.on]."""
-
         @property
         def radio_button(self) -> RadioButton:
             """The radio button that was changed."""

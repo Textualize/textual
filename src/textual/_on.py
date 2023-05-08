@@ -26,8 +26,8 @@ def on(
 ) -> Callable[[DecoratedType], DecoratedType]:
     """Decorator to declare that the method is a message handler.
 
-    The decorator accepts an optional CSS selector that is matched against a widget exposed by a `control` attribute on the message.
-    of the message.
+    The decorator accepts an optional CSS selector that will be matched against a widget exposed by
+    a `control` attribute on the message.
 
     Example:
         ```python
@@ -37,8 +37,8 @@ def on(
             self.app.quit()
         ```
 
-    Keyword arguments can be used to provide further selectors for the attributes
-    that are listed in [`ALLOW_SELECTOR_MATCH`][textual.message.Message.ALLOW_SELECTOR_MATCH].
+    Keyword arguments can be used to match additional selectors for attributes
+    listed in [`ALLOW_SELECTOR_MATCH`][textual.message.Message.ALLOW_SELECTOR_MATCH].
 
     Example:
         ```python
@@ -64,7 +64,12 @@ def on(
 
     parsed_selectors: dict[str, tuple[SelectorSet, ...]] = {}
     for attribute, css_selector in selectors.items():
-        if attribute not in message_type.ALLOW_SELECTOR_MATCH:
+        if attribute == "control":
+            if message_type.control is None:
+                raise OnDecoratorError(
+                    "The message class must have a 'control' to match with the on decorator"
+                )
+        elif attribute not in message_type.ALLOW_SELECTOR_MATCH:
             raise OnDecoratorError(
                 f"The attribute {attribute!r} can't be matched; have you added it to "
                 + f"{message_type.__name__}.ALLOW_SELECTOR_MATCH?"

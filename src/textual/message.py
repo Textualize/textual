@@ -16,6 +16,7 @@ from .case import camel_to_snake
 
 if TYPE_CHECKING:
     from .message_pump import MessagePump
+    from .widget import Widget
 
 
 @rich.repr.auto
@@ -32,8 +33,8 @@ class Message:
         "_prevent",
     ]
 
-    ALLOW_SELECTOR_MATCH: ClassVar[set[str]] = set()
-    """Message attributes that can be used with the [`on` decorator][textual.on].
+    ALLOW_SELECTOR_MATCH: ClassVar[set[str]] = {"control"}
+    """Additional attributes that can be used with the [`on` decorator][textual.on].
 
     These attributes must be widgets.
     """
@@ -41,6 +42,7 @@ class Message:
     verbose: ClassVar[bool] = False  # Message is verbose
     no_dispatch: ClassVar[bool] = False  # Message may not be handled by client code
     namespace: ClassVar[str] = ""  # Namespace to disambiguate messages
+    control: Widget | None = None
 
     def __init__(self) -> None:
         self.__post_init__()

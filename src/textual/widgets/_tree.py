@@ -512,9 +512,6 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         parent node in the DOM.
         """
 
-        ALLOW_SELECTOR_MATCH = {"control"}
-        """Message attributes that can be used with the [`on` decorator][textual.on]."""
-
         def __init__(
             self, tree: Tree[EventTreeDataType], node: TreeNode[EventTreeDataType]
         ) -> None:
@@ -539,9 +536,6 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         Can be handled using `on_tree_node_expanded` in a subclass of `Tree` or in a
         parent node in the DOM.
         """
-
-        ALLOW_SELECTOR_MATCH = {"control"}
-        """Message attributes that can be used with the [`on` decorator][textual.on]."""
 
         def __init__(
             self, tree: Tree[EventTreeDataType], node: TreeNode[EventTreeDataType]
@@ -568,9 +562,6 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         parent node in the DOM.
         """
 
-        ALLOW_SELECTOR_MATCH = {"control"}
-        """Message attributes that can be used with the [`on` decorator][textual.on]."""
-
         def __init__(
             self, tree: Tree[EventTreeDataType], node: TreeNode[EventTreeDataType]
         ) -> None:
@@ -595,9 +586,6 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         Can be handled using `on_tree_node_selected` in a subclass of `Tree` or in a
         parent node in the DOM.
         """
-
-        ALLOW_SELECTOR_MATCH = {"control"}
-        """Message attributes that can be used with the [`on` decorator][textual.on]."""
 
         def __init__(
             self, tree: Tree[EventTreeDataType], node: TreeNode[EventTreeDataType]
