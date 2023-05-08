@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - The DataTable cursor is now scrolled into view when the cursor coordinate is changed programmatically https://github.com/Textualize/textual/issues/2459
 - run_worker exclusive parameter is now `False` by default https://github.com/Textualize/textual/pull/2470
 - Added `always_update` as an optional argument for `reactive.var`
+- `TabbedContent` now takes kwargs `id`, `name`, `classes`, and `disabled`, upon initialization, like other widgets https://github.com/Textualize/textual/pull/2497
 
 
 ### Added
