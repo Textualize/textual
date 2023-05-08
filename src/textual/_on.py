@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Callable, TypeVar
 
+from .css.model import SelectorSet
 from .css.parse import parse_selectors
 from .css.tokenizer import TokenError
 from .message import Message
@@ -61,7 +62,7 @@ def on(
     if kwargs:
         selectors.update(kwargs)
 
-    parsed_selectors = {}
+    parsed_selectors: dict[str, tuple[SelectorSet, ...]] = {}
     for attribute, css_selector in selectors.items():
         try:
             parsed_selectors[attribute] = parse_selectors(css_selector)

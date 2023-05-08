@@ -26,7 +26,6 @@ from ._time import time
 from ._types import CallbackType
 from .case import camel_to_snake
 from .css.match import match
-from .css.parse import parse_selectors
 from .errors import DuplicateKeyHandlers
 from .events import Event
 from .message import Message
@@ -35,6 +34,7 @@ from .timer import Timer, TimerCallback
 
 if TYPE_CHECKING:
     from .app import App
+    from .css.model import SelectorSet
 
 
 class CallbackError(Exception):
@@ -60,7 +60,7 @@ class _MessagePumpMeta(type):
         namespace = camel_to_snake(name)
         isclass = inspect.isclass
         handlers: dict[
-            type[Message], list[tuple[Callable, dict[str, str]]]
+            type[Message], list[tuple[Callable, dict[str, tuple[SelectorSet, ...]]]]
         ] = class_dict.get("_decorated_handlers", {})
 
         class_dict["_decorated_handlers"] = handlers
