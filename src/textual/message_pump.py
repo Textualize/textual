@@ -572,9 +572,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
                             continue
                         for attribute, selector in selectors.items():
                             node = getattr(message, attribute, _sentinel)
-                            if node is _sentinel:
-                                break
-                            if not match(selector, node):
+                            if node is _sentinel or not match(selector, node):
                                 break
                         else:
                             yield cls, method.__get__(self, cls)
