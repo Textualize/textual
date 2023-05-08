@@ -185,6 +185,11 @@ class TreeNode(Generic[TreeDataType]):
         )
 
     @property
+    def is_root(self) -> bool:
+        """Is this node the root of the tree?"""
+        return self == self._tree.root
+
+    @property
     def allow_expand(self) -> bool:
         """Is this node allowed to expand?"""
         return self._allow_expand
