@@ -12,6 +12,7 @@ if typing.TYPE_CHECKING:
     from ..widget import Widget
     from ._button import Button
     from ._checkbox import Checkbox
+    from ._checkbox_set import CheckboxSet
     from ._content_switcher import ContentSwitcher
     from ._data_table import DataTable
     from ._directory_tree import DirectoryTree
@@ -42,6 +43,7 @@ if typing.TYPE_CHECKING:
 __all__ = [
     "Button",
     "Checkbox",
+    "CheckboxSet",
     "ContentSwitcher",
     "DataTable",
     "DirectoryTree",

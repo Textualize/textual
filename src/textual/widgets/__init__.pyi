@@ -1,6 +1,7 @@
 # This stub file must re-export every classes exposed in the __init__.py's `__all__` list:
 from ._button import Button as Button
 from ._checkbox import Checkbox as Checkbox
+from ._checkbox_set import CheckboxSet as CheckboxSet
 from ._content_switcher import ContentSwitcher as ContentSwitcher
 from ._data_table import DataTable as DataTable
 from ._directory_tree import DirectoryTree as DirectoryTree
