@@ -243,6 +243,14 @@ Message handler methods can be written with or without a positional argument. If
         self.screen.styles.animate("background", message.color, duration=0.5)
 ```
 
+A similar handler can be written using the decorator `on`:
+
+```python
+    @on(ColorButton.Selected)
+    def animate_background_color(self, message: ColorButton.Selected) -> None:
+        self.screen.styles.animate("background", message.color, duration=0.5)
+```
+
 If the body of your handler doesn't require any information in the message you can omit it from the method signature. If we just want to play a bell noise when the button is clicked, we could write our handler like this:
 
 ```python
