@@ -61,9 +61,10 @@ def on(
     if kwargs:
         selectors.update(kwargs)
 
+    parsed_selectors = {}
     for attribute, css_selector in selectors.items():
         try:
-            parse_selectors(css_selector)
+            parsed_selectors[attribute] = parse_selectors(css_selector)
         except TokenError:
             raise OnDecoratorError(
                 f"Unable to parse selector {css_selector!r} for {attribute}; check for syntax errors"
@@ -74,7 +75,7 @@ def on(
 
         if not hasattr(method, "_textual_on"):
             setattr(method, "_textual_on", [])
-        getattr(method, "_textual_on").append((message_type, selectors))
+        getattr(method, "_textual_on").append((message_type, parsed_selectors))
 
         return method
 
