@@ -149,6 +149,7 @@ nav:
       - "widgets/progress_bar.md"
       - "widgets/radiobutton.md"
       - "widgets/radioset.md"
+      - "widgets/select.md"
       - "widgets/static.md"
       - "widgets/switch.md"
       - "widgets/tabbed_content.md"

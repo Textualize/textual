@@ -203,6 +203,8 @@ def test_option_list(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_options.py")
     assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_tables.py")
 
+def test_option_list_build(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "option_list.py")
 
 def test_progress_bar_indeterminate(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "progress_bar_isolated_.py", press=["f"])
@@ -226,6 +228,23 @@ def test_progress_bar_completed(snap_compare):
 
 def test_progress_bar_completed_styled(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "progress_bar_styled_.py", press=["u"])
+
+
+def test_select(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "select_widget.py")
+
+
+def test_select_expanded(snap_compare):
+    assert snap_compare(
+        WIDGET_EXAMPLES_DIR / "select_widget.py", press=["tab", "enter"]
+    )
+
+
+def test_select_expanded_changed(snap_compare):
+    assert snap_compare(
+        WIDGET_EXAMPLES_DIR / "select_widget.py",
+        press=["tab", "enter", "down", "enter"],
+    )
 
 
 # --- CSS properties ---
