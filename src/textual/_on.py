@@ -33,8 +33,8 @@ def on(
             self.app.quit()
         ```
 
-    Additionally, arbitrary keyword arguments can be used to provide further selectors
-    for arbitrary attributes of the messages passed in.
+    Keyword arguments can be used to provide further selectors for the attributes
+    of the messages passed in.
 
     Example:
         ```python
