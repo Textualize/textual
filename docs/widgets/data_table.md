@@ -59,9 +59,9 @@ If you want to change the table based solely on coordinates, you can use the [co
 
 ### Cursors
 
-The coordinate of the cursor is exposed via the `cursor_coordinate` reactive attribute.
+The coordinate of the cursor is exposed via the [`cursor_coordinate`][textual.widgets.DataTable.cursor_coordinate] reactive attribute.
 Three types of cursors are supported: `cell`, `row`, and `column`.
-Change the cursor type by assigning to the `cursor_type` reactive attribute.
+Change the cursor type by assigning to the [`cursor_type`][textual.widgets.DataTable.cursor_type] reactive attribute.
 
 === "Column Cursor"
 
