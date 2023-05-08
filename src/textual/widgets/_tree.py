@@ -352,14 +352,24 @@ class TreeNode(Generic[TreeDataType]):
     class RemoveRootError(Exception):
         """Exception raised when trying to remove a tree's root node."""
 
+    def _remove_children(self) -> None:
+        """Remove child nodes of this node.
+
+        Note:
+            This is the internal support method for `remove_children`. Call
+            `remove_children` to ensure the tree gets refreshed.
+        """
+        for child in reversed(self._children):
+            child._remove()
+
     def _remove(self) -> None:
         """Remove the current node and all its children.
 
         Note:
-            This is the internal support method for `remove`.
+            This is the internal support method for `remove`. Call `remove`
+            to ensure the tree gets refreshed.
         """
-        for child in reversed(self._children):
-            child._remove()
+        self._remove_children()
         assert self._parent is not None
         del self._parent._children[self._parent._children.index(self)]
         del self._tree._tree_nodes[self.id]
@@ -373,6 +383,11 @@ class TreeNode(Generic[TreeDataType]):
         if self.is_root:
             raise self.RemoveRootError("Attempt to remove the root node of a Tree.")
         self._remove()
+        self._tree._invalidate()
+
+    def remove_children(self) -> None:
+        """Remove any child nodes of this node."""
+        self._remove_children()
         self._tree._invalidate()
 
 
