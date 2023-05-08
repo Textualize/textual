@@ -72,7 +72,7 @@ Here's a snippet from the [calculator](https://github.com/Textualize/textual/blo
 
 The decorator arranges for the method to be called when any of the four math operation buttons are pressed.
 
-In 0.25.0 we've fixed some missing attributes which prevented the decorator from working with some messages.
+In 0.24.0 we've fixed some missing attributes which prevented the decorator from working with some messages.
 We've also extended the decorator to use keywords arguments, so it will match attributes other than `control`.
 
 ## Other fixes
