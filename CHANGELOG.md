@@ -36,13 +36,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `TreeNode.remove_children` https://github.com/Textualize/textual/pull/2510
 - Added `TreeNode.remove` https://github.com/Textualize/textual/pull/2510
 - Added classvar `Message.ALLOW_SELECTOR_MATCH` https://github.com/Textualize/textual/pull/2498
-  - Added `ALLOW_SELECTOR_MATCH` to `ListView.Highlighted` and `ListView.Selected`
-  - Added `ALLOW_SELECTOR_MATCH` to `RadioSet.Changed`
-  - Added `ALLOW_SELECTOR_MATCH` to `TabbedContent.TabActivated`
-  - Added `ALLOW_SELECTOR_MATCH` to `Tabs.TabActivated`
-
-### Added
-
+- Added `ALLOW_SELECTOR_MATCH` to all built-in messages associated with widgets https://github.com/Textualize/textual/pull/2498
 - Markdown document sub-widgets now reference the container document
 - Table of contents of a markdown document now references the document
 - Added the `control` property to messages
