@@ -92,6 +92,15 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
             self.index = radio_set.pressed_index
             """The index of the [`RadioButton`][textual.widgets.RadioButton] that was pressed to make the change."""
 
+        @property
+        def control(self) -> RadioSet:
+            """A reference to the [`RadioSet`][textual.widgets.RadioSet] that was changed.
+
+            This is an alias for [`Changed.radio_set`][textual.widgets.RadioSet.Changed.radio_set]
+            and is used by the [`on`][textual.on] decorator.
+            """
+            return self.radio_set
+
         def __rich_repr__(self) -> rich.repr.Result:
             yield "radio_set", self.radio_set
             yield "pressed", self.pressed

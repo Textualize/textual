@@ -36,6 +36,30 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `TreeNode.remove_children` https://github.com/Textualize/textual/pull/2510
 - Added `TreeNode.remove` https://github.com/Textualize/textual/pull/2510
 
+### Added
+
+- Markdown document sub-widgets now reference the container document
+- Table of contents of a markdown document now references the document
+- Added the `control` property to messages
+  - `DirectoryTree.FileSelected`
+  - `ListView`
+    - `Highlighted`
+    - `Selected`
+  - `Markdown`
+    - `TableOfContentsUpdated`
+    - `TableOfContentsSelected`
+    - `LinkClicked`
+  - `OptionList`
+    - `OptionHighlighted`
+    - `OptionSelected`
+  - `RadioSet.Changed`
+  - `TabContent.TabActivated`
+  - `Tree`
+    - `NodeSelected`
+    - `NodeHighlighted`
+    - `NodeExpanded`
+    - `NodeCollapsed`
+
 ## [0.23.0] - 2023-05-03
 
 ### Fixed
