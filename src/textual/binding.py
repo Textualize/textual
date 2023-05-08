@@ -76,7 +76,7 @@ class _Bindings:
                 if isinstance(binding, tuple):
                     if len(binding) not in (2, 3):
                         raise BindingError(
-                            f"BINDINGS must contain a tuple of three strings, not {binding!r}"
+                            f"BINDINGS must contain a tuple of two or three strings, not {binding!r}"
                         )
                     binding = Binding(*binding)
 

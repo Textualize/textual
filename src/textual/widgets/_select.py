@@ -112,7 +112,7 @@ class SelectCurrent(Horizontal):
     }
     """
 
-    has_value = var(False)
+    has_value: var[bool] = var(False)
     """True if there is a current value, or False if it is None."""
 
     class Toggle(Message):
@@ -169,11 +169,11 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
 
     """
 
-    BINDINGS = [("enter", "show_overlay")]
+    BINDINGS = [("down,enter", "show_overlay")]
     """
     | Key(s) | Description |
     | :- | :- |
-    | enter | Activate the overlay |
+    | down,enter | Activate the overlay |
     """
 
     DEFAULT_CSS = """
@@ -219,7 +219,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     }
     """
 
-    expanded = var(False, init=False)
+    expanded: var[bool] = var(False, init=False)
     """True to show the overlay, otherwise False."""
     prompt: var[str] = var[str]("Select")
     """The prompt to show when no value is selected."""
@@ -233,9 +233,11 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
 
         """
 
-        def __init__(
-            self, control: Select, value: SelectType | RenderableType | None
-        ) -> None:
+        def __init__(self, control: Select, value: SelectType | None) -> None:
+            """
+            Initialize the Changed message.
+
+            """
             super().__init__()
             self.control = control
             """The select control."""
@@ -351,7 +353,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         event.stop()
         self.expanded = False
         if not event.lost_focus:
-            """If the overlay didn't lose focus, we want to re-focus the select."""
+            # If the overlay didn't lose focus, we want to re-focus the select.
             self.focus()
 
     @on(SelectOverlay.UpdateSelection)
