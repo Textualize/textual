@@ -226,12 +226,13 @@ Messages from builtin controls will have this attribute, but you may need to add
 
 The `on` decorator also accepts selectors as keyword arguments that may be used to match other attributes in a Message, provided those attributes are in [`Message.ALLOW_SELECTOR_MATCH`][textual.message.Message.ALLOW_SELECTOR_MATCH].
 
-The snippet below shows how to match the message [`TabbedContent.TabActivated`][textual.widgets.TabbedContent.TabActivated] only when it is the tab with id `#home` that is activated:
+The snippet below shows how to match the message [`TabbedContent.TabActivated`][textual.widgets.TabbedContent.TabActivated] only when the tab with id `home` was activated:
 
 ```py
 @on(TabbedContent.TabActivated, tab="#home")
-def two(self) -> None:
-    log.append("Switching back to the home tab.")
+def home_tab(self) -> None:
+    self.log("Switched back to home tab.")
+    ...
 ```
 
 ### Handler arguments
