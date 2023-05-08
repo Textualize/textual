@@ -121,9 +121,9 @@ async def test_on_arbitrary_attributes() -> None:
         def one(self) -> None:
             log.append("one")
 
-        # @on(TabbedContent.TabActivated, ".tabs", tab="#two")
-        # def two(self) -> None:
-        #     log.append("two")
+        @on(TabbedContent.TabActivated, ".tabs", tab="#two")
+        def two(self) -> None:
+            log.append("two")
 
         @on(TabbedContent.TabActivated, tabbed_content=".tabs", tab="#three")
         def three(self) -> None:
