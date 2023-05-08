@@ -18,22 +18,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - The DataTable cursor is now scrolled into view when the cursor coordinate is changed programmatically https://github.com/Textualize/textual/issues/2459
 - run_worker exclusive parameter is now `False` by default https://github.com/Textualize/textual/pull/2470
 - Added `always_update` as an optional argument for `reactive.var`
+
+- Made Binding description default to empty string, which is equivalent to show=False https://github.com/Textualize/textual/pull/2501
+- Modified Message to allow it to be used as a dataclass https://github.com/Textualize/textual/pull/2501
+
+### Added
+
+- Experimental: Added "overlay" rule https://github.com/Textualize/textual/pull/2501
+- Experimental: Added "constrain" rule https://github.com/Textualize/textual/pull/2501
+- Added textual.widgets.Select https://github.com/Textualize/textual/pull/2501
+- Added Region.translate_inside https://github.com/Textualize/textual/pull/2501
 - `TabbedContent` now takes kwargs `id`, `name`, `classes`, and `disabled`, upon initialization, like other widgets https://github.com/Textualize/textual/pull/2497
-
-
-### Added
-
 - Method `DataTable.move_cursor` https://github.com/Textualize/textual/issues/2472
-
-### Added
-
 - Added `OptionList.add_options` https://github.com/Textualize/textual/pull/2508
-
-### Added
-
 - Added `TreeNode.is_root` https://github.com/Textualize/textual/pull/2510
 - Added `TreeNode.remove_children` https://github.com/Textualize/textual/pull/2510
 - Added `TreeNode.remove` https://github.com/Textualize/textual/pull/2510
+
 
 ## [0.23.0] - 2023-05-03
 

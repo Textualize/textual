@@ -230,6 +230,23 @@ def test_progress_bar_completed_styled(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "progress_bar_styled_.py", press=["u"])
 
 
+def test_select(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "select_widget.py")
+
+
+def test_select_expanded(snap_compare):
+    assert snap_compare(
+        WIDGET_EXAMPLES_DIR / "select_widget.py", press=["tab", "enter"]
+    )
+
+
+def test_select_expanded_changed(snap_compare):
+    assert snap_compare(
+        WIDGET_EXAMPLES_DIR / "select_widget.py",
+        press=["tab", "enter", "down", "enter"],
+    )
+
+
 # --- CSS properties ---
 # We have a canonical example for each CSS property that is shown in their docs.
 # If any of these change, something has likely broken, so snapshot each of them.

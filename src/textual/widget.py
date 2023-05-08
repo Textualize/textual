@@ -1569,12 +1569,13 @@ class Widget(DOMNode):
         Returns:
             Tuple of layer names.
         """
+        layers: tuple[str, ...] = ("default",)
         for node in self.ancestors_with_self:
             if not isinstance(node, Widget):
                 break
             if node.styles.has_rule("layers"):
-                return node.styles.layers
-        return ("default",)
+                layers = node.styles.layers
+        return layers
 
     @property
     def link_style(self) -> Style:
@@ -1637,8 +1638,11 @@ class Widget(DOMNode):
             self._dirty_regions.clear()
             self._repaint_regions.clear()
             self._styles_cache.clear()
-            self._dirty_regions.add(self.outer_size.region)
-            self._repaint_regions.add(self.outer_size.region)
+
+            outer_size = self.outer_size
+            self._dirty_regions.add(outer_size.region)
+            if outer_size:
+                self._repaint_regions.add(outer_size.region)
 
     def _exchange_repaint_regions(self) -> Collection[Region]:
         """Get a copy of the regions which need a repaint, and clear internal cache.
@@ -2921,6 +2925,13 @@ class Widget(DOMNode):
         Returns:
             True if the message was posted, False if this widget was closed / closing.
         """
+        _rich_traceback_omit = True
+        # Catch a common error.
+        # This will error anyway, but at least we can offer a helpful message here.
+        if not hasattr(message, "_prevent"):
+            raise RuntimeError(
+                f"{type(message)!r} is missing expected attributes; did you forget to call super().__init__() in the constructor?"
+            )
 
         if constants.DEBUG and not self.is_running and not message.no_dispatch:
             try:

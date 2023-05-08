@@ -1058,6 +1058,7 @@ class DOMNode(MessagePump):
         Returns:
             A widget matching the selector.
         """
+        _rich_traceback_omit = True
         from .css.query import DOMQuery
 
         if isinstance(selector, str):

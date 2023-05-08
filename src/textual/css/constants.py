@@ -69,6 +69,7 @@ VALID_PSEUDO_CLASSES: Final = {
     "focus",
     "hover",
 }
-
+VALID_OVERLAY: Final = {"none", "screen"}
+VALID_CONSTRAIN: Final = {"x", "y", "both", "none"}
 
 NULL_SPACING: Final = Spacing.all(0)

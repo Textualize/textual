@@ -35,7 +35,7 @@ def arrange(
     dock_layers: defaultdict[str, list[Widget]] = defaultdict(list)
     for child in children:
         if child.display:
-            dock_layers[child.styles.layer or "default"].append(child)
+            dock_layers[child.layer].append(child)
 
     width, height = size
 
@@ -121,9 +121,14 @@ def arrange(
             if placement_offset:
                 layout_placements = [
                     _WidgetPlacement(
-                        _region + placement_offset, margin, layout_widget, order, fixed
+                        _region + placement_offset,
+                        margin,
+                        layout_widget,
+                        order,
+                        fixed,
+                        overlay,
                     )
-                    for _region, margin, layout_widget, order, fixed in layout_placements
+                    for _region, margin, layout_widget, order, fixed, overlay in layout_placements
                 ]
 
         placements.extend(layout_placements)
