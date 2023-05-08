@@ -54,7 +54,7 @@ class CodeBrowser(App):
         code_view = self.query_one("#code", Static)
         try:
             syntax = Syntax.from_path(
-                event.path,
+                str(event.path),
                 line_numbers=True,
                 word_wrap=False,
                 indent_guides=True,
@@ -66,7 +66,7 @@ class CodeBrowser(App):
         else:
             code_view.update(syntax)
             self.query_one("#code-view").scroll_home(animate=False)
-            self.sub_title = event.path
+            self.sub_title = str(event.path)
 
     def action_toggle_files(self) -> None:
         """Called in response to key binding."""
