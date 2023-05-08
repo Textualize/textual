@@ -133,7 +133,7 @@ async def test_on_arbitrary_attributes() -> None:
     async with app.run_test() as pilot:
         await pilot.press("tab", "right", "right")
 
-    assert log == ["one", "three"]
+    assert log == ["one", "two", "three"]
 
 
 async def test_on_extra_attributes() -> None:
