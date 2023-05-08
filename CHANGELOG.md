@@ -18,12 +18,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - The DataTable cursor is now scrolled into view when the cursor coordinate is changed programmatically https://github.com/Textualize/textual/issues/2459
 - run_worker exclusive parameter is now `False` by default https://github.com/Textualize/textual/pull/2470
 - Added `always_update` as an optional argument for `reactive.var`
-- `TabbedContent` now takes kwargs `id`, `name`, `classes`, and `disabled`, upon initialization, like other widgets https://github.com/Textualize/textual/pull/2497
+- Made Binding description default to empty string, which is equivalent to show=False https://github.com/Textualize/textual/pull/2501
+- Modified Message to allow it to be used as a dataclass https://github.com/Textualize/textual/pull/2501
 - Decorator `@on` accepts arbitrary `**kwargs` to apply selectors to arbitrary attributes of the message https://github.com/Textualize/textual/pull/2498
-
 
 ### Added
 
+- Property `control` as alias for attribute `tabs` in `Tabs` messages https://github.com/Textualize/textual/pull/2483
+- Experimental: Added "overlay" rule https://github.com/Textualize/textual/pull/2501
+- Experimental: Added "constrain" rule https://github.com/Textualize/textual/pull/2501
+- Added textual.widgets.Select https://github.com/Textualize/textual/pull/2501
+- Added Region.translate_inside https://github.com/Textualize/textual/pull/2501
+- `TabbedContent` now takes kwargs `id`, `name`, `classes`, and `disabled`, upon initialization, like other widgets https://github.com/Textualize/textual/pull/2497
 - Method `DataTable.move_cursor` https://github.com/Textualize/textual/issues/2472
 - Added `OptionList.add_options` https://github.com/Textualize/textual/pull/2508
 - Added `TreeNode.is_root` https://github.com/Textualize/textual/pull/2510

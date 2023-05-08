@@ -654,6 +654,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         Returns:
             `True` if the messages was processed, `False` if it wasn't.
         """
+        _rich_traceback_omit = True
         if self._closing or self._closed:
             return False
         if not self.check_message_enabled(message):
