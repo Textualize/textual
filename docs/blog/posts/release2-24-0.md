@@ -43,7 +43,7 @@ The overlay needed to appear over any content below it.
 This is possible (using [layers](https://textual.textualize.io/styles/layers/)), but there was no simple way of positioning it directly under the parent widget.
 
 We solved this with a new "overlay" concept, which can considered a special layer for user interactions like this Select, but also pop-up menus, tooltips, etc.
-Widgets styled to use the overlay appear in there natural place in the "document", but on top of everything else.
+Widgets styled to use the overlay appear in their natural place in the "document", but on top of everything else.
 
 A second problem we tackled was ensuring that an overlay widget was never clipped.
 This was also solved with a new rule called "constrain".
