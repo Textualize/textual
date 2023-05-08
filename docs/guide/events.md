@@ -218,9 +218,22 @@ Messages from builtin controls will have this attribute, but you may need to add
 
 !!! note
 
-    If multiple decorated handlers match the `control`, then they will *all* be called in the order they are defined.
+    If multiple decorated handlers match the message, then they will *all* be called in the order they are defined.
 
     The naming convention handler will be called *after* any decorated handlers.
+
+#### Applying CSS selectors to arbitrary attributes
+
+The `on` decorator also accepts selectors as keyword arguments that may be used to match other attributes in a Message, provided those attributes are in [`Message.ALLOW_SELECTOR_MATCH`][textual.message.Message.ALLOW_SELECTOR_MATCH].
+
+The snippet below shows how to match the message [`TabbedContent.TabActivated`][textual.widgets.TabbedContent.TabActivated] only when the tab with id `home` was activated:
+
+```py
+@on(TabbedContent.TabActivated, tab="#home")
+def home_tab(self) -> None:
+    self.log("Switched back to home tab.")
+    ...
+```
 
 ### Handler arguments
 
@@ -228,6 +241,14 @@ Message handler methods can be written with or without a positional argument. If
 
 ```python
     def on_color_button_selected(self, message: ColorButton.Selected) -> None:
+        self.screen.styles.animate("background", message.color, duration=0.5)
+```
+
+A similar handler can be written using the decorator `on`:
+
+```python
+    @on(ColorButton.Selected)
+    def animate_background_color(self, message: ColorButton.Selected) -> None:
         self.screen.styles.animate("background", message.color, duration=0.5)
 ```
 
