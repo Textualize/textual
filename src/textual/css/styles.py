@@ -39,8 +39,10 @@ from .constants import (
     VALID_ALIGN_HORIZONTAL,
     VALID_ALIGN_VERTICAL,
     VALID_BOX_SIZING,
+    VALID_CONSTRAIN,
     VALID_DISPLAY,
     VALID_OVERFLOW,
+    VALID_OVERLAY,
     VALID_SCROLLBAR_GUTTER,
     VALID_TEXT_ALIGN,
     VALID_VISIBILITY,
@@ -52,9 +54,11 @@ from .types import (
     AlignHorizontal,
     AlignVertical,
     BoxSizing,
+    Constrain,
     Display,
     Edge,
     Overflow,
+    Overlay,
     ScrollbarGutter,
     Specificity3,
     Specificity6,
@@ -177,6 +181,9 @@ class RulesMap(TypedDict, total=False):
     border_subtitle_background: Color
     border_subtitle_style: Style
 
+    overlay: Overlay
+    constrain: Constrain
+
 
 RULE_NAMES = list(RulesMap.__annotations__.keys())
 RULE_NAMES_SET = frozenset(RULE_NAMES)
@@ -223,7 +230,7 @@ class StylesBase(ABC):
     node: DOMNode | None = None
 
     display = StringEnumProperty(
-        VALID_DISPLAY, "block", layout=True, refresh_parent=True
+        VALID_DISPLAY, "block", layout=True, refresh_parent=True, refresh_children=True
     )
     visibility = StringEnumProperty(
         VALID_VISIBILITY, "visible", layout=True, refresh_parent=True
@@ -340,6 +347,11 @@ class StylesBase(ABC):
     border_subtitle_color = ColorProperty(Color(255, 255, 255, 0))
     border_subtitle_background = ColorProperty(Color(0, 0, 0, 0))
     border_subtitle_style = StyleFlagsProperty()
+
+    overlay = StringEnumProperty(
+        VALID_OVERLAY, "none", layout=True, refresh_parent=True
+    )
+    constrain = StringEnumProperty(VALID_CONSTRAIN, "none")
 
     def __textual_animation__(
         self,
@@ -1024,7 +1036,10 @@ class Styles(StylesBase):
             )
         if "border_subtitle_text_style" in rules:
             append_declaration("subtitle-text-style", str(self.border_subtitle_style))
-
+        if "overlay" in rules:
+            append_declaration("overlay", str(self.overlay))
+        if "constrain" in rules:
+            append_declaration("constrain", str(self.constrain))
         lines.sort()
         return lines
 

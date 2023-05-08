@@ -52,7 +52,7 @@ def test_bindings_merge_overlap():
 
 def test_bad_binding_tuple():
     with pytest.raises(BindingError):
-        _ = _Bindings((("a", "action"),))
+        _ = _Bindings((("a",),))
     with pytest.raises(BindingError):
         _ = _Bindings((("a", "action", "description", "too much"),))
 

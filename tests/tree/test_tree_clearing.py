@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.widgets import Tree
+from textual.widgets.tree import TreeNode
 
 
 class VerseBody:
@@ -71,3 +74,37 @@ async def test_tree_reset_with_label_and_data() -> None:
         assert len(tree.root.children) == 0
         assert str(tree.root.label) == "Jiangyin"
         assert isinstance(tree.root.data, VersePlanet)
+
+
+async def test_remove_node():
+    async with TreeClearApp().run_test() as pilot:
+        tree = pilot.app.query_one(VerseTree)
+        assert len(tree.root.children) == 2
+        tree.root.children[0].remove()
+        assert len(tree.root.children) == 1
+
+
+async def test_remove_node_children():
+    async with TreeClearApp().run_test() as pilot:
+        tree = pilot.app.query_one(VerseTree)
+        assert len(tree.root.children) == 2
+        assert len(tree.root.children[0].children) == 2
+        tree.root.children[0].remove_children()
+        assert len(tree.root.children) == 2
+        assert len(tree.root.children[0].children) == 0
+
+
+async def test_tree_remove_children_of_root():
+    """Test removing the children of the root."""
+    async with TreeClearApp().run_test() as pilot:
+        tree = pilot.app.query_one(VerseTree)
+        assert len(tree.root.children) > 1
+        tree.root.remove_children()
+        assert len(tree.root.children) == 0
+
+
+async def test_attempt_to_remove_root():
+    """Attempting to remove the root should be an error."""
+    async with TreeClearApp().run_test() as pilot:
+        with pytest.raises(TreeNode.RemoveRootError):
+            pilot.app.query_one(VerseTree).root.remove()
