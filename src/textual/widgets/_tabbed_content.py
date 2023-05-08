@@ -88,7 +88,7 @@ class TabbedContent(Widget):
     class TabActivated(Message):
         """Posted when the active tab changes."""
 
-        ON_MATCHABLE_ATTRIBUTES = {"tab"}
+        ALLOW_SELECTOR_MATCH = {"tab"}
         """Message attributes that can be used with the [`on` decorator][textual.on]."""
 
         def __init__(self, tabbed_content: TabbedContent, tab: Tab) -> None:

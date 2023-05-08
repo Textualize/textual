@@ -46,7 +46,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         or in a parent widget in the DOM.
         """
 
-        ON_MATCHABLE_ATTRIBUTES = {"item"}
+        ALLOW_SELECTOR_MATCH = {"item"}
         """Message attributes that can be used with the [`on` decorator][textual.on]."""
 
         def __init__(self, list_view: ListView, item: ListItem | None) -> None:
@@ -72,7 +72,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         a parent widget in the DOM.
         """
 
-        ON_MATCHABLE_ATTRIBUTES = {"item"}
+        ALLOW_SELECTOR_MATCH = {"item"}
         """Message attributes that can be used with the [`on` decorator][textual.on]."""
 
         def __init__(self, list_view: ListView, item: ListItem) -> None:

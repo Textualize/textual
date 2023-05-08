@@ -32,7 +32,7 @@ class Message:
         "_prevent",
     ]
 
-    ON_MATCHABLE_ATTRIBUTES: ClassVar[set[str]] = set()
+    ALLOW_SELECTOR_MATCH: ClassVar[set[str]] = set()
     """Message attributes that can be used with the [`on` decorator][textual.on].
 
     These attributes must be widgets.

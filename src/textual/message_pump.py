@@ -564,6 +564,8 @@ class MessagePump(metaclass=_MessagePumpMeta):
             decorated_handlers = cls.__dict__.get("_decorated_handlers")
             if decorated_handlers is not None:
                 handlers = decorated_handlers.get(type(message), [])
+                from .widget import Widget
+
                 for method, selectors in handlers:
                     if not selectors:
                         yield cls, method.__get__(self, cls)
@@ -572,13 +574,12 @@ class MessagePump(metaclass=_MessagePumpMeta):
                             continue
                         for attribute, selector in selectors.items():
                             node = getattr(message, attribute)
-                            try:
-                                if not match(selector, node):
-                                    break
-                            except AttributeError:
+                            if not isinstance(node, Widget):
                                 raise OnNoWidget(
-                                    f"Attribute {attribute!r} isn't a widget."
-                                ) from None
+                                    f"on decorator can't match against {attribute!r} as it is not a widget."
+                                )
+                            if not match(selector, node):
+                                break
                         else:
                             yield cls, method.__get__(self, cls)
 

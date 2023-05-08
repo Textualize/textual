@@ -35,11 +35,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `TreeNode.is_root` https://github.com/Textualize/textual/pull/2510
 - Added `TreeNode.remove_children` https://github.com/Textualize/textual/pull/2510
 - Added `TreeNode.remove` https://github.com/Textualize/textual/pull/2510
-- Added classvar `Message.ON_MATCHABLE_ATTRIBUTES` https://github.com/Textualize/textual/pull/2498
-  - Added `ON_MATCHABLE_ATTRIBUTES` to `ListView.Highlighted` and `ListView.Selected`
-  - Added `ON_MATCHABLE_ATTRIBUTES` to `RadioSet.Changed`
-  - Added `ON_MATCHABLE_ATTRIBUTES` to `TabbedContent.TabActivated`
-  - Added `ON_MATCHABLE_ATTRIBUTES` to `Tabs.TabActivated`
+- Added classvar `Message.ALLOW_SELECTOR_MATCH` https://github.com/Textualize/textual/pull/2498
+  - Added `ALLOW_SELECTOR_MATCH` to `ListView.Highlighted` and `ListView.Selected`
+  - Added `ALLOW_SELECTOR_MATCH` to `RadioSet.Changed`
+  - Added `ALLOW_SELECTOR_MATCH` to `TabbedContent.TabActivated`
+  - Added `ALLOW_SELECTOR_MATCH` to `Tabs.TabActivated`
 
 ### Added
 

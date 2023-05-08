@@ -78,7 +78,7 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
         This message can be handled using an `on_radio_set_changed` method.
         """
 
-        ON_MATCHABLE_ATTRIBUTES = {"pressed"}
+        ALLOW_SELECTOR_MATCH = {"pressed"}
         """Message attributes that can be used with the [`on` decorator][textual.on]."""
 
         def __init__(self, radio_set: RadioSet, pressed: RadioButton) -> None:

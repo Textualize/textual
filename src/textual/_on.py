@@ -38,7 +38,7 @@ def on(
         ```
 
     Keyword arguments can be used to provide further selectors for the attributes
-    that are listed in [`ON_MATCHABLE_ATTRIBUTES`][textual.message.Message.ON_MATCHABLE_ATTRIBUTES].
+    that are listed in [`ALLOW_SELECTOR_MATCH`][textual.message.Message.ALLOW_SELECTOR_MATCH].
 
     Example:
         ```python
@@ -64,12 +64,10 @@ def on(
 
     parsed_selectors: dict[str, tuple[SelectorSet, ...]] = {}
     for attribute, css_selector in selectors.items():
-        if attribute not in message_type.ON_MATCHABLE_ATTRIBUTES and not hasattr(
-            message_type, attribute
-        ):
+        if attribute not in message_type.ALLOW_SELECTOR_MATCH:
             raise OnDecoratorError(
                 f"The attribute {attribute!r} can't be matched; have you added it to "
-                + f"{message_type.__name__}.ON_MATCHABLE_ATTRIBUTES?"
+                + f"{message_type.__name__}.ALLOW_SELECTOR_MATCH?"
             )
         try:
             parsed_selectors[attribute] = parse_selectors(css_selector)

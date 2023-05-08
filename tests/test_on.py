@@ -105,7 +105,7 @@ def test_on_no_control() -> None:
 
 
 def test_on_attribute_not_listed() -> None:
-    """Check `on` checks if the attribute is in ON_MATCHABLE_ATTRIBUTES."""
+    """Check `on` checks if the attribute is in ALLOW_SELECTOR_MATCH."""
 
     class CustomMessage(Message):
         pass
