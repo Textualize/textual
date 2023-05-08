@@ -26,7 +26,7 @@ def on(
 ) -> Callable[[DecoratedType], DecoratedType]:
     """Decorator to declare that the method is a message handler.
 
-    The decorator can take a CSS selector that is applied to the attribute `control`
+    The decorator accepts an optional CSS selector that is matched against a widget exposed by a `control` attribute on the message.
     of the message.
 
     Example:
