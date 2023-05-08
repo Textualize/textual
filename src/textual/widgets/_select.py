@@ -169,11 +169,11 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
 
     """
 
-    BINDINGS = [("down,enter", "show_overlay")]
+    BINDINGS = [("enter,down,space,up", "show_overlay")]
     """
     | Key(s) | Description |
     | :- | :- |
-    | down,enter | Activate the overlay |
+    | enter,down,space,up | Activate the overlay |
     """
 
     DEFAULT_CSS = """
