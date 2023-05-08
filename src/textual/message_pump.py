@@ -568,19 +568,14 @@ class MessagePump(metaclass=_MessagePumpMeta):
                     if not selectors:
                         yield cls, method.__get__(self, cls)
                     else:
-                        print("===")
-                        print(message)
-                        print(selectors)
                         if not message._sender:
                             continue
                         for attribute, selector in selectors.items():
                             node = getattr(message, attribute, _sentinel)
-                            print(f"Matching {node} against {selector}")
                             if node is _sentinel:
                                 break
                             if not match(parse_selectors(selector), node):
                                 break
-                            print("passed")
                         else:
                             yield cls, method.__get__(self, cls)
 
