@@ -261,7 +261,7 @@ class DirectoryTree(Tree[DirEntry]):
             if not dir_entry.loaded:
                 self._load_directory(event.node)
         else:
-            self.post_message(self.FileSelected(event.node, dir_entry.path))
+            self.post_message(self.FileSelected(self, event.node, dir_entry.path))
 
     def _on_tree_node_selected(self, event: Tree.NodeSelected) -> None:
         event.stop()
@@ -269,4 +269,4 @@ class DirectoryTree(Tree[DirEntry]):
         if dir_entry is None:
             return
         if not dir_entry.path.is_dir():
-            self.post_message(self.FileSelected(event.node, dir_entry.path))
+            self.post_message(self.FileSelected(self, event.node, dir_entry.path))
