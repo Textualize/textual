@@ -11,7 +11,7 @@ authors:
 # Textual 0.24.0 adds a Select control
 
 Coming just 5 days after the last release, we have version 0.24.0 which we are crowning the King of Textual releases.
-At least util it is deposed by version 0.25.0.
+At least until it is deposed by version 0.25.0.
 
 <!-- more -->
 
