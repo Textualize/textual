@@ -178,6 +178,9 @@ class Tabs(Widget, can_focus=True):
     class TabActivated(Message):
         """Sent when a new tab is activated."""
 
+        ON_MATCHABLE_ATTRIBUTES = {"tab"}
+        """Message attributes that can be used with the [`on` decorator][textual.on]."""
+
         tabs: Tabs
         """The tabs widget containing the tab."""
         tab: Tab

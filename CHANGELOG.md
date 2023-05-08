@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `always_update` as an optional argument for `reactive.var`
 - Made Binding description default to empty string, which is equivalent to show=False https://github.com/Textualize/textual/pull/2501
 - Modified Message to allow it to be used as a dataclass https://github.com/Textualize/textual/pull/2501
-- Decorator `@on` accepts arbitrary `**kwargs` to apply selectors to arbitrary attributes of the message https://github.com/Textualize/textual/pull/2498
+- Decorator `@on` accepts arbitrary `**kwargs` to apply selectors to attributes of the message https://github.com/Textualize/textual/pull/2498
 
 ### Added
 
@@ -35,6 +35,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `TreeNode.is_root` https://github.com/Textualize/textual/pull/2510
 - Added `TreeNode.remove_children` https://github.com/Textualize/textual/pull/2510
 - Added `TreeNode.remove` https://github.com/Textualize/textual/pull/2510
+- Added classvar `Message.ON_MATCHABLE_ATTRIBUTES` https://github.com/Textualize/textual/pull/2498
+  - Added `ON_MATCHABLE_ATTRIBUTES` to `ListView.Highlighted` and `ListView.Selected`
+  - Added `ON_MATCHABLE_ATTRIBUTES` to `RadioSet.Changed`
+  - Added `ON_MATCHABLE_ATTRIBUTES` to `TabbedContent.TabActivated`
+  - Added `ON_MATCHABLE_ATTRIBUTES` to `Tabs.TabActivated`
 
 ### Added
 

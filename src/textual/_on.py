@@ -17,6 +17,10 @@ class OnDecoratorError(Exception):
     """
 
 
+class OnNoWidget(Exception):
+    """A selector was applied to an attribute that isn't a widget."""
+
+
 def on(
     message_type: type[Message], selector: str | None = None, **kwargs: str
 ) -> Callable[[DecoratedType], DecoratedType]:
@@ -34,7 +38,7 @@ def on(
         ```
 
     Keyword arguments can be used to provide further selectors for the attributes
-    of the messages passed in.
+    that are listed in [`ON_MATCHABLE_ATTRIBUTES`][textual.message.Message.ON_MATCHABLE_ATTRIBUTES].
 
     Example:
         ```python
@@ -52,11 +56,6 @@ def on(
         **kwargs: Additional selectors for other attributes of the message.
     """
 
-    if selector is not None and not hasattr(message_type, "control"):
-        raise OnDecoratorError(
-            "The 'selector' argument requires a message class with a 'control' attribute (such as events from controls)."
-        )
-
     selectors: dict[str, str] = {}
     if selector is not None:
         selectors["control"] = selector
@@ -65,6 +64,13 @@ def on(
 
     parsed_selectors: dict[str, tuple[SelectorSet, ...]] = {}
     for attribute, css_selector in selectors.items():
+        if attribute not in message_type.ON_MATCHABLE_ATTRIBUTES and not hasattr(
+            message_type, attribute
+        ):
+            raise OnDecoratorError(
+                f"The attribute {attribute!r} can't be matched; have you added it to "
+                + f"{message_type.__name__}.ON_MATCHABLE_ATTRIBUTES?"
+            )
         try:
             parsed_selectors[attribute] = parse_selectors(css_selector)
         except TokenError:

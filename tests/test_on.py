@@ -104,6 +104,19 @@ def test_on_no_control() -> None:
             pass
 
 
+def test_on_attribute_not_listed() -> None:
+    """Check `on` checks if the attribute is in ON_MATCHABLE_ATTRIBUTES."""
+
+    class CustomMessage(Message):
+        pass
+
+    with pytest.raises(OnDecoratorError):
+
+        @on(CustomMessage, foo="bar")
+        def foo():
+            pass
+
+
 async def test_on_arbitrary_attributes() -> None:
     log: list[str] = []
 
@@ -125,40 +138,8 @@ async def test_on_arbitrary_attributes() -> None:
         def two(self) -> None:
             log.append("two")
 
-        @on(TabbedContent.TabActivated, tabbed_content=".tabs", tab="#three")
-        def three(self) -> None:
-            log.append("three")
-
     app = OnArbitraryAttributesApp()
     async with app.run_test() as pilot:
         await pilot.press("tab", "right", "right")
 
-    assert log == ["one", "two", "three"]
-
-
-async def test_on_extra_attributes() -> None:
-    """@on shouldn't trigger when there are selectors for non-existing attributes."""
-    log: list[str] = []
-
-    class OnExtraAttributes(App[None]):
-        def compose(self) -> ComposeResult:
-            with TabbedContent():
-                yield TabPane("One", id="one")
-
-        @on(TabbedContent.TabActivated, tab="#one", hello="#world")
-        def one_hello_world(self) -> None:
-            log.append("one hello world")
-
-        @on(TabbedContent.TabActivated, hello="#world")
-        def hello_world(self) -> None:
-            log.append("hello world")
-
-        @on(TabbedContent.TabActivated, tab="#one")
-        def one(self) -> None:
-            log.append("control")
-
-    app = OnExtraAttributes()
-    async with app.run_test():
-        pass
-
-    assert log == ["control"]
+    assert log == ["one", "two"]

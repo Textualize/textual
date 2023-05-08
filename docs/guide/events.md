@@ -224,24 +224,7 @@ Messages from builtin controls will have this attribute, but you may need to add
 
 #### Applying CSS selectors to arbitrary attributes
 
-The `on` decorator also accepts selectors as keyword arguments that may be used to match other attributes in a Message.
-As a simple example, the app below is functionally equivalent to the previous example, but it will match the CSS selectors explicitly against the attribute `button` of the message `Button.Pressed`:
-
-=== "on_decorator03.py"
-
-    ```python title="on_decorator03.py"
-    --8<-- "docs/examples/events/on_decorator03.py"
-    ```
-
-    1. Matches `Button.Pressed` messages whose attribute `button` has an id `bell`.
-    2. Matches `Button.Pressed` messages whose attribute `button` has the class names "toggle" *and* "dark".
-    3. Matches `Button.Pressed` messages whose attribute `button` has an id of "quit".
-    4. Matches `Button.Pressed` messages whose attribute `super_cool_button` has an id `button`, which will never happen because the message `Button.Pressed` doesn't have such an attribute.
-
-=== "Output"
-
-    ```{.textual path="docs/examples/events/on_decorator03.py"}
-    ```
+The `on` decorator also accepts selectors as keyword arguments that may be used to match other attributes in a Message, provided those attributes are in [`Message.ON_MATCHABLE_ATTRIBUTES`][textual.message.Message.ON_MATCHABLE_ATTRIBUTES].
 
 ### Handler arguments
 

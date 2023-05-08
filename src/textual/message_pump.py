@@ -22,6 +22,7 @@ from ._context import (
     active_message_pump,
     prevent_message_types_stack,
 )
+from ._on import OnNoWidget
 from ._time import time
 from ._types import CallbackType
 from .case import camel_to_snake
@@ -563,7 +564,6 @@ class MessagePump(metaclass=_MessagePumpMeta):
             decorated_handlers = cls.__dict__.get("_decorated_handlers")
             if decorated_handlers is not None:
                 handlers = decorated_handlers.get(type(message), [])
-                _sentinel = object()
                 for method, selectors in handlers:
                     if not selectors:
                         yield cls, method.__get__(self, cls)
@@ -571,9 +571,14 @@ class MessagePump(metaclass=_MessagePumpMeta):
                         if not message._sender:
                             continue
                         for attribute, selector in selectors.items():
-                            node = getattr(message, attribute, _sentinel)
-                            if node is _sentinel or not match(selector, node):
-                                break
+                            node = getattr(message, attribute)
+                            try:
+                                if not match(selector, node):
+                                    break
+                            except AttributeError:
+                                raise OnNoWidget(
+                                    f"Attribute {attribute!r} isn't a widget."
+                                ) from None
                         else:
                             yield cls, method.__get__(self, cls)
 

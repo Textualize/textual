@@ -32,6 +32,11 @@ class Message:
         "_prevent",
     ]
 
+    ON_MATCHABLE_ATTRIBUTES: ClassVar[set[str]] = set()
+    """Message attributes that can be used with the [`on` decorator][textual.on].
+
+    These attributes must be widgets.
+    """
     bubble: ClassVar[bool] = True  # Message will bubble to parent
     verbose: ClassVar[bool] = False  # Message is verbose
     no_dispatch: ClassVar[bool] = False  # Message may not be handled by client code
