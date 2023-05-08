@@ -20,7 +20,7 @@ class OnDecoratorError(Exception):
 def on(
     message_type: type[Message], selector: str | None = None, **kwargs: str
 ) -> Callable[[DecoratedType], DecoratedType]:
-    """Decorator to declare that method is a message handler.
+    """Decorator to declare that the method is a message handler.
 
     The decorator can take a CSS selector that is applied to the attribute `control`
     of the message.
