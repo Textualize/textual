@@ -845,6 +845,8 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             self._cursor_node = node
             if previous_node != node:
                 self.post_message(self.NodeHighlighted(node))
+        else:
+            self._cursor_node = None
 
     def watch_guide_depth(self, guide_depth: int) -> None:
         self._invalidate()
