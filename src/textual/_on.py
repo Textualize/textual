@@ -49,6 +49,7 @@ def on(
         message_type: The message type (i.e. the class).
         selector: An optional [selector](/guide/CSS#selectors). If supplied, the handler will only be called if `selector`
             matches the widget from the `control` attribute of the message.
+        **kwargs: Additional selectors for other attributes of the message.
     """
 
     if selector is not None and not hasattr(message_type, "control"):
