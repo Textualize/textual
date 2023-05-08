@@ -147,6 +147,9 @@ class Input(Widget, can_focus=True):
             input: The `Input` widget that was changed.
         """
 
+        ALLOW_SELECTOR_MATCH = {"control"}
+        """Message attributes that can be used with the [`on` decorator][textual.on]."""
+
         def __init__(self, input: Input, value: str) -> None:
             super().__init__()
             self.input: Input = input
@@ -167,6 +170,9 @@ class Input(Widget, can_focus=True):
             value: The value of the `Input` being submitted.
             input: The `Input` widget that is being submitted.
         """
+
+        ALLOW_SELECTOR_MATCH = {"control"}
+        """Message attributes that can be used with the [`on` decorator][textual.on]."""
 
         def __init__(self, input: Input, value: str) -> None:
             super().__init__()

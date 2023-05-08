@@ -178,7 +178,7 @@ class Tabs(Widget, can_focus=True):
     class TabActivated(Message):
         """Sent when a new tab is activated."""
 
-        ALLOW_SELECTOR_MATCH = {"tab"}
+        ALLOW_SELECTOR_MATCH = {"control", "tab"}
         """Message attributes that can be used with the [`on` decorator][textual.on]."""
 
         tabs: Tabs

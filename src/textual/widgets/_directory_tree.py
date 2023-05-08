@@ -64,6 +64,9 @@ class DirectoryTree(Tree[DirEntry]):
         `DirectoryTree` or in a parent widget in the DOM.
         """
 
+        ALLOW_SELECTOR_MATCH = {"control"}
+        """Message attributes that can be used with the [`on` decorator][textual.on]."""
+
         def __init__(
             self, tree: DirectoryTree, node: TreeNode[DirEntry], path: Path
         ) -> None:

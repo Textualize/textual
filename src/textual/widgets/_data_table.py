@@ -331,6 +331,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         a subclass of `DataTable` or in a parent widget in the DOM.
         """
 
+        ALLOW_SELECTOR_MATCH = {"control"}
+        """Message attributes that can be used with the [`on` decorator][textual.on]."""
+
         def __init__(
             self,
             data_table: DataTable,
@@ -365,6 +368,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         `on_data_table_cell_selected` in a subclass of `DataTable` or in a parent
         widget in the DOM.
         """
+
+        ALLOW_SELECTOR_MATCH = {"control"}
+        """Message attributes that can be used with the [`on` decorator][textual.on]."""
 
         def __init__(
             self,
@@ -402,6 +408,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         widget in the DOM.
         """
 
+        ALLOW_SELECTOR_MATCH = {"control"}
+        """Message attributes that can be used with the [`on` decorator][textual.on]."""
+
         def __init__(
             self, data_table: DataTable, cursor_row: int, row_key: RowKey
         ) -> None:
@@ -431,6 +440,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         widget in the DOM.
         """
 
+        ALLOW_SELECTOR_MATCH = {"control"}
+        """Message attributes that can be used with the [`on` decorator][textual.on]."""
+
         def __init__(
             self, data_table: DataTable, cursor_row: int, row_key: RowKey
         ) -> None:
@@ -459,6 +471,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         `on_data_table_column_highlighted` in a subclass of `DataTable` or in a parent
         widget in the DOM.
         """
+
+        ALLOW_SELECTOR_MATCH = {"control"}
+        """Message attributes that can be used with the [`on` decorator][textual.on]."""
 
         def __init__(
             self, data_table: DataTable, cursor_column: int, column_key: ColumnKey

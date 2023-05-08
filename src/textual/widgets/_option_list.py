@@ -238,6 +238,9 @@ class OptionList(ScrollView, can_focus=True):
     class OptionMessage(Message):
         """Base class for all option messages."""
 
+        ALLOW_SELECTOR_MATCH = {"control"}
+        """Message attributes that can be used with the [`on` decorator][textual.on]."""
+
         def __init__(self, option_list: OptionList, index: int) -> None:
             """Initialise the option message.
 
