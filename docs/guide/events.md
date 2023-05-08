@@ -224,7 +224,7 @@ Messages from builtin controls will have this attribute, but you may need to add
 
 #### Applying CSS selectors to arbitrary attributes
 
-The decorator `on` also accepts `**kwargs` that can be used to specify CSS selectors for the specified attributes of the message.
+The `on` decorator also accepts selectors as keyword arguments that may be used to match other attributes in a Message.
 As a simple example, the app below is functionally equivalent to the previous example, but it will match the CSS selectors explicitly against the attribute `button` of the message `Button.Pressed`:
 
 === "on_decorator03.py"
