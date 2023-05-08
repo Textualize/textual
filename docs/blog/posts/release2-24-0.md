@@ -15,7 +15,7 @@ At least util it is deposed by version 0.25.0.
 
 <!-- more -->
 
-The highlight of this release is the new Select widget: a very familiar control from the web and desktop worlds.
+The highlight of this release is the new [Select](/widget_gallery/#select) widget: a very familiar control from the web and desktop worlds.
 Here's a screenshot and code:
 
 === "Output (expanded)"
