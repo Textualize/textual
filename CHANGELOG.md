@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - The DataTable cursor is now scrolled into view when the cursor coordinate is changed programmatically https://github.com/Textualize/textual/issues/2459
+- Added `key_function` as an optional argument for `DataTable.sort` https://github.com/Textualize/textual/pull/2512
 - run_worker exclusive parameter is now `False` by default https://github.com/Textualize/textual/pull/2470
 - Added `always_update` as an optional argument for `reactive.var`
 - Made Binding description default to empty string, which is equivalent to show=False https://github.com/Textualize/textual/pull/2501

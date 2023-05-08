@@ -4,7 +4,7 @@ import functools
 from dataclasses import dataclass
 from itertools import chain, zip_longest
 from operator import itemgetter
-from typing import Any, ClassVar, Generic, Iterable, NamedTuple, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Callable, ClassVar, Generic, Iterable, NamedTuple, TypeVar, cast
 
 import rich.repr
 from rich.console import RenderableType
@@ -13,7 +13,7 @@ from rich.protocol import is_renderable
 from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text, TextType
-from typing_extensions import Literal, Self, TypeAlias
+from typing_extensions import Literal
 
 from .. import events
 from .._cache import LRUCache
@@ -31,6 +31,10 @@ from ..renderables.styled import Styled
 from ..scroll_view import ScrollView
 from ..strip import Strip
 from ..widget import PseudoClasses
+
+if TYPE_CHECKING:
+    from _typeshed import SupportsRichComparison
+    from typing_extensions import Self, TypeAlias
 
 CellCacheKey: TypeAlias = (
     "tuple[RowKey, ColumnKey, Style, bool, bool, int, PseudoClasses]"
@@ -1981,26 +1985,33 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self,
         *columns: ColumnKey | str,
         reverse: bool = False,
+        key_function: Callable[[tuple[RowKey, dict[ColumnKey, CellType]]],
+                               SupportsRichComparison] | None = None,
     ) -> Self:
         """Sort the rows in the `DataTable` by one or more column keys.
 
         Args:
-            columns: One or more columns to sort by the values in.
+            columns: One or more columns to sort by (unless key_function is set).
             reverse: If True, the sort order will be reversed.
+            key_function: A custom function to extract a comparison key for each row.
 
         Returns:
             The `DataTable` instance.
+
         """
 
         def sort_by_column_keys(
-            row: tuple[RowKey, dict[ColumnKey | str, CellType]]
-        ) -> Any:
+            row: tuple[RowKey, dict[ColumnKey, CellType]]
+        ) -> SupportsRichComparison:
             _, row_data = row
             result = itemgetter(*columns)(row_data)
             return result
 
+        if key_function is None:
+            key_function = sort_by_column_keys
+
         ordered_rows = sorted(
-            self._data.items(), key=sort_by_column_keys, reverse=reverse
+            self._data.items(), key=key_function, reverse=reverse
         )
         self._row_locations = TwoWayDict(
             {key: new_index for new_index, (key, _) in enumerate(ordered_rows)}
