@@ -29,6 +29,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `OptionList.add_options` https://github.com/Textualize/textual/pull/2508
 
+### Added
+
+- Added `TreeNode.is_root` https://github.com/Textualize/textual/pull/2510
+- Added `TreeNode.remove_children` https://github.com/Textualize/textual/pull/2510
+- Added `TreeNode.remove` https://github.com/Textualize/textual/pull/2510
+
 ## [0.23.0] - 2023-05-03
 
 ### Fixed

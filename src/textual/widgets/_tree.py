@@ -185,6 +185,11 @@ class TreeNode(Generic[TreeDataType]):
         )
 
     @property
+    def is_root(self) -> bool:
+        """Is this node the root of the tree?"""
+        return self == self._tree.root
+
+    @property
     def allow_expand(self) -> bool:
         """Is this node allowed to expand?"""
         return self._allow_expand
@@ -343,6 +348,47 @@ class TreeNode(Generic[TreeDataType]):
         """
         node = self.add(label, data, expand=False, allow_expand=False)
         return node
+
+    class RemoveRootError(Exception):
+        """Exception raised when trying to remove a tree's root node."""
+
+    def _remove_children(self) -> None:
+        """Remove child nodes of this node.
+
+        Note:
+            This is the internal support method for `remove_children`. Call
+            `remove_children` to ensure the tree gets refreshed.
+        """
+        for child in reversed(self._children):
+            child._remove()
+
+    def _remove(self) -> None:
+        """Remove the current node and all its children.
+
+        Note:
+            This is the internal support method for `remove`. Call `remove`
+            to ensure the tree gets refreshed.
+        """
+        self._remove_children()
+        assert self._parent is not None
+        del self._parent._children[self._parent._children.index(self)]
+        del self._tree._tree_nodes[self.id]
+
+    def remove(self) -> None:
+        """Remove this node from the tree.
+
+        Raises:
+            TreeNode.RemoveRootError: If there is an attempt to remove the root.
+        """
+        if self.is_root:
+            raise self.RemoveRootError("Attempt to remove the root node of a Tree.")
+        self._remove()
+        self._tree._invalidate()
+
+    def remove_children(self) -> None:
+        """Remove any child nodes of this node."""
+        self._remove_children()
+        self._tree._invalidate()
 
 
 class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
@@ -814,6 +860,8 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             self._cursor_node = node
             if previous_node != node:
                 self.post_message(self.NodeHighlighted(node))
+        else:
+            self._cursor_node = None
 
     def watch_guide_depth(self, guide_depth: int) -> None:
         self._invalidate()
