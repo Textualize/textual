@@ -88,7 +88,9 @@ class MarkdownBlock(Static):
     }
     """
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, markdown: Markdown, *args, **kwargs) -> None:
+        self._markdown: Markdown = markdown
+        """A reference to the Markdown document that contains this block."""
         self._text = Text()
         self._blocks: list[MarkdownBlock] = []
         super().__init__(*args, **kwargs)
@@ -103,7 +105,7 @@ class MarkdownBlock(Static):
 
     async def action_link(self, href: str) -> None:
         """Called on link click."""
-        self.post_message(Markdown.LinkClicked(href))
+        self.post_message(Markdown.LinkClicked(self._markdown, href))
 
 
 class MarkdownHeader(MarkdownBlock):
@@ -453,9 +455,9 @@ class MarkdownListItem(MarkdownBlock):
     }
     """
 
-    def __init__(self, bullet: str) -> None:
+    def __init__(self, markdown: Markdown, bullet: str) -> None:
         self.bullet = bullet
-        super().__init__()
+        super().__init__(markdown)
 
 
 class MarkdownOrderedListItem(MarkdownListItem):
@@ -484,10 +486,10 @@ class MarkdownFence(MarkdownBlock):
     }
     """
 
-    def __init__(self, code: str, lexer: str) -> None:
+    def __init__(self, markdown: Markdown, code: str, lexer: str) -> None:
         self.code = code
         self.lexer = lexer
-        super().__init__()
+        super().__init__(markdown)
 
     def compose(self) -> ComposeResult:
         yield Static(
@@ -565,26 +567,61 @@ class Markdown(Widget):
     class TableOfContentsUpdated(Message, bubble=True):
         """The table of contents was updated."""
 
-        def __init__(self, table_of_contents: TableOfContentsType) -> None:
+        def __init__(
+            self, markdown: Markdown, table_of_contents: TableOfContentsType
+        ) -> None:
             super().__init__()
+            self.markdown: Markdown = markdown
+            """The `Markdown` widget associated with the table of contents."""
             self.table_of_contents: TableOfContentsType = table_of_contents
             """Table of contents."""
+
+        @property
+        def control(self) -> Markdown:
+            """The `Markdown` widget associated with the table of contents.
+
+            This is an alias for [`TableOfContentsUpdated.markdown`][textual.widgets.Markdown.TableOfContentsSelected.markdown]
+            and is used by the [`on`][textual.on] decorator.
+            """
+            return self.markdown
 
     class TableOfContentsSelected(Message, bubble=True):
         """An item in the TOC was selected."""
 
-        def __init__(self, block_id: str) -> None:
+        def __init__(self, markdown: Markdown, block_id: str) -> None:
             super().__init__()
-            self.block_id = block_id
+            self.markdown: Markdown = markdown
+            """The `Markdown` widget where the selected item is."""
+            self.block_id: str = block_id
             """ID of the block that was selected."""
+
+        @property
+        def control(self) -> Markdown:
+            """The `Markdown` widget where the selected item is.
+
+            This is an alias for [`TableOfContentsSelected.markdown`][textual.widgets.Markdown.TableOfContentsSelected.markdown]
+            and is used by the [`on`][textual.on] decorator.
+            """
+            return self.markdown
 
     class LinkClicked(Message, bubble=True):
         """A link in the document was clicked."""
 
-        def __init__(self, href: str) -> None:
+        def __init__(self, markdown: Markdown, href: str) -> None:
             super().__init__()
+            self.markdown: Markdown = markdown
+            """The `Markdown` widget containing the link clicked."""
             self.href: str = href
             """The link that was selected."""
+
+        @property
+        def control(self) -> Markdown:
+            """The `Markdown` widget containing the link clicked.
+
+            This is an alias for [`LinkClicked.markdown`][textual.widgets.Markdown.LinkClicked.markdown]
+            and is used by the [`on`][textual.on] decorator.
+            """
+            return self.markdown
 
     def _on_mount(self, _: Mount) -> None:
         if self._markdown is not None:
@@ -629,20 +666,20 @@ class Markdown(Widget):
         for token in parser.parse(markdown):
             if token.type == "heading_open":
                 block_id += 1
-                stack.append(HEADINGS[token.tag](id=f"block{block_id}"))
+                stack.append(HEADINGS[token.tag](self, id=f"block{block_id}"))
             elif token.type == "hr":
-                output.append(MarkdownHorizontalRule())
+                output.append(MarkdownHorizontalRule(self))
             elif token.type == "paragraph_open":
-                stack.append(MarkdownParagraph())
+                stack.append(MarkdownParagraph(self))
             elif token.type == "blockquote_open":
-                stack.append(MarkdownBlockQuote())
+                stack.append(MarkdownBlockQuote(self))
             elif token.type == "bullet_list_open":
-                stack.append(MarkdownBulletList())
+                stack.append(MarkdownBulletList(self))
             elif token.type == "ordered_list_open":
-                stack.append(MarkdownOrderedList())
+                stack.append(MarkdownOrderedList(self))
             elif token.type == "list_item_open":
                 if token.info:
-                    stack.append(MarkdownOrderedListItem(token.info))
+                    stack.append(MarkdownOrderedListItem(self, token.info))
                 else:
                     item_count = sum(
                         1
@@ -651,22 +688,23 @@ class Markdown(Widget):
                     )
                     stack.append(
                         MarkdownUnorderedListItem(
-                            self.BULLETS[item_count % len(self.BULLETS)]
+                            self,
+                            self.BULLETS[item_count % len(self.BULLETS)],
                         )
                     )
 
             elif token.type == "table_open":
-                stack.append(MarkdownTable())
+                stack.append(MarkdownTable(self))
             elif token.type == "tbody_open":
-                stack.append(MarkdownTBody())
+                stack.append(MarkdownTBody(self))
             elif token.type == "thead_open":
-                stack.append(MarkdownTHead())
+                stack.append(MarkdownTHead(self))
             elif token.type == "tr_open":
-                stack.append(MarkdownTR())
+                stack.append(MarkdownTR(self))
             elif token.type == "th_open":
-                stack.append(MarkdownTH())
+                stack.append(MarkdownTH(self))
             elif token.type == "td_open":
-                stack.append(MarkdownTD())
+                stack.append(MarkdownTD(self))
             elif token.type.endswith("_close"):
                 block = stack.pop()
                 if token.type == "heading_close":
@@ -742,12 +780,13 @@ class Markdown(Widget):
             elif token.type == "fence":
                 output.append(
                     MarkdownFence(
+                        self,
                         token.content.rstrip(),
                         token.info,
                     )
                 )
 
-        self.post_message(Markdown.TableOfContentsUpdated(table_of_contents))
+        self.post_message(Markdown.TableOfContentsUpdated(self, table_of_contents))
         with self.app.batch_update():
             self.query("MarkdownBlock").remove()
             self.mount_all(output)
@@ -767,6 +806,27 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
     """
 
     table_of_contents = reactive["TableOfContentsType | None"](None, init=False)
+
+    def __init__(
+        self,
+        markdown: Markdown,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+        disabled: bool = False,
+    ) -> None:
+        """Initialize a table of contents.
+
+        Args:
+            markdown: The Markdown document associated with this table of contents.
+            name: The name of the widget.
+            id: The ID of the widget in the DOM.
+            classes: The CSS classes for the widget.
+            disabled: Whether the widget is disabled or not.
+        """
+        self.markdown = markdown
+        """The Markdown document associated with this table of contents."""
+        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
     def compose(self) -> ComposeResult:
         tree: Tree = Tree("TOC")
@@ -804,8 +864,9 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
         node_data = message.node.data
         if node_data is not None:
             await self._post_message(
-                Markdown.TableOfContentsSelected(node_data["block_id"])
+                Markdown.TableOfContentsSelected(self.markdown, node_data["block_id"])
             )
+        message.stop()
 
 
 class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
@@ -896,8 +957,9 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
         self.set_class(show_table_of_contents, "-show-table-of-contents")
 
     def compose(self) -> ComposeResult:
-        yield MarkdownTableOfContents()
-        yield Markdown(parser_factory=self._parser_factory)
+        markdown = Markdown(parser_factory=self._parser_factory)
+        yield MarkdownTableOfContents(markdown)
+        yield markdown
 
     def _on_markdown_table_of_contents_updated(
         self, message: Markdown.TableOfContentsUpdated

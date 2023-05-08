@@ -90,18 +90,7 @@ tables](https://rich.readthedocs.io/en/latest/tables.html):
 - [OptionList.OptionHighlight][textual.widgets.OptionList.OptionHighlighted]
 - [OptionList.OptionSelected][textual.widgets.OptionList.OptionSelected]
 
-Both of the messages above inherit from this common base, which makes
-available the following properties relating to the `OptionList` and the
-related `Option`:
-
-### Common message properties
-
-Both of the above messages provide the following properties:
-
-#### ::: textual.widgets.OptionList.OptionMessage.option
-#### ::: textual.widgets.OptionList.OptionMessage.option_id
-#### ::: textual.widgets.OptionList.OptionMessage.option_index
-#### ::: textual.widgets.OptionList.OptionMessage.option_list
+Both of the messages above inherit from the common base [`OptionList`][textual.widgets.OptionList.OptionMessage], so refer to its documentation to see what attributes are available.
 
 ## Bindings
 
