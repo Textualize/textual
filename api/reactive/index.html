@@ -4203,6 +4203,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -4732,6 +4734,32 @@
     
   
     RadioSet
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/select/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Select
   
 
     
@@ -6559,7 +6587,7 @@
   </span>
 
 <a href="#textual.reactive.Reactive.var" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">var</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">default</span><span class="p">):</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">var</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">default</span><span class="p">,</span> <span class="n">always_update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -6585,6 +6613,16 @@
           <td><p>A default value or callable that returns a default.</p></td>
           <td>
               <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>always_update</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td><p>Call watchers even when the new value equals the old value.</p></td>
+          <td>
+                <code>False</code>
           </td>
         </tr>
     </tbody>
@@ -6754,7 +6792,7 @@
   </span>
 
 <a href="#textual.reactive.var" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">always_update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -6793,6 +6831,16 @@
           <td><p>Call watchers on initialize (post mount).</p></td>
           <td>
                 <code>True</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>always_update</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td><p>Call watchers even when the new value equals the old value.</p></td>
+          <td>
+                <code>False</code>
           </td>
         </tr>
     </tbody>

@@ -4207,6 +4207,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
@@ -4617,10 +4619,32 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._data_table.DataTable.cursor_coordinate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cursor_coordinate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._data_table.DataTable.cursor_row" class="md-nav__link">
     <span class="md-ellipsis">
       
         cursor_row
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._data_table.DataTable.cursor_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cursor_type
       
     </span>
   </a>
@@ -4665,6 +4689,17 @@
     <span class="md-ellipsis">
       
         hover_column
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._data_table.DataTable.hover_coordinate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hover_coordinate
       
     </span>
   </a>
@@ -5523,6 +5558,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._data_table.DataTable.move_cursor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        move_cursor()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._data_table.DataTable.refresh_column" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5992,6 +6038,32 @@
     
   
     RadioSet
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../select/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Select
   
 
     
@@ -7704,10 +7776,32 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._data_table.DataTable.cursor_coordinate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cursor_coordinate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._data_table.DataTable.cursor_row" class="md-nav__link">
     <span class="md-ellipsis">
       
         cursor_row
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._data_table.DataTable.cursor_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cursor_type
       
     </span>
   </a>
@@ -7752,6 +7846,17 @@
     <span class="md-ellipsis">
       
         hover_column
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._data_table.DataTable.hover_coordinate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hover_coordinate
       
     </span>
   </a>
@@ -8610,6 +8715,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._data_table.DataTable.move_cursor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        move_cursor()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._data_table.DataTable.refresh_column" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -9131,9 +9247,9 @@ The method <a class="autorefs autorefs-internal" href="#textual.widgets._data_ta
 Thus, using keys instead of coordinates allows us to refer to data without worrying about its current location in the table.</p>
 <p>If you want to change the table based solely on coordinates, you can use the <a class="autorefs autorefs-internal" href="#textual.widgets._data_table.DataTable.coordinate_to_cell_key">coordinate_to_cell_key</a> method to convert a coordinate to a <em>cell key</em>, which is a <code>(row_key, column_key)</code> pair.</p>
 <h3 id="cursors">Cursors<a class="headerlink" href="#cursors" title="Permanent link">&para;</a></h3>
-<p>The coordinate of the cursor is exposed via the <code>cursor_coordinate</code> reactive attribute.
+<p>The coordinate of the cursor is exposed via the <a class="autorefs autorefs-internal" href="#textual.widgets._data_table.DataTable.cursor_coordinate"><code>cursor_coordinate</code></a> reactive attribute.
 Three types of cursors are supported: <code>cell</code>, <code>row</code>, and <code>column</code>.
-Change the cursor type by assigning to the <code>cursor_type</code> reactive attribute.</p>
+Change the cursor type by assigning to the <a class="autorefs autorefs-internal" href="#textual.widgets._data_table.DataTable.cursor_type"><code>cursor_type</code></a> reactive attribute.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="3:4"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><input id="__tabbed_3_4" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Column Cursor</label><label for="__tabbed_3_2">Row Cursor</label><label for="__tabbed_3_3">Cell Cursor</label><label for="__tabbed_3_4">data_table_cursors.py</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -10509,6 +10625,33 @@ The example below shows how to attach simple numbered labels to rows.</p>
 
 
 
+<h3 id="textual.widgets._data_table.DataTable.cursor_coordinate" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">cursor_coordinate</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+  </span>
+
+<a href="#textual.widgets._data_table.DataTable.cursor_coordinate" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">cursor_coordinate</span><span class="p">:</span> <span class="n">Reactive</span><span class="p">[</span><span class="n">Coordinate</span><span class="p">]</span> <span class="o">=</span> <span class="n">Reactive</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">Coordinate</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">repaint</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">always_update</span><span class="o">=</span><span class="kc">True</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Current cursor <a class="autorefs autorefs-internal" href="../../api/coordinate/#textual.coordinate.Coordinate"><code>Coordinate</code></a>.</p>
+<p>This can be set programmatically or changed via the method
+<a class="autorefs autorefs-internal" href="#textual.widgets._data_table.DataTable.move_cursor"><code>move_cursor</code></a>.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
 <h3 id="textual.widgets._data_table.DataTable.cursor_row" class="doc doc-heading">
         <span class="doc doc-object-name doc-attribute-name">cursor_row</span>
 
@@ -10524,6 +10667,31 @@ The example below shows how to attach simple numbered labels to rows.</p>
   <div class="doc doc-contents ">
   
       <p>The index of the row that the DataTable cursor is currently on.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.widgets._data_table.DataTable.cursor_type" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">cursor_type</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+  </span>
+
+<a href="#textual.widgets._data_table.DataTable.cursor_type" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">cursor_type</span><span class="p">:</span> <span class="n">Reactive</span><span class="p">[</span><span class="n">CursorType</span><span class="p">]</span> <span class="o">=</span> <span class="n">Reactive</span><span class="p">[</span><span class="n">CursorType</span><span class="p">](</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="s2">&quot;cell&quot;</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>The type of the cursor of the <code>DataTable</code>.</p>
   </div>
 
 </div>
@@ -10616,6 +10784,31 @@ The example below shows how to attach simple numbered labels to rows.</p>
   <div class="doc doc-contents ">
   
       <p>The index of the column that the mouse cursor is currently hovering above.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.widgets._data_table.DataTable.hover_coordinate" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">hover_coordinate</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+  </span>
+
+<a href="#textual.widgets._data_table.DataTable.hover_coordinate" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">hover_coordinate</span><span class="p">:</span> <span class="n">Reactive</span><span class="p">[</span><span class="n">Coordinate</span><span class="p">]</span> <span class="o">=</span> <span class="n">Reactive</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">Coordinate</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">repaint</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">always_update</span><span class="o">=</span><span class="kc">True</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>The coordinate of the <code>DataTable</code> that is being hovered.</p>
   </div>
 
 </div>
@@ -13361,6 +13554,82 @@ the table.</p>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
           <td><p>True if the row index is within the bounds of the table.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._data_table.DataTable.move_cursor" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">move_cursor</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._data_table.DataTable.move_cursor" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">move_cursor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">animate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Move the cursor to the given position.</p>
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">datatable</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">query_one</span><span class="p">(</span><span class="n">DataTable</span><span class="p">)</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">datatable</span><span class="o">.</span><span class="n">move_cursor</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># datatable.cursor_coordinate == Coordinate(4, 6)</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">datatable</span><span class="o">.</span><span class="n">move_cursor</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># datatable.cursor_coordinate == Coordinate(3, 6)</span>
+</code></pre></div>
+</details>
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>row</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> | None</code>
+          </td>
+          <td><p>The new row to move the cursor to.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>column</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> | None</code>
+          </td>
+          <td><p>The new column to move the cursor to.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>animate</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td><p>Whether to animate the change of coordinates.</p></td>
+          <td>
+                <code>False</code>
+          </td>
         </tr>
     </tbody>
   </table>

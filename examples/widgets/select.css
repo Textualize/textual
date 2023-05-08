@@ -1,0 +1,8 @@
+Screen {
+    align: center top;
+}
+
+Select {
+    width: 60;
+    margin: 2;
+}

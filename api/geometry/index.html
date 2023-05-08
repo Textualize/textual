@@ -4203,6 +4203,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -4732,6 +4734,32 @@
     
   
     RadioSet
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/select/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Select
   
 
     
@@ -5897,6 +5925,17 @@
     <span class="md-ellipsis">
       
         translate()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.geometry.Region.translate_inside" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        translate_inside()
       
     </span>
   </a>
@@ -7652,6 +7691,17 @@
     <span class="md-ellipsis">
       
         translate()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.geometry.Region.translate_inside" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        translate_inside()
       
     </span>
   </a>
@@ -10333,6 +10383,103 @@ it is taken from the right edge.</p></td>
                 <code><a class="autorefs autorefs-internal" title="textual.geometry.Region" href="#textual.geometry.Region">Region</a></code>
           </td>
           <td><p>A new region shifted by (x, y)</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.geometry.Region.translate_inside" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">translate_inside</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.geometry.Region.translate_inside" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">translate_inside</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">container</span><span class="p">,</span> <span class="n">x_axis</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">y_axis</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Translate this region, so it fits within a container.</p>
+<p>This will ensure that there is as little overlap as possible.
+The top left of the returned region is guaranteed to be within the container.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>┌──────────────────┐         ┌──────────────────┐
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>│    container     │         │    container     │
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>│                  │         │    ┌─────────────┤
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>│                  │   ──▶   │    │    return   │
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>│       ┌──────────┴──┐      │    │             │
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>│       │    self     │      │    │             │
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>└───────┤             │      └────┴─────────────┘
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        │             │
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>        └─────────────┘
+</code></pre></div>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>container</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.geometry.Region" href="#textual.geometry.Region">Region</a></code>
+          </td>
+          <td><p>A container region.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>x_axis</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td><p>Allow translation of X axis.</p></td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>y_axis</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td><p>Allow translation of Y axis.</p></td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.geometry.Region" href="#textual.geometry.Region">Region</a></code>
+          </td>
+          <td><p>A new region with same dimensions that fits with inside container.</p></td>
         </tr>
     </tbody>
   </table>

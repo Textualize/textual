@@ -4207,6 +4207,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
@@ -4755,6 +4757,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../select/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Select
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../static/" class="md-nav__link">
         
   
@@ -4972,6 +5000,56 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="TabActivated">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._tabbed_content.TabbedContent.TabActivated.ALLOW_SELECTOR_MATCH" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ALLOW_SELECTOR_MATCH
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._tabbed_content.TabbedContent.TabActivated.control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        control
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._tabbed_content.TabbedContent.TabActivated.tab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tab
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._tabbed_content.TabbedContent.TabActivated.tabbed_content" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tabbed_content
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -6551,6 +6629,56 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="TabActivated">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._tabbed_content.TabbedContent.TabActivated.ALLOW_SELECTOR_MATCH" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ALLOW_SELECTOR_MATCH
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._tabbed_content.TabbedContent.TabActivated.control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        control
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._tabbed_content.TabbedContent.TabActivated.tab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tab
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._tabbed_content.TabbedContent.TabActivated.tabbed_content" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tabbed_content
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -6966,7 +7094,15 @@ You can pass them as positional arguments to the <a class="autorefs autorefs-int
   </span>
 
 <a href="#textual.widgets.TabbedContent" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">titles</span><span class="p">,</span> <span class="n">initial</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="bp">self</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="o">*</span><span class="n">titles</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">initial</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">classes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">disabled</span><span class="o">=</span><span class="kc">False</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents first">
@@ -7007,6 +7143,46 @@ You can pass them as positional arguments to the <a class="autorefs autorefs-int
           <td><p>The id of the initial tab, or empty string to select the first tab.</p></td>
           <td>
                 <code>&#39;&#39;</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>name</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td><p>The name of the button.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>id</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td><p>The ID of the button in the DOM.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>classes</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td><p>The CSS classes of the button.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>disabled</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td><p>Whether the button is disabled or not.</p></td>
+          <td>
+                <code>False</code>
           </td>
         </tr>
     </tbody>
@@ -7118,6 +7294,100 @@ You can pass them as positional arguments to the <a class="autorefs autorefs-int
 
 
 
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="textual.widgets._tabbed_content.TabbedContent.TabActivated.ALLOW_SELECTOR_MATCH" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">ALLOW_SELECTOR_MATCH</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+  </span>
+
+<a href="#textual.widgets._tabbed_content.TabbedContent.TabActivated.ALLOW_SELECTOR_MATCH" class="headerlink" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ALLOW_SELECTOR_MATCH</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;tab&#39;</span><span class="p">}</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Additional message attributes that can be used with the <a class="autorefs autorefs-internal" href="../../api/on/#textual.on"><code>on</code> decorator</a>.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="textual.widgets._tabbed_content.TabbedContent.TabActivated.control" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">control</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.widgets._tabbed_content.TabbedContent.TabActivated.control" class="headerlink" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">control</span><span class="p">:</span> <span class="n">TabbedContent</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>The <code>TabbedContent</code> widget that contains the tab activated.</p>
+<p>This is an alias for <a class="autorefs autorefs-internal" href="#textual.widgets._tabbed_content.TabbedContent.TabActivated.tabbed_content"><code>TabActivated.tabbed_content</code></a>
+and is used by the <a class="autorefs autorefs-internal" href="../../api/on/#textual.on"><code>on</code></a> decorator.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="textual.widgets._tabbed_content.TabbedContent.TabActivated.tab" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">tab</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#textual.widgets._tabbed_content.TabbedContent.TabActivated.tab" class="headerlink" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">tab</span> <span class="o">=</span> <span class="n">tab</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>The <code>Tab</code> widget that was selected (contains the tab label).</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="textual.widgets._tabbed_content.TabbedContent.TabActivated.tabbed_content" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">tabbed_content</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#textual.widgets._tabbed_content.TabbedContent.TabActivated.tabbed_content" class="headerlink" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">tabbed_content</span> <span class="o">=</span> <span class="n">tabbed_content</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>The <code>TabbedContent</code> widget that contains the tab activated.</p>
+  </div>
+
+</div>
 
 
 
