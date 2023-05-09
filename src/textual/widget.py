@@ -813,7 +813,8 @@ class Widget(DOMNode):
         elif before is not None and after is not None:
             raise WidgetError("Only one of `before` or `after` can be handled.")
 
-        if child is before or child is after:  # no-op
+        # We short-circuit the no-op, otherwise it will error later down the road.
+        if child is before or child is after:
             return
 
         def _to_widget(child: int | Widget, called: str) -> Widget:
