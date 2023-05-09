@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import ClassVar, Iterable
@@ -10,6 +9,7 @@ from rich.text import Text, TextType
 
 from ..events import Mount
 from ..message import Message
+from ..reactive import var
 from ._tree import TOGGLE_STYLE, Tree, TreeNode
 
 
@@ -17,26 +17,19 @@ from ._tree import TOGGLE_STYLE, Tree, TreeNode
 class DirEntry:
     """Attaches directory information to a node."""
 
-    path: str
-    is_dir: bool
+    path: Path
+    """The path of the directory entry."""
     loaded: bool = False
+    """Has this been loaded?"""
 
 
 class DirectoryTree(Tree[DirEntry]):
-    """A Tree widget that presents files and directories.
-
-    Args:
-        path: Path to directory.
-        name: The name of the widget, or None for no name.
-        id: The ID of the widget in the DOM, or None for no ID.
-        classes: A space-separated list of classes, or None for no classes.
-        disabled: Whether the directory tree is disabled or not.
-    """
+    """A Tree widget that presents files and directories."""
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
-        "directory-tree--folder",
-        "directory-tree--file",
         "directory-tree--extension",
+        "directory-tree--file",
+        "directory-tree--folder",
         "directory-tree--hidden",
     }
     """
@@ -55,10 +48,6 @@ class DirectoryTree(Tree[DirEntry]):
         text-style: bold;
     }
 
-    DirectoryTree > .directory-tree--file {
-
-    }
-
     DirectoryTree > .directory-tree--extension {
         text-style: italic;
     }
@@ -73,14 +62,41 @@ class DirectoryTree(Tree[DirEntry]):
 
         Can be handled using `on_directory_tree_file_selected` in a subclass of
         `DirectoryTree` or in a parent widget in the DOM.
-
-        Attributes:
-            path: The path of the file that was selected.
         """
 
-        def __init__(self, path: str) -> None:
-            self.path: str = path
+        def __init__(
+            self, tree: DirectoryTree, node: TreeNode[DirEntry], path: Path
+        ) -> None:
+            """Initialise the FileSelected object.
+
+            Args:
+                node: The tree node for the file that was selected.
+                path: The path of the file that was selected.
+            """
             super().__init__()
+            self.tree: DirectoryTree = tree
+            """The `DirectoryTree` that had a file selected."""
+            self.node: TreeNode[DirEntry] = node
+            """The tree node of the file that was selected."""
+            self.path: Path = path
+            """The path of the file that was selected."""
+
+        @property
+        def control(self) -> DirectoryTree:
+            """The `DirectoryTree` that had a file selected.
+
+            This is an alias for [`FileSelected.tree`][textual.widgets.DirectoryTree.FileSelected.tree]
+            which is used by the [`on`][textual.on] decorator.
+            """
+            return self.tree
+
+    path: var[str | Path] = var["str | Path"](Path("."), init=False)
+    """The path that is the root of the directory tree.
+
+    Note:
+        This can be set to either a `str` or a `pathlib.Path` object, but
+        the value will always be a `pathlib.Path` object.
+    """
 
     def __init__(
         self,
@@ -91,18 +107,54 @@ class DirectoryTree(Tree[DirEntry]):
         classes: str | None = None,
         disabled: bool = False,
     ) -> None:
-        str_path = os.fspath(path)
-        self.path = str_path
+        """Initialise the directory tree.
+
+        Args:
+            path: Path to directory.
+            name: The name of the widget, or None for no name.
+            id: The ID of the widget in the DOM, or None for no ID.
+            classes: A space-separated list of classes, or None for no classes.
+            disabled: Whether the directory tree is disabled or not.
+        """
         super().__init__(
-            str_path,
-            data=DirEntry(str_path, True),
+            str(path),
+            data=DirEntry(Path(path)),
             name=name,
             id=id,
             classes=classes,
             disabled=disabled,
         )
+        self.path = path
 
-    def process_label(self, label: TextType):
+    def reload(self) -> None:
+        """Reload the `DirectoryTree` contents."""
+        self.reset(str(self.path), DirEntry(Path(self.path)))
+        self._load_directory(self.root)
+
+    def validate_path(self, path: str | Path) -> Path:
+        """Ensure that the path is of the `Path` type.
+
+        Args:
+            path: The path to validate.
+
+        Returns:
+            The validated Path value.
+
+        Note:
+            The result will always be a Python `Path` object, regardless of
+            the value given.
+        """
+        return Path(path)
+
+    def watch_path(self) -> None:
+        """Watch for changes to the `path` of the directory tree.
+
+        If the path is changed the directory tree will be repopulated using
+        the new value as the root.
+        """
+        self.reload()
+
+    def process_label(self, label: TextType) -> Text:
         """Process a str or Text into a label. Maybe overridden in a subclass to modify how labels are rendered.
 
         Args:
@@ -118,7 +170,19 @@ class DirectoryTree(Tree[DirEntry]):
         first_line = text_label.split()[0]
         return first_line
 
-    def render_label(self, node: TreeNode[DirEntry], base_style: Style, style: Style):
+    def render_label(
+        self, node: TreeNode[DirEntry], base_style: Style, style: Style
+    ) -> Text:
+        """Render a label for the given node.
+
+        Args:
+            node: A tree node.
+            base_style: The base style of the widget.
+            style: The additional style for the label.
+
+        Returns:
+            A Rich Text object containing the label.
+        """
         node_label = node._label.copy()
         node_label.stylize(style)
 
@@ -165,40 +229,44 @@ class DirectoryTree(Tree[DirEntry]):
         """
         return paths
 
-    def load_directory(self, node: TreeNode[DirEntry]) -> None:
+    def _load_directory(self, node: TreeNode[DirEntry]) -> None:
+        """Load the directory contents for a given node.
+
+        Args:
+            node: The node to load the directory contents for.
+        """
         assert node.data is not None
-        dir_path = Path(node.data.path)
         node.data.loaded = True
         directory = sorted(
-            self.filter_paths(dir_path.iterdir()),
+            self.filter_paths(node.data.path.iterdir()),
             key=lambda path: (not path.is_dir(), path.name.lower()),
         )
         for path in directory:
             node.add(
                 path.name,
-                data=DirEntry(str(path), path.is_dir()),
+                data=DirEntry(path),
                 allow_expand=path.is_dir(),
             )
         node.expand()
 
     def _on_mount(self, _: Mount) -> None:
-        self.load_directory(self.root)
+        self._load_directory(self.root)
 
-    def _on_tree_node_expanded(self, event: Tree.NodeSelected) -> None:
+    def _on_tree_node_expanded(self, event: Tree.NodeExpanded) -> None:
         event.stop()
         dir_entry = event.node.data
         if dir_entry is None:
             return
-        if dir_entry.is_dir:
+        if dir_entry.path.is_dir():
             if not dir_entry.loaded:
-                self.load_directory(event.node)
+                self._load_directory(event.node)
         else:
-            self.post_message(self.FileSelected(dir_entry.path))
+            self.post_message(self.FileSelected(self, event.node, dir_entry.path))
 
     def _on_tree_node_selected(self, event: Tree.NodeSelected) -> None:
         event.stop()
         dir_entry = event.node.data
         if dir_entry is None:
             return
-        if not dir_entry.is_dir:
-            self.post_message(self.FileSelected(dir_entry.path))
+        if not dir_entry.path.is_dir():
+            self.post_message(self.FileSelected(self, event.node, dir_entry.path))

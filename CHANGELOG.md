@@ -5,6 +5,95 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.24.1] - 2023-05-08
+
+### Fixed
+
+- Fix TypeError in code browser
+
+## [0.24.0] - 2023-05-08
+
+### Fixed
+
+- Fixed crash when creating a `DirectoryTree` starting anywhere other than `.`
+- Fixed line drawing in `Tree` when `Tree.show_root` is `True` https://github.com/Textualize/textual/issues/2397
+- Fixed line drawing in `Tree` not marking branches as selected when first getting focus https://github.com/Textualize/textual/issues/2397
+
+### Changed
+
+- The DataTable cursor is now scrolled into view when the cursor coordinate is changed programmatically https://github.com/Textualize/textual/issues/2459
+- run_worker exclusive parameter is now `False` by default https://github.com/Textualize/textual/pull/2470
+- Added `always_update` as an optional argument for `reactive.var`
+- Made Binding description default to empty string, which is equivalent to show=False https://github.com/Textualize/textual/pull/2501
+- Modified Message to allow it to be used as a dataclass https://github.com/Textualize/textual/pull/2501
+- Decorator `@on` accepts arbitrary `**kwargs` to apply selectors to attributes of the message https://github.com/Textualize/textual/pull/2498
+
+### Added
+
+- Property `control` as alias for attribute `tabs` in `Tabs` messages https://github.com/Textualize/textual/pull/2483
+- Experimental: Added "overlay" rule https://github.com/Textualize/textual/pull/2501
+- Experimental: Added "constrain" rule https://github.com/Textualize/textual/pull/2501
+- Added textual.widgets.Select https://github.com/Textualize/textual/pull/2501
+- Added Region.translate_inside https://github.com/Textualize/textual/pull/2501
+- `TabbedContent` now takes kwargs `id`, `name`, `classes`, and `disabled`, upon initialization, like other widgets https://github.com/Textualize/textual/pull/2497
+- Method `DataTable.move_cursor` https://github.com/Textualize/textual/issues/2472
+- Added `OptionList.add_options` https://github.com/Textualize/textual/pull/2508
+- Added `TreeNode.is_root` https://github.com/Textualize/textual/pull/2510
+- Added `TreeNode.remove_children` https://github.com/Textualize/textual/pull/2510
+- Added `TreeNode.remove` https://github.com/Textualize/textual/pull/2510
+- Added classvar `Message.ALLOW_SELECTOR_MATCH` https://github.com/Textualize/textual/pull/2498
+- Added `ALLOW_SELECTOR_MATCH` to all built-in messages associated with widgets https://github.com/Textualize/textual/pull/2498
+- Markdown document sub-widgets now reference the container document
+- Table of contents of a markdown document now references the document
+- Added the `control` property to messages
+  - `DirectoryTree.FileSelected`
+  - `ListView`
+    - `Highlighted`
+    - `Selected`
+  - `Markdown`
+    - `TableOfContentsUpdated`
+    - `TableOfContentsSelected`
+    - `LinkClicked`
+  - `OptionList`
+    - `OptionHighlighted`
+    - `OptionSelected`
+  - `RadioSet.Changed`
+  - `TabContent.TabActivated`
+  - `Tree`
+    - `NodeSelected`
+    - `NodeHighlighted`
+    - `NodeExpanded`
+    - `NodeCollapsed`
+
+## [0.23.0] - 2023-05-03
+
+### Fixed
+
+- Fixed `outline` top and bottom not handling alpha - https://github.com/Textualize/textual/issues/2371
+- Fixed `!important` not applying to `align` https://github.com/Textualize/textual/issues/2420
+- Fixed `!important` not applying to `border` https://github.com/Textualize/textual/issues/2420
+- Fixed `!important` not applying to `content-align` https://github.com/Textualize/textual/issues/2420
+- Fixed `!important` not applying to `outline` https://github.com/Textualize/textual/issues/2420
+- Fixed `!important` not applying to `overflow` https://github.com/Textualize/textual/issues/2420
+- Fixed `!important` not applying to `scrollbar-size` https://github.com/Textualize/textual/issues/2420
+- Fixed `outline-right` not being recognised https://github.com/Textualize/textual/issues/2446
+- Fixed OSError when a file system is not available https://github.com/Textualize/textual/issues/2468
+
+### Changed
+
+- Setting attributes with a `compute_` method will now raise an `AttributeError` https://github.com/Textualize/textual/issues/2383
+- Unknown psuedo-selectors will now raise a tokenizer error (previously they were silently ignored) https://github.com/Textualize/textual/pull/2445
+- Breaking change: `DirectoryTree.FileSelected.path` is now always a `Path` https://github.com/Textualize/textual/issues/2448
+- Breaking change: `Directorytree.load_directory` renamed to `Directorytree._load_directory` https://github.com/Textualize/textual/issues/2448
+- Unknown pseudo-selectors will now raise a tokenizer error (previously they were silently ignored) https://github.com/Textualize/textual/pull/2445
+
+### Added
+
+- Watch methods can now optionally be private https://github.com/Textualize/textual/issues/2382
+- Added `DirectoryTree.path` reactive attribute https://github.com/Textualize/textual/issues/2448
+- Added `DirectoryTree.FileSelected.node` https://github.com/Textualize/textual/pull/2463
+- Added `DirectoryTree.reload` https://github.com/Textualize/textual/issues/2448
+- Added textual.on decorator https://github.com/Textualize/textual/issues/2398
 
 ## [0.22.3] - 2023-04-29
 
@@ -845,6 +934,9 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.24.1]: https://github.com/Textualize/textual/compare/v0.24.0...v0.24.1
+[0.24.0]: https://github.com/Textualize/textual/compare/v0.23.0...v0.24.0
+[0.23.0]: https://github.com/Textualize/textual/compare/v0.22.3...v0.23.0
 [0.22.3]: https://github.com/Textualize/textual/compare/v0.22.2...v0.22.3
 [0.22.2]: https://github.com/Textualize/textual/compare/v0.22.1...v0.22.2
 [0.22.1]: https://github.com/Textualize/textual/compare/v0.22.0...v0.22.1

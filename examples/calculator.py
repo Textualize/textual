@@ -1,6 +1,14 @@
+"""
+
+An implementation of a classic calculator, with a layout inspired by macOS calculator.
+
+
+"""
+
+
 from decimal import Decimal
 
-from textual import events
+from textual import events, on
 from textual.app import App, ComposeResult
 from textual.containers import Container
 from textual.css.query import NoMatches
@@ -34,7 +42,6 @@ class CalculatorApp(App):
 
     def watch_numbers(self, value: str) -> None:
         """Called when numbers is updated."""
-        # Update the Numbers widget
         self.query_one("#numbers", Static).update(value)
 
     def compute_show_ac(self) -> bool:
@@ -55,19 +62,19 @@ class CalculatorApp(App):
             yield Button("+/-", id="plus-minus", variant="primary")
             yield Button("%", id="percent", variant="primary")
             yield Button("÷", id="divide", variant="warning")
-            yield Button("7", id="number-7")
-            yield Button("8", id="number-8")
-            yield Button("9", id="number-9")
+            yield Button("7", id="number-7", classes="number")
+            yield Button("8", id="number-8", classes="number")
+            yield Button("9", id="number-9", classes="number")
             yield Button("×", id="multiply", variant="warning")
-            yield Button("4", id="number-4")
-            yield Button("5", id="number-5")
-            yield Button("6", id="number-6")
+            yield Button("4", id="number-4", classes="number")
+            yield Button("5", id="number-5", classes="number")
+            yield Button("6", id="number-6", classes="number")
             yield Button("-", id="minus", variant="warning")
-            yield Button("1", id="number-1")
-            yield Button("2", id="number-2")
-            yield Button("3", id="number-3")
+            yield Button("1", id="number-1", classes="number")
+            yield Button("2", id="number-2", classes="number")
+            yield Button("3", id="number-3", classes="number")
             yield Button("+", id="plus", variant="warning")
-            yield Button("0", id="number-0")
+            yield Button("0", id="number-0", classes="number")
             yield Button(".", id="point")
             yield Button("=", id="equals", variant="warning")
 
@@ -75,6 +82,8 @@ class CalculatorApp(App):
         """Called when the user presses a key."""
 
         def press(button_id: str) -> None:
+            """Press a button, should it exist."""
+
             try:
                 self.query_one(f"#{button_id}", Button).press()
             except NoMatches:
@@ -91,54 +100,73 @@ class CalculatorApp(App):
             if button_id is not None:
                 press(self.NAME_MAP.get(key, key))
 
-    def on_button_pressed(self, event: Button.Pressed) -> None:
-        """Called when a button is pressed."""
+    @on(Button.Pressed, ".number")
+    def number_pressed(self, event: Button.Pressed) -> None:
+        """Pressed a number."""
+        assert event.button.id is not None
+        number = event.button.id.partition("-")[-1]
+        self.numbers = self.value = self.value.lstrip("0") + number
 
-        button_id = event.button.id
-        assert button_id is not None
+    @on(Button.Pressed, "#plus-minus")
+    def plus_minus_pressed(self) -> None:
+        """Pressed + / -"""
+        self.numbers = self.value = str(Decimal(self.value or "0") * -1)
 
-        def do_math() -> None:
-            """Does the math: LEFT OPERATOR RIGHT"""
-            try:
-                if self.operator == "plus":
-                    self.left += self.right
-                elif self.operator == "minus":
-                    self.left -= self.right
-                elif self.operator == "divide":
-                    self.left /= self.right
-                elif self.operator == "multiply":
-                    self.left *= self.right
-                self.numbers = str(self.left)
-                self.value = ""
-            except Exception:
-                self.numbers = "Error"
+    @on(Button.Pressed, "#percent")
+    def percent_pressed(self) -> None:
+        """Pressed %"""
+        self.numbers = self.value = str(Decimal(self.value or "0") / Decimal(100))
 
-        if button_id.startswith("number-"):
-            number = button_id.partition("-")[-1]
-            self.numbers = self.value = self.value.lstrip("0") + number
-        elif button_id == "plus-minus":
-            self.numbers = self.value = str(Decimal(self.value or "0") * -1)
-        elif button_id == "percent":
-            self.numbers = self.value = str(Decimal(self.value or "0") / Decimal(100))
-        elif button_id == "point":
-            if "." not in self.value:
-                self.numbers = self.value = (self.value or "0") + "."
-        elif button_id == "ac":
+    @on(Button.Pressed, "#point")
+    def pressed_point(self) -> None:
+        """Pressed ."""
+        if "." not in self.value:
+            self.numbers = self.value = (self.value or "0") + "."
+
+    @on(Button.Pressed, "#ac")
+    def pressed_ac(self) -> None:
+        """Pressed AC"""
+        self.value = ""
+        self.left = self.right = Decimal(0)
+        self.operator = "plus"
+        self.numbers = "0"
+
+    @on(Button.Pressed, "#c")
+    def pressed_c(self) -> None:
+        """Pressed C"""
+        self.value = ""
+        self.numbers = "0"
+
+    def _do_math(self) -> None:
+        """Does the math: LEFT OPERATOR RIGHT"""
+        try:
+            if self.operator == "plus":
+                self.left += self.right
+            elif self.operator == "minus":
+                self.left -= self.right
+            elif self.operator == "divide":
+                self.left /= self.right
+            elif self.operator == "multiply":
+                self.left *= self.right
+            self.numbers = str(self.left)
             self.value = ""
-            self.left = self.right = Decimal(0)
-            self.operator = "plus"
-            self.numbers = "0"
-        elif button_id == "c":
-            self.value = ""
-            self.numbers = "0"
-        elif button_id in ("plus", "minus", "divide", "multiply"):
-            self.right = Decimal(self.value or "0")
-            do_math()
-            self.operator = button_id
-        elif button_id == "equals":
-            if self.value:
-                self.right = Decimal(self.value)
-            do_math()
+        except Exception:
+            self.numbers = "Error"
+
+    @on(Button.Pressed, "#plus,#minus,#divide,#multiply")
+    def pressed_op(self, event: Button.Pressed) -> None:
+        """Pressed one of the arithmetic operations."""
+        self.right = Decimal(self.value or "0")
+        self._do_math()
+        assert event.button.id is not None
+        self.operator = event.button.id
+
+    @on(Button.Pressed, "#equals")
+    def pressed_equals(self) -> None:
+        """Pressed ="""
+        if self.value:
+            self.right = Decimal(self.value)
+        self._do_math()
 
 
 if __name__ == "__main__":

@@ -39,9 +39,11 @@ from .constants import (
     VALID_ALIGN_VERTICAL,
     VALID_BORDER,
     VALID_BOX_SIZING,
+    VALID_CONSTRAIN,
     VALID_DISPLAY,
     VALID_EDGE,
     VALID_OVERFLOW,
+    VALID_OVERLAY,
     VALID_SCROLLBAR_GUTTER,
     VALID_STYLE_FLAGS,
     VALID_TEXT_ALIGN,
@@ -252,6 +254,23 @@ class StylesBuilder:
         else:
             scalar_error()
 
+    def _distribute_importance(self, prefix: str, suffixes: tuple[str, ...]) -> None:
+        """Distribute importance amongst all aspects of the given style.
+
+        Args:
+            prefix: The prefix of the style.
+            siffixes: The suffixes to distribute amongst.
+
+        A number of styles can be set with the 'prefix' of the style,
+        providing the values as a series of parameters; or they can be set
+        with specific suffixes. Think `border` vs `border-left`, etc. This
+        method is used to ensure that if the former is set, `!important` is
+        distributed amongst all the suffixes.
+        """
+        if prefix in self.styles.important:
+            self.styles.important.remove(prefix)
+            self.styles.important.update(f"{prefix}_{suffix}" for suffix in suffixes)
+
     def process_box_sizing(self, name: str, tokens: list[Token]) -> None:
         for token in tokens:
             name, value, _, _, location, _ = token
@@ -304,6 +323,7 @@ class StylesBuilder:
         )
         rules["overflow_x"] = cast(Overflow, overflow_x)
         rules["overflow_y"] = cast(Overflow, overflow_y)
+        self._distribute_importance("overflow", ("x", "y"))
 
     def process_overflow_x(self, name: str, tokens: list[Token]) -> None:
         self.styles._rules["overflow_x"] = cast(
@@ -486,6 +506,7 @@ class StylesBuilder:
         rules = self.styles._rules
         rules["border_top"] = rules["border_right"] = border
         rules["border_bottom"] = rules["border_left"] = border
+        self._distribute_importance("border", ("top", "left", "bottom", "right"))
 
     def process_border_top(self, name: str, tokens: list[Token]) -> None:
         self._process_border_edge("top", name, tokens)
@@ -508,11 +529,12 @@ class StylesBuilder:
         rules = self.styles._rules
         rules["outline_top"] = rules["outline_right"] = border
         rules["outline_bottom"] = rules["outline_left"] = border
+        self._distribute_importance("outline", ("top", "left", "bottom", "right"))
 
     def process_outline_top(self, name: str, tokens: list[Token]) -> None:
         self._process_outline("top", name, tokens)
 
-    def process_parse_border_right(self, name: str, tokens: list[Token]) -> None:
+    def process_outline_right(self, name: str, tokens: list[Token]) -> None:
         self._process_outline("right", name, tokens)
 
     def process_outline_bottom(self, name: str, tokens: list[Token]) -> None:
@@ -792,6 +814,8 @@ class StylesBuilder:
         self.styles._rules[f"{name}_horizontal"] = token_horizontal.value  # type: ignore
         self.styles._rules[f"{name}_vertical"] = token_vertical.value  # type: ignore
 
+        self._distribute_importance(name, ("horizontal", "vertical"))
+
     def process_align_horizontal(self, name: str, tokens: list[Token]) -> None:
         try:
             value = self._process_enum(name, tokens, VALID_ALIGN_HORIZONTAL)
@@ -859,6 +883,7 @@ class StylesBuilder:
                 scrollbar_size_error(name, token2)
             self.styles._rules["scrollbar_size_horizontal"] = horizontal
             self.styles._rules["scrollbar_size_vertical"] = vertical
+            self._distribute_importance("scrollbar_size", ("horizontal", "vertical"))
 
     def process_scrollbar_size_vertical(self, name: str, tokens: list[Token]) -> None:
         if not tokens:
@@ -979,6 +1004,30 @@ class StylesBuilder:
 
         else:
             self.error(name, tokens[0], "expected two integers here")
+
+    def process_overlay(self, name: str, tokens: list[Token]) -> None:
+        try:
+            value = self._process_enum(name, tokens, VALID_OVERLAY)
+        except StyleValueError:
+            self.error(
+                name,
+                tokens[0],
+                string_enum_help_text(name, VALID_OVERLAY, context="css"),
+            )
+        else:
+            self.styles._rules[name] = value  # type: ignore
+
+    def process_constrain(self, name: str, tokens: list[Token]) -> None:
+        try:
+            value = self._process_enum(name, tokens, VALID_CONSTRAIN)
+        except StyleValueError:
+            self.error(
+                name,
+                tokens[0],
+                string_enum_help_text(name, VALID_CONSTRAIN, context="css"),
+            )
+        else:
+            self.styles._rules[name] = value  # type: ignore
 
     def _get_suggested_property_name_for_rule(self, rule_name: str) -> str | None:
         """

@@ -21,6 +21,10 @@ if TYPE_CHECKING:
     """Animation keys are the id of the object and the attribute being animated."""
 
 EasingFunction = Callable[[float], float]
+"""Signature for a function that parametrises animation speed.
+
+An easing function must map the interval [0, 1] into the interval [0, 1].
+"""
 
 
 class AnimationError(Exception):
@@ -32,6 +36,12 @@ ReturnType = TypeVar("ReturnType")
 
 @runtime_checkable
 class Animatable(Protocol):
+    """Protocol for objects that can have their intrinsic values animated.
+
+    For example, the transition between two colors can be animated
+    because the class [`Color`][textual.color.Color.blend] satisfies this protocol.
+    """
+
     def blend(
         self: ReturnType, destination: ReturnType, factor: float
     ) -> ReturnType:  # pragma: no cover

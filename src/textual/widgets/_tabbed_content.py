@@ -89,6 +89,9 @@ class TabbedContent(Widget):
     class TabActivated(Message):
         """Posted when the active tab changes."""
 
+        ALLOW_SELECTOR_MATCH = {"tab"}
+        """Additional message attributes that can be used with the [`on` decorator][textual.on]."""
+
         def __init__(self, tabbed_content: TabbedContent, tab: Tab) -> None:
             """Initialize message.
 
@@ -97,26 +100,49 @@ class TabbedContent(Widget):
                 tab: The Tab widget that was selected (contains the tab label).
             """
             self.tabbed_content = tabbed_content
+            """The `TabbedContent` widget that contains the tab activated."""
             self.tab = tab
+            """The `Tab` widget that was selected (contains the tab label)."""
             super().__init__()
+
+        @property
+        def control(self) -> TabbedContent:
+            """The `TabbedContent` widget that contains the tab activated.
+
+            This is an alias for [`TabActivated.tabbed_content`][textual.widgets.TabbedContent.TabActivated.tabbed_content]
+            and is used by the [`on`][textual.on] decorator.
+            """
+            return self.tabbed_content
 
         def __rich_repr__(self) -> Result:
             yield self.tabbed_content
             yield self.tab
 
-    def __init__(self, *titles: TextType, initial: str = "") -> None:
+    def __init__(
+        self,
+        *titles: TextType,
+        initial: str = "",
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+        disabled: bool = False,
+    ):
         """Initialize a TabbedContent widgets.
 
         Args:
             *titles: Positional argument will be used as title.
             initial: The id of the initial tab, or empty string to select the first tab.
+            name: The name of the button.
+            id: The ID of the button in the DOM.
+            classes: The CSS classes of the button.
+            disabled: Whether the button is disabled or not.
         """
         self.titles = [self.render_str(title) for title in titles]
         self._tab_content: list[Widget] = []
         self._initial = initial
         self._tabs: Optional[Tabs] = None
         self._content_switcher = ContentSwitcher(initial=self._initial or None)
-        super().__init__()
+        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
     def validate_active(self, active: str) -> str:
         """It doesn't make sense for `active` to be an empty string.

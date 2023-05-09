@@ -15,7 +15,9 @@ class CheckboxApp(App[None]):
         yield Checkbox(value=True, id="cb3")
 
     def on_checkbox_changed(self, event: Checkbox.Changed) -> None:
-        self.events_received.append((event.checkbox.id, event.checkbox.value))
+        self.events_received.append(
+            (event.checkbox.id, event.checkbox.value, event.checkbox == event.control)
+        )
 
 
 async def test_checkbox_initial_state() -> None:
@@ -43,7 +45,7 @@ async def test_checkbox_toggle() -> None:
         ]
         await pilot.pause()
         assert pilot.app.events_received == [
-            ("cb1", True),
-            ("cb2", True),
-            ("cb3", False),
+            ("cb1", True, True),
+            ("cb2", True, True),
+            ("cb3", False, True),
         ]

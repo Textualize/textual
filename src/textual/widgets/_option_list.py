@@ -7,9 +7,10 @@ forms of bounce-bar menu.
 
 from __future__ import annotations
 
-from typing import ClassVar, NamedTuple
+from typing import ClassVar, Iterable, NamedTuple
 
 from rich.console import RenderableType
+from rich.padding import Padding
 from rich.repr import Result
 from rich.rule import Rule
 from rich.style import Style
@@ -146,6 +147,7 @@ class OptionList(ScrollView, can_focus=True):
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
+        "option-list--option",
         "option-list--option-disabled",
         "option-list--option-highlighted",
         "option-list--option-highlighted-disabled",
@@ -252,6 +254,15 @@ class OptionList(ScrollView, can_focus=True):
             """The ID of the option that the message relates to."""
             self.option_index: int = index
             """The index of the option that the message relates to."""
+
+        @property
+        def control(self) -> OptionList:
+            """The option list that sent the message.
+
+            This is an alias for [`OptionMessage.option_list`][textual.widgets.OptionList.OptionMessage.option_list]
+            and is used by the [`on`][textual.on] decorator.
+            """
+            return self.option_list
 
         def __rich_repr__(self) -> Result:
             yield "option_list", self.option_list
@@ -474,6 +485,7 @@ class OptionList(ScrollView, can_focus=True):
         # also set up the tracking of the actual options.
         line = 0
         option = 0
+        padding = self.get_component_styles("option-list--option").padding
         for content in self._contents:
             if isinstance(content, Option):
                 # The content is an option, so render out the prompt and
@@ -483,7 +495,10 @@ class OptionList(ScrollView, can_focus=True):
                         Strip(prompt_line).apply_style(Style(meta={"option": option})),
                         option,
                     )
-                    for prompt_line in lines_from(content.prompt, options)
+                    for prompt_line in lines_from(
+                        Padding(content.prompt, padding) if padding else content.prompt,
+                        options,
+                    )
                 ]
                 # Record the span information for the option.
                 add_span(OptionLineSpan(line, len(new_lines)))
@@ -508,6 +523,31 @@ class OptionList(ScrollView, can_focus=True):
         # list, set the virtual size.
         self.virtual_size = Size(self.scrollable_content_region.width, len(self._lines))
 
+    def add_options(self, items: Iterable[NewOptionListContent]) -> Self:
+        """Add new options to the end of the option list.
+
+        Args:
+            items: The new items to add.
+
+        Returns:
+            The `OptionList` instance.
+
+        Raises:
+            DuplicateID: If there is an attempt to use a duplicate ID.
+        """
+        # Only work if we have items to add; but don't make a fuss out of
+        # zero items to add, just carry on like nothing happened.
+        if items:
+            # Turn any incoming values into valid content for the list.
+            content = [self._make_content(item) for item in items]
+            self._contents.extend(content)
+            # Pull out the content that is genuine options and add them to the
+            # list of options.
+            self._options.extend([item for item in content if isinstance(item, Option)])
+            self._refresh_content_tracking(force=True)
+            self.refresh()
+        return self
+
     def add_option(self, item: NewOptionListContent = None) -> Self:
         """Add a new option to the end of the option list.
 
@@ -520,15 +560,7 @@ class OptionList(ScrollView, can_focus=True):
         Raises:
             DuplicateID: If there is an attempt to use a duplicate ID.
         """
-        # Turn any incoming value into valid content for the list.
-        content = self._make_content(item)
-        self._contents.append(content)
-        # If the content is a genuine option, add it to the list of options.
-        if isinstance(content, Option):
-            self._options.append(content)
-        self._refresh_content_tracking(force=True)
-        self.refresh()
-        return self
+        return self.add_options([item])
 
     def _remove_option(self, index: int) -> None:
         """Remove an option from the option list.
@@ -821,8 +853,13 @@ class OptionList(ScrollView, can_focus=True):
         # It's a normal option line.
         return strip.apply_style(self.rich_style)
 
-    def scroll_to_highlight(self) -> None:
-        """Ensure that the highlighted option is in view."""
+    def scroll_to_highlight(self, top: bool = False) -> None:
+        """Ensure that the highlighted option is in view.
+
+        Args:
+            top: Scroll highlight to top of the list.
+
+        """
         highlighted = self.highlighted
         if highlighted is None:
             return
@@ -839,6 +876,7 @@ class OptionList(ScrollView, can_focus=True):
             ),
             force=True,
             animate=False,
+            top=top,
         )
 
     def validate_highlighted(self, highlighted: int | None) -> int | None:

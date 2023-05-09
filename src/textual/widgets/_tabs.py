@@ -178,6 +178,9 @@ class Tabs(Widget, can_focus=True):
     class TabActivated(Message):
         """Sent when a new tab is activated."""
 
+        ALLOW_SELECTOR_MATCH = {"tab"}
+        """Additional message attributes that can be used with the [`on` decorator][textual.on]."""
+
         tabs: Tabs
         """The tabs widget containing the tab."""
         tab: Tab
@@ -193,6 +196,15 @@ class Tabs(Widget, can_focus=True):
             self.tabs = tabs
             self.tab = tab
             super().__init__()
+
+        @property
+        def control(self) -> Tabs:
+            """The tabs widget containing the tab that was activated.
+
+            This is an alias for [`TabActivated.tabs`][textual.widgets.Tabs.TabActivated.tabs]
+            which is used by the [`on`][textual.on] decorator.
+            """
+            return self.tabs
 
         def __rich_repr__(self) -> rich.repr.Result:
             yield self.tabs
@@ -212,6 +224,15 @@ class Tabs(Widget, can_focus=True):
             """
             self.tabs = tabs
             super().__init__()
+
+        @property
+        def control(self) -> Tabs:
+            """The tabs widget which was cleared.
+
+            This is an alias for [`Cleared.tabs`][textual.widgets.Tabs.Cleared] which
+            is used by the [`on`][textual.on] decorator.
+            """
+            return self.tabs
 
         def __rich_repr__(self) -> rich.repr.Result:
             yield self.tabs

@@ -16,6 +16,7 @@ from .case import camel_to_snake
 
 if TYPE_CHECKING:
     from .message_pump import MessagePump
+    from .widget import Widget
 
 
 @rich.repr.auto
@@ -32,12 +33,22 @@ class Message:
         "_prevent",
     ]
 
+    ALLOW_SELECTOR_MATCH: ClassVar[set[str]] = set()
+    """Additional attributes that can be used with the [`on` decorator][textual.on].
+
+    These attributes must be widgets.
+    """
     bubble: ClassVar[bool] = True  # Message will bubble to parent
     verbose: ClassVar[bool] = False  # Message is verbose
     no_dispatch: ClassVar[bool] = False  # Message may not be handled by client code
     namespace: ClassVar[str] = ""  # Namespace to disambiguate messages
+    control: Widget | None = None
 
     def __init__(self) -> None:
+        self.__post_init__()
+
+    def __post_init__(self) -> None:
+        """Allow dataclasses to initialize the object."""
         self._sender: MessageTarget | None = active_message_pump.get(None)
         self.time: float = _time.get_time()
         self._forwarded = False
@@ -48,7 +59,6 @@ class Message:
             f"on_{self.namespace}_{name}" if self.namespace else f"on_{name}"
         )
         self._prevent: set[type[Message]] = set()
-        super().__init__()
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield from ()
@@ -71,6 +81,7 @@ class Message:
 
     @property
     def is_forwarded(self) -> bool:
+        """Has the message been forwarded?"""
         return self._forwarded
 
     @property

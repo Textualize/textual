@@ -185,6 +185,11 @@ class TreeNode(Generic[TreeDataType]):
         )
 
     @property
+    def is_root(self) -> bool:
+        """Is this node the root of the tree?"""
+        return self == self._tree.root
+
+    @property
     def allow_expand(self) -> bool:
         """Is this node allowed to expand?"""
         return self._allow_expand
@@ -344,6 +349,47 @@ class TreeNode(Generic[TreeDataType]):
         node = self.add(label, data, expand=False, allow_expand=False)
         return node
 
+    class RemoveRootError(Exception):
+        """Exception raised when trying to remove a tree's root node."""
+
+    def _remove_children(self) -> None:
+        """Remove child nodes of this node.
+
+        Note:
+            This is the internal support method for `remove_children`. Call
+            `remove_children` to ensure the tree gets refreshed.
+        """
+        for child in reversed(self._children):
+            child._remove()
+
+    def _remove(self) -> None:
+        """Remove the current node and all its children.
+
+        Note:
+            This is the internal support method for `remove`. Call `remove`
+            to ensure the tree gets refreshed.
+        """
+        self._remove_children()
+        assert self._parent is not None
+        del self._parent._children[self._parent._children.index(self)]
+        del self._tree._tree_nodes[self.id]
+
+    def remove(self) -> None:
+        """Remove this node from the tree.
+
+        Raises:
+            TreeNode.RemoveRootError: If there is an attempt to remove the root.
+        """
+        if self.is_root:
+            raise self.RemoveRootError("Attempt to remove the root node of a Tree.")
+        self._remove()
+        self._tree._invalidate()
+
+    def remove_children(self) -> None:
+        """Remove any child nodes of this node."""
+        self._remove_children()
+        self._tree._invalidate()
+
 
 class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     """A widget for displaying and navigating data in a tree."""
@@ -429,7 +475,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     """Show the root of the tree."""
     hover_line = var(-1)
     """The line number under the mouse pointer, or -1 if not under the mouse pointer."""
-    cursor_line = var(-1)
+    cursor_line = var(-1, always_update=True)
     """The line with the cursor, or -1 if no cursor."""
     show_guides = reactive(True)
     """Enable display of tree guide lines."""
@@ -464,56 +510,100 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
         Can be handled using `on_tree_node_collapsed` in a subclass of `Tree` or in a
         parent node in the DOM.
-
-        Attributes:
-            node: The node that was collapsed.
         """
 
-        def __init__(self, node: TreeNode[EventTreeDataType]) -> None:
+        def __init__(
+            self, tree: Tree[EventTreeDataType], node: TreeNode[EventTreeDataType]
+        ) -> None:
+            self.tree = tree
+            """The tree that sent the message."""
             self.node: TreeNode[EventTreeDataType] = node
+            """The node that was collapsed."""
             super().__init__()
+
+        @property
+        def control(self) -> Tree[EventTreeDataType]:
+            """The tree that sent the message.
+
+            This is an alias for [`NodeCollapsed.tree`][textual.widgets.Tree.NodeCollapsed.tree]
+            and is used by the [`on`][textual.on] decorator.
+            """
+            return self.tree
 
     class NodeExpanded(Generic[EventTreeDataType], Message, bubble=True):
         """Event sent when a node is expanded.
 
         Can be handled using `on_tree_node_expanded` in a subclass of `Tree` or in a
         parent node in the DOM.
-
-        Attributes:
-            node: The node that was expanded.
         """
 
-        def __init__(self, node: TreeNode[EventTreeDataType]) -> None:
+        def __init__(
+            self, tree: Tree[EventTreeDataType], node: TreeNode[EventTreeDataType]
+        ) -> None:
+            self.tree = tree
+            """The tree that sent the message."""
             self.node: TreeNode[EventTreeDataType] = node
+            """The node that was expanded."""
             super().__init__()
+
+        @property
+        def control(self) -> Tree[EventTreeDataType]:
+            """The tree that sent the message.
+
+            This is an alias for [`NodeExpanded.tree`][textual.widgets.Tree.NodeExpanded.tree]
+            and is used by the [`on`][textual.on] decorator.
+            """
+            return self.tree
 
     class NodeHighlighted(Generic[EventTreeDataType], Message, bubble=True):
         """Event sent when a node is highlighted.
 
         Can be handled using `on_tree_node_highlighted` in a subclass of `Tree` or in a
         parent node in the DOM.
-
-        Attributes:
-            node: The node that was highlighted.
         """
 
-        def __init__(self, node: TreeNode[EventTreeDataType]) -> None:
+        def __init__(
+            self, tree: Tree[EventTreeDataType], node: TreeNode[EventTreeDataType]
+        ) -> None:
+            self.tree = tree
+            """The tree that sent the message."""
             self.node: TreeNode[EventTreeDataType] = node
+            """The node that was highlighted."""
             super().__init__()
+
+        @property
+        def control(self) -> Tree[EventTreeDataType]:
+            """The tree that sent the message.
+
+            This is an alias for [`NodeHighlighted.tree`][textual.widgets.Tree.NodeHighlighted.tree]
+            and is used by the [`on`][textual.on] decorator.
+            """
+            return self.tree
 
     class NodeSelected(Generic[EventTreeDataType], Message, bubble=True):
         """Event sent when a node is selected.
 
         Can be handled using `on_tree_node_selected` in a subclass of `Tree` or in a
         parent node in the DOM.
-
-        Attributes:
-            node: The node that was selected.
         """
 
-        def __init__(self, node: TreeNode[EventTreeDataType]) -> None:
+        def __init__(
+            self, tree: Tree[EventTreeDataType], node: TreeNode[EventTreeDataType]
+        ) -> None:
+            self.tree = tree
+            """The tree that sent the message."""
             self.node: TreeNode[EventTreeDataType] = node
+            """The node that was selected."""
             super().__init__()
+
+        @property
+        def control(self) -> Tree[EventTreeDataType]:
+            """The tree that sent the message.
+
+            This is an alias for [`NodeSelected.tree`][textual.widgets.Tree.NodeSelected.tree]
+            and is used by the [`on`][textual.on] decorator.
+            """
+            return self.tree
 
     def __init__(
         self,
@@ -813,7 +903,9 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             node._selected = True
             self._cursor_node = node
             if previous_node != node:
-                self.post_message(self.NodeHighlighted(node))
+                self.post_message(self.NodeHighlighted(self, node))
+        else:
+            self._cursor_node = None
 
     def watch_guide_depth(self, guide_depth: int) -> None:
         self._invalidate()
@@ -976,8 +1068,8 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 "tree--guides-selected", partial=True
             )
 
-            hover = self.root._hover
-            selected = self.root._selected and self.has_focus
+            hover = line.path[0]._hover
+            selected = line.path[0]._selected and self.has_focus
 
             def get_guides(style: Style) -> tuple[str, str, str, str]:
                 """Get the guide strings for a given style.
@@ -1065,10 +1157,10 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             return
         if node.is_expanded:
             node.collapse()
-            self.post_message(self.NodeCollapsed(node))
+            self.post_message(self.NodeCollapsed(self, node))
         else:
             node.expand()
-            self.post_message(self.NodeExpanded(node))
+            self.post_message(self.NodeExpanded(self, node))
 
     async def _on_click(self, event: events.Click) -> None:
         meta = event.style.meta
@@ -1155,4 +1247,4 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             node = line.path[-1]
             if self.auto_expand:
                 self._toggle_node(node)
-            self.post_message(self.NodeSelected(node))
+            self.post_message(self.NodeSelected(self, node))

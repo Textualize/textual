@@ -36,6 +36,7 @@ class DockArrangeResult:
                 (
                     placement.region.grow(placement.margin),
                     placement.fixed,
+                    placement.overlay,
                     placement,
                 )
                 for placement in self.placements
@@ -73,6 +74,7 @@ class WidgetPlacement(NamedTuple):
     widget: Widget
     order: int = 0
     fixed: bool = False
+    overlay: bool = False
 
 
 class Layout(ABC):

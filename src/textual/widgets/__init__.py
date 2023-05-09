@@ -29,6 +29,7 @@ if typing.TYPE_CHECKING:
     from ._progress_bar import ProgressBar
     from ._radio_button import RadioButton
     from ._radio_set import RadioSet
+    from ._select import Select
     from ._static import Static
     from ._switch import Switch
     from ._tabbed_content import TabbedContent, TabPane
@@ -59,6 +60,7 @@ __all__ = [
     "ProgressBar",
     "RadioButton",
     "RadioSet",
+    "Select",
     "Static",
     "Switch",
     "Tab",

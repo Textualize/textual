@@ -57,7 +57,7 @@ class SpatialMap(Generic[ValueType]):
         )
 
     def insert(
-        self, regions_and_values: Iterable[tuple[Region, bool, ValueType]]
+        self, regions_and_values: Iterable[tuple[Region, bool, bool, ValueType]]
     ) -> None:
         """Insert values into the Spatial map.
 
@@ -71,8 +71,9 @@ class SpatialMap(Generic[ValueType]):
         get_grid_list = self._map.__getitem__
         _region_to_grid = self._region_to_grid_coordinates
         total_region = self.total_region
-        for region, fixed, value in regions_and_values:
-            total_region = total_region.union(region)
+        for region, fixed, overlay, value in regions_and_values:
+            if not overlay:
+                total_region = total_region.union(region)
             if fixed:
                 append_fixed(value)
             else:

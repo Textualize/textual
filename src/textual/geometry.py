@@ -27,6 +27,7 @@ if TYPE_CHECKING:
 SpacingDimensions: TypeAlias = Union[
     int, Tuple[int], Tuple[int, int], Tuple[int, int, int, int]
 ]
+"""The valid ways in which you can specify spacing."""
 
 T = TypeVar("T", int, float)
 
@@ -866,6 +867,44 @@ class Region(NamedTuple):
             Region(x, y + cut, width, height - cut),
         )
 
+    def translate_inside(
+        self, container: Region, x_axis: bool = True, y_axis: bool = True
+    ) -> Region:
+        """Translate this region, so it fits within a container.
+
+        This will ensure that there is as little overlap as possible.
+        The top left of the returned region is guaranteed to be within the container.
+
+        ```
+        ┌──────────────────┐         ┌──────────────────┐
+        │    container     │         │    container     │
+        │                  │         │    ┌─────────────┤
+        │                  │   ──▶   │    │    return   │
+        │       ┌──────────┴──┐      │    │             │
+        │       │    self     │      │    │             │
+        └───────┤             │      └────┴─────────────┘
+                │             │
+                └─────────────┘
+        ```
+
+
+        Args:
+            container: A container region.
+            x_axis: Allow translation of X axis.
+            y_axis: Allow translation of Y axis.
+
+        Returns:
+            A new region with same dimensions that fits with inside container.
+        """
+        x1, y1, width1, height1 = container
+        x2, y2, width2, height2 = self
+        return Region(
+            max(min(x2, x1 + width1 - width2), x1) if x_axis else x2,
+            max(min(y2, y1 + height1 - height2), y1) if y_axis else y2,
+            width2,
+            height2,
+        )
+
 
 class Spacing(NamedTuple):
     """The spacing around a renderable, such as padding and border
@@ -1043,4 +1082,4 @@ class Spacing(NamedTuple):
 
 
 NULL_OFFSET: Final = Offset(0, 0)
-"""An Offset constant for (0, 0)."""
+"""An [offset][textual.geometry.Offset] constant for (0, 0)."""

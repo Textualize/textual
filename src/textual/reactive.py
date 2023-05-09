@@ -76,11 +76,13 @@ class Reactive(Generic[ReactiveType]):
     def var(
         cls,
         default: ReactiveType | Callable[[], ReactiveType],
+        always_update: bool = False,
     ) -> Reactive:
         """A reactive variable that doesn't update or layout.
 
         Args:
             default: A default value or callable that returns a default.
+            always_update: Call watchers even when the new value equals the old value.
 
         Returns:
             A Reactive descriptor.
@@ -174,6 +176,12 @@ class Reactive(Generic[ReactiveType]):
         _rich_traceback_omit = True
 
         self._initialize_reactive(obj, self.name)
+
+        if hasattr(obj, self.compute_name):
+            raise AttributeError(
+                f"Can't set {obj}.{self.name!r}; reactive attributes with a compute method are read-only"
+            )
+
         name = self.name
         current_value = getattr(obj, name)
         # Check for validate function
@@ -241,9 +249,13 @@ class Reactive(Generic[ReactiveType]):
                     events.Callback(callback=partial(await_watcher, watch_result))
                 )
 
-        watch_function = getattr(obj, f"watch_{name}", None)
-        if callable(watch_function):
-            invoke_watcher(watch_function, old_value, value)
+        private_watch_function = getattr(obj, f"_watch_{name}", None)
+        if callable(private_watch_function):
+            invoke_watcher(private_watch_function, old_value, value)
+
+        public_watch_function = getattr(obj, f"watch_{name}", None)
+        if callable(public_watch_function):
+            invoke_watcher(public_watch_function, old_value, value)
 
         # Process "global" watchers
         watchers: list[tuple[Reactable, Callable]]
@@ -272,7 +284,9 @@ class Reactive(Generic[ReactiveType]):
                 compute_method = getattr(obj, f"compute_{compute}")
             except AttributeError:
                 continue
-            current_value = getattr(obj, f"_reactive_{compute}")
+            current_value = getattr(
+                obj, f"_reactive_{compute}", getattr(obj, f"_default_{compute}", None)
+            )
             value = compute_method()
             setattr(obj, f"_reactive_{compute}", value)
             if value != current_value:
@@ -314,18 +328,21 @@ class var(Reactive[ReactiveType]):
     Args:
         default: A default value or callable that returns a default.
         init: Call watchers on initialize (post mount).
+        always_update: Call watchers even when the new value equals the old value.
     """
 
     def __init__(
         self,
         default: ReactiveType | Callable[[], ReactiveType],
         init: bool = True,
+        always_update: bool = False,
     ) -> None:
         super().__init__(
             default,
             layout=False,
             repaint=False,
             init=init,
+            always_update=always_update,
         )
 
 

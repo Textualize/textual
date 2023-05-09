@@ -44,30 +44,52 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         Highlighted item is controlled using up/down keys.
         Can be handled using `on_list_view_highlighted` in a subclass of `ListView`
         or in a parent widget in the DOM.
-
-        Attributes:
-            item: The highlighted item, if there is one highlighted.
         """
+
+        ALLOW_SELECTOR_MATCH = {"item"}
+        """Additional message attributes that can be used with the [`on` decorator][textual.on]."""
 
         def __init__(self, list_view: ListView, item: ListItem | None) -> None:
             super().__init__()
-            self.list_view = list_view
+            self.list_view: ListView = list_view
+            """The view that contains the item highlighted."""
             self.item: ListItem | None = item
+            """The highlighted item, if there is one highlighted."""
+
+        @property
+        def control(self) -> ListView:
+            """The view that contains the item highlighted.
+
+            This is an alias for [`Highlighted.list_view`][textual.widgets.ListView.Highlighted.list_view]
+            and is used by the [`on`][textual.on] decorator.
+            """
+            return self.list_view
 
     class Selected(Message, bubble=True):
         """Posted when a list item is selected, e.g. when you press the enter key on it.
 
         Can be handled using `on_list_view_selected` in a subclass of `ListView` or in
         a parent widget in the DOM.
-
-        Attributes:
-            item: The selected item.
         """
+
+        ALLOW_SELECTOR_MATCH = {"item"}
+        """Additional message attributes that can be used with the [`on` decorator][textual.on]."""
 
         def __init__(self, list_view: ListView, item: ListItem) -> None:
             super().__init__()
-            self.list_view = list_view
+            self.list_view: ListView = list_view
+            """The view that contains the item selected."""
             self.item: ListItem = item
+            """The selected item."""
+
+        @property
+        def control(self) -> ListView:
+            """The view that contains the item selected.
+
+            This is an alias for [`Selected.list_view`][textual.widgets.ListView.Selected.list_view]
+            and is used by the [`on`][textual.on] decorator.
+            """
+            return self.list_view
 
     def __init__(
         self,

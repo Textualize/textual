@@ -8,6 +8,8 @@ if TYPE_CHECKING:
 
 
 class MessageTarget(Protocol):
+    """Protocol that must be followed by objects that can receive messages."""
+
     async def _post_message(self, message: "Message") -> bool:
         ...
 
@@ -25,6 +27,7 @@ class EventTarget(Protocol):
 
 SegmentLines = List[List["Segment"]]
 CallbackType = Union[Callable[[], Awaitable[None]], Callable[[], None]]
+"""Type used for arbitrary callables used in callbacks."""
 WatchCallbackType = Union[
     Callable[[], Awaitable[None]],
     Callable[[Any], Awaitable[None]],
@@ -33,3 +36,4 @@ WatchCallbackType = Union[
     Callable[[Any], None],
     Callable[[Any, Any], None],
 ]
+"""Type used for callbacks passed to the `watch` method of widgets."""

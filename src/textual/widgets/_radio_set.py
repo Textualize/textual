@@ -78,6 +78,9 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
         This message can be handled using an `on_radio_set_changed` method.
         """
 
+        ALLOW_SELECTOR_MATCH = {"pressed"}
+        """Additional message attributes that can be used with the [`on` decorator][textual.on]."""
+
         def __init__(self, radio_set: RadioSet, pressed: RadioButton) -> None:
             """Initialise the message.
 
@@ -91,6 +94,15 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
             """The [`RadioButton`][textual.widgets.RadioButton] that was pressed to make the change."""
             self.index = radio_set.pressed_index
             """The index of the [`RadioButton`][textual.widgets.RadioButton] that was pressed to make the change."""
+
+        @property
+        def control(self) -> RadioSet:
+            """A reference to the [`RadioSet`][textual.widgets.RadioSet] that was changed.
+
+            This is an alias for [`Changed.radio_set`][textual.widgets.RadioSet.Changed.radio_set]
+            and is used by the [`on`][textual.on] decorator.
+            """
+            return self.radio_set
 
         def __rich_repr__(self) -> rich.repr.Result:
             yield "radio_set", self.radio_set
