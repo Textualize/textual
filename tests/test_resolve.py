@@ -1,4 +1,5 @@
 from fractions import Fraction
+from itertools import chain
 
 import pytest
 
@@ -122,3 +123,30 @@ def test_resolve_fraction_unit():
         Fraction(32),
         resolve_dimension="width",
     ) == Fraction(2)
+
+
+@pytest.mark.xfail(reason="https://github.com/Textualize/textual/issues/2502")
+def test_resolve_issue_2502():
+    """Test https://github.com/Textualize/textual/issues/2502"""
+
+    widgets_fr = [Widget() for _ in range(50)]
+    widgets_min_width = [Widget() for _ in range(50)]
+
+    for widget in widgets_fr:
+        widget.styles.width = "1fr"
+        widget.styles.min_width = 3
+
+    for widget in widgets_min_width:
+        widget.styles.width = 0
+
+    styles = (
+        widget.styles
+        for widget in chain.from_iterable(zip(widgets_fr, widgets_min_width))
+    )
+
+    assert isinstance(
+        resolve_fraction_unit(
+            styles, Size(80, 24), Size(80, 24), Fraction(10), resolve_dimension="width"
+        ),
+        Fraction,
+    )
