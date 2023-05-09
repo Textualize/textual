@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import ClassVar, Iterable
+from typing import ClassVar, Iterable, Iterator
 
 from rich.style import Style
 from rich.text import Text, TextType
@@ -229,6 +229,19 @@ class DirectoryTree(Tree[DirEntry]):
         """
         return paths
 
+    def _directory_content(self, directory: Path) -> Iterator[Path]:
+        """Get the entries within a given directory.
+
+        Args:
+            directory: The directory to get the content of.
+
+        Returns:
+            An iterator of `Path` objects.
+        """
+        # TODO: Place this in a loop with a sleep to slow things down for
+        # testing.
+        return directory.iterdir()
+
     def _load_directory(self, node: TreeNode[DirEntry]) -> None:
         """Load the directory contents for a given node.
 
@@ -238,7 +251,7 @@ class DirectoryTree(Tree[DirEntry]):
         assert node.data is not None
         node.data.loaded = True
         directory = sorted(
-            self.filter_paths(node.data.path.iterdir()),
+            self.filter_paths(self._directory_content(node.data.path)),
             key=lambda path: (not path.is_dir(), path.name.lower()),
         )
         for path in directory:
