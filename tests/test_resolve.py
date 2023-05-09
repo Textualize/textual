@@ -134,7 +134,7 @@ def test_resolve_issue_2502():
 
     for widget in widgets_fr:
         widget.styles.width = "1fr"
-        widget.styles.min_width = 3
+        widget.styles.min_width = 1
 
     for widget in widgets_min_width:
         widget.styles.width = 0
