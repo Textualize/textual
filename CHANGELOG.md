@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
+## Unreleased
+
+### Added
+
+- Attribute `auto_focus` to screens https://github.com/Textualize/textual/issues/2457
+
 ## [0.24.1] - 2023-05-08
 
 ### Fixed
