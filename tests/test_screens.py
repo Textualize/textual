@@ -6,6 +6,7 @@ import pytest
 
 from textual.app import App, ScreenStackError
 from textual.screen import Screen
+from textual.widgets import Button, Input
 
 skip_py310 = pytest.mark.skipif(
     sys.version_info.minor == 10 and sys.version_info.major == 3,
@@ -150,3 +151,44 @@ async def test_screens():
     screen2.remove()
     screen3.remove()
     await app._shutdown()
+
+
+async def test_auto_focus():
+    class MyScreen(Screen[None]):
+        def compose(self) -> None:
+            print("composing")
+            yield Button()
+            yield Input(id="one")
+            yield Input(id="two")
+
+    class MyApp(App[None]):
+        pass
+
+    app = MyApp()
+    async with app.run_test():
+        await app.push_screen(MyScreen())
+        assert isinstance(app.focused, Button)
+        app.pop_screen()
+
+        MyScreen.auto_focus = None
+        await app.push_screen(MyScreen())
+        assert app.focused is None
+        app.pop_screen()
+
+        MyScreen.auto_focus = "Input"
+        await app.push_screen(MyScreen())
+        assert isinstance(app.focused, Input)
+        assert app.focused.id == "one"
+        app.pop_screen()
+
+        MyScreen.auto_focus = "#two"
+        await app.push_screen(MyScreen())
+        assert isinstance(app.focused, Input)
+        assert app.focused.id == "two"
+
+        # If we push and pop another screen, focus should be preserved for #two.
+        MyScreen.auto_focus = None
+        await app.push_screen(MyScreen())
+        assert app.focused is None
+        app.pop_screen()
+        assert app.focused.id == "two"
