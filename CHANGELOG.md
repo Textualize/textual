@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
+## Unrealeased
+
+### Changed
+
+- App `title` and `sub_title` attributes can be set to any type https://github.com/Textualize/textual/issues/2521
+
+
 ## [0.24.1] - 2023-05-08
 
 ### Fixed
