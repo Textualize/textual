@@ -143,7 +143,7 @@ def resolve_fraction_unit(
     resolved: list[Fraction | None] = [None] * len(resolve)
     remaining_fraction = Fraction(sum(scalar.value for scalar, _, _ in resolve))
 
-    while remaining_fraction:
+    while remaining_fraction > 0:
         remaining_space_changed = False
         resolve_fraction = Fraction(remaining_space, remaining_fraction)
         for index, (scalar, min_value, max_value) in enumerate(resolve):
