@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.24.1] - 2023-05-08
+
+### Fixed
+
+- Fix TypeError in code browser
+
+## [0.24.0] - 2023-05-08
 
 ### Fixed
 
@@ -20,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `always_update` as an optional argument for `reactive.var`
 - Made Binding description default to empty string, which is equivalent to show=False https://github.com/Textualize/textual/pull/2501
 - Modified Message to allow it to be used as a dataclass https://github.com/Textualize/textual/pull/2501
+- Decorator `@on` accepts arbitrary `**kwargs` to apply selectors to attributes of the message https://github.com/Textualize/textual/pull/2498
 
 ### Added
 
@@ -34,6 +41,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `TreeNode.is_root` https://github.com/Textualize/textual/pull/2510
 - Added `TreeNode.remove_children` https://github.com/Textualize/textual/pull/2510
 - Added `TreeNode.remove` https://github.com/Textualize/textual/pull/2510
+- Added classvar `Message.ALLOW_SELECTOR_MATCH` https://github.com/Textualize/textual/pull/2498
+- Added `ALLOW_SELECTOR_MATCH` to all built-in messages associated with widgets https://github.com/Textualize/textual/pull/2498
 - Markdown document sub-widgets now reference the container document
 - Table of contents of a markdown document now references the document
 - Added the `control` property to messages
@@ -925,6 +934,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.24.1]: https://github.com/Textualize/textual/compare/v0.24.0...v0.24.1
+[0.24.0]: https://github.com/Textualize/textual/compare/v0.23.0...v0.24.0
 [0.23.0]: https://github.com/Textualize/textual/compare/v0.22.3...v0.23.0
 [0.22.3]: https://github.com/Textualize/textual/compare/v0.22.2...v0.22.3
 [0.22.2]: https://github.com/Textualize/textual/compare/v0.22.1...v0.22.2

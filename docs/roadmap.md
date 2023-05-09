@@ -45,7 +45,7 @@ Widgets are key to making user-friendly interfaces. The builtin widgets should c
 - [x] DataTable
     * [x] Cell select
     * [x] Row / Column select
-    * [ ] API to update cells / rows
+    * [x] API to update cells / rows
     * [ ] Lazy loading API
 - [ ] Date picker
 - [ ] Drop-down menus
@@ -61,6 +61,7 @@ Widgets are key to making user-friendly interfaces. The builtin widgets should c
     * [ ] Validation
     * [ ] Error / warning states
     * [ ] Template types: IP address, physical units (weight, volume), currency, credit card etc
+- [X] Select control (pull-down)
 - [X] Markdown viewer
     * [ ] Collapsible sections
     * [ ] Custom widgets

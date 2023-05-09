@@ -5,7 +5,7 @@ from textual._on import OnDecoratorError
 from textual.app import App, ComposeResult
 from textual.message import Message
 from textual.widget import Widget
-from textual.widgets import Button
+from textual.widgets import Button, TabbedContent, TabPane
 
 
 async def test_on_button_pressed() -> None:
@@ -102,3 +102,44 @@ def test_on_no_control() -> None:
         @on(CustomMessage, "#foo")
         def foo():
             pass
+
+
+def test_on_attribute_not_listed() -> None:
+    """Check `on` checks if the attribute is in ALLOW_SELECTOR_MATCH."""
+
+    class CustomMessage(Message):
+        pass
+
+    with pytest.raises(OnDecoratorError):
+
+        @on(CustomMessage, foo="bar")
+        def foo():
+            pass
+
+
+async def test_on_arbitrary_attributes() -> None:
+    log: list[str] = []
+
+    class OnArbitraryAttributesApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield TabPane("One", id="one")
+                yield TabPane("Two", id="two")
+                yield TabPane("Three", id="three")
+
+        def on_mount(self) -> None:
+            self.query_one(TabbedContent).add_class("tabs")
+
+        @on(TabbedContent.TabActivated, tab="#one")
+        def one(self) -> None:
+            log.append("one")
+
+        @on(TabbedContent.TabActivated, ".tabs", tab="#two")
+        def two(self) -> None:
+            log.append("two")
+
+    app = OnArbitraryAttributesApp()
+    async with app.run_test() as pilot:
+        await pilot.press("tab", "right", "right")
+
+    assert log == ["one", "two"]
