@@ -409,9 +409,11 @@ class App(Generic[ReturnType], DOMNode):
         self.set_class(not self.dark, "-light-mode")
 
     def validate_title(self, title: Any) -> str:
+        """Make sure the title is set to a string."""
         return str(title)
 
     def validate_sub_title(self, sub_title: Any) -> str:
+        """Make sure the sub-title is set to a string."""
         return str(sub_title)
 
     @property
