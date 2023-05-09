@@ -125,9 +125,6 @@ def test_resolve_fraction_unit():
     ) == Fraction(2)
 
 
-@pytest.mark.xfail(
-    strict=True, reason="https://github.com/Textualize/textual/issues/2502"
-)
 def test_resolve_issue_2502():
     """Test https://github.com/Textualize/textual/issues/2502"""
 
