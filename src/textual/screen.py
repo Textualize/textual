@@ -9,6 +9,7 @@ from typing import (
     TYPE_CHECKING,
     Awaitable,
     Callable,
+    ClassVar,
     Generic,
     Iterable,
     Iterator,
@@ -93,19 +94,19 @@ class ResultCallback(Generic[ScreenResultType]):
 class Screen(Generic[ScreenResultType], Widget):
     """The base class for screens."""
 
+    AUTO_FOCUS: ClassVar[str | None] = "*"
+    """A selector to determine what to focus automatically when the screen is activated.
+
+    The widget focused is the first that matches the given [CSS selector](/guide/queries/#query-selectors).
+    Set to `None` to disable auto focus.
+    """
+
     DEFAULT_CSS = """
     Screen {
         layout: vertical;
         overflow-y: auto;
         background: $surface;
     }
-    """
-
-    auto_focus: str | None = "*"
-    """A selector to determine what to focus automatically when the screen is activated.
-
-    The widget focused is the first that matches the given [CSS selector](/guide/queries/#query-selectors).
-    Set to `None` to disable auto focus.
     """
     focused: Reactive[Widget | None] = Reactive(None)
     """The focused [widget][textual.widget.Widget] or `None` for no focus."""
@@ -665,9 +666,9 @@ class Screen(Generic[ScreenResultType], Widget):
         """Screen has resumed."""
         self.stack_updates += 1
         size = self.app.size
-        if self.auto_focus is not None and self.focused is None:
+        if self.AUTO_FOCUS is not None and self.focused is None:
             try:
-                to_focus = self.query(self.auto_focus).first()
+                to_focus = self.query(self.AUTO_FOCUS).first()
             except NoMatches:
                 pass
             else:

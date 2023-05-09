@@ -170,24 +170,24 @@ async def test_auto_focus():
         assert isinstance(app.focused, Button)
         app.pop_screen()
 
-        MyScreen.auto_focus = None
+        MyScreen.AUTO_FOCUS = None
         await app.push_screen(MyScreen())
         assert app.focused is None
         app.pop_screen()
 
-        MyScreen.auto_focus = "Input"
+        MyScreen.AUTO_FOCUS = "Input"
         await app.push_screen(MyScreen())
         assert isinstance(app.focused, Input)
         assert app.focused.id == "one"
         app.pop_screen()
 
-        MyScreen.auto_focus = "#two"
+        MyScreen.AUTO_FOCUS = "#two"
         await app.push_screen(MyScreen())
         assert isinstance(app.focused, Input)
         assert app.focused.id == "two"
 
         # If we push and pop another screen, focus should be preserved for #two.
-        MyScreen.auto_focus = None
+        MyScreen.AUTO_FOCUS = None
         await app.push_screen(MyScreen())
         assert app.focused is None
         app.pop_screen()
