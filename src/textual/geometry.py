@@ -839,7 +839,7 @@ class Region(NamedTuple):
 
     @lru_cache(maxsize=1024)
     def split_horizontal(self, cut: int) -> tuple[Region, Region]:
-        """Split a region in to two, from a given x offset.
+        """Split a region in to two, from a given y offset.
 
         ```
                     ┌─────────┐
