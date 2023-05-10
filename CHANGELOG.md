@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed `TreeNode.expand` and `TreeNode.expand_all` not posting a `Tree.NodeExpanded` message https://github.com/Textualize/textual/issues/2535
+- Fixed `TreeNode.collapse` and `TreeNode.collapse_all` not posting a `Tree.NodeCollapsed` message https://github.com/Textualize/textual/issues/2535
+- Fixed `TreeNode.toggle` and `TreeNode.toggle_all` not posting a `Tree.NodeExpanded` or `Tree.NodeCollapsed` message https://github.com/Textualize/textual/issues/2535
+
 ## [0.24.1] - 2023-05-08
 
 ### Fixed

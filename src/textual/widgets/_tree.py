@@ -207,6 +207,7 @@ class TreeNode(Generic[TreeDataType]):
         """
         self._expanded = True
         self._updates += 1
+        self._tree.post_message(Tree.NodeExpanded(self._tree, self))
         if expand_all:
             for child in self.children:
                 child._expand(expand_all)
@@ -239,6 +240,7 @@ class TreeNode(Generic[TreeDataType]):
         """
         self._expanded = False
         self._updates += 1
+        self._tree.post_message(Tree.NodeCollapsed(self._tree, self))
         if collapse_all:
             for child in self.children:
                 child._collapse(collapse_all)
@@ -1157,10 +1159,8 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             return
         if node.is_expanded:
             node.collapse()
-            self.post_message(self.NodeCollapsed(self, node))
         else:
             node.expand()
-            self.post_message(self.NodeExpanded(self, node))
 
     async def _on_click(self, event: events.Click) -> None:
         meta = event.style.meta
