@@ -852,8 +852,8 @@ class Region(NamedTuple):
         ```
 
         Args:
-            cut: An offset from self.x where the cut should be made. May be negative,
-                for the offset to start from the right edge.
+            cut: An offset from self.y where the cut should be made. May be negative,
+                for the offset to start from the bottom edge.
 
         Returns:
             Two regions, which add up to the original (self).
