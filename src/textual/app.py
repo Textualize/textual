@@ -316,6 +316,7 @@ class App(Generic[ReturnType], DOMNode):
         the name of the app if it doesn't.
 
         Assign a new value to this attribute to change the title.
+        The new value is always converted to string.
         """
 
         self.sub_title = self.SUB_TITLE if self.SUB_TITLE is not None else ""
@@ -328,6 +329,7 @@ class App(Generic[ReturnType], DOMNode):
         the file being worker on.
 
         Assign a new value to this attribute to change the sub-title.
+        The new value is always converted to string.
         """
 
         self._logger = Logger(self._log)
@@ -405,6 +407,14 @@ class App(Generic[ReturnType], DOMNode):
         self._batch_count = 0
         self.set_class(self.dark, "-dark-mode")
         self.set_class(not self.dark, "-light-mode")
+
+    def validate_title(self, title: Any) -> str:
+        """Make sure the title is set to a string."""
+        return str(title)
+
+    def validate_sub_title(self, sub_title: Any) -> str:
+        """Make sure the sub-title is set to a string."""
+        return str(sub_title)
 
     @property
     def workers(self) -> WorkerManager:
