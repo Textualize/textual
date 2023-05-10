@@ -250,6 +250,23 @@ class DirectoryTree(Tree[DirEntry]):
             yield entry
             time.sleep(0.05)
 
+    def _populate_node(
+        self, node: TreeNode[DirEntry], directory: Iterable[Path]
+    ) -> None:
+        """Populate the given node with the contents of a directory.
+
+        Args:
+            node: The node to populate.
+            directory: The directory contents to populate it with.
+        """
+        for path in directory:
+            node.add(
+                path.name,
+                data=DirEntry(path),
+                allow_expand=path.is_dir(),
+            )
+        node.expand()
+
     @work
     def _load_directory(self, node: TreeNode[DirEntry]) -> None:
         """Load the directory contents for a given node.
@@ -259,18 +276,14 @@ class DirectoryTree(Tree[DirEntry]):
         """
         assert node.data is not None
         node.data.loaded = True
-        directory = sorted(
-            self.filter_paths(self._directory_content(node.data.path)),
-            key=lambda path: (not path.is_dir(), path.name.lower()),
+        self.app.call_from_thread(
+            self._populate_node,
+            node,
+            sorted(
+                self.filter_paths(self._directory_content(node.data.path)),
+                key=lambda path: (not path.is_dir(), path.name.lower()),
+            ),
         )
-        for path in directory:
-            self.app.call_from_thread(
-                node.add,
-                path.name,
-                data=DirEntry(path),
-                allow_expand=path.is_dir(),
-            )
-        self.app.call_from_thread(node.expand)
 
     def _on_mount(self, _: Mount) -> None:
         self._load_directory(self.root)
