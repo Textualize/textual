@@ -159,6 +159,10 @@ class ScreenStackError(ScreenError):
     """Raised when attempting to pop the last screen from the stack."""
 
 
+class UnknownModeError(Exception):
+    """Raised when attempting to use a mode that is not known."""
+
+
 class CssPathError(Exception):
     """Raised when supplied CSS path(s) are invalid."""
 
@@ -294,7 +298,10 @@ class App(Generic[ReturnType], DOMNode):
         self._workers = WorkerManager(self)
         self.error_console = Console(markup=False, stderr=True)
         self.driver_class = driver_class or self.get_driver_class()
-        self._screen_stack: list[Screen] = []
+        self._screen_stacks: dict[str, list[Screen]] = {"_default": []}
+        """A stack of screens per mode."""
+        self._current_mode: str = "_default"
+        """The current mode the app is in."""
         self._sync_available = False
 
         self.mouse_over: Widget | None = None
@@ -526,7 +533,7 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             A snapshot of the current state of the screen stack.
         """
-        return self._screen_stack.copy()
+        return self._screen_stacks[self._current_mode].copy()
 
     def exit(
         self, result: ReturnType | None = None, message: RenderableType | None = None
@@ -680,7 +687,9 @@ class App(Generic[ReturnType], DOMNode):
             ScreenStackError: If there are no screens on the stack.
         """
         try:
-            return self._screen_stack[-1]
+            return self._screen_stacks[self._current_mode][-1]
+        except KeyError:
+            raise UnknownModeError(f"No known mode {self._current_mode!r}") from None
         except IndexError:
             raise ScreenStackError("No screens on stack") from None
 
@@ -688,7 +697,7 @@ class App(Generic[ReturnType], DOMNode):
     def _background_screens(self) -> list[Screen]:
         """A list of screens that may be visible due to background opacity (top-most first, not including current screen)."""
         screens: list[Screen] = []
-        for screen in reversed(self._screen_stack[:-1]):
+        for screen in reversed(self._screen_stacks[self._current_mode][:-1]):
             screens.append(screen)
             if screen.styles.background.a == 1:
                 break
@@ -1398,11 +1407,14 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             The screen that was replaced.
         """
-        if self._screen_stack:
+        if self._screen_stacks[self._current_mode]:
             self.screen.refresh()
         screen.post_message(events.ScreenSuspend())
         self.log.system(f"{screen} SUSPENDED")
-        if not self.is_screen_installed(screen) and screen not in self._screen_stack:
+        if (
+            not self.is_screen_installed(screen)
+            and screen not in self._screen_stacks[self._current_mode]
+        ):
             screen.remove()
             self.log.system(f"{screen} REMOVED")
         return screen
@@ -1426,14 +1438,14 @@ class App(Generic[ReturnType], DOMNode):
                 f"push_screen requires a Screen instance or str; not {screen!r}"
             )
 
-        if self._screen_stack:
+        if self._screen_stacks[self._current_mode]:
             self.screen.post_message(events.ScreenSuspend())
             self.screen.refresh()
         next_screen, await_mount = self._get_screen(screen)
         next_screen._push_result_callback(
-            self.screen if self._screen_stack else None, callback
+            self.screen if self._screen_stacks[self._current_mode] else None, callback
         )
-        self._screen_stack.append(next_screen)
+        self._screen_stacks[self._current_mode].append(next_screen)
         next_screen.post_message(events.ScreenResume())
         self.log.system(f"{self.screen} is current (PUSHED)")
         return await_mount
@@ -1449,10 +1461,12 @@ class App(Generic[ReturnType], DOMNode):
                 f"switch_screen requires a Screen instance or str; not {screen!r}"
             )
         if self.screen is not screen:
-            previous_screen = self._replace_screen(self._screen_stack.pop())
+            previous_screen = self._replace_screen(
+                self._screen_stacks[self._current_mode].pop()
+            )
             previous_screen._pop_result_callback()
             next_screen, await_mount = self._get_screen(screen)
-            self._screen_stack.append(next_screen)
+            self._screen_stacks[self._current_mode].append(next_screen)
             self.screen.post_message(events.ScreenResume())
             self.log.system(f"{self.screen} is current (SWITCHED)")
             return await_mount
@@ -1503,13 +1517,13 @@ class App(Generic[ReturnType], DOMNode):
             if screen not in self._installed_screens:
                 return None
             uninstall_screen = self._installed_screens[screen]
-            if uninstall_screen in self._screen_stack:
+            if any(uninstall_screen in stack for stack in self._screen_stacks.values()):
                 raise ScreenStackError("Can't uninstall screen in screen stack")
             del self._installed_screens[screen]
             self.log.system(f"{uninstall_screen} UNINSTALLED name={screen!r}")
             return screen
         else:
-            if screen in self._screen_stack:
+            if any(screen in stack for stack in self._screen_stacks.values()):
                 raise ScreenStackError("Can't uninstall screen in screen stack")
             for name, installed_screen in self._installed_screens.items():
                 if installed_screen is screen:
@@ -1524,7 +1538,7 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             The screen that was replaced.
         """
-        screen_stack = self._screen_stack
+        screen_stack = self._screen_stacks[self._current_mode]
         if len(screen_stack) <= 1:
             raise ScreenStackError(
                 "Can't pop screen; there must be at least one screen on the stack"
@@ -1940,12 +1954,12 @@ class App(Generic[ReturnType], DOMNode):
     async def _close_all(self) -> None:
         """Close all message pumps."""
 
-        # Close all screens on the stack.
-        for stack_screen in reversed(self._screen_stack):
-            if stack_screen._running:
-                await self._prune_node(stack_screen)
-
-        self._screen_stack.clear()
+        # Close all screens on all stacks:
+        for stack in self._screen_stacks.values():
+            for stack_screen in reversed(stack):
+                if stack_screen._running:
+                    await self._prune_node(stack_screen)
+            stack.clear()
 
         # Close pre-defined screens.
         for screen in self.SCREENS.values():
@@ -1990,7 +2004,7 @@ class App(Generic[ReturnType], DOMNode):
         await self._message_queue.put(None)
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
-        if self._screen_stack:
+        if self._screen_stacks[self._current_mode]:
             self.screen.refresh(repaint=repaint, layout=layout)
         self.check_idle()
 
@@ -2130,9 +2144,9 @@ class App(Generic[ReturnType], DOMNode):
         # Handle input events that haven't been forwarded
         # If the event has been forwarded it may have bubbled up back to the App
         if isinstance(event, events.Compose):
-            screen = Screen(id="_default")
+            screen = Screen(id=f"_default_{self._current_mode}")
             self._register(self, screen)
-            self._screen_stack.append(screen)
+            self._screen_stacks[self._current_mode].append(screen)
             await super().on_event(event)
 
         elif isinstance(event, events.InputEvent) and not event.is_forwarded:
