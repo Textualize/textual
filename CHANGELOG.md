@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - App `title` and `sub_title` attributes can be set to any type https://github.com/Textualize/textual/issues/2521
 
+### Fixed
+
+- Fixed `ZeroDivisionError` in `resolve_fraction_unit` https://github.com/Textualize/textual/issues/2502
 
 ## [0.24.1] - 2023-05-08
 
