@@ -159,8 +159,16 @@ class ScreenStackError(ScreenError):
     """Raised when attempting to pop the last screen from the stack."""
 
 
-class UnknownModeError(Exception):
+class ModeError(Exception):
+    """Base class for exceptions related to modes."""
+
+
+class UnknownModeError(ModeError):
     """Raised when attempting to use a mode that is not known."""
+
+
+class ActiveModeError(ModeError):
+    """Raised when attempting to remove the currently active mode."""
 
 
 class CssPathError(Exception):
@@ -216,6 +224,8 @@ class App(Generic[ReturnType], DOMNode):
     }
     """
 
+    MODES: ClassVar[set[str]] = set()
+    """Modes associated with the app for the lifetime of the app."""
     SCREENS: ClassVar[dict[str, Screen | Callable[[], Screen]]] = {}
     """Screens associated with the app for the lifetime of the app."""
     _BASE_PATH: str | None = None
@@ -1335,6 +1345,63 @@ class App(Generic[ReturnType], DOMNode):
         """
         return self.mount(*widgets, before=before, after=after)
 
+    def _init_mode(self, mode: str) -> None:
+        """Do internal initialisation of a new screen stack mode."""
+
+        screen = Screen(id=f"_default_{mode}")
+        self._register(self, screen)
+        self._screen_stacks[mode] = [screen]
+
+    def switch_mode(self, mode: str) -> None:
+        """Switch to a given mode.
+
+        Args:
+            mode: The mode to switch to.
+
+        Raises:
+            UnknownModeError: If trying to switch to an unknown mode.
+        """
+        if mode not in self.MODES:
+            raise UnknownModeError(f"No known mode {mode!r}")
+
+        self.screen.post_message(events.ScreenSuspend())
+        self.screen.refresh()
+
+        if mode not in self._screen_stacks:
+            self._init_mode(mode)
+        self._current_mode = mode
+        self.screen._screen_resized(self.size)
+        self.screen.post_message(events.ScreenResume())
+        self.log.system(f"{self.screen} is active")
+
+    def add_mode(self, mode: str) -> None:
+        """Adds a mode to the app.
+
+        Args:
+            mode: The new mode.
+        """
+        self.MODES.add(mode)
+
+    def remove_mode(self, mode: str) -> None:
+        """Removes a mode from the app.
+
+        Args:
+            mode: The mode to remove. It can't be the active mode.
+
+        Raises:
+            ActiveModeError: If trying to remove the active mode.
+            UnknownModeError: If trying to remove an unknown mode.
+        """
+        if mode == self._current_mode:
+            raise ActiveModeError(f"Can't remove active mode {mode!r}")
+        elif mode not in self.MODES:
+            raise UnknownModeError(f"Unknown mode {mode!r}")
+
+        stack = self._screen_stacks.get(mode, [])
+        while stack:
+            self._replace_screen(stack.pop())
+        self.MODES.remove(mode)
+
     def is_screen_installed(self, screen: Screen | str) -> bool:
         """Check if a given screen has been installed.
 
@@ -2144,7 +2211,7 @@ class App(Generic[ReturnType], DOMNode):
         # Handle input events that haven't been forwarded
         # If the event has been forwarded it may have bubbled up back to the App
         if isinstance(event, events.Compose):
-            screen = Screen(id=f"_default_{self._current_mode}")
+            screen = Screen(id=f"_default")
             self._register(self, screen)
             self._screen_stacks[self._current_mode].append(screen)
             await super().on_event(event)
