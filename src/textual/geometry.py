@@ -853,7 +853,7 @@ class Region(NamedTuple):
 
         Args:
             cut: An offset from self.y where the cut should be made. May be negative,
-                for the offset to start from the bottom edge.
+                for the offset to start from the lower edge.
 
         Returns:
             Two regions, which add up to the original (self).
@@ -909,7 +909,19 @@ class Region(NamedTuple):
 class Spacing(NamedTuple):
     """The spacing around a renderable, such as padding and border
 
-    Spacing is defined by four integers for the space at the top, right, bottom, and left of a region,
+    Spacing is defined by four integers for the space at the top, right, bottom, and left of a region.
+
+    ```
+    ┌ ─ ─ ─ ─ ─ ─ ─▲─ ─ ─ ─ ─ ─ ─ ─ ┐
+                   │ top
+    │        ┏━━━━━▼━━━━━━┓         │
+     ◀──────▶┃            ┃◀───────▶
+    │  left  ┃            ┃ right   │
+             ┃            ┃
+    │        ┗━━━━━▲━━━━━━┛         │
+                   │ bottom
+    └ ─ ─ ─ ─ ─ ─ ─▼─ ─ ─ ─ ─ ─ ─ ─ ┘
+    ```
 
     Example:
         ```python
