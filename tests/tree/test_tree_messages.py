@@ -78,11 +78,65 @@ async def test_tree_node_expanded_message() -> None:
         assert pilot.app.messages == [("NodeExpanded", "test-tree")]
 
 
+async def tree_node_expanded_by_code_message() -> None:
+    """Expanding a node via the API should result in an expanded message being posted."""
+    async with TreeApp().run_test() as pilot:
+        pilot.app.query_one(Tree).root.children[0].expand()
+        assert pilot.app.messages == [("NodeExpanded", "test-tree")]
+
+
+async def tree_node_all_expanded_by_code_message() -> None:
+    """Expanding all nodes via the API should result in expanded messages being posted."""
+    async with TreeApp().run_test() as pilot:
+        pilot.app.query_one(Tree).root.children[0].expand_all()
+        assert pilot.app.messages == [("NodeExpanded", "test-tree")]
+
+
 async def test_tree_node_collapsed_message() -> None:
     """Collapsing a node should result in a collapsed message being emitted."""
     async with TreeApp().run_test() as pilot:
         await pilot.press("space", "space")
         await pilot.pause()
+        assert pilot.app.messages == [
+            ("NodeExpanded", "test-tree"),
+            ("NodeCollapsed", "test-tree"),
+        ]
+
+
+async def tree_node_collapsed_by_code_message() -> None:
+    """Collapsing a node via the API should result in a collapsed message being posted."""
+    async with TreeApp().run_test() as pilot:
+        pilot.app.query_one(Tree).root.children[0].expand().collapse()
+        assert pilot.app.messages == [
+            ("NodeExpanded", "test-tree"),
+            ("NodeCollapsed", "test-tree"),
+        ]
+
+
+async def tree_node_all_collapsed_by_code_message() -> None:
+    """Collapsing all nodes via the API should result in collapsed messages being posted."""
+    async with TreeApp().run_test() as pilot:
+        pilot.app.query_one(Tree).root.children[0].expand_all().collapse_all()
+        assert pilot.app.messages == [
+            ("NodeExpanded", "test-tree"),
+            ("NodeCollapsed", "test-tree"),
+        ]
+
+
+async def tree_node_toggled_by_code_message() -> None:
+    """Toggling a node twice via the API should result in expanded and collapsed messages."""
+    async with TreeApp().run_test() as pilot:
+        pilot.app.query_one(Tree).root.children[0].toggle().toggle()
+        assert pilot.app.messages == [
+            ("NodeExpanded", "test-tree"),
+            ("NodeCollapsed", "test-tree"),
+        ]
+
+
+async def tree_node_all_toggled_by_code_message() -> None:
+    """Toggling all nodes twice via the API should result in expanded and collapsed messages."""
+    async with TreeApp().run_test() as pilot:
+        pilot.app.query_one(Tree).root.children[0].toggle_all().toggle_all()
         assert pilot.app.messages == [
             ("NodeExpanded", "test-tree"),
             ("NodeCollapsed", "test-tree"),
