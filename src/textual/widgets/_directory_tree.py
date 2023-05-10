@@ -7,6 +7,7 @@ from typing import ClassVar, Iterable, Iterator
 from rich.style import Style
 from rich.text import Text, TextType
 
+from .. import work
 from ..events import Mount
 from ..message import Message
 from ..reactive import var
@@ -238,10 +239,18 @@ class DirectoryTree(Tree[DirEntry]):
         Returns:
             An iterator of `Path` objects.
         """
-        # TODO: Place this in a loop with a sleep to slow things down for
-        # testing.
-        return directory.iterdir()
+        # TODO: Not like this. Oh so very not like this. This is here to
+        # slow things down on purpose, to emulate loading directory
+        # information from a slow source.
+        #
+        # REMOVE BEFORE FLIGHT!
+        import time
 
+        for entry in directory.iterdir():
+            yield entry
+            time.sleep(0.05)
+
+    @work
     def _load_directory(self, node: TreeNode[DirEntry]) -> None:
         """Load the directory contents for a given node.
 
@@ -255,12 +264,13 @@ class DirectoryTree(Tree[DirEntry]):
             key=lambda path: (not path.is_dir(), path.name.lower()),
         )
         for path in directory:
-            node.add(
+            self.app.call_from_thread(
+                node.add,
                 path.name,
                 data=DirEntry(path),
                 allow_expand=path.is_dir(),
             )
-        node.expand()
+        self.app.call_from_thread(node.expand)
 
     def _on_mount(self, _: Mount) -> None:
         self._load_directory(self.root)
