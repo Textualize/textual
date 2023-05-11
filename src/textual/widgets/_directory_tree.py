@@ -296,19 +296,43 @@ class DirectoryTree(Tree[DirEntry]):
         Args:
             node: The node to load the directory contents for.
         """
+
+        # We should not ever be asked to load a directory for a node that
+        # has no directory information.
         assert node.data is not None
+
+        # Mark the node as loaded; we do this as soon as possible.
         node.data.loaded = True
-        # TODO: Perhaps move this out of here and...
-        self.app.call_from_thread(
-            self._populate_node,
-            node,
-            sorted(
-                self.filter_paths(self._directory_content(node.data.path)),
-                key=lambda path: (not path.is_dir(), path.name.lower()),
-            ),
+
+        # From now on we get the directory content and populate the node in
+        # simple steps, checking that the worker hasn't been cancelled at
+        # every step of the way. We /could/ just run to the end, but we
+        # might as well drop out of here as soon as we can tell we've been
+        # asked to stop.
+        worker = get_current_worker()
+
+        # Load up the content of the directly.
+        content = self.filter_paths(self._directory_content(node.data.path))
+        if worker.is_cancelled:
+            return
+
+        # We're still going, sort the content, case-insensitive, placing
+        # directory entries up front.
+        content = sorted(
+            content,
+            key=lambda path: (not path.is_dir(), path.name.lower()),
         )
-        # TODO: ...attach it to this and have the receiver update the tree?
-        if not get_current_worker().is_cancelled:
+        if worker.is_cancelled:
+            return
+
+        # We have directory content, it's filtered, it's sorted, we're still
+        # working, so now let's update the actual node in the tree.
+        self.app.call_from_thread(self._populate_node, node, content)
+
+        # Finally, if we're 100% sure we've not been cancelled, post a
+        # message to say the load has finished. Our caller should not be
+        # told we finished fine if they've cancelled us.
+        if not worker.is_cancelled:
             self.post_message(self._LoadFinished(node))
 
     _MAX_CONCURRENT_JOBS: Final[int] = 5
