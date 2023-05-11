@@ -13,6 +13,7 @@ from .. import work
 from ..events import Mount
 from ..message import Message
 from ..reactive import var
+from ..worker import get_current_worker
 from ._tree import TOGGLE_STYLE, Tree, TreeNode
 
 
@@ -250,7 +251,10 @@ class DirectoryTree(Tree[DirEntry]):
         # REMOVE BEFORE FLIGHT!
         import time
 
+        worker = get_current_worker()
         for entry in directory.iterdir():
+            if worker.is_cancelled:
+                return
             yield entry
             time.sleep(0.05)
 
