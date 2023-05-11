@@ -251,19 +251,11 @@ class DirectoryTree(Tree[DirEntry]):
         Returns:
             An iterator of `Path` objects.
         """
-        # TODO: Not like this. Oh so very not like this. This is here to
-        # slow things down on purpose, to emulate loading directory
-        # information from a slow source.
-        #
-        # REMOVE BEFORE FLIGHT!
-        import time
-
         worker = get_current_worker()
         for entry in directory.iterdir():
             if worker.is_cancelled:
                 return
             yield entry
-            time.sleep(0.05)
 
     def _populate_node(
         self, node: TreeNode[DirEntry], directory: Iterable[Path]
