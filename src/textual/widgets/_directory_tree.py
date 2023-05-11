@@ -128,9 +128,9 @@ class DirectoryTree(Tree[DirEntry]):
             classes=classes,
             disabled=disabled,
         )
-        self.path = path
         self._waiting_load_jobs: Queue[TreeNode[DirEntry]] = Queue()
         self._running_load_jobs: set[int] = set()
+        self.path = path
 
     def reload(self) -> None:
         """Reload the `DirectoryTree` contents."""
