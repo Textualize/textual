@@ -135,7 +135,7 @@ class DirectoryTree(Tree[DirEntry]):
     def reload(self) -> None:
         """Reload the `DirectoryTree` contents."""
         self.reset(str(self.path), DirEntry(Path(self.path)))
-        self._load_directory(self.root)
+        self._add_load_job(self.root)
 
     def validate_path(self, path: str | Path) -> Path:
         """Ensure that the path is of the `Path` type.
