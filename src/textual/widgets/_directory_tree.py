@@ -134,6 +134,13 @@ class DirectoryTree(Tree[DirEntry]):
 
     def reload(self) -> None:
         """Reload the `DirectoryTree` contents."""
+        # We're about to nuke the whole tree and start over, so we don't
+        # want any dangling load jobs. Before we do anything else, ensure
+        # they're all marked as cancelled and that the queue of pending jobs
+        # has been emptied.
+        self._cancel_all_jobs()
+        # That out of the way, we can reset the tree and start loading the
+        # root's content.
         self.reset(str(self.path), DirEntry(Path(self.path)))
         self._add_load_job(self.root)
 
