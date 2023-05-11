@@ -316,10 +316,12 @@ class DirectoryTree(Tree[DirEntry]):
             except Empty:
                 # Queue is empty; our work here is done.
                 return
-            # We've got a new directory load job, add it to the collection
-            # of running jobs and kick off the load.
-            self._running_load_jobs.add(new_job.id)
-            self._load_directory(new_job)
+            # At this point we've got a new directory load job; add it to
+            # the collection of running jobs and kick off the load, but only
+            # if there isn't already a job for it.
+            if not new_job.id in self._running_load_jobs:
+                self._running_load_jobs.add(new_job.id)
+                self._load_directory(new_job)
 
     def _on_directory_tree__load_finished(
         self, event: DirectoryTree._LoadFinished
