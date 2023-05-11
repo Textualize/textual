@@ -163,6 +163,10 @@ class ModeError(Exception):
     """Base class for exceptions related to modes."""
 
 
+class InvalidModeError(ModeError):
+    """Raised if there is an issue with a mode name."""
+
+
 class UnknownModeError(ModeError):
     """Raised when attempting to use a mode that is not known."""
 
@@ -224,8 +228,35 @@ class App(Generic[ReturnType], DOMNode):
     }
     """
 
-    MODES: ClassVar[set[str]] = set()
-    """Modes associated with the app for the lifetime of the app."""
+    MODES: ClassVar[dict[str, str | Screen | Callable[[], Screen]]] = {}
+    """Modes associated with the app and their base screens.
+
+    The base screen is the screen at the bottom of the mode stack. You can think of
+    it as the default screen for that stack.
+    The base screens can be names of screens listed in [SCREENS][textual.app.App.SCREENS],
+    [`Screen`][textual.screen.Screen] instances, or callables that return screens.
+
+    Example:
+        ```py
+        class HelpScreen(Screen[None]):
+            ...
+
+        class MainAppScreen(Screen[None]):
+            ...
+
+        class MyApp(App[None]):
+            MODES = {
+                "default": "main",
+                "help": HelpScreen,
+            }
+
+            SCREENS = {
+                "main": MainAppScreen,
+            }
+
+            ...
+        ```
+    """
     SCREENS: ClassVar[dict[str, Screen | Callable[[], Screen]]] = {}
     """Screens associated with the app for the lifetime of the app."""
     _BASE_PATH: str | None = None
@@ -1348,8 +1379,14 @@ class App(Generic[ReturnType], DOMNode):
     def _init_mode(self, mode: str) -> None:
         """Do internal initialisation of a new screen stack mode."""
 
-        screen = Screen(id=f"_default_{mode}")
-        self._register(self, screen)
+        stack = self._screen_stacks.get(mode, [])
+        if not stack:
+            _screen = self.MODES[mode]
+            if callable(_screen):
+                screen, _ = self._get_screen(_screen())
+            else:
+                screen, _ = self._get_screen(self.MODES[mode])
+            stack.append(screen)
         self._screen_stacks[mode] = [screen]
 
     def switch_mode(self, mode: str) -> None:
@@ -1372,18 +1409,32 @@ class App(Generic[ReturnType], DOMNode):
         self._current_mode = mode
         self.screen._screen_resized(self.size)
         self.screen.post_message(events.ScreenResume())
+        self.log.system(f"{self._current_mode!r} is the current mode")
         self.log.system(f"{self.screen} is active")
 
-    def add_mode(self, mode: str) -> None:
-        """Adds a mode to the app.
+    def add_mode(
+        self, mode: str, base_screen: str | Screen | Callable[[], Screen]
+    ) -> None:
+        """Adds a mode and its corresponding base screen to the app.
 
         Args:
             mode: The new mode.
+            base_screen: The base screen associated with the given mode.
+
+        Raises:
+            InvalidModeError: If the name of the mode is not valid/duplicated.
         """
-        self.MODES.add(mode)
+        if mode == "_default":
+            raise InvalidModeError("Cannot use '_default' as a custom mode.")
+        elif mode in self.MODES:
+            raise InvalidModeError(f"Duplicated mode name {mode!r}.")
+
+        self.MODES[mode] = base_screen
 
     def remove_mode(self, mode: str) -> None:
         """Removes a mode from the app.
+
+        Screens that are running in the stack of that mode are scheduled for pruning.
 
         Args:
             mode: The mode to remove. It can't be the active mode.
@@ -1396,11 +1447,17 @@ class App(Generic[ReturnType], DOMNode):
             raise ActiveModeError(f"Can't remove active mode {mode!r}")
         elif mode not in self.MODES:
             raise UnknownModeError(f"Unknown mode {mode!r}")
+        else:
+            del self.MODES[mode]
 
-        stack = self._screen_stacks.get(mode, [])
-        while stack:
-            self._replace_screen(stack.pop())
-        self.MODES.remove(mode)
+        if mode not in self._screen_stacks:
+            return
+
+        stack = self._screen_stacks[mode]
+        for screen in reversed(stack):
+            if screen._running:
+                self.call_later(self._prune_node, screen)
+        del self._screen_stacks[mode]
 
     def is_screen_installed(self, screen: Screen | str) -> bool:
         """Check if a given screen has been installed.
