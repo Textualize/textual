@@ -303,7 +303,7 @@ class DirectoryTree(Tree[DirEntry]):
         # asked to stop.
         worker = get_current_worker()
 
-        # Load up the content of the directly.
+        # Load up the content of the directory.
         content = self.filter_paths(self._directory_content(node.data.path))
         if worker.is_cancelled:
             return
