@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - App `title` and `sub_title` attributes can be set to any type https://github.com/Textualize/textual/issues/2521
+- `DirectoryTree` now loads directory contents in a worker https://github.com/Textualize/textual/issues/2456
 
 ### Fixed
 
