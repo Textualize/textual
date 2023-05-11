@@ -301,7 +301,8 @@ class DirectoryTree(Tree[DirEntry]):
             ),
         )
         # TODO: ...attach it to this and have the receiver update the tree?
-        self.post_message(self._LoadFinished(node))
+        if not get_current_worker().is_cancelled:
+            self.post_message(self._LoadFinished(node))
 
     _MAX_CONCURRENT_JOBS: Final[int] = 5
     """The maximum number of load jobs to run at the same time."""
