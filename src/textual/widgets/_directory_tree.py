@@ -307,6 +307,16 @@ class DirectoryTree(Tree[DirEntry]):
     _MAX_CONCURRENT_JOBS: Final[int] = 5
     """The maximum number of load jobs to run at the same time."""
 
+    def _cancel_all_jobs(self) -> None:
+        """Cancel all running load jobs."""
+        self._waiting_load_jobs = Queue()
+        self._running_load_jobs = set()
+        # TODO: Check if there's an Textual-API-way to say "get all workers
+        # in this DOM node", or "cancel all of the works I made", or
+        # something. This seems fine, but I want to be 100% sure.
+        for job in (worker for worker in self.app.workers if worker.node == self):
+            job.cancel()
+
     def _process_load_jobs(self) -> None:
         """Process the incoming load request queue."""
         # While we still have spare capacity...
