@@ -306,28 +306,20 @@ class DirectoryTree(Tree[DirEntry]):
     _MAX_CONCURRENT_JOBS: Final[int] = 5
     """The maximum number of load jobs to run at the same time."""
 
-    # TODO: Remove debug logging before going to an actual PR.
-
     def _process_load_jobs(self) -> None:
         """Process the incoming load request queue."""
         # While we still have spare capacity...
-        self.log.debug(
-            f"LOAD QUEUE: Running job count is {len(self._running_load_jobs)}"
-        )
         while len(self._running_load_jobs) <= self._MAX_CONCURRENT_JOBS:
             try:
                 # ...pull a load job off the queue.
                 new_job = self._waiting_load_jobs.get(block=False)
             except Empty:
                 # Queue is empty; our work here is done.
-                self.log.debug("LOAD QUEUE: New job queue is empty")
                 return
             # We've got a new directory load job, add it to the collection
             # of running jobs and kick off the load.
-            self.log.debug(f"LOAD QUEUE: Staring a new job running {new_job.id}")
             self._running_load_jobs.add(new_job.id)
             self._load_directory(new_job)
-        self.log.debug(f"LOAD QUEUE: Running job queue is full")
 
     def _on_directory_tree__load_finished(
         self, event: DirectoryTree._LoadFinished
@@ -338,7 +330,6 @@ class DirectoryTree(Tree[DirEntry]):
             event: The event to process.
         """
         event.stop()
-        self.log.debug(f"LOAD QUEUE: Done {event.node.id} - REMOVING")
         self._running_load_jobs.remove(event.node.id)
         self._process_load_jobs()
 
@@ -348,7 +339,6 @@ class DirectoryTree(Tree[DirEntry]):
         Args:
             node: The node that needs loading.
         """
-        self.log.debug(f"LOAD QUEUE: New {node.id} - ADDING")
         self._waiting_load_jobs.put(node)
         self._process_load_jobs()
 
