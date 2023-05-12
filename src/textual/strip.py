@@ -379,16 +379,22 @@ class Strip:
         """
 
         pos = 0
+        cell_length = self.cell_length
+        cuts = [cut for cut in cuts if cut <= cell_length]
         cache_key = tuple(cuts)
         cached = self._divide_cache.get(cache_key)
         if cached is not None:
             return cached
 
-        strips: list[Strip] = []
-        add_strip = strips.append
-        for segments, cut in zip(Segment.divide(self._segments, cuts), cuts):
-            add_strip(Strip(segments, cut - pos))
-            pos = cut
+        strips: list[Strip]
+        if cuts == [cell_length]:
+            strips = [self]
+        else:
+            strips = []
+            add_strip = strips.append
+            for segments, cut in zip(Segment.divide(self._segments, cuts), cuts):
+                add_strip(Strip(segments, cut - pos))
+                pos = cut
 
         self._divide_cache[cache_key] = strips
         return strips
