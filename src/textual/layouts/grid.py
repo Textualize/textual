@@ -153,7 +153,7 @@ class GridLayout(Layout):
                 .shrink(margin)
                 .clip_size(cell_size)
             )
-            add_placement(WidgetPlacement(region, margin, widget))
+            add_placement(WidgetPlacement(region, margin, widget, 0, False, False))
             add_widget(widget)
 
         return (placements, set(widgets))
