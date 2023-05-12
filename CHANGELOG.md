@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - App `title` and `sub_title` attributes can be set to any type https://github.com/Textualize/textual/issues/2521
+- Only a single error will be written by default, unless in dev mode ("debug" in App.features)
 
 ### Fixed
 
