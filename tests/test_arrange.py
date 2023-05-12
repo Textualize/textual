@@ -24,8 +24,10 @@ def test_arrange_dock_top():
     result = arrange(container, [child, header], Size(80, 24), Size(80, 24))
 
     assert result.placements == [
-        WidgetPlacement(Region(0, 0, 80, 1), Spacing(), header, TOP_Z, True, False),
-        WidgetPlacement(Region(0, 1, 80, 23), Spacing(), child, 0, False, False),
+        WidgetPlacement(
+            Region(0, 0, 80, 1), Spacing(), header, order=TOP_Z, fixed=True
+        ),
+        WidgetPlacement(Region(0, 1, 80, 23), Spacing(), child, order=0, fixed=False),
     ]
     assert result.widgets == {child, header}
 
@@ -39,8 +41,10 @@ def test_arrange_dock_left():
 
     result = arrange(container, [child, header], Size(80, 24), Size(80, 24))
     assert result.placements == [
-        WidgetPlacement(Region(0, 0, 10, 24), Spacing(), header, TOP_Z, True, False),
-        WidgetPlacement(Region(10, 0, 70, 24), Spacing(), child, 0, False, False),
+        WidgetPlacement(
+            Region(0, 0, 10, 24), Spacing(), header, order=TOP_Z, fixed=True
+        ),
+        WidgetPlacement(Region(10, 0, 70, 24), Spacing(), child, order=0, fixed=False),
     ]
     assert result.widgets == {child, header}
 
@@ -54,8 +58,10 @@ def test_arrange_dock_right():
 
     result = arrange(container, [child, header], Size(80, 24), Size(80, 24))
     assert result.placements == [
-        WidgetPlacement(Region(70, 0, 10, 24), Spacing(), header, TOP_Z, True, False),
-        WidgetPlacement(Region(0, 0, 70, 24), Spacing(), child, 0, False, False),
+        WidgetPlacement(
+            Region(70, 0, 10, 24), Spacing(), header, order=TOP_Z, fixed=True
+        ),
+        WidgetPlacement(Region(0, 0, 70, 24), Spacing(), child, order=0, fixed=False),
     ]
     assert result.widgets == {child, header}
 
@@ -69,8 +75,10 @@ def test_arrange_dock_bottom():
 
     result = arrange(container, [child, header], Size(80, 24), Size(80, 24))
     assert result.placements == [
-        WidgetPlacement(Region(0, 23, 80, 1), Spacing(), header, TOP_Z, True, False),
-        WidgetPlacement(Region(0, 0, 80, 23), Spacing(), child, 0, False, False),
+        WidgetPlacement(
+            Region(0, 23, 80, 1), Spacing(), header, order=TOP_Z, fixed=True
+        ),
+        WidgetPlacement(Region(0, 0, 80, 23), Spacing(), child, order=0, fixed=False),
     ]
     assert result.widgets == {child, header}
 

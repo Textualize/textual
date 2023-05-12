@@ -580,10 +580,7 @@ class Screen(Generic[ScreenResultType], Widget):
                     ) in layers:
                         if widget in exposed_widgets:
                             if widget._size_updated(
-                                region.size,
-                                virtual_size,
-                                container_size,
-                                layout=False,
+                                region.size, virtual_size, container_size, layout=False
                             ):
                                 widget.post_message(
                                     ResizeEvent(

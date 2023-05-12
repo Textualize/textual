@@ -72,9 +72,9 @@ class WidgetPlacement(NamedTuple):
     region: Region
     margin: Spacing
     widget: Widget
-    order: int
-    fixed: bool
-    overlay: bool
+    order: int = 0
+    fixed: bool = False
+    overlay: bool = False
 
 
 class Layout(ABC):
