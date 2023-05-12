@@ -94,7 +94,9 @@ def arrange(
             )
             dock_region = dock_region.shrink(margin).translate(align_offset)
             add_placement(
-                _WidgetPlacement(dock_region, null_spacing, dock_widget, top_z, True)
+                _WidgetPlacement(
+                    dock_region, null_spacing, dock_widget, top_z, True, False
+                )
             )
 
         dock_spacing = Spacing(top, right, bottom, left)

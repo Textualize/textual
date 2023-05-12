@@ -592,6 +592,7 @@ class Compositor:
                     get_layer_index = layers_to_index.get
 
                     scroll_spacing = arrange_result.scroll_spacing
+                    total_region = total_region.shrink(scroll_spacing)
 
                     # Add all the widgets
                     for sub_region, margin, sub_widget, z, fixed, overlay in reversed(
@@ -621,13 +622,21 @@ class Compositor:
                                     constrain in ("y", "both"),
                                 )
 
+                        if overlay:
+                            clip_region = no_clip
+                        else:
+                            if fixed:
+                                clip_region = sub_clip
+                            else:
+                                clip_region = sub_clip.shrink(scroll_spacing)
+
                         add_widget(
                             sub_widget,
                             sub_region,
                             widget_region,
                             ((1, 0, 0),) if overlay else widget_order,
                             layer_order,
-                            no_clip if overlay else sub_clip,
+                            clip_region,
                             visible,
                         )
 
