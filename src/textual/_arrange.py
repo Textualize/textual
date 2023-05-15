@@ -57,7 +57,7 @@ def arrange(
     dock_layers = _build_dock_layers(display_widgets)
 
     layer_region = size.region
-    for layer_name, widgets in dock_layers.items():
+    for widgets in dock_layers.values():
         region = layer_region
 
         # Partition widgets into "layout" widgets (those that appears in the normal 'flow' of the
