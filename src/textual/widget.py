@@ -2329,7 +2329,6 @@ class Widget(DOMNode):
             The distance that was scrolled.
         """
         window = self.scrollable_content_region.at_offset(self.scroll_offset)
-
         if spacing is not None:
             window = window.shrink(spacing)
 
