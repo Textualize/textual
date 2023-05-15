@@ -23,7 +23,7 @@ def _build_dock_layers(widgets: Iterable[Widget]) -> Mapping[str, Sequence[Widge
         widgets: The widgets.
 
     Returns:
-        A mapping of layer name on to the widgets within the layer.
+        A mapping of layer name onto the widgets within the layer.
     """
     layers: defaultdict[str, list[Widget]] = defaultdict(list)
     for widget in widgets:
@@ -110,7 +110,7 @@ def _arrange_dock_widgets(
     Args:
         dock_widgets: Widgets with a non-empty dock.
         size: Size of the container.
-        viewport: size of the viewport
+        viewport: Size of the viewport.
 
     Returns:
         A tuple of widget placements, and additional spacing around them
