@@ -72,7 +72,7 @@ class MapGeometry(NamedTuple):
     virtual_region: Region
     """The [region][textual.geometry.Region] relative to the container (but not necessarily visible)."""
     dock_gutter: Spacing
-    """Spacing allocated to docks."""
+    """Space from the container reserved by docked widgets."""
 
     @property
     def visible_region(self) -> Region:
@@ -595,7 +595,7 @@ class Compositor:
                     get_layer_index = layers_to_index.get
 
                     # Add all the widgets
-                    for sub_region, margin, sub_widget, z, fixed, overlay in reversed(
+                    for sub_region, _, sub_widget, z, fixed, overlay in reversed(
                         placements
                     ):
                         layer_index = get_layer_index(sub_widget.layer, 0)

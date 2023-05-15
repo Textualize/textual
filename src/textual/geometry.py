@@ -1100,4 +1100,4 @@ NULL_REGION: Final = Region(0, 0, 0, 0)
 """A [Region][textual.geometryRegion] constant for a null region (at the origin, with both width and height set to zero)."""
 
 NULL_SPACING: Final = Spacing(0, 0, 0, 0)
-"""A [Spacing][textual.geometry.Spacing] which represents no space."""
+"""A [Spacing][textual.geometry.Spacing] constant for no space."""
