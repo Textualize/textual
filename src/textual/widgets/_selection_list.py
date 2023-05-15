@@ -47,7 +47,7 @@ class SelectionList(Generic[SelectionType], OptionList):
 
     def __init__(
         self,
-        *selections: Selection[SelectionType],
+        *selections: Selection[SelectionType] | tuple[SelectionType, str],
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -63,5 +63,22 @@ class SelectionList(Generic[SelectionType], OptionList):
             disabled: Whether the selection list is disabled or not.
         """
         super().__init__(
-            *selections, name=name, id=id, classes=classes, disabled=disabled
+            *[self._make_selection(selection) for selection in selections],
+            name=name,
+            id=id,
+            classes=classes,
+            disabled=disabled,
         )
+
+    def _make_selection(
+        self, selection: Selection[SelectionType] | tuple[SelectionType, str]
+    ) -> Selection[SelectionType]:
+        """Turn incoming selection data into a `Selection` instance.
+
+        Args:
+            selection: The selection data.
+
+        Returns:
+            An instance of a `Selection`.
+        """
+        return selection if isinstance(selection, Selection) else Selection(*selection)
