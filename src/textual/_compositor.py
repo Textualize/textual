@@ -33,7 +33,7 @@ from . import errors
 from ._cells import cell_len
 from ._context import visible_screen_stack
 from ._loop import loop_last
-from .geometry import NULL_OFFSET, Offset, Region, Size
+from .geometry import NULL_OFFSET, Offset, Region, Size, Spacing
 from .strip import Strip, StripRenderable
 
 if TYPE_CHECKING:
@@ -591,7 +591,7 @@ class Compositor:
 
                     get_layer_index = layers_to_index.get
 
-                    scroll_spacing = arrange_result.scroll_spacing
+                    # scroll_spacing = arrange_result.scroll_spacing
 
                     # Add all the widgets
                     for sub_region, margin, sub_widget, z, fixed, overlay in reversed(
@@ -602,11 +602,11 @@ class Compositor:
                         if fixed:
                             widget_region = sub_region + placement_offset
                         else:
-                            total_region = total_region.union(
-                                sub_region.grow(
-                                    margin if layer_index else margin + scroll_spacing
-                                )
-                            )
+                            # total_region = total_region.union(
+                            #     sub_region.grow(
+                            #         margin if layer_index else margin + scroll_spacing
+                            #     )
+                            # )
                             widget_region = sub_region + placement_scroll_offset
 
                         widget_order = order + ((layer_index, z, layer_order),)
