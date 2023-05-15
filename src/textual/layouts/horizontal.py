@@ -65,8 +65,6 @@ class HorizontalLayout(Layout):
 
         x = Fraction(box_models[0].margin.left if box_models else 0)
 
-        displayed_children = [child for child in children if child.display]
-
         _Region = Region
         _WidgetPlacement = WidgetPlacement
         for widget, box_model, margin in zip(children, box_models, margins):
@@ -86,4 +84,4 @@ class HorizontalLayout(Layout):
             if not overlay:
                 x = next_x + margin
 
-        return placements, set(displayed_children)
+        return placements

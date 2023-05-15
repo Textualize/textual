@@ -156,4 +156,4 @@ class GridLayout(Layout):
             add_placement(WidgetPlacement(region, margin, widget))
             add_widget(widget)
 
-        return (placements, set(widgets))
+        return placements
