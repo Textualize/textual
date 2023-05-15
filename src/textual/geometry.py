@@ -839,7 +839,7 @@ class Region(NamedTuple):
 
     @lru_cache(maxsize=1024)
     def split_horizontal(self, cut: int) -> tuple[Region, Region]:
-        """Split a region in to two, from a given x offset.
+        """Split a region in to two, from a given y offset.
 
         ```
                     ┌─────────┐
@@ -852,8 +852,8 @@ class Region(NamedTuple):
         ```
 
         Args:
-            cut: An offset from self.x where the cut should be made. May be negative,
-                for the offset to start from the right edge.
+            cut: An offset from self.y where the cut should be made. May be negative,
+                for the offset to start from the lower edge.
 
         Returns:
             Two regions, which add up to the original (self).
@@ -909,7 +909,19 @@ class Region(NamedTuple):
 class Spacing(NamedTuple):
     """The spacing around a renderable, such as padding and border
 
-    Spacing is defined by four integers for the space at the top, right, bottom, and left of a region,
+    Spacing is defined by four integers for the space at the top, right, bottom, and left of a region.
+
+    ```
+    ┌ ─ ─ ─ ─ ─ ─ ─▲─ ─ ─ ─ ─ ─ ─ ─ ┐
+                   │ top
+    │        ┏━━━━━▼━━━━━━┓         │
+     ◀──────▶┃            ┃◀───────▶
+    │  left  ┃            ┃ right   │
+             ┃            ┃
+    │        ┗━━━━━▲━━━━━━┛         │
+                   │ bottom
+    └ ─ ─ ─ ─ ─ ─ ─▼─ ─ ─ ─ ─ ─ ─ ─ ┘
+    ```
 
     Example:
         ```python

@@ -98,6 +98,7 @@ class Footer(Widget):
         highlight_style = self.get_component_rich_style("footer--highlight")
         highlight_key_style = self.get_component_rich_style("footer--highlight-key")
         key_style = self.get_component_rich_style("footer--key")
+        description_style = self.get_component_rich_style("footer--description")
 
         bindings = [
             binding
@@ -122,7 +123,7 @@ class Footer(Widget):
                 (f" {key_display} ", highlight_key_style if hovered else key_style),
                 (
                     f" {binding.description} ",
-                    highlight_style if hovered else base_style,
+                    highlight_style if hovered else base_style + description_style,
                 ),
                 meta={
                     "@click": f"app.check_bindings('{binding.key}')",
