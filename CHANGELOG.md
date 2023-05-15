@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - App `title` and `sub_title` attributes can be set to any type https://github.com/Textualize/textual/issues/2521
+- Using `Widget.move_child` where the target and the child being moved are the same is now a no-op https://github.com/Textualize/textual/issues/1743
 
 ### Fixed
 
