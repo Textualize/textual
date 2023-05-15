@@ -940,7 +940,7 @@ class Spacing(NamedTuple):
     top: int = 0
     """Space from the top of a region."""
     right: int = 0
-    """Space from the left of a region."""
+    """Space from the right of a region."""
     bottom: int = 0
     """Space from the bottom of a region."""
     left: int = 0
