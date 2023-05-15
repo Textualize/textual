@@ -907,7 +907,7 @@ class Region(NamedTuple):
 
 
 class Spacing(NamedTuple):
-    """The spacing around a renderable, such as padding and border
+    """The spacing around a renderable, such as padding and border.
 
     Spacing is defined by four integers for the space at the top, right, bottom, and left of a region.
 
