@@ -36,3 +36,33 @@ async def test_hover_update_styles():
         # We've hovered, so ensure the pseudoclass is present and background changed
         assert button.pseudo_classes == {"enabled", "hover"}
         assert button.styles.background != initial_background
+
+
+def test_setting_title():
+    app = MyApp()
+    app.title = None
+    assert app.title == "None"
+
+    app.title = ""
+    assert app.title == ""
+
+    app.title = 0.125
+    assert app.title == "0.125"
+
+    app.title = [True, False, 2]
+    assert app.title == "[True, False, 2]"
+
+
+def test_setting_sub_title():
+    app = MyApp()
+    app.sub_title = None
+    assert app.sub_title == "None"
+
+    app.sub_title = ""
+    assert app.sub_title == ""
+
+    app.sub_title = 0.125
+    assert app.sub_title == "0.125"
+
+    app.sub_title = [True, False, 2]
+    assert app.sub_title == "[True, False, 2]"

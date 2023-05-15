@@ -6,11 +6,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## Unreleased
+## Unrealeased
+
+### Changed
+
+- App `title` and `sub_title` attributes can be set to any type https://github.com/Textualize/textual/issues/2521
+- Using `Widget.move_child` where the target and the child being moved are the same is now a no-op https://github.com/Textualize/textual/issues/1743
+
+### Fixed
+
+- Fixed `ZeroDivisionError` in `resolve_fraction_unit` https://github.com/Textualize/textual/issues/2502
+- Fixed `TreeNode.expand` and `TreeNode.expand_all` not posting a `Tree.NodeExpanded` message https://github.com/Textualize/textual/issues/2535
+- Fixed `TreeNode.collapse` and `TreeNode.collapse_all` not posting a `Tree.NodeCollapsed` message https://github.com/Textualize/textual/issues/2535
+- Fixed `TreeNode.toggle` and `TreeNode.toggle_all` not posting a `Tree.NodeExpanded` or `Tree.NodeCollapsed` message https://github.com/Textualize/textual/issues/2535
+- `footer--description` component class was being ignored https://github.com/Textualize/textual/issues/2544
 
 ### Added
 
-- Attribute `auto_focus` to screens https://github.com/Textualize/textual/issues/2457
+- Class variable `AUTO_FOCUS` to screens https://github.com/Textualize/textual/issues/2457
 
 ## [0.24.1] - 2023-05-08
 
