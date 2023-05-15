@@ -19,6 +19,7 @@ class Selection(Generic[SelectionType], Option):
         self,
         value: SelectionType,
         prompt: RenderableType,
+        selected: bool = False,
         id: str | None = None,
         disabled: bool = False,
     ):
@@ -27,11 +28,18 @@ class Selection(Generic[SelectionType], Option):
         Args:
             value: The value for the selection.
             prompt: The prompt for the selection.
+            selected: The initial selected state for the selection.
             id: The optional ID for the selection.
             disabled: The initial enabled/disabled state. Enabled by default.
         """
         super().__init__(prompt, id, disabled)
         self._value: SelectionType = value
+        self._selected: bool = selected
+
+    @property
+    def selected(self) -> bool:
+        """The selected state of this selection."""
+        return self._selected
 
 
 class SelectionList(Generic[SelectionType], OptionList):
