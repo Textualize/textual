@@ -335,7 +335,7 @@ class Input(Widget, can_focus=True):
         if event.text:
             line = event.text.splitlines()[0]
             self.insert_text_at_cursor(line)
-            event.stop()
+        event.stop()
 
     async def _on_click(self, event: events.Click) -> None:
         offset = event.get_content_offset(self)
