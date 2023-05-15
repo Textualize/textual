@@ -9,6 +9,7 @@ from typing import (
     TYPE_CHECKING,
     Awaitable,
     Callable,
+    ClassVar,
     Generic,
     Iterable,
     Iterator,
@@ -30,7 +31,7 @@ from ._types import CallbackType
 from .binding import Binding
 from .css.match import match
 from .css.parse import parse_selectors
-from .css.query import QueryType
+from .css.query import NoMatches, QueryType
 from .dom import DOMNode
 from .geometry import Offset, Region, Size
 from .reactive import Reactive
@@ -93,6 +94,13 @@ class ResultCallback(Generic[ScreenResultType]):
 class Screen(Generic[ScreenResultType], Widget):
     """The base class for screens."""
 
+    AUTO_FOCUS: ClassVar[str | None] = "*"
+    """A selector to determine what to focus automatically when the screen is activated.
+
+    The widget focused is the first that matches the given [CSS selector](/guide/queries/#query-selectors).
+    Set to `None` to disable auto focus.
+    """
+
     DEFAULT_CSS = """
     Screen {
         layout: vertical;
@@ -100,7 +108,6 @@ class Screen(Generic[ScreenResultType], Widget):
         background: $surface;
     }
     """
-
     focused: Reactive[Widget | None] = Reactive(None)
     """The focused [widget][textual.widget.Widget] or `None` for no focus."""
     stack_updates: Reactive[int] = Reactive(0, repaint=False)
@@ -659,6 +666,13 @@ class Screen(Generic[ScreenResultType], Widget):
         """Screen has resumed."""
         self.stack_updates += 1
         size = self.app.size
+        if self.AUTO_FOCUS is not None and self.focused is None:
+            try:
+                to_focus = self.query(self.AUTO_FOCUS).first()
+            except NoMatches:
+                pass
+            else:
+                self.set_focus(to_focus)
         self._refresh_layout(size, full=True)
         self.refresh()
 

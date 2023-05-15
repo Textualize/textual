@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `TreeNode.toggle` and `TreeNode.toggle_all` not posting a `Tree.NodeExpanded` or `Tree.NodeCollapsed` message https://github.com/Textualize/textual/issues/2535
 - `footer--description` component class was being ignored https://github.com/Textualize/textual/issues/2544
 
+### Added
+
+- Class variable `AUTO_FOCUS` to screens https://github.com/Textualize/textual/issues/2457
+
 ## [0.24.1] - 2023-05-08
 
 ### Fixed
