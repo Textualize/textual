@@ -17,7 +17,7 @@ TOP_Z = 2**31 - 1
 
 
 def _build_dock_layers(widgets: Iterable[Widget]) -> Mapping[str, Sequence[Widget]]:
-    """Organize widgets in to layers.
+    """Organize widgets into layers.
 
     Args:
         widgets: The widgets.
@@ -53,14 +53,14 @@ def arrange(
     # Widgets which will be displayed
     display_widgets = [child for child in children if child.styles.display != "none"]
 
-    # Widgets organized in to layers
+    # Widgets organized into layers
     dock_layers = _build_dock_layers(display_widgets)
 
     layer_region = size.region
     for widgets in dock_layers.values():
         region = layer_region
 
-        # Partition widgets in to "layout" widgets (those that appears in the normal 'flow' of the
+        # Partition widgets into "layout" widgets (those that appears in the normal 'flow' of the
         # document), and "dock" widgets which are positioned relative to an edge
         layout_widgets, dock_widgets = partition(get_dock, widgets)
 
