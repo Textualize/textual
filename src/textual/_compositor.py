@@ -625,7 +625,7 @@ class Compositor:
                             layer_order,
                             no_clip if overlay else sub_clip,
                             visible,
-                            arrange_result.scroll_spacing + dock_gutter,
+                            arrange_result.scroll_spacing,
                         )
 
                         layer_order -= 1
