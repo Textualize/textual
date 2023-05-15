@@ -1,5 +1,7 @@
 """Provides a selection list widget, allowing one or more items to be selected."""
 
+from __future__ import annotations
+
 from typing import Generic, TypeVar
 
 from rich.console import RenderableType
