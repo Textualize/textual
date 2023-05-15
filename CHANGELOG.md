@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Class variable `AUTO_FOCUS` to screens https://github.com/Textualize/textual/issues/2457
+- Added NULL_SPACING and NULL_REGION to geometry.py
 
 ## [0.24.1] - 2023-05-08
 
