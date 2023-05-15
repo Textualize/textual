@@ -57,7 +57,7 @@ from .box_model import BoxModel
 from .css.query import NoMatches, WrongType
 from .css.scalar import ScalarOffset
 from .dom import DOMNode, NoScreen
-from .geometry import Offset, Region, Size, Spacing, clamp
+from .geometry import NULL_REGION, NULL_SPACING, Offset, Region, Size, Spacing, clamp
 from .layouts.vertical import VerticalLayout
 from .message import Message
 from .messages import CallbackType
@@ -1375,10 +1375,20 @@ class Widget(DOMNode):
         """
         try:
             return self.screen.find_widget(self).region
-        except NoScreen:
-            return Region()
-        except errors.NoWidget:
-            return Region()
+        except (NoScreen, errors.NoWidget):
+            return NULL_REGION
+
+    @property
+    def dock_gutter(self) -> Spacing:
+        """Space allocated to docks in the parent.
+
+        Returns:
+            Space to be subtracted from scrollable area.
+        """
+        try:
+            return self.screen.find_widget(self).dock_gutter
+        except (NoScreen, errors.NoWidget):
+            return NULL_SPACING
 
     @property
     def container_viewport(self) -> Region:
@@ -2263,7 +2273,7 @@ class Widget(DOMNode):
             else:
                 scroll_offset = container.scroll_to_region(
                     region,
-                    spacing=widget.parent.gutter,
+                    spacing=widget.parent.gutter + widget.dock_gutter,
                     animate=animate,
                     speed=speed,
                     duration=duration,
@@ -2319,6 +2329,7 @@ class Widget(DOMNode):
             The distance that was scrolled.
         """
         window = self.scrollable_content_region.at_offset(self.scroll_offset)
+
         if spacing is not None:
             window = window.shrink(spacing)
 

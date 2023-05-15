@@ -1095,3 +1095,9 @@ class Spacing(NamedTuple):
 
 NULL_OFFSET: Final = Offset(0, 0)
 """An [offset][textual.geometry.Offset] constant for (0, 0)."""
+
+NULL_REGION: Final = Region(0, 0, 0, 0)
+"""A [Region][textual.geometryRegion] constant for a null region (at the origin, with both width and height set to zero)."""
+
+NULL_SPACING: Final = Spacing(0, 0, 0, 0)
+"""A [Spacing][textual.geometry.Spacing] which represents no space."""

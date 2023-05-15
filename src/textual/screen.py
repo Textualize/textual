@@ -584,6 +584,7 @@ class Screen(Generic[ScreenResultType], Widget):
                         virtual_size,
                         container_size,
                         _,
+                        _,
                     ) in layers:
                         if widget in exposed_widgets:
                             if widget._size_updated(
@@ -613,6 +614,7 @@ class Screen(Generic[ScreenResultType], Widget):
                     _clip,
                     virtual_size,
                     container_size,
+                    _,
                     _,
                 ) in layers:
                     widget._size_updated(region.size, virtual_size, container_size)

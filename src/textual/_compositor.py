@@ -33,7 +33,7 @@ from . import errors
 from ._cells import cell_len
 from ._context import visible_screen_stack
 from ._loop import loop_last
-from .geometry import NULL_OFFSET, Offset, Region, Size, Spacing
+from .geometry import NULL_OFFSET, NULL_SPACING, Offset, Region, Size, Spacing
 from .strip import Strip, StripRenderable
 
 if TYPE_CHECKING:
@@ -71,6 +71,8 @@ class MapGeometry(NamedTuple):
     """The container [size][textual.geometry.Size] (area not occupied by scrollbars)."""
     virtual_region: Region
     """The [region][textual.geometry.Region] relative to the container (but not necessarily visible)."""
+    dock_gutter: Spacing
+    """Spacing allocated to docks."""
 
     @property
     def visible_region(self) -> Region:
@@ -484,7 +486,7 @@ class Compositor:
             # Widgets and regions in render order
             visible_widgets = [
                 (order, widget, region, clip)
-                for widget, (region, order, clip, _, _, _) in map.items()
+                for widget, (region, order, clip, _, _, _, _) in map.items()
                 if in_screen(region) and overlaps(clip, region)
             ]
             visible_widgets.sort(key=itemgetter(0), reverse=True)
@@ -522,6 +524,7 @@ class Compositor:
             layer_order: int,
             clip: Region,
             visible: bool,
+            dock_gutter: Spacing,
             _MapGeometry: type[MapGeometry] = MapGeometry,
         ) -> None:
             """Called recursively to place a widget and its children in the map.
@@ -622,6 +625,7 @@ class Compositor:
                             layer_order,
                             no_clip if overlay else sub_clip,
                             visible,
+                            arrange_result.scroll_spacing + dock_gutter,
                         )
 
                         layer_order -= 1
@@ -639,6 +643,7 @@ class Compositor:
                                 container_size,
                                 container_size,
                                 chrome_region,
+                                dock_gutter,
                             )
 
                     map[widget] = _MapGeometry(
@@ -648,6 +653,7 @@ class Compositor:
                         total_region.size,
                         container_size,
                         virtual_region,
+                        dock_gutter,
                     )
 
             elif visible:
@@ -659,6 +665,7 @@ class Compositor:
                     region.size,
                     container_size,
                     virtual_region,
+                    dock_gutter,
                 )
 
         # Add top level (root) widget
@@ -670,6 +677,7 @@ class Compositor:
             layer_order,
             size.region,
             True,
+            NULL_SPACING,
         )
         return map, widgets
 
