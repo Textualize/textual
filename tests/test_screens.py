@@ -192,3 +192,17 @@ async def test_auto_focus():
         assert app.focused is None
         app.pop_screen()
         assert app.focused.id == "two"
+
+
+async def test_dismiss_non_top_screen():
+    class MyApp(App[None]):
+        async def key_p(self) -> None:
+            self.bottom, top = Screen(), Screen()
+            await self.push_screen(self.bottom)
+            await self.push_screen(top)
+
+    app = MyApp()
+    async with app.run_test() as pilot:
+        await pilot.press("p")
+        with pytest.raises(ScreenStackError):
+            app.bottom.dismiss()

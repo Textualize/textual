@@ -156,7 +156,7 @@ class ScreenError(Exception):
 
 
 class ScreenStackError(ScreenError):
-    """Raised when attempting to pop the last screen from the stack."""
+    """Raised when trying to manipulate the screen stack incorrectly."""
 
 
 class CssPathError(Exception):

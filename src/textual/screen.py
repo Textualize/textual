@@ -774,7 +774,17 @@ class Screen(Generic[ScreenResultType], Widget):
         Args:
             result: The optional result to be passed to the result callback.
 
+        Raises:
+            ScreenStackError: If trying to dismiss a screen that is not at the top of
+                the stack.
+
         """
+        if self is not self.app.screen:
+            from .app import ScreenStackError
+
+            raise ScreenStackError(
+                f"Can't dismiss screen {self} that's not at the top of the stack."
+            )
         if result is not self._NoResult and self._result_callbacks:
             self._result_callbacks[-1](cast(ScreenResultType, result))
         self.app.pop_screen()
