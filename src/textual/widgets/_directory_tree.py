@@ -2,14 +2,18 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import ClassVar, Iterable
+from queue import Empty, Queue
+from typing import ClassVar, Iterable, Iterator
 
 from rich.style import Style
 from rich.text import Text, TextType
+from typing_extensions import Final
 
+from .. import work
 from ..events import Mount
 from ..message import Message
 from ..reactive import var
+from ..worker import Worker, get_current_worker
 from ._tree import TOGGLE_STYLE, Tree, TreeNode
 
 
@@ -116,6 +120,7 @@ class DirectoryTree(Tree[DirEntry]):
             classes: A space-separated list of classes, or None for no classes.
             disabled: Whether the directory tree is disabled or not.
         """
+        self._to_load: Queue[TreeNode[DirEntry]] = Queue()
         super().__init__(
             str(path),
             data=DirEntry(Path(path)),
@@ -129,7 +134,13 @@ class DirectoryTree(Tree[DirEntry]):
     def reload(self) -> None:
         """Reload the `DirectoryTree` contents."""
         self.reset(str(self.path), DirEntry(Path(self.path)))
-        self._load_directory(self.root)
+        # Orphan the old queue...
+        self._to_load = Queue()
+        # ...and replace the old load with a new one.
+        self._loader()
+        # We have a fresh queue, we have a fresh loader, get the fresh root
+        # loading up.
+        self._to_load.put_nowait(self.root)
 
     def validate_path(self, path: str | Path) -> Path:
         """Ensure that the path is of the `Path` type.
@@ -229,19 +240,14 @@ class DirectoryTree(Tree[DirEntry]):
         """
         return paths
 
-    def _load_directory(self, node: TreeNode[DirEntry]) -> None:
-        """Load the directory contents for a given node.
+    def _populate_node(self, node: TreeNode[DirEntry], content: Iterable[Path]) -> None:
+        """Populate the given tree node with the given directory content.
 
         Args:
-            node: The node to load the directory contents for.
+            node: The Tree node to populate.
+            content: The collection of `Path` objects to populate the node with.
         """
-        assert node.data is not None
-        node.data.loaded = True
-        directory = sorted(
-            self.filter_paths(node.data.path.iterdir()),
-            key=lambda path: (not path.is_dir(), path.name.lower()),
-        )
-        for path in directory:
+        for path in content:
             node.add(
                 path.name,
                 data=DirEntry(path),
@@ -249,8 +255,52 @@ class DirectoryTree(Tree[DirEntry]):
             )
         node.expand()
 
-    def _on_mount(self, _: Mount) -> None:
-        self._load_directory(self.root)
+    def _directory_content(self, location: Path, worker: Worker) -> Iterator[Path]:
+        """Load the content of a given directory.
+
+        Args:
+            location: The location to load from.
+            worker: The worker that the loading is taking place in.
+
+        Yields:
+            Path: A entry within the location.
+        """
+        for entry in location.iterdir():
+            if worker.is_cancelled:
+                break
+            yield entry
+
+    def _load_directory(self, node: TreeNode[DirEntry], worker: Worker) -> None:
+        """Load the directory contents for a given node.
+
+        Args:
+            node: The node to load the directory contents for.
+        """
+        assert node.data is not None
+        node.data.loaded = True
+        self.app.call_from_thread(
+            self._populate_node,
+            node,
+            sorted(
+                self.filter_paths(self._directory_content(node.data.path, worker)),
+                key=lambda path: (not path.is_dir(), path.name.lower()),
+            ),
+        )
+
+    _LOADER_INTERVAL: Final[float] = 0.2
+    """How long the loader should block while waiting for queue content."""
+
+    @work(exclusive=True)
+    def _loader(self) -> None:
+        """Background loading queue processor."""
+        worker = get_current_worker()
+        while not worker.is_cancelled:
+            try:
+                self._load_directory(
+                    self._to_load.get(timeout=self._LOADER_INTERVAL), worker
+                )
+            except Empty:
+                pass
 
     def _on_tree_node_expanded(self, event: Tree.NodeExpanded) -> None:
         event.stop()
@@ -259,7 +309,7 @@ class DirectoryTree(Tree[DirEntry]):
             return
         if dir_entry.path.is_dir():
             if not dir_entry.loaded:
-                self._load_directory(event.node)
+                self._to_load.put_nowait(event.node)
         else:
             self.post_message(self.FileSelected(self, event.node, dir_entry.path))
 
