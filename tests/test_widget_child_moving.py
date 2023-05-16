@@ -42,22 +42,18 @@ async def test_move_child_to_outside() -> None:
             pilot.app.screen.move_child(child, before=Widget())
 
 
-@pytest.mark.xfail(
-    strict=True, reason="https://github.com/Textualize/textual/issues/1743"
-)
 async def test_move_child_before_itself() -> None:
     """Test moving a widget before itself."""
+
     async with App().run_test() as pilot:
         child = Widget(Widget())
         await pilot.app.mount(child)
         pilot.app.screen.move_child(child, before=child)
 
 
-@pytest.mark.xfail(
-    strict=True, reason="https://github.com/Textualize/textual/issues/1743"
-)
 async def test_move_child_after_itself() -> None:
     """Test moving a widget after itself."""
+    # Regression test for https://github.com/Textualize/textual/issues/1743
     async with App().run_test() as pilot:
         child = Widget(Widget())
         await pilot.app.mount(child)

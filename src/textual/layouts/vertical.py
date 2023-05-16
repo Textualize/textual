@@ -86,4 +86,4 @@ class VerticalLayout(Layout):
             if not overlay:
                 y = next_y + margin
 
-        return placements, set(children)
+        return placements
