@@ -134,7 +134,7 @@ class Pilot(Generic[ReturnType]):
         await self.pause()
 
     async def _wait_for_screen(self, timeout: float = 30.0) -> bool:
-        """Wait for the current screen to have processed all current events.
+        """Wait for the current screen to have processed all pending events.
 
         Args:
             timeout: A timeout in seconds to wait.
