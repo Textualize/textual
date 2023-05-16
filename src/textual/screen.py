@@ -28,7 +28,6 @@ from ._callback import invoke
 from ._compositor import Compositor, MapGeometry
 from ._context import visible_screen_stack
 from ._types import CallbackType
-from .app import ScreenStackError
 from .binding import Binding
 from .css.match import match
 from .css.parse import parse_selectors
@@ -784,6 +783,8 @@ class Screen(Generic[ScreenResultType], Widget):
             simply calling [`App.pop_screen`][textual.app.App.pop_screen].
         """
         if self is not self.app.screen:
+            from .app import ScreenStackError
+
             raise ScreenStackError(
                 f"Can't dismiss screen {self} that's not at the top of the stack."
             )
