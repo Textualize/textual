@@ -151,6 +151,7 @@ class Pilot(Generic[ReturnType]):
             nonlocal count
             count -= 1
             if count == 0:
+                # When count is zero, all messages queued at the start of the method have been processed
                 count_zero_event.set()
 
         # Increase the count for every successful call_later
