@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `TreeNode.toggle` and `TreeNode.toggle_all` not posting a `Tree.NodeExpanded` or `Tree.NodeCollapsed` message https://github.com/Textualize/textual/issues/2535
 - `footer--description` component class was being ignored https://github.com/Textualize/textual/issues/2544
 - Pasting empty selection in `Input` would raise an exception https://github.com/Textualize/textual/issues/2563
+- `Screen.AUTO_FOCUS` now focuses the first _focusable_ widget that matches the selector https://github.com/Textualize/textual/issues/2578
 
 ### Added
 
