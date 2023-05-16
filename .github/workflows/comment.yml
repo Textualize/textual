@@ -1,7 +1,8 @@
-name: issues
+name: Closed issue comment
 on:
   issues:
     types: [closed]
+
 jobs:
   add-comment:
     runs-on: ubuntu-latest
@@ -14,5 +15,5 @@ jobs:
           issue-number: ${{ github.event.issue.number }}
           body: |
             Don't forget to [star](https://github.com/Textualize/textual) the repository!
-            
+
             Follow [@textualizeio](https://twitter.com/textualizeio) for Textual updates.
