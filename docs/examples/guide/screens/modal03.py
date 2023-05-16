@@ -12,7 +12,7 @@ And when it has gone past, I will turn the inner eye to see its path.
 Where the fear has gone there will be nothing. Only I will remain."""
 
 
-class QuitScreen(ModalScreen):
+class QuitScreen(ModalScreen[bool]):  # (1)!
     """Screen with a dialog to quit."""
 
     def compose(self) -> ComposeResult:
@@ -25,13 +25,13 @@ class QuitScreen(ModalScreen):
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "quit":
-            self.app.exit()
+            self.dismiss(True)
         else:
-            self.app.pop_screen()
+            self.dismiss(False)
 
 
 class ModalApp(App):
-    """A app with a modal dialog."""
+    """An app with a modal dialog."""
 
     CSS_PATH = "modal01.css"
     BINDINGS = [("q", "request_quit", "Quit")]
@@ -43,7 +43,13 @@ class ModalApp(App):
 
     def action_request_quit(self) -> None:
         """Action to display the quit dialog."""
-        self.push_screen(QuitScreen())
+
+        def check_quit(quit: bool) -> None:
+            """Called when QuitScreen is dismissed."""
+            if quit:
+                self.exit()
+
+        self.push_screen(QuitScreen(), check_quit)
 
 
 if __name__ == "__main__":
