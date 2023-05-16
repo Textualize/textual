@@ -24,10 +24,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `TreeNode.toggle` and `TreeNode.toggle_all` not posting a `Tree.NodeExpanded` or `Tree.NodeCollapsed` message https://github.com/Textualize/textual/issues/2535
 - `footer--description` component class was being ignored https://github.com/Textualize/textual/issues/2544
 - Pasting empty selection in `Input` would raise an exception https://github.com/Textualize/textual/issues/2563
+- Fix issue with scrolling and docks https://github.com/Textualize/textual/issues/2525
 
 ### Added
 
 - Class variable `AUTO_FOCUS` to screens https://github.com/Textualize/textual/issues/2457
+- Added `NULL_SPACING` and `NULL_REGION` to geometry.py
 
 ## [0.24.1] - 2023-05-08
 
