@@ -1,7 +1,8 @@
-name: issues
+name: FAQ issue comment
 on:
   issues:
     types: [opened]
+
 jobs:
   add-comment:
     if: ${{ !contains( 'willmcgugan,darrenburns,davep,rodrigogiraoserrao', github.actor ) }}
