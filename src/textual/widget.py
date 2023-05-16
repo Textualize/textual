@@ -795,19 +795,15 @@ class Widget(DOMNode):
 
         Args:
             child: The child widget to move.
-            before: Optional location to move before. An `int` is the index
-                of the child to move before, a `str` is a `query_one` query to
-                find the widget to move before.
-            after: Optional location to move after. An `int` is the index
-                of the child to move after, a `str` is a `query_one` query to
-                find the widget to move after.
+            before: Child widget or location index to move before.
+            after: Child widget or location index to move after.
 
         Raises:
             WidgetError: If there is a problem with the child or target.
 
         Note:
-            Only one of ``before`` or ``after`` can be provided. If neither
-            or both are provided a ``WidgetError`` will be raised.
+            Only one of `before` or `after` can be provided. If neither
+            or both are provided a `WidgetError` will be raised.
         """
 
         # One or the other of before or after are required. Can't do
@@ -816,6 +812,10 @@ class Widget(DOMNode):
             raise WidgetError("One of `before` or `after` is required.")
         elif before is not None and after is not None:
             raise WidgetError("Only one of `before` or `after` can be handled.")
+
+        # We short-circuit the no-op, otherwise it will error later down the road.
+        if child is before or child is after:
+            return
 
         def _to_widget(child: int | Widget, called: str) -> Widget:
             """Ensure a given child reference is a Widget."""

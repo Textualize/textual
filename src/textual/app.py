@@ -156,7 +156,7 @@ class ScreenError(Exception):
 
 
 class ScreenStackError(ScreenError):
-    """Raised when attempting to pop the last screen from the stack."""
+    """Raised when trying to manipulate the screen stack incorrectly."""
 
 
 class CssPathError(Exception):
@@ -1416,7 +1416,7 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             screen: A Screen instance or the name of an installed screen.
-            callback: An optional callback function that is called if the screen is dismissed with a result.
+            callback: An optional callback function that will be called if the screen is [dismissed][textual.screen.Screen.dismiss] with a result.
 
         Returns:
             An optional awaitable that awaits the mounting of the screen and its children.
