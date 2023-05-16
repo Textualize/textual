@@ -493,3 +493,12 @@ def test_quickly_change_tabs(snap_compare):
 def test_fr_unit_with_min(snap_compare):
     # https://github.com/Textualize/textual/issues/2378
     assert snap_compare(SNAPSHOT_APPS_DIR / "fr_with_min.py")
+
+
+def test_select_rebuild(snap_compare):
+    # https://github.com/Textualize/textual/issues/2557
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "select_rebuild.py",
+        press=["tab", "space", "escape", "tab", "enter", "tab", "space"]
+    )
+
