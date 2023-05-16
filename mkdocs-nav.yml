@@ -157,6 +157,7 @@ nav:
       - "widgets/text_log.md"
       - "widgets/tree.md"
   - API:
+    - "api/index.md"
     - "api/app.md"
     - "api/await_remove.md"
     - "api/binding.md"
@@ -189,6 +190,9 @@ nav:
     - "api/work.md"
     - "api/worker.md"
     - "api/worker_manager.md"
+  - "How To":
+    - "how-to/index.md"
+    - "how-to/design-a-layout.md"
   - "roadmap.md"
   - "Blog":
     - blog/index.md
