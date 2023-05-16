@@ -627,7 +627,6 @@ class OptionList(ScrollView, can_focus=True):
         """
         self._contents.clear()
         self._options.clear()
-        self._refresh_content_tracking(force=True)
         self.highlighted = None
         self._mouse_hovering_over = None
         self.virtual_size = Size(self.scrollable_content_region.width, 0)
