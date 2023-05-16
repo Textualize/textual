@@ -10,7 +10,6 @@ from rich.text import Text, TextType
 from typing_extensions import Final
 
 from .. import work
-from ..events import Mount
 from ..message import Message
 from ..reactive import var
 from ..worker import Worker, get_current_worker
