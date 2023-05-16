@@ -358,7 +358,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
 
         Returns:
             `True` if the callback was scheduled, or `False` if the callback could not be
-                schedule (may occur if the message pump was closed or closing).
+                scheduled (may occur if the message pump was closed or closing).
 
         """
         # We send the InvokeLater message to ourselves first, to ensure we've cleared
@@ -378,7 +378,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
 
         Returns:
             `True` if the callback was scheduled, or `False` if the callback could not be
-                schedule (may occur if the message pump was closed or closing).
+                scheduled (may occur if the message pump was closed or closing).
 
         """
         message = events.Callback(callback=partial(callback, *args, **kwargs))

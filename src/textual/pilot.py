@@ -133,7 +133,7 @@ class Pilot(Generic[ReturnType]):
         app.post_message(MouseMove(**message_arguments))
         await self.pause()
 
-    async def _wait_for_screen(self, timeout: float = 10.0) -> bool:
+    async def _wait_for_screen(self, timeout: float = 30.0) -> bool:
         """Wait for the current screen to have processed all current events.
 
         Args:
@@ -158,11 +158,12 @@ class Pilot(Generic[ReturnType]):
             if child.call_later(decrement_counter):
                 count += 1
 
-        # Wait for the count to return to zero, or a timeout
-        try:
-            await asyncio.wait_for(count_zero_event.wait(), timeout=timeout)
-        except asyncio.TimeoutError:
-            return False
+        if count:
+            # Wait for the count to return to zero, or a timeout
+            try:
+                await asyncio.wait_for(count_zero_event.wait(), timeout=timeout)
+            except asyncio.TimeoutError:
+                return False
 
         return True
 
@@ -187,6 +188,7 @@ class Pilot(Generic[ReturnType]):
 
     async def wait_for_scheduled_animations(self) -> None:
         """Wait for any current and scheduled animations to complete."""
+        await self._wait_for_screen()
         await self._app.animator.wait_until_complete()
         await self._wait_for_screen()
         await wait_for_idle()
