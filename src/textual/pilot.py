@@ -132,13 +132,45 @@ class Pilot(Generic[ReturnType]):
         app.post_message(MouseMove(**message_arguments))
         await self.pause()
 
+    async def _wait_for_screen(self, timeout: float = 10.0) -> bool:
+        """Wait for the current screen to have processed all current events.
+
+        Args:
+            timeout: A timeout in seconds to wait.
+
+        Returns:
+            `True` if all events were processed, or `False` if the wait timed out.
+        """
+        children = [self.app, *self.app.screen.walk_children(with_self=True)]
+        count = 0
+        count_zero_event = asyncio.Event()
+
+        def decrement_counter() -> None:
+            """Decrement internal counter, and set an event if it reaches zero."""
+            nonlocal count
+            count -= 1
+            if count == 0:
+                count_zero_event.set()
+
+        for child in children:
+            if child.call_later(decrement_counter):
+                count += 1
+
+        try:
+            await asyncio.wait_for(count_zero_event.wait(), timeout=timeout)
+        except asyncio.TimeoutError:
+            return False
+
+        return True
+
     async def pause(self, delay: float | None = None) -> None:
         """Insert a pause.
 
         Args:
             delay: Seconds to pause, or None to wait for cpu idle.
         """
-        # These sleep zeros, are to force asyncio to give up a time-slice,
+        # These sleep zeros, are to force asyncio to give up a time-slice.
+        await self._wait_for_screen()
         if delay is None:
             await wait_for_idle(0)
         else:
@@ -153,6 +185,7 @@ class Pilot(Generic[ReturnType]):
     async def wait_for_scheduled_animations(self) -> None:
         """Wait for any current and scheduled animations to complete."""
         await self._app.animator.wait_until_complete()
+        await self._wait_for_screen()
         await wait_for_idle()
         self.app.screen._on_timer_update()
 
@@ -162,5 +195,6 @@ class Pilot(Generic[ReturnType]):
         Args:
             result: The app result returned by `run` or `run_async`.
         """
+        await self._wait_for_screen()
         await wait_for_idle()
         self.app.exit(result)
