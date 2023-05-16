@@ -152,10 +152,12 @@ class Pilot(Generic[ReturnType]):
             if count == 0:
                 count_zero_event.set()
 
+        # Increase the count for every successful call later
         for child in children:
             if child.call_later(decrement_counter):
                 count += 1
 
+        # Wait for the count to return to zero, or a timeout
         try:
             await asyncio.wait_for(count_zero_event.wait(), timeout=timeout)
         except asyncio.TimeoutError:
