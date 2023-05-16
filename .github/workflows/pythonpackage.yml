@@ -3,6 +3,7 @@ name: Test Textual module
 on:
   pull_request:
     paths:
+      - '.github/workflows/pythonpackage.yml'
       - '**.py'
       - '**.pyi'
       - '**.css'

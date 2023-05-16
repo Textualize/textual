@@ -4,6 +4,7 @@ name: Black format check
 on:
   pull_request:
     paths:
+      - '.github/workflows/black_format.yml'
       - '**.py'
 
 jobs:
