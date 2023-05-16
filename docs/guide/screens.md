@@ -250,7 +250,7 @@ This boolean is passed to the `check_quit` function we provided when `QuitScreen
 Although this example behaves the same as the previous code, it is more flexible because it has removed responsibility for exiting from the modal screen to the caller.
 This makes it easier for the app to perform any cleanup actions prior to exiting, for example.
 
-Returning data in this way can help keep your code manageable by making it easy to re-use your Screen classes in other contexts.
+Returning data in this way can help keep your code manageable by making it easy to re-use your `Screen` classes in other contexts.
 
 ### Typing screen results
 

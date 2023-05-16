@@ -31,7 +31,7 @@ class QuitScreen(ModalScreen[bool]):  # (1)!
 
 
 class ModalApp(App):
-    """A app with a modal dialog."""
+    """An app with a modal dialog."""
 
     CSS_PATH = "modal01.css"
     BINDINGS = [("q", "request_quit", "Quit")]
@@ -42,7 +42,7 @@ class ModalApp(App):
         yield Footer()
 
     def action_request_quit(self) -> None:
-        """Action to display quit dialog."""
+        """Action to display the quit dialog."""
 
         def check_quit(quit: bool) -> None:
             """Called when QuitScreen is dismissed."""
