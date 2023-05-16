@@ -768,8 +768,8 @@ class Screen(Generic[ScreenResultType], Widget):
     def dismiss(self, result: ScreenResultType | Type[_NoResult] = _NoResult) -> None:
         """Dismiss the screen, optionally with a result.
 
-        If a result it provided and a callback was set when the screen was [pushed][textual.app.push_screen], then
-        the callback will be invoked with the result.
+        If `result` is provided and a callback was set when the screen was [pushed][textual.app.push_screen], then
+        the callback will be invoked with `result`.
 
         Args:
             result: The optional result to be passed to the result callback.
