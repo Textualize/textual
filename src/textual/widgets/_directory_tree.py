@@ -3,7 +3,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 from queue import Empty, Queue
-from threading import RLock
 from typing import ClassVar, Iterable, Iterator
 
 from rich.style import Style
@@ -15,8 +14,6 @@ from ..message import Message
 from ..reactive import var
 from ..worker import Worker, get_current_worker
 from ._tree import TOGGLE_STYLE, Tree, TreeNode
-
-read_dir = RLock()
 
 
 @dataclass
@@ -270,11 +267,15 @@ class DirectoryTree(Tree[DirEntry]):
         Yields:
             Path: A entry within the location.
         """
-        for entry in location.iterdir():
-            if worker.is_cancelled:
-                break
-            yield entry
-            self._tlog(f"Loaded entry {entry} from {location}")
+        yield Path("Foo")
+        yield Path("Bar")
+        yield Path("Baz")
+        yield Path("Wibble")
+        # for entry in location.iterdir():
+        #     if worker.is_cancelled:
+        #         break
+        #     yield entry
+        #     self._tlog(f"Loaded entry {entry} from {location}")
 
     def _load_directory(self, node: TreeNode[DirEntry], worker: Worker) -> None:
         """Load the directory contents for a given node.
@@ -284,15 +285,14 @@ class DirectoryTree(Tree[DirEntry]):
         """
         assert node.data is not None
         node.data.loaded = True
-        with read_dir:
-            self.app.call_from_thread(
-                self._populate_node,
-                node,
-                sorted(
-                    self.filter_paths(self._directory_content(node.data.path, worker)),
-                    key=lambda path: (not path.is_dir(), path.name.lower()),
-                ),
-            )
+        self.app.call_from_thread(
+            self._populate_node,
+            node,
+            sorted(
+                self.filter_paths(self._directory_content(node.data.path, worker)),
+                key=lambda path: (not path.is_dir(), path.name.lower()),
+            ),
+        )
 
     _LOADER_INTERVAL: Final[float] = 0.2
     """How long the loader should block while waiting for queue content."""
