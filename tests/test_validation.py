@@ -3,7 +3,7 @@ import tempfile
 
 import pytest
 
-from textual.validation import URL, Integer, Number, Path, RegexValidator, String
+from textual.validation import URL, Integer, Number, Path, Regex, String
 
 
 @pytest.mark.parametrize(
@@ -42,7 +42,7 @@ def test_Number_validate(value, minimum, maximum, expected_result):
     ],
 )
 def test_RegexValidator_validate(regex, value, expected_result):
-    validator = RegexValidator(regex)
+    validator = Regex(regex)
     result = validator.validate(value)
     assert result.valid == expected_result
 

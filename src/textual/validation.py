@@ -6,7 +6,6 @@ import os
 import re
 from dataclasses import dataclass, field
 from numbers import Number as NumberType
-from pathlib import Path as FilePath
 from urllib.parse import urlparse
 
 from textual._types import Pattern, Protocol
@@ -31,7 +30,7 @@ class Validation(Protocol):
 
 
 @dataclass
-class RegexValidator:
+class Regex:
     regex: str | Pattern[str]
 
     def validate(self, value: str) -> ValidationResult:
@@ -46,7 +45,7 @@ class RegexValidator:
 
 
 @dataclass
-class Number(RegexValidator):
+class Number(Regex):
     regex: str | Pattern[str] = r"^-?(0|[1-9]\d*)?(\.\d+)?([eE][-+]?\d+)?$"
     minimum: NumberType | None = None
     """The minimum value of the number, inclusive."""
@@ -128,7 +127,7 @@ class String:
             )
 
         if self.regex is not None:
-            regex_result = RegexValidator(self.regex).validate(value)
+            regex_result = Regex(self.regex).validate(value)
             if not regex_result:
                 return regex_result
 
