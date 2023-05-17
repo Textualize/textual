@@ -185,10 +185,6 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         border: tall $accent;
     }
 
-    Select {
-        height: auto;
-    }
-
     Select > SelectOverlay {
         width: 1fr;
         display: none;

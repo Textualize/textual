@@ -455,6 +455,23 @@ def test_dock_scroll(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "dock_scroll.py", terminal_size=(80, 25))
 
 
+def test_dock_scroll2(snap_compare):
+    # https://github.com/Textualize/textual/issues/2525
+    assert snap_compare(SNAPSHOT_APPS_DIR / "dock_scroll2.py", terminal_size=(80, 25))
+
+
+def test_dock_scroll_off_by_one(snap_compare):
+    # https://github.com/Textualize/textual/issues/2525
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "dock_scroll_off_by_one.py", terminal_size=(80, 25)
+    )
+
+
+def test_scroll_to(snap_compare):
+    # https://github.com/Textualize/textual/issues/2525
+    assert snap_compare(SNAPSHOT_APPS_DIR / "scroll_to.py", terminal_size=(80, 25))
+
+
 def test_auto_fr(snap_compare):
     # https://github.com/Textualize/textual/issues/2220
     assert snap_compare(SNAPSHOT_APPS_DIR / "auto_fr.py", terminal_size=(80, 25))
@@ -491,3 +508,12 @@ def test_quickly_change_tabs(snap_compare):
 def test_fr_unit_with_min(snap_compare):
     # https://github.com/Textualize/textual/issues/2378
     assert snap_compare(SNAPSHOT_APPS_DIR / "fr_with_min.py")
+
+
+def test_select_rebuild(snap_compare):
+    # https://github.com/Textualize/textual/issues/2557
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "select_rebuild.py",
+        press=["tab", "space", "escape", "tab", "enter", "tab", "space"]
+    )
+

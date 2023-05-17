@@ -907,7 +907,7 @@ class Region(NamedTuple):
 
 
 class Spacing(NamedTuple):
-    """The spacing around a renderable, such as padding and border
+    """The spacing around a renderable, such as padding and border.
 
     Spacing is defined by four integers for the space at the top, right, bottom, and left of a region.
 
@@ -940,7 +940,7 @@ class Spacing(NamedTuple):
     top: int = 0
     """Space from the top of a region."""
     right: int = 0
-    """Space from the left of a region."""
+    """Space from the right of a region."""
     bottom: int = 0
     """Space from the bottom of a region."""
     left: int = 0
@@ -1095,3 +1095,9 @@ class Spacing(NamedTuple):
 
 NULL_OFFSET: Final = Offset(0, 0)
 """An [offset][textual.geometry.Offset] constant for (0, 0)."""
+
+NULL_REGION: Final = Region(0, 0, 0, 0)
+"""A [Region][textual.geometry.Region] constant for a null region (at the origin, with both width and height set to zero)."""
+
+NULL_SPACING: Final = Spacing(0, 0, 0, 0)
+"""A [Spacing][textual.geometry.Spacing] constant for no space."""

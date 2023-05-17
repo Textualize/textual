@@ -584,6 +584,7 @@ class Screen(Generic[ScreenResultType], Widget):
                         virtual_size,
                         container_size,
                         _,
+                        _,
                     ) in layers:
                         if widget in exposed_widgets:
                             if widget._size_updated(
@@ -613,6 +614,7 @@ class Screen(Generic[ScreenResultType], Widget):
                     _clip,
                     virtual_size,
                     container_size,
+                    _,
                     _,
                 ) in layers:
                     widget._size_updated(region.size, virtual_size, container_size)
@@ -766,6 +768,9 @@ class Screen(Generic[ScreenResultType], Widget):
     def dismiss(self, result: ScreenResultType | Type[_NoResult] = _NoResult) -> None:
         """Dismiss the screen, optionally with a result.
 
+        If `result` is provided and a callback was set when the screen was [pushed][textual.app.push_screen], then
+        the callback will be invoked with `result`.
+
         Args:
             result: The optional result to be passed to the result callback.
 
@@ -773,12 +778,6 @@ class Screen(Generic[ScreenResultType], Widget):
             ScreenStackError: If trying to dismiss a screen that is not at the top of
                 the stack.
 
-        Note:
-            If the screen was pushed with a callback, the callback will be
-            called with the given result and then a call to
-            [`App.pop_screen`][textual.app.App.pop_screen] is performed. If
-            no callback was provided calling this method is the same as
-            simply calling [`App.pop_screen`][textual.app.App.pop_screen].
         """
         if self is not self.app.screen:
             from .app import ScreenStackError

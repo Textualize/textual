@@ -51,7 +51,8 @@ class DockArrangeResult:
         Returns:
             A Region.
         """
-        return self.spatial_map.total_region
+        _top, right, bottom, _left = self.scroll_spacing
+        return self.spatial_map.total_region.grow((0, right, bottom, 0))
 
     def get_visible_placements(self, region: Region) -> list[WidgetPlacement]:
         """Get the placements visible within the given region.
