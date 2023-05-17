@@ -37,7 +37,7 @@ Since these are the outermost widgets, we will begin by adding them.
 
 !!! tip
 
-    Textual has a builtin [Header](../widgets/header.md) and [Footer](../widgets/footer.md) widgets which you could use in a real application.
+    Textual has builtin [Header](../widgets/header.md) and [Footer](../widgets/footer.md) widgets which you could use in a real application.
 
 The following example defines an [app](../guide/app.md), a [screen](../guide/screens.md), and our header and footer widgets.
 Since we're starting from scratch and don't have any functionality for our widgets, we are going to use the [Placeholder][textual.widgets.Placeholder] widget to help us visualize our design.
