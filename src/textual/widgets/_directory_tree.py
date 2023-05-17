@@ -11,7 +11,7 @@ from rich.text import Text, TextType
 from .. import work
 from ..message import Message
 from ..reactive import var
-from ..worker import Worker, get_current_worker
+from ..worker import Worker, WorkerCancelled, WorkerFailed, get_current_worker
 from ._tree import TOGGLE_STYLE, Tree, TreeNode
 
 
@@ -269,22 +269,22 @@ class DirectoryTree(Tree[DirEntry]):
             yield entry
 
     @work
-    def _load_directory(self, node: TreeNode[DirEntry]) -> None:
+    def _load_directory(self, node: TreeNode[DirEntry]) -> list[Path]:
         """Load the directory contents for a given node.
 
         Args:
             node: The node to load the directory contents for.
+
+        Returns:
+            The list of entries within the directory associated with the node.
         """
         assert node.data is not None
         node.data.loaded = True
-        worker = get_current_worker()
-        self.app.call_from_thread(
-            self._populate_node,
-            node,
-            sorted(
-                self.filter_paths(self._directory_content(node.data.path, worker)),
-                key=lambda path: (not path.is_dir(), path.name.lower()),
+        return sorted(
+            self.filter_paths(
+                self._directory_content(node.data.path, get_current_worker())
             ),
+            key=lambda path: (not path.is_dir(), path.name.lower()),
         )
 
     @work(exclusive=True)
@@ -292,7 +292,26 @@ class DirectoryTree(Tree[DirEntry]):
         """Background loading queue processor."""
         worker = get_current_worker()
         while not worker.is_cancelled:
-            self._load_directory(await self._to_load.get())
+            # Get the next node that needs loading off the queue. Note that
+            # this blocks if the queue is empty.
+            node = await self._to_load.get()
+            content: list[Path] = []
+            try:
+                # Spin up a short-lived thread that will load the content of
+                # the directory associated with that node.
+                content = await self._load_directory(node).wait()
+            except WorkerCancelled:
+                # The worker was cancelled, that would suggest we're all
+                # done here and we should get out of the loader in general.
+                break
+            except WorkerFailed:
+                # This particular worker failed to start. We don't know the
+                # reason so let's no-op that (for now anyway).
+                pass
+            # We're still here and we have directory content, get it into
+            # the tree.
+            if content:
+                self._populate_node(node, content)
 
     def _on_tree_node_expanded(self, event: Tree.NodeExpanded) -> None:
         event.stop()
