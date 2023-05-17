@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+from asyncio import Queue, QueueEmpty
 from dataclasses import dataclass
 from pathlib import Path
-from queue import Empty, Queue
 from typing import ClassVar, Iterable, Iterator
 
 from rich.style import Style
@@ -239,9 +239,6 @@ class DirectoryTree(Tree[DirEntry]):
         """
         return paths
 
-    def _tlog(self, message: str) -> None:
-        self.app.call_from_thread(self.log.debug, f"{self.id} - {message}")
-
     def _populate_node(self, node: TreeNode[DirEntry], content: Iterable[Path]) -> None:
         """Populate the given tree node with the given directory content.
 
@@ -271,9 +268,9 @@ class DirectoryTree(Tree[DirEntry]):
             if worker.is_cancelled:
                 break
             yield entry
-            self._tlog(f"Loaded entry {entry} from {location}")
 
-    def _load_directory(self, node: TreeNode[DirEntry], worker: Worker) -> None:
+    @work
+    def _load_directory(self, node: TreeNode[DirEntry]) -> None:
         """Load the directory contents for a given node.
 
         Args:
@@ -281,6 +278,7 @@ class DirectoryTree(Tree[DirEntry]):
         """
         assert node.data is not None
         node.data.loaded = True
+        worker = get_current_worker()
         self.app.call_from_thread(
             self._populate_node,
             node,
@@ -290,21 +288,14 @@ class DirectoryTree(Tree[DirEntry]):
             ),
         )
 
-    _LOADER_INTERVAL: Final[float] = 0.2
-    """How long the loader should block while waiting for queue content."""
-
     @work(exclusive=True)
-    def _loader(self) -> None:
+    async def _loader(self) -> None:
         """Background loading queue processor."""
-        self._tlog("_loader started")
         worker = get_current_worker()
         while not worker.is_cancelled:
             try:
-                next_node = self._to_load.get(timeout=self._LOADER_INTERVAL)
-                self._tlog(f"Received {next_node} for loading")
-                self._load_directory(next_node, worker)
-                self._tlog(f"Loaded {next_node}")
-            except Empty:
+                self._load_directory(await self._to_load.get())
+            except QueueEmpty:
                 pass
 
     def _on_tree_node_expanded(self, event: Tree.NodeExpanded) -> None:
