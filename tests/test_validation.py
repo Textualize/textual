@@ -137,9 +137,15 @@ def test_URL_validate(value, min_length, max_length, expected_result):
             False,
         ),  # non-existing path, but exists=True
         ("", False, None, None, True),  # empty string
-        (tempfile.gettempdir(), False, 100, None, False),  # shorter than minimum length
-        (tempfile.gettempdir(), False, None, 10, False),  # longer than maximum length
-        (tempfile.gettempdir(), False, 1, 100, True),  # within length range
+        (
+            tempfile.gettempdir(),
+            False,
+            1000,
+            None,
+            False,
+        ),  # shorter than minimum length
+        (tempfile.gettempdir(), False, None, 2, False),  # longer than maximum length
+        (tempfile.gettempdir(), False, 1, 1000, True),  # within length range
     ],
 )
 def test_Path_validate(value, exists, min_length, max_length, expected_result):
