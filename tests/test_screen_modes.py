@@ -174,16 +174,18 @@ async def test_screen_stack_preserved(ModesApp: Type[App]):
 
 
 async def test_inactive_stack_is_alive():
+    """This tests that timers in screens outside the active stack keep going."""
+    pings = []
+
     class FastCounter(Screen[None]):
         def compose(self) -> ComposeResult:
-            self.lbl = Label("0")
-            yield self.lbl
+            yield Label("fast")
 
         def on_mount(self) -> None:
-            self.set_interval(0.01, self.increment)
+            self.set_interval(0.01, self.ping)
 
-        def increment(self) -> None:
-            self.lbl.update(str(int(str(self.lbl.renderable)) + 1))
+        def ping(self) -> None:
+            pings.append(str(self.app.query_one(Label).renderable))
 
         def key_s(self):
             self.app.switch_mode("smile")
@@ -206,11 +208,10 @@ async def test_inactive_stack_is_alive():
 
     app = ModesApp()
     async with app.run_test() as pilot:
-        current = int(str(app.query_one(Label).renderable))
         await pilot.press("s")
         assert str(app.query_one(Label).renderable) == ":)"
         await pilot.press("s")
-        assert int(str(app.query_one(Label).renderable)) > current
+        assert ":)" in pings
 
 
 async def test_multiple_mode_callbacks():
