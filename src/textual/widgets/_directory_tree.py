@@ -118,7 +118,7 @@ class DirectoryTree(Tree[DirEntry]):
             classes: A space-separated list of classes, or None for no classes.
             disabled: Whether the directory tree is disabled or not.
         """
-        self._to_load: Queue[TreeNode[DirEntry]] = Queue()
+        self._load_queue: Queue[TreeNode[DirEntry]] = Queue()
         super().__init__(
             str(path),
             data=DirEntry(Path(path)),
@@ -133,12 +133,12 @@ class DirectoryTree(Tree[DirEntry]):
         """Reload the `DirectoryTree` contents."""
         self.reset(str(self.path), DirEntry(Path(self.path)))
         # Orphan the old queue...
-        self._to_load = Queue()
+        self._load_queue = Queue()
         # ...and replace the old load with a new one.
         self._loader()
         # We have a fresh queue, we have a fresh loader, get the fresh root
         # loading up.
-        self._to_load.put_nowait(self.root)
+        self._load_queue.put_nowait(self.root)
 
     def validate_path(self, path: str | Path) -> Path:
         """Ensure that the path is of the `Path` type.
@@ -318,7 +318,7 @@ class DirectoryTree(Tree[DirEntry]):
         while not worker.is_cancelled:
             # Get the next node that needs loading off the queue. Note that
             # this blocks if the queue is empty.
-            node = await self._to_load.get()
+            node = await self._load_queue.get()
             content: list[Path] = []
             try:
                 # Spin up a short-lived thread that will load the content of
@@ -337,7 +337,7 @@ class DirectoryTree(Tree[DirEntry]):
             if content:
                 self._populate_node(node, content)
             # Mark this iteration as done.
-            self._to_load.task_done()
+            self._load_queue.task_done()
 
     def _on_tree_node_expanded(self, event: Tree.NodeExpanded) -> None:
         event.stop()
@@ -346,7 +346,7 @@ class DirectoryTree(Tree[DirEntry]):
             return
         if self._safe_is_dir(dir_entry.path):
             if not dir_entry.loaded:
-                self._to_load.put_nowait(event.node)
+                self._load_queue.put_nowait(event.node)
         else:
             self.post_message(self.FileSelected(self, event.node, dir_entry.path))
 
