@@ -349,20 +349,25 @@ class MessagePump(metaclass=_MessagePumpMeta):
         self._timers.add(timer)
         return timer
 
-    def call_after_refresh(self, callback: Callable, *args: Any, **kwargs: Any) -> None:
+    def call_after_refresh(self, callback: Callable, *args: Any, **kwargs: Any) -> bool:
         """Schedule a callback to run after all messages are processed and the screen
         has been refreshed. Positional and keyword arguments are passed to the callable.
 
         Args:
             callback: A callable.
+
+        Returns:
+            `True` if the callback was scheduled, or `False` if the callback could not be
+                scheduled (may occur if the message pump was closed or closing).
+
         """
         # We send the InvokeLater message to ourselves first, to ensure we've cleared
         # out anything already pending in our own queue.
 
         message = messages.InvokeLater(partial(callback, *args, **kwargs))
-        self.post_message(message)
+        return self.post_message(message)
 
-    def call_later(self, callback: Callable, *args: Any, **kwargs: Any) -> None:
+    def call_later(self, callback: Callable, *args: Any, **kwargs: Any) -> bool:
         """Schedule a callback to run after all messages are processed in this object.
         Positional and keywords arguments are passed to the callable.
 
@@ -370,9 +375,14 @@ class MessagePump(metaclass=_MessagePumpMeta):
             callback: Callable to call next.
             *args: Positional arguments to pass to the callable.
             **kwargs: Keyword arguments to pass to the callable.
+
+        Returns:
+            `True` if the callback was scheduled, or `False` if the callback could not be
+                scheduled (may occur if the message pump was closed or closing).
+
         """
         message = events.Callback(callback=partial(callback, *args, **kwargs))
-        self.post_message(message)
+        return self.post_message(message)
 
     def call_next(self, callback: Callable, *args: Any, **kwargs: Any) -> None:
         """Schedule a callback to run immediately after processing the current message.

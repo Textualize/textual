@@ -72,11 +72,11 @@ class SpatialMap(Generic[ValueType]):
         _region_to_grid = self._region_to_grid_coordinates
         total_region = self.total_region
         for region, fixed, overlay, value in regions_and_values:
-            if not overlay:
-                total_region = total_region.union(region)
             if fixed:
                 append_fixed(value)
             else:
+                if not overlay:
+                    total_region = total_region.union(region)
                 for grid in _region_to_grid(region):
                     get_grid_list(grid).append(value)
         self.total_region = total_region

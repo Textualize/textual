@@ -57,7 +57,7 @@ from .box_model import BoxModel
 from .css.query import NoMatches, WrongType
 from .css.scalar import ScalarOffset
 from .dom import DOMNode, NoScreen
-from .geometry import Offset, Region, Size, Spacing, clamp
+from .geometry import NULL_REGION, NULL_SPACING, Offset, Region, Size, Spacing, clamp
 from .layouts.vertical import VerticalLayout
 from .message import Message
 from .messages import CallbackType
@@ -795,19 +795,15 @@ class Widget(DOMNode):
 
         Args:
             child: The child widget to move.
-            before: Optional location to move before. An `int` is the index
-                of the child to move before, a `str` is a `query_one` query to
-                find the widget to move before.
-            after: Optional location to move after. An `int` is the index
-                of the child to move after, a `str` is a `query_one` query to
-                find the widget to move after.
+            before: Child widget or location index to move before.
+            after: Child widget or location index to move after.
 
         Raises:
             WidgetError: If there is a problem with the child or target.
 
         Note:
-            Only one of ``before`` or ``after`` can be provided. If neither
-            or both are provided a ``WidgetError`` will be raised.
+            Only one of `before` or `after` can be provided. If neither
+            or both are provided a `WidgetError` will be raised.
         """
 
         # One or the other of before or after are required. Can't do
@@ -816,6 +812,10 @@ class Widget(DOMNode):
             raise WidgetError("One of `before` or `after` is required.")
         elif before is not None and after is not None:
             raise WidgetError("Only one of `before` or `after` can be handled.")
+
+        # We short-circuit the no-op, otherwise it will error later down the road.
+        if child is before or child is after:
+            return
 
         def _to_widget(child: int | Widget, called: str) -> Widget:
             """Ensure a given child reference is a Widget."""
@@ -1375,10 +1375,20 @@ class Widget(DOMNode):
         """
         try:
             return self.screen.find_widget(self).region
-        except NoScreen:
-            return Region()
-        except errors.NoWidget:
-            return Region()
+        except (NoScreen, errors.NoWidget):
+            return NULL_REGION
+
+    @property
+    def dock_gutter(self) -> Spacing:
+        """Space allocated to docks in the parent.
+
+        Returns:
+            Space to be subtracted from scrollable area.
+        """
+        try:
+            return self.screen.find_widget(self).dock_gutter
+        except (NoScreen, errors.NoWidget):
+            return NULL_SPACING
 
     @property
     def container_viewport(self) -> Region:
@@ -2263,7 +2273,7 @@ class Widget(DOMNode):
             else:
                 scroll_offset = container.scroll_to_region(
                     region,
-                    spacing=widget.parent.gutter,
+                    spacing=widget.parent.gutter + widget.dock_gutter,
                     animate=animate,
                     speed=speed,
                     duration=duration,

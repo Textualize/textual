@@ -887,7 +887,7 @@ class DOMNode(MessagePump):
 
         Example:
 
-            Here's how you could detect when the app changes from dark to light mode (and visa versa).
+            Here's how you could detect when the app changes from dark to light mode (and vice versa).
 
             ```python
             def on_dark_change(old_value:bool, new_value:bool):

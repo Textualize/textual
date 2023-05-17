@@ -2,17 +2,17 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, ClassVar, NamedTuple
+from typing import TYPE_CHECKING, ClassVar, Iterable, NamedTuple
 
 from ._spatial_map import SpatialMap
-from .geometry import Region, Size, Spacing
+from .geometry import Offset, Region, Size, Spacing
 
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
 
     from .widget import Widget
 
-ArrangeResult: TypeAlias = "tuple[list[WidgetPlacement], set[Widget]]"
+ArrangeResult: TypeAlias = "list[WidgetPlacement]"
 
 
 @dataclass
@@ -51,7 +51,8 @@ class DockArrangeResult:
         Returns:
             A Region.
         """
-        return self.spatial_map.total_region
+        _top, right, bottom, _left = self.scroll_spacing
+        return self.spatial_map.total_region.grow((0, right, bottom, 0))
 
     def get_visible_placements(self, region: Region) -> list[WidgetPlacement]:
         """Get the placements visible within the given region.
@@ -75,6 +76,41 @@ class WidgetPlacement(NamedTuple):
     order: int = 0
     fixed: bool = False
     overlay: bool = False
+
+    @classmethod
+    def translate(
+        cls, placements: list[WidgetPlacement], offset: Offset
+    ) -> list[WidgetPlacement]:
+        """Move all placements by a given offset.
+
+        Args:
+            placements: List of placements.
+            offset: Offset to add to placements.
+
+        Returns:
+            Placements with adjusted region, or same instance if offset is null.
+        """
+        if offset:
+            return [
+                cls(region + offset, margin, layout_widget, order, fixed, overlay)
+                for region, margin, layout_widget, order, fixed, overlay in placements
+            ]
+        return placements
+
+    @classmethod
+    def get_bounds(cls, placements: Iterable[WidgetPlacement]) -> Region:
+        """Get a bounding region around all placements.
+
+        Args:
+            placements: A number of placements.
+
+        Returns:
+            An optimal binding box around all placements.
+        """
+        bounding_region = Region.from_union(
+            [placement.region.grow(placement.margin) for placement in placements]
+        )
+        return bounding_region
 
 
 class Layout(ABC):
