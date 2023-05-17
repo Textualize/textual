@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## Unreleased
+## [0.25.0] - 2023-05-17
 
 ### Changed
 
@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Only a single error will be written by default, unless in dev mode ("debug" in App.features) https://github.com/Textualize/textual/issues/2480
 - Using `Widget.move_child` where the target and the child being moved are the same is now a no-op https://github.com/Textualize/textual/issues/1743
 - Calling `dismiss` on a screen that is not at the top of the stack now raises an exception https://github.com/Textualize/textual/issues/2575
-- `MessagePump.call_after_refresh` and `MessagePump.call_later` will not return `False` if the callback could not be scheduled. https://github.com/Textualize/textual/pull/2584
+- `MessagePump.call_after_refresh` and `MessagePump.call_later` will now return `False` if the callback could not be scheduled. https://github.com/Textualize/textual/pull/2584
 
 ### Fixed
 
@@ -965,6 +965,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.25.0]: https://github.com/Textualize/textual/compare/v0.24.1...v0.25.0
 [0.24.1]: https://github.com/Textualize/textual/compare/v0.24.0...v0.24.1
 [0.24.0]: https://github.com/Textualize/textual/compare/v0.23.0...v0.24.0
 [0.23.0]: https://github.com/Textualize/textual/compare/v0.22.3...v0.23.0
