@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from asyncio import Queue, QueueEmpty
+from asyncio import Queue
 from dataclasses import dataclass
 from pathlib import Path
 from typing import ClassVar, Iterable, Iterator
@@ -293,10 +293,7 @@ class DirectoryTree(Tree[DirEntry]):
         """Background loading queue processor."""
         worker = get_current_worker()
         while not worker.is_cancelled:
-            try:
-                self._load_directory(await self._to_load.get())
-            except QueueEmpty:
-                pass
+            self._load_directory(await self._to_load.get())
 
     def _on_tree_node_expanded(self, event: Tree.NodeExpanded) -> None:
         event.stop()
