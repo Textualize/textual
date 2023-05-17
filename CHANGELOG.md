@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## Unrealeased
+## Unreleased
 
 ### Changed
 
@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Pasting empty selection in `Input` would raise an exception https://github.com/Textualize/textual/issues/2563
 - Fix for setting dark in App `__init__` https://github.com/Textualize/textual/issues/2583
 - Fix issue with scrolling and docks https://github.com/Textualize/textual/issues/2525
+- Fix not being able to use CSS classes with `Tab` https://github.com/Textualize/textual/pull/2589
 
 ### Added
 
