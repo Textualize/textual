@@ -238,6 +238,27 @@ class DirectoryTree(Tree[DirEntry]):
         """
         return paths
 
+    @staticmethod
+    def _safe_is_dir(path: Path) -> bool:
+        """Safely check if a path is a directory.
+
+        Args:
+            path: The path to check.
+
+        Returns:
+            `True` if the path is for a directory, `False` if not.
+        """
+        try:
+            return path.is_dir()
+        except PermissionError:
+            # We may or may not have been looking at a directory, but we
+            # don't have the rights or permissions to even know that. Best
+            # we can do, short of letting the error blow up, is assume it's
+            # not a directory. A possible improvement in here could be to
+            # have a third state which is "unknown", and reflect that in the
+            # tree.
+            return False
+
     def _populate_node(self, node: TreeNode[DirEntry], content: Iterable[Path]) -> None:
         """Populate the given tree node with the given directory content.
 
@@ -249,7 +270,7 @@ class DirectoryTree(Tree[DirEntry]):
             node.add(
                 path.name,
                 data=DirEntry(path),
-                allow_expand=path.is_dir(),
+                allow_expand=self._safe_is_dir(path),
             )
         node.expand()
 
@@ -263,10 +284,13 @@ class DirectoryTree(Tree[DirEntry]):
         Yields:
             Path: A entry within the location.
         """
-        for entry in location.iterdir():
-            if worker.is_cancelled:
-                break
-            yield entry
+        try:
+            for entry in location.iterdir():
+                if worker.is_cancelled:
+                    break
+                yield entry
+        except PermissionError:
+            pass
 
     @work
     def _load_directory(self, node: TreeNode[DirEntry]) -> list[Path]:
@@ -284,7 +308,7 @@ class DirectoryTree(Tree[DirEntry]):
             self.filter_paths(
                 self._directory_content(node.data.path, get_current_worker())
             ),
-            key=lambda path: (not path.is_dir(), path.name.lower()),
+            key=lambda path: (not self._safe_is_dir(path), path.name.lower()),
         )
 
     @work(exclusive=True)
@@ -318,7 +342,7 @@ class DirectoryTree(Tree[DirEntry]):
         dir_entry = event.node.data
         if dir_entry is None:
             return
-        if dir_entry.path.is_dir():
+        if self._safe_is_dir(dir_entry.path):
             if not dir_entry.loaded:
                 self._to_load.put_nowait(event.node)
         else:
@@ -329,5 +353,5 @@ class DirectoryTree(Tree[DirEntry]):
         dir_entry = event.node.data
         if dir_entry is None:
             return
-        if not dir_entry.path.is_dir():
+        if not self._safe_is_dir(dir_entry.path):
             self.post_message(self.FileSelected(self, event.node, dir_entry.path))
