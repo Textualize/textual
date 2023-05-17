@@ -303,7 +303,6 @@ class DirectoryTree(Tree[DirEntry]):
             The list of entries within the directory associated with the node.
         """
         assert node.data is not None
-        node.data.loaded = True
         return sorted(
             self.filter_paths(
                 self._directory_content(node.data.path, get_current_worker())
@@ -346,6 +345,7 @@ class DirectoryTree(Tree[DirEntry]):
             return
         if self._safe_is_dir(dir_entry.path):
             if not dir_entry.loaded:
+                dir_entry.loaded = True
                 self._load_queue.put_nowait(event.node)
         else:
             self.post_message(self.FileSelected(self, event.node, dir_entry.path))
