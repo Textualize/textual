@@ -341,10 +341,11 @@ class DirectoryTree(Tree[DirEntry]):
                 # This particular worker failed to start. We don't know the
                 # reason so let's no-op that (for now anyway).
                 pass
-            # We're still here and we have directory content, get it into
-            # the tree.
-            if content:
-                self._populate_node(node, content)
+            else:
+                # We're still here and we have directory content, get it into
+                # the tree.
+                if content:
+                    self._populate_node(node, content)
             # Mark this iteration as done.
             self._load_queue.task_done()
 
