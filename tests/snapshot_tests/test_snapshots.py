@@ -514,6 +514,5 @@ def test_select_rebuild(snap_compare):
     # https://github.com/Textualize/textual/issues/2557
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "select_rebuild.py",
-        press=["tab", "space", "escape", "tab", "enter", "tab", "space"]
+        press=["space", "escape", "tab", "enter", "tab", "space"],
     )
-
