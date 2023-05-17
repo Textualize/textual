@@ -36,7 +36,7 @@ async def test_on_button_pressed() -> None:
 
     app = ButtonApp()
     async with app.run_test() as pilot:
-        await pilot.press("tab", "enter", "tab", "enter", "tab", "enter")
+        await pilot.press("enter", "tab", "enter", "tab", "enter")
         await pilot.pause()
 
     assert pressed == [

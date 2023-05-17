@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.widgets import Button
+from textual.widgets import Button, Input
 
 
 def test_batch_update():
@@ -20,6 +20,7 @@ def test_batch_update():
 
 class MyApp(App):
     def compose(self) -> ComposeResult:
+        yield Input()
         yield Button("Click me!")
 
 

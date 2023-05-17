@@ -1,5 +1,4 @@
 from pathlib import Path
-import sys
 
 import pytest
 
@@ -78,8 +77,7 @@ def test_switches(snap_compare):
 
 def test_input_and_focus(snap_compare):
     press = [
-        "tab",
-        *"Darren",  # Focus first input, write "Darren"
+        *"Darren",  # Write "Darren"
         "tab",
         *"Burns",  # Focus second input, write "Burns"
     ]
@@ -88,7 +86,7 @@ def test_input_and_focus(snap_compare):
 
 def test_buttons_render(snap_compare):
     # Testing button rendering. We press tab to focus the first button too.
-    assert snap_compare(WIDGET_EXAMPLES_DIR / "button.py", press=["tab", "tab"])
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "button.py", press=["tab"])
 
 
 def test_placeholder_render(snap_compare):
@@ -189,7 +187,7 @@ def test_content_switcher_example_initial(snap_compare):
 def test_content_switcher_example_switch(snap_compare):
     assert snap_compare(
         WIDGET_EXAMPLES_DIR / "content_switcher.py",
-        press=["tab", "tab", "enter", "wait:500"],
+        press=["tab", "enter", "wait:500"],
         terminal_size=(50, 50),
     )
 
@@ -315,7 +313,7 @@ def test_programmatic_scrollbar_gutter_change(snap_compare):
 
 
 def test_borders_preview(snap_compare):
-    assert snap_compare(CLI_PREVIEWS_DIR / "borders.py", press=["tab", "enter"])
+    assert snap_compare(CLI_PREVIEWS_DIR / "borders.py", press=["enter"])
 
 
 def test_colors_preview(snap_compare):
@@ -379,9 +377,7 @@ def test_disabled_widgets(snap_compare):
 
 
 def test_focus_component_class(snap_compare):
-    assert snap_compare(
-        SNAPSHOT_APPS_DIR / "focus_component_class.py", press=["tab", "tab"]
-    )
+    assert snap_compare(SNAPSHOT_APPS_DIR / "focus_component_class.py", press=["tab"])
 
 
 def test_line_api_scrollbars(snap_compare):
