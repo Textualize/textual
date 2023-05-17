@@ -92,7 +92,7 @@ class DirectoryTree(Tree[DirEntry]):
             """
             return self.tree
 
-    path: var[str | Path] = var["str | Path"](Path("."), init=False)
+    path: var[str | Path] = var["str | Path"](Path("."), init=False, always_update=True)
     """The path that is the root of the directory tree.
 
     Note:
