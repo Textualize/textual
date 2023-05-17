@@ -129,6 +129,16 @@ class DirectoryTree(Tree[DirEntry]):
         )
         self.path = path
 
+    def _add_to_load_queue(self, node: TreeNode[DirEntry]) -> None:
+        """Add the given node to the load queue.
+
+        Args:
+            node: The node to add to the load queue.
+        """
+        assert node.data is not None
+        node.data.loaded = True
+        self._load_queue.put_nowait(node)
+
     def reload(self) -> None:
         """Reload the `DirectoryTree` contents."""
         self.reset(str(self.path), DirEntry(Path(self.path)))
@@ -138,7 +148,7 @@ class DirectoryTree(Tree[DirEntry]):
         self._loader()
         # We have a fresh queue, we have a fresh loader, get the fresh root
         # loading up.
-        self._load_queue.put_nowait(self.root)
+        self._add_to_load_queue(self.root)
 
     def validate_path(self, path: str | Path) -> Path:
         """Ensure that the path is of the `Path` type.
@@ -345,8 +355,7 @@ class DirectoryTree(Tree[DirEntry]):
             return
         if self._safe_is_dir(dir_entry.path):
             if not dir_entry.loaded:
-                dir_entry.loaded = True
-                self._load_queue.put_nowait(event.node)
+                self._add_to_load_queue(event.node)
         else:
             self.post_message(self.FileSelected(self, event.node, dir_entry.path))
 
