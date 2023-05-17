@@ -292,7 +292,7 @@ class DirectoryTree(Tree[DirEntry]):
             worker: The worker that the loading is taking place in.
 
         Yields:
-            Path: A entry within the location.
+            Path: An entry within the location.
         """
         try:
             for entry in location.iterdir():

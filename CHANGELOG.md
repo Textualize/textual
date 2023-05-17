@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `Screen.AUTO_FOCUS` now works on the default screen on startup https://github.com/Textualize/textual/pull/2581
 - Fix for setting dark in App `__init__` https://github.com/Textualize/textual/issues/2583
 - Fix issue with scrolling and docks https://github.com/Textualize/textual/issues/2525
+- Fix not being able to use CSS classes with `Tab` https://github.com/Textualize/textual/pull/2589
 
 ### Added
 
