@@ -87,14 +87,15 @@ def work(
             self = args[0]
             assert isinstance(self, DOMNode)
 
-            positional_arguments = ", ".join(repr(arg) for arg in args[1:])
-            keyword_arguments = ", ".join(
-                f"{name}={value!r}" for name, value in kwargs.items()
-            )
-            tokens = [positional_arguments, keyword_arguments]
-            worker_description = (
-                f"{method.__name__}({', '.join(token for token in tokens if token)})"
-            )
+            try:
+                positional_arguments = ", ".join(repr(arg) for arg in args[1:])
+                keyword_arguments = ", ".join(
+                    f"{name}={value!r}" for name, value in kwargs.items()
+                )
+                tokens = [positional_arguments, keyword_arguments]
+                worker_description = f"{method.__name__}({', '.join(token for token in tokens if token)})"
+            except Exception:
+                worker_description = "<worker>"
             worker = cast(
                 "Worker[ReturnType]",
                 self.run_worker(
