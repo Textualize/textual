@@ -669,15 +669,10 @@ class Screen(Generic[ScreenResultType], Widget):
         self._refresh_layout(size, full=True)
         self.refresh()
         if self.AUTO_FOCUS is not None and self.focused is None:
-            try:
-                focus_candidates = self.query(self.AUTO_FOCUS)
-            except NoMatches:
-                pass
-            else:
-                for widget in focus_candidates:
-                    if widget.focusable:
-                        self.set_focus(widget)
-                        break
+            for widget in self.query(self.AUTO_FOCUS):
+                if widget.focusable:
+                    self.set_focus(widget)
+                    break
 
     def _on_screen_suspend(self) -> None:
         """Screen has suspended."""
