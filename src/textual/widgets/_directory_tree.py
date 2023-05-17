@@ -7,7 +7,6 @@ from typing import ClassVar, Iterable, Iterator
 
 from rich.style import Style
 from rich.text import Text, TextType
-from typing_extensions import Final
 
 from .. import work
 from ..message import Message
