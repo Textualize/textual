@@ -42,6 +42,7 @@ class ModalApp(App):
         yield Footer()
 
     def action_request_quit(self) -> None:
+        """Action to display the quit dialog."""
         self.push_screen(QuitScreen())
 
 
