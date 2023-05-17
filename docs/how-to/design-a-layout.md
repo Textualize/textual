@@ -174,7 +174,7 @@ In the real app, you might set the height to "auto" so it fits the content, but 
     ```{.textual path="docs/examples/how-to/layout06.py" columns="100" lines="32"}
     ```
 
-You should see from the output that we have fixed with columns, that will scroll horizontally.
+You should see from the output that we have fixed width columns that will scroll horizontally.
 You can also scroll the "tweets" in each column vertically.
 
 This last example is a relatively complete design.
