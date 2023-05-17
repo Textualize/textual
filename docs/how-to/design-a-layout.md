@@ -66,7 +66,7 @@ This app works, but the header and footer don't behave as expected.
 We want both of these widgets to be fixed to an edge of the screen and limited in height.
 In Textual this is known as *docking* which you can apply with the [dock](../styles/dock.md) rule.
 
-We will dock the header and footer to the top and bottom edge of the screen respectively, by adding a little [CSS](../guide/CSS.md) to the widget classes:
+We will dock the header and footer to the top and bottom edges of the screen respectively, by adding a little [CSS](../guide/CSS.md) to the widget classes:
 
 === "layout02.py"
 
@@ -90,7 +90,7 @@ This means that Textual will automatically compensate for the 6 additional lines
 After we've added the header and footer, we want the remaining space to be used for the main interface, which will contain the columns in the sketch.
 This area is flexible (will change according to the size of the terminal), so how do we ensure that it takes up precisely the space needed?
 
-The simplest way is to use [fr](../css_types/scalar.md) units.
+The simplest way is to use [fr](../css_types/scalar.md#fraction) units.
 By setting both the width and height to `1fr`, we are telling Textual to divide the space equally amongst the remaining widgets.
 There is only a single widget, so that widget will fill all of the remaining space.
 
@@ -137,10 +137,10 @@ Let's replace the `ColumnsContainer` class in the previous example with a `Horiz
 The container will appear as blank space until we add some widgets to it.
 
 Let's add the columns to the `HorizontalScroll`.
-A column is itself a container which will can have a vertical scrollbar, so we will define our `Column` by subclassing `VerticalScroll`.
+A column is itself a container which will have a vertical scrollbar, so we will define our `Column` by subclassing `VerticalScroll`.
 In a real app, these columns will likely be added dynamically from some kind of configuration, but let's add 4 to visualize the layout.
 
-We will also define a `Tweet` placeholder and add a few to each column,
+We will also define a `Tweet` placeholder and add a few to each column.
 
 === "layout05.py"
 
