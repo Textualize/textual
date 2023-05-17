@@ -668,15 +668,13 @@ class Screen(Generic[ScreenResultType], Widget):
         """Screen has resumed."""
         self.stack_updates += 1
         size = self.app.size
-        if self.AUTO_FOCUS is not None and self.focused is None:
-            try:
-                to_focus = self.query(self.AUTO_FOCUS).first()
-            except NoMatches:
-                pass
-            else:
-                self.set_focus(to_focus)
         self._refresh_layout(size, full=True)
         self.refresh()
+        if self.AUTO_FOCUS is not None and self.focused is None:
+            for widget in self.query(self.AUTO_FOCUS):
+                if widget.focusable:
+                    self.set_focus(widget)
+                    break
 
     def _on_screen_suspend(self) -> None:
         """Screen has suspended."""
