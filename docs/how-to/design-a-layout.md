@@ -160,7 +160,7 @@ It makes more sense for a column in a Twitter / Mastodon client to use a fixed w
 Let's set the width of the columns to 32.
 
 We also want to reduce the height of each "tweet".
-In the real app, you might set the height to "auto" so it fits the content, but lets set if to 5 lines for now.
+In the real app, you might set the height to "auto" so it fits the content, but lets set it to 5 lines for now.
 
 
 === "layout06.py"
