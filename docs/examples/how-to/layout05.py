@@ -23,24 +23,10 @@ class Footer(Placeholder):
 
 
 class Tweet(Placeholder):
-    DEFAULT_CSS = """
-    Tweet {
-        height: 5;
-        width: 1fr;
-        border: tall $background;
-    }
-    """
+    pass
 
 
 class Column(VerticalScroll):
-    DEFAULT_CSS = """
-    Column {
-        height: 1fr;
-        width: 32;
-        margin: 0 2;
-    }
-    """
-
     def compose(self) -> ComposeResult:
         for tweet_no in range(1, 20):
             yield Tweet(id=f"Tweet{tweet_no}")

@@ -3,22 +3,22 @@ from textual.screen import Screen
 from textual.widgets import Placeholder
 
 
-class Header(Placeholder):
+class Header(Placeholder):  # (1)!
     pass
 
 
-class Footer(Placeholder):
+class Footer(Placeholder):  # (2)!
     pass
 
 
 class TweetScreen(Screen):
     def compose(self) -> ComposeResult:
-        yield Header(id="Header")
-        yield Footer(id="Footer")
+        yield Header(id="Header")  # (3)!
+        yield Footer(id="Footer")  # (4)!
 
 
 class LayoutApp(App):
-    def on_ready(self) -> None:
+    def on_mount(self) -> None:
         self.push_screen(TweetScreen())
 
 

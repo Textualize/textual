@@ -1,4 +1,5 @@
 from textual.app import App, ComposeResult
+from textual.containers import HorizontalScroll
 from textual.screen import Screen
 from textual.widgets import Placeholder
 
@@ -25,6 +26,7 @@ class TweetScreen(Screen):
     def compose(self) -> ComposeResult:
         yield Header(id="Header")
         yield Footer(id="Footer")
+        yield HorizontalScroll()  # (1)!
 
 
 class LayoutApp(App):
