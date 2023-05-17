@@ -336,6 +336,8 @@ class DirectoryTree(Tree[DirEntry]):
             # the tree.
             if content:
                 self._populate_node(node, content)
+            # Mark this iteration as done.
+            self._to_load.task_done()
 
     def _on_tree_node_expanded(self, event: Tree.NodeExpanded) -> None:
         event.stop()
