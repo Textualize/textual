@@ -267,15 +267,11 @@ class DirectoryTree(Tree[DirEntry]):
         Yields:
             Path: A entry within the location.
         """
-        yield Path("Foo")
-        yield Path("Bar")
-        yield Path("Baz")
-        yield Path("Wibble")
-        # for entry in location.iterdir():
-        #     if worker.is_cancelled:
-        #         break
-        #     yield entry
-        #     self._tlog(f"Loaded entry {entry} from {location}")
+        for entry in location.iterdir():
+            if worker.is_cancelled:
+                break
+            yield entry
+            self._tlog(f"Loaded entry {entry} from {location}")
 
     def _load_directory(self, node: TreeNode[DirEntry], worker: Worker) -> None:
         """Load the directory contents for a given node.
