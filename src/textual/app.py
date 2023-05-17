@@ -1623,8 +1623,22 @@ class App(Generic[ReturnType], DOMNode):
 
     def _print_error_renderables(self) -> None:
         """Print and clear exit renderables."""
-        for renderable in self._exit_renderables:
-            self.error_console.print(renderable)
+        error_count = len(self._exit_renderables)
+        if "debug" in self.features:
+            for renderable in self._exit_renderables:
+                self.error_console.print(renderable)
+            if error_count > 1:
+                self.error_console.print(
+                    f"\n[b]NOTE:[/b] {error_count} errors show above.", markup=True
+                )
+        elif self._exit_renderables:
+            self.error_console.print(self._exit_renderables[0])
+            if error_count > 1:
+                self.error_console.print(
+                    f"\n[b]NOTE:[/b] 1 of {error_count} errors show. Run with [b]--dev[/] to see all errors.",
+                    markup=True,
+                )
+
         self._exit_renderables.clear()
 
     async def _process_messages(

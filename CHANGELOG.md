@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - App `title` and `sub_title` attributes can be set to any type https://github.com/Textualize/textual/issues/2521
+- Only a single error will be written by default, unless in dev mode ("debug" in App.features) https://github.com/Textualize/textual/issues/2480
 - Using `Widget.move_child` where the target and the child being moved are the same is now a no-op https://github.com/Textualize/textual/issues/1743
 - Calling `dismiss` on a screen that is not at the top of the stack now raises an exception https://github.com/Textualize/textual/issues/2575
 - `MessagePump.call_after_refresh` and `MessagePump.call_later` will not return `False` if the callback could not be scheduled. https://github.com/Textualize/textual/pull/2584
@@ -24,10 +25,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `footer--description` component class was being ignored https://github.com/Textualize/textual/issues/2544
 - Pasting empty selection in `Input` would raise an exception https://github.com/Textualize/textual/issues/2563
 - Fix for setting dark in App `__init__` https://github.com/Textualize/textual/issues/2583
+- Fix issue with scrolling and docks https://github.com/Textualize/textual/issues/2525
 
 ### Added
 
 - Class variable `AUTO_FOCUS` to screens https://github.com/Textualize/textual/issues/2457
+- Added `NULL_SPACING` and `NULL_REGION` to geometry.py
 
 ## [0.24.1] - 2023-05-08
 
