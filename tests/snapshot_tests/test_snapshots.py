@@ -1,5 +1,4 @@
 from pathlib import Path
-import sys
 
 import pytest
 
@@ -78,8 +77,7 @@ def test_switches(snap_compare):
 
 def test_input_and_focus(snap_compare):
     press = [
-        "tab",
-        *"Darren",  # Focus first input, write "Darren"
+        *"Darren",  # Write "Darren"
         "tab",
         *"Burns",  # Focus second input, write "Burns"
     ]
@@ -88,7 +86,7 @@ def test_input_and_focus(snap_compare):
 
 def test_buttons_render(snap_compare):
     # Testing button rendering. We press tab to focus the first button too.
-    assert snap_compare(WIDGET_EXAMPLES_DIR / "button.py", press=["tab", "tab"])
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "button.py", press=["tab"])
 
 
 def test_placeholder_render(snap_compare):
@@ -189,7 +187,7 @@ def test_content_switcher_example_initial(snap_compare):
 def test_content_switcher_example_switch(snap_compare):
     assert snap_compare(
         WIDGET_EXAMPLES_DIR / "content_switcher.py",
-        press=["tab", "tab", "enter", "wait:500"],
+        press=["tab", "enter", "wait:500"],
         terminal_size=(50, 50),
     )
 
@@ -203,8 +201,10 @@ def test_option_list(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_options.py")
     assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_tables.py")
 
+
 def test_option_list_build(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "option_list.py")
+
 
 def test_progress_bar_indeterminate(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "progress_bar_isolated_.py", press=["f"])
@@ -313,7 +313,7 @@ def test_programmatic_scrollbar_gutter_change(snap_compare):
 
 
 def test_borders_preview(snap_compare):
-    assert snap_compare(CLI_PREVIEWS_DIR / "borders.py", press=["tab", "enter"])
+    assert snap_compare(CLI_PREVIEWS_DIR / "borders.py", press=["enter"])
 
 
 def test_colors_preview(snap_compare):
@@ -377,9 +377,7 @@ def test_disabled_widgets(snap_compare):
 
 
 def test_focus_component_class(snap_compare):
-    assert snap_compare(
-        SNAPSHOT_APPS_DIR / "focus_component_class.py", press=["tab", "tab"]
-    )
+    assert snap_compare(SNAPSHOT_APPS_DIR / "focus_component_class.py", press=["tab"])
 
 
 def test_line_api_scrollbars(snap_compare):
@@ -440,7 +438,7 @@ def test_modal_dialog_bindings_input(snap_compare):
     # Check https://github.com/Textualize/textual/issues/2194
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "modal_screen_bindings.py",
-        press=["enter", "tab", "h", "!", "left", "i", "tab"],
+        press=["enter", "h", "!", "left", "i", "tab"],
     )
 
 
@@ -455,6 +453,23 @@ def test_modal_dialog_bindings(snap_compare):
 def test_dock_scroll(snap_compare):
     # https://github.com/Textualize/textual/issues/2188
     assert snap_compare(SNAPSHOT_APPS_DIR / "dock_scroll.py", terminal_size=(80, 25))
+
+
+def test_dock_scroll2(snap_compare):
+    # https://github.com/Textualize/textual/issues/2525
+    assert snap_compare(SNAPSHOT_APPS_DIR / "dock_scroll2.py", terminal_size=(80, 25))
+
+
+def test_dock_scroll_off_by_one(snap_compare):
+    # https://github.com/Textualize/textual/issues/2525
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "dock_scroll_off_by_one.py", terminal_size=(80, 25)
+    )
+
+
+def test_scroll_to(snap_compare):
+    # https://github.com/Textualize/textual/issues/2525
+    assert snap_compare(SNAPSHOT_APPS_DIR / "scroll_to.py", terminal_size=(80, 25))
 
 
 def test_auto_fr(snap_compare):
@@ -493,3 +508,11 @@ def test_quickly_change_tabs(snap_compare):
 def test_fr_unit_with_min(snap_compare):
     # https://github.com/Textualize/textual/issues/2378
     assert snap_compare(SNAPSHOT_APPS_DIR / "fr_with_min.py")
+
+
+def test_select_rebuild(snap_compare):
+    # https://github.com/Textualize/textual/issues/2557
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "select_rebuild.py",
+        press=["space", "escape", "tab", "enter", "tab", "space"],
+    )

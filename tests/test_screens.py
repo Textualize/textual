@@ -6,6 +6,7 @@ import pytest
 
 from textual.app import App, ScreenStackError
 from textual.screen import Screen
+from textual.widgets import Button, Input, Label
 
 skip_py310 = pytest.mark.skipif(
     sys.version_info.minor == 10 and sys.version_info.major == 3,
@@ -150,3 +151,73 @@ async def test_screens():
     screen2.remove()
     screen3.remove()
     await app._shutdown()
+
+
+async def test_auto_focus():
+    class MyScreen(Screen[None]):
+        def compose(self):
+            yield Button()
+            yield Input(id="one")
+            yield Input(id="two")
+
+    class MyApp(App[None]):
+        pass
+
+    app = MyApp()
+    async with app.run_test():
+        await app.push_screen(MyScreen())
+        assert isinstance(app.focused, Button)
+        app.pop_screen()
+
+        MyScreen.AUTO_FOCUS = None
+        await app.push_screen(MyScreen())
+        assert app.focused is None
+        app.pop_screen()
+
+        MyScreen.AUTO_FOCUS = "Input"
+        await app.push_screen(MyScreen())
+        assert isinstance(app.focused, Input)
+        assert app.focused.id == "one"
+        app.pop_screen()
+
+        MyScreen.AUTO_FOCUS = "#two"
+        await app.push_screen(MyScreen())
+        assert isinstance(app.focused, Input)
+        assert app.focused.id == "two"
+
+        # If we push and pop another screen, focus should be preserved for #two.
+        MyScreen.AUTO_FOCUS = None
+        await app.push_screen(MyScreen())
+        assert app.focused is None
+        app.pop_screen()
+        assert app.focused.id == "two"
+
+
+async def test_auto_focus_skips_non_focusable_widgets():
+    class MyScreen(Screen[None]):
+        def compose(self):
+            yield Label()
+            yield Button()
+
+    class MyApp(App[None]):
+        def on_mount(self):
+            self.push_screen(MyScreen())
+
+    app = MyApp()
+    async with app.run_test():
+        assert app.focused is not None
+        assert isinstance(app.focused, Button)
+
+
+async def test_dismiss_non_top_screen():
+    class MyApp(App[None]):
+        async def key_p(self) -> None:
+            self.bottom, top = Screen(), Screen()
+            await self.push_screen(self.bottom)
+            await self.push_screen(top)
+
+    app = MyApp()
+    async with app.run_test() as pilot:
+        await pilot.press("p")
+        with pytest.raises(ScreenStackError):
+            app.bottom.dismiss()

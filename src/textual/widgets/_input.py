@@ -332,8 +332,9 @@ class Input(Widget, can_focus=True):
             event.prevent_default()
 
     def _on_paste(self, event: events.Paste) -> None:
-        line = event.text.splitlines()[0]
-        self.insert_text_at_cursor(line)
+        if event.text:
+            line = event.text.splitlines()[0]
+            self.insert_text_at_cursor(line)
         event.stop()
 
     async def _on_click(self, event: events.Click) -> None:

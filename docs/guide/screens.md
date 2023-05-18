@@ -219,3 +219,40 @@ Let's see what happens when we use `ModalScreen`.
 
 Now when we press ++q++, the dialog is displayed over the main screen.
 The main screen is darkened to indicate to the user that it is not active, and only the dialog will respond to input.
+
+## Returning data from screens
+
+It is a common requirement for screens to be able to return data.
+For instance, you may want a screen to show a dialog and have the result of that dialog processed *after* the screen has been popped.
+
+To return data from a screen, call [`dismiss()`][textual.screen.dismiss] on the screen with the data you wish to return.
+This will pop the screen and invoke a callback set when the screen was pushed (with [`push_screen`][textual.app.push_screen]).
+
+Let's modify the previous example to use `dismiss` rather than an explicit `pop_screen`.
+
+=== "modal03.py"
+
+    ```python title="modal03.py" hl_lines="15 27-30 47-50 52"
+    --8<-- "docs/examples/guide/screens/modal03.py"
+    ```
+
+    1. See below for an explanation of the `[bool]`
+
+=== "modal01.css"
+
+    ```sass title="modal01.css"
+    --8<-- "docs/examples/guide/screens/modal01.css"
+    ```
+
+In the `on_button_pressed` message handler we call `dismiss` with a boolean that indicates if the user has chosen to quit the app.
+This boolean is passed to the `check_quit` function we provided when `QuitScreen` was pushed.
+
+Although this example behaves the same as the previous code, it is more flexible because it has removed responsibility for exiting from the modal screen to the caller.
+This makes it easier for the app to perform any cleanup actions prior to exiting, for example.
+
+Returning data in this way can help keep your code manageable by making it easy to re-use your `Screen` classes in other contexts.
+
+### Typing screen results
+
+You may have noticed in the previous example that we changed the base class to `ModalScreen[bool]`.
+The addition of `[bool]` adds typing information that tells the type checker to expect a boolean in the call to `dismiss`, and that any callback set in `push_screen` should also expect the same type. As always, typing is optional in Textual, but this may help you catch bugs.

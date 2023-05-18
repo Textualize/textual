@@ -3,6 +3,7 @@ name: Test Textual module
 on:
   pull_request:
     paths:
+      - '.github/workflows/pythonpackage.yml'
       - '**.py'
       - '**.pyi'
       - '**.css'
@@ -21,27 +22,28 @@ jobs:
       run:
         shell: bash
     steps:
-      - uses: actions/checkout@v1
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-          architecture: x64
-      - name: Install and configure Poetry
+      - uses: actions/checkout@v3.5.2
+      - name: Install and configure Poetry  # This could be cached, too...
         uses: snok/install-poetry@v1.3.3
         with:
           version: 1.4.2
           virtualenvs-in-project: true
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4.6.0
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: x64
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
       - name: Install dependencies
         run: poetry install --extras "dev"
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-      - name: Format check with black
-        run: |
-          source $VENV
-          make format-check
 #      - name: Typecheck with mypy
 #        run: |
-#          source $VENV
 #          make typecheck
       - name: Test with pytest
         run: |

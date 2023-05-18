@@ -6,11 +6,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## Unrealeased
+## [0.25.0] - 2023-05-17
 
 ### Changed
 
 - App `title` and `sub_title` attributes can be set to any type https://github.com/Textualize/textual/issues/2521
+- `DirectoryTree` now loads directory contents in a worker https://github.com/Textualize/textual/issues/2456
+- Only a single error will be written by default, unless in dev mode ("debug" in App.features) https://github.com/Textualize/textual/issues/2480
+- Using `Widget.move_child` where the target and the child being moved are the same is now a no-op https://github.com/Textualize/textual/issues/1743
+- Calling `dismiss` on a screen that is not at the top of the stack now raises an exception https://github.com/Textualize/textual/issues/2575
+- `MessagePump.call_after_refresh` and `MessagePump.call_later` will now return `False` if the callback could not be scheduled. https://github.com/Textualize/textual/pull/2584
 
 ### Fixed
 
@@ -18,6 +23,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `TreeNode.expand` and `TreeNode.expand_all` not posting a `Tree.NodeExpanded` message https://github.com/Textualize/textual/issues/2535
 - Fixed `TreeNode.collapse` and `TreeNode.collapse_all` not posting a `Tree.NodeCollapsed` message https://github.com/Textualize/textual/issues/2535
 - Fixed `TreeNode.toggle` and `TreeNode.toggle_all` not posting a `Tree.NodeExpanded` or `Tree.NodeCollapsed` message https://github.com/Textualize/textual/issues/2535
+- `footer--description` component class was being ignored https://github.com/Textualize/textual/issues/2544
+- Pasting empty selection in `Input` would raise an exception https://github.com/Textualize/textual/issues/2563
+- `Screen.AUTO_FOCUS` now focuses the first _focusable_ widget that matches the selector https://github.com/Textualize/textual/issues/2578
+- `Screen.AUTO_FOCUS` now works on the default screen on startup https://github.com/Textualize/textual/pull/2581
+- Fix for setting dark in App `__init__` https://github.com/Textualize/textual/issues/2583
+- Fix issue with scrolling and docks https://github.com/Textualize/textual/issues/2525
+- Fix not being able to use CSS classes with `Tab` https://github.com/Textualize/textual/pull/2589
+
+### Added
+
+- Class variable `AUTO_FOCUS` to screens https://github.com/Textualize/textual/issues/2457
+- Added `NULL_SPACING` and `NULL_REGION` to geometry.py
 
 ## [0.24.1] - 2023-05-08
 
@@ -948,6 +965,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.25.0]: https://github.com/Textualize/textual/compare/v0.24.1...v0.25.0
 [0.24.1]: https://github.com/Textualize/textual/compare/v0.24.0...v0.24.1
 [0.24.0]: https://github.com/Textualize/textual/compare/v0.23.0...v0.24.0
 [0.23.0]: https://github.com/Textualize/textual/compare/v0.22.3...v0.23.0
