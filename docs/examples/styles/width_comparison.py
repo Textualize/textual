@@ -1,6 +1,6 @@
 from textual.app import App
 from textual.containers import Horizontal
-from textual.widgets import Placeholder, Label, Static
+from textual.widgets import Label, Placeholder, Static
 
 
 class Ruler(Static):
@@ -9,7 +9,7 @@ class Ruler(Static):
         yield Label(ruler_text)
 
 
-class HeightComparisonApp(App):
+class WidthComparisonApp(App):
     def compose(self):
         yield Horizontal(
             Placeholder(id="cells"),  # (1)!
@@ -25,4 +25,6 @@ class HeightComparisonApp(App):
         yield Ruler()
 
 
-app = HeightComparisonApp(css_path="width_comparison.css")
+app = WidthComparisonApp(css_path="width_comparison.css")
+if __name__ == "__main__":
+    app.run()

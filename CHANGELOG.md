@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - `Placeholder` now sets its color cycle per app https://github.com/Textualize/textual/issues/2590
 
+### Removed
+
+- `Placeholder.reset_color_cycle`
+
 ## [0.25.0] - 2023-05-17
 
 ### Changed
