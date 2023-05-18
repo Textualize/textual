@@ -226,19 +226,22 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         """Posted when the select value was changed.
 
         This message can be handled using a `on_select_changed` method.
-
         """
 
-        def __init__(self, control: Select, value: SelectType | None) -> None:
+        def __init__(self, widget: Select, value: SelectType | None) -> None:
             """
             Initialize the Changed message.
-
             """
             super().__init__()
-            self.control = control
-            """The select control."""
+            self.widget = widget
+            """The select widget."""
             self.value = value
             """The value of the Select when it changed."""
+
+        @property
+        def control(self) -> Select:
+            """The Select that sent the message."""
+            return self.widget
 
     def __init__(
         self,
