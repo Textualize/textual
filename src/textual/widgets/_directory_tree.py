@@ -66,9 +66,7 @@ class DirectoryTree(Tree[DirEntry]):
         `DirectoryTree` or in a parent widget in the DOM.
         """
 
-        def __init__(
-            self, tree: DirectoryTree, node: TreeNode[DirEntry], path: Path
-        ) -> None:
+        def __init__(self, node: TreeNode[DirEntry], path: Path) -> None:
             """Initialise the FileSelected object.
 
             Args:
@@ -76,21 +74,15 @@ class DirectoryTree(Tree[DirEntry]):
                 path: The path of the file that was selected.
             """
             super().__init__()
-            self.tree: DirectoryTree = tree
-            """The `DirectoryTree` that had a file selected."""
             self.node: TreeNode[DirEntry] = node
             """The tree node of the file that was selected."""
             self.path: Path = path
             """The path of the file that was selected."""
 
         @property
-        def control(self) -> DirectoryTree:
-            """The `DirectoryTree` that had a file selected.
-
-            This is an alias for [`FileSelected.tree`][textual.widgets.DirectoryTree.FileSelected.tree]
-            which is used by the [`on`][textual.on] decorator.
-            """
-            return self.tree
+        def control(self) -> Tree[DirEntry]:
+            """The `Tree` that had a file selected."""
+            return self.node.tree
 
     path: var[str | Path] = var["str | Path"](Path("."), init=False, always_update=True)
     """The path that is the root of the directory tree.
