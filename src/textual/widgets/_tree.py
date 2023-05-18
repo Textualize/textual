@@ -207,7 +207,7 @@ class TreeNode(Generic[TreeDataType]):
         """
         self._expanded = True
         self._updates += 1
-        self._tree.post_message(Tree.NodeExpanded(self._tree, self))
+        self._tree.post_message(Tree.NodeExpanded(self))
         if expand_all:
             for child in self.children:
                 child._expand(expand_all)
@@ -240,7 +240,7 @@ class TreeNode(Generic[TreeDataType]):
         """
         self._expanded = False
         self._updates += 1
-        self._tree.post_message(Tree.NodeCollapsed(self._tree, self))
+        self._tree.post_message(Tree.NodeCollapsed(self))
         if collapse_all:
             for child in self.children:
                 child._collapse(collapse_all)
@@ -873,7 +873,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             node._selected = True
             self._cursor_node = node
             if previous_node != node:
-                self.post_message(self.NodeHighlighted(self, node))
+                self.post_message(self.NodeHighlighted(node))
         else:
             self._cursor_node = None
 
@@ -1204,7 +1204,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
         Note:
             If `auto_expand` is `True` use of this action on a non-leaf node
-            will cause both an expand/collapse event to occour, as well as a
+            will cause both an expand/collapse event to occur, as well as a
             selected event.
         """
         try:
@@ -1215,4 +1215,4 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             node = line.path[-1]
             if self.auto_expand:
                 self._toggle_node(node)
-            self.post_message(self.NodeSelected(self, node))
+            self.post_message(self.NodeSelected(node))
