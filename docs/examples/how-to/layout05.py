@@ -44,8 +44,6 @@ class TweetScreen(Screen):
 
 
 class LayoutApp(App):
-    CSS_PATH = "layout.css"
-
     def on_ready(self) -> None:
         self.push_screen(TweetScreen())
 
