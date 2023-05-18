@@ -4,11 +4,12 @@ from __future__ import annotations
 
 from typing import ClassVar, Generic, TypeVar
 
-from rich.console import RenderableType
+from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text, TextType
 
 from ..binding import Binding
+from ..strip import Strip
 from ._option_list import Option, OptionList
 from ._toggle_button import ToggleButton
 
@@ -36,7 +37,6 @@ class Selection(Generic[SelectionType], Option):
             id: The optional ID for the selection.
             disabled: The initial enabled/disabled state. Enabled by default.
         """
-        self._prompt = prompt
         self._parent = parent
         super().__init__(prompt, id, disabled)
         self._value: SelectionType = value
@@ -47,10 +47,6 @@ class Selection(Generic[SelectionType], Option):
         return self._value
 
     @property
-    def prompt(self) -> RenderableType:
-        return self._parent._make_label(self)
-
-    @property
     def selected(self) -> bool:
         return self._value in self._parent._selected
 
@@ -58,34 +54,51 @@ class Selection(Generic[SelectionType], Option):
 class SelectionList(Generic[SelectionType], OptionList):
     """A vertical option list that allows making multiple selections."""
 
-    BINDINGS = [Binding("space, enter", "toggle"), Binding("x", "redraw")]
+    BINDINGS = [Binding("space, enter", "toggle")]
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
         "selection-list--button",
         "selection-list--button-selected",
+        "selection-list--button-highlighted",
+        "selection-list--button-selected-highlighted",
     }
 
     DEFAULT_CSS = """
-    /* Base button colours (including in dark mode). */
-
     SelectionList > .selection-list--button {
-        color: $background;
         text-style: bold;
         background: $foreground 15%;
     }
 
     SelectionList:focus > .selection-list--button {
         background: $foreground 25%;
-        background: red;
-        color: red;
+    }
+
+    SelectionList > .selection-list--button-highlighted {
+        text-style: bold;
+        background: $foreground 15%;
+    }
+
+    SelectionList:focus > .selection-list--button-highlighted {
+        text-style: bold;
+        background: $foreground 25%;
     }
 
     SelectionList > .selection-list--button-selected {
-        color: $success;
-        text-style: bold;
+        background: $foreground 15%;
     }
 
     SelectionList:focus > .selection-list--button-selected {
+        color: $success;
+        background: $foreground 25%;
+    }
+
+    SelectionList > .selection-list--button-selected-highlighted {
+        color: $success;
+        background: $foreground 15%;
+    }
+
+    SelectionList:focus > .selection-list--button-selected-highlighted {
+        color: $success;
         background: $foreground 25%;
     }
     """
@@ -148,8 +161,6 @@ class SelectionList(Generic[SelectionType], OptionList):
             (ToggleButton.BUTTON_LEFT, side_style),
             (ToggleButton.BUTTON_INNER, button_style),
             (ToggleButton.BUTTON_RIGHT, side_style),
-            " ",
-            selection._prompt,
         )
 
     def _make_selection(
@@ -186,3 +197,66 @@ class SelectionList(Generic[SelectionType], OptionList):
                 self._selected[option._value] = None
             self._refresh_content_tracking(force=True)
             self.refresh()
+
+    def render_line(self, y: int) -> Strip:
+        """Render a line in the display.
+
+        Args:
+            y: The line to render.
+
+        Returns:
+            A `Strip` that is the line to render.
+        """
+
+        # First off, get the underlying prompt from OptionList.
+        prompt = super().render_line(y)
+
+        # If it looks like the prompt itself is actually an empty line...
+        if not prompt:
+            # ...get out with that. We don't need to do any more here.
+            return prompt
+
+        # We know the prompt we're going to display, what we're going to do
+        # is place a CheckBox-a-like button next to it. So to start with
+        # let's pull out the actual Selection we're looking at right now.
+        _, scroll_y = self.scroll_offset
+        selection_index = scroll_y + y
+        selection = self.get_option_at_index(selection_index)
+        assert isinstance(selection, Selection)
+
+        component_style = "selection-list--button"
+        if selection.selected:
+            component_style += "-selected"
+        if self.highlighted == selection_index:
+            component_style += "-highlighted"
+
+        # Get the underlying style used for the prompt.
+        underlying_style = next(iter(prompt)).style
+        assert underlying_style is not None
+
+        # Get the style for the button.
+        button_style = self.get_component_rich_style(component_style)
+
+        # If the button is off, we're going to do a bit of a switcharound to
+        # make it look like it's a "cutout".
+        if not selection.selected:
+            button_style += Style.from_color(
+                self.background_colors[1].rich_color, button_style.bgcolor
+            )
+
+        # Building the style for the side characters. Note that this is
+        # sensitive to the type of character used, so pay attention to
+        # BUTTON_LEFT and BUTTON_RIGHT.
+        side_style = Style.from_color(button_style.bgcolor, underlying_style.bgcolor)
+
+        # At this point we should have everything we need to place a
+        # "button" before the option.
+        return Strip(
+            [
+                Segment(ToggleButton.BUTTON_LEFT, style=side_style),
+                Segment(ToggleButton.BUTTON_INNER, style=button_style),
+                Segment(ToggleButton.BUTTON_RIGHT, style=side_style),
+                Segment(" ", style=underlying_style),
+                *prompt,
+            ]
+        )
