@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import re
-from typing import ClassVar
+from dataclasses import dataclass
+from typing import ClassVar, Iterable
 
 from rich.cells import cell_len, get_character_cell_size
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
@@ -16,6 +17,7 @@ from ..events import Blur, Focus, Mount
 from ..geometry import Size
 from ..message import Message
 from ..reactive import reactive
+from ..validation import ValidationResult, Validator
 from ..widget import Widget
 
 
@@ -122,6 +124,9 @@ class Input(Widget, can_focus=True):
     Input>.input--placeholder {
         color: $text-disabled;
     }
+    Input.-invalid {
+        border: tall $error;
+    }
     """
 
     cursor_blink = reactive(True)
@@ -178,12 +183,26 @@ class Input(Widget, can_focus=True):
             """Alias for self.input."""
             return self.input
 
+    @dataclass
+    class Valid(Message):
+        """Posted when the Input value is successfully validated."""
+
+        value: str
+
+    @dataclass
+    class Invalid(Message):
+        """Posted when the Input value is invalid."""
+
+        value: str
+        invalid_reasons: list[str]
+
     def __init__(
         self,
         value: str | None = None,
         placeholder: str = "",
         highlighter: Highlighter | None = None,
         password: bool = False,
+        validators: Validator | Iterable[Validator] = None,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -196,6 +215,7 @@ class Input(Widget, can_focus=True):
             placeholder: Optional placeholder text for the input.
             highlighter: An optional highlighter for the input.
             password: Flag to say if the field should obfuscate its content. Default is `False`.
+            validators: An iterable of validators that the Input value will be checked against.
             name: Optional name for the input widget.
             id: Optional ID for the widget.
             classes: Optional initial classes for the widget.
@@ -207,6 +227,11 @@ class Input(Widget, can_focus=True):
         self.placeholder = placeholder
         self.highlighter = highlighter
         self.password = password
+        # Ensure we always end up with an Iterable of validators
+        if isinstance(validators, Validator):
+            self.validators: list[Validator] = [validators]
+        else:
+            self.validators = list(validators) or []
 
     def _position_to_cell(self, position: int) -> int:
         """Convert an index within the value to cell position."""
@@ -255,6 +280,26 @@ class Input(Widget, can_focus=True):
         if self.styles.auto_dimensions:
             self.refresh(layout=True)
         self.post_message(self.Changed(self, value))
+
+        # If this input requires validation, do it when the value changes.
+        if self.validators:
+            validation_result = self.validate(value)
+            self.set_class(not bool(validation_result), "-invalid")
+            self._post_validation_message(validation_result, value)
+
+    def validate(self, value: str) -> ValidationResult:
+        validation_results: list[ValidationResult] = [
+            validator.validate(value) for validator in self.validators
+        ]
+        return ValidationResult.merge(validation_results)
+
+    def _post_validation_message(
+        self, validation_result: ValidationResult, value: str
+    ) -> None:
+        if validation_result:
+            self.post_message(Input.Valid(value))
+        else:
+            self.post_message(Input.Invalid(value, validation_result.invalid_reasons))
 
     @property
     def cursor_width(self) -> int:
@@ -438,7 +483,7 @@ class Input(Widget, can_focus=True):
                 self.value = self.value[: self.cursor_position]
             else:
                 self.value = (
-                    f"{self.value[: self.cursor_position]}{after[hit.end()-1 :]}"
+                    f"{self.value[: self.cursor_position]}{after[hit.end() - 1:]}"
                 )
 
     def action_delete_right_all(self) -> None:
