@@ -514,23 +514,15 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         parent node in the DOM.
         """
 
-        def __init__(
-            self, tree: Tree[EventTreeDataType], node: TreeNode[EventTreeDataType]
-        ) -> None:
-            self.tree = tree
-            """The tree that sent the message."""
+        def __init__(self, node: TreeNode[EventTreeDataType]) -> None:
             self.node: TreeNode[EventTreeDataType] = node
             """The node that was collapsed."""
             super().__init__()
 
         @property
         def control(self) -> Tree[EventTreeDataType]:
-            """The tree that sent the message.
-
-            This is an alias for [`NodeCollapsed.tree`][textual.widgets.Tree.NodeCollapsed.tree]
-            and is used by the [`on`][textual.on] decorator.
-            """
-            return self.tree
+            """The tree that sent the message."""
+            return self.node.tree
 
     class NodeExpanded(Generic[EventTreeDataType], Message, bubble=True):
         """Event sent when a node is expanded.
@@ -539,23 +531,15 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         parent node in the DOM.
         """
 
-        def __init__(
-            self, tree: Tree[EventTreeDataType], node: TreeNode[EventTreeDataType]
-        ) -> None:
-            self.tree = tree
-            """The tree that sent the message."""
+        def __init__(self, node: TreeNode[EventTreeDataType]) -> None:
             self.node: TreeNode[EventTreeDataType] = node
             """The node that was expanded."""
             super().__init__()
 
         @property
         def control(self) -> Tree[EventTreeDataType]:
-            """The tree that sent the message.
-
-            This is an alias for [`NodeExpanded.tree`][textual.widgets.Tree.NodeExpanded.tree]
-            and is used by the [`on`][textual.on] decorator.
-            """
-            return self.tree
+            """The tree that sent the message."""
+            return self.node.tree
 
     class NodeHighlighted(Generic[EventTreeDataType], Message, bubble=True):
         """Event sent when a node is highlighted.
@@ -564,23 +548,15 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         parent node in the DOM.
         """
 
-        def __init__(
-            self, tree: Tree[EventTreeDataType], node: TreeNode[EventTreeDataType]
-        ) -> None:
-            self.tree = tree
-            """The tree that sent the message."""
+        def __init__(self, node: TreeNode[EventTreeDataType]) -> None:
             self.node: TreeNode[EventTreeDataType] = node
             """The node that was highlighted."""
             super().__init__()
 
         @property
         def control(self) -> Tree[EventTreeDataType]:
-            """The tree that sent the message.
-
-            This is an alias for [`NodeHighlighted.tree`][textual.widgets.Tree.NodeHighlighted.tree]
-            and is used by the [`on`][textual.on] decorator.
-            """
-            return self.tree
+            """The tree that sent the message."""
+            return self.node.tree
 
     class NodeSelected(Generic[EventTreeDataType], Message, bubble=True):
         """Event sent when a node is selected.
@@ -589,23 +565,15 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         parent node in the DOM.
         """
 
-        def __init__(
-            self, tree: Tree[EventTreeDataType], node: TreeNode[EventTreeDataType]
-        ) -> None:
-            self.tree = tree
-            """The tree that sent the message."""
+        def __init__(self, node: TreeNode[EventTreeDataType]) -> None:
             self.node: TreeNode[EventTreeDataType] = node
             """The node that was selected."""
             super().__init__()
 
         @property
         def control(self) -> Tree[EventTreeDataType]:
-            """The tree that sent the message.
-
-            This is an alias for [`NodeSelected.tree`][textual.widgets.Tree.NodeSelected.tree]
-            and is used by the [`on`][textual.on] decorator.
-            """
-            return self.tree
+            """The tree that sent the message."""
+            return self.node.tree
 
     def __init__(
         self,
