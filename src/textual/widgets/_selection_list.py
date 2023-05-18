@@ -116,20 +116,13 @@ class SelectionList(Generic[SelectionType], OptionList):
             disabled: Whether the selection list is disabled or not.
         """
         super().__init__(
+            *[self._make_selection(selection) for selection in selections],
             name=name,
             id=id,
             classes=classes,
             disabled=disabled,
         )
         self._selected: dict[SelectionType, None] = {}
-        self._selections = selections
-
-    def _on_mount(self):
-        self.add_options(
-            [self._make_selection(selection) for selection in self._selections]
-        )
-        if self.option_count:
-            self.highlighted = 0
 
     def _make_selection(
         self,
