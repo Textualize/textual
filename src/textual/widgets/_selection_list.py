@@ -22,7 +22,6 @@ class Selection(Generic[SelectionType], Option):
 
     def __init__(
         self,
-        parent: SelectionList,
         value: SelectionType,
         prompt: TextType,
         id: str | None = None,
@@ -37,7 +36,6 @@ class Selection(Generic[SelectionType], Option):
             id: The optional ID for the selection.
             disabled: The initial enabled/disabled state. Enabled by default.
         """
-        self._parent = parent
         super().__init__(prompt, id, disabled)
         self._value: SelectionType = value
 
@@ -45,10 +43,6 @@ class Selection(Generic[SelectionType], Option):
     def value(self) -> SelectionType:
         """The value for this selection."""
         return self._value
-
-    @property
-    def selected(self) -> bool:
-        return self._value in self._parent._selected
 
 
 class SelectionList(Generic[SelectionType], OptionList):
@@ -159,13 +153,13 @@ class SelectionList(Generic[SelectionType], OptionList):
             raise TypeError("Wrong number of values for a selection.")
         if selected:
             self._selected[value] = None
-        return Selection(self, value, label)
+        return Selection(value, label)
 
     def action_toggle(self) -> None:
         if self.highlighted is not None:
             option = self.get_option_at_index(self.highlighted)
             assert isinstance(option, Selection)
-            if option.selected:
+            if option.value in self._selected:
                 del self._selected[option._value]
             else:
                 self._selected[option._value] = None
@@ -199,7 +193,7 @@ class SelectionList(Generic[SelectionType], OptionList):
         assert isinstance(selection, Selection)
 
         component_style = "selection-list--button"
-        if selection.selected:
+        if selection.value in self._selected:
             component_style += "-selected"
         if self.highlighted == selection_index:
             component_style += "-highlighted"
@@ -213,7 +207,7 @@ class SelectionList(Generic[SelectionType], OptionList):
 
         # If the button is off, we're going to do a bit of a switcharound to
         # make it look like it's a "cutout".
-        if not selection.selected:
+        if not selection.value in self._selected:
             button_style += Style.from_color(
                 self.background_colors[1].rich_color, button_style.bgcolor
             )
