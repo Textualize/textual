@@ -84,6 +84,10 @@ def test_input_and_focus(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "input.py", press=press)
 
 
+def test_input_suggestions(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "input_suggestions.py", press=[])
+
+
 def test_buttons_render(snap_compare):
     # Testing button rendering. We press tab to focus the first button too.
     assert snap_compare(WIDGET_EXAMPLES_DIR / "button.py", press=["tab"])
@@ -463,7 +467,9 @@ def test_dock_scroll2(snap_compare):
 def test_dock_scroll_off_by_one(snap_compare):
     # https://github.com/Textualize/textual/issues/2525
     assert snap_compare(
-        SNAPSHOT_APPS_DIR / "dock_scroll_off_by_one.py", terminal_size=(80, 25)
+        SNAPSHOT_APPS_DIR / "dock_scroll_off_by_one.py",
+        terminal_size=(80, 25),
+        press=["_"],
     )
 
 

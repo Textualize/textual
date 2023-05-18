@@ -40,7 +40,7 @@ def snap_compare(
 
     def compare(
         app_path: str | PurePath,
-        press: Iterable[str] = ("_",),
+        press: Iterable[str] = (),
         terminal_size: tuple[int, int] = (80, 24),
         run_before: Callable[[Pilot], Awaitable[None] | None] | None = None,
     ) -> bool:
