@@ -64,6 +64,7 @@ class SelectionList(Generic[SelectionType], OptionList):
     }
 
     SelectionList:focus > .selection-list--button {
+        text-style: bold;
         background: $foreground 25%;
     }
 
@@ -78,20 +79,24 @@ class SelectionList(Generic[SelectionType], OptionList):
     }
 
     SelectionList > .selection-list--button-selected {
+        text-style: bold;
         background: $foreground 15%;
     }
 
     SelectionList:focus > .selection-list--button-selected {
+        text-style: bold;
         color: $success;
         background: $foreground 25%;
     }
 
     SelectionList > .selection-list--button-selected-highlighted {
+        text-style: bold;
         color: $success;
         background: $foreground 15%;
     }
 
     SelectionList:focus > .selection-list--button-selected-highlighted {
+        text-style: bold;
         color: $success;
         background: $foreground 25%;
     }
