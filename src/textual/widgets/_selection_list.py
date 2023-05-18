@@ -137,32 +137,6 @@ class SelectionList(Generic[SelectionType], OptionList):
         if self.option_count:
             self.highlighted = 0
 
-    def _make_label(self, selection: Selection) -> Text:
-        # Grab the button style.
-        button_style = self.get_component_rich_style(
-            f"selection-list--button{'-selected' if selection.selected else ''}"
-        )
-
-        # If the button is off, we're going to do a bit of a switcharound to
-        # make it look like it's a "cutout".
-        if not selection.selected:
-            button_style += Style.from_color(
-                self.background_colors[1].rich_color, button_style.bgcolor
-            )
-
-        # Building the style for the side characters. Note that this is
-        # sensitive to the type of character used, so pay attention to
-        # BUTTON_LEFT and BUTTON_RIGHT.
-        side_style = Style.from_color(
-            button_style.bgcolor, self.background_colors[1].rich_color
-        )
-
-        return Text.assemble(
-            (ToggleButton.BUTTON_LEFT, side_style),
-            (ToggleButton.BUTTON_INNER, button_style),
-            (ToggleButton.BUTTON_RIGHT, side_style),
-        )
-
     def _make_selection(
         self,
         selection: tuple[SelectionType, TextType]
