@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## Unreleased
+
+### Added
+
+- `work` decorator accepts `description` parameter to add debug string https://github.com/Textualize/textual/issues/2597
+
+
 ## [0.25.0] - 2023-05-17
 
 ### Changed
