@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import ClassVar
+from typing import ClassVar, Iterable, List, Optional
 
 from rich.cells import cell_len, get_character_cell_size
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
@@ -9,7 +9,7 @@ from rich.highlighter import Highlighter
 from rich.segment import Segment
 from rich.text import Text
 
-from .. import events
+from .. import events, work
 from .._segment_tools import line_crop
 from ..binding import Binding, BindingType
 from ..events import Blur, Focus, Mount
@@ -31,13 +31,28 @@ class _InputRenderable:
     ) -> "RenderResult":
         input = self.input
         result = input._value
-        if input._cursor_at_end:
-            result.pad_right(1)
-        cursor_style = input.get_component_rich_style("input--cursor")
+        width = input.content_size.width
+
+        # Add the completion with a faded style.
+        value = input.value
+        value_length = len(value)
+        completion = input._completion
+        show_completion = completion.startswith(value) and (
+            len(completion) > value_length
+        )
+        if show_completion:
+            result += Text(
+                completion[value_length:],
+                input.get_component_rich_style("input--suggestion"),
+            )
+
         if self.cursor_visible and input.has_focus:
+            if not show_completion and input._cursor_at_end:
+                result.pad_right(1)
+            cursor_style = input.get_component_rich_style("input--cursor")
             cursor = input.cursor_position
             result.stylize(cursor_style, cursor, cursor + 1)
-        width = input.content_size.width
+
         segments = list(result.render(console))
         line_length = Segment.get_line_length(segments)
         if line_length < width:
@@ -80,7 +95,7 @@ class Input(Widget, can_focus=True):
     | :- | :- |
     | left | Move the cursor left. |
     | ctrl+left | Move the cursor one word to the left. |
-    | right | Move the cursor right. |
+    | right | Move the cursor right or accept the auto-completion suggestion. |
     | ctrl+right | Move the cursor one word to the right. |
     | backspace | Delete the character to the left of the cursor. |
     | home,ctrl+a | Go to the beginning of the input. |
@@ -93,12 +108,17 @@ class Input(Widget, can_focus=True):
     | ctrl+k | Delete everything to the right of the cursor. |
     """
 
-    COMPONENT_CLASSES: ClassVar[set[str]] = {"input--cursor", "input--placeholder"}
+    COMPONENT_CLASSES: ClassVar[set[str]] = {
+        "input--cursor",
+        "input--placeholder",
+        "input--suggestion",
+    }
     """
     | Class | Description |
     | :- | :- |
     | `input--cursor` | Target the cursor. |
     | `input--placeholder` | Target the placeholder text (when it exists). |
+    | `input--suggestion` | Target the auto-completion suggestion (when it exists). |
     """
 
     DEFAULT_CSS = """
@@ -119,7 +139,7 @@ class Input(Widget, can_focus=True):
         color: $text;
         text-style: reverse;
     }
-    Input>.input--placeholder {
+    Input>.input--placeholder, Input>.input--suggestion {
         color: $text-disabled;
     }
     """
@@ -135,6 +155,13 @@ class Input(Widget, can_focus=True):
     _cursor_visible = reactive(True)
     password = reactive(False)
     max_size: reactive[int | None] = reactive(None)
+    completions = reactive[Optional[List[str]]](None)
+    """List of auto-completions that are suggested while the user types.
+
+    The precedence of the suggestions is inferred from the order of the list.
+    Set this to `None` or to an empty list to disable auto-suggestions."""
+    _completion = reactive("")
+    """A completion suggestion for the current value in the input."""
 
     class Changed(Message, bubble=True):
         """Posted when the value changes.
@@ -184,6 +211,8 @@ class Input(Widget, can_focus=True):
         placeholder: str = "",
         highlighter: Highlighter | None = None,
         password: bool = False,
+        *,
+        completions: Iterable[str] | None = None,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -195,7 +224,8 @@ class Input(Widget, can_focus=True):
             value: An optional default value for the input.
             placeholder: Optional placeholder text for the input.
             highlighter: An optional highlighter for the input.
-            password: Flag to say if the field should obfuscate its content. Default is `False`.
+            password: Flag to say if the field should obfuscate its content.
+            completions: Possible auto-completions for the input field.
             name: Optional name for the input widget.
             id: Optional ID for the widget.
             classes: Optional initial classes for the widget.
@@ -207,6 +237,7 @@ class Input(Widget, can_focus=True):
         self.placeholder = placeholder
         self.highlighter = highlighter
         self.password = password
+        self.completions = completions
 
     def _position_to_cell(self, position: int) -> int:
         """Convert an index within the value to cell position."""
@@ -252,6 +283,9 @@ class Input(Widget, can_focus=True):
             self.view_position = self.view_position
 
     async def watch_value(self, value: str) -> None:
+        self._completion = ""
+        if self.completions and value:
+            self._get_completion()
         if self.styles.auto_dimensions:
             self.refresh(layout=True)
         self.post_message(self.Changed(self, value))
@@ -359,7 +393,7 @@ class Input(Widget, can_focus=True):
         Args:
             text: New text to insert.
         """
-        if self.cursor_position > len(self.value):
+        if self.cursor_position >= len(self.value):
             self.value += text
             self.cursor_position = len(self.value)
         else:
@@ -374,8 +408,12 @@ class Input(Widget, can_focus=True):
         self.cursor_position -= 1
 
     def action_cursor_right(self) -> None:
-        """Move the cursor one position to the right."""
-        self.cursor_position += 1
+        """Accept an auto-completion or move the cursor one position to the right."""
+        if self._cursor_at_end and self._completion:
+            self.value = self._completion
+            self.cursor_position = len(self.value)
+        else:
+            self.cursor_position += 1
 
     def action_home(self) -> None:
         """Move the cursor to the start of the input."""
@@ -492,3 +530,23 @@ class Input(Widget, can_focus=True):
     async def action_submit(self) -> None:
         """Handle a submit action (normally the user hitting Enter in the input)."""
         self.post_message(self.Submitted(self, self.value))
+
+    def validate_completions(
+        self, completions: Iterable[str] | None
+    ) -> list[str] | None:
+        """Convert completions iterable to a list."""
+        if completions is None:
+            return None
+        return list(completions)
+
+    @work(exclusive=True)
+    def _get_completion(self) -> None:
+        """Try to get a completion to suggest to the user."""
+        if not self.completions:
+            return
+
+        value = self.value
+        for completion in self.completions:
+            if completion.startswith(value):
+                self._completion = completion
+                break

@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## Unreleased
+
+### Added
+
+- `Input` widget now supports auto-completion https://github.com/Textualize/textual/issues/2330
+
+
 ## [0.25.0] - 2023-05-17
 
 ### Changed
