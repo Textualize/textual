@@ -202,7 +202,7 @@ class Input(Widget, can_focus=True):
         placeholder: str = "",
         highlighter: Highlighter | None = None,
         password: bool = False,
-        validators: Validator | Iterable[Validator] = None,
+        validators: Validator | Iterable[Validator] | None = None,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -230,6 +230,8 @@ class Input(Widget, can_focus=True):
         # Ensure we always end up with an Iterable of validators
         if isinstance(validators, Validator):
             self.validators: list[Validator] = [validators]
+        elif validators is None:
+            self.validators = []
         else:
             self.validators = list(validators) or []
 
