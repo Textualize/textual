@@ -2140,6 +2140,7 @@ class App(Generic[ReturnType], DOMNode):
             screen = Screen(id="_default")
             self._register(self, screen)
             self._screen_stack.append(screen)
+            screen.post_message(events.ScreenResume())
             await super().on_event(event)
 
         elif isinstance(event, events.InputEvent) and not event.is_forwarded:

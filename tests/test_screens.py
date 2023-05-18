@@ -6,7 +6,7 @@ import pytest
 
 from textual.app import App, ScreenStackError
 from textual.screen import Screen
-from textual.widgets import Button, Input
+from textual.widgets import Button, Input, Label
 
 skip_py310 = pytest.mark.skipif(
     sys.version_info.minor == 10 and sys.version_info.major == 3,
@@ -155,8 +155,7 @@ async def test_screens():
 
 async def test_auto_focus():
     class MyScreen(Screen[None]):
-        def compose(self) -> None:
-            print("composing")
+        def compose(self):
             yield Button()
             yield Input(id="one")
             yield Input(id="two")
@@ -192,6 +191,22 @@ async def test_auto_focus():
         assert app.focused is None
         app.pop_screen()
         assert app.focused.id == "two"
+
+
+async def test_auto_focus_skips_non_focusable_widgets():
+    class MyScreen(Screen[None]):
+        def compose(self):
+            yield Label()
+            yield Button()
+
+    class MyApp(App[None]):
+        def on_mount(self):
+            self.push_screen(MyScreen())
+
+    app = MyApp()
+    async with app.run_test():
+        assert app.focused is not None
+        assert isinstance(app.focused, Button)
 
 
 async def test_dismiss_non_top_screen():

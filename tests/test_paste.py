@@ -38,6 +38,7 @@ async def test_empty_paste():
 
     app = PasteApp()
     async with app.run_test() as pilot:
+        app.set_focus(None)
         await pilot.press("p")
         assert app.query_one(MyInput).value == ""
         assert len(paste_events) == 1
