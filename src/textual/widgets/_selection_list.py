@@ -190,6 +190,8 @@ class SelectionList(Generic[SelectionType], OptionList):
         selection = self.get_option_at_index(selection_index)
         assert isinstance(selection, Selection)
 
+        # Figure out which component style is relevant for a checkbox on
+        # this particular line.
         component_style = "selection-list--button"
         if selection.value in self._selected:
             component_style += "-selected"
@@ -203,14 +205,14 @@ class SelectionList(Generic[SelectionType], OptionList):
         # Get the style for the button.
         button_style = self.get_component_rich_style(component_style)
 
-        # If the button is off, we're going to do a bit of a switcharound to
-        # make it look like it's a "cutout".
+        # If the button is in the unselected state, we're going to do a bit
+        # of a switcharound to make it look like it's a "cutout".
         if not selection.value in self._selected:
             button_style += Style.from_color(
                 self.background_colors[1].rich_color, button_style.bgcolor
             )
 
-        # Building the style for the side characters. Note that this is
+        # Build the style for the side characters. Note that this is
         # sensitive to the type of character used, so pay attention to
         # BUTTON_LEFT and BUTTON_RIGHT.
         side_style = Style.from_color(button_style.bgcolor, underlying_style.bgcolor)
