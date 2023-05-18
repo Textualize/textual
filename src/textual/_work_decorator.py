@@ -69,7 +69,7 @@ def work(
         exit_on_error: Exit the app if the worker raises an error. Set to `False` to suppress exceptions.
         exclusive: Cancel all workers in the same group.
         description: Readable description of the worker for debugging purposes.
-            By default, it uses a string representation of the of the decorated method
+            By default, it uses a string representation of the decorated method
             and its arguments.
     """
 
