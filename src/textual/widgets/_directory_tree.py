@@ -2,13 +2,13 @@ from __future__ import annotations
 
 from asyncio import Queue
 from dataclasses import dataclass
-from pathlib import Path
 from typing import ClassVar, Iterable, Iterator
 
 from rich.style import Style
 from rich.text import Text, TextType
 
 from .. import work
+from .._pathlib import PathlibImplementation as Path
 from ..message import Message
 from ..reactive import var
 from ..worker import Worker, WorkerCancelled, WorkerFailed, get_current_worker

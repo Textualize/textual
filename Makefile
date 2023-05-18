@@ -80,7 +80,7 @@ clean: clean-screenshot-cache clean-offline-docs
 
 .PHONY: setup
 setup:
-	poetry install --extras dev
+	poetry install --extras "dev fsspec"
 
 .PHONY: update
 update:
