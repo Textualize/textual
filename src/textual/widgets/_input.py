@@ -36,18 +36,18 @@ class _InputRenderable:
         # Add the completion with a faded style.
         value = input.value
         value_length = len(value)
-        completion = input._completion
-        show_completion = completion.startswith(value) and (
-            len(completion) > value_length
+        suggestion = input._suggestion
+        show_suggestion = suggestion.startswith(value) and (
+            len(suggestion) > value_length
         )
-        if show_completion:
+        if show_suggestion:
             result += Text(
-                completion[value_length:],
+                suggestion[value_length:],
                 input.get_component_rich_style("input--suggestion"),
             )
 
         if self.cursor_visible and input.has_focus:
-            if not show_completion and input._cursor_at_end:
+            if not show_suggestion and input._cursor_at_end:
                 result.pad_right(1)
             cursor_style = input.get_component_rich_style("input--cursor")
             cursor = input.cursor_position
@@ -95,7 +95,7 @@ class Input(Widget, can_focus=True):
     | :- | :- |
     | left | Move the cursor left. |
     | ctrl+left | Move the cursor one word to the left. |
-    | right | Move the cursor right or accept the auto-completion suggestion. |
+    | right | Move the cursor right or accept the completion suggestion. |
     | ctrl+right | Move the cursor one word to the right. |
     | backspace | Delete the character to the left of the cursor. |
     | home,ctrl+a | Go to the beginning of the input. |
@@ -155,12 +155,13 @@ class Input(Widget, can_focus=True):
     _cursor_visible = reactive(True)
     password = reactive(False)
     max_size: reactive[int | None] = reactive(None)
-    completions = reactive[Optional[List[str]]](None)
-    """List of auto-completions that are suggested while the user types.
+    suggestions = reactive[Optional[List[str]]](None)
+    """List of completion suggestions that are shown while the user types.
 
     The precedence of the suggestions is inferred from the order of the list.
-    Set this to `None` or to an empty list to disable auto-suggestions."""
-    _completion = reactive("")
+    Set this to `None` or to an empty list to disable this feature..
+    """
+    _suggestion = reactive("")
     """A completion suggestion for the current value in the input."""
 
     class Changed(Message, bubble=True):
@@ -212,7 +213,7 @@ class Input(Widget, can_focus=True):
         highlighter: Highlighter | None = None,
         password: bool = False,
         *,
-        completions: Iterable[str] | None = None,
+        suggestions: Iterable[str] | None = None,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -225,7 +226,7 @@ class Input(Widget, can_focus=True):
             placeholder: Optional placeholder text for the input.
             highlighter: An optional highlighter for the input.
             password: Flag to say if the field should obfuscate its content.
-            completions: Possible auto-completions for the input field.
+            suggestions: Possible auto-completions for the input field.
             name: Optional name for the input widget.
             id: Optional ID for the widget.
             classes: Optional initial classes for the widget.
@@ -237,7 +238,7 @@ class Input(Widget, can_focus=True):
         self.placeholder = placeholder
         self.highlighter = highlighter
         self.password = password
-        self.completions = completions
+        self.suggestions = suggestions
 
     def _position_to_cell(self, position: int) -> int:
         """Convert an index within the value to cell position."""
@@ -283,9 +284,9 @@ class Input(Widget, can_focus=True):
             self.view_position = self.view_position
 
     async def watch_value(self, value: str) -> None:
-        self._completion = ""
-        if self.completions and value:
-            self._get_completion()
+        self._suggestion = ""
+        if self.suggestions and value:
+            self._get_suggestion()
         if self.styles.auto_dimensions:
             self.refresh(layout=True)
         self.post_message(self.Changed(self, value))
@@ -409,8 +410,8 @@ class Input(Widget, can_focus=True):
 
     def action_cursor_right(self) -> None:
         """Accept an auto-completion or move the cursor one position to the right."""
-        if self._cursor_at_end and self._completion:
-            self.value = self._completion
+        if self._cursor_at_end and self._suggestion:
+            self.value = self._suggestion
             self.cursor_position = len(self.value)
         else:
             self.cursor_position += 1
@@ -531,22 +532,22 @@ class Input(Widget, can_focus=True):
         """Handle a submit action (normally the user hitting Enter in the input)."""
         self.post_message(self.Submitted(self, self.value))
 
-    def validate_completions(
-        self, completions: Iterable[str] | None
+    def validate_suggestions(
+        self, suggestions: Iterable[str] | None
     ) -> list[str] | None:
-        """Convert completions iterable to a list."""
-        if completions is None:
+        """Convert suggestions iterable into a list."""
+        if suggestions is None:
             return None
-        return list(completions)
+        return list(suggestions)
 
     @work(exclusive=True)
-    def _get_completion(self) -> None:
-        """Try to get a completion to suggest to the user."""
-        if not self.completions:
+    def _get_suggestion(self) -> None:
+        """Try to get a suggestion for the user."""
+        if not self.suggestions:
             return
 
         value = self.value
-        for completion in self.completions:
-            if completion.startswith(value):
-                self._completion = completion
+        for suggestion in self.suggestions:
+            if suggestion.startswith(value):
+                self._suggestion = suggestion
                 break
