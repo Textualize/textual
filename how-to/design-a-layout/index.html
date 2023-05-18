@@ -7539,15 +7539,13 @@ In a real app, these columns will likely be added dynamically from some kind of 
 </span><a id="__codelineno-4-44" name="__codelineno-4-44" href="#__codelineno-4-44"></a>
 <a id="__codelineno-4-45" name="__codelineno-4-45" href="#__codelineno-4-45"></a>
 <a id="__codelineno-4-46" name="__codelineno-4-46" href="#__codelineno-4-46"></a><span class="k">class</span> <span class="nc">LayoutApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
-<a id="__codelineno-4-47" name="__codelineno-4-47" href="#__codelineno-4-47"></a>    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;layout.css&quot;</span>
-<a id="__codelineno-4-48" name="__codelineno-4-48" href="#__codelineno-4-48"></a>
-<a id="__codelineno-4-49" name="__codelineno-4-49" href="#__codelineno-4-49"></a>    <span class="k">def</span> <span class="nf">on_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-4-50" name="__codelineno-4-50" href="#__codelineno-4-50"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">push_screen</span><span class="p">(</span><span class="n">TweetScreen</span><span class="p">())</span>
-<a id="__codelineno-4-51" name="__codelineno-4-51" href="#__codelineno-4-51"></a>
-<a id="__codelineno-4-52" name="__codelineno-4-52" href="#__codelineno-4-52"></a>
-<a id="__codelineno-4-53" name="__codelineno-4-53" href="#__codelineno-4-53"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-<a id="__codelineno-4-54" name="__codelineno-4-54" href="#__codelineno-4-54"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">LayoutApp</span><span class="p">()</span>
-<a id="__codelineno-4-55" name="__codelineno-4-55" href="#__codelineno-4-55"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<a id="__codelineno-4-47" name="__codelineno-4-47" href="#__codelineno-4-47"></a>    <span class="k">def</span> <span class="nf">on_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-4-48" name="__codelineno-4-48" href="#__codelineno-4-48"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">push_screen</span><span class="p">(</span><span class="n">TweetScreen</span><span class="p">())</span>
+<a id="__codelineno-4-49" name="__codelineno-4-49" href="#__codelineno-4-49"></a>
+<a id="__codelineno-4-50" name="__codelineno-4-50" href="#__codelineno-4-50"></a>
+<a id="__codelineno-4-51" name="__codelineno-4-51" href="#__codelineno-4-51"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-4-52" name="__codelineno-4-52" href="#__codelineno-4-52"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">LayoutApp</span><span class="p">()</span>
+<a id="__codelineno-4-53" name="__codelineno-4-53" href="#__codelineno-4-53"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
@@ -7780,15 +7778,13 @@ In the real app, you might set the height to "auto" so it fits the content, but 
 <a id="__codelineno-5-58" name="__codelineno-5-58" href="#__codelineno-5-58"></a>
 <a id="__codelineno-5-59" name="__codelineno-5-59" href="#__codelineno-5-59"></a>
 <a id="__codelineno-5-60" name="__codelineno-5-60" href="#__codelineno-5-60"></a><span class="k">class</span> <span class="nc">LayoutApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
-<a id="__codelineno-5-61" name="__codelineno-5-61" href="#__codelineno-5-61"></a>    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;layout.css&quot;</span>
-<a id="__codelineno-5-62" name="__codelineno-5-62" href="#__codelineno-5-62"></a>
-<a id="__codelineno-5-63" name="__codelineno-5-63" href="#__codelineno-5-63"></a>    <span class="k">def</span> <span class="nf">on_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-5-64" name="__codelineno-5-64" href="#__codelineno-5-64"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">push_screen</span><span class="p">(</span><span class="n">TweetScreen</span><span class="p">())</span>
-<a id="__codelineno-5-65" name="__codelineno-5-65" href="#__codelineno-5-65"></a>
-<a id="__codelineno-5-66" name="__codelineno-5-66" href="#__codelineno-5-66"></a>
-<a id="__codelineno-5-67" name="__codelineno-5-67" href="#__codelineno-5-67"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-<a id="__codelineno-5-68" name="__codelineno-5-68" href="#__codelineno-5-68"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">LayoutApp</span><span class="p">()</span>
-<a id="__codelineno-5-69" name="__codelineno-5-69" href="#__codelineno-5-69"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<a id="__codelineno-5-61" name="__codelineno-5-61" href="#__codelineno-5-61"></a>    <span class="k">def</span> <span class="nf">on_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-5-62" name="__codelineno-5-62" href="#__codelineno-5-62"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">push_screen</span><span class="p">(</span><span class="n">TweetScreen</span><span class="p">())</span>
+<a id="__codelineno-5-63" name="__codelineno-5-63" href="#__codelineno-5-63"></a>
+<a id="__codelineno-5-64" name="__codelineno-5-64" href="#__codelineno-5-64"></a>
+<a id="__codelineno-5-65" name="__codelineno-5-65" href="#__codelineno-5-65"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-5-66" name="__codelineno-5-66" href="#__codelineno-5-66"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">LayoutApp</span><span class="p">()</span>
+<a id="__codelineno-5-67" name="__codelineno-5-67" href="#__codelineno-5-67"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
