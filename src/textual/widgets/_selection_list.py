@@ -6,7 +6,7 @@ from typing import ClassVar, Generic, TypeVar
 
 from rich.segment import Segment
 from rich.style import Style
-from rich.text import Text, TextType
+from rich.text import TextType
 
 from ..binding import Binding
 from ..strip import Strip
