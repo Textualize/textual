@@ -1454,10 +1454,9 @@ class App(Generic[ReturnType], DOMNode):
             return
 
         stack = self._screen_stacks[mode]
-        for screen in reversed(stack):
-            if screen._running:
-                self.call_later(self._prune_node, screen)
         del self._screen_stacks[mode]
+        for screen in reversed(stack):
+            self._replace_screen(screen)
 
     def is_screen_installed(self, screen: Screen | str) -> bool:
         """Check if a given screen has been installed.
@@ -1535,9 +1534,8 @@ class App(Generic[ReturnType], DOMNode):
             self.screen.refresh()
         screen.post_message(events.ScreenSuspend())
         self.log.system(f"{screen} SUSPENDED")
-        if (
-            not self.is_screen_installed(screen)
-            and screen not in self._screen_stacks[self._current_mode]
+        if not self.is_screen_installed(screen) and all(
+            screen not in stack for stack in self._screen_stacks.values()
         ):
             screen.remove()
             self.log.system(f"{screen} REMOVED")
