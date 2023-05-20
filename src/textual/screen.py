@@ -254,7 +254,6 @@ class Screen(Generic[ScreenResultType], Widget):
         stack: list[Iterator[Widget]] = [iter(self.focusable_children)]
         pop = stack.pop
         push = stack.append
-        self._compositor.full_map
 
         while stack:
             node = next(stack[-1], None)
@@ -287,6 +286,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 is not `None`, then it is guaranteed that the widget returned matches
                 the CSS selectors given in the argument.
         """
+        # TODO: This shouldn't be required
         self._compositor._full_map_invalidated = True
         if not isinstance(selector, str):
             selector = selector.__name__
