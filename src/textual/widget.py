@@ -2267,13 +2267,12 @@ class Widget(DOMNode):
 
         while isinstance(widget.parent, Widget) and widget is not self:
             container = widget.parent
-
             if widget.styles.dock:
                 scroll_offset = Offset(0, 0)
             else:
                 scroll_offset = container.scroll_to_region(
                     region,
-                    spacing=widget.parent.gutter + widget.dock_gutter,
+                    spacing=widget.gutter + widget.dock_gutter,
                     animate=animate,
                     speed=speed,
                     duration=duration,
@@ -2286,15 +2285,17 @@ class Widget(DOMNode):
 
             # Adjust the region by the amount we just scrolled it, and convert to
             # it's parent's virtual coordinate system.
+
             region = (
                 (
                     region.translate(-scroll_offset)
                     .translate(-widget.scroll_offset)
-                    .translate(container.virtual_region.offset)
+                    .translate(container.virtual_region_with_margin.offset)
                 )
                 .grow(container.styles.margin)
-                .intersection(container.virtual_region)
+                .intersection(container.virtual_region_with_margin)
             )
+
             widget = container
         return scrolled
 
@@ -2482,6 +2483,30 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
         )
+
+    def can_view(self, widget: Widget) -> bool:
+        """Check if a given widget is in the current view (scrollable area).
+
+        Note: This doesn't necessarily mean a widget is visible.
+        There are several reasons why a widget may not be visible.
+
+        Args:
+            widget: A widget that is a descendant of self.
+
+        Returns:
+            True if the entire widget is in view, False if it is partially visible or not in view.
+        """
+        if widget is self:
+            return True
+
+        region = widget.region
+        node: Widget = widget
+
+        while isinstance(node.parent, Widget) and node is not self:
+            if region not in node.parent.scrollable_content_region:
+                return False
+            node = node.parent
+        return True
 
     def __init_subclass__(
         cls,
