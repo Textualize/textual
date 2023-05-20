@@ -475,16 +475,16 @@ class Screen(Generic[ScreenResultType], Widget):
                 # Send focus event
                 if scroll_visible:
 
-                    def scroll_to_center() -> None:
+                    def scroll_to_center(widget: Widget) -> None:
+                        """Scroll to center (after a refresh)."""
                         if widget.has_focus and not self.screen.can_view(widget):
                             self.screen.scroll_to_center(widget)
 
-                    self.call_after_refresh(scroll_to_center)
+                    self.call_after_refresh(scroll_to_center, widget)
                 widget.post_message(events.Focus())
                 focused = widget
 
-                # self._update_focus_styles(self.focused, widget)
-                # self.log.debug(widget, "was focused")
+                self.log.debug(widget, "was focused")
 
         self._update_focus_styles(focused, blurred)
 

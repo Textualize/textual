@@ -2487,8 +2487,8 @@ class Widget(DOMNode):
     def can_view(self, widget: Widget) -> bool:
         """Check if a given widget is in the current view (scrollable area).
 
-        Note: This doesn't necessarily mean a widget is visible.
-        There are several reasons why a widget may not be visible.
+        Note: This doesn't necessarily equate to a widget being visible.
+        There are other reasons why a widget may not be visible.
 
         Args:
             widget: A widget that is a descendant of self.

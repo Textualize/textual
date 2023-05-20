@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added Widget.can_view
 
+### Changed
+
+- Textual will now scroll focused widgets to center if not in view
+
 ## [0.25.0] - 2023-05-17
 
 ### Changed
