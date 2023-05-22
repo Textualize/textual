@@ -141,21 +141,23 @@ class Input(Widget, can_focus=True):
     password = reactive(False)
     max_size: reactive[int | None] = reactive(None)
 
+    @dataclass
     class Changed(Message, bubble=True):
         """Posted when the value changes.
 
         Can be handled using `on_input_changed` in a subclass of `Input` or in a parent
         widget in the DOM.
-
-        Attributes:
-            value: The value that the input was changed to.
-            input: The `Input` widget that was changed.
         """
 
-        def __init__(self, input: Input, value: str) -> None:
-            super().__init__()
-            self.input: Input = input
-            self.value: str = value
+        input: Input
+        """The `Input` widget that was changed."""
+
+        value: str
+        """The value that the input was changed to."""
+
+        validation_result: ValidationResult | None = None
+        """The result of validating the value (formed by combining the results from each validator), or None
+            if validation was not performed (for example  when no validators are specified in the `Input`s init)"""
 
         @property
         def control(self) -> Input:
@@ -182,19 +184,6 @@ class Input(Widget, can_focus=True):
         def control(self) -> Input:
             """Alias for self.input."""
             return self.input
-
-    @dataclass
-    class Valid(Message):
-        """Posted when the Input value is successfully validated."""
-
-        value: str
-
-    @dataclass
-    class Invalid(Message):
-        """Posted when the Input value is invalid."""
-
-        value: str
-        failure_reasons: list[Failure]
 
     def __init__(
         self,
@@ -281,13 +270,15 @@ class Input(Widget, can_focus=True):
     async def watch_value(self, value: str) -> None:
         if self.styles.auto_dimensions:
             self.refresh(layout=True)
-        self.post_message(self.Changed(self, value))
 
         # If this input requires validation, do it when the value changes.
         if self.validators:
             validation_result = self.validate(value)
             self.set_class(not bool(validation_result), "-invalid")
-            self._post_validation_message(validation_result, value)
+        else:
+            validation_result = None
+
+        self.post_message(self.Changed(self, value, validation_result))
 
     def validate(self, value: str) -> ValidationResult:
         """Run all the validators associated with this Input on the supplied value.
@@ -300,14 +291,6 @@ class Input(Widget, can_focus=True):
             validator.validate(value) for validator in self.validators
         ]
         return ValidationResult.merge(validation_results)
-
-    def _post_validation_message(
-        self, validation_result: ValidationResult, value: str
-    ) -> None:
-        if validation_result:
-            self.post_message(Input.Valid(value))
-        else:
-            self.post_message(Input.Invalid(value, validation_result.failures))
 
     @property
     def cursor_width(self) -> int:

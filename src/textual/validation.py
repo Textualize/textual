@@ -160,10 +160,11 @@ class Validator(ABC):
         if isinstance(failures, Failure):
             failures = [failures]
 
-        return ValidationResult(
+        result = ValidationResult(
             False,
             failures or [Failure(value=value, validator=self, message=description)],
         )
+        return result
 
 
 class Regex(Validator):
