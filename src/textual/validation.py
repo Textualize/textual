@@ -33,8 +33,8 @@ class ValidationResult:
             Merged ValidationResult object.
         """
         valid = all(result.valid for result in results)
-        invalid_reasons = [reason for result in results for reason in result.failures]
-        return ValidationResult(valid=valid, failures=invalid_reasons)
+        failures = [failure for result in results for failure in result.failures]
+        return ValidationResult(valid=valid, failures=failures)
 
     @property
     def failure_descriptions(self) -> list[str]:
