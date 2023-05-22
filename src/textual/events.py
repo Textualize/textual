@@ -35,9 +35,6 @@ if TYPE_CHECKING:
 class Event(Message):
     """The base class for all events."""
 
-    def __rich_repr__(self) -> rich.repr.Result:
-        yield from ()
-
 
 @rich.repr.auto
 class Callback(Event, bubble=False, verbose=True):
