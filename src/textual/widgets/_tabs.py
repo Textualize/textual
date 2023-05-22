@@ -117,15 +117,17 @@ class Tab(Static):
         label: TextType,
         *,
         id: str | None = None,
+        classes: str | None = None,
     ) -> None:
         """Initialise a Tab.
 
         Args:
             label: The label to use in the tab.
             id: Optional ID for the widget.
+            classes: Space separated list of class names.
         """
         self.label = Text.from_markup(label) if isinstance(label, str) else label
-        super().__init__(id=id)
+        super().__init__(id=id, classes=classes)
         self.update(label)
 
     @property

@@ -162,6 +162,7 @@ Let's set the width of the columns to 32.
 We also want to reduce the height of each "tweet".
 In the real app, you might set the height to "auto" so it fits the content, but lets set it to 5 lines for now.
 
+Here's the final example and a reminder of the sketch.
 
 === "layout06.py"
 
@@ -174,11 +175,16 @@ In the real app, you might set the height to "auto" so it fits the content, but 
     ```{.textual path="docs/examples/how-to/layout06.py" columns="100" lines="32"}
     ```
 
-You should see from the output that we have fixed width columns that will scroll horizontally.
-You can also scroll the "tweets" in each column vertically.
+=== "Sketch"
 
-This last example is a relatively complete design.
-There are plenty of things you might want to tweak, but this contains all the elements you might need.
+    <div class="excalidraw">
+    --8<-- "docs/images/how-to/layout.excalidraw.svg"
+    </div>
+
+
+A layout like this is a great starting point.
+In a real app, you would start replacing each of the placeholders with [builtin](../widget_gallery.md) or [custom](../guide/widgets.md) widgets.
+
 
 ## Summary
 

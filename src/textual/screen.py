@@ -246,6 +246,9 @@ class Screen(Generic[ScreenResultType], Widget):
     @property
     def focus_chain(self) -> list[Widget]:
         """A list of widgets that may receive focus, in focus order."""
+        # TODO: Calculating a focus chain is moderately expensive.
+        # Suspect we can move focus without calculating the entire thing again.
+
         widgets: list[Widget] = []
         add_widget = widgets.append
         stack: list[Iterator[Widget]] = [iter(self.focusable_children)]
@@ -283,6 +286,8 @@ class Screen(Generic[ScreenResultType], Widget):
                 is not `None`, then it is guaranteed that the widget returned matches
                 the CSS selectors given in the argument.
         """
+        # TODO: This shouldn't be required
+        self._compositor._full_map_invalidated = True
         if not isinstance(selector, str):
             selector = selector.__name__
         selector_set = parse_selectors(selector)
@@ -469,11 +474,16 @@ class Screen(Generic[ScreenResultType], Widget):
                 self.focused = widget
                 # Send focus event
                 if scroll_visible:
-                    self.screen.scroll_to_widget(widget)
+
+                    def scroll_to_center(widget: Widget) -> None:
+                        """Scroll to center (after a refresh)."""
+                        if widget.has_focus and not self.screen.can_view(widget):
+                            self.screen.scroll_to_center(widget)
+
+                    self.call_after_refresh(scroll_to_center, widget)
                 widget.post_message(events.Focus())
                 focused = widget
 
-                self._update_focus_styles(self.focused, widget)
                 self.log.debug(widget, "was focused")
 
         self._update_focus_styles(focused, blurred)
