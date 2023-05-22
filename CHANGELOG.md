@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## Unreleased
+
+### Changed
+
+- `Message.control` is now a property instead of a class variable. https://github.com/Textualize/textual/issues/2528
+- `Tree` and `DirectoryTree` Messages no longer accept a `tree` parameter, using `self.node.tree` instead. https://github.com/Textualize/textual/issues/2529
+
 ## [0.25.0] - 2023-05-17
 
 ### Changed
