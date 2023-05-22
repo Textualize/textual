@@ -71,7 +71,7 @@ from ._wait import wait_for_idle
 from ._worker_manager import WorkerManager
 from .actions import ActionParseResult, SkipAction
 from .await_remove import AwaitRemove
-from .binding import Binding, _Bindings
+from .binding import Binding, _Bindings, BindingType
 from .css.query import NoMatches
 from .css.stylesheet import Stylesheet
 from .design import ColorSystem
@@ -230,7 +230,9 @@ class App(Generic[ReturnType], DOMNode):
     To update the sub-title while the app is running, you can set the [sub_title][textual.app.App.sub_title] attribute.
     """
 
-    BINDINGS = [Binding("ctrl+c", "quit", "Quit", show=False, priority=True)]
+    BINDINGS: ClassVar[list[BindingType]] = [
+        Binding("ctrl+c", "quit", "Quit", show=False, priority=True)
+    ]
 
     title: Reactive[str] = Reactive("", compute=False)
     sub_title: Reactive[str] = Reactive("", compute=False)
