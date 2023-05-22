@@ -91,7 +91,7 @@ class Validator(ABC):
             def validate(self, value: str) -> ValidationResult:
                 def is_palindrome(value: str) -> bool:
                     return value == value[::-1]
-                return success() if is_palindrome(value) else failure("Not palindrome!")
+                return self.success() if is_palindrome(value) else self.failure("Not palindrome!")
         ```
     """
 
