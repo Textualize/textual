@@ -228,12 +228,12 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         This message can be handled using a `on_select_changed` method.
         """
 
-        def __init__(self, widget: Select, value: SelectType | None) -> None:
+        def __init__(self, select: Select, value: SelectType | None) -> None:
             """
             Initialize the Changed message.
             """
             super().__init__()
-            self.widget = widget
+            self.select = select
             """The select widget."""
             self.value = value
             """The value of the Select when it changed."""
@@ -241,7 +241,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         @property
         def control(self) -> Select:
             """The Select that sent the message."""
-            return self.widget
+            return self.select
 
     def __init__(
         self,
