@@ -22,6 +22,10 @@ MessageSelectionType = TypeVar("MessageSelectionType")
 """The type for the value of a `SelectionList` message"""
 
 
+class SelectionError(TypeError):
+    """Type of an error raised if a selection is badly-formed."""
+
+
 class Selection(Generic[SelectionType], Option):
     """A selection for the `SelectionList`."""
 
@@ -200,6 +204,9 @@ class SelectionList(Generic[SelectionType], OptionList):
 
         Returns:
             An instance of a `Selection`.
+
+        Raises:
+            SelectionError: If the selection was badly-formed.
         """
         if len(selection) == 3:
             label, value, selected = cast(
@@ -210,8 +217,7 @@ class SelectionList(Generic[SelectionType], OptionList):
                 "tuple[TextType, SelectionType, bool]", (*selection, False)
             )
         else:
-            # TODO: Proper error.
-            raise TypeError("Wrong number of values for a selection.")
+            raise SelectionError(f"Expected 2 or 3 values, got {len(selection)}")
         if selected:
             self._selected[value] = None
         return Selection(label, value)

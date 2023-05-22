@@ -1,3 +1,3 @@
-from ._selection_list import Selection
+from ._selection_list import Selection, SelectionError
 
-__all__ = ["Selection"]
+__all__ = ["Selection", "SelectionError"]
