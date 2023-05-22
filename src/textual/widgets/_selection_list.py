@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import ClassVar, Generic, TypeVar, cast
 
 from rich.repr import Result
@@ -162,6 +163,18 @@ class SelectionList(Generic[SelectionType], OptionList):
         `SelectionList` or in a parent node in the DOM.
         """
 
+    @dataclass
+    class SelectedChanged(Generic[MessageSelectionType], Message):
+        """Message sent when the collection of selected values changes."""
+
+        selection_list: SelectionList[MessageSelectionType]
+        """The `SelectionList` that sent the message."""
+
+        @property
+        def control(self) -> SelectionList[MessageSelectionType]:
+            """An alias for `selection_list`."""
+            return self.selection_list
+
     def __init__(
         self,
         *selections: tuple[TextType, SelectionType]
@@ -200,7 +213,9 @@ class SelectionList(Generic[SelectionType], OptionList):
         Args:
             value: The value to mark as selected.
         """
-        self._selected[value] = None
+        if value not in self._selected:
+            self._selected[value] = None
+            self.post_message(self.SelectedChanged(self))
 
     def select(self, selection: Selection[SelectionType] | SelectionType) -> Self:
         """Mark the given selection as selected.
@@ -224,6 +239,7 @@ class SelectionList(Generic[SelectionType], OptionList):
         """
         try:
             del self._selected[value]
+            self.post_message(self.SelectedChanged(self))
         except KeyError:
             pass
 
