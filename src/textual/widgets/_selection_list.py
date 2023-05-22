@@ -125,7 +125,7 @@ class SelectionList(Generic[SelectionType], OptionList):
                 index: The index of the selection that the message relates to.
             """
             super().__init__()
-            self.selection_list: SelectionList = selection_list
+            self.selection_list: SelectionList[MessageSelectionType] = selection_list
             """The option list that sent the message."""
             self.selection: Selection[
                 MessageSelectionType
