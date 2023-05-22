@@ -203,11 +203,11 @@ class SelectionList(Generic[SelectionType], OptionList):
         """
         if len(selection) == 3:
             label, value, selected = cast(
-                tuple[TextType, SelectionType, bool], selection
+                "tuple[TextType, SelectionType, bool]", selection
             )
         elif len(selection) == 2:
             label, value, selected = cast(
-                tuple[TextType, SelectionType, bool], (*selection, False)
+                "tuple[TextType, SelectionType, bool]", (*selection, False)
             )
         else:
             # TODO: Proper error.
