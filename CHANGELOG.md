@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - `Placeholder` now sets its color cycle per app https://github.com/Textualize/textual/issues/2590
+- Footer now clears key highlight regardless of whether it's in the active screen or not https://github.com/Textualize/textual/issues/2606
 
 ### Removed
 
