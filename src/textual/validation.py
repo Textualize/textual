@@ -36,6 +36,17 @@ class ValidationResult:
         invalid_reasons = [reason for result in results for reason in result.failures]
         return ValidationResult(valid=valid, failures=invalid_reasons)
 
+    @property
+    def failure_descriptions(self) -> list[str]:
+        """Utility for extracting failure descriptions as strings.
+
+        Useful if you don't care about the additional metadata included in the `Failure` objects.
+
+        Returns:
+            A list of the string descriptions explaining the failing validations.
+        """
+        return [failure.description for failure in self.failures]
+
     def __bool__(self):
         return self.valid
 
@@ -48,21 +59,21 @@ class Failure:
     """The value which resulted in validation failing."""
     validator: Validator | None = None
     """The Validator which produced the failure."""
-    message: str | None = None
-    """An optional override for the message to produce."""
+    description: str | None = None
+    """An optional override for describing this failure. Takes precedence over any messages set in the Validator."""
 
     def __post_init__(self):
         # If a failure message isn't supplied, try to get it from the Validator.
-        if self.message is None and self.validator is not None:
+        if self.description is None and self.validator is not None:
             if self.validator.failure_description is not None:
-                self.message = self.validator.failure_description
+                self.description = self.validator.failure_description
             else:
-                self.message = self.validator.describe_failure(self)
+                self.description = self.validator.describe_failure(self)
 
     def __rich_repr__(self) -> str:
         yield self.value
         yield self.validator
-        yield self.message
+        yield self.description
 
 
 class Validator(ABC):
@@ -162,7 +173,7 @@ class Validator(ABC):
 
         result = ValidationResult(
             False,
-            failures or [Failure(value=value, validator=self, message=description)],
+            failures or [Failure(value=value, validator=self, description=description)],
         )
         return result
 
