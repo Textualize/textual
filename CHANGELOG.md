@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Added
+
+- `work` decorator accepts `description` parameter to add debug string https://github.com/Textualize/textual/issues/2597
+
+### Changed
+
+- `Placeholder` now sets its color cycle per app https://github.com/Textualize/textual/issues/2590
+- Footer now clears key highlight regardless of whether it's in the active screen or not https://github.com/Textualize/textual/issues/2606
+
+### Removed
+
+- `Placeholder.reset_color_cycle`
+
+
+## [0.26.0] - 2023-05-20
+
+### Added
+
+- Added Widget.can_view
+
+### Changed
+
+- Textual will now scroll focused widgets to center if not in view
 
 ## [0.25.0] - 2023-05-17
 
@@ -965,6 +990,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.26.0]: https://github.com/Textualize/textual/compare/v0.25.0...v0.26.0
 [0.25.0]: https://github.com/Textualize/textual/compare/v0.24.1...v0.25.0
 [0.24.1]: https://github.com/Textualize/textual/compare/v0.24.0...v0.24.1
 [0.24.0]: https://github.com/Textualize/textual/compare/v0.23.0...v0.24.0
