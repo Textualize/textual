@@ -79,8 +79,7 @@ class Footer(Widget):
 
     def _on_leave(self, _: events.Leave) -> None:
         """Clear any highlight when the mouse leaves the widget"""
-        if self.screen.is_current:
-            self.highlight_key = None
+        self.highlight_key = None
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield from super().__rich_repr__()
