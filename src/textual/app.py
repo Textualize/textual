@@ -592,6 +592,18 @@ class App(Generic[ReturnType], DOMNode):
         """
         return self._screen_stacks[self._current_mode].copy()
 
+    @property
+    def _screen_stack(self) -> list[Screen]:
+        """A reference to the current screen stack.
+
+        Note:
+            Consider using [`screen_stack`][textual.app.App.screen_stack] instead.
+
+        Returns:
+            A reference to the current screen stack.
+        """
+        return self._screen_stacks[self._current_mode]
+
     def exit(
         self, result: ReturnType | None = None, message: RenderableType | None = None
     ) -> None:
@@ -737,7 +749,7 @@ class App(Generic[ReturnType], DOMNode):
             ScreenStackError: If there are no screens on the stack.
         """
         try:
-            return self._screen_stacks[self._current_mode][-1]
+            return self._screen_stack[-1]
         except KeyError:
             raise UnknownModeError(f"No known mode {self._current_mode!r}") from None
         except IndexError:
@@ -747,7 +759,7 @@ class App(Generic[ReturnType], DOMNode):
     def _background_screens(self) -> list[Screen]:
         """A list of screens that may be visible due to background opacity (top-most first, not including current screen)."""
         screens: list[Screen] = []
-        for screen in reversed(self._screen_stacks[self._current_mode][:-1]):
+        for screen in reversed(self._screen_stack[:-1]):
             screens.append(screen)
             if screen.styles.background.a == 1:
                 break
@@ -1539,7 +1551,7 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             The screen that was replaced.
         """
-        if self._screen_stacks[self._current_mode]:
+        if self._screen_stack:
             self.screen.refresh()
         screen.post_message(events.ScreenSuspend())
         self.log.system(f"{screen} SUSPENDED")
@@ -1569,14 +1581,14 @@ class App(Generic[ReturnType], DOMNode):
                 f"push_screen requires a Screen instance or str; not {screen!r}"
             )
 
-        if self._screen_stacks[self._current_mode]:
+        if self._screen_stack:
             self.screen.post_message(events.ScreenSuspend())
             self.screen.refresh()
         next_screen, await_mount = self._get_screen(screen)
         next_screen._push_result_callback(
-            self.screen if self._screen_stacks[self._current_mode] else None, callback
+            self.screen if self._screen_stack else None, callback
         )
-        self._screen_stacks[self._current_mode].append(next_screen)
+        self._screen_stack.append(next_screen)
         next_screen.post_message(events.ScreenResume())
         self.log.system(f"{self.screen} is current (PUSHED)")
         return await_mount
@@ -1592,12 +1604,10 @@ class App(Generic[ReturnType], DOMNode):
                 f"switch_screen requires a Screen instance or str; not {screen!r}"
             )
         if self.screen is not screen:
-            previous_screen = self._replace_screen(
-                self._screen_stacks[self._current_mode].pop()
-            )
+            previous_screen = self._replace_screen(self._screen_stack.pop())
             previous_screen._pop_result_callback()
             next_screen, await_mount = self._get_screen(screen)
-            self._screen_stacks[self._current_mode].append(next_screen)
+            self._screen_stack.append(next_screen)
             self.screen.post_message(events.ScreenResume())
             self.log.system(f"{self.screen} is current (SWITCHED)")
             return await_mount
@@ -1669,7 +1679,7 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             The screen that was replaced.
         """
-        screen_stack = self._screen_stacks[self._current_mode]
+        screen_stack = self._screen_stack
         if len(screen_stack) <= 1:
             raise ScreenStackError(
                 "Can't pop screen; there must be at least one screen on the stack"
@@ -2149,7 +2159,7 @@ class App(Generic[ReturnType], DOMNode):
         await self._message_queue.put(None)
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
-        if self._screen_stacks[self._current_mode]:
+        if self._screen_stack:
             self.screen.refresh(repaint=repaint, layout=layout)
         self.check_idle()
 
@@ -2291,7 +2301,7 @@ class App(Generic[ReturnType], DOMNode):
         if isinstance(event, events.Compose):
             screen = Screen(id=f"_default")
             self._register(self, screen)
-            self._screen_stacks[self._current_mode].append(screen)
+            self._screen_stack.append(screen)
             screen.post_message(events.ScreenResume())
             await super().on_event(event)
 
