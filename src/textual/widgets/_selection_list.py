@@ -22,16 +22,16 @@ class Selection(Generic[SelectionType], Option):
 
     def __init__(
         self,
-        value: SelectionType,
         prompt: TextType,
+        value: SelectionType,
         id: str | None = None,
         disabled: bool = False,
     ):
         """Initialise the selection.
 
         Args:
-            value: The value for the selection.
             prompt: The prompt for the selection.
+            value: The value for the selection.
             selected: Is this particular selection selected?
             id: The optional ID for the selection.
             disabled: The initial enabled/disabled state. Enabled by default.
@@ -104,8 +104,8 @@ class SelectionList(Generic[SelectionType], OptionList):
 
     def __init__(
         self,
-        *selections: tuple[SelectionType, TextType]
-        | tuple[SelectionType, TextType, bool],
+        *selections: tuple[TextType, SelectionType]
+        | tuple[TextType, SelectionType, bool],
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -131,8 +131,8 @@ class SelectionList(Generic[SelectionType], OptionList):
 
     def _make_selection(
         self,
-        selection: tuple[SelectionType, TextType]
-        | tuple[SelectionType, TextType, bool],
+        selection: tuple[TextType, SelectionType]
+        | tuple[TextType, SelectionType, bool],
     ) -> Selection[SelectionType]:
         """Turn incoming selection data into a `Selection` instance.
 
@@ -143,15 +143,15 @@ class SelectionList(Generic[SelectionType], OptionList):
             An instance of a `Selection`.
         """
         if len(selection) == 3:
-            value, label, selected = selection
+            label, value, selected = selection
         elif len(selection) == 2:
-            value, label, selected = (*selection, False)
+            label, value, selected = (*selection, False)
         else:
             # TODO: Proper error.
             raise TypeError("Wrong number of values for a selection.")
         if selected:
             self._selected[value] = None
-        return Selection(value, label)
+        return Selection(label, value)
 
     def action_toggle(self) -> None:
         if self.highlighted is not None:
