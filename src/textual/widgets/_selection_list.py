@@ -8,6 +8,7 @@ from rich.repr import Result
 from rich.segment import Segment
 from rich.style import Style
 from rich.text import TextType
+from typing_extensions import Self
 
 from ..binding import Binding
 from ..messages import Message
@@ -192,6 +193,78 @@ class SelectionList(Generic[SelectionType], OptionList):
         """The selected values."""
         return list(self._selected.keys())
 
+    def _select(self, value: SelectionType) -> None:
+        """Mark the given value as selected.
+
+        Args:
+            value: The value to mark as selected.
+        """
+        self._selected[value] = None
+
+    def select(self, selection: Selection[SelectionType] | SelectionType) -> Self:
+        """Mark the given selection as selected.
+
+        Args:
+            selection: The selection to mark as selected.
+        """
+        self._select(
+            selection.value
+            if isinstance(selection, Selection)
+            else cast(SelectionType, selection)
+        )
+        self.refresh()
+        return self
+
+    def _deselect(self, value: SelectionType) -> None:
+        """Mark the given selection as not selected.
+
+        Args:
+            value: The value to mark as not selected.
+        """
+        try:
+            del self._selected[value]
+        except KeyError:
+            pass
+
+    def deselect(self, selection: Selection[SelectionType] | SelectionType) -> Self:
+        """Mark the given selection as not selected.
+
+        Args:
+            selection: The selection to mark as selected.
+        """
+        self._deselect(
+            selection.value
+            if isinstance(selection, Selection)
+            else cast(SelectionType, selection)
+        )
+        self.refresh()
+        return self
+
+    def _toggle(self, value: SelectionType) -> None:
+        """Toggle the selection state of the given value.
+
+        Args:
+            value: The value to toggle.
+        """
+        if value in self._selected:
+            self._deselect(value)
+        else:
+            self._select(value)
+
+    def toggle(self, selection: Selection[SelectionType] | SelectionType) -> Self:
+        """Toggle the selected state of the given selection.
+
+        Args:
+            selection: The selection to toggle.
+        """
+        self._toggle(
+            selection.value
+            if isinstance(selection, Selection)
+            else cast(SelectionType, selection)
+        )
+        self.refresh()
+        return self
+
     def _make_selection(
         self,
         selection: tuple[TextType, SelectionType]
@@ -219,7 +292,7 @@ class SelectionList(Generic[SelectionType], OptionList):
         else:
             raise SelectionError(f"Expected 2 or 3 values, got {len(selection)}")
         if selected:
-            self._selected[value] = None
+            self._select(value)
         return Selection(label, value)
 
     def _toggle_highlighted_selection(self) -> None:
@@ -230,12 +303,7 @@ class SelectionList(Generic[SelectionType], OptionList):
         if self.highlighted is not None:
             option = self.get_option_at_index(self.highlighted)
             assert isinstance(option, Selection)
-            if option.value in self._selected:
-                del self._selected[option._value]
-            else:
-                self._selected[option._value] = None
-            self._refresh_content_tracking(force=True)
-            self.refresh()
+            self.toggle(option)
 
     def render_line(self, y: int) -> Strip:
         """Render a line in the display.
