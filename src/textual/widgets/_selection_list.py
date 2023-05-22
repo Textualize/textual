@@ -7,7 +7,7 @@ from typing import ClassVar, Generic, TypeVar, cast
 from rich.repr import Result
 from rich.segment import Segment
 from rich.style import Style
-from rich.text import TextType
+from rich.text import Text, TextType
 from typing_extensions import Self
 
 from ..binding import Binding
@@ -46,7 +46,9 @@ class Selection(Generic[SelectionType], Option):
             id: The optional ID for the selection.
             disabled: The initial enabled/disabled state. Enabled by default.
         """
-        super().__init__(prompt, id, disabled)
+        if isinstance(prompt, str):
+            prompt = Text.from_markup(prompt)
+        super().__init__(prompt.split()[0], id, disabled)
         self._value: SelectionType = value
 
     @property
