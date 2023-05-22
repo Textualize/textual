@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import ClassVar, Generic, TypeVar, cast
+from typing import ClassVar, Generic, Iterable, TypeVar, cast
 
 from rich.repr import Result
 from rich.segment import Segment
@@ -14,7 +14,7 @@ from typing_extensions import Self
 from ..binding import Binding
 from ..messages import Message
 from ..strip import Strip
-from ._option_list import Option, OptionList
+from ._option_list import NewOptionListContent, Option, OptionList
 from ._toggle_button import ToggleButton
 
 SelectionType = TypeVar("SelectionType")
@@ -414,3 +414,37 @@ class SelectionList(Generic[SelectionType], OptionList):
     def _remove_option(self, index: int) -> None:
         self._deselect(self.get_option_at_index(index).value)
         return super()._remove_option(index)
+
+    def add_options(
+        self,
+        items: Iterable[
+            NewOptionListContent
+            | Selection
+            | tuple[TextType, SelectionType]
+            | tuple[TextType, SelectionType, bool]
+        ],
+    ) -> Self:
+        # This... is sort of sub-optimal, but a natural consequence of
+        # inheriting from and narrowing down OptionList. Here we don't want
+        # things like a separator, or a base Option, being passed in. So we
+        # extend the types of accepted items to keep mypy and friends happy,
+        # but then we runtime check that we've been given sensible types (in
+        # this case the supported tuple values).
+        cleaned_options: list[Selection] = []
+        for item in items:
+            if isinstance(item, tuple):
+                cleaned_options.append(
+                    self._make_selection(
+                        cast(
+                            "tuple[TextType, SelectionType] | tuple[TextType, SelectionType, bool]",
+                            item,
+                        )
+                    )
+                )
+            elif isinstance(item, Selection):
+                cleaned_options.append(item)
+            else:
+                raise SelectionError(
+                    "Only Selection or a prompt/value tuple is supported in SelectionList"
+                )
+        return super().add_options(cleaned_options)
