@@ -91,7 +91,6 @@ def test_buttons_render(snap_compare):
 
 def test_placeholder_render(snap_compare):
     # Testing the rendering of the multiple placeholder variants and labels.
-    Placeholder.reset_color_cycle()
     assert snap_compare(WIDGET_EXAMPLES_DIR / "placeholder.py")
 
 
@@ -261,7 +260,6 @@ PATHS = [
 @pytest.mark.parametrize("file_name", PATHS)
 def test_css_property(file_name, snap_compare):
     path_to_app = STYLES_EXAMPLES_DIR / file_name
-    Placeholder.reset_color_cycle()
     assert snap_compare(path_to_app)
 
 
