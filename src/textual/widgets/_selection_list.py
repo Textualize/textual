@@ -50,7 +50,7 @@ class Selection(Generic[SelectionType], Option):
 
 
 class SelectionList(Generic[SelectionType], OptionList):
-    """A vertical option list that allows making multiple selections."""
+    """A vertical selection list that allows making multiple selections."""
 
     BINDINGS = [Binding("space, enter", "toggle")]
 
