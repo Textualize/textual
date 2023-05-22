@@ -84,10 +84,10 @@ def test_Length_validate(value, min_length, max_length, expected_result):
 @pytest.mark.parametrize(
     "value, expected_result",
     [
-        ("http://google.com", True),  # valid URL
-        ("https://google.com", True),  # valid URL with https
-        ("www.google.com", False),  # missing scheme
-        ("://google.com", False),  # invalid URL (no scheme)
+        ("http://example.com", True),  # valid URL
+        ("https://example.com", True),  # valid URL with https
+        ("www.example.com", False),  # missing scheme
+        ("://example.com", False),  # invalid URL (no scheme)
         ("https:///path", False),  # missing netloc
         ("", False),  # empty string
     ],

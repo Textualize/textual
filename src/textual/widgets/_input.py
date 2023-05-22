@@ -17,7 +17,7 @@ from ..events import Blur, Focus, Mount
 from ..geometry import Size
 from ..message import Message
 from ..reactive import reactive
-from ..validation import ValidationResult, Validator
+from ..validation import Failure, ValidationResult, Validator
 from ..widget import Widget
 
 
@@ -194,7 +194,7 @@ class Input(Widget, can_focus=True):
         """Posted when the Input value is invalid."""
 
         value: str
-        invalid_reasons: list[str]
+        failure_reasons: list[Failure]
 
     def __init__(
         self,
@@ -290,6 +290,12 @@ class Input(Widget, can_focus=True):
             self._post_validation_message(validation_result, value)
 
     def validate(self, value: str) -> ValidationResult:
+        """Run all the validators associated with this Input on the supplied value.
+
+        Returns:
+            A ValidationResult indicating whether *all* validators succeeded or not.
+                That is, if *any* validator fails, the result will be an unsuccessful validation.
+        """
         validation_results: list[ValidationResult] = [
             validator.validate(value) for validator in self.validators
         ]
@@ -301,7 +307,7 @@ class Input(Widget, can_focus=True):
         if validation_result:
             self.post_message(Input.Valid(value))
         else:
-            self.post_message(Input.Invalid(value, validation_result.invalid_reasons))
+            self.post_message(Input.Invalid(value, validation_result.failures))
 
     @property
     def cursor_width(self) -> int:
