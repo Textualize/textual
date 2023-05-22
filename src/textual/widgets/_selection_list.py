@@ -2,19 +2,23 @@
 
 from __future__ import annotations
 
-from typing import ClassVar, Generic, TypeVar
+from typing import ClassVar, Generic, TypeVar, cast
 
+from rich.repr import Result
 from rich.segment import Segment
 from rich.style import Style
 from rich.text import TextType
 
 from ..binding import Binding
+from ..messages import Message
 from ..strip import Strip
 from ._option_list import Option, OptionList
 from ._toggle_button import ToggleButton
 
 SelectionType = TypeVar("SelectionType")
 """The type for the value of a `Selection`"""
+MessageSelectionType = TypeVar("MessageSelectionType")
+"""The type for the value of a `SelectionList` message"""
 
 
 class Selection(Generic[SelectionType], Option):
@@ -101,6 +105,48 @@ class SelectionList(Generic[SelectionType], OptionList):
         background: $foreground 25%;
     }
     """
+
+    class SelectionMessage(Generic[MessageSelectionType], Message):
+        """Base class for all selection messages."""
+
+        def __init__(self, selection_list: SelectionList, index: int) -> None:
+            """Initialise the selection message.
+
+            Args:
+                selection_list: The selection list that owns the selection.
+                index: The index of the selection that the message relates to.
+            """
+            super().__init__()
+            self.selection_list: SelectionList = selection_list
+            """The option list that sent the message."""
+            self.selection: Selection[MessageSelectionType] = cast(
+                Selection[MessageSelectionType],
+                selection_list.get_option_at_index(index),
+            )
+            """The highlighted selection."""
+            self.selection_index: int = index
+            """The index of the selection that the message relates to."""
+
+        @property
+        def control(self) -> OptionList:
+            """The option list that sent the message.
+
+            This is an alias for [`OptionMessage.option_list`][textual.widgets.OptionList.OptionMessage.option_list]
+            and is used by the [`on`][textual.on] decorator.
+            """
+            return self.selection_list
+
+        def __rich_repr__(self) -> Result:
+            yield "selection_list", self.selection_list
+            yield "selection", self.selection
+            yield "selection_index", self.selection_index
+
+    class SelectionHighlighted(SelectionMessage):
+        """Message sent when a selection is highlighted.
+
+        Can be handled using `on_selection_list_selection_highlighted` in a subclass of
+        `SelectionList` or in a parent node in the DOM.
+        """
 
     def __init__(
         self,
@@ -228,3 +274,14 @@ class SelectionList(Generic[SelectionType], OptionList):
                 *prompt,
             ]
         )
+
+    def _on_option_list_option_highlighted(
+        self, event: OptionList.OptionHighlighted
+    ) -> None:
+        """Capture the `OptionList` highlight event and turn it into a `SelectionList` event.
+
+        Args:
+            event: The event to capture and recreate.
+        """
+        event.stop()
+        self.post_message(self.SelectionHighlighted(self, event.option_index))
