@@ -182,6 +182,11 @@ class SelectionList(Generic[SelectionType], OptionList):
         )
         self._selected: dict[SelectionType, None] = {}
 
+    @property
+    def selected(self) -> list[SelectionType]:
+        """The selected values."""
+        return list(self._selected.keys())
+
     def _make_selection(
         self,
         selection: tuple[TextType, SelectionType]
