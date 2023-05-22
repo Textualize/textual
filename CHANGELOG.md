@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - `Placeholder` now sets its color cycle per app https://github.com/Textualize/textual/issues/2590
 - Footer now clears key highlight regardless of whether it's in the active screen or not https://github.com/Textualize/textual/issues/2606
-- The default repr no longer displays classes and pseudo-classes (to reduce noise in logs). Add them to your rich_repr method if needed. https://github.com/Textualize/textual/pull/2623
+- The default Widget repr no longer displays classes and pseudo-classes (to reduce noise in logs). Add them to your `__rich_repr__` method if needed. https://github.com/Textualize/textual/pull/2623
 
 ### Removed
 
