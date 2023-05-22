@@ -71,7 +71,7 @@ from ._wait import wait_for_idle
 from ._worker_manager import WorkerManager
 from .actions import ActionParseResult, SkipAction
 from .await_remove import AwaitRemove
-from .binding import Binding, _Bindings, BindingType
+from .binding import Binding, BindingType, _Bindings
 from .css.query import NoMatches
 from .css.stylesheet import Stylesheet
 from .design import ColorSystem
@@ -1853,7 +1853,7 @@ class App(Generic[ReturnType], DOMNode):
 
         if self.css_monitor:
             self.set_interval(0.25, self.css_monitor, name="css monitor")
-            self.log.system("[b green]STARTED[/]", self.css_monitor)
+            self.log.system("STARTED", self.css_monitor)
 
         async def run_process_messages():
             """The main message loop, invoke below."""
@@ -2713,7 +2713,7 @@ class App(Generic[ReturnType], DOMNode):
     def _on_terminal_supports_synchronized_output(
         self, message: messages.TerminalSupportsSynchronizedOutput
     ) -> None:
-        log.system("[b green]SynchronizedOutput mode is supported")
+        log.system("SynchronizedOutput mode is supported")
         self._sync_available = True
 
     def _begin_update(self) -> None:

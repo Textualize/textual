@@ -2532,11 +2532,6 @@ class Widget(DOMNode):
         yield "id", self.id, None
         if self.name:
             yield "name", self.name
-        if self.classes:
-            yield "classes", set(self.classes)
-        pseudo_classes = self.pseudo_classes
-        if pseudo_classes:
-            yield "pseudo_classes", set(pseudo_classes)
 
     def _get_scrollable_region(self, region: Region) -> Region:
         """Adjusts the Widget region to accommodate scrollbars.
