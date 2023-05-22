@@ -194,8 +194,6 @@ class Regex(Validator):
     class NoResults(Failure):
         """Indicates validation failed because the regex could not be found within the value string."""
 
-        pass
-
     def validate(self, value: str) -> ValidationResult:
         """Ensure that the regex is found inside the value.
 
@@ -247,12 +245,8 @@ class Number(Validator):
     class NotANumber(Failure):
         """Indicates a failure due to the value not being a valid number (decimal/integer, inc. scientific notation)"""
 
-        pass
-
     class NotInRange(Failure):
         """Indicates a failure due to the number not being within the range [minimum, maximum]."""
-
-        pass
 
     def validate(self, value: str) -> ValidationResult:
         """Ensure that `value` is a valid number, optionally within a range.
@@ -310,8 +304,6 @@ class Integer(Number):
 
     class NotAnInteger(Failure):
         """Indicates a failure due to the value not being a valid integer."""
-
-        pass
 
     def validate(self, value: str) -> ValidationResult:
         """Ensure that `value` is an integer, optionally within a range.
@@ -371,12 +363,8 @@ class Length(Validator):
     class TooShort(Failure):
         """Indicates a failure due to the value being too short."""
 
-        pass
-
     class TooLong(Failure):
         """Indicates a failure due to a value being too long."""
-
-        pass
 
     def validate(self, value: str) -> ValidationResult:
         """Ensure that value falls within the maximum and minimum length constraints.
@@ -422,8 +410,6 @@ class Function(Validator):
     class ReturnedFalse(Failure):
         """Indicates validation failed because the supplied function returned False."""
 
-        pass
-
     def validate(self, value: str) -> ValidationResult:
         """Validate that the supplied function returns True.
 
@@ -456,8 +442,6 @@ class URL(Validator):
 
     class InvalidURL(Failure):
         """Indicates that the URL is not valid."""
-
-        pass
 
     def validate(self, value: str) -> ValidationResult:
         """Validates that `value` is a valid URL (contains a scheme).
