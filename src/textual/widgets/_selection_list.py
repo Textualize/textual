@@ -52,7 +52,7 @@ class Selection(Generic[SelectionType], Option):
 class SelectionList(Generic[SelectionType], OptionList):
     """A vertical selection list that allows making multiple selections."""
 
-    BINDINGS = [Binding("space, enter", "toggle")]
+    BINDINGS = [Binding("space", "select")]
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
         "selection-list--button",
@@ -148,6 +148,13 @@ class SelectionList(Generic[SelectionType], OptionList):
         `SelectionList` or in a parent node in the DOM.
         """
 
+    class SelectionToggled(SelectionMessage):
+        """Message sent when a selection is toggled.
+
+        Can be handled using `on_selection_list_selection_toggled` in a subclass of
+        `SelectionList` or in a parent node in the DOM.
+        """
+
     def __init__(
         self,
         *selections: tuple[TextType, SelectionType]
@@ -199,7 +206,11 @@ class SelectionList(Generic[SelectionType], OptionList):
             self._selected[value] = None
         return Selection(label, value)
 
-    def action_toggle(self) -> None:
+    def _toggle_highlighted_selection(self) -> None:
+        """Toggle the state of the highlighted selection.
+
+        If nothing is selected in the list this is a non-operation.
+        """
         if self.highlighted is not None:
             option = self.get_option_at_index(self.highlighted)
             assert isinstance(option, Selection)
@@ -285,3 +296,13 @@ class SelectionList(Generic[SelectionType], OptionList):
         """
         event.stop()
         self.post_message(self.SelectionHighlighted(self, event.option_index))
+
+    def _on_option_list_option_selected(self, event: OptionList.OptionSelected) -> None:
+        """Capture the `OptionList` selected event and turn it into a `SelectionList` event.
+
+        Args:
+            event: The event to capture and recreate.
+        """
+        event.stop()
+        self._toggle_highlighted_selection()
+        self.post_message(self.SelectionToggled(self, event.option_index))
