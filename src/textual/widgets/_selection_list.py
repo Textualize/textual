@@ -125,10 +125,9 @@ class SelectionList(Generic[SelectionType], OptionList):
             super().__init__()
             self.selection_list: SelectionList = selection_list
             """The option list that sent the message."""
-            self.selection: Selection[MessageSelectionType] = cast(
-                Selection[MessageSelectionType],
-                selection_list.get_option_at_index(index),
-            )
+            self.selection: Selection[
+                MessageSelectionType
+            ] = selection_list.get_option_at_index(index)
             """The highlighted selection."""
             self.selection_index: int = index
             """The index of the selection that the message relates to."""
@@ -301,9 +300,7 @@ class SelectionList(Generic[SelectionType], OptionList):
         If nothing is selected in the list this is a non-operation.
         """
         if self.highlighted is not None:
-            option = self.get_option_at_index(self.highlighted)
-            assert isinstance(option, Selection)
-            self.toggle(option)
+            self.toggle(self.get_option_at_index(self.highlighted))
 
     def render_line(self, y: int) -> Strip:
         """Render a line in the display.
@@ -329,7 +326,6 @@ class SelectionList(Generic[SelectionType], OptionList):
         _, scroll_y = self.scroll_offset
         selection_index = scroll_y + y
         selection = self.get_option_at_index(selection_index)
-        assert isinstance(selection, Selection)
 
         # Figure out which component style is relevant for a checkbox on
         # this particular line.
@@ -390,3 +386,9 @@ class SelectionList(Generic[SelectionType], OptionList):
         event.stop()
         self._toggle_highlighted_selection()
         self.post_message(self.SelectionToggled(self, event.option_index))
+
+    def get_option_at_index(self, index: int) -> Selection[SelectionType]:
+        return cast("Selection[SelectionType]", super().get_option_at_index(index))
+
+    def get_option(self, option_id: str) -> Selection[SelectionType]:
+        return cast("Selection[SelectionType]", super().get_option(option_id))
