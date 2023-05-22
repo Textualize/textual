@@ -410,3 +410,7 @@ class SelectionList(Generic[SelectionType], OptionList):
 
     def get_option(self, option_id: str) -> Selection[SelectionType]:
         return cast("Selection[SelectionType]", super().get_option(option_id))
+
+    def _remove_option(self, index: int) -> None:
+        self._deselect(self.get_option_at_index(index).value)
+        return super()._remove_option(index)
