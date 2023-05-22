@@ -17,6 +17,7 @@ from ._toggle_button import ToggleButton
 
 SelectionType = TypeVar("SelectionType")
 """The type for the value of a `Selection`"""
+
 MessageSelectionType = TypeVar("MessageSelectionType")
 """The type for the value of a `SelectionList` message"""
 
@@ -201,9 +202,13 @@ class SelectionList(Generic[SelectionType], OptionList):
             An instance of a `Selection`.
         """
         if len(selection) == 3:
-            label, value, selected = selection
+            label, value, selected = cast(
+                tuple[TextType, SelectionType, bool], selection
+            )
         elif len(selection) == 2:
-            label, value, selected = (*selection, False)
+            label, value, selected = cast(
+                tuple[TextType, SelectionType, bool], (*selection, False)
+            )
         else:
             # TODO: Proper error.
             raise TypeError("Wrong number of values for a selection.")
