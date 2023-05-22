@@ -15,6 +15,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Textual will now scroll focused widgets to center if not in view
 
+## Unreleased
+
+### Added
+
+- `work` decorator accepts `description` parameter to add debug string https://github.com/Textualize/textual/issues/2597
+
+
 ## [0.25.0] - 2023-05-17
 
 ### Changed
