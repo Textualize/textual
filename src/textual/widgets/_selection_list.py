@@ -302,12 +302,12 @@ class SelectionList(Generic[SelectionType], OptionList):
         Args:
             selection: The selection to mark as selected.
         """
-        self._deselect(
+        if self._deselect(
             selection.value
             if isinstance(selection, Selection)
             else cast(SelectionType, selection)
-        )
-        self.refresh()
+        ):
+            self.refresh()
         return self
 
     def deselect_all(self) -> Self:
