@@ -37,6 +37,7 @@ if typing.TYPE_CHECKING:
     from ._text_log import TextLog
     from ._tree import Tree
     from ._welcome import Welcome
+    from ._text_area import TextArea
 
 
 __all__ = [
@@ -70,6 +71,7 @@ __all__ = [
     "TextLog",
     "Tree",
     "Welcome",
+    "TextArea",
 ]
 
 _WIDGETS_LAZY_LOADING_CACHE: dict[str, type[Widget]] = {}
