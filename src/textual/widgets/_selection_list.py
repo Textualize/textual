@@ -331,6 +331,10 @@ class SelectionList(Generic[SelectionType], OptionList):
         self.refresh()
         return self
 
+    def toggle_all(self) -> Self:
+        """Toggle all items."""
+        return self._apply_to_all(self._toggle)
+
     def _make_selection(
         self,
         selection: tuple[TextType, SelectionType]
