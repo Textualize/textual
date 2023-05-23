@@ -125,7 +125,7 @@ class Input(Widget, can_focus=True):
         color: $text-disabled;
     }
     Input.-invalid {
-        border: tall $error 70%;
+        border: tall $error 60%;
     }
     Input.-invalid:focus {
         border: tall $error;
@@ -284,8 +284,9 @@ class Input(Widget, can_focus=True):
 
         Runs all validators, combines the result into one. If any of the validators
         failed, the combined result will be a failure. If no validators are present,
-        None will be returned. This also sets the `-invalid` CSS class on the Input,
-        which by default changes the border color to $error.
+        None will be returned. This also sets the `-invalid` CSS class on the Input
+        if the validation fails, and sets the `-valid` CSS class on the Input if
+        the validation succeeds.
 
         Returns:
             A ValidationResult indicating whether *all* validators succeeded or not.
@@ -301,6 +302,7 @@ class Input(Widget, can_focus=True):
         ]
         combined_result = ValidationResult.merge(validation_results)
         self.set_class(not bool(combined_result), "-invalid")
+        self.set_class(bool(combined_result), "-valid")
         return combined_result
 
     @property

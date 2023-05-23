@@ -84,6 +84,19 @@ def test_input_and_focus(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "input.py", press=press)
 
 
+def test_input_validation(snap_compare):
+    """Checking that invalid styling is applied. The snapshot app itself
+    also adds styling for -valid which gives a green border."""
+    press = [
+        *"-2",  # -2 is invalid, so -invalid should be applied
+        "tab",
+        "3",  # This is valid, so -valid should be applied
+        "tab",
+        *"-2",  # -2 is invalid, so -invalid should be applied (and :focus, since we stop here)
+    ]
+    assert snap_compare(SNAPSHOT_APPS_DIR / "input_validation.py", press=press)
+
+
 def test_buttons_render(snap_compare):
     # Testing button rendering. We press tab to focus the first button too.
     assert snap_compare(WIDGET_EXAMPLES_DIR / "button.py", press=["tab"])
