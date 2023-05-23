@@ -74,6 +74,14 @@ class SelectionList(Generic[SelectionType], OptionList):
         "selection-list--button-highlighted",
         "selection-list--button-selected-highlighted",
     }
+    """
+    | Class | Description |
+    | :- | :- |
+    | `selection-list--button` | Target the default button style. |
+    | `selection-list--button-selected` | Target a selected button style. |
+    | `selection-list--button-highlighted` | Target a highlighted button style. |
+    | `selection-list--button-selected-highlighted` | Target a highlighted selected button style. |
+    """
 
     DEFAULT_CSS = """
     SelectionList > .selection-list--button {
