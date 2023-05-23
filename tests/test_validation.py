@@ -1,6 +1,104 @@
+from __future__ import annotations
+
 import pytest
 
-from textual.validation import URL, Integer, Length, Number, Regex
+from textual.validation import (
+    URL,
+    Failure,
+    Function,
+    Integer,
+    Length,
+    Number,
+    Regex,
+    ValidationResult,
+    Validator,
+)
+
+
+def test_ValidationResult_merge_successes():
+    results = [ValidationResult(True), ValidationResult(True)]
+    assert ValidationResult.merge(results) == ValidationResult(True)
+
+
+def test_ValidationResult_merge_failures():
+    failure_one = Failure("1")
+    failure_two = Failure("2")
+    results = [
+        ValidationResult(False, [failure_one]),
+        ValidationResult(False, [failure_two]),
+        ValidationResult(True),
+    ]
+    expected_result = ValidationResult(False, [failure_one, failure_two])
+    assert ValidationResult.merge(results) == expected_result
+
+
+def test_ValidationResult_failure_descriptions():
+    result = ValidationResult(
+        False,
+        [
+            Failure(description="One"),
+            Failure(description="Two"),
+            Failure(description="Three"),
+        ],
+    )
+    assert result.failure_descriptions == ["One", "Two", "Three"]
+
+
+class ValidatorWithDescribeFailure(Validator):
+    def validate(self, value: str) -> ValidationResult:
+        return self.failure()
+
+    def describe_failure(self, failure: Failure) -> str | None:
+        return "describe_failure"
+
+
+def test_Failure_description_priorities_parameter_only():
+    number_validator = Number(failure_description="ABC")
+    non_number_value = "x"
+    result = number_validator.validate(non_number_value)
+    # The inline value takes priority over the describe_failure.
+    assert result.failures[0].description == "ABC"
+
+
+def test_Failure_description_priorities_parameter_and_describe_failure():
+    validator = ValidatorWithDescribeFailure(failure_description="ABC")
+    result = validator.validate("x")
+    # Even though the validator has a `describe_failure`, we've provided it
+    # inline and the inline value should take priority.
+    assert result.failures[0].description == "ABC"
+
+
+def test_Failure_description_priorities_describe_failure_only():
+    validator = ValidatorWithDescribeFailure()
+    result = validator.validate("x")
+    assert result.failures[0].description == "describe_failure"
+
+
+class ValidatorWithFailureMessageAndNoDescribe(Validator):
+    def validate(self, value: str) -> ValidationResult:
+        return self.failure(description="ABC")
+
+
+def test_Failure_description_parameter_and_description_inside_validate():
+    validator = ValidatorWithFailureMessageAndNoDescribe()
+    result = validator.validate("x")
+    assert result.failures[0].description == "ABC"
+
+
+class ValidatorWithFailureMessageAndDescribe(Validator):
+    def validate(self, value: str) -> ValidationResult:
+        return self.failure(value=value, description="ABC")
+
+    def describe_failure(self, failure: Failure) -> str | None:
+        return "describe_failure"
+
+
+def test_Failure_description_describe_and_description_inside_validate():
+    # This is kind of a weird case - there's no reason to supply both of
+    # these but lets still make sure we're sensible about how we handle it.
+    validator = ValidatorWithFailureMessageAndDescribe()
+    result = validator.validate("x")
+    assert result.failures == [Failure("x", validator, "ABC")]
 
 
 @pytest.mark.parametrize(
@@ -89,6 +187,10 @@ def test_Length_validate(value, min_length, max_length, expected_result):
         ("www.example.com", False),  # missing scheme
         ("://example.com", False),  # invalid URL (no scheme)
         ("https:///path", False),  # missing netloc
+        (
+            "redis://username:pass[word@localhost:6379/0",
+            False,
+        ),  # invalid URL characters
         ("", False),  # empty string
     ],
 )
@@ -96,3 +198,18 @@ def test_URL_validate(value, expected_result):
     validator = URL()
     result = validator.validate(value)
     assert result.valid == expected_result
+
+
+@pytest.mark.parametrize(
+    "function, failure_description, is_valid",
+    [
+        ((lambda value: True), None, True),
+        ((lambda value: False), "failure!", False),
+    ],
+)
+def test_Function_validate(function, failure_description, is_valid):
+    validator = Function(function, failure_description)
+    result = validator.validate("x")
+    assert result.valid is is_valid
+    if result.failure_descriptions:
+        assert result.failure_descriptions[0] == failure_description

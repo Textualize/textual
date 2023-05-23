@@ -70,7 +70,7 @@ class Failure:
             else:
                 self.description = self.validator.describe_failure(self)
 
-    def __rich_repr__(self) -> str:
+    def __rich_repr__(self) -> str:  # pragma: no cover
         yield self.value
         yield self.validator
         yield self.description
@@ -115,13 +115,18 @@ class Validator(ABC):
         Returns:
             The result of the validation.
         """
-        raise NotImplementedError()
 
     def describe_failure(self, failure: Failure) -> str | None:
         """Return a string description of the Failure.
 
         Used to provide a more fine-grained description of the failure. A Validator could fail for multiple
         reasons, so this method could be used to provide a different reason for different types of failure.
+
+        !!! warning
+
+            This method is only called if no other description has been supplied. If you supply a description
+            inside a call to `self.failure(description="...")`, or pass a description into the constructor of
+            the validator, those will take priority, and this method won't be called.
 
         Args:
             failure: Information about why the validation failed.
@@ -295,8 +300,6 @@ class Number(Validator):
             minimum = self.minimum if self.minimum is not None else "-∞"
             maximum = self.maximum if self.maximum is not None else "∞"
             return f"Must be in range [{minimum}, {maximum}]."
-        else:
-            return super().describe_failure(failure)
 
 
 class Integer(Number):
@@ -341,8 +344,6 @@ class Integer(Number):
             minimum = self.minimum if self.minimum is not None else "-∞"
             maximum = self.maximum if self.maximum is not None else "∞"
             return f"Must be in range [{minimum}, {maximum}]."
-        else:
-            return super().describe_failure(failure)
 
 
 class Length(Validator):
@@ -396,16 +397,19 @@ class Length(Validator):
             return f"Must be {self.minimum} characters or more."
         elif isinstance(failure, Length.TooLong):
             return f"Must be {self.maximum} characters or less."
-        else:
-            return super().describe_failure(failure)
 
 
-@dataclass
 class Function(Validator):
     """A flexible validator which allows you to provide custom validation logic."""
 
-    function: Callable[[str], bool]
-    """Function which takes the value to validate and returns True if valid, and False otherwise."""
+    def __init__(
+        self,
+        function: Callable[[str], bool],
+        failure_description: str | None = None,
+    ):
+        super().__init__(failure_description=failure_description)
+        self.function = function
+        """Function which takes the value to validate and returns True if valid, and False otherwise."""
 
     class ReturnedFalse(Failure):
         """Indicates validation failed because the supplied function returned False."""
