@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import ClassVar, Generic, Iterable, TypeVar, cast
+from typing import Callable, ClassVar, Generic, Iterable, TypeVar, cast
 
 from rich.repr import Result
 from rich.segment import Segment
@@ -241,6 +241,34 @@ class SelectionList(Generic[SelectionType], OptionList):
             if isinstance(selection, Selection)
             else cast(SelectionType, selection)
         )
+        self.refresh()
+        return self
+
+    def _apply_to_all(self, state_change: Callable[[SelectionType], None]) -> Self:
+        """Apply a selection state change to all selection options in the list.
+
+        Args:
+            state_change: The state change function to apply.
+
+        Returns:
+            The `SelectionList` instance.
+        """
+
+        # We're only going to signal a change in the selections if there is
+        # any actual change; so let's count how many are selected now.
+        selected_count = len(self.selected)
+
+        # Next we run through everything and apply the change, preventing
+        # the changed message because the caller really isn't going to be
+        # expecting a message storm from this.
+        with self.prevent(self.SelectedChanged):
+            for selection in self._options:
+                state_change(cast(Selection, selection).value)
+
+        # If the above did make a change, *then* send a message.
+        if len(self.selected) != selected_count:
+            self.post_message(self.SelectedChanged(self))
+
         self.refresh()
         return self
 
