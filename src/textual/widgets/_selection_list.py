@@ -448,3 +448,12 @@ class SelectionList(Generic[SelectionType], OptionList):
                     "Only Selection or a prompt/value tuple is supported in SelectionList"
                 )
         return super().add_options(cleaned_options)
+
+    def add_option(
+        self,
+        item: NewOptionListContent
+        | Selection
+        | tuple[TextType, SelectionType]
+        | tuple[TextType, SelectionType, bool] = None,
+    ) -> Self:
+        return self.add_options([item])
