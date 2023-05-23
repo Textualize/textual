@@ -7,8 +7,10 @@ import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from numbers import Number as NumberType
-from typing import Callable
+from typing import Callable, Sequence
 from urllib.parse import urlparse
+
+import rich.repr
 
 from textual._types import Pattern
 
@@ -19,11 +21,11 @@ class ValidationResult:
 
     valid: bool
     """True if and only if the value is valid."""
-    failures: list[Failure] = field(default_factory=list)
+    failures: Sequence[Failure] = field(default_factory=list)
     """A list of reasons why the value was invalid. Empty if valid=True"""
 
     @staticmethod
-    def merge(results: list["ValidationResult"]) -> "ValidationResult":
+    def merge(results: Sequence["ValidationResult"]) -> "ValidationResult":
         """Merge multiple ValidationResult objects into one.
 
         Args:
@@ -45,7 +47,11 @@ class ValidationResult:
         Returns:
             A list of the string descriptions explaining the failing validations.
         """
-        return [failure.description for failure in self.failures]
+        return [
+            failure.description
+            for failure in self.failures
+            if failure.description is not None
+        ]
 
     def __bool__(self):
         return self.valid
@@ -70,7 +76,7 @@ class Failure:
             else:
                 self.description = self.validator.describe_failure(self)
 
-    def __rich_repr__(self) -> str:  # pragma: no cover
+    def __rich_repr__(self) -> rich.repr.Result:  # pragma: no cover
         yield self.value
         yield self.validator
         yield self.description
@@ -151,7 +157,7 @@ class Validator(ABC):
         self,
         description: str | None = None,
         value: str | None = None,
-        failures: Failure | list[Failure] | None = None,
+        failures: Failure | Sequence[Failure] | None = None,
     ) -> ValidationResult:
         """Shorthand for signaling validation failure.
 
@@ -237,8 +243,8 @@ class Number(Validator):
 
     def __init__(
         self,
-        minimum: NumberType | None = None,
-        maximum: NumberType | None = None,
+        minimum: float | None = None,
+        maximum: float | None = None,
         failure_description: str | None = None,
     ):
         super().__init__(failure_description=failure_description)
@@ -277,7 +283,7 @@ class Number(Validator):
             )
         return self.success()
 
-    def _validate_range(self, value: NumberType) -> bool:
+    def _validate_range(self, value: float) -> bool:
         """Return a boolean indicating whether the number is within the range specified in the attributes."""
         if self.minimum is not None and value < self.minimum:
             return False
@@ -300,6 +306,8 @@ class Number(Validator):
             minimum = self.minimum if self.minimum is not None else "-∞"
             maximum = self.maximum if self.maximum is not None else "∞"
             return f"Must be in range [{minimum}, {maximum}]."
+        else:
+            return None
 
 
 class Integer(Number):
@@ -344,6 +352,8 @@ class Integer(Number):
             minimum = self.minimum if self.minimum is not None else "-∞"
             maximum = self.maximum if self.maximum is not None else "∞"
             return f"Must be in range [{minimum}, {maximum}]."
+        else:
+            return None
 
 
 class Length(Validator):
@@ -397,6 +407,8 @@ class Length(Validator):
             return f"Must be {self.minimum} characters or more."
         elif isinstance(failure, Length.TooLong):
             return f"Must be {self.maximum} characters or less."
+        else:
+            return None
 
 
 class Function(Validator):
