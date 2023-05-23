@@ -1,35 +1,43 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Generic, Iterable, Optional, TypeVar
+from typing import Iterable
 
-from ._types import MessageTarget
+from .dom import DOMNode
 from .message import Message
-
-_SuggestionRequester = TypeVar("_SuggestionRequester", bound=MessageTarget)
-"""Type variable for the message target that will request suggestions."""
 
 
 @dataclass
 class SuggestionReady(Message):
     """Sent when a completion suggestion is ready."""
 
-    input_value: str
-    """The input value that the suggestion was for."""
+    initial_value: str
+    """The value to which the suggestion is for."""
     suggestion: str
     """The string suggestion."""
 
 
-class Suggester(ABC, Generic[_SuggestionRequester]):
-    """Defines how [inputs][textual.widgets.Input] generate completion suggestions.
+class Suggester(ABC):
+    """Defines how widgets generate completion suggestions.
 
     To define a custom suggester, subclass `Suggester` and implement the async method
     `get_suggestion`.
     See [`SuggestFromList`][textual.suggester.SuggestFromList] for an example.
     """
 
-    async def _get_suggestion(
-        self, requester: _SuggestionRequester, value: str
-    ) -> None:
+    cache: dict[str, str | None] | None
+    """Suggestion cache, if used."""
+
+    def __init__(self, use_cache: bool = True):
+        """Create a suggester object.
+
+        Args:
+            use_cache: Whether to cache suggestion results.
+        """
+        self.cache = {} if use_cache else None
+
+    async def _get_suggestion(self, requester: DOMNode, value: str) -> None:
         """Used by widgets to get completion suggestions.
 
         Note:
@@ -40,20 +48,29 @@ class Suggester(ABC, Generic[_SuggestionRequester]):
             requester: The message target that requested a suggestion.
             value: The current input value to complete.
         """
-        suggestion = await self.get_suggestion(value)
+
+        if self.cache is None or value not in self.cache:
+            suggestion = await self.get_suggestion(value)
+            if self.cache is not None:
+                self.cache[value] = suggestion
+        else:
+            suggestion = self.cache[value]
+
         if suggestion is None:
             return
-
         requester.post_message(SuggestionReady(value, suggestion))
 
     @abstractmethod
-    async def get_suggestion(self, value: str) -> Optional[str]:
+    async def get_suggestion(self, value: str) -> str | None:
         """Try to get a completion suggestion for the given input value.
 
         Custom suggesters should implement this method.
 
+        Note:
+            If your implementation is not deterministic, you may need to disable caching.
+
         Args:
-            value: The current value of the input widget.
+            value: The current value of the requester widget.
 
         Returns:
             A valid suggestion or `None`.
@@ -61,8 +78,18 @@ class Suggester(ABC, Generic[_SuggestionRequester]):
         pass
 
 
-class SuggestFromList(Suggester[_SuggestionRequester]):
-    """Give completion suggestions based on a fixed list of options."""
+class SuggestFromList(Suggester):
+    """Give completion suggestions based on a fixed list of options.
+
+    Example:
+        ```py
+        countries = ["England", "Scotland", "Portugal", "Spain", "France"]
+
+        class MyApp(App[None]):
+            def compose(self) -> ComposeResult:
+                yield Input(suggester=SuggestFromList(countries))
+        ```
+    """
 
     def __init__(self, suggestions: Iterable[str]) -> None:
         """Creates a suggester based off of a given iterable of possibilities.
@@ -70,9 +97,10 @@ class SuggestFromList(Suggester[_SuggestionRequester]):
         Args:
             suggestions: Valid suggestions sorted by decreasing priority.
         """
-        self.suggestions = list(suggestions)
+        super().__init__()
+        self._suggestions = list(suggestions)
 
-    async def get_suggestion(self, value: str) -> Optional[str]:
+    async def get_suggestion(self, value: str) -> str | None:
         """Gets a completion from the given possibilities.
 
         Args:
@@ -81,7 +109,7 @@ class SuggestFromList(Suggester[_SuggestionRequester]):
         Returns:
             A valid completion suggestion or `None`.
         """
-        for suggestion in self.suggestions:
+        for suggestion in self._suggestions:
             if suggestion.startswith(value):
                 return suggestion
         return None
