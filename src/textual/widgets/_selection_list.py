@@ -267,6 +267,9 @@ class SelectionList(Generic[SelectionType], OptionList):
 
         Args:
             selection: The selection to mark as selected.
+
+        Returns:
+            The `SelectionList` instance.
         """
         if self._select(
             selection.value
@@ -277,7 +280,11 @@ class SelectionList(Generic[SelectionType], OptionList):
         return self
 
     def select_all(self) -> Self:
-        """Select all items."""
+        """Select all items.
+
+        Returns:
+            The `SelectionList` instance.
+        """
         return self._apply_to_all(self._select)
 
     def _deselect(self, value: SelectionType) -> bool:
@@ -301,6 +308,9 @@ class SelectionList(Generic[SelectionType], OptionList):
 
         Args:
             selection: The selection to mark as not selected.
+
+        Returns:
+            The `SelectionList` instance.
         """
         if self._deselect(
             selection.value
@@ -311,7 +321,11 @@ class SelectionList(Generic[SelectionType], OptionList):
         return self
 
     def deselect_all(self) -> Self:
-        """Deselect all items."""
+        """Deselect all items.
+
+        Returns:
+            The `SelectionList` instance.
+        """
         return self._apply_to_all(self._deselect)
 
     def _toggle(self, value: SelectionType) -> bool:
@@ -334,6 +348,9 @@ class SelectionList(Generic[SelectionType], OptionList):
 
         Args:
             selection: The selection to toggle.
+
+        Returns:
+            The `SelectionList` instance.
         """
         self._toggle(
             selection.value
@@ -344,7 +361,11 @@ class SelectionList(Generic[SelectionType], OptionList):
         return self
 
     def toggle_all(self) -> Self:
-        """Toggle all items."""
+        """Toggle all items.
+
+        Returns:
+            The `SelectionList` instance.
+        """
         return self._apply_to_all(self._toggle)
 
     def _make_selection(
