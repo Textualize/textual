@@ -208,6 +208,7 @@ class SelectionList(Generic[SelectionType], OptionList):
             disabled: Whether the selection list is disabled or not.
         """
         self._selected: dict[SelectionType, None] = {}
+        """Tracking of which values are selected."""
         super().__init__(
             *[self._make_selection(selection) for selection in selections],
             name=name,
