@@ -16,6 +16,7 @@ from ..events import Blur, Focus, Mount
 from ..geometry import Size
 from ..message import Message
 from ..reactive import reactive
+from ..suggester import Suggester, SuggestionReady
 from ..widget import Widget
 
 
@@ -155,12 +156,8 @@ class Input(Widget, can_focus=True):
     _cursor_visible = reactive(True)
     password = reactive(False)
     max_size: reactive[int | None] = reactive(None)
-    suggestions = reactive[Optional[List[str]]](None)
-    """List of completion suggestions that are shown while the user types.
-
-    The precedence of the suggestions is inferred from the order of the list.
-    Set this to `None` or to an empty list to disable this feature..
-    """
+    suggester: Suggester | None
+    """The suggester used to provide completions as the user types."""
     _suggestion = reactive("")
     """A completion suggestion for the current value in the input."""
 
@@ -213,7 +210,7 @@ class Input(Widget, can_focus=True):
         highlighter: Highlighter | None = None,
         password: bool = False,
         *,
-        suggestions: Iterable[str] | None = None,
+        suggester: Suggester | None = None,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -226,7 +223,8 @@ class Input(Widget, can_focus=True):
             placeholder: Optional placeholder text for the input.
             highlighter: An optional highlighter for the input.
             password: Flag to say if the field should obfuscate its content.
-            suggestions: Possible auto-completions for the input field.
+            suggester: [`Suggester`][textual.suggester.Suggester] associated with this
+                input instance.
             name: Optional name for the input widget.
             id: Optional ID for the widget.
             classes: Optional initial classes for the widget.
@@ -238,7 +236,7 @@ class Input(Widget, can_focus=True):
         self.placeholder = placeholder
         self.highlighter = highlighter
         self.password = password
-        self.suggestions = suggestions
+        self.suggester = suggester
 
     def _position_to_cell(self, position: int) -> int:
         """Convert an index within the value to cell position."""
@@ -285,8 +283,8 @@ class Input(Widget, can_focus=True):
 
     async def watch_value(self, value: str) -> None:
         self._suggestion = ""
-        if self.suggestions and value:
-            self._get_suggestion()
+        if self.suggester and value:
+            self.call_next(self.suggester.get, self, value)
         if self.styles.auto_dimensions:
             self.refresh(layout=True)
         self.post_message(self.Changed(self, value))
@@ -387,6 +385,11 @@ class Input(Widget, can_focus=True):
             cell_offset += _cell_size(char)
         else:
             self.cursor_position = len(self.value)
+
+    async def _on_suggestion_ready(self, event: SuggestionReady) -> None:
+        """Handle suggestion messages and set the suggestion when relevant."""
+        if event.input_value == self.value:
+            self._suggestion = event.suggestion
 
     def insert_text_at_cursor(self, text: str) -> None:
         """Insert new text at the cursor, move the cursor to the end of the new text.
@@ -531,23 +534,3 @@ class Input(Widget, can_focus=True):
     async def action_submit(self) -> None:
         """Handle a submit action (normally the user hitting Enter in the input)."""
         self.post_message(self.Submitted(self, self.value))
-
-    def validate_suggestions(
-        self, suggestions: Iterable[str] | None
-    ) -> list[str] | None:
-        """Convert suggestions iterable into a list."""
-        if suggestions is None:
-            return None
-        return list(suggestions)
-
-    @work(exclusive=True)
-    def _get_suggestion(self) -> None:
-        """Try to get a suggestion for the user."""
-        if not self.suggestions:
-            return
-
-        value = self.value
-        for suggestion in self.suggestions:
-            if suggestion.startswith(value):
-                self._suggestion = suggestion
-                break

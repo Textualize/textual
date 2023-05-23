@@ -1,4 +1,5 @@
 from textual.app import App, ComposeResult
+from textual.suggester import SuggestFromList
 from textual.widgets import Input
 
 
@@ -14,7 +15,7 @@ class FruitsApp(App[None]):
     """
 
     def compose(self) -> ComposeResult:
-        yield Input("straw", suggestions=fruits)
+        yield Input("straw", suggester=SuggestFromList(fruits))
 
 
 if __name__ == "__main__":

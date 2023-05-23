@@ -3,13 +3,14 @@ import string
 import pytest
 
 from textual.app import App, ComposeResult
+from textual.suggester import SuggestFromList
 from textual.widgets import Input
 
 
 class SuggestionsApp(App[ComposeResult]):
-    def __init__(self, suggestions=None):
+    def __init__(self, suggestions):
         self.suggestions = suggestions
-        self.input = Input(suggestions=self.suggestions)
+        self.input = Input(suggester=SuggestFromList(self.suggestions))
         super().__init__()
 
     def compose(self) -> ComposeResult:
@@ -17,7 +18,7 @@ class SuggestionsApp(App[ComposeResult]):
 
 
 async def test_no_suggestions():
-    app = SuggestionsApp()
+    app = SuggestionsApp([])
     async with app.run_test() as pilot:
         assert app.input._suggestion == ""
         await pilot.press("a")
