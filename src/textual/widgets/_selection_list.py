@@ -220,31 +220,7 @@ class SelectionList(Generic[SelectionType], OptionList):
         """The selected values."""
         return list(self._selected.keys())
 
-    def _select(self, value: SelectionType) -> None:
-        """Mark the given value as selected.
-
-        Args:
-            value: The value to mark as selected.
-        """
-        if value not in self._selected:
-            self._selected[value] = None
-            self.post_message(self.SelectedChanged(self))
-
-    def select(self, selection: Selection[SelectionType] | SelectionType) -> Self:
-        """Mark the given selection as selected.
-
-        Args:
-            selection: The selection to mark as selected.
-        """
-        self._select(
-            selection.value
-            if isinstance(selection, Selection)
-            else cast(SelectionType, selection)
-        )
-        self.refresh()
-        return self
-
-    def _apply_to_all(self, state_change: Callable[[SelectionType], None]) -> Self:
+    def _apply_to_all(self, state_change: Callable[[SelectionType], bool]) -> Self:
         """Apply a selection state change to all selection options in the list.
 
         Args:
@@ -254,39 +230,71 @@ class SelectionList(Generic[SelectionType], OptionList):
             The `SelectionList` instance.
         """
 
-        # We're only going to signal a change in the selections if there is
-        # any actual change; so let's count how many are selected now.
-        selected_count = len(self.selected)
+        # Keep track of if anything changed.
+        changed = False
 
         # Next we run through everything and apply the change, preventing
         # the changed message because the caller really isn't going to be
         # expecting a message storm from this.
         with self.prevent(self.SelectedChanged):
             for selection in self._options:
-                state_change(cast(Selection, selection).value)
+                changed = state_change(cast(Selection, selection).value) or changed
 
         # If the above did make a change, *then* send a message.
-        if len(self.selected) != selected_count:
+        if changed:
             self.post_message(self.SelectedChanged(self))
 
         self.refresh()
+        return self
+
+    def _select(self, value: SelectionType) -> bool:
+        """Mark the given value as selected.
+
+        Args:
+            value: The value to mark as selected.
+
+        Returns:
+            `True` if the value was selected, `False` if not.
+        """
+        if value not in self._selected:
+            self._selected[value] = None
+            self.post_message(self.SelectedChanged(self))
+            return True
+        return False
+
+    def select(self, selection: Selection[SelectionType] | SelectionType) -> Self:
+        """Mark the given selection as selected.
+
+        Args:
+            selection: The selection to mark as selected.
+        """
+        if self._select(
+            selection.value
+            if isinstance(selection, Selection)
+            else cast(SelectionType, selection)
+        ):
+            self.refresh()
         return self
 
     def select_all(self) -> Self:
         """Select all items."""
         return self._apply_to_all(self._select)
 
-    def _deselect(self, value: SelectionType) -> None:
+    def _deselect(self, value: SelectionType) -> bool:
         """Mark the given selection as not selected.
 
         Args:
             value: The value to mark as not selected.
+
+        Returns:
+            `True` if the value was deselected, `False` if not.
         """
         try:
             del self._selected[value]
-            self.post_message(self.SelectedChanged(self))
         except KeyError:
-            pass
+            return False
+        self.post_message(self.SelectedChanged(self))
+        return True
 
     def deselect(self, selection: Selection[SelectionType] | SelectionType) -> Self:
         """Mark the given selection as not selected.
@@ -306,16 +314,20 @@ class SelectionList(Generic[SelectionType], OptionList):
         """Deselect all items."""
         return self._apply_to_all(self._deselect)
 
-    def _toggle(self, value: SelectionType) -> None:
+    def _toggle(self, value: SelectionType) -> bool:
         """Toggle the selection state of the given value.
 
         Args:
             value: The value to toggle.
+
+        Returns:
+            Always `True`.
         """
         if value in self._selected:
             self._deselect(value)
         else:
             self._select(value)
+        return True
 
     def toggle(self, selection: Selection[SelectionType] | SelectionType) -> Self:
         """Toggle the selected state of the given selection.
