@@ -30,7 +30,7 @@ class Suggester(ABC):
     cache: FIFOCache[str, str | None] | None
     """Suggestion cache, if used."""
 
-    def __init__(self, use_cache: bool = True):
+    def __init__(self, use_cache: bool = True) -> None:
         """Create a suggester object.
 
         Args:
