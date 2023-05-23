@@ -272,6 +272,10 @@ class SelectionList(Generic[SelectionType], OptionList):
         self.refresh()
         return self
 
+    def select_all(self) -> Self:
+        """Select all items."""
+        return self._apply_to_all(self._select)
+
     def _deselect(self, value: SelectionType) -> None:
         """Mark the given selection as not selected.
 
