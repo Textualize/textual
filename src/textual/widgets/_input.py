@@ -125,6 +125,9 @@ class Input(Widget, can_focus=True):
         color: $text-disabled;
     }
     Input.-invalid {
+        border: tall $error 70%;
+    }
+    Input.-invalid:focus {
         border: tall $error;
     }
     """
