@@ -209,6 +209,8 @@ class SelectionList(Generic[SelectionType], OptionList):
         """
         self._selected: dict[SelectionType, None] = {}
         """Tracking of which values are selected."""
+        self._send_messages = False
+        """Keep track of when we're ready to start sending messages."""
         super().__init__(
             *[self._make_selection(selection) for selection in selections],
             name=name,
@@ -221,6 +223,21 @@ class SelectionList(Generic[SelectionType], OptionList):
     def selected(self) -> list[SelectionType]:
         """The selected values."""
         return list(self._selected.keys())
+
+    def _on_mount(self) -> None:
+        """Configure the list once the DOM is ready."""
+        self._send_messages = True
+
+    def _message_changed(self) -> None:
+        """Post a message that the selected collection has changed, where appropriate.
+
+        Note:
+            A message will only be send if `_send_messages` is `True`. This
+            makes this safe to call before the widget is ready for posting
+            messages.
+        """
+        if self._send_messages:
+            self.post_message(self.SelectedChanged(self))
 
     def _apply_to_all(self, state_change: Callable[[SelectionType], bool]) -> Self:
         """Apply a selection state change to all selection options in the list.
@@ -244,7 +261,7 @@ class SelectionList(Generic[SelectionType], OptionList):
 
         # If the above did make a change, *then* send a message.
         if changed:
-            self.post_message(self.SelectedChanged(self))
+            self._message_changed()
 
         self.refresh()
         return self
@@ -260,7 +277,7 @@ class SelectionList(Generic[SelectionType], OptionList):
         """
         if value not in self._selected:
             self._selected[value] = None
-            self.post_message(self.SelectedChanged(self))
+            self._message_changed()
             return True
         return False
 
@@ -302,7 +319,7 @@ class SelectionList(Generic[SelectionType], OptionList):
             del self._selected[value]
         except KeyError:
             return False
-        self.post_message(self.SelectedChanged(self))
+        self._message_changed()
         return True
 
     def deselect(self, selection: Selection[SelectionType] | SelectionType) -> Self:
