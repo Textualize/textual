@@ -302,6 +302,10 @@ class SelectionList(Generic[SelectionType], OptionList):
         self.refresh()
         return self
 
+    def deselect_all(self) -> Self:
+        """Deselect all items."""
+        return self._apply_to_all(self._deselect)
+
     def _toggle(self, value: SelectionType) -> None:
         """Toggle the selection state of the given value.
 
