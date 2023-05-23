@@ -10,14 +10,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- `Input` widget now supports showing automatic input suggestions https://github.com/Textualize/textual/issues/2330
-- `Input` accepts a parameter `suggestions` with a list of suggestions that show up while the user types https://github.com/Textualize/textual/pull/2604
-- `Input.suggestions` reactive can be used to change the possible completions for a given input https://github.com/Textualize/textual/pull/2604
+- `Suggester` API to compose with `Input` for automatic input suggestions while typing https://github.com/Textualize/textual/issues/2330
+- `SuggestFromList` class to let `Input` widgets get completions from a fixed set of options https://github.com/Textualize/textual/pull/2604
 - `Input` has new component class `input--suggestion` https://github.com/Textualize/textual/pull/2604
 
 ### Changed
 
 - Keybinding <kbd>right</kbd> in `Input` is also used to accept a suggestion if the cursor is at the end of the input https://github.com/Textualize/textual/pull/2604
+- `Input.__init__` now accepts a suggester for completion suggestions https://github.com/Textualize/textual/pull/2604
 
 
 ## [0.25.0] - 2023-05-17
