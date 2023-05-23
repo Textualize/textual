@@ -300,7 +300,7 @@ class SelectionList(Generic[SelectionType], OptionList):
         """Mark the given selection as not selected.
 
         Args:
-            selection: The selection to mark as selected.
+            selection: The selection to mark as not selected.
         """
         if self._deselect(
             selection.value
