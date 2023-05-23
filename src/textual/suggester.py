@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Iterable
 
+from ._cache import FIFOCache
 from .dom import DOMNode
 from .message import Message
 
@@ -26,7 +27,7 @@ class Suggester(ABC):
     See [`SuggestFromList`][textual.suggester.SuggestFromList] for an example.
     """
 
-    cache: dict[str, str | None] | None
+    cache: FIFOCache[str, str | None] | None
     """Suggestion cache, if used."""
 
     def __init__(self, use_cache: bool = True):
@@ -35,7 +36,7 @@ class Suggester(ABC):
         Args:
             use_cache: Whether to cache suggestion results.
         """
-        self.cache = {} if use_cache else None
+        self.cache = FIFOCache(1024) if use_cache else None
 
     async def _get_suggestion(self, requester: DOMNode, value: str) -> None:
         """Used by widgets to get completion suggestions.
