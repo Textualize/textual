@@ -156,7 +156,7 @@ class Input(Widget, can_focus=True):
     _cursor_visible = reactive(True)
     password = reactive(False)
     max_size: reactive[int | None] = reactive(None)
-    suggester: Suggester | None
+    suggester: Suggester[Input] | None
     """The suggester used to provide completions as the user types."""
     _suggestion = reactive("")
     """A completion suggestion for the current value in the input."""
@@ -284,7 +284,7 @@ class Input(Widget, can_focus=True):
     async def watch_value(self, value: str) -> None:
         self._suggestion = ""
         if self.suggester and value:
-            self.call_next(self.suggester.get, self, value)
+            self.call_next(self.suggester._get_suggestion, self, value)
         if self.styles.auto_dimensions:
             self.refresh(layout=True)
         self.post_message(self.Changed(self, value))
