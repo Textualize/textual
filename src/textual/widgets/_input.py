@@ -142,7 +142,7 @@ class Input(Widget, can_focus=True):
     max_size: reactive[int | None] = reactive(None)
 
     @dataclass
-    class Changed(Message, bubble=True):
+    class Changed(Message):
         """Posted when the value changes.
 
         Can be handled using `on_input_changed` in a subclass of `Input` or in a parent
@@ -157,28 +157,29 @@ class Input(Widget, can_focus=True):
 
         validation_result: ValidationResult | None = None
         """The result of validating the value (formed by combining the results from each validator), or None
-            if validation was not performed (for example  when no validators are specified in the `Input`s init)"""
+            if validation was not performed (for example when no validators are specified in the `Input`s init)"""
 
         @property
         def control(self) -> Input:
             """Alias for self.input."""
             return self.input
 
-    class Submitted(Message, bubble=True):
+    @dataclass
+    class Submitted(Message):
         """Posted when the enter key is pressed within an `Input`.
 
         Can be handled using `on_input_submitted` in a subclass of `Input` or in a
         parent widget in the DOM.
-
-        Attributes:
-            value: The value of the `Input` being submitted.
-            input: The `Input` widget that is being submitted.
         """
 
-        def __init__(self, input: Input, value: str) -> None:
-            super().__init__()
-            self.input: Input = input
-            self.value: str = value
+        input: Input
+        """The `Input` widget that is being submitted."""
+        value: str
+        """The value of the `Input` being submitted."""
+        validation_result: ValidationResult | None = None
+        """The result of validating the value on submission, formed by combining the results for each validator.
+        This value will be None if no validation was performed, which will be the case if no validators are supplied
+        to the corresponding `Input` widget."""
 
         @property
         def control(self) -> Input:
@@ -271,26 +272,33 @@ class Input(Widget, can_focus=True):
         if self.styles.auto_dimensions:
             self.refresh(layout=True)
 
-        # If this input requires validation, do it when the value changes.
-        if self.validators:
-            validation_result = self.validate(value)
-            self.set_class(not bool(validation_result), "-invalid")
-        else:
-            validation_result = None
+        validation_result = self.validate(value)
 
         self.post_message(self.Changed(self, value, validation_result))
 
-    def validate(self, value: str) -> ValidationResult:
+    def validate(self, value: str) -> ValidationResult | None:
         """Run all the validators associated with this Input on the supplied value.
+
+        Runs all validators, combines the result into one. If any of the validators
+        failed, the combined result will be a failure. If no validators are present,
+        None will be returned. This also sets the `-invalid` CSS class on the Input,
+        which by default changes the border color to $error.
 
         Returns:
             A ValidationResult indicating whether *all* validators succeeded or not.
-                That is, if *any* validator fails, the result will be an unsuccessful validation.
+                That is, if *any* validator fails, the result will be an unsuccessful
+                validation.
         """
+        # If no validators are supplied, and therefore no validation occurs, we return None.
+        if not self.validators:
+            return None
+
         validation_results: list[ValidationResult] = [
             validator.validate(value) for validator in self.validators
         ]
-        return ValidationResult.merge(validation_results)
+        combined_result = ValidationResult.merge(validation_results)
+        self.set_class(not bool(combined_result), "-invalid")
+        return combined_result
 
     @property
     def cursor_width(self) -> int:
@@ -526,5 +534,9 @@ class Input(Widget, can_focus=True):
             self.cursor_position = 0
 
     async def action_submit(self) -> None:
-        """Handle a submit action (normally the user hitting Enter in the input)."""
-        self.post_message(self.Submitted(self, self.value))
+        """Handle a submit action.
+
+        Normally triggered by the user pressing Enter. This will also run any validators.
+        """
+        validation_result = self.validate(self.value)
+        self.post_message(self.Submitted(self, self.value, validation_result))
