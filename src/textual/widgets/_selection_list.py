@@ -51,6 +51,7 @@ class Selection(Generic[SelectionType], Option):
             prompt = Text.from_markup(prompt)
         super().__init__(prompt.split()[0], id, disabled)
         self._value: SelectionType = value
+        """The value associated with the selection."""
 
     @property
     def value(self) -> SelectionType:
