@@ -406,12 +406,42 @@ class SelectionList(Generic[SelectionType], OptionList):
         self.post_message(self.SelectionToggled(self, event.option_index))
 
     def get_option_at_index(self, index: int) -> Selection[SelectionType]:
+        """Get the selection option at the given index.
+
+        Args:
+            index: The index of the selection option to get.
+
+        Returns:
+            The selection option at that index.
+
+        Raises:
+            OptionDoesNotExist: If there is no selection option with the index.
+        """
         return cast("Selection[SelectionType]", super().get_option_at_index(index))
 
     def get_option(self, option_id: str) -> Selection[SelectionType]:
+        """Get the selection option with the given ID.
+
+        Args:
+            index: The ID of the selection option to get.
+
+        Returns:
+            The selection option at with the ID.
+
+        Raises:
+            OptionDoesNotExist: If no selection option has the given ID.
+        """
         return cast("Selection[SelectionType]", super().get_option(option_id))
 
     def _remove_option(self, index: int) -> None:
+        """Remove a selection option from the selection option list.
+
+        Args:
+            index: The index of the selection option to remove.
+
+        Raises:
+            IndexError: If there is no selection option of the given index.
+        """
         self._deselect(self.get_option_at_index(index).value)
         return super()._remove_option(index)
 
@@ -424,6 +454,23 @@ class SelectionList(Generic[SelectionType], OptionList):
             | tuple[TextType, SelectionType, bool]
         ],
     ) -> Self:
+        """Add new selection options to the end of the list.
+
+        Args:
+            items: The new items to add.
+
+        Returns:
+            The `SelectionList` instance.
+
+        Raises:
+            DuplicateID: If there is an attempt to use a duplicate ID.
+            SelectionError: If one of the selection options is of the wrong form.
+
+        Note:
+            Any new selection option added should either be an instance of
+            `Option`, or should be a `tuple` of prompt and value, or prompt,
+            value and selected state.
+        """
         # This... is sort of sub-optimal, but a natural consequence of
         # inheriting from and narrowing down OptionList. Here we don't want
         # things like a separator, or a base Option, being passed in. So we
@@ -456,4 +503,21 @@ class SelectionList(Generic[SelectionType], OptionList):
         | tuple[TextType, SelectionType]
         | tuple[TextType, SelectionType, bool] = None,
     ) -> Self:
+        """Add a new selection option to the end of the list.
+
+        Args:
+            item: The new item to add.
+
+        Returns:
+            The `SelectionList` instance.
+
+        Raises:
+            DuplicateID: If there is an attempt to use a duplicate ID.
+            SelectionError: If the selection option is of the wrong form.
+
+        Note:
+            Any new selection option added should either be an instance of
+            `Option`, or should be a `tuple` of prompt and value, or prompt,
+            value and selected state.
+        """
         return self.add_options([item])
