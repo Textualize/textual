@@ -275,6 +275,14 @@ class App(Generic[ReturnType], DOMNode):
     """
     SCREENS: ClassVar[dict[str, Screen | Callable[[], Screen]]] = {}
     """Screens associated with the app for the lifetime of the app."""
+
+    AUTO_FOCUS: ClassVar[str | None] = "*"
+    """A selector to determine what to focus automatically when a screen is activated.
+
+    The widget focused is the first that matches the given [CSS selector](/guide/queries/#query-selectors).
+    Setting to `None` or `""` disables auto focus.
+    """
+
     _BASE_PATH: str | None = None
     CSS_PATH: ClassVar[CSSPathType | None] = None
     """File paths to load CSS from."""
