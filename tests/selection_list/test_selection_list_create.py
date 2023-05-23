@@ -71,3 +71,7 @@ async def test_add_non_selections() -> None:
             selections.add_option(Option("Nope"))
         with pytest.raises(SelectionError):
             selections.add_option("Nope")
+        with pytest.raises(SelectionError):
+            selections.add_option(("Nope",))
+        with pytest.raises(SelectionError):
+            selections.add_option(("Nope", 0, False, 23))
