@@ -207,6 +207,7 @@ class SelectionList(Generic[SelectionType], OptionList):
             classes: The CSS classes of the selection list.
             disabled: Whether the selection list is disabled or not.
         """
+        self._selected: dict[SelectionType, None] = {}
         super().__init__(
             *[self._make_selection(selection) for selection in selections],
             name=name,
@@ -214,7 +215,6 @@ class SelectionList(Generic[SelectionType], OptionList):
             classes=classes,
             disabled=disabled,
         )
-        self._selected: dict[SelectionType, None] = {}
 
     @property
     def selected(self) -> list[SelectionType]:
