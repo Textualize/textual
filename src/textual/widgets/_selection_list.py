@@ -18,7 +18,7 @@ from ._option_list import NewOptionListContent, Option, OptionList
 from ._toggle_button import ToggleButton
 
 SelectionType = TypeVar("SelectionType")
-"""The type for the value of a `Selection`"""
+"""The type for the value of a [`Selection`][textual.widgets.selection_list.Selection] in a [`SelectionList`][textual.widgets.SelectionList]"""
 
 MessageSelectionType = TypeVar("MessageSelectionType")
 """The type for the value of a `SelectionList` message"""
