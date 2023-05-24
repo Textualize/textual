@@ -446,7 +446,7 @@ class SelectionList(Generic[SelectionType], OptionList):
                 )
             else:
                 raise SelectionError(f"Expected 2 or 3 values, got {len(selection)}")
-            selection = Selection(label, value, selected)
+            selection = Selection[SelectionType](label, value, selected)
 
         # At this point we should have a proper selection.
         assert isinstance(selection, Selection)
