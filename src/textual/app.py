@@ -2075,7 +2075,7 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             widget: A Widget to unregister
         """
-        widget.reset_focus()
+        widget.blur()
         if isinstance(widget._parent, Widget):
             widget._parent._nodes._remove(widget)
             widget._detach()

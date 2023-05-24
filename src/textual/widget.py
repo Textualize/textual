@@ -3017,8 +3017,8 @@ class Widget(DOMNode):
         self.app.call_later(set_focus, self)
         return self
 
-    def reset_focus(self) -> Self:
-        """Reset the focus (move it to the next available widget).
+    def blur(self) -> Self:
+        """Blur (un-focus) the widget (focus will be moved to the next available widget).
 
         Returns:
             The `Widget` instance.
@@ -3172,7 +3172,7 @@ class Widget(DOMNode):
 
     def _on_hide(self, event: events.Hide) -> None:
         if self.has_focus:
-            self.reset_focus()
+            self.blur()
 
     def _on_scroll_to_region(self, message: messages.ScrollToRegion) -> None:
         self.scroll_to_region(message.region, animate=True)
