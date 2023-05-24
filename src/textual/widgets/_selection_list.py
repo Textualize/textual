@@ -159,9 +159,10 @@ class SelectionList(Generic[SelectionType], OptionList):
 
         @property
         def control(self) -> OptionList:
-            """The option list that sent the message.
+            """The selection list that sent the message.
 
-            This is an alias for [`OptionMessage.option_list`][textual.widgets.OptionList.OptionMessage.option_list]
+            This is an alias for
+            [`SelectionMessage.selection_list`][textual.widgets.SelectionList.SelectionMessage.selection_list]
             and is used by the [`on`][textual.on] decorator.
             """
             return self.selection_list
