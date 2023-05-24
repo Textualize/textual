@@ -3,7 +3,7 @@ from __future__ import annotations
 from asyncio import Queue
 from dataclasses import dataclass
 from pathlib import Path
-from typing import ClassVar, Iterable, Iterator
+from typing import Callable, ClassVar, Iterable, Iterator
 
 from rich.style import Style
 from rich.text import Text, TextType
@@ -59,6 +59,9 @@ class DirectoryTree(Tree[DirEntry]):
     }
     """
 
+    PATH: Callable[[str | Path], Path] = Path
+    """Callable that returns a fresh path object."""
+
     class FileSelected(Message, bubble=True):
         """Posted when a file is selected.
 
@@ -92,7 +95,7 @@ class DirectoryTree(Tree[DirEntry]):
             """
             return self.tree
 
-    path: var[str | Path] = var["str | Path"](Path("."), init=False, always_update=True)
+    path: var[str | Path] = var["str | Path"](PATH("."), init=False, always_update=True)
     """The path that is the root of the directory tree.
 
     Note:
@@ -121,7 +124,7 @@ class DirectoryTree(Tree[DirEntry]):
         self._load_queue: Queue[TreeNode[DirEntry]] = Queue()
         super().__init__(
             str(path),
-            data=DirEntry(Path(path)),
+            data=DirEntry(self.PATH(path)),
             name=name,
             id=id,
             classes=classes,
@@ -141,7 +144,7 @@ class DirectoryTree(Tree[DirEntry]):
 
     def reload(self) -> None:
         """Reload the `DirectoryTree` contents."""
-        self.reset(str(self.path), DirEntry(Path(self.path)))
+        self.reset(str(self.path), DirEntry(self.PATH(self.path)))
         # Orphan the old queue...
         self._load_queue = Queue()
         # ...and replace the old load with a new one.
@@ -163,7 +166,7 @@ class DirectoryTree(Tree[DirEntry]):
             The result will always be a Python `Path` object, regardless of
             the value given.
         """
-        return Path(path)
+        return self.PATH(path)
 
     def watch_path(self) -> None:
         """Watch for changes to the `path` of the directory tree.

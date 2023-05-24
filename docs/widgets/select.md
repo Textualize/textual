@@ -66,10 +66,10 @@ The following example presents a `Select` with a number of options.
 ## Reactive attributes
 
 
-| Name       | Type                 | Default | Description                         |
-| ---------- | -------------------- | ------- | ----------------------------------- |
-| `expanded` | `bool`               | `False` | True to expand the options overlay. |
-| `value`    | `SelectType \| None` | `None`  | Current value of the Select.        |
+| Name       | Type                   | Default | Description                         |
+|------------|------------------------|---------|-------------------------------------|
+| `expanded` | `bool`                 | `False` | True to expand the options overlay. |
+| `value`    | `SelectType` \| `None` | `None`  | Current value of the Select.        |
 
 
 ## Bindings

@@ -87,7 +87,7 @@ tables](https://rich.readthedocs.io/en/latest/tables.html):
 
 ## Messages
 
-- [OptionList.OptionHighlight][textual.widgets.OptionList.OptionHighlighted]
+- [OptionList.OptionHighlighted][textual.widgets.OptionList.OptionHighlighted]
 - [OptionList.OptionSelected][textual.widgets.OptionList.OptionSelected]
 
 Both of the messages above inherit from the common base [`OptionList`][textual.widgets.OptionList.OptionMessage], so refer to its documentation to see what attributes are available.
@@ -113,5 +113,10 @@ The option list provides the following component classes:
 
 
 ::: textual.widgets.OptionList
+    options:
+      heading_level: 2
+
+
+::: textual.widgets.option_list.Option
     options:
       heading_level: 2

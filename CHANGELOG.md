@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Added
+
+- `work` decorator accepts `description` parameter to add debug string https://github.com/Textualize/textual/issues/2597
+
+### Changed
+
+- `Placeholder` now sets its color cycle per app https://github.com/Textualize/textual/issues/2590
+- Footer now clears key highlight regardless of whether it's in the active screen or not https://github.com/Textualize/textual/issues/2606
+- The default Widget repr no longer displays classes and pseudo-classes (to reduce noise in logs). Add them to your `__rich_repr__` method if needed. https://github.com/Textualize/textual/pull/2623
+
+### Removed
+
+- `Placeholder.reset_color_cycle`
+
+
 ## [0.26.0] - 2023-05-20
 
 ### Added

@@ -71,7 +71,7 @@ from ._wait import wait_for_idle
 from ._worker_manager import WorkerManager
 from .actions import ActionParseResult, SkipAction
 from .await_remove import AwaitRemove
-from .binding import Binding, _Bindings
+from .binding import Binding, BindingType, _Bindings
 from .css.query import NoMatches
 from .css.stylesheet import Stylesheet
 from .design import ColorSystem
@@ -159,6 +159,38 @@ class ScreenStackError(ScreenError):
     """Raised when trying to manipulate the screen stack incorrectly."""
 
 
+class ModeError(Exception):
+    """Base class for exceptions related to modes."""
+
+
+class InvalidModeError(ModeError):
+    """Raised if there is an issue with a mode name."""
+
+
+class UnknownModeError(ModeError):
+    """Raised when attempting to use a mode that is not known."""
+
+
+class ActiveModeError(ModeError):
+    """Raised when attempting to remove the currently active mode."""
+
+
+class ModeError(Exception):
+    """Base class for exceptions related to modes."""
+
+
+class InvalidModeError(ModeError):
+    """Raised if there is an issue with a mode name."""
+
+
+class UnknownModeError(ModeError):
+    """Raised when attempting to use a mode that is not known."""
+
+
+class ActiveModeError(ModeError):
+    """Raised when attempting to remove the currently active mode."""
+
+
 class CssPathError(Exception):
     """Raised when supplied CSS path(s) are invalid."""
 
@@ -212,6 +244,35 @@ class App(Generic[ReturnType], DOMNode):
     }
     """
 
+    MODES: ClassVar[dict[str, str | Screen | Callable[[], Screen]]] = {}
+    """Modes associated with the app and their base screens.
+
+    The base screen is the screen at the bottom of the mode stack. You can think of
+    it as the default screen for that stack.
+    The base screens can be names of screens listed in [SCREENS][textual.app.App.SCREENS],
+    [`Screen`][textual.screen.Screen] instances, or callables that return screens.
+
+    Example:
+        ```py
+        class HelpScreen(Screen[None]):
+            ...
+
+        class MainAppScreen(Screen[None]):
+            ...
+
+        class MyApp(App[None]):
+            MODES = {
+                "default": "main",
+                "help": HelpScreen,
+            }
+
+            SCREENS = {
+                "main": MainAppScreen,
+            }
+
+            ...
+        ```
+    """
     SCREENS: ClassVar[dict[str, Screen | Callable[[], Screen]]] = {}
     """Screens associated with the app for the lifetime of the app."""
     _BASE_PATH: str | None = None
@@ -230,7 +291,9 @@ class App(Generic[ReturnType], DOMNode):
     To update the sub-title while the app is running, you can set the [sub_title][textual.app.App.sub_title] attribute.
     """
 
-    BINDINGS = [Binding("ctrl+c", "quit", "Quit", show=False, priority=True)]
+    BINDINGS: ClassVar[list[BindingType]] = [
+        Binding("ctrl+c", "quit", "Quit", show=False, priority=True)
+    ]
 
     title: Reactive[str] = Reactive("", compute=False)
     sub_title: Reactive[str] = Reactive("", compute=False)
@@ -294,7 +357,10 @@ class App(Generic[ReturnType], DOMNode):
         self._workers = WorkerManager(self)
         self.error_console = Console(markup=False, stderr=True)
         self.driver_class = driver_class or self.get_driver_class()
-        self._screen_stack: list[Screen] = []
+        self._screen_stacks: dict[str, list[Screen]] = {"_default": []}
+        """A stack of screens per mode."""
+        self._current_mode: str = "_default"
+        """The current mode the app is in."""
         self._sync_available = False
 
         self.mouse_over: Widget | None = None
@@ -526,7 +592,19 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             A snapshot of the current state of the screen stack.
         """
-        return self._screen_stack.copy()
+        return self._screen_stacks[self._current_mode].copy()
+
+    @property
+    def _screen_stack(self) -> list[Screen]:
+        """A reference to the current screen stack.
+
+        Note:
+            Consider using [`screen_stack`][textual.app.App.screen_stack] instead.
+
+        Returns:
+            A reference to the current screen stack.
+        """
+        return self._screen_stacks[self._current_mode]
 
     def exit(
         self, result: ReturnType | None = None, message: RenderableType | None = None
@@ -674,6 +752,8 @@ class App(Generic[ReturnType], DOMNode):
         """
         try:
             return self._screen_stack[-1]
+        except KeyError:
+            raise UnknownModeError(f"No known mode {self._current_mode!r}") from None
         except IndexError:
             raise ScreenStackError("No screens on stack") from None
 
@@ -1319,6 +1399,88 @@ class App(Generic[ReturnType], DOMNode):
         """
         return self.mount(*widgets, before=before, after=after)
 
+    def _init_mode(self, mode: str) -> None:
+        """Do internal initialisation of a new screen stack mode."""
+
+        stack = self._screen_stacks.get(mode, [])
+        if not stack:
+            _screen = self.MODES[mode]
+            if callable(_screen):
+                screen, _ = self._get_screen(_screen())
+            else:
+                screen, _ = self._get_screen(self.MODES[mode])
+            stack.append(screen)
+        self._screen_stacks[mode] = [screen]
+
+    def switch_mode(self, mode: str) -> None:
+        """Switch to a given mode.
+
+        Args:
+            mode: The mode to switch to.
+
+        Raises:
+            UnknownModeError: If trying to switch to an unknown mode.
+        """
+        if mode not in self.MODES:
+            raise UnknownModeError(f"No known mode {mode!r}")
+
+        self.screen.post_message(events.ScreenSuspend())
+        self.screen.refresh()
+
+        if mode not in self._screen_stacks:
+            self._init_mode(mode)
+        self._current_mode = mode
+        self.screen._screen_resized(self.size)
+        self.screen.post_message(events.ScreenResume())
+        self.log.system(f"{self._current_mode!r} is the current mode")
+        self.log.system(f"{self.screen} is active")
+
+    def add_mode(
+        self, mode: str, base_screen: str | Screen | Callable[[], Screen]
+    ) -> None:
+        """Adds a mode and its corresponding base screen to the app.
+
+        Args:
+            mode: The new mode.
+            base_screen: The base screen associated with the given mode.
+
+        Raises:
+            InvalidModeError: If the name of the mode is not valid/duplicated.
+        """
+        if mode == "_default":
+            raise InvalidModeError("Cannot use '_default' as a custom mode.")
+        elif mode in self.MODES:
+            raise InvalidModeError(f"Duplicated mode name {mode!r}.")
+
+        self.MODES[mode] = base_screen
+
+    def remove_mode(self, mode: str) -> None:
+        """Removes a mode from the app.
+
+        Screens that are running in the stack of that mode are scheduled for pruning.
+
+        Args:
+            mode: The mode to remove. It can't be the active mode.
+
+        Raises:
+            ActiveModeError: If trying to remove the active mode.
+            UnknownModeError: If trying to remove an unknown mode.
+        """
+        if mode == self._current_mode:
+            raise ActiveModeError(f"Can't remove active mode {mode!r}")
+        elif mode not in self.MODES:
+            raise UnknownModeError(f"Unknown mode {mode!r}")
+        else:
+            del self.MODES[mode]
+
+        if mode not in self._screen_stacks:
+            return
+
+        stack = self._screen_stacks[mode]
+        del self._screen_stacks[mode]
+        for screen in reversed(stack):
+            self._replace_screen(screen)
+
     def is_screen_installed(self, screen: Screen | str) -> bool:
         """Check if a given screen has been installed.
 
@@ -1395,7 +1557,9 @@ class App(Generic[ReturnType], DOMNode):
             self.screen.refresh()
         screen.post_message(events.ScreenSuspend())
         self.log.system(f"{screen} SUSPENDED")
-        if not self.is_screen_installed(screen) and screen not in self._screen_stack:
+        if not self.is_screen_installed(screen) and all(
+            screen not in stack for stack in self._screen_stacks.values()
+        ):
             screen.remove()
             self.log.system(f"{screen} REMOVED")
         return screen
@@ -1496,13 +1660,13 @@ class App(Generic[ReturnType], DOMNode):
             if screen not in self._installed_screens:
                 return None
             uninstall_screen = self._installed_screens[screen]
-            if uninstall_screen in self._screen_stack:
+            if any(uninstall_screen in stack for stack in self._screen_stacks.values()):
                 raise ScreenStackError("Can't uninstall screen in screen stack")
             del self._installed_screens[screen]
             self.log.system(f"{uninstall_screen} UNINSTALLED name={screen!r}")
             return screen
         else:
-            if screen in self._screen_stack:
+            if any(screen in stack for stack in self._screen_stacks.values()):
                 raise ScreenStackError("Can't uninstall screen in screen stack")
             for name, installed_screen in self._installed_screens.items():
                 if installed_screen is screen:
@@ -1689,7 +1853,7 @@ class App(Generic[ReturnType], DOMNode):
 
         if self.css_monitor:
             self.set_interval(0.25, self.css_monitor, name="css monitor")
-            self.log.system("[b green]STARTED[/]", self.css_monitor)
+            self.log.system("STARTED", self.css_monitor)
 
         async def run_process_messages():
             """The main message loop, invoke below."""
@@ -1947,12 +2111,12 @@ class App(Generic[ReturnType], DOMNode):
     async def _close_all(self) -> None:
         """Close all message pumps."""
 
-        # Close all screens on the stack.
-        for stack_screen in reversed(self._screen_stack):
-            if stack_screen._running:
-                await self._prune_node(stack_screen)
-
-        self._screen_stack.clear()
+        # Close all screens on all stacks:
+        for stack in self._screen_stacks.values():
+            for stack_screen in reversed(stack):
+                if stack_screen._running:
+                    await self._prune_node(stack_screen)
+            stack.clear()
 
         # Close pre-defined screens.
         for screen in self.SCREENS.values():
@@ -2137,7 +2301,7 @@ class App(Generic[ReturnType], DOMNode):
         # Handle input events that haven't been forwarded
         # If the event has been forwarded it may have bubbled up back to the App
         if isinstance(event, events.Compose):
-            screen = Screen(id="_default")
+            screen = Screen(id=f"_default")
             self._register(self, screen)
             self._screen_stack.append(screen)
             screen.post_message(events.ScreenResume())
@@ -2549,7 +2713,7 @@ class App(Generic[ReturnType], DOMNode):
     def _on_terminal_supports_synchronized_output(
         self, message: messages.TerminalSupportsSynchronizedOutput
     ) -> None:
-        log.system("[b green]SynchronizedOutput mode is supported")
+        log.system("SynchronizedOutput mode is supported")
         self._sync_available = True
 
     def _begin_update(self) -> None:
