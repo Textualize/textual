@@ -514,3 +514,11 @@ def test_select_rebuild(snap_compare):
         SNAPSHOT_APPS_DIR / "select_rebuild.py",
         press=["space", "escape", "tab", "enter", "tab", "space"],
     )
+
+
+def test_blur_on_disabled(snap_compare):
+    # https://github.com/Textualize/textual/issues/2641
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "blur_on_disabled.py",
+        press=[*"foo", "f3", *"this should not appear"],
+    )

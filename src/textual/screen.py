@@ -386,6 +386,7 @@ class Screen(Generic[ScreenResultType], Widget):
         focusable_widgets = self.focus_chain
         if not focusable_widgets:
             # If there's nothing to focus... give up now.
+            self.set_focus(None)
             return
 
         try:

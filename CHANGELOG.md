@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 - `Placeholder.reset_color_cycle`
+- Removed `Widget.reset_focus` (now called `Widget.blur`) https://github.com/Textualize/textual/issues/2642
 
 
 ## [0.26.0] - 2023-05-20
