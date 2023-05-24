@@ -194,6 +194,7 @@ class TextArea(ScrollView, can_focus=True):
         self.cursor_y += 1
 
     def action_remove_left(self) -> None:
+        # TODO: refactor of removing linebreak into "watch_cursor_offset"?
         if not self.cursor_x and self.cursor_y:
             above_line_length = self._buffer.get_line_length(self.cursor_y - 1)
             self._buffer.remove_linebreak(self.cursor_y)
