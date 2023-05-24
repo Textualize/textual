@@ -71,6 +71,19 @@ async def test_toggle() -> None:
         ]
 
 
+async def test_toggle_via_user() -> None:
+    """Toggling via the user should result in the correct messages."""
+    async with SelectionListApp().run_test() as pilot:
+        assert isinstance(pilot.app, SelectionListApp)
+        await pilot.press("space")
+        await pilot.pause()
+        assert pilot.app.messages == [
+            ("SelectionHighlighted", 0),
+            ("SelectedChanged", None),
+            ("SelectionToggled", 0),
+        ]
+
+
 async def test_toggle_all() -> None:
     """Toggling all options should result in messages."""
     async with SelectionListApp().run_test() as pilot:
