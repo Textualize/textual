@@ -35,6 +35,7 @@ class Selection(Generic[SelectionType], Option):
         self,
         prompt: TextType,
         value: SelectionType,
+        initial_state: bool = False,
         id: str | None = None,
         disabled: bool = False,
     ):
@@ -52,11 +53,18 @@ class Selection(Generic[SelectionType], Option):
         super().__init__(prompt.split()[0], id, disabled)
         self._value: SelectionType = value
         """The value associated with the selection."""
+        self._initial_state: bool = initial_state
+        """The initial selected state for the selection."""
 
     @property
     def value(self) -> SelectionType:
         """The value for this selection."""
         return self._value
+
+    @property
+    def initial_state(self) -> bool:
+        """The initial selected state for the selection."""
+        return self._initial_state
 
 
 class SelectionList(Generic[SelectionType], OptionList):
