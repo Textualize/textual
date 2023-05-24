@@ -115,3 +115,8 @@ The option list provides the following component classes:
 ::: textual.widgets.OptionList
     options:
       heading_level: 2
+
+
+::: textual.widgets.option_list.Option
+    options:
+      heading_level: 2
