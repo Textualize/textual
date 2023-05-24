@@ -29,7 +29,7 @@ class SelectionError(TypeError):
 
 
 class Selection(Generic[SelectionType], Option):
-    """A selection for the `SelectionList`."""
+    """A selection for a [`SelectionList`][textual.widgets.SelectionList]."""
 
     def __init__(
         self,
@@ -176,14 +176,14 @@ class SelectionList(Generic[SelectionType], OptionList):
         """Message sent when a selection is highlighted.
 
         Can be handled using `on_selection_list_selection_highlighted` in a subclass of
-        `SelectionList` or in a parent node in the DOM.
+        [`SelectionList`][textual.widgets.SelectionList] or in a parent node in the DOM.
         """
 
     class SelectionToggled(SelectionMessage):
         """Message sent when a selection is toggled.
 
         Can be handled using `on_selection_list_selection_toggled` in a subclass of
-        `SelectionList` or in a parent node in the DOM.
+        [`SelectionList`][textual.widgets.SelectionList] or in a parent node in the DOM.
 
         Note:
             This message is only sent if the selection is toggled by user
@@ -330,7 +330,7 @@ class SelectionList(Generic[SelectionType], OptionList):
         """Select all items.
 
         Returns:
-            The `SelectionList` instance.
+            The [`SelectionList`][textual.widgets.SelectionList] instance.
         """
         return self._apply_to_all(self._select)
 
@@ -542,7 +542,7 @@ class SelectionList(Generic[SelectionType], OptionList):
         self.post_message(self.SelectionHighlighted(self, event.option_index))
 
     def _on_option_list_option_selected(self, event: OptionList.OptionSelected) -> None:
-        """Capture the `OptionList` selected event and turn it into a `SelectionList` event.
+        """Capture the `OptionList` selected event and turn it into a [`SelectionList`][textual.widgets.SelectionList] event.
 
         Args:
             event: The event to capture and recreate.
