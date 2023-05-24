@@ -616,7 +616,7 @@ class SelectionList(Generic[SelectionType], OptionList):
                     )
                 )
             elif isinstance(item, Selection):
-                cleaned_options.append(item)
+                cleaned_options.append(self._make_selection(item))
             else:
                 raise SelectionError(
                     "Only Selection or a prompt/value tuple is supported in SelectionList"
