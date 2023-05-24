@@ -195,7 +195,11 @@ class SelectionList(Generic[SelectionType], OptionList):
 
     @dataclass
     class SelectedChanged(Generic[MessageSelectionType], Message):
-        """Message sent when the collection of selected values changes."""
+        """Message sent when the collection of selected values changes.
+
+        This message is sent when any change to the collection of selected
+        values takes place; either by user interaction or by API calls.
+        """
 
         selection_list: SelectionList[MessageSelectionType]
         """The `SelectionList` that sent the message."""
