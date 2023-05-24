@@ -112,7 +112,7 @@ class _TextAreaRenderable:
             return
         self.textarea.styles.background = bgcolor.name
 
-# FIXME: cursor jumping between odd lines (in terms of length)
+
 # TODO: document code :)
 # TODO: possibility to pass `pygments.lexer.Lexer` with "lexer"
 # TODO: possibility to pass the theme for syntax highlighting
@@ -156,6 +156,15 @@ class TextArea(ScrollView, can_focus=True):
     def compute_cursor_offset(self) -> Offset:
         return Offset(self.cursor_x, self.cursor_y)
 
+    def watch_cursor_offset(
+        self, previous_cursor_offset: Offset, cursor_offset: Offset
+    ) -> None:
+        previous_cursor_x, _ = previous_cursor_offset
+        _, cursor_y = cursor_offset
+        line_length = self._buffer.get_line_length(cursor_y)
+        if previous_cursor_x > line_length:
+            self.cursor_x = line_length
+
     def validate_cursor_x(self, cursor_x: int) -> int:
         if cursor_x < 0:
             return 0
@@ -191,7 +200,6 @@ class TextArea(ScrollView, can_focus=True):
             self.action_cursor_up()
             self.cursor_x = above_line_length
             return
-
         if self.cursor_x:
             self.action_cursor_left()
             self._buffer.remove_char(self.cursor_offset)
