@@ -9,7 +9,53 @@ A widget for showing a vertical list check boxes.
 
 ## Examples
 
-Some super-cool examples will appear here!
+A selection list is designed to be built up of single-line prompts (which
+can be Rich renderables) and an associated unique value.
+
+### Selections as tuples
+
+A selection list can be built with tuples, either of two or three values in
+length. Each tuple must contain a prompt and a value, and it can also
+optionally contain a flag for the initial selected state of the option.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/widgets/selection_list.py"}
+    ```
+
+=== "selection_list.py"
+
+    ~~~python
+    --8<-- "docs/examples/widgets/selection_list.py"
+    ~~~
+
+=== "selection_list.css"
+
+    ~~~python
+    --8<-- "docs/examples/widgets/selection_list.css"
+    ~~~
+
+### Selections as Selection objects
+
+Alternatively, selections can be passed in as
+[`Selection`][textual.widgets.selection_list.Selection]s:
+
+=== "Output"
+
+    ```{.textual path="docs/examples/widgets/selection_list_selections.py"}
+    ```
+
+=== "selection_list_selections.py"
+
+    ~~~python
+    --8<-- "docs/examples/widgets/selection_list_selections.py"
+    ~~~
+
+=== "selection_list.css"
+
+    ~~~python
+    --8<-- "docs/examples/widgets/selection_list.css"
+    ~~~
 
 ## Reactive Attributes
 
