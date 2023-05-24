@@ -6,7 +6,6 @@ import math
 import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from numbers import Number as NumberType
 from typing import Callable, Sequence
 from urllib.parse import urlparse
 
@@ -19,8 +18,6 @@ from textual._types import Pattern
 class ValidationResult:
     """The result of calling a `Validator.validate` method."""
 
-    valid: bool
-    """True if and only if the value is valid."""
     failures: Sequence[Failure] = field(default_factory=list)
     """A list of reasons why the value was invalid. Empty if valid=True"""
 
@@ -34,9 +31,33 @@ class ValidationResult:
         Returns:
             Merged ValidationResult object.
         """
-        valid = all(result.valid for result in results)
+        is_valid = all(result.is_valid for result in results)
         failures = [failure for result in results for failure in result.failures]
-        return ValidationResult(valid=valid, failures=failures)
+        if is_valid:
+            return ValidationResult.success()
+        else:
+            return ValidationResult.failure(failures)
+
+    @staticmethod
+    def success() -> ValidationResult:
+        """Construct a successful ValidationResult.
+
+        Returns:
+            A successful ValidationResult.
+        """
+        return ValidationResult()
+
+    @staticmethod
+    def failure(failures: Sequence[Failure]) -> ValidationResult:
+        """Construct a failure ValidationResult.
+
+        Args:
+            failures: The failures.
+
+        Returns:
+            A failure ValidationResult.
+        """
+        return ValidationResult(failures)
 
     @property
     def failure_descriptions(self) -> list[str]:
@@ -53,22 +74,23 @@ class ValidationResult:
             if failure.description is not None
         ]
 
-    def __bool__(self):
-        return self.valid
+    @property
+    def is_valid(self) -> bool:
+        return len(self.failures) == 0
 
 
 @dataclass
 class Failure:
     """Information about a validation failure."""
 
+    validator: Validator
+    """The Validator which produced the failure."""
     value: str | None = None
     """The value which resulted in validation failing."""
-    validator: Validator | None = None
-    """The Validator which produced the failure."""
     description: str | None = None
     """An optional override for describing this failure. Takes precedence over any messages set in the Validator."""
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         # If a failure message isn't supplied, try to get it from the Validator.
         if self.description is None and self.validator is not None:
             if self.validator.failure_description is not None:
@@ -101,7 +123,7 @@ class Validator(ABC):
         ```
     """
 
-    def __init__(self, failure_description: str | None = None):
+    def __init__(self, failure_description: str | None = None) -> None:
         self.failure_description = failure_description
         """A description of why the validation failed.
 
@@ -151,7 +173,7 @@ class Validator(ABC):
         Returns:
             A ValidationResult indicating validation succeeded.
         """
-        return ValidationResult(True)
+        return ValidationResult()
 
     def failure(
         self,
@@ -183,8 +205,7 @@ class Validator(ABC):
             failures = [failures]
 
         result = ValidationResult(
-            False,
-            failures or [Failure(value=value, validator=self, description=description)],
+            failures or [Failure(validator=self, value=value, description=description)],
         )
         return result
 
@@ -197,7 +218,7 @@ class Regex(Validator):
         regex: str | Pattern[str],
         flags: int | re.RegexFlag = 0,
         failure_description: str | None = None,
-    ):
+    ) -> None:
         super().__init__(failure_description=failure_description)
         self.regex = regex
         self.flags = flags
@@ -217,12 +238,7 @@ class Regex(Validator):
         regex = self.regex
         has_match = re.search(regex, value, flags=self.flags) is not None
         if not has_match:
-            failures = [
-                Regex.NoResults(
-                    value,
-                    validator=self,
-                ),
-            ]
+            failures = [Regex.NoResults(self, value)]
             return self.failure(failures=failures)
         return self.success()
 
@@ -246,7 +262,7 @@ class Number(Validator):
         minimum: float | None = None,
         maximum: float | None = None,
         failure_description: str | None = None,
-    ):
+    ) -> None:
         super().__init__(failure_description=failure_description)
         self.minimum = minimum
         """The minimum value of the number, inclusive. If `None`, the minimum is unbounded."""
@@ -271,15 +287,14 @@ class Number(Validator):
         try:
             float_value = float(value)
         except ValueError:
-            return ValidationResult(False, [Number.NotANumber(value, self)])
+            return ValidationResult.failure([Number.NotANumber(self, value)])
 
         if float_value in {math.nan, math.inf, -math.inf}:
-            return ValidationResult(False, [Number.NotANumber(value, self)])
+            return ValidationResult.failure([Number.NotANumber(self, value)])
 
         if not self._validate_range(float_value):
-            return ValidationResult(
-                False,
-                [Number.NotInRange(value, self)],
+            return ValidationResult.failure(
+                [Number.NotInRange(self, value)],
             )
         return self.success()
 
@@ -327,13 +342,13 @@ class Integer(Number):
         """
         # First, check that we're dealing with a number in the range.
         number_validation_result = super().validate(value)
-        if not number_validation_result:
+        if not number_validation_result.is_valid:
             return number_validation_result
 
         # We know it's a number, but is that number an integer?
         is_integer = float(value).is_integer()
         if not is_integer:
-            return ValidationResult(False, [Integer.NotAnInteger(value, self)])
+            return ValidationResult.failure([Integer.NotAnInteger(self, value)])
 
         return self.success()
 
@@ -364,7 +379,7 @@ class Length(Validator):
         minimum: int | None = None,
         maximum: int | None = None,
         failure_description: str | None = None,
-    ):
+    ) -> None:
         super().__init__(failure_description=failure_description)
         self.minimum = minimum
         """The inclusive minimum length of the value, or None if unbounded."""
@@ -387,10 +402,10 @@ class Length(Validator):
             The result of the validation.
         """
         if self.minimum is not None and len(value) < self.minimum:
-            return ValidationResult(False, [Length.TooShort(value, self)])
+            return ValidationResult.failure([Length.TooShort(self, value)])
 
         if self.maximum is not None and len(value) > self.maximum:
-            return ValidationResult(False, [Length.TooLong(value, self)])
+            return ValidationResult.failure([Length.TooLong(self, value)])
 
         return self.success()
 
@@ -418,7 +433,7 @@ class Function(Validator):
         self,
         function: Callable[[str], bool],
         failure_description: str | None = None,
-    ):
+    ) -> None:
         super().__init__(failure_description=failure_description)
         self.function = function
         """Function which takes the value to validate and returns True if valid, and False otherwise."""
@@ -439,7 +454,7 @@ class Function(Validator):
         is_valid = self.function(value)
         if is_valid:
             return self.success()
-        return self.failure(failures=Function.ReturnedFalse(value, self))
+        return self.failure(failures=Function.ReturnedFalse(self, value))
 
     def describe_failure(self, failure: Failure) -> str | None:
         """Describes why the validator failed.
@@ -468,7 +483,7 @@ class URL(Validator):
         Returns:
             The result of the validation.
         """
-        invalid_url = ValidationResult(False, [URL.InvalidURL(value, self)])
+        invalid_url = ValidationResult.failure([URL.InvalidURL(self, value)])
         try:
             parsed_url = urlparse(value)
             if not all([parsed_url.scheme, parsed_url.netloc]):

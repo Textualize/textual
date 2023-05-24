@@ -301,8 +301,8 @@ class Input(Widget, can_focus=True):
             validator.validate(value) for validator in self.validators
         ]
         combined_result = ValidationResult.merge(validation_results)
-        self.set_class(not bool(combined_result), "-invalid")
-        self.set_class(bool(combined_result), "-valid")
+        self.set_class(not combined_result.is_valid, "-invalid")
+        self.set_class(combined_result.is_valid, "-valid")
         return combined_result
 
     @property

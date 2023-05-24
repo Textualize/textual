@@ -28,8 +28,7 @@ async def test_input_changed_message_validation_failure():
         input.value = "8"
         await pilot.pause()
         assert len(app.messages) == 1
-        assert app.messages[0].validation_result == ValidationResult(
-            valid=False,
+        assert app.messages[0].validation_result == ValidationResult.failure(
             failures=[
                 Number.NotInRange(
                     value="8",
@@ -47,7 +46,7 @@ async def test_input_changed_message_validation_success():
         input.value = "3"
         await pilot.pause()
         assert len(app.messages) == 1
-        assert app.messages[0].validation_result == ValidationResult(valid=True)
+        assert app.messages[0].validation_result == ValidationResult.success()
 
 
 async def test_input_submitted_message_validation_failure():
@@ -58,8 +57,7 @@ async def test_input_submitted_message_validation_failure():
         await input.action_submit()
         await pilot.pause()
         assert len(app.messages) == 2
-        assert app.messages[1].validation_result == ValidationResult(
-            valid=False,
+        assert app.messages[1].validation_result == ValidationResult.failure(
             failures=[
                 Number.NotInRange(
                     value="8",
@@ -78,4 +76,4 @@ async def test_input_submitted_message_validation_success():
         await input.action_submit()
         await pilot.pause()
         assert len(app.messages) == 2
-        assert app.messages[1].validation_result == ValidationResult(valid=True)
+        assert app.messages[1].validation_result == ValidationResult.success()

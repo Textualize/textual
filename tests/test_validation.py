@@ -14,31 +14,32 @@ from textual.validation import (
     Validator,
 )
 
+VALIDATOR = Function(lambda value: True)
+
 
 def test_ValidationResult_merge_successes():
-    results = [ValidationResult(True), ValidationResult(True)]
-    assert ValidationResult.merge(results) == ValidationResult(True)
+    results = [ValidationResult.success(), ValidationResult.success()]
+    assert ValidationResult.merge(results) == ValidationResult.success()
 
 
 def test_ValidationResult_merge_failures():
-    failure_one = Failure("1")
-    failure_two = Failure("2")
+    failure_one = Failure(VALIDATOR, "1")
+    failure_two = Failure(VALIDATOR, "2")
     results = [
-        ValidationResult(False, [failure_one]),
-        ValidationResult(False, [failure_two]),
-        ValidationResult(True),
+        ValidationResult.failure([failure_one]),
+        ValidationResult.failure([failure_two]),
+        ValidationResult.success(),
     ]
-    expected_result = ValidationResult(False, [failure_one, failure_two])
+    expected_result = ValidationResult.failure([failure_one, failure_two])
     assert ValidationResult.merge(results) == expected_result
 
 
 def test_ValidationResult_failure_descriptions():
-    result = ValidationResult(
-        False,
+    result = ValidationResult.failure(
         [
-            Failure(description="One"),
-            Failure(description="Two"),
-            Failure(description="Three"),
+            Failure(VALIDATOR, description="One"),
+            Failure(VALIDATOR, description="Two"),
+            Failure(VALIDATOR, description="Three"),
         ],
     )
     assert result.failure_descriptions == ["One", "Two", "Three"]
@@ -98,7 +99,7 @@ def test_Failure_description_describe_and_description_inside_validate():
     # these but lets still make sure we're sensible about how we handle it.
     validator = ValidatorWithFailureMessageAndDescribe()
     result = validator.validate("x")
-    assert result.failures == [Failure("x", validator, "ABC")]
+    assert result.failures == [Failure(validator, "x", "ABC")]
 
 
 @pytest.mark.parametrize(
@@ -118,7 +119,7 @@ def test_Failure_description_describe_and_description_inside_validate():
 def test_Number_validate(value, minimum, maximum, expected_result):
     validator = Number(minimum=minimum, maximum=maximum)
     result = validator.validate(value)
-    assert result.valid == expected_result
+    assert result.is_valid == expected_result
 
 
 @pytest.mark.parametrize(
@@ -139,7 +140,7 @@ def test_Number_validate(value, minimum, maximum, expected_result):
 def test_Regex_validate(regex, value, expected_result):
     validator = Regex(regex)
     result = validator.validate(value)
-    assert result.valid == expected_result
+    assert result.is_valid == expected_result
 
 
 @pytest.mark.parametrize(
@@ -159,7 +160,7 @@ def test_Regex_validate(regex, value, expected_result):
 def test_Integer_validate(value, minimum, maximum, expected_result):
     validator = Integer(minimum=minimum, maximum=maximum)
     result = validator.validate(value)
-    assert result.valid == expected_result
+    assert result.is_valid == expected_result
 
 
 @pytest.mark.parametrize(
@@ -176,7 +177,7 @@ def test_Integer_validate(value, minimum, maximum, expected_result):
 def test_Length_validate(value, min_length, max_length, expected_result):
     validator = Length(minimum=min_length, maximum=max_length)
     result = validator.validate(value)
-    assert result.valid == expected_result
+    assert result.is_valid == expected_result
 
 
 @pytest.mark.parametrize(
@@ -197,7 +198,7 @@ def test_Length_validate(value, min_length, max_length, expected_result):
 def test_URL_validate(value, expected_result):
     validator = URL()
     result = validator.validate(value)
-    assert result.valid == expected_result
+    assert result.is_valid == expected_result
 
 
 @pytest.mark.parametrize(
@@ -210,6 +211,6 @@ def test_URL_validate(value, expected_result):
 def test_Function_validate(function, failure_description, is_valid):
     validator = Function(function, failure_description)
     result = validator.validate("x")
-    assert result.valid is is_valid
+    assert result.is_valid is is_valid
     if result.failure_descriptions:
         assert result.failure_descriptions[0] == failure_description

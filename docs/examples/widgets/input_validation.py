@@ -39,7 +39,7 @@ class InputApp(App):
     @on(Input.Changed)
     def show_invalid_reasons(self, event: Input.Changed) -> None:
         # Updating the UI to show the reasons why validation failed
-        if not event.validation_result:  # (4)!
+        if not event.validation_result.is_valid:  # (4)!
             self.query_one(Pretty).update(event.validation_result.failure_descriptions)
         else:
             self.query_one(Pretty).update([])
