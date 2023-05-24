@@ -1123,7 +1123,8 @@ class DOMNode(MessagePump):
         """Replace all classes.
 
         Args:
-            A string contain space separated classes, or an iterable of class names.
+            classes: A string containing space separated classes, or an
+                iterable of class names.
 
         Returns:
             Self.
