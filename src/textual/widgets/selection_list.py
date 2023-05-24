@@ -1,3 +1,8 @@
-from ._selection_list import Selection, SelectionError
+from ._selection_list import (
+    MessageSelectionType,
+    Selection,
+    SelectionError,
+    SelectionType,
+)
 
-__all__ = ["Selection", "SelectionError"]
+__all__ = ["MessageSelectionType", "Selection", "SelectionError", "SelectionType"]
