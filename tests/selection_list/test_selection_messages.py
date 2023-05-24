@@ -30,6 +30,7 @@ class SelectionListApp(App[None]):
     @on(SelectionList.SelectionToggled)
     @on(SelectionList.SelectedChanged)
     def _record(self, event: Message) -> None:
+        assert event.control == self.query_one(SelectionList)
         self.messages.append(
             (
                 event.__class__.__name__,
