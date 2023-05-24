@@ -24,7 +24,7 @@ The example below shows how you might create a simple form using two `Input` wid
 
 ### Validating Input
 
-You can supply one or more *validators* to the `Input` widget to validate the value.
+You can supply one or more *[validators][textual.validation.Validator]* to the `Input` widget to validate the value.
 
 When the value changes or the `Input` is submitted, all the supplied validators will run.
 

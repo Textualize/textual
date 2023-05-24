@@ -76,6 +76,7 @@ class ValidationResult:
 
     @property
     def is_valid(self) -> bool:
+        """True if the validation was successful."""
         return len(self.failures) == 0
 
 
@@ -92,7 +93,7 @@ class Failure:
 
     def __post_init__(self) -> None:
         # If a failure message isn't supplied, try to get it from the Validator.
-        if self.description is None and self.validator is not None:
+        if self.description is None:
             if self.validator.failure_description is not None:
                 self.description = self.validator.failure_description
             else:
@@ -211,7 +212,7 @@ class Validator(ABC):
 
 
 class Regex(Validator):
-    """A validator that the supplied regex is found inside the value (via `re.search`)."""
+    """A validator that checks the value matches a regex (via `re.fullmatch`)."""
 
     def __init__(
         self,
@@ -221,22 +222,24 @@ class Regex(Validator):
     ) -> None:
         super().__init__(failure_description=failure_description)
         self.regex = regex
+        """The regex which we'll validate is matched by the value."""
         self.flags = flags
+        """The flags to pass to `re.fullmatch`."""
 
     class NoResults(Failure):
         """Indicates validation failed because the regex could not be found within the value string."""
 
     def validate(self, value: str) -> ValidationResult:
-        """Ensure that the regex is found inside the value.
+        """Ensure that the value matches the regex.
 
         Args:
-            value: The value to search in.
+            value: The value that should match the regex.
 
         Returns:
             The result of the validation.
         """
         regex = self.regex
-        has_match = re.search(regex, value, flags=self.flags) is not None
+        has_match = re.fullmatch(regex, value, flags=self.flags) is not None
         if not has_match:
             failures = [Regex.NoResults(self, value)]
             return self.failure(failures=failures)
