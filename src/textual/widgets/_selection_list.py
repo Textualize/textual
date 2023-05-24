@@ -274,7 +274,7 @@ class SelectionList(Generic[SelectionType], OptionList):
             state_change: The state change function to apply.
 
         Returns:
-            The `SelectionList` instance.
+            The [`SelectionList`][textual.widgets.SelectionList] instance.
         """
 
         # Keep track of if anything changed.
@@ -316,7 +316,7 @@ class SelectionList(Generic[SelectionType], OptionList):
             selection: The selection to mark as selected.
 
         Returns:
-            The `SelectionList` instance.
+            The [`SelectionList`][textual.widgets.SelectionList] instance.
         """
         if self._select(
             selection.value
@@ -357,7 +357,7 @@ class SelectionList(Generic[SelectionType], OptionList):
             selection: The selection to mark as not selected.
 
         Returns:
-            The `SelectionList` instance.
+            The [`SelectionList`][textual.widgets.SelectionList] instance.
         """
         if self._deselect(
             selection.value
@@ -371,7 +371,7 @@ class SelectionList(Generic[SelectionType], OptionList):
         """Deselect all items.
 
         Returns:
-            The `SelectionList` instance.
+            The [`SelectionList`][textual.widgets.SelectionList] instance.
         """
         return self._apply_to_all(self._deselect)
 
@@ -397,7 +397,7 @@ class SelectionList(Generic[SelectionType], OptionList):
             selection: The selection to toggle.
 
         Returns:
-            The `SelectionList` instance.
+            The [`SelectionList`][textual.widgets.SelectionList] instance.
         """
         self._toggle(
             selection.value
@@ -411,7 +411,7 @@ class SelectionList(Generic[SelectionType], OptionList):
         """Toggle all items.
 
         Returns:
-            The `SelectionList` instance.
+            The [`SelectionList`][textual.widgets.SelectionList] instance.
         """
         return self._apply_to_all(self._toggle)
 
@@ -533,7 +533,7 @@ class SelectionList(Generic[SelectionType], OptionList):
     def _on_option_list_option_highlighted(
         self, event: OptionList.OptionHighlighted
     ) -> None:
-        """Capture the `OptionList` highlight event and turn it into a `SelectionList` event.
+        """Capture the `OptionList` highlight event and turn it into a [`SelectionList`][textual.widgets.SelectionList] event.
 
         Args:
             event: The event to capture and recreate.
@@ -606,7 +606,7 @@ class SelectionList(Generic[SelectionType], OptionList):
             items: The new items to add.
 
         Returns:
-            The `SelectionList` instance.
+            The [`SelectionList`][textual.widgets.SelectionList] instance.
 
         Raises:
             DuplicateID: If there is an attempt to use a duplicate ID.
@@ -650,7 +650,7 @@ class SelectionList(Generic[SelectionType], OptionList):
             item: The new item to add.
 
         Returns:
-            The `SelectionList` instance.
+            The [`SelectionList`][textual.widgets.SelectionList] instance.
 
         Raises:
             DuplicateID: If there is an attempt to use a duplicate ID.
