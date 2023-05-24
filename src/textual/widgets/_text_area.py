@@ -82,7 +82,7 @@ class _TextAreaRenderable:
 
         lines_with_cursors = frozenset({textarea.cursor_offset.y})
         written_buffer = textarea._buffer.write(lines_with_cursors)
-        syntax = Syntax(written_buffer, "python")
+        syntax = Syntax(written_buffer, textarea._lexer)
         cursor_style = self.textarea.get_component_rich_style("textarea--cursor")
 
         self._set_background(syntax)
@@ -133,13 +133,22 @@ class TextArea(ScrollView, can_focus=True):
         color: black;
     }
     """
+
     cursor_offset: reactive[Offset] = reactive(Offset(0, 0))
     cursor_x: reactive[int] = reactive(0)
     cursor_y: reactive[int] = reactive(0)
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        lexer: str | None = None,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+        disabled: bool = False,
+    ) -> None:
+        self._lexer = lexer or ""
         self._buffer = _Buffer()
-        super().__init__()
+        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
     def compute_cursor_offset(self) -> Offset:
         return Offset(self.cursor_x, self.cursor_y)
