@@ -68,10 +68,6 @@ makes use of the following component classes:
     options:
       heading_level: 2
 
-::: textual.widgets.selection_list.Selection
-    options:
-      heading_level: 2
-
 ::: textual.widgets.selection_list
     options:
       heading_level: 2
