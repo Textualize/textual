@@ -70,3 +70,13 @@ async def test_programatic_toggle_all() -> None:
         selection = pilot.app.query_one(SelectionList)
         selection.toggle_all()
         assert pilot.app.query_one(SelectionList).selected == list(range(50))
+
+
+async def test_removal_of_selected_item() -> None:
+    """Removing a selected selection should remove its value from the selected set."""
+    async with SelectionListApp().run_test() as pilot:
+        selection = pilot.app.query_one(SelectionList)
+        selection.toggle(0)
+        assert pilot.app.query_one(SelectionList).selected == [0]
+        selection.remove_option_at_index(0)
+        assert pilot.app.query_one(SelectionList).selected == []
