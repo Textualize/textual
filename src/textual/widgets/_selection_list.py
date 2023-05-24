@@ -473,7 +473,7 @@ class SelectionList(Generic[SelectionType], OptionList):
             y: The line to render.
 
         Returns:
-            A `Strip` that is the line to render.
+            A [`Strip`][textual.strip.Strip] that is the line to render.
         """
 
         # First off, get the underlying prompt from OptionList.
