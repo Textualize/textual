@@ -11,7 +11,7 @@ from __future__ import annotations
 from textual import on
 from textual.app import App, ComposeResult
 from textual.messages import Message
-from textual.widgets import SelectionList
+from textual.widgets import OptionList, SelectionList
 
 
 class SelectionListApp(App[None]):
@@ -24,6 +24,8 @@ class SelectionListApp(App[None]):
     def compose(self) -> ComposeResult:
         yield SelectionList[int](*[(str(n), n) for n in range(10)])
 
+    @on(OptionList.OptionHighlighted)
+    @on(OptionList.OptionSelected)
     @on(SelectionList.SelectionHighlighted)
     @on(SelectionList.SelectionToggled)
     @on(SelectionList.SelectedChanged)
