@@ -21,7 +21,7 @@ SelectionType = TypeVar("SelectionType")
 """The type for the value of a [`Selection`][textual.widgets.selection_list.Selection] in a [`SelectionList`][textual.widgets.SelectionList]"""
 
 MessageSelectionType = TypeVar("MessageSelectionType")
-"""The type for the value of a `SelectionList` message"""
+"""The type for the value of a [`Selection`][textual.widgets.selection_list.Selection] in a [`SelectionList`][textual.widgets.SelectionList] message."""
 
 
 class SelectionError(TypeError):
