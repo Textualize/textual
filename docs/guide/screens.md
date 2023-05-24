@@ -225,8 +225,8 @@ The main screen is darkened to indicate to the user that it is not active, and o
 It is a common requirement for screens to be able to return data.
 For instance, you may want a screen to show a dialog and have the result of that dialog processed *after* the screen has been popped.
 
-To return data from a screen, call [`dismiss()`][textual.screen.dismiss] on the screen with the data you wish to return.
-This will pop the screen and invoke a callback set when the screen was pushed (with [`push_screen`][textual.app.push_screen]).
+To return data from a screen, call [`dismiss()`][textual.screen.Screen.dismiss] on the screen with the data you wish to return.
+This will pop the screen and invoke a callback set when the screen was pushed (with [`push_screen`][textual.app.App.push_screen]).
 
 Let's modify the previous example to use `dismiss` rather than an explicit `pop_screen`.
 
