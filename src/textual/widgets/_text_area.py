@@ -113,6 +113,7 @@ class _TextAreaRenderable:
         self.textarea.styles.background = bgcolor.name
 
 # FIXME: cursor jumping between odd lines (in terms of length)
+# TODO: document code :)
 # TODO: possibility to pass `pygments.lexer.Lexer` with "lexer"
 # TODO: possibility to pass the theme for syntax highlighting
 # TODO: implement tab (\t) support
