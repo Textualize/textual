@@ -243,7 +243,13 @@ class SelectionList(Generic[SelectionType], OptionList):
 
     @property
     def selected(self) -> list[SelectionType]:
-        """The selected values."""
+        """The selected values.
+
+        This is a list of all of the
+        [values][textual.widgets.selection_list.Selection.value] associated
+        with selections in the list that are currently in the selected
+        state.
+        """
         return list(self._selected.keys())
 
     def _on_mount(self) -> None:
