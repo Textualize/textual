@@ -3018,7 +3018,9 @@ class Widget(DOMNode):
         return self
 
     def blur(self) -> Self:
-        """Blur (un-focus) the widget (focus will be moved to the next available widget).
+        """Blur (un-focus) the widget.
+
+        Focus will be moved to the next available widget in the focus chain..
 
         Returns:
             The `Widget` instance.
