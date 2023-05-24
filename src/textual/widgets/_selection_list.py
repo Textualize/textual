@@ -199,7 +199,8 @@ class SelectionList(Generic[SelectionType], OptionList):
 
     def __init__(
         self,
-        *selections: tuple[TextType, SelectionType]
+        *selections: Selection
+        | tuple[TextType, SelectionType]
         | tuple[TextType, SelectionType, bool],
         name: str | None = None,
         id: str | None = None,
@@ -397,7 +398,8 @@ class SelectionList(Generic[SelectionType], OptionList):
 
     def _make_selection(
         self,
-        selection: tuple[TextType, SelectionType]
+        selection: Selection
+        | tuple[TextType, SelectionType]
         | tuple[TextType, SelectionType, bool],
     ) -> Selection[SelectionType]:
         """Turn incoming selection data into a `Selection` instance.
@@ -411,19 +413,31 @@ class SelectionList(Generic[SelectionType], OptionList):
         Raises:
             SelectionError: If the selection was badly-formed.
         """
-        if len(selection) == 3:
-            label, value, selected = cast(
-                "tuple[TextType, SelectionType, bool]", selection
-            )
-        elif len(selection) == 2:
-            label, value, selected = cast(
-                "tuple[TextType, SelectionType, bool]", (*selection, False)
-            )
-        else:
-            raise SelectionError(f"Expected 2 or 3 values, got {len(selection)}")
-        if selected:
-            self._select(value)
-        return Selection(label, value)
+
+        # If we've been given a tuple of some sort, turn that into a proper
+        # Selection.
+        if isinstance(selection, tuple):
+            if len(selection) == 3:
+                label, value, selected = cast(
+                    "tuple[TextType, SelectionType, bool]", selection
+                )
+            elif len(selection) == 2:
+                label, value, selected = cast(
+                    "tuple[TextType, SelectionType, bool]", (*selection, False)
+                )
+            else:
+                raise SelectionError(f"Expected 2 or 3 values, got {len(selection)}")
+            selection = Selection(label, value, selected)
+
+        # At this point we should have a proper selection.
+        assert isinstance(selection, Selection)
+
+        # If the initial state for this is that it's selected, add it to the
+        # selected collection.
+        if selection.initial_state:
+            self._select(selection.value)
+
+        return selection
 
     def _toggle_highlighted_selection(self) -> None:
         """Toggle the state of the highlighted selection.
