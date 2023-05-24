@@ -44,7 +44,7 @@ class Selection(Generic[SelectionType], Option):
         Args:
             prompt: The prompt for the selection.
             value: The value for the selection.
-            selected: Is this particular selection selected?
+            initial_state: The initial selected state of the selection.
             id: The optional ID for the selection.
             disabled: The initial enabled/disabled state. Enabled by default.
         """
