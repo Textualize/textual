@@ -592,11 +592,6 @@ class SelectionList(Generic[SelectionType], OptionList):
         Raises:
             DuplicateID: If there is an attempt to use a duplicate ID.
             SelectionError: If one of the selection options is of the wrong form.
-
-        Note:
-            Any new selection option added should either be an instance of
-            `Option`, or should be a `tuple` of prompt and value, or prompt,
-            value and selected state.
         """
         # This... is sort of sub-optimal, but a natural consequence of
         # inheriting from and narrowing down OptionList. Here we don't want
