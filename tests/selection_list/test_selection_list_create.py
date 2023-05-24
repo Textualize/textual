@@ -73,6 +73,17 @@ async def test_add_later() -> None:
         assert selections.option_count == 11
 
 
+async def test_add_later_selcted_state() -> None:
+    """When adding selections later the selected collection should get updated."""
+    async with SelectionListApp().run_test() as pilot:
+        selections = pilot.app.query_one(SelectionList)
+        assert selections.selected == [2, 4]
+        selections.add_option(("5", 5, True))
+        assert selections.selected == [2, 4, 5]
+        selections.add_option(Selection("6", 6, True))
+        assert selections.selected == [2, 4, 5, 6]
+
+
 async def test_add_non_selections() -> None:
     """Adding options that aren't selections should result in errors."""
     async with SelectionListApp().run_test() as pilot:
