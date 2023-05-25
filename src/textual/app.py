@@ -1022,7 +1022,7 @@ class App(Generic[ReturnType], DOMNode):
         app = self
         driver = app._driver
         assert driver is not None
-        await wait_for_idle(0)
+        # await wait_for_idle(0)
         for key in keys:
             if key.startswith("wait:"):
                 _, wait_ms = key.split(":")
@@ -1102,7 +1102,9 @@ class App(Generic[ReturnType], DOMNode):
 
         # Context manager returns pilot object to manipulate the app
         try:
-            yield Pilot(app)
+            pilot = Pilot(app)
+            await pilot._wait_for_screen()
+            yield pilot
         finally:
             # Shutdown the app cleanly
             await app._shutdown()
