@@ -413,3 +413,25 @@ async def test_public_and_private_watch() -> None:
         pilot.app.counter += 1
         assert calls["private"] is True
         assert calls["public"] is True
+
+
+async def test_public_and_private_validate() -> None:
+    """If a reactive/var has public and private validate both should get called."""
+
+    calls: dict[str, bool] = {"private": False, "public": False}
+
+    class PrivateValidateTest(App):
+        counter = var(0, init=False)
+
+        def validate_counter(self, _: int) -> None:
+            calls["public"] = True
+
+        def _validate_counter(self, _: int) -> None:
+            calls["private"] = True
+
+    async with PrivateValidateTest().run_test() as pilot:
+        assert calls["private"] is False
+        assert calls["public"] is False
+        pilot.app.counter += 1
+        assert calls["private"] is True
+        assert calls["public"] is True
