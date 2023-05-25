@@ -101,7 +101,7 @@ collection of selected values:
     --8<-- "docs/examples/widgets/selection_list_selected.py"
     ~~~
 
-    1. Note that the `SelectionList` is typed as `str`, for the type of the vlaues.
+    1. Note that the `SelectionList` is typed as `str`, for the type of the values.
 
 === "selection_list.css"
 
