@@ -321,9 +321,12 @@ class Number(Validator):
         if isinstance(failure, Number.NotANumber):
             return f"Must be a valid number."
         elif isinstance(failure, Number.NotInRange):
-            minimum = self.minimum if self.minimum is not None else "-∞"
-            maximum = self.maximum if self.maximum is not None else "∞"
-            return f"Must be in range [{minimum}, {maximum}]."
+            if self.minimum is None and self.maximum is not None:
+                return f"Must be less than or equal to {self.maximum}."
+            elif self.minimum is not None and self.maximum is None:
+                return f"Must be greater than or equal to {self.minimum}."
+            else:
+                return f"Must be between {self.minimum} and {self.maximum}."
         else:
             return None
 
@@ -367,9 +370,12 @@ class Integer(Number):
         if isinstance(failure, Integer.NotAnInteger):
             return f"Must be a valid integer."
         elif isinstance(failure, Integer.NotInRange):
-            minimum = self.minimum if self.minimum is not None else "-∞"
-            maximum = self.maximum if self.maximum is not None else "∞"
-            return f"Must be in range [{minimum}, {maximum}]."
+            if self.minimum is None and self.maximum is not None:
+                return f"Must be less than or equal to {self.maximum}."
+            elif self.minimum is not None and self.maximum is None:
+                return f"Must be greater than or equal to {self.minimum}."
+            else:
+                return f"Must be between {self.minimum} and {self.maximum}."
         else:
             return None
 
@@ -389,11 +395,8 @@ class Length(Validator):
         self.maximum = maximum
         """The inclusive maximum length of the value, or None if unbounded."""
 
-    class TooShort(Failure):
-        """Indicates a failure due to the value being too short."""
-
-    class TooLong(Failure):
-        """Indicates a failure due to a value being too long."""
+    class Incorrect(Failure):
+        """Indicates a failure due to the length of the value being outside the range."""
 
     def validate(self, value: str) -> ValidationResult:
         """Ensure that value falls within the maximum and minimum length constraints.
@@ -404,12 +407,10 @@ class Length(Validator):
         Returns:
             The result of the validation.
         """
-        if self.minimum is not None and len(value) < self.minimum:
-            return ValidationResult.failure([Length.TooShort(self, value)])
-
-        if self.maximum is not None and len(value) > self.maximum:
-            return ValidationResult.failure([Length.TooLong(self, value)])
-
+        too_short = self.minimum is not None and len(value) < self.minimum
+        too_long = self.maximum is not None and len(value) > self.maximum
+        if too_short or too_long:
+            return ValidationResult.failure([Length.Incorrect(self, value)])
         return self.success()
 
     def describe_failure(self, failure: Failure) -> str | None:
@@ -421,12 +422,14 @@ class Length(Validator):
         Returns:
             A string description of the failure.
         """
-        if isinstance(failure, Length.TooShort):
-            return f"Must be {self.minimum} characters or more."
-        elif isinstance(failure, Length.TooLong):
-            return f"Must be {self.maximum} characters or less."
-        else:
-            return None
+        if isinstance(failure, Length.Incorrect):
+            if self.minimum is None and self.maximum is not None:
+                return f"Must be shorter than {self.maximum} characters."
+            elif self.minimum is not None and self.maximum is None:
+                return f"Must be longer than {self.minimum} characters."
+            else:
+                return f"Must be between {self.minimum} and {self.maximum} characters."
+        return None
 
 
 class Function(Validator):

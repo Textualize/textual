@@ -33,7 +33,7 @@ async def test_input_changed_message_validation_failure():
                 Number.NotInRange(
                     value="8",
                     validator=app.validator,
-                    description="Must be in range [1, 5].",
+                    description="Must be between 1 and 5.",
                 )
             ],
         )
@@ -62,7 +62,7 @@ async def test_input_submitted_message_validation_failure():
                 Number.NotInRange(
                     value="8",
                     validator=app.validator,
-                    description="Must be in range [1, 5].",
+                    description="Must be between 1 and 5.",
                 )
             ],
         )
