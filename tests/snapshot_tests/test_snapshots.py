@@ -461,7 +461,9 @@ def test_dock_scroll2(snap_compare):
 def test_dock_scroll_off_by_one(snap_compare):
     # https://github.com/Textualize/textual/issues/2525
     assert snap_compare(
-        SNAPSHOT_APPS_DIR / "dock_scroll_off_by_one.py", terminal_size=(80, 25)
+        SNAPSHOT_APPS_DIR / "dock_scroll_off_by_one.py",
+        terminal_size=(80, 25),
+        press="wait:100",
     )
 
 
