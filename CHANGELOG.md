@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - `work` decorator accepts `description` parameter to add debug string https://github.com/Textualize/textual/issues/2597
+- Added `SelectionList` widget https://github.com/Textualize/textual/pull/2652
 
 ### Changed
 

@@ -1,6 +1,6 @@
 # SelectionList
 
-!!! tip "Added in version 0.??.0"
+!!! tip "Added in version 0.27.0"
 
 A widget for showing a vertical list check boxes.
 
