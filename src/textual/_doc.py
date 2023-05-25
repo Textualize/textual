@@ -109,8 +109,8 @@ def take_svg_screenshot(
             if inspect.isawaitable(result):
                 await result
         await pilot.press(*press)
-        await pilot.wait_for_scheduled_animations()
-        await pilot.pause()
+        # await pilot.wait_for_scheduled_animations()
+        # await pilot.pause()
         svg = app.export_screenshot(title=title)
 
         app.exit(svg)
