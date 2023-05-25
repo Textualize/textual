@@ -82,6 +82,33 @@ Alternatively, selections can be passed in as
     --8<-- "docs/examples/widgets/selection_list.css"
     ~~~
 
+### Handling changes to the selections
+
+Most of the time, when using the `SelectionList`, you will want to know when
+the collection of selected items has changed, this is ideally done using the
+[`SelectedChanged`][textual.widgets.SelectionList.SelectedChanged] message.
+Here is an example of using that message to update a
+[`Pretty`][textual.widgets.Pretty] with the collection of selected values:
+
+=== "Output"
+
+    ```{.textual path="docs/examples/widgets/selection_list_selected.py"}
+    ```
+
+=== "selection_list_selections.py"
+
+    ~~~python
+    --8<-- "docs/examples/widgets/selection_list_selected.py"
+    ~~~
+
+    1. Note that the `SelectionList` is typed as `str`, for the type of the vlaues.
+
+=== "selection_list.css"
+
+    ~~~python
+    --8<-- "docs/examples/widgets/selection_list_selected.css"
+    ~~~
+
 ## Reactive Attributes
 
 | Name          | Type            | Default | Description                                                                  |
