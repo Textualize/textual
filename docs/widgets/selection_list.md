@@ -2,7 +2,7 @@
 
 !!! tip "Added in version 0.27.0"
 
-A widget for showing a vertical list check boxes.
+A widget for showing a vertical list of selectable options.
 
 - [x] Focusable
 - [ ] Container
