@@ -85,7 +85,7 @@ Alternatively, selections can be passed in as
 ### Handling changes to the selections
 
 Most of the time, when using the `SelectionList`, you will want to know when
-the collection of selected items has changed, this is ideally done using the
+the collection of selected items has changed; this is ideally done using the
 [`SelectedChanged`][textual.widgets.SelectionList.SelectedChanged] message.
 Here is an example of using that message to update a `Pretty` with the
 collection of selected values:
