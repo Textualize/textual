@@ -11,12 +11,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - `work` decorator accepts `description` parameter to add debug string https://github.com/Textualize/textual/issues/2597
 - Added `SelectionList` widget https://github.com/Textualize/textual/pull/2652
+- `App.AUTO_FOCUS` to set auto focus on all screens https://github.com/Textualize/textual/issues/2594
 
 ### Changed
 
 - `Placeholder` now sets its color cycle per app https://github.com/Textualize/textual/issues/2590
 - Footer now clears key highlight regardless of whether it's in the active screen or not https://github.com/Textualize/textual/issues/2606
 - The default Widget repr no longer displays classes and pseudo-classes (to reduce noise in logs). Add them to your `__rich_repr__` method if needed. https://github.com/Textualize/textual/pull/2623
+- Setting `Screen.AUTO_FOCUS` to `None` will inherit `AUTO_FOCUS` from the app instead of disabling it https://github.com/Textualize/textual/issues/2594
+- Setting `Screen.AUTO_FOCUS` to `""` will disable it on the screen https://github.com/Textualize/textual/issues/2594
 
 ### Removed
 
@@ -33,6 +36,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Textual will now scroll focused widgets to center if not in view
+
+## Unreleased
+
+### Changed
+
+- `Message.control` is now a property instead of a class variable. https://github.com/Textualize/textual/issues/2528
+- `Tree` and `DirectoryTree` Messages no longer accept a `tree` parameter, using `self.node.tree` instead. https://github.com/Textualize/textual/issues/2529
 
 ## [0.25.0] - 2023-05-17
 

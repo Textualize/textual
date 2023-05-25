@@ -153,7 +153,9 @@ async def test_screens():
     await app._shutdown()
 
 
-async def test_auto_focus():
+async def test_auto_focus_on_screen_if_app_auto_focus_is_none():
+    """Setting app.AUTO_FOCUS = `None` means it is not taken into consideration."""
+
     class MyScreen(Screen[None]):
         def compose(self):
             yield Button()
@@ -161,10 +163,11 @@ async def test_auto_focus():
             yield Input(id="two")
 
     class MyApp(App[None]):
-        pass
+        AUTO_FOCUS = None
 
     app = MyApp()
     async with app.run_test():
+        MyScreen.AUTO_FOCUS = "*"
         await app.push_screen(MyScreen())
         assert isinstance(app.focused, Button)
         app.pop_screen()
@@ -191,6 +194,80 @@ async def test_auto_focus():
         assert app.focused is None
         app.pop_screen()
         assert app.focused.id == "two"
+
+
+async def test_auto_focus_on_screen_if_app_auto_focus_is_disabled():
+    """Setting app.AUTO_FOCUS = `None` means it is not taken into consideration."""
+
+    class MyScreen(Screen[None]):
+        def compose(self):
+            yield Button()
+            yield Input(id="one")
+            yield Input(id="two")
+
+    class MyApp(App[None]):
+        AUTO_FOCUS = ""
+
+    app = MyApp()
+    async with app.run_test():
+        MyScreen.AUTO_FOCUS = "*"
+        await app.push_screen(MyScreen())
+        assert isinstance(app.focused, Button)
+        app.pop_screen()
+
+        MyScreen.AUTO_FOCUS = None
+        await app.push_screen(MyScreen())
+        assert app.focused is None
+        app.pop_screen()
+
+        MyScreen.AUTO_FOCUS = "Input"
+        await app.push_screen(MyScreen())
+        assert isinstance(app.focused, Input)
+        assert app.focused.id == "one"
+        app.pop_screen()
+
+        MyScreen.AUTO_FOCUS = "#two"
+        await app.push_screen(MyScreen())
+        assert isinstance(app.focused, Input)
+        assert app.focused.id == "two"
+
+        # If we push and pop another screen, focus should be preserved for #two.
+        MyScreen.AUTO_FOCUS = None
+        await app.push_screen(MyScreen())
+        assert app.focused is None
+        app.pop_screen()
+        assert app.focused.id == "two"
+
+
+async def test_auto_focus_inheritance():
+    """Setting app.AUTO_FOCUS = `None` means it is not taken into consideration."""
+
+    class MyScreen(Screen[None]):
+        def compose(self):
+            yield Button()
+            yield Input(id="one")
+            yield Input(id="two")
+
+    class MyApp(App[None]):
+        pass
+
+    app = MyApp()
+    async with app.run_test():
+        MyApp.AUTO_FOCUS = "Input"
+        MyScreen.AUTO_FOCUS = "*"
+        await app.push_screen(MyScreen())
+        assert isinstance(app.focused, Button)
+        app.pop_screen()
+
+        MyScreen.AUTO_FOCUS = None
+        await app.push_screen(MyScreen())
+        assert isinstance(app.focused, Input)
+        app.pop_screen()
+
+        MyScreen.AUTO_FOCUS = ""
+        await app.push_screen(MyScreen())
+        assert app.focused is None
+        app.pop_screen()
 
 
 async def test_auto_focus_skips_non_focusable_widgets():
