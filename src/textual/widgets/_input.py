@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import ClassVar, Iterable, List, Optional
+from typing import ClassVar, Iterable
 
 from rich.cells import cell_len, get_character_cell_size
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
@@ -10,7 +10,7 @@ from rich.highlighter import Highlighter
 from rich.segment import Segment
 from rich.text import Text
 
-from .. import events, work
+from .. import events
 from .._segment_tools import line_crop
 from ..binding import Binding, BindingType
 from ..events import Blur, Focus, Mount
@@ -18,7 +18,7 @@ from ..geometry import Size
 from ..message import Message
 from ..reactive import reactive
 from ..suggester import Suggester, SuggestionReady
-from ..validation import Failure, ValidationResult, Validator
+from ..validation import ValidationResult, Validator
 from ..widget import Widget
 
 
@@ -218,9 +218,9 @@ class Input(Widget, can_focus=True):
         placeholder: str = "",
         highlighter: Highlighter | None = None,
         password: bool = False,
-        validators: Validator | Iterable[Validator] | None = None,
         *,
         suggester: Suggester | None = None,
+        validators: Validator | Iterable[Validator] | None = None,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
