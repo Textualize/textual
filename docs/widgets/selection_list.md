@@ -18,7 +18,7 @@ follows:
 
 ```python
 selections = [("First", 1), ("Second", 2)]
-my_selection_list: SelectionList[int] =  SelectionList[int](selections)
+my_selection_list: SelectionList[int] =  SelectionList(selections)
 ```
 
 !!! note
