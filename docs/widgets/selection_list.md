@@ -20,13 +20,13 @@ optionally contain a flag for the initial selected state of the option.
 
 === "Output"
 
-    ```{.textual path="docs/examples/widgets/selection_list.py"}
+    ```{.textual path="docs/examples/widgets/selection_list_tuples.py"}
     ```
 
-=== "selection_list.py"
+=== "selection_list_tuples.py"
 
     ~~~python
-    --8<-- "docs/examples/widgets/selection_list.py"
+    --8<-- "docs/examples/widgets/selection_list_tuples.py"
     ~~~
 
 === "selection_list.css"
