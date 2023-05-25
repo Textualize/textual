@@ -2712,6 +2712,7 @@ class Widget(DOMNode):
 
     def watch_disabled(self) -> None:
         """Update the styles of the widget and its children when disabled is toggled."""
+        self.blur()
         self._update_styles()
 
     def _size_updated(
@@ -3017,8 +3018,10 @@ class Widget(DOMNode):
         self.app.call_later(set_focus, self)
         return self
 
-    def reset_focus(self) -> Self:
-        """Reset the focus (move it to the next available widget).
+    def blur(self) -> Self:
+        """Blur (un-focus) the widget.
+
+        Focus will be moved to the next available widget in the focus chain..
 
         Returns:
             The `Widget` instance.
@@ -3172,7 +3175,7 @@ class Widget(DOMNode):
 
     def _on_hide(self, event: events.Hide) -> None:
         if self.has_focus:
-            self.reset_focus()
+            self.blur()
 
     def _on_scroll_to_region(self, message: messages.ScrollToRegion) -> None:
         self.scroll_to_region(message.region, animate=True)

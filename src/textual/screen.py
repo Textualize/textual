@@ -386,6 +386,7 @@ class Screen(Generic[ScreenResultType], Widget):
         focusable_widgets = self.focus_chain
         if not focusable_widgets:
             # If there's nothing to focus... give up now.
+            self.set_focus(None)
             return
 
         try:
@@ -778,7 +779,7 @@ class Screen(Generic[ScreenResultType], Widget):
     def dismiss(self, result: ScreenResultType | Type[_NoResult] = _NoResult) -> None:
         """Dismiss the screen, optionally with a result.
 
-        If `result` is provided and a callback was set when the screen was [pushed][textual.app.push_screen], then
+        If `result` is provided and a callback was set when the screen was [pushed][textual.app.App.push_screen], then
         the callback will be invoked with `result`.
 
         Args:

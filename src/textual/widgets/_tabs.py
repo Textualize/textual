@@ -183,11 +183,6 @@ class Tabs(Widget, can_focus=True):
         ALLOW_SELECTOR_MATCH = {"tab"}
         """Additional message attributes that can be used with the [`on` decorator][textual.on]."""
 
-        tabs: Tabs
-        """The tabs widget containing the tab."""
-        tab: Tab
-        """The tab that was activated."""
-
         def __init__(self, tabs: Tabs, tab: Tab) -> None:
             """Initialize event.
 
@@ -195,8 +190,10 @@ class Tabs(Widget, can_focus=True):
                 tabs: The Tabs widget.
                 tab: The tab that was activated.
             """
-            self.tabs = tabs
-            self.tab = tab
+            self.tabs: Tabs = tabs
+            """The tabs widget containing the tab."""
+            self.tab: Tab = tab
+            """The tab that was activated."""
             super().__init__()
 
         @property
@@ -215,16 +212,14 @@ class Tabs(Widget, can_focus=True):
     class Cleared(Message):
         """Sent when there are no active tabs."""
 
-        tabs: Tabs
-        """The tabs widget which was cleared."""
-
         def __init__(self, tabs: Tabs) -> None:
             """Initialize the event.
 
             Args:
                 tabs: The tabs widget.
             """
-            self.tabs = tabs
+            self.tabs: Tabs = tabs
+            """The tabs widget which was cleared."""
             super().__init__()
 
         @property
