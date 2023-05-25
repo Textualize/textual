@@ -1,0 +1,19 @@
+Screen {
+    align: center middle;
+}
+
+Horizontal {
+    width: 80%;
+    height: 80%;
+}
+
+SelectionList {
+    padding: 1;
+    border: solid $accent;
+    width: 1fr;
+}
+
+Pretty {
+    width: 1fr;
+    border: solid $accent;
+}

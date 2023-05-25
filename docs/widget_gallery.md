@@ -197,6 +197,14 @@ Select from a number of possible options.
 ```{.textual path="docs/examples/widgets/select_widget.py" press="tab,enter,down,down"}
 ```
 
+## SelectionList
+
+Select multiple values from a list of options.
+
+[SelectionList reference](./widgets/selection_list.md){ .md-button .md-button--primary }
+
+```{.textual path="docs/examples/widgets/selection_list_selections.py" press="down,down,down"}
+```
 
 ## Static
 

@@ -245,6 +245,14 @@ def test_progress_bar_completed_styled(snap_compare):
 def test_select(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "select_widget.py")
 
+def test_selection_list_selected(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "selection_list_selected.py")
+
+def test_selection_list_selections(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "selection_list_selections.py")
+
+def test_selection_list_tuples(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "selection_list_tuples.py")
 
 def test_select_expanded(snap_compare):
     assert snap_compare(
