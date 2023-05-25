@@ -69,9 +69,7 @@ class DirectoryTree(Tree[DirEntry]):
         `DirectoryTree` or in a parent widget in the DOM.
         """
 
-        def __init__(
-            self, tree: DirectoryTree, node: TreeNode[DirEntry], path: Path
-        ) -> None:
+        def __init__(self, node: TreeNode[DirEntry], path: Path) -> None:
             """Initialise the FileSelected object.
 
             Args:
@@ -79,21 +77,15 @@ class DirectoryTree(Tree[DirEntry]):
                 path: The path of the file that was selected.
             """
             super().__init__()
-            self.tree: DirectoryTree = tree
-            """The `DirectoryTree` that had a file selected."""
             self.node: TreeNode[DirEntry] = node
             """The tree node of the file that was selected."""
             self.path: Path = path
             """The path of the file that was selected."""
 
         @property
-        def control(self) -> DirectoryTree:
-            """The `DirectoryTree` that had a file selected.
-
-            This is an alias for [`FileSelected.tree`][textual.widgets.DirectoryTree.FileSelected.tree]
-            which is used by the [`on`][textual.on] decorator.
-            """
-            return self.tree
+        def control(self) -> Tree[DirEntry]:
+            """The `Tree` that had a file selected."""
+            return self.node.tree
 
     path: var[str | Path] = var["str | Path"](PATH("."), init=False, always_update=True)
     """The path that is the root of the directory tree.
@@ -361,7 +353,7 @@ class DirectoryTree(Tree[DirEntry]):
             if not dir_entry.loaded:
                 self._add_to_load_queue(event.node)
         else:
-            self.post_message(self.FileSelected(self, event.node, dir_entry.path))
+            self.post_message(self.FileSelected(event.node, dir_entry.path))
 
     def _on_tree_node_selected(self, event: Tree.NodeSelected) -> None:
         event.stop()
@@ -369,4 +361,4 @@ class DirectoryTree(Tree[DirEntry]):
         if dir_entry is None:
             return
         if not self._safe_is_dir(dir_entry.path):
-            self.post_message(self.FileSelected(self, event.node, dir_entry.path))
+            self.post_message(self.FileSelected(event.node, dir_entry.path))

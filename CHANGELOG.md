@@ -36,6 +36,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Textual will now scroll focused widgets to center if not in view
 
+## Unreleased
+
+### Changed
+
+- `Message.control` is now a property instead of a class variable. https://github.com/Textualize/textual/issues/2528
+- `Tree` and `DirectoryTree` Messages no longer accept a `tree` parameter, using `self.node.tree` instead. https://github.com/Textualize/textual/issues/2529
+
 ## [0.25.0] - 2023-05-17
 
 ### Changed
