@@ -149,7 +149,7 @@ class SelectionList(Generic[SelectionType], OptionList):
             """
             super().__init__()
             self.selection_list: SelectionList[MessageSelectionType] = selection_list
-            """The option list that sent the message."""
+            """The selection list that sent the message."""
             self.selection: Selection[
                 MessageSelectionType
             ] = selection_list.get_option_at_index(index)
