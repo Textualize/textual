@@ -34,7 +34,12 @@ def format_svg(source, language, css_class, options, md, attrs, **kwargs) -> str
             rows = int(attrs.get("lines", 24))
             columns = int(attrs.get("columns", 80))
             svg = take_svg_screenshot(
-                None, path, press, title, terminal_size=(columns, rows)
+                None,
+                path,
+                press,
+                title,
+                terminal_size=(columns, rows),
+                wait_for_animation=False,
             )
         finally:
             os.chdir(cwd)
@@ -56,6 +61,7 @@ def take_svg_screenshot(
     title: str | None = None,
     terminal_size: tuple[int, int] = (80, 24),
     run_before: Callable[[Pilot], Awaitable[None] | None] | None = None,
+    wait_for_animation: bool = True,
 ) -> str:
     """
 
@@ -68,6 +74,7 @@ def take_svg_screenshot(
         run_before: An arbitrary callable that runs arbitrary code before taking the
             screenshot. Use this to simulate complex user interactions with the app
             that cannot be simulated by key presses.
+        wait_for_animation: Wait for animation to complete before taking screenshot.
 
     Returns:
         An SVG string, showing the content of the terminal window at the time
@@ -109,8 +116,9 @@ def take_svg_screenshot(
             if inspect.isawaitable(result):
                 await result
         await pilot.press(*press)
-        # await pilot.wait_for_scheduled_animations()
-        # await pilot.pause()
+        if wait_for_animation:
+            await pilot.wait_for_scheduled_animations()
+            await pilot.pause()
         svg = app.export_screenshot(title=title)
 
         app.exit(svg)
