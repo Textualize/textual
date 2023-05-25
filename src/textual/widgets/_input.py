@@ -38,9 +38,7 @@ class _InputRenderable:
         value = input.value
         value_length = len(value)
         suggestion = input._suggestion
-        show_suggestion = suggestion.startswith(value) and (
-            len(suggestion) > value_length
-        )
+        show_suggestion = len(suggestion) > value_length
         if show_suggestion:
             result += Text(
                 suggestion[value_length:],
@@ -388,7 +386,7 @@ class Input(Widget, can_focus=True):
 
     async def _on_suggestion_ready(self, event: SuggestionReady) -> None:
         """Handle suggestion messages and set the suggestion when relevant."""
-        if event.initial_value == self.value:
+        if event.value == self.value:
             self._suggestion = event.suggestion
 
     def insert_text_at_cursor(self, text: str) -> None:
