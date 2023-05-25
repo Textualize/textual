@@ -74,7 +74,7 @@ Alternatively, selections can be passed in as
     --8<-- "docs/examples/widgets/selection_list_selections.py"
     ~~~
 
-    1. Note that the `SelectionList` is typed as `int`, for the type of the vlaues.
+    1. Note that the `SelectionList` is typed as `int`, for the type of the values.
 
 === "selection_list.css"
 
