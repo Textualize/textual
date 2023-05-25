@@ -131,8 +131,9 @@ class DirectoryTree(Tree[DirEntry]):
             node: The node to add to the load queue.
         """
         assert node.data is not None
-        node.data.loaded = True
-        self._load_queue.put_nowait(node)
+        if not node.data.loaded:
+            node.data.loaded = True
+            self._load_queue.put_nowait(node)
 
     def reload(self) -> None:
         """Reload the `DirectoryTree` contents."""
@@ -351,8 +352,7 @@ class DirectoryTree(Tree[DirEntry]):
         if dir_entry is None:
             return
         if self._safe_is_dir(dir_entry.path):
-            if not dir_entry.loaded:
-                self._add_to_load_queue(event.node)
+            self._add_to_load_queue(event.node)
         else:
             self.post_message(self.FileSelected(event.node, dir_entry.path))
 
