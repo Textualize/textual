@@ -1022,14 +1022,13 @@ class App(Generic[ReturnType], DOMNode):
         app = self
         driver = app._driver
         assert driver is not None
-        await wait_for_idle(0)
         for key in keys:
             if key.startswith("wait:"):
                 _, wait_ms = key.split(":")
                 print(f"(pause {wait_ms}ms)")
                 await asyncio.sleep(float(wait_ms) / 1000)
-                await app._animator.wait_until_complete()
-                await wait_for_idle(0)
+                # await app._animator.wait_until_complete()
+                # await wait_for_idle(0)
             else:
                 if len(key) == 1 and not key.isalnum():
                     key = _character_to_key(key)
@@ -1043,10 +1042,9 @@ class App(Generic[ReturnType], DOMNode):
                 key_event = events.Key(key, char)
                 key_event._set_sender(app)
                 driver.send_event(key_event)
-                await wait_for_idle(0)
 
-        await app._animator.wait_until_complete()
-        await wait_for_idle(0)
+                await app._animator.wait_until_complete()
+                await wait_for_idle(0)
 
     @asynccontextmanager
     async def run_test(
