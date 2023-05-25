@@ -15,7 +15,7 @@ T = TypeVar("T", int, float)
 SummaryFunction = Callable[[Sequence[T]], float]
 
 
-class SparklineRenderable(Generic[T]):
+class Sparkline(Generic[T]):
     """A sparkline representing a series of data.
 
     Args:
@@ -113,7 +113,7 @@ if __name__ == "__main__":
     for f in funcs:
         console.print(
             f"{f.__name__}:\t",
-            SparklineRenderable(nums, width=12, summary_function=f),
+            Sparkline(nums, width=12, summary_function=f),
             end="",
         )
         console.print("\n")

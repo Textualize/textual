@@ -5,7 +5,7 @@ from typing import Callable, ClassVar, Sequence
 from textual.app import RenderResult
 
 from ..reactive import reactive
-from ..renderables.sparkline import SparklineRenderable
+from ..renderables.sparkline import Sparkline as SparklineRenderable
 from ..widget import Widget
 
 
@@ -32,6 +32,9 @@ class Sparkline(Widget):
     """
 
     DEFAULT_CSS = """
+    Sparkline {
+        height: 1;
+    }
     Sparkline > .sparkline--max-color {
         color: $error;
     }
