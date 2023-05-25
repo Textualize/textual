@@ -16,7 +16,7 @@ class Pretty(Widget):
     """
 
     DEFAULT_CSS = """
-    Static {
+    Pretty {
         height: auto;
     }
     """
