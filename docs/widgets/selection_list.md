@@ -87,8 +87,8 @@ Alternatively, selections can be passed in as
 Most of the time, when using the `SelectionList`, you will want to know when
 the collection of selected items has changed, this is ideally done using the
 [`SelectedChanged`][textual.widgets.SelectionList.SelectedChanged] message.
-Here is an example of using that message to update a
-[`Pretty`][textual.widgets.Pretty] with the collection of selected values:
+Here is an example of using that message to update a `Pretty` with the
+collection of selected values:
 
 === "Output"
 
