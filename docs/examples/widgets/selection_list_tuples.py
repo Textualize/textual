@@ -7,7 +7,7 @@ class SelectionListApp(App[None]):
 
     def compose(self) -> ComposeResult:
         yield Header()
-        yield SelectionList[int](
+        yield SelectionList[int](  # (1)!
             ("Falken's Maze", 0, True),
             ("Black Jack", 1),
             ("Gin Rummy", 2),

@@ -7,10 +7,31 @@ A widget for showing a vertical list check boxes.
 - [x] Focusable
 - [ ] Container
 
+## Typing
+
+The `SelectionList` control is a
+[`Generic`](https://docs.python.org/3/library/typing.html#typing.Generic),
+which allows you to set the type of the
+[selection values][textual.widgets.selection_list.Selection.value]. For instance, if
+the data type for your values is an integer, you would type the widget as
+follows:
+
+```python
+selections = [("First", 1), ("Second", 2)]
+my_selection_list: SelectionList[int] =  SelectionList[int](selections)
+```
+
+!!! note
+
+    Typing is entirely optional.
+
+    If you aren't familiar with typing or don't want to worry about it right now, feel free to ignore it.
+
 ## Examples
 
 A selection list is designed to be built up of single-line prompts (which
-can be Rich renderables) and an associated unique value.
+can be [Rich renderables](/guide/widgets/#rich-renderables)) and an
+associated unique value.
 
 ### Selections as tuples
 
@@ -28,6 +49,8 @@ optionally contain a flag for the initial selected state of the option.
     ~~~python
     --8<-- "docs/examples/widgets/selection_list_tuples.py"
     ~~~
+
+    1. Note that the `SelectionList` is typed as `int`, for the type of the vlaues.
 
 === "selection_list.css"
 
@@ -50,6 +73,8 @@ Alternatively, selections can be passed in as
     ~~~python
     --8<-- "docs/examples/widgets/selection_list_selections.py"
     ~~~
+
+    1. Note that the `SelectionList` is typed as `int`, for the type of the vlaues.
 
 === "selection_list.css"
 
