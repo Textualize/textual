@@ -382,7 +382,7 @@ class SelectionList(Generic[SelectionType], OptionList):
             value: The value to toggle.
 
         Returns:
-            Always `True`.
+            `True`.
         """
         if value in self._selected:
             self._deselect(value)
