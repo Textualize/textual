@@ -50,7 +50,7 @@ optionally contain a flag for the initial selected state of the option.
     --8<-- "docs/examples/widgets/selection_list_tuples.py"
     ~~~
 
-    1. Note that the `SelectionList` is typed as `int`, for the type of the vlaues.
+    1. Note that the `SelectionList` is typed as `int`, for the type of the values.
 
 === "selection_list.css"
 
