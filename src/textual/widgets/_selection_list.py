@@ -275,6 +275,11 @@ class SelectionList(Generic[SelectionType], OptionList):
 
         Returns:
             The [`SelectionList`][textual.widgets.SelectionList] instance.
+
+        Note:
+            This method will post a single
+            [`SelectedChanged`][textual.widgets.OptionList.SelectedChanged]
+            message if a change is made in a call to this method.
         """
 
         # Keep track of if anything changed.
