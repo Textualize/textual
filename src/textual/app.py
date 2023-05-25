@@ -1022,7 +1022,6 @@ class App(Generic[ReturnType], DOMNode):
         app = self
         driver = app._driver
         assert driver is not None
-        # await wait_for_idle(0)
         for key in keys:
             if key.startswith("wait:"):
                 _, wait_ms = key.split(":")
