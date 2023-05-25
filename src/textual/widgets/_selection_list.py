@@ -568,7 +568,7 @@ class SelectionList(Generic[SelectionType], OptionList):
             index: The ID of the selection option to get.
 
         Returns:
-            The selection option at with the ID.
+            The selection option with the ID.
 
         Raises:
             OptionDoesNotExist: If no selection option has the given ID.
