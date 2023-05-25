@@ -181,7 +181,7 @@ async def test_deselect_deselected() -> None:
 
 
 async def test_deselect_all() -> None:
-    """Deselecting all options should result in no additional."""
+    """Deselecting all deselected options should result in no additional messages."""
     async with SelectionListApp().run_test() as pilot:
         assert isinstance(pilot.app, SelectionListApp)
         await pilot.pause()
