@@ -158,7 +158,8 @@ class _TextAreaRenderable:
         self.textarea.styles.background = bgcolor.name
 
 
-# TODO: document code :)
+# TODO: document code
+# TODO: write tests
 # TODO: possibility to pass `pygments.lexer.Lexer` with "lexer" argument
 # TODO: possibility to pass the theme for syntax highlighting
 # TODO: implement tab (\t) support
