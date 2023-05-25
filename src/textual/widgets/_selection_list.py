@@ -436,17 +436,13 @@ class SelectionList(Generic[SelectionType], OptionList):
         # If we've been given a tuple of some sort, turn that into a proper
         # Selection.
         if isinstance(selection, tuple):
-            if len(selection) == 3:
-                label, value, selected = cast(
-                    "tuple[TextType, SelectionType, bool]", selection
-                )
-            elif len(selection) == 2:
-                label, value, selected = cast(
+            if len(selection) == 2:
+                selection = cast(
                     "tuple[TextType, SelectionType, bool]", (*selection, False)
                 )
-            else:
+            elif len(selection) != 3:
                 raise SelectionError(f"Expected 2 or 3 values, got {len(selection)}")
-            selection = Selection[SelectionType](label, value, selected)
+            selection = Selection[SelectionType](*selection)
 
         # At this point we should have a proper selection.
         assert isinstance(selection, Selection)
