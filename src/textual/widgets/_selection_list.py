@@ -223,7 +223,7 @@ class SelectionList(Generic[SelectionType], OptionList):
         """Initialise the selection list.
 
         Args:
-            *content: The content for the selection list.
+            *selections: The content for the selection list.
             name: The name of the selection list.
             id: The ID of the selection list in the DOM.
             classes: The CSS classes of the selection list.
