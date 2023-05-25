@@ -260,7 +260,7 @@ class SelectionList(Generic[SelectionType], OptionList):
         """Post a message that the selected collection has changed, where appropriate.
 
         Note:
-            A message will only be send if `_send_messages` is `True`. This
+            A message will only be sent if `_send_messages` is `True`. This
             makes this safe to call before the widget is ready for posting
             messages.
         """
