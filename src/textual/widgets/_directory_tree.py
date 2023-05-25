@@ -271,6 +271,7 @@ class DirectoryTree(Tree[DirEntry]):
             node: The Tree node to populate.
             content: The collection of `Path` objects to populate the node with.
         """
+        node.remove_children()
         for path in content:
             node.add(
                 path.name,
