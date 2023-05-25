@@ -94,11 +94,12 @@ class ResultCallback(Generic[ScreenResultType]):
 class Screen(Generic[ScreenResultType], Widget):
     """The base class for screens."""
 
-    AUTO_FOCUS: ClassVar[str | None] = "*"
+    AUTO_FOCUS: ClassVar[str | None] = None
     """A selector to determine what to focus automatically when the screen is activated.
 
     The widget focused is the first that matches the given [CSS selector](/guide/queries/#query-selectors).
-    Set to `None` to disable auto focus.
+    Set to `None` to inherit the value from the screen's app.
+    Set to `""` to disable auto focus.
     """
 
     DEFAULT_CSS = """
@@ -246,6 +247,9 @@ class Screen(Generic[ScreenResultType], Widget):
     @property
     def focus_chain(self) -> list[Widget]:
         """A list of widgets that may receive focus, in focus order."""
+        # TODO: Calculating a focus chain is moderately expensive.
+        # Suspect we can move focus without calculating the entire thing again.
+
         widgets: list[Widget] = []
         add_widget = widgets.append
         stack: list[Iterator[Widget]] = [iter(self.focusable_children)]
@@ -283,6 +287,8 @@ class Screen(Generic[ScreenResultType], Widget):
                 is not `None`, then it is guaranteed that the widget returned matches
                 the CSS selectors given in the argument.
         """
+        # TODO: This shouldn't be required
+        self._compositor._full_map_invalidated = True
         if not isinstance(selector, str):
             selector = selector.__name__
         selector_set = parse_selectors(selector)
@@ -381,6 +387,7 @@ class Screen(Generic[ScreenResultType], Widget):
         focusable_widgets = self.focus_chain
         if not focusable_widgets:
             # If there's nothing to focus... give up now.
+            self.set_focus(None)
             return
 
         try:
@@ -469,11 +476,16 @@ class Screen(Generic[ScreenResultType], Widget):
                 self.focused = widget
                 # Send focus event
                 if scroll_visible:
-                    self.screen.scroll_to_widget(widget)
+
+                    def scroll_to_center(widget: Widget) -> None:
+                        """Scroll to center (after a refresh)."""
+                        if widget.has_focus and not self.screen.can_view(widget):
+                            self.screen.scroll_to_center(widget)
+
+                    self.call_after_refresh(scroll_to_center, widget)
                 widget.post_message(events.Focus())
                 focused = widget
 
-                self._update_focus_styles(self.focused, widget)
                 self.log.debug(widget, "was focused")
 
         self._update_focus_styles(focused, blurred)
@@ -670,8 +682,9 @@ class Screen(Generic[ScreenResultType], Widget):
         size = self.app.size
         self._refresh_layout(size, full=True)
         self.refresh()
-        if self.AUTO_FOCUS is not None and self.focused is None:
-            for widget in self.query(self.AUTO_FOCUS):
+        auto_focus = self.app.AUTO_FOCUS if self.AUTO_FOCUS is None else self.AUTO_FOCUS
+        if auto_focus and self.focused is None:
+            for widget in self.query(auto_focus):
                 if widget.focusable:
                     self.set_focus(widget)
                     break
@@ -768,7 +781,7 @@ class Screen(Generic[ScreenResultType], Widget):
     def dismiss(self, result: ScreenResultType | Type[_NoResult] = _NoResult) -> None:
         """Dismiss the screen, optionally with a result.
 
-        If `result` is provided and a callback was set when the screen was [pushed][textual.app.push_screen], then
+        If `result` is provided and a callback was set when the screen was [pushed][textual.app.App.push_screen], then
         the callback will be invoked with `result`.
 
         Args:

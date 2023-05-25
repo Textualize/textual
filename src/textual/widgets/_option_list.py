@@ -753,7 +753,7 @@ class OptionList(ScrollView, can_focus=True):
         """Get the option with the given ID.
 
         Args:
-            index: The ID of the option to get.
+            option_id: The ID of the option to get.
 
         Returns:
             The option at with the ID.

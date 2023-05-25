@@ -3,7 +3,7 @@ from __future__ import annotations
 from asyncio import Queue
 from dataclasses import dataclass
 from pathlib import Path
-from typing import ClassVar, Iterable, Iterator
+from typing import Callable, ClassVar, Iterable, Iterator
 
 from rich.style import Style
 from rich.text import Text, TextType
@@ -59,6 +59,9 @@ class DirectoryTree(Tree[DirEntry]):
     }
     """
 
+    PATH: Callable[[str | Path], Path] = Path
+    """Callable that returns a fresh path object."""
+
     class FileSelected(Message, bubble=True):
         """Posted when a file is selected.
 
@@ -66,9 +69,7 @@ class DirectoryTree(Tree[DirEntry]):
         `DirectoryTree` or in a parent widget in the DOM.
         """
 
-        def __init__(
-            self, tree: DirectoryTree, node: TreeNode[DirEntry], path: Path
-        ) -> None:
+        def __init__(self, node: TreeNode[DirEntry], path: Path) -> None:
             """Initialise the FileSelected object.
 
             Args:
@@ -76,23 +77,17 @@ class DirectoryTree(Tree[DirEntry]):
                 path: The path of the file that was selected.
             """
             super().__init__()
-            self.tree: DirectoryTree = tree
-            """The `DirectoryTree` that had a file selected."""
             self.node: TreeNode[DirEntry] = node
             """The tree node of the file that was selected."""
             self.path: Path = path
             """The path of the file that was selected."""
 
         @property
-        def control(self) -> DirectoryTree:
-            """The `DirectoryTree` that had a file selected.
+        def control(self) -> Tree[DirEntry]:
+            """The `Tree` that had a file selected."""
+            return self.node.tree
 
-            This is an alias for [`FileSelected.tree`][textual.widgets.DirectoryTree.FileSelected.tree]
-            which is used by the [`on`][textual.on] decorator.
-            """
-            return self.tree
-
-    path: var[str | Path] = var["str | Path"](Path("."), init=False, always_update=True)
+    path: var[str | Path] = var["str | Path"](PATH("."), init=False, always_update=True)
     """The path that is the root of the directory tree.
 
     Note:
@@ -121,7 +116,7 @@ class DirectoryTree(Tree[DirEntry]):
         self._load_queue: Queue[TreeNode[DirEntry]] = Queue()
         super().__init__(
             str(path),
-            data=DirEntry(Path(path)),
+            data=DirEntry(self.PATH(path)),
             name=name,
             id=id,
             classes=classes,
@@ -141,7 +136,7 @@ class DirectoryTree(Tree[DirEntry]):
 
     def reload(self) -> None:
         """Reload the `DirectoryTree` contents."""
-        self.reset(str(self.path), DirEntry(Path(self.path)))
+        self.reset(str(self.path), DirEntry(self.PATH(self.path)))
         # Orphan the old queue...
         self._load_queue = Queue()
         # ...and replace the old load with a new one.
@@ -163,7 +158,7 @@ class DirectoryTree(Tree[DirEntry]):
             The result will always be a Python `Path` object, regardless of
             the value given.
         """
-        return Path(path)
+        return self.PATH(path)
 
     def watch_path(self) -> None:
         """Watch for changes to the `path` of the directory tree.
@@ -358,7 +353,7 @@ class DirectoryTree(Tree[DirEntry]):
             if not dir_entry.loaded:
                 self._add_to_load_queue(event.node)
         else:
-            self.post_message(self.FileSelected(self, event.node, dir_entry.path))
+            self.post_message(self.FileSelected(event.node, dir_entry.path))
 
     def _on_tree_node_selected(self, event: Tree.NodeSelected) -> None:
         event.stop()
@@ -366,4 +361,4 @@ class DirectoryTree(Tree[DirEntry]):
         if dir_entry is None:
             return
         if not self._safe_is_dir(dir_entry.path):
-            self.post_message(self.FileSelected(self, event.node, dir_entry.path))
+            self.post_message(self.FileSelected(event.node, dir_entry.path))

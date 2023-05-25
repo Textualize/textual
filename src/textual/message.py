@@ -42,7 +42,6 @@ class Message:
     verbose: ClassVar[bool] = False  # Message is verbose
     no_dispatch: ClassVar[bool] = False  # Message may not be handled by client code
     namespace: ClassVar[str] = ""  # Namespace to disambiguate messages
-    control: Widget | None = None
 
     def __init__(self) -> None:
         self.__post_init__()
@@ -78,6 +77,11 @@ class Message:
             cls.no_dispatch = no_dispatch
         if namespace is not None:
             cls.namespace = namespace
+
+    @property
+    def control(self) -> Widget | None:
+        """The widget associated with this message, or None by default."""
+        return None
 
     @property
     def is_forwarded(self) -> bool:

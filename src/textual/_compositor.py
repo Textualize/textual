@@ -806,7 +806,7 @@ class Compositor:
         if self.root is None:
             raise errors.NoWidget("Widget is not in layout")
         try:
-            if self._full_map is not None:
+            if not self._full_map_invalidated:
                 try:
                     return self._full_map[widget]
                 except KeyError:

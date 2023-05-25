@@ -2267,13 +2267,12 @@ class Widget(DOMNode):
 
         while isinstance(widget.parent, Widget) and widget is not self:
             container = widget.parent
-
             if widget.styles.dock:
                 scroll_offset = Offset(0, 0)
             else:
                 scroll_offset = container.scroll_to_region(
                     region,
-                    spacing=widget.parent.gutter + widget.dock_gutter,
+                    spacing=widget.gutter + widget.dock_gutter,
                     animate=animate,
                     speed=speed,
                     duration=duration,
@@ -2286,15 +2285,17 @@ class Widget(DOMNode):
 
             # Adjust the region by the amount we just scrolled it, and convert to
             # it's parent's virtual coordinate system.
+
             region = (
                 (
                     region.translate(-scroll_offset)
                     .translate(-widget.scroll_offset)
-                    .translate(container.virtual_region.offset)
+                    .translate(container.virtual_region_with_margin.offset)
                 )
                 .grow(container.styles.margin)
-                .intersection(container.virtual_region)
+                .intersection(container.virtual_region_with_margin)
             )
+
             widget = container
         return scrolled
 
@@ -2483,6 +2484,30 @@ class Widget(DOMNode):
             force=force,
         )
 
+    def can_view(self, widget: Widget) -> bool:
+        """Check if a given widget is in the current view (scrollable area).
+
+        Note: This doesn't necessarily equate to a widget being visible.
+        There are other reasons why a widget may not be visible.
+
+        Args:
+            widget: A widget that is a descendant of self.
+
+        Returns:
+            True if the entire widget is in view, False if it is partially visible or not in view.
+        """
+        if widget is self:
+            return True
+
+        region = widget.region
+        node: Widget = widget
+
+        while isinstance(node.parent, Widget) and node is not self:
+            if region not in node.parent.scrollable_content_region:
+                return False
+            node = node.parent
+        return True
+
     def __init_subclass__(
         cls,
         can_focus: bool | None = None,
@@ -2507,11 +2532,6 @@ class Widget(DOMNode):
         yield "id", self.id, None
         if self.name:
             yield "name", self.name
-        if self.classes:
-            yield "classes", set(self.classes)
-        pseudo_classes = self.pseudo_classes
-        if pseudo_classes:
-            yield "pseudo_classes", set(pseudo_classes)
 
     def _get_scrollable_region(self, region: Region) -> Region:
         """Adjusts the Widget region to accommodate scrollbars.
@@ -2692,6 +2712,7 @@ class Widget(DOMNode):
 
     def watch_disabled(self) -> None:
         """Update the styles of the widget and its children when disabled is toggled."""
+        self.blur()
         self._update_styles()
 
     def _size_updated(
@@ -2997,8 +3018,10 @@ class Widget(DOMNode):
         self.app.call_later(set_focus, self)
         return self
 
-    def reset_focus(self) -> Self:
-        """Reset the focus (move it to the next available widget).
+    def blur(self) -> Self:
+        """Blur (un-focus) the widget.
+
+        Focus will be moved to the next available widget in the focus chain..
 
         Returns:
             The `Widget` instance.
@@ -3152,7 +3175,7 @@ class Widget(DOMNode):
 
     def _on_hide(self, event: events.Hide) -> None:
         if self.has_focus:
-            self.reset_focus()
+            self.blur()
 
     def _on_scroll_to_region(self, message: messages.ScrollToRegion) -> None:
         self.scroll_to_region(message.region, animate=True)

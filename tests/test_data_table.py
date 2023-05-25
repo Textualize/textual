@@ -1009,7 +1009,9 @@ async def test_scrolling_cursor_into_view():
         table.add_column("n")
         table.add_rows([(n,) for n in range(300)])
 
+        await pilot.pause()
         await pilot.press("c")
+        await pilot.pause()
         assert table.scroll_y > 100
 
 

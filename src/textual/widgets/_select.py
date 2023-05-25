@@ -9,6 +9,7 @@ from rich.text import Text
 from .. import events, on
 from ..app import ComposeResult
 from ..containers import Horizontal, Vertical
+from ..css.query import NoMatches
 from ..message import Message
 from ..reactive import var
 from ..widgets import Static
@@ -226,19 +227,22 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         """Posted when the select value was changed.
 
         This message can be handled using a `on_select_changed` method.
-
         """
 
-        def __init__(self, control: Select, value: SelectType | None) -> None:
+        def __init__(self, select: Select, value: SelectType | None) -> None:
             """
             Initialize the Changed message.
-
             """
             super().__init__()
-            self.control = control
-            """The select control."""
+            self.select = select
+            """The select widget."""
             self.value = value
             """The value of the Select when it changed."""
+
+        @property
+        def control(self) -> Select:
+            """The Select that sent the message."""
+            return self.select
 
     def __init__(
         self,
@@ -298,17 +302,22 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     def _watch_value(self, value: SelectType | None) -> None:
         """Update the current value when it changes."""
         self._value = value
-        if value is None:
-            self.query_one(SelectCurrent).update(None)
+        try:
+            select_current = self.query_one(SelectCurrent)
+        except NoMatches:
+            pass
         else:
-            for index, (prompt, _value) in enumerate(self._options):
-                if _value == value:
-                    select_overlay = self.query_one(SelectOverlay)
-                    select_overlay.highlighted = index
-                    self.query_one(SelectCurrent).update(prompt)
-                    break
-            else:
+            if value is None:
                 self.query_one(SelectCurrent).update(None)
+            else:
+                for index, (prompt, _value) in enumerate(self._options):
+                    if _value == value:
+                        select_overlay = self.query_one(SelectOverlay)
+                        select_overlay.highlighted = index
+                        self.query_one(SelectCurrent).update(prompt)
+                        break
+                else:
+                    self.query_one(SelectCurrent).update(None)
 
     def compose(self) -> ComposeResult:
         """Compose Select with overlay and current value."""
