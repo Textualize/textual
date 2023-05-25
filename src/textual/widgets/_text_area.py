@@ -17,18 +17,37 @@ from ..scroll_view import ScrollView
 
 
 class _Buffer:
+    """
+    A buffer.
+    """
+
     def __init__(self) -> None:
         self._lines = [[]]
 
     def get_line_length(self, y: int) -> int:
+        """
+        Args:
+            y: The line number.
+
+        Returns:
+            Length of line at y.
+        """
         return len(self._lines[y])
 
     @property
     def max_y(self) -> int:
+        """
+        Returns:
+            Number of the lines.
+        """
         return len(self._lines)
 
     @property
     def max_x(self) -> int:
+        """
+        Returns:
+            Length of the longest line.
+        """
         if not self.max_y:
             return 0
         return max(len(line) for line in self._lines)
@@ -38,7 +57,16 @@ class _Buffer:
         return (self.max_x, self.max_y)
 
     def write(self, cursor_pad_at_lines: Union[FrozenSet[int], None] = None) -> str:
-        lines: List[str] = []
+        """
+        Write out the buffer.
+
+        Args:
+            cursor_pad_at_lines: Cursor pad at line numbers.
+
+        Returns:
+            The written buffer
+        """
+        lines = []
         has_cursor_pads = cursor_pad_at_lines is not None
         for index, line in enumerate(self._lines):
             line = "".join(line)
@@ -48,6 +76,12 @@ class _Buffer:
         return os.linesep.join(lines)
 
     def insert(self, position: Offset, text: str) -> None:
+        """
+        Insert the text at position.
+
+        Args:
+            text: New text to insert.
+        """
         x, y = position
         if text == os.linesep:
             line = self._lines[y][x:]
@@ -56,11 +90,23 @@ class _Buffer:
             return
         self._lines[y].insert(x, text)
 
-    def remove_char(self, position: Offset) -> None:
+    def delete_char(self, position: Offset) -> None:
+        """
+        Delete the character at position.
+
+        Args:
+            position: Position of the charcater
+        """
         x, y = position
         del self._lines[y][x]
 
-    def remove_linebreak(self, y: int) -> None:
+    def delete_linebreak(self, y: int) -> None:
+        """
+        Merge into the line at y above and delete the line at y.
+
+        Args:
+            y: The line number.
+        """
         line = self._lines[y]
         self._lines[y - 1] += line
         del self._lines[y]
@@ -75,21 +121,25 @@ class _TextAreaRenderable:
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
+        def set_cursor(position: Offset, syntax: Syntax, style: Style):
+            x, y = position
+            y += 1
+            syntax.stylize_range(style, (y, x), (y, x + 1))
+
         textarea = self.textarea
-
-        options.max_width = textarea._buffer.max_x + 1
-        options.height = textarea._buffer.max_y
-
         lines_with_cursors = frozenset({textarea.cursor_offset.y})
         written_buffer = textarea._buffer.write(lines_with_cursors)
         syntax = Syntax(written_buffer, textarea._lexer)
         cursor_style = self.textarea.get_component_rich_style("textarea--cursor")
 
         self._set_background(syntax)
-        self._set_cursor(textarea.cursor_offset, syntax, cursor_style)
+        set_cursor(textarea.cursor_offset, syntax, cursor_style)
 
-        scroll_x, scroll_y = textarea.scroll_offset
+        options.max_width = textarea._buffer.max_x + 1
+        options.height = textarea._buffer.max_y
+
         lines = console.render_lines(syntax, options)
+        scroll_x, scroll_y = textarea.scroll_offset
         lines = lines[scroll_y:]
         for line in lines:
             line = line_crop(
@@ -101,11 +151,6 @@ class _TextAreaRenderable:
             line.append(Segment.line())
             yield from line
 
-    def _set_cursor(self, position: Offset, syntax: Syntax, style: Style) -> None:
-        x, y = position
-        y += 1
-        syntax.stylize_range(style, (y, x), (y, x + 1))
-
     def _set_background(self, syntax: Syntax) -> None:
         bgcolor = syntax.get_theme(DEFAULT_THEME).get_background_style().bgcolor
         if bgcolor is None:
@@ -114,21 +159,40 @@ class _TextAreaRenderable:
 
 
 # TODO: document code :)
-# TODO: possibility to pass `pygments.lexer.Lexer` with "lexer"
+# TODO: possibility to pass `pygments.lexer.Lexer` with "lexer" argument
 # TODO: possibility to pass the theme for syntax highlighting
 # TODO: implement tab (\t) support
 # TODO: implement multiple cursors
 class TextArea(ScrollView, can_focus=True):
+    """
+    A multi-line input widget.
+    """
+
     BINDINGS: ClassVar[List[BindingType]] = [
         Binding("left", "cursor_left", "cursor left"),
         Binding("right", "cursor_right", "cursor right"),
         Binding("up", "cursor_up", "cursor up"),
         Binding("down", "cursor_down", "cursor down"),
-        Binding("backspace", "remove_left", "remove left"),
+        Binding("backspace", "delete_left", "delete left"),
         Binding("enter", "insert_linebreak_at_cursor", "insert linebreak"),
     ]
+    """
+    | Key(s) | Description |
+    | :- | :- |
+    | left | Move the cursor one character left. |
+    | right | Move the cursor one character right. |
+    | up | Move the cursor one line up. |
+    | down | Move the cursor one line down. |
+    | backspace | Delete the character to the left of the cursor. |
+    | enter | Do a linebreak. |
+    """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {"textarea--cursor"}
+    """
+    | Class | Description |
+    | :- | :- |
+    | `textarea--cursor` | Target the cursor. |
+    """
 
     DEFAULT_CSS = """
     TextArea>.textarea--cursor {
@@ -193,17 +257,16 @@ class TextArea(ScrollView, can_focus=True):
     def action_cursor_down(self) -> None:
         self.cursor_y += 1
 
-    def action_remove_left(self) -> None:
-        # TODO: refactor of removing linebreak into "watch_cursor_offset"?
+    def action_delete_left(self) -> None:
         if not self.cursor_x and self.cursor_y:
             above_line_length = self._buffer.get_line_length(self.cursor_y - 1)
-            self._buffer.remove_linebreak(self.cursor_y)
+            self._buffer.delete_linebreak(self.cursor_y)
             self.action_cursor_up()
             self.cursor_x = above_line_length
             return
         if self.cursor_x:
             self.action_cursor_left()
-            self._buffer.remove_char(self.cursor_offset)
+            self._buffer.delete_char(self.cursor_offset)
 
     def action_insert_linebreak_at_cursor(self) -> None:
         self._buffer.insert(self.cursor_offset, os.linesep)
