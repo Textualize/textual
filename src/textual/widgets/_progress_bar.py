@@ -281,9 +281,6 @@ class ProgressBar(Widget, can_focus=False):
 
     The percentage is a value between 0 and 1 and the returned value is only
     `None` if the total progress of the bar hasn't been set yet.
-    In other words, after the progress bar emits the message
-    [`ProgressBar.Started`][textual.widgets.ProgressBar.Started],
-    the value of `percentage` is always not `None`.
 
     Example:
         ```py
