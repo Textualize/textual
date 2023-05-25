@@ -171,7 +171,7 @@ async def test_deselect() -> None:
 
 
 async def test_deselect_deselected() -> None:
-    """Deselecting a deslected option should result in no extra messages."""
+    """Deselecting a deselected option should result in no extra messages."""
     async with SelectionListApp().run_test() as pilot:
         assert isinstance(pilot.app, SelectionListApp)
         await pilot.pause()
