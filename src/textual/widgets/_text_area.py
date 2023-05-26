@@ -53,6 +53,10 @@ class _Buffer:
 
     @property
     def max_xy(self) -> Tuple[int, int]:
+        """
+        Returns:
+            Length of the longest line and number of the lines (max_x, max_y)
+        """
         return (self.max_x, self.max_y)
 
     def write(self, cursor_pad_at_lines: Union[FrozenSet[int], None] = None) -> str:
