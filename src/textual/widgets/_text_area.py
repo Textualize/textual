@@ -5,7 +5,6 @@ from typing import ClassVar, FrozenSet, List, Tuple, Union
 
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.segment import Segment
-from rich.style import Style
 from rich.syntax import DEFAULT_THEME, Syntax
 
 from .. import events
