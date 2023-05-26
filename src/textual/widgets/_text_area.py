@@ -105,7 +105,7 @@ class _Buffer:
 
     def delete_linebreak(self, y: int) -> None:
         """
-        Merge into the line at y above and delete the line at y.
+        Merge line at y into the line at y above and delete the line at y.
 
         Args:
             y: The line number.
