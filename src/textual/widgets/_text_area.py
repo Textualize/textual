@@ -157,7 +157,6 @@ class _TextAreaRenderable:
         syntax.stylize_range(cursor_style, (y, x), (y, x + 1))
 
 
-# TODO: document code
 # TODO: write tests
 # TODO: possibility to pass `pygments.lexer.Lexer` with "lexer" argument
 # TODO: possibility to pass the theme for syntax highlighting
