@@ -121,19 +121,13 @@ class _TextAreaRenderable:
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
-        def set_cursor(position: Offset, syntax: Syntax, style: Style):
-            x, y = position
-            y += 1
-            syntax.stylize_range(style, (y, x), (y, x + 1))
-
         textarea = self.textarea
         lines_with_cursors = frozenset({textarea.cursor_offset.y})
         written_buffer = textarea._buffer.write(lines_with_cursors)
         syntax = Syntax(written_buffer, textarea._lexer)
-        cursor_style = self.textarea.get_component_rich_style("textarea--cursor")
 
         self._set_background(syntax)
-        set_cursor(textarea.cursor_offset, syntax, cursor_style)
+        self._set_cursor(textarea.cursor_offset, syntax)
 
         options.max_width = textarea._buffer.max_x + 1
         options.height = textarea._buffer.max_y
@@ -156,6 +150,12 @@ class _TextAreaRenderable:
         if bgcolor is None:
             return
         self.textarea.styles.background = bgcolor.name
+
+    def _set_cursor(self, position: Offset, syntax: Syntax):
+        x, y = position
+        y += 1
+        cursor_style = self.textarea.get_component_rich_style("textarea--cursor")
+        syntax.stylize_range(cursor_style, (y, x), (y, x + 1))
 
 
 # TODO: document code
