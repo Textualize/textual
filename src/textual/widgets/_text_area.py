@@ -279,6 +279,11 @@ class TextArea(ScrollView, can_focus=True):
         return _TextAreaRenderable(self)
 
     def insert_text_at_cursor(self, text: str) -> None:
+        """Insert new text at the cursor, move the cursor to the end of the new text.
+
+        Args:
+            text: New text to insert.
+        """
         self._buffer.insert(self.cursor_offset, text)
         self.action_cursor_right()
 
