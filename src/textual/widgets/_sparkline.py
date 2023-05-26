@@ -2,8 +2,7 @@ from __future__ import annotations
 
 from typing import Callable, ClassVar, Sequence
 
-from textual.app import RenderResult
-
+from ..app import RenderResult
 from ..reactive import reactive
 from ..renderables.sparkline import Sparkline as SparklineRenderable
 from ..widget import Widget
@@ -79,14 +78,13 @@ class Sparkline(Widget):
         """Renders the sparkline when there is data available."""
         if not self.data:
             return "<empty sparkline>"
+        _, base = self.background_colors
+        min_color = self.get_component_styles("sparkline--min-color").color
+        max_color = self.get_component_styles("sparkline--max-color").color
         return SparklineRenderable(
             self.data,
             width=None,
-            min_color=self.get_component_styles(
-                "sparkline--min-color"
-            ).color.rich_color,
-            max_color=self.get_component_styles(
-                "sparkline--max-color"
-            ).color.rich_color,
+            min_color=base.blend(min_color, min_color.a, 1).rich_color,
+            max_color=base.blend(max_color, max_color.a, 1).rich_color,
             summary_function=self.summary_function,
         )
