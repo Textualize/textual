@@ -285,7 +285,7 @@ class TextArea(ScrollView, can_focus=True):
             text: New text to insert.
         """
         self._buffer.insert(self.cursor_offset, text)
-        self.action_cursor_right()
+        self.cursor_x += len(text)
 
     async def _on_key(self, event: events.Key) -> None:
         # Do key bindings first
