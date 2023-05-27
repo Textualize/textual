@@ -607,15 +607,16 @@ class Compositor:
 
                         widget_order = order + ((layer_index, z, layer_order),)
 
-                        if overlay:
-                            constrain = sub_widget.styles.constrain
-                            if constrain != "none":
-                                # Constrain to avoid clipping
-                                widget_region = widget_region.translate_inside(
-                                    no_clip,
-                                    constrain in ("x", "both"),
-                                    constrain in ("y", "both"),
-                                )
+                        # if overlay:
+                        #     constrain = sub_widget.styles.constrain
+                        #     print(widget_region, sub_region)
+                        #     if constrain != "none":
+                        #         # Constrain to avoid clipping
+                        #         widget_region = widget_region.translate_inside(
+                        #             no_clip,
+                        #             constrain in ("x", "both"),
+                        #             constrain in ("y", "both"),
+                        #         )
 
                         add_widget(
                             sub_widget,
@@ -658,8 +659,35 @@ class Compositor:
 
             elif visible:
                 # Add the widget to the map
+
+                widget_region = region + layout_offset
+                constrain = widget.styles.constrain
+
+                if constrain != "none":
+                    # Constrain to avoid clipping
+                    widget_region = widget_region.translate_inside(
+                        clip,
+                        constrain in ("x", "both"),
+                        constrain in ("y", "both"),
+                    )
+                    if constrain == "inflect":
+                        inflect_margin = widget.styles.margin
+                        widget_region = widget_region.inflect(
+                            (
+                                -1
+                                if widget_region.grow(inflect_margin).right > clip.right
+                                else 0
+                            ),
+                            (
+                                -1
+                                if widget_region.grow(inflect_margin).bottom
+                                > clip.bottom
+                                else 0
+                            ),
+                        )
+
                 map[widget] = _MapGeometry(
-                    region + layout_offset,
+                    widget_region,
                     order,
                     clip,
                     region.size,

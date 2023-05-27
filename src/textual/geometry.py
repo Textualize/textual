@@ -905,6 +905,47 @@ class Region(NamedTuple):
             height2,
         )
 
+    def inflect(
+        self, x_axis: int = +1, y_axis: int = +1, margin: Spacing | None = None
+    ) -> Region:
+        """Inflect a region around one or both axis.
+
+        The `x_axis` and `y_axis` parameters define which direction to move the region.
+        A positive value will move the region right or down, a negative value will move
+        the region left or up.
+
+        ```
+        ╔══════════╗    │
+        ║          ║
+        ║   Self   ║    │
+        ║          ║
+        ╚══════════╝    │
+
+        ─ ─ ─ ─ ─ ─ ─ ─ ┼ ─ ─ ─ ─ ─ ─ ─ ─
+
+                        │   ┌──────────┐
+                            │          │
+                        │   │  Result  │
+                            │          │
+                        │   └──────────┘
+        ```
+
+        Args:
+            x_axis: +1 to infect in the positive direction, -1 to inflect in the negative direction.
+            y_axis: +1 to infect in the positive direction, -1 to inflect in the negative direction.
+            margin: Additional margin.
+
+        Returns:
+            A new region.
+        """
+        inflect_margin = NULL_SPACING if margin is None else margin
+        x, y, width, height = self
+        if x_axis:
+            x += (width + inflect_margin.width) * x_axis
+        if y_axis:
+            y += (height + inflect_margin.height) * y_axis
+        return Region(x, y, width, height)
+
 
 class Spacing(NamedTuple):
     """The spacing around a renderable, such as padding and border.

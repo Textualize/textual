@@ -140,6 +140,7 @@ class Screen(Generic[ScreenResultType], Widget):
         self.__update_timer: Timer | None = None
         self._callbacks: list[CallbackType] = []
         self._result_callbacks: list[ResultCallback[ScreenResultType]] = []
+        self._pointer_attached_widget: Widget | None = None
 
     @property
     def is_modal(self) -> bool:
@@ -331,6 +332,10 @@ class Screen(Generic[ScreenResultType], Widget):
                 self.set_focus(to_focus)
 
         return self.focused
+
+    def attach_to_pointer(self, widget: Widget | None) -> None:
+        self._pointer_attached_widget = widget
+        self.refresh(layout=True)
 
     def focus_next(self, selector: str | type[QueryType] = "*") -> Widget | None:
         """Focus the next widget, optionally filtered by a CSS selector.
@@ -701,6 +706,8 @@ class Screen(Generic[ScreenResultType], Widget):
             screen._screen_resized(event.size)
 
     def _handle_mouse_move(self, event: events.MouseMove) -> None:
+        if self._pointer_attached_widget is not None:
+            self._pointer_attached_widget.styles.offset = event.screen_offset
         try:
             if self.app.mouse_captured:
                 widget = self.app.mouse_captured
