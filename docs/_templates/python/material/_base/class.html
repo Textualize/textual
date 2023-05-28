@@ -46,7 +46,7 @@
       {% if "__init__" in class.members %}
         {% with function = class.members["__init__"] %}
           {% filter highlight(language="python", inline=False) -%}
-            def {% filter format_signature(function, config.line_length, crossrefs=config.signature_crossrefs) %}
+            def {% filter format_signature(config.line_length) %}
 __init__{% include "signature.html" with context %}
             {% endfilter %}:
           {% endfilter %}

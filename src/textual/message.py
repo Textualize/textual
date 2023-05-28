@@ -42,6 +42,7 @@ class Message:
     no_dispatch: ClassVar[bool] = False  # Message may not be handled by client code
     namespace: ClassVar[str] = ""  # Namespace to disambiguate messages
     handler_name: ClassVar[str]
+    """Name of the default message handler."""
 
     def __init__(self) -> None:
         self.__post_init__()
