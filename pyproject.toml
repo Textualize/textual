@@ -59,6 +59,7 @@ mypy = "^1.0.0"
 pytest-cov = "^2.12.1"
 mkdocs = "^1.3.0"
 mkdocstrings = {extras = ["python"], version = "^0.20.0"}
+mkdocstrings-python = "0.10.1"
 mkdocs-material = "^9.0.11"
 mkdocs-exclude = "^1.0.2"
 pre-commit = "^2.13.0"

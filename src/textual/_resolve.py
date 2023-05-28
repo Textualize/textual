@@ -101,6 +101,8 @@ def resolve_fraction_unit(
     if not remaining_space or not widget_styles:
         return Fraction(1)
 
+    initial_space = remaining_space
+
     def resolve_scalar(
         scalar: Scalar | None, fraction_unit: Fraction = Fraction(1)
     ) -> Fraction | None:
@@ -166,8 +168,8 @@ def resolve_fraction_unit(
 
     return (
         Fraction(remaining_space, remaining_fraction)
-        if remaining_space > 0
-        else Fraction(1)
+        if remaining_fraction > 0
+        else initial_space
     )
 
 
