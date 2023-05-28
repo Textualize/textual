@@ -148,22 +148,39 @@ Most of the logic in a Textual app will be written in message handlers. Let's ex
 Textual uses the following scheme to map messages classes on to a Python method.
 
 - Start with `"on_"`.
-- Add the messages' namespace (if any) converted from CamelCase to snake_case plus an underscore `"_"`
+- Add the message's namespace (if any) converted from CamelCase to snake_case plus an underscore `"_"`.
 - Add the name of the class converted from CamelCase to snake_case.
 
 <div class="excalidraw">
 --8<-- "docs/images/events/naming.excalidraw.svg"
 </div>
 
-If you are ever in doubt about what the handler name should be for a given event, print the `handler_name` class variable for your event class.
+Messages have a namespace if they are defined as a child class of a Widget.
+The namespace is the name of the parent class.
+For instance, the builtin `Input` class defines it's `Changed` message as follow:
 
-Here's how you would check the handler name for the `Input.Changed` event:
-
-```py
->>> from textual.widgets import Input
->>> Input.Changed.handler_name
-'on_input_changed'
+```python
+class Input:
+    ...
+    class Changed(Message):
+        """Posted when the value changes."""
+        ...
 ```
+
+Because `Changed` is a *child* class of `Input`, its namespace will be "input".
+This allows you to have similarly named events, without clashing event handler names.
+
+!!! tip
+
+    If you are ever in doubt about what the handler name should be for a given event, print the `handler_name` class variable for your event class.
+
+    Here's how you would check the handler name for the `Input.Changed` event:
+
+    ```py
+    >>> from textual.widgets import Input
+    >>> Input.Changed.handler_name
+    'on_input_changed'
+    ```
 
 ### On decorator
 
