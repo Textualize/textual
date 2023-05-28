@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+
+### Fixed
+
+- Fixed zero division error https://github.com/Textualize/textual/issues/2673
+
 ### Added
 
 - `work` decorator accepts `description` parameter to add debug string https://github.com/Textualize/textual/issues/2597
