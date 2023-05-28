@@ -167,7 +167,7 @@ class Input:
         ...
 ```
 
-Because `Changed` is a *child* class of `Input`, its namespace will be "input".
+Because `Changed` is a *child* class of `Input`, its namespace will be "input" (and the handler name will be `on_input_changed`).
 This allows you to have similarly named events, without clashing event handler names.
 
 !!! tip
