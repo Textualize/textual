@@ -160,7 +160,7 @@ The namespace is the name of the parent class.
 For instance, the builtin `Input` class defines it's `Changed` message as follow:
 
 ```python
-class Input:
+class Input(Widget):
     ...
     class Changed(Message):
         """Posted when the value changes."""
