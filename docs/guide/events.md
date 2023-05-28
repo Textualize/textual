@@ -155,6 +155,16 @@ Textual uses the following scheme to map messages classes on to a Python method.
 --8<-- "docs/images/events/naming.excalidraw.svg"
 </div>
 
+If you are ever in doubt about what the handler name should be for a given event, print the `handler_name` class variable for your event class.
+
+Here's how you would check the handler name for the `Input.Changed` event:
+
+```py
+>>> from textual.widgets import Input
+>>> Input.Changed.handler_name
+'on_input_changed'
+```
+
 ### On decorator
 
 In addition to the naming convention, message handlers may be created with the [`on`][textual.on] decorator, which turns a method into a handler for the given message or event.

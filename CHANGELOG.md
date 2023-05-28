@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - The default Widget repr no longer displays classes and pseudo-classes (to reduce noise in logs). Add them to your `__rich_repr__` method if needed. https://github.com/Textualize/textual/pull/2623
 - Setting `Screen.AUTO_FOCUS` to `None` will inherit `AUTO_FOCUS` from the app instead of disabling it https://github.com/Textualize/textual/issues/2594
 - Setting `Screen.AUTO_FOCUS` to `""` will disable it on the screen https://github.com/Textualize/textual/issues/2594
+- Messages now have a `handler_name` class var which contains the name of the default handler method.
 
 ### Removed
 

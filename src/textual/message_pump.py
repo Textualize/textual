@@ -71,8 +71,13 @@ class _MessagePumpMeta(type):
                 for message_type, selectors in getattr(value, "_textual_on"):
                     handlers.setdefault(message_type, []).append((value, selectors))
             if isclass(value) and issubclass(value, Message):
-                if "namespace" not in value.__dict__:
-                    value.namespace = namespace
+                if "namespace" in value.__dict__:
+                    value.handler_name = f"on_{value.__dict__['namespace']}_{camel_to_snake(value.__name__)}"
+                else:
+                    value.handler_name = (
+                        f"on_{namespace}_{camel_to_snake(value.__name__)}"
+                    )
+
         class_obj = super().__new__(cls, name, bases, class_dict, **kwargs)
         return class_obj
 
@@ -616,7 +621,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
             message: A Message object.
         """
         _rich_traceback_guard = True
-        handler_name = message._handler_name
+        handler_name = message.handler_name
 
         # Look through the MRO to find a handler
         dispatched = False

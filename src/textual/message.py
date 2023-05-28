@@ -29,7 +29,6 @@ class Message:
         "_forwarded",
         "_no_default_action",
         "_stop_propagation",
-        "_handler_name",
         "_prevent",
     ]
 
@@ -42,6 +41,7 @@ class Message:
     verbose: ClassVar[bool] = False  # Message is verbose
     no_dispatch: ClassVar[bool] = False  # Message may not be handled by client code
     namespace: ClassVar[str] = ""  # Namespace to disambiguate messages
+    handler_name: ClassVar[str]
 
     def __init__(self) -> None:
         self.__post_init__()
@@ -53,10 +53,6 @@ class Message:
         self._forwarded = False
         self._no_default_action = False
         self._stop_propagation = False
-        name = camel_to_snake(self.__class__.__name__)
-        self._handler_name = (
-            f"on_{self.namespace}_{name}" if self.namespace else f"on_{name}"
-        )
         self._prevent: set[type[Message]] = set()
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -77,6 +73,8 @@ class Message:
             cls.no_dispatch = no_dispatch
         if namespace is not None:
             cls.namespace = namespace
+        name = camel_to_snake(cls.__name__)
+        cls.handler_name = f"on_{namespace}_{name}" if namespace else f"on_{name}"
 
     @property
     def control(self) -> Widget | None:
@@ -87,12 +85,6 @@ class Message:
     def is_forwarded(self) -> bool:
         """Has the message been forwarded?"""
         return self._forwarded
-
-    @property
-    def handler_name(self) -> str:
-        """The name of the handler associated with this message."""
-        # Property to make it read only
-        return self._handler_name
 
     def _set_forwarded(self) -> None:
         """Mark this event as being forwarded."""
