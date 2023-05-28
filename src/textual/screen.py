@@ -5,6 +5,7 @@ The `Screen` class is a special widget which represents the content in the termi
 
 from __future__ import annotations
 
+from functools import partial
 from typing import (
     TYPE_CHECKING,
     Awaitable,
@@ -39,6 +40,7 @@ from .renderables.background_screen import BackgroundScreen
 from .renderables.blank import Blank
 from .timer import Timer
 from .widget import Widget
+from .widgets import Tooltip
 
 if TYPE_CHECKING:
     from typing_extensions import Final
@@ -141,6 +143,9 @@ class Screen(Generic[ScreenResultType], Widget):
         self._callbacks: list[CallbackType] = []
         self._result_callbacks: list[ResultCallback[ScreenResultType]] = []
         self._pointer_attached_widget: Widget | None = None
+
+        self._tooltip_widget: Widget | None = None
+        self._tooltip_timer: Timer | None = None
 
     @property
     def is_modal(self) -> bool:
@@ -705,9 +710,21 @@ class Screen(Generic[ScreenResultType], Widget):
         for screen in self.app._background_screens:
             screen._screen_resized(event.size)
 
+    def _handle_tooltip_timer(self, widget: Widget) -> None:
+        tooltip_content = widget.get_tooltip()
+        try:
+            tooltip = self.query_one(Tooltip)
+        except NoMatches:
+            pass
+        else:
+            if tooltip_content is None:
+                tooltip.display = False
+            else:
+                tooltip.display = True
+                tooltip.styles.offset = self.app.mouse_position
+                tooltip.update(tooltip_content)
+
     def _handle_mouse_move(self, event: events.MouseMove) -> None:
-        if self._pointer_attached_widget is not None:
-            self._pointer_attached_widget.styles.offset = event.screen_offset
         try:
             if self.app.mouse_captured:
                 widget = self.app.mouse_captured
@@ -716,6 +733,10 @@ class Screen(Generic[ScreenResultType], Widget):
                 widget, region = self.get_widget_at(event.x, event.y)
         except errors.NoWidget:
             self.app._set_mouse_over(None)
+            if self._tooltip_timer is not None:
+                self._tooltip_timer.stop()
+            self.get_child_by_type(Tooltip).display = False
+
         else:
             self.app._set_mouse_over(widget)
             mouse_event = events.MouseMove(
@@ -734,6 +755,21 @@ class Screen(Generic[ScreenResultType], Widget):
             widget.hover_style = event.style
             mouse_event._set_forwarded()
             widget._forward_event(mouse_event)
+
+            tooltip = self.query_one(Tooltip)
+            tooltip.styles.offset = event.screen_offset
+
+            if self._tooltip_widget != widget:
+                tooltip.display = False
+                self._tooltip_widget = widget
+                if self._tooltip_timer is not None:
+                    self._tooltip_timer.stop()
+
+                self._tooltip_timer = self.set_timer(
+                    0.5,
+                    partial(self._handle_tooltip_timer, widget),
+                    name="tooltip-timer",
+                )
 
     def _forward_event(self, event: events.Event) -> None:
         if event.is_forwarded:

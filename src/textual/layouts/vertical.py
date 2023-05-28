@@ -24,7 +24,9 @@ class VerticalLayout(Layout):
         add_placement = placements.append
 
         child_styles = [child.styles for child in children]
-        box_margins: list[Spacing] = [styles.margin for styles in child_styles]
+        box_margins: list[Spacing] = [
+            styles.margin for styles in child_styles if styles.overlay != "screen"
+        ]
         if box_margins:
             resolve_margin = Size(
                 max(
@@ -60,7 +62,15 @@ class VerticalLayout(Layout):
         if box_models:
             margins.append(box_models[-1].margin.bottom)
 
-        y = Fraction(box_models[0].margin.top if box_models else 0)
+        y = next(
+            (
+                box_model.margin.top
+                for box_model, child in zip(box_models, children)
+                if child.styles.overlay != "screen"
+            ),
+            Fraction(0),
+        )
+        # y = Fraction(box_models[0].margin.top if box_models else 0)
 
         _Region = Region
         _WidgetPlacement = WidgetPlacement

@@ -441,6 +441,14 @@ class Widget(DOMNode):
     def offset(self, offset: tuple[int, int]) -> None:
         self.styles.offset = ScalarOffset.from_offset(offset)
 
+    @property
+    def is_overlay(self) -> bool:
+        """Is this widget an overlay (or child of an overlay)?"""
+        for node in self.ancestors_with_self:
+            if isinstance(node, Widget) and node.styles.overlay == "screen":
+                return True
+        return False
+
     def __enter__(self) -> Self:
         """Use as context manager when composing."""
         self.app._compose_stacks[-1].append(self)
@@ -558,6 +566,13 @@ class Widget(DOMNode):
                 assert isinstance(child, expect_type)
                 return child
         raise NoMatches(f"No immediate child of type {expect_type}; {self._nodes}")
+
+    def get_tooltip(self) -> RenderableType | None:
+        """Get tooltip renderable.
+
+        Returns:
+            Tooltip content, or `None` for no tooltip.
+        """
 
     def get_component_rich_style(self, name: str, *, partial: bool = False) -> Style:
         """Get a *Rich* style for a component.
