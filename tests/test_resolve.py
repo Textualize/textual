@@ -133,9 +133,9 @@ def test_resolve_fraction_unit_stress_test():
     styles = widget.styles
     styles.width = "1fr"
 
-    # We're mainly checking for the absense of zero division errors,
+    # We're mainly checking for the absence of zero division errors,
     # which is a reoccurring theme for this code.
-    for remaining_space in range(1, 100, 10):
+    for remaining_space in range(1, 101, 10):
         for max_width in range(1, remaining_space):
             styles.max_width = max_width
 
