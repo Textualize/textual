@@ -14,3 +14,9 @@ plugins:
       - categories
       - release
       - tags
+  mkdocstrings:
+    handlers:
+      python:
+        import:
+          - https://docs.python.org/3/objects.inv
+          - https://rich.readthedocs.io/en/stable/objects.inv

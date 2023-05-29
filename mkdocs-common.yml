@@ -67,9 +67,6 @@ plugins:
     default_handler: python
     handlers:
       python:
-        import:
-          - https://docs.python.org/3/objects.inv
-          - https://rich.readthedocs.io/en/stable/objects.inv
         options:
           show_signature_annotations: false
           separate_signature: true
