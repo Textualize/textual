@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `Suggester` API to compose with widgets for automatic suggestions https://github.com/Textualize/textual/issues/2330
 - `SuggestFromList` class to let widgets get completions from a fixed set of options https://github.com/Textualize/textual/pull/2604
 - `Input` has a new component class `input--suggestion` https://github.com/Textualize/textual/pull/2604
+- Added `Widget.remove_children` https://github.com/Textualize/textual/pull/2657
 
 ### Changed
 
