@@ -70,7 +70,6 @@ class VerticalLayout(Layout):
             ),
             Fraction(0),
         )
-        # y = Fraction(box_models[0].margin.top if box_models else 0)
 
         _Region = Region
         _WidgetPlacement = WidgetPlacement

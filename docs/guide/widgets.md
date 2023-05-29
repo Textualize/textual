@@ -195,8 +195,14 @@ Note that we've added `expand=True` to tell the `Table` to expand beyond the opt
 
 ## Tooltips
 
-Widgets may have "tooltips" which is content shown when you hover the mouse over a widget.
-You can use this to add supplementary information or help messages for the user.
+Widgets can have *tooltips* which is content displayed when the user hovers the mouse over the widget.
+You can use tooltips to add supplementary information or help messages.
+
+!!! tip
+
+    It is best not to rely on tooltips for essential information.
+    Some users prefer to use the keyboard exclusively and may never see tooltips.
+
 
 To add a tooltip, assign to the widget's [`tooltip`][textual.widgets.Widget.tooltip] property.
 You can set text or any other [Rich](https://github.com/Textualize/rich) renderable.
