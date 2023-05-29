@@ -198,9 +198,10 @@ Note that we've added `expand=True` to tell the `Table` to expand beyond the opt
 Widgets may have "tooltips" which is content shown when you hover the mouse over a widget.
 You can use this to add supplementary information or help messages for the user.
 
-To add a tooltip, assign to the [`tooltip`][textual.widgets.Widget.tooltip] property.
+To add a tooltip, assign to the widget's [`tooltip`][textual.widgets.Widget.tooltip] property.
 You can set text or any other [Rich](https://github.com/Textualize/rich) renderable.
 
+The following example adds a tooltip to a button:
 
 === "tooltip01.py"
 
