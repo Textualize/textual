@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable, ClassVar, Sequence
+from typing import Callable, ClassVar, Optional, Sequence, Union
 
 from ..app import RenderResult
 from ..reactive import reactive
@@ -35,18 +35,18 @@ class Sparkline(Widget):
         height: 1;
     }
     Sparkline > .sparkline--max-color {
-        color: $error;
+        color: $accent;
     }
     Sparkline > .sparkline--min-color {
-        color: $success;
+        color: $accent 30%;
     }
     """
 
-    data: reactive[Sequence[int | float] | None]
+    data = reactive[Optional[Sequence[Union[int, float]]]](None)
     """The data that populates the sparkline."""
-    width: reactive[int | None]
-    """The width of the sparkline/number of buckets to partition data into."""
-    summary_function: reactive[Callable[[Sequence[int | float]], float]]
+    summary_function = reactive[
+        Optional[Callable[[Sequence[Union[int, float]]], float]]
+    ](None)
     """The function that computes the value that represents each bucket."""
 
     def __init__(
@@ -81,9 +81,10 @@ class Sparkline(Widget):
         _, base = self.background_colors
         min_color = self.get_component_styles("sparkline--min-color").color
         max_color = self.get_component_styles("sparkline--max-color").color
+        assert self.summary_function is not None  # Sanity check.
         return SparklineRenderable(
             self.data,
-            width=None,
+            width=self.size.width,
             min_color=base.blend(min_color, min_color.a, 1).rich_color,
             max_color=base.blend(max_color, max_color.a, 1).rich_color,
             summary_function=self.summary_function,

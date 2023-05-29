@@ -30,6 +30,7 @@ if typing.TYPE_CHECKING:
     from ._radio_button import RadioButton
     from ._radio_set import RadioSet
     from ._select import Select
+    from ._sparkline import Sparkline
     from ._static import Static
     from ._switch import Switch
     from ._tabbed_content import TabbedContent, TabPane
@@ -61,6 +62,7 @@ __all__ = [
     "RadioButton",
     "RadioSet",
     "Select",
+    "Sparkline",
     "Static",
     "Switch",
     "Tab",
