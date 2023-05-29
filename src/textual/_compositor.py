@@ -510,32 +510,29 @@ class Compositor:
             New region.
         """
         constrain = styles.constrain
-
-        if constrain != "none":
-            if constrain == "inflect":
-                inflect_margin = styles.margin
-                region = region.inflect(
-                    (
-                        -1
-                        if region.grow(inflect_margin).right > constrain_region.right
-                        else 0
-                    ),
-                    (
-                        -1
-                        if region.grow(inflect_margin).bottom > constrain_region.bottom
-                        else 0
-                    ),
-                    inflect_margin,
-                )
-                region = region.translate_inside(constrain_region, True, True)
-            else:
-                # Constrain to avoid clipping
-                region = region.translate_inside(
-                    constrain_region,
-                    constrain in ("x", "both"),
-                    constrain in ("y", "both"),
-                )
-
+        if constrain == "inflect":
+            inflect_margin = styles.margin
+            region = region.inflect(
+                (
+                    -1
+                    if region.grow(inflect_margin).right > constrain_region.right
+                    else 0
+                ),
+                (
+                    -1
+                    if region.grow(inflect_margin).bottom > constrain_region.bottom
+                    else 0
+                ),
+                inflect_margin,
+            )
+            region = region.translate_inside(constrain_region, True, True)
+        elif constrain != "none":
+            # Constrain to avoid clipping
+            region = region.translate_inside(
+                constrain_region,
+                constrain in ("x", "both"),
+                constrain in ("y", "both"),
+            )
         return region
 
     def _arrange_root(
@@ -649,7 +646,7 @@ class Compositor:
 
                         widget_order = order + ((layer_index, z, layer_order),)
 
-                        if overlay:
+                        if overlay and sub_widget.styles.constrain != "none":
                             widget_region = self._constrain(
                                 sub_widget.styles, widget_region, no_clip
                             )

@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `SelectionList` widget https://github.com/Textualize/textual/pull/2652
 - `App.AUTO_FOCUS` to set auto focus on all screens https://github.com/Textualize/textual/issues/2594
 - Added Widget.tooltip property
+- Added Region.inflect
 
 ### Changed
 
