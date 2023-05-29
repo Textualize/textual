@@ -445,14 +445,6 @@ class Widget(DOMNode):
         self.styles.offset = ScalarOffset.from_offset(offset)
 
     @property
-    def is_overlay(self) -> bool:
-        """Is this widget an overlay (or child of an overlay)?"""
-        for node in self.ancestors_with_self:
-            if isinstance(node, Widget) and node.styles.overlay == "screen":
-                return True
-        return False
-
-    @property
     def tooltip(self) -> RenderableType | None:
         """Tooltip for the widget, or `None` for no tooltip."""
         return self._tooltip

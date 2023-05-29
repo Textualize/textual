@@ -215,7 +215,12 @@ The following example adds a tooltip to a button:
     --8<-- "docs/examples/guide/widgets/tooltip01.py"
     ```
 
-=== "Output"
+=== "Output (before hover)"
+
+    ```{.textual path="docs/examples/guide/widgets/tooltip01.py"}
+    ```
+
+=== "Output (after hover)"
 
     ```{.textual path="docs/examples/guide/widgets/tooltip01.py" hover="Button"}
     ```
@@ -227,11 +232,16 @@ Add a rule to your CSS that targets `Tooltip`. Here's an example:
 
 === "tooltip02.py"
 
-    ```python title="tooltip02.py" hl_lines="16-20"
+    ```python title="tooltip02.py" hl_lines="15-19"
     --8<-- "docs/examples/guide/widgets/tooltip02.py"
     ```
 
-=== "Output"
+=== "Output (before hover)"
+
+    ```{.textual path="docs/examples/guide/widgets/tooltip02.py"}
+    ```
+
+=== "Output (after hover)"
 
     ```{.textual path="docs/examples/guide/widgets/tooltip02.py" hover="Button"}
     ```

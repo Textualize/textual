@@ -101,7 +101,7 @@ def take_svg_screenshot(
             assert path is not None
             with open(path, "rb") as source_file:
                 hash.update(source_file.read())
-        hash.update(f"{press}-{title}-{terminal_size}".encode("utf-8"))
+        hash.update(f"{press}-{hover}-{title}-{terminal_size}".encode("utf-8"))
         cache_key = f"{hash.hexdigest()}.svg"
         return cache_key
 
@@ -121,12 +121,12 @@ def take_svg_screenshot(
                 await result
         await pilot.pause()
         await pilot.press(*press)
-        if wait_for_animation:
-            await pilot.wait_for_scheduled_animations()
-            await pilot.pause()
         if hover:
             await pilot.hover(hover)
             await pilot.pause(0.5)
+        if wait_for_animation:
+            await pilot.wait_for_scheduled_animations()
+            await pilot.pause()
         svg = app.export_screenshot(title=title)
 
         app.exit(svg)
