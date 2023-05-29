@@ -6,15 +6,15 @@ from textual.widgets import Static
 class Tooltip(Static):
     DEFAULT_CSS = """
     Tooltip {
+        layer: _tooltips;
         margin: 1 2;
         padding: 1 2;
         background: $panel;
         width: auto;
         height: auto;
-        overlay: screen;
+        # overlay: screen;
         constrain: inflect;
         max-width: 40;
         display: none;
-
     }
     """

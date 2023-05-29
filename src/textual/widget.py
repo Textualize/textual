@@ -325,6 +325,8 @@ class Widget(DOMNode):
         self._stabilize_scrollbar: tuple[Size, str, str] | None = None
         """Used to prevent scrollbar logic getting stuck in an infinite loop."""
 
+        self._tooltip: RenderableType | None = None
+
         self._lock = Lock()
 
         super().__init__(
@@ -449,6 +451,18 @@ class Widget(DOMNode):
                 return True
         return False
 
+    @property
+    def tooltip(self) -> RenderableType | None:
+        return self._tooltip
+
+    @tooltip.setter
+    def tooltip(self, tooltip: RenderableType | None):
+        self._tooltip = tooltip
+        try:
+            self.screen._update_tooltip(self)
+        except NoScreen:
+            pass
+
     def __enter__(self) -> Self:
         """Use as context manager when composing."""
         self.app._compose_stacks[-1].append(self)
@@ -566,13 +580,6 @@ class Widget(DOMNode):
                 assert isinstance(child, expect_type)
                 return child
         raise NoMatches(f"No immediate child of type {expect_type}; {self._nodes}")
-
-    def get_tooltip(self) -> RenderableType | None:
-        """Get tooltip renderable.
-
-        Returns:
-            Tooltip content, or `None` for no tooltip.
-        """
 
     def get_component_rich_style(self, name: str, *, partial: bool = False) -> Style:
         """Get a *Rich* style for a component.
@@ -1600,6 +1607,7 @@ class Widget(DOMNode):
                 break
             if node.styles.has_rule("layers"):
                 layers = node.styles.layers
+
         return layers
 
     @property
@@ -3118,7 +3126,15 @@ class Widget(DOMNode):
         except Exception:
             self.app.panic(Traceback())
         else:
+            self._extend_compose(widgets)
             await self.mount(*widgets)
+
+    def _extend_compose(self, widgets: list[Widget]) -> None:
+        """Hook to extend composed widgets.
+
+        Args:
+            widgets: Widgets to be mounted.
+        """
 
     def _on_mount(self, event: events.Mount) -> None:
         if self.styles.overflow_y == "scroll":

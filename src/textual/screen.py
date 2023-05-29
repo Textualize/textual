@@ -23,9 +23,11 @@ from typing import (
 import rich.repr
 from rich.console import RenderableType
 from rich.style import Style
+from rich.traceback import Traceback
 
 from . import errors, events, messages
 from ._callback import invoke
+from ._compose import compose
 from ._compositor import Compositor, MapGeometry
 from ._context import visible_screen_stack
 from ._types import CallbackType
@@ -142,7 +144,6 @@ class Screen(Generic[ScreenResultType], Widget):
         self.__update_timer: Timer | None = None
         self._callbacks: list[CallbackType] = []
         self._result_callbacks: list[ResultCallback[ScreenResultType]] = []
-        self._pointer_attached_widget: Widget | None = None
 
         self._tooltip_widget: Widget | None = None
         self._tooltip_timer: Timer | None = None
@@ -174,6 +175,18 @@ class Screen(Generic[ScreenResultType], Widget):
                 UPDATE_PERIOD, self._on_timer_update, name="screen_update", pause=True
             )
         return self.__update_timer
+
+    @property
+    def layers(self) -> tuple[str, ...]:
+        """Layers of from parent.
+
+        Returns:
+            Tuple of layer names.
+        """
+        if self.app._disable_tooltips:
+            return super().layers
+        else:
+            return (*super().layers, "_tooltips")
 
     def render(self) -> RenderableType:
         background = self.styles.background
@@ -500,6 +513,11 @@ class Screen(Generic[ScreenResultType], Widget):
 
         self._update_focus_styles(focused, blurred)
 
+    def _extend_compose(self, widgets: list[Widget]) -> None:
+        """Insert the tooltip widget, if required."""
+        if not self.app._disable_tooltips:
+            widgets.insert(0, Tooltip(id="textual-tooltip"))
+
     async def _on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)
         event.prevent_default()
@@ -710,13 +728,29 @@ class Screen(Generic[ScreenResultType], Widget):
         for screen in self.app._background_screens:
             screen._screen_resized(event.size)
 
-    def _handle_tooltip_timer(self, widget: Widget) -> None:
-        tooltip_content = widget.get_tooltip()
+    def _update_tooltip(self, widget: Widget) -> None:
+        """Update the content of the tooltip."""
         try:
-            tooltip = self.query_one(Tooltip)
+            tooltip = self.get_child_by_type(Tooltip)
         except NoMatches:
             pass
         else:
+            if tooltip.display and self._tooltip_widget is widget:
+                self._handle_tooltip_timer(widget)
+
+    def _handle_tooltip_timer(self, widget: Widget) -> None:
+        """Called by a timer from _handle_mouse_move to update the tooltip.
+
+        Args:
+            widget: The widget under the mouse.
+        """
+
+        try:
+            tooltip = self.get_child_by_type(Tooltip)
+        except NoMatches:
+            pass
+        else:
+            tooltip_content = widget.tooltip
             if tooltip_content is None:
                 tooltip.display = False
             else:
@@ -756,20 +790,25 @@ class Screen(Generic[ScreenResultType], Widget):
             mouse_event._set_forwarded()
             widget._forward_event(mouse_event)
 
-            tooltip = self.query_one(Tooltip)
-            tooltip.styles.offset = event.screen_offset
+            try:
+                tooltip = self.query_one(Tooltip)
+            except NoMatches:
+                pass
+            else:
+                tooltip.styles.offset = event.screen_offset
 
-            if self._tooltip_widget != widget:
-                tooltip.display = False
-                self._tooltip_widget = widget
-                if self._tooltip_timer is not None:
-                    self._tooltip_timer.stop()
+                if self._tooltip_widget != widget or not tooltip.display:
+                    self._tooltip_widget = widget
+                    if self._tooltip_timer is not None:
+                        self._tooltip_timer.stop()
 
-                self._tooltip_timer = self.set_timer(
-                    0.5,
-                    partial(self._handle_tooltip_timer, widget),
-                    name="tooltip-timer",
-                )
+                    self._tooltip_timer = self.set_timer(
+                        0.3,
+                        partial(self._handle_tooltip_timer, widget),
+                        name="tooltip-timer",
+                    )
+                else:
+                    tooltip.display = False
 
     def _forward_event(self, event: events.Event) -> None:
         if event.is_forwarded:

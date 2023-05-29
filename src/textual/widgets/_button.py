@@ -178,9 +178,6 @@ class Button(Static, can_focus=True):
             """
             return self.button
 
-    def get_tooltip(self) -> str:
-        return "Hello, I am a button!"
-
     def __init__(
         self,
         label: TextType | None = None,

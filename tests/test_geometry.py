@@ -459,3 +459,9 @@ def test_translate_inside():
     assert Region(10, 10, 20, 5).translate_inside(Region(0, 0, 100, 100)) == Region(
         10, 10, 20, 5
     )
+
+
+def test_inflect():
+    assert Region(10, 10, 30, 20).inflect(margin=Spacing(2, 2, 2, 2)) == Region(
+        44, 34, 30, 20
+    )
