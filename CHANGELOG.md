@@ -7,19 +7,30 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+
+### Fixed
+
+- Fixed zero division error https://github.com/Textualize/textual/issues/2673
+
 ### Added
 
 - `work` decorator accepts `description` parameter to add debug string https://github.com/Textualize/textual/issues/2597
+- Added `SelectionList` widget https://github.com/Textualize/textual/pull/2652
+- `App.AUTO_FOCUS` to set auto focus on all screens https://github.com/Textualize/textual/issues/2594
 
 ### Changed
 
 - `Placeholder` now sets its color cycle per app https://github.com/Textualize/textual/issues/2590
 - Footer now clears key highlight regardless of whether it's in the active screen or not https://github.com/Textualize/textual/issues/2606
 - The default Widget repr no longer displays classes and pseudo-classes (to reduce noise in logs). Add them to your `__rich_repr__` method if needed. https://github.com/Textualize/textual/pull/2623
+- Setting `Screen.AUTO_FOCUS` to `None` will inherit `AUTO_FOCUS` from the app instead of disabling it https://github.com/Textualize/textual/issues/2594
+- Setting `Screen.AUTO_FOCUS` to `""` will disable it on the screen https://github.com/Textualize/textual/issues/2594
+- Messages now have a `handler_name` class var which contains the name of the default handler method.
 
 ### Removed
 
 - `Placeholder.reset_color_cycle`
+- Removed `Widget.reset_focus` (now called `Widget.blur`) https://github.com/Textualize/textual/issues/2642
 
 
 ## [0.26.0] - 2023-05-20
@@ -31,6 +42,27 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Textual will now scroll focused widgets to center if not in view
+
+## Unreleased
+
+### Changed
+
+- `Message.control` is now a property instead of a class variable. https://github.com/Textualize/textual/issues/2528
+- `Tree` and `DirectoryTree` Messages no longer accept a `tree` parameter, using `self.node.tree` instead. https://github.com/Textualize/textual/issues/2529
+
+## Unreleased
+
+### Added
+
+- `Suggester` API to compose with widgets for automatic suggestions https://github.com/Textualize/textual/issues/2330
+- `SuggestFromList` class to let widgets get completions from a fixed set of options https://github.com/Textualize/textual/pull/2604
+- `Input` has a new component class `input--suggestion` https://github.com/Textualize/textual/pull/2604
+
+### Changed
+
+- Keybinding <kbd>right</kbd> in `Input` is also used to accept a suggestion if the cursor is at the end of the input https://github.com/Textualize/textual/pull/2604
+- `Input.__init__` now accepts a `suggester` attribute for completion suggestions https://github.com/Textualize/textual/pull/2604
+
 
 ## [0.25.0] - 2023-05-17
 

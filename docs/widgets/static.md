@@ -32,6 +32,7 @@ This widget sends no messages.
 ## See Also
 
 * [Label](./label.md)
+* [Pretty](./pretty.md)
 
 
 ---

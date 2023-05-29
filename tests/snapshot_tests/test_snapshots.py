@@ -84,6 +84,23 @@ def test_input_and_focus(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "input.py", press=press)
 
 
+def test_input_validation(snap_compare):
+    """Checking that invalid styling is applied. The snapshot app itself
+    also adds styling for -valid which gives a green border."""
+    press = [
+        *"-2",  # -2 is invalid, so -invalid should be applied
+        "tab",
+        "3",  # This is valid, so -valid should be applied
+        "tab",
+        *"-2",  # -2 is invalid, so -invalid should be applied (and :focus, since we stop here)
+    ]
+    assert snap_compare(SNAPSHOT_APPS_DIR / "input_validation.py", press=press)
+
+
+def test_input_suggestions(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "input_suggestions.py", press=[])
+
+
 def test_buttons_render(snap_compare):
     # Testing button rendering. We press tab to focus the first button too.
     assert snap_compare(WIDGET_EXAMPLES_DIR / "button.py", press=["tab"])
@@ -231,6 +248,18 @@ def test_progress_bar_completed_styled(snap_compare):
 
 def test_select(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "select_widget.py")
+
+
+def test_selection_list_selected(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "selection_list_selected.py")
+
+
+def test_selection_list_selections(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "selection_list_selections.py")
+
+
+def test_selection_list_tuples(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "selection_list_tuples.py")
 
 
 def test_select_expanded(snap_compare):
@@ -469,13 +498,17 @@ def test_dock_scroll2(snap_compare):
 def test_dock_scroll_off_by_one(snap_compare):
     # https://github.com/Textualize/textual/issues/2525
     assert snap_compare(
-        SNAPSHOT_APPS_DIR / "dock_scroll_off_by_one.py", terminal_size=(80, 25)
+        SNAPSHOT_APPS_DIR / "dock_scroll_off_by_one.py",
+        terminal_size=(80, 25),
+        press=["_"],
     )
 
 
 def test_scroll_to(snap_compare):
     # https://github.com/Textualize/textual/issues/2525
-    assert snap_compare(SNAPSHOT_APPS_DIR / "scroll_to.py", terminal_size=(80, 25))
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "scroll_to.py", terminal_size=(80, 25), press=["_"]
+    )
 
 
 def test_auto_fr(snap_compare):
@@ -521,4 +554,12 @@ def test_select_rebuild(snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "select_rebuild.py",
         press=["space", "escape", "tab", "enter", "tab", "space"],
+    )
+
+
+def test_blur_on_disabled(snap_compare):
+    # https://github.com/Textualize/textual/issues/2641
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "blur_on_disabled.py",
+        press=[*"foo", "f3", *"this should not appear"],
     )

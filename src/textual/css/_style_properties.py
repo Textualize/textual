@@ -570,7 +570,7 @@ class DockProperty:
         """
         return cast(DockEdge, obj.get_rule("dock", ""))
 
-    def __set__(self, obj: Styles, dock_name: str | None):
+    def __set__(self, obj: StylesBase, dock_name: str | None):
         """Set the Dock property.
 
         Args:

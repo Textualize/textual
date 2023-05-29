@@ -65,7 +65,7 @@ def on(
     parsed_selectors: dict[str, tuple[SelectorSet, ...]] = {}
     for attribute, css_selector in selectors.items():
         if attribute == "control":
-            if message_type.control is None:
+            if message_type.control == Message.control:
                 raise OnDecoratorError(
                     "The message class must have a 'control' to match with the on decorator"
                 )

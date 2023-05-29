@@ -158,6 +158,16 @@ Display placeholder content while you are designing a UI.
 ```{.textual path="docs/examples/widgets/placeholder.py"}
 ```
 
+## Pretty
+
+Display a pretty-formatted Rich renderable.
+
+[Pretty reference](./widgets/pretty.md){ .md-button .md-button--primary }
+
+
+```{.textual path="docs/examples/widgets/pretty.py"}
+```
+
 ## ProgressBar
 
 A configurable progress bar with ETA and percentage complete.
@@ -195,6 +205,15 @@ Select from a number of possible options.
 [Select reference](./widgets/select.md){ .md-button .md-button--primary }
 
 ```{.textual path="docs/examples/widgets/select_widget.py" press="tab,enter,down,down"}
+```
+
+## SelectionList
+
+Select multiple values from a list of options.
+
+[SelectionList reference](./widgets/selection_list.md){ .md-button .md-button--primary }
+
+```{.textual path="docs/examples/widgets/selection_list_selections.py" press="down,down,down"}
 ```
 
 ## Sparkline

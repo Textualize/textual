@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import re
-from typing import ClassVar
+from dataclasses import dataclass
+from typing import ClassVar, Iterable
 
 from rich.cells import cell_len, get_character_cell_size
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
@@ -16,6 +17,8 @@ from ..events import Blur, Focus, Mount
 from ..geometry import Size
 from ..message import Message
 from ..reactive import reactive
+from ..suggester import Suggester, SuggestionReady
+from ..validation import ValidationResult, Validator
 from ..widget import Widget
 
 
@@ -31,13 +34,26 @@ class _InputRenderable:
     ) -> "RenderResult":
         input = self.input
         result = input._value
-        if input._cursor_at_end:
-            result.pad_right(1)
-        cursor_style = input.get_component_rich_style("input--cursor")
+        width = input.content_size.width
+
+        # Add the completion with a faded style.
+        value = input.value
+        value_length = len(value)
+        suggestion = input._suggestion
+        show_suggestion = len(suggestion) > value_length
+        if show_suggestion:
+            result += Text(
+                suggestion[value_length:],
+                input.get_component_rich_style("input--suggestion"),
+            )
+
         if self.cursor_visible and input.has_focus:
+            if not show_suggestion and input._cursor_at_end:
+                result.pad_right(1)
+            cursor_style = input.get_component_rich_style("input--cursor")
             cursor = input.cursor_position
             result.stylize(cursor_style, cursor, cursor + 1)
-        width = input.content_size.width
+
         segments = list(result.render(console))
         line_length = Segment.get_line_length(segments)
         if line_length < width:
@@ -80,7 +96,7 @@ class Input(Widget, can_focus=True):
     | :- | :- |
     | left | Move the cursor left. |
     | ctrl+left | Move the cursor one word to the left. |
-    | right | Move the cursor right. |
+    | right | Move the cursor right or accept the completion suggestion. |
     | ctrl+right | Move the cursor one word to the right. |
     | backspace | Delete the character to the left of the cursor. |
     | home,ctrl+a | Go to the beginning of the input. |
@@ -93,12 +109,17 @@ class Input(Widget, can_focus=True):
     | ctrl+k | Delete everything to the right of the cursor. |
     """
 
-    COMPONENT_CLASSES: ClassVar[set[str]] = {"input--cursor", "input--placeholder"}
+    COMPONENT_CLASSES: ClassVar[set[str]] = {
+        "input--cursor",
+        "input--placeholder",
+        "input--suggestion",
+    }
     """
     | Class | Description |
     | :- | :- |
     | `input--cursor` | Target the cursor. |
     | `input--placeholder` | Target the placeholder text (when it exists). |
+    | `input--suggestion` | Target the auto-completion suggestion (when it exists). |
     """
 
     DEFAULT_CSS = """
@@ -119,8 +140,14 @@ class Input(Widget, can_focus=True):
         color: $text;
         text-style: reverse;
     }
-    Input>.input--placeholder {
+    Input>.input--placeholder, Input>.input--suggestion {
         color: $text-disabled;
+    }
+    Input.-invalid {
+        border: tall $error 60%;
+    }
+    Input.-invalid:focus {
+        border: tall $error;
     }
     """
 
@@ -135,43 +162,50 @@ class Input(Widget, can_focus=True):
     _cursor_visible = reactive(True)
     password = reactive(False)
     max_size: reactive[int | None] = reactive(None)
+    suggester: Suggester | None
+    """The suggester used to provide completions as the user types."""
+    _suggestion = reactive("")
+    """A completion suggestion for the current value in the input."""
 
-    class Changed(Message, bubble=True):
+    @dataclass
+    class Changed(Message):
         """Posted when the value changes.
 
         Can be handled using `on_input_changed` in a subclass of `Input` or in a parent
         widget in the DOM.
-
-        Attributes:
-            value: The value that the input was changed to.
-            input: The `Input` widget that was changed.
         """
 
-        def __init__(self, input: Input, value: str) -> None:
-            super().__init__()
-            self.input: Input = input
-            self.value: str = value
+        input: Input
+        """The `Input` widget that was changed."""
+
+        value: str
+        """The value that the input was changed to."""
+
+        validation_result: ValidationResult | None = None
+        """The result of validating the value (formed by combining the results from each validator), or None
+            if validation was not performed (for example when no validators are specified in the `Input`s init)"""
 
         @property
         def control(self) -> Input:
             """Alias for self.input."""
             return self.input
 
-    class Submitted(Message, bubble=True):
+    @dataclass
+    class Submitted(Message):
         """Posted when the enter key is pressed within an `Input`.
 
         Can be handled using `on_input_submitted` in a subclass of `Input` or in a
         parent widget in the DOM.
-
-        Attributes:
-            value: The value of the `Input` being submitted.
-            input: The `Input` widget that is being submitted.
         """
 
-        def __init__(self, input: Input, value: str) -> None:
-            super().__init__()
-            self.input: Input = input
-            self.value: str = value
+        input: Input
+        """The `Input` widget that is being submitted."""
+        value: str
+        """The value of the `Input` being submitted."""
+        validation_result: ValidationResult | None = None
+        """The result of validating the value on submission, formed by combining the results for each validator.
+        This value will be None if no validation was performed, which will be the case if no validators are supplied
+        to the corresponding `Input` widget."""
 
         @property
         def control(self) -> Input:
@@ -184,6 +218,9 @@ class Input(Widget, can_focus=True):
         placeholder: str = "",
         highlighter: Highlighter | None = None,
         password: bool = False,
+        *,
+        suggester: Suggester | None = None,
+        validators: Validator | Iterable[Validator] | None = None,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -195,7 +232,10 @@ class Input(Widget, can_focus=True):
             value: An optional default value for the input.
             placeholder: Optional placeholder text for the input.
             highlighter: An optional highlighter for the input.
-            password: Flag to say if the field should obfuscate its content. Default is `False`.
+            password: Flag to say if the field should obfuscate its content.
+            suggester: [`Suggester`][textual.suggester.Suggester] associated with this
+                input instance.
+            validators: An iterable of validators that the Input value will be checked against.
             name: Optional name for the input widget.
             id: Optional ID for the widget.
             classes: Optional initial classes for the widget.
@@ -207,6 +247,14 @@ class Input(Widget, can_focus=True):
         self.placeholder = placeholder
         self.highlighter = highlighter
         self.password = password
+        self.suggester = suggester
+        # Ensure we always end up with an Iterable of validators
+        if isinstance(validators, Validator):
+            self.validators: list[Validator] = [validators]
+        elif validators is None:
+            self.validators = []
+        else:
+            self.validators = list(validators) or []
 
     def _position_to_cell(self, position: int) -> int:
         """Convert an index within the value to cell position."""
@@ -252,9 +300,41 @@ class Input(Widget, can_focus=True):
             self.view_position = self.view_position
 
     async def watch_value(self, value: str) -> None:
+        self._suggestion = ""
+        if self.suggester and value:
+            self.run_worker(self.suggester._get_suggestion(self, value))
         if self.styles.auto_dimensions:
             self.refresh(layout=True)
-        self.post_message(self.Changed(self, value))
+
+        validation_result = self.validate(value)
+
+        self.post_message(self.Changed(self, value, validation_result))
+
+    def validate(self, value: str) -> ValidationResult | None:
+        """Run all the validators associated with this Input on the supplied value.
+
+        Runs all validators, combines the result into one. If any of the validators
+        failed, the combined result will be a failure. If no validators are present,
+        None will be returned. This also sets the `-invalid` CSS class on the Input
+        if the validation fails, and sets the `-valid` CSS class on the Input if
+        the validation succeeds.
+
+        Returns:
+            A ValidationResult indicating whether *all* validators succeeded or not.
+                That is, if *any* validator fails, the result will be an unsuccessful
+                validation.
+        """
+        # If no validators are supplied, and therefore no validation occurs, we return None.
+        if not self.validators:
+            return None
+
+        validation_results: list[ValidationResult] = [
+            validator.validate(value) for validator in self.validators
+        ]
+        combined_result = ValidationResult.merge(validation_results)
+        self.set_class(not combined_result.is_valid, "-invalid")
+        self.set_class(combined_result.is_valid, "-valid")
+        return combined_result
 
     @property
     def cursor_width(self) -> int:
@@ -353,13 +433,18 @@ class Input(Widget, can_focus=True):
         else:
             self.cursor_position = len(self.value)
 
+    async def _on_suggestion_ready(self, event: SuggestionReady) -> None:
+        """Handle suggestion messages and set the suggestion when relevant."""
+        if event.value == self.value:
+            self._suggestion = event.suggestion
+
     def insert_text_at_cursor(self, text: str) -> None:
         """Insert new text at the cursor, move the cursor to the end of the new text.
 
         Args:
             text: New text to insert.
         """
-        if self.cursor_position > len(self.value):
+        if self.cursor_position >= len(self.value):
             self.value += text
             self.cursor_position = len(self.value)
         else:
@@ -374,8 +459,12 @@ class Input(Widget, can_focus=True):
         self.cursor_position -= 1
 
     def action_cursor_right(self) -> None:
-        """Move the cursor one position to the right."""
-        self.cursor_position += 1
+        """Accept an auto-completion or move the cursor one position to the right."""
+        if self._cursor_at_end and self._suggestion:
+            self.value = self._suggestion
+            self.cursor_position = len(self.value)
+        else:
+            self.cursor_position += 1
 
     def action_home(self) -> None:
         """Move the cursor to the start of the input."""
@@ -438,7 +527,7 @@ class Input(Widget, can_focus=True):
                 self.value = self.value[: self.cursor_position]
             else:
                 self.value = (
-                    f"{self.value[: self.cursor_position]}{after[hit.end()-1 :]}"
+                    f"{self.value[: self.cursor_position]}{after[hit.end() - 1:]}"
                 )
 
     def action_delete_right_all(self) -> None:
@@ -490,5 +579,9 @@ class Input(Widget, can_focus=True):
             self.cursor_position = 0
 
     async def action_submit(self) -> None:
-        """Handle a submit action (normally the user hitting Enter in the input)."""
-        self.post_message(self.Submitted(self, self.value))
+        """Handle a submit action.
+
+        Normally triggered by the user pressing Enter. This will also run any validators.
+        """
+        validation_result = self.validate(self.value)
+        self.post_message(self.Submitted(self, self.value, validation_result))

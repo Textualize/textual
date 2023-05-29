@@ -94,11 +94,12 @@ class ResultCallback(Generic[ScreenResultType]):
 class Screen(Generic[ScreenResultType], Widget):
     """The base class for screens."""
 
-    AUTO_FOCUS: ClassVar[str | None] = "*"
+    AUTO_FOCUS: ClassVar[str | None] = None
     """A selector to determine what to focus automatically when the screen is activated.
 
     The widget focused is the first that matches the given [CSS selector](/guide/queries/#query-selectors).
-    Set to `None` to disable auto focus.
+    Set to `None` to inherit the value from the screen's app.
+    Set to `""` to disable auto focus.
     """
 
     DEFAULT_CSS = """
@@ -386,6 +387,7 @@ class Screen(Generic[ScreenResultType], Widget):
         focusable_widgets = self.focus_chain
         if not focusable_widgets:
             # If there's nothing to focus... give up now.
+            self.set_focus(None)
             return
 
         try:
@@ -680,8 +682,9 @@ class Screen(Generic[ScreenResultType], Widget):
         size = self.app.size
         self._refresh_layout(size, full=True)
         self.refresh()
-        if self.AUTO_FOCUS is not None and self.focused is None:
-            for widget in self.query(self.AUTO_FOCUS):
+        auto_focus = self.app.AUTO_FOCUS if self.AUTO_FOCUS is None else self.AUTO_FOCUS
+        if auto_focus and self.focused is None:
+            for widget in self.query(auto_focus):
                 if widget.focusable:
                     self.set_focus(widget)
                     break
@@ -778,7 +781,7 @@ class Screen(Generic[ScreenResultType], Widget):
     def dismiss(self, result: ScreenResultType | Type[_NoResult] = _NoResult) -> None:
         """Dismiss the screen, optionally with a result.
 
-        If `result` is provided and a callback was set when the screen was [pushed][textual.app.push_screen], then
+        If `result` is provided and a callback was set when the screen was [pushed][textual.app.App.push_screen], then
         the callback will be invoked with `result`.
 
         Args:
