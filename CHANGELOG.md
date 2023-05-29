@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `SuggestFromList` class to let widgets get completions from a fixed set of options https://github.com/Textualize/textual/pull/2604
 - `Input` has a new component class `input--suggestion` https://github.com/Textualize/textual/pull/2604
 - Added `Widget.remove_children` https://github.com/Textualize/textual/pull/2657
+- Added `Validator` framework and validation for `Input` https://github.com/Textualize/textual/pull/2600
 
 ### Changed
 
