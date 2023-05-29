@@ -1,9 +1,9 @@
 import asyncio
 
-from textual.app import App
-from textual.containers import Container
+from textual.app import App, ComposeResult
+from textual.containers import Container, Vertical
 from textual.widget import Widget
-from textual.widgets import Button, Static
+from textual.widgets import Button, Label, Static
 
 
 async def test_remove_single_widget():
@@ -31,7 +31,7 @@ async def test_many_remove_all_widgets():
 async def test_many_remove_some_widgets():
     """It should be possible to remove some widgets on a multi-widget screen."""
     async with App().run_test() as pilot:
-        await pilot.app.mount(*[Static(classes=f"is-{n%2}") for n in range(10)])
+        await pilot.app.mount(*[Static(classes=f"is-{n % 2}") for n in range(10)])
         assert len(pilot.app.screen._nodes) == 10
         await pilot.app.query(".is-0").remove()
         assert len(pilot.app.screen._nodes) == 5
@@ -117,3 +117,43 @@ async def test_query_remove_order():
         await pilot.app.query(Removable).remove()
         assert len(pilot.app.screen.walk_children(with_self=False)) == 0
         assert removals == ["grandchild", "child", "parent"]
+
+
+class ExampleApp(App):
+    def compose(self) -> ComposeResult:
+        yield Button("ABC")
+        yield Label("Outside of vertical.")
+        with Vertical():
+            for index in range(5):
+                yield Label(str(index))
+
+
+async def test_widget_remove_children_container():
+    app = ExampleApp()
+    async with app.run_test():
+        container = app.query_one(Vertical)
+
+        # 6 labels in total, with 5 of them inside the container.
+        assert len(app.query(Label)) == 6
+        assert len(container.children) == 5
+
+        await container.remove_children()
+
+        # The labels inside the container are gone, and the 1 outside remains.
+        assert len(app.query(Label)) == 1
+        assert len(container.children) == 0
+
+
+async def test_widget_remove_children_no_children():
+    app = ExampleApp()
+    async with app.run_test():
+        button = app.query_one(Button)
+
+        count_before = len(app.query("*"))
+        await button.remove_children()
+        count_after = len(app.query("*"))
+
+        assert len(app.query(Button)) == 1  # The button still remains.
+        assert (
+            count_before == count_after
+        )  # No widgets have been removed, since Button has no children.

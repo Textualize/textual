@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `work` decorator accepts `description` parameter to add debug string https://github.com/Textualize/textual/issues/2597
 - Added `SelectionList` widget https://github.com/Textualize/textual/pull/2652
 - `App.AUTO_FOCUS` to set auto focus on all screens https://github.com/Textualize/textual/issues/2594
+- Added `Widget.remove_children` https://github.com/Textualize/textual/pull/2657
 
 ### Changed
 
