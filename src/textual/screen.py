@@ -769,7 +769,11 @@ class Screen(Generic[ScreenResultType], Widget):
             self.app._set_mouse_over(None)
             if self._tooltip_timer is not None:
                 self._tooltip_timer.stop()
-            self.get_child_by_type(Tooltip).display = False
+            if not self.app._disable_tooltips:
+                try:
+                    self.get_child_by_type(Tooltip).display = False
+                except NoMatches:
+                    pass
 
         else:
             self.app._set_mouse_over(widget)
@@ -790,25 +794,26 @@ class Screen(Generic[ScreenResultType], Widget):
             mouse_event._set_forwarded()
             widget._forward_event(mouse_event)
 
-            try:
-                tooltip = self.query_one(Tooltip)
-            except NoMatches:
-                pass
-            else:
-                tooltip.styles.offset = event.screen_offset
-
-                if self._tooltip_widget != widget or not tooltip.display:
-                    self._tooltip_widget = widget
-                    if self._tooltip_timer is not None:
-                        self._tooltip_timer.stop()
-
-                    self._tooltip_timer = self.set_timer(
-                        0.3,
-                        partial(self._handle_tooltip_timer, widget),
-                        name="tooltip-timer",
-                    )
+            if not self.app._disable_tooltips:
+                try:
+                    tooltip = self.get_child_by_type(Tooltip)
+                except NoMatches:
+                    pass
                 else:
-                    tooltip.display = False
+                    tooltip.styles.offset = event.screen_offset
+
+                    if self._tooltip_widget != widget or not tooltip.display:
+                        self._tooltip_widget = widget
+                        if self._tooltip_timer is not None:
+                            self._tooltip_timer.stop()
+
+                        self._tooltip_timer = self.set_timer(
+                            0.3,
+                            partial(self._handle_tooltip_timer, widget),
+                            name="tooltip-timer",
+                        )
+                    else:
+                        tooltip.display = False
 
     def _forward_event(self, event: events.Event) -> None:
         if event.is_forwarded:
