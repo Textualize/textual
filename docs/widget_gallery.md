@@ -197,6 +197,14 @@ Select from a number of possible options.
 ```{.textual path="docs/examples/widgets/select_widget.py" press="tab,enter,down,down"}
 ```
 
+## Sparkline
+
+Display numerical data.
+
+[Sparkline reference](./widgets/sparkline.md){ .md-button .md-button--primary }
+
+```{.textual path="docs/examples/widgets/sparkline.py" lines="11"}
+```
 
 ## Static
 
