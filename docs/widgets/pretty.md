@@ -1,11 +1,13 @@
 # Pretty
 
-Display a pretty-formatted Rich renderable.
+Display a pretty-formatted object.
 
 - [ ] Focusable
 - [ ] Container
 
 ## Example
+
+The example below shows a pretty-formatted `dict`, but `Pretty` can display any Python object.
 
 === "Output"
 
