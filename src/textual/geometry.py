@@ -912,7 +912,7 @@ class Region(NamedTuple):
 
         The `x_axis` and `y_axis` parameters define which direction to move the region.
         A positive value will move the region right or down, a negative value will move
-        the region left or up.
+        the region left or up. A value of `0` will leave that axis unmodified.
 
         ```
         ╔══════════╗    │
