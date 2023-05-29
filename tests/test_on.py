@@ -143,3 +143,43 @@ async def test_on_arbitrary_attributes() -> None:
         await pilot.press("tab", "right", "right")
 
     assert log == ["one", "two"]
+
+
+async def test_fire_on_inherited_message():
+    """Handlers should fire when descendant messages are posted."""
+
+    posted: list[str] = []
+
+    class MessageSender(Widget):
+        class Parent(Message):
+            pass
+
+        class Child(Parent):
+            pass
+
+        def post_parent(self) -> None:
+            self.post_message(self.Parent())
+
+        def post_child(self) -> None:
+            self.post_message(self.Child())
+
+    class InheritTestApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield MessageSender()
+
+        @on(MessageSender.Parent)
+        def catch_parent(self) -> None:
+            posted.append("parent")
+
+        @on(MessageSender.Child)
+        def catch_child(self) -> None:
+            posted.append("child")
+
+        def on_mount(self) -> None:
+            self.query_one(MessageSender).post_parent()
+            self.query_one(MessageSender).post_child()
+
+    async with InheritTestApp().run_test():
+        pass
+
+    assert posted == ["parent", "child", "parent"]
