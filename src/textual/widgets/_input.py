@@ -17,7 +17,8 @@ from ..events import Blur, Focus, Mount
 from ..geometry import Size
 from ..message import Message
 from ..reactive import reactive
-from ..validation import Failure, ValidationResult, Validator
+from ..suggester import Suggester, SuggestionReady
+from ..validation import ValidationResult, Validator
 from ..widget import Widget
 
 
@@ -33,13 +34,26 @@ class _InputRenderable:
     ) -> "RenderResult":
         input = self.input
         result = input._value
-        if input._cursor_at_end:
-            result.pad_right(1)
-        cursor_style = input.get_component_rich_style("input--cursor")
+        width = input.content_size.width
+
+        # Add the completion with a faded style.
+        value = input.value
+        value_length = len(value)
+        suggestion = input._suggestion
+        show_suggestion = len(suggestion) > value_length
+        if show_suggestion:
+            result += Text(
+                suggestion[value_length:],
+                input.get_component_rich_style("input--suggestion"),
+            )
+
         if self.cursor_visible and input.has_focus:
+            if not show_suggestion and input._cursor_at_end:
+                result.pad_right(1)
+            cursor_style = input.get_component_rich_style("input--cursor")
             cursor = input.cursor_position
             result.stylize(cursor_style, cursor, cursor + 1)
-        width = input.content_size.width
+
         segments = list(result.render(console))
         line_length = Segment.get_line_length(segments)
         if line_length < width:
@@ -82,7 +96,7 @@ class Input(Widget, can_focus=True):
     | :- | :- |
     | left | Move the cursor left. |
     | ctrl+left | Move the cursor one word to the left. |
-    | right | Move the cursor right. |
+    | right | Move the cursor right or accept the completion suggestion. |
     | ctrl+right | Move the cursor one word to the right. |
     | backspace | Delete the character to the left of the cursor. |
     | home,ctrl+a | Go to the beginning of the input. |
@@ -95,12 +109,17 @@ class Input(Widget, can_focus=True):
     | ctrl+k | Delete everything to the right of the cursor. |
     """
 
-    COMPONENT_CLASSES: ClassVar[set[str]] = {"input--cursor", "input--placeholder"}
+    COMPONENT_CLASSES: ClassVar[set[str]] = {
+        "input--cursor",
+        "input--placeholder",
+        "input--suggestion",
+    }
     """
     | Class | Description |
     | :- | :- |
     | `input--cursor` | Target the cursor. |
     | `input--placeholder` | Target the placeholder text (when it exists). |
+    | `input--suggestion` | Target the auto-completion suggestion (when it exists). |
     """
 
     DEFAULT_CSS = """
@@ -121,7 +140,7 @@ class Input(Widget, can_focus=True):
         color: $text;
         text-style: reverse;
     }
-    Input>.input--placeholder {
+    Input>.input--placeholder, Input>.input--suggestion {
         color: $text-disabled;
     }
     Input.-invalid {
@@ -143,6 +162,10 @@ class Input(Widget, can_focus=True):
     _cursor_visible = reactive(True)
     password = reactive(False)
     max_size: reactive[int | None] = reactive(None)
+    suggester: Suggester | None
+    """The suggester used to provide completions as the user types."""
+    _suggestion = reactive("")
+    """A completion suggestion for the current value in the input."""
 
     @dataclass
     class Changed(Message):
@@ -195,6 +218,8 @@ class Input(Widget, can_focus=True):
         placeholder: str = "",
         highlighter: Highlighter | None = None,
         password: bool = False,
+        *,
+        suggester: Suggester | None = None,
         validators: Validator | Iterable[Validator] | None = None,
         name: str | None = None,
         id: str | None = None,
@@ -207,7 +232,9 @@ class Input(Widget, can_focus=True):
             value: An optional default value for the input.
             placeholder: Optional placeholder text for the input.
             highlighter: An optional highlighter for the input.
-            password: Flag to say if the field should obfuscate its content. Default is `False`.
+            password: Flag to say if the field should obfuscate its content.
+            suggester: [`Suggester`][textual.suggester.Suggester] associated with this
+                input instance.
             validators: An iterable of validators that the Input value will be checked against.
             name: Optional name for the input widget.
             id: Optional ID for the widget.
@@ -220,6 +247,7 @@ class Input(Widget, can_focus=True):
         self.placeholder = placeholder
         self.highlighter = highlighter
         self.password = password
+        self.suggester = suggester
         # Ensure we always end up with an Iterable of validators
         if isinstance(validators, Validator):
             self.validators: list[Validator] = [validators]
@@ -272,6 +300,9 @@ class Input(Widget, can_focus=True):
             self.view_position = self.view_position
 
     async def watch_value(self, value: str) -> None:
+        self._suggestion = ""
+        if self.suggester and value:
+            self.run_worker(self.suggester._get_suggestion(self, value))
         if self.styles.auto_dimensions:
             self.refresh(layout=True)
 
@@ -402,13 +433,18 @@ class Input(Widget, can_focus=True):
         else:
             self.cursor_position = len(self.value)
 
+    async def _on_suggestion_ready(self, event: SuggestionReady) -> None:
+        """Handle suggestion messages and set the suggestion when relevant."""
+        if event.value == self.value:
+            self._suggestion = event.suggestion
+
     def insert_text_at_cursor(self, text: str) -> None:
         """Insert new text at the cursor, move the cursor to the end of the new text.
 
         Args:
             text: New text to insert.
         """
-        if self.cursor_position > len(self.value):
+        if self.cursor_position >= len(self.value):
             self.value += text
             self.cursor_position = len(self.value)
         else:
@@ -423,8 +459,12 @@ class Input(Widget, can_focus=True):
         self.cursor_position -= 1
 
     def action_cursor_right(self) -> None:
-        """Move the cursor one position to the right."""
-        self.cursor_position += 1
+        """Accept an auto-completion or move the cursor one position to the right."""
+        if self._cursor_at_end and self._suggestion:
+            self.value = self._suggestion
+            self.cursor_position = len(self.value)
+        else:
+            self.cursor_position += 1
 
     def action_home(self) -> None:
         """Move the cursor to the start of the input."""
