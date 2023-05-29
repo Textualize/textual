@@ -178,7 +178,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
     @property
     def layers(self) -> tuple[str, ...]:
-        """Layers of from parent.
+        """Layers from parent.
 
         Returns:
             Tuple of layer names.

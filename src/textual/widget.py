@@ -370,7 +370,7 @@ class Widget(DOMNode):
     """Show a horizontal scrollbar?"""
 
     show_horizontal_scrollbar: Reactive[bool] = Reactive(False, layout=True)
-    """Show a vertical scrollbar?"""
+    """Show a horizontal scrollbar?"""
 
     border_title: str | Text | None = _BorderTitle()  # type: ignore
     """A title to show in the top border (if there is one)."""

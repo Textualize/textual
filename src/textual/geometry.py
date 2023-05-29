@@ -931,8 +931,8 @@ class Region(NamedTuple):
         ```
 
         Args:
-            x_axis: +1 to infect in the positive direction, -1 to inflect in the negative direction.
-            y_axis: +1 to infect in the positive direction, -1 to inflect in the negative direction.
+            x_axis: +1 to inflect in the positive direction, -1 to inflect in the negative direction.
+            y_axis: +1 to inflect in the positive direction, -1 to inflect in the negative direction.
             margin: Additional margin.
 
         Returns:
