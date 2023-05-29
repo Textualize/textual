@@ -512,17 +512,10 @@ class Compositor:
         constrain = styles.constrain
         if constrain == "inflect":
             inflect_margin = styles.margin
+            margin_region = region.grow(inflect_margin)
             region = region.inflect(
-                (
-                    -1
-                    if region.grow(inflect_margin).right > constrain_region.right
-                    else 0
-                ),
-                (
-                    -1
-                    if region.grow(inflect_margin).bottom > constrain_region.bottom
-                    else 0
-                ),
+                (-1 if margin_region.right > constrain_region.right else 0),
+                (-1 if margin_region.bottom > constrain_region.bottom else 0),
                 inflect_margin,
             )
             region = region.translate_inside(constrain_region, True, True)
