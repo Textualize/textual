@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed zero division error https://github.com/Textualize/textual/issues/2673
 - Fix `scroll_to_center` when there were nested layers out of view (Compositor full_map not populated fully) https://github.com/Textualize/textual/pull/2684
+- Issue with computing progress in workers https://github.com/Textualize/textual/pull/2686
 
 ### Added
 

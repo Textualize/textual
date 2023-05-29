@@ -1,11 +1,15 @@
 import asyncio
+from re import A
 
 import pytest
 
 from textual.app import App
 from textual.worker import (
+    DeadlockError,
+    NoActiveWorker,
     Worker,
     WorkerCancelled,
+    WorkerError,
     WorkerFailed,
     WorkerState,
     get_current_worker,
@@ -153,3 +157,61 @@ async def test_get_worker() -> None:
         worker._start(app)
 
         assert await worker.wait() is worker
+
+
+def test_no_active_worker() -> None:
+    """No active worker raises a specific exception."""
+    with pytest.raises(NoActiveWorker):
+        get_current_worker()
+
+
+async def test_progress_update():
+    async def long_work():
+        pass
+
+    app = App()
+    async with app.run_test():
+        worker = Worker(app, long_work)
+        worker._start(app)
+        worker.update(total_steps=100)
+        assert worker.progress == 0
+        worker.advance(50)
+        assert worker.progress == 50
+        worker.update(completed_steps=23)
+        assert worker.progress == 73
+
+
+async def test_double_start():
+    async def long_work():
+        return 0
+
+    app = App()
+    async with app.run_test():
+        worker = Worker(app, long_work)
+        worker._start(app)
+        worker._start(app)
+        assert await worker.wait() == 0
+
+
+async def test_self_referential_deadlock():
+    async def self_referential_work():
+        await get_current_worker().wait()
+
+    app = App()
+    async with app.run_test():
+        worker = Worker(app, self_referential_work)
+        worker._start(app)
+        with pytest.raises(WorkerFailed) as exc:
+            await worker.wait()
+            assert exc.type is DeadlockError
+
+
+async def test_wait_without_start():
+    async def work():
+        return
+
+    app = App()
+    async with app.run_test():
+        worker = Worker(app, work)
+        with pytest.raises(WorkerError):
+            await worker.wait()
