@@ -2933,6 +2933,15 @@ class Widget(DOMNode):
         await_remove = self.app._remove_nodes([self], self.parent)
         return await_remove
 
+    def remove_children(self) -> AwaitRemove:
+        """Remove all children of this Widget from the DOM.
+
+        Returns:
+            An awaitable object that waits for the children to be removed.
+        """
+        await_remove = self.app._remove_nodes(list(self.children), self)
+        return await_remove
+
     def render(self) -> RenderableType:
         """Get renderable for widget.
 

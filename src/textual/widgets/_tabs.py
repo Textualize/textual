@@ -354,7 +354,7 @@ class Tabs(Widget, can_focus=True):
         """Remove a tab.
 
         Args:
-            tab_id: The Tab's id.
+            tab_or_id: The Tab's id.
         """
         if tab_or_id is None:
             return

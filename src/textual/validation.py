@@ -193,8 +193,6 @@ class Validator(ABC):
                 then the `describe_failure` method on `Validator` will be called.
             value: The value that was considered invalid. This is optional, and only needs to be supplied if required
                 in your `Input.Changed` handler.
-            validator: The validator that performed the validation. This is optional, and only needs to be supplied if
-                required in your `Input.Changed` handler.
             failures: The reasons the validator failed. If not supplied, a generic `Failure` will be included in the
                 ValidationResult returned from this function.
 

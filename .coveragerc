@@ -8,3 +8,4 @@ exclude_lines =
     if __name__ == "__main__":
     @overload
     __rich_repr__
+    @abstractmethod

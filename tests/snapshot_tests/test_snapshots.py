@@ -97,6 +97,10 @@ def test_input_validation(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "input_validation.py", press=press)
 
 
+def test_input_suggestions(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "input_suggestions.py", press=[])
+
+
 def test_buttons_render(snap_compare):
     # Testing button rendering. We press tab to focus the first button too.
     assert snap_compare(WIDGET_EXAMPLES_DIR / "button.py", press=["tab"])
@@ -245,14 +249,18 @@ def test_progress_bar_completed_styled(snap_compare):
 def test_select(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "select_widget.py")
 
+
 def test_selection_list_selected(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "selection_list_selected.py")
+
 
 def test_selection_list_selections(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "selection_list_selections.py")
 
+
 def test_selection_list_tuples(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "selection_list_tuples.py")
+
 
 def test_select_expanded(snap_compare):
     assert snap_compare(
@@ -482,13 +490,17 @@ def test_dock_scroll2(snap_compare):
 def test_dock_scroll_off_by_one(snap_compare):
     # https://github.com/Textualize/textual/issues/2525
     assert snap_compare(
-        SNAPSHOT_APPS_DIR / "dock_scroll_off_by_one.py", terminal_size=(80, 25)
+        SNAPSHOT_APPS_DIR / "dock_scroll_off_by_one.py",
+        terminal_size=(80, 25),
+        press=["_"],
     )
 
 
 def test_scroll_to(snap_compare):
     # https://github.com/Textualize/textual/issues/2525
-    assert snap_compare(SNAPSHOT_APPS_DIR / "scroll_to.py", terminal_size=(80, 25))
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "scroll_to.py", terminal_size=(80, 25), press=["_"]
+    )
 
 
 def test_auto_fr(snap_compare):

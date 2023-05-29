@@ -2,7 +2,6 @@ INHERIT: mkdocs-common.yml
 
 plugins:
   offline:
-  privacy:
   exclude:
     glob:
       - "**/_template.md"
