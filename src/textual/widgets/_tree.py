@@ -98,7 +98,7 @@ class TreeNode(Generic[TreeDataType]):
             id: The ID of the node.
             label: The label for the node.
             data: Optional data to associate with the node.
-            expand: Should the node be attached in an expanded state?
+            expanded: Should the node be attached in an expanded state?
             allow_expand: Should the node allow being expanded by the user?
         """
         self._tree = tree
