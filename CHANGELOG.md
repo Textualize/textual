@@ -50,6 +50,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `Message.control` is now a property instead of a class variable. https://github.com/Textualize/textual/issues/2528
 - `Tree` and `DirectoryTree` Messages no longer accept a `tree` parameter, using `self.node.tree` instead. https://github.com/Textualize/textual/issues/2529
 
+## Unreleased
+
+### Added
+
+- `Suggester` API to compose with widgets for automatic suggestions https://github.com/Textualize/textual/issues/2330
+- `SuggestFromList` class to let widgets get completions from a fixed set of options https://github.com/Textualize/textual/pull/2604
+- `Input` has a new component class `input--suggestion` https://github.com/Textualize/textual/pull/2604
+
+### Changed
+
+- Keybinding <kbd>right</kbd> in `Input` is also used to accept a suggestion if the cursor is at the end of the input https://github.com/Textualize/textual/pull/2604
+- `Input.__init__` now accepts a `suggester` attribute for completion suggestions https://github.com/Textualize/textual/pull/2604
+
+
 ## [0.25.0] - 2023-05-17
 
 ### Changed
