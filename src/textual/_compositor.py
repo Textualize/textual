@@ -499,6 +499,16 @@ class Compositor:
     def _constrain(
         self, styles: RenderStyles, region: Region, constrain_region: Region
     ) -> Region:
+        """Applies constrain logic to a Region.
+
+        Args:
+            styles: The widget's styles.
+            region: The region to constrain.
+            constrain_region: The outer region.
+
+        Returns:
+            New region.
+        """
         constrain = styles.constrain
 
         if constrain != "none":
@@ -688,6 +698,11 @@ class Compositor:
 
                 widget_region = region + layout_offset
                 constrain = styles.constrain
+
+                if widget._absolute_offset is not None:
+                    widget_region = widget_region.reset_offset.translate(
+                        widget._absolute_offset + widget.styles.margin.top_left
+                    )
 
                 if constrain != "none":
                     widget_region = self._constrain(styles, widget_region, no_clip)

@@ -3,7 +3,7 @@ from __future__ import annotations
 from textual.widgets import Static
 
 
-class Tooltip(Static):
+class Tooltip(Static, can_focus=False):
     DEFAULT_CSS = """
     Tooltip {
         layer: _tooltips;
@@ -12,7 +12,6 @@ class Tooltip(Static):
         background: $panel;
         width: auto;
         height: auto;
-        # overlay: screen;
         constrain: inflect;
         max-width: 40;
         display: none;

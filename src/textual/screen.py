@@ -755,7 +755,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 tooltip.display = False
             else:
                 tooltip.display = True
-                tooltip.styles.offset = self.app.mouse_position
+                tooltip._absolute_offset = self.app.mouse_position
                 tooltip.update(tooltip_content)
 
     def _handle_mouse_move(self, event: events.MouseMove) -> None:

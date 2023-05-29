@@ -9,6 +9,7 @@ from typing import Awaitable, Callable, Iterable, cast
 
 from textual._import_app import import_app
 from textual.app import App
+from textual.geometry import Offset
 from textual.pilot import Pilot
 
 SCREENSHOT_CACHE = ".screenshot_cache"
@@ -33,11 +34,13 @@ def format_svg(source, language, css_class, options, md, attrs, **kwargs) -> str
         try:
             rows = int(attrs.get("lines", 24))
             columns = int(attrs.get("columns", 80))
+            hover = attrs.get("hover", "")
             svg = take_svg_screenshot(
                 None,
                 path,
                 press,
-                title,
+                hover=hover,
+                title=title,
                 terminal_size=(columns, rows),
                 wait_for_animation=False,
             )
@@ -58,6 +61,7 @@ def take_svg_screenshot(
     app: App | None = None,
     app_path: str | None = None,
     press: Iterable[str] = (),
+    hover: str = "",
     title: str | None = None,
     terminal_size: tuple[int, int] = (80, 24),
     run_before: Callable[[Pilot], Awaitable[None] | None] | None = None,
@@ -69,6 +73,7 @@ def take_svg_screenshot(
         app: An app instance. Must be supplied if app_path is not.
         app_path: A path to an app. Must be supplied if app is not.
         press: Key presses to run before taking screenshot. "_" is a short pause.
+        hover: Hover over the given widget.
         title: The terminal title in the output image.
         terminal_size: A pair of integers (rows, columns), representing terminal size.
         run_before: An arbitrary callable that runs arbitrary code before taking the
@@ -115,10 +120,14 @@ def take_svg_screenshot(
             result = run_before(pilot)
             if inspect.isawaitable(result):
                 await result
+        await pilot.pause()
         await pilot.press(*press)
         if wait_for_animation:
             await pilot.wait_for_scheduled_animations()
             await pilot.pause()
+        if hover:
+            await pilot.hover(hover)
+            await pilot.pause(0.5)
         svg = app.export_screenshot(title=title)
 
         app.exit(svg)

@@ -326,6 +326,7 @@ class Widget(DOMNode):
         """Used to prevent scrollbar logic getting stuck in an infinite loop."""
 
         self._tooltip: RenderableType | None = None
+        self._absolute_offset: Offset | None = None
 
         self._lock = Lock()
 
@@ -453,6 +454,7 @@ class Widget(DOMNode):
 
     @property
     def tooltip(self) -> RenderableType | None:
+        """Tooltip for the widget, or `None` for no tooltip."""
         return self._tooltip
 
     @tooltip.setter

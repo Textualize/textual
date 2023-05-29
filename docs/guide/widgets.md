@@ -193,6 +193,41 @@ Let's modify the default width for the fizzbuzz example. By default, the table w
 
 Note that we've added `expand=True` to tell the `Table` to expand beyond the optimal width, so that it fills the 50 characters returned by `get_content_width`.
 
+## Tooltips
+
+Widgets may have "tooltips" which is content shown when you hover the mouse over a widget.
+You can use this to add supplementary information or help messages for the user.
+
+To add a tooltip, assign to the [`tooltip`][textual.widgets.Widget.tooltip] property.
+You can set text or any other [Rich](https://github.com/Textualize/rich) renderable.
+
+
+=== "tooltip01.py"
+
+    ```python title="tooltip01.py"
+    --8<-- "docs/examples/guide/widgets/tooltip01.py"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/widgets/tooltip01.py" hover="Button"}
+    ```
+
+### Customizing the tooltip
+
+If you don't like the default look of the tooltips, you can customize them to your liking with CSS.
+Add a rule to your CSS that targets `Tooltip`. Here's an example:
+
+=== "tooltip02.py"
+
+    ```python title="tooltip02.py" hl_lines="16-20"
+    --8<-- "docs/examples/guide/widgets/tooltip02.py"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/widgets/tooltip02.py" hover="Button"}
+    ```
 
 ## Line API
 
