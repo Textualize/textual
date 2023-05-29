@@ -578,7 +578,15 @@ class MessagePump(metaclass=_MessagePumpMeta):
             # Try decorated handlers first
             decorated_handlers = cls.__dict__.get("_decorated_handlers")
             if decorated_handlers is not None:
-                handlers = decorated_handlers.get(type(message), [])
+                handlers = []
+                add_handlers = handlers.extend
+                # Allow for firing of handlers bound to a message higher up
+                # the inheritance tree.
+                for check_message in type(message).__mro__:
+                    add_handlers(decorated_handlers.get(check_message, []))
+                    # If we've hit message, that's far enough.
+                    if check_message == Message:
+                        break
                 from .widget import Widget
 
                 for method, selectors in handlers:
