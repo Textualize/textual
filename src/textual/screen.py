@@ -351,10 +351,6 @@ class Screen(Generic[ScreenResultType], Widget):
 
         return self.focused
 
-    def attach_to_pointer(self, widget: Widget | None) -> None:
-        self._pointer_attached_widget = widget
-        self.refresh(layout=True)
-
     def focus_next(self, selector: str | type[QueryType] = "*") -> Widget | None:
         """Focus the next widget, optionally filtered by a CSS selector.
 

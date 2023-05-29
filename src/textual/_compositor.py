@@ -697,14 +697,13 @@ class Compositor:
                 # Add the widget to the map
 
                 widget_region = region + layout_offset
-                constrain = styles.constrain
 
                 if widget._absolute_offset is not None:
                     widget_region = widget_region.reset_offset.translate(
                         widget._absolute_offset + widget.styles.margin.top_left
                     )
 
-                if constrain != "none":
+                if styles.constrain != "none":
                     widget_region = self._constrain(styles, widget_region, no_clip)
 
                 map[widget] = _MapGeometry(

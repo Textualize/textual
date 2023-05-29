@@ -4,7 +4,7 @@ The base class for widgets.
 
 from __future__ import annotations
 
-from asyncio import Lock, wait
+from asyncio import wait
 from collections import Counter
 from fractions import Fraction
 from itertools import islice
@@ -326,9 +326,9 @@ class Widget(DOMNode):
         """Used to prevent scrollbar logic getting stuck in an infinite loop."""
 
         self._tooltip: RenderableType | None = None
+        """The tooltip content."""
         self._absolute_offset: Offset | None = None
-
-        self._lock = Lock()
+        """Force an absolute offset for the widget (used by tooltips)."""
 
         super().__init__(
             name=name,
