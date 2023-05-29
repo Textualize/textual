@@ -480,7 +480,7 @@ class Screen(Generic[ScreenResultType], Widget):
                     def scroll_to_center(widget: Widget) -> None:
                         """Scroll to center (after a refresh)."""
                         if widget.has_focus and not self.screen.can_view(widget):
-                            self.screen.scroll_to_center(widget)
+                            self.screen.scroll_to_center(widget, origin_visible=True)
 
                     self.call_after_refresh(scroll_to_center, widget)
                 widget.post_message(events.Focus())

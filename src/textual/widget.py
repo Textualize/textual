@@ -2389,7 +2389,7 @@ class Widget(DOMNode):
                 force=force,
             )
 
-    async def _scroll_to_center_of(
+    async def _scroll_widget_to_center_of_self(
         self,
         widget: Widget,
         animate: bool = True,
@@ -2398,8 +2398,11 @@ class Widget(DOMNode):
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
         force: bool = False,
+        origin_visible: bool = False,
     ) -> None:
-        """Scroll a widget to the center of this container.
+        """Scroll a widget to the center of this container. Note that this may
+        result in more than one container scrolling, since multiple containers
+        might be encountered on the path from `widget` to `self`.
 
         Args:
             widget: The widget to center.
@@ -2408,6 +2411,7 @@ class Widget(DOMNode):
             duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
+            origin_visible: Ensure that the top left corner of the widget remains visible after the scroll.
         """
 
         central_point = Offset(
@@ -2418,15 +2422,19 @@ class Widget(DOMNode):
         container = widget.parent
         while isinstance(container, Widget) and widget is not self:
             container_virtual_region = container.virtual_region
-            # The region we want to scroll to must be centered around the central point.
-            # We make it as big as possible because `scroll_to_region` scrolls as little
-            # as possible.
-            target_region = Region(
-                central_point.x - container_virtual_region.width // 2,
-                central_point.y - container_virtual_region.height // 2,
-                container_virtual_region.width,
-                container_virtual_region.height,
-            )
+            if origin_visible and widget.region.height > container.region.height:
+                target_region = widget.virtual_region
+            else:
+                # The region we want to scroll to must be centered around the central point.
+                # We make it as big as possible because `scroll_to_region` scrolls as little
+                # as possible.
+                target_region = Region(
+                    central_point.x - container_virtual_region.width // 2,
+                    central_point.y - container_virtual_region.height // 2,
+                    container_virtual_region.width,
+                    container_virtual_region.height,
+                )
+
             scroll = container.scroll_to_region(
                 target_region,
                 animate=animate,
@@ -2463,25 +2471,31 @@ class Widget(DOMNode):
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
         force: bool = False,
+        origin_visible: bool = False,
     ) -> None:
-        """Scroll this widget to the center of the screen.
+        """Scroll this widget to the center of self.
+
+        The center of the widget will be scrolled to the center of the container.
 
         Args:
+            widget: The widget to scroll to the center of self.
             animate: Whether to animate the scroll.
             speed: Speed of scroll if animate is `True`; or `None` to use `duration`.
             duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
+            origin_visible: Ensure that the top left corner of the widget remains visible after the scroll.
         """
 
         self.call_after_refresh(
-            self._scroll_to_center_of,
+            self._scroll_widget_to_center_of_self,
             widget=widget,
             animate=animate,
             speed=speed,
             duration=duration,
             easing=easing,
             force=force,
+            origin_visible=origin_visible,
         )
 
     def can_view(self, widget: Widget) -> bool:
