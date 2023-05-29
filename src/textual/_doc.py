@@ -9,7 +9,6 @@ from typing import Awaitable, Callable, Iterable, cast
 
 from textual._import_app import import_app
 from textual.app import App
-from textual.geometry import Offset
 from textual.pilot import Pilot
 
 SCREENSHOT_CACHE = ".screenshot_cache"

@@ -220,12 +220,8 @@ def resolve_box_models(
         return cast("list[BoxModel]", box_models)
 
     # If all box models have been calculated
-    widget_styles = [
-        widget.styles for widget in widgets  # if widget.styles.overlay != "screen"
-    ]
+    widget_styles = [widget.styles for widget in widgets]
     if resolve_dimension == "width":
-        # total_remaining = int(sum([width for width, _, _ in filter(None, box_models)]))
-
         total_remaining = int(
             sum(
                 [
@@ -253,10 +249,6 @@ def resolve_box_models(
         width_fraction = fraction_unit
         height_fraction = Fraction(margin_size.height)
     else:
-        # total_remaining = int(
-        #     sum([height for _, height, _ in filter(None, box_models)])
-        # )
-
         total_remaining = int(
             sum(
                 [

@@ -63,7 +63,14 @@ class HorizontalLayout(Layout):
         if box_models:
             margins.append(box_models[-1].margin.right)
 
-        x = Fraction(box_models[0].margin.left if box_models else 0)
+        x = next(
+            (
+                box_model.margin.left
+                for box_model, child in zip(box_models, children)
+                if child.styles.overlay != "screen"
+            ),
+            Fraction(0),
+        )
 
         _Region = Region
         _WidgetPlacement = WidgetPlacement
