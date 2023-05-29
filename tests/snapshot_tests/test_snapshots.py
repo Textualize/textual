@@ -246,6 +246,14 @@ def test_select_expanded_changed(snap_compare):
     )
 
 
+def test_sparkline_render(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "sparkline.py")
+
+
+def test_sparkline_component_classes_colors(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "sparkline_colors.py")
+
+
 # --- CSS properties ---
 # We have a canonical example for each CSS property that is shown in their docs.
 # If any of these change, something has likely broken, so snapshot each of them.
