@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pytest
 
 from textual import on
@@ -145,23 +147,24 @@ async def test_on_arbitrary_attributes() -> None:
     assert log == ["one", "two"]
 
 
+class MessageSender(Widget):
+    class Parent(Message):
+        pass
+
+    class Child(Parent):
+        pass
+
+    def post_parent(self) -> None:
+        self.post_message(self.Parent())
+
+    def post_child(self) -> None:
+        self.post_message(self.Child())
+
+
 async def test_fire_on_inherited_message() -> None:
     """Handlers should fire when descendant messages are posted."""
 
     posted: list[str] = []
-
-    class MessageSender(Widget):
-        class Parent(Message):
-            pass
-
-        class Child(Parent):
-            pass
-
-        def post_parent(self) -> None:
-            self.post_message(self.Parent())
-
-        def post_child(self) -> None:
-            self.post_message(self.Child())
 
     class InheritTestApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -183,3 +186,40 @@ async def test_fire_on_inherited_message() -> None:
         pass
 
     assert posted == ["parent", "child", "parent"]
+
+
+async def test_fire_inherited_and_on_methods() -> None:
+    posted: list[str] = []
+
+    class OnAndOnTestApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield MessageSender()
+
+        def on_message_sender_parent(self) -> None:
+            posted.append("on_message_sender_parent")
+
+        @on(MessageSender.Parent)
+        def catch_parent(self) -> None:
+            posted.append("catch_parent")
+
+        def on_message_sender_child(self) -> None:
+            posted.append("on_message_sender_child")
+
+        @on(MessageSender.Child)
+        def catch_child(self) -> None:
+            posted.append("catch_child")
+
+        def on_mount(self) -> None:
+            self.query_one(MessageSender).post_parent()
+            self.query_one(MessageSender).post_child()
+
+    async with OnAndOnTestApp().run_test():
+        pass
+
+    assert posted == [
+        "catch_parent",
+        "on_message_sender_parent",
+        "catch_child",
+        "catch_parent",
+        "on_message_sender_child",
+    ]
