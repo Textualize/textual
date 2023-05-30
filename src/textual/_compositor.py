@@ -266,7 +266,6 @@ class Compositor:
 
     def __init__(self) -> None:
         # A mapping of Widget on to its "render location" (absolute position / depth)
-
         self._full_map: CompositorMap = {}
         self._full_map_invalidated = True
         self._visible_map: CompositorMap | None = None
@@ -358,7 +357,7 @@ class Compositor:
         old_map = self._full_map
         old_widgets = old_map.keys()
 
-        map, widgets = self._arrange_root(parent, size)
+        map, widgets = self._arrange_root(parent, size, visible_only=False)
 
         new_widgets = map.keys()
 
@@ -1021,11 +1020,12 @@ class Compositor:
         return StripRenderable(self.render_strips())
 
     def update_widgets(self, widgets: set[Widget]) -> None:
-        """Update a given widget in the composition.
+        """Update the given widgets in the composition.
 
         Args:
             widgets: Set of Widgets to update.
         """
+
         # If there are any *new* widgets we need to invalidate the full map
         if not self._full_map_invalidated and not widgets.issubset(
             self.visible_widgets.keys()

@@ -158,6 +158,16 @@ Display placeholder content while you are designing a UI.
 ```{.textual path="docs/examples/widgets/placeholder.py"}
 ```
 
+## Pretty
+
+Display a pretty-formatted Rich renderable.
+
+[Pretty reference](./widgets/pretty.md){ .md-button .md-button--primary }
+
+
+```{.textual path="docs/examples/widgets/pretty.py"}
+```
+
 ## ProgressBar
 
 A configurable progress bar with ETA and percentage complete.

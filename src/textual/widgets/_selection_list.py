@@ -570,7 +570,7 @@ class SelectionList(Generic[SelectionType], OptionList):
         """Get the selection option with the given ID.
 
         Args:
-            index: The ID of the selection option to get.
+            option_id: The ID of the selection option to get.
 
         Returns:
             The selection option with the ID.
