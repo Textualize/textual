@@ -583,9 +583,9 @@ class MessagePump(metaclass=_MessagePumpMeta):
                 # Allow for firing of handlers bound to a message higher up
                 # the inheritance tree.
                 for check_message in message.__class__.__mro__:
-                    # If we've hit something that isn't derived from Message
-                    # we can give up.
+                    # If what we're looking at looks like a message...
                     if issubclass(check_message, Message):
+                        # ...pick up any handlers for it.
                         add_handlers(decorated_handlers.get(check_message, []))
                 from .widget import Widget
 
