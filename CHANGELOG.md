@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed zero division error https://github.com/Textualize/textual/issues/2673
 - Fix `scroll_to_center` when there were nested layers out of view (Compositor full_map not populated fully) https://github.com/Textualize/textual/pull/2684
+- Issues with `switch_screen` not updating the results callback appropriately https://github.com/Textualize/textual/issues/2650
 
 ### Added
 
@@ -22,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `SuggestFromList` class to let widgets get completions from a fixed set of options https://github.com/Textualize/textual/pull/2604
 - `Input` has a new component class `input--suggestion` https://github.com/Textualize/textual/pull/2604
 - Added `Widget.remove_children` https://github.com/Textualize/textual/pull/2657
+- Added `Validator` framework and validation for `Input` https://github.com/Textualize/textual/pull/2600
 
 ### Changed
 
@@ -36,6 +38,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Keybinding <kbd>right</kbd> in `Input` is also used to accept a suggestion if the cursor is at the end of the input https://github.com/Textualize/textual/pull/2604
 - `Input.__init__` now accepts a `suggester` attribute for completion suggestions https://github.com/Textualize/textual/pull/2604
 - Breaking change: The `@on` decorator will now match a message class and any child classes https://github.com/Textualize/textual/pull/2691
+- Using `switch_screen` to switch to the currently active screen is now a no-op https://github.com/Textualize/textual/pull/2692
 
 ### Removed
 
