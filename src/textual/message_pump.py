@@ -582,7 +582,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
                 add_handlers = handlers.extend
                 # Allow for firing of handlers bound to a message higher up
                 # the inheritance tree.
-                for check_message in type(message).__mro__:
+                for check_message in message.__class__.__mro__:
                     # If we've hit something that isn't derived from Message
                     # we can give up.
                     if not issubclass(check_message, Message):
