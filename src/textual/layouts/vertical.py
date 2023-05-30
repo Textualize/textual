@@ -83,14 +83,7 @@ class VerticalLayout(Layout):
                 box_margin.left, int(y), int(content_width), int(next_y) - int(y)
             )
             add_placement(
-                _WidgetPlacement(
-                    region,
-                    box_model.margin,
-                    widget,
-                    0,
-                    False,
-                    overlay,
-                )
+                _WidgetPlacement(region, box_model.margin, widget, 0, False, overlay)
             )
             if not overlay:
                 y = next_y + margin
