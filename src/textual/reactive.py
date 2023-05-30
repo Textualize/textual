@@ -184,11 +184,13 @@ class Reactive(Generic[ReactiveType]):
 
         name = self.name
         current_value = getattr(obj, name)
-        # Check for validate function
-        validate_function = getattr(obj, f"validate_{name}", None)
-        # Call validate
-        if callable(validate_function):
-            value = validate_function(value)
+        # Check for private and public validate functions.
+        private_validate_function = getattr(obj, f"_validate_{name}", None)
+        if callable(private_validate_function):
+            value = private_validate_function(value)
+        public_validate_function = getattr(obj, f"validate_{name}", None)
+        if callable(public_validate_function):
+            value = public_validate_function(value)
         # If the value has changed, or this is the first time setting the value
         if current_value != value or self._always_update:
             # Store the internal value
