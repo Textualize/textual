@@ -361,6 +361,11 @@ class Compositor:
 
         new_widgets = map.keys()
 
+        # Newly visible widgets
+        shown_widgets = new_widgets - old_widgets
+        # Newly hidden widgets
+        hidden_widgets = self.widgets - widgets
+
         # Replace map and widgets
         self._full_map = map
         self.widgets = widgets
@@ -389,10 +394,7 @@ class Compositor:
             for widget, (region, *_) in changes
             if (widget in common_widgets and old_map[widget].region[2:] != region[2:])
         }
-        # Newly visible widgets
-        shown_widgets = new_widgets - old_widgets
-        # Newly hidden widgets
-        hidden_widgets = self.widgets - widgets
+
         return ReflowResult(
             hidden=hidden_widgets,
             shown=shown_widgets,
