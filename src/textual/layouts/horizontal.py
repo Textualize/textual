@@ -65,7 +65,7 @@ class HorizontalLayout(Layout):
 
         x = next(
             (
-                box_model.margin.left
+                Fraction(box_model.margin.left)
                 for box_model, child in zip(box_models, children)
                 if child.styles.overlay != "screen"
             ),

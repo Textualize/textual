@@ -64,7 +64,7 @@ class VerticalLayout(Layout):
 
         y = next(
             (
-                box_model.margin.top
+                Fraction(box_model.margin.top)
                 for box_model, child in zip(box_models, children)
                 if child.styles.overlay != "screen"
             ),
