@@ -1,5 +1,4 @@
 import asyncio
-from re import A
 
 import pytest
 
