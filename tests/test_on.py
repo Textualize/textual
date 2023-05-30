@@ -145,7 +145,7 @@ async def test_on_arbitrary_attributes() -> None:
     assert log == ["one", "two"]
 
 
-async def test_fire_on_inherited_message():
+async def test_fire_on_inherited_message() -> None:
     """Handlers should fire when descendant messages are posted."""
 
     posted: list[str] = []
