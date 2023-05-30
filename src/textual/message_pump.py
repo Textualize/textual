@@ -585,9 +585,8 @@ class MessagePump(metaclass=_MessagePumpMeta):
                 for check_message in message.__class__.__mro__:
                     # If we've hit something that isn't derived from Message
                     # we can give up.
-                    if not issubclass(check_message, Message):
-                        break
-                    add_handlers(decorated_handlers.get(check_message, []))
+                    if issubclass(check_message, Message):
+                        add_handlers(decorated_handlers.get(check_message, []))
                 from .widget import Widget
 
                 for method, selectors in handlers:

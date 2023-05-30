@@ -223,3 +223,47 @@ async def test_fire_inherited_and_on_methods() -> None:
         "catch_parent",
         "on_message_sender_child",
     ]
+
+
+class MixinMessageSender(Widget):
+    class Parent(Message):
+        pass
+
+    class JustSomeRandomMixin:
+        pass
+
+    class Child(JustSomeRandomMixin, Parent):
+        pass
+
+    def post_parent(self) -> None:
+        self.post_message(self.Parent())
+
+    def post_child(self) -> None:
+        self.post_message(self.Child())
+
+
+async def test_fire_on_inherited_message_plus_mixins() -> None:
+    """Handlers should fire when descendant messages are posted, without mixins messing things up."""
+
+    posted: list[str] = []
+
+    class InheritTestApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield MixinMessageSender()
+
+        @on(MixinMessageSender.Parent)
+        def catch_parent(self) -> None:
+            posted.append("parent")
+
+        @on(MixinMessageSender.Child)
+        def catch_child(self) -> None:
+            posted.append("child")
+
+        def on_mount(self) -> None:
+            self.query_one(MixinMessageSender).post_parent()
+            self.query_one(MixinMessageSender).post_child()
+
+    async with InheritTestApp().run_test():
+        pass
+
+    assert posted == ["parent", "child", "parent"]
