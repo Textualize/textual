@@ -415,7 +415,6 @@ async def test_public_and_private_watch() -> None:
         assert calls["public"] is True
 
 
-@pytest.mark.xfail(reason="https://github.com/Textualize/textual/issues/2539")
 async def test_public_and_private_validate() -> None:
     """If a reactive/var has public and private validate both should get called."""
 
