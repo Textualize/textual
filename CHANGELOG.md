@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `work` decorator accepts `description` parameter to add debug string https://github.com/Textualize/textual/issues/2597
 - Added `SelectionList` widget https://github.com/Textualize/textual/pull/2652
 - `App.AUTO_FOCUS` to set auto focus on all screens https://github.com/Textualize/textual/issues/2594
+- Added `Widget.tooltip` property https://github.com/Textualize/textual/pull/2670
+- Added `Region.inflect` https://github.com/Textualize/textual/pull/2670
 - `Suggester` API to compose with widgets for automatic suggestions https://github.com/Textualize/textual/issues/2330
 - `SuggestFromList` class to let widgets get completions from a fixed set of options https://github.com/Textualize/textual/pull/2604
 - `Input` has a new component class `input--suggestion` https://github.com/Textualize/textual/pull/2604
