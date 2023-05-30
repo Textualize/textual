@@ -21,8 +21,6 @@ class MyApp(App[None]):
     }
     """
 
-    # AUTO_FOCUS = ""
-
     def compose(self) -> ComposeResult:
         yield Label(("SPAM\n" * 53)[:-1])
         with VerticalScroll(id="vertical"):
