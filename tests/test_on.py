@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 import pytest
 
 from textual import on
@@ -148,17 +150,22 @@ async def test_on_arbitrary_attributes() -> None:
 
 
 class MessageSender(Widget):
+    @dataclass
     class Parent(Message):
-        pass
+        sender: MessageSender
+
+        @property
+        def control(self) -> MessageSender:
+            return self.sender
 
     class Child(Parent):
         pass
 
     def post_parent(self) -> None:
-        self.post_message(self.Parent())
+        self.post_message(self.Parent(self))
 
     def post_child(self) -> None:
-        self.post_message(self.Child())
+        self.post_message(self.Child(self))
 
 
 async def test_fire_on_inherited_message() -> None:
@@ -199,6 +206,34 @@ async def test_fire_inherited_on_single_handler() -> None:
 
         @on(MessageSender.Parent)
         @on(MessageSender.Child)
+        def catch_either(self, event: MessageSender.Parent) -> None:
+            posted.append(f"either {event.__class__.__name__}")
+
+        def on_mount(self) -> None:
+            self.query_one(MessageSender).post_parent()
+            self.query_one(MessageSender).post_child()
+
+    async with InheritTestApp().run_test():
+        pass
+
+    assert posted == ["either Parent", "either Child"]
+
+
+async def test_fire_inherited_on_single_handler_multi_selector() -> None:
+    """Test having parent/child messages on a single handler but with different selectors."""
+
+    posted: list[str] = []
+
+    class InheritTestApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield MessageSender(classes="a b")
+
+        @on(MessageSender.Parent, ".a.b")
+        @on(MessageSender.Child, ".a.b")
+        @on(MessageSender.Parent, ".a")
+        @on(MessageSender.Child, ".a")
+        @on(MessageSender.Parent, ".b")
+        @on(MessageSender.Child, ".b")
         def catch_either(self, event: MessageSender.Parent) -> None:
             posted.append(f"either {event.__class__.__name__}")
 
