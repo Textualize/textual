@@ -4,7 +4,7 @@ The base class for widgets.
 
 from __future__ import annotations
 
-from asyncio import Lock, wait
+from asyncio import wait
 from collections import Counter
 from fractions import Fraction
 from itertools import islice
@@ -325,7 +325,10 @@ class Widget(DOMNode):
         self._stabilize_scrollbar: tuple[Size, str, str] | None = None
         """Used to prevent scrollbar logic getting stuck in an infinite loop."""
 
-        self._lock = Lock()
+        self._tooltip: RenderableType | None = None
+        """The tooltip content."""
+        self._absolute_offset: Offset | None = None
+        """Force an absolute offset for the widget (used by tooltips)."""
 
         super().__init__(
             name=name,
@@ -367,7 +370,7 @@ class Widget(DOMNode):
     """Show a horizontal scrollbar?"""
 
     show_horizontal_scrollbar: Reactive[bool] = Reactive(False, layout=True)
-    """SHow a vertical scrollbar?"""
+    """Show a horizontal scrollbar?"""
 
     border_title: str | Text | None = _BorderTitle()  # type: ignore
     """A title to show in the top border (if there is one)."""
@@ -440,6 +443,19 @@ class Widget(DOMNode):
     @offset.setter
     def offset(self, offset: tuple[int, int]) -> None:
         self.styles.offset = ScalarOffset.from_offset(offset)
+
+    @property
+    def tooltip(self) -> RenderableType | None:
+        """Tooltip for the widget, or `None` for no tooltip."""
+        return self._tooltip
+
+    @tooltip.setter
+    def tooltip(self, tooltip: RenderableType | None):
+        self._tooltip = tooltip
+        try:
+            self.screen._update_tooltip(self)
+        except NoScreen:
+            pass
 
     def __enter__(self) -> Self:
         """Use as context manager when composing."""
@@ -1585,6 +1601,7 @@ class Widget(DOMNode):
                 break
             if node.styles.has_rule("layers"):
                 layers = node.styles.layers
+
         return layers
 
     @property
@@ -3126,7 +3143,15 @@ class Widget(DOMNode):
         except Exception:
             self.app.panic(Traceback())
         else:
+            self._extend_compose(widgets)
             await self.mount(*widgets)
+
+    def _extend_compose(self, widgets: list[Widget]) -> None:
+        """Hook to extend composed widgets.
+
+        Args:
+            widgets: Widgets to be mounted.
+        """
 
     def _on_mount(self, event: events.Mount) -> None:
         if self.styles.overflow_y == "scroll":

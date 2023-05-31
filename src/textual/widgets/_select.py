@@ -273,6 +273,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         self.prompt = prompt
         self._initial_options = list(options)
         self._value: SelectType | None = value
+        self._options = options
 
     def set_options(self, options: Iterable[tuple[RenderableType, SelectType]]) -> None:
         """Set the options for the Select.

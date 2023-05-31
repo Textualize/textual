@@ -131,6 +131,7 @@ def resolve_fraction_unit(
                 resolve_scalar(styles.max_width),
             )
             for styles in widget_styles
+            if styles.overlay != "screen"
         ]
     else:
         resolve = [
@@ -140,6 +141,7 @@ def resolve_fraction_unit(
                 resolve_scalar(styles.max_height),
             )
             for styles in widget_styles
+            if styles.overlay != "screen"
         ]
 
     resolved: list[Fraction | None] = [None] * len(resolve)
@@ -220,13 +222,24 @@ def resolve_box_models(
     # If all box models have been calculated
     widget_styles = [widget.styles for widget in widgets]
     if resolve_dimension == "width":
-        total_remaining = int(sum([width for width, _, _ in filter(None, box_models)]))
+        total_remaining = int(
+            sum(
+                [
+                    box_model.width
+                    for widget, box_model in zip(widgets, box_models)
+                    if (box_model is not None and widget.styles.overlay != "screen")
+                ]
+            )
+        )
+
         remaining_space = int(max(0, size.width - total_remaining - margin_width))
         fraction_unit = resolve_fraction_unit(
             [
                 styles
                 for styles in widget_styles
-                if styles.width is not None and styles.width.is_fraction
+                if styles.width is not None
+                and styles.width.is_fraction
+                and styles.overlay != "screen"
             ],
             size,
             viewport_size,
@@ -237,14 +250,23 @@ def resolve_box_models(
         height_fraction = Fraction(margin_size.height)
     else:
         total_remaining = int(
-            sum([height for _, height, _ in filter(None, box_models)])
+            sum(
+                [
+                    box_model.height
+                    for widget, box_model in zip(widgets, box_models)
+                    if (box_model is not None and widget.styles.overlay != "screen")
+                ]
+            )
         )
+
         remaining_space = int(max(0, size.height - total_remaining - margin_height))
         fraction_unit = resolve_fraction_unit(
             [
                 styles
                 for styles in widget_styles
-                if styles.height is not None and styles.height.is_fraction
+                if styles.height is not None
+                and styles.height.is_fraction
+                and styles.overlay != "screen"
             ],
             size,
             viewport_size,

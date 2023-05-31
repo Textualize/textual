@@ -298,3 +298,55 @@ async def test_dismiss_non_top_screen():
         await pilot.press("p")
         with pytest.raises(ScreenStackError):
             app.bottom.dismiss()
+
+
+async def test_switch_screen_no_op():
+    """Regression test for https://github.com/Textualize/textual/issues/2650"""
+
+    class MyScreen(Screen):
+        pass
+
+    class MyApp(App[None]):
+        SCREENS = {"screen": MyScreen()}
+
+        def on_mount(self):
+            self.push_screen("screen")
+
+    app = MyApp()
+    async with app.run_test():
+        screen_id = id(app.screen)
+        app.switch_screen("screen")
+        assert screen_id == id(app.screen)
+        app.switch_screen("screen")
+        assert screen_id == id(app.screen)
+
+
+async def test_switch_screen_updates_results_callback_stack():
+    """Regression test for https://github.com/Textualize/textual/issues/2650"""
+
+    class ScreenA(Screen):
+        pass
+
+    class ScreenB(Screen):
+        pass
+
+    class MyApp(App[None]):
+        SCREENS = {
+            "a": ScreenA(),
+            "b": ScreenB(),
+        }
+
+        def callback(self, _):
+            return 42
+
+        def on_mount(self):
+            self.push_screen("a", self.callback)
+
+    app = MyApp()
+    async with app.run_test():
+        assert len(app.screen._result_callbacks) == 1
+        assert app.screen._result_callbacks[-1].callback(None) == 42
+
+        app.switch_screen("b")
+        assert len(app.screen._result_callbacks) == 1
+        assert app.screen._result_callbacks[-1].callback is None
