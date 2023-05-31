@@ -50,7 +50,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - `Placeholder.reset_color_cycle`
 - Removed `Widget.reset_focus` (now called `Widget.blur`) https://github.com/Textualize/textual/issues/2642
-
+- Removed `reactive.py::Reactive.var` in favor of `reactive.py::var` https://github.com/Textualize/textual/pull/2709/
 
 ## [0.26.0] - 2023-05-20
 
