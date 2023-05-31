@@ -11,12 +11,12 @@ A widget that is used to visually represent numerical data.
 
 ### Basic example
 
-The example below illustrates the relationship between the data, its length, the width of the sparkline, and the number of buckets.
+The example below illustrates the relationship between the data, its length, the width of the sparkline, and the number of bars displayed.
 
 !!! tip
 
-    The sparkline data is split into equally-sized chunks called buckets.
-    The number of buckets matches the width of the sparkline.
+    The sparkline data is split into equally-sized chunks.
+    Each chunk is represented by a bar and the width of the sparkline dictates how many bars there are.
 
 === "Output"
 
@@ -31,9 +31,9 @@ The example below illustrates the relationship between the data, its length, the
 
     1. We have 12 data points.
     2. This sparkline will have its width set to 3 via CSS.
-    3. The data (12 numbers) will be split across 3 buckets, so 4 data points for each bucket.
-    4. Each bar will show the largest value of that bucket.
-    The largest value of each bucket is 2, 4, and 8, respectively.
+    3. The data (12 numbers) will be split across 3 bars, so 4 data points are associated with each bar.
+    4. Each bar will represent its largest value.
+    The largest value of each chunk is 2, 4, and 8, respectively.
     That explains why the first bar is half the height of the second and the second bar is half the height of the third.
 
 === "sparkline_basic.css"
@@ -47,7 +47,7 @@ The example below illustrates the relationship between the data, its length, the
 ### Different summary functions
 
 The example below shows a sparkline widget with different summary functions.
-The summary function is applied to each bucket to reduce its data into a single number that represents the bucket.
+The summary function is what determines the height of each bar.
 
 === "Output"
 
@@ -97,7 +97,7 @@ The example below shows how to use component classes to change the colors of the
 | Name      | Type  | Default     | Description                                        |
 | --------- | ----- | ----------- | -------------------------------------------------- |
 | `data` | `Sequence[float] | None` | `None` | The data represented by the sparkline. |
-| `summary_function` | `Callable[[Sequence[float]], float]` | `max` | The function used to summarise each of the bins. |
+| `summary_function` | `Callable[[Sequence[float]], float]` | `max` | The function that computes the height of each bar. |
 
 
 ## Messages
