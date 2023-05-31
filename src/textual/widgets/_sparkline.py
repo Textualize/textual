@@ -50,7 +50,7 @@ class Sparkline(Widget):
     data = reactive[Optional[Sequence[float]]](None)
     """The data that populates the sparkline."""
     summary_function = reactive[Callable[[Sequence[float]], float]](_max_factory)
-    """The function that computes the value that represents each bucket."""
+    """The function that computes the value that represents each bar."""
 
     def __init__(
         self,
@@ -66,8 +66,8 @@ class Sparkline(Widget):
 
         Args:
             data: The initial data to populate the sparkline with.
-            summary_function: Summarises bucket values into a single value used to
-                represent each bucket.
+            summary_function: Summarises bar values into a single value used to
+                represent each bar.
             name: The name of the widget.
             id: The ID of the widget in the DOM.
             classes: The CSS classes for the widget.
