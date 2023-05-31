@@ -8,6 +8,11 @@ from ..renderables.sparkline import Sparkline as SparklineRenderable
 from ..widget import Widget
 
 
+def _max_factory() -> Callable[[Sequence[float]], float]:
+    """Callable that returns the built-in max to initialise a reactive."""
+    return max
+
+
 class Sparkline(Widget):
     """A sparkline widget to display numerical data."""
 
@@ -44,14 +49,14 @@ class Sparkline(Widget):
 
     data = reactive[Optional[Sequence[float]]](None)
     """The data that populates the sparkline."""
-    summary_function = reactive[Optional[Callable[[Sequence[float]], float]]](None)
+    summary_function = reactive[Callable[[Sequence[float]], float]](_max_factory)
     """The function that computes the value that represents each bucket."""
 
     def __init__(
         self,
         data: Sequence[float] | None = None,
         *,
-        summary_function: Callable[[Sequence[float]], float] = max,
+        summary_function: Callable[[Sequence[float]], float] | None = None,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -70,14 +75,14 @@ class Sparkline(Widget):
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self.data = data
-        self.summary_function = summary_function
+        if summary_function is not None:
+            self.summary_function = summary_function
 
     def render(self) -> RenderResult:
         """Renders the sparkline when there is data available."""
         if not self.data:
             return "<empty sparkline>"
         _, base = self.background_colors
-        assert self.summary_function is not None  # Sanity check.
         return SparklineRenderable(
             self.data,
             width=self.size.width,
