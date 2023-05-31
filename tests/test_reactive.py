@@ -415,6 +415,21 @@ async def test_public_and_private_watch() -> None:
         assert calls["public"] is True
 
 
+async def test_private_validate() -> None:
+    calls: dict[str, bool] = {"private": False}
+
+    class PrivateValidateTest(App):
+        counter = var(0, init=False)
+
+        def _validate_counter(self, _: int) -> None:
+            calls["private"] = True
+
+    async with PrivateValidateTest().run_test() as pilot:
+        assert calls["private"] is False
+        pilot.app.counter += 1
+        assert calls["private"] is True
+
+
 async def test_public_and_private_validate() -> None:
     """If a reactive/var has public and private validate both should get called."""
 
@@ -435,6 +450,27 @@ async def test_public_and_private_validate() -> None:
         pilot.app.counter += 1
         assert calls["private"] is True
         assert calls["public"] is True
+
+
+async def test_public_and_private_validate_order() -> None:
+    """The private validate should be called first."""
+
+    class ValidateOrderTest(App):
+        value = reactive(0, init=False)
+
+        def validate_value(self, value: int) -> int:
+            if value < 0:
+                return 42
+            return value
+
+        def _validate_value(self, value: int) -> int:
+            if value < 0:
+                return 73
+            return value
+
+    async with ValidateOrderTest().run_test() as pilot:
+        pilot.app.value = -10
+        assert pilot.app.value == 73
 
 
 @pytest.mark.xfail(reason="https://github.com/Textualize/textual/issues/2539")
