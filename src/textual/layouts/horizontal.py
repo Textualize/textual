@@ -24,7 +24,6 @@ class HorizontalLayout(Layout):
     ) -> ArrangeResult:
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
-        x = max_height = Fraction(0)
 
         child_styles = [child.styles for child in children]
         box_margins: list[Spacing] = [styles.margin for styles in child_styles]
@@ -63,7 +62,14 @@ class HorizontalLayout(Layout):
         if box_models:
             margins.append(box_models[-1].margin.right)
 
-        x = Fraction(box_models[0].margin.left if box_models else 0)
+        x = next(
+            (
+                Fraction(box_model.margin.left)
+                for box_model, child in zip(box_models, children)
+                if child.styles.overlay != "screen"
+            ),
+            Fraction(0),
+        )
 
         _Region = Region
         _WidgetPlacement = WidgetPlacement
@@ -74,9 +80,6 @@ class HorizontalLayout(Layout):
             next_x = x + content_width
             region = _Region(
                 int(x), offset_y, int(next_x - int(x)), int(content_height)
-            )
-            max_height = max(
-                max_height, content_height + offset_y + box_model.margin.bottom
             )
             add_placement(
                 _WidgetPlacement(region, box_model.margin, widget, 0, False, overlay)

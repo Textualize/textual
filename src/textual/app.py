@@ -469,6 +469,7 @@ class App(Generic[ReturnType], DOMNode):
         self._loop: asyncio.AbstractEventLoop | None = None
         self._return_value: ReturnType | None = None
         self._exit = False
+        self._disable_tooltips = False
 
         self.css_monitor = (
             FileMonitor(self.css_path, self._on_css_change)
@@ -1058,6 +1059,7 @@ class App(Generic[ReturnType], DOMNode):
         *,
         headless: bool = True,
         size: tuple[int, int] | None = (80, 24),
+        tooltips: bool = False,
     ) -> AsyncGenerator[Pilot, None]:
         """An asynchronous context manager for testing app.
 
@@ -1075,10 +1077,12 @@ class App(Generic[ReturnType], DOMNode):
             headless: Run in headless mode (no output or input).
             size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect.
+            tooltips: Enable tooltips when testing.
         """
         from .pilot import Pilot
 
         app = self
+        app._disable_tooltips = not tooltips
         app_ready_event = asyncio.Event()
 
         def on_app_ready() -> None:
@@ -1611,15 +1615,19 @@ class App(Generic[ReturnType], DOMNode):
             raise TypeError(
                 f"switch_screen requires a Screen instance or str; not {screen!r}"
             )
-        if self.screen is not screen:
-            previous_screen = self._replace_screen(self._screen_stack.pop())
-            previous_screen._pop_result_callback()
-            next_screen, await_mount = self._get_screen(screen)
-            self._screen_stack.append(next_screen)
-            self.screen.post_message(events.ScreenResume())
-            self.log.system(f"{self.screen} is current (SWITCHED)")
-            return await_mount
-        return AwaitMount(self.screen, [])
+
+        next_screen, await_mount = self._get_screen(screen)
+        if screen is self.screen or next_screen is self.screen:
+            self.log.system(f"Screen {screen} is already current.")
+            return AwaitMount(self.screen, [])
+
+        previous_screen = self._replace_screen(self._screen_stack.pop())
+        previous_screen._pop_result_callback()
+        self._screen_stack.append(next_screen)
+        self.screen.post_message(events.ScreenResume())
+        self.screen._push_result_callback(self.screen, None)
+        self.log.system(f"{self.screen} is current (SWITCHED)")
+        return await_mount
 
     def install_screen(self, screen: Screen, name: str) -> None:
         """Install a screen.
