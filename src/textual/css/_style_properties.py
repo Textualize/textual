@@ -90,7 +90,7 @@ class GenericProperty(Generic[PropertyGetType, PropertySetType]):
         # Raise StyleValueError here
         return cast(PropertyGetType, value)
 
-    def __set_name__(self, owner: Styles, name: str) -> None:
+    def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
 
     def __get__(
@@ -138,7 +138,7 @@ class ScalarProperty:
         self.allow_auto = allow_auto
         super().__init__()
 
-    def __set_name__(self, owner: Styles, name: str) -> None:
+    def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
 
     def __get__(
@@ -227,7 +227,7 @@ class ScalarListProperty:
         self.percent_unit = percent_unit
         self.refresh_children = refresh_children
 
-    def __set_name__(self, owner: Styles, name: str) -> None:
+    def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
 
     def __get__(
@@ -294,7 +294,7 @@ class BoxProperty:
             obj.get_rule(self.name) or ("", self._default_color),
         )
 
-    def __set__(self, obj: Styles, border: tuple[EdgeType, str | Color] | None):
+    def __set__(self, obj: StylesBase, border: tuple[EdgeType, str | Color] | None):
         """Set the box property.
 
         Args:
@@ -928,7 +928,7 @@ class ColorProperty:
 class StyleFlagsProperty:
     """Descriptor for getting and set style flag properties (e.g. ``bold italic underline``)."""
 
-    def __set_name__(self, owner: Styles, name: str) -> None:
+    def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
 
     def __get__(
@@ -1008,7 +1008,9 @@ class TransitionsProperty:
         """
         return cast("dict[str, Transition]", obj.get_rule("transitions", {}))
 
-    def __set__(self, obj: Styles, transitions: dict[str, Transition] | None) -> None:
+    def __set__(
+        self, obj: StylesBase, transitions: dict[str, Transition] | None
+    ) -> None:
         _rich_traceback_omit = True
         if transitions is None:
             obj.clear_rule("transitions")

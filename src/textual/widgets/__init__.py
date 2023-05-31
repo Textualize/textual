@@ -36,6 +36,7 @@ if typing.TYPE_CHECKING:
     from ._tabbed_content import TabbedContent, TabPane
     from ._tabs import Tab, Tabs
     from ._text_log import TextLog
+    from ._tooltip import Tooltip
     from ._tree import Tree
     from ._welcome import Welcome
 
@@ -70,6 +71,7 @@ __all__ = [
     "TabPane",
     "Tabs",
     "TextLog",
+    "Tooltip",
     "Tree",
     "Welcome",
 ]

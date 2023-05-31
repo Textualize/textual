@@ -12,12 +12,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed zero division error https://github.com/Textualize/textual/issues/2673
 - Fix `scroll_to_center` when there were nested layers out of view (Compositor full_map not populated fully) https://github.com/Textualize/textual/pull/2684
+- Fix crash when `Select` widget value attribute was set in `compose` https://github.com/Textualize/textual/pull/2690
+- Issue with computing progress in workers https://github.com/Textualize/textual/pull/2686
+- Issues with `switch_screen` not updating the results callback appropriately https://github.com/Textualize/textual/issues/2650
+
 
 ### Added
 
 - `work` decorator accepts `description` parameter to add debug string https://github.com/Textualize/textual/issues/2597
 - Added `SelectionList` widget https://github.com/Textualize/textual/pull/2652
 - `App.AUTO_FOCUS` to set auto focus on all screens https://github.com/Textualize/textual/issues/2594
+- Added `Widget.tooltip` property https://github.com/Textualize/textual/pull/2670
+- Added `Region.inflect` https://github.com/Textualize/textual/pull/2670
 - `Suggester` API to compose with widgets for automatic suggestions https://github.com/Textualize/textual/issues/2330
 - `SuggestFromList` class to let widgets get completions from a fixed set of options https://github.com/Textualize/textual/pull/2604
 - `Input` has a new component class `input--suggestion` https://github.com/Textualize/textual/pull/2604
@@ -36,6 +42,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `Tree` and `DirectoryTree` Messages no longer accept a `tree` parameter, using `self.node.tree` instead. https://github.com/Textualize/textual/issues/2529
 - Keybinding <kbd>right</kbd> in `Input` is also used to accept a suggestion if the cursor is at the end of the input https://github.com/Textualize/textual/pull/2604
 - `Input.__init__` now accepts a `suggester` attribute for completion suggestions https://github.com/Textualize/textual/pull/2604
+- Using `switch_screen` to switch to the currently active screen is now a no-op https://github.com/Textualize/textual/pull/2692
 
 ### Removed
 
