@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed zero division error https://github.com/Textualize/textual/issues/2673
 - Fix `scroll_to_center` when there were nested layers out of view (Compositor full_map not populated fully) https://github.com/Textualize/textual/pull/2684
+- Fix crash when `Select` widget value attribute was set in `compose` https://github.com/Textualize/textual/pull/2690
 - Issue with computing progress in workers https://github.com/Textualize/textual/pull/2686
 - Issues with `switch_screen` not updating the results callback appropriately https://github.com/Textualize/textual/issues/2650
 
