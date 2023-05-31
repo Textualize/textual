@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable, ClassVar, Optional, Sequence, Union
+from typing import Callable, ClassVar, Optional, Sequence
 
 from ..app import RenderResult
 from ..reactive import reactive
@@ -42,18 +42,16 @@ class Sparkline(Widget):
     }
     """
 
-    data = reactive[Optional[Sequence[Union[int, float]]]](None)
+    data = reactive[Optional[Sequence[float]]](None)
     """The data that populates the sparkline."""
-    summary_function = reactive[
-        Optional[Callable[[Sequence[Union[int, float]]], float]]
-    ](None)
+    summary_function = reactive[Optional[Callable[[Sequence[float]], float]]](None)
     """The function that computes the value that represents each bucket."""
 
     def __init__(
         self,
-        data: Sequence[int | float] | None = None,
+        data: Sequence[float] | None = None,
         *,
-        summary_function: Callable[[Sequence[int | float]], float] = max,
+        summary_function: Callable[[Sequence[float]], float] = max,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -79,13 +77,15 @@ class Sparkline(Widget):
         if not self.data:
             return "<empty sparkline>"
         _, base = self.background_colors
-        min_color = self.get_component_styles("sparkline--min-color").color
-        max_color = self.get_component_styles("sparkline--max-color").color
         assert self.summary_function is not None  # Sanity check.
         return SparklineRenderable(
             self.data,
             width=self.size.width,
-            min_color=base.blend(min_color, min_color.a, 1).rich_color,
-            max_color=base.blend(max_color, max_color.a, 1).rich_color,
+            min_color=(
+                base + self.get_component_styles("sparkline--min-color").color
+            ).rich_color,
+            max_color=(
+                base + self.get_component_styles("sparkline--max-color").color
+            ).rich_color,
             summary_function=self.summary_function,
         )
