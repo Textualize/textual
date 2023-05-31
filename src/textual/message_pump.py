@@ -575,36 +575,50 @@ class MessagePump(metaclass=_MessagePumpMeta):
         for cls in self.__class__.__mro__:
             if message._no_default_action:
                 break
+
             # Try decorated handlers first
             decorated_handlers = cls.__dict__.get("_decorated_handlers")
             if decorated_handlers is not None:
-                # We're going to gather the handlers into a dictionary,
-                # where the key is the method to call. If we have related
-                # messages all piled on top of a single method, this helps
-                # us reduce the trigger to a single call (that is, imagine
-                # two messages, parent/child relationship, both @on the same
-                # method -- this stops a posting of the child message
-                # causing two calls to the same message -- one that matches
-                # the parent and one that matches the child).
-                handlers: dict[Callable, dict[str, tuple[SelectorSet, ...]]] = {}
-                # Allow for firing of handlers bound to a message higher up
-                # the inheritance tree.
-                for check_message in message.__class__.__mro__:
-                    # If what we're looking at looks like a message...
-                    if issubclass(check_message, Message):
-                        # ...pick up any handlers for it.
-                        for method, selectors in decorated_handlers.get(
-                            check_message, []
-                        ):
-                            handlers[method] = selectors
                 from .widget import Widget
 
-                for method, selectors in handlers.items():
-                    if not selectors:
+                # First up, let's go and find all the candidate handlers.
+                handlers: dict[Callable, list[dict[str, tuple[SelectorSet, ...]]]] = {}
+                # For every message from the one we're looking up, up the
+                # inheritance chain...
+                for check_message in (
+                    _message
+                    for _message in message.__class__.__mro__
+                    if issubclass(_message, Message)
+                ):
+                    # ...for every handler method an possible associated
+                    # selectors on that message...
+                    for method, selectors in decorated_handlers.get(check_message, []):
+                        # ...if we've not seen the method yet add an empty
+                        # list to the dictionary so we can gather up all
+                        # selectors.
+                        if method not in handlers:
+                            handlers[method] = []
+                        # Expand the list of selectors for that handler.
+                        handlers[method].extend([selectors])
+
+                # Next, for every method we found above...
+                for method, selectors_list in handlers.items():
+                    # ...if it had no selectors associated with it at all...
+                    if not selectors_list:
+                        # ...we're just handling the message itself.
                         yield cls, method.__get__(self, cls)
-                    else:
-                        if not message._sender:
-                            continue
+                        continue
+
+                    # If the message doesn't know who the sender is, don't
+                    # even bother with the next part.
+                    if not message._sender:
+                        continue
+
+                    # We've got some selectors. At this point it's a list of...
+                    for selectors in selectors_list:
+                        # ...dictionaries, the key being the attribute the
+                        # selectors relate to, and the value being the
+                        # selectors.
                         for attribute, selector in selectors.items():
                             node = getattr(message, attribute)
                             if not isinstance(node, Widget):
@@ -615,6 +629,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
                                 break
                         else:
                             yield cls, method.__get__(self, cls)
+                            break
 
             # Fall back to the naming convention
             # But avoid calling the handler if it was decorated
