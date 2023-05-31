@@ -9,9 +9,45 @@ A widget that is used to visually represent numerical data.
 
 ## Examples
 
+### Basic example
+
+The example below illustrates the relationship between the data, its length, the width of the sparkline, and the number of buckets.
+
+!!! tip
+
+    The sparkline data is split into equally-sized chunks called buckets.
+    The number of buckets matches the width of the sparkline.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/widgets/sparkline_basic.py" lines="5" columns="30"}
+    ```
+
+=== "sparkline_basic.py"
+
+    ```python hl_lines="4 11 12 13"
+    --8<-- "docs/examples/widgets/sparkline_basic.py"
+    ```
+
+    1. We have 12 data points.
+    2. This sparkline will have its width set to 3 via CSS.
+    3. The data (12 numbers) will be split across 3 buckets, so 4 data points for each bucket.
+    4. Each bar will show the largest value of that bucket.
+    The largest value of each bucket is 2, 4, and 8, respectively.
+    That explains why the first bar is half the height of the second and the second bar is half the height of the third.
+
+=== "sparkline_basic.css"
+
+    ```sass
+    --8<-- "docs/examples/widgets/sparkline_basic.css"
+    ```
+
+    1. By setting the width to 3 we get three buckets.
+
 ### Different summary functions
 
 The example below shows a sparkline widget with different summary functions.
+The summary function is applied to each bucket to reduce its data into a single number that represents the bucket.
 
 === "Output"
 
@@ -23,6 +59,10 @@ The example below shows a sparkline widget with different summary functions.
     ```python hl_lines="15-17"
     --8<-- "docs/examples/widgets/sparkline.py"
     ```
+
+    1. Each bar will show the largest value of that bucket.
+    2. Each bar will show the mean value of that bucket.
+    3. Each bar will show the smaller value of that bucket.
 
 === "sparkline.css"
 
@@ -41,7 +81,7 @@ The example below shows how to use component classes to change the colors of the
 
 === "sparkline_colors.py"
 
-    ```python hl_lines="15-17"
+    ```python
     --8<-- "docs/examples/widgets/sparkline_colors.py"
     ```
 
@@ -50,6 +90,7 @@ The example below shows how to use component classes to change the colors of the
     ```sass
     --8<-- "docs/examples/widgets/sparkline_colors.css"
     ```
+
 
 ## Reactive Attributes
 

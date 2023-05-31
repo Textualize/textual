@@ -2,7 +2,7 @@ from textual.app import App, ComposeResult
 from textual.widgets._sparkline import Sparkline
 
 
-class MyApp(App[None]):
+class SparklineColorsApp(App[None]):
     CSS_PATH = "sparkline_colors.css"
 
     def compose(self) -> ComposeResult:
@@ -19,6 +19,6 @@ class MyApp(App[None]):
         yield Sparkline(nums, summary_function=max, id="tnt")
 
 
-app = MyApp()
+app = SparklineColorsApp()
 if __name__ == "__main__":
     app.run()
