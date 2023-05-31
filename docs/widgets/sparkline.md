@@ -96,8 +96,8 @@ The example below shows how to use component classes to change the colors of the
 
 | Name      | Type  | Default     | Description                                        |
 | --------- | ----- | ----------- | -------------------------------------------------- |
-| `data` | `Sequence[int | float] | None` | `None` | The data represented by the sparkline. |
-| `summary_function` | `Callable[[Sequence[int | float]], float]` | `max` | The function used to summarise each of the bins. |
+| `data` | `Sequence[float] | None` | `None` | The data represented by the sparkline. |
+| `summary_function` | `Callable[[Sequence[float]], float]` | `max` | The function used to summarise each of the bins. |
 
 
 ## Messages
