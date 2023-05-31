@@ -188,6 +188,31 @@ async def test_fire_on_inherited_message() -> None:
     assert posted == ["parent", "child", "parent"]
 
 
+async def test_fire_inherited_on_single_handler() -> None:
+    """Test having parent/child messages on a single handler."""
+
+    posted: list[str] = []
+
+    class InheritTestApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield MessageSender()
+
+        @on(MessageSender.Parent)
+        @on(MessageSender.Child)
+        def catch_either(self, event: MessageSender.Parent) -> None:
+            posted.append(f"either {event.__class__.__name__}")
+
+        def on_mount(self) -> None:
+            self.query_one(MessageSender).post_parent()
+            self.query_one(MessageSender).post_child()
+
+    async with InheritTestApp().run_test():
+        pass
+
+    # TODO: Likely not this!
+    assert posted == ["either Parent", "either Child", "either Child"]
+
+
 async def test_fire_inherited_and_on_methods() -> None:
     posted: list[str] = []
 
