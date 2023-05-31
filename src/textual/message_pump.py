@@ -79,13 +79,13 @@ class _MessagePumpMeta(type):
                     )
 
         # Look for reactives with public AND private compute methods.
-        for name, value in class_dict.items():
-            if name.startswith("compute_") and callable(value):
-                reactive_name = name[len("compute_") :]
+        for attr_name, value in class_dict.items():
+            if attr_name.startswith("compute_") and callable(value):
+                reactive_name = attr_name[len("compute_") :]
                 if (
                     reactive_name in class_dict
                     and isinstance(class_dict[reactive_name], Reactive)
-                    and f"_{name}" in class_dict
+                    and f"_{attr_name}" in class_dict
                 ):
                     raise TooManyComputesError(
                         f"reactive {reactive_name!r} can't have two computes."
