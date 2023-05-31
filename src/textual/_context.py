@@ -22,3 +22,4 @@ prevent_message_types_stack: ContextVar[list[set[type[Message]]]] = ContextVar(
 visible_screen_stack: ContextVar[list[Screen]] = ContextVar("visible_screen_stack")
 """A stack of visible screens (with background alpha < 1), used in the screen render process."""
 message_hook: ContextVar[Callable[[Message], None]] = ContextVar("message_hook")
+"""A callable that accepts a message. Used by App.run_test."""

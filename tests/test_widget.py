@@ -304,5 +304,4 @@ async def test_compose_order() -> None:
         "my-screen",  # THe screen mounted in the app
     ]
 
-    print(mounts)
-    assert len(mounts) == 3
+    assert mounts == expected
