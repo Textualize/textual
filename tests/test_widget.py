@@ -1,12 +1,14 @@
 import pytest
 from rich.text import Text
 
+from textual import events
 from textual._node_list import DuplicateIds
 from textual.app import App, ComposeResult
 from textual.containers import Container
 from textual.css.errors import StyleValueError
 from textual.css.query import NoMatches
 from textual.geometry import Size
+from textual.message import Message
 from textual.widget import MountError, PseudoClasses, Widget
 from textual.widgets import Label
 
@@ -260,3 +262,47 @@ def test_render_str() -> None:
     # Text objects are passed unchanged
     text = Text("bar")
     assert widget.render_str(text) is text
+
+
+async def test_compose_order() -> None:
+    from textual.containers import Horizontal
+    from textual.screen import Screen
+    from textual.widgets import Select
+
+    class MyScreen(Screen):
+        def on_mount(self) -> None:
+            self.query_one(Select).value = 1
+
+        def compose(self) -> ComposeResult:
+            yield Horizontal(
+                Select(((str(n), n) for n in range(10)), id="select"),
+                id="screen-horizontal",
+            )
+
+    class SelectBugApp(App[None]):
+        async def on_mount(self):
+            await self.push_screen(MyScreen(id="my-screen"))
+            self.query_one(Select)
+
+    app = SelectBugApp()
+    messages: list[Message] = []
+
+    async with app.run_test(message_hook=messages.append) as pilot:
+        await pilot.pause()
+
+    mounts = [
+        message._sender.id
+        for message in messages
+        if isinstance(message, events.Mount) and message._sender.id is not None
+    ]
+
+    expected = [
+        "_default",  # default  screen
+        "label",  # A static in select
+        "select",  # The select
+        "screen-horizontal",  # The horizontal in MyScreen.compose
+        "my-screen",  # THe screen mounted in the app
+    ]
+
+    print(mounts)
+    assert len(mounts) == 3
