@@ -32,6 +32,10 @@ if TYPE_CHECKING:
 ReactiveType = TypeVar("ReactiveType")
 
 
+class TooManyComputesError(Exception):
+    """Raised when an attribute has public and private compute methods."""
+
+
 @rich.repr.auto
 class Reactive(Generic[ReactiveType]):
     """Reactive descriptor.
@@ -102,9 +106,9 @@ class Reactive(Generic[ReactiveType]):
             # Attribute already has a value
             return
 
-        compute_method = getattr(obj, f"compute_{name}", None)
+        compute_method = getattr(obj, self.compute_name, None)
         if compute_method is not None and self._init:
-            default = getattr(obj, f"compute_{name}")()
+            default = compute_method()
         else:
             default_or_callable = self._default
             default = (
@@ -139,7 +143,12 @@ class Reactive(Generic[ReactiveType]):
 
     def __set_name__(self, owner: Type[MessageTarget], name: str) -> None:
         # Check for compute method
-        if hasattr(owner, f"compute_{name}"):
+        public_compute = f"compute_{name}"
+        private_compute = f"_compute_{name}"
+        compute_name = (
+            private_compute if hasattr(owner, private_compute) else public_compute
+        )
+        if hasattr(owner, compute_name):
             # Compute methods are stored in a list called `__computes`
             try:
                 computes = getattr(owner, "__computes")
@@ -152,7 +161,7 @@ class Reactive(Generic[ReactiveType]):
         self.name = name
         # The internal name where the attribute's value is stored
         self.internal_name = f"_reactive_{name}"
-        self.compute_name = f"compute_{name}"
+        self.compute_name = compute_name
         default = self._default
         setattr(owner, f"_default_{name}", default)
 
@@ -285,7 +294,10 @@ class Reactive(Generic[ReactiveType]):
             try:
                 compute_method = getattr(obj, f"compute_{compute}")
             except AttributeError:
-                continue
+                try:
+                    compute_method = getattr(obj, f"_compute_{compute}")
+                except AttributeError:
+                    continue
             current_value = getattr(
                 obj, f"_reactive_{compute}", getattr(obj, f"_default_{compute}", None)
             )
