@@ -209,8 +209,7 @@ async def test_fire_inherited_on_single_handler() -> None:
     async with InheritTestApp().run_test():
         pass
 
-    # TODO: Likely not this!
-    assert posted == ["either Parent", "either Child", "either Child"]
+    assert posted == ["either Parent", "either Child"]
 
 
 async def test_fire_inherited_and_on_methods() -> None:

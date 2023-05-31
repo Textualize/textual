@@ -578,18 +578,28 @@ class MessagePump(metaclass=_MessagePumpMeta):
             # Try decorated handlers first
             decorated_handlers = cls.__dict__.get("_decorated_handlers")
             if decorated_handlers is not None:
-                handlers: list[tuple[Callable, dict[str, tuple[SelectorSet, ...]]]] = []
-                add_handlers = handlers.extend
+                # We're going to gather the handlers into a dictionary,
+                # where the key is the method to call. If we have related
+                # messages all piled on top of a single method, this helps
+                # us reduce the trigger to a single call (that is, imagine
+                # two messages, parent/child relationship, both @on the same
+                # method -- this stops a posting of the child message
+                # causing two calls to the same message -- one that matches
+                # the parent and one that matches the child).
+                handlers: dict[Callable, dict[str, tuple[SelectorSet, ...]]] = {}
                 # Allow for firing of handlers bound to a message higher up
                 # the inheritance tree.
                 for check_message in message.__class__.__mro__:
                     # If what we're looking at looks like a message...
                     if issubclass(check_message, Message):
                         # ...pick up any handlers for it.
-                        add_handlers(decorated_handlers.get(check_message, []))
+                        for method, selectors in decorated_handlers.get(
+                            check_message, []
+                        ):
+                            handlers[method] = selectors
                 from .widget import Widget
 
-                for method, selectors in handlers:
+                for method, selectors in handlers.items():
                     if not selectors:
                         yield cls, method.__get__(self, cls)
                     else:
