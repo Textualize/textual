@@ -4,7 +4,7 @@ The base class for widgets.
 
 from __future__ import annotations
 
-from asyncio import Lock, wait
+from asyncio import wait
 from collections import Counter
 from fractions import Fraction
 from itertools import islice
@@ -325,7 +325,10 @@ class Widget(DOMNode):
         self._stabilize_scrollbar: tuple[Size, str, str] | None = None
         """Used to prevent scrollbar logic getting stuck in an infinite loop."""
 
-        self._lock = Lock()
+        self._tooltip: RenderableType | None = None
+        """The tooltip content."""
+        self._absolute_offset: Offset | None = None
+        """Force an absolute offset for the widget (used by tooltips)."""
 
         super().__init__(
             name=name,
@@ -367,7 +370,7 @@ class Widget(DOMNode):
     """Show a horizontal scrollbar?"""
 
     show_horizontal_scrollbar: Reactive[bool] = Reactive(False, layout=True)
-    """SHow a vertical scrollbar?"""
+    """Show a horizontal scrollbar?"""
 
     border_title: str | Text | None = _BorderTitle()  # type: ignore
     """A title to show in the top border (if there is one)."""
@@ -440,6 +443,19 @@ class Widget(DOMNode):
     @offset.setter
     def offset(self, offset: tuple[int, int]) -> None:
         self.styles.offset = ScalarOffset.from_offset(offset)
+
+    @property
+    def tooltip(self) -> RenderableType | None:
+        """Tooltip for the widget, or `None` for no tooltip."""
+        return self._tooltip
+
+    @tooltip.setter
+    def tooltip(self, tooltip: RenderableType | None):
+        self._tooltip = tooltip
+        try:
+            self.screen._update_tooltip(self)
+        except NoScreen:
+            pass
 
     def __enter__(self) -> Self:
         """Use as context manager when composing."""
@@ -1585,6 +1601,7 @@ class Widget(DOMNode):
                 break
             if node.styles.has_rule("layers"):
                 layers = node.styles.layers
+
         return layers
 
     @property
@@ -2389,7 +2406,7 @@ class Widget(DOMNode):
                 force=force,
             )
 
-    async def _scroll_to_center_of(
+    async def _scroll_widget_to_center_of_self(
         self,
         widget: Widget,
         animate: bool = True,
@@ -2398,8 +2415,11 @@ class Widget(DOMNode):
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
         force: bool = False,
+        origin_visible: bool = False,
     ) -> None:
-        """Scroll a widget to the center of this container.
+        """Scroll a widget to the center of this container. Note that this may
+        result in more than one container scrolling, since multiple containers
+        might be encountered on the path from `widget` to `self`.
 
         Args:
             widget: The widget to center.
@@ -2408,6 +2428,7 @@ class Widget(DOMNode):
             duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
+            origin_visible: Ensure that the top left corner of the widget remains visible after the scroll.
         """
 
         central_point = Offset(
@@ -2418,15 +2439,19 @@ class Widget(DOMNode):
         container = widget.parent
         while isinstance(container, Widget) and widget is not self:
             container_virtual_region = container.virtual_region
-            # The region we want to scroll to must be centered around the central point.
-            # We make it as big as possible because `scroll_to_region` scrolls as little
-            # as possible.
-            target_region = Region(
-                central_point.x - container_virtual_region.width // 2,
-                central_point.y - container_virtual_region.height // 2,
-                container_virtual_region.width,
-                container_virtual_region.height,
-            )
+            if origin_visible and widget.region.height > container.region.height:
+                target_region = widget.virtual_region
+            else:
+                # The region we want to scroll to must be centered around the central point.
+                # We make it as big as possible because `scroll_to_region` scrolls as little
+                # as possible.
+                target_region = Region(
+                    central_point.x - container_virtual_region.width // 2,
+                    central_point.y - container_virtual_region.height // 2,
+                    container_virtual_region.width,
+                    container_virtual_region.height,
+                )
+
             scroll = container.scroll_to_region(
                 target_region,
                 animate=animate,
@@ -2463,25 +2488,31 @@ class Widget(DOMNode):
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
         force: bool = False,
+        origin_visible: bool = False,
     ) -> None:
-        """Scroll this widget to the center of the screen.
+        """Scroll this widget to the center of self.
+
+        The center of the widget will be scrolled to the center of the container.
 
         Args:
+            widget: The widget to scroll to the center of self.
             animate: Whether to animate the scroll.
             speed: Speed of scroll if animate is `True`; or `None` to use `duration`.
             duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
+            origin_visible: Ensure that the top left corner of the widget remains visible after the scroll.
         """
 
         self.call_after_refresh(
-            self._scroll_to_center_of,
+            self._scroll_widget_to_center_of_self,
             widget=widget,
             animate=animate,
             speed=speed,
             duration=duration,
             easing=easing,
             force=force,
+            origin_visible=origin_visible,
         )
 
     def can_view(self, widget: Widget) -> bool:
@@ -3104,7 +3135,7 @@ class Widget(DOMNode):
 
     async def _on_compose(self) -> None:
         try:
-            widgets = compose(self)
+            widgets = [*self._nodes, *compose(self)]
         except TypeError as error:
             raise TypeError(
                 f"{self!r} compose() method returned an invalid result; {error}"
@@ -3112,7 +3143,15 @@ class Widget(DOMNode):
         except Exception:
             self.app.panic(Traceback())
         else:
+            self._extend_compose(widgets)
             await self.mount(*widgets)
+
+    def _extend_compose(self, widgets: list[Widget]) -> None:
+        """Hook to extend composed widgets.
+
+        Args:
+            widgets: Widgets to be mounted.
+        """
 
     def _on_mount(self, event: events.Mount) -> None:
         if self.styles.overflow_y == "scroll":

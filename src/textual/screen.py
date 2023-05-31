@@ -5,6 +5,7 @@ The `Screen` class is a special widget which represents the content in the termi
 
 from __future__ import annotations
 
+from functools import partial
 from typing import (
     TYPE_CHECKING,
     Awaitable,
@@ -22,9 +23,11 @@ from typing import (
 import rich.repr
 from rich.console import RenderableType
 from rich.style import Style
+from rich.traceback import Traceback
 
 from . import errors, events, messages
 from ._callback import invoke
+from ._compose import compose
 from ._compositor import Compositor, MapGeometry
 from ._context import visible_screen_stack
 from ._types import CallbackType
@@ -39,6 +42,7 @@ from .renderables.background_screen import BackgroundScreen
 from .renderables.blank import Blank
 from .timer import Timer
 from .widget import Widget
+from .widgets import Tooltip
 
 if TYPE_CHECKING:
     from typing_extensions import Final
@@ -141,6 +145,9 @@ class Screen(Generic[ScreenResultType], Widget):
         self._callbacks: list[CallbackType] = []
         self._result_callbacks: list[ResultCallback[ScreenResultType]] = []
 
+        self._tooltip_widget: Widget | None = None
+        self._tooltip_timer: Timer | None = None
+
     @property
     def is_modal(self) -> bool:
         """Is the screen modal?"""
@@ -168,6 +175,18 @@ class Screen(Generic[ScreenResultType], Widget):
                 UPDATE_PERIOD, self._on_timer_update, name="screen_update", pause=True
             )
         return self.__update_timer
+
+    @property
+    def layers(self) -> tuple[str, ...]:
+        """Layers from parent.
+
+        Returns:
+            Tuple of layer names.
+        """
+        if self.app._disable_tooltips:
+            return super().layers
+        else:
+            return (*super().layers, "_tooltips")
 
     def render(self) -> RenderableType:
         background = self.styles.background
@@ -480,7 +499,7 @@ class Screen(Generic[ScreenResultType], Widget):
                     def scroll_to_center(widget: Widget) -> None:
                         """Scroll to center (after a refresh)."""
                         if widget.has_focus and not self.screen.can_view(widget):
-                            self.screen.scroll_to_center(widget)
+                            self.screen.scroll_to_center(widget, origin_visible=True)
 
                     self.call_after_refresh(scroll_to_center, widget)
                 widget.post_message(events.Focus())
@@ -489,6 +508,11 @@ class Screen(Generic[ScreenResultType], Widget):
                 self.log.debug(widget, "was focused")
 
         self._update_focus_styles(focused, blurred)
+
+    def _extend_compose(self, widgets: list[Widget]) -> None:
+        """Insert the tooltip widget, if required."""
+        if not self.app._disable_tooltips:
+            widgets.insert(0, Tooltip(id="textual-tooltip"))
 
     async def _on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)
@@ -700,6 +724,36 @@ class Screen(Generic[ScreenResultType], Widget):
         for screen in self.app._background_screens:
             screen._screen_resized(event.size)
 
+    def _update_tooltip(self, widget: Widget) -> None:
+        """Update the content of the tooltip."""
+        try:
+            tooltip = self.get_child_by_type(Tooltip)
+        except NoMatches:
+            pass
+        else:
+            if tooltip.display and self._tooltip_widget is widget:
+                self._handle_tooltip_timer(widget)
+
+    def _handle_tooltip_timer(self, widget: Widget) -> None:
+        """Called by a timer from _handle_mouse_move to update the tooltip.
+
+        Args:
+            widget: The widget under the mouse.
+        """
+
+        try:
+            tooltip = self.get_child_by_type(Tooltip)
+        except NoMatches:
+            pass
+        else:
+            tooltip_content = widget.tooltip
+            if tooltip_content is None:
+                tooltip.display = False
+            else:
+                tooltip.display = True
+                tooltip._absolute_offset = self.app.mouse_position
+                tooltip.update(tooltip_content)
+
     def _handle_mouse_move(self, event: events.MouseMove) -> None:
         try:
             if self.app.mouse_captured:
@@ -709,6 +763,14 @@ class Screen(Generic[ScreenResultType], Widget):
                 widget, region = self.get_widget_at(event.x, event.y)
         except errors.NoWidget:
             self.app._set_mouse_over(None)
+            if self._tooltip_timer is not None:
+                self._tooltip_timer.stop()
+            if not self.app._disable_tooltips:
+                try:
+                    self.get_child_by_type(Tooltip).display = False
+                except NoMatches:
+                    pass
+
         else:
             self.app._set_mouse_over(widget)
             mouse_event = events.MouseMove(
@@ -727,6 +789,27 @@ class Screen(Generic[ScreenResultType], Widget):
             widget.hover_style = event.style
             mouse_event._set_forwarded()
             widget._forward_event(mouse_event)
+
+            if not self.app._disable_tooltips:
+                try:
+                    tooltip = self.get_child_by_type(Tooltip)
+                except NoMatches:
+                    pass
+                else:
+                    tooltip.styles.offset = event.screen_offset
+
+                    if self._tooltip_widget != widget or not tooltip.display:
+                        self._tooltip_widget = widget
+                        if self._tooltip_timer is not None:
+                            self._tooltip_timer.stop()
+
+                        self._tooltip_timer = self.set_timer(
+                            0.3,
+                            partial(self._handle_tooltip_timer, widget),
+                            name="tooltip-timer",
+                        )
+                    else:
+                        tooltip.display = False
 
     def _forward_event(self, event: events.Event) -> None:
         if event.is_forwarded:

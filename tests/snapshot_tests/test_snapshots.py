@@ -212,9 +212,13 @@ def test_tabbed_content(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "tabbed_content.py")
 
 
-def test_option_list(snap_compare):
+def test_option_list_strings(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_strings.py")
+
+def test_option_list_options(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_options.py")
+
+def test_option_list_tables(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_tables.py")
 
 
