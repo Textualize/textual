@@ -5,7 +5,7 @@ import asyncio
 import pytest
 
 from textual.app import App, ComposeResult
-from textual.reactive import Reactive, reactive, var
+from textual.reactive import Reactive, TooManyComputesError, reactive, var
 from textual.widget import Widget
 
 OLD_VALUE = 5_000
@@ -456,7 +456,7 @@ async def test_public_and_private_validate_order() -> None:
     """The private validate should be called first."""
 
     class ValidateOrderTest(App):
-        value = reactive(0, init=False)
+        value = var(0, init=False)
 
         def validate_value(self, value: int) -> int:
             if value < 0:
@@ -473,26 +473,29 @@ async def test_public_and_private_validate_order() -> None:
         assert pilot.app.value == 73
 
 
-@pytest.mark.xfail(reason="https://github.com/Textualize/textual/issues/2539")
 async def test_public_and_private_compute() -> None:
     """If a reactive/var has public and private compute both should get called."""
 
-    calls: dict[str, bool] = {"private": False, "public": False}
+    with pytest.raises(TooManyComputesError):
 
+        class PublicAndPrivateComputeTest(App):
+            counter = var(0, init=False)
+
+            def compute_counter(self):
+                pass
+
+            def _compute_counter(self):
+                pass
+
+
+async def test_private_compute() -> None:
     class PrivateComputeTest(App):
-        counter = var(0, init=False)
+        double = var(0, init=False)
+        base = var(0, init=False)
 
-        def compute_counter(self) -> int:
-            calls["public"] = True
-            return 23
-
-        def _compute_counter(self) -> int:
-            calls["private"] = True
-            return 42
+        def _compute_double(self) -> int:
+            return 2 * self.base
 
     async with PrivateComputeTest().run_test() as pilot:
-        assert calls["private"] is False
-        assert calls["public"] is False
-        _ = pilot.app.counter
-        assert calls["private"] is True
-        assert calls["public"] is True
+        pilot.app.base = 5
+        assert pilot.app.double == 10
