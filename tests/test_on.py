@@ -228,12 +228,16 @@ async def test_fire_inherited_on_single_handler_multi_selector() -> None:
         def compose(self) -> ComposeResult:
             yield MessageSender(classes="a b")
 
+        @on(MessageSender.Parent, ".y")
+        @on(MessageSender.Child, ".y")
         @on(MessageSender.Parent, ".a.b")
         @on(MessageSender.Child, ".a.b")
         @on(MessageSender.Parent, ".a")
         @on(MessageSender.Child, ".a")
         @on(MessageSender.Parent, ".b")
         @on(MessageSender.Child, ".b")
+        @on(MessageSender.Parent, ".x")
+        @on(MessageSender.Child, ".x")
         def catch_either(self, event: MessageSender.Parent) -> None:
             posted.append(f"either {event.__class__.__name__}")
 
