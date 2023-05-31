@@ -1093,7 +1093,8 @@ class App(Generic[ReturnType], DOMNode):
             app_ready_event.set()
 
         async def run_app(app) -> None:
-            message_hook_context_var.set(message_hook)
+            if message_hook is not None:
+                message_hook_context_var.set(message_hook)
             app._loop = asyncio.get_running_loop()
             app._thread_id = threading.get_ident()
             await app._process_messages(

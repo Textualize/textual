@@ -556,8 +556,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         except LookupError:
             pass
         else:
-            if message_hook is not None:
-                message_hook(message)
+            message_hook(message)
 
         with self.prevent(*message._prevent):
             # Allow apps to treat events and messages separately
