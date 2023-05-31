@@ -1081,6 +1081,7 @@ class App(Generic[ReturnType], DOMNode):
             size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect.
             tooltips: Enable tooltips when testing.
+            message_hook: An optional callback that will called with every message going through the app.
         """
         from .pilot import Pilot
 
