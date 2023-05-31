@@ -3121,7 +3121,7 @@ class Widget(DOMNode):
 
     async def _on_compose(self) -> None:
         try:
-            widgets = compose(self)
+            widgets = [*self._nodes, *compose(self)]
         except TypeError as error:
             raise TypeError(
                 f"{self!r} compose() method returned an invalid result; {error}"
