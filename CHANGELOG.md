@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix crash when `Select` widget value attribute was set in `compose` https://github.com/Textualize/textual/pull/2690
 - Issue with computing progress in workers https://github.com/Textualize/textual/pull/2686
 - Issues with `switch_screen` not updating the results callback appropriately https://github.com/Textualize/textual/issues/2650
-- Fixed incorrect mount order
+- Fixed incorrect mount order https://github.com/Textualize/textual/pull/2702
 
 ### Added
 
@@ -29,7 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `Input` has a new component class `input--suggestion` https://github.com/Textualize/textual/pull/2604
 - Added `Widget.remove_children` https://github.com/Textualize/textual/pull/2657
 - Added `Validator` framework and validation for `Input` https://github.com/Textualize/textual/pull/2600
-- Added `message_hook` to App.run_test
+- Added `message_hook` to App.run_test https://github.com/Textualize/textual/pull/2702
 
 ### Changed
 
