@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `Input` has a new component class `input--suggestion` https://github.com/Textualize/textual/pull/2604
 - Added `Widget.remove_children` https://github.com/Textualize/textual/pull/2657
 - Added `Validator` framework and validation for `Input` https://github.com/Textualize/textual/pull/2600
+- Ability to have private and public validate methods https://github.com/Textualize/textual/pull/2708
+- Ability to have private compute methods https://github.com/Textualize/textual/pull/2708
 
 ### Changed
 
