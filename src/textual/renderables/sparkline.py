@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import statistics
+from fractions import Fraction
 from typing import Callable, Generic, Iterable, Sequence, TypeVar
 
 from rich.color import Color
@@ -52,10 +53,10 @@ class Sparkline(Generic[T]):
             data: The data to partition.
             num_buckets: The number of buckets to partition the data into.
         """
-        num_steps, remainder = divmod(len(data), num_buckets)
-        for i in range(num_buckets):
-            start = i * num_steps + min(i, remainder)
-            end = (i + 1) * num_steps + min(i + 1, remainder)
+        bucket_step = Fraction(len(data), num_buckets)
+        for bucket_no in range(num_buckets):
+            start = int(bucket_step * bucket_no)
+            end = int(bucket_step * (bucket_no + 1))
             partition = data[start:end]
             if partition:
                 yield partition
