@@ -3,12 +3,12 @@ draft: false
 date: 2023-06-01
 categories:
   - Release
-title: "Textual 0.24.0 adds a Select control"
+title: "Textual adds Sparklines, Selection list, Input validation, and tool tips"
 authors:
   - willmcgugan
 ---
 
-# Textual adds Sparklines, Selection List, Input validation, and tool tips
+# Textual adds Sparklines, Selection list, Input validation, and tool tips
 
 It's been 12 days since the last Textual release, which is longer than our usual release cycle of a week.
 
@@ -41,6 +41,7 @@ We've added [tooltips](../../guide/widgets.md#tooltips) to Textual widgets.
 The API couldn't be simpler: simply assign a string to the `tooltip` property on any widget.
 This string will be displayed after 300ms when you hover over the widget.
 
+
 <div>
 --8<-- "docs/blog/images/tooltips.svg"
 </div>
@@ -51,7 +52,7 @@ As always, you can configure how the tooltips will be displayed with CSS.
 
 We have some quality of life improvements for the [Input](../../widget_gallery.md#input) widget.
 
-We've added simple declarative API for [validating input](http://127.0.0.1:8000/widgets/input/#validating-input) which you can use to check the user has entered text in the right format.
+You can now use a simple declarative API to [validating input](http://127.0.0.1:8000/widgets/input/#validating-input).
 
 <div>
 --8<-- "docs/blog/images/validation.svg"
@@ -65,6 +66,8 @@ Here's a screenshot:
 <div>
 --8<-- "docs/blog/images/suggest.svg"
 </div>
+
+You could use this API to offer suggestions from a fixed list, or even pull the data from a network request.
 
 ## Join us
 
