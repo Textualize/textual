@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- The devtools console now confirms when CSS files have been successfully loaded after a previous error
+- The devtools console now confirms when CSS files have been successfully loaded after a previous error https://github.com/Textualize/textual/pull/2716
 
 ## [0.27.0] - 2023-06-01
 
