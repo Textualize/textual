@@ -1680,11 +1680,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                     component_style += get_component("datatable--fixed-cursor")
 
             post_foreground = (
-                Style.from_color(
-                    color=component_style.color
-                    if component_style.color and not component_style.color.is_default
-                    else ""
-                )
+                Style.from_color(color=component_style.color)
                 if self.cursor_foreground_priority == "css"
                 else Style.null()
             )
