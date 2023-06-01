@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed setting `TreeNode.label` on an existing `Tree` node not immediately https://github.com/Textualize/textual/pull/2713
+
 ## [0.27.0] - 2023-06-01
 
 ### Fixed
