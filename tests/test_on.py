@@ -241,6 +241,14 @@ async def test_fire_inherited_on_single_handler_multi_selector() -> None:
         def catch_either(self, event: MessageSender.Parent) -> None:
             posted.append(f"either {event.__class__.__name__}")
 
+        @on(MessageSender.Child, ".a, .x")
+        def catch_selector_list_one_miss(self, event: MessageSender.Parent) -> None:
+            posted.append(f"selector list one miss {event.__class__.__name__}")
+
+        @on(MessageSender.Child, ".a, .b")
+        def catch_selector_list_two_hits(self, event: MessageSender.Parent) -> None:
+            posted.append(f"selector list two hits {event.__class__.__name__}")
+
         def on_mount(self) -> None:
             self.query_one(MessageSender).post_parent()
             self.query_one(MessageSender).post_child()
@@ -248,7 +256,12 @@ async def test_fire_inherited_on_single_handler_multi_selector() -> None:
     async with InheritTestApp().run_test():
         pass
 
-    assert posted == ["either Parent", "either Child"]
+    assert posted == [
+        "either Parent",
+        "either Child",
+        "selector list one miss Child",
+        "selector list two hits Child",
+    ]
 
 
 async def test_fire_inherited_and_on_methods() -> None:
