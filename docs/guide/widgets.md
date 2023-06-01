@@ -193,6 +193,58 @@ Let's modify the default width for the fizzbuzz example. By default, the table w
 
 Note that we've added `expand=True` to tell the `Table` to expand beyond the optimal width, so that it fills the 50 characters returned by `get_content_width`.
 
+## Tooltips
+
+Widgets can have *tooltips* which is content displayed when the user hovers the mouse over the widget.
+You can use tooltips to add supplementary information or help messages.
+
+!!! tip
+
+    It is best not to rely on tooltips for essential information.
+    Some users prefer to use the keyboard exclusively and may never see tooltips.
+
+
+To add a tooltip, assign to the widget's [`tooltip`][textual.widgets.Widget.tooltip] property.
+You can set text or any other [Rich](https://github.com/Textualize/rich) renderable.
+
+The following example adds a tooltip to a button:
+
+=== "tooltip01.py"
+
+    ```python title="tooltip01.py"
+    --8<-- "docs/examples/guide/widgets/tooltip01.py"
+    ```
+
+=== "Output (before hover)"
+
+    ```{.textual path="docs/examples/guide/widgets/tooltip01.py"}
+    ```
+
+=== "Output (after hover)"
+
+    ```{.textual path="docs/examples/guide/widgets/tooltip01.py" hover="Button"}
+    ```
+
+### Customizing the tooltip
+
+If you don't like the default look of the tooltips, you can customize them to your liking with CSS.
+Add a rule to your CSS that targets `Tooltip`. Here's an example:
+
+=== "tooltip02.py"
+
+    ```python title="tooltip02.py" hl_lines="15-19"
+    --8<-- "docs/examples/guide/widgets/tooltip02.py"
+    ```
+
+=== "Output (before hover)"
+
+    ```{.textual path="docs/examples/guide/widgets/tooltip02.py"}
+    ```
+
+=== "Output (after hover)"
+
+    ```{.textual path="docs/examples/guide/widgets/tooltip02.py" hover="Button"}
+    ```
 
 ## Line API
 

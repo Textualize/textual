@@ -469,6 +469,7 @@ class App(Generic[ReturnType], DOMNode):
         self._loop: asyncio.AbstractEventLoop | None = None
         self._return_value: ReturnType | None = None
         self._exit = False
+        self._disable_tooltips = False
 
         self.css_monitor = (
             FileMonitor(self.css_path, self._on_css_change)
@@ -1058,6 +1059,7 @@ class App(Generic[ReturnType], DOMNode):
         *,
         headless: bool = True,
         size: tuple[int, int] | None = (80, 24),
+        tooltips: bool = False,
     ) -> AsyncGenerator[Pilot, None]:
         """An asynchronous context manager for testing app.
 
@@ -1075,10 +1077,12 @@ class App(Generic[ReturnType], DOMNode):
             headless: Run in headless mode (no output or input).
             size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect.
+            tooltips: Enable tooltips when testing.
         """
         from .pilot import Pilot
 
         app = self
+        app._disable_tooltips = not tooltips
         app_ready_event = asyncio.Event()
 
         def on_app_ready() -> None:

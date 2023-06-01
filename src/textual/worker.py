@@ -256,7 +256,7 @@ class Worker(Generic[ResultType]):
         if completed_steps is not None:
             self._completed_steps += completed_steps
         if total_steps != -1:
-            self._total_steps = None if total_steps is None else min(0, total_steps)
+            self._total_steps = None if total_steps is None else max(0, total_steps)
 
     def advance(self, steps: int = 1) -> None:
         """Advance the number of completed steps.
