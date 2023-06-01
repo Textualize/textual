@@ -41,7 +41,7 @@ between the different views.
 
 When the user presses the "Markdown" button the view is switched:
 
-```{.textual path="docs/examples/widgets/content_switcher.py" lines="40" press="tab,tab,enter"}
+```{.textual path="docs/examples/widgets/content_switcher.py" lines="40" press="tab,enter"}
 ```
 
 ## Reactive Attributes
