@@ -177,22 +177,6 @@ class ActiveModeError(ModeError):
     """Raised when attempting to remove the currently active mode."""
 
 
-class ModeError(Exception):
-    """Base class for exceptions related to modes."""
-
-
-class InvalidModeError(ModeError):
-    """Raised if there is an issue with a mode name."""
-
-
-class UnknownModeError(ModeError):
-    """Raised when attempting to use a mode that is not known."""
-
-
-class ActiveModeError(ModeError):
-    """Raised when attempting to remove the currently active mode."""
-
-
 class CssPathError(Exception):
     """Raised when supplied CSS path(s) are invalid."""
 

@@ -18,7 +18,7 @@ We've been a little distracted with our "dogfood" projects: [Frogmouth](https://
 
 ## Sparkline widget
 
-A [Sparkline](../../widget_gallery.md#selectionlist) is essentially a mini-plot. Just detailed enough to keep an eye on time-series data.
+A [Sparkline](../../widget_gallery.md#sparkline) is essentially a mini-plot. Just detailed enough to keep an eye on time-series data.
 
 <div>
 --8<-- "docs/blog/images/sparkline.svg"
@@ -52,7 +52,7 @@ As always, you can configure how the tooltips will be displayed with CSS.
 
 We have some quality of life improvements for the [Input](../../widget_gallery.md#input) widget.
 
-You can now use a simple declarative API to [validating input](http://127.0.0.1:8000/widgets/input/#validating-input).
+You can now use a simple declarative API to [validating input](/widgets/input/#validating-input).
 
 <div>
 --8<-- "docs/blog/images/validation.svg"

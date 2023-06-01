@@ -307,6 +307,7 @@ class TreeNode(Generic[TreeDataType]):
         self._updates += 1
         text_label = self._tree.process_label(label)
         self._label = text_label
+        self._tree.call_later(self._tree._refresh_node, self)
 
     def add(
         self,
