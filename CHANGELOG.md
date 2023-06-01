@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+- The devtools console now confirms when CSS files have been successfully loaded after a previous error https://github.com/Textualize/textual/pull/2716
+
 ### Fixed
 
 - Fixed setting `TreeNode.label` on an existing `Tree` node not immediately https://github.com/Textualize/textual/pull/2713
