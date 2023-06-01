@@ -620,14 +620,22 @@ class MessagePump(metaclass=_MessagePumpMeta):
                         # selectors relate to, and the value being the
                         # selectors.
                         for attribute, selector in selectors.items():
+                            # Look in the attribute to find a DOM node to
+                            # select against.
                             node = getattr(message, attribute)
                             if not isinstance(node, Widget):
+                                # The attribute didn't contain a reference
+                                # to a widget, so it can't be a thing in the
+                                # DOM, so we can't test it with a selector.
                                 raise OnNoWidget(
                                     f"on decorator can't match against {attribute!r} as it is not a widget."
                                 )
                             if not match(selector, node):
                                 break
                         else:
+                            # We've checked all the selectors and didn't get
+                            # a fail, so this must be a handler to call.
+                            # Make it so and then stop looking for more.
                             yield cls, method.__get__(self, cls)
                             break
 
