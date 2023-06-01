@@ -152,6 +152,7 @@ nav:
       - "widgets/radioset.md"
       - "widgets/select.md"
       - "widgets/selection_list.md"
+      - "widgets/sparkline.md"
       - "widgets/static.md"
       - "widgets/switch.md"
       - "widgets/tabbed_content.md"

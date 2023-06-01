@@ -58,7 +58,7 @@ Widgets are key to making user-friendly interfaces. The builtin widgets should c
     * [ ] Braille
     * [ ] Sixels, and other image extensions
 - [x] Input
-    * [ ] Validation
+    * [x] Validation
     * [ ] Error / warning states
     * [ ] Template types: IP address, physical units (weight, volume), currency, credit card etc
 - [X] Select control (pull-down)
@@ -72,7 +72,7 @@ Widgets are key to making user-friendly interfaces. The builtin widgets should c
 - [X] Progress bars
     * [ ] Style variants (solid, thin etc)
 - [X] Radio boxes
-- [ ] Spark-lines
+- [X] Spark-lines
 - [X] Switch
 - [X] Tabs
 - [ ] TextArea (multi-line input)
