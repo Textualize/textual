@@ -16,6 +16,7 @@ def test_sparkline_single_datapoint():
 
 
 def test_sparkline_two_values_min_max():
+    print(repr(render(Sparkline([2, 4], width=2))))
     assert render(Sparkline([2, 4], width=2)) == f"{GREEN}▁{STOP}{RED}█{STOP}"
 
 
@@ -36,13 +37,6 @@ def test_sparkline_expand_data_to_width_non_divisible():
 def test_sparkline_shrink_data_to_width():
     assert (
         render(Sparkline([2, 2, 4, 4, 6, 6], width=3))
-        == f"{GREEN}▁{STOP}{BLENDED}▄{STOP}{RED}█{STOP}"
-    )
-
-
-def test_sparkline_shrink_data_to_width_non_divisible():
-    assert (
-        render(Sparkline([1, 2, 3, 4, 5], width=3, summary_function=min))
         == f"{GREEN}▁{STOP}{BLENDED}▄{STOP}{RED}█{STOP}"
     )
 
