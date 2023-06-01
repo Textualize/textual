@@ -112,6 +112,8 @@ if __name__ == "__main__":
     console.print(f"data = {nums}\n")
     for f in funcs:
         console.print(
-            f"{f.__name__}:\t", Sparkline(nums, width=12, summary_function=f), end=""
+            f"{f.__name__}:\t",
+            Sparkline(nums, width=12, summary_function=f),
+            end="",
         )
         console.print("\n")

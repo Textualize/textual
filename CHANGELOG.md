@@ -15,13 +15,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix crash when `Select` widget value attribute was set in `compose` https://github.com/Textualize/textual/pull/2690
 - Issue with computing progress in workers https://github.com/Textualize/textual/pull/2686
 - Issues with `switch_screen` not updating the results callback appropriately https://github.com/Textualize/textual/issues/2650
-
+- Fixed incorrect mount order https://github.com/Textualize/textual/pull/2702
 
 ### Added
 
 - `work` decorator accepts `description` parameter to add debug string https://github.com/Textualize/textual/issues/2597
 - Added `SelectionList` widget https://github.com/Textualize/textual/pull/2652
 - `App.AUTO_FOCUS` to set auto focus on all screens https://github.com/Textualize/textual/issues/2594
+- Option to `scroll_to_center` to ensure we don't scroll such that the top left corner of the widget is not visible https://github.com/Textualize/textual/pull/2682
 - Added `Widget.tooltip` property https://github.com/Textualize/textual/pull/2670
 - Added `Region.inflect` https://github.com/Textualize/textual/pull/2670
 - `Suggester` API to compose with widgets for automatic suggestions https://github.com/Textualize/textual/issues/2330
@@ -29,6 +30,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `Input` has a new component class `input--suggestion` https://github.com/Textualize/textual/pull/2604
 - Added `Widget.remove_children` https://github.com/Textualize/textual/pull/2657
 - Added `Validator` framework and validation for `Input` https://github.com/Textualize/textual/pull/2600
+- Added `message_hook` to App.run_test https://github.com/Textualize/textual/pull/2702
 
 ### Changed
 

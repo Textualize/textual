@@ -216,6 +216,15 @@ Select multiple values from a list of options.
 ```{.textual path="docs/examples/widgets/selection_list_selections.py" press="down,down,down"}
 ```
 
+## Sparkline
+
+Display numerical data.
+
+[Sparkline reference](./widgets/sparkline.md){ .md-button .md-button--primary }
+
+```{.textual path="docs/examples/widgets/sparkline.py" lines="11"}
+```
+
 ## Static
 
 Displays simple static content. Typically used as a base class.

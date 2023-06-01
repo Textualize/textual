@@ -65,6 +65,7 @@ from ._callback import invoke
 from ._compose import compose
 from ._compositor import CompositorUpdate
 from ._context import active_app, active_message_pump
+from ._context import message_hook as message_hook_context_var
 from ._event_broker import NoHandler, extract_handler_actions
 from ._path import _make_path_object_relative
 from ._wait import wait_for_idle
@@ -100,6 +101,7 @@ if TYPE_CHECKING:
     # Unused & ignored imports are needed for the docs to link to these objects:
     from .css.query import WrongType  # type: ignore  # noqa: F401
     from .devtools.client import DevtoolsClient
+    from .message import Message
     from .pilot import Pilot
     from .widget import MountError  # type: ignore  # noqa: F401
 
@@ -1060,6 +1062,7 @@ class App(Generic[ReturnType], DOMNode):
         headless: bool = True,
         size: tuple[int, int] | None = (80, 24),
         tooltips: bool = False,
+        message_hook: Callable[[Message], None] | None = None,
     ) -> AsyncGenerator[Pilot, None]:
         """An asynchronous context manager for testing app.
 
@@ -1078,6 +1081,7 @@ class App(Generic[ReturnType], DOMNode):
             size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect.
             tooltips: Enable tooltips when testing.
+            message_hook: An optional callback that will called with every message going through the app.
         """
         from .pilot import Pilot
 
@@ -1090,6 +1094,8 @@ class App(Generic[ReturnType], DOMNode):
             app_ready_event.set()
 
         async def run_app(app) -> None:
+            if message_hook is not None:
+                message_hook_context_var.set(message_hook)
             app._loop = asyncio.get_running_loop()
             app._thread_id = threading.get_ident()
             await app._process_messages(
@@ -1824,6 +1830,7 @@ class App(Generic[ReturnType], DOMNode):
         ready_callback: CallbackType | None = None,
         headless: bool = False,
         terminal_size: tuple[int, int] | None = None,
+        message_hook: Callable[[Message], None] | None = None,
     ) -> None:
         self._set_active()
         active_message_pump.set(self)
@@ -1978,7 +1985,7 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _on_compose(self) -> None:
         try:
-            widgets = compose(self)
+            widgets = [*self.screen._nodes, *compose(self)]
         except TypeError as error:
             raise TypeError(
                 f"{self!r} compose() method returned an invalid result; {error}"

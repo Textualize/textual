@@ -20,6 +20,7 @@ class OptionListApp(App[None]):
 
     def _record(self, event: OptionList.OptionMessage) -> None:
         assert isinstance(event.option_id, str)
+        assert event.option_list is event.control
         self.messages.append(
             (event.__class__.__name__, event.option_id, event.option_index)
         )

@@ -13,7 +13,9 @@ class OptionListApp(App[None]):
 
     def compose(self) -> ComposeResult:
         yield Label("Something else to hover over")
-        yield OptionList(*[Option(str(n), id=str(n)) for n in range(10)])
+        yield OptionList(
+            *[Option(str(n), id=str(n), disabled=n == 3) for n in range(10)]
+        )
 
 
 async def test_no_hover() -> None:
@@ -38,6 +40,18 @@ async def test_hover_no_highlight() -> None:
         await pilot.hover(OptionList, Offset(1, 1))
         option_list = pilot.app.query_one(OptionList)
         assert option_list._mouse_hovering_over == 1
+        assert option_list._mouse_hovering_over != option_list.highlighted
+
+
+async def test_hover_disabled() -> None:
+    """The mouse hover value should react to the mouse hover over a disabled option."""
+    async with OptionListApp().run_test() as pilot:
+        await pilot.hover(OptionList, Offset(1, 3))
+        option_list = pilot.app.query_one(OptionList)
+        assert option_list._mouse_hovering_over == 3
+        assert option_list.get_option_at_index(
+            option_list._mouse_hovering_over
+        ).disabled
         assert option_list._mouse_hovering_over != option_list.highlighted
 
 
