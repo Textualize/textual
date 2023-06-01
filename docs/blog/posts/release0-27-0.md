@@ -12,7 +12,7 @@ authors:
 
 It's been 12 days since the last Textual release, which is longer than our usual release cycle of a week.
 
-We've been a little distracted with our "dogfood" projects: [Frogmouth](https://github.com/Textualize/frogmouth) and [Trogon](https://github.com/Textualize/trogon). Both of which hit 1000 Github stars in 24 hours. We will be maintaining / updating those, but it is business as usual for this Textual release (and its a big one). We have such sights to show you.
+We've been a little distracted with our "dogfood" projects: [Frogmouth](https://github.com/Textualize/frogmouth) and [Trogon](https://github.com/Textualize/trogon). Both of which hit 1000 Github stars in 24 hours. We will be maintaining / updating those, but it is business as usual for this Textual release (and it's a big one). We have such sights to show you.
 
 <!-- more -->
 
