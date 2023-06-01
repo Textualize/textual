@@ -2,7 +2,7 @@ import random
 from statistics import mean
 
 from textual.app import App, ComposeResult
-from textual.widgets._sparkline import Sparkline
+from textual.widgets import Sparkline
 
 random.seed(73)
 data = [random.expovariate(1 / 3) for _ in range(1000)]

@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.widgets._sparkline import Sparkline
+from textual.widgets import Sparkline
 
 data = [1, 2, 2, 1, 1, 4, 3, 1, 1, 8, 8, 2]  # (1)!
 
