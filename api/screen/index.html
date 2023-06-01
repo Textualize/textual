@@ -24,7 +24,7 @@
         <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../feed_rss_updated.xml">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.5+insiders-4.32.4">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.5+insiders-4.32.4">
     
     
       
@@ -4238,6 +4238,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -4708,6 +4714,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../widgets/pretty/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Pretty
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../widgets/progress_bar/" class="md-nav__link">
         
   
@@ -4793,6 +4825,58 @@
     
   
     Select
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/selection_list/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    SelectionList
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/sparkline/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Sparkline
   
 
     
@@ -5015,6 +5099,8 @@
       
         
           
+        
+      
         
       
         
@@ -5861,6 +5947,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.screen.Screen.layers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        layers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.screen.Screen.stack_updates" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6060,6 +6157,32 @@
     
   
     Strip
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../suggester/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Suggester
   
 
     
@@ -6876,6 +6999,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.screen.Screen.layers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        layers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.screen.Screen.stack_updates" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7361,14 +7495,15 @@
   </span>
 
 <a href="#textual.screen.Screen.AUTO_FOCUS" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">AUTO_FOCUS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;*&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">AUTO_FOCUS</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
   
       <p>A selector to determine what to focus automatically when the screen is activated.</p>
 <p>The widget focused is the first that matches the given <a href="/guide/queries/#query-selectors">CSS selector</a>.
-Set to <code>None</code> to disable auto focus.</p>
+Set to <code>None</code> to inherit the value from the screen's app.
+Set to <code>""</code> to disable auto focus.</p>
   </div>
 
 </div>
@@ -7405,6 +7540,7 @@ Set to <code>None</code> to disable auto focus.</p>
 
   
   <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
@@ -7469,11 +7605,53 @@ Set to <code>None</code> to disable auto focus.</p>
 
 
 
+<h3 id="textual.screen.Screen.layers" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">layers</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.screen.Screen.layers" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">layers</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Layers from parent.</p>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, ...]</code>
+          </td>
+          <td><p>Tuple of layer names.</p></td>
+        </tr>
+    </tbody>
+  </table>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
 <h3 id="textual.screen.Screen.stack_updates" class="doc doc-heading">
         <span class="doc doc-object-name doc-attribute-name">stack_updates</span>
 
   
   <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
@@ -7555,7 +7733,7 @@ Set to <code>None</code> to disable auto focus.</p>
   <div class="doc doc-contents ">
   
       <p>Dismiss the screen, optionally with a result.</p>
-<p>If <code>result</code> is provided and a callback was set when the screen was [pushed][textual.app.push_screen], then
+<p>If <code>result</code> is provided and a callback was set when the screen was <a class="autorefs autorefs-internal" href="../app/#textual.app.App.push_screen">pushed</a>, then
 the callback will be invoked with <code>result</code>.</p>
 
   <h5>Parameters</h5>

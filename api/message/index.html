@@ -24,7 +24,7 @@
         <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../feed_rss_updated.xml">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.5+insiders-4.32.4">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.5+insiders-4.32.4">
     
     
       
@@ -4238,6 +4238,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -4708,6 +4714,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../widgets/pretty/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Pretty
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../widgets/progress_bar/" class="md-nav__link">
         
   
@@ -4793,6 +4825,58 @@
     
   
     Select
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/selection_list/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    SelectionList
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/sparkline/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Sparkline
   
 
     
@@ -5015,6 +5099,8 @@
       
         
           
+        
+      
         
       
         
@@ -5615,6 +5701,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.message.Message.control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        control
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.message.Message.handler_name" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5867,6 +5964,32 @@
     
   
     Strip
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../suggester/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Suggester
   
 
     
@@ -6567,6 +6690,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.message.Message.control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        control
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.message.Message.handler_name" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6703,7 +6837,7 @@
   </span>
 
 <a href="#textual.message.Message.ALLOW_SELECTOR_MATCH" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ALLOW_SELECTOR_MATCH</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ALLOW_SELECTOR_MATCH</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -6718,12 +6852,35 @@
 
 
 
+<h3 id="textual.message.Message.control" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">control</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.message.Message.control" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">control</span><span class="p">:</span> <span class="n">Widget</span> <span class="o">|</span> <span class="kc">None</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>The widget associated with this message, or None by default.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
 <h3 id="textual.message.Message.handler_name" class="doc doc-heading">
         <span class="doc doc-object-name doc-attribute-name">handler_name</span>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.message.Message.handler_name" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -6732,7 +6889,7 @@
 
   <div class="doc doc-contents ">
   
-      <p>The name of the handler associated with this message.</p>
+      <p>Name of the default message handler.</p>
   </div>
 
 </div>

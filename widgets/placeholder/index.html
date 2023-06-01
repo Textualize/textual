@@ -14,7 +14,7 @@
         <link rel="prev" href="../option_list/">
       
       
-        <link rel="next" href="../progress_bar/">
+        <link rel="next" href="../pretty/">
       
       
         
@@ -24,7 +24,7 @@
         <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../feed_rss_updated.xml">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.5+insiders-4.32.4">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.5+insiders-4.32.4">
     
     
       
@@ -4242,6 +4242,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
@@ -4811,10 +4817,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#textual.widgets._placeholder.Placeholder.render" class="md-nav__link">
+  <a href="#textual.widgets._placeholder.Placeholder.on_mount" class="md-nav__link">
     <span class="md-ellipsis">
       
-        render()
+        on_mount()
       
     </span>
   </a>
@@ -4822,10 +4828,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#textual.widgets._placeholder.Placeholder.reset_color_cycle" class="md-nav__link">
+  <a href="#textual.widgets._placeholder.Placeholder.render" class="md-nav__link">
     <span class="md-ellipsis">
       
-        reset_color_cycle()
+        render()
       
     </span>
   </a>
@@ -4852,6 +4858,32 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pretty/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Pretty
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -4948,6 +4980,58 @@
     
   
     Select
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../selection_list/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    SelectionList
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sparkline/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Sparkline
   
 
     
@@ -5168,6 +5252,8 @@
       
         
           
+        
+      
         
       
         
@@ -5914,6 +6000,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../api/suggester/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Suggester
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../api/timer/" class="md-nav__link">
         
   
@@ -6630,10 +6742,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#textual.widgets._placeholder.Placeholder.render" class="md-nav__link">
+  <a href="#textual.widgets._placeholder.Placeholder.on_mount" class="md-nav__link">
     <span class="md-ellipsis">
       
-        render()
+        on_mount()
       
     </span>
   </a>
@@ -6641,10 +6753,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#textual.widgets._placeholder.Placeholder.reset_color_cycle" class="md-nav__link">
+  <a href="#textual.widgets._placeholder.Placeholder.render" class="md-nav__link">
     <span class="md-ellipsis">
       
-        reset_color_cycle()
+        render()
       
     </span>
   </a>
@@ -7135,10 +7247,13 @@ of the placeholder, if any.</p></td>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._placeholder.Placeholder.variant" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">variant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_variant</span><span class="p">(</span><span class="n">variant</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">variant</span><span class="p">:</span> <span class="n">Reactive</span><span class="p">[</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">PlaceholderVariant</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_variant</span><span class="p">(</span><span class="n">variant</span><span class="p">)</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -7195,6 +7310,29 @@ of the placeholder, if any.</p></td>
 
 
 
+<h3 id="textual.widgets._placeholder.Placeholder.on_mount" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">on_mount</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._placeholder.Placeholder.on_mount" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">on_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Set the color for this placeholder.</p>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
 <h3 id="textual.widgets._placeholder.Placeholder.render" class="doc doc-heading">
         <span class="doc doc-object-name doc-function-name">render</span>
   
@@ -7227,29 +7365,6 @@ of the placeholder, if any.</p></td>
         </tr>
     </tbody>
   </table>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-
-<h3 id="textual.widgets._placeholder.Placeholder.reset_color_cycle" class="doc doc-heading">
-        <span class="doc doc-object-name doc-function-name">reset_color_cycle</span>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
-  </span>
-
-<a href="#textual.widgets._placeholder.Placeholder.reset_color_cycle" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">reset_color_cycle</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-  
-      <p>Reset the placeholder background color cycle.</p>
 
   </div>
 
@@ -7324,13 +7439,13 @@ of the placeholder, if any.</p></td>
         
         
           
-          <a href="../progress_bar/" class="md-footer__link md-footer__link--next" aria-label="Next: ProgressBar" rel="next">
+          <a href="../pretty/" class="md-footer__link md-footer__link--next" aria-label="Next: Pretty" rel="next">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                ProgressBar
+                Pretty
               </div>
             </div>
             <div class="md-footer__button md-icon">

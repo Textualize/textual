@@ -24,7 +24,7 @@
         <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../feed_rss_updated.xml">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.5+insiders-4.32.4">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.5+insiders-4.32.4">
     
     
       
@@ -4487,6 +4487,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -4957,6 +4963,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../widgets/pretty/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Pretty
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../widgets/progress_bar/" class="md-nav__link">
         
   
@@ -5042,6 +5074,58 @@
     
   
     Select
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/selection_list/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    SelectionList
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/sparkline/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Sparkline
   
 
     
@@ -5262,6 +5346,8 @@
       
         
           
+        
+      
         
       
         
@@ -5989,6 +6075,32 @@
     
   
     Strip
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/suggester/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Suggester
   
 
     
@@ -8290,8 +8402,8 @@ The main screen is darkened to indicate to the user that it is not active, and o
 <h2 id="returning-data-from-screens">Returning data from screens<a class="headerlink" href="#returning-data-from-screens" title="Permanent link">&para;</a></h2>
 <p>It is a common requirement for screens to be able to return data.
 For instance, you may want a screen to show a dialog and have the result of that dialog processed <em>after</em> the screen has been popped.</p>
-<p>To return data from a screen, call [<code>dismiss()</code>][textual.screen.dismiss] on the screen with the data you wish to return.
-This will pop the screen and invoke a callback set when the screen was pushed (with [<code>push_screen</code>][textual.app.push_screen]).</p>
+<p>To return data from a screen, call <a class="autorefs autorefs-internal" href="../../api/screen/#textual.screen.Screen.dismiss"><code>dismiss()</code></a> on the screen with the data you wish to return.
+This will pop the screen and invoke a callback set when the screen was pushed (with <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.push_screen"><code>push_screen</code></a>).</p>
 <p>Let's modify the previous example to use <code>dismiss</code> rather than an explicit <code>pop_screen</code>.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="5:2"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">modal03.py</label><label for="__tabbed_5_2">modal01.css</label></div>
 <div class="tabbed-content">

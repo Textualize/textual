@@ -14,7 +14,7 @@
         <link rel="prev" href="../radioset/">
       
       
-        <link rel="next" href="../static/">
+        <link rel="next" href="../selection_list/">
       
       
         
@@ -24,7 +24,7 @@
         <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../feed_rss_updated.xml">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.5+insiders-4.32.4">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.5+insiders-4.32.4">
     
     
       
@@ -4242,6 +4242,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
@@ -4712,6 +4718,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../pretty/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Pretty
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../progress_bar/" class="md-nav__link">
         
   
@@ -4937,6 +4969,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._select.Select.prompt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        prompt
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._select.Select.value" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4964,6 +5007,17 @@
     <span class="md-ellipsis">
       
         control
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._select.Select.Changed.select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select
       
     </span>
   </a>
@@ -5028,6 +5082,58 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../selection_list/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    SelectionList
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sparkline/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Sparkline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -5240,6 +5346,8 @@
       
         
           
+        
+      
         
       
         
@@ -5967,6 +6075,32 @@
     
   
     Strip
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/suggester/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Suggester
   
 
     
@@ -6724,6 +6858,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._select.Select.prompt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        prompt
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._select.Select.value" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6751,6 +6896,17 @@
     <span class="md-ellipsis">
       
         control
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._select.Select.Changed.select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select
       
     </span>
   </a>
@@ -7242,7 +7398,7 @@ For instance, if the data type for your values is an integer, you would type the
 </tr>
 <tr>
 <td><code>value</code></td>
-<td><code>SelectType \| None</code></td>
+<td><code>SelectType</code> | <code>None</code></td>
 <td><code>None</code></td>
 <td>Current value of the Select.</td>
 </tr>
@@ -7431,6 +7587,7 @@ When activated with <span class="keys"><kbd class="key-enter">Enter</kbd></span>
 
   
   <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
@@ -7467,6 +7624,7 @@ When activated with <span class="keys"><kbd class="key-enter">Enter</kbd></span>
 
   
   <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
@@ -7485,11 +7643,36 @@ When activated with <span class="keys"><kbd class="key-enter">Enter</kbd></span>
 
 
 
+<h3 id="textual.widgets._select.Select.prompt" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">prompt</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+  </span>
+
+<a href="#textual.widgets._select.Select.prompt" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">prompt</span><span class="p">:</span> <span class="n">var</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">prompt</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>The prompt to show when no value is selected.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
 <h3 id="textual.widgets._select.Select.value" class="doc doc-heading">
         <span class="doc doc-object-name doc-attribute-name">value</span>
 
   
   <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
@@ -7522,7 +7705,7 @@ When activated with <span class="keys"><kbd class="key-enter">Enter</kbd></span>
   </span>
 
 <a href="#textual.widgets._select.Select.Changed" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">control</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">select</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -7554,16 +7737,39 @@ When activated with <span class="keys"><kbd class="key-enter">Enter</kbd></span>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 <a href="#textual.widgets._select.Select.Changed.control" class="headerlink" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">control</span> <span class="o">=</span> <span class="n">control</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">control</span><span class="p">:</span> <span class="n">Select</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
   
-      <p>The select control.</p>
+      <p>The Select that sent the message.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="textual.widgets._select.Select.Changed.select" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">select</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#textual.widgets._select.Select.Changed.select" class="headerlink" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">select</span> <span class="o">=</span> <span class="n">select</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>The select widget.</p>
   </div>
 
 </div>
@@ -7741,13 +7947,13 @@ When activated with <span class="keys"><kbd class="key-enter">Enter</kbd></span>
         
         
           
-          <a href="../static/" class="md-footer__link md-footer__link--next" aria-label="Next: Static" rel="next">
+          <a href="../selection_list/" class="md-footer__link md-footer__link--next" aria-label="Next: SelectionList" rel="next">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Static
+                SelectionList
               </div>
             </div>
             <div class="md-footer__button md-icon">

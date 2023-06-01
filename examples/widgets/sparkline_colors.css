@@ -1,0 +1,74 @@
+Sparkline {
+    width: 100%;
+    margin: 1;
+}
+
+#fst > .sparkline--max-color {
+    color: $success;
+}
+#fst > .sparkline--min-color {
+    color: $warning;
+}
+
+#snd > .sparkline--max-color {
+    color: $warning;
+}
+#snd > .sparkline--min-color {
+    color: $success;
+}
+
+#trd > .sparkline--max-color {
+    color: $error;
+}
+#trd > .sparkline--min-color {
+    color: $warning;
+}
+
+#frt > .sparkline--max-color {
+    color: $warning;
+}
+#frt > .sparkline--min-color {
+    color: $error;
+}
+
+#fft > .sparkline--max-color {
+    color: $accent;
+}
+#fft > .sparkline--min-color {
+    color: $accent 30%;
+}
+
+#sxt > .sparkline--max-color {
+    color: $accent 30%;
+}
+#sxt > .sparkline--min-color {
+    color: $accent;
+}
+
+#svt > .sparkline--max-color {
+    color: $error;
+}
+#svt > .sparkline--min-color {
+    color: $error 30%;
+}
+
+#egt > .sparkline--max-color {
+    color: $error 30%;
+}
+#egt > .sparkline--min-color {
+    color: $error;
+}
+
+#nnt > .sparkline--max-color {
+    color: $success;
+}
+#nnt > .sparkline--min-color {
+    color: $success 30%;
+}
+
+#tnt > .sparkline--max-color {
+    color: $success 30%;
+}
+#tnt > .sparkline--min-color {
+    color: $success;
+}
