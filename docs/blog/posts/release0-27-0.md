@@ -18,7 +18,7 @@ We've been a little distracted with our "dogfood" projects: [Frogmouth](https://
 
 ## Sparkline widget
 
-A [Sparkline](../../widget_gallery.md#selectionlist) is essentially a mini-plot. Just detailed enough to keep an eye on time-series data.
+A [Sparkline](../../widget_gallery.md#sparkline) is essentially a mini-plot. Just detailed enough to keep an eye on time-series data.
 
 <div>
 --8<-- "docs/blog/images/sparkline.svg"
