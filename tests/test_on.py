@@ -253,6 +253,10 @@ async def test_fire_inherited_on_single_handler_multi_selector() -> None:
         def catch_selector_combined_hits(self, event: MessageSender.Parent) -> None:
             posted.append(f"combined hits {event.__class__.__name__}")
 
+        @on(MessageSender.Child, ".a.x")
+        def catch_selector_combined_miss(self, event: MessageSender.Parent) -> None:
+            posted.append(f"combined miss {event.__class__.__name__}")
+
         def on_mount(self) -> None:
             self.query_one(MessageSender).post_parent()
             self.query_one(MessageSender).post_child()
