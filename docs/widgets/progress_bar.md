@@ -49,12 +49,12 @@ The example below shows a simple app with a progress bar that is keeping track o
 
 === "Output (partial funding)"
 
-    ```{.textual path="docs/examples/widgets/progress_bar.py" press="tab,1,5,enter,2,0,enter"}
+    ```{.textual path="docs/examples/widgets/progress_bar.py" press="1,5,enter,2,0,enter"}
     ```
 
 === "Output (full funding)"
 
-    ```{.textual path="docs/examples/widgets/progress_bar.py" press="tab,1,5,enter,2,0,enter,6,5,enter"}
+    ```{.textual path="docs/examples/widgets/progress_bar.py" press="1,5,enter,2,0,enter,6,5,enter"}
     ```
 
 === "progress_bar.py"
