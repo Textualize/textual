@@ -13,7 +13,7 @@ The example below shows how you might create a simple form using two `Input` wid
 
 === "Output"
 
-    ```{.textual path="docs/examples/widgets/input.py" press="tab,D,a,r,r,e,n"}
+    ```{.textual path="docs/examples/widgets/input.py" press="D,a,r,r,e,n"}
     ```
 
 === "input.py"
