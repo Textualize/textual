@@ -583,7 +583,7 @@ Let's extend the `ByteEditor` so that clicking any of the 8 `BitSwitch` widgets 
 
 === "Output"
 
-    ```{.textual path="docs/examples/guide/compound/byte02.py" columns="90" line="30", press="tab,tab,tab,tab,enter"}
+    ```{.textual path="docs/examples/guide/compound/byte02.py" columns="90" line="30", press="tab,tab,tab,enter"}
     ```
 
 - The `BitSwitch` widget now has an `on_switch_changed` method which will handle a [`Switch.Changed`][textual.widgets.Switch.Changed] message, sent when the user clicks a switch. We use this to store the new value of the bit, and sent a new custom message, `BitSwitch.BitChanged`.
@@ -619,7 +619,7 @@ This is an example of "attributes down".
 
 === "Output"
 
-    ```{.textual path="docs/examples/guide/compound/byte03.py" columns="90" line="30", press="tab,1,0,0"}
+    ```{.textual path="docs/examples/guide/compound/byte03.py" columns="90" line="30", press="1,0,0"}
     ```
 
 - When the user edits the input, the [Input](../widgets/input.md) widget sends a `Changed` event, which we handle with `on_input_changed` by setting `self.value`, which is a reactive value we added to `ByteEditor`.
