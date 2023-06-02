@@ -89,7 +89,7 @@ A control to enter text.
 [Input reference](./widgets/input.md){ .md-button .md-button--primary }
 
 
-```{.textual path="docs/examples/widgets/input.py" press="tab,D,a,r,r,e,n"}
+```{.textual path="docs/examples/widgets/input.py" press="D,a,r,r,e,n"}
 ```
 
 
