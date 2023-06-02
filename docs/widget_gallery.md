@@ -175,7 +175,7 @@ A configurable progress bar with ETA and percentage complete.
 [ProgressBar reference](./widgets/progress_bar.md){ .md-button .md-button--primary }
 
 
-```{.textual path="docs/examples/widgets/progress_bar.py" press="tab,5,0,tab,enter"}
+```{.textual path="docs/examples/widgets/progress_bar.py" press="5,0,tab,enter"}
 ```
 
 
