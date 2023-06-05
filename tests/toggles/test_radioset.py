@@ -17,6 +17,7 @@ class RadioSetApp(App[None]):
         yield RadioSet("One", "True", "Three", id="from_strings")
 
     def on_radio_set_changed(self, event: RadioSet.Changed) -> None:
+        assert event.radio_set is event.control
         self.events_received.append(
             (
                 event.radio_set.id,
