@@ -1811,13 +1811,13 @@ class App(Generic[ReturnType], DOMNode):
                 self.error_console.print(renderable)
             if error_count > 1:
                 self.error_console.print(
-                    f"\n[b]NOTE:[/b] {error_count} errors show above.", markup=True
+                    f"\n[b]NOTE:[/b] {error_count} errors shown above.", markup=True
                 )
         elif self._exit_renderables:
             self.error_console.print(self._exit_renderables[0])
             if error_count > 1:
                 self.error_console.print(
-                    f"\n[b]NOTE:[/b] 1 of {error_count} errors show. Run with [b]--dev[/] to see all errors.",
+                    f"\n[b]NOTE:[/b] 1 of {error_count} errors shown. Run with [b]--dev[/] to see all errors.",
                     markup=True,
                 )
 
