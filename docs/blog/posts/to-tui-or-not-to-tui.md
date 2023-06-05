@@ -70,7 +70,7 @@ I'm looking forward to seeing how far we can taken them.
 
 With previous generations of software, TUIs have required a high degree of motivation to build.
 That has changed with the work that we (and others) have been doing.
-A TUI can be a powerful and maintainable pieced of software which works as a standalone project, or as a value-add to an existing project.
+A TUI can be a powerful and maintainable piece of software which works as a standalone project, or as a value-add to an existing project.
 
 As a forever-technology, a TUI is a safe bet.
 
