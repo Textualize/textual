@@ -7567,7 +7567,7 @@ which allows you to set the type of the
 the data type for your values is an integer, you would type the widget as
 follows:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">selections</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;First&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;Second&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)]</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">my_selection_list</span><span class="p">:</span> <span class="n">SelectionList</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span>  <span class="n">SelectionList</span><span class="p">(</span><span class="n">selections</span><span class="p">)</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">my_selection_list</span><span class="p">:</span> <span class="n">SelectionList</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span>  <span class="n">SelectionList</span><span class="p">(</span><span class="o">*</span><span class="n">selections</span><span class="p">)</span>
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -8570,8 +8570,8 @@ makes use of the following component classes:</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._selection_list.SelectionList.BINDINGS" class="headerlink" title="Permanent link">&para;</a></h3>
