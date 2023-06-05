@@ -31,7 +31,7 @@ Note that the text contains tags in square brackets, i.e. `[b]`. This is [consol
 ```{.textual path="docs/examples/guide/widgets/hello01.py"}
 ```
 
-This (very simple) custom widget may be [styled](./styles.md) in the same was as builtin widgets, and targeted with CSS. Let's add some CSS to this app.
+This (very simple) custom widget may be [styled](./styles.md) in the same way as builtin widgets, and targeted with CSS. Let's add some CSS to this app.
 
 
 === "hello02.py"

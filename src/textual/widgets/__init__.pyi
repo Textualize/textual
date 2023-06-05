@@ -21,6 +21,7 @@ from ._radio_button import RadioButton as RadioButton
 from ._radio_set import RadioSet as RadioSet
 from ._select import Select as Select
 from ._selection_list import SelectionList as SelectionList
+from ._sparkline import Sparkline as Sparkline
 from ._static import Static as Static
 from ._switch import Switch as Switch
 from ._tabbed_content import TabbedContent as TabbedContent

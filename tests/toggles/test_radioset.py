@@ -17,6 +17,7 @@ class RadioSetApp(App[None]):
         yield RadioSet("One", "True", "Three", id="from_strings")
 
     def on_radio_set_changed(self, event: RadioSet.Changed) -> None:
+        assert event.radio_set is event.control
         self.events_received.append(
             (
                 event.radio_set.id,
@@ -93,6 +94,23 @@ async def test_radioset_inner_navigation():
         assert pilot.app.query_one("#from_strings", RadioSet)._selected == 0
         await pilot.press("down")
         assert pilot.app.query_one("#from_strings", RadioSet)._selected == 1
+
+
+async def test_radioset_inner_navigation_post_build():
+    class EmptyRadioSetApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield RadioSet()
+
+        def on_mount(self) -> None:
+            # This isn't encouraged; but neither is it currently prohibited;
+            # so let's test.
+            for n in range(5):
+                self.query_one(RadioSet).mount(RadioButton(id=f"rb{n}"))
+
+    async with EmptyRadioSetApp().run_test() as pilot:
+        assert pilot.app.query_one(RadioSet)._selected is None
+        await pilot.press("up")
+        assert pilot.app.query_one(RadioSet)._selected == 0
 
 
 async def test_radioset_breakout_navigation():

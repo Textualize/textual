@@ -177,22 +177,6 @@ class ActiveModeError(ModeError):
     """Raised when attempting to remove the currently active mode."""
 
 
-class ModeError(Exception):
-    """Base class for exceptions related to modes."""
-
-
-class InvalidModeError(ModeError):
-    """Raised if there is an issue with a mode name."""
-
-
-class UnknownModeError(ModeError):
-    """Raised when attempting to use a mode that is not known."""
-
-
-class ActiveModeError(ModeError):
-    """Raised when attempting to remove the currently active mode."""
-
-
 class CssPathError(Exception):
     """Raised when supplied CSS path(s) are invalid."""
 
@@ -414,6 +398,7 @@ class App(Generic[ReturnType], DOMNode):
 
         self.design = DEFAULT_COLORS
 
+        self._css_has_errors = False
         self.stylesheet = Stylesheet(variables=self.get_css_variables())
 
         css_path = css_path or self.CSS_PATH
@@ -1247,14 +1232,27 @@ class App(Generic[ReturnType], DOMNode):
                 stylesheet.read_all(css_paths)
                 stylesheet.parse()
                 elapsed = (perf_counter() - time) * 1000
+                if self._css_has_errors:
+                    from rich.panel import Panel
+
+                    self.log.system(
+                        Panel(
+                            "CSS files successfully loaded after previous error:\n\n- "
+                            + "\n- ".join(str(path) for path in css_paths),
+                            style="green",
+                            border_style="green",
+                        )
+                    )
                 self.log.system(
                     f"<stylesheet> loaded {len(css_paths)} CSS files in {elapsed:.0f} ms"
                 )
             except Exception as error:
                 # TODO: Catch specific exceptions
+                self._css_has_errors = True
                 self.log.error(error)
                 self.bell()
             else:
+                self._css_has_errors = False
                 self.stylesheet = stylesheet
                 self.stylesheet.update(self)
                 self.screen.refresh(layout=True)

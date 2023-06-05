@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+- The devtools console now confirms when CSS files have been successfully loaded after a previous error https://github.com/Textualize/textual/pull/2716
+
+### Fixed
+
+- Fixed setting `TreeNode.label` on an existing `Tree` node not immediately https://github.com/Textualize/textual/pull/2713
+
+## [0.27.0] - 2023-06-01
 
 ### Fixed
 
@@ -31,6 +40,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Widget.remove_children` https://github.com/Textualize/textual/pull/2657
 - Added `Validator` framework and validation for `Input` https://github.com/Textualize/textual/pull/2600
 - Added `message_hook` to App.run_test https://github.com/Textualize/textual/pull/2702
+- Added `Sparkline` widget https://github.com/Textualize/textual/pull/2631
 
 ### Changed
 
