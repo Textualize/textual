@@ -26,6 +26,7 @@ async def test_no_initial_display() -> None:
         assert all(
             not child.display for child in pilot.app.query_one(ContentSwitcher).children
         )
+        assert pilot.app.query_one(ContentSwitcher).visible_content is None
 
 
 async def test_initial_display() -> None:
@@ -34,6 +35,9 @@ async def test_initial_display() -> None:
         assert pilot.app.query_one(ContentSwitcher).current == "w3"
         for child in pilot.app.query_one(ContentSwitcher).children:
             assert child.display is (child.id == "w3")
+        assert pilot.app.query_one(
+            ContentSwitcher
+        ).visible_content is pilot.app.query_one("#w3")
 
 
 async def test_no_initial_display_then_set() -> None:
@@ -43,10 +47,14 @@ async def test_no_initial_display_then_set() -> None:
         assert all(
             not child.display for child in pilot.app.query_one(ContentSwitcher).children
         )
+        assert pilot.app.query_one(ContentSwitcher).visible_content is None
         pilot.app.query_one(ContentSwitcher).current = "w3"
         assert pilot.app.query_one(ContentSwitcher).current == "w3"
         for child in pilot.app.query_one(ContentSwitcher).children:
             assert child.display is (child.id == "w3")
+        assert pilot.app.query_one(
+            ContentSwitcher
+        ).visible_content is pilot.app.query_one("#w3")
 
 
 async def test_initial_display_then_change() -> None:
@@ -55,10 +63,16 @@ async def test_initial_display_then_change() -> None:
         assert pilot.app.query_one(ContentSwitcher).current == "w3"
         for child in pilot.app.query_one(ContentSwitcher).children:
             assert child.display is (child.id == "w3")
+        assert pilot.app.query_one(
+            ContentSwitcher
+        ).visible_content is pilot.app.query_one("#w3")
         pilot.app.query_one(ContentSwitcher).current = "w2"
         assert pilot.app.query_one(ContentSwitcher).current == "w2"
         for child in pilot.app.query_one(ContentSwitcher).children:
             assert child.display is (child.id == "w2")
+        assert pilot.app.query_one(
+            ContentSwitcher
+        ).visible_content is pilot.app.query_one("#w2")
 
 
 async def test_initial_display_then_hide() -> None:
