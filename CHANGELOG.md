@@ -15,6 +15,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed setting `TreeNode.label` on an existing `Tree` node not immediately https://github.com/Textualize/textual/pull/2713
 
+### Removed
+- Removed the following arguments from `DataTable.__init__` (they can still be set via the reactive attributes):
+  - `show_header`
+  - `show_row_labels`
+  - `fixed_rows`
+  - `fixed_columns`
+  - `zebra_stripes`
+  - `header_height`
+  - `show_cursor`
+
 ## [0.27.0] - 2023-06-01
 
 ### Fixed

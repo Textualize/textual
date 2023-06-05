@@ -299,12 +299,19 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     """
 
     show_header = Reactive(True)
+    """Show/hide the header row (the row of column labels)."""
     show_row_labels = Reactive(True)
+    """Show/hide the column containing the labels of rows."""
     fixed_rows = Reactive(0)
+    """The number of rows to fix (prevented from scrolling)."""
     fixed_columns = Reactive(0)
+    """The number of columns to fix (prevented from scrolling)."""
     zebra_stripes = Reactive(False)
+    """Apply zebra effect on row backgrounds (light, dark, light, dark, ...)."""
     header_height = Reactive(1)
+    """The height of the header row (the row of column labels)."""
     show_cursor = Reactive(True)
+    """Show/hide both the keyboard and hover cursor."""
     cursor_type: Reactive[CursorType] = Reactive[CursorType]("cell")
     """The type of the cursor of the `DataTable`."""
 
@@ -572,13 +579,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def __init__(
         self,
         *,
-        show_header: bool = True,
-        show_row_labels: bool = True,
-        fixed_rows: int = 0,
-        fixed_columns: int = 0,
-        zebra_stripes: bool = False,
-        header_height: int = 1,
-        show_cursor: bool = True,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -645,21 +645,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Whether or not the user has supplied any rows with labels."""
         self._label_column = Column(self._label_column_key, Text(), auto_width=True)
         """The largest content width out of all row labels in the table."""
-
-        self.show_header = show_header
-        """Show/hide the header row (the row of column labels)."""
-        self.show_row_labels = show_row_labels
-        """Show/hide the column containing the labels of rows."""
-        self.header_height = header_height
-        """The height of the header row (the row of column labels)."""
-        self.fixed_rows = fixed_rows
-        """The number of rows to fix (prevented from scrolling)."""
-        self.fixed_columns = fixed_columns
-        """The number of columns to fix (prevented from scrolling)."""
-        self.zebra_stripes = zebra_stripes
-        """Apply zebra effect on row backgrounds (light, dark, light, dark, ...)."""
-        self.show_cursor = show_cursor
-        """Show/hide both the keyboard and hover cursor."""
 
     @property
     def hover_row(self) -> int:
