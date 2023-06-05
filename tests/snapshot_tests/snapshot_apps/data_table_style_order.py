@@ -1,3 +1,5 @@
+from typing_extensions import Literal
+
 from textual.app import App, ComposeResult
 from textual.widgets import DataTable, Label
 
@@ -6,6 +8,17 @@ data = [
     "Foundation",
     "Dark",
 ]
+
+
+def make_datatable(foreground_priority: Literal["css", "renderable"],
+                   background_priority: Literal["css", "renderable"]) -> DataTable:
+    table = DataTable(cursor_foreground_priority=foreground_priority,
+                      cursor_background_priority=background_priority)
+    table.zebra_stripes = True
+    table.add_column("Movies")
+    for row in data:
+        table.add_row(f"[red on blue]{row}")
+    return table
 
 
 class DataTableCursorStyles(App):
@@ -25,7 +38,7 @@ DataTable > .datatable--cursor {
 """
 
     def compose(self) -> ComposeResult:
-        priorities = [
+        priorities: list[tuple[Literal["css", "renderable"], Literal["css", "renderable"]]] = [
             ("css", "css"),
             ("css", "renderable"),
             ("renderable", "renderable"),
@@ -33,17 +46,8 @@ DataTable > .datatable--cursor {
         ]
         for foreground, background in priorities:
             yield Label(f"Foreground is {foreground!r}, background is {background!r}:")
-            table = self.make_datatable(foreground, background)
+            table = make_datatable(foreground, background)
             yield table
-
-    def make_datatable(self, foreground_priority, background_priority) -> DataTable:
-        table = DataTable(cursor_foreground_priority=foreground_priority,
-                          cursor_background_priority=background_priority)
-        table.zebra_stripes = True
-        table.add_column("Movies")
-        for row in data:
-            table.add_row(f"[red on blue]{row}")
-        return table
 
 
 app = DataTableCursorStyles()

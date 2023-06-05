@@ -579,7 +579,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         zebra_stripes: bool = False,
         header_height: int = 1,
         show_cursor: bool = True,
-        cursor_foreground_priority: Literal["renderable", "css"] = "renderable",
+        cursor_foreground_priority: Literal["renderable", "css"] = "css",
         cursor_background_priority: Literal["renderable", "css"] = "renderable",
         name: str | None = None,
         id: str | None = None,
@@ -1672,7 +1672,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                     component_style += get_component("datatable--header-hover")
 
             if cursor and show_cursor:
-                cursor_style = get_component("datatable--cursor", partial=True)
+                cursor_style = get_component("datatable--cursor")
                 component_style += cursor_style
                 if is_header_cell or is_row_label_cell:
                     component_style += get_component("datatable--header-cursor")
