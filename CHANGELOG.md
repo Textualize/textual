@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Widget.remove_children` https://github.com/Textualize/textual/pull/2657
 - Added `Validator` framework and validation for `Input` https://github.com/Textualize/textual/pull/2600
 - Added `message_hook` to App.run_test https://github.com/Textualize/textual/pull/2702
+- Added `cursor_foreground_priority` and `cursor_background_priority` to `DataTable` https://github.com/Textualize/textual/pull/2736
 
 ### Changed
 
