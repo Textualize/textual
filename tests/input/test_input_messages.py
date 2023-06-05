@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from textual import on
 from textual.app import App, ComposeResult
+from textual.events import Paste
 from textual.widgets import Input
 
 
@@ -64,3 +65,11 @@ async def test_submit_pre_populated_input():
     async with InputApp("The owls are not what they seem").run_test() as pilot:
         await pilot.press("enter")
         assert pilot.app.messages == ["Changed", "Submitted"]
+
+
+async def test_paste_event_impact():
+    """A paste event should result in a changed event."""
+    async with InputApp().run_test() as pilot:
+        await pilot.app._post_message(Paste("Hello, World"))
+        await pilot.pause()
+        assert pilot.app.messages == ["Changed"]
