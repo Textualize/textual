@@ -282,7 +282,7 @@ class Input(Widget, can_focus=True):
         new_view_position = max(0, min(view_position, self.cursor_width - width))
         return new_view_position
 
-    def watch_cursor_position(self, cursor_position: int) -> None:
+    def _watch_cursor_position(self) -> None:
         width = self.content_size.width
         if width == 0:
             # If the input has no width the view position can't be elsewhere.
@@ -299,7 +299,7 @@ class Input(Widget, can_focus=True):
         else:
             self.view_position = self.view_position
 
-    async def watch_value(self, value: str) -> None:
+    async def _watch_value(self, value: str) -> None:
         self._suggestion = ""
         if self.suggester and value:
             self.run_worker(self.suggester._get_suggestion(self, value))
@@ -400,12 +400,7 @@ class Input(Widget, can_focus=True):
         if self.cursor_blink:
             self.blink_timer.reset()
 
-        # Do key bindings first
-        if await self.handle_key(event):
-            event.prevent_default()
-            event.stop()
-            return
-        elif event.is_printable:
+        if event.is_printable:
             event.stop()
             assert event.character is not None
             self.insert_text_at_cursor(event.character)
