@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed setting `TreeNode.label` on an existing `Tree` node not immediately https://github.com/Textualize/textual/pull/2713
+- Correctly implement `__eq__` protocol in DataTable https://github.com/Textualize/textual/pull/2705
 
 ## [0.27.0] - 2023-06-01
 

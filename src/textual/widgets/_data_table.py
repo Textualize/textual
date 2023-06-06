@@ -97,7 +97,7 @@ class StringKey:
             else:
                 return hash(self) == hash(other)
         else:
-            raise NotImplemented
+            return NotImplemented
 
     def __lt__(self, other):
         if isinstance(other, str):
@@ -105,7 +105,7 @@ class StringKey:
         elif isinstance(other, StringKey):
             return self.value < other.value
         else:
-            raise NotImplemented
+            return NotImplemented
 
     def __rich_repr__(self):
         yield "value", self.value
