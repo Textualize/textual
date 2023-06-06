@@ -211,6 +211,17 @@ class TabbedContent(Widget):
         pane.display = False
         return self.get_child_by_type(ContentSwitcher).mount(pane)
 
+    def remove_pane(self, pane_id: str) -> None:
+        """Remove a given pane from the tabbed content.
+
+        Args:
+            pane_id: The ID of the pane to remove.
+        """
+        self.get_child_by_type(Tabs).remove_tab(pane_id)
+        self.call_after_refresh(
+            self.get_child_by_type(ContentSwitcher).get_child_by_id(pane_id).remove
+        )
+
     def compose_add_child(self, widget: Widget) -> None:
         """When using the context manager compose syntax, we want to attach nodes to the switcher.
 
@@ -237,6 +248,7 @@ class TabbedContent(Widget):
     def _on_tabs_cleared(self, event: Tabs.Cleared) -> None:
         """All tabs were removed."""
         event.stop()
+        self.get_child_by_type(ContentSwitcher).current = None
 
     def _watch_active(self, active: str) -> None:
         """Switch tabs when the active attributes changes."""
