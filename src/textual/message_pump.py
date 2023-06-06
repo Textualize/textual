@@ -77,7 +77,7 @@ class _MessagePumpMeta(type):
 
         # Look for reactives with public AND private compute methods.
         prefix = "compute_"
-        prefix_len = len("compute_")
+        prefix_len = len(prefix)
         for attr_name, value in class_dict.items():
             if attr_name.startswith(prefix) and callable(value):
                 reactive_name = attr_name[prefix_len:]
