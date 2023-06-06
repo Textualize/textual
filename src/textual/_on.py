@@ -63,7 +63,6 @@ def on(
         selectors.update(kwargs)
 
     parsed_selectors: dict[str, tuple[SelectorSet, ...]] = {}
-
     for attribute, css_selector in selectors.items():
         if attribute == "control":
             if message_type.control == Message.control:
