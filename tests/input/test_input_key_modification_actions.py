@@ -49,6 +49,15 @@ async def test_delete_left_word_from_home() -> None:
             assert input.value == TEST_INPUTS[input.id]
 
 
+async def test_delete_left_word_from_inside_first_word() -> None:
+    async with InputTester().run_test() as pilot:
+        for input in pilot.app.query(Input):
+            input.cursor_position = 1
+            input.action_delete_left_word()
+            assert input.cursor_position == 0
+            assert input.value == TEST_INPUTS[input.id][1:]
+
+
 async def test_delete_left_word_from_end() -> None:
     """Deleting word left from end should remove the expected text."""
     async with InputTester().run_test() as pilot:
