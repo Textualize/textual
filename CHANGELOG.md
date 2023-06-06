@@ -45,12 +45,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Keybinding <kbd>right</kbd> in `Input` is also used to accept a suggestion if the cursor is at the end of the input https://github.com/Textualize/textual/pull/2604
 - `Input.__init__` now accepts a `suggester` attribute for completion suggestions https://github.com/Textualize/textual/pull/2604
 - Using `switch_screen` to switch to the currently active screen is now a no-op https://github.com/Textualize/textual/pull/2692
+- Breaking change: removed `reactive.py::Reactive.var` in favor of `reactive.py::var` https://github.com/Textualize/textual/pull/2709/
 
 ### Removed
 
 - `Placeholder.reset_color_cycle`
 - Removed `Widget.reset_focus` (now called `Widget.blur`) https://github.com/Textualize/textual/issues/2642
-- Removed `reactive.py::Reactive.var` in favor of `reactive.py::var` https://github.com/Textualize/textual/pull/2709/
 
 ## [0.26.0] - 2023-05-20
 
