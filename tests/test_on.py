@@ -189,12 +189,6 @@ async def test_fire_on_inherited_message() -> None:
             self.query_one(MessageSender).post_parent()
             self.query_one(MessageSender).post_child()
 
-    from rich import print
-
-    print(InheritTestApp._decorated_handlers)
-    print("___")
-    print(InheritTestApp.catch_parent._textual_on)
-    print(InheritTestApp.catch_child._textual_on)
 
     async with InheritTestApp().run_test():
         pass
