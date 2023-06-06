@@ -593,30 +593,31 @@ class MessagePump(metaclass=_MessagePumpMeta):
                 "dict[type[Message], list[tuple[Callable, dict[str, tuple[SelectorSet, ...]]]]] | None",
                 cls.__dict__.get("_decorated_handlers"),
             )
-            if not decorated_handlers:
-                continue
 
-            for message_class in message_mro:
-                for method, selectors in decorated_handlers.get(message_class, []):
-                    if method in methods_dispatched:
-                        continue
-                    if not selectors:
-                        yield cls, method.__get__(self, cls)
-                        methods_dispatched.add(method)
-                    else:
-                        if not message._sender:
+            if decorated_handlers:
+                for message_class in message_mro:
+                    handlers = decorated_handlers.get(message_class, [])
+
+                    for method, selectors in handlers:
+                        if method in methods_dispatched:
                             continue
-                        for attribute, selector in selectors.items():
-                            node = getattr(message, attribute)
-                            if not isinstance(node, Widget):
-                                raise OnNoWidget(
-                                    f"on decorator can't match against {attribute!r} as it is not a widget."
-                                )
-                            if not match(selector, node):
-                                break
-                        else:
+                        if not selectors:
                             yield cls, method.__get__(self, cls)
                             methods_dispatched.add(method)
+                        else:
+                            if not message._sender:
+                                continue
+                            for attribute, selector in selectors.items():
+                                node = getattr(message, attribute)
+                                if not isinstance(node, Widget):
+                                    raise OnNoWidget(
+                                        f"on decorator can't match against {attribute!r} as it is not a widget."
+                                    )
+                                if not match(selector, node):
+                                    break
+                            else:
+                                yield cls, method.__get__(self, cls)
+                                methods_dispatched.add(method)
 
             # Fall back to the naming convention
             # But avoid calling the handler if it was decorated
