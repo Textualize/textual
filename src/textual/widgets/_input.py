@@ -282,7 +282,7 @@ class Input(Widget, can_focus=True):
         new_view_position = max(0, min(view_position, self.cursor_width - width))
         return new_view_position
 
-    def watch_cursor_position(self, cursor_position: int) -> None:
+    def _watch_cursor_position(self) -> None:
         width = self.content_size.width
         if width == 0:
             # If the input has no width the view position can't be elsewhere.
