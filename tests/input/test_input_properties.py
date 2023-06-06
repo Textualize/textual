@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from rich.highlighter import JSONHighlighter
 from rich.text import Text
 
 from textual.app import App, ComposeResult
@@ -24,6 +25,14 @@ async def test_internal_value_password():
     async with InputApp().run_test() as pilot:
         pilot.app.query_one(Input).password = True
         assert pilot.app.query_one(Input)._value == Text("•" * len(pilot.app.TEST_TEXT))
+
+
+async def test_internal_value_hilighted():
+    async with InputApp().run_test() as pilot:
+        pilot.app.query_one(Input).highlighter = JSONHighlighter()
+        test_text = f'{{"test": "{pilot.app.query_one(Input).value}"}}'
+        pilot.app.query_one(Input).value = test_text
+        assert pilot.app.query_one(Input)._value == JSONHighlighter()(test_text)
 
 
 async def test_cursor_toggle():
