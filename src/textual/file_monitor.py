@@ -13,8 +13,10 @@ from ._callback import invoke
 class FileMonitor:
     """Monitors files for changes and invokes a callback when it does."""
 
+    paths: list[PurePath]
+
     def __init__(self, paths: Sequence[PurePath], callback: Callable) -> None:
-        self.paths = paths
+        self.paths = list(paths)
         self.callback = callback
         self._modified = self._get_last_modified_time()
 

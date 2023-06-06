@@ -4,6 +4,7 @@ Export some objects that are used by Textual and that help document other featur
 
 from ._animator import Animatable, EasingFunction
 from ._context import NoActiveAppError
+from ._path import CSSPathError, CSSPathType
 from ._types import CallbackType, MessageTarget, WatchCallbackType
 from .actions import ActionParseResult
 from .css.styles import RenderStyles
@@ -13,6 +14,8 @@ __all__ = [
     "ActionParseResult",
     "Animatable",
     "CallbackType",
+    "CSSPathError",
+    "CSSPathType",
     "CursorType",
     "EasingFunction",
     "MessageTarget",

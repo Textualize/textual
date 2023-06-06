@@ -2,6 +2,34 @@ from __future__ import annotations
 
 import inspect
 from pathlib import Path, PurePath
+from typing import List, Union
+
+from typing_extensions import TypeAlias
+
+CSSPathType: TypeAlias = Union[
+    str,
+    PurePath,
+    List[Union[str, PurePath]],
+]
+"""Valid ways of specifying paths to CSS files."""
+
+
+class CSSPathError(Exception):
+    """Raised when supplied CSS path(s) are invalid."""
+
+
+def _css_path_type_as_list(css_path: CSSPathType) -> list[PurePath]:
+    paths: list[PurePath] = []
+    if isinstance(css_path, str):
+        paths = [Path(css_path)]
+    elif isinstance(css_path, PurePath):
+        paths = [css_path]
+    elif isinstance(css_path, list):
+        paths = [Path(path) for path in css_path]
+    else:
+        raise CSSPathError("Expected a str, Path or list[str | Path] for the CSS_PATH.")
+
+    return paths
 
 
 def _make_path_object_relative(path: str | PurePath, obj: object) -> Path:
