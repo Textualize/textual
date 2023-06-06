@@ -27,7 +27,7 @@ async def test_internal_value_password():
         assert pilot.app.query_one(Input)._value == Text("•" * len(pilot.app.TEST_TEXT))
 
 
-async def test_internal_value_hilighted():
+async def test_internal_value_highlighted():
     async with InputApp().run_test() as pilot:
         pilot.app.query_one(Input).highlighter = JSONHighlighter()
         test_text = f'{{"test": "{pilot.app.TEST_TEXT}"}}'
