@@ -8,7 +8,7 @@ from rich.text import Text, TextType
 from ..app import ComposeResult
 from ..message import Message
 from ..reactive import reactive
-from ..widget import Widget
+from ..widget import AwaitMount, Widget
 from ._content_switcher import ContentSwitcher
 from ._tabs import Tab, Tabs
 
@@ -157,27 +157,28 @@ class TabbedContent(Widget):
             raise ValueError("'active' tab must not be empty string.")
         return active
 
+    @staticmethod
+    def _set_id(content: TabPane, new_id: int) -> TabPane:
+        """Set an id on the content, if not already present.
+
+        Args:
+            content: a TabPane.
+            new_id: Numeric ID to make the pane ID from.
+
+        Returns:
+            The same TabPane.
+        """
+        if content.id is None:
+            content.id = f"tab-{new_id}"
+        return content
+
     def compose(self) -> ComposeResult:
         """Compose the tabbed content."""
-
-        def set_id(content: TabPane, new_id: str) -> TabPane:
-            """Set an id on the content, if not already present.
-
-            Args:
-                content: a TabPane.
-                new_id: New `is` attribute, if it is not already set.
-
-            Returns:
-                The same TabPane.
-            """
-            if content.id is None:
-                content.id = new_id
-            return content
 
         # Wrap content in a `TabPane` if required.
         pane_content = [
             (
-                set_id(content, f"tab-{index}")
+                self._set_id(content, index)
                 if isinstance(content, TabPane)
                 else TabPane(
                     title or self.render_str(f"Tab {index}"), content, id=f"tab-{index}"
@@ -196,6 +197,19 @@ class TabbedContent(Widget):
         # Yield the content switcher and panes
         with ContentSwitcher(initial=self._initial or None):
             yield from pane_content
+
+    def add_pane(self, pane: TabPane) -> AwaitMount:
+        """Add a new pane to the tabbed content.
+
+        Args:
+            pane: The pane to add.
+        """
+        tabs = self.get_child_by_type(Tabs)
+        pane = self._set_id(pane, tabs.tab_count + 1)
+        assert pane.id is not None
+        tabs.add_tab(ContentTab(pane._title, pane.id))
+        pane.display = False
+        return self.get_child_by_type(ContentSwitcher).mount(pane)
 
     def compose_add_child(self, widget: Widget) -> None:
         """When using the context manager compose syntax, we want to attach nodes to the switcher.
