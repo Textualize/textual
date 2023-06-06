@@ -224,7 +224,7 @@ class TabbedContent(Widget):
         """All tabs were removed."""
         event.stop()
 
-    def watch_active(self, active: str) -> None:
+    def _watch_active(self, active: str) -> None:
         """Switch tabs when the active attributes changes."""
         with self.prevent(Tabs.TabActivated):
             self.get_child_by_type(Tabs).active = active
