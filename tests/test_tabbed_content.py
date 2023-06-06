@@ -156,3 +156,56 @@ async def test_tabbed_content_messages():
         await pilot.pause()
         assert isinstance(app.message, TabbedContent.TabActivated)
         assert app.message.tab.label.plain == "bar"
+
+
+async def test_tabbed_content_add_after_from_empty():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield TabbedContent()
+
+    async with TabbedApp().run_test() as pilot:
+        tabbed_content = pilot.app.query_one(TabbedContent)
+        assert tabbed_content.active == ""
+        await tabbed_content.add_pane(TabPane("Test 1", id="test-1"))
+        assert tabbed_content.active == "test-1"
+        await tabbed_content.add_pane(TabPane("Test 2", id="test-2"))
+        assert tabbed_content.active == "test-1"
+
+
+async def test_tabbed_content_add_after_from_composed():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield TabPane("Test 1", id="initial-1")
+                yield TabPane("Test 2", id="initial-2")
+                yield TabPane("Test 3", id="initial-3")
+
+    async with TabbedApp().run_test() as pilot:
+        tabbed_content = pilot.app.query_one(TabbedContent)
+        assert tabbed_content.active == "initial-1"
+        await tabbed_content.add_pane(TabPane("Test 4", id="test-1"))
+        assert tabbed_content.active == "initial-1"
+        await tabbed_content.add_pane(TabPane("Test 5", id="test-2"))
+        assert tabbed_content.active == "initial-1"
+
+
+async def test_tabbed_content_removal():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield TabPane("Test 1", id="initial-1")
+                yield TabPane("Test 2", id="initial-2")
+                yield TabPane("Test 3", id="initial-3")
+
+    async with TabbedApp().run_test() as pilot:
+        tabbed_content = pilot.app.query_one(TabbedContent)
+        assert tabbed_content.active == "initial-1"
+        tabbed_content.remove_pane("initial-1")
+        await pilot.pause()
+        assert tabbed_content.active == "initial-2"
+        tabbed_content.remove_pane("initial-2")
+        await pilot.pause()
+        assert tabbed_content.active == "initial-3"
+        tabbed_content.remove_pane("initial-3")
+        await pilot.pause()
+        assert tabbed_content.active == ""
