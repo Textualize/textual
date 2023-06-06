@@ -579,6 +579,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         zebra_stripes: bool = False,
         header_height: int = 1,
         show_cursor: bool = True,
+        cursor_foreground_priority: Literal["renderable", "css"] = "css",
+        cursor_background_priority: Literal["renderable", "css"] = "renderable",
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -660,6 +662,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Apply zebra effect on row backgrounds (light, dark, light, dark, ...)."""
         self.show_cursor = show_cursor
         """Show/hide both the keyboard and hover cursor."""
+        self.cursor_foreground_priority = cursor_foreground_priority
+        """Should we prioritize the cursor component class CSS foreground or the renderable foreground
+         in the event where a cell contains a renderable with a foreground color."""
+        self.cursor_background_priority = cursor_background_priority
+        """Should we prioritize the cursor component class CSS background or the renderable background
+         in the event where a cell contains a renderable with a background color."""
 
     @property
     def hover_row(self) -> int:
@@ -1651,38 +1659,42 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             else:
                 cell = row_cells[column_index]
 
-            get_component = self.get_component_styles
+            get_component = self.get_component_rich_style
             show_cursor = self.show_cursor
-
             component_style = Style()
 
             if hover and show_cursor and self._show_hover_cursor:
-                component_style += get_component("datatable--hover").rich_style
+                component_style += get_component("datatable--hover")
                 if is_header_cell or is_row_label_cell:
                     # Apply subtle variation in style for the header/label (blue background by
                     # default) rows and columns affected by the cursor, to ensure we can
                     # still differentiate between the labels and the data.
-                    component_style += get_component(
-                        "datatable--header-hover"
-                    ).rich_style
+                    component_style += get_component("datatable--header-hover")
 
             if cursor and show_cursor:
-                cursor_style = get_component("datatable--cursor").rich_style
+                cursor_style = get_component("datatable--cursor")
                 component_style += cursor_style
                 if is_header_cell or is_row_label_cell:
-                    component_style += get_component(
-                        "datatable--header-cursor"
-                    ).rich_style
+                    component_style += get_component("datatable--header-cursor")
                 elif is_fixed_style_cell:
-                    component_style += get_component(
-                        "datatable--fixed-cursor"
-                    ).rich_style
+                    component_style += get_component("datatable--fixed-cursor")
+
+            post_foreground = (
+                Style.from_color(color=component_style.color)
+                if self.cursor_foreground_priority == "css"
+                else Style.null()
+            )
+            post_background = (
+                Style.from_color(bgcolor=component_style.bgcolor)
+                if self.cursor_background_priority == "css"
+                else Style.null()
+            )
 
             lines = self.app.console.render_lines(
                 Styled(
                     Padding(cell, (0, 1)),
-                    pre_style=base_style,
-                    post_style=component_style,
+                    pre_style=base_style + component_style,
+                    post_style=post_foreground + post_background,
                 ),
                 self.app.console.options.update_dimensions(width, height),
             )
