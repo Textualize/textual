@@ -400,12 +400,7 @@ class Input(Widget, can_focus=True):
         if self.cursor_blink:
             self.blink_timer.reset()
 
-        # Do key bindings first
-        if await self.handle_key(event):
-            event.prevent_default()
-            event.stop()
-            return
-        elif event.is_printable:
+        if event.is_printable:
             event.stop()
             assert event.character is not None
             self.insert_text_at_cursor(event.character)
