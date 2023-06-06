@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
+
 import pytest
 
 from textual import on
@@ -143,3 +147,215 @@ async def test_on_arbitrary_attributes() -> None:
         await pilot.press("tab", "right", "right")
 
     assert log == ["one", "two"]
+
+
+class MessageSender(Widget):
+    @dataclass
+    class Parent(Message):
+        sender: MessageSender
+
+        @property
+        def control(self) -> MessageSender:
+            return self.sender
+
+    class Child(Parent):
+        pass
+
+    def post_parent(self) -> None:
+        self.post_message(self.Parent(self))
+
+    def post_child(self) -> None:
+        self.post_message(self.Child(self))
+
+
+async def test_fire_on_inherited_message() -> None:
+    """Handlers should fire when descendant messages are posted."""
+
+    posted: list[str] = []
+
+    class InheritTestApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield MessageSender()
+
+        @on(MessageSender.Parent)
+        def catch_parent(self) -> None:
+            posted.append("parent")
+
+        @on(MessageSender.Child)
+        def catch_child(self) -> None:
+            posted.append("child")
+
+        def on_mount(self) -> None:
+            self.query_one(MessageSender).post_parent()
+            self.query_one(MessageSender).post_child()
+
+    from rich import print
+
+    print(InheritTestApp._decorated_handlers)
+    print("___")
+    print(InheritTestApp.catch_parent._textual_on)
+    print(InheritTestApp.catch_child._textual_on)
+
+    async with InheritTestApp().run_test():
+        pass
+
+    assert posted == ["parent", "child", "parent"]
+
+
+async def test_fire_inherited_on_single_handler() -> None:
+    """Test having parent/child messages on a single handler."""
+
+    posted: list[str] = []
+
+    class InheritTestApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield MessageSender()
+
+        @on(MessageSender.Parent)
+        @on(MessageSender.Child)
+        def catch_either(self, event: MessageSender.Parent) -> None:
+            posted.append(f"either {event.__class__.__name__}")
+
+        def on_mount(self) -> None:
+            self.query_one(MessageSender).post_parent()
+            self.query_one(MessageSender).post_child()
+
+    async with InheritTestApp().run_test():
+        pass
+
+    assert posted == ["either Parent", "either Child"]
+
+
+async def test_fire_inherited_on_single_handler_multi_selector() -> None:
+    """Test having parent/child messages on a single handler but with different selectors."""
+
+    posted: list[str] = []
+
+    class InheritTestApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield MessageSender(classes="a b")
+
+        @on(MessageSender.Parent, ".y")
+        @on(MessageSender.Child, ".y")
+        @on(MessageSender.Parent, ".a.b")
+        @on(MessageSender.Child, ".a.b")
+        @on(MessageSender.Parent, ".a")
+        @on(MessageSender.Child, ".a")
+        @on(MessageSender.Parent, ".b")
+        @on(MessageSender.Child, ".b")
+        @on(MessageSender.Parent, ".x")
+        @on(MessageSender.Child, ".x")
+        def catch_either(self, event: MessageSender.Parent) -> None:
+            posted.append(f"either {event.__class__.__name__}")
+
+        @on(MessageSender.Child, ".a, .x")
+        def catch_selector_list_one_miss(self, event: MessageSender.Parent) -> None:
+            posted.append(f"selector list one miss {event.__class__.__name__}")
+
+        @on(MessageSender.Child, ".a, .b")
+        def catch_selector_list_two_hits(self, event: MessageSender.Parent) -> None:
+            posted.append(f"selector list two hits {event.__class__.__name__}")
+
+        @on(MessageSender.Child, ".a.b")
+        def catch_selector_combined_hits(self, event: MessageSender.Parent) -> None:
+            posted.append(f"combined hits {event.__class__.__name__}")
+
+        @on(MessageSender.Child, ".a.x")
+        def catch_selector_combined_miss(self, event: MessageSender.Parent) -> None:
+            posted.append(f"combined miss {event.__class__.__name__}")
+
+        def on_mount(self) -> None:
+            self.query_one(MessageSender).post_parent()
+            self.query_one(MessageSender).post_child()
+
+    async with InheritTestApp().run_test():
+        pass
+
+    assert posted == [
+        "either Parent",
+        "either Child",
+        "selector list one miss Child",
+        "selector list two hits Child",
+        "combined hits Child",
+    ]
+
+
+async def test_fire_inherited_and_on_methods() -> None:
+    posted: list[str] = []
+
+    class OnAndOnTestApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield MessageSender()
+
+        def on_message_sender_parent(self) -> None:
+            posted.append("on_message_sender_parent")
+
+        @on(MessageSender.Parent)
+        def catch_parent(self) -> None:
+            posted.append("catch_parent")
+
+        def on_message_sender_child(self) -> None:
+            posted.append("on_message_sender_child")
+
+        @on(MessageSender.Child)
+        def catch_child(self) -> None:
+            posted.append("catch_child")
+
+        def on_mount(self) -> None:
+            self.query_one(MessageSender).post_parent()
+            self.query_one(MessageSender).post_child()
+
+    async with OnAndOnTestApp().run_test():
+        pass
+
+    assert posted == [
+        "catch_parent",
+        "on_message_sender_parent",
+        "catch_child",
+        "catch_parent",
+        "on_message_sender_child",
+    ]
+
+
+class MixinMessageSender(Widget):
+    class Parent(Message):
+        pass
+
+    class JustSomeRandomMixin:
+        pass
+
+    class Child(JustSomeRandomMixin, Parent):
+        pass
+
+    def post_parent(self) -> None:
+        self.post_message(self.Parent())
+
+    def post_child(self) -> None:
+        self.post_message(self.Child())
+
+
+async def test_fire_on_inherited_message_plus_mixins() -> None:
+    """Handlers should fire when descendant messages are posted, without mixins messing things up."""
+
+    posted: list[str] = []
+
+    class InheritTestApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield MixinMessageSender()
+
+        @on(MixinMessageSender.Parent)
+        def catch_parent(self) -> None:
+            posted.append("parent")
+
+        @on(MixinMessageSender.Child)
+        def catch_child(self) -> None:
+            posted.append("child")
+
+        def on_mount(self) -> None:
+            self.query_one(MixinMessageSender).post_parent()
+            self.query_one(MixinMessageSender).post_child()
+
+    async with InheritTestApp().run_test():
+        pass
+
+    assert posted == ["parent", "child", "parent"]

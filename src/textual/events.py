@@ -138,7 +138,7 @@ class Mount(Event, bubble=False, verbose=False):
     """
 
 
-class Unmount(Mount, bubble=False, verbose=False):
+class Unmount(Event, bubble=False, verbose=False):
     """Sent when a widget is unmounted and may not longer receive messages.
 
     - [ ] Bubbles
