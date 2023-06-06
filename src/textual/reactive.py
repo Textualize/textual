@@ -72,23 +72,6 @@ class Reactive(Generic[ReactiveType]):
         yield "always_update", self._always_update
         yield "compute", self._run_compute
 
-    @classmethod
-    def var(
-        cls,
-        default: ReactiveType | Callable[[], ReactiveType],
-        always_update: bool = False,
-    ) -> Reactive:
-        """A reactive variable that doesn't update or layout.
-
-        Args:
-            default: A default value or callable that returns a default.
-            always_update: Call watchers even when the new value equals the old value.
-
-        Returns:
-            A Reactive descriptor.
-        """
-        return cls(default, layout=False, repaint=False, init=False)
-
     def _initialize_reactive(self, obj: Reactable, name: str) -> None:
         """Initialized a reactive attribute on an object.
 
