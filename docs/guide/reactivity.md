@@ -87,7 +87,7 @@ Let's look at an example which illustrates this. In the following app, the value
 
 === "Output"
 
-    ```{.textual path="docs/examples/guide/reactivity/refresh01.py" press="tab,T,e,x,t,u,a,l"}
+    ```{.textual path="docs/examples/guide/reactivity/refresh01.py" press="T,e,x,t,u,a,l"}
     ```
 
 The `Name` widget has a reactive `who` attribute. When the app modifies that attribute, a refresh happens automatically.
@@ -131,7 +131,7 @@ The following example modifies "refresh01.py" so that the greeting has an automa
 
 === "Output"
 
-    ```{.textual path="docs/examples/guide/reactivity/refresh02.py" press="tab,n,a,m,e"}
+    ```{.textual path="docs/examples/guide/reactivity/refresh02.py" press="n,a,m,e"}
     ```
 
 If you type in to the input now, the greeting will expand to fit the content. If you were to set `layout=False` on the reactive attribute, you should see that the box remains the same size when you type.
@@ -191,7 +191,7 @@ The following app will display any color you type in to the input. Try it with a
 
 === "Output"
 
-    ```{.textual path="docs/examples/guide/reactivity/watch01.py" press="tab,d,a,r,k,o,r,c,h,i,d"}
+    ```{.textual path="docs/examples/guide/reactivity/watch01.py" press="d,a,r,k,o,r,c,h,i,d"}
     ```
 
 The color is parsed in `on_input_submitted` and assigned to `self.color`. Because `color` is reactive, Textual also calls `watch_color` with the old and new values.
