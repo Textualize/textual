@@ -299,7 +299,7 @@ class Input(Widget, can_focus=True):
         else:
             self.view_position = self.view_position
 
-    async def watch_value(self, value: str) -> None:
+    async def _watch_value(self, value: str) -> None:
         self._suggestion = ""
         if self.suggester and value:
             self.run_worker(self.suggester._get_suggestion(self, value))
