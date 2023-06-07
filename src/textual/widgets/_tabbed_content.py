@@ -256,3 +256,8 @@ class TabbedContent(Widget):
         with self.prevent(Tabs.TabActivated):
             self.get_child_by_type(Tabs).active = active
             self.get_child_by_type(ContentSwitcher).current = active
+
+    @property
+    def tab_count(self) -> int:
+        """Total number of tabs."""
+        return self.get_child_by_type(Tabs).tab_count
