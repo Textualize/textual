@@ -43,7 +43,7 @@ Clicking any of the non-disabled buttons in the example app below will result in
 
 ## Additional Notes
 
-* The spacing between the text and the edges of a button are due to border, _not_ padding. To create a button with zero visible padding, use the `border: none;` declaration.
+- The spacing between the text and the edges of a button are _not_ due to padding. The default styling for a `Button` has the `height` set to 3 lines and a `min-width` of 16 columns. To create a button with zero visible padding, you will need to change these values and also remove the border with `border: none;`.
 
 ---
 

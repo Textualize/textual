@@ -27,7 +27,7 @@ from .css.match import match
 from .errors import DuplicateKeyHandlers
 from .events import Event
 from .message import Message
-from .reactive import Reactive
+from .reactive import Reactive, TooManyComputesError
 from .timer import Timer, TimerCallback
 
 if TYPE_CHECKING:
@@ -73,6 +73,21 @@ class _MessagePumpMeta(type):
                 else:
                     value.handler_name = (
                         f"on_{namespace}_{camel_to_snake(value.__name__)}"
+                    )
+
+        # Look for reactives with public AND private compute methods.
+        prefix = "compute_"
+        prefix_len = len(prefix)
+        for attr_name, value in class_dict.items():
+            if attr_name.startswith(prefix) and callable(value):
+                reactive_name = attr_name[prefix_len:]
+                if (
+                    reactive_name in class_dict
+                    and isinstance(class_dict[reactive_name], Reactive)
+                    and f"_{attr_name}" in class_dict
+                ):
+                    raise TooManyComputesError(
+                        f"reactive {reactive_name!r} can't have two computes."
                     )
 
         class_obj = super().__new__(cls, name, bases, class_dict, **kwargs)
