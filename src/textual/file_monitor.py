@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import os
-from pathlib import PurePath
-from typing import Callable, Sequence
+from pathlib import Path
+from typing import Callable, Iterable, Sequence
 
 import rich.repr
 
@@ -13,16 +13,16 @@ from ._callback import invoke
 class FileMonitor:
     """Monitors files for changes and invokes a callback when it does."""
 
-    paths: list[PurePath]
+    _paths: set[Path]
 
-    def __init__(self, paths: Sequence[PurePath], callback: Callable) -> None:
-        self.paths = list(paths)
+    def __init__(self, paths: Sequence[Path], callback: Callable) -> None:
+        self._paths = set(paths)
         self.callback = callback
         self._modified = self._get_last_modified_time()
 
     def _get_last_modified_time(self) -> float:
         """Get the most recent modified time out of all files being watched."""
-        return max(os.stat(path).st_mtime for path in self.paths)
+        return max(os.stat(path).st_mtime for path in self._paths)
 
     def check(self) -> bool:
         """Check the monitored files. Return True if any were changed since the last modification time."""
@@ -30,6 +30,14 @@ class FileMonitor:
         changed = modified != self._modified
         self._modified = modified
         return changed
+
+    def add_paths(self, paths: Iterable[Path]) -> None:
+        """Adds paths to start being monitored.
+
+        Args:
+            paths: The paths to be monitored.
+        """
+        self._paths.update(paths)
 
     async def __call__(self) -> None:
         if self.check():

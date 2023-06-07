@@ -405,7 +405,6 @@ class App(Generic[ReturnType], DOMNode):
             )
         ]
         self.css_path = css_paths
-        self._css_screens_loaded: WeakSet[Screen[Any]] = WeakSet()
 
         self._registry: WeakSet[DOMNode] = WeakSet()
 
@@ -678,9 +677,7 @@ class App(Generic[ReturnType], DOMNode):
             module_import, _, driver_symbol = driver_import.partition(":")
             driver_module = importlib.import_module(module_import)
             driver_class = getattr(driver_module, driver_symbol)
-            if not inspect.isclass(driver_class) or not issubclass(
-                driver_class, Driver
-            ):
+            if not inspect.isclass(driver_class) or not issubclass(driver_class, Driver):
                 raise RuntimeError(
                     f"Unable to import {driver_import!r}; {driver_class!r} is not a Driver class "
                 )
@@ -972,9 +969,7 @@ class App(Generic[ReturnType], DOMNode):
             show: Show key in UI.
             key_display: Replacement text for key, or None to use default.
         """
-        self._bindings.bind(
-            keys, action, description, show=show, key_display=key_display
-        )
+        self._bindings.bind(keys, action, description, show=show, key_display=key_display)
 
     def get_key_display(self, key: str) -> str:
         """For a given key, return how it should be displayed in an app
@@ -1404,8 +1399,7 @@ class App(Generic[ReturnType], DOMNode):
                 screen, _ = self._get_screen(self.MODES[mode])
             stack.append(screen)
 
-            if screen not in self._css_screens_loaded:
-                self._load_screen_css(screen)
+            self._load_screen_css(screen)
 
         self._screen_stacks[mode] = stack
 
@@ -1544,14 +1538,14 @@ class App(Generic[ReturnType], DOMNode):
     def _load_screen_css(self, screen: Screen):
         """Loads the CSS associated with a screen."""
 
-        self._css_screens_loaded.add(screen)
         if self.css_monitor is not None:
-            self.css_monitor.paths.extend(screen.css_path)
+            self.css_monitor.add_paths(screen.css_path)
 
         update = False
-        if screen.css_path:
-            self.stylesheet.read_all(screen.css_path)
-            update = True
+        for path in screen.css_path:
+            if not self.stylesheet.has_source(path):
+                self.stylesheet.read(path)
+                update = True
         if screen.CSS:
             try:
                 screen_css_path = (
@@ -1559,10 +1553,11 @@ class App(Generic[ReturnType], DOMNode):
                 )
             except (TypeError, OSError):
                 screen_css_path = f"{screen.__class__.__name__}"
-            self.stylesheet.add_source(
-                screen.CSS, path=screen_css_path, is_default_css=False
-            )
-            update = True
+            if not self.stylesheet.has_source(screen_css_path):
+                self.stylesheet.add_source(
+                    screen.CSS, path=screen_css_path, is_default_css=False
+                )
+                update = True
         if update:
             self.stylesheet.reparse()
             self.stylesheet.update(self)
@@ -1613,8 +1608,7 @@ class App(Generic[ReturnType], DOMNode):
         next_screen._push_result_callback(
             self.screen if self._screen_stack else None, callback
         )
-        if next_screen not in self._css_screens_loaded:
-            self._load_screen_css(next_screen)
+        self._load_screen_css(next_screen)
         self._screen_stack.append(next_screen)
         next_screen.post_message(events.ScreenResume())
         self.log.system(f"{self.screen} is current (PUSHED)")
@@ -1638,8 +1632,7 @@ class App(Generic[ReturnType], DOMNode):
 
         previous_screen = self._replace_screen(self._screen_stack.pop())
         previous_screen._pop_result_callback()
-        if next_screen not in self._css_screens_loaded:
-            self._load_screen_css(next_screen)
+        self._load_screen_css(next_screen)
         self._screen_stack.append(next_screen)
         self.screen.post_message(events.ScreenResume())
         self.screen._push_result_callback(self.screen, None)
@@ -2510,9 +2503,7 @@ class App(Generic[ReturnType], DOMNode):
         everything_to_remove: list[Widget] = []
         for widget in widgets:
             everything_to_remove.extend(
-                widget.walk_children(
-                    Widget, with_self=True, method="depth", reverse=True
-                )
+                widget.walk_children(Widget, with_self=True, method="depth", reverse=True)
             )
 
         # Next up, let's quickly create a deduped collection of things to
@@ -2568,9 +2559,7 @@ class App(Generic[ReturnType], DOMNode):
             for child in widget._nodes:
                 push(child)
 
-    def _remove_nodes(
-        self, widgets: list[Widget], parent: DOMNode | None
-    ) -> AwaitRemove:
+    def _remove_nodes(self, widgets: list[Widget], parent: DOMNode | None) -> AwaitRemove:
         """Remove nodes from DOM, and return an awaitable that awaits cleanup.
 
         Args:

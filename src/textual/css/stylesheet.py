@@ -15,7 +15,6 @@ from rich.style import Style
 from rich.syntax import Syntax
 from rich.text import Text
 
-from .. import messages
 from ..dom import DOMNode
 from ..widget import Widget
 from .errors import StylesheetError
@@ -54,9 +53,7 @@ class StylesheetErrors:
         )
         return syntax
 
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
+    def __rich_console__(self, console: Console, options: ConsoleOptions) -> RenderResult:
         error_count = 0
         for rule in self.rules:
             for token, message in rule.errors:
@@ -263,6 +260,14 @@ class Stylesheet:
         for path in paths:
             self.read(path)
 
+    def has_source(self, path: str | PurePath) -> bool:
+        """Check if the stylesheet has this CSS source already.
+
+        Returns:
+            Whether the stylesheet is aware of this CSS source or not.
+        """
+        return str(path) in self.source
+
     def add_source(
         self,
         css: str,
@@ -437,9 +442,7 @@ class Stylesheet:
                 node.refresh()
 
     @classmethod
-    def replace_rules(
-        cls, node: DOMNode, rules: RulesMap, animate: bool = False
-    ) -> None:
+    def replace_rules(cls, node: DOMNode, rules: RulesMap, animate: bool = False) -> None:
         """Replace style rules on a node, animating as required.
 
         Args:
