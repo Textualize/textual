@@ -166,9 +166,12 @@ async def test_tabbed_content_add_after_from_empty():
     async with TabbedApp().run_test() as pilot:
         tabbed_content = pilot.app.query_one(TabbedContent)
         assert tabbed_content.active == ""
+        assert tabbed_content.tab_count == 0
         await tabbed_content.add_pane(TabPane("Test 1", id="test-1"))
+        assert tabbed_content.tab_count == 1
         assert tabbed_content.active == "test-1"
         await tabbed_content.add_pane(TabPane("Test 2", id="test-2"))
+        assert tabbed_content.tab_count == 2
         assert tabbed_content.active == "test-1"
 
 
@@ -182,10 +185,13 @@ async def test_tabbed_content_add_after_from_composed():
 
     async with TabbedApp().run_test() as pilot:
         tabbed_content = pilot.app.query_one(TabbedContent)
+        assert tabbed_content.tab_count == 3
         assert tabbed_content.active == "initial-1"
         await tabbed_content.add_pane(TabPane("Test 4", id="test-1"))
+        assert tabbed_content.tab_count == 4
         assert tabbed_content.active == "initial-1"
         await tabbed_content.add_pane(TabPane("Test 5", id="test-2"))
+        assert tabbed_content.tab_count == 5
         assert tabbed_content.active == "initial-1"
 
 
@@ -199,13 +205,17 @@ async def test_tabbed_content_removal():
 
     async with TabbedApp().run_test() as pilot:
         tabbed_content = pilot.app.query_one(TabbedContent)
+        assert tabbed_content.tab_count == 3
         assert tabbed_content.active == "initial-1"
         tabbed_content.remove_pane("initial-1")
         await pilot.pause()
+        assert tabbed_content.tab_count == 2
         assert tabbed_content.active == "initial-2"
         tabbed_content.remove_pane("initial-2")
         await pilot.pause()
+        assert tabbed_content.tab_count == 1
         assert tabbed_content.active == "initial-3"
         tabbed_content.remove_pane("initial-3")
         await pilot.pause()
+        assert tabbed_content.tab_count == 0
         assert tabbed_content.active == ""
