@@ -14,7 +14,6 @@ from typing import (
     Generic,
     Iterable,
     Iterator,
-    List,
     Type,
     TypeVar,
     Union,
@@ -110,13 +109,13 @@ class Screen(Generic[ScreenResultType], Widget):
     """Inline CSS, useful for quick scripts. Rules here take priority over CSS_PATH.
 
     Note:
-        This CSS is _not_ scoped to only apply to the screen.
+        This CSS applies to the whole app.
     """
     CSS_PATH: ClassVar[CSSPathType | None] = None
     """File paths to load CSS from.
 
     Note:
-        This CSS is _not_ scoped to only apply to the screen.
+        This CSS applies to the whole app.
     """
 
     DEFAULT_CSS = """
@@ -164,9 +163,7 @@ class Screen(Generic[ScreenResultType], Widget):
         css_paths = [
             _make_path_object_relative(css_path, self)
             for css_path in (
-                _css_path_type_as_list(self.CSS_PATH)
-                if self.CSS_PATH is not None
-                else []
+                _css_path_type_as_list(self.CSS_PATH) if self.CSS_PATH is not None else []
             )
         ]
         self.css_path = css_paths
@@ -335,9 +332,7 @@ class Screen(Generic[ScreenResultType], Widget):
             selector = selector.__name__
         selector_set = parse_selectors(selector)
         focus_chain = self.focus_chain
-        filtered_focus_chain = (
-            node for node in focus_chain if match(selector_set, node)
-        )
+        filtered_focus_chain = (node for node in focus_chain if match(selector_set, node))
 
         if not focus_chain:
             # Nothing focusable, so nothing to do
@@ -364,9 +359,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 to_focus = None
                 chain_length = len(focus_chain)
                 for step in range(1, len(focus_chain) + 1):
-                    node = focus_chain[
-                        (current_index + direction * step) % chain_length
-                    ]
+                    node = focus_chain[(current_index + direction * step) % chain_length]
                     if match(selector_set, node):
                         to_focus = node
                         break
@@ -408,9 +401,7 @@ class Screen(Generic[ScreenResultType], Widget):
         """
         return self._move_focus(-1, selector)
 
-    def _reset_focus(
-        self, widget: Widget, avoiding: list[Widget] | None = None
-    ) -> None:
+    def _reset_focus(self, widget: Widget, avoiding: list[Widget] | None = None) -> None:
         """Reset the focus when a widget is removed
 
         Args:
@@ -650,9 +641,7 @@ class Screen(Generic[ScreenResultType], Widget):
                                 region.size, virtual_size, container_size, layout=False
                             ):
                                 widget.post_message(
-                                    ResizeEvent(
-                                        region.size, virtual_size, container_size
-                                    )
+                                    ResizeEvent(region.size, virtual_size, container_size)
                                 )
 
             else:

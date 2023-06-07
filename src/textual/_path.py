@@ -19,6 +19,18 @@ class CSSPathError(Exception):
 
 
 def _css_path_type_as_list(css_path: CSSPathType) -> list[PurePath]:
+    """Normalize the supplied CSSPathType into a list of paths.
+
+    Args:
+        css_path: Value to be normalized.
+
+    Raises:
+        CSSPathError: If the argument has the wrong format.
+
+    Returns:
+        A list of paths.
+    """
+
     paths: list[PurePath] = []
     if isinstance(css_path, str):
         paths = [Path(css_path)]
