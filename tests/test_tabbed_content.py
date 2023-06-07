@@ -1,6 +1,7 @@
 import pytest
 
 from textual.app import App, ComposeResult
+from textual.reactive import var
 from textual.widgets import Label, TabbedContent, TabPane
 
 
@@ -197,43 +198,59 @@ async def test_tabbed_content_add_after_from_composed():
 
 async def test_tabbed_content_removal():
     class TabbedApp(App[None]):
+        cleared: var[int] = var(0)
+
         def compose(self) -> ComposeResult:
             with TabbedContent():
                 yield TabPane("Test 1", id="initial-1")
                 yield TabPane("Test 2", id="initial-2")
                 yield TabPane("Test 3", id="initial-3")
 
+        def on_tabbed_content_cleared(self) -> None:
+            self.cleared += 1
+
     async with TabbedApp().run_test() as pilot:
         tabbed_content = pilot.app.query_one(TabbedContent)
         assert tabbed_content.tab_count == 3
+        assert pilot.app.cleared == 0
         assert tabbed_content.active == "initial-1"
         tabbed_content.remove_pane("initial-1")
         await pilot.pause()
         assert tabbed_content.tab_count == 2
+        assert pilot.app.cleared == 0
         assert tabbed_content.active == "initial-2"
         tabbed_content.remove_pane("initial-2")
         await pilot.pause()
         assert tabbed_content.tab_count == 1
+        assert pilot.app.cleared == 0
         assert tabbed_content.active == "initial-3"
         tabbed_content.remove_pane("initial-3")
         await pilot.pause()
         assert tabbed_content.tab_count == 0
+        assert pilot.app.cleared == 1
         assert tabbed_content.active == ""
 
 
 async def test_tabbed_content_clear():
     class TabbedApp(App[None]):
+        cleared: var[int] = var(0)
+
         def compose(self) -> ComposeResult:
             with TabbedContent():
                 yield TabPane("Test 1", id="initial-1")
                 yield TabPane("Test 2", id="initial-2")
                 yield TabPane("Test 3", id="initial-3")
 
+        def on_tabbed_content_cleared(self) -> None:
+            self.cleared += 1
+
     async with TabbedApp().run_test() as pilot:
         tabbed_content = pilot.app.query_one(TabbedContent)
         assert tabbed_content.tab_count == 3
         assert tabbed_content.active == "initial-1"
+        assert pilot.app.cleared == 0
         tabbed_content.clear_panes()
         await pilot.pause()
         assert tabbed_content.tab_count == 0
         assert tabbed_content.active == ""
+        assert pilot.app.cleared == 1
