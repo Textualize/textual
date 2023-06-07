@@ -224,6 +224,11 @@ class TabbedContent(Widget):
             self.get_child_by_type(ContentSwitcher).get_child_by_id(pane_id).remove
         )
 
+    def clear_panes(self) -> None:
+        """Remove all the panes in the tabbed content."""
+        self.get_child_by_type(Tabs).clear()
+        self.call_after_refresh(self.get_child_by_type(ContentSwitcher).remove_children)
+
     def compose_add_child(self, widget: Widget) -> None:
         """When using the context manager compose syntax, we want to attach nodes to the switcher.
 

@@ -219,3 +219,21 @@ async def test_tabbed_content_removal():
         await pilot.pause()
         assert tabbed_content.tab_count == 0
         assert tabbed_content.active == ""
+
+
+async def test_tabbed_content_clear():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield TabPane("Test 1", id="initial-1")
+                yield TabPane("Test 2", id="initial-2")
+                yield TabPane("Test 3", id="initial-3")
+
+    async with TabbedApp().run_test() as pilot:
+        tabbed_content = pilot.app.query_one(TabbedContent)
+        assert tabbed_content.tab_count == 3
+        assert tabbed_content.active == "initial-1"
+        tabbed_content.clear_panes()
+        await pilot.pause()
+        assert tabbed_content.tab_count == 0
+        assert tabbed_content.active == ""
