@@ -266,7 +266,7 @@ class TabbedContent(Widget):
             self.post_message(cleared_message)
 
         # Note that I create the message out here, rather than in
-        # _remove_content, to ensure that the message's internal
+        # _clear_content, to ensure that the message's internal
         # understanding of who the sender is is correct.
         #
         # https://github.com/Textualize/textual/issues/2750
