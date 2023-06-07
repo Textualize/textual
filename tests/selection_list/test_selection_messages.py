@@ -10,7 +10,6 @@ from __future__ import annotations
 
 from textual import on
 from textual.app import App, ComposeResult
-from textual.messages import Message
 from textual.widgets import OptionList, SelectionList
 
 
@@ -24,12 +23,15 @@ class SelectionListApp(App[None]):
     def compose(self) -> ComposeResult:
         yield SelectionList[int](*[(str(n), n) for n in range(10)])
 
-    @on(OptionList.OptionHighlighted)
-    @on(OptionList.OptionSelected)
-    @on(SelectionList.SelectionHighlighted)
-    @on(SelectionList.SelectionToggled)
+    @on(OptionList.OptionMessage)
+    @on(SelectionList.SelectionMessage)
     @on(SelectionList.SelectedChanged)
-    def _record(self, event: Message) -> None:
+    def _record(
+        self,
+        event: OptionList.OptionMessage
+        | SelectionList.SelectionMessage
+        | SelectionList.SelectedChanged,
+    ) -> None:
         assert event.control == self.query_one(SelectionList)
         self.messages.append(
             (
