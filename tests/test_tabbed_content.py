@@ -215,17 +215,17 @@ async def test_tabbed_content_removal():
         assert pilot.app.cleared == 0
         assert tabbed_content.active == "initial-1"
         tabbed_content.remove_pane("initial-1")
-        await pilot.pause()
+        await pilot.pause(0.01)
         assert tabbed_content.tab_count == 2
         assert pilot.app.cleared == 0
         assert tabbed_content.active == "initial-2"
         tabbed_content.remove_pane("initial-2")
-        await pilot.pause()
+        await pilot.pause(0.01)
         assert tabbed_content.tab_count == 1
         assert pilot.app.cleared == 0
         assert tabbed_content.active == "initial-3"
         tabbed_content.remove_pane("initial-3")
-        await pilot.pause()
+        await pilot.pause(0.01)
         assert tabbed_content.tab_count == 0
         assert pilot.app.cleared == 1
         assert tabbed_content.active == ""
@@ -250,7 +250,7 @@ async def test_tabbed_content_clear():
         assert tabbed_content.active == "initial-1"
         assert pilot.app.cleared == 0
         tabbed_content.clear_panes()
-        await pilot.pause()
+        await pilot.pause(0.01)
         assert tabbed_content.tab_count == 0
         assert tabbed_content.active == ""
         assert pilot.app.cleared == 1
