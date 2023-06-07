@@ -177,12 +177,11 @@ class TabbedContent(Widget):
 
         # Wrap content in a `TabPane` if required.
         pane_content = [
-            (
-                self._set_id(content, index)
+            self._set_id(
+                content
                 if isinstance(content, TabPane)
-                else TabPane(
-                    title or self.render_str(f"Tab {index}"), content, id=f"tab-{index}"
-                )
+                else TabPane(title or self.render_str(f"Tab {index}"), content),
+                index,
             )
             for index, (title, content) in enumerate(
                 zip_longest(self.titles, self._tab_content), 1
