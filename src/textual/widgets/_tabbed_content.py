@@ -203,6 +203,9 @@ class TabbedContent(Widget):
 
         Args:
             pane: The pane to add.
+
+        Returns:
+            An awaitable object that waits for the pane to be mounted.
         """
         tabs = self.get_child_by_type(Tabs)
         pane = self._set_id(pane, tabs.tab_count + 1)
