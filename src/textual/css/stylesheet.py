@@ -53,7 +53,9 @@ class StylesheetErrors:
         )
         return syntax
 
-    def __rich_console__(self, console: Console, options: ConsoleOptions) -> RenderResult:
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
         error_count = 0
         for rule in self.rules:
             for token, message in rule.errors:
@@ -442,7 +444,9 @@ class Stylesheet:
                 node.refresh()
 
     @classmethod
-    def replace_rules(cls, node: DOMNode, rules: RulesMap, animate: bool = False) -> None:
+    def replace_rules(
+        cls, node: DOMNode, rules: RulesMap, animate: bool = False
+    ) -> None:
         """Replace style rules on a node, animating as required.
 
         Args:

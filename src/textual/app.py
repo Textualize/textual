@@ -677,7 +677,9 @@ class App(Generic[ReturnType], DOMNode):
             module_import, _, driver_symbol = driver_import.partition(":")
             driver_module = importlib.import_module(module_import)
             driver_class = getattr(driver_module, driver_symbol)
-            if not inspect.isclass(driver_class) or not issubclass(driver_class, Driver):
+            if not inspect.isclass(driver_class) or not issubclass(
+                driver_class, Driver
+            ):
                 raise RuntimeError(
                     f"Unable to import {driver_import!r}; {driver_class!r} is not a Driver class "
                 )
@@ -969,7 +971,9 @@ class App(Generic[ReturnType], DOMNode):
             show: Show key in UI.
             key_display: Replacement text for key, or None to use default.
         """
-        self._bindings.bind(keys, action, description, show=show, key_display=key_display)
+        self._bindings.bind(
+            keys, action, description, show=show, key_display=key_display
+        )
 
     def get_key_display(self, key: str) -> str:
         """For a given key, return how it should be displayed in an app
@@ -2503,7 +2507,9 @@ class App(Generic[ReturnType], DOMNode):
         everything_to_remove: list[Widget] = []
         for widget in widgets:
             everything_to_remove.extend(
-                widget.walk_children(Widget, with_self=True, method="depth", reverse=True)
+                widget.walk_children(
+                    Widget, with_self=True, method="depth", reverse=True
+                )
             )
 
         # Next up, let's quickly create a deduped collection of things to
@@ -2559,7 +2565,9 @@ class App(Generic[ReturnType], DOMNode):
             for child in widget._nodes:
                 push(child)
 
-    def _remove_nodes(self, widgets: list[Widget], parent: DOMNode | None) -> AwaitRemove:
+    def _remove_nodes(
+        self, widgets: list[Widget], parent: DOMNode | None
+    ) -> AwaitRemove:
         """Remove nodes from DOM, and return an awaitable that awaits cleanup.
 
         Args:
