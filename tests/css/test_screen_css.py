@@ -68,6 +68,40 @@ def check_colors_after_screen_css(app: BaseApp):
     assert app.query_one("#screen-css").styles.background == RED
 
 
+async def test_screen_pushing_and_popping_does_not_reparse_css():
+    """Check that pushing and popping the same screen doesn't trigger CSS reparses."""
+
+    class MyApp(BaseApp):
+        def key_p(self):
+            self.push_screen(ScreenWithCSS())
+
+        def key_o(self):
+            self.pop_screen()
+
+    counter = 0
+
+    def reparse_wrapper(reparse):
+        def _reparse(*args, **kwargs):
+            nonlocal counter
+            counter += 1
+            return reparse(*args, **kwargs)
+
+        return _reparse
+
+    app = MyApp()
+    app.stylesheet.reparse = reparse_wrapper(app.stylesheet.reparse)
+    async with app.run_test() as pilot:
+        await pilot.press("p")
+        await pilot.press("o")
+        await pilot.press("p")
+        await pilot.press("o")
+        await pilot.press("p")
+        await pilot.press("o")
+        await pilot.press("p")
+        await pilot.press("o")
+        assert counter == 1
+
+
 async def test_screen_css_push_screen_instance():
     """Check that screen CSS is loaded and applied when pushing a screen instance."""
 
