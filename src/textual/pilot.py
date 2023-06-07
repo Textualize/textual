@@ -133,7 +133,7 @@ class Pilot(Generic[ReturnType]):
         app.post_message(MouseMove(**message_arguments))
         await self.pause()
 
-    async def _wait_for_screen(self, timeout: float = 30.0) -> bool:
+    async def _wait_for_screen(self, timeout: float = 10.0) -> bool:
         """Wait for the current screen to have processed all pending events.
 
         Args:
@@ -162,8 +162,10 @@ class Pilot(Generic[ReturnType]):
         if count:
             # Wait for the count to return to zero, or a timeout
             try:
+                print("NOW WE WAIT")
                 await asyncio.wait_for(count_zero_event.wait(), timeout=timeout)
             except asyncio.TimeoutError:
+                print("WE'VE TIMED OUT")
                 return False
 
         return True

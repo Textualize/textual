@@ -491,14 +491,25 @@ class MessagePump(metaclass=_MessagePumpMeta):
         """Process messages until the queue is closed."""
         _rich_traceback_guard = True
         self._thread_id = threading.get_ident()
+        from .app import App
+
         while not self._closed:
             try:
                 message = await self._get_message()
+                if isinstance(self, App):
+                    print(f"APP received message = {message!r}")
+                    print(f"App queue = {self._message_queue._queue}")
             except MessagePumpClosed:
+                if isinstance(self, App):
+                    print(f"APP MESSAGE PUMP CLOSED - NO LONGER PROCESSING MESSAGES")
+                    print(f"App queue = {self._message_queue._queue}")
                 break
             except CancelledError:
                 raise
             except Exception as error:
+                if isinstance(self, App):
+                    print(f"Exception occurred in process messages loop")
+                    print(f"App queue = {self._message_queue._queue}")
                 raise error from None
 
             # Combine any pending messages that may supersede this one

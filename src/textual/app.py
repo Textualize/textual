@@ -183,7 +183,6 @@ class CssPathError(Exception):
 
 ReturnType = TypeVar("ReturnType")
 
-
 CSSPathType = Union[
     str,
     PurePath,
@@ -366,6 +365,10 @@ class App(Generic[ReturnType], DOMNode):
         self._animator = Animator(self)
         self._animate = self._animator.bind(self)
         self.mouse_position = Offset(0, 0)
+
+        self._exception: Exception | None = None
+        """The unhandled exception which is leading to the app shutting down,
+        or None if the app is still running with no unhandled exceptions."""
 
         self.title = (
             self.TITLE if self.TITLE is not None else f"{self.__class__.__name__}"
@@ -1108,6 +1111,9 @@ class App(Generic[ReturnType], DOMNode):
             # Shutdown the app cleanly
             await app._shutdown()
             await app_task
+            # Re-raise the exception which caused panic so test frameworks are aware
+            if self._exception:
+                raise self._exception
 
     async def run_async(
         self,
@@ -1782,9 +1788,14 @@ class App(Generic[ReturnType], DOMNode):
     def _handle_exception(self, error: Exception) -> None:
         """Called with an unhandled exception.
 
+        Always results in the app exiting.
+
         Args:
             error: An exception instance.
         """
+        if self.is_headless:
+            self._exception = error
+
         if hasattr(error, "__rich__"):
             # Exception has a rich method, so we can defer to that for the rendering
             self.panic(error)
