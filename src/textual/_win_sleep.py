@@ -4,7 +4,9 @@ A version of `time.sleep` that is more accurate than the standard library (even 
 This should only be imported on Windows.
 """
 
+from functools import partial
 from time import sleep as time_sleep
+from typing import Callable
 
 __all__ = ["sleep"]
 
@@ -20,10 +22,15 @@ try:
 
     kernel32 = ctypes.windll.kernel32  # type: ignore[attr-defined]
 except Exception:
-    sleep = time_sleep
-else:
+    print("Exception found")
 
-    def sleep(secs: float) -> None:
+    def sleep(secs: float) -> tuple[Callable[[], None], None]:
+        return partial(time_sleep, secs), None
+
+else:
+    print("Defining sleep")
+
+    def sleep(secs: float) -> tuple[Callable[[], None], Callable[[], None] | None]:
         """A replacement sleep for Windows.
 
         Note that unlike `time.sleep` this *may* sleep for slightly less than the
@@ -34,35 +41,47 @@ else:
         """
 
         # Subtract a millisecond to account for overhead
+        print("Inside sleep")
         sleep_for = max(0, secs - 0.001)
         if sleep_for < 0.0005:
             # Less than 0.5ms and its not worth doing the sleep
-            return
+            return lambda: None, None
 
+        print("Creating handle")
         handle = kernel32.CreateWaitableTimerExW(
             None,
             None,
             CREATE_WAITABLE_TIMER_HIGH_RESOLUTION,
             TIMER_ALL_ACCESS,
         )
+        print(handle)
         if not handle:
-            time_sleep(sleep_for)
-            return
+            return partial(time_sleep, sleep_for), None
 
-        try:
-            if not kernel32.SetWaitableTimer(
-                handle,
-                ctypes.byref(LARGE_INTEGER(int(sleep_for * -10_000_000))),
-                0,
-                None,
-                None,
-                0,
-            ):
+        print("Setting timer")
+        if not kernel32.SetWaitableTimer(
+            handle,
+            ctypes.byref(LARGE_INTEGER(int(sleep_for * -10_000_000))),
+            0,
+            None,
+            None,
+            0,
+        ):
+            print("Failed")
+            kernel32.CloseHandle(handle)
+            return partial(time_sleep, sleep_for), None
+        print("Success")
+
+        def sleep_callable():
+            if kernel32.WaitForSingleObject(handle, INFINITE) == WAIT_FAILED:
                 kernel32.CloseHandle(handle)
                 time_sleep(sleep_for)
-                return
+            else:
+                kernel32.CloseHandle(handle)
 
-            if kernel32.WaitForSingleObject(handle, INFINITE) == WAIT_FAILED:
-                time_sleep(sleep_for)
-        finally:
+        def cancel_callable():
+            kernel32.CancelWaitableTimer(handle)
             kernel32.CloseHandle(handle)
+
+        print("About to end")
+        return sleep_callable, cancel_callable

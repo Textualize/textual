@@ -26,7 +26,16 @@ if WINDOWS:
         Args:
             secs: Number of seconds to sleep for.
         """
-        await get_running_loop().run_in_executor(None, win_sleep, secs)
+        print("> Going to call winsleep")
+        sleep_callable, cancel_callable = win_sleep(secs)
+        print("> Done")
+
+        try:
+            await get_running_loop().run_in_executor(None, sleep_callable)
+        except Exception as e:
+            print(e)
+            if cancel_callable is not None:
+                cancel_callable()
 
 else:
 
