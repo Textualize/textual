@@ -138,14 +138,17 @@ class Pilot(Generic[ReturnType]):
         await self.pause()
 
     async def _wait_for_screen(self, timeout: float = 30.0) -> bool:
-        """Wait for the current screen to have processed all pending events.
+        """Wait for the current screen and its children to have processed all pending events.
 
         Args:
             timeout: A timeout in seconds to wait.
 
         Returns:
-            `True` if all events were processed. `False` if the wait timed
-            out or an exception occurred while in the application.
+            `True` if all events were processed. `False` if an exception occurred,
+            meaning that not all events could be processed.
+
+        Raises:
+            WaitForScreenTimeout: If the screen and its children didn't finish processing within the timeout.
         """
         children = [self.app, *self.app.screen.walk_children(with_self=True)]
         count = 0
