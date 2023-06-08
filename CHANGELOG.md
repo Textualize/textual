@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed setting `TreeNode.label` on an existing `Tree` node not immediately https://github.com/Textualize/textual/pull/2713
 - Correctly implement `__eq__` protocol in DataTable https://github.com/Textualize/textual/pull/2705
 - Fixed exceptions in Pilot tests being silently ignored https://github.com/Textualize/textual/pull/2754
+- Fixed issue where internal data of `OptionList` could be invalid for short window after `clear_options` https://github.com/Textualize/textual/pull/2754
 - Fixed `Tooltip` causing a `query_one` on a lone `Static` to fail https://github.com/Textualize/textual/issues/2723
 
 ### Changed
