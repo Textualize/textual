@@ -42,6 +42,10 @@ def _get_mouse_message_arguments(
     return message_arguments
 
 
+class WaitForScreenTimeout(Exception):
+    pass
+
+
 @rich.repr.auto(angular=True)
 class Pilot(Generic[ReturnType]):
     """Pilot object to drive an app."""
@@ -133,7 +137,7 @@ class Pilot(Generic[ReturnType]):
         app.post_message(MouseMove(**message_arguments))
         await self.pause()
 
-    async def _wait_for_screen(self, timeout: float = 10.0) -> bool:
+    async def _wait_for_screen(self, timeout: float = 30.0) -> bool:
         """Wait for the current screen to have processed all pending events.
 
         Args:
@@ -162,16 +166,24 @@ class Pilot(Generic[ReturnType]):
 
         if count:
             # Wait for the count to return to zero, or a timeout, or an exception
+            wait_for = [
+                asyncio.create_task(count_zero_event.wait()),
+                asyncio.create_task(self.app._exception_event.wait()),
+            ]
             _, pending = await asyncio.wait(
-                [
-                    asyncio.create_task(count_zero_event.wait()),
-                    asyncio.create_task(self.app._exception_event.wait()),
-                ],
+                wait_for,
                 timeout=timeout,
                 return_when=asyncio.FIRST_COMPLETED,
             )
+
             for task in pending:
                 task.cancel()
+
+            timed_out = len(wait_for) == len(pending)
+            if timed_out:
+                raise WaitForScreenTimeout(
+                    "Timed out while waiting for widgets to process pending messages."
+                )
 
             # We've either timed out, encountered an exception, or we've finished
             # decrementing all the counters (all events processed in children).
