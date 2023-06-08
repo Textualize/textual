@@ -630,7 +630,7 @@ class OptionList(ScrollView, can_focus=True):
         self.highlighted = None
         self._mouse_hovering_over = None
         self.virtual_size = Size(self.scrollable_content_region.width, 0)
-        self._refresh_content_tracking()
+        self._refresh_content_tracking(force=True)
         return self
 
     def _set_option_disabled(self, index: int, disabled: bool) -> Self:
