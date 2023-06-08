@@ -370,6 +370,9 @@ class App(Generic[ReturnType], DOMNode):
         """The unhandled exception which is leading to the app shutting down,
         or None if the app is still running with no unhandled exceptions."""
 
+        self._exception_event: asyncio.Event | None = None
+        """An event that will be set when the first exception is encountered."""
+
         self.title = (
             self.TITLE if self.TITLE is not None else f"{self.__class__.__name__}"
         )
@@ -1086,6 +1089,7 @@ class App(Generic[ReturnType], DOMNode):
                 message_hook_context_var.set(message_hook)
             app._loop = asyncio.get_running_loop()
             app._thread_id = threading.get_ident()
+            app._exception_event = asyncio.Event()
             await app._process_messages(
                 ready_callback=on_app_ready,
                 headless=headless,
@@ -1793,8 +1797,11 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             error: An exception instance.
         """
-        if self.is_headless:
+        # If we're running via pilot and this is the first exception encountered,
+        # take note of it so that we can re-raise for test frameworks later.
+        if self.is_headless and self._exception is None:
             self._exception = error
+            self._exception_event.set()
 
         if hasattr(error, "__rich__"):
             # Exception has a rich method, so we can defer to that for the rendering
