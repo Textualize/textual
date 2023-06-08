@@ -133,7 +133,7 @@ class Pilot(Generic[ReturnType]):
         app.post_message(MouseMove(**message_arguments))
         await self.pause()
 
-    async def _wait_for_screen(self, timeout: float = 4.0) -> bool:
+    async def _wait_for_screen(self, timeout: float = 10.0) -> bool:
         """Wait for the current screen to have processed all pending events.
 
         Args:
@@ -164,8 +164,8 @@ class Pilot(Generic[ReturnType]):
             # Wait for the count to return to zero, or a timeout, or an exception
             _, pending = await asyncio.wait(
                 [
-                    count_zero_event.wait(),
-                    self.app._exception_event.wait(),
+                    asyncio.create_task(count_zero_event.wait()),
+                    asyncio.create_task(self.app._exception_event.wait()),
                 ],
                 timeout=timeout,
                 return_when=asyncio.FIRST_COMPLETED,
