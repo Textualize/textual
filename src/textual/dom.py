@@ -284,6 +284,7 @@ class DOMNode(MessagePump):
         inherit_css: bool = True,
         inherit_bindings: bool = True,
         inherit_component_classes: bool = True,
+        isolate_css_type: bool = False,
     ) -> None:
         super().__init_subclass__()
 
@@ -301,7 +302,7 @@ class DOMNode(MessagePump):
         cls._inherit_bindings = inherit_bindings
         cls._inherit_component_classes = inherit_component_classes
         css_type_names: set[str] = set()
-        for base in cls._css_bases(cls):
+        for base in [cls] if isolate_css_type else cls._css_bases(cls):
             css_type_names.add(base.__name__)
         cls._merged_bindings = cls._merge_bindings()
         cls._css_type_names = frozenset(css_type_names)

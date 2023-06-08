@@ -2545,11 +2545,13 @@ class Widget(DOMNode):
         can_focus_children: bool | None = None,
         inherit_css: bool = True,
         inherit_bindings: bool = True,
+        isolate_css_type: bool = False,
     ) -> None:
         base = cls.__mro__[0]
         super().__init_subclass__(
             inherit_css=inherit_css,
             inherit_bindings=inherit_bindings,
+            isolate_css_type=isolate_css_type,
         )
         if issubclass(base, Widget):
             cls.can_focus = base.can_focus if can_focus is None else can_focus
