@@ -162,7 +162,7 @@ class Pilot(Generic[ReturnType]):
 
         if count:
             # Wait for the count to return to zero, or a timeout, or an exception
-            await asyncio.wait(
+            _, pending = await asyncio.wait(
                 [
                     count_zero_event.wait(),
                     self.app._exception_event.wait(),
@@ -170,6 +170,8 @@ class Pilot(Generic[ReturnType]):
                 timeout=timeout,
                 return_when=asyncio.FIRST_COMPLETED,
             )
+            for task in pending:
+                task.cancel()
 
             # We've either timed out, encountered an exception, or we've finished
             # decrementing all the counters (all events processed in children).

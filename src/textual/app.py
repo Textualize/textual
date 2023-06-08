@@ -370,7 +370,7 @@ class App(Generic[ReturnType], DOMNode):
         """The unhandled exception which is leading to the app shutting down,
         or None if the app is still running with no unhandled exceptions."""
 
-        self._exception_event: asyncio.Event | None = None
+        self._exception_event: asyncio.Event = asyncio.Event()
         """An event that will be set when the first exception is encountered."""
 
         self.title = (
@@ -1089,7 +1089,6 @@ class App(Generic[ReturnType], DOMNode):
                 message_hook_context_var.set(message_hook)
             app._loop = asyncio.get_running_loop()
             app._thread_id = threading.get_ident()
-            app._exception_event = asyncio.Event()
             await app._process_messages(
                 ready_callback=on_app_ready,
                 headless=headless,
