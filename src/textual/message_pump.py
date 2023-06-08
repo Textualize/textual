@@ -10,7 +10,7 @@ import threading
 from asyncio import CancelledError, Queue, QueueEmpty, Task
 from contextlib import contextmanager
 from functools import partial
-from typing import TYPE_CHECKING, Any, Awaitable, Callable, Generator, Iterable
+from typing import TYPE_CHECKING, Any, Awaitable, Callable, Generator, Iterable, cast
 from weakref import WeakSet
 
 from . import Logger, events, log, messages
@@ -65,7 +65,10 @@ class _MessagePumpMeta(type):
 
         for value in class_dict.values():
             if callable(value) and hasattr(value, "_textual_on"):
-                for message_type, selectors in getattr(value, "_textual_on"):
+                textual_on: list[
+                    tuple[type[Message], dict[str, tuple[SelectorSet, ...]]]
+                ] = getattr(value, "_textual_on")
+                for message_type, selectors in textual_on:
                     handlers.setdefault(message_type, []).append((value, selectors))
             if isclass(value) and issubclass(value, Message):
                 if "namespace" in value.__dict__:
@@ -592,31 +595,45 @@ class MessagePump(metaclass=_MessagePumpMeta):
             method_name: Handler method name.
             message: Message object.
         """
+        from .widget import Widget
+
+        methods_dispatched: set[Callable] = set()
+        message_mro = [
+            _type for _type in message.__class__.__mro__ if issubclass(_type, Message)
+        ]
         for cls in self.__class__.__mro__:
             if message._no_default_action:
                 break
             # Try decorated handlers first
-            decorated_handlers = cls.__dict__.get("_decorated_handlers")
-            if decorated_handlers is not None:
-                handlers = decorated_handlers.get(type(message), [])
-                from .widget import Widget
+            decorated_handlers = cast(
+                "dict[type[Message], list[tuple[Callable, dict[str, tuple[SelectorSet, ...]]]]] | None",
+                cls.__dict__.get("_decorated_handlers"),
+            )
 
-                for method, selectors in handlers:
-                    if not selectors:
-                        yield cls, method.__get__(self, cls)
-                    else:
-                        if not message._sender:
+            if decorated_handlers:
+                for message_class in message_mro:
+                    handlers = decorated_handlers.get(message_class, [])
+
+                    for method, selectors in handlers:
+                        if method in methods_dispatched:
                             continue
-                        for attribute, selector in selectors.items():
-                            node = getattr(message, attribute)
-                            if not isinstance(node, Widget):
-                                raise OnNoWidget(
-                                    f"on decorator can't match against {attribute!r} as it is not a widget."
-                                )
-                            if not match(selector, node):
-                                break
-                        else:
+                        if not selectors:
                             yield cls, method.__get__(self, cls)
+                            methods_dispatched.add(method)
+                        else:
+                            if not message._sender:
+                                continue
+                            for attribute, selector in selectors.items():
+                                node = getattr(message, attribute)
+                                if not isinstance(node, Widget):
+                                    raise OnNoWidget(
+                                        f"on decorator can't match against {attribute!r} as it is not a widget."
+                                    )
+                                if not match(selector, node):
+                                    break
+                            else:
+                                yield cls, method.__get__(self, cls)
+                                methods_dispatched.add(method)
 
             # Fall back to the naming convention
             # But avoid calling the handler if it was decorated
