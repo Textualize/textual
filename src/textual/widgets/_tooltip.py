@@ -3,7 +3,7 @@ from __future__ import annotations
 from textual.widgets import Static
 
 
-class Tooltip(Static):
+class Tooltip(Static, inherit_css=False):
     DEFAULT_CSS = """
     Tooltip {
         layer: _tooltips;
