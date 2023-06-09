@@ -7,7 +7,7 @@ from textual.app import App, ComposeResult
 from textual.containers import Container
 from textual.css.errors import StyleValueError
 from textual.css.query import NoMatches
-from textual.geometry import Size
+from textual.geometry import Offset, Size
 from textual.message import Message
 from textual.widget import MountError, PseudoClasses, Widget
 from textual.widgets import Label
@@ -305,3 +305,54 @@ async def test_compose_order() -> None:
     ]
 
     assert mounts == expected
+
+
+def test_children_must_be_widgets():
+    with pytest.raises(TypeError):
+        Widget(1, 2, 3)
+
+
+def test_orphan_widget_has_no_siblings():
+    assert Widget().siblings == []
+
+
+def test__allow_scroll_default():
+    assert not Widget()._allow_scroll
+
+
+async def test__allow_scroll():
+    from textual.containers import ScrollableContainer
+
+    class AllowScrollApp(App):
+        CSS = "ScrollableContainer { width: 3; height: 3; }"
+
+        def compose(self):
+            with ScrollableContainer():
+                yield Label("This is\n\n\n\n\nlarge text.")
+
+    app = AllowScrollApp()
+    async with app.run_test():
+        assert app.query_one(ScrollableContainer)._allow_scroll
+
+
+async def test_offset_getter_setter():
+    class OffsetApp(App):
+        def compose(self):
+            yield Label("hello")
+
+    app = OffsetApp()
+    async with app.run_test():
+        label = app.query_one(Label)
+        assert label.offset == Offset(0, 0)
+        label.offset = (7, 3)
+        assert label.offset == Offset(7, 3)
+
+
+def test_get_set_tooltip():
+    widget = Widget()
+    assert widget.tooltip is None
+    widget.tooltip = "This is a tooltip."
+    assert widget.tooltip == "This is a tooltip."
+
+
+# 168, 510-515, 549, 552-553, 703-704, 947, 989, 1261, 1269, 1416-1419, 1433, 1500, 1635-1647, 1716, 1846-1848, 1917, 1951, 1978, 2012, 2039, 2073, 2100, 2134, 2161, 2188, 2215-2217, 2244-2246, 2288, 2443, 2531, 2774, 2855-2856, 2881-2887, 3003, 3008-3011, 3055-3056, 3083, 3090, 3103, 3139-3144, 3160, 3180-3187, 3190-3197, 3200-3202, 3205-3207, 3210-3212, 3215-3217, 3220-3222, 3226, 3229, 3235-3237, 3240-3242, 3247, 3252, 3257, 3262, 3265-3267, 3270-3272
