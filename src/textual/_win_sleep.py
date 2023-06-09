@@ -4,6 +4,8 @@ A version of `time.sleep` that is more accurate than the standard library (even 
 This should only be imported on Windows.
 """
 
+from __future__ import annotations
+
 import asyncio
 from time import sleep as time_sleep
 from typing import Coroutine
@@ -35,7 +37,7 @@ except Exception:
 
 else:
 
-    def sleep(secs: float) -> Coroutine[None, None, None]:
+    def sleep(secs: float) -> Coroutine[None, None, None] | None:
         """A replacement sleep for Windows.
 
         Note that unlike `time.sleep` this *may* sleep for slightly less than the
@@ -49,7 +51,7 @@ else:
         sleep_for = max(0, secs - 0.001)
         if sleep_for < 0.0005:
             # Less than 0.5ms and its not worth doing the sleep
-            return time_sleep_coro(0)
+            return None
 
         timer = kernel32.CreateWaitableTimerExW(
             None,

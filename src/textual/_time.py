@@ -1,5 +1,5 @@
-import platform
 import asyncio
+import platform
 from asyncio import sleep as asyncio_sleep
 from time import monotonic, perf_counter
 
@@ -26,7 +26,9 @@ if WINDOWS:
         Args:
             secs: Number of seconds to sleep for.
         """
-        await asyncio.create_task(win_sleep(secs))
+        sleep = win_sleep(secs)
+        if sleep is not None:
+            await asyncio.create_task(sleep)
 
 else:
 
