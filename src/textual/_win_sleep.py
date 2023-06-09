@@ -4,9 +4,9 @@ A version of `time.sleep` that is more accurate than the standard library (even 
 This should only be imported on Windows.
 """
 
-from functools import partial
+import asyncio
 from time import sleep as time_sleep
-from typing import Callable
+from typing import Coroutine
 
 __all__ = ["sleep"]
 
@@ -16,21 +16,26 @@ WAIT_FAILED = 0xFFFFFFFF
 CREATE_WAITABLE_TIMER_HIGH_RESOLUTION = 0x00000002
 TIMER_ALL_ACCESS = 0x1F0003
 
+
+async def time_sleep_coro(secs: float):
+    """Coroutine wrapper around `time.sleep`."""
+    time_sleep(secs)
+
+
 try:
     import ctypes
-    from ctypes.wintypes import LARGE_INTEGER
+    from ctypes.wintypes import HANDLE, LARGE_INTEGER
 
     kernel32 = ctypes.windll.kernel32  # type: ignore[attr-defined]
 except Exception:
     print("Exception found")
 
-    def sleep(secs: float) -> tuple[Callable[[], None], None]:
-        return partial(time_sleep, secs), None
+    def sleep(secs: float) -> Coroutine[None, None, None]:
+        return time_sleep_coro(secs)
 
 else:
-    print("Defining sleep")
 
-    def sleep(secs: float) -> tuple[Callable[[], None], Callable[[], None] | None]:
+    def sleep(secs: float) -> Coroutine[None, None, None]:
         """A replacement sleep for Windows.
 
         Note that unlike `time.sleep` this *may* sleep for slightly less than the
@@ -41,47 +46,65 @@ else:
         """
 
         # Subtract a millisecond to account for overhead
-        print("Inside sleep")
         sleep_for = max(0, secs - 0.001)
         if sleep_for < 0.0005:
             # Less than 0.5ms and its not worth doing the sleep
-            return lambda: None, None
+            return time_sleep_coro(0)
 
-        print("Creating handle")
-        handle = kernel32.CreateWaitableTimerExW(
+        timer = kernel32.CreateWaitableTimerExW(
             None,
             None,
             CREATE_WAITABLE_TIMER_HIGH_RESOLUTION,
             TIMER_ALL_ACCESS,
         )
-        print(handle)
-        if not handle:
-            return partial(time_sleep, sleep_for), None
+        if not timer:
+            return time_sleep_coro(sleep_for)
 
-        print("Setting timer")
         if not kernel32.SetWaitableTimer(
-            handle,
+            timer,
             ctypes.byref(LARGE_INTEGER(int(sleep_for * -10_000_000))),
             0,
             None,
             None,
             0,
         ):
-            print("Failed")
-            kernel32.CloseHandle(handle)
-            return partial(time_sleep, sleep_for), None
-        print("Success")
+            kernel32.CloseHandle(timer)
+            return time_sleep_coro(sleep_for)
 
-        def sleep_callable():
-            if kernel32.WaitForSingleObject(handle, INFINITE) == WAIT_FAILED:
-                kernel32.CloseHandle(handle)
+        cancel_event = kernel32.CreateEventExW(None, None, 0, TIMER_ALL_ACCESS)
+        if not cancel_event:
+            kernel32.CloseHandle(timer)
+            return time_sleep_coro(sleep_for)
+
+        def cancel_inner():
+            kernel32.SetEvent(cancel_event)
+
+        async def cancel():
+            """Cancels the timer by setting the cancel event."""
+            await asyncio.get_running_loop().run_in_executor(None, cancel_inner)
+
+        def wait_inner():
+            """Function responsible for waiting for the timer or the cancel event."""
+            if (
+                kernel32.WaitForMultipleObjects(
+                    2,
+                    ctypes.pointer((HANDLE * 2)(cancel_event, timer)),
+                    False,
+                    INFINITE,
+                )
+                == WAIT_FAILED
+            ):
                 time_sleep(sleep_for)
-            else:
-                kernel32.CloseHandle(handle)
 
-        def cancel_callable():
-            kernel32.CancelWaitableTimer(handle)
-            kernel32.CloseHandle(handle)
+        async def wait():
+            """Wraps the actual sleeping so we can detect if the thread was cancelled."""
+            try:
+                await asyncio.get_running_loop().run_in_executor(None, wait_inner)
+            except asyncio.CancelledError:
+                await cancel()
+                raise
+            finally:
+                kernel32.CloseHandle(timer)
+                kernel32.CloseHandle(cancel_event)
 
-        print("About to end")
-        return sleep_callable, cancel_callable
+        return wait()

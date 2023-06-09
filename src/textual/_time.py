@@ -1,5 +1,5 @@
 import platform
-from asyncio import get_running_loop
+import asyncio
 from asyncio import sleep as asyncio_sleep
 from time import monotonic, perf_counter
 
@@ -26,16 +26,7 @@ if WINDOWS:
         Args:
             secs: Number of seconds to sleep for.
         """
-        print("> Going to call winsleep")
-        sleep_callable, cancel_callable = win_sleep(secs)
-        print("> Done")
-
-        try:
-            await get_running_loop().run_in_executor(None, sleep_callable)
-        except Exception as e:
-            print(e)
-            if cancel_callable is not None:
-                cancel_callable()
+        await asyncio.create_task(win_sleep(secs))
 
 else:
 
