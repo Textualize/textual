@@ -26,9 +26,7 @@ if WINDOWS:
         Args:
             secs: Number of seconds to sleep for.
         """
-        sleep = win_sleep(secs)
-        if sleep is not None:
-            await asyncio.create_task(sleep)
+        await asyncio.create_task(win_sleep(secs))
 
 else:
 
