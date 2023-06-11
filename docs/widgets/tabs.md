@@ -36,6 +36,9 @@ Clear tabs by calling the [clear][textual.widgets.Tabs.clear] method. Clearing t
 
 Tabs may be added dynamically with the [add_tab][textual.widgets.Tabs.add_tab] method, which accepts strings, [Text][rich.text.Text], or [Tab][textual.widgets.Tab] objects.
 
+You can also customize the position of the added tab by passing an optional `before`
+or `after` parameter that is passed down to the underlying mount operation.
+
 ## Example
 
 The following example adds a `Tabs` widget above a text label. Press ++a++ to add a tab, ++c++ to clear the tabs.

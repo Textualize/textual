@@ -312,11 +312,20 @@ class Tabs(Widget, can_focus=True):
                 pass
         return None
 
-    def add_tab(self, tab: Tab | str | Text) -> None:
+    def add_tab(self,
+                tab: Tab | str | Text,
+                before: int | str | Widget | None = None,
+                after: int | str | Widget | None = None) -> None:
         """Add a new tab to the end of the tab list.
 
         Args:
             tab: A new tab object, or a label (str or Text).
+            before: Optional location to mount before. An `int` is the index
+                of the child to mount before, a `str` is a `query_one` query to
+                find the widget to mount before.
+            after: Optional location to mount after. An `int` is the index
+                of the child to mount after, a `str` is a `query_one` query to
+                find the widget to mount after.
         """
         from_empty = self.tab_count == 0
         tab_widget = (
@@ -324,7 +333,9 @@ class Tabs(Widget, can_focus=True):
             if isinstance(tab, (str, Text))
             else self._auto_tab_id(tab)
         )
-        mount_await = self.query_one("#tabs-list").mount(tab_widget)
+        mount_await = self.query_one("#tabs-list").mount(tab_widget, 
+                                                         before=before,
+                                                         after=after)
         if from_empty:
             tab_widget.add_class("-active")
             self.post_message(self.TabActivated(self, tab_widget))
