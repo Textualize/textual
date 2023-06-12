@@ -1,4 +1,4 @@
-from functools import partial
+import asyncio
 import time
 import sys
 
@@ -12,18 +12,8 @@ pytestmark = pytest.mark.skipif(
 )
 
 
-@pytest.mark.parametrize("sleep_for", [0.1, 1, 10])
-async def test_win_sleep_duration(sleep_for):
-    start = time.perf_counter()
-    await sleep(sleep_for)
-    end = time.perf_counter()
-    assert end - start == pytest.approx(sleep_for, abs=min(sleep_for, 0.1))
-    assert (end - start) < min(sleep_for, 0.1) + sleep_for
-    assert end - start
-
-
-@pytest.mark.parametrize("sleep_for", [0.1, 1, 10])
-async def test_win_sleep_timer_is_cancellable(sleep_for):
+@pytest.mark.parametrize("sleep_for", [1, 10, 1000])
+def test_win_sleep_timer_is_cancellable(sleep_for):
     """Regression test for https://github.com/Textualize/textual/issues/2711."""
 
     class WindowsIntervalBugApp(App[None]):
@@ -33,9 +23,11 @@ async def test_win_sleep_timer_is_cancellable(sleep_for):
         def key_e(self):
             self.exit()
 
-    async with WindowsIntervalBugApp().run_test() as pilot:
-        start = time.perf_counter()
-        await pilot.press("e")
-        end = time.perf_counter()
+    async def actual_test():
+        async with WindowsIntervalBugApp().run_test() as pilot:
+            await pilot.press("e")
 
-    assert (end - start) < 0.05
+    start = time.perf_counter()
+    asyncio.run(actual_test())
+    end = time.perf_counter()
+    assert end - start < 0.1

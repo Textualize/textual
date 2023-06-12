@@ -19,7 +19,7 @@ TIMER_ALL_ACCESS = 0x1F0003
 
 async def time_sleep_coro(secs: float):
     """Coroutine wrapper around `time.sleep`."""
-    time_sleep(secs)
+    await asyncio.sleep(secs)
 
 
 try:
