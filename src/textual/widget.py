@@ -2439,18 +2439,12 @@ class Widget(DOMNode):
         container = widget.parent
         while isinstance(container, Widget) and widget is not self:
             container_virtual_region = container.virtual_region
-            if origin_visible and widget.region.height > container.region.height:
-                target_region = widget.virtual_region
-            else:
-                # The region we want to scroll to must be centered around the central point.
-                # We make it as big as possible because `scroll_to_region` scrolls as little
-                # as possible.
-                target_region = Region(
-                    central_point.x - container_virtual_region.width // 2,
-                    central_point.y - container_virtual_region.height // 2,
-                    container_virtual_region.width,
-                    container_virtual_region.height,
-                )
+            target_region = Region(
+                central_point.x - container_virtual_region.width // 2,
+                central_point.y - container_virtual_region.height // 2,
+                container_virtual_region.width,
+                container_virtual_region.height,
+            )
 
             scroll = container.scroll_to_region(
                 target_region,
@@ -2459,6 +2453,7 @@ class Widget(DOMNode):
                 duration=duration,
                 easing=easing,
                 force=force,
+                top=origin_visible and widget.region.height > container.region.height,
             )
 
             # We scroll `widget` within `container` with the central point written in
