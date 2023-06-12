@@ -36,114 +36,88 @@ class Button(Static, can_focus=True):
         height: 3;
         background: $panel;
         color: $text;
-        border: none;
-        border-top: tall $panel-lighten-2;
-        border-bottom: tall $panel-darken-3;
+        border: tall $background;
         content-align: center middle;
         text-style: bold;
     }
 
     Button:focus {
-        text-style: bold reverse;
+        text-style: bold;
+        border: tall $accent;
     }
 
     Button:hover {
-        border-top: tall $panel;
-        background: $panel-darken-2;
         color: $text;
+        background: $primary;
     }
 
     Button.-active {
-        background: $panel;
-        border-bottom: tall $panel-lighten-2;
-        border-top: tall $panel-darken-2;
-        tint: $background 30%;
+        background: $primary-lighten-1;
     }
 
     /* Primary variant */
     Button.-primary {
-        background: $primary;
+        background: $primary 20%;
         color: $text;
-        border-top: tall $primary-lighten-3;
-        border-bottom: tall $primary-darken-3;
 
     }
 
     Button.-primary:hover {
-        background: $primary-darken-2;
+        background: $primary;
         color: $text;
-        border-top: tall $primary;
     }
 
     Button.-primary.-active {
-        background: $primary;
-        border-bottom: tall $primary-lighten-3;
-        border-top: tall $primary-darken-3;
+        background: $primary-lighten-1;
+
     }
 
 
     /* Success variant */
     Button.-success {
-        background: $success;
+        background: $success 20%;
         color: $text;
-        border-top: tall $success-lighten-2;
-        border-bottom: tall $success-darken-3;
     }
 
     Button.-success:hover {
         background: $success-darken-2;
         color: $text;
-        border-top: tall $success;
     }
 
     Button.-success.-active {
         background: $success;
-        border-bottom: tall $success-lighten-2;
-        border-top: tall $success-darken-2;
     }
 
 
     /* Warning variant */
     Button.-warning {
-        background: $warning;
+        background: $warning 20%;
         color: $text;
-        border-top: tall $warning-lighten-2;
-        border-bottom: tall $warning-darken-3;
     }
 
     Button.-warning:hover {
         background: $warning-darken-2;
         color: $text;
-        border-top: tall $warning;
-
     }
 
     Button.-warning.-active {
         background: $warning;
-        border-bottom: tall $warning-lighten-2;
-        border-top: tall $warning-darken-2;
     }
 
 
     /* Error variant */
     Button.-error {
-        background: $error;
+        background: $error 20%;
         color: $text;
-        border-top: tall $error-lighten-2;
-        border-bottom: tall $error-darken-3;
-
     }
 
     Button.-error:hover {
         background: $error-darken-1;
         color: $text;
-        border-top: tall $error;
     }
 
     Button.-error.-active {
         background: $error;
-        border-bottom: tall $error-lighten-2;
-        border-top: tall $error-darken-2;
     }
     """
 
