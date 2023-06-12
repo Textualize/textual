@@ -1193,7 +1193,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         rows = self.rows
         row_key = self._row_locations.get_key(row_index)
         row = rows[row_key]
-        row_width = sum(column.render_width for column in self.columns.values())
+        row_width = (
+            sum(column.render_width for column in self.columns.values())
+            + self._row_label_column_width
+        )
         y = sum(ordered_row.height for ordered_row in self.ordered_rows[:row_index])
         if self.show_header:
             y += self.header_height
