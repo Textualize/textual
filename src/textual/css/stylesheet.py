@@ -262,6 +262,14 @@ class Stylesheet:
         for path in paths:
             self.read(path)
 
+    def has_source(self, path: str | PurePath) -> bool:
+        """Check if the stylesheet has this CSS source already.
+
+        Returns:
+            Whether the stylesheet is aware of this CSS source or not.
+        """
+        return str(path) in self.source
+
     def add_source(
         self,
         css: str,

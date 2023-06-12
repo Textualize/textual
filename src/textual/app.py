@@ -27,7 +27,7 @@ from contextlib import (
 )
 from datetime import datetime
 from functools import partial
-from pathlib import Path, PurePath
+from pathlib import PurePath
 from time import perf_counter
 from typing import (
     TYPE_CHECKING,
@@ -67,7 +67,7 @@ from ._compositor import CompositorUpdate
 from ._context import active_app, active_message_pump
 from ._context import message_hook as message_hook_context_var
 from ._event_broker import NoHandler, extract_handler_actions
-from ._path import _make_path_object_relative
+from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relative
 from ._wait import wait_for_idle
 from ._worker_manager import WorkerManager
 from .actions import ActionParseResult, SkipAction
@@ -175,10 +175,6 @@ class UnknownModeError(ModeError):
 
 class ActiveModeError(ModeError):
     """Raised when attempting to remove the currently active mode."""
-
-
-class CssPathError(Exception):
-    """Raised when supplied CSS path(s) are invalid."""
 
 
 ReturnType = TypeVar("ReturnType")
@@ -408,32 +404,14 @@ class App(Generic[ReturnType], DOMNode):
         self.stylesheet = Stylesheet(variables=self.get_css_variables())
 
         css_path = css_path or self.CSS_PATH
-        if css_path is not None:
-            # When value(s) are supplied for CSS_PATH, we normalise them to a list of Paths.
-            css_paths: List[PurePath]
-            if isinstance(css_path, str):
-                css_paths = [Path(css_path)]
-            elif isinstance(css_path, PurePath):
-                css_paths = [css_path]
-            elif isinstance(css_path, list):
-                css_paths = []
-                for path in css_path:
-                    css_paths.append(
-                        Path(path) if isinstance(path, str) else path,
-                    )
-            else:
-                raise CssPathError(
-                    "Expected a str, Path or list[str | Path] for the CSS_PATH."
-                )
-
-            # We want the CSS path to be resolved from the location of the App subclass
-            css_paths = [
-                _make_path_object_relative(css_path, self) for css_path in css_paths
-            ]
-        else:
-            css_paths = []
-
+        css_paths = [
+            _make_path_object_relative(css_path, self)
+            for css_path in (
+                _css_path_type_as_list(css_path) if css_path is not None else []
+            )
+        ]
         self.css_path = css_paths
+
         self._registry: WeakSet[DOMNode] = WeakSet()
 
         # Sensitivity on X is double the sensitivity on Y to account for
@@ -1433,7 +1411,10 @@ class App(Generic[ReturnType], DOMNode):
             else:
                 screen, _ = self._get_screen(self.MODES[mode])
             stack.append(screen)
-        self._screen_stacks[mode] = [screen]
+
+            self._load_screen_css(screen)
+
+        self._screen_stacks[mode] = stack
 
     def switch_mode(self, mode: str) -> None:
         """Switch to a given mode.
@@ -1567,6 +1548,33 @@ class App(Generic[ReturnType], DOMNode):
             self.call_next(await_mount)
             return (_screen, await_mount)
 
+    def _load_screen_css(self, screen: Screen):
+        """Loads the CSS associated with a screen."""
+
+        if self.css_monitor is not None:
+            self.css_monitor.add_paths(screen.css_path)
+
+        update = False
+        for path in screen.css_path:
+            if not self.stylesheet.has_source(path):
+                self.stylesheet.read(path)
+                update = True
+        if screen.CSS:
+            try:
+                screen_css_path = (
+                    f"{inspect.getfile(screen.__class__)}:{screen.__class__.__name__}"
+                )
+            except (TypeError, OSError):
+                screen_css_path = f"{screen.__class__.__name__}"
+            if not self.stylesheet.has_source(screen_css_path):
+                self.stylesheet.add_source(
+                    screen.CSS, path=screen_css_path, is_default_css=False
+                )
+                update = True
+        if update:
+            self.stylesheet.reparse()
+            self.stylesheet.update(self)
+
     def _replace_screen(self, screen: Screen) -> Screen:
         """Handle the replaced screen.
 
@@ -1613,6 +1621,7 @@ class App(Generic[ReturnType], DOMNode):
         next_screen._push_result_callback(
             self.screen if self._screen_stack else None, callback
         )
+        self._load_screen_css(next_screen)
         self._screen_stack.append(next_screen)
         next_screen.post_message(events.ScreenResume())
         self.log.system(f"{self.screen} is current (PUSHED)")
@@ -1636,6 +1645,7 @@ class App(Generic[ReturnType], DOMNode):
 
         previous_screen = self._replace_screen(self._screen_stack.pop())
         previous_screen._pop_result_callback()
+        self._load_screen_css(next_screen)
         self._screen_stack.append(next_screen)
         self.screen.post_message(events.ScreenResume())
         self.screen._push_result_callback(self.screen, None)

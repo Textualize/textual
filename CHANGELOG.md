@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - The devtools console now confirms when CSS files have been successfully loaded after a previous error https://github.com/Textualize/textual/pull/2716
+- Class variable `CSS` to screens https://github.com/Textualize/textual/issues/2137
+- Class variable `CSS_PATH` to screens https://github.com/Textualize/textual/issues/2137
 - Added `cursor_foreground_priority` and `cursor_background_priority` to `DataTable` https://github.com/Textualize/textual/pull/2736
 
 ### Fixed
