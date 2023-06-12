@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from functools import lru_cache
+from os import environ
 from typing import TYPE_CHECKING, Iterable, Tuple, cast
 
 from rich.console import Console
@@ -211,6 +212,18 @@ BORDER_LOCATIONS: dict[
         (1, 1, 1),
     ),
 }
+
+
+if environ.get("TERM_PROGRAM") == "Apple_Terminal":
+    # On the default Mac terminal, some border styles look terrible. Replace those.
+    style_replacements = {
+        "panel": "thick",
+        "tall": "solid",
+        "wide": "solid",
+    }
+    for out_, in_ in style_replacements.items():
+        BORDER_CHARS[out_] = BORDER_CHARS[in_]
+        BORDER_LOCATIONS[out_] = BORDER_LOCATIONS[in_]
 
 # Some borders (such as panel) require that the title (and subtitle) be draw in reverse.
 # This is a mapping of the border type on to a tuple for the top and bottom borders, to indicate
