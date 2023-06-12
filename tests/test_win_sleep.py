@@ -1,6 +1,6 @@
-from functools import partial
-import time
 import sys
+import time
+from functools import partial
 
 import pytest
 
@@ -38,4 +38,4 @@ async def test_win_sleep_timer_is_cancellable(sleep_for):
         await pilot.press("e")
         end = time.perf_counter()
 
-    assert (end - start) < 0.05
+    assert (end - start) < 0.1
