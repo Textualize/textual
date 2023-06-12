@@ -1,7 +1,7 @@
 from textual.app import App, ComposeResult
 from textual.color import Color
 from textual.containers import Container
-from textual.css.scalar import Scalar, ScalarOffset
+from textual.css.scalar import ScalarOffset
 
 
 class StyleApp(App[None]):

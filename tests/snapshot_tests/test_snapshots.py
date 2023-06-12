@@ -2,8 +2,6 @@ from pathlib import Path
 
 import pytest
 
-from textual.widgets import Placeholder
-
 # These paths should be relative to THIS directory.
 WIDGET_EXAMPLES_DIR = Path("../../docs/examples/widgets")
 LAYOUT_EXAMPLES_DIR = Path("../../docs/examples/guide/layout")

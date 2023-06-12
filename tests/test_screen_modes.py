@@ -1,4 +1,3 @@
-from functools import partial
 from itertools import cycle
 from typing import Type
 

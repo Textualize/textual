@@ -35,7 +35,7 @@ async def test_installed_screens():
         SCREENS = {
             "home": Screen,  # Screen type
             "one": Screen(),  # Screen instance
-            "two": lambda: Screen(),  # Callable[[], Screen]
+            "two": Screen,  # Callable[[], Screen]
         }
 
     app = ScreensApp()

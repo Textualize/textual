@@ -1,6 +1,3 @@
-from os import urandom
-from random import randrange
-
 from textual.app import App
 from textual.containers import Container, Horizontal, ScrollableContainer, Vertical
 from textual.screen import Screen
