@@ -23,11 +23,9 @@ from typing import (
 import rich.repr
 from rich.console import RenderableType
 from rich.style import Style
-from rich.traceback import Traceback
 
 from . import errors, events, messages
 from ._callback import invoke
-from ._compose import compose
 from ._compositor import Compositor, MapGeometry
 from ._context import visible_screen_stack
 from ._types import CallbackType

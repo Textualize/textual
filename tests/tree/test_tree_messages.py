@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import Any
 
 from textual.app import App, ComposeResult
-from textual.message import Message
 from textual.widgets import Tree
 
 

@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.screen import Screen, ModalScreen
+from textual.screen import ModalScreen
 from textual.widgets import Button, Footer, Header, Label, Input
 
 

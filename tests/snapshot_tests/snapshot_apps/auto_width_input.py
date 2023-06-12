@@ -1,6 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.containers import VerticalScroll
-from textual.widgets import Header, Footer, Label, Input
+from textual.widgets import Header, Footer, Input
 
 
 class InputWidthAutoApp(App[None]):

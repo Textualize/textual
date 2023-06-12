@@ -645,7 +645,7 @@ class StylesBase(ABC):
 class Styles(StylesBase):
     node: DOMNode | None = None
     _rules: RulesMap = field(
-        default_factory=lambda: RulesMap()
+        default_factory=RulesMap
     )  # mypy won't be happy with `default_factory=RulesMap`
     _updates: int = 0
 

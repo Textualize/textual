@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import pytest
 
-from textual.css.parse import parse
 from textual.css.tokenize import tokenize
 from textual.css.tokenizer import Token, TokenError
 

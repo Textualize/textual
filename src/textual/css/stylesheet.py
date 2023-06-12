@@ -15,7 +15,6 @@ from rich.style import Style
 from rich.syntax import Syntax
 from rich.text import Text
 
-from .. import messages
 from ..dom import DOMNode
 from ..widget import Widget
 from .errors import StylesheetError
