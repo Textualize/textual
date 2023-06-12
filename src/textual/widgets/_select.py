@@ -82,7 +82,7 @@ class SelectCurrent(Horizontal):
 
     DEFAULT_CSS = """
     SelectCurrent {
-        border: tall $background;
+        border: tall transparent;
         background: $boost;
         color: $text;
         width: 100%;

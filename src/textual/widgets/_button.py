@@ -41,6 +41,26 @@ class Button(Static, can_focus=True):
         text-style: bold;
     }
 
+    .-light-mode Button {
+        border: tall transparent;
+    }
+
+    .-light-mode Button.-primary {
+        color: $primary-darken-2;
+    }
+
+    .-light-mode Button.-success {
+        color: $success-darken-3;
+    }
+
+    .-light-mode Button.-error {
+        color: $error-darken-3;
+    }
+
+    .-light-mode Button.-warning {
+        color: $warning-darken-3;
+    }
+
     Button:focus {
         text-style: bold;
         border: tall $accent;

@@ -66,7 +66,7 @@ class Switch(Widget, can_focus=True):
     }
 
     Switch.-on {
-
+        background: $success 12%;
     }
 
     Switch.-on > .switch--slider {

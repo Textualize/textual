@@ -190,7 +190,6 @@ class OptionList(ScrollView, can_focus=True):
     }
 
     OptionList > .option-list--option-highlighted {
-
         color: $text;
         text-style: bold;
     }
