@@ -54,6 +54,13 @@ class ToggleButton(Static, can_focus=True):
     DEFAULT_CSS = """
     ToggleButton {
         width: auto;
+        border: tall transparent;
+        padding: 0 1;
+        background: $boost;
+    }
+
+    ToggleButton:focus {
+        border: tall $accent;
     }
 
     ToggleButton:hover {

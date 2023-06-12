@@ -46,7 +46,7 @@ class Switch(Widget, can_focus=True):
     DEFAULT_CSS = """
     Switch {
         border: tall transparent;
-        background: $panel;
+        background: $boost;
         height: auto;
         width: auto;
         padding: 0 2;
