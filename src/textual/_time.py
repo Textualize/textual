@@ -1,5 +1,5 @@
-import platform
 import asyncio
+import platform
 from asyncio import sleep as asyncio_sleep
 from time import monotonic, perf_counter
 

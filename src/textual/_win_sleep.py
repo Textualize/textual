@@ -4,6 +4,8 @@ A version of `time.sleep` that is more accurate than the standard library (even 
 This should only be imported on Windows.
 """
 
+from __future__ import annotations
+
 import asyncio
 from time import sleep as time_sleep
 from typing import Coroutine
@@ -31,15 +33,24 @@ except Exception:
     print("Exception found")
 
     def sleep(secs: float) -> Coroutine[None, None, None]:
+        """Wrapper around `time.sleep` to match the signature of the main case below."""
         return time_sleep_coro(secs)
 
 else:
+
+    async def no_sleep_coro():
+        """Creates a coroutine that does nothing for when no sleep is needed."""
+        pass
 
     def sleep(secs: float) -> Coroutine[None, None, None]:
         """A replacement sleep for Windows.
 
         Note that unlike `time.sleep` this *may* sleep for slightly less than the
         specified time. This is generally not an issue for Textual's use case.
+
+        In order to create a timer that _can_ be cancelled on Windows, we need to
+        create a timer and a separate event, and then we wait for either of the two
+        things. When Textual wants to quit, we set the cancel event.
 
         Args:
             secs: Seconds to sleep for.
@@ -49,7 +60,7 @@ else:
         sleep_for = max(0, secs - 0.001)
         if sleep_for < 0.0005:
             # Less than 0.5ms and its not worth doing the sleep
-            return time_sleep_coro(0)
+            return no_sleep_coro()
 
         timer = kernel32.CreateWaitableTimerExW(
             None,
@@ -77,6 +88,7 @@ else:
             return time_sleep_coro(sleep_for)
 
         def cancel_inner():
+            """Sets the cancel event so we know we can stop waiting for the timer."""
             kernel32.SetEvent(cancel_event)
 
         async def cancel():

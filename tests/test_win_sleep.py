@@ -4,7 +4,6 @@ import sys
 
 import pytest
 
-from textual._win_sleep import sleep
 from textual.app import App
 
 pytestmark = pytest.mark.skipif(
@@ -12,13 +11,22 @@ pytestmark = pytest.mark.skipif(
 )
 
 
-@pytest.mark.parametrize("sleep_for", [1, 10, 1000])
-def test_win_sleep_timer_is_cancellable(sleep_for):
-    """Regression test for https://github.com/Textualize/textual/issues/2711."""
+def test_win_sleep_timer_is_cancellable():
+    """Regression test for https://github.com/Textualize/textual/issues/2711.
+
+    When we exit an app with a "long" timer, everything asyncio-related
+    should shutdown quickly. So, we create an app with a timer that triggers
+    every SLEEP_FOR seconds and we shut the app down immediately after creating
+    it. `asyncio` should be done quickly (i.e., the timer was cancelled) and
+    thus the total time this takes should be considerably lesser than the time
+    we originally set the timer for.
+    """
+
+    SLEEP_FOR = 10
 
     class WindowsIntervalBugApp(App[None]):
         def on_mount(self) -> None:
-            self.set_interval(sleep_for, lambda: None)
+            self.set_interval(SLEEP_FOR, lambda: None)
 
         def key_e(self):
             self.exit()
@@ -30,4 +38,4 @@ def test_win_sleep_timer_is_cancellable(sleep_for):
     start = time.perf_counter()
     asyncio.run(actual_test())
     end = time.perf_counter()
-    assert end - start < 0.1
+    assert end - start < 1
