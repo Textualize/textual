@@ -181,7 +181,7 @@ async def test_inactive_stack_is_alive():
             yield Label("fast")
 
         def on_mount(self) -> None:
-            self.set_interval(0.01, self.ping)
+            self.call_later(self.set_interval, 0.01, self.ping)
 
         def ping(self) -> None:
             pings.append(str(self.app.query_one(Label).renderable))

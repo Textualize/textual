@@ -494,6 +494,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         """Process messages until the queue is closed."""
         _rich_traceback_guard = True
         self._thread_id = threading.get_ident()
+
         while not self._closed:
             try:
                 message = await self._get_message()

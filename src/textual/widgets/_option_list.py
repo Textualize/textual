@@ -630,14 +630,7 @@ class OptionList(ScrollView, can_focus=True):
         self.highlighted = None
         self._mouse_hovering_over = None
         self.virtual_size = Size(self.scrollable_content_region.width, 0)
-        # TODO: See https://github.com/Textualize/textual/issues/2582 -- it
-        # should not be necessary to do this like this here; ideally here in
-        # clear_options it would be a forced refresh, and also in a
-        # `on_show` it would be the same (which, I think, would actually
-        # solve the problem we're seeing). But, until such a time as we get
-        # to the bottom of 2582... this seems to delay the refresh enough
-        # that things fall into place.
-        self._request_content_tracking_refresh()
+        self._refresh_content_tracking(force=True)
         return self
 
     def _set_option_disabled(self, index: int, disabled: bool) -> Self:
