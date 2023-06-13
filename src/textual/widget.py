@@ -2746,7 +2746,7 @@ class Widget(DOMNode):
         if (
             self.disabled
             and self.app.focused is not None
-            and self.app.focused in self.walk_children()
+            and self in self.app.focused.ancestors_with_self
         ):
             self.app.focused.blur()
         self._update_styles()
