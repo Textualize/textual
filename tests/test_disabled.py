@@ -1,15 +1,24 @@
 """Test Widget.disabled."""
 
+import pytest
+
 from textual.app import App, ComposeResult
-from textual.containers import VerticalScroll
+from textual.containers import Vertical, VerticalScroll
 from textual.widgets import (
     Button,
+    Checkbox,
     DataTable,
     DirectoryTree,
     Input,
+    Label,
+    ListItem,
     ListView,
     Markdown,
     MarkdownViewer,
+    OptionList,
+    RadioButton,
+    RadioSet,
+    Select,
     Switch,
     TextLog,
     Tree,
@@ -82,3 +91,59 @@ async def test_disable_via_container() -> None:
             node.has_pseudo_class("disabled") and not node.has_pseudo_class("enabled")
             for node in pilot.app.screen.query("#test-container > *")
         )
+
+
+class ChildrenNoFocusDisabledContainer(App[None]):
+    """App for regression test for https://github.com/Textualize/textual/issues/2772."""
+
+    def compose(self) -> ComposeResult:
+        with Vertical():
+            with Vertical():
+                yield Button()
+                yield Checkbox()
+                yield DataTable()
+                yield DirectoryTree(".")
+                yield Input()
+                with ListView():
+                    yield ListItem(Label("one"))
+                    yield ListItem(Label("two"))
+                    yield ListItem(Label("three"))
+                yield OptionList("one", "two", "three")
+                with RadioSet():
+                    yield RadioButton("one")
+                    yield RadioButton("two")
+                    yield RadioButton("three")
+                yield Select([("one", 1), ("two", 2), ("three", 3)])
+                yield Switch()
+
+    def on_mount(self):
+        dt = self.query_one(DataTable)
+        dt.add_columns("one", "two", "three")
+        dt.add_rows([["a", "b", "c"], ["d", "e", "f"], ["g", "h", "i"]])
+
+
+@pytest.mark.parametrize(
+    "widget",
+    [
+        Button,
+        Checkbox,
+        DataTable,
+        DirectoryTree,
+        Input,
+        ListView,
+        OptionList,
+        RadioSet,
+        Select,
+        Switch,
+    ],
+)
+async def test_children_loses_focus_if_container_is_disabled(widget):
+    """Regression test for https://github.com/Textualize/textual/issues/2772."""
+    app = ChildrenNoFocusDisabledContainer()
+    async with app.run_test() as pilot:
+        app.query(widget).first().focus()
+        await pilot.pause()
+        assert isinstance(app.focused, widget)
+        app.query(Vertical).first().disabled = True
+        await pilot.pause()
+        assert app.focused is None
