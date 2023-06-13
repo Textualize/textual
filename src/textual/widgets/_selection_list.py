@@ -524,7 +524,7 @@ class SelectionList(Generic[SelectionType], OptionList):
 
         # If the button is in the unselected state, we're going to do a bit
         # of a switcharound to make it look like it's a "cutout".
-        if not selection.value in self._selected:
+        if selection.value not in self._selected:
             button_style += Style.from_color(
                 self.background_colors[1].rich_color, button_style.bgcolor
             )

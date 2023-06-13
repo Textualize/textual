@@ -3,7 +3,6 @@ from __future__ import annotations
 from fractions import Fraction
 
 from textual.box_model import BoxModel
-from textual.css.styles import Styles
 from textual.geometry import Size, Spacing
 from textual.widget import Widget
 

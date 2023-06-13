@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Iterable
 
-from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
+from rich.console import Console, ConsoleOptions, RenderResult
 from rich.segment import Segment
 from rich.style import Style
 

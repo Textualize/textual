@@ -1,6 +1,5 @@
 import pytest
 from rich.color import Color as RichColor
-from rich.text import Text
 
 from textual.color import Color, Gradient, Lab, lab_to_rgb, rgb_to_lab
 

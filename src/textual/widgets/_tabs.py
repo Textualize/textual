@@ -422,9 +422,7 @@ class Tabs(Widget, can_focus=True):
             active_tab = self.query_one(f"#tabs-list > #{active}", Tab)
             self.query("#tabs-list > Tab.-active").remove_class("-active")
             active_tab.add_class("-active")
-            self.call_after_refresh(
-                self._highlight_active, animate=previously_active != ""
-            )
+            self.call_later(self._highlight_active, animate=previously_active != "")
             self.post_message(self.TabActivated(self, active_tab))
         else:
             underline = self.query_one(Underline)

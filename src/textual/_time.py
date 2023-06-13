@@ -1,5 +1,5 @@
+import asyncio
 import platform
-from asyncio import get_running_loop
 from asyncio import sleep as asyncio_sleep
 from time import monotonic, perf_counter
 
@@ -26,7 +26,7 @@ if WINDOWS:
         Args:
             secs: Number of seconds to sleep for.
         """
-        await get_running_loop().run_in_executor(None, win_sleep, secs)
+        await asyncio.create_task(win_sleep(secs))
 
 else:
 

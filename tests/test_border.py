@@ -41,7 +41,7 @@ def test_border_title_single_line():
     assert widget.border_title is None
 
     widget.border_title = None
-    assert widget.border_title == None
+    assert widget.border_title is None
 
     widget.border_title = ""
     assert widget.border_title == ""
