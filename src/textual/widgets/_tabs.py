@@ -345,18 +345,17 @@ class Tabs(Widget, can_focus=True):
 
         return mount_await
 
-    def clear(self) -> Self:
+    def clear(self) -> AwaitRemove:
         """Clear all the tabs.
 
         Returns:
-            The `Tabs` instance.
+            An awaitable object that waits for the tabs to be removed.
         """
         underline = self.query_one(Underline)
         underline.highlight_start = 0
         underline.highlight_end = 0
-        self.query("#tabs-list > Tab").remove()
-        self.post_message(self.Cleared(self))
-        return self
+        self.call_after_refresh(self.post_message, self.Cleared(self))
+        return self.query("#tabs-list > Tab").remove()
 
     def remove_tab(self, tab_or_id: Tab | str | None) -> AwaitRemove:
         """Remove a tab.
