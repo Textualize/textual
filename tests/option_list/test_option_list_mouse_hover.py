@@ -28,7 +28,9 @@ async def test_no_hover() -> None:
 async def test_hover_highlight() -> None:
     """The mouse hover value should react to the mouse hover over a highlighted option."""
     async with OptionListApp().run_test() as pilot:
+        print("before mouse position", pilot.app.mouse_position)
         await pilot.hover(OptionList)
+        print("mouse position", pilot.app.mouse_position)
         option_list = pilot.app.query_one(OptionList)
         assert option_list._mouse_hovering_over == 0
         assert option_list._mouse_hovering_over == option_list.highlighted

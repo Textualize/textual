@@ -26,7 +26,7 @@ def _get_mouse_message_arguments(
     control: bool = False,
 ) -> dict[str, Any]:
     """Get the arguments to pass into mouse messages for the click and hover methods."""
-    click_x, click_y, _, _ = target.region.translate(offset)
+    click_x, click_y = target.region.offset + offset
     message_arguments = {
         "x": click_x,
         "y": click_y,

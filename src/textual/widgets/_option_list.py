@@ -408,8 +408,8 @@ class OptionList(ScrollView, can_focus=True):
         Args:
             event: The mouse movement event.
         """
+        print(event, event.style)
         self._mouse_hovering_over = event.style.meta.get("option")
-        1 / 0
 
     def _on_leave(self, _: Leave) -> None:
         """React to the mouse leaving the widget."""
