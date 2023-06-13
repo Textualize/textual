@@ -8,6 +8,7 @@ from rich.text import Text, TextType
 
 from .. import events
 from ..app import ComposeResult, RenderResult
+from ..await_remove import AwaitRemove
 from ..binding import Binding, BindingType
 from ..containers import Container, Horizontal, Vertical
 from ..css.query import NoMatches
@@ -357,38 +358,44 @@ class Tabs(Widget, can_focus=True):
         self.post_message(self.Cleared(self))
         return self
 
-    def remove_tab(self, tab_or_id: Tab | str | None) -> None:
+    def remove_tab(self, tab_or_id: Tab | str | None) -> AwaitRemove:
         """Remove a tab.
 
         Args:
             tab_or_id: The Tab's id.
         """
         if tab_or_id is None:
-            return
+            return self.app._remove_nodes([], None)
         if isinstance(tab_or_id, Tab):
             remove_tab = tab_or_id
         else:
             try:
                 remove_tab = self.query_one(f"#tabs-list > #{tab_or_id}", Tab)
             except NoMatches:
-                return
+                return self.app._remove_nodes([], None)
         removing_active_tab = remove_tab.has_class("-active")
 
         next_tab = self._next_active
-        if next_tab is None:
-            self.post_message(self.Cleared(self))
-        else:
-            self.post_message(self.TabActivated(self, next_tab))
+        result_message: Tabs.Cleared | Tabs.TabActivated = (
+            self.Cleared(self)
+            if next_tab is None
+            else self.TabActivated(self, next_tab)
+        )
+
+        remove_await = remove_tab.remove()
 
         async def do_remove() -> None:
             """Perform the remove after refresh so the underline bar gets new positions."""
-            await remove_tab.remove()
+            await remove_await
             if removing_active_tab:
                 if next_tab is not None:
                     next_tab.add_class("-active")
                 self.call_after_refresh(self._highlight_active, animate=True)
+            self.post_message(result_message)
 
         self.call_after_refresh(do_remove)
+
+        return remove_await
 
     def validate_active(self, active: str) -> str:
         """Check id assigned to active attribute is a valid tab."""
