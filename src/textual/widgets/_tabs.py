@@ -16,7 +16,7 @@ from ..geometry import Offset
 from ..message import Message
 from ..reactive import reactive
 from ..renderables.bar import Bar
-from ..widget import Widget
+from ..widget import AwaitMount, Widget
 from ..widgets import Static
 
 if TYPE_CHECKING:
@@ -312,11 +312,14 @@ class Tabs(Widget, can_focus=True):
                 pass
         return None
 
-    def add_tab(self, tab: Tab | str | Text) -> None:
+    def add_tab(self, tab: Tab | str | Text) -> AwaitMount:
         """Add a new tab to the end of the tab list.
 
         Args:
             tab: A new tab object, or a label (str or Text).
+
+        Returns:
+            An awaitable object that waits for the tab to be mounted.
         """
         from_empty = self.tab_count == 0
         tab_widget = (
@@ -324,18 +327,22 @@ class Tabs(Widget, can_focus=True):
             if isinstance(tab, (str, Text))
             else self._auto_tab_id(tab)
         )
+
         mount_await = self.query_one("#tabs-list").mount(tab_widget)
+
         if from_empty:
             tab_widget.add_class("-active")
-            self.post_message(self.TabActivated(self, tab_widget))
+            activated_message = self.TabActivated(self, tab_widget)
 
             async def refresh_active() -> None:
                 """Wait for things to be mounted before highlighting."""
-                await mount_await
                 self.active = tab_widget.id or ""
                 self._highlight_active(animate=False)
+                self.post_message(activated_message)
 
             self.call_after_refresh(refresh_active)
+
+        return mount_await
 
     def clear(self) -> Self:
         """Clear all the tabs.
