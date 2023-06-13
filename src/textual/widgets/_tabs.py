@@ -363,6 +363,9 @@ class Tabs(Widget, can_focus=True):
 
         Args:
             tab_or_id: The Tab's id.
+
+        Returns:
+            An awaitable object that waits for the tab to be removed.
         """
         if tab_or_id is None:
             return self.app._remove_nodes([], None)
