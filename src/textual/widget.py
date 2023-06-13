@@ -2743,7 +2743,12 @@ class Widget(DOMNode):
 
     def watch_disabled(self) -> None:
         """Update the styles of the widget and its children when disabled is toggled."""
-        self.blur()
+        if (
+            self.disabled
+            and self.app.focused is not None
+            and self.app.focused in self.walk_children()
+        ):
+            self.app.focused.blur()
         self._update_styles()
 
     def _size_updated(
