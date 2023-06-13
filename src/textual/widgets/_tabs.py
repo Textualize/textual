@@ -419,7 +419,10 @@ class Tabs(Widget, can_focus=True):
     def watch_active(self, previously_active: str, active: str) -> None:
         """Handle a change to the active tab."""
         if active:
-            active_tab = self.query_one(f"#tabs-list > #{active}", Tab)
+            try:
+                active_tab = self.query_one(f"#tabs-list > #{active}", Tab)
+            except NoMatches:
+                return
             self.query("#tabs-list > Tab.-active").remove_class("-active")
             active_tab.add_class("-active")
             self.call_later(self._highlight_active, animate=previously_active != "")
