@@ -45,6 +45,10 @@ class Button(Static, can_focus=True):
         border: tall transparent;
     }
 
+    .-light-mode Button.-active {
+        color: $text !important;
+    }
+
     .-light-mode Button.-primary {
         color: $primary-darken-2;
     }
@@ -72,7 +76,7 @@ class Button(Static, can_focus=True):
     }
 
     Button.-active {
-        background: $primary-lighten-1;
+        background: $primary-darken-1;
     }
 
     /* Primary variant */
@@ -88,7 +92,7 @@ class Button(Static, can_focus=True):
     }
 
     Button.-primary.-active {
-        background: $primary-lighten-1;
+        background: $primary-darken-1;
 
     }
 
@@ -105,7 +109,7 @@ class Button(Static, can_focus=True):
     }
 
     Button.-success.-active {
-        background: $success;
+        background: $success-darken-3;
     }
 
 
@@ -121,7 +125,7 @@ class Button(Static, can_focus=True):
     }
 
     Button.-warning.-active {
-        background: $warning;
+        background: $warning-darken-3;
     }
 
 
@@ -137,7 +141,7 @@ class Button(Static, can_focus=True):
     }
 
     Button.-error.-active {
-        background: $error;
+        background: $error-darken-2;
     }
     """
 
