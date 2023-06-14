@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 from itertools import zip_longest
+from typing import Generator
 
 from rich.repr import Result
 from rich.text import Text, TextType
 
 from ..app import ComposeResult
+from ..await_remove import AwaitRemove
 from ..message import Message
 from ..reactive import reactive
 from ..widget import AwaitMount, Widget
@@ -68,6 +70,26 @@ class TabPane(Widget):
         super().__init__(
             *children, name=name, id=id, classes=classes, disabled=disabled
         )
+
+
+class AwaitTabbedContent:
+    """An awaitable return by [`TabbedContent`][textual.widgets.TabbedContent] methods that modify the tabs."""
+
+    def __init__(self, *awaitables: AwaitMount | AwaitRemove) -> None:
+        """Initialise the awaitable.
+
+        Args:
+            *awaitables: The collection of awaitables to await.
+        """
+        super().__init__()
+        self._awaitables = awaitables
+
+    def __await__(self) -> Generator[None, None, None]:
+        async def await_tabbed_content() -> None:
+            for awaitable in self._awaitables:
+                await awaitable
+
+        return await_tabbed_content().__await__()
 
 
 class TabbedContent(Widget):
@@ -219,34 +241,40 @@ class TabbedContent(Widget):
         with ContentSwitcher(initial=self._initial or None):
             yield from pane_content
 
-    def add_pane(self, pane: TabPane) -> AwaitMount:
+    def add_pane(self, pane: TabPane) -> AwaitTabbedContent:
         """Add a new pane to the tabbed content.
 
         Args:
             pane: The pane to add.
 
         Returns:
-            An awaitable object that waits for the pane to be mounted.
+            An awaitable object that waits for the pane to be added.
         """
         tabs = self.get_child_by_type(Tabs)
         pane = self._set_id(pane, tabs.tab_count + 1)
         assert pane.id is not None
-        tabs.add_tab(ContentTab(pane._title, pane.id))
+        await_tab = tabs.add_tab(ContentTab(pane._title, pane.id))
         pane.display = False
-        return self.get_child_by_type(ContentSwitcher).mount(pane)
+        return AwaitTabbedContent(
+            await_tab, self.get_child_by_type(ContentSwitcher).mount(pane)
+        )
 
-    def remove_pane(self, pane_id: str) -> None:
+    def remove_pane(self, pane_id: str) -> AwaitTabbedContent:
         """Remove a given pane from the tabbed content.
 
         Args:
             pane_id: The ID of the pane to remove.
+
+        Returns:
+            An awaitable object that waits for the pane to be removed.
         """
-        self.get_child_by_type(Tabs).remove_tab(pane_id)
+        await_remove = AwaitTabbedContent(
+            self.get_child_by_type(Tabs).remove_tab(pane_id),
+            self.get_child_by_type(ContentSwitcher).get_child_by_id(pane_id).remove(),
+        )
 
         async def _remove_content(cleared_message: TabbedContent.Cleared) -> None:
-            await self.get_child_by_type(ContentSwitcher).get_child_by_id(
-                pane_id
-            ).remove()
+            await await_remove
             if self.tab_count == 0:
                 self.post_message(cleared_message)
 
@@ -257,12 +285,17 @@ class TabbedContent(Widget):
         # https://github.com/Textualize/textual/issues/2750
         self.call_after_refresh(_remove_content, self.Cleared(self))
 
-    def clear_panes(self) -> None:
+        return await_remove
+
+    def clear_panes(self) -> AwaitTabbedContent:
         """Remove all the panes in the tabbed content."""
-        self.get_child_by_type(Tabs).clear()
+        await_clear = AwaitTabbedContent(
+            self.get_child_by_type(Tabs).clear(),
+            self.get_child_by_type(ContentSwitcher).remove_children(),
+        )
 
         async def _clear_content(cleared_message: TabbedContent.Cleared) -> None:
-            await self.get_child_by_type(ContentSwitcher).remove_children()
+            await await_clear
             self.post_message(cleared_message)
 
         # Note that I create the message out here, rather than in
@@ -271,6 +304,8 @@ class TabbedContent(Widget):
         #
         # https://github.com/Textualize/textual/issues/2750
         self.call_after_refresh(_clear_content, self.Cleared(self))
+
+        return await_clear
 
     def compose_add_child(self, widget: Widget) -> None:
         """When using the context manager compose syntax, we want to attach nodes to the switcher.

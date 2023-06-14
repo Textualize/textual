@@ -169,9 +169,11 @@ async def test_tabbed_content_add_after_from_empty():
         assert tabbed_content.active == ""
         assert tabbed_content.tab_count == 0
         await tabbed_content.add_pane(TabPane("Test 1", id="test-1"))
+        await pilot.pause()
         assert tabbed_content.tab_count == 1
         assert tabbed_content.active == "test-1"
         await tabbed_content.add_pane(TabPane("Test 2", id="test-2"))
+        await pilot.pause()
         assert tabbed_content.tab_count == 2
         assert tabbed_content.active == "test-1"
 
