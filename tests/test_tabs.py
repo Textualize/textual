@@ -80,12 +80,26 @@ async def test_remove_tabs():
         assert tabs.tab_count == 4
         assert tabs.active_tab is not None
         assert tabs.active_tab.id == "tab-1"
+
         await tabs.remove_tab("tab-1")
         await pilot.pause()
         assert tabs.tab_count == 3
         assert tabs.active_tab is not None
         assert tabs.active_tab.id == "tab-2"
+
         await tabs.remove_tab(tabs.query_one("#tab-2", Tab))
+        await pilot.pause()
+        assert tabs.tab_count == 2
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-3"
+
+        await tabs.remove_tab("tab-does-not-exist")
+        await pilot.pause()
+        assert tabs.tab_count == 2
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-3"
+
+        await tabs.remove_tab(None)
         await pilot.pause()
         assert tabs.tab_count == 2
         assert tabs.active_tab is not None
