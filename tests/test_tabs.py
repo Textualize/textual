@@ -1,5 +1,9 @@
+from __future__ import annotations
+
+from textual import on
 from textual.app import App, ComposeResult
 from textual.widgets import Tab, Tabs
+from textual.widgets._tabs import Underline
 
 
 async def test_tab_label():
@@ -235,3 +239,87 @@ async def test_navigate_tabs_with_mouse():
         await pilot.click("Underline")
         assert tabs.active_tab is not None
         assert tabs.active_tab.id == "tab-1"
+
+
+class TabsMessageCatchApp(App[None]):
+    def __init__(self) -> None:
+        super().__init__()
+        self.intended_handlers: list[str] = []
+
+    def compose(self) -> ComposeResult:
+        yield Tabs("John", "Aeryn", "Moya", "Pilot")
+
+    @on(Tabs.Cleared)
+    @on(Tabs.TabActivated)
+    @on(Underline.Clicked)
+    @on(Tab.Clicked)
+    def log_message(
+        self, event: Tabs.Cleared | Tabs.TabActivated | Underline.Clicked | Tab.Clicked
+    ) -> None:
+        self.intended_handlers.append(event.handler_name)
+
+    @on(Tabs.TabActivated)
+    @on(Tabs.Cleared)
+    def check_control(self, event: Tabs.TabActivated) -> None:
+        assert event.control is event.tabs
+
+
+async def test_startup_messages():
+    """On startup there should be a tab activated message."""
+    async with TabsMessageCatchApp().run_test() as pilot:
+        assert pilot.app.intended_handlers == ["on_tabs_tab_activated"]
+
+
+async def test_change_tab_with_code_messages():
+    """Changing tab in code should result in an activated tab message."""
+    async with TabsMessageCatchApp().run_test() as pilot:
+        pilot.app.query_one(Tabs).active = "tab-2"
+        await pilot.pause()
+        assert pilot.app.intended_handlers == [
+            "on_tabs_tab_activated",
+            "on_tabs_tab_activated",
+        ]
+
+
+async def test_remove_tabs_messages():
+    """Removing tabs should result in various messages."""
+    async with TabsMessageCatchApp().run_test() as pilot:
+        tabs = pilot.app.query_one(Tabs)
+        for n in range(4):
+            await tabs.remove_tab(f"tab-{n+1}")
+            await pilot.pause()
+        assert pilot.app.intended_handlers == [
+            "on_tabs_tab_activated",
+            "on_tabs_tab_activated",
+            "on_tabs_tab_activated",
+            "on_tabs_tab_activated",
+            "on_tabs_cleared",
+        ]
+
+
+async def test_keyboard_navigation_messages():
+    """Keyboard navigation should result in the expected messages."""
+    async with TabsMessageCatchApp().run_test() as pilot:
+        await pilot.press("right")
+        await pilot.pause()
+        await pilot.press("left")
+        await pilot.pause()
+        assert pilot.app.intended_handlers == [
+            "on_tabs_tab_activated",
+            "on_tabs_tab_activated",
+            "on_tabs_tab_activated",
+        ]
+
+
+async def test_mouse_navigation_messages():
+    """Mouse navigation should result in the expected messages."""
+    async with TabsMessageCatchApp().run_test() as pilot:
+        await pilot.click("#tab-2")
+        await pilot.pause()
+        await pilot.click("Underline")
+        await pilot.pause()
+        assert pilot.app.intended_handlers == [
+            "on_tabs_tab_activated",
+            "on_tabs_tab_activated",
+            "on_tabs_tab_activated",
+        ]
