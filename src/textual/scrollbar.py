@@ -111,7 +111,7 @@ class ScrollBarRender:
         _Style = Style
         blank = " " * width_thickness
 
-        foreground_meta = {"@mouse.up": "release", "@mouse.down": "grab"}
+        foreground_meta = {"@mouse.down": "grab"}
         if window_size and size and virtual_size and size != virtual_size:
             bar_ratio = virtual_size / size
             thumb_size = max(1, window_size / bar_ratio)
@@ -315,10 +315,6 @@ class ScrollBar(Widget):
     def action_grab(self) -> None:
         """Begin capturing the mouse cursor."""
         self.capture_mouse()
-
-    def action_released(self) -> None:
-        """Finish capturing the mouse cursor"""
-        self.capture_mouse(False)
 
     async def _on_mouse_up(self, event: events.MouseUp) -> None:
         if self.grabbed:
