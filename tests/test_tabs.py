@@ -2,6 +2,11 @@ from textual.app import App, ComposeResult
 from textual.widgets import Tab, Tabs
 
 
+async def test_tab_label():
+    """It should be possible to access a tab's label."""
+    assert Tab("Pilot").label_text == "Pilot"
+
+
 async def test_compose_empty_tabs():
     """It should be possible to create an empty Tabs."""
 
