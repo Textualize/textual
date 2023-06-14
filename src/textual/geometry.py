@@ -23,7 +23,6 @@ from typing_extensions import Final
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
 
-
 SpacingDimensions: TypeAlias = Union[
     int, Tuple[int], Tuple[int, int], Tuple[int, int, int, int]
 ]

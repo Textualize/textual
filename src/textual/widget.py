@@ -1803,7 +1803,7 @@ class Widget(DOMNode):
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
         force: bool = False,
-    ) -> None:
+    ) -> Offset:
         """Scroll relative to current position.
 
         Args:
@@ -1815,6 +1815,11 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
         """
+        # Calculate the offset that is actually scrolled
+        delta = Offset(
+            self.scroll_x - clamp(self.scroll_x + x, 0, self.max_scroll_x),
+            self.scroll_y - clamp(self.scroll_y + y, 0, self.max_scroll_y),
+        )
         self.scroll_to(
             None if x is None else (self.scroll_x + x),
             None if y is None else (self.scroll_y + y),
@@ -1824,6 +1829,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
         )
+        return delta
 
     def scroll_home(
         self,
@@ -2431,48 +2437,129 @@ class Widget(DOMNode):
             origin_visible: Ensure that the top left corner of the widget remains visible after the scroll.
         """
 
-        central_point = Offset(
-            widget.virtual_region.x + (1 + widget.virtual_region.width) // 2,
-            widget.virtual_region.y + (1 + widget.virtual_region.height) // 2,
-        )
-
-        container = widget.parent
-        while isinstance(container, Widget) and widget is not self:
-            container_virtual_region = container.virtual_region
-            target_region = Region(
-                central_point.x - container_virtual_region.width // 2,
-                central_point.y - container_virtual_region.height // 2,
-                container_virtual_region.width,
-                container_virtual_region.height,
+        def get_virtual_center(widget: Widget) -> Offset:
+            """Return a virtual offset (in parent-space/container-space) representing the center of the widget."""
+            return Offset(
+                widget.virtual_region.x + (widget.virtual_region.width) // 2,
+                widget.virtual_region.y + (widget.virtual_region.height) // 2,
             )
 
-            scroll = container.scroll_to_region(
-                target_region,
-                animate=animate,
-                speed=speed,
-                duration=duration,
-                easing=easing,
-                force=force,
-                top=origin_visible and widget.region.height > container.region.height,
-            )
+        # Calculate the offset between the center of the child and the center of the parent.
+        parent = widget.parent
+        drift = Offset()
+        while isinstance(parent, Widget) and widget is not self:
+            # If origin_visible, then our goal is to place the top right of the child widget at the top right
+            # of the parent widget.
 
-            # We scroll `widget` within `container` with the central point written in
-            # the frame of reference of `container`. However, we need to update it so
-            # that we are ready to scroll `container` within _its_ container.
-            # To do this, notice that
-            # (central_point.y - container.scroll_offset.y - scroll.y) is the number
-            # of rows of `widget` that are visible within `container`.
-            # We add that to `container_virtual_region.y` to find the total vertical
-            # offset of the central point with respect to the container of `container`.
-            # A similar calculation is made for the horizontal update.
-            central_point = (
-                container_virtual_region.offset
-                + central_point
-                - container.scroll_offset
-                - scroll
-            )
-            widget = container
-            container = widget.parent
+            widget_too_tall = widget.region.size.height > parent.region.size.height
+            widget_too_wide = widget.region.size.width > parent.region.size.width
+
+            parent_center = Offset(parent.region.width // 2, parent.region.height // 2)
+            widget_center = get_virtual_center(widget)
+
+            if origin_visible and widget_too_tall:
+                # Vertically scroll top of child to top of parent
+                scroll_required_y = widget.virtual_region.y
+            else:
+                # Vertically scroll center of child to center of parent
+                # These offsets are in the coordinate system of the parent:
+                scroll_required_y = parent_center.y - widget_center.y
+
+            if origin_visible and widget_too_wide:
+                # Horizontally scroll left edge of child to left edge of parent
+                scroll_required_x = widget.virtual_region.x
+            else:
+                # Horizontally scroll center of child to center of parent
+                scroll_required_x = parent_center.x - widget_center.x
+
+            # Assuming we could freely scroll - this is what would be required. Of course, we may not
+            # be able to scroll by this amount (parent may not be scrollable, or configuration of widgets
+            # may mean that we can't scroll a widget to the center of the screen).
+            scroll_required = drift + Offset(scroll_required_x, scroll_required_y)
+
+            # Scroll the center of the child to the center of the parent as much as possible.
+            # If it's not possible to scroll all the way to the center, accumulate how far away
+            # we are (called drift) and pass that information up such that our ancestors can try
+            # to make up for the drift.
+            required_x, required_y = scroll_required
+            actual_scrolled = parent.scroll_relative(required_x, required_y)
+
+            new_drift = scroll_required - actual_scrolled
+            drift = new_drift
+
+            # Travel up the DOM
+            widget = parent
+            parent = widget.parent
+
+    # central_point = Offset(
+    #     widget.virtual_region.x + (1 + widget.virtual_region.width) // 2,
+    #     widget.virtual_region.y + (1 + widget.virtual_region.height) // 2,
+    # )
+    #
+    # container = widget.parent
+    # while isinstance(container, Widget) and widget is not self:
+    #     container_virtual_region = container.virtual_region
+    #
+    #     widget_too_wide = widget.region.size.width > container.region.size.width
+    #     widget_too_tall = widget.region.size.height > container.region.size.height
+    #
+    #     # Our target is different for `origin_visible`, since we're targeting the top
+    #     # left of the child widget rather than the center of it. Note that we only
+    #     # need to do this if the widget is too big to fit into the container - if the
+    #     # widget fits fine then we can just proceed with the normal behaviour which
+    #     # targets the center.
+    #     if widget_too_wide and origin_visible:
+    #         target_x = widget.virtual_region.x
+    #     else:
+    #         target_x = central_point.x - container_virtual_region.width // 2
+    #
+    #     if widget_too_tall and origin_visible:
+    #         target_y = widget.virtual_region.y
+    #     else:
+    #         target_y = central_point.y - container_virtual_region.height // 2
+    #
+    #     target_region = Region(
+    #         target_x,
+    #         target_y,
+    #         container_virtual_region.width,
+    #         container_virtual_region.height,
+    #     )
+    #
+    #     # Note that this doesn't always actually scroll since some containers
+    #     # are not scrollable. The amount we wish to scroll should be propagated
+    #     # up though as we go through this loop. So, we probably maybe need to update
+    #     # the `central_point` so that the information gets passed up to the parent
+    #     # containers.
+    #     scroll = container.scroll_to_region(
+    #         target_region,
+    #         animate=animate,
+    #         speed=speed,
+    #         duration=duration,
+    #         easing=easing,
+    #         force=force,
+    #         # top=origin_visible and widget_too_tall,
+    #         # left=origin_visible and widget_too_wide,
+    #     )
+    #
+    #     print(container, scroll)
+    #
+    #     # We scroll `widget` within `container` with the central point written in
+    #     # the frame of reference of `container`. However, we need to update it so
+    #     # that we are ready to scroll `container` within _its_ container.
+    #     # To do this, notice that
+    #     # (central_point.y - container.scroll_offset.y - scroll.y) is the number
+    #     # of rows of `widget` that are visible within `container`.
+    #     # We add that to `container_virtual_region.y` to find the total vertical
+    #     # offset of the central point with respect to the container of `container`.
+    #     # A similar calculation is made for the horizontal update.
+    #     central_point = (
+    #         container_virtual_region.offset
+    #         + central_point
+    #         - container.scroll_offset
+    #         - scroll
+    #     )
+    #     widget = container
+    #     container = widget.parent
 
     def scroll_to_center(
         self,
