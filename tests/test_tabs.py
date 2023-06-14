@@ -213,3 +213,25 @@ async def test_navigate_empty_tabs_with_keyboard():
         await pilot.press("left")
         assert tabs.active_tab is None
         assert tabs.active == ""
+
+
+async def test_navigate_tabs_with_mouse():
+    """It should be possible to navigate tabs with the mouse."""
+
+    class TabsApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Tabs("John", "Aeryn", "Moya", "Pilot")
+
+    async with TabsApp().run_test() as pilot:
+        tabs = pilot.app.query_one(Tabs)
+        assert tabs.tab_count == 4
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-1"
+
+        await pilot.click("#tab-2")
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-2"
+
+        await pilot.click("Underline")
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-1"
