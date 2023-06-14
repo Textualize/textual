@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.widgets import Tabs
+from textual.widgets import Tab, Tabs
 
 
 async def test_compose_empty_tabs():
@@ -20,6 +20,25 @@ async def test_compose_tabs_from_strings():
     class TabsApp(App[None]):
         def compose(self) -> ComposeResult:
             yield Tabs("John", "Aeryn", "Moya", "Pilot")
+
+    async with TabsApp().run_test() as pilot:
+        tabs = pilot.app.query_one(Tabs)
+        assert tabs.tab_count == 4
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-1"
+
+
+async def test_compose_tabs_from_tabs():
+    """It should be possible to create a Tabs from some Tabs."""
+
+    class TabsApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Tabs(
+                Tab("John"),
+                Tab("Aeryn"),
+                Tab("Moya"),
+                Tab("Pilot"),
+            )
 
     async with TabsApp().run_test() as pilot:
         tabs = pilot.app.query_one(Tabs)
