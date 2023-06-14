@@ -8,6 +8,7 @@ from rich.text import Text, TextType
 
 from .. import events
 from ..app import ComposeResult, RenderResult
+from ..await_remove import AwaitRemove
 from ..binding import Binding, BindingType
 from ..containers import Container, Horizontal, Vertical
 from ..css.query import NoMatches
@@ -16,11 +17,8 @@ from ..geometry import Offset
 from ..message import Message
 from ..reactive import reactive
 from ..renderables.bar import Bar
-from ..widget import Widget
+from ..widget import AwaitMount, Widget
 from ..widgets import Static
-
-if TYPE_CHECKING:
-    from typing_extensions import Self
 
 
 class Underline(Widget):
@@ -177,6 +175,9 @@ class Tabs(Widget, can_focus=True):
     | right | Move to the next tab. |
     """
 
+    class TabError(Exception):
+        """Exception raised when there is an error relating to tabs."""
+
     class TabActivated(Message):
         """Sent when a new tab is activated."""
 
@@ -312,76 +313,136 @@ class Tabs(Widget, can_focus=True):
                 pass
         return None
 
-    def add_tab(self, tab: Tab | str | Text) -> None:
+    def add_tab(
+        self,
+        tab: Tab | str | Text,
+        *,
+        before: Tab | str | None = None,
+        after: Tab | str | None = None,
+    ) -> AwaitMount:
         """Add a new tab to the end of the tab list.
 
         Args:
             tab: A new tab object, or a label (str or Text).
+            before: Optional tab or tab ID to add the tab before.
+            after: Optional tab or tab ID to add the tab after.
+
+        Returns:
+            An awaitable object that waits for the tab to be mounted.
+
+        Raises:
+            Tabs.TabError: If there is a problem with the addition request.
+
+        Note:
+            Only one of `before` or `after` can be provided. If both are
+            provided a `Tabs.TabError` will be raised.
         """
+
+        if before and after:
+            raise self.TabError("Unable to add a tab both before and after a tab")
+
+        if isinstance(before, str):
+            try:
+                before = self.query_one(f"#tabs-list > #{before}", Tab)
+            except NoMatches:
+                raise self.TabError(
+                    f"There is no tab with ID '{before}' to mount before"
+                )
+        elif isinstance(before, Tab) and self not in before.ancestors:
+            raise self.TabError(
+                "Request to add a tab before a tab that isn't part of this tab collection"
+            )
+
+        if isinstance(after, str):
+            try:
+                after = self.query_one(f"#tabs-list > #{after}", Tab)
+            except NoMatches:
+                raise self.TabError(f"There is no tab with ID '{after}' to mount after")
+        elif isinstance(after, Tab) and self not in after.ancestors:
+            raise self.TabError(
+                "Request to add a tab after a tab that isn't part of this tab collection"
+            )
+
         from_empty = self.tab_count == 0
         tab_widget = (
             Tab(tab, id=f"tab-{self._new_tab_id}")
             if isinstance(tab, (str, Text))
             else self._auto_tab_id(tab)
         )
-        mount_await = self.query_one("#tabs-list").mount(tab_widget)
+
+        mount_await = self.query_one("#tabs-list").mount(
+            tab_widget, before=before, after=after
+        )
+
         if from_empty:
             tab_widget.add_class("-active")
-            self.post_message(self.TabActivated(self, tab_widget))
+            activated_message = self.TabActivated(self, tab_widget)
 
             async def refresh_active() -> None:
                 """Wait for things to be mounted before highlighting."""
-                await mount_await
                 self.active = tab_widget.id or ""
                 self._highlight_active(animate=False)
+                self.post_message(activated_message)
 
             self.call_after_refresh(refresh_active)
+        elif before or after:
+            self.call_after_refresh(self._highlight_active, animate=False)
 
-    def clear(self) -> Self:
+        return mount_await
+
+    def clear(self) -> AwaitRemove:
         """Clear all the tabs.
 
         Returns:
-            The `Tabs` instance.
+            An awaitable object that waits for the tabs to be removed.
         """
         underline = self.query_one(Underline)
         underline.highlight_start = 0
         underline.highlight_end = 0
-        self.query("#tabs-list > Tab").remove()
-        self.post_message(self.Cleared(self))
-        return self
+        self.call_after_refresh(self.post_message, self.Cleared(self))
+        return self.query("#tabs-list > Tab").remove()
 
-    def remove_tab(self, tab_or_id: Tab | str | None) -> None:
+    def remove_tab(self, tab_or_id: Tab | str | None) -> AwaitRemove:
         """Remove a tab.
 
         Args:
             tab_or_id: The Tab's id.
+
+        Returns:
+            An awaitable object that waits for the tab to be removed.
         """
         if tab_or_id is None:
-            return
+            return self.app._remove_nodes([], None)
         if isinstance(tab_or_id, Tab):
             remove_tab = tab_or_id
         else:
             try:
                 remove_tab = self.query_one(f"#tabs-list > #{tab_or_id}", Tab)
             except NoMatches:
-                return
+                return self.app._remove_nodes([], None)
         removing_active_tab = remove_tab.has_class("-active")
 
         next_tab = self._next_active
-        if next_tab is None:
-            self.post_message(self.Cleared(self))
-        else:
-            self.post_message(self.TabActivated(self, next_tab))
+        result_message: Tabs.Cleared | Tabs.TabActivated = (
+            self.Cleared(self)
+            if next_tab is None
+            else self.TabActivated(self, next_tab)
+        )
+
+        remove_await = remove_tab.remove()
 
         async def do_remove() -> None:
             """Perform the remove after refresh so the underline bar gets new positions."""
-            await remove_tab.remove()
+            await remove_await
             if removing_active_tab:
                 if next_tab is not None:
                     next_tab.add_class("-active")
                 self.call_after_refresh(self._highlight_active, animate=True)
+            self.post_message(result_message)
 
         self.call_after_refresh(do_remove)
+
+        return remove_await
 
     def validate_active(self, active: str) -> str:
         """Check id assigned to active attribute is a valid tab."""
@@ -419,7 +480,10 @@ class Tabs(Widget, can_focus=True):
     def watch_active(self, previously_active: str, active: str) -> None:
         """Handle a change to the active tab."""
         if active:
-            active_tab = self.query_one(f"#tabs-list > #{active}", Tab)
+            try:
+                active_tab = self.query_one(f"#tabs-list > #{active}", Tab)
+            except NoMatches:
+                return
             self.query("#tabs-list > Tab.-active").remove_class("-active")
             active_tab.add_class("-active")
             self.call_later(self._highlight_active, animate=previously_active != "")
