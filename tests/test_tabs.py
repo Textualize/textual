@@ -186,3 +186,25 @@ async def test_navigate_tabs_with_keyboard():
         assert tabs.active_tab is not None
         assert tabs.active_tab.id == "tab-1"
         assert tabs.active == tabs.active_tab.id
+
+
+async def test_navigate_empty_tabs_with_keyboard():
+    """It should be possible to navigate an empty tabs with the keyboard."""
+
+    class TabsApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Tabs()
+
+    async with TabsApp().run_test() as pilot:
+        tabs = pilot.app.query_one(Tabs)
+        assert tabs.tab_count == 0
+        assert tabs.active_tab is None
+        assert tabs.active == ""
+
+        await pilot.press("right")
+        assert tabs.active_tab is None
+        assert tabs.active == ""
+
+        await pilot.press("left")
+        assert tabs.active_tab is None
+        assert tabs.active == ""
