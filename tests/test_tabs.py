@@ -90,3 +90,20 @@ async def test_remove_tabs():
         assert tabs.tab_count == 2
         assert tabs.active_tab is not None
         assert tabs.active_tab.id == "tab-3"
+
+
+async def test_clear_tabs():
+    """It should be possible to clear all tabs."""
+
+    class TabsApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Tabs("John", "Aeryn", "Moya", "Pilot")
+
+    async with TabsApp().run_test() as pilot:
+        tabs = pilot.app.query_one(Tabs)
+        assert tabs.tab_count == 4
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-1"
+        await tabs.clear()
+        assert tabs.tab_count == 0
+        assert tabs.active_tab is None
