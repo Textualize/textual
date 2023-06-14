@@ -25,6 +25,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Breaking change: The `@on` decorator will now match a message class and any child classes https://github.com/Textualize/textual/pull/2746
+- `Tabs.add_tab` is now optionally awaitable https://github.com/Textualize/textual/pull/2778
+- `Tabs.add_tab` now takes `before` and `after` arguments to position a new tab https://github.com/Textualize/textual/pull/2778
+- `Tabs.remove_tab` is now optionally awaitable https://github.com/Textualize/textual/pull/2778
+- Breaking change: `Tabs.clear` has been changed from returning `self` to being optionally awaitable https://github.com/Textualize/textual/pull/2778
 
 ## [0.27.0] - 2023-06-01
 
