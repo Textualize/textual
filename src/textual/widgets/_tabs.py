@@ -20,9 +20,6 @@ from ..renderables.bar import Bar
 from ..widget import AwaitMount, Widget
 from ..widgets import Static
 
-if TYPE_CHECKING:
-    from typing_extensions import Self
-
 
 class Underline(Widget):
     """The animated underline beneath tabs."""
