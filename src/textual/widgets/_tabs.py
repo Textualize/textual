@@ -334,8 +334,8 @@ class Tabs(Widget, can_focus=True):
             Tabs.TabError: If there is a problem with the addition request.
 
         Note:
-            Only one of ``before`` or ``after`` can be provided. If both are
-            provided a ``MountError`` will be raised.
+            Only one of `before` or `after` can be provided. If both are
+            provided a `Tabs.TabError` will be raised.
         """
 
         if before and after:
