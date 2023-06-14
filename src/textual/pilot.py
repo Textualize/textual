@@ -26,7 +26,7 @@ def _get_mouse_message_arguments(
     control: bool = False,
 ) -> dict[str, Any]:
     """Get the arguments to pass into mouse messages for the click and hover methods."""
-    click_x, click_y, _, _ = target.region.translate(offset)
+    click_x, click_y = target.region.offset + offset
     message_arguments = {
         "x": click_x,
         "y": click_y,
@@ -134,6 +134,7 @@ class Pilot(Generic[ReturnType]):
         message_arguments = _get_mouse_message_arguments(
             target_widget, offset, button=0
         )
+        await self.pause()
         app.post_message(MouseMove(**message_arguments))
         await self.pause()
 

@@ -25,22 +25,26 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
 
     DEFAULT_CSS = """
     RadioSet {
-        border: round #666;
+        border: tall transparent;
+        background: $boost;
+        padding: 0 1 0 0;
         height: auto;
         width: auto;
     }
 
     RadioSet:focus {
-        border: round $accent;
-    }
-
-    App.-light-mode RadioSet {
-        border: round #CCC;
+        border: tall $accent;
     }
 
     /* The following rules/styles mimic similar ToggleButton:focus rules in
      * ToggleButton. If those styles ever get updated, these should be too.
      */
+
+    RadioSet > * {
+        background: transparent;
+        border: none;
+        padding: 0 1;
+    }
 
     RadioSet:focus > RadioButton.-selected > .toggle--label {
         text-style: underline;

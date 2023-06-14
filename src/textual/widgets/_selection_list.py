@@ -93,6 +93,22 @@ class SelectionList(Generic[SelectionType], OptionList):
     """
 
     DEFAULT_CSS = """
+    SelectionList {
+        height: auto;
+    }
+
+    .-light-mode SelectionList:focus > .selection-list--button-selected {
+        color: $primary;
+    }
+
+    .-light-mode SelectionList > .selection-list--button-selected-highlighted {
+        color: $primary;
+    }
+
+    .-light-mode SelectionList:focus > .selection-list--button-selected-highlighted {
+        color: $primary;
+    }
+
     SelectionList > .selection-list--button {
         text-style: bold;
         background: $foreground 15%;
@@ -115,7 +131,6 @@ class SelectionList(Generic[SelectionType], OptionList):
 
     SelectionList > .selection-list--button-selected {
         text-style: bold;
-        background: $foreground 15%;
     }
 
     SelectionList:focus > .selection-list--button-selected {

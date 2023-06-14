@@ -21,10 +21,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed exceptions in Pilot tests being silently ignored https://github.com/Textualize/textual/pull/2754
 - Fixed issue where internal data of `OptionList` could be invalid for short window after `clear_options` https://github.com/Textualize/textual/pull/2754
 - Fixed `Tooltip` causing a `query_one` on a lone `Static` to fail https://github.com/Textualize/textual/issues/2723
+- Nested widgets wouldn't lose focus when parent is disabled https://github.com/Textualize/textual/issues/2772
 
 ### Changed
 
 - Breaking change: The `@on` decorator will now match a message class and any child classes https://github.com/Textualize/textual/pull/2746
+- Breaking change: Styles update to checkbox, radiobutton, OptionList, Select, SelectionList, Switch https://github.com/Textualize/textual/pull/2777
 - `Tabs.add_tab` is now optionally awaitable https://github.com/Textualize/textual/pull/2778
 - `Tabs.add_tab` now takes `before` and `after` arguments to position a new tab https://github.com/Textualize/textual/pull/2778
 - `Tabs.remove_tab` is now optionally awaitable https://github.com/Textualize/textual/pull/2778

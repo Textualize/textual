@@ -105,7 +105,7 @@ async def test_click_option_with_mouse() -> None:
     """Clicking on an option via the mouse should result in highlight and select messages."""
     async with OptionListApp().run_test() as pilot:
         assert isinstance(pilot.app, OptionListApp)
-        await pilot.click(OptionList, Offset(1, 1))
+        await pilot.click(OptionList, Offset(2, 2))
         assert pilot.app.messages[1:] == [
             ("OptionHighlighted", "1", 1),
             ("OptionSelected", "1", 1),

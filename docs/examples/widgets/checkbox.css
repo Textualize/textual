@@ -5,7 +5,6 @@ Screen {
 VerticalScroll {
     width: auto;
     height: auto;
-    border: solid $primary;
-    background: $panel;
+    background: $boost;
     padding: 2;
 }
