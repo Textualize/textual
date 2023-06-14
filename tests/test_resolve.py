@@ -1,11 +1,9 @@
 from fractions import Fraction
-from itertools import chain
 
 import pytest
 
 from textual._resolve import resolve, resolve_fraction_unit
 from textual.css.scalar import Scalar
-from textual.css.styles import Styles
 from textual.geometry import Size
 from textual.widget import Widget
 

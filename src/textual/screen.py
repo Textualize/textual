@@ -23,13 +23,12 @@ from typing import (
 import rich.repr
 from rich.console import RenderableType
 from rich.style import Style
-from rich.traceback import Traceback
 
 from . import errors, events, messages
 from ._callback import invoke
-from ._compose import compose
 from ._compositor import Compositor, MapGeometry
 from ._context import visible_screen_stack
+from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relative
 from ._types import CallbackType
 from .binding import Binding
 from .css.match import match
@@ -106,6 +105,19 @@ class Screen(Generic[ScreenResultType], Widget):
     Set to `""` to disable auto focus.
     """
 
+    CSS: ClassVar[str] = ""
+    """Inline CSS, useful for quick scripts. Rules here take priority over CSS_PATH.
+
+    Note:
+        This CSS applies to the whole app.
+    """
+    CSS_PATH: ClassVar[CSSPathType | None] = None
+    """File paths to load CSS from.
+
+    Note:
+        This CSS applies to the whole app.
+    """
+
     DEFAULT_CSS = """
     Screen {
         layout: vertical;
@@ -147,6 +159,16 @@ class Screen(Generic[ScreenResultType], Widget):
 
         self._tooltip_widget: Widget | None = None
         self._tooltip_timer: Timer | None = None
+
+        css_paths = [
+            _make_path_object_relative(css_path, self)
+            for css_path in (
+                _css_path_type_as_list(self.CSS_PATH)
+                if self.CSS_PATH is not None
+                else []
+            )
+        ]
+        self.css_path = css_paths
 
     @property
     def is_modal(self) -> bool:

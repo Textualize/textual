@@ -25,7 +25,7 @@ class AwaitRemove:
         self._task = task
 
     async def __call__(self) -> None:
-        return await self
+        await self
 
     def __await__(self) -> Generator[None, None, None]:
         async def await_prune() -> None:

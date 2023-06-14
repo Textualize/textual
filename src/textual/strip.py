@@ -7,11 +7,10 @@ See [line API](/guide/widgets#line-api) for how to use Strips.
 from __future__ import annotations
 
 from itertools import chain
-from typing import Iterable, Iterator, Sequence, cast
+from typing import Iterable, Iterator, Sequence
 
 import rich.repr
 from rich.cells import cell_len, set_cell_size
-from rich.color import ColorSystem
 from rich.console import Console, ConsoleOptions, RenderResult
 from rich.segment import Segment
 from rich.style import Style, StyleType

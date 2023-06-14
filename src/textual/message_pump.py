@@ -494,6 +494,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         """Process messages until the queue is closed."""
         _rich_traceback_guard = True
         self._thread_id = threading.get_ident()
+
         while not self._closed:
             try:
                 message = await self._get_message()
@@ -771,7 +772,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
                     )
                 # If key handlers return False, then they are not considered handled
                 # This allows key handlers to do some conditional logic
-                handled = (await invoke(key_method, event)) != False
+                handled = (await invoke(key_method, event)) is not False
                 invoked_method = key_method
 
         return handled

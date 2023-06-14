@@ -26,7 +26,7 @@ def _get_mouse_message_arguments(
     control: bool = False,
 ) -> dict[str, Any]:
     """Get the arguments to pass into mouse messages for the click and hover methods."""
-    click_x, click_y, _, _ = target.region.translate(offset)
+    click_x, click_y = target.region.offset + offset
     message_arguments = {
         "x": click_x,
         "y": click_y,
@@ -40,6 +40,10 @@ def _get_mouse_message_arguments(
         "screen_y": click_y,
     }
     return message_arguments
+
+
+class WaitForScreenTimeout(Exception):
+    pass
 
 
 @rich.repr.auto(angular=True)
@@ -130,17 +134,22 @@ class Pilot(Generic[ReturnType]):
         message_arguments = _get_mouse_message_arguments(
             target_widget, offset, button=0
         )
+        await self.pause()
         app.post_message(MouseMove(**message_arguments))
         await self.pause()
 
     async def _wait_for_screen(self, timeout: float = 30.0) -> bool:
-        """Wait for the current screen to have processed all pending events.
+        """Wait for the current screen and its children to have processed all pending events.
 
         Args:
             timeout: A timeout in seconds to wait.
 
         Returns:
-            `True` if all events were processed, or `False` if the wait timed out.
+            `True` if all events were processed. `False` if an exception occurred,
+            meaning that not all events could be processed.
+
+        Raises:
+            WaitForScreenTimeout: If the screen and its children didn't finish processing within the timeout.
         """
         children = [self.app, *self.app.screen.walk_children(with_self=True)]
         count = 0
@@ -160,10 +169,29 @@ class Pilot(Generic[ReturnType]):
                 count += 1
 
         if count:
-            # Wait for the count to return to zero, or a timeout
-            try:
-                await asyncio.wait_for(count_zero_event.wait(), timeout=timeout)
-            except asyncio.TimeoutError:
+            # Wait for the count to return to zero, or a timeout, or an exception
+            wait_for = [
+                asyncio.create_task(count_zero_event.wait()),
+                asyncio.create_task(self.app._exception_event.wait()),
+            ]
+            _, pending = await asyncio.wait(
+                wait_for,
+                timeout=timeout,
+                return_when=asyncio.FIRST_COMPLETED,
+            )
+
+            for task in pending:
+                task.cancel()
+
+            timed_out = len(wait_for) == len(pending)
+            if timed_out:
+                raise WaitForScreenTimeout(
+                    "Timed out while waiting for widgets to process pending messages."
+                )
+
+            # We've either timed out, encountered an exception, or we've finished
+            # decrementing all the counters (all events processed in children).
+            if count > 0:
                 return False
 
         return True

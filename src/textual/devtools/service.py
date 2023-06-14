@@ -45,7 +45,7 @@ class DevtoolsService:
         """
         self.update_frequency = update_frequency
         self.verbose = verbose
-        self.exclude = set(name.upper() for name in exclude) if exclude else set()
+        self.exclude = {name.upper() for name in exclude} if exclude else set()
         self.console = Console()
         self.shutdown_event = asyncio.Event()
         self.clients: list[ClientHandler] = []

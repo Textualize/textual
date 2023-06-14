@@ -60,7 +60,6 @@ def _pre_run_warnings() -> None:
     the developer can see it easily.
     """
     import os
-    import platform
 
     from rich.console import Console
     from rich.panel import Panel

@@ -172,9 +172,17 @@ class OptionList(ScrollView, can_focus=True):
 
     DEFAULT_CSS = """
     OptionList {
-        background: $panel-lighten-1;
+        height: auto;
+        background: $boost;
         color: $text;
         overflow-x: hidden;
+        border: tall transparent;
+        padding: 0 1;
+    }
+
+    OptionList:focus {
+        border: tall $accent;
+
     }
 
     OptionList > .option-list--separator {
@@ -182,7 +190,6 @@ class OptionList(ScrollView, can_focus=True):
     }
 
     OptionList > .option-list--option-highlighted {
-        background: $accent 50%;
         color: $text;
         text-style: bold;
     }
@@ -197,11 +204,11 @@ class OptionList(ScrollView, can_focus=True):
 
     OptionList > .option-list--option-highlighted-disabled {
         color: $text-disabled;
-        background: $accent 30%;
+        background: $accent 20%;
     }
 
     OptionList:focus > .option-list--option-highlighted-disabled {
-        background: $accent 40%;
+        background: $accent 30%;
     }
 
     OptionList > .option-list--option-hover {
@@ -401,6 +408,7 @@ class OptionList(ScrollView, can_focus=True):
         Args:
             event: The mouse movement event.
         """
+        print(event, event.style.meta)
         self._mouse_hovering_over = event.style.meta.get("option")
 
     def _on_leave(self, _: Leave) -> None:
@@ -630,14 +638,7 @@ class OptionList(ScrollView, can_focus=True):
         self.highlighted = None
         self._mouse_hovering_over = None
         self.virtual_size = Size(self.scrollable_content_region.width, 0)
-        # TODO: See https://github.com/Textualize/textual/issues/2582 -- it
-        # should not be necessary to do this like this here; ideally here in
-        # clear_options it would be a forced refresh, and also in a
-        # `on_show` it would be the same (which, I think, would actually
-        # solve the problem we're seeing). But, until such a time as we get
-        # to the bottom of 2582... this seems to delay the refresh enough
-        # that things fall into place.
-        self._request_content_tracking_refresh()
+        self._refresh_content_tracking(force=True)
         return self
 
     def _set_option_disabled(self, index: int, disabled: bool) -> Self:

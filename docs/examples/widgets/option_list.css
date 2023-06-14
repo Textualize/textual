@@ -3,8 +3,6 @@ Screen {
 }
 
 OptionList {
-    background: $panel;
-    border: round $primary;
     width: 70%;
-    height: 70%;
+    height: 80%;
 }

@@ -6,12 +6,10 @@ import math
 import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Callable, Sequence
+from typing import Callable, Pattern, Sequence
 from urllib.parse import urlparse
 
 import rich.repr
-
-from textual._types import Pattern
 
 
 @dataclass

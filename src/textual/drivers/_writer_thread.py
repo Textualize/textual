@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import sys
 import threading
 from queue import Queue
 from typing import IO

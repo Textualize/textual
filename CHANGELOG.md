@@ -10,16 +10,27 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - The devtools console now confirms when CSS files have been successfully loaded after a previous error https://github.com/Textualize/textual/pull/2716
+- Class variable `CSS` to screens https://github.com/Textualize/textual/issues/2137
+- Class variable `CSS_PATH` to screens https://github.com/Textualize/textual/issues/2137
 - Added `cursor_foreground_priority` and `cursor_background_priority` to `DataTable` https://github.com/Textualize/textual/pull/2736
 
 ### Fixed
 
 - Fixed setting `TreeNode.label` on an existing `Tree` node not immediately https://github.com/Textualize/textual/pull/2713
 - Correctly implement `__eq__` protocol in DataTable https://github.com/Textualize/textual/pull/2705
+- Fixed exceptions in Pilot tests being silently ignored https://github.com/Textualize/textual/pull/2754
+- Fixed issue where internal data of `OptionList` could be invalid for short window after `clear_options` https://github.com/Textualize/textual/pull/2754
+- Fixed `Tooltip` causing a `query_one` on a lone `Static` to fail https://github.com/Textualize/textual/issues/2723
+- Nested widgets wouldn't lose focus when parent is disabled https://github.com/Textualize/textual/issues/2772
 
 ### Changed
 
 - Breaking change: The `@on` decorator will now match a message class and any child classes https://github.com/Textualize/textual/pull/2746
+- Breaking change: Styles update to checkbox, radiobutton, OptionList, Select, SelectionList, Switch https://github.com/Textualize/textual/pull/2777
+- `Tabs.add_tab` is now optionally awaitable https://github.com/Textualize/textual/pull/2778
+- `Tabs.add_tab` now takes `before` and `after` arguments to position a new tab https://github.com/Textualize/textual/pull/2778
+- `Tabs.remove_tab` is now optionally awaitable https://github.com/Textualize/textual/pull/2778
+- Breaking change: `Tabs.clear` has been changed from returning `self` to being optionally awaitable https://github.com/Textualize/textual/pull/2778
 
 ## [0.27.0] - 2023-06-01
 

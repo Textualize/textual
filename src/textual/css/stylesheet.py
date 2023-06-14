@@ -15,7 +15,6 @@ from rich.style import Style
 from rich.syntax import Syntax
 from rich.text import Text
 
-from .. import messages
 from ..dom import DOMNode
 from ..widget import Widget
 from .errors import StylesheetError
@@ -262,6 +261,14 @@ class Stylesheet:
         """
         for path in paths:
             self.read(path)
+
+    def has_source(self, path: str | PurePath) -> bool:
+        """Check if the stylesheet has this CSS source already.
+
+        Returns:
+            Whether the stylesheet is aware of this CSS source or not.
+        """
+        return str(path) in self.source
 
     def add_source(
         self,

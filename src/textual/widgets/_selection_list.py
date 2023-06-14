@@ -93,6 +93,22 @@ class SelectionList(Generic[SelectionType], OptionList):
     """
 
     DEFAULT_CSS = """
+    SelectionList {
+        height: auto;
+    }
+
+    .-light-mode SelectionList:focus > .selection-list--button-selected {
+        color: $primary;
+    }
+
+    .-light-mode SelectionList > .selection-list--button-selected-highlighted {
+        color: $primary;
+    }
+
+    .-light-mode SelectionList:focus > .selection-list--button-selected-highlighted {
+        color: $primary;
+    }
+
     SelectionList > .selection-list--button {
         text-style: bold;
         background: $foreground 15%;
@@ -115,7 +131,6 @@ class SelectionList(Generic[SelectionType], OptionList):
 
     SelectionList > .selection-list--button-selected {
         text-style: bold;
-        background: $foreground 15%;
     }
 
     SelectionList:focus > .selection-list--button-selected {
@@ -509,7 +524,7 @@ class SelectionList(Generic[SelectionType], OptionList):
 
         # If the button is in the unselected state, we're going to do a bit
         # of a switcharound to make it look like it's a "cutout".
-        if not selection.value in self._selected:
+        if selection.value not in self._selected:
             button_style += Style.from_color(
                 self.background_colors[1].rich_color, button_style.bgcolor
             )
