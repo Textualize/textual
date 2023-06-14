@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from textual import on
 from textual.app import App, ComposeResult
 from textual.widgets import Tab, Tabs
@@ -56,7 +58,7 @@ async def test_compose_tabs_from_tabs():
         assert tabs.active_tab.id == "tab-1"
 
 
-async def test_add_tabs_after():
+async def test_add_tabs_later():
     """It should be possible to add tabs later on in the app's cycle."""
 
     class TabsApp(App[None]):
@@ -75,6 +77,127 @@ async def test_add_tabs_after():
         assert tabs.tab_count == 2
         assert tabs.active_tab is not None
         assert tabs.active_tab.id == "tab-1"
+
+
+async def test_add_tab_before():
+    """It should be possible to add a tab before another tab."""
+
+    class TabsApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Tabs("Pilot")
+
+    async with TabsApp().run_test() as pilot:
+        tabs = pilot.app.query_one(Tabs)
+        assert tabs.tab_count == 1
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-1"
+        assert tabs.active == "tab-1"
+        await tabs.add_tab("John", before="tab-1")
+        assert tabs.tab_count == 2
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-1"
+        assert tabs.active == "tab-1"
+        await tabs.add_tab("John", before=tabs.active_tab)
+        assert tabs.tab_count == 3
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-1"
+        assert tabs.active == "tab-1"
+
+
+async def test_add_tab_before_badly():
+    """Test exceptions from badly adding a tab before another."""
+
+    class TabsApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Tabs("Pilot")
+
+    async with TabsApp().run_test() as pilot:
+        tabs = pilot.app.query_one(Tabs)
+        assert tabs.tab_count == 1
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-1"
+        assert tabs.active == "tab-1"
+        with pytest.raises(Tabs.TabError):
+            tabs.add_tab("John", before="this-is-not-a-tab")
+        assert tabs.tab_count == 1
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-1"
+        assert tabs.active == "tab-1"
+        with pytest.raises(Tabs.TabError):
+            tabs.add_tab("John", before=Tab("I just made this up"))
+        assert tabs.tab_count == 1
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-1"
+        assert tabs.active == "tab-1"
+
+
+async def test_add_tab_after():
+    """It should be possible to add a tab after another tab."""
+
+    class TabsApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Tabs("Pilot")
+
+    async with TabsApp().run_test() as pilot:
+        tabs = pilot.app.query_one(Tabs)
+        assert tabs.tab_count == 1
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-1"
+        assert tabs.active == "tab-1"
+        await tabs.add_tab("John", after="tab-1")
+        assert tabs.tab_count == 2
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-1"
+        assert tabs.active == "tab-1"
+        await tabs.add_tab("John", after=tabs.active_tab)
+        assert tabs.tab_count == 3
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-1"
+        assert tabs.active == "tab-1"
+
+
+async def test_add_tab_after_badly():
+    """Test exceptions from badly adding a tab after another."""
+
+    class TabsApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Tabs("Pilot")
+
+    async with TabsApp().run_test() as pilot:
+        tabs = pilot.app.query_one(Tabs)
+        assert tabs.tab_count == 1
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-1"
+        assert tabs.active == "tab-1"
+        with pytest.raises(Tabs.TabError):
+            tabs.add_tab("John", after="this-is-not-a-tab")
+        assert tabs.tab_count == 1
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-1"
+        assert tabs.active == "tab-1"
+        with pytest.raises(Tabs.TabError):
+            tabs.add_tab("John", after=Tab("I just made this up"))
+        assert tabs.tab_count == 1
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-1"
+        assert tabs.active == "tab-1"
+
+
+async def test_add_tab_before_and_after():
+    """Attempting to add a tab before and after another is an error."""
+
+    class TabsApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Tabs("Pilot")
+
+    async with TabsApp().run_test() as pilot:
+        tabs = pilot.app.query_one(Tabs)
+        assert tabs.tab_count == 1
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-1"
+        assert tabs.active == "tab-1"
+        with pytest.raises(Tabs.TabError):
+            tabs.add_tab("John", before="tab-1", after="tab-1")
 
 
 async def test_remove_tabs():

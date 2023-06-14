@@ -175,6 +175,9 @@ class Tabs(Widget, can_focus=True):
     | right | Move to the next tab. |
     """
 
+    class TabError(Exception):
+        """Exception raised when there is an error relating to tabs."""
+
     class TabActivated(Message):
         """Sent when a new tab is activated."""
 
@@ -310,15 +313,56 @@ class Tabs(Widget, can_focus=True):
                 pass
         return None
 
-    def add_tab(self, tab: Tab | str | Text) -> AwaitMount:
+    def add_tab(
+        self,
+        tab: Tab | str | Text,
+        *,
+        before: Tab | str | None = None,
+        after: Tab | str | None = None,
+    ) -> AwaitMount:
         """Add a new tab to the end of the tab list.
 
         Args:
             tab: A new tab object, or a label (str or Text).
+            before: Optional tab or tab ID to add the tab before.
+            after: Optional tab or tab ID to add the tab after.
 
         Returns:
             An awaitable object that waits for the tab to be mounted.
+
+        Raises:
+            Tabs.TabError: If there is a problem with the addition request.
+
+        Note:
+            Only one of ``before`` or ``after`` can be provided. If both are
+            provided a ``MountError`` will be raised.
         """
+
+        if before and after:
+            raise self.TabError("Unable to add a tab both before and after a tab")
+
+        if isinstance(before, str):
+            try:
+                before = self.query_one(f"#tabs-list > #{before}", Tab)
+            except NoMatches:
+                raise self.TabError(
+                    f"There is no tab with ID '{before}' to mount before"
+                )
+        elif isinstance(before, Tab) and self not in before.ancestors:
+            raise self.TabError(
+                "Request to add a tab before a tab that isn't part of this tab collection"
+            )
+
+        if isinstance(after, str):
+            try:
+                after = self.query_one(f"#tabs-list > #{after}", Tab)
+            except NoMatches:
+                raise self.TabError(f"There is no tab with ID '{after}' to mount after")
+        elif isinstance(after, Tab) and self not in after.ancestors:
+            raise self.TabError(
+                "Request to add a tab after a tab that isn't part of this tab collection"
+            )
+
         from_empty = self.tab_count == 0
         tab_widget = (
             Tab(tab, id=f"tab-{self._new_tab_id}")
@@ -326,7 +370,9 @@ class Tabs(Widget, can_focus=True):
             else self._auto_tab_id(tab)
         )
 
-        mount_await = self.query_one("#tabs-list").mount(tab_widget)
+        mount_await = self.query_one("#tabs-list").mount(
+            tab_widget, before=before, after=after
+        )
 
         if from_empty:
             tab_widget.add_class("-active")
@@ -339,6 +385,8 @@ class Tabs(Widget, can_focus=True):
                 self.post_message(activated_message)
 
             self.call_after_refresh(refresh_active)
+        elif before or after:
+            self.call_after_refresh(self._highlight_active, animate=False)
 
         return mount_await
 
