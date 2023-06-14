@@ -105,6 +105,11 @@ async def test_remove_tabs():
         assert tabs.active_tab is not None
         assert tabs.active_tab.id == "tab-3"
 
+        await tabs.remove_tab("tab-3")
+        await tabs.remove_tab("tab-4")
+        assert tabs.tab_count == 0
+        assert tabs.active_tab is None
+
 
 async def test_clear_tabs():
     """It should be possible to clear all tabs."""
