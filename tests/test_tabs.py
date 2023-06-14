@@ -156,3 +156,33 @@ async def test_change_active_from_code():
         tabs.active = ""
         assert tabs.active_tab is not None
         assert tabs.active_tab.id == "tab-2"
+
+
+async def test_navigate_tabs_with_keyboard():
+    """It should be possible to navigate tabs with the keyboard."""
+
+    class TabsApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Tabs("John", "Aeryn", "Moya", "Pilot")
+
+    async with TabsApp().run_test() as pilot:
+        tabs = pilot.app.query_one(Tabs)
+        assert tabs.tab_count == 4
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-1"
+        assert tabs.active == tabs.active_tab.id
+
+        await pilot.press("right")
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-2"
+        assert tabs.active == tabs.active_tab.id
+
+        await pilot.press("left")
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-1"
+        assert tabs.active == tabs.active_tab.id
+
+        await pilot.press(*(["left"] * tabs.tab_count))
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-1"
+        assert tabs.active == tabs.active_tab.id
