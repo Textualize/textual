@@ -28,9 +28,7 @@ async def test_no_hover() -> None:
 async def test_hover_highlight() -> None:
     """The mouse hover value should react to the mouse hover over a highlighted option."""
     async with OptionListApp().run_test() as pilot:
-        print("before mouse position", pilot.app.mouse_position)
-        await pilot.hover(OptionList)
-        print("mouse position", pilot.app.mouse_position)
+        await pilot.hover(OptionList, Offset(2, 1))
         option_list = pilot.app.query_one(OptionList)
         assert option_list._mouse_hovering_over == 0
         assert option_list._mouse_hovering_over == option_list.highlighted
@@ -39,7 +37,7 @@ async def test_hover_highlight() -> None:
 async def test_hover_no_highlight() -> None:
     """The mouse hover value should react to the mouse hover over a non-highlighted option."""
     async with OptionListApp().run_test() as pilot:
-        await pilot.hover(OptionList, Offset(1, 1))
+        await pilot.hover(OptionList, Offset(1, 1) + Offset(2, 1))
         option_list = pilot.app.query_one(OptionList)
         assert option_list._mouse_hovering_over == 1
         assert option_list._mouse_hovering_over != option_list.highlighted
@@ -48,7 +46,7 @@ async def test_hover_no_highlight() -> None:
 async def test_hover_disabled() -> None:
     """The mouse hover value should react to the mouse hover over a disabled option."""
     async with OptionListApp().run_test() as pilot:
-        await pilot.hover(OptionList, Offset(1, 3))
+        await pilot.hover(OptionList, Offset(1, 3) + Offset(2, 1))
         option_list = pilot.app.query_one(OptionList)
         assert option_list._mouse_hovering_over == 3
         assert option_list.get_option_at_index(
@@ -60,7 +58,7 @@ async def test_hover_disabled() -> None:
 async def test_hover_then_leave() -> None:
     """After a mouse has been over an OptionList and left _mouse_hovering_over should be None again."""
     async with OptionListApp().run_test() as pilot:
-        await pilot.hover(OptionList)
+        await pilot.hover(OptionList, Offset(2, 1))
         option_list = pilot.app.query_one(OptionList)
         assert option_list._mouse_hovering_over == 0
         await pilot.hover(Label)

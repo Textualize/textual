@@ -134,6 +134,7 @@ class Pilot(Generic[ReturnType]):
         message_arguments = _get_mouse_message_arguments(
             target_widget, offset, button=0
         )
+        await self.pause()
         app.post_message(MouseMove(**message_arguments))
         await self.pause()
 

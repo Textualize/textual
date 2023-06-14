@@ -408,7 +408,7 @@ class OptionList(ScrollView, can_focus=True):
         Args:
             event: The mouse movement event.
         """
-        print(event, event.style)
+        print(event, event.style.meta)
         self._mouse_hovering_over = event.style.meta.get("option")
 
     def _on_leave(self, _: Leave) -> None:
