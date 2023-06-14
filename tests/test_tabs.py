@@ -66,3 +66,27 @@ async def test_add_tabs_after():
         assert tabs.tab_count == 2
         assert tabs.active_tab is not None
         assert tabs.active_tab.id == "tab-1"
+
+
+async def test_remove_tabs():
+    """It should be possible to remove tabs."""
+
+    class TabsApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Tabs("John", "Aeryn", "Moya", "Pilot")
+
+    async with TabsApp().run_test() as pilot:
+        tabs = pilot.app.query_one(Tabs)
+        assert tabs.tab_count == 4
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-1"
+        await tabs.remove_tab("tab-1")
+        await pilot.pause()
+        assert tabs.tab_count == 3
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-2"
+        await tabs.remove_tab(tabs.query_one("#tab-2", Tab))
+        await pilot.pause()
+        assert tabs.tab_count == 2
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-3"
