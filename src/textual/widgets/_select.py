@@ -32,6 +32,9 @@ class SelectOverlay(OptionList):
         width: 100%;
         padding: 0 1;
     }
+    SelectOverlay:focus {
+        border: tall $background;
+    }
     SelectOverlay > .option-list--option {
         padding: 0 1;
     }
@@ -79,7 +82,7 @@ class SelectCurrent(Horizontal):
 
     DEFAULT_CSS = """
     SelectCurrent {
-        border: tall $background;
+        border: tall transparent;
         background: $boost;
         color: $text;
         width: 100%;

@@ -172,9 +172,17 @@ class OptionList(ScrollView, can_focus=True):
 
     DEFAULT_CSS = """
     OptionList {
-        background: $panel-lighten-1;
+        height: auto;
+        background: $boost;
         color: $text;
         overflow-x: hidden;
+        border: tall transparent;
+        padding: 0 1;
+    }
+
+    OptionList:focus {
+        border: tall $accent;
+
     }
 
     OptionList > .option-list--separator {
@@ -182,7 +190,6 @@ class OptionList(ScrollView, can_focus=True):
     }
 
     OptionList > .option-list--option-highlighted {
-        background: $accent 50%;
         color: $text;
         text-style: bold;
     }
@@ -197,11 +204,11 @@ class OptionList(ScrollView, can_focus=True):
 
     OptionList > .option-list--option-highlighted-disabled {
         color: $text-disabled;
-        background: $accent 30%;
+        background: $accent 20%;
     }
 
     OptionList:focus > .option-list--option-highlighted-disabled {
-        background: $accent 40%;
+        background: $accent 30%;
     }
 
     OptionList > .option-list--option-hover {
@@ -401,6 +408,7 @@ class OptionList(ScrollView, can_focus=True):
         Args:
             event: The mouse movement event.
         """
+        print(event, event.style.meta)
         self._mouse_hovering_over = event.style.meta.get("option")
 
     def _on_leave(self, _: Leave) -> None:

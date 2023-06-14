@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Breaking change: The `@on` decorator will now match a message class and any child classes https://github.com/Textualize/textual/pull/2746
+- Breaking change: Styles update to checkbox, radiobutton, OptionList, Select, SelectionList, Switch https://github.com/Textualize/textual/pull/2777
 
 ## [0.27.0] - 2023-06-01
 
