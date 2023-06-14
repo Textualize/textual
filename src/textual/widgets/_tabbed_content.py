@@ -253,10 +253,10 @@ class TabbedContent(Widget):
         tabs = self.get_child_by_type(Tabs)
         pane = self._set_id(pane, tabs.tab_count + 1)
         assert pane.id is not None
-        await_tab = tabs.add_tab(ContentTab(pane._title, pane.id))
         pane.display = False
         return AwaitTabbedContent(
-            await_tab, self.get_child_by_type(ContentSwitcher).mount(pane)
+            tabs.add_tab(ContentTab(pane._title, pane.id)),
+            self.get_child_by_type(ContentSwitcher).mount(pane),
         )
 
     def remove_pane(self, pane_id: str) -> AwaitTabbedContent:
