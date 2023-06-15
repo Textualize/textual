@@ -443,7 +443,7 @@ class Region(NamedTuple):
     def center(self) -> tuple[float, float]:
         """The center of the region.
 
-        Note, that this is *not* an Offset, because the center may not be an integer coordinate.
+        Note, that this does *not* return an `Offset`, because the center may not be an integer coordinate.
 
         Returns:
             Tuple of floats
