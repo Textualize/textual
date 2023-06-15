@@ -46,6 +46,8 @@ class Underline(Widget):
     """First cell in highlight."""
     highlight_end = reactive(0)
     """Last cell (inclusive) in highlight."""
+    show_highlight: reactive[bool] = reactive(True)
+    """Flag to indicate if a highlight should be shown at all."""
 
     class Clicked(Message):
         """Inform ancestors the underline was clicked."""
@@ -60,7 +62,11 @@ class Underline(Widget):
     @property
     def _highlight_range(self) -> tuple[int, int]:
         """Highlighted range for underline bar."""
-        return (self.highlight_start, self.highlight_end)
+        return (
+            (self.highlight_start, self.highlight_end)
+            if self.show_highlight
+            else (0, 0)
+        )
 
     def render(self) -> RenderResult:
         """Render the bar."""
