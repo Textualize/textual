@@ -355,3 +355,15 @@ def test_get_set_tooltip():
     assert widget.tooltip == "This is a tooltip."
 
 
+def test_get_set_inherited_tooltip():
+    tooltip = "This is a tooltip."
+    child = Widget()
+    parent = Widget(child)
+    parent.tooltip = tooltip
+    assert parent.tooltip == tooltip
+    assert child.tooltip == tooltip
+    child = Widget()
+    parent = Widget(child)
+    child.tooltip = tooltip
+    assert parent.tooltip is None
+    assert child.tooltip == tooltip
