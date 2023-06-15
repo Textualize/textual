@@ -199,7 +199,7 @@ class TabbedContent(Widget):
             ValueError: If the active attribute is set to empty string when there are tabs available.
         """
         if not active and self.get_child_by_type(ContentSwitcher).current:
-            raise ValueError(f"'active' tab must not be empty string.")
+            raise ValueError("'active' tab must not be empty string.")
         return active
 
     @staticmethod
