@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed issue where internal data of `OptionList` could be invalid for short window after `clear_options` https://github.com/Textualize/textual/pull/2754
 - Fixed `Tooltip` causing a `query_one` on a lone `Static` to fail https://github.com/Textualize/textual/issues/2723
 - Nested widgets wouldn't lose focus when parent is disabled https://github.com/Textualize/textual/issues/2772
+- Tooltips now work with compound widgets https://github.com/Textualize/textual/issues/2789
 
 ### Changed
 
