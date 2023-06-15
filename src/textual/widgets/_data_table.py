@@ -1125,6 +1125,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             else:
                 column.content_width = max(new_content_width, label_width)
 
+        self._require_update_dimensions = True
+
     def _update_dimensions(self, new_rows: Iterable[RowKey]) -> None:
         """Called to recalculate the virtual (scrollable) size."""
         console = self.app.console
@@ -1425,6 +1427,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         whole DataTable and re-computing column widths after some cells
         have been updated. This is more efficient in the case of high
         frequency updates, ensuring we only do expensive computations once."""
+        if self._updated_cells:
+            # Cell contents have already been updated at this point.
+            # Now we only need to worry about measuring column widths.
+            updated_columns = self._updated_cells.copy()
+            self._updated_cells.clear()
+            self._update_column_widths(updated_columns)
+
         if self._require_update_dimensions:
             # Add the new rows *before* updating the column widths, since
             # cells in a new row may influence the final width of a column
@@ -1432,13 +1441,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             new_rows = self._new_rows.copy()
             self._new_rows.clear()
             self._update_dimensions(new_rows)
-
-        if self._updated_cells:
-            # Cell contents have already been updated at this point.
-            # Now we only need to worry about measuring column widths.
-            updated_columns = self._updated_cells.copy()
-            self._updated_cells.clear()
-            self._update_column_widths(updated_columns)
 
     def refresh_coordinate(self, coordinate: Coordinate) -> Self:
         """Refresh the cell at a coordinate.
