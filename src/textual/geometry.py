@@ -446,10 +446,9 @@ class Region(NamedTuple):
         Note, that this does *not* return an `Offset`, because the center may not be an integer coordinate.
 
         Returns:
-            Tuple of floats
+            Tuple of floats.
         """
         x, y, width, height = self
-
         return (x + width / 2.0, y + height / 2.0)
 
     @property
