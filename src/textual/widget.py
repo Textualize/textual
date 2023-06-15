@@ -2262,6 +2262,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         center: bool = False,
         top: bool = False,
+        origin_visible: bool = True,
         force: bool = False,
     ) -> bool:
         """Scroll scrolling to bring a widget in to view.
@@ -2273,6 +2274,7 @@ class Widget(DOMNode):
             duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
             easing: An easing method for the scrolling animation.
             top: Scroll widget to top of container.
+            origin_visible: Ensure that the top left of the widget is within the window.
             force: Force scrolling even when prohibited by overflow styling.
 
         Returns:
@@ -2297,6 +2299,7 @@ class Widget(DOMNode):
                     center=center,
                     top=top,
                     easing=easing,
+                    origin_visible=origin_visible,
                     force=force,
                 )
                 if scroll_offset:
@@ -2329,8 +2332,8 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         center: bool = False,
         top: bool = False,
-        force: bool = False,
         origin_visible: bool = True,
+        force: bool = False,
     ) -> Offset:
         """Scrolls a given region in to view, if required.
 
@@ -2345,6 +2348,7 @@ class Widget(DOMNode):
             duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
             easing: An easing method for the scrolling animation.
             top: Scroll `region` to top of container.
+            origin_visible: Ensure that the top left of the widget is within the window.
             force: Force scrolling even when prohibited by overflow styling.
 
         Returns:
