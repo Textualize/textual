@@ -427,7 +427,7 @@ class Region(NamedTuple):
 
     @property
     def area(self) -> int:
-        """The are under the region."""
+        """The area under the region."""
         return self.width * self.height
 
     @property
@@ -1122,7 +1122,7 @@ class Spacing(NamedTuple):
             other: Spacing object.
 
         Returns:
-            New spacing were the values are maximum of the two values.
+            New spacing where the values are maximum of the two values.
         """
         top, right, bottom, left = self
         other_top, other_right, other_bottom, other_left = other
