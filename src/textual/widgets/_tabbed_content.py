@@ -8,6 +8,7 @@ from rich.text import Text, TextType
 
 from ..app import ComposeResult
 from ..await_remove import AwaitRemove
+from ..css.query import NoMatches
 from ..message import Message
 from ..reactive import reactive
 from ..widget import AwaitMount, Widget
@@ -268,10 +269,18 @@ class TabbedContent(Widget):
         Returns:
             An awaitable object that waits for the pane to be removed.
         """
-        await_remove = AwaitTabbedContent(
-            self.get_child_by_type(Tabs).remove_tab(pane_id),
-            self.get_child_by_type(ContentSwitcher).get_child_by_id(pane_id).remove(),
-        )
+        removals = [self.get_child_by_type(Tabs).remove_tab(pane_id)]
+        try:
+            removals.append(
+                self.get_child_by_type(ContentSwitcher)
+                .get_child_by_id(pane_id)
+                .remove()
+            )
+        except NoMatches:
+            # It's possible that the content itself may have gone away via
+            # other means; so allow that to be a no-op.
+            pass
+        await_remove = AwaitTabbedContent(*removals)
 
         async def _remove_content(cleared_message: TabbedContent.Cleared) -> None:
             await await_remove
