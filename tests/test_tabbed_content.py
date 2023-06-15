@@ -191,9 +191,11 @@ async def test_tabbed_content_add_after_from_composed():
         assert tabbed_content.tab_count == 3
         assert tabbed_content.active == "initial-1"
         await tabbed_content.add_pane(TabPane("Test 4", id="test-1"))
+        await pilot.pause()
         assert tabbed_content.tab_count == 4
         assert tabbed_content.active == "initial-1"
         await tabbed_content.add_pane(TabPane("Test 5", id="test-2"))
+        await pilot.pause()
         assert tabbed_content.tab_count == 5
         assert tabbed_content.active == "initial-1"
 
