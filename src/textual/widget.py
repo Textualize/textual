@@ -447,6 +447,8 @@ class Widget(DOMNode):
     @property
     def tooltip(self) -> RenderableType | None:
         """Tooltip for the widget, or `None` for no tooltip."""
+        if self._tooltip is None and isinstance(self.parent, Widget):
+            return self.parent.tooltip
         return self._tooltip
 
     @tooltip.setter
