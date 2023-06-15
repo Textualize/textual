@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from asyncio import gather
 from itertools import zip_longest
 from typing import Generator
 
@@ -87,8 +88,7 @@ class AwaitTabbedContent:
 
     def __await__(self) -> Generator[None, None, None]:
         async def await_tabbed_content() -> None:
-            for awaitable in self._awaitables:
-                await awaitable
+            await gather(*self._awaitables)
 
         return await_tabbed_content().__await__()
 
