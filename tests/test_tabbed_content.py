@@ -159,7 +159,7 @@ async def test_tabbed_content_messages():
         assert app.message.tab.label.plain == "bar"
 
 
-async def test_tabbed_content_add_after_from_empty():
+async def test_tabbed_content_add_later_from_empty():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
             yield TabbedContent()
@@ -178,7 +178,7 @@ async def test_tabbed_content_add_after_from_empty():
         assert tabbed_content.active == "test-1"
 
 
-async def test_tabbed_content_add_after_from_composed():
+async def test_tabbed_content_add_later_from_composed():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
             with TabbedContent():
