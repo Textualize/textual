@@ -510,9 +510,11 @@ class Tabs(Widget, can_focus=True):
         try:
             active_tab = self.query_one(f"#tabs-list > Tab.-active")
         except NoMatches:
+            underline.show_highlight = False
             underline.highlight_start = 0
             underline.highlight_end = 0
         else:
+            underline.show_highlight = True
             tab_region = active_tab.virtual_region.shrink(active_tab.styles.gutter)
             start, end = tab_region.column_span
             if animate:
