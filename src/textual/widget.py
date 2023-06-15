@@ -2443,6 +2443,12 @@ class Widget(DOMNode):
         parent = widget.parent
         drift = Offset()
         while isinstance(parent, Widget) and widget is not self:
+            if parent.region.contains_region(widget.region):
+                # No scrolling required
+                widget = parent
+                parent = widget.parent
+                continue
+
             widget_too_tall = widget.region.size.height > parent.region.size.height
             widget_too_wide = widget.region.size.width > parent.region.size.width
 
@@ -2474,8 +2480,12 @@ class Widget(DOMNode):
                 force=force,
             )
 
-            new_drift = actual_scrolled - scroll_target
+            new_drift = scroll_target - actual_scrolled
             drift = new_drift
+
+            print(f"Parent = {type(parent).__name__}")
+            print("Aiming to scroll to ")
+            print(f"Drift is now: {drift!r}")
 
             widget = parent
             parent = widget.parent
