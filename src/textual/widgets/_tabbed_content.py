@@ -74,7 +74,7 @@ class TabPane(Widget):
 
 
 class AwaitTabbedContent:
-    """An awaitable return by [`TabbedContent`][textual.widgets.TabbedContent] methods that modify the tabs."""
+    """An awaitable returned by [`TabbedContent`][textual.widgets.TabbedContent] methods that modify the tabs."""
 
     def __init__(self, *awaitables: AwaitMount | AwaitRemove) -> None:
         """Initialise the awaitable.
