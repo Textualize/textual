@@ -2,7 +2,7 @@ import pytest
 
 from textual.app import App, ComposeResult
 from textual.reactive import var
-from textual.widgets import Label, TabbedContent, TabPane
+from textual.widgets import Label, Tab, TabbedContent, TabPane, Tabs
 
 
 async def test_tabbed_content_switch_via_ui():
@@ -198,6 +198,140 @@ async def test_tabbed_content_add_later_from_composed():
         await pilot.pause()
         assert tabbed_content.tab_count == 5
         assert tabbed_content.active == "initial-1"
+
+
+async def test_tabbed_content_add_before_id():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield TabPane("Test 1", id="initial-1")
+
+    async with TabbedApp().run_test() as pilot:
+        tabbed_content = pilot.app.query_one(TabbedContent)
+        assert tabbed_content.tab_count == 1
+        assert tabbed_content.active == "initial-1"
+        await tabbed_content.add_pane(TabPane("Added", id="new-1"), before="initial-1")
+        await pilot.pause()
+        assert tabbed_content.tab_count == 2
+        assert tabbed_content.active == "initial-1"
+        assert [tab.id for tab in tabbed_content.query(Tab).results(Tab)] == [
+            "new-1",
+            "initial-1",
+        ]
+
+
+async def test_tabbed_content_add_before_pane():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield TabPane("Test 1", id="initial-1")
+
+    async with TabbedApp().run_test() as pilot:
+        tabbed_content = pilot.app.query_one(TabbedContent)
+        assert tabbed_content.tab_count == 1
+        assert tabbed_content.active == "initial-1"
+        await tabbed_content.add_pane(
+            TabPane("Added", id="new-1"),
+            before=pilot.app.query_one("TabPane#initial-1", TabPane),
+        )
+        await pilot.pause()
+        assert tabbed_content.tab_count == 2
+        assert tabbed_content.active == "initial-1"
+        assert [tab.id for tab in tabbed_content.query(Tab).results(Tab)] == [
+            "new-1",
+            "initial-1",
+        ]
+
+
+async def test_tabbed_content_add_before_badly():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield TabPane("Test 1", id="initial-1")
+
+    async with TabbedApp().run_test() as pilot:
+        tabbed_content = pilot.app.query_one(TabbedContent)
+        assert tabbed_content.tab_count == 1
+        assert tabbed_content.active == "initial-1"
+        with pytest.raises(Tabs.TabError):
+            await tabbed_content.add_pane(
+                TabPane("Added", id="new-1"), before="unknown-1"
+            )
+
+
+async def test_tabbed_content_add_after():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield TabPane("Test 1", id="initial-1")
+
+    async with TabbedApp().run_test() as pilot:
+        tabbed_content = pilot.app.query_one(TabbedContent)
+        assert tabbed_content.tab_count == 1
+        assert tabbed_content.active == "initial-1"
+        await tabbed_content.add_pane(TabPane("Added", id="new-1"), after="initial-1")
+        await pilot.pause()
+        assert tabbed_content.tab_count == 2
+        assert tabbed_content.active == "initial-1"
+        assert [tab.id for tab in tabbed_content.query(Tab).results(Tab)] == [
+            "initial-1",
+            "new-1",
+        ]
+
+
+async def test_tabbed_content_add_after_pane():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield TabPane("Test 1", id="initial-1")
+
+    async with TabbedApp().run_test() as pilot:
+        tabbed_content = pilot.app.query_one(TabbedContent)
+        assert tabbed_content.tab_count == 1
+        assert tabbed_content.active == "initial-1"
+        await tabbed_content.add_pane(
+            TabPane("Added", id="new-1"),
+            after=pilot.app.query_one("TabPane#initial-1", TabPane),
+        )
+        await pilot.pause()
+        assert tabbed_content.tab_count == 2
+        assert tabbed_content.active == "initial-1"
+        assert [tab.id for tab in tabbed_content.query(Tab).results(Tab)] == [
+            "initial-1",
+            "new-1",
+        ]
+
+
+async def test_tabbed_content_add_after_badly():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield TabPane("Test 1", id="initial-1")
+
+    async with TabbedApp().run_test() as pilot:
+        tabbed_content = pilot.app.query_one(TabbedContent)
+        assert tabbed_content.tab_count == 1
+        assert tabbed_content.active == "initial-1"
+        with pytest.raises(Tabs.TabError):
+            await tabbed_content.add_pane(
+                TabPane("Added", id="new-1"), after="unknown-1"
+            )
+
+
+async def test_tabbed_content_add_before_and_after():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield TabPane("Test 1", id="initial-1")
+
+    async with TabbedApp().run_test() as pilot:
+        tabbed_content = pilot.app.query_one(TabbedContent)
+        assert tabbed_content.tab_count == 1
+        assert tabbed_content.active == "initial-1"
+        with pytest.raises(Tabs.TabError):
+            await tabbed_content.add_pane(
+                TabPane("Added", id="new-1"), before="initial-1", after="initial-1"
+            )
 
 
 async def test_tabbed_content_removal():
