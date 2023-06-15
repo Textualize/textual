@@ -242,21 +242,40 @@ class TabbedContent(Widget):
         with ContentSwitcher(initial=self._initial or None):
             yield from pane_content
 
-    def add_pane(self, pane: TabPane) -> AwaitTabbedContent:
+    def add_pane(
+        self,
+        pane: TabPane,
+        *,
+        before: TabPane | str | None = None,
+        after: TabPane | str | None = None,
+    ) -> AwaitTabbedContent:
         """Add a new pane to the tabbed content.
 
         Args:
             pane: The pane to add.
+            before: Optional pane or pane ID to add the pane before.
+            after: Optional pane or pane ID to add the pane after.
 
         Returns:
             An awaitable object that waits for the pane to be added.
+
+        Raises:
+            Tabs.TabError: If there is a problem with the addition request.
+
+        Note:
+            Only one of `before` or `after` can be provided. If both are
+            provided a `Tabs.TabError` will be raised.
         """
+        if isinstance(before, TabPane):
+            before = before.id
+        if isinstance(after, TabPane):
+            after = after.id
         tabs = self.get_child_by_type(Tabs)
         pane = self._set_id(pane, tabs.tab_count + 1)
         assert pane.id is not None
         pane.display = False
         return AwaitTabbedContent(
-            tabs.add_tab(ContentTab(pane._title, pane.id)),
+            tabs.add_tab(ContentTab(pane._title, pane.id), before=before, after=after),
             self.get_child_by_type(ContentSwitcher).mount(pane),
         )
 
