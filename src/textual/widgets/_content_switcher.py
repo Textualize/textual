@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Optional
 
 from ..containers import Container
+from ..css.query import NoMatches
 from ..events import Mount
 from ..reactive import reactive
 from ..widget import Widget
@@ -84,6 +85,9 @@ class ContentSwitcher(Container):
         """
         with self.app.batch_update():
             if old:
-                self.get_child_by_id(old).display = False
+                try:
+                    self.get_child_by_id(old).display = False
+                except NoMatches:
+                    pass
             if new:
                 self.get_child_by_id(new).display = True

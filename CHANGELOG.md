@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Class variable `CSS` to screens https://github.com/Textualize/textual/issues/2137
 - Class variable `CSS_PATH` to screens https://github.com/Textualize/textual/issues/2137
 - Added `cursor_foreground_priority` and `cursor_background_priority` to `DataTable` https://github.com/Textualize/textual/pull/2736
+- Added `TabbedContent.tab_count` https://github.com/Textualize/textual/pull/2751
+- Added `TabbedContnet.add_pane` https://github.com/Textualize/textual/pull/2751
+- Added `TabbedContent.remove_pane` https://github.com/Textualize/textual/pull/2751
+- Added `TabbedContent.clear_panes` https://github.com/Textualize/textual/pull/2751
+- Added `TabbedContent.Cleared` https://github.com/Textualize/textual/pull/2751
 
 ### Fixed
 
@@ -22,6 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed issue where internal data of `OptionList` could be invalid for short window after `clear_options` https://github.com/Textualize/textual/pull/2754
 - Fixed `Tooltip` causing a `query_one` on a lone `Static` to fail https://github.com/Textualize/textual/issues/2723
 - Nested widgets wouldn't lose focus when parent is disabled https://github.com/Textualize/textual/issues/2772
+- Fixed the `Tabs` `Underline` highlight getting "lost" in some extreme situations https://github.com/Textualize/textual/pull/2751
 
 ### Changed
 
