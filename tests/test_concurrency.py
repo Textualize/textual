@@ -20,7 +20,7 @@ def test_call_from_thread():
     class BackgroundThread(Thread):
         """A background thread which will modify app in some way."""
 
-        def __init__(self, app: App) -> None:
+        def __init__(self, app: App[object]) -> None:
             self.app = app
             super().__init__()
 
@@ -33,7 +33,7 @@ def test_call_from_thread():
             # Exit the app with a code we can assert
             self.app.call_from_thread(self.app.exit, 123)
 
-    class ThreadTestApp(App):
+    class ThreadTestApp(App[object]):
         """Trivial app with a single widget."""
 
         def compose(self) -> ComposeResult:

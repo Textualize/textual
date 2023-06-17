@@ -721,7 +721,7 @@ class App(Generic[ReturnType], DOMNode):
         return self._animator
 
     @property
-    def screen(self) -> Screen:
+    def screen(self) -> Screen[object]:
         """The current active screen.
 
         Returns:
@@ -834,8 +834,8 @@ class App(Generic[ReturnType], DOMNode):
     def call_from_thread(
         self,
         callback: Callable[..., CallThreadReturnType | Awaitable[CallThreadReturnType]],
-        *args,
-        **kwargs,
+        *args: object,
+        **kwargs: object,
     ) -> CallThreadReturnType:
         """Run a callable from another thread, and return the result.
 
@@ -1712,7 +1712,7 @@ class App(Generic[ReturnType], DOMNode):
                     return name
         return None
 
-    def pop_screen(self) -> Screen:
+    def pop_screen(self) -> Screen[object]:
         """Pop the current [screen](/guide/screens) from the stack, and switch to the previous screen.
 
         Returns:

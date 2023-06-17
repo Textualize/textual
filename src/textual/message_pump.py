@@ -31,8 +31,13 @@ from .reactive import Reactive, TooManyComputesError
 from .timer import Timer, TimerCallback
 
 if TYPE_CHECKING:
+    from typing_extensions import TypeAlias
+
     from .app import App
     from .css.model import SelectorSet
+
+
+Callback: TypeAlias = "Callable[..., Any] | Callable[..., Awaitable[Any]]"
 
 
 class CallbackError(Exception):
@@ -174,7 +179,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         return self._parent is not None
 
     @property
-    def app(self) -> "App":
+    def app(self) -> "App[object]":
         """
         Get the current app.
 
@@ -369,7 +374,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         self._timers.add(timer)
         return timer
 
-    def call_after_refresh(self, callback: Callable, *args: Any, **kwargs: Any) -> bool:
+    def call_after_refresh(self, callback: Callback, *args: Any, **kwargs: Any) -> bool:
         """Schedule a callback to run after all messages are processed and the screen
         has been refreshed. Positional and keyword arguments are passed to the callable.
 
@@ -387,7 +392,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         message = messages.InvokeLater(partial(callback, *args, **kwargs))
         return self.post_message(message)
 
-    def call_later(self, callback: Callable, *args: Any, **kwargs: Any) -> bool:
+    def call_later(self, callback: Callback, *args: Any, **kwargs: Any) -> bool:
         """Schedule a callback to run after all messages are processed in this object.
         Positional and keywords arguments are passed to the callable.
 
@@ -404,7 +409,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         message = events.Callback(callback=partial(callback, *args, **kwargs))
         return self.post_message(message)
 
-    def call_next(self, callback: Callable, *args: Any, **kwargs: Any) -> None:
+    def call_next(self, callback: Callback, *args: Any, **kwargs: Any) -> None:
         """Schedule a callback to run immediately after processing the current message.
 
         Args:
