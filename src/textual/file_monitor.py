@@ -22,7 +22,6 @@ class FileMonitor:
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._paths
-        yield self.callback
 
     def _get_last_modified_time(self) -> float:
         """Get the most recent modified time out of all files being watched."""
