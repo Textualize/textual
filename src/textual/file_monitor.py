@@ -15,10 +15,19 @@ class FileMonitor:
 
     _paths: set[Path]
 
-    def __init__(self, paths: Sequence[Path], callback: Callable) -> None:
+    def __init__(self, paths: Sequence[Path], callback: Callable[[], None]) -> None:
+        """Monitor the given file paths for changes.
+
+        Args:
+            paths: Paths to monitor.
+            callback: Callback to invoke if any of the paths change.
+        """
         self._paths = set(paths)
         self.callback = callback
         self._modified = self._get_last_modified_time()
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield self._paths
 
     def _get_last_modified_time(self) -> float:
         """Get the most recent modified time out of all files being watched."""
