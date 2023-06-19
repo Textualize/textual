@@ -4,6 +4,7 @@ from textual.widgets import Label
 
 
 class MyApp(App[None]):
+    AUTO_FOCUS = ""
     CSS = """
     VerticalScroll {
         border: round $primary;

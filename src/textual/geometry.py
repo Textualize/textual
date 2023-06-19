@@ -440,6 +440,18 @@ class Region(NamedTuple):
         return Offset(*self[:2])
 
     @property
+    def center(self) -> tuple[float, float]:
+        """The center of the region.
+
+        Note, that this does *not* return an `Offset`, because the center may not be an integer coordinate.
+
+        Returns:
+            Tuple of floats.
+        """
+        x, y, width, height = self
+        return (x + width / 2.0, y + height / 2.0)
+
+    @property
     def bottom_left(self) -> Offset:
         """Bottom left offset of the region.
 

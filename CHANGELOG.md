@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Class variable `CSS` to screens https://github.com/Textualize/textual/issues/2137
 - Class variable `CSS_PATH` to screens https://github.com/Textualize/textual/issues/2137
 - Added `cursor_foreground_priority` and `cursor_background_priority` to `DataTable` https://github.com/Textualize/textual/pull/2736
+- Added Region.center
+- Added `center` parameter to `Widget.scroll_to_region`
+- Added `origin_visible` parameter to `Widget.scroll_to_region`
+- Added `origin_visible` parameter to `Widget.scroll_to_center`
 - Added `TabbedContent.tab_count` https://github.com/Textualize/textual/pull/2751
 - Added `TabbedContnet.add_pane` https://github.com/Textualize/textual/pull/2751
 - Added `TabbedContent.remove_pane` https://github.com/Textualize/textual/pull/2751
