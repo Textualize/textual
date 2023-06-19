@@ -52,12 +52,26 @@ class MarkdownApp(App[None]):
         ("Hello", [MD.MarkdownParagraph]),
         ("Hello\nWorld", [MD.MarkdownParagraph]),
         ("> Hello", [MD.MarkdownBlockQuote, MD.MarkdownParagraph]),
-        ("- One\n-Two", [MD.MarkdownBulletList]),
-        ("1. One\n2. Two", [MD.MarkdownOrderedList]),
+        ("- One\n-Two", [MD.MarkdownBulletList, MD.MarkdownParagraph]),
+        (
+            "1. One\n2. Two",
+            [MD.MarkdownOrderedList, MD.MarkdownParagraph, MD.MarkdownParagraph],
+        ),
         ("    1", [MD.MarkdownFence]),
         ("```\n1\n```", [MD.MarkdownFence]),
         ("```python\n1\n```", [MD.MarkdownFence]),
         ("""| One | Two |\n| :- | :- |\n| 1 | 2 |""", [MD.MarkdownTable]),
+        # Test for https://github.com/Textualize/textual/issues/2676
+        (
+            "- One\n```\nTwo\n```\n- Three\n",
+            [
+                MD.MarkdownBulletList,
+                MD.MarkdownParagraph,
+                MD.MarkdownFence,
+                MD.MarkdownBulletList,
+                MD.MarkdownParagraph,
+            ],
+        ),
     ],
 )
 async def test_markdown_nodes(
@@ -65,13 +79,14 @@ async def test_markdown_nodes(
 ) -> None:
     """A Markdown document should parse into the expected Textual node list."""
 
-    def markdown_nodes(root: Markdown | MarkdownBlock) -> Iterator[MarkdownBlock]:
+    def markdown_nodes(root: Widget) -> Iterator[MarkdownBlock]:
         for node in root.children:
             if isinstance(node, MarkdownBlock):
                 yield node
-                yield from markdown_nodes(node)
+            yield from markdown_nodes(node)
 
     async with MarkdownApp(document).run_test() as pilot:
+        await pilot.pause()
         assert [
             node.__class__ for node in markdown_nodes(pilot.app.query_one(Markdown))
         ] == expected_nodes
