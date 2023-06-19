@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed indented code blocks not showing up in `Markdown` https://github.com/Textualize/textual/issues/2781
+- Fixed inline code blocks in lists showing out of order in `Markdown` https://github.com/Textualize/textual/issues/2676
+
+### Added
+
+- Added a method of allowing third party code to handle unhandled tokens in `Markdown` https://github.com/Textualize/textual/pull/2803
+- Added `MarkdownBlock` as an exported symbol in `textual.widgets.markdown` https://github.com/Textualize/textual/pull/2803
+
 ## [0.28.0] - 2023-06-19
 
 ### Added
