@@ -600,6 +600,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
         Args:
             callback: A callback.
+            sender: The sender (active message pump) of the callback.
         """
 
         self._callbacks.append((callback, sender))

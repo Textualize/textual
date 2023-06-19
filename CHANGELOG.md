@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Tooltips are now inherited, so will work with compound widgets
 
+### Fixed
+
+- call_after_refresh will preserve the sender within the callback https://github.com/Textualize/textual/pull/2806
+
 ## [0.28.0] - 2023-06-19
 
 ### Added
