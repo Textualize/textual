@@ -422,7 +422,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
 
     def _on_invoke_later(self, message: messages.InvokeLater) -> None:
         # Forward InvokeLater message to the Screen
-        self.app.screen._invoke_later(message.callback)
+        self.app.screen._invoke_later(message.callback, message._sender)
 
     def _close_messages_no_wait(self) -> None:
         """Request the message queue to immediately exit."""
