@@ -570,6 +570,7 @@ def test_tooltips_in_compound_widgets(snap_compare):
     # https://github.com/Textualize/textual/issues/2641
     async def run_before(pilot) -> None:
         await pilot.hover("ProgressBar")
-        await pilot.pause(0.2)
+        await pilot.pause(0.3)
+        await pilot.pause()
 
     assert snap_compare(SNAPSHOT_APPS_DIR / "tooltips.py", run_before=run_before)

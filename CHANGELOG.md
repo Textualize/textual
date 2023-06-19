@@ -24,7 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `origin_visible` parameter to `Widget.scroll_to_region`
 - Added `origin_visible` parameter to `Widget.scroll_to_center`
 - Added `TabbedContent.tab_count` https://github.com/Textualize/textual/pull/2751
-- Added `TabbedContnet.add_pane` https://github.com/Textualize/textual/pull/2751
+- Added `TabbedContent.add_pane` https://github.com/Textualize/textual/pull/2751
 - Added `TabbedContent.remove_pane` https://github.com/Textualize/textual/pull/2751
 - Added `TabbedContent.clear_panes` https://github.com/Textualize/textual/pull/2751
 - Added `TabbedContent.Cleared` https://github.com/Textualize/textual/pull/2751
