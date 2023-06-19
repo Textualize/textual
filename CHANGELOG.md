@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Tooltips are now inherited, so will work with compound widgets
 
+### Fixed
+
+- Fixed `Tabs` posting unnecessary messages when removing non-active tabs https://github.com/Textualize/textual/issues/2807
+
 ## [0.28.0] - 2023-06-19
 
 ### Added
