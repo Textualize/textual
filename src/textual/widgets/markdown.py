@@ -1,3 +1,3 @@
-from ._markdown import Markdown, MarkdownTableOfContents
+from ._markdown import Markdown, MarkdownBlock, MarkdownTableOfContents
 
-__all__ = ["MarkdownTableOfContents", "Markdown"]
+__all__ = ["MarkdownTableOfContents", "Markdown", "MarkdownBlock"]

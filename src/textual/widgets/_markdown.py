@@ -4,6 +4,7 @@ from pathlib import Path, PurePath
 from typing import Callable, Iterable
 
 from markdown_it import MarkdownIt
+from markdown_it.token import Token
 from rich import box
 from rich.style import Style
 from rich.syntax import Syntax
@@ -644,6 +645,18 @@ class Markdown(Widget):
         self.update(markdown)
         return True
 
+    def unhandled_token(self, token: Token) -> MarkdownBlock | None:
+        """Process an unhandled token.
+
+        Args:
+            token: The token to handle.
+
+        Returns:
+            Either a widget to be added to the output, or `None`.
+        """
+        del token
+        return None
+
     def update(self, markdown: str) -> None:
         """Update the document with new Markdown.
 
@@ -785,6 +798,10 @@ class Markdown(Widget):
                         token.info,
                     )
                 )
+            else:
+                external = self.unhandled_token(token)
+                if external is not None:
+                    output.append(external)
 
         self.post_message(Markdown.TableOfContentsUpdated(self, table_of_contents))
         with self.app.batch_update():
