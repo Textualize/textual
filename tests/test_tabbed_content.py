@@ -369,9 +369,6 @@ async def test_tabbed_content_removal():
         assert tabbed_content.active == ""
 
 
-@pytest.mark.xfail(
-    reason="https://github.com/Textualize/textual/issues/2807", strict=True
-)
 async def test_tabbed_content_reversed_removal():
     class TabbedApp(App[None]):
         cleared: var[int] = var(0)

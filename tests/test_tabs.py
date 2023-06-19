@@ -457,9 +457,6 @@ async def test_remove_tabs_messages():
         ]
 
 
-@pytest.mark.xfail(
-    reason="https://github.com/Textualize/textual/issues/2807", strict=True
-)
 async def test_reverse_remove_tabs_messages():
     """Removing tabs should result in various messages."""
     async with TabsMessageCatchApp().run_test() as pilot:
@@ -468,6 +465,7 @@ async def test_reverse_remove_tabs_messages():
             await tabs.remove_tab(f"tab-{n+1}")
             await pilot.pause()
         assert pilot.app.intended_handlers == [
+            "on_tabs_tab_activated",
             "on_tabs_cleared",
         ]
 
