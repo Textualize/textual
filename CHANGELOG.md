@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added a method of allowing third party code to handle unhandled tokens in `Markdown` https://github.com/Textualize/textual/pull/2803
 - Added `MarkdownBlock` as an exported symbol in `textual.widgets.markdown` https://github.com/Textualize/textual/pull/2803
 
+### Changed
+
+- Tooltips are now inherited, so will work with compound widgets
+
 ## [0.28.0] - 2023-06-19
 
 ### Added
@@ -31,7 +35,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `origin_visible` parameter to `Widget.scroll_to_region`
 - Added `origin_visible` parameter to `Widget.scroll_to_center`
 - Added `TabbedContent.tab_count` https://github.com/Textualize/textual/pull/2751
-- Added `TabbedContnet.add_pane` https://github.com/Textualize/textual/pull/2751
+- Added `TabbedContent.add_pane` https://github.com/Textualize/textual/pull/2751
 - Added `TabbedContent.remove_pane` https://github.com/Textualize/textual/pull/2751
 - Added `TabbedContent.clear_panes` https://github.com/Textualize/textual/pull/2751
 - Added `TabbedContent.Cleared` https://github.com/Textualize/textual/pull/2751
