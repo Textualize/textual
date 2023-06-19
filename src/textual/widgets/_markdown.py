@@ -791,7 +791,7 @@ class Markdown(Widget):
 
                 stack[-1].set_content(content)
             elif token.type in ("fence", "code_block"):
-                output.append(
+                (stack[-1]._blocks if stack else output).append(
                     MarkdownFence(
                         self,
                         token.content.rstrip(),
