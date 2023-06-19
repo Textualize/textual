@@ -13,7 +13,7 @@ from rich.text import Text
 from typing_extensions import TypeAlias
 
 from ..app import ComposeResult
-from ..containers import Horizontal, VerticalScroll
+from ..containers import Horizontal, Vertical, VerticalScroll
 from ..events import Mount
 from ..message import Message
 from ..reactive import reactive, var
@@ -270,7 +270,7 @@ class MarkdownBulletList(MarkdownList):
         width: 1fr;
     }
 
-    MarkdownBulletList VerticalScroll {
+    MarkdownBulletList Vertical {
         height: auto;
         width: 1fr;
     }
@@ -281,7 +281,7 @@ class MarkdownBulletList(MarkdownList):
             if isinstance(block, MarkdownListItem):
                 bullet = MarkdownBullet()
                 bullet.symbol = block.bullet
-                yield Horizontal(bullet, VerticalScroll(*block._blocks))
+                yield Horizontal(bullet, Vertical(*block._blocks))
         self._blocks.clear()
 
 
@@ -299,7 +299,7 @@ class MarkdownOrderedList(MarkdownList):
         width: 1fr;
     }
 
-    MarkdownOrderedList VerticalScroll {
+    MarkdownOrderedList Vertical {
         height: auto;
         width: 1fr;
     }
@@ -322,7 +322,7 @@ class MarkdownOrderedList(MarkdownList):
             if isinstance(block, MarkdownListItem):
                 bullet = MarkdownBullet()
                 bullet.symbol = f"{number}{suffix}".rjust(symbol_size + 1)
-                yield Horizontal(bullet, VerticalScroll(*block._blocks))
+                yield Horizontal(bullet, Vertical(*block._blocks))
 
         self._blocks.clear()
 
@@ -450,7 +450,7 @@ class MarkdownListItem(MarkdownBlock):
         height: auto;
     }
 
-    MarkdownListItem > VerticalScroll {
+    MarkdownListItem > Vertical {
         width: 1fr;
         height: auto;
     }

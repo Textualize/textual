@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed indented code blocks not showing up in `Markdown` https://github.com/Textualize/textual/issues/2781
 - Fixed inline code blocks in lists showing out of order in `Markdown` https://github.com/Textualize/textual/issues/2676
+- Fixed list items in a `Markdown` being added to the focus chain https://github.com/Textualize/textual/issues/2380
 
 ### Added
 
