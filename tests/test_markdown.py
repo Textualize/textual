@@ -5,11 +5,27 @@ from __future__ import annotations
 from typing import Iterator
 
 import pytest
+from markdown_it.token import Token
 
 import textual.widgets._markdown as MD
 from textual.app import App, ComposeResult
 from textual.widget import Widget
 from textual.widgets import Markdown
+from textual.widgets.markdown import MarkdownBlock
+
+
+class UnhandledToken(MarkdownBlock):
+    def __init__(self, markdown: Markdown, token: Token) -> None:
+        super().__init__(markdown)
+        self._token = token
+
+    def __repr___(self) -> str:
+        return self._token.type
+
+
+class FussyMarkdown(Markdown):
+    def unhandled_token(self, token: Token) -> MarkdownBlock | None:
+        return UnhandledToken(self, token)
 
 
 class MarkdownApp(App[None]):
@@ -18,7 +34,7 @@ class MarkdownApp(App[None]):
         self._markdown = markdown
 
     def compose(self) -> ComposeResult:
-        yield Markdown(self._markdown)
+        yield FussyMarkdown(self._markdown)
 
 
 @pytest.mark.parametrize(
@@ -48,9 +64,9 @@ async def test_markdown_nodes(
 ) -> None:
     """A Markdown document should parse into the expected Textual node list."""
 
-    def markdown_nodes(root: Markdown | MD.MarkdownBlock) -> Iterator[MD.MarkdownBlock]:
+    def markdown_nodes(root: Markdown | MarkdownBlock) -> Iterator[MarkdownBlock]:
         for node in root.children:
-            if isinstance(node, MD.MarkdownBlock):
+            if isinstance(node, MarkdownBlock):
                 yield node
                 yield from markdown_nodes(node)
 
