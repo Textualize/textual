@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar
+from typing import ClassVar
 
 import rich.repr
 from rich.style import Style
@@ -46,6 +46,8 @@ class Underline(Widget):
     """First cell in highlight."""
     highlight_end = reactive(0)
     """Last cell (inclusive) in highlight."""
+    show_highlight: reactive[bool] = reactive(True)
+    """Flag to indicate if a highlight should be shown at all."""
 
     class Clicked(Message):
         """Inform ancestors the underline was clicked."""
@@ -60,7 +62,11 @@ class Underline(Widget):
     @property
     def _highlight_range(self) -> tuple[int, int]:
         """Highlighted range for underline bar."""
-        return (self.highlight_start, self.highlight_end)
+        return (
+            (self.highlight_start, self.highlight_end)
+            if self.show_highlight
+            else (0, 0)
+        )
 
     def render(self) -> RenderResult:
         """Render the bar."""
@@ -504,9 +510,11 @@ class Tabs(Widget, can_focus=True):
         try:
             active_tab = self.query_one(f"#tabs-list > Tab.-active")
         except NoMatches:
+            underline.show_highlight = False
             underline.highlight_start = 0
             underline.highlight_end = 0
         else:
+            underline.show_highlight = True
             tab_region = active_tab.virtual_region.shrink(active_tab.styles.gutter)
             start, end = tab_region.column_span
             if animate:
