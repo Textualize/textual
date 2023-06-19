@@ -654,7 +654,6 @@ class Markdown(Widget):
         Returns:
             Either a widget to be added to the output, or `None`.
         """
-        del token
         return None
 
     def update(self, markdown: str) -> None:
