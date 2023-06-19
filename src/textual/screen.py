@@ -768,7 +768,14 @@ class Screen(Generic[ScreenResultType], Widget):
         except NoMatches:
             pass
         else:
-            tooltip_content = widget.tooltip
+            tooltip_content: RenderableType | None = None
+            for node in widget.ancestors_with_self:
+                if not isinstance(node, Widget):
+                    break
+                if node.tooltip is not None:
+                    tooltip_content = node.tooltip
+                    break
+
             if tooltip_content is None:
                 tooltip.display = False
             else:

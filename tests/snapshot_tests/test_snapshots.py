@@ -213,8 +213,10 @@ def test_tabbed_content(snap_compare):
 def test_option_list_strings(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_strings.py")
 
+
 def test_option_list_options(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_options.py")
+
 
 def test_option_list_tables(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_tables.py")
@@ -562,3 +564,13 @@ def test_blur_on_disabled(snap_compare):
         SNAPSHOT_APPS_DIR / "blur_on_disabled.py",
         press=[*"foo", "f3", *"this should not appear"],
     )
+
+
+def test_tooltips_in_compound_widgets(snap_compare):
+    # https://github.com/Textualize/textual/issues/2641
+    async def run_before(pilot) -> None:
+        await pilot.hover("ProgressBar")
+        await pilot.pause(0.3)
+        await pilot.pause()
+
+    assert snap_compare(SNAPSHOT_APPS_DIR / "tooltips.py", run_before=run_before)
