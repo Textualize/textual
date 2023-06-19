@@ -790,7 +790,7 @@ class Markdown(Widget):
                             style_stack.pop()
 
                 stack[-1].set_content(content)
-            elif token.type == "fence":
+            elif token.type in ("fence", "code_block"):
                 output.append(
                     MarkdownFence(
                         self,
