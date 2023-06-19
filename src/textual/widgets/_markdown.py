@@ -801,7 +801,7 @@ class Markdown(Widget):
             else:
                 external = self.unhandled_token(token)
                 if external is not None:
-                    output.append(external)
+                    (stack[-1]._blocks if stack else output).append(external)
 
         self.post_message(Markdown.TableOfContentsUpdated(self, table_of_contents))
         with self.app.batch_update():
