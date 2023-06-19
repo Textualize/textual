@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.28.0] - 2023-06-19
 
 ### Added
 
@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Class variable `CSS` to screens https://github.com/Textualize/textual/issues/2137
 - Class variable `CSS_PATH` to screens https://github.com/Textualize/textual/issues/2137
 - Added `cursor_foreground_priority` and `cursor_background_priority` to `DataTable` https://github.com/Textualize/textual/pull/2736
+- Added Region.center
+- Added `center` parameter to `Widget.scroll_to_region`
+- Added `origin_visible` parameter to `Widget.scroll_to_region`
+- Added `origin_visible` parameter to `Widget.scroll_to_center`
 - Added `TabbedContent.tab_count` https://github.com/Textualize/textual/pull/2751
 - Added `TabbedContnet.add_pane` https://github.com/Textualize/textual/pull/2751
 - Added `TabbedContent.remove_pane` https://github.com/Textualize/textual/pull/2751
@@ -21,7 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed setting `TreeNode.label` on an existing `Tree` node not immediately https://github.com/Textualize/textual/pull/2713
+- Fixed setting `TreeNode.label` on an existing `Tree` node not immediately refreshing https://github.com/Textualize/textual/pull/2713
 - Correctly implement `__eq__` protocol in DataTable https://github.com/Textualize/textual/pull/2705
 - Fixed exceptions in Pilot tests being silently ignored https://github.com/Textualize/textual/pull/2754
 - Fixed issue where internal data of `OptionList` could be invalid for short window after `clear_options` https://github.com/Textualize/textual/pull/2754
@@ -1056,6 +1060,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.28.0]: https://github.com/Textualize/textual/compare/v0.27.0...v0.28.0
+[0.27.0]: https://github.com/Textualize/textual/compare/v0.26.0...v0.27.0
 [0.26.0]: https://github.com/Textualize/textual/compare/v0.25.0...v0.26.0
 [0.25.0]: https://github.com/Textualize/textual/compare/v0.24.1...v0.25.0
 [0.24.1]: https://github.com/Textualize/textual/compare/v0.24.0...v0.24.1

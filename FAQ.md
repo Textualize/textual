@@ -2,17 +2,16 @@
 <!-- Do not edit by hand! -->
 
 # Frequently Asked Questions
-- [Frequently Asked Questions](#frequently-asked-questions)
-  - [Does Textual support images?](#does-textual-support-images)
-  - [How can I fix ImportError cannot import name ComposeResult from textual.app ?](#how-can-i-fix-importerror-cannot-import-name-composeresult-from-textualapp-)
-  - [How can I select and copy text in a Textual app?](#how-can-i-select-and-copy-text-in-a-textual-app)
-  - [How can I set a translucent app background?](#how-can-i-set-a-translucent-app-background)
-  - [How do I center a widget in a screen?](#how-do-i-center-a-widget-in-a-screen)
-  - [How do I pass arguments to an app?](#how-do-i-pass-arguments-to-an-app)
-  - [Why do some key combinations never make it to my app?](#why-do-some-key-combinations-never-make-it-to-my-app)
-  - [Why doesn't Textual look good on macOS?](#why-doesnt-textual-look-good-on-macos)
-  - [Why doesn't Textual support ANSI themes?](#why-doesnt-textual-support-ansi-themes)
-  - [Why doesn't the `DataTable` scroll programmatically?](#why-doesnt-the-datatable-scroll-programmatically)
+- [Does Textual support images?](#does-textual-support-images)
+- [How can I fix ImportError cannot import name ComposeResult from textual.app ?](#how-can-i-fix-importerror-cannot-import-name-composeresult-from-textualapp-)
+- [How can I select and copy text in a Textual app?](#how-can-i-select-and-copy-text-in-a-textual-app)
+- [How can I set a translucent app background?](#how-can-i-set-a-translucent-app-background)
+- [How do I center a widget in a screen?](#how-do-i-center-a-widget-in-a-screen)
+- [How do I pass arguments to an app?](#how-do-i-pass-arguments-to-an-app)
+- [Why do some key combinations never make it to my app?](#why-do-some-key-combinations-never-make-it-to-my-app)
+- [Why doesn't Textual look good on macOS?](#why-doesn't-textual-look-good-on-macos)
+- [Why doesn't Textual support ANSI themes?](#why-doesn't-textual-support-ansi-themes)
+- [Why doesn't the `DataTable` scroll programmatically?](#why-doesn't-the-`datatable`-scroll-programmatically)
 
 <a name="does-textual-support-images"></a>
 ## Does Textual support images?
@@ -212,12 +211,38 @@ work in different environments you can try them out with `textual keys`.
 <a name="why-doesn't-textual-look-good-on-macos"></a>
 ## Why doesn't Textual look good on macOS?
 
-The default macOS `Terminal.app` is getting rather old now; it has problems
-such as being limited to just 256 colors, being slow to draw and not all
-box-drawing characters are fully-supported. We recommend installing a newer
-terminal such as [iTerm2](https://iterm2.com/),
-[Kitty](https://sw.kovidgoyal.net/kitty/) or
-[WezTerm](https://wezfurlong.org/wezterm/).
+You may find that the default macOS Terminal.app doesn't render Textual apps (and likely other TUIs) very well, particuarily when it comes to box characters.
+For instance, you may find it displays misaligned blocks and lines like this:
+
+<img width="1042" alt="Screenshot 2023-06-19 at 10 43 02" src="https://github.com/Textualize/textual/assets/554369/e61f3876-3dd1-4ac8-b380-22922c89c7d6">
+
+You can (mostly) fix this by opening settings -> profiles > Text tab, and changing the font settings.
+We have found that Menlo Regular font, with a character spacing of 1 and line spacing of 0.805 produces reasonable results.
+If you want to use another font, you may have to tweak the line spacing until you get good results.
+
+<img width="737" alt="Screenshot 2023-06-19 at 10 44 00" src="https://github.com/Textualize/textual/assets/554369/0a052a93-b1fd-4327-9d33-d954b51a9ad2">
+
+With these changes, Textual apps render more as intended:
+
+<img width="1042" alt="Screenshot 2023-06-19 at 10 43 23" src="https://github.com/Textualize/textual/assets/554369/a0c4aa05-c509-4ac1-b0b8-e68ce4433f70">
+
+Even with this *fix*, Terminal.app has a few limitations.
+It is limited to 256 colors, and can be a little slow compared to more modern alternatives.
+Fortunately there are a number of free terminal emulators for macOS which produces high quality results.
+
+We recommend any of the following terminals:
+
+- [iTerm2](https://iterm2.com/)
+- [Kitty](https://sw.kovidgoyal.net/kitty/)
+- [WezTerm](https://wezfurlong.org/wezterm/)
+
+### Terminal.app colors
+
+<img width="762" alt="Screenshot 2023-06-19 at 11 00 12" src="https://github.com/Textualize/textual/assets/554369/e0555d23-e141-4069-b318-f3965c880208">
+
+### iTerm2 colors
+
+<img width="1002" alt="Screenshot 2023-06-19 at 11 00 25" src="https://github.com/Textualize/textual/assets/554369/9a8cde57-5121-49a7-a2e0-5f6fc871b7a6">
 
 <a name="why-doesn't-textual-support-ansi-themes"></a>
 ## Why doesn't Textual support ANSI themes?

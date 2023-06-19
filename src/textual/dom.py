@@ -457,7 +457,7 @@ class DOMNode(MessagePump):
         return cast("DOMNode | None", self._parent)
 
     @property
-    def screen(self) -> "Screen":
+    def screen(self) -> "Screen[object]":
         """The screen containing this node.
 
         Returns:
