@@ -229,13 +229,18 @@ With these changes, Textual apps render more as intended:
 Even with this *fix*, Terminal.app has a few limitations.
 It is limited to 256 colors, and can be a little slow compared to more modern alternatives.
 Fortunately there are a number of free terminal emulators for macOS which produces high quality results.
-We recommend installing a newer terminal such as [iTerm2](https://iterm2.com/), [Kitty](https://sw.kovidgoyal.net/kitty/) or [WezTerm](https://wezfurlong.org/wezterm/).
 
-*Terminal.app colors*
+We recommend any of the following terminals:
+
+- [iTerm2](https://iterm2.com/)
+- [Kitty](https://sw.kovidgoyal.net/kitty/)
+- [WezTerm](https://wezfurlong.org/wezterm/)
+
+### Terminal.app colors
 
 <img width="762" alt="Screenshot 2023-06-19 at 11 00 12" src="https://github.com/Textualize/textual/assets/554369/e0555d23-e141-4069-b318-f3965c880208">
 
-*iTerm2 colors*
+### iTerm2 colors
 
 <img width="1002" alt="Screenshot 2023-06-19 at 11 00 25" src="https://github.com/Textualize/textual/assets/554369/9a8cde57-5121-49a7-a2e0-5f6fc871b7a6">
 
