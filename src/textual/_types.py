@@ -3,6 +3,8 @@ from typing import TYPE_CHECKING, Any, Awaitable, Callable, List, Union
 from typing_extensions import Protocol
 
 if TYPE_CHECKING:
+    from rich.segment import Segment
+
     from .message import Message
 
 
