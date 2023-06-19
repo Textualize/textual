@@ -141,7 +141,9 @@ DEFAULT_COLORS = {
 ComposeResult = Iterable[Widget]
 RenderResult = RenderableType
 
-AutopilotCallbackType: TypeAlias = "Callable[[Pilot], Coroutine[Any, Any, None]]"
+AutopilotCallbackType: TypeAlias = (
+    "Callable[[Pilot[object]], Coroutine[Any, Any, None]]"
+)
 """Signature for valid callbacks that can be used to control apps."""
 
 
