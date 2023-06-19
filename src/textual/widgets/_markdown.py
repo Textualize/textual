@@ -725,7 +725,7 @@ class Markdown(Widget):
                         if child.type == "hardbreak":
                             content.append("\n")
                         if child.type == "softbreak":
-                            content.append(" ")
+                            content.append(" ", style_stack[-1])
                         elif child.type == "code_inline":
                             content.append(
                                 child.content,
