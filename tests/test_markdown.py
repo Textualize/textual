@@ -54,6 +54,7 @@ class MarkdownApp(App[None]):
         ("> Hello", [MD.MarkdownBlockQuote, MD.MarkdownParagraph]),
         ("- One\n-Two", [MD.MarkdownBulletList]),
         ("1. One\n2. Two", [MD.MarkdownOrderedList]),
+        ("    1", [MD.MarkdownFence]),
         ("```\n1\n```", [MD.MarkdownFence]),
         ("```python\n1\n```", [MD.MarkdownFence]),
         ("""| One | Two |\n| :- | :- |\n| 1 | 2 |""", [MD.MarkdownTable]),
