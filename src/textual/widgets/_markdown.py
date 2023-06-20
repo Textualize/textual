@@ -4,6 +4,7 @@ from pathlib import Path, PurePath
 from typing import Callable, Iterable
 
 from markdown_it import MarkdownIt
+from markdown_it.token import Token
 from rich import box
 from rich.style import Style
 from rich.syntax import Syntax
@@ -12,7 +13,7 @@ from rich.text import Text
 from typing_extensions import TypeAlias
 
 from ..app import ComposeResult
-from ..containers import Horizontal, VerticalScroll
+from ..containers import Horizontal, Vertical, VerticalScroll
 from ..events import Mount
 from ..message import Message
 from ..reactive import reactive, var
@@ -269,7 +270,7 @@ class MarkdownBulletList(MarkdownList):
         width: 1fr;
     }
 
-    MarkdownBulletList VerticalScroll {
+    MarkdownBulletList Vertical {
         height: auto;
         width: 1fr;
     }
@@ -280,7 +281,7 @@ class MarkdownBulletList(MarkdownList):
             if isinstance(block, MarkdownListItem):
                 bullet = MarkdownBullet()
                 bullet.symbol = block.bullet
-                yield Horizontal(bullet, VerticalScroll(*block._blocks))
+                yield Horizontal(bullet, Vertical(*block._blocks))
         self._blocks.clear()
 
 
@@ -298,7 +299,7 @@ class MarkdownOrderedList(MarkdownList):
         width: 1fr;
     }
 
-    MarkdownOrderedList VerticalScroll {
+    MarkdownOrderedList Vertical {
         height: auto;
         width: 1fr;
     }
@@ -321,7 +322,7 @@ class MarkdownOrderedList(MarkdownList):
             if isinstance(block, MarkdownListItem):
                 bullet = MarkdownBullet()
                 bullet.symbol = f"{number}{suffix}".rjust(symbol_size + 1)
-                yield Horizontal(bullet, VerticalScroll(*block._blocks))
+                yield Horizontal(bullet, Vertical(*block._blocks))
 
         self._blocks.clear()
 
@@ -449,7 +450,7 @@ class MarkdownListItem(MarkdownBlock):
         height: auto;
     }
 
-    MarkdownListItem > VerticalScroll {
+    MarkdownListItem > Vertical {
         width: 1fr;
         height: auto;
     }
@@ -644,6 +645,17 @@ class Markdown(Widget):
         self.update(markdown)
         return True
 
+    def unhandled_token(self, token: Token) -> MarkdownBlock | None:
+        """Process an unhandled token.
+
+        Args:
+            token: The token to handle.
+
+        Returns:
+            Either a widget to be added to the output, or `None`.
+        """
+        return None
+
     def update(self, markdown: str) -> None:
         """Update the document with new Markdown.
 
@@ -777,14 +789,18 @@ class Markdown(Widget):
                             style_stack.pop()
 
                 stack[-1].set_content(content)
-            elif token.type == "fence":
-                output.append(
+            elif token.type in ("fence", "code_block"):
+                (stack[-1]._blocks if stack else output).append(
                     MarkdownFence(
                         self,
                         token.content.rstrip(),
                         token.info,
                     )
                 )
+            else:
+                external = self.unhandled_token(token)
+                if external is not None:
+                    (stack[-1]._blocks if stack else output).append(external)
 
         self.post_message(Markdown.TableOfContentsUpdated(self, table_of_contents))
         with self.app.batch_update():
