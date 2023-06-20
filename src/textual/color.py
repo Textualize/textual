@@ -348,6 +348,7 @@ class Color(NamedTuple):
         r, g, b, a = self
         return Color(r, g, b, a * alpha)
 
+    @lru_cache(maxsize=1024)
     def blend(
         self, destination: Color, factor: float, alpha: float | None = None
     ) -> Color:
@@ -365,9 +366,9 @@ class Color(NamedTuple):
         Returns:
             A new color.
         """
-        if factor == 0:
+        if factor <= 0:
             return self
-        elif factor == 1:
+        elif factor >= 1:
             return destination
         r1, g1, b1, a1 = self
         r2, g2, b2, a2 = destination
@@ -386,8 +387,7 @@ class Color(NamedTuple):
 
     def __add__(self, other: object) -> Color:
         if isinstance(other, Color):
-            new_color = self.blend(other, other.a, alpha=1.0)
-            return new_color
+            return self.blend(other, other.a, 1.0)
         return NotImplemented
 
     @classmethod

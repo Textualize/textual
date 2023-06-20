@@ -917,13 +917,12 @@ class Compositor:
             widget_regions = [
                 (widget, region, clip)
                 for widget, (region, clip) in visible_widgets.items()
-                if crop_overlaps(clip) and widget.styles.opacity > 0
+                if crop_overlaps(clip)
             ]
         else:
             widget_regions = [
                 (widget, region, clip)
                 for widget, (region, clip) in visible_widgets.items()
-                if widget.styles.opacity > 0
             ]
 
         intersection = _Region.intersection

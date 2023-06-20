@@ -819,6 +819,22 @@ class DOMNode(MessagePump):
         return (base_background, background)
 
     @property
+    def _opacity_background_colors(self) -> tuple[Color, Color]:
+        """The background color and the color of the parent's background.
+
+        Returns:
+            `(<background color>, <color>)`
+        """
+        base_background = background = BLACK
+        opacity = 1.0
+        for node in reversed(self.ancestors_with_self[:-1]):
+            styles = node.styles
+            base_background = background
+            opacity *= styles.opacity
+            background += styles.background.multiply_alpha(opacity)
+        return (base_background.with_alpha(1), background.with_alpha(1))
+
+    @property
     def colors(self) -> tuple[Color, Color, Color, Color]:
         """The widget's background and foreground colors, and the parent's background and foreground colors.
 

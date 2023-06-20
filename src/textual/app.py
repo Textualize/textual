@@ -715,10 +715,6 @@ class App(Generic[ReturnType], DOMNode):
             yield "pseudo_classes", set(pseudo_classes)
 
     @property
-    def is_transparent(self) -> bool:
-        return True
-
-    @property
     def animator(self) -> Animator:
         return self._animator
 

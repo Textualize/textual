@@ -110,7 +110,7 @@ class StylesCache:
         border_title = widget._border_title
         border_subtitle = widget._border_subtitle
 
-        base_background, background = widget.background_colors
+        base_background, background = widget._opacity_background_colors
         styles = widget.styles
         strips = self.render(
             styles,
@@ -139,6 +139,7 @@ class StylesCache:
             padding=styles.padding,
             crop=crop,
             filters=widget.app._filters,
+            opacity=widget.opacity,
         )
         if widget.auto_links:
             hover_style = widget.hover_style
@@ -170,6 +171,7 @@ class StylesCache:
         padding: Spacing | None = None,
         crop: Region | None = None,
         filters: Sequence[LineFilter] | None = None,
+        opacity: float = 1.0,
     ) -> list[Strip]:
         """Render a widget content plus CSS styles.
 
@@ -186,6 +188,7 @@ class StylesCache:
             padding: Override padding from Styles, or None to use styles.padding.
             crop: Region to crop to.
             filters: Additional post-processing for the segments.
+            opacity: Widget opacity.
 
         Returns:
             Rendered lines.
@@ -220,6 +223,7 @@ class StylesCache:
                     console,
                     border_title,
                     border_subtitle,
+                    opacity,
                 )
                 self._cache[y] = strip
             else:
@@ -249,6 +253,7 @@ class StylesCache:
         console: Console,
         border_title: tuple[Text, Color, Color, Style] | None,
         border_subtitle: tuple[Text, Color, Color, Style] | None,
+        opacity: float,
     ) -> Strip:
         """Render a styled line.
 
@@ -264,6 +269,7 @@ class StylesCache:
             console: The console in use by the app.
             border_title: Optional tuple of (title, color, background, style).
             border_subtitle: Optional tuple of (subtitle, color, background, style).
+            opacity: Opacity of line.
 
         Returns:
             A line of segments.
@@ -305,8 +311,8 @@ class StylesCache:
             """
             if styles.tint.a:
                 segments = Tint.process_segments(segments, styles.tint)
-            if styles.opacity != 1.0:
-                segments = _apply_opacity(segments, base_background, styles.opacity)
+            if opacity != 1.0:
+                segments = _apply_opacity(segments, base_background, opacity)
             return segments
 
         line: Iterable[Segment]
