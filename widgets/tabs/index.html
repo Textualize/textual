@@ -5258,6 +5258,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._tabs.Tabs.TabError" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TabError
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._tabs.Tabs.action_next_tab" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7152,6 +7163,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._tabs.Tabs.TabError" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TabError
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._tabs.Tabs.action_next_tab" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7819,8 +7841,8 @@ You can then use <code>event.tab.id</code> attribute to perform any related acti
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._tabs.Tabs.active" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -8082,8 +8104,8 @@ is used by the <a class="autorefs autorefs-internal" href="../../api/on/#textual
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._tabs.Tabs.TabActivated.ALLOW_SELECTOR_MATCH" class="headerlink" title="Permanent link">&para;</a></h4>
@@ -8178,6 +8200,36 @@ which is used by the <a class="autorefs autorefs-internal" href="../../api/on/#t
 
 </div>
 
+<div class="doc doc-object doc-class">
+
+
+
+
+
+<h3 id="textual.widgets._tabs.Tabs.TabError" class="doc doc-heading">
+        <span class="doc doc-object-name doc-class-name">TabError</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class"><code>class</code></small>
+  </span>
+
+<a href="#textual.widgets._tabs.Tabs.TabError" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+      <p class="doc doc-class-bases">
+        Bases: <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#Exception">Exception</a></code></p>
+
+  
+      <p>Exception raised when there is an error relating to tabs.</p>
+
+
+
+  </div>
+
+</div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -8237,7 +8289,7 @@ which is used by the <a class="autorefs autorefs-internal" href="../../api/on/#t
   </span>
 
 <a href="#textual.widgets._tabs.Tabs.add_tab" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">add_tab</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tab</span><span class="p">):</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">add_tab</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tab</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">after</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -8265,9 +8317,70 @@ which is used by the <a class="autorefs autorefs-internal" href="../../api/on/#t
               <em>required</em>
           </td>
         </tr>
+        <tr>
+          <td><code>before</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.widgets._tabs.Tab" href="#textual.widgets.Tab">Tab</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td><p>Optional tab or tab ID to add the tab before.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>after</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.widgets._tabs.Tab" href="#textual.widgets.Tab">Tab</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td><p>Optional tab or tab ID to add the tab after.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
     </tbody>
   </table>
 
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.widget.AwaitMount" href="../../api/widget/#textual.widget.AwaitMount">AwaitMount</a></code>
+          </td>
+          <td><p>An awaitable object that waits for the tab to be mounted.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Raises</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.widgets._tabs.Tabs" href="#textual.widgets.Tabs">Tabs</a>.<a class="autorefs autorefs-internal" title="textual.widgets._tabs.Tabs.TabError" href="#textual.widgets._tabs.Tabs.TabError">TabError</a></code>
+          </td>
+          <td><p>If there is a problem with the addition request.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+<details class="note" open>
+  <summary>Note</summary>
+  <p>Only one of <code>before</code> or <code>after</code> can be provided. If both are
+provided a <code>Tabs.TabError</code> will be raised.</p>
+</details>
   </div>
 
 </div>
@@ -8302,9 +8415,9 @@ which is used by the <a class="autorefs autorefs-internal" href="../../api/on/#t
     <tbody>
         <tr>
           <td>
-                <code><span title="typing_extensions.Self">Self</span></code>
+                <code><a class="autorefs autorefs-internal" title="textual.await_remove.AwaitRemove" href="../../api/await_remove/#textual.await_remove.AwaitRemove">AwaitRemove</a></code>
           </td>
-          <td><p>The <code>Tabs</code> instance.</p></td>
+          <td><p>An awaitable object that waits for the tabs to be removed.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8352,6 +8465,24 @@ which is used by the <a class="autorefs autorefs-internal" href="../../api/on/#t
           <td>
               <em>required</em>
           </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.await_remove.AwaitRemove" href="../../api/await_remove/#textual.await_remove.AwaitRemove">AwaitRemove</a></code>
+          </td>
+          <td><p>An awaitable object that waits for the tab to be removed.</p></td>
         </tr>
     </tbody>
   </table>

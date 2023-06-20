@@ -6225,17 +6225,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#textual.app.CssPathError" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CssPathError
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#textual.app.InvalidModeError" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -8576,17 +8565,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#textual.app.CssPathError" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CssPathError
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#textual.app.InvalidModeError" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -8695,7 +8673,7 @@
 
 <a href="#textual.app.AutopilotCallbackType" class="headerlink" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">AutopilotCallbackType</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="s2">&quot;Callable[[Pilot], Coroutine[Any, Any, None]]&quot;</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="s2">&quot;Callable[[Pilot[object]], Coroutine[Any, Any, None]]&quot;</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span>
 </code></pre></div>
 
@@ -8880,7 +8858,7 @@ you are using <code>textual run</code> with the <code>dev</code> switch.</p></td
     <tbody>
         <tr>
           <td>
-                <code><a class="autorefs autorefs-internal" title="textual.app.CssPathError" href="#textual.app.CssPathError">CssPathError</a></code>
+                <code>CssPathError</code>
           </td>
           <td><p>When the supplied CSS path(s) are an unexpected type.</p></td>
         </tr>
@@ -9050,8 +9028,8 @@ The base screens can be names of screens listed in <a class="autorefs autorefs-i
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.SUB_TITLE" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9075,8 +9053,8 @@ The base screens can be names of screens listed in <a class="autorefs autorefs-i
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.TITLE" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9144,8 +9122,8 @@ be the currently active screen.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.dark" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9382,7 +9360,7 @@ If a widget is focused, then any bindings present in the active screen and app a
   </span>
 
 <a href="#textual.app.App.screen" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">screen</span><span class="p">:</span> <span class="n">Screen</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">screen</span><span class="p">:</span> <span class="n">Screen</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -9400,7 +9378,7 @@ If a widget is focused, then any bindings present in the active screen and app a
     <tbody>
         <tr>
           <td>
-                <code><a class="autorefs autorefs-internal" title="textual.screen.Screen" href="../screen/#textual.screen.Screen">Screen</a></code>
+                <code><a class="autorefs autorefs-internal" title="textual.screen.Screen" href="../screen/#textual.screen.Screen">Screen</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#object">object</a>]</code>
           </td>
           <td><p>The currently active (visible) screen.</p></td>
         </tr>
@@ -9565,8 +9543,8 @@ If a widget is focused, then any bindings present in the active screen and app a
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.sub_title" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9597,8 +9575,8 @@ The new value is always converted to string.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.title" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -10643,6 +10621,7 @@ or set attributes on Textual objects from a thread, you may get unpredictable re
         <tr>
           <td><code>*args</code></td>
           <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#object">object</a></code>
           </td>
           <td><p>Arguments to the callback.</p></td>
           <td>
@@ -10652,6 +10631,7 @@ or set attributes on Textual objects from a thread, you may get unpredictable re
         <tr>
           <td><code>**kwargs</code></td>
           <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#object">object</a></code>
           </td>
           <td><p>Keyword arguments for the callback.</p></td>
           <td>
@@ -12084,7 +12064,7 @@ For a more graceful exit, see the <a class="autorefs autorefs-internal" href="#t
     <tbody>
         <tr>
           <td>
-                <code><a class="autorefs autorefs-internal" title="textual.screen.Screen" href="../screen/#textual.screen.Screen">Screen</a></code>
+                <code><a class="autorefs autorefs-internal" title="textual.screen.Screen" href="../screen/#textual.screen.Screen">Screen</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#object">object</a>]</code>
           </td>
           <td><p>The screen that was replaced.</p></td>
         </tr>
@@ -13113,36 +13093,6 @@ change the <a class="autorefs autorefs-internal" href="#textual.app.App.dark">da
 
   
       <p>Base class for general App related exceptions.</p>
-
-
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.app.CssPathError" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">CssPathError</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.app.CssPathError" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#Exception">Exception</a></code></p>
-
-  
-      <p>Raised when supplied CSS path(s) are invalid.</p>
 
 
 

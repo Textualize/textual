@@ -5790,22 +5790,16 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Reactive">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#textual.reactive.Reactive.var" class="md-nav__link">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.reactive.TooManyComputesError" class="md-nav__link">
     <span class="md-ellipsis">
       
-        var()
+        TooManyComputesError
       
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -6642,22 +6636,16 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Reactive">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#textual.reactive.Reactive.var" class="md-nav__link">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.reactive.TooManyComputesError" class="md-nav__link">
     <span class="md-ellipsis">
       
-        var()
+        TooManyComputesError
       
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -6845,84 +6833,39 @@
 
 
 
-<div class="doc doc-object doc-function">
 
 
-
-<h3 id="textual.reactive.Reactive.var" class="doc doc-heading">
-        <span class="doc doc-object-name doc-function-name">var</span>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
-  </span>
-
-<a href="#textual.reactive.Reactive.var" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">var</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">default</span><span class="p">,</span> <span class="n">always_update</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-  
-      <p>A reactive variable that doesn't update or layout.</p>
-
-  <h5>Parameters</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>default</code></td>
-          <td>
-                <code><span title="textual.reactive.ReactiveType">ReactiveType</span> | <a class="autorefs autorefs-external" title="typing.Callable" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a>[[], <span title="textual.reactive.ReactiveType">ReactiveType</span>]</code>
-          </td>
-          <td><p>A default value or callable that returns a default.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>always_update</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
-          </td>
-          <td><p>Call watchers even when the new value equals the old value.</p></td>
-          <td>
-                <code>False</code>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.reactive.Reactive" href="#textual.reactive.Reactive">Reactive</a></code>
-          </td>
-          <td><p>A Reactive descriptor.</p></td>
-        </tr>
-    </tbody>
-  </table>
+  </div>
 
   </div>
 
 </div>
 
+<div class="doc doc-object doc-class">
 
 
-  </div>
+
+
+
+<h2 id="textual.reactive.TooManyComputesError" class="doc doc-heading">
+        <span class="doc doc-object-name doc-class-name">TooManyComputesError</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class"><code>class</code></small>
+  </span>
+
+<a href="#textual.reactive.TooManyComputesError" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+      <p class="doc doc-class-bases">
+        Bases: <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#Exception">Exception</a></code></p>
+
+  
+      <p>Raised when an attribute has public and private compute methods.</p>
+
+
 
   </div>
 

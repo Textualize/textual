@@ -4904,6 +4904,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._markdown.Markdown.unhandled_token" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        unhandled_token()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._markdown.Markdown.update" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6998,6 +7009,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._markdown.Markdown.unhandled_token" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        unhandled_token()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._markdown.Markdown.update" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7778,6 +7800,71 @@ and is used by the <a class="autorefs autorefs-internal" href="../../api/on/#tex
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
           <td><p>True    on success, or False if the document could not be read.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._markdown.Markdown.unhandled_token" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">unhandled_token</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._markdown.Markdown.unhandled_token" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">unhandled_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Process an unhandled token.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>token</code></td>
+          <td>
+                <code><span title="markdown_it.token.Token">Token</span></code>
+          </td>
+          <td><p>The token to handle.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="textual.widgets._markdown.MarkdownBlock">MarkdownBlock</span> | None</code>
+          </td>
+          <td><p>Either a widget to be added to the output, or <code>None</code>.</p></td>
         </tr>
     </tbody>
   </table>

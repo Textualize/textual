@@ -5705,6 +5705,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.geometry.Region.center" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        center
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.geometry.Region.column_range" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7649,6 +7660,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.geometry.Region.center" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        center
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.geometry.Region.column_range" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -8591,8 +8613,8 @@
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.geometry.Offset.x" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -8615,8 +8637,8 @@
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.geometry.Offset.y" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -8863,7 +8885,7 @@
 
   <div class="doc doc-contents ">
   
-      <p>The are under the region.</p>
+      <p>The area under the region.</p>
   </div>
 
 </div>
@@ -8977,6 +8999,48 @@
 
 
 
+<h3 id="textual.geometry.Region.center" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">center</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.geometry.Region.center" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">center</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>The center of the region.</p>
+<p>Note, that this does <em>not</em> return an <code>Offset</code>, because the center may not be an integer coordinate.</p>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a>]</code>
+          </td>
+          <td><p>Tuple of floats.</p></td>
+        </tr>
+    </tbody>
+  </table>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
 <h3 id="textual.geometry.Region.column_range" class="doc doc-heading">
         <span class="doc doc-object-name doc-attribute-name">column_range</span>
 
@@ -9052,8 +9116,8 @@
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.geometry.Region.height" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9292,8 +9356,8 @@
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.geometry.Region.width" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9316,8 +9380,8 @@
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.geometry.Region.x" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9340,8 +9404,8 @@
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.geometry.Region.y" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -11131,8 +11195,8 @@ The top left of the returned region is guaranteed to be within the container.</p
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.geometry.Size.height" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -11201,8 +11265,8 @@ The top left of the returned region is guaranteed to be within the container.</p
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.geometry.Size.width" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -11435,8 +11499,8 @@ The top left of the returned region is guaranteed to be within the container.</p
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.geometry.Spacing.bottom" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -11529,8 +11593,8 @@ The top left of the returned region is guaranteed to be within the container.</p
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.geometry.Spacing.left" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -11553,8 +11617,8 @@ The top left of the returned region is guaranteed to be within the container.</p
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.geometry.Spacing.right" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -11577,8 +11641,8 @@ The top left of the returned region is guaranteed to be within the container.</p
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.geometry.Spacing.top" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -11784,7 +11848,7 @@ The top left of the returned region is guaranteed to be within the container.</p
           <td>
                 <code><a class="autorefs autorefs-internal" title="textual.geometry.Spacing" href="#textual.geometry.Spacing">Spacing</a></code>
           </td>
-          <td><p>New spacing were the values are maximum of the two values.</p></td>
+          <td><p>New spacing where the values are maximum of the two values.</p></td>
         </tr>
     </tbody>
   </table>
