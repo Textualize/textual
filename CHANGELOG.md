@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed indented code blocks not showing up in `Markdown` https://github.com/Textualize/textual/issues/2781
 - Fixed inline code blocks in lists showing out of order in `Markdown` https://github.com/Textualize/textual/issues/2676
 - Fixed list items in a `Markdown` being added to the focus chain https://github.com/Textualize/textual/issues/2380
+- Fixed `Tabs` posting unnecessary messages when removing non-active tabs https://github.com/Textualize/textual/issues/2807
+- call_after_refresh will preserve the sender within the callback https://github.com/Textualize/textual/pull/2806
+
 
 ### Added
 
@@ -22,9 +25,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Tooltips are now inherited, so will work with compound widgets
 
-### Fixed
-
-- call_after_refresh will preserve the sender within the callback https://github.com/Textualize/textual/pull/2806
 
 ## [0.28.0] - 2023-06-19
 
