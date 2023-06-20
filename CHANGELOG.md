@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.28.1] - 2023-06-19
 
 ### Fixed
 
@@ -14,7 +14,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed list items in a `Markdown` being added to the focus chain https://github.com/Textualize/textual/issues/2380
 - Fixed `Tabs` posting unnecessary messages when removing non-active tabs https://github.com/Textualize/textual/issues/2807
 - call_after_refresh will preserve the sender within the callback https://github.com/Textualize/textual/pull/2806
-
 
 ### Added
 
