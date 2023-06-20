@@ -49,7 +49,7 @@ class Message:
 
     def __post_init__(self) -> None:
         """Allow dataclasses to initialize the object."""
-        self._sender: MessageTarget | None = active_message_pump.get(None)
+        self._sender: MessagePump | None = active_message_pump.get(None)
         self.time: float = _time.get_time()
         self._forwarded = False
         self._no_default_action = False
@@ -91,7 +91,7 @@ class Message:
         """Mark this event as being forwarded."""
         self._forwarded = True
 
-    def _set_sender(self, sender: MessageTarget) -> None:
+    def _set_sender(self, sender: MessagePump) -> None:
         """Set the sender."""
         self._sender = sender
 

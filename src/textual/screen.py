@@ -27,7 +27,7 @@ from rich.style import Style
 from . import errors, events, messages
 from ._callback import invoke
 from ._compositor import Compositor, MapGeometry
-from ._context import visible_screen_stack
+from ._context import active_message_pump, visible_screen_stack
 from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relative
 from ._types import CallbackType
 from .binding import Binding
@@ -48,6 +48,7 @@ if TYPE_CHECKING:
 
     # Unused & ignored imports are needed for the docs to link to these objects:
     from .errors import NoWidget  # type: ignore  # noqa: F401
+    from .message_pump import MessagePump
 
 # Screen updates will be batched so that they don't happen more often than 60 times per second:
 UPDATE_PERIOD: Final[float] = 1 / 60
@@ -154,7 +155,7 @@ class Screen(Generic[ScreenResultType], Widget):
         self._compositor = Compositor()
         self._dirty_widgets: set[Widget] = set()
         self.__update_timer: Timer | None = None
-        self._callbacks: list[CallbackType] = []
+        self._callbacks: list[tuple[CallbackType, MessagePump]] = []
         self._result_callbacks: list[ResultCallback[ScreenResultType]] = []
 
         self._tooltip_widget: Widget | None = None
@@ -587,17 +588,22 @@ class Screen(Generic[ScreenResultType], Widget):
         if self._callbacks:
             callbacks = self._callbacks[:]
             self._callbacks.clear()
-            for callback in callbacks:
-                await invoke(callback)
+            for callback, message_pump in callbacks:
+                reset_token = active_message_pump.set(message_pump)
+                try:
+                    await invoke(callback)
+                finally:
+                    active_message_pump.reset(reset_token)
 
-    def _invoke_later(self, callback: CallbackType) -> None:
+    def _invoke_later(self, callback: CallbackType, sender: MessagePump) -> None:
         """Enqueue a callback to be invoked after the screen is repainted.
 
         Args:
             callback: A callback.
+            sender: The sender (active message pump) of the callback.
         """
 
-        self._callbacks.append(callback)
+        self._callbacks.append((callback, sender))
         self.check_idle()
 
     def _push_result_callback(
