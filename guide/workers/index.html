@@ -7114,7 +7114,7 @@ This is because we are making a request to the weather API within a message hand
 <a id="__codelineno-2-40" name="__codelineno-2-40" href="#__codelineno-2-40"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
 <p>This one line change will make typing as responsive as you would expect from any app.</p>
-<p>The <code>run_worker</code> method schedules a new <em>worker</em> to run <code>update_weather</code>, and returns a <a href="textual.worker.Worker">Worker</a> object. This happens almost immediately, so it won't prevent other messages from being processed. The <code>update_weather</code> function is now running concurrently, and will finish a second or two later.</p>
+<p>The <code>run_worker</code> method schedules a new <em>worker</em> to run <code>update_weather</code>, and returns a <a class="autorefs autorefs-internal" href="../../api/worker/#textual.worker.Worker">Worker</a> object. This happens almost immediately, so it won't prevent other messages from being processed. The <code>update_weather</code> function is now running concurrently, and will finish a second or two later.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>The <a class="autorefs autorefs-internal" href="../../api/worker/#textual.worker.Worker">Worker</a> object has a few useful methods on it, but you can often ignore it as we did in <code>weather02.py</code>.</p>
