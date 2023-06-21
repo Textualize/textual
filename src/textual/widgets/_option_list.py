@@ -757,7 +757,7 @@ class OptionList(ScrollView, can_focus=True):
             option_id: The ID of the option to get.
 
         Returns:
-            The option at with the ID.
+            The option with the ID.
 
         Raises:
             OptionDoesNotExist: If no option has the given ID.
