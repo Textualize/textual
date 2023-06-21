@@ -49,7 +49,7 @@ To resolve this we can use the [run_worker][textual.dom.DOMNode.run_worker] meth
 
 This one line change will make typing as responsive as you would expect from any app.
 
-The `run_worker` method schedules a new *worker* to run `update_weather`, and returns a [Worker](textual.worker.Worker) object. This happens almost immediately, so it won't prevent other messages from being processed. The `update_weather` function is now running concurrently, and will finish a second or two later.
+The `run_worker` method schedules a new *worker* to run `update_weather`, and returns a [Worker][textual.worker.Worker] object. This happens almost immediately, so it won't prevent other messages from being processed. The `update_weather` function is now running concurrently, and will finish a second or two later.
 
 !!! tip
 
