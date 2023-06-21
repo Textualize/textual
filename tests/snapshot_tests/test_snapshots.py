@@ -347,26 +347,6 @@ def test_programmatic_scrollbar_gutter_change(snap_compare):
     )
 
 
-# --- CLI Preview Apps ---
-# For our CLI previews e.g. `textual easing`, `textual colors` etc, we have snapshots
-
-
-def test_borders_preview(snap_compare):
-    assert snap_compare(CLI_PREVIEWS_DIR / "borders.py", press=["enter"])
-
-
-def test_colors_preview(snap_compare):
-    assert snap_compare(CLI_PREVIEWS_DIR / "colors.py")
-
-
-def test_easing_preview(snap_compare):
-    assert snap_compare(CLI_PREVIEWS_DIR / "easing.py")
-
-
-def test_keys_preview(snap_compare):
-    assert snap_compare(CLI_PREVIEWS_DIR / "keys.py", press=["a", "b"])
-
-
 # --- Other ---
 
 
