@@ -33,9 +33,6 @@ include = [
     { path = "docs-offline/**/*", format = "sdist" }
 ]
 
-[tool.poetry.scripts]
-textual = "textual.cli.cli:run"
-
 [tool.poetry.dependencies]
 python = "^3.7"
 rich = ">=13.3.3"
