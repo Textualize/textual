@@ -47,7 +47,7 @@ click = {version = ">=8.1.2", optional = true}
 msgpack = { version = ">=1.0.3", optional = true }
 
 [tool.poetry.extras]
-dev = ["aiohttp", "click", "msgpack"]
+dev = ["textual-dev"]
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.1.3"
