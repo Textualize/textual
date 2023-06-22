@@ -745,10 +745,12 @@ class DOMNode(MessagePump):
         background = Color(0, 0, 0, 0)
         color = Color(255, 255, 255, 0)
         style = Style()
+        opacity = 1.0
         for node in reversed(self.ancestors_with_self):
             styles = node.styles
+            opacity *= styles.opacity
             if styles.has_rule("background"):
-                background += styles.background
+                background += styles.background.multiply_alpha(opacity)
             if styles.has_rule("color"):
                 color = styles.color
             style += styles.text_style
