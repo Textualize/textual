@@ -221,9 +221,9 @@ class App(Generic[ReturnType], DOMNode):
         color: $text;
     }
 
-    *:disabled {
-        opacity: 0.6;
-        text-opacity: 0.8;
+    *:disabled:can-focus {
+        opacity: 0.7;
+
     }
     """
 

@@ -321,7 +321,7 @@ class StylesCache:
             is_top = y == 0
             border_color = base_background + (
                 border_top_color if is_top else border_bottom_color
-            )
+            ).multiply_alpha(opacity)
             border_color_as_style = from_color(color=border_color.rich_color)
             border_edge_type = border_top if is_top else border_bottom
             has_left = border_left != ""
@@ -383,11 +383,15 @@ class StylesCache:
         ):
             background_style = from_color(bgcolor=background.rich_color)
             left_style = from_color(
-                color=(base_background + border_left_color).rich_color
+                color=(
+                    base_background + border_left_color.multiply_alpha(opacity)
+                ).rich_color
             )
             left = get_box(border_left, inner, outer, left_style)[1][0]
             right_style = from_color(
-                color=(base_background + border_right_color).rich_color
+                color=(
+                    base_background + border_right_color.multiply_alpha(opacity)
+                ).rich_color
             )
             right = get_box(border_right, inner, outer, right_style)[1][2]
             if border_left and border_right:
@@ -415,11 +419,15 @@ class StylesCache:
             if border_left or border_right:
                 # Add left / right border
                 left_style = from_color(
-                    (base_background + border_left_color).rich_color
+                    (
+                        base_background + border_left_color.multiply_alpha(opacity)
+                    ).rich_color
                 )
                 left = get_box(border_left, inner, outer, left_style)[1][0]
                 right_style = from_color(
-                    (base_background + border_right_color).rich_color
+                    (
+                        base_background + border_right_color.multiply_alpha(opacity)
+                    ).rich_color
                 )
                 right = get_box(border_right, inner, outer, right_style)[1][2]
 

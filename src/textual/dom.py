@@ -744,18 +744,24 @@ class DOMNode(MessagePump):
         """
         background = Color(0, 0, 0, 0)
         color = Color(255, 255, 255, 0)
+
         style = Style()
         opacity = 1.0
+
         for node in reversed(self.ancestors_with_self):
             styles = node.styles
             opacity *= styles.opacity
             if styles.has_rule("background"):
+                text_background = background + styles.background
                 background += styles.background.multiply_alpha(opacity)
+            else:
+                text_background = background
             if styles.has_rule("color"):
                 color = styles.color
             style += styles.text_style
             if styles.has_rule("auto_color") and styles.auto_color:
-                color = background.get_contrast_text(color.a)
+                color = text_background.get_contrast_text(color.a)
+
         style += Style.from_color(
             (background + color).rich_color if (background.a or color.a) else None,
             background.rich_color if background.a else None,
@@ -829,12 +835,12 @@ class DOMNode(MessagePump):
         """
         base_background = background = BLACK
         opacity = 1.0
-        for node in reversed(self.ancestors_with_self[:-1]):
+        for node in reversed(self.ancestors_with_self):
             styles = node.styles
             base_background = background
             opacity *= styles.opacity
             background += styles.background.multiply_alpha(opacity)
-        return (base_background.with_alpha(1), background.with_alpha(1))
+        return (base_background, background)
 
     @property
     def colors(self) -> tuple[Color, Color, Color, Color]:

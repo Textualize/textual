@@ -2627,6 +2627,8 @@ class Widget(DOMNode):
             yield "hover"
         if self.has_focus:
             yield "focus"
+        if self.can_focus:
+            yield "can-focus"
         try:
             focused = self.screen.focused
         except NoScreen:
