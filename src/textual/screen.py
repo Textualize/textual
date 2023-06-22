@@ -214,7 +214,7 @@ class Screen(Generic[ScreenResultType], Widget):
         except IndexError:
             base_screen = None
 
-        if base_screen is not None and 1 > background.a > 0:
+        if base_screen is not None and background.a < 1:
             return BackgroundScreen(base_screen, background)
 
         if background.is_transparent:
