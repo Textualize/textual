@@ -27,11 +27,8 @@ def _apply_opacity(
     blend = base_background.blend
     for segment in segments:
         text, style, _ = segment
-        # if not style:
-        #     yield segment
-        #     continue
-
         blended_style = style
+
         if style.color is not None:
             color = from_rich_color(style.color)
             blended_foreground = blend(color, opacity)

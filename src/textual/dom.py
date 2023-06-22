@@ -828,7 +828,7 @@ class DOMNode(MessagePump):
 
     @property
     def _opacity_background_colors(self) -> tuple[Color, Color]:
-        """The background color and the color of the parent's background.
+        """Background colors adjusted for opacity.
 
         Returns:
             `(<background color>, <color>)`
