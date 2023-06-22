@@ -41,11 +41,6 @@ markdown-it-py = {extras = ["plugins", "linkify"], version = "^2.1.0"}
 importlib-metadata = ">=4.11.3"
 typing-extensions = "^4.4.0"
 
-# Dependencies below are required for devtools only
-aiohttp = { version = ">=3.8.1", optional = true }
-click = {version = ">=8.1.2", optional = true}
-msgpack = { version = ">=1.0.3", optional = true }
-
 [tool.poetry.extras]
 dev = ["textual-dev"]
 
@@ -68,6 +63,7 @@ mkdocs-rss-plugin = "^1.5.0"
 httpx = "^0.23.1"
 msgpack-types = "^0.2.0"
 types-setuptools = "^67.2.0.1"
+textual-dev = "*"
 
 [tool.black]
 includes = "src"
