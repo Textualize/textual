@@ -1023,8 +1023,15 @@ class FractionalProperty:
     string percentage (e.g. '10%'). Values will be clamped to the range (0, 1).
     """
 
-    def __init__(self, default: float = 1.0):
+    def __init__(self, default: float = 1.0, children: bool = False):
+        """
+        Args:
+            default: Default value if the rule wasn't explicitly set.
+            children: If `True`, then updating this value will also refresh children.
+                Otherwise only this widget will be refreshed.
+        """
         self.default = default
+        self.children = children
 
     def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
@@ -1053,7 +1060,7 @@ class FractionalProperty:
         name = self.name
         if value is None:
             if obj.clear_rule(name):
-                obj.refresh()
+                obj.refresh(children=self.children)
             return
 
         if isinstance(value, float):
@@ -1066,7 +1073,7 @@ class FractionalProperty:
                 help_text=fractional_property_help_text(name, context="inline"),
             )
         if obj.set_rule(name, clamp(float_value, 0, 1)):
-            obj.refresh()
+            obj.refresh(children=self.children)
 
 
 class AlignProperty:
