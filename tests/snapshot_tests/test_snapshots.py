@@ -7,7 +7,6 @@ WIDGET_EXAMPLES_DIR = Path("../../docs/examples/widgets")
 LAYOUT_EXAMPLES_DIR = Path("../../docs/examples/guide/layout")
 STYLES_EXAMPLES_DIR = Path("../../docs/examples/styles")
 SNAPSHOT_APPS_DIR = Path("./snapshot_apps")
-CLI_PREVIEWS_DIR = Path("../../src/textual/cli/previews")
 
 
 # --- Layout related stuff ---
