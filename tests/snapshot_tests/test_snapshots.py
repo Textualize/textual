@@ -553,3 +553,8 @@ def test_tooltips_in_compound_widgets(snap_compare):
         await pilot.pause()
 
     assert snap_compare(SNAPSHOT_APPS_DIR / "tooltips.py", run_before=run_before)
+
+# --- textual-dev library preview tests ---
+
+def test_textual_dev_border_preview(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "dev_previews_border.py")
