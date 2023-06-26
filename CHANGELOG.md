@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed crash when columns were added to populated `DataTable` https://github.com/Textualize/textual/pull/2836
+
+### Added
+
+- Added `default` parameter to `DataTable.add_column` for populating existing rows https://github.com/Textualize/textual/pull/2836
+
 ## [0.28.1] - 2023-06-20
 
 ### Fixed
