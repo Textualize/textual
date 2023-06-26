@@ -558,3 +558,8 @@ def test_tooltips_in_compound_widgets(snap_compare):
 
 def test_textual_dev_border_preview(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "dev_previews_border.py")
+
+
+def test_textual_dev_colors_preview(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "dev_previews_color.py")
+
