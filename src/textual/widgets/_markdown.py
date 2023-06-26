@@ -17,7 +17,7 @@ from ..containers import Horizontal, Vertical, VerticalScroll
 from ..events import Mount
 from ..message import Message
 from ..reactive import reactive, var
-from ..widget import Widget
+from ..widget import AwaitMount, Widget
 from ..widgets import Static, Tree
 
 TableOfContentsType: TypeAlias = "list[tuple[int, str, str | None]]"
@@ -635,14 +635,14 @@ class Markdown(Widget):
             path: Path to the document.
 
         Returns:
-            True    on success, or False if the document could not be read.
+            True on success, or False if the document could not be read.
         """
         try:
             markdown = path.read_text(encoding="utf-8")
         except Exception:
             return False
 
-        self.update(markdown)
+        await self.update(markdown)
         return True
 
     def unhandled_token(self, token: Token) -> MarkdownBlock | None:
@@ -656,11 +656,14 @@ class Markdown(Widget):
         """
         return None
 
-    def update(self, markdown: str) -> None:
+    def update(self, markdown: str) -> AwaitMount:
         """Update the document with new Markdown.
 
         Args:
             markdown: A string containing Markdown.
+
+        Returns:
+            An optionally awaitable object. Await this to ensure that all children have been mounted.
         """
         output: list[MarkdownBlock] = []
         stack: list[MarkdownBlock] = []
@@ -670,9 +673,7 @@ class Markdown(Widget):
             else self._parser_factory()
         )
 
-        content = Text()
         block_id: int = 0
-
         table_of_contents: TableOfContentsType = []
 
         for token in parser.parse(markdown):
@@ -805,7 +806,7 @@ class Markdown(Widget):
         self.post_message(Markdown.TableOfContentsUpdated(self, table_of_contents))
         with self.app.batch_update():
             self.query("MarkdownBlock").remove()
-            self.mount_all(output)
+            return self.mount_all(output)
 
 
 class MarkdownTableOfContents(Widget, can_focus_children=True):
