@@ -10,10 +10,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed crash when columns were added to populated `DataTable` https://github.com/Textualize/textual/pull/2836
+- Fixed issues with opacity on Screens https://github.com/Textualize/textual/issues/2616
 
 ### Added
 
 - Added `default` parameter to `DataTable.add_column` for populating existing rows https://github.com/Textualize/textual/pull/2836
+- Added can-focus pseudo-class to target widgets that may receive focus
 
 ## [0.28.1] - 2023-06-20
 

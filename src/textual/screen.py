@@ -177,10 +177,6 @@ class Screen(Generic[ScreenResultType], Widget):
         return self._modal
 
     @property
-    def is_transparent(self) -> bool:
-        return False
-
-    @property
     def is_current(self) -> bool:
         """Is the screen current (i.e. visible to user)?"""
         from .app import ScreenStackError
@@ -218,7 +214,7 @@ class Screen(Generic[ScreenResultType], Widget):
         except IndexError:
             base_screen = None
 
-        if base_screen is not None and 1 > background.a > 0:
+        if base_screen is not None and background.a < 1:
             return BackgroundScreen(base_screen, background)
 
         if background.is_transparent:
