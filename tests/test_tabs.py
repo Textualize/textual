@@ -243,6 +243,43 @@ async def test_remove_tabs():
         assert tabs.active_tab is None
 
 
+async def test_remove_tabs_reversed():
+    """It should be possible to remove tabs."""
+
+    class TabsApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Tabs("John", "Aeryn", "Moya", "Pilot")
+
+    async with TabsApp().run_test() as pilot:
+        tabs = pilot.app.query_one(Tabs)
+        assert tabs.tab_count == 4
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-1"
+
+        await tabs.remove_tab("tab-4")
+        await pilot.pause()
+        assert tabs.tab_count == 3
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-1"
+
+        await tabs.remove_tab("tab-3")
+        await pilot.pause()
+        assert tabs.tab_count == 2
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-1"
+
+        await tabs.remove_tab("tab-2")
+        await pilot.pause()
+        assert tabs.tab_count == 1
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "tab-1"
+
+        await tabs.remove_tab("tab-1")
+        await pilot.pause()
+        assert tabs.tab_count == 0
+        assert tabs.active_tab is None
+
+
 async def test_clear_tabs():
     """It should be possible to clear all tabs."""
 
@@ -415,6 +452,19 @@ async def test_remove_tabs_messages():
             "on_tabs_tab_activated",
             "on_tabs_tab_activated",
             "on_tabs_tab_activated",
+            "on_tabs_tab_activated",
+            "on_tabs_cleared",
+        ]
+
+
+async def test_reverse_remove_tabs_messages():
+    """Removing tabs should result in various messages."""
+    async with TabsMessageCatchApp().run_test() as pilot:
+        tabs = pilot.app.query_one(Tabs)
+        for n in reversed(range(4)):
+            await tabs.remove_tab(f"tab-{n+1}")
+            await pilot.pause()
+        assert pilot.app.intended_handlers == [
             "on_tabs_tab_activated",
             "on_tabs_cleared",
         ]

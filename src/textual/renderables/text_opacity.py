@@ -61,7 +61,7 @@ class TextOpacity:
         _Segment = Segment
         _from_color = Style.from_color
         if opacity == 0:
-            for text, style, control in cast(
+            for text, style, _control in cast(
                 # use Tuple rather than tuple so Python 3.7 doesn't complain
                 Iterable[Tuple[str, Style, object]],
                 segments,

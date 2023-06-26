@@ -7,9 +7,34 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+- Added can-focus pseudo-class to target widgets that may receive focus
+
+### Fixed
+
+- Fixed issues with opacity on Screens https://github.com/Textualize/textual/issues/2616
+
+
+## [0.28.1] - 2023-06-20
+
+### Fixed
+
+- Fixed indented code blocks not showing up in `Markdown` https://github.com/Textualize/textual/issues/2781
+- Fixed inline code blocks in lists showing out of order in `Markdown` https://github.com/Textualize/textual/issues/2676
+- Fixed list items in a `Markdown` being added to the focus chain https://github.com/Textualize/textual/issues/2380
+- Fixed `Tabs` posting unnecessary messages when removing non-active tabs https://github.com/Textualize/textual/issues/2807
+- call_after_refresh will preserve the sender within the callback https://github.com/Textualize/textual/pull/2806
+
+### Added
+
+- Added a method of allowing third party code to handle unhandled tokens in `Markdown` https://github.com/Textualize/textual/pull/2803
+- Added `MarkdownBlock` as an exported symbol in `textual.widgets.markdown` https://github.com/Textualize/textual/pull/2803
+
 ### Changed
 
 - Tooltips are now inherited, so will work with compound widgets
+
 
 ## [0.28.0] - 2023-06-19
 
@@ -1066,6 +1091,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.28.1]: https://github.com/Textualize/textual/compare/v0.28.0...v0.28.1
 [0.28.0]: https://github.com/Textualize/textual/compare/v0.27.0...v0.28.0
 [0.27.0]: https://github.com/Textualize/textual/compare/v0.26.0...v0.27.0
 [0.26.0]: https://github.com/Textualize/textual/compare/v0.25.0...v0.26.0
