@@ -1024,8 +1024,7 @@ class FractionalProperty:
     """
 
     def __init__(self, default: float = 1.0, children: bool = False):
-        """A property for a fraction / ration.
-
+        """
         Args:
             default: Default value if the rule wasn't explicitly set.
             children: If `True`, then updating this value will also refresh children.
