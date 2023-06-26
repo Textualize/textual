@@ -566,3 +566,7 @@ def test_textual_dev_colors_preview(snap_compare):
 
 def test_textual_dev_easing_preview(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "dev_previews_easing.py")
+
+
+def test_textual_dev_keys_preview(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "dev_previews_keys.py", press=["a", "b"])
