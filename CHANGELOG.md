@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added can-focus pseudo-class to target widgets that may receive focus
+- Make `Markdown.update` optionally awaitable https://github.com/Textualize/textual/pull/2838
 
 ### Fixed
 
