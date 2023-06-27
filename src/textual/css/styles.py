@@ -242,7 +242,7 @@ class StylesBase(ABC):
     background = ColorProperty(Color(0, 0, 0, 0))
     text_style = StyleFlagsProperty()
 
-    opacity = FractionalProperty()
+    opacity = FractionalProperty(children=True)
     text_opacity = FractionalProperty()
 
     padding = SpacingProperty()

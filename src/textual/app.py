@@ -221,9 +221,9 @@ class App(Generic[ReturnType], DOMNode):
         color: $text;
     }
 
-    *:disabled {
-        opacity: 0.6;
-        text-opacity: 0.8;
+    *:disabled:can-focus {
+        opacity: 0.7;
+
     }
     """
 
@@ -713,10 +713,6 @@ class App(Generic[ReturnType], DOMNode):
         pseudo_classes = self.pseudo_classes
         if pseudo_classes:
             yield "pseudo_classes", set(pseudo_classes)
-
-    @property
-    def is_transparent(self) -> bool:
-        return True
 
     @property
     def animator(self) -> Animator:

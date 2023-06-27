@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Added
+
+- Added can-focus pseudo-class to target widgets that may receive focus
+
+### Fixed
+
+- Fixed issues with opacity on Screens https://github.com/Textualize/textual/issues/2616
+
+
 ## [0.28.1] - 2023-06-20
 
 ### Fixed

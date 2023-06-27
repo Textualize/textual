@@ -29,11 +29,6 @@ class ScrollView(ScrollableContainer):
         """Always scrollable."""
         return True
 
-    @property
-    def is_transparent(self) -> bool:
-        """Not transparent, i.e. renders something."""
-        return False
-
     def watch_scroll_x(self, old_value: float, new_value: float) -> None:
         if self.show_horizontal_scrollbar and round(old_value) != round(new_value):
             self.horizontal_scrollbar.position = round(new_value)

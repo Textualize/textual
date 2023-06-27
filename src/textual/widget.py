@@ -445,6 +445,16 @@ class Widget(DOMNode):
         self.styles.offset = ScalarOffset.from_offset(offset)
 
     @property
+    def opacity(self) -> float:
+        """Total opacity of widget."""
+        opacity = 1.0
+        for node in reversed(self.ancestors_with_self):
+            opacity *= node.styles.opacity
+            if not opacity:
+                break
+        return opacity
+
+    @property
     def tooltip(self) -> RenderableType | None:
         """Tooltip for the widget, or `None` for no tooltip."""
         return self._tooltip
@@ -1493,11 +1503,6 @@ class Widget(DOMNode):
             Offset a container has been scrolled by.
         """
         return Offset(round(self.scroll_x), round(self.scroll_y))
-
-    @property
-    def is_transparent(self) -> bool:
-        """Does this widget have a transparent background?"""
-        return self.is_scrollable and self.styles.background.is_transparent
 
     @property
     def _console(self) -> Console:
@@ -2622,6 +2627,8 @@ class Widget(DOMNode):
             yield "hover"
         if self.has_focus:
             yield "focus"
+        if self.can_focus:
+            yield "can-focus"
         try:
             focused = self.screen.focused
         except NoScreen:

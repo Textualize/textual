@@ -63,6 +63,7 @@ VALID_STYLE_FLAGS: Final = {
 }
 VALID_PSEUDO_CLASSES: Final = {
     "blur",
+    "can-focus",
     "disabled",
     "enabled",
     "focus-within",
