@@ -48,6 +48,7 @@ typing-extensions = "^4.4.0"
 aiohttp = { version = ">=3.8.1", optional = true }
 click = {version = ">=8.1.2", optional = true}
 msgpack = { version = ">=1.0.3", optional = true }
+pytest-textual-snapshot = {path = "../pytest-textual-snapshot", develop = true}
 
 [tool.poetry.extras]
 dev = ["aiohttp", "click", "msgpack"]
@@ -71,6 +72,7 @@ mkdocs-rss-plugin = "^1.5.0"
 httpx = "^0.23.1"
 msgpack-types = "^0.2.0"
 types-setuptools = "^67.2.0.1"
+pytest-textual-snapshot = ">=0.1.0"
 
 [tool.black]
 includes = "src"
