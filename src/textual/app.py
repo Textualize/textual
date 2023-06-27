@@ -96,11 +96,11 @@ from .screen import Screen, ScreenResultCallbackType, ScreenResultType
 from .widget import AwaitMount, Widget
 
 if TYPE_CHECKING:
+    from textual_dev.client import DevtoolsClient
     from typing_extensions import Coroutine, TypeAlias
 
     # Unused & ignored imports are needed for the docs to link to these objects:
     from .css.query import WrongType  # type: ignore  # noqa: F401
-    from .devtools.client import DevtoolsClient
     from .message import Message
     from .pilot import Pilot
     from .widget import MountError  # type: ignore  # noqa: F401
@@ -432,7 +432,7 @@ class App(Generic[ReturnType], DOMNode):
         self.devtools: DevtoolsClient | None = None
         if "devtools" in self.features:
             try:
-                from .devtools.client import DevtoolsClient
+                from textual_dev.client import DevtoolsClient
             except ImportError:
                 # Dev dependencies not installed
                 pass
@@ -806,7 +806,7 @@ class App(Generic[ReturnType], DOMNode):
             return
 
         try:
-            from .devtools.client import DevtoolsLog
+            from textual_dev.client import DevtoolsLog
 
             if len(objects) == 1 and not kwargs:
                 devtools.log(
@@ -1859,7 +1859,7 @@ class App(Generic[ReturnType], DOMNode):
         active_message_pump.set(self)
 
         if self.devtools is not None:
-            from .devtools.client import DevtoolsConnectionError
+            from textual_dev.client import DevtoolsConnectionError
 
             try:
                 await self.devtools.connect()
@@ -1971,7 +1971,7 @@ class App(Generic[ReturnType], DOMNode):
                         if self.devtools is not None:
                             devtools = self.devtools
                             assert devtools is not None
-                            from .devtools.redirect_output import StdoutRedirector
+                            from textual_dev.redirect_output import StdoutRedirector
 
                             redirector = StdoutRedirector(devtools)
                             with redirect_stderr(redirector):
