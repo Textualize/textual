@@ -30,7 +30,6 @@ try:
 
     kernel32 = ctypes.windll.kernel32  # type: ignore[attr-defined]
 except Exception:
-    print("Exception found")
 
     def sleep(secs: float) -> Coroutine[None, None, None]:
         """Wrapper around `time.sleep` to match the signature of the main case below."""
