@@ -167,7 +167,7 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*,>=2.7
 name = "colored"
 version = "1.4.4"
 description = "Simple library for color and formatting to terminal"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -194,7 +194,7 @@ python-versions = "*"
 name = "exceptiongroup"
 version = "1.1.1"
 description = "Backport of PEP 654 (exception groups)"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 
@@ -359,7 +359,7 @@ testing = ["flufl.flake8", "importlib-resources (>=1.3)", "packaging", "pyfakefs
 name = "iniconfig"
 version = "2.0.0"
 description = "brain-dead simple config-ini parsing"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 
@@ -367,7 +367,7 @@ python-versions = ">=3.7"
 name = "jinja2"
 version = "3.1.2"
 description = "A very fast and expressive template engine."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 
@@ -436,7 +436,7 @@ testing = ["coverage", "pytest", "pytest-cov", "pytest-regressions"]
 name = "markupsafe"
 version = "2.1.3"
 description = "Safely add untrusted strings to HTML/XML markup."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 
@@ -667,7 +667,7 @@ setuptools = "*"
 name = "packaging"
 version = "23.1"
 description = "Core utilities for Python packages"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 
@@ -698,7 +698,7 @@ test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest (>=7.3.1)", "pytest-
 name = "pluggy"
 version = "1.2.0"
 description = "plugin and hook calling mechanisms for python"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 
@@ -752,7 +752,7 @@ pyyaml = "*"
 name = "pytest"
 version = "7.4.0"
 description = "pytest: simple powerful testing with Python"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 
@@ -820,10 +820,9 @@ testing = ["fields", "hunter", "process-tests", "pytest-xdist", "six", "virtuale
 name = "pytest-textual-snapshot"
 version = "0.1.0"
 description = "Snapshot testing for Textual apps"
-category = "main"
+category = "dev"
 optional = false
-python-versions = ">=3.6"
-develop = true
+python-versions = ">=3.6,<4.0"
 
 [package.dependencies]
 jinja2 = ">=3.0.0"
@@ -831,10 +830,6 @@ pytest = ">=7.0.0"
 rich = ">=12.0.0"
 syrupy = ">=3.0.0"
 textual = ">=0.28.0"
-
-[package.source]
-type = "directory"
-url = "../pytest-textual-snapshot"
 
 [[package]]
 name = "python-dateutil"
@@ -971,7 +966,7 @@ python-versions = ">=3.7"
 name = "syrupy"
 version = "3.0.6"
 description = "Pytest Snapshot Test Utility"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7,<4"
 
@@ -1002,7 +997,7 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 name = "tomli"
 version = "2.0.1"
 description = "A lil' TOML parser"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 
@@ -1123,7 +1118,7 @@ dev = ["aiohttp", "click", "msgpack"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "203a04d289fc3c75969f23ea13e62ad164d346ef5a02220ed39414d97ef18287"
+content-hash = "54585998c7e97c8766b5daa9411b49616e014168eeeed5120390ebc19d102b15"
 
 [metadata.files]
 aiohttp = [
@@ -1892,7 +1887,10 @@ pytest-cov = [
     {file = "pytest-cov-2.12.1.tar.gz", hash = "sha256:261ceeb8c227b726249b376b8526b600f38667ee314f910353fa318caa01f4d7"},
     {file = "pytest_cov-2.12.1-py2.py3-none-any.whl", hash = "sha256:261bb9e47e65bd099c89c3edf92972865210c36813f80ede5277dceb77a4a62a"},
 ]
-pytest-textual-snapshot = []
+pytest-textual-snapshot = [
+    {file = "pytest_textual_snapshot-0.1.0-py3-none-any.whl", hash = "sha256:7310002ed152ce6cc654fff7f83ec88eecc36116c5bf7995decc0a6424809da3"},
+    {file = "pytest_textual_snapshot-0.1.0.tar.gz", hash = "sha256:5e20629f2413a3689a485117e709e6d4010b7b5b558c0070414899b9768697f0"},
+]
 python-dateutil = [
     {file = "python-dateutil-2.8.2.tar.gz", hash = "sha256:0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86"},
     {file = "python_dateutil-2.8.2-py2.py3-none-any.whl", hash = "sha256:961d03dc3453ebbc59dbdea9e4e11c5651520a876d0f4db161e8674aae935da9"},
