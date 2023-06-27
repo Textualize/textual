@@ -48,6 +48,7 @@ typing-extensions = "^4.4.0"
 aiohttp = { version = ">=3.8.1", optional = true }
 click = {version = ">=8.1.2", optional = true}
 msgpack = { version = ">=1.0.3", optional = true }
+tree-sitter = "^0.20.1"
 
 [tool.poetry.extras]
 dev = ["aiohttp", "click", "msgpack"]

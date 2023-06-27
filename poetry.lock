@@ -1002,6 +1002,14 @@ optional = false
 python-versions = ">=3.7"
 
 [[package]]
+name = "tree-sitter"
+version = "0.20.1"
+description = "Python bindings to the Tree-sitter parsing library"
+category = "main"
+optional = false
+python-versions = ">=3.3"
+
+[[package]]
 name = "typed-ast"
 version = "1.5.4"
 description = "a fork of Python 2 and 3 ast modules with type comment support"
@@ -1118,7 +1126,7 @@ dev = ["aiohttp", "click", "msgpack"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "54585998c7e97c8766b5daa9411b49616e014168eeeed5120390ebc19d102b15"
+content-hash = "27d651fcaa49e9921f51604a7364a4025c8bb485649b3dc24878c08d542249d9"
 
 [metadata.files]
 aiohttp = [
@@ -2130,6 +2138,10 @@ toml = [
 tomli = [
     {file = "tomli-2.0.1-py3-none-any.whl", hash = "sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc"},
     {file = "tomli-2.0.1.tar.gz", hash = "sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f"},
+]
+tree-sitter = [
+    {file = "tree_sitter-0.20.1-cp39-cp39-macosx_12_0_arm64.whl", hash = "sha256:6f11a1fd909dcf569e7b1d98861a837436799e757bbbc5cd5280989050929e12"},
+    {file = "tree_sitter-0.20.1.tar.gz", hash = "sha256:e93f082c545d6649bcfb5d681ed255eb004a6ce22988971a128f40692feec60d"},
 ]
 typed-ast = [
     {file = "typed_ast-1.5.4-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:669dd0c4167f6f2cd9f57041e03c3c2ebf9063d0757dc89f79ba1daa2bfca9d4"},
