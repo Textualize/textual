@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed issues with opacity on Screens https://github.com/Textualize/textual/issues/2616
+- Fixed style problem with selected selections in a non-focused selection list https://github.com/Textualize/textual/issues/2768
 
 
 ## [0.28.1] - 2023-06-20
