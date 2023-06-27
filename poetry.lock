@@ -1799,22 +1799,21 @@ pytest = ">=5.1.0,<8.0.0"
 
 [[package]]
 name = "textual-dev"
-version = "0.0.2"
-description = "Textual dev tools"
+version = "0.1.0"
+description = "Development tools for working with Textual"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.7,<4.0"
 files = [
-    {file = "textual_dev-0.0.2-py3-none-any.whl", hash = "sha256:b9d239c47de8f9431f742634cd99123fb97b59eba9d70763c8fa7db1fe3a7682"},
-    {file = "textual_dev-0.0.2.tar.gz", hash = "sha256:e82e7e5a6d02510a0fd3bb552c12ee4b7bd0500cffe403ec43703c4519f0e935"},
+    {file = "textual_dev-0.1.0-py3-none-any.whl", hash = "sha256:d56eef604e53bf444dd90fdadbf8bf4efe9ecc3b28665374af49042078d4c321"},
+    {file = "textual_dev-0.1.0.tar.gz", hash = "sha256:ba27f9ea85b7a0e191f66cf346fe5355a60fdcc5ae82668417cdf49869c361f8"},
 ]
 
 [package.dependencies]
-aiohttp = "*"
-click = "*"
-importlib-metadata = ">=4.11.3"
+aiohttp = ">=3.8.1"
+click = ">=8.1.2"
 msgpack = ">=1.0.3"
-rich = "*"
 textual = "*"
+typing-extensions = ">=4.4.0,<5.0.0"
 
 [[package]]
 name = "toml"
@@ -2104,4 +2103,4 @@ dev = []
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.7"
-content-hash = "b2078048e0b71d67570022cb8330d8e4dbd8a1c5dd9a7bc641694d0dc90e8226"
+content-hash = "91570deb245041f9c85dcbc4c5cf5f873ce2a573a5e679618cc9c3a79d7adf24"
