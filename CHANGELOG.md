@@ -7,13 +7,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+
 ### Added
 
 - Added can-focus pseudo-class to target widgets that may receive focus
+- Make `Markdown.update` optionally awaitable https://github.com/Textualize/textual/pull/2838
+- Added `default` parameter to `DataTable.add_column` for populating existing rows https://github.com/Textualize/textual/pull/2836
+- Added can-focus pseudo-class to target widgets that may receive focus
+
 
 ### Fixed
 
+- Fixed crash when columns were added to populated `DataTable` https://github.com/Textualize/textual/pull/2836
 - Fixed issues with opacity on Screens https://github.com/Textualize/textual/issues/2616
+- Fixed style problem with selected selections in a non-focused selection list https://github.com/Textualize/textual/issues/2768
 
 
 ## [0.28.1] - 2023-06-20
