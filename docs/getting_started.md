@@ -22,13 +22,13 @@ Textual requires Python 3.7 or later (if you have a choice, pick the most recent
 
 You can install Textual via PyPI.
 
-If you plan on developing Textual apps, then you should install `textual[dev]`. The `[dev]` part installs a few extra dependencies for development.
+If you plan on developing Textual apps, then you should install `textual-dev`; this installs a few extra dependencies for development.
 
 ```
-pip install "textual[dev]"
+pip install textual-dev
 ```
 
-If you only plan on _running_ Textual apps, then you can drop the `[dev]` part:
+If you only plan on _running_ Textual apps, then you can install `textual`:
 
 ```
 pip install textual
