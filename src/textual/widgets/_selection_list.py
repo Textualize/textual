@@ -131,6 +131,8 @@ class SelectionList(Generic[SelectionType], OptionList):
 
     SelectionList > .selection-list--button-selected {
         text-style: bold;
+        color: $success;
+        background: $foreground 15%;
     }
 
     SelectionList:focus > .selection-list--button-selected {
