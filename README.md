@@ -43,10 +43,16 @@ Textual runs on Linux, macOS, and Windows. Textual requires Python 3.7 or above.
 Install Textual via pip:
 
 ```
-pip install "textual"
+pip install textual
 ```
 
-Or, to get extra development tools, install `textual-dev` instead. See the [docs](https://textual.textualize.io/getting_started/) if you need help getting started.
+If you plan on developing Textual apps, you should also install the development tools with the following command:
+
+```
+pip install textual-dev
+```
+
+See the [docs](https://textual.textualize.io/getting_started/) if you need help getting started.
 
 ## Demo
 
