@@ -6,33 +6,17 @@ from rich.segment import Segment
 from tree_sitter import Language, Parser
 
 from textual._cells import cell_len
+from textual.geometry import Size
 from textual.reactive import Reactive, reactive
 from textual.scroll_view import ScrollView
 from textual.strip import Strip
 
-LANGUAGES_PATH = Path(__file__) / "../../../tree-sitter-languages/textual-languages.so"
-SAMPLE_TEXT = [
-    "Hello, world!",
-    "",
-    "你好，世界！",  # Chinese characters, which are usually double-width
-    "こんにちは、世界！",  # Japanese characters, also usually double-width
-    "안녕하세요, 세계!",  # Korean characters, also usually double-width
-    "    This line has leading white space",
-    "This line has trailing white space    ",
-    "    This line has both leading and trailing white space    ",
-    "    ",  # Line with only spaces
-    "こんにちは、world! 你好，world!",  # Mixed script line
-    "Hello, 🌍! Hello, 🌏! Hello, 🌎!",  # Line with emoji (which are often double-width)
-    "The quick brown 🦊 jumps over the lazy 🐶.",  # Line with emoji interspersed in text
-    "Special characters: ~!@#$%^&*()_+`-={}|[]\\:\";'<>?,./",
-    # Line with special characters
-    "Unicode example: Привет, мир!",  # Russian text
-    "Unicode example: Γειά σου Κόσμε!",  # Greek text
-    "Unicode example: مرحبا بك في",  # Arabic text
-]
+LANGUAGES_PATH = (
+    Path(__file__) / "../../../../tree-sitter-languages/textual-languages.so"
+)
 
 
-class TextArea(ScrollView):
+class TextEditor(ScrollView):
     language: Reactive[str | None] = reactive(None)
     """The language to use for syntax highlighting (via tree-sitter)."""
     cursor_position = reactive((0, 0))
@@ -48,7 +32,7 @@ class TextArea(ScrollView):
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self.parser: Parser | None = None
         """The tree-sitter parser which extracts the syntax tree from the document."""
-        self.document_lines: list[str] = SAMPLE_TEXT.copy()
+        self.document_lines: list[str] = []
         """Each string in this list represents a line in the document."""
 
     def watch_language(self, new_language: str | None) -> None:
@@ -64,6 +48,20 @@ class TextArea(ScrollView):
             self.parser = parser
         else:
             self.parser = None
+
+    def open_text(self, text: str) -> None:
+        """Load text from a string into the editor."""
+        lines = text.splitlines(keepends=False)
+        self.open_lines(lines)
+
+    def open_lines(self, lines: list[str]) -> None:
+        """Load text from a list of lines into the editor."""
+        self.document_lines = lines
+
+        # TODO Offer maximum line width and wrap if needed
+        width = max(cell_len(line) for line in lines)
+        height = len(lines)
+        self.virtual_size = Size(width, height)
 
     def render_line(self, widget_y: int) -> Strip:
         document_lines = self.document_lines
