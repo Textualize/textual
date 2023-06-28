@@ -1,11 +1,16 @@
 from __future__ import annotations
 
+from collections import defaultdict
 from pathlib import Path
+from typing import Iterable
 
 from rich.segment import Segment
-from tree_sitter import Language, Parser, Tree
+from rich.style import Style
+from tree_sitter import Language, Node, Parser, Tree
 
+from textual import log
 from textual._cells import cell_len
+from textual.binding import Binding
 from textual.geometry import Size
 from textual.reactive import Reactive, reactive
 from textual.scroll_view import ScrollView
@@ -16,7 +21,11 @@ LANGUAGES_PATH = (
 )
 
 
-class TextEditor(ScrollView):
+class TextEditor(ScrollView, can_focus=True):
+    BINDINGS = [
+        Binding("ctrl+l", "print_line_cache", "[debug] Line Cache"),
+    ]
+
     language: Reactive[str | None] = reactive(None)
     """The language to use for syntax highlighting (via tree-sitter)."""
     cursor_position = reactive((0, 0))
@@ -35,10 +44,18 @@ class TextEditor(ScrollView):
         self.document_lines: list[str] = []
         """Each string in this list represents a line in the document."""
 
+        self._line_cache: dict[int, list[Segment]] = defaultdict(list)
+        """Caches segments for lines. Note that a line may span multiple y-offsets
+         due to wrapping. These segments do NOT include the cursor highlighting.
+         A portion of the line cache will be updated when an edit operation occurs
+         or when a file is loaded for the first time.
+         Tree sitter will tell us the modified ranges of the AST and we update
+         the corresponding line ranges in this cache."""
+
         # --- Abstract syntax tree and related parsing machinery
-        self.parser: Parser | None = None
+        self._parser: Parser | None = None
         """The tree-sitter parser which extracts the syntax tree from the document."""
-        self.ast: Tree | None = None
+        self._ast: Tree | None = None
         """The tree-sitter Tree (AST) built from the document."""
 
     def watch_language(self, new_language: str | None) -> None:
@@ -50,13 +67,15 @@ class TextEditor(ScrollView):
         if new_language:
             language = Language(LANGUAGES_PATH.resolve(), new_language)
             parser = Parser()
-            self.parser = parser
-            self.parser.set_language(language)
-            self.ast = self._full_tree_build(parser, self.document_lines)
+            self._parser = parser
+            self._parser.set_language(language)
+            self._ast = self._build_ast(parser, self.document_lines)
         else:
-            self.ast = None
+            self._ast = None
 
-    def _full_tree_build(
+        log.debug(f"parser set to {self._parser}")
+
+    def _build_ast(
         self,
         parser: Parser,
         document_lines: list[str],
@@ -66,15 +85,13 @@ class TextEditor(ScrollView):
         Returns None if there's no parser available (e.g. when no language is selected).
         """
 
-        document_lines = self.document_lines
-
         def read_callable(byte_offset, point):
             row, column = point
-            if row >= len(document_lines) or column >= len([row]):
+            if row >= len(document_lines) or column >= len(document_lines[row]):
                 return None
             return document_lines[row][column:].encode("utf8")
 
-        if self.parser:
+        if parser:
             return parser.parse(read_callable)
         else:
             return None
@@ -93,6 +110,13 @@ class TextEditor(ScrollView):
         height = len(lines)
         self.virtual_size = Size(width, height)
 
+        # TODO - clear caches
+        if self._parser is not None:
+            self._ast = self._build_ast(self._parser, lines)
+            self._cache_highlights(self._ast.walk(), lines)
+
+        log.debug(f"loaded text. parser = {self._parser} ast = {self._ast}")
+
     def render_line(self, widget_y: int) -> Strip:
         document_lines = self.document_lines
 
@@ -101,50 +125,67 @@ class TextEditor(ScrollView):
         if out_of_bounds:
             return Strip.blank(self.size.width)
 
-        # TODO For now, we naively just pull the line from the document based on
-        #  y_offset. This will later need to be adjusted to account for wrapping.
-        line = document_lines[document_y]
-        return Strip([Segment(line)], cell_len(line))
+        # Fetch the segments from the cache
+        strip = Strip(self._line_cache.get(document_y, Strip.blank(self.size.width)))
+        return strip
+
+    def _cache_highlights(
+        self,
+        cursor,
+        document: list[str],
+        line_range: tuple[int, int] | None = None,
+    ) -> None:
+        """Traverse the AST and highlight the document.
+
+        Args:
+            cursor: The tree-sitter Tree cursor.
+            document: The document as a list of strings.
+            line_range: The start and end line index that is visible. If None, highlight the whole document.
+        """
+        # The range of the document (line indices) that we want to highlight.
+        if line_range is not None:
+            window_start, window_end = line_range
+        else:
+            window_start = 0
+            window_end = len(document) - 1
+
+        # Get the range of this node
+        node_start_line = cursor.node.start_point[0]
+        node_end_line = cursor.node.end_point[0]
+
+        node_in_window = line_range is None or (
+            window_start <= node_end_line and window_end >= node_start_line
+        )
+
+    # Apply simple highlighting to the node based on its type.
+    # if cursor.node.type == 'identifier':
+    #     style = Style(color="black", bgcolor="red")
+    # elif cursor.node.type == 'string':
+    #     style = Style(color="green", italic=True)
+    # else:
+    #     style = Style.null()
+
+    def action_print_line_cache(self) -> None:
+        log.debug(self._line_cache)
+
+        # TODO - this traversal is correct - see notes in Notion
+        def traverse(cursor) -> Iterable[Node]:
+            yield cursor.node
+
+            if cursor.goto_first_child():
+                yield from traverse(cursor)
+                while cursor.goto_next_sibling():
+                    yield from traverse(cursor)
+                cursor.goto_parent()
+
+        log.debug(list(traverse(self._ast.walk())))
 
 
 if __name__ == "__main__":
-    # Language.build_library(
-    #     '../../../tree-sitter-languages/textual-languages.so',
-    #     [
-    #         'tree-sitter-libraries/tree-sitter-python'
-    #     ]
-    # )
-    this_directory = Path(__file__).parent
-    languages = this_directory / "../../../tree-sitter-languages/textual-languages.so"
-    python_language = Language(languages.resolve(), "python")
-
-    parser = Parser()
-    parser.set_language(python_language)
-
-    tree = parser.parse(
-        bytes(
-            """\
-    def foo():
-        if bar:
-            baz()
-    """,
-            "utf8",
-        )
-    )
-
-    def traverse(cursor):
-        # Start with the first child
-        if cursor.goto_first_child():
-            print(cursor.node)
-            traverse(cursor)
-
-            # Continue with the siblings
-            while cursor.goto_next_sibling():
-                print(cursor.node)
-                traverse(cursor)
-
-            # Go back up to the parent when done
-            cursor.goto_parent()
-
-    # Start traversal with the root of the tree
-    traverse(tree.walk())
+    pass
+# Language.build_library(
+#     '../../../tree-sitter-languages/textual-languages.so',
+#     [
+#         'tree-sitter-libraries/tree-sitter-python'
+#     ]
+# )
