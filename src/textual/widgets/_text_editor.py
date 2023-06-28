@@ -49,12 +49,12 @@ class TextEditor(ScrollView):
         else:
             self.parser = None
 
-    def open_text(self, text: str) -> None:
+    def load_text(self, text: str) -> None:
         """Load text from a string into the editor."""
         lines = text.splitlines(keepends=False)
-        self.open_lines(lines)
+        self.load_lines(lines)
 
-    def open_lines(self, lines: list[str]) -> None:
+    def load_lines(self, lines: list[str]) -> None:
         """Load text from a list of lines into the editor."""
         self.document_lines = lines
 
