@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from rich.segment import Segment
-from tree_sitter import Language, Parser
+from tree_sitter import Language, Parser, Tree
 
 from textual._cells import cell_len
 from textual.geometry import Size
@@ -30,10 +30,16 @@ class TextEditor(ScrollView):
         disabled: bool = False,
     ) -> None:
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
-        self.parser: Parser | None = None
-        """The tree-sitter parser which extracts the syntax tree from the document."""
+
+        # --- Core editor data
         self.document_lines: list[str] = []
         """Each string in this list represents a line in the document."""
+
+        # --- Abstract syntax tree and related parsing machinery
+        self.parser: Parser | None = None
+        """The tree-sitter parser which extracts the syntax tree from the document."""
+        self.ast: Tree | None = None
+        """The tree-sitter Tree (AST) built from the document."""
 
     def watch_language(self, new_language: str | None) -> None:
         """Update the language used in AST parsing.
@@ -44,14 +50,38 @@ class TextEditor(ScrollView):
         if new_language:
             language = Language(LANGUAGES_PATH.resolve(), new_language)
             parser = Parser()
-            parser.set_language(language)
             self.parser = parser
+            self.parser.set_language(language)
+            self.ast = self._full_tree_build(parser, self.document_lines)
         else:
-            self.parser = None
+            self.ast = None
+
+    def _full_tree_build(
+        self,
+        parser: Parser,
+        document_lines: list[str],
+    ) -> Tree | None:
+        """Fully parse the document and build the abstract syntax tree for it.
+
+        Returns None if there's no parser available (e.g. when no language is selected).
+        """
+
+        document_lines = self.document_lines
+
+        def read_callable(byte_offset, point):
+            row, column = point
+            if row >= len(document_lines) or column >= len([row]):
+                return None
+            return document_lines[row][column:].encode("utf8")
+
+        if self.parser:
+            return parser.parse(read_callable)
+        else:
+            return None
 
     def load_text(self, text: str) -> None:
         """Load text from a string into the editor."""
-        lines = text.splitlines(keepends=False)
+        lines = text.splitlines(keepends=True)
         self.load_lines(lines)
 
     def load_lines(self, lines: list[str]) -> None:
