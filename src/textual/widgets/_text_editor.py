@@ -54,7 +54,7 @@ class TextEditor(ScrollView, can_focus=True):
         self.document_lines: list[str] = []
         """Each string in this list represents a line in the document."""
 
-        self._highlight_cache: dict[int, set[Highlight]] = defaultdict(set)
+        self._highlights: dict[int, set[Highlight]] = defaultdict(set)
         """Mapping line numbers to the set of cached highlights for that line."""
 
         # TODO - currently unused
@@ -143,21 +143,26 @@ class TextEditor(ScrollView, can_focus=True):
         if out_of_bounds:
             return Strip.blank(self.size.width)
 
-        # Get the line from the document and apply highlighting.
-        highlights = self._highlight_cache[document_y]
         line_string = document_lines[document_y].replace("\n", "").replace("\r", "")
         line_text = Text(line_string, end="")
 
-        # Apply the highlights to the ranges
-        for start, end, node_type in highlights:
-            node_style = self._get_node_style(node_type)
-            line_text.stylize(node_style, start, end)
+        # Apply highlighting to the line if necessary.
+        if self._highlights:
+            highlights = self._highlights[document_y]
+            for start, end, node_type in highlights:
+                node_style = self._get_node_style(node_type)
+                line_text.stylize(node_style, start, end)
 
-        segments = self.app.console.render(line_text)
+        # We need to render according to the virtual size otherwise the rendering
+        # will wrap the text content incorrectly.
+        segments = self.app.console.render(
+            line_text, self.app.console.options.update_width(self.virtual_size.width)
+        )
         strip = (
-            Strip(segments, line_text.cell_len)
-            .adjust_cell_length(self.size.width)
-            .simplify()
+            Strip(segments)
+            .crop(int(self.scroll_x), int(self.scroll_x) + self.content_size.width)
+            .adjust_cell_length(self.content_size.width)
+            # .simplify()
         )
         log.debug(f"{document_y}|{repr(strip.text)}|")
 
@@ -169,14 +174,8 @@ class TextEditor(ScrollView, can_focus=True):
             style = Style(color="cyan")
         elif node_type == "string":
             style = Style(color="green")
-        elif node_type == "block":
-            style = Style(bgcolor="#434343")
-        elif node_type == "if_statement":
-            style = Style(bgcolor="#636363")
-        elif node_type == "class_definition":
-            style = Style(bgcolor="#820912")
-        elif node_type == "call":
-            style = Style(bgcolor="blue")
+        elif node_type == "import_from_statement":
+            style = Style(bgcolor="magenta")
         else:
             style = Style.null()
         return style
@@ -194,52 +193,65 @@ class TextEditor(ScrollView, can_focus=True):
             document: The document as a list of strings.
             line_range: The start and end line index that is visible. If None, highlight the whole document.
         """
-        # The range of the document (line indices) that we want to highlight.
-        if line_range is not None:
-            window_start, window_end = line_range
-        else:
-            window_start = 0
-            window_end = len(document) - 1
 
-        # Get the range of this node
-        node_start_row, node_start_column = cursor.node.start_point
-        node_end_row, node_end_column = cursor.node.end_point
+        reached_root = False
 
-        node_in_window = line_range is None or (
-            window_start <= node_end_row and window_end >= node_start_row
-        )
-
-        # Cache the highlight data for this node if it's within the window range
-        # At this point we're not actually looking at the document at all, we're
-        # just storing data on the locations to highlight within the document.
-        # This data will be referenced only when we render.
-        log.debug(f"Processing highlights for node {cursor.node}")
-        if node_in_window:
-            highlight_cache = self._highlight_cache
-            node_type = cursor.node.type
-            if node_start_row == node_end_row:
-                highlight = Highlight(node_start_column, node_end_column, node_type)
-                highlight_cache[node_start_row].add(highlight)
+        while not reached_root:
+            # The range of the document (line indices) that we want to highlight.
+            if line_range is not None:
+                window_start, window_end = line_range
             else:
-                # Add the first line
-                highlight_cache[node_start_row].add(
-                    Highlight(node_start_column, None, node_type)
-                )
-                # Add the middle lines - entire row of this node is highlighted
-                for node_row in range(node_start_row + 1, node_end_row):
-                    highlight_cache[node_row].add(Highlight(0, None, node_type))
+                window_start = 0
+                window_end = len(document) - 1
 
-                # Add the last line
-                highlight_cache[node_end_row].add(
-                    Highlight(0, node_end_column, node_type)
-                )
+            # Get the range of this node
+            node_start_row, node_start_column = cursor.node.start_point
+            node_end_row, node_end_column = cursor.node.end_point
 
-            # Recurse to children
+            node_in_window = line_range is None or (
+                window_start <= node_end_row and window_end >= node_start_row
+            )
+
+            # Cache the highlight data for this node if it's within the window range
+            # At this point we're not actually looking at the document at all, we're
+            # just storing data on the locations to highlight within the document.
+            # This data will be referenced only when we render.
+            log.debug(f"Processing highlights for node {cursor.node}")
+
+            if node_in_window:
+                highlight_cache = self._highlights
+                node_type = cursor.node.type
+                if node_start_row == node_end_row:
+                    highlight = Highlight(node_start_column, node_end_column, node_type)
+                    highlight_cache[node_start_row].add(highlight)
+                else:
+                    # Add the first line
+                    highlight_cache[node_start_row].add(
+                        Highlight(node_start_column, None, node_type)
+                    )
+                    # Add the middle lines - entire row of this node is highlighted
+                    for node_row in range(node_start_row + 1, node_end_row):
+                        highlight_cache[node_row].add(Highlight(0, None, node_type))
+
+                    # Add the last line
+                    highlight_cache[node_end_row].add(
+                        Highlight(0, node_end_column, node_type)
+                    )
+
             if cursor.goto_first_child():
-                self._cache_highlights(cursor, document, line_range)
-            while cursor.goto_next_sibling():
-                self._cache_highlights(cursor, document, line_range)
-            cursor.goto_parent()
+                continue
+
+            if cursor.goto_next_sibling():
+                continue
+
+            retracing = True
+            while retracing:
+                if not cursor.goto_parent():
+                    retracing = False
+                    reached_root = True
+
+                if cursor.goto_next_sibling():
+                    retracing = False
 
     def action_print_line_cache(self) -> None:
         log.debug(self._line_cache)
@@ -257,7 +269,7 @@ class TextEditor(ScrollView, can_focus=True):
         log.debug(list(traverse(self._ast.walk())))
 
     def action_print_highlight_cache(self) -> None:
-        log.debug(self._highlight_cache)
+        log.debug(self._highlights)
 
 
 if __name__ == "__main__":
