@@ -18,7 +18,7 @@ For instance, setting `text-opacity` to `70%` would result in slightly faded tex
 
 !!! warning
 
-    Be careful not to set text opacity *too* low.
+    Be careful not to set text opacity so low as to make it hard to read.
 
 
 ## Example
