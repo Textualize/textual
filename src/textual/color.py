@@ -165,7 +165,7 @@ class Color(NamedTuple):
     b: int
     """Blue component in range 0 to 255."""
     a: float = 1.0
-    """Alpha component in range 0 to 1."""
+    """Alpha (opacity) component in range 0 to 1."""
 
     @classmethod
     def from_rich_color(cls, rich_color: RichColor) -> Color:

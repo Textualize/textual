@@ -8,9 +8,9 @@ The `color` style sets the text color of a widget.
 color: (<a href="../../css_types/color">&lt;color&gt;</a> | auto) [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The `color` style needs a [`<color>`](../../css_types/color) followed by an optional [`<percentage>`](../../css_types/percentage) to specify the color opacity (opposite of transparency).
+The `color` style requires a [`<color>`](../../css_types/color) followed by an optional [`<percentage>`](../../css_types/percentage) to specify the color's opacity.
 
-Instead of a [`<color>`](../../css_types/color), one can use the special value `"auto"` to choose automatically the color with the best contrast for readability purposes.
+You can also use the special value of `"auto"` in place of a color. This tells Textual to automatically select either white or black text for best contrast against the background.
 
 ## Examples
 
