@@ -166,9 +166,17 @@ class TextEditor(ScrollView, can_focus=True):
     def _get_node_style(self, node_type: str) -> Style:
         # Apply simple highlighting to the node based on its type.
         if node_type == "identifier":
-            style = Style(color="black", bgcolor="red")
+            style = Style(color="cyan")
         elif node_type == "string":
-            style = Style(color="green", italic=True)
+            style = Style(color="green")
+        elif node_type == "block":
+            style = Style(bgcolor="#434343")
+        elif node_type == "if_statement":
+            style = Style(bgcolor="#636363")
+        elif node_type == "class_definition":
+            style = Style(bgcolor="#820912")
+        elif node_type == "call":
+            style = Style(bgcolor="blue")
         else:
             style = Style.null()
         return style
