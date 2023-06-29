@@ -309,6 +309,14 @@ class TextEditor(ScrollView, can_focus=True):
         """True if the cursor is at the very end of the document."""
         return self.cursor_at_last_row and self.cursor_at_end_of_row
 
+    def cursor_to_line_end(self) -> None:
+        cursor_row, cursor_column = self.cursor_position
+        self.cursor_position = (cursor_row, len(self.document_lines[cursor_row]))
+
+    def cursor_to_line_start(self) -> None:
+        cursor_row, cursor_column = self.cursor_position
+        self.cursor_position = (0, cursor_row)
+
     def scroll_cursor_into_view(self) -> None:
         """Scroll the cursor into view."""
         cursor_row, cursor_column = self.cursor_position
@@ -348,6 +356,36 @@ class TextEditor(ScrollView, can_focus=True):
 
         target_row = cursor_row + 1 if self.cursor_at_end_of_row else cursor_row
         target_column = 0 if self.cursor_at_end_of_row else cursor_column + 1
+
+        self.cursor_position = (target_row, target_column)
+
+    def action_cursor_down(self) -> None:
+        """Move the cursor down one cell."""
+        if self.cursor_at_last_row:
+            self.cursor_to_line_end()
+
+        cursor_row, cursor_column = self.cursor_position
+
+        target_row = min(len(self.document_lines) - 1, cursor_row + 1)
+        # TODO: Fetch last active column on this row
+        target_column = clamp(
+            cursor_column, 0, len(self.document_lines[target_row]) - 1
+        )
+
+        self.cursor_position = (target_row, target_column)
+
+    def action_cursor_up(self) -> None:
+        """Move the cursor up one cell."""
+        if self.cursor_at_first_row:
+            self.cursor_to_line_start()
+
+        cursor_row, cursor_column = self.cursor_position
+
+        target_row = max(0, cursor_row - 1)
+        # TODO: Fetch last active column on this row
+        target_column = clamp(
+            cursor_column, 0, len(self.document_lines[target_row]) - 1
+        )
 
         self.cursor_position = (target_row, target_column)
 
