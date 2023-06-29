@@ -27,7 +27,7 @@ class Highlight(NamedTuple):
 
     start_column: int | None
     end_column: int | None
-    node_type: str
+    node: Node
 
 
 class TextEditor(ScrollView, can_focus=True):
@@ -60,7 +60,7 @@ class TextEditor(ScrollView, can_focus=True):
         self.document_lines: list[str] = []
         """Each string in this list represents a line in the document."""
 
-        self._highlights: dict[int, set[Highlight]] = defaultdict(set)
+        self._highlights: dict[int, list[Highlight]] = defaultdict(list)
         """Mapping line numbers to the set of cached highlights for that line."""
 
         # TODO - currently unused
@@ -180,13 +180,13 @@ class TextEditor(ScrollView, can_focus=True):
 
         return strip
 
-    def _get_node_style(self, node_type: str) -> Style:
+    def _get_node_style(self, node: Node) -> Style:
         # Apply simple highlighting to the node based on its type.
-        if node_type == "identifier":
+        if node.type == "identifier":
             style = Style(color="cyan")
-        elif node_type == "string":
+        elif node.type == "string":
             style = Style(color="green")
-        elif node_type == "import_from_statement":
+        elif node.type == "import_from_statement":
             style = Style(bgcolor="magenta")
         else:
             style = Style.null()
@@ -230,22 +230,22 @@ class TextEditor(ScrollView, can_focus=True):
             # This data will be referenced only when we render.
             if node_in_window:
                 highlight_cache = self._highlights
-                node_type = cursor.node.type
+                node = cursor.node
                 if node_start_row == node_end_row:
-                    highlight = Highlight(node_start_column, node_end_column, node_type)
-                    highlight_cache[node_start_row].add(highlight)
+                    highlight = Highlight(node_start_column, node_end_column, node)
+                    highlight_cache[node_start_row].append(highlight)
                 else:
                     # Add the first line
-                    highlight_cache[node_start_row].add(
-                        Highlight(node_start_column, None, node_type)
+                    highlight_cache[node_start_row].append(
+                        Highlight(node_start_column, None, node)
                     )
                     # Add the middle lines - entire row of this node is highlighted
                     for node_row in range(node_start_row + 1, node_end_row):
-                        highlight_cache[node_row].add(Highlight(0, None, node_type))
+                        highlight_cache[node_row].append(Highlight(0, None, node))
 
                     # Add the last line
-                    highlight_cache[node_end_row].add(
-                        Highlight(0, node_end_column, node_type)
+                    highlight_cache[node_end_row].append(
+                        Highlight(0, node_end_column, node)
                     )
 
             if cursor.goto_first_child():
@@ -338,7 +338,6 @@ class TextEditor(ScrollView, can_focus=True):
 
         cursor_row, cursor_column = self.cursor_position
 
-        print(f"action_cursor_right {self.cursor_position!r}")
         target_row = cursor_row + 1 if self.cursor_at_end_of_row else cursor_row
         target_column = 0 if self.cursor_at_end_of_row else cursor_column + 1
 
@@ -367,13 +366,20 @@ class TextEditor(ScrollView, can_focus=True):
     def action_print_highlight_cache(self) -> None:
         log.debug(self._highlights)
 
-    def __repr__(self):
+    def debug_state(self) -> str:
         return f"""\
 cursor {self.cursor_position!r}
 language {self.language!r}
-document rows {len(self.document_lines)}
-highlight cache size {sum(len(highlights) for key, highlights in self._highlights.items())}
-current row highlight cache size {len(self._highlights[self.cursor_position[0]])}"""
+document rows {len(self.document_lines)}"""
+
+    def debug_highlights(self) -> str:
+        return f"""\
+highlight cache keys (rows) {len(self._highlights)}
+highlight cache total size {sum(len(highlights) for key, highlights in self._highlights.items())}
+current row highlight cache size {len(self._highlights[self.cursor_position[0]])}
+
+[b]current row highlights[/]
+{self._highlights[self.cursor_position[0]]}"""
 
 
 if __name__ == "__main__":
