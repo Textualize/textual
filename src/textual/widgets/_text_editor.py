@@ -2,10 +2,11 @@ from __future__ import annotations
 
 from collections import defaultdict
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, NamedTuple
 
 from rich.segment import Segment
 from rich.style import Style
+from rich.text import Text
 from tree_sitter import Language, Node, Parser, Tree
 
 from textual import log
@@ -21,9 +22,18 @@ LANGUAGES_PATH = (
 )
 
 
+class Highlight(NamedTuple):
+    """A range to highlight within a single line"""
+
+    start_column: int | None
+    end_column: int | None
+    node_type: str
+
+
 class TextEditor(ScrollView, can_focus=True):
     BINDINGS = [
-        Binding("ctrl+l", "print_line_cache", "[debug] Line Cache"),
+        Binding("ctrl+s", "print_highlight_cache", "[debug] Print highlight cache"),
+        Binding("ctrl+l", "print_line_cache", "[debug] Print line cache"),
     ]
 
     language: Reactive[str | None] = reactive(None)
@@ -44,6 +54,10 @@ class TextEditor(ScrollView, can_focus=True):
         self.document_lines: list[str] = []
         """Each string in this list represents a line in the document."""
 
+        self._highlight_cache: dict[int, set[Highlight]] = defaultdict(set)
+        """Mapping line numbers to the set of cached highlights for that line."""
+
+        # TODO - currently unused
         self._line_cache: dict[int, list[Segment]] = defaultdict(list)
         """Caches segments for lines. Note that a line may span multiple y-offsets
          due to wrapping. These segments do NOT include the cursor highlighting.
@@ -87,7 +101,11 @@ class TextEditor(ScrollView, can_focus=True):
 
         def read_callable(byte_offset, point):
             row, column = point
-            if row >= len(document_lines) or column >= len(document_lines[row]):
+            row_out_of_bounds = row >= len(document_lines)
+            column_out_of_bounds = not row_out_of_bounds and column >= len(
+                document_lines[row]
+            )
+            if row_out_of_bounds or column_out_of_bounds:
                 return None
             return document_lines[row][column:].encode("utf8")
 
@@ -125,9 +143,35 @@ class TextEditor(ScrollView, can_focus=True):
         if out_of_bounds:
             return Strip.blank(self.size.width)
 
-        # Fetch the segments from the cache
-        strip = Strip(self._line_cache.get(document_y, Strip.blank(self.size.width)))
+        # Get the line from the document and apply highlighting.
+        highlights = self._highlight_cache[document_y]
+        line_string = document_lines[document_y].replace("\n", "").replace("\r", "")
+        line_text = Text(line_string, end="")
+
+        # Apply the highlights to the ranges
+        for start, end, node_type in highlights:
+            node_style = self._get_node_style(node_type)
+            line_text.stylize(node_style, start, end)
+
+        segments = self.app.console.render(line_text)
+        strip = (
+            Strip(segments, line_text.cell_len)
+            .adjust_cell_length(self.size.width)
+            .simplify()
+        )
+        log.debug(f"{document_y}|{repr(strip.text)}|")
+
         return strip
+
+    def _get_node_style(self, node_type: str) -> Style:
+        # Apply simple highlighting to the node based on its type.
+        if node_type == "identifier":
+            style = Style(color="black", bgcolor="red")
+        elif node_type == "string":
+            style = Style(color="green", italic=True)
+        else:
+            style = Style.null()
+        return style
 
     def _cache_highlights(
         self,
@@ -150,20 +194,44 @@ class TextEditor(ScrollView, can_focus=True):
             window_end = len(document) - 1
 
         # Get the range of this node
-        node_start_line = cursor.node.start_point[0]
-        node_end_line = cursor.node.end_point[0]
+        node_start_row, node_start_column = cursor.node.start_point
+        node_end_row, node_end_column = cursor.node.end_point
 
         node_in_window = line_range is None or (
-            window_start <= node_end_line and window_end >= node_start_line
+            window_start <= node_end_row and window_end >= node_start_row
         )
 
-    # Apply simple highlighting to the node based on its type.
-    # if cursor.node.type == 'identifier':
-    #     style = Style(color="black", bgcolor="red")
-    # elif cursor.node.type == 'string':
-    #     style = Style(color="green", italic=True)
-    # else:
-    #     style = Style.null()
+        # Cache the highlight data for this node if it's within the window range
+        # At this point we're not actually looking at the document at all, we're
+        # just storing data on the locations to highlight within the document.
+        # This data will be referenced only when we render.
+        log.debug(f"Processing highlights for node {cursor.node}")
+        if node_in_window:
+            highlight_cache = self._highlight_cache
+            node_type = cursor.node.type
+            if node_start_row == node_end_row:
+                highlight = Highlight(node_start_column, node_end_column, node_type)
+                highlight_cache[node_start_row].add(highlight)
+            else:
+                # Add the first line
+                highlight_cache[node_start_row].add(
+                    Highlight(node_start_column, None, node_type)
+                )
+                # Add the middle lines - entire row of this node is highlighted
+                for node_row in range(node_start_row + 1, node_end_row):
+                    highlight_cache[node_row].add(Highlight(0, None, node_type))
+
+                # Add the last line
+                highlight_cache[node_end_row].add(
+                    Highlight(0, node_end_column, node_type)
+                )
+
+            # Recurse to children
+            if cursor.goto_first_child():
+                self._cache_highlights(cursor, document, line_range)
+            while cursor.goto_next_sibling():
+                self._cache_highlights(cursor, document, line_range)
+            cursor.goto_parent()
 
     def action_print_line_cache(self) -> None:
         log.debug(self._line_cache)
@@ -180,12 +248,59 @@ class TextEditor(ScrollView, can_focus=True):
 
         log.debug(list(traverse(self._ast.walk())))
 
+    def action_print_highlight_cache(self) -> None:
+        log.debug(self._highlight_cache)
+
 
 if __name__ == "__main__":
-    pass
-# Language.build_library(
-#     '../../../tree-sitter-languages/textual-languages.so',
-#     [
-#         'tree-sitter-libraries/tree-sitter-python'
-#     ]
-# )
+
+    def traverse_tree(cursor):
+        reached_root = False
+        while reached_root == False:
+            yield cursor.node
+
+            if cursor.goto_first_child():
+                continue
+
+            if cursor.goto_next_sibling():
+                continue
+
+            retracing = True
+            while retracing:
+                if not cursor.goto_parent():
+                    retracing = False
+                    reached_root = True
+
+                if cursor.goto_next_sibling():
+                    retracing = False
+
+    language = Language(LANGUAGES_PATH.resolve(), "python")
+    parser = Parser()
+    parser.set_language(language)
+
+    CODE = """\
+    from textual.app import App
+
+
+    class ScreenApp(App):
+        def on_mount(self) -> None:
+            self.screen.styles.background = "darkblue"
+            self.screen.styles.border = ("heavy", "white")
+
+
+    if __name__ == "__main__":
+        app = ScreenApp()
+        app.run()
+    """
+
+    document_lines = CODE.splitlines(keepends=False)
+
+    def read_callable(byte_offset, point):
+        row, column = point
+        if row >= len(document_lines) or column >= len(document_lines[row]):
+            return None
+        return document_lines[row][column:].encode("utf8")
+
+    tree = parser.parse(bytes(CODE, "utf-8"))
+
+    print(list(traverse_tree(tree.walk())))
