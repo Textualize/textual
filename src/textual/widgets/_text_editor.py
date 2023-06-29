@@ -12,7 +12,7 @@ from tree_sitter import Language, Node, Parser, Tree
 from textual import events, log
 from textual._cells import cell_len
 from textual.binding import Binding
-from textual.geometry import Size, clamp
+from textual.geometry import Region, Size, clamp
 from textual.reactive import Reactive, reactive
 from textual.scroll_view import ScrollView
 from textual.strip import Strip
@@ -278,6 +278,7 @@ class TextEditor(ScrollView, can_focus=True):
 
     def watch_cursor_position(self, new_position: tuple[int, int]) -> None:
         log.debug(f"cursor_position = {new_position!r}")
+        self.scroll_cursor_into_view()
 
     # --- Cursor utilities
     @property
@@ -307,6 +308,13 @@ class TextEditor(ScrollView, can_focus=True):
     def cursor_at_end_of_document(self) -> bool:
         """True if the cursor is at the very end of the document."""
         return self.cursor_at_last_row and self.cursor_at_end_of_row
+
+    def scroll_cursor_into_view(self) -> None:
+        """Scroll the cursor into view."""
+        cursor_row, cursor_column = self.cursor_position
+        self.scroll_to_region(
+            Region(x=cursor_column, y=cursor_row, width=1, height=1), animate=False
+        )
 
     # ------ Cursor movement actions
     def action_cursor_left(self) -> None:
@@ -348,7 +356,6 @@ class TextEditor(ScrollView, can_focus=True):
         pass
 
     # --- Debug actions
-
     def action_print_line_cache(self) -> None:
         log.debug(self._line_cache)
 
