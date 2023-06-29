@@ -91,7 +91,7 @@ border: heavy white;
 /* Set a red border on the left */
 border-left: outer red;
 
-/* Set a rounded orange border, 50% transparency. */
+/* Set a rounded orange border, 50% opacity. */
 border: round orange 50%;
 ```
 

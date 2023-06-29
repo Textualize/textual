@@ -14,8 +14,8 @@ A bullet point summary of the formats available follows:
  - a recognised [named color](#named-colors) (e.g., `red`);
  - a 3 or 6 hexadecimal digit number representing the [RGB values](#hex-rgb-value) of the color (e.g., `#F35573`);
  - a 4 or 8 hexadecimal digit number representing the [RGBA values](#hex-rgba-value) of the color (e.g., `#F35573A0`);
- - a color description in the RGB system, [with](#rgba-description) or [without](#rgb-description) transparency (e.g., `rgb(23, 78, 200)`);
- - a color description in the HSL system, [with](#hsla-description) or [without](#hsl-description) transparency (e.g., `hsl(290, 70%, 80%)`);
+ - a color description in the RGB system, [with](#rgba-description) or [without](#rgb-description) opacity (e.g., `rgb(23, 78, 200)`);
+ - a color description in the HSL system, [with](#hsla-description) or [without](#hsl-description) opacity (e.g., `hsl(290, 70%, 80%)`);
 
 [Textual's default themes](../../guide/design#theme-reference) also provide many CSS variables with colors that can be used out of the box.
 
@@ -66,10 +66,10 @@ For example, the color `#A2F` is the same as `#AA22FF`.
 
 ### Hex RGBA value
 
-This is the same as the [hex RGB value](#hex-rgb-value), but with an extra channel for the alpha component (that sets transparency).
+This is the same as the [hex RGB value](#hex-rgb-value), but with an extra channel for the alpha component (that sets opacity).
 
- - If 8 digits are used, the format is `#RRGGBBAA`, equivalent to the format `#RRGGBB` with two extra digits for transparency.
- - If 4 digits are used, the format is `#RGBA`, equivalent to the format `#RGB` with an extra digit for transparency.
+ - If 8 digits are used, the format is `#RRGGBBAA`, equivalent to the format `#RRGGBB` with two extra digits for opacity.
+ - If 4 digits are used, the format is `#RGBA`, equivalent to the format `#RGB` with an extra digit for opacity.
 
 ### `rgb` description
 
@@ -81,9 +81,9 @@ For example, `rgb(0, 255, 32)` is equivalent to `#00FF20`.
 
 ### `rgba` description
 
-The `rgba` format description is the same as the `rgb` with an extra parameter for transparency, which should be a value between `0` and `1`.
+The `rgba` format description is the same as the `rgb` with an extra parameter for opacity, which should be a value between `0` and `1`.
 
-For example, `rgba(0, 255, 32, 0.5)` is the color `rgb(0, 255, 32)` with 50% transparency.
+For example, `rgba(0, 255, 32, 0.5)` is the color `rgb(0, 255, 32)` with 50% opacity.
 
 ### `hsl` description
 
@@ -98,9 +98,9 @@ For example, the color `#00FF20` would be represented as `hsl(128, 100%, 50%)` i
 
 ### `hsla` description
 
-The `hsla` format description is the same as the `hsl` with an extra parameter for transparency, which should be a value between `0` and `1`.
+The `hsla` format description is the same as the `hsl` with an extra parameter for opacity, which should be a value between `0` and `1`.
 
-For example, `hsla(128, 100%, 50%, 0.5)` is the color `hsl(128, 100%, 50%)` with 50% transparency.
+For example, `hsla(128, 100%, 50%, 0.5)` is the color `hsl(128, 100%, 50%)` with 50% opacity.
 
 ## Examples
 
