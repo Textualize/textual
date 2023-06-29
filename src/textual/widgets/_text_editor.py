@@ -37,6 +37,8 @@ class TextEditor(ScrollView, can_focus=True):
         Binding("down", "cursor_down", "cursor down", show=False),
         Binding("left", "cursor_left", "cursor left", show=False),
         Binding("right", "cursor_right", "cursor right", show=False),
+        Binding("home", "cursor_line_start", "cursor line start", show=False),
+        Binding("end", "cursor_line_end", "cursor line end", show=False),
         # Debugging bindings
         Binding("ctrl+s", "print_highlight_cache", "[debug] Print highlight cache"),
         Binding("ctrl+l", "print_line_cache", "[debug] Print line cache"),
@@ -44,7 +46,7 @@ class TextEditor(ScrollView, can_focus=True):
 
     language: Reactive[str | None] = reactive(None)
     """The language to use for syntax highlighting (via tree-sitter)."""
-    cursor_position = reactive((0, 0))
+    cursor_position = reactive((0, 0), always_update=True)
     """The cursor position (zero-based line_index, offset)."""
 
     def __init__(
@@ -142,9 +144,16 @@ class TextEditor(ScrollView, can_focus=True):
     def _get_document_size(self, document_lines: list[str]) -> Size:
         width = max(cell_len(line) for line in document_lines)
         height = len(document_lines)
-        return Size(width, height)
+        # We add one to the width to leave a space for the cursor, since it can
+        # rest at the end of a line where there isn't yet any character.
+        return Size(
+            width + self.scrollbar_size_vertical + 1,
+            height + self.scrollbar_size_horizontal,
+        )
 
     def render_line(self, widget_y: int) -> Strip:
+        log.debug(f"render_line {widget_y!r}")
+
         document_lines = self.document_lines
 
         document_y = round(self.scroll_y + widget_y)
@@ -176,8 +185,8 @@ class TextEditor(ScrollView, can_focus=True):
         )
         strip = (
             Strip(segments)
-            .adjust_cell_length(self.virtual_size.width - 1)
-            .crop(int(self.scroll_x), int(self.scroll_x) + self.virtual_size.width - 1)
+            .adjust_cell_length(self.virtual_size.width)
+            .crop(int(self.scroll_x), int(self.scroll_x) + self.virtual_size.width)
             .simplify()
         )
 
@@ -316,11 +325,11 @@ class TextEditor(ScrollView, can_focus=True):
 
     def cursor_to_line_end(self) -> None:
         cursor_row, cursor_column = self.cursor_position
-        self.cursor_position = (cursor_row, len(self.document_lines[cursor_row]))
+        self.cursor_position = (cursor_row, len(self.document_lines[cursor_row]) - 1)
 
     def cursor_to_line_start(self) -> None:
         cursor_row, cursor_column = self.cursor_position
-        self.cursor_position = (0, cursor_row)
+        self.cursor_position = (cursor_row, 0)
 
     def scroll_cursor_into_view(self) -> None:
         """Scroll the cursor into view."""
@@ -394,6 +403,12 @@ class TextEditor(ScrollView, can_focus=True):
 
         self.cursor_position = (target_row, target_column)
 
+    def action_cursor_line_end(self) -> None:
+        self.cursor_to_line_end()
+
+    def action_cursor_line_start(self) -> None:
+        self.cursor_to_line_start()
+
     # --- Editor operations
     def insert_text_at_cursor(self, text: str) -> None:
         log.debug(f"insert {text!r} at {self.cursor_position!r}")
@@ -420,7 +435,12 @@ class TextEditor(ScrollView, can_focus=True):
             # TODO: The virtual height may change if the inserted text
             #  contains newline characters. We should count them an increment
             #  by that number.
-            self.virtual_size = Size(new_row_cell_length, virtual_height)
+
+            # TODO: Does the virtual size need to account for the scrollbar width
+            #  to ensure that the text never gets hidden behind the scrollbar?
+            self.virtual_size = Size(
+                new_row_cell_length + self.scrollbar_size_vertical + 1, virtual_height
+            )
 
         self.refresh()
         # TODO: Need to update the AST to inform it of the edit operation
@@ -464,6 +484,7 @@ class TextEditor(ScrollView, can_focus=True):
         return f"""\
 cursor {self.cursor_position!r}
 language {self.language!r}
+virtual_size {self.virtual_size!r}
 document rows {len(self.document_lines)}"""
 
     def debug_highlights(self) -> str:
