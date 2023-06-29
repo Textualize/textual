@@ -130,9 +130,7 @@ class TextEditor(ScrollView, can_focus=True):
         self.document_lines = lines
 
         # TODO Offer maximum line width and wrap if needed
-        width = max(cell_len(line) for line in lines)
-        height = len(lines)
-        self.virtual_size = Size(width, height)
+        self.virtual_size = self._get_document_size(lines)
 
         # TODO - clear caches
         if self._parser is not None:
@@ -140,6 +138,11 @@ class TextEditor(ScrollView, can_focus=True):
             self._cache_highlights(self._ast.walk(), lines)
 
         log.debug(f"loaded text. parser = {self._parser} ast = {self._ast}")
+
+    def _get_document_size(self, document_lines: list[str]) -> Size:
+        width = max(cell_len(line) for line in document_lines)
+        height = len(document_lines)
+        return Size(width, height)
 
     def render_line(self, widget_y: int) -> Strip:
         document_lines = self.document_lines
@@ -268,6 +271,9 @@ class TextEditor(ScrollView, can_focus=True):
         if event.is_printable:
             event.stop()
             assert event.character is not None
+            self.insert_text_at_cursor(event.character)
+            event.prevent_default()
+            self.refresh()
 
     # --- Reactive watchers and validators
     # def validate_cursor_position(self, new_position: tuple[int, int]) -> tuple[int, int]:
@@ -277,7 +283,6 @@ class TextEditor(ScrollView, can_focus=True):
     #     return clamped_row, clamped_column
 
     def watch_cursor_position(self, new_position: tuple[int, int]) -> None:
-        log.debug(f"cursor_position = {new_position!r}")
         self.scroll_cursor_into_view()
 
     # --- Cursor utilities
@@ -391,7 +396,51 @@ class TextEditor(ScrollView, can_focus=True):
 
     # --- Editor operations
     def insert_text_at_cursor(self, text: str) -> None:
-        pass
+        log.debug(f"insert {text!r} at {self.cursor_position!r}")
+        cursor_row, cursor_column = self.cursor_position
+        old_text = self.document_lines[cursor_row]
+
+        # TODO: If the text has newline characters, this operation becomes
+        #  more complex.
+        new_text = old_text[:cursor_column] + text + old_text[cursor_column:]
+        self.document_lines[cursor_row] = new_text
+        self.cursor_position = (cursor_row, cursor_column + cell_len(text))
+        # cursor_row, cursor_column = self.cursor_position
+        # virtual_width, virtual_height = self.virtual_size
+        # if cursor_column > virtual_width:
+        #     virtual_width = cursor_column
+        # if cursor_row > virtual_height:
+        #     virtual_height = cursor_row
+        #
+        # self.virtual_size = Size(virtual_width, virtual_height)
+
+        virtual_width, virtual_height = self.virtual_size
+        new_row_cell_length = cell_len(new_text)
+        if new_row_cell_length > virtual_width:
+            # TODO: The virtual height may change if the inserted text
+            #  contains newline characters. We should count them an increment
+            #  by that number.
+            self.virtual_size = Size(new_row_cell_length, virtual_height)
+
+        self.refresh()
+        # TODO: Need to update the AST to inform it of the edit operation
+
+    def delete_left(self) -> None:
+        log.debug(f"delete left at {self.cursor_position!r}")
+
+        if self.cursor_at_start_of_document:
+            return
+
+        cursor_row, cursor_column = self.cursor_position
+
+        # If the cursor is at the start of a row, then the deletion "merges" the rows
+        # as it deletes the newline character that separates them.
+        if self.cursor_at_start_of_row:
+            pass
+        else:
+            old_text = self.document_lines[cursor_row]
+
+        new_text = old_text[: cursor_column - 1]
 
     # --- Debug actions
     def action_print_line_cache(self) -> None:
