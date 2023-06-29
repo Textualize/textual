@@ -9,10 +9,10 @@ from rich.style import Style
 from rich.text import Text
 from tree_sitter import Language, Node, Parser, Tree
 
-from textual import log
+from textual import events, log
 from textual._cells import cell_len
 from textual.binding import Binding
-from textual.geometry import Size
+from textual.geometry import Size, clamp
 from textual.reactive import Reactive, reactive
 from textual.scroll_view import ScrollView
 from textual.strip import Strip
@@ -32,6 +32,12 @@ class Highlight(NamedTuple):
 
 class TextEditor(ScrollView, can_focus=True):
     BINDINGS = [
+        # Cursor movement
+        Binding("up", "cursor_up", "cursor up", show=False),
+        Binding("down", "cursor_down", "cursor down", show=False),
+        Binding("left", "cursor_left", "cursor left", show=False),
+        Binding("right", "cursor_right", "cursor right", show=False),
+        # Debugging bindings
         Binding("ctrl+s", "print_highlight_cache", "[debug] Print highlight cache"),
         Binding("ctrl+l", "print_line_cache", "[debug] Print line cache"),
     ]
@@ -144,7 +150,7 @@ class TextEditor(ScrollView, can_focus=True):
             return Strip.blank(self.size.width)
 
         line_string = document_lines[document_y].replace("\n", "").replace("\r", "")
-        line_text = Text(line_string, end="")
+        line_text = Text(f"{line_string} ", end="")
 
         # Apply highlighting to the line if necessary.
         if self._highlights:
@@ -156,7 +162,9 @@ class TextEditor(ScrollView, can_focus=True):
         # Show the cursor if necessary
         cursor_row, cursor_column = self.cursor_position
         if cursor_row == document_y:
-            line_text.stylize(Style(reverse=True), cursor_column, cursor_column + 1)
+            line_text.stylize(
+                Style(color="black", bgcolor="white"), cursor_column, cursor_column + 1
+            )
 
         # We need to render according to the virtual size otherwise the rendering
         # will wrap the text content incorrectly.
@@ -165,8 +173,8 @@ class TextEditor(ScrollView, can_focus=True):
         )
         strip = (
             Strip(segments)
-            .adjust_cell_length(self.virtual_size.width)
-            .crop(int(self.scroll_x), int(self.scroll_x) + self.virtual_size.width)
+            .adjust_cell_length(self.virtual_size.width - 1)
+            .crop(int(self.scroll_x), int(self.scroll_x) + self.virtual_size.width - 1)
             .simplify()
         )
         log.debug(f"{document_y}|{repr(strip.text)}|")
@@ -257,6 +265,93 @@ class TextEditor(ScrollView, can_focus=True):
 
                 if cursor.goto_next_sibling():
                     retracing = False
+
+    # --- Key handling
+    async def _on_key(self, event: events.Key) -> None:
+        if event.is_printable:
+            event.stop()
+            assert event.character is not None
+
+    # --- Reactive watchers and validators
+    # def validate_cursor_position(self, new_position: tuple[int, int]) -> tuple[int, int]:
+    #     new_row, new_column = new_position
+    #     clamped_row = clamp(new_row, 0, len(self.document_lines) - 1)
+    #     clamped_column = clamp(new_column, 0, len(self.document_lines[clamped_row]) - 1)
+    #     return clamped_row, clamped_column
+
+    def watch_cursor_position(self, new_position: tuple[int, int]) -> None:
+        log.debug(f"cursor_position = {new_position!r}")
+
+    # --- Cursor utilities
+    @property
+    def cursor_at_first_row(self) -> bool:
+        return self.cursor_position[0] == 0
+
+    @property
+    def cursor_at_last_row(self) -> bool:
+        return self.cursor_position[0] == len(self.document_lines) - 1
+
+    @property
+    def cursor_at_start_of_row(self) -> bool:
+        return self.cursor_position[1] == 0
+
+    @property
+    def cursor_at_end_of_row(self) -> bool:
+        cursor_row, cursor_column = self.cursor_position
+        row_length = len(self.document_lines[cursor_row])
+        cursor_at_end = cursor_column == row_length - 1
+        return cursor_at_end
+
+    @property
+    def cursor_at_start_of_document(self) -> bool:
+        return self.cursor_at_first_row and self.cursor_at_start_of_row
+
+    @property
+    def cursor_at_end_of_document(self) -> bool:
+        """True if the cursor is at the very end of the document."""
+        return self.cursor_at_last_row and self.cursor_at_end_of_row
+
+    # ------ Cursor movement actions
+    def action_cursor_left(self) -> None:
+        """Move the cursor one position to the left.
+
+        If the cursor is at the left edge of the document, try to move it to
+        the end of the previous line.
+        """
+        if self.cursor_at_start_of_document:
+            return
+
+        cursor_row, cursor_column = self.cursor_position
+        length_of_row_above = len(self.document_lines[cursor_row - 1])
+
+        target_row = cursor_row if cursor_column != 0 else cursor_row - 1
+        target_column = (
+            cursor_column - 1 if cursor_column != 0 else length_of_row_above - 1
+        )
+
+        self.cursor_position = (target_row, target_column)
+
+    def action_cursor_right(self) -> None:
+        """Move the cursor one position to the right.
+
+        If the cursor is at the end of a line, attempt to go to the start of the next line.
+        """
+        if self.cursor_at_end_of_document:
+            return
+
+        cursor_row, cursor_column = self.cursor_position
+
+        print(f"action_cursor_right {self.cursor_position!r}")
+        target_row = cursor_row + 1 if self.cursor_at_end_of_row else cursor_row
+        target_column = 0 if self.cursor_at_end_of_row else cursor_column + 1
+
+        self.cursor_position = (target_row, target_column)
+
+    # --- Editor operations
+    def insert_text_at_cursor(self, text: str) -> None:
+        pass
+
+    # --- Debug actions
 
     def action_print_line_cache(self) -> None:
         log.debug(self._line_cache)
