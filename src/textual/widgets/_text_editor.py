@@ -153,6 +153,11 @@ class TextEditor(ScrollView, can_focus=True):
                 node_style = self._get_node_style(node_type)
                 line_text.stylize(node_style, start, end)
 
+        # Show the cursor if necessary
+        cursor_row, cursor_column = self.cursor_position
+        if cursor_row == document_y:
+            line_text.stylize(Style(reverse=True), cursor_column, cursor_column + 1)
+
         # We need to render according to the virtual size otherwise the rendering
         # will wrap the text content incorrectly.
         segments = self.app.console.render(
