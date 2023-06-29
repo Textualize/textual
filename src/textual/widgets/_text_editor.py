@@ -160,9 +160,9 @@ class TextEditor(ScrollView, can_focus=True):
         )
         strip = (
             Strip(segments)
-            .crop(int(self.scroll_x), int(self.scroll_x) + self.content_size.width)
-            .adjust_cell_length(self.content_size.width)
-            # .simplify()
+            .adjust_cell_length(self.virtual_size.width)
+            .crop(int(self.scroll_x), int(self.scroll_x) + self.virtual_size.width)
+            .simplify()
         )
         log.debug(f"{document_y}|{repr(strip.text)}|")
 
