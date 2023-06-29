@@ -90,10 +90,12 @@ from .keys import (
     _get_unicode_name_from_key,
 )
 from .messages import CallbackType
+from .notifications import Notification, Notifications, SeverityLevel
 from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import Screen, ScreenResultCallbackType, ScreenResultType
 from .widget import AwaitMount, Widget
+from .widgets._toast import ToastRack
 
 if TYPE_CHECKING:
     from typing_extensions import Coroutine, TypeAlias
@@ -443,6 +445,7 @@ class App(Generic[ReturnType], DOMNode):
         self._return_value: ReturnType | None = None
         self._exit = False
         self._disable_tooltips = False
+        self._disable_notifications = False
 
         self.css_monitor = (
             FileMonitor(self.css_path, self._on_css_change)
@@ -455,6 +458,7 @@ class App(Generic[ReturnType], DOMNode):
         self._batch_count = 0
         self.set_class(self.dark, "-dark-mode")
         self.set_class(not self.dark, "-light-mode")
+        self._notifications = Notifications()
 
     def validate_title(self, title: Any) -> str:
         """Make sure the title is set to a string."""
@@ -1029,6 +1033,7 @@ class App(Generic[ReturnType], DOMNode):
         headless: bool = True,
         size: tuple[int, int] | None = (80, 24),
         tooltips: bool = False,
+        notifications: bool = False,
         message_hook: Callable[[Message], None] | None = None,
     ) -> AsyncGenerator[Pilot, None]:
         """An asynchronous context manager for testing app.
@@ -1048,12 +1053,14 @@ class App(Generic[ReturnType], DOMNode):
             size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect.
             tooltips: Enable tooltips when testing.
+            notifications: Enable notifications when testing.
             message_hook: An optional callback that will called with every message going through the app.
         """
         from .pilot import Pilot
 
         app = self
         app._disable_tooltips = not tooltips
+        app._disable_notifications = not notifications
         app_ready_event = asyncio.Event()
 
         def on_app_ready() -> None:
@@ -2767,3 +2774,33 @@ class App(Generic[ReturnType], DOMNode):
     def _end_update(self) -> None:
         if self._sync_available and self._driver is not None:
             self._driver.write(SYNC_END)
+
+    def notify(
+        self,
+        message: str,
+        *,
+        title: str | None = None,
+        severity: SeverityLevel = "information",
+    ) -> None:
+        """Create a notification.
+
+        Args:
+            message: The message for the notification.
+            title: The title for the notification.
+            severity: The severity of the notification.
+        """
+        # Add the notification to the list of in-play notifications.
+        self._notifications.add(Notification(message, title, severity))
+        # If we've got a screen to hand...
+        if self.screen is not None:
+            try:
+                # ...see if it has a toast rack.
+                toast_rack = self.screen.get_child_by_type(ToastRack)
+            except NoMatches:
+                # It doesn't. That's fine. Either there won't ever be one,
+                # or one will turn up. Things will work out later.
+                return
+            # For each notification that's in play, get the toast rack to
+            # take a look at it and potentially add it.
+            for notification in self._notifications:
+                toast_rack.add_toast(notification)

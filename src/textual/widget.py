@@ -61,6 +61,7 @@ from .geometry import NULL_REGION, NULL_SPACING, Offset, Region, Size, Spacing, 
 from .layouts.vertical import VerticalLayout
 from .message import Message
 from .messages import CallbackType
+from .notifications import SeverityLevel
 from .reactive import Reactive
 from .render import measure
 from .strip import Strip

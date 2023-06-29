@@ -36,12 +36,14 @@ from .css.parse import parse_selectors
 from .css.query import NoMatches, QueryType
 from .dom import DOMNode
 from .geometry import Offset, Region, Size
+from .notifications import SeverityLevel
 from .reactive import Reactive
 from .renderables.background_screen import BackgroundScreen
 from .renderables.blank import Blank
 from .timer import Timer
 from .widget import Widget
 from .widgets import Tooltip
+from .widgets._toast import ToastRack
 
 if TYPE_CHECKING:
     from typing_extensions import Final
@@ -202,10 +204,12 @@ class Screen(Generic[ScreenResultType], Widget):
         Returns:
             Tuple of layer names.
         """
-        if self.app._disable_tooltips:
-            return super().layers
-        else:
-            return (*super().layers, "_tooltips")
+        extras = []
+        if not self.app._disable_notifications:
+            extras.append("_toastrack")
+        if not self.app._disable_tooltips:
+            extras.append("_tooltips")
+        return (*super().layers, *extras)
 
     def render(self) -> RenderableType:
         background = self.styles.background
@@ -529,9 +533,18 @@ class Screen(Generic[ScreenResultType], Widget):
         self._update_focus_styles(focused, blurred)
 
     def _extend_compose(self, widgets: list[Widget]) -> None:
-        """Insert the tooltip widget, if required."""
+        """Insert Textual's own internal widgets.
+
+        Args:
+            widgets: The list of widgets to be composed.
+
+        This method adds the tooltip, if required, and also adds the
+        container for `Toast`s.
+        """
         if not self.app._disable_tooltips:
             widgets.insert(0, Tooltip(id="textual-tooltip"))
+        if not self.app._disable_notifications:
+            widgets.insert(0, ToastRack(id="textual-toastrack"))
 
     async def _on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)
@@ -925,6 +938,22 @@ class Screen(Generic[ScreenResultType], Widget):
             result: The optional result to be passed to the result callback.
         """
         self.dismiss(result)
+
+    def notify(
+        self,
+        message: str,
+        *,
+        title: str | None = None,
+        severity: SeverityLevel = "information",
+    ) -> None:
+        """Create a notification.
+
+        Args:
+            message: The message for the notification.
+            title: The title for the notification.
+            severity: The severity of the notification.
+        """
+        self.app.notify(message, title=title, severity=severity)
 
 
 @rich.repr.auto
