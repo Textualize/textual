@@ -177,7 +177,6 @@ class TextEditor(ScrollView, can_focus=True):
             .crop(int(self.scroll_x), int(self.scroll_x) + self.virtual_size.width - 1)
             .simplify()
         )
-        log.debug(f"{document_y}|{repr(strip.text)}|")
 
         return strip
 
@@ -229,8 +228,6 @@ class TextEditor(ScrollView, can_focus=True):
             # At this point we're not actually looking at the document at all, we're
             # just storing data on the locations to highlight within the document.
             # This data will be referenced only when we render.
-            log.debug(f"Processing highlights for node {cursor.node}")
-
             if node_in_window:
                 highlight_cache = self._highlights
                 node_type = cursor.node.type
@@ -356,7 +353,6 @@ class TextEditor(ScrollView, can_focus=True):
     def action_print_line_cache(self) -> None:
         log.debug(self._line_cache)
 
-        # TODO - this traversal is correct - see notes in Notion
         def traverse(cursor) -> Iterable[Node]:
             yield cursor.node
 
@@ -370,6 +366,14 @@ class TextEditor(ScrollView, can_focus=True):
 
     def action_print_highlight_cache(self) -> None:
         log.debug(self._highlights)
+
+    def __repr__(self):
+        return f"""\
+cursor {self.cursor_position!r}
+language {self.language!r}
+document rows {len(self.document_lines)}
+highlight cache size {sum(len(highlights) for key, highlights in self._highlights.items())}
+current row highlight cache size {len(self._highlights[self.cursor_position[0]])}"""
 
 
 if __name__ == "__main__":
