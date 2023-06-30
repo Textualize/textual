@@ -39,6 +39,10 @@ class Toast(Static, inherit_css=False):
         border-top: panel $error;
         background: $error 20%;
     }
+
+    Toast.empty-title {
+        border: none;
+    }
     """
 
     def __init__(self, notification: Notification) -> None:
@@ -55,6 +59,8 @@ class Toast(Static, inherit_css=False):
             if notification.title is not None
             else notification.severity.capitalize()
         )
+        if not self.border_title:
+            self.add_class("empty-title")
         self._timeout = notification.time_left
 
     def _on_mount(self, _: Mount) -> None:
