@@ -18,6 +18,7 @@ class RightAlignToast(Container, inherit_css=False):
         align-horizontal: right;
         width: 1fr;
         height: auto;
+        visibility: hidden;
     }
     """
 
