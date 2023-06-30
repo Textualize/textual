@@ -80,7 +80,7 @@ class HSV(NamedTuple):
     h: float
     """Hue in range 0 to 1."""
     s: float
-    """Saturation in range 0 to 1"""
+    """Saturation in range 0 to 1."""
     v: float
     """Value un range 0 to 1."""
 
@@ -543,7 +543,7 @@ class Color(NamedTuple):
             alpha: An alpha value to apply to the result.
 
         Returns:
-            A new color, either an off-white or off-black
+            A new color, either an off-white or off-black.
         """
         return (WHITE if self.brightness < 0.5 else BLACK).with_alpha(alpha)
 
