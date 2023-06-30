@@ -31,7 +31,7 @@ class QuitScreen(Screen):
 
 
 class ModalApp(App):
-    """A app with a modal dialog."""
+    """An app with a modal dialog."""
 
     CSS_PATH = "modal01.css"
     BINDINGS = [("q", "request_quit", "Quit")]
