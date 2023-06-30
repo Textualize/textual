@@ -57,6 +57,8 @@ from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
 from rich.traceback import Traceback
 
+from textual import notifications
+
 from . import Logger, LogGroup, LogVerbosity, actions, constants, events, log, messages
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
@@ -2800,7 +2802,5 @@ class App(Generic[ReturnType], DOMNode):
                 # It doesn't. That's fine. Either there won't ever be one,
                 # or one will turn up. Things will work out later.
                 return
-            # For each notification that's in play, get the toast rack to
-            # take a look at it and potentially add it.
-            for notification in self._notifications:
-                toast_rack.add_toast(notification)
+            # Update the toast rack.
+            toast_rack.add_toast(*self._notifications)

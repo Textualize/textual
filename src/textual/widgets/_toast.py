@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from rich.text import Text
 
-from .._node_list import DuplicateIds
 from ..containers import Container
+from ..css.query import NoMatches
 from ..events import Click, Mount
 from ..notifications import Notification
 from ._static import Static
@@ -102,17 +102,28 @@ class ToastRack(Container, inherit_css=False):
     def _toast_id(notification: Notification) -> str:
         return f"textual-toast-{notification.identity}"
 
-    def add_toast(self, notification: Notification) -> None:
+    def add_toast(self, *notifications: Notification) -> None:
         """Add a toast to the display.
 
         Args:
             notification: The notification to build the toast from.
         """
-        # It's possible (and sort of encouraged) that we're being asked to
-        # show the same notification again. If this happens we make that a
-        # no-op.
-        if not self.query(f"#{self._toast_id(notification)}"):
-            self.mount(
-                RightAlignToast(Toast(notification), id=self._toast_id(notification))
+
+        # Gather up all the notifications that we don't have toasts for yet.
+        new_toasts: list[Notification] = []
+        for notification in notifications:
+            try:
+                # See if there's already a toast for that notification.
+                _ = self.get_child_by_id(self._toast_id(notification))
+            except NoMatches:
+                if not notification.has_expired:
+                    new_toasts.append(notification)
+
+        # If we got any...
+        if new_toasts:
+            # ...mount them.
+            self.mount_all(
+                RightAlignToast(Toast(toast), id=self._toast_id(toast))
+                for toast in new_toasts
             )
             self.call_later(self.scroll_end, animate=False, force=True)
