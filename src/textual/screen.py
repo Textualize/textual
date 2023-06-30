@@ -740,6 +740,7 @@ class Screen(Generic[ScreenResultType], Widget):
     def _on_screen_resume(self) -> None:
         """Screen has resumed."""
         self.stack_updates += 1
+        self.app._refresh_notifications()
         size = self.app.size
         self._refresh_layout(size, full=True)
         self.refresh()

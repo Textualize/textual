@@ -2777,6 +2777,19 @@ class App(Generic[ReturnType], DOMNode):
         if self._sync_available and self._driver is not None:
             self._driver.write(SYNC_END)
 
+    def _refresh_notifications(self) -> None:
+        # If we've got a screen to hand...
+        if self.screen is not None:
+            try:
+                # ...see if it has a toast rack.
+                toast_rack = self.screen.get_child_by_type(ToastRack)
+            except NoMatches:
+                # It doesn't. That's fine. Either there won't ever be one,
+                # or one will turn up. Things will work out later.
+                return
+            # Update the toast rack.
+            toast_rack.add_toast(*self._notifications)
+
     def notify(
         self,
         message: str,
@@ -2793,14 +2806,4 @@ class App(Generic[ReturnType], DOMNode):
         """
         # Add the notification to the list of in-play notifications.
         self._notifications.add(Notification(message, title, severity))
-        # If we've got a screen to hand...
-        if self.screen is not None:
-            try:
-                # ...see if it has a toast rack.
-                toast_rack = self.screen.get_child_by_type(ToastRack)
-            except NoMatches:
-                # It doesn't. That's fine. Either there won't ever be one,
-                # or one will turn up. Things will work out later.
-                return
-            # Update the toast rack.
-            toast_rack.add_toast(*self._notifications)
+        self._refresh_notifications()
