@@ -24,23 +24,23 @@ class Toast(Static, inherit_css=False):
         padding: 1;
     }
 
-    Toast.information {
+    Toast.-information {
         border-top: panel $success;
         background: $success 20%;
     }
 
-    Toast.warning {
+    Toast.-warning {
         border-top: panel $warning;
         background: $warning 20%;
 
     }
 
-    Toast.error {
+    Toast.-error {
         border-top: panel $error;
         background: $error 20%;
     }
 
-    Toast.empty-title {
+    Toast.-empty-title {
         border: none;
     }
     """
@@ -52,7 +52,7 @@ class Toast(Static, inherit_css=False):
             notification: The notification to show in the toast.
         """
         super().__init__(
-            Text.from_markup(notification.message), classes=notification.severity
+            Text.from_markup(notification.message), classes=f"-{notification.severity}"
         )
         self.border_title = Text.from_markup(
             notification.title
@@ -60,7 +60,7 @@ class Toast(Static, inherit_css=False):
             else notification.severity.capitalize()
         )
         if not self.border_title:
-            self.add_class("empty-title")
+            self.add_class("-empty-title")
         self._timeout = notification.time_left
 
     def _on_mount(self, _: Mount) -> None:
