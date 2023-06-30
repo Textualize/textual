@@ -25,18 +25,18 @@ class Toast(Static, inherit_css=False):
     }
 
     Toast.information {
-        border: panel $success;
+        border-top: panel $success;
         background: $success 20%;
     }
 
     Toast.warning {
-        border: panel $warning;
+        border-top: panel $warning;
         background: $warning 20%;
 
     }
 
     Toast.error {
-        border: panel $error;
+        border-top: panel $error;
         background: $error 20%;
     }
     """
