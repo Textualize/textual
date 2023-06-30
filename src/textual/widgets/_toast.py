@@ -4,11 +4,22 @@ from __future__ import annotations
 
 from rich.text import Text
 
+from .. import on
 from ..containers import Container
 from ..css.query import NoMatches
 from ..events import Click, Mount
 from ..notifications import Notification
 from ._static import Static
+
+
+class RightAlignToast(Container, inherit_css=False):
+    DEFAULT_CSS = """
+    RightAlignToast {
+        align-horizontal: right;
+        width: 1fr;
+        height: auto;
+    }
+    """
 
 
 class Toast(Static, inherit_css=False):
@@ -65,27 +76,15 @@ class Toast(Static, inherit_css=False):
 
     def _on_mount(self, _: Mount) -> None:
         """Set the time running once the toast is mounted."""
-        # https://github.com/Textualize/textual/issues/2854
         self.set_timer(self._timeout, self._expire)
 
+    @on(Click)
     def _expire(self) -> None:
         """Remove the toast once the timer has expired."""
-        # https://github.com/Textualize/textual/issues/2854
-        self.remove()
-
-    def _on_click(self, _: Click) -> None:
-        """Remove the toast when the user clicks on it."""
-        self.remove()
-
-
-class RightAlignToast(Container, inherit_css=False):
-    DEFAULT_CSS = """
-    RightAlignToast {
-        align-horizontal: right;
-        width: 1fr;
-        height: auto;
-    }
-    """
+        # Note that we attempt to remove our parent, because we're wrapped
+        # inside an alignment container. The testing that we are is as much
+        # to keep type checkers happy as anything else.
+        (self.parent if isinstance(self.parent, RightAlignToast) else self).remove()
 
 
 class ToastRack(Container, inherit_css=False):
