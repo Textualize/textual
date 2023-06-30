@@ -112,7 +112,7 @@ class ToastRack(Container, inherit_css=False):
         """Add a toast to the display.
 
         Args:
-            notification: The notification to build the toast from.
+            notifications: The notifications to build the toasts from.
         """
 
         # Gather up all the notifications that we don't have toasts for yet.
