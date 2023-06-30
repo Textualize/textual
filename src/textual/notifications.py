@@ -89,32 +89,3 @@ class Notifications:
 
     def __iter__(self) -> Iterator[Notification]:
         return iter(self._reap()._notifications)
-
-
-if __name__ == "__main__":
-    from textual import on
-    from textual.app import App, ComposeResult
-    from textual.widgets import Button, Pretty
-
-    class Notifier(Pretty):
-        def __init__(self) -> None:
-            self.notifications = Notifications()
-            super().__init__(list(self.notifications))
-            self.set_interval(0.1, self._show_notifications)
-
-        def add(self) -> None:
-            self.notifications.add(Notification("Hello"))
-
-        def _show_notifications(self) -> None:
-            self.update(list(self.notifications))
-
-    class TestApp(App[None]):
-        def compose(self) -> ComposeResult:
-            yield Button("Add another notification")
-            yield Notifier()
-
-        @on(Button.Pressed)
-        def add(self) -> None:
-            self.query_one(Notifier).add()
-
-    TestApp().run()
