@@ -55,7 +55,7 @@ class Toast(Static, inherit_css=False):
             if notification.title is not None
             else notification.severity.capitalize()
         )
-        self._timeout = notification.timeout
+        self._timeout = notification.time_left
 
     def _on_mount(self, _: Mount) -> None:
         """Set the time running once the toast is mounted."""
