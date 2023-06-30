@@ -36,7 +36,7 @@ from .css.parse import parse_selectors
 from .css.query import NoMatches, QueryType
 from .dom import DOMNode
 from .geometry import Offset, Region, Size
-from .notifications import SeverityLevel
+from .notifications import Notification, SeverityLevel
 from .reactive import Reactive
 from .renderables.background_screen import BackgroundScreen
 from .renderables.blank import Blank
@@ -946,6 +946,7 @@ class Screen(Generic[ScreenResultType], Widget):
         *,
         title: str | None = None,
         severity: SeverityLevel = "information",
+        timeout: float = Notification.timeout,
     ) -> None:
         """Create a notification.
 
@@ -953,8 +954,9 @@ class Screen(Generic[ScreenResultType], Widget):
             message: The message for the notification.
             title: The title for the notification.
             severity: The severity of the notification.
+            timeout: The timeout for the notification.
         """
-        self.app.notify(message, title=title, severity=severity)
+        self.app.notify(message, title=title, severity=severity, timeout=timeout)
 
 
 @rich.repr.auto

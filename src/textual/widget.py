@@ -61,7 +61,7 @@ from .geometry import NULL_REGION, NULL_SPACING, Offset, Region, Size, Spacing, 
 from .layouts.vertical import VerticalLayout
 from .message import Message
 from .messages import CallbackType
-from .notifications import SeverityLevel
+from .notifications import Notification, SeverityLevel
 from .reactive import Reactive
 from .render import measure
 from .strip import Strip
@@ -3248,6 +3248,7 @@ class Widget(DOMNode):
         *,
         title: str | None = None,
         severity: SeverityLevel = "information",
+        timeout: float = Notification.timeout,
     ) -> None:
         """Create a notification.
 
@@ -3255,5 +3256,6 @@ class Widget(DOMNode):
             message: The message for the notification.
             title: The title for the notification.
             severity: The severity of the notification.
+            timeout: The timeout for the notification.
         """
-        self.app.notify(message, title=title, severity=severity)
+        self.app.notify(message, title=title, severity=severity, timeout=timeout)

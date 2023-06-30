@@ -2796,6 +2796,7 @@ class App(Generic[ReturnType], DOMNode):
         *,
         title: str | None = None,
         severity: SeverityLevel = "information",
+        timeout: float = Notification.timeout,
     ) -> None:
         """Create a notification.
 
@@ -2803,7 +2804,8 @@ class App(Generic[ReturnType], DOMNode):
             message: The message for the notification.
             title: The title for the notification.
             severity: The severity of the notification.
+            timeout: The timeout for the notification.
         """
         # Add the notification to the list of in-play notifications.
-        self._notifications.add(Notification(message, title, severity))
+        self._notifications.add(Notification(message, title, severity, timeout))
         self._refresh_notifications()
