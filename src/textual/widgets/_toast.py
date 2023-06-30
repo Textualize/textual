@@ -108,13 +108,11 @@ class ToastRack(Container, inherit_css=False):
         Args:
             notification: The notification to build the toast from.
         """
-        try:
+        # It's possible (and sort of encouraged) that we're being asked to
+        # show the same notification again. If this happens we make that a
+        # no-op.
+        if not self.query(f"#{self._toast_id(notification)}"):
             self.mount(
                 RightAlignToast(Toast(notification), id=self._toast_id(notification))
             )
-        except DuplicateIds:
-            # An attempt to mount the same ID again suggest an inadvertent
-            # attempt to show the same notification twice. This would imply
-            # that we've shown it, so let's no-op that.
-            return
-        self.call_later(self.scroll_end, animate=False, force=True)
+            self.call_later(self.scroll_end, animate=False, force=True)
