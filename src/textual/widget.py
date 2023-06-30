@@ -3241,3 +3241,19 @@ class Widget(DOMNode):
         if not self.allow_vertical_scroll:
             raise SkipAction()
         self.scroll_page_up()
+
+    def notify(
+        self,
+        message: str,
+        *,
+        title: str | None = None,
+        severity: SeverityLevel = "information",
+    ) -> None:
+        """Create a notification.
+
+        Args:
+            message: The message for the notification.
+            title: The title for the notification.
+            severity: The severity of the notification.
+        """
+        self.app.notify(message, title=title, severity=severity)
