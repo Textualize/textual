@@ -806,9 +806,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return self.get_cell(row_key, column_key)
 
     def get_cell_coordinate(
-        self,
-        row_key : RowKey | str,
-        column_key : Column | str
+        self, row_key: RowKey | str, column_key: Column | str
     ) -> Coordinate:
         """Given a row key and column key, return the corresponding cell coordinate.
 
@@ -822,14 +820,16 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Raises:
             CellDoesNotExist: If the specified cell does not exist.
         """
-        if row_key not in self._row_locations or column_key not in self._column_locations:
+        if (
+            row_key not in self._row_locations
+            or column_key not in self._column_locations
+        ):
             raise CellDoesNotExist(
                 f"No cell exists for row_key={row_key!r}, column_key={column_key!r}."
             )
         row_index = self._row_locations.get(row_key)
         column_index = self._column_locations.get(column_key)
         return Coordinate(row_index, column_index)
-
 
     def get_row(self, row_key: RowKey | str) -> list[CellType]:
         """Get the values from the row identified by the given row key.
@@ -870,7 +870,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         row_key = self._row_locations.get_key(row_index)
         return self.get_row(row_key)
 
-    def get_row_index(self, row_key : RowKey | str) -> int:
+    def get_row_index(self, row_key: RowKey | str) -> int:
         """Return the current index for the row identified by row_key.
 
         Args:
@@ -924,7 +924,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         column_key = self._column_locations.get_key(column_index)
         yield from self.get_column(column_key)
 
-    def get_column_index(self, column_key : ColumnKey | str) -> int:
+    def get_column_index(self, column_key: ColumnKey | str) -> int:
         """Return the current index for the column identified by column_key.
 
         Args:
