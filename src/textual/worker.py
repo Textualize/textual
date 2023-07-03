@@ -244,6 +244,11 @@ class Worker(Generic[ResultType]):
         """The result of the worker, or `None` if there is no result."""
         return self._result
 
+    @property
+    def error(self) -> BaseException | None:
+        """The exception raised by the worker, or `None` if there was no error."""
+        return self._error
+
     def update(
         self, completed_steps: int | None = None, total_steps: int | None = -1
     ) -> None:

@@ -143,6 +143,11 @@ def test_datatable_style_ordering(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_style_order.py")
 
 
+def test_datatable_add_column(snap_compare):
+    # Checking adding columns after adding rows
+    assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_add_column.py")
+
+
 def test_footer_render(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "footer.py")
 

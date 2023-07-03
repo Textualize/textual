@@ -1,6 +1,8 @@
 # Opacity
 
-The `opacity` style sets the opacity/transparency of a widget.
+The `opacity` style sets the opacity of a widget.
+
+While terminals are not capable of true opacity, Textual can create an approximation by blending widgets with their background color.
 
 ## Syntax
 
@@ -9,9 +11,12 @@ opacity: <a href="../../css_types/number">&lt;number&gt;</a> | <a href="../../cs
 --8<-- "docs/snippets/syntax_block_end.md"
 
 The opacity of a widget can be set as a [`<number>`](../css_types/number.md) or a [`<percentage>`](../css_types/percentage.md).
-`0`/`0%` means no opacity, which is equivalent to full transparency.
-Conversely, `1`/`100%` means full opacity, which is equivalent to no transparency.
-Values outside of these ranges will be clamped.
+If given as a number, then `opacity` should be a value between 0 and 1, where 0 is the background color and 1 is fully opaque.
+If given as a percentage, 0% is the background color and 100% is fully opaque.
+
+Typically, if you set this value it would be somewhere between the two extremes.
+For instance, setting the opacity of a widget to `70%` will make it appear dimmer than surrounding widgets, which could be used to display a *disabled* state.
+
 
 ## Example
 
