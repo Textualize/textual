@@ -1912,14 +1912,14 @@ pytest = ">=5.1.0,<8.0.0"
 
 [[package]]
 name = "textual-dev"
-version = "0.1.0"
+version = "1.0.0"
 description = "Development tools for working with Textual"
 category = "dev"
 optional = false
 python-versions = ">=3.7,<4.0"
 files = [
-    {file = "textual_dev-0.1.0-py3-none-any.whl", hash = "sha256:d56eef604e53bf444dd90fdadbf8bf4efe9ecc3b28665374af49042078d4c321"},
-    {file = "textual_dev-0.1.0.tar.gz", hash = "sha256:ba27f9ea85b7a0e191f66cf346fe5355a60fdcc5ae82668417cdf49869c361f8"},
+    {file = "textual_dev-1.0.0-py3-none-any.whl", hash = "sha256:af6ca102bd46cf5115a108329cdfe1c7aec26cab81e83fd78d884648ad84e23b"},
+    {file = "textual_dev-1.0.0.tar.gz", hash = "sha256:1aa32f58976eb63078d2b8454e2d40a7806d7b205e3ee89e34ca2941548dbbd8"},
 ]
 
 [package.dependencies]
@@ -2293,4 +2293,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.7"
-content-hash = "5e0cfd9e3a2f59756e8c5fa6b8072eaf7e8de7d29b52f8fc22bf086e0401f846"
+content-hash = "652f05ae0b8df5f39af720c34bfb222e514e1b17afbf0eb10738946651c293e1"
