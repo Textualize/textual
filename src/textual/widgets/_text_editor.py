@@ -74,7 +74,7 @@ TextEditor > .text-editor--active-line {
 
         # --- Core editor data
         self.document_lines: list[str] = []
-        """Each string in this list represents a line in the document."""
+        """Each string in this list represents a line in the document. Includes new line characters."""
 
         self._highlights: dict[int, list[Highlight]] = defaultdict(list)
         """Mapping line numbers to the set of cached highlights for that line."""
@@ -291,18 +291,27 @@ TextEditor > .text-editor--active-line {
                 if cursor.goto_next_sibling():
                     retracing = False
 
-    # --- Key handling
+    # --- Lower level event/key handling
     def _on_key(self, event: events.Key) -> None:
-        if event.is_printable:
+        log.debug(f"{event!r}")
+        key = event.key
+        if event.is_printable or key == "tab":
+            if key == "tab":
+                insert = "    "
+            else:
+                insert = event.character
             event.stop()
             assert event.character is not None
-            self.insert_text_at_cursor(event.character)
+            self.insert_text(insert)
             event.prevent_default()
+        elif key == "enter":
+            self.split_line()
 
-        if event.key == "tab":
-            event.stop()
-            self.insert_text_at_cursor("    ")
-            event.prevent_default()
+    def _on_paste(self, event: events.Paste) -> None:
+        text = event.text
+        if text:
+            self.insert_text(text)
+        event.stop()
 
     # --- Reactive watchers and validators
     # def validate_cursor_position(self, new_position: tuple[int, int]) -> tuple[int, int]:
@@ -313,17 +322,21 @@ TextEditor > .text-editor--active-line {
 
     def watch_cursor_position(self, new_position: tuple[int, int]) -> None:
         log.debug("scrolling cursor into view")
-        row, column = new_position
+        self.scroll_cursor_visible()
+
+    def watch_virtual_size(self, vs):
+        log.debug(f"new virtual_size = {vs!r}")
+
+    # --- Cursor utilities
+
+    def scroll_cursor_visible(self):
+        row, column = self.cursor_position
         self.scroll_to_region(
             Region(x=column, y=row, width=1, height=1),
             animate=False,
             origin_visible=False,
         )
 
-    def watch_virtual_size(self, vs):
-        log.debug(f"new virtual_size = {vs!r}")
-
-    # --- Cursor utilities
     @property
     def cursor_at_first_row(self) -> bool:
         return self.cursor_position[0] == 0
@@ -432,39 +445,65 @@ TextEditor > .text-editor--active-line {
         self.cursor_to_line_start()
 
     # --- Editor operations
-    def insert_text_at_cursor(self, text: str) -> None:
+    def insert_text(self, text: str) -> None:
         log.debug(f"insert {text!r} at {self.cursor_position!r}")
         cursor_row, cursor_column = self.cursor_position
-        old_text = self.document_lines[cursor_row]
 
-        # TODO: If the text has newline characters, this operation becomes
-        #  more complex.
-        new_text = old_text[:cursor_column] + text + old_text[cursor_column:]
-        self.document_lines[cursor_row] = new_text
-        # cursor_row, cursor_column = self.cursor_position
-        # virtual_width, virtual_height = self.virtual_size
-        # if cursor_column > virtual_width:
-        #     virtual_width = cursor_column
-        # if cursor_row > virtual_height:
-        #     virtual_height = cursor_row
-        #
-        # self.virtual_size = Size(virtual_width, virtual_height)
+        lines = self.document_lines
 
+        line = lines[cursor_row]
+        text_before_cursor = line[:cursor_column]
+        text_after_cursor = line[cursor_column:]
+
+        replacement_lines = text.splitlines(keepends=False)
+        replacement_lines[0] = text_before_cursor + replacement_lines[0]
+        end_column = cell_len(replacement_lines[-1])
+        replacement_lines[-1] += text_after_cursor
+
+        lines[cursor_row : cursor_row + 1] = replacement_lines
+
+        longest_modified_line = max(cell_len(line) for line in replacement_lines)
         virtual_width, virtual_height = self.virtual_size
-        new_row_cell_length = cell_len(new_text)
 
         # The virtual width of the row is the cell length of the text in the row
         # plus 1 to accommodate for a cursor potentially "resting" at the end of the row.
-        row_virtual_width = new_row_cell_length + 1
-        if row_virtual_width > virtual_width:
-            # TODO: The virtual height may change if the inserted text
-            #  contains newline characters. We should count them an increment
-            #  by that number.
-            self.virtual_size = Size(row_virtual_width, virtual_height)
+        insertion_virtual_width = longest_modified_line + 1
 
-        self.cursor_position = (cursor_row, cursor_column + cell_len(text))
+        new_virtual_width = max(insertion_virtual_width, virtual_width)
+        new_virtual_height = len(lines)
+
+        self.virtual_size = Size(new_virtual_width, new_virtual_height)
+
+        print("final_insert = ", replacement_lines)
+
+        # TODO: Update the cursor column (length of final insert line?)
+        self.cursor_position = (cursor_row + len(replacement_lines) - 1, end_column)
         self.refresh()
         # TODO: Need to update the AST to inform it of the edit operation
+
+    def split_line(self):
+        cursor_row, cursor_column = self.cursor_position
+        lines = self.document_lines
+
+        line = lines[cursor_row]
+        text_before_cursor = line[:cursor_column]
+        text_after_cursor = line[cursor_column:]
+
+        lines = (
+            lines[:cursor_row]
+            + [text_before_cursor, text_after_cursor]
+            + lines[cursor_row + 1 :]
+        )
+
+        self.document_lines = lines
+
+        # Update virtual size and cursor position
+        self.cursor_position = (cursor_row + 1, 0)
+        width, height = self.virtual_size
+
+        # If this line was responsible for the document virtual width
+        if width == cell_len(line) + 1:
+            self.virtual_size = self._get_document_size(lines)
 
     def delete_left(self) -> None:
         log.debug(f"delete left at {self.cursor_position!r}")
