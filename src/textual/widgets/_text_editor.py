@@ -201,7 +201,7 @@ TextEditor > .text-editor--active-line {
         )
         strip = (
             Strip(segments)
-            .crop(int(self.scroll_x), int(self.scroll_x) + self.virtual_size.width + 1)
+            .crop(int(self.scroll_x), int(self.scroll_x) + self.virtual_size.width)
             .simplify()
         )
 
