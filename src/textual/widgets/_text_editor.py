@@ -174,7 +174,7 @@ TextEditor > .text-editor--active-line {
             return Strip.blank(self.size.width)
 
         line_string = document_lines[document_y].replace("\n", "").replace("\r", "")
-        line_text = Text(f"{line_string} ", end="")
+        line_text = Text(f"{line_string} ", end="", tab_size=4)
         line_text.set_length(self.virtual_size.width)
 
         # Apply highlighting to the line if necessary.
@@ -299,6 +299,9 @@ TextEditor > .text-editor--active-line {
             self.insert_text_at_cursor(event.character)
             event.prevent_default()
             self.refresh()
+
+        if event.key == "tab":
+            self.insert_text_at_cursor("    ")
 
     # --- Reactive watchers and validators
     # def validate_cursor_position(self, new_position: tuple[int, int]) -> tuple[int, int]:
