@@ -104,7 +104,7 @@ class SuggestFromList(Suggester):
     """
 
     def __init__(
-        self, suggestions: Iterable[str], *, case_sensitive: bool = True
+            self, suggestions: Iterable[str], *, case_sensitive: bool = True
     ) -> None:
         """Creates a suggester based off of a given iterable of possibilities.
 
@@ -135,4 +135,20 @@ class SuggestFromList(Suggester):
         for idx, suggestion in enumerate(self._for_comparison):
             if suggestion.startswith(value):
                 return self._suggestions[idx]
+        return None
+
+
+class SuggestLastWordFromList(SuggestFromList):
+    """
+        Give suggestions for completing each last word in the text based on a fixed list of options.
+    """
+
+    async def get_suggestion(self, value: str) -> str | None:
+        if not value.endswith(' '):
+            values = value.rsplit(' ', 1)
+            last_word = values[-1]
+            for idx, suggestion in enumerate(self._for_comparison):
+                if suggestion.startswith(last_word):
+                    values[-1] = self._suggestions[idx]
+                    return ' '.join(values)
         return None
