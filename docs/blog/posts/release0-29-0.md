@@ -3,18 +3,18 @@ draft: false
 date: 2023-07-03
 categories:
   - Release
-title: "Textual 0.27.0 refactors dev tools"
+title: "Textual 0.29.0 refactors dev tools"
 authors:
   - willmcgugan
 ---
 
-# Textual 0.27.0 refactors dev tools
+# Textual 0.29.0 refactors dev tools
 
 It's been a slow week or two at Textualize, with Textual devs taking well-earned annual leave, but we still managed to get a new version out.
 
 <!-- more -->
 
-Version 0.27.0 has shipped with a number of fixes (see the [release notes](https://github.com/Textualize/textual/releases/tag/v0.29.0) for details), but I'd like to use this post to explain a change we made to how Textual developer tools are distributed.
+Version 0.29.0 has shipped with a number of fixes (see the [release notes](https://github.com/Textualize/textual/releases/tag/v0.29.0) for details), but I'd like to use this post to explain a change we made to how Textual developer tools are distributed.
 
 Previously if you installed `textual[dev]` you would get the Textual dev tools plus the library itself. If you were distributing Textual apps and didn't need the developer tools you could drop the `[dev]`.
 
