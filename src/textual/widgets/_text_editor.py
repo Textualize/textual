@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from pathlib import Path
-from typing import Iterable, NamedTuple
+from typing import ClassVar, Iterable, NamedTuple
 
 from rich.segment import Segment
 from rich.style import Style
@@ -31,6 +31,18 @@ class Highlight(NamedTuple):
 
 
 class TextEditor(ScrollView, can_focus=True):
+    DEFAULT_CSS = """\
+TextEditor > .text-editor--active-line {
+    background: $success;
+}
+"""
+
+    COMPONENT_CLASSES: ClassVar[set[str]] = {
+        "text-editor--active-line",
+        "text-editor--active-line-gutter",
+        "text-editor--gutter",
+    }
+
     BINDINGS = [
         # Cursor movement
         Binding("up", "cursor_up", "cursor up", show=False),
@@ -46,8 +58,10 @@ class TextEditor(ScrollView, can_focus=True):
 
     language: Reactive[str | None] = reactive(None)
     """The language to use for syntax highlighting (via tree-sitter)."""
-    cursor_position = reactive((0, 0), always_update=True)
+    cursor_position: Reactive[tuple[int, int]] = reactive((0, 0), always_update=True)
     """The cursor position (zero-based line_index, offset)."""
+    show_line_numbers: Reactive[bool] = reactive(True)
+    """True to show line number gutter, otherwise False."""
 
     def __init__(
         self,
@@ -132,7 +146,16 @@ class TextEditor(ScrollView, can_focus=True):
         self.document_lines = lines
 
         # TODO Offer maximum line width and wrap if needed
-        self.virtual_size = self._get_document_size(lines)
+        virtual_size = self._get_document_size(lines)
+        width, height = virtual_size
+        if self.show_line_numbers:
+            total_gutter_padding = 2
+            gutter_width = len(str(len(lines) + 1)) + total_gutter_padding
+            virtual_size = Size(
+                width + gutter_width + self.scrollbar_size_vertical, height
+            )
+
+        self.virtual_size = virtual_size
 
         # TODO - clear caches
         if self._parser is not None:
@@ -141,6 +164,7 @@ class TextEditor(ScrollView, can_focus=True):
 
         log.debug(f"loaded text. parser = {self._parser} ast = {self._ast}")
 
+    # --- Methods for measuring things (e.g. virtual sizes)
     def _get_document_size(self, document_lines: list[str]) -> Size:
         width = max(cell_len(line) for line in document_lines)
         height = len(document_lines)
@@ -163,6 +187,7 @@ class TextEditor(ScrollView, can_focus=True):
 
         line_string = document_lines[document_y].replace("\n", "").replace("\r", "")
         line_text = Text(f"{line_string} ", end="")
+        line_text.set_length(self.virtual_size.width)
 
         # Apply highlighting to the line if necessary.
         if self._highlights:
@@ -177,6 +202,7 @@ class TextEditor(ScrollView, can_focus=True):
             line_text.stylize(
                 Style(color="black", bgcolor="white"), cursor_column, cursor_column + 1
             )
+            line_text.stylize_before(Style(bgcolor="#363636"))
 
         # We need to render according to the virtual size otherwise the rendering
         # will wrap the text content incorrectly.
@@ -185,8 +211,7 @@ class TextEditor(ScrollView, can_focus=True):
         )
         strip = (
             Strip(segments)
-            .adjust_cell_length(self.virtual_size.width)
-            .crop(int(self.scroll_x), int(self.scroll_x) + self.virtual_size.width)
+            .crop(int(self.scroll_x), int(self.scroll_x) + self.virtual_size.width + 1)
             .simplify()
         )
 
@@ -217,6 +242,9 @@ class TextEditor(ScrollView, can_focus=True):
             document: The document as a list of strings.
             line_range: The start and end line index that is visible. If None, highlight the whole document.
         """
+
+        # TODO: Instead of traversing the AST, use AST queries and the
+        #  .scm files from tree-sitter GitHub org for highlighting.
 
         reached_root = False
 
@@ -276,7 +304,7 @@ class TextEditor(ScrollView, can_focus=True):
                     retracing = False
 
     # --- Key handling
-    async def _on_key(self, event: events.Key) -> None:
+    def _on_key(self, event: events.Key) -> None:
         if event.is_printable:
             event.stop()
             assert event.character is not None
@@ -292,7 +320,16 @@ class TextEditor(ScrollView, can_focus=True):
     #     return clamped_row, clamped_column
 
     def watch_cursor_position(self, new_position: tuple[int, int]) -> None:
-        self.scroll_cursor_into_view()
+        log.debug("scrolling cursor into view")
+        row, column = new_position
+        self.scroll_to_region(
+            Region(x=column, y=row, width=1, height=1),
+            animate=False,
+            origin_visible=False,
+        )
+
+    def watch_virtual_size(self, vs):
+        log.debug(f"new virtual_size = {vs!r}")
 
     # --- Cursor utilities
     @property
@@ -330,13 +367,6 @@ class TextEditor(ScrollView, can_focus=True):
     def cursor_to_line_start(self) -> None:
         cursor_row, cursor_column = self.cursor_position
         self.cursor_position = (cursor_row, 0)
-
-    def scroll_cursor_into_view(self) -> None:
-        """Scroll the cursor into view."""
-        cursor_row, cursor_column = self.cursor_position
-        self.scroll_to_region(
-            Region(x=cursor_column, y=cursor_row, width=1, height=1), animate=False
-        )
 
     # ------ Cursor movement actions
     def action_cursor_left(self) -> None:
@@ -419,7 +449,6 @@ class TextEditor(ScrollView, can_focus=True):
         #  more complex.
         new_text = old_text[:cursor_column] + text + old_text[cursor_column:]
         self.document_lines[cursor_row] = new_text
-        self.cursor_position = (cursor_row, cursor_column + cell_len(text))
         # cursor_row, cursor_column = self.cursor_position
         # virtual_width, virtual_height = self.virtual_size
         # if cursor_column > virtual_width:
@@ -431,17 +460,17 @@ class TextEditor(ScrollView, can_focus=True):
 
         virtual_width, virtual_height = self.virtual_size
         new_row_cell_length = cell_len(new_text)
-        if new_row_cell_length > virtual_width:
+
+        # The virtual width of the row is the cell length of the text in the row
+        # plus 1 to accommodate for a cursor potentially "resting" at the end of the row.
+        row_virtual_width = new_row_cell_length + 1
+        if row_virtual_width > virtual_width:
             # TODO: The virtual height may change if the inserted text
             #  contains newline characters. We should count them an increment
             #  by that number.
+            self.virtual_size = Size(row_virtual_width, virtual_height)
 
-            # TODO: Does the virtual size need to account for the scrollbar width
-            #  to ensure that the text never gets hidden behind the scrollbar?
-            self.virtual_size = Size(
-                new_row_cell_length + self.scrollbar_size_vertical + 1, virtual_height
-            )
-
+        self.cursor_position = (cursor_row, cursor_column + cell_len(text))
         self.refresh()
         # TODO: Need to update the AST to inform it of the edit operation
 
@@ -492,9 +521,7 @@ document rows {len(self.document_lines)}"""
 highlight cache keys (rows) {len(self._highlights)}
 highlight cache total size {sum(len(highlights) for key, highlights in self._highlights.items())}
 current row highlight cache size {len(self._highlights[self.cursor_position[0]])}
-
-[b]current row highlights[/]
-{self._highlights[self.cursor_position[0]]}"""
+"""
 
 
 if __name__ == "__main__":
