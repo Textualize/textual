@@ -20,6 +20,8 @@ Textual requires Python 3.7 or later (if you have a choice, pick the most recent
 
 ## Installation
 
+### From PyPI
+
 You can install Textual via PyPI, with the following command:
 
 ```
@@ -30,6 +32,20 @@ If you plan on developing Textual apps, you should also install textual develope
 
 ```
 pip install textual-dev
+```
+
+### From conda-forge
+
+Textual is also available on [conda-forge](https://conda-forge.org/). The preferred package manager for conda-forge is currently [micromamba](https://mamba.readthedocs.io/en/latest/installation.html#micromamba):
+
+```
+micromamba install -c conda-forge textual
+```
+
+And for the textual developer tools:
+
+```
+micromamba install -c conda-forge textual-dev
 ```
 
 ### Textual CLI
