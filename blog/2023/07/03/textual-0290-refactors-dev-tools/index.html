@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://textual.textualize.io/blog/2023/07/03/textual-0270-refactors-dev-tools/">
+        <link rel="canonical" href="https://textual.textualize.io/blog/2023/07/03/textual-0290-refactors-dev-tools/">
       
       
         <link rel="prev" href="../../../06/06/to-tui-or-not-to-tui/">
@@ -26,7 +26,7 @@
     
     
       
-        <title>Textual 0.27.0 refactors dev tools - Textual</title>
+        <title>Textual 0.29.0 refactors dev tools - Textual</title>
       
     
     
@@ -69,9 +69,9 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@textualizeio">
 <meta name="twitter:creator" content="@willmcgugan">
-<meta property="og:title" content="Textual - Textual 0.27.0 refactors dev tools">
+<meta property="og:title" content="Textual - Textual 0.29.0 refactors dev tools">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://textual.textualize.io/blog/2023/07/03/textual-0270-refactors-dev-tools/">
+<meta property="og:url" content="https://textual.textualize.io/blog/2023/07/03/textual-0290-refactors-dev-tools/">
 <meta property="og:site_name" content="Textual Documentation">
 <meta property="og:description" content="Textual is a TUI framework for Python, inspired by modern web development.">
 <meta property="og:image" content="https://raw.githubusercontent.com/Textualize/textual/main/imgs/textual.png">
@@ -109,7 +109,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#textual-0270-refactors-dev-tools" class="md-skip">
+        <a href="#textual-0290-refactors-dev-tools" class="md-skip">
           Skip to content
         </a>
       
@@ -144,7 +144,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Textual 0.27.0 refactors dev tools
+              Textual 0.29.0 refactors dev tools
             
           </span>
         </div>
@@ -6607,11 +6607,11 @@
   
 
 
-<h1 id="textual-0270-refactors-dev-tools">Textual 0.27.0 refactors dev tools<a class="headerlink" href="#textual-0270-refactors-dev-tools" title="Permanent link">&para;</a></h1>
+<h1 id="textual-0290-refactors-dev-tools">Textual 0.29.0 refactors dev tools<a class="headerlink" href="#textual-0290-refactors-dev-tools" title="Permanent link">&para;</a></h1>
 <p>It's been a slow week or two at Textualize, with Textual devs taking well-earned annual leave, but we still managed to get a new version out.</p>
 <!-- more -->
 
-<p>Version 0.27.0 has shipped with a number of fixes (see the <a href="https://github.com/Textualize/textual/releases/tag/v0.29.0">release notes</a> for details), but I'd like to use this post to explain a change we made to how Textual developer tools are distributed.</p>
+<p>Version 0.29.0 has shipped with a number of fixes (see the <a href="https://github.com/Textualize/textual/releases/tag/v0.29.0">release notes</a> for details), but I'd like to use this post to explain a change we made to how Textual developer tools are distributed.</p>
 <p>Previously if you installed <code>textual[dev]</code> you would get the Textual dev tools plus the library itself. If you were distributing Textual apps and didn't need the developer tools you could drop the <code>[dev]</code>.</p>
 <p>We did this because the less dependencies a package has, the fewer installation issues you can expect to get in the future. And Textual is surprisingly lean if you only need to <em>run</em> apps, and not build them.</p>
 <p>Alas, this wasn't quite as elegant solution as we hoped. The dependencies defined in extras wouldn't install commands, so <code>textual</code> was bundled with the core library. This meant that if you installed the Textual package <em>without</em> the <code>[dev]</code> you would still get the <code>textual</code> command on your path but it wouldn't run.</p>
