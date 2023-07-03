@@ -6867,8 +6867,8 @@ A bullet point summary of the formats available follows:</p>
 <li>a recognised <a href="#named-colors">named color</a> (e.g., <code>red</code>);</li>
 <li>a 3 or 6 hexadecimal digit number representing the <a href="#hex-rgb-value">RGB values</a> of the color (e.g., <code>#F35573</code>);</li>
 <li>a 4 or 8 hexadecimal digit number representing the <a href="#hex-rgba-value">RGBA values</a> of the color (e.g., <code>#F35573A0</code>);</li>
-<li>a color description in the RGB system, <a href="#rgba-description">with</a> or <a href="#rgb-description">without</a> transparency (e.g., <code>rgb(23, 78, 200)</code>);</li>
-<li>a color description in the HSL system, <a href="#hsla-description">with</a> or <a href="#hsl-description">without</a> transparency (e.g., <code>hsl(290, 70%, 80%)</code>);</li>
+<li>a color description in the RGB system, <a href="#rgba-description">with</a> or <a href="#rgb-description">without</a> opacity (e.g., <code>rgb(23, 78, 200)</code>);</li>
+<li>a color description in the HSL system, <a href="#hsla-description">with</a> or <a href="#hsl-description">without</a> opacity (e.g., <code>hsl(290, 70%, 80%)</code>);</li>
 </ul>
 <p><a href="../../guide/design#theme-reference">Textual's default themes</a> also provide many CSS variables with colors that can be used out of the box.</p>
 <h3 id="named-colors">Named colors<a class="headerlink" href="#named-colors" title="Permanent link">&para;</a></h3>
@@ -7625,10 +7625,10 @@ Casing is ignored.</p>
 <p>In a 3 digit color, each channel is represented by a single digit which is duplicated when converting to the 6 digit format.
 For example, the color <code>#A2F</code> is the same as <code>#AA22FF</code>.</p>
 <h3 id="hex-rgba-value">Hex RGBA value<a class="headerlink" href="#hex-rgba-value" title="Permanent link">&para;</a></h3>
-<p>This is the same as the <a href="#hex-rgb-value">hex RGB value</a>, but with an extra channel for the alpha component (that sets transparency).</p>
+<p>This is the same as the <a href="#hex-rgb-value">hex RGB value</a>, but with an extra channel for the alpha component (that sets opacity).</p>
 <ul>
-<li>If 8 digits are used, the format is <code>#RRGGBBAA</code>, equivalent to the format <code>#RRGGBB</code> with two extra digits for transparency.</li>
-<li>If 4 digits are used, the format is <code>#RGBA</code>, equivalent to the format <code>#RGB</code> with an extra digit for transparency.</li>
+<li>If 8 digits are used, the format is <code>#RRGGBBAA</code>, equivalent to the format <code>#RRGGBB</code> with two extra digits for opacity.</li>
+<li>If 4 digits are used, the format is <code>#RGBA</code>, equivalent to the format <code>#RGB</code> with an extra digit for opacity.</li>
 </ul>
 <h3 id="rgb-description"><code>rgb</code> description<a class="headerlink" href="#rgb-description" title="Permanent link">&para;</a></h3>
 <p>The <code>rgb</code> format description is a functional description of a color in the RGB color space.
@@ -7636,8 +7636,8 @@ This description follows the format <code>rgb(red, green, blue)</code>, where <c
 They represent the value of the channel with the same name.</p>
 <p>For example, <code>rgb(0, 255, 32)</code> is equivalent to <code>#00FF20</code>.</p>
 <h3 id="rgba-description"><code>rgba</code> description<a class="headerlink" href="#rgba-description" title="Permanent link">&para;</a></h3>
-<p>The <code>rgba</code> format description is the same as the <code>rgb</code> with an extra parameter for transparency, which should be a value between <code>0</code> and <code>1</code>.</p>
-<p>For example, <code>rgba(0, 255, 32, 0.5)</code> is the color <code>rgb(0, 255, 32)</code> with 50% transparency.</p>
+<p>The <code>rgba</code> format description is the same as the <code>rgb</code> with an extra parameter for opacity, which should be a value between <code>0</code> and <code>1</code>.</p>
+<p>For example, <code>rgba(0, 255, 32, 0.5)</code> is the color <code>rgb(0, 255, 32)</code> with 50% opacity.</p>
 <h3 id="hsl-description"><code>hsl</code> description<a class="headerlink" href="#hsl-description" title="Permanent link">&para;</a></h3>
 <p>The <code>hsl</code> format description is a functional description of a color in the HSL color space.
 This description follows the format <code>hsl(hue, saturation, lightness)</code>, where</p>
@@ -7648,8 +7648,8 @@ This description follows the format <code>hsl(hue, saturation, lightness)</code>
 </ul>
 <p>For example, the color <code>#00FF20</code> would be represented as <code>hsl(128, 100%, 50%)</code> in the HSL color space.</p>
 <h3 id="hsla-description"><code>hsla</code> description<a class="headerlink" href="#hsla-description" title="Permanent link">&para;</a></h3>
-<p>The <code>hsla</code> format description is the same as the <code>hsl</code> with an extra parameter for transparency, which should be a value between <code>0</code> and <code>1</code>.</p>
-<p>For example, <code>hsla(128, 100%, 50%, 0.5)</code> is the color <code>hsl(128, 100%, 50%)</code> with 50% transparency.</p>
+<p>The <code>hsla</code> format description is the same as the <code>hsl</code> with an extra parameter for opacity, which should be a value between <code>0</code> and <code>1</code>.</p>
+<p>For example, <code>hsla(128, 100%, 50%, 0.5)</code> is the color <code>hsl(128, 100%, 50%)</code> with 50% opacity.</p>
 <h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
 <h3 id="css">CSS<a class="headerlink" href="#css" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">Header</span><span class="w"> </span><span class="err">{</span>

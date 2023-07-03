@@ -640,6 +640,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Installation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Textual CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -658,17 +675,6 @@
     <span class="md-ellipsis">
       
         Examples
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual-cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Textual CLI
       
     </span>
   </a>
@@ -6725,6 +6731,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Installation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Textual CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -6743,17 +6766,6 @@
     <span class="md-ellipsis">
       
         Examples
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual-cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Textual CLI
       
     </span>
   </a>
@@ -6805,16 +6817,20 @@
 <p>The new <a href="https://apps.microsoft.com/store/detail/windows-terminal/9N0DX20HK701?hl=en-gb&amp;gl=GB">Windows Terminal</a> runs Textual apps beautifully.</p>
 </div>
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
-<p>You can install Textual via PyPI.</p>
-<p>If you plan on developing Textual apps, then you should install <code>textual[dev]</code>. The <code>[dev]</code> part installs a few extra dependencies for development.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip install &quot;textual[dev]&quot;
+<p>You can install Textual via PyPI, with the following command:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip install textual
 </code></pre></div>
-<p>If you only plan on <em>running</em> Textual apps, then you can drop the <code>[dev]</code> part:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pip install textual
+<p>If you plan on developing Textual apps, you should also install textual developer tools:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pip install textual-dev
 </code></pre></div>
+<h3 id="textual-cli">Textual CLI<a class="headerlink" href="#textual-cli" title="Permanent link">&para;</a></h3>
+<p>If you installed the developer tools you should have access to the <code>textual</code> command. There are a number of sub-commands available which will aid you in building Textual apps. Run the following for a list of the available commands:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>textual<span class="w"> </span>--help
+</code></pre></div>
+<p>See <a href="../guide/devtools/">devtools</a> for more about the <code>textual</code> command.</p>
 <h2 id="demo">Demo<a class="headerlink" href="#demo" title="Permanent link">&para;</a></h2>
 <p>Once you have Textual installed, run the following to get an impression of what it can do:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>python<span class="w"> </span>-m<span class="w"> </span>textual
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>python<span class="w"> </span>-m<span class="w"> </span>textual
 </code></pre></div>
 <p>If Textual is installed you should see the following:</p>
 <p><svg class="rich-terminal" viewBox="0 0 1568 1343.1999999999998" xmlns="http://www.w3.org/2000/svg">
@@ -7111,28 +7127,23 @@
 <div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">HTTPS</label><label for="__tabbed_1_2">SSH</label><label for="__tabbed_1_3">GitHub CLI</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Textualize/textual.git
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Textualize/textual.git
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:Textualize/textual.git
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:Textualize/textual.git
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>gh<span class="w"> </span>repo<span class="w"> </span>clone<span class="w"> </span>Textualize/textual
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>gh<span class="w"> </span>repo<span class="w"> </span>clone<span class="w"> </span>Textualize/textual
 </code></pre></div>
 </div>
 </div>
 </div>
 <p>With the repository cloned, navigate to the <code>/examples/</code> directory where you will find a number of Python files you can run from the command line:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nb">cd</span><span class="w"> </span>textual/examples/
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>python<span class="w"> </span>code_browser.py<span class="w"> </span>../
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nb">cd</span><span class="w"> </span>textual/examples/
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>python<span class="w"> </span>code_browser.py<span class="w"> </span>../
 </code></pre></div>
-<h2 id="textual-cli">Textual CLI<a class="headerlink" href="#textual-cli" title="Permanent link">&para;</a></h2>
-<p>If you installed the dev dependencies you have access to the <code>textual</code> CLI command. There are a number of sub-commands which will aid you in building Textual apps.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>textual<span class="w"> </span>--help
-</code></pre></div>
-<p>See <a href="../guide/devtools/">devtools</a> for more about the <code>textual</code> command.</p>
 <h2 id="need-help">Need help?<a class="headerlink" href="#need-help" title="Permanent link">&para;</a></h2>
 <p>See the <a href="../help/">help</a> page for how to get help with Textual, or to report bugs.</p>
 

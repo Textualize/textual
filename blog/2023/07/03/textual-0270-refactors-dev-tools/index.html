@@ -8,34 +8,32 @@
       
       
       
-        <link rel="canonical" href="https://textual.textualize.io/api/suggester/">
+        <link rel="canonical" href="https://textual.textualize.io/blog/2023/07/03/textual-0270-refactors-dev-tools/">
       
       
-        <link rel="prev" href="../strip/">
+        <link rel="prev" href="../../../06/06/to-tui-or-not-to-tui/">
       
-      
-        <link rel="next" href="../timer/">
       
       
         
       
       
-        <link rel="alternate" type="application/rss+xml" title="RSS feed" href="../../feed_rss_created.xml">
-        <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../feed_rss_updated.xml">
+        <link rel="alternate" type="application/rss+xml" title="RSS feed" href="../../../../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../../../../feed_rss_updated.xml">
       
-      <link rel="icon" href="../../assets/images/favicon.png">
+      <link rel="icon" href="../../../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.5+insiders-4.32.4">
     
     
       
-        <title>Suggester - Textual</title>
+        <title>Textual 0.27.0 refactors dev tools - Textual</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.323870f8.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.323870f8.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.6932e648.min.css">
+        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.6932e648.min.css">
       
       
 
@@ -51,11 +49,11 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../../../../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="../../stylesheets/custom.css">
+      <link rel="stylesheet" href="../../../../../stylesheets/custom.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -71,9 +69,9 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@textualizeio">
 <meta name="twitter:creator" content="@willmcgugan">
-<meta property="og:title" content="Textual - Suggester">
+<meta property="og:title" content="Textual - Textual 0.27.0 refactors dev tools">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://textual.textualize.io/api/suggester/">
+<meta property="og:url" content="https://textual.textualize.io/blog/2023/07/03/textual-0270-refactors-dev-tools/">
 <meta property="og:site_name" content="Textual Documentation">
 <meta property="og:description" content="Textual is a TUI framework for Python, inspired by modern web development.">
 <meta property="og:image" content="https://raw.githubusercontent.com/Textualize/textual/main/imgs/textual.png">
@@ -111,7 +109,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#textual.suggester" class="md-skip">
+        <a href="#textual-0270-refactors-dev-tools" class="md-skip">
           Skip to content
         </a>
       
@@ -127,7 +125,7 @@
 
 <header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Textual" class="md-header__button md-logo" aria-label="Textual" data-md-component="logo">
+    <a href="../../../../.." title="Textual" class="md-header__button md-logo" aria-label="Textual" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -146,7 +144,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Suggester
+              Textual 0.27.0 refactors dev tools
             
           </span>
         </div>
@@ -239,7 +237,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../.." class="md-tabs__link">
+        <a href="../../../../.." class="md-tabs__link">
           
   
     
@@ -257,7 +255,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../tutorial/" class="md-tabs__link">
+      <a href="../../../../../tutorial/" class="md-tabs__link">
         
   
     
@@ -276,7 +274,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../guide/" class="md-tabs__link">
+        <a href="../../../../../guide/" class="md-tabs__link">
           
   
     
@@ -294,7 +292,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../widget_gallery/" class="md-tabs__link">
+      <a href="../../../../../widget_gallery/" class="md-tabs__link">
         
   
     
@@ -313,7 +311,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../reference/" class="md-tabs__link">
+        <a href="../../../../../reference/" class="md-tabs__link">
           
   
     
@@ -329,13 +327,11 @@
         
   
   
-    
-  
   
     
     
       <li class="md-tabs__item">
-        <a href="../" class="md-tabs__link md-tabs__link--active">
+        <a href="../../../../../api/" class="md-tabs__link">
           
   
     
@@ -355,7 +351,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../how-to/" class="md-tabs__link">
+        <a href="../../../../../how-to/" class="md-tabs__link">
           
   
     
@@ -373,7 +369,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../roadmap/" class="md-tabs__link">
+      <a href="../../../../../roadmap/" class="md-tabs__link">
         
   
     
@@ -388,11 +384,13 @@
         
   
   
+    
+  
   
     
     
       <li class="md-tabs__item">
-        <a href="../../blog/" class="md-tabs__link">
+        <a href="../../../../" class="md-tabs__link md-tabs__link--active">
           
   
     
@@ -422,7 +420,9 @@
           
             
               
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -433,7 +433,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Textual" class="md-nav__button md-logo" aria-label="Textual" data-md-component="logo">
+    <a href="../../../../.." title="Textual" class="md-nav__button md-logo" aria-label="Textual" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -485,7 +485,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../.." class="md-nav__link ">
+            <a href="../../../../.." class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -526,7 +526,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting_started/" class="md-nav__link">
+      <a href="../../../../../getting_started/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -552,7 +552,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../help/" class="md-nav__link">
+      <a href="../../../../../help/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -585,7 +585,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tutorial/" class="md-nav__link">
+      <a href="../../../../../tutorial/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -659,7 +659,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../guide/" class="md-nav__link ">
+            <a href="../../../../../guide/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -700,7 +700,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/devtools/" class="md-nav__link">
+      <a href="../../../../../guide/devtools/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -726,7 +726,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/app/" class="md-nav__link">
+      <a href="../../../../../guide/app/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -752,7 +752,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/styles/" class="md-nav__link">
+      <a href="../../../../../guide/styles/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -778,7 +778,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/CSS/" class="md-nav__link">
+      <a href="../../../../../guide/CSS/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -804,7 +804,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/design/" class="md-nav__link">
+      <a href="../../../../../guide/design/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -830,7 +830,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/queries/" class="md-nav__link">
+      <a href="../../../../../guide/queries/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -856,7 +856,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/layout/" class="md-nav__link">
+      <a href="../../../../../guide/layout/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -882,7 +882,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/events/" class="md-nav__link">
+      <a href="../../../../../guide/events/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -908,7 +908,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/input/" class="md-nav__link">
+      <a href="../../../../../guide/input/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -934,7 +934,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/actions/" class="md-nav__link">
+      <a href="../../../../../guide/actions/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -960,7 +960,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/reactivity/" class="md-nav__link">
+      <a href="../../../../../guide/reactivity/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -986,7 +986,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/widgets/" class="md-nav__link">
+      <a href="../../../../../guide/widgets/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1012,7 +1012,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/animation/" class="md-nav__link">
+      <a href="../../../../../guide/animation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1038,7 +1038,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/screens/" class="md-nav__link">
+      <a href="../../../../../guide/screens/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1064,7 +1064,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/workers/" class="md-nav__link">
+      <a href="../../../../../guide/workers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1097,7 +1097,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widget_gallery/" class="md-nav__link">
+      <a href="../../../../../widget_gallery/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1149,7 +1149,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../reference/" class="md-nav__link ">
+            <a href="../../../../../reference/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -1233,7 +1233,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../css_types/" class="md-nav__link ">
+            <a href="../../../../../css_types/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -1274,7 +1274,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../css_types/border/" class="md-nav__link">
+      <a href="../../../../../css_types/border/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1300,7 +1300,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../css_types/color/" class="md-nav__link">
+      <a href="../../../../../css_types/color/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1326,7 +1326,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../css_types/horizontal/" class="md-nav__link">
+      <a href="../../../../../css_types/horizontal/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1352,7 +1352,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../css_types/integer/" class="md-nav__link">
+      <a href="../../../../../css_types/integer/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1378,7 +1378,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../css_types/name/" class="md-nav__link">
+      <a href="../../../../../css_types/name/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1404,7 +1404,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../css_types/number/" class="md-nav__link">
+      <a href="../../../../../css_types/number/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1430,7 +1430,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../css_types/overflow/" class="md-nav__link">
+      <a href="../../../../../css_types/overflow/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1456,7 +1456,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../css_types/percentage/" class="md-nav__link">
+      <a href="../../../../../css_types/percentage/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1482,7 +1482,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../css_types/scalar/" class="md-nav__link">
+      <a href="../../../../../css_types/scalar/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1508,7 +1508,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../css_types/text_align/" class="md-nav__link">
+      <a href="../../../../../css_types/text_align/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1534,7 +1534,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../css_types/text_style/" class="md-nav__link">
+      <a href="../../../../../css_types/text_style/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1560,7 +1560,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../css_types/vertical/" class="md-nav__link">
+      <a href="../../../../../css_types/vertical/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1659,7 +1659,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../events/" class="md-nav__link ">
+            <a href="../../../../../events/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -1700,7 +1700,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/blur/" class="md-nav__link">
+      <a href="../../../../../events/blur/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1726,7 +1726,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/descendant_blur/" class="md-nav__link">
+      <a href="../../../../../events/descendant_blur/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1752,7 +1752,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/descendant_focus/" class="md-nav__link">
+      <a href="../../../../../events/descendant_focus/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1778,7 +1778,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/enter/" class="md-nav__link">
+      <a href="../../../../../events/enter/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1804,7 +1804,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/focus/" class="md-nav__link">
+      <a href="../../../../../events/focus/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1830,7 +1830,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/hide/" class="md-nav__link">
+      <a href="../../../../../events/hide/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1856,7 +1856,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/key/" class="md-nav__link">
+      <a href="../../../../../events/key/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1882,7 +1882,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/leave/" class="md-nav__link">
+      <a href="../../../../../events/leave/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1908,7 +1908,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/load/" class="md-nav__link">
+      <a href="../../../../../events/load/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1934,7 +1934,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/mount/" class="md-nav__link">
+      <a href="../../../../../events/mount/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1960,7 +1960,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/mouse_capture/" class="md-nav__link">
+      <a href="../../../../../events/mouse_capture/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1986,7 +1986,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/click/" class="md-nav__link">
+      <a href="../../../../../events/click/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2012,7 +2012,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/mouse_down/" class="md-nav__link">
+      <a href="../../../../../events/mouse_down/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2038,7 +2038,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/mouse_move/" class="md-nav__link">
+      <a href="../../../../../events/mouse_move/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2064,7 +2064,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/mouse_release/" class="md-nav__link">
+      <a href="../../../../../events/mouse_release/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2090,7 +2090,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/mouse_scroll_down/" class="md-nav__link">
+      <a href="../../../../../events/mouse_scroll_down/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2116,7 +2116,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/mouse_scroll_up/" class="md-nav__link">
+      <a href="../../../../../events/mouse_scroll_up/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2142,7 +2142,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/mouse_up/" class="md-nav__link">
+      <a href="../../../../../events/mouse_up/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2168,7 +2168,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/paste/" class="md-nav__link">
+      <a href="../../../../../events/paste/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2194,7 +2194,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/resize/" class="md-nav__link">
+      <a href="../../../../../events/resize/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2220,7 +2220,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/screen_resume/" class="md-nav__link">
+      <a href="../../../../../events/screen_resume/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2246,7 +2246,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/screen_suspend/" class="md-nav__link">
+      <a href="../../../../../events/screen_suspend/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2272,7 +2272,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/show/" class="md-nav__link">
+      <a href="../../../../../events/show/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2407,7 +2407,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../styles/" class="md-nav__link ">
+            <a href="../../../../../styles/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -2446,7 +2446,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/align/" class="md-nav__link">
+      <a href="../../../../../styles/align/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2472,7 +2472,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/background/" class="md-nav__link">
+      <a href="../../../../../styles/background/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2498,7 +2498,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/border/" class="md-nav__link">
+      <a href="../../../../../styles/border/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2524,7 +2524,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/border_subtitle_align/" class="md-nav__link">
+      <a href="../../../../../styles/border_subtitle_align/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2550,7 +2550,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/border_subtitle_background/" class="md-nav__link">
+      <a href="../../../../../styles/border_subtitle_background/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2576,7 +2576,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/border_subtitle_color/" class="md-nav__link">
+      <a href="../../../../../styles/border_subtitle_color/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2602,7 +2602,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/border_subtitle_style/" class="md-nav__link">
+      <a href="../../../../../styles/border_subtitle_style/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2628,7 +2628,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/border_title_align/" class="md-nav__link">
+      <a href="../../../../../styles/border_title_align/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2654,7 +2654,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/border_title_background/" class="md-nav__link">
+      <a href="../../../../../styles/border_title_background/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2680,7 +2680,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/border_title_color/" class="md-nav__link">
+      <a href="../../../../../styles/border_title_color/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2706,7 +2706,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/border_title_style/" class="md-nav__link">
+      <a href="../../../../../styles/border_title_style/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2732,7 +2732,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/box_sizing/" class="md-nav__link">
+      <a href="../../../../../styles/box_sizing/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2758,7 +2758,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/color/" class="md-nav__link">
+      <a href="../../../../../styles/color/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2784,7 +2784,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/content_align/" class="md-nav__link">
+      <a href="../../../../../styles/content_align/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2810,7 +2810,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/display/" class="md-nav__link">
+      <a href="../../../../../styles/display/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2836,7 +2836,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/dock/" class="md-nav__link">
+      <a href="../../../../../styles/dock/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2895,7 +2895,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../styles/grid/" class="md-nav__link ">
+            <a href="../../../../../styles/grid/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -2936,7 +2936,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/grid/column_span/" class="md-nav__link">
+      <a href="../../../../../styles/grid/column_span/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2962,7 +2962,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/grid/grid_columns/" class="md-nav__link">
+      <a href="../../../../../styles/grid/grid_columns/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2988,7 +2988,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/grid/grid_gutter/" class="md-nav__link">
+      <a href="../../../../../styles/grid/grid_gutter/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3014,7 +3014,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/grid/grid_rows/" class="md-nav__link">
+      <a href="../../../../../styles/grid/grid_rows/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3040,7 +3040,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/grid/grid_size/" class="md-nav__link">
+      <a href="../../../../../styles/grid/grid_size/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3066,7 +3066,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/grid/row_span/" class="md-nav__link">
+      <a href="../../../../../styles/grid/row_span/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3100,7 +3100,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/height/" class="md-nav__link">
+      <a href="../../../../../styles/height/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3126,7 +3126,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/layer/" class="md-nav__link">
+      <a href="../../../../../styles/layer/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3152,7 +3152,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/layers/" class="md-nav__link">
+      <a href="../../../../../styles/layers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3178,7 +3178,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/layout/" class="md-nav__link">
+      <a href="../../../../../styles/layout/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3235,7 +3235,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../styles/links/" class="md-nav__link ">
+            <a href="../../../../../styles/links/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -3276,7 +3276,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/links/link_background/" class="md-nav__link">
+      <a href="../../../../../styles/links/link_background/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3302,7 +3302,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/links/link_color/" class="md-nav__link">
+      <a href="../../../../../styles/links/link_color/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3328,7 +3328,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/links/link_hover_background/" class="md-nav__link">
+      <a href="../../../../../styles/links/link_hover_background/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3354,7 +3354,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/links/link_hover_color/" class="md-nav__link">
+      <a href="../../../../../styles/links/link_hover_color/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3380,7 +3380,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/links/link_hover_style/" class="md-nav__link">
+      <a href="../../../../../styles/links/link_hover_style/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3406,7 +3406,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/links/link_style/" class="md-nav__link">
+      <a href="../../../../../styles/links/link_style/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3440,7 +3440,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/margin/" class="md-nav__link">
+      <a href="../../../../../styles/margin/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3466,7 +3466,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/max_height/" class="md-nav__link">
+      <a href="../../../../../styles/max_height/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3492,7 +3492,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/max_width/" class="md-nav__link">
+      <a href="../../../../../styles/max_width/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3518,7 +3518,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/min_height/" class="md-nav__link">
+      <a href="../../../../../styles/min_height/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3544,7 +3544,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/min_width/" class="md-nav__link">
+      <a href="../../../../../styles/min_width/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3570,7 +3570,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/offset/" class="md-nav__link">
+      <a href="../../../../../styles/offset/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3596,7 +3596,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/opacity/" class="md-nav__link">
+      <a href="../../../../../styles/opacity/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3622,7 +3622,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/outline/" class="md-nav__link">
+      <a href="../../../../../styles/outline/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3648,7 +3648,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/overflow/" class="md-nav__link">
+      <a href="../../../../../styles/overflow/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3674,7 +3674,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/padding/" class="md-nav__link">
+      <a href="../../../../../styles/padding/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3733,7 +3733,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../styles/scrollbar_colors/" class="md-nav__link ">
+            <a href="../../../../../styles/scrollbar_colors/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -3774,7 +3774,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/scrollbar_colors/scrollbar_background/" class="md-nav__link">
+      <a href="../../../../../styles/scrollbar_colors/scrollbar_background/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3800,7 +3800,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/scrollbar_colors/scrollbar_background_active/" class="md-nav__link">
+      <a href="../../../../../styles/scrollbar_colors/scrollbar_background_active/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3826,7 +3826,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/scrollbar_colors/scrollbar_background_hover/" class="md-nav__link">
+      <a href="../../../../../styles/scrollbar_colors/scrollbar_background_hover/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3852,7 +3852,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/scrollbar_colors/scrollbar_color/" class="md-nav__link">
+      <a href="../../../../../styles/scrollbar_colors/scrollbar_color/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3878,7 +3878,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/scrollbar_colors/scrollbar_color_active/" class="md-nav__link">
+      <a href="../../../../../styles/scrollbar_colors/scrollbar_color_active/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3904,7 +3904,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/scrollbar_colors/scrollbar_color_hover/" class="md-nav__link">
+      <a href="../../../../../styles/scrollbar_colors/scrollbar_color_hover/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3930,7 +3930,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/scrollbar_colors/scrollbar_corner_color/" class="md-nav__link">
+      <a href="../../../../../styles/scrollbar_colors/scrollbar_corner_color/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3964,7 +3964,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/scrollbar_gutter/" class="md-nav__link">
+      <a href="../../../../../styles/scrollbar_gutter/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3990,7 +3990,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/scrollbar_size/" class="md-nav__link">
+      <a href="../../../../../styles/scrollbar_size/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4016,7 +4016,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/text_align/" class="md-nav__link">
+      <a href="../../../../../styles/text_align/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4042,7 +4042,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/text_opacity/" class="md-nav__link">
+      <a href="../../../../../styles/text_opacity/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4068,7 +4068,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/text_style/" class="md-nav__link">
+      <a href="../../../../../styles/text_style/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4094,7 +4094,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/tint/" class="md-nav__link">
+      <a href="../../../../../styles/tint/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4120,7 +4120,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/visibility/" class="md-nav__link">
+      <a href="../../../../../styles/visibility/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4146,7 +4146,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../styles/width/" class="md-nav__link">
+      <a href="../../../../../styles/width/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4257,7 +4257,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../widgets/" class="md-nav__link ">
+            <a href="../../../../../widgets/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -4296,7 +4296,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/button/" class="md-nav__link">
+      <a href="../../../../../widgets/button/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4322,7 +4322,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/checkbox/" class="md-nav__link">
+      <a href="../../../../../widgets/checkbox/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4348,7 +4348,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/content_switcher/" class="md-nav__link">
+      <a href="../../../../../widgets/content_switcher/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4374,7 +4374,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/data_table/" class="md-nav__link">
+      <a href="../../../../../widgets/data_table/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4400,7 +4400,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/directory_tree/" class="md-nav__link">
+      <a href="../../../../../widgets/directory_tree/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4426,7 +4426,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/footer/" class="md-nav__link">
+      <a href="../../../../../widgets/footer/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4452,7 +4452,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/header/" class="md-nav__link">
+      <a href="../../../../../widgets/header/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4480,7 +4480,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/input/" class="md-nav__link">
+      <a href="../../../../../widgets/input/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4506,7 +4506,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/label/" class="md-nav__link">
+      <a href="../../../../../widgets/label/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4532,7 +4532,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/list_item/" class="md-nav__link">
+      <a href="../../../../../widgets/list_item/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4558,7 +4558,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/list_view/" class="md-nav__link">
+      <a href="../../../../../widgets/list_view/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4584,7 +4584,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/loading_indicator/" class="md-nav__link">
+      <a href="../../../../../widgets/loading_indicator/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4610,7 +4610,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/markdown_viewer/" class="md-nav__link">
+      <a href="../../../../../widgets/markdown_viewer/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4636,7 +4636,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/markdown/" class="md-nav__link">
+      <a href="../../../../../widgets/markdown/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4662,7 +4662,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/option_list/" class="md-nav__link">
+      <a href="../../../../../widgets/option_list/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4688,7 +4688,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/placeholder/" class="md-nav__link">
+      <a href="../../../../../widgets/placeholder/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4714,7 +4714,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/pretty/" class="md-nav__link">
+      <a href="../../../../../widgets/pretty/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4740,7 +4740,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/progress_bar/" class="md-nav__link">
+      <a href="../../../../../widgets/progress_bar/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4766,7 +4766,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/radiobutton/" class="md-nav__link">
+      <a href="../../../../../widgets/radiobutton/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4792,7 +4792,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/radioset/" class="md-nav__link">
+      <a href="../../../../../widgets/radioset/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4818,7 +4818,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/select/" class="md-nav__link">
+      <a href="../../../../../widgets/select/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4844,7 +4844,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/selection_list/" class="md-nav__link">
+      <a href="../../../../../widgets/selection_list/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4870,7 +4870,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/sparkline/" class="md-nav__link">
+      <a href="../../../../../widgets/sparkline/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4896,7 +4896,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/static/" class="md-nav__link">
+      <a href="../../../../../widgets/static/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4922,7 +4922,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/switch/" class="md-nav__link">
+      <a href="../../../../../widgets/switch/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4948,7 +4948,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/tabbed_content/" class="md-nav__link">
+      <a href="../../../../../widgets/tabbed_content/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4974,7 +4974,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/tabs/" class="md-nav__link">
+      <a href="../../../../../widgets/tabs/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5000,7 +5000,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/text_log/" class="md-nav__link">
+      <a href="../../../../../widgets/text_log/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5026,7 +5026,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/tree/" class="md-nav__link">
+      <a href="../../../../../widgets/tree/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5065,8 +5065,6 @@
       
   
   
-    
-  
   
     
     
@@ -5145,18 +5143,18 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../../../../api/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -5178,7 +5176,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
@@ -5197,7 +5195,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../app/" class="md-nav__link">
+      <a href="../../../../../api/app/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5223,7 +5221,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../await_remove/" class="md-nav__link">
+      <a href="../../../../../api/await_remove/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5249,7 +5247,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../binding/" class="md-nav__link">
+      <a href="../../../../../api/binding/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5275,7 +5273,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../color/" class="md-nav__link">
+      <a href="../../../../../api/color/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5301,7 +5299,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../containers/" class="md-nav__link">
+      <a href="../../../../../api/containers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5327,7 +5325,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../coordinate/" class="md-nav__link">
+      <a href="../../../../../api/coordinate/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5353,7 +5351,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../dom_node/" class="md-nav__link">
+      <a href="../../../../../api/dom_node/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5379,7 +5377,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../events/" class="md-nav__link">
+      <a href="../../../../../api/events/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5405,7 +5403,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../errors/" class="md-nav__link">
+      <a href="../../../../../api/errors/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5431,7 +5429,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../filter/" class="md-nav__link">
+      <a href="../../../../../api/filter/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5457,7 +5455,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../geometry/" class="md-nav__link">
+      <a href="../../../../../api/geometry/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5483,7 +5481,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../../../../../api/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5509,7 +5507,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../logger/" class="md-nav__link">
+      <a href="../../../../../api/logger/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5535,7 +5533,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../logging/" class="md-nav__link">
+      <a href="../../../../../api/logging/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5561,7 +5559,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../map_geometry/" class="md-nav__link">
+      <a href="../../../../../api/map_geometry/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5587,7 +5585,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../message_pump/" class="md-nav__link">
+      <a href="../../../../../api/message_pump/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5613,7 +5611,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../message/" class="md-nav__link">
+      <a href="../../../../../api/message/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5639,7 +5637,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../on/" class="md-nav__link">
+      <a href="../../../../../api/on/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5665,7 +5663,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../pilot/" class="md-nav__link">
+      <a href="../../../../../api/pilot/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5691,7 +5689,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../query/" class="md-nav__link">
+      <a href="../../../../../api/query/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5717,7 +5715,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../reactive/" class="md-nav__link">
+      <a href="../../../../../api/reactive/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5743,7 +5741,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../screen/" class="md-nav__link">
+      <a href="../../../../../api/screen/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5769,7 +5767,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../scrollbar/" class="md-nav__link">
+      <a href="../../../../../api/scrollbar/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5795,7 +5793,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../scroll_view/" class="md-nav__link">
+      <a href="../../../../../api/scroll_view/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5821,7 +5819,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../strip/" class="md-nav__link">
+      <a href="../../../../../api/strip/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5845,33 +5843,9 @@
                 
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    
-  
-    Suggester
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../../../../api/suggester/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5886,141 +5860,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#textual.suggester" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        textual.suggester
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.suggester.SuggestFromList" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SuggestFromList
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="SuggestFromList">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#textual.suggester.SuggestFromList.get_suggestion" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        get_suggestion()
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.suggester.Suggester" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Suggester
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Suggester">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#textual.suggester.Suggester.cache" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        cache
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.suggester.Suggester.get_suggestion" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        get_suggestion()
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.suggester.SuggestionReady" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SuggestionReady
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="SuggestionReady">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#textual.suggester.SuggestionReady.suggestion" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        suggestion
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.suggester.SuggestionReady.value" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        value
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -6032,7 +5871,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../timer/" class="md-nav__link">
+      <a href="../../../../../api/timer/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6058,7 +5897,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../types/" class="md-nav__link">
+      <a href="../../../../../api/types/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6084,7 +5923,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../walk/" class="md-nav__link">
+      <a href="../../../../../api/walk/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6110,7 +5949,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../widget/" class="md-nav__link">
+      <a href="../../../../../api/widget/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6136,7 +5975,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../work/" class="md-nav__link">
+      <a href="../../../../../api/work/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6162,7 +6001,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../worker/" class="md-nav__link">
+      <a href="../../../../../api/worker/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6188,7 +6027,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../worker_manager/" class="md-nav__link">
+      <a href="../../../../../api/worker_manager/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6242,7 +6081,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../how-to/" class="md-nav__link ">
+            <a href="../../../../../how-to/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -6283,7 +6122,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../how-to/design-a-layout/" class="md-nav__link">
+      <a href="../../../../../how-to/design-a-layout/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6316,7 +6155,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../roadmap/" class="md-nav__link">
+      <a href="../../../../../roadmap/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6339,6 +6178,8 @@
       
   
   
+    
+  
   
     
     
@@ -6353,18 +6194,18 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
         
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../blog/" class="md-nav__link ">
+            <a href="../../../../" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -6386,7 +6227,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -6455,7 +6296,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../blog/archive/2023/" class="md-nav__link">
+      <a href="../../../../archive/2023/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6481,7 +6322,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../blog/archive/2022/" class="md-nav__link">
+      <a href="../../../../archive/2022/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6567,7 +6408,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../blog/category/devlog/" class="md-nav__link">
+      <a href="../../../../category/devlog/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6593,7 +6434,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../blog/category/news/" class="md-nav__link">
+      <a href="../../../../category/news/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6619,7 +6460,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../blog/category/release/" class="md-nav__link">
+      <a href="../../../../category/release/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6662,6 +6503,8 @@
             
             
               
+                
+              
               <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
@@ -6671,131 +6514,8 @@
   
   
   
+    
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#textual.suggester" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        textual.suggester
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.suggester.SuggestFromList" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SuggestFromList
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="SuggestFromList">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#textual.suggester.SuggestFromList.get_suggestion" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        get_suggestion()
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.suggester.Suggester" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Suggester
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Suggester">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#textual.suggester.Suggester.cache" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        cache
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.suggester.Suggester.get_suggestion" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        get_suggestion()
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.suggester.SuggestionReady" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SuggestionReady
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="SuggestionReady">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#textual.suggester.SuggestionReady.suggestion" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        suggestion
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.suggester.SuggestionReady.value" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        value
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
   
 </nav>
                   </div>
@@ -6804,493 +6524,116 @@
             
           
           
-            <div class="md-content" data-md-component="content">
-              
-              <article class="md-content__inner md-typeset">
-                
-                  
-
-  
-  
-
-
-  <h1>Suggester</h1>
-
-<div class="doc doc-object doc-module">
-
-
-<a id="textual.suggester"></a>
-  <div class="doc doc-contents first">
-
-  
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.suggester.SuggestFromList" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">SuggestFromList</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.suggester.SuggestFromList" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">suggestions</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">case_sensitive</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.suggester.Suggester" href="#textual.suggester.Suggester">Suggester</a></code></p>
-
-  
-      <p>Give completion suggestions based on a fixed list of options.</p>
-
-<details class="example" open>
-  <summary>Example</summary>
-  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">countries</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;England&quot;</span><span class="p">,</span> <span class="s2">&quot;Scotland&quot;</span><span class="p">,</span> <span class="s2">&quot;Portugal&quot;</span><span class="p">,</span> <span class="s2">&quot;Spain&quot;</span><span class="p">,</span> <span class="s2">&quot;France&quot;</span><span class="p">]</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">class</span> <span class="nc">MyApp</span><span class="p">(</span><span class="n">App</span><span class="p">[</span><span class="kc">None</span><span class="p">]):</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>        <span class="k">yield</span> <span class="n">Input</span><span class="p">(</span><span class="n">suggester</span><span class="o">=</span><span class="n">SuggestFromList</span><span class="p">(</span><span class="n">countries</span><span class="p">,</span> <span class="n">case_sensitive</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
-</code></pre></div>
-<p>If the user types <span class="keys"><kbd class="key-p">P</kbd></span> inside the input widget, a completion suggestion
-for <code>"Portugal"</code> appears.</p>
-</details>
-  
-
-  <h5>Parameters</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>suggestions</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>
-          </td>
-          <td><p>Valid suggestions sorted by decreasing priority.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>case_sensitive</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
-          </td>
-          <td><p>Whether suggestions are computed in a case sensitive manner
-or not. The values provided in the argument <code>suggestions</code> represent the
-canonical representation of the completions and they will be suggested
-with that same casing.</p></td>
-          <td>
-                <code>True</code>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-
-  
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-<div class="doc doc-object doc-function">
-
-
-
-<h3 id="textual.suggester.SuggestFromList.get_suggestion" class="doc doc-heading">
-        <span class="doc doc-object-name doc-function-name">get_suggestion</span>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-async"><code>async</code></small>
-  </span>
-
-<a href="#textual.suggester.SuggestFromList.get_suggestion" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">get_suggestion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-  
-      <p>Gets a completion from the given possibilities.</p>
-
-  <h5>Parameters</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>value</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
-          </td>
-          <td><p>The current value.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
-          </td>
-          <td><p>A valid completion suggestion or <code>None</code>.</p></td>
-        </tr>
-    </tbody>
-  </table>
-
-  </div>
-
-</div>
-
-
-
-  </div>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.suggester.Suggester" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">Suggester</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.suggester.Suggester" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">use_cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">case_sensitive</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-external" title="abc.ABC" href="https://docs.python.org/3/library/abc.html#abc.ABC">ABC</a></code></p>
-
-  
-      <p>Defines how widgets generate completion suggestions.</p>
-<p>To define a custom suggester, subclass <code>Suggester</code> and implement the async method
-<code>get_suggestion</code>.
-See <a class="autorefs autorefs-internal" href="#textual.suggester.SuggestFromList"><code>SuggestFromList</code></a> for an example.</p>
-
-  
-
-  <h5>Parameters</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>use_cache</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
-          </td>
-          <td><p>Whether to cache suggestion results.</p></td>
-          <td>
-                <code>True</code>
-          </td>
-        </tr>
-        <tr>
-          <td><code>case_sensitive</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
-          </td>
-          <td><p>Whether suggestions are case sensitive or not.
-If they are not, incoming values are casefolded before generating
-the suggestion.</p></td>
-          <td>
-                <code>False</code>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-
-  
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-<div class="doc doc-object doc-attribute">
-
-
-
-<h3 id="textual.suggester.Suggester.cache" class="doc doc-heading">
-        <span class="doc doc-object-name doc-attribute-name">cache</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
-  </span>
-
-<a href="#textual.suggester.Suggester.cache" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">cache</span><span class="p">:</span> <span class="n">LRUCache</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">LRUCache</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span> <span class="k">if</span> <span class="n">use_cache</span> <span class="k">else</span> <span class="kc">None</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-  
-      <p>Suggestion cache, if used.</p>
-  </div>
-
-</div>
-
-
-
-<div class="doc doc-object doc-function">
-
-
-
-<h3 id="textual.suggester.Suggester.get_suggestion" class="doc doc-heading">
-        <span class="doc doc-object-name doc-function-name">get_suggestion</span>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-async"><code>async</code></small>
-      <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
-  </span>
-
-<a href="#textual.suggester.Suggester.get_suggestion" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">get_suggestion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-  
-      <p>Try to get a completion suggestion for the given input value.</p>
-<p>Custom suggesters should implement this method.</p>
-
-<details class="note" open>
-  <summary>Note</summary>
-  <p>The value argument will be casefolded if <code>self.case_sensitive</code> is <code>False</code>.</p>
-</details>
-<details class="note" open>
-  <summary>Note</summary>
-  <p>If your implementation is not deterministic, you may need to disable caching.</p>
-</details>
-  <h5>Parameters</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>value</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
-          </td>
-          <td><p>The current value of the requester widget.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
-          </td>
-          <td><p>A valid suggestion or <code>None</code>.</p></td>
-        </tr>
-    </tbody>
-  </table>
-
-  </div>
-
-</div>
-
-
-
-  </div>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-
-
-<h2 id="textual.suggester.SuggestionReady" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">SuggestionReady</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class"><code>class</code></small>
-  </span>
-
-<a href="#textual.suggester.SuggestionReady" class="headerlink" title="Permanent link">&para;</a></h2>
-
-
-  <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.message.Message" href="../message/#textual.message.Message">Message</a></code></p>
-
-  
-      <p>Sent when a completion suggestion is ready.</p>
-
-
-
-  
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-<div class="doc doc-object doc-attribute">
-
-
-
-<h3 id="textual.suggester.SuggestionReady.suggestion" class="doc doc-heading">
-        <span class="doc doc-object-name doc-attribute-name">suggestion</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
-  </span>
-
-<a href="#textual.suggester.SuggestionReady.suggestion" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">suggestion</span><span class="p">:</span> <span class="nb">str</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-  
-      <p>The string suggestion.</p>
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-attribute">
-
-
-
-<h3 id="textual.suggester.SuggestionReady.value" class="doc doc-heading">
-        <span class="doc doc-object-name doc-attribute-name">value</span>
-
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
-  </span>
-
-<a href="#textual.suggester.SuggestionReady.value" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">value</span><span class="p">:</span> <span class="nb">str</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-  
-      <p>The value to which the suggestion is for.</p>
-  </div>
-
-</div>
-
-
-
-
-
-  </div>
-
-  </div>
-
-</div>
-
-
-
-
-  </div>
-
-  </div>
-
-</div>
-
-
-
-
-
-
-                
-              </article>
+  <div class="md-content md-content--post" data-md-component="content">
+    <div class="md-sidebar md-sidebar--post" data-md-component="sidebar" data-md-type="navigation">
+      <div class="md-sidebar__scrollwrap">
+        <div class="md-sidebar__inner md-post">
+          <nav class="md-nav">
+            <div class="md-post__back">
+              <div class="md-nav__title md-nav__container">
+                <a href="../../../../" class="md-nav__link">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+                  <span class="md-ellipsis">
+                    Back to index
+                  </span>
+                </a>
+              </div>
             </div>
+            
+              <div class="md-post__authors md-typeset">
+                
+                  <div class="md-profile md-post__profile">
+                    <span class="md-author md-author--long">
+                      <img src="https://github.com/willmcgugan.png" alt="Will McGugan">
+                    </span>
+                    <span class="md-profile__description">
+                      <strong>Will McGugan</strong><br>
+                      CEO / code-monkey
+                    </span>
+                  </div>
+                
+              </div>
+            
+            <ul class="md-post__meta md-nav__list">
+              <li class="md-nav__item md-nav__title">
+                <div class="md-nav__link">
+                  <span class="md-ellipsis">
+                    Metadata
+                  </span>
+                </div>
+              </li>
+              <li class="md-nav__item">
+                <div class="md-nav__link">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5v-5Z"/></svg>
+                  <time datetime="2023-07-03 00:00:00" class="md-ellipsis">July 3, 2023</time>
+                </div>
+              </li>
+              
+                <li class="md-nav__item">
+                  <div class="md-nav__link">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 3v15h3V3H9m3 2 4 13 3-1-4-13-3 1M5 5v13h3V5H5M3 19v2h18v-2H3Z"/></svg>
+                    <span class="md-ellipsis">
+                      in
+                      
+                        <a href="../../../../category/release/">Release</a></span>
+                  </div>
+                </li>
+              
+              
+                
+                <li class="md-nav__item">
+                  <div class="md-nav__link">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8m0-18a10 10 0 0 1 10 10 10 10 0 0 1-10 10C6.47 22 2 17.5 2 12A10 10 0 0 1 12 2m.5 5v5.25l4.5 2.67-.75 1.23L11 13V7h1.5Z"/></svg>
+                    <span class="md-ellipsis">
+                      
+                        1 min read
+                      
+                    </span>
+                  </div>
+                </li>
+              
+            </ul>
+            
+          </nav>
           
+        </div>
+      </div>
+    </div>
+    <article class="md-content__inner md-typeset">
+      
+        
+
+  
+  
+
+
+<h1 id="textual-0270-refactors-dev-tools">Textual 0.27.0 refactors dev tools<a class="headerlink" href="#textual-0270-refactors-dev-tools" title="Permanent link">&para;</a></h1>
+<p>It's been a slow week or two at Textualize, with Textual devs taking well-earned annual leave, but we still managed to get a new version out.</p>
+<!-- more -->
+
+<p>Version 0.27.0 has shipped with a number of fixes (see the <a href="https://github.com/Textualize/textual/releases/tag/v0.29.0">release notes</a> for details), but I'd like to use this post to explain a change we made to how Textual developer tools are distributed.</p>
+<p>Previously if you installed <code>textual[dev]</code> you would get the Textual dev tools plus the library itself. If you were distributing Textual apps and didn't need the developer tools you could drop the <code>[dev]</code>.</p>
+<p>We did this because the less dependencies a package has, the fewer installation issues you can expect to get in the future. And Textual is surprisingly lean if you only need to <em>run</em> apps, and not build them.</p>
+<p>Alas, this wasn't quite as elegant solution as we hoped. The dependencies defined in extras wouldn't install commands, so <code>textual</code> was bundled with the core library. This meant that if you installed the Textual package <em>without</em> the <code>[dev]</code> you would still get the <code>textual</code> command on your path but it wouldn't run.</p>
+<p>We solved this by creating two packages: <code>textual</code> contains the core library (with minimal dependencies) and <code>textual-dev</code> contains the developer tools. If you are building Textual apps, you should install both as follows:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip install textual textual-dev
+</code></pre></div>
+<p>That's the only difference. If you run in to any issues feel free to ask on the <a href="https://discord.gg/Enf6Z3qhVr">Discord server</a>!</p>
+
+  
+  
+
+
+
+
+  
+
+
+
+      
+    </article>
+  </div>
+
           
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
@@ -7301,10 +6644,12 @@ the suggestion.</p></td>
   
     
       
+        
+      
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../strip/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Strip" rel="prev">
+          <a href="../../../06/06/to-tui-or-not-to-tui/" class="md-footer__link md-footer__link--prev" aria-label="Previous: To TUI or not to TUI" rel="prev">
             <div class="md-footer__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
             </div>
@@ -7313,26 +6658,11 @@ the suggestion.</p></td>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Strip
+                To TUI or not to TUI
               </div>
             </div>
           </a>
         
-        
-          
-          <a href="../timer/" class="md-footer__link md-footer__link--next" aria-label="Next: Timer" rel="next">
-            <div class="md-footer__title">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              <div class="md-ellipsis">
-                Timer
-              </div>
-            </div>
-            <div class="md-footer__button md-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
-            </div>
-          </a>
         
       </nav>
     
@@ -7390,10 +6720,10 @@ the suggestion.</p></td>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.tabs.sticky", "navigation.footer", "content.code.annotate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.6c7302c4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.tabs.sticky", "navigation.footer", "content.code.annotate", "content.code.copy"], "search": "../../../../../assets/javascripts/workers/search.6c7302c4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.a3190745.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.a3190745.min.js"></script>
       
     
   </body>

@@ -6699,7 +6699,7 @@
 
 
 <h1 id="text-opacity">Text-opacity<a class="headerlink" href="#text-opacity" title="Permanent link">&para;</a></h1>
-<p>The <code>text-opacity</code> style blends the color of the content of a widget with the color of the background.</p>
+<p>The <code>text-opacity</code> style blends the foreground color (i.e. text) with the background color.</p>
 <h2 id="syntax">Syntax<a class="headerlink" href="#syntax" title="Permanent link">&para;</a></h2>
 <!-- Include this snippet when starting a code block that shows the syntax of a CSS rule. -->
 <div class="highlight" style="padding: 0.25em 1.15em; background: var(--md-code-bg-color);"><pre>
@@ -6707,10 +6707,15 @@ text-opacity: <a href="../../css_types/number">&lt;number&gt;</a> | <a href="../
 </pre></div>
 <!-- Include this snippet when ending a code block that shows the syntax of a CSS rule. -->
 
-<p>The text opacity can be set as a <a href="../../css_types/number/"><code>&lt;number&gt;</code></a> or a <a href="../../css_types/percentage/"><code>&lt;percentage&gt;</code></a>.
-<code>0</code>/<code>0%</code> means no opacity, which is equivalent to full transparency.
-Conversely, <code>1</code>/<code>100%</code> means full opacity, which is equivalent to no transparency.
-Values outside of these ranges will be clamped.</p>
+<p>The text opacity of a widget can be set as a <a href="../../css_types/number/"><code>&lt;number&gt;</code></a> or a <a href="../../css_types/percentage/"><code>&lt;percentage&gt;</code></a>.
+If given as a number, then <code>text-opacity</code> should be a value between 0 and 1, where 0 makes the foreground color match the background (effectively making text invisible) and 1 will display text as normal.
+If given as a percentage, 0% will result in invisible text, and 100% will display fully opaque text.</p>
+<p>Typically, if you set this value it would be somewhere between the two extremes.
+For instance, setting <code>text-opacity</code> to <code>70%</code> would result in slightly faded text. Setting it to <code>0.3</code> would result in very dim text.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Be careful not to set text opacity so low as to make it hard to read.</p>
+</div>
 <h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h2>
 <p>This example shows, from top to bottom, increasing <code>text-opacity</code> values.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Output</label><label for="__tabbed_1_2">text_opacity.py</label><label for="__tabbed_1_3">text_opacity.css</label></div>
@@ -6929,7 +6934,7 @@ Values outside of these ranges will be clamped.</p>
 </code></pre></div>
 <h2 id="see-also">See also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../opacity/"><code>opacity</code></a> to specify the transparency of a whole widget.</li>
+<li><a href="../opacity/"><code>opacity</code></a> to specify the opacity of a whole widget.</li>
 </ul>
 
 
