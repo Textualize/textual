@@ -298,10 +298,11 @@ TextEditor > .text-editor--active-line {
             assert event.character is not None
             self.insert_text_at_cursor(event.character)
             event.prevent_default()
-            self.refresh()
 
         if event.key == "tab":
+            event.stop()
             self.insert_text_at_cursor("    ")
+            event.prevent_default()
 
     # --- Reactive watchers and validators
     # def validate_cursor_position(self, new_position: tuple[int, int]) -> tuple[int, int]:
