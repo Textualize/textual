@@ -146,16 +146,7 @@ TextEditor > .text-editor--active-line {
         self.document_lines = lines
 
         # TODO Offer maximum line width and wrap if needed
-        virtual_size = self._get_document_size(lines)
-        width, height = virtual_size
-        if self.show_line_numbers:
-            total_gutter_padding = 2
-            gutter_width = len(str(len(lines) + 1)) + total_gutter_padding
-            virtual_size = Size(
-                width + gutter_width + self.scrollbar_size_vertical, height
-            )
-
-        self.virtual_size = virtual_size
+        self.virtual_size = self._get_document_size(lines)
 
         # TODO - clear caches
         if self._parser is not None:
@@ -166,14 +157,11 @@ TextEditor > .text-editor--active-line {
 
     # --- Methods for measuring things (e.g. virtual sizes)
     def _get_document_size(self, document_lines: list[str]) -> Size:
-        width = max(cell_len(line) for line in document_lines)
+        text_width = max(cell_len(line) for line in document_lines)
         height = len(document_lines)
-        # We add one to the width to leave a space for the cursor, since it can
-        # rest at the end of a line where there isn't yet any character.
-        return Size(
-            width + self.scrollbar_size_vertical + 1,
-            height + self.scrollbar_size_horizontal,
-        )
+        # We add one to the text width to leave a space for the cursor, since it
+        # can rest at the end of a line where there isn't yet any character.
+        return Size(text_width + 1, height)
 
     def render_line(self, widget_y: int) -> Strip:
         log.debug(f"render_line {widget_y!r}")
@@ -514,7 +502,9 @@ TextEditor > .text-editor--active-line {
 cursor {self.cursor_position!r}
 language {self.language!r}
 virtual_size {self.virtual_size!r}
-document rows {len(self.document_lines)}"""
+document rows {len(self.document_lines)!r}
+scroll {(self.scroll_x, self.scroll_y)!r}
+"""
 
     def debug_highlights(self) -> str:
         return f"""\
