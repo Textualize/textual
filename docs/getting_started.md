@@ -20,19 +20,27 @@ Textual requires Python 3.7 or later (if you have a choice, pick the most recent
 
 ## Installation
 
-You can install Textual via PyPI.
-
-If you plan on developing Textual apps, then you should install `textual[dev]`. The `[dev]` part installs a few extra dependencies for development.
-
-```
-pip install "textual[dev]"
-```
-
-If you only plan on _running_ Textual apps, then you can drop the `[dev]` part:
+You can install Textual via PyPI, with the following command:
 
 ```
 pip install textual
 ```
+
+If you plan on developing Textual apps, you should also install textual developer tools:
+
+```
+pip install textual-dev
+```
+
+### Textual CLI
+
+If you installed the developer tools you should have access to the `textual` command. There are a number of sub-commands available which will aid you in building Textual apps. Run the following for a list of the available commands:
+
+```bash
+textual --help
+```
+
+See [devtools](guide/devtools.md) for more about the `textual` command.
 
 ## Demo
 
@@ -79,15 +87,7 @@ python code_browser.py ../
 ```
 
 
-## Textual CLI
 
-If you installed the dev dependencies you have access to the `textual` CLI command. There are a number of sub-commands which will aid you in building Textual apps.
-
-```bash
-textual --help
-```
-
-See [devtools](guide/devtools.md) for more about the `textual` command.
 
 ## Need help?
 
