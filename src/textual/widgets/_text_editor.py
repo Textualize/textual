@@ -161,6 +161,8 @@ TextEditor > .text-editor--active-line {
         height = len(document_lines)
         # We add one to the text width to leave a space for the cursor, since it
         # can rest at the end of a line where there isn't yet any character.
+        # Similarly, the cursor can rest below the bottom line of text, where
+        # a line doesn't currently exist.
         return Size(text_width + 1, height)
 
     def render_line(self, widget_y: int) -> Strip:
@@ -331,10 +333,9 @@ TextEditor > .text-editor--active-line {
 
     def scroll_cursor_visible(self):
         row, column = self.cursor_position
+        log.debug(f"scrolling to cursor at {row,column}")
         self.scroll_to_region(
-            Region(x=column, y=row, width=1, height=1),
-            animate=False,
-            origin_visible=False,
+            Region(x=column, y=row, width=1, height=1), animate=False, force=True
         )
 
     @property
@@ -473,12 +474,10 @@ TextEditor > .text-editor--active-line {
         new_virtual_height = len(lines)
 
         self.virtual_size = Size(new_virtual_width, new_virtual_height)
+        self.cursor_position = (cursor_row + len(replacement_lines) - 1, end_column)
 
         print("final_insert = ", replacement_lines)
 
-        # TODO: Update the cursor column (length of final insert line?)
-        self.cursor_position = (cursor_row + len(replacement_lines) - 1, end_column)
-        self.refresh()
         # TODO: Need to update the AST to inform it of the edit operation
 
     def split_line(self):
@@ -496,14 +495,9 @@ TextEditor > .text-editor--active-line {
         )
 
         self.document_lines = lines
-
-        # Update virtual size and cursor position
-        self.cursor_position = (cursor_row + 1, 0)
         width, height = self.virtual_size
-
-        # If this line was responsible for the document virtual width
-        if width == cell_len(line) + 1:
-            self.virtual_size = self._get_document_size(lines)
+        self.virtual_size = Size(width, height + 1)
+        self.cursor_position = (cursor_row + 1, 0)
 
     def delete_left(self) -> None:
         log.debug(f"delete left at {self.cursor_position!r}")
