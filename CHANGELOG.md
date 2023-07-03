@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.29.0] - 2023-07-03
 
+### Changed
+
+- Factored dev tools (`textual` command) in to external lib (`textual-dev`).
+
 ### Added
 
 - Added can-focus pseudo-class to target widgets that may receive focus
