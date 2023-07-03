@@ -104,7 +104,7 @@ class SuggestFromList(Suggester):
     """
 
     def __init__(
-            self, suggestions: Iterable[str], *, case_sensitive: bool = True
+        self, suggestions: Iterable[str], *, case_sensitive: bool = True
     ) -> None:
         """Creates a suggester based off of a given iterable of possibilities.
 
