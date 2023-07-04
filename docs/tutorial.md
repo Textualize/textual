@@ -15,6 +15,9 @@ By the end of this page you should have a solid understanding of app development
 
     &mdash; **Will McGugan** (creator of Rich and Textual)
 
+## Video series
+
+This tutorial has an accompanying [video series](https://www.youtube.com/playlist?list=PLHhDR_Q5Me1MxO4LmfzMNNQyKfwa275Qe) which covers the same content.
 
 ## Stopwatch Application
 

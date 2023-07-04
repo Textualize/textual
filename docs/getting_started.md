@@ -20,6 +20,8 @@ Textual requires Python 3.7 or later (if you have a choice, pick the most recent
 
 ## Installation
 
+Here's how to install Textual.
+
 ### From PyPI
 
 You can install Textual via PyPI, with the following command:
