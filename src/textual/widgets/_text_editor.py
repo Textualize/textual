@@ -5,6 +5,7 @@ from collections import defaultdict
 from pathlib import Path
 from typing import ClassVar, Iterable, NamedTuple
 
+from rich.cells import get_character_cell_size
 from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text
@@ -33,12 +34,14 @@ class Highlight(NamedTuple):
 
 class TextEditor(ScrollView, can_focus=True):
     DEFAULT_CSS = """\
+$editor-active-line-bg: white 8%;
+
 TextEditor > .text-editor--active-line {
-    background: $panel-lighten-1;
+    background: $editor-active-line-bg;
 }
 TextEditor > .text-editor--active-line-gutter {
     color: $text;
-    background: $panel-lighten-1;
+    background: $editor-active-line-bg;
 }
 TextEditor > .text-editor--gutter {
     color: $text-muted 40%;
@@ -94,15 +97,6 @@ TextEditor > .text-editor--cursor {
 
         self._highlights: dict[int, list[Highlight]] = defaultdict(list)
         """Mapping line numbers to the set of cached highlights for that line."""
-
-        # TODO - currently unused
-        self._line_cache: dict[int, list[Segment]] = defaultdict(list)
-        """Caches segments for lines. Note that a line may span multiple y-offsets
-         due to wrapping. These segments do NOT include the cursor highlighting.
-         A portion of the line cache will be updated when an edit operation occurs
-         or when a file is loaded for the first time.
-         Tree sitter will tell us the modified ranges of the AST and we update
-         the corresponding line ranges in this cache."""
 
         # --- Abstract syntax tree and related parsing machinery
         self._parser: Parser | None = None
@@ -365,6 +359,28 @@ TextEditor > .text-editor--cursor {
             event.prevent_default()
         elif key == "enter":
             self.split_line()
+
+    def _on_click(self, event: events.Click) -> None:
+        """Clicking the content body moves the cursor."""
+
+        offset = event.get_content_offset(self)
+        if offset is None:
+            return
+
+        event.stop()
+
+        target_x = max(offset.x - self.gutter_width + int(self.scroll_x), 0)
+        target_y = offset.y + int(self.scroll_y)
+
+        line = self.document_lines[target_y]
+        cell_offset = 0
+        for index, character in enumerate(line):
+            if cell_offset >= target_x:
+                self.cursor_position = (target_y, index)
+                break
+            cell_offset += get_character_cell_size(character)
+        else:
+            self.cursor_position = (target_y, len(line))
 
     def _on_paste(self, event: events.Paste) -> None:
         text = event.text
