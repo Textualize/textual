@@ -391,7 +391,7 @@ TextEditor > .text-editor--active-line {
     def cursor_at_end_of_row(self) -> bool:
         cursor_row, cursor_column = self.cursor_position
         row_length = cell_len(self.document_lines[cursor_row])
-        cursor_at_end = cursor_column == row_length - 1
+        cursor_at_end = cursor_column == row_length
         return cursor_at_end
 
     @property
@@ -407,7 +407,7 @@ TextEditor > .text-editor--active-line {
         cursor_row, cursor_column = self.cursor_position
         self.cursor_position = (
             cursor_row,
-            cell_len(self.document_lines[cursor_row]) - 1,
+            cell_len(self.document_lines[cursor_row]),
         )
 
     def cursor_to_line_start(self) -> None:
@@ -425,12 +425,10 @@ TextEditor > .text-editor--active-line {
             return
 
         cursor_row, cursor_column = self.cursor_position
-        length_of_row_above = len(self.document_lines[cursor_row - 1])
+        length_of_row_above = cell_len(self.document_lines[cursor_row - 1])
 
         target_row = cursor_row if cursor_column != 0 else cursor_row - 1
-        target_column = (
-            cursor_column - 1 if cursor_column != 0 else length_of_row_above - 1
-        )
+        target_column = cursor_column - 1 if cursor_column != 0 else length_of_row_above
 
         self.cursor_position = (target_row, target_column)
 
@@ -459,7 +457,7 @@ TextEditor > .text-editor--active-line {
         target_row = min(len(self.document_lines) - 1, cursor_row + 1)
         # TODO: Fetch last active column on this row
         target_column = clamp(
-            cursor_column, 0, len(self.document_lines[target_row]) - 1
+            cursor_column, 0, cell_len(self.document_lines[target_row]) - 1
         )
 
         self.cursor_position = (target_row, target_column)
@@ -474,7 +472,7 @@ TextEditor > .text-editor--active-line {
         target_row = max(0, cursor_row - 1)
         # TODO: Fetch last active column on this row
         target_column = clamp(
-            cursor_column, 0, len(self.document_lines[target_row]) - 1
+            cursor_column, 0, cell_len(self.document_lines[target_row]) - 1
         )
 
         self.cursor_position = (target_row, target_column)
