@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from collections import defaultdict
 from pathlib import Path
 from typing import ClassVar, Iterable, NamedTuple
@@ -62,6 +63,9 @@ TextEditor > .text-editor--active-line {
     """The cursor position (zero-based line_index, offset)."""
     show_line_numbers: Reactive[bool] = reactive(True)
     """True to show line number gutter, otherwise False."""
+    _document_size: Reactive[Size] = reactive(Size(), init=False)
+    """Tracks the width of the document. Used to update virtual size. Do not
+    update virtual size directly."""
 
     def __init__(
         self,
@@ -111,6 +115,11 @@ TextEditor > .text-editor--active-line {
 
         log.debug(f"parser set to {self._parser}")
 
+    def watch__document_size(self, size: Size) -> None:
+        log.debug(f"document size set to {size!r} ")
+        document_width, document_height = size
+        self.virtual_size = Size(document_width + self.gutter_width, document_height)
+
     def _build_ast(
         self,
         parser: Parser,
@@ -147,7 +156,7 @@ TextEditor > .text-editor--active-line {
 
         # TODO Offer maximum line width and wrap if needed
         print("setting vs in load_lines")
-        self.virtual_size = self._get_virtual_size()
+        self._document_size = self._get_document_size(lines)
 
         # TODO - clear caches
         if self._parser is not None:
@@ -168,15 +177,6 @@ TextEditor > .text-editor--active-line {
         # Similarly, the cursor can rest below the bottom line of text, where
         # a line doesn't currently exist.
         return Size(text_width + 1, height)
-
-    def _get_virtual_size(self) -> Size:
-        document_width, document_height = self._get_document_size(self.document_lines)
-        gutter_width = self.gutter_width
-        # gutter_width_contribution = max(gutter_width - int(self.scroll_x), 0)
-        return Size(
-            document_width + gutter_width,
-            document_height,
-        )
 
     def render_line(self, widget_y: int) -> Strip:
         document_lines = self.document_lines
@@ -366,17 +366,10 @@ TextEditor > .text-editor--active-line {
         log.debug(f"new virtual_size = {vs!r}")
 
     # --- Cursor utilities
-
     def scroll_cursor_visible(self):
         row, column = self.cursor_position
-        # TODO - this should account for gutter?
-
-        target_x = column
-        target_y = row
-        target_region = Region(x=target_x, y=target_y, width=1, height=1)
-        log.debug(f"scrolling to target {target_x, target_y}")
         self.scroll_to_region(
-            target_region,
+            Region(x=column, y=row, width=1, height=1),
             spacing=Spacing(right=self.gutter_width),
             animate=False,
             force=True,
@@ -397,7 +390,7 @@ TextEditor > .text-editor--active-line {
     @property
     def cursor_at_end_of_row(self) -> bool:
         cursor_row, cursor_column = self.cursor_position
-        row_length = len(self.document_lines[cursor_row])
+        row_length = cell_len(self.document_lines[cursor_row])
         cursor_at_end = cursor_column == row_length - 1
         return cursor_at_end
 
@@ -412,7 +405,10 @@ TextEditor > .text-editor--active-line {
 
     def cursor_to_line_end(self) -> None:
         cursor_row, cursor_column = self.cursor_position
-        self.cursor_position = (cursor_row, len(self.document_lines[cursor_row]) - 1)
+        self.cursor_position = (
+            cursor_row,
+            cell_len(self.document_lines[cursor_row]) - 1,
+        )
 
     def cursor_to_line_start(self) -> None:
         cursor_row, cursor_column = self.cursor_position
@@ -489,6 +485,11 @@ TextEditor > .text-editor--active-line {
     def action_cursor_line_start(self) -> None:
         self.cursor_to_line_start()
 
+    @property
+    def active_line_text(self) -> str:
+        # TODO - consider empty documents
+        return self.document_lines[self.cursor_position[0]]
+
     # --- Editor operations
     def insert_text(self, text: str) -> None:
         log.debug(f"insert {text!r} at {self.cursor_position!r}")
@@ -500,7 +501,7 @@ TextEditor > .text-editor--active-line {
         text_before_cursor = line[:cursor_column]
         text_after_cursor = line[cursor_column:]
 
-        replacement_lines = text.splitlines(keepends=False)
+        replacement_lines = text.splitlines(keepends=True)
         replacement_lines[0] = text_before_cursor + replacement_lines[0]
         end_column = cell_len(replacement_lines[-1])
         replacement_lines[-1] += text_after_cursor
@@ -508,16 +509,16 @@ TextEditor > .text-editor--active-line {
         lines[cursor_row : cursor_row + 1] = replacement_lines
 
         longest_modified_line = max(cell_len(line) for line in replacement_lines)
-        virtual_width, virtual_height = self.virtual_size
+        document_width, document_height = self._document_size
 
         # The virtual width of the row is the cell length of the text in the row
         # plus 1 to accommodate for a cursor potentially "resting" at the end of the row.
-        insertion_virtual_width = longest_modified_line + 1
+        insertion_width = longest_modified_line + 1
 
-        new_virtual_width = max(insertion_virtual_width, virtual_width)
-        new_virtual_height = len(lines)
+        new_document_width = max(insertion_width, document_width)
+        new_document_height = len(lines)
 
-        self.virtual_size = Size(new_virtual_width, new_virtual_height)
+        self._document_size = Size(new_document_width, new_document_height)
         self.cursor_position = (cursor_row + len(replacement_lines) - 1, end_column)
 
         print("final_insert = ", replacement_lines)
@@ -534,13 +535,13 @@ TextEditor > .text-editor--active-line {
 
         lines = (
             lines[:cursor_row]
-            + [text_before_cursor, text_after_cursor]
+            + [text_before_cursor + os.linesep, text_after_cursor]
             + lines[cursor_row + 1 :]
         )
 
         self.document_lines = lines
-        width, height = self.virtual_size
-        self.virtual_size = Size(width, height + 1)
+        width, height = self._document_size
+        self._document_size = Size(width, height + 1)
         self.cursor_position = (cursor_row + 1, 0)
 
     def delete_left(self) -> None:
@@ -582,9 +583,12 @@ TextEditor > .text-editor--active-line {
         return f"""\
 cursor {self.cursor_position!r}
 language {self.language!r}
+document_size {self._document_size!r}
 virtual_size {self.virtual_size!r}
-document rows {len(self.document_lines)!r}
 scroll {(self.scroll_x, self.scroll_y)!r}
+
+[b]LINE INDEX {self.cursor_position[0]} (cell_len={cell_len(self.active_line_text)})[/]
+{self.active_line_text!r}
 """
 
     def debug_highlights(self) -> str:
