@@ -12,7 +12,7 @@ from tree_sitter import Language, Node, Parser, Tree
 from textual import events, log
 from textual._cells import cell_len
 from textual.binding import Binding
-from textual.geometry import Region, Size, clamp
+from textual.geometry import Region, Size, Spacing, clamp
 from textual.reactive import Reactive, reactive
 from textual.scroll_view import ScrollView
 from textual.strip import Strip
@@ -172,14 +172,13 @@ TextEditor > .text-editor--active-line {
     def _get_virtual_size(self) -> Size:
         document_width, document_height = self._get_document_size(self.document_lines)
         gutter_width = self.gutter_width
+        # gutter_width_contribution = max(gutter_width - int(self.scroll_x), 0)
         return Size(
-            document_width + max(gutter_width - int(self.scroll_x), 0),
+            document_width + gutter_width,
             document_height,
         )
 
     def render_line(self, widget_y: int) -> Strip:
-        log.debug(f"render_line {widget_y!r}")
-
         document_lines = self.document_lines
 
         document_y = round(self.scroll_y + widget_y)
@@ -230,7 +229,6 @@ TextEditor > .text-editor--active-line {
         text_strip = Strip(text_segments).crop(text_crop_start, text_crop_end)
 
         strip = Strip.join([gutter_strip, text_strip]).simplify()
-        log.debug(f"combined_strip = {strip.text!r}")
 
         return strip
 
@@ -371,10 +369,17 @@ TextEditor > .text-editor--active-line {
 
     def scroll_cursor_visible(self):
         row, column = self.cursor_position
-        log.debug(f"scrolling to cursor at {row, column}")
         # TODO - this should account for gutter?
+
+        target_x = column
+        target_y = row
+        target_region = Region(x=target_x, y=target_y, width=1, height=1)
+        log.debug(f"scrolling to target {target_x, target_y}")
         self.scroll_to_region(
-            Region(x=column, y=row, width=1, height=1), animate=False, force=True
+            target_region,
+            spacing=Spacing(right=self.gutter_width),
+            animate=False,
+            force=True,
         )
 
     @property
