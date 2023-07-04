@@ -34,7 +34,19 @@ class Highlight(NamedTuple):
 class TextEditor(ScrollView, can_focus=True):
     DEFAULT_CSS = """\
 TextEditor > .text-editor--active-line {
-    background: $success;
+    background: $panel-lighten-1;
+}
+TextEditor > .text-editor--active-line-gutter {
+    color: $text;
+    background: $panel-lighten-1;
+}
+TextEditor > .text-editor--gutter {
+    color: $text-muted;
+    background: $background;
+}
+TextEditor > .text-editor--cursor {
+    color: $text;
+    background: white 80%;
 }
 """
 
@@ -42,6 +54,7 @@ TextEditor > .text-editor--active-line {
         "text-editor--active-line",
         "text-editor--active-line-gutter",
         "text-editor--gutter",
+        "text-editor--cursor",
     }
 
     BINDINGS = [
@@ -190,26 +203,35 @@ TextEditor > .text-editor--active-line {
         line_text = Text(f"{line_string} ", end="", tab_size=4)
         line_text.set_length(self.virtual_size.width)
 
-        # Apply highlighting to the line if necessary.
+        # Apply highlighting
         if self._highlights:
             highlights = self._highlights[document_y]
             for start, end, node_type in highlights:
                 node_style = self._get_node_style(node_type)
                 line_text.stylize(node_style, start, end)
 
-        # Show the cursor if necessary
+        # Show the cursor
         cursor_row, cursor_column = self.cursor_position
         if cursor_row == document_y:
-            line_text.stylize(
-                Style(color="black", bgcolor="white"), cursor_column, cursor_column + 1
+            cursor_style = self.get_component_rich_style("text-editor--cursor")
+            line_text.stylize(cursor_style, cursor_column, cursor_column + 1)
+            active_line_style = self.get_component_rich_style(
+                "text-editor--active-line"
             )
-            line_text.stylize_before(Style(bgcolor="#363636"))
+            line_text.stylize_before(active_line_style)
 
+        # Show the gutter
         if self.show_line_numbers:
-            gutter_style = self.get_component_rich_style("text-editor--gutter")
+            if cursor_row == document_y:
+                gutter_style = self.get_component_rich_style(
+                    "text-editor--active-line-gutter"
+                )
+            else:
+                gutter_style = self.get_component_rich_style("text-editor--gutter")
+
             gutter_width_no_margin = self.gutter_width - 2
             gutter = Text(
-                f"{document_y + 1:>{gutter_width_no_margin}}│ ",
+                f"{document_y + 1:>{gutter_width_no_margin}}  ",
                 style=gutter_style,
                 end="",
             )
@@ -501,7 +523,7 @@ TextEditor > .text-editor--active-line {
 
         replacement_lines = text.splitlines(keepends=False)
         replacement_lines[0] = text_before_cursor + replacement_lines[0]
-        end_column = cell_len(replacement_lines[-1])
+        end_column = len(replacement_lines[-1])
         replacement_lines[-1] += text_after_cursor
 
         lines[cursor_row : cursor_row + 1] = replacement_lines
