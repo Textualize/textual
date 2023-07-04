@@ -146,7 +146,8 @@ TextEditor > .text-editor--active-line {
         self.document_lines = lines
 
         # TODO Offer maximum line width and wrap if needed
-        self.virtual_size = self._get_document_size(lines)
+        print("setting vs in load_lines")
+        self.virtual_size = self._get_virtual_size()
 
         # TODO - clear caches
         if self._parser is not None:
@@ -157,6 +158,9 @@ TextEditor > .text-editor--active-line {
 
     # --- Methods for measuring things (e.g. virtual sizes)
     def _get_document_size(self, document_lines: list[str]) -> Size:
+        """Return the virtual size of the document - the document only
+        refers to the area in which the cursor can move. It does not, for
+        example, include the width of the gutter."""
         text_width = max(cell_len(line) for line in document_lines)
         height = len(document_lines)
         # We add one to the text width to leave a space for the cursor, since it
@@ -164,6 +168,14 @@ TextEditor > .text-editor--active-line {
         # Similarly, the cursor can rest below the bottom line of text, where
         # a line doesn't currently exist.
         return Size(text_width + 1, height)
+
+    def _get_virtual_size(self) -> Size:
+        document_width, document_height = self._get_document_size(self.document_lines)
+        gutter_width = self.gutter_width
+        return Size(
+            document_width + max(gutter_width - int(self.scroll_x), 0),
+            document_height,
+        )
 
     def render_line(self, widget_y: int) -> Strip:
         log.debug(f"render_line {widget_y!r}")
@@ -194,18 +206,44 @@ TextEditor > .text-editor--active-line {
             )
             line_text.stylize_before(Style(bgcolor="#363636"))
 
-        # We need to render according to the virtual size otherwise the rendering
-        # will wrap the text content incorrectly.
-        segments = self.app.console.render(
+        if self.show_line_numbers:
+            gutter_style = self.get_component_rich_style("text-editor--gutter")
+            gutter_width_no_margin = self.gutter_width - 2
+            gutter = Text(
+                f"{document_y + 1:>{gutter_width_no_margin}}│ ",
+                style=gutter_style,
+                end="",
+            )
+        else:
+            gutter = Text("", end="")
+
+        gutter_segments = self.app.console.render(gutter)
+        text_segments = self.app.console.render(
             line_text, self.app.console.options.update_width(self.virtual_size.width)
         )
-        strip = (
-            Strip(segments)
-            .crop(int(self.scroll_x), int(self.scroll_x) + self.virtual_size.width)
-            .simplify()
-        )
+
+        virtual_width, virtual_height = self.virtual_size
+        text_crop_start = int(self.scroll_x)
+        text_crop_end = text_crop_start + virtual_width
+
+        gutter_strip = Strip(gutter_segments)
+        text_strip = Strip(text_segments).crop(text_crop_start, text_crop_end)
+
+        strip = Strip.join([gutter_strip, text_strip]).simplify()
+        log.debug(f"combined_strip = {strip.text!r}")
 
         return strip
+
+    @property
+    def gutter_width(self) -> int:
+        # The longest number in the gutter plus two extra characters: `│ `.
+        gutter_margin = 2
+        gutter_longest_number = (
+            len(str(len(self.document_lines) + 1)) + gutter_margin
+            if self.show_line_numbers
+            else 0
+        )
+        return gutter_longest_number
 
     def _get_node_style(self, node: Node) -> Style:
         # Apply simple highlighting to the node based on its type.
@@ -333,7 +371,8 @@ TextEditor > .text-editor--active-line {
 
     def scroll_cursor_visible(self):
         row, column = self.cursor_position
-        log.debug(f"scrolling to cursor at {row,column}")
+        log.debug(f"scrolling to cursor at {row, column}")
+        # TODO - this should account for gutter?
         self.scroll_to_region(
             Region(x=column, y=row, width=1, height=1), animate=False, force=True
         )
