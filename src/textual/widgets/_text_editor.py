@@ -368,8 +368,10 @@ TextEditor > .text-editor--active-line {
     # --- Cursor utilities
     def scroll_cursor_visible(self):
         row, column = self.cursor_position
+        text = self.active_line_text[:column]
+        column_offset = cell_len(text)
         self.scroll_to_region(
-            Region(x=column, y=row, width=1, height=1),
+            Region(x=column_offset, y=row, width=1, height=1),
             spacing=Spacing(right=self.gutter_width),
             animate=False,
             force=True,
