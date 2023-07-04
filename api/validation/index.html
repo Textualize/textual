@@ -11,6 +11,10 @@
         <link rel="canonical" href="https://textual.textualize.io/api/validation/">
       
       
+        <link rel="prev" href="../types/">
+      
+      
+        <link rel="next" href="../walk/">
       
       
         
@@ -325,11 +329,13 @@
         
   
   
+    
+  
   
     
     
       <li class="md-tabs__item">
-        <a href="../" class="md-tabs__link">
+        <a href="../" class="md-tabs__link md-tabs__link--active">
           
   
     
@@ -5059,6 +5065,8 @@
       
   
   
+    
+  
   
     
     
@@ -5090,8 +5098,6 @@
         
       
         
-          
-        
       
         
       
@@ -5137,13 +5143,13 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
         
           
           
@@ -5170,7 +5176,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
@@ -5456,32 +5462,6 @@
     
   
     Geometry
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    API
   
 
     
@@ -5906,6 +5886,678 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#textual.validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        textual.validation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.validation.Failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Failure
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Failure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Failure.description" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        description
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Failure.validator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        validator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Failure.value" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        value
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.validation.Function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Function
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Function">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Function.function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        function
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Function.ReturnedFalse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ReturnedFalse
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Function.describe_failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        describe_failure()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Function.validate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        validate()
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.validation.Integer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Integer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Integer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Integer.NotAnInteger" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NotAnInteger
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Integer.describe_failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        describe_failure()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Integer.validate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        validate()
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.validation.Length" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Length
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Length">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Length.maximum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        maximum
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Length.minimum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        minimum
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Length.Incorrect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Incorrect
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Length.describe_failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        describe_failure()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Length.validate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        validate()
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.validation.Number" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Number
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Number">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Number.maximum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        maximum
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Number.minimum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        minimum
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Number.NotANumber" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NotANumber
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Number.NotInRange" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NotInRange
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Number.describe_failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        describe_failure()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Number.validate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        validate()
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.validation.Regex" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regex
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Regex">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Regex.flags" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        flags
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Regex.regex" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        regex
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Regex.NoResults" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NoResults
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Regex.describe_failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        describe_failure()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Regex.validate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        validate()
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.validation.URL" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        URL
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="URL">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.URL.InvalidURL" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        InvalidURL
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.URL.describe_failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        describe_failure()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.URL.validate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        validate()
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.validation.ValidationResult" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ValidationResult
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ValidationResult">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.ValidationResult.failure_descriptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        failure_descriptions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.ValidationResult.failures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        failures
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.ValidationResult.is_valid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        is_valid
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.ValidationResult.failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        failure()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.ValidationResult.merge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        merge()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.ValidationResult.success" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        success()
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.validation.Validator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validator
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Validator">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Validator.failure_description" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        failure_description
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Validator.describe_failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        describe_failure()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Validator.failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        failure()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Validator.success" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        success()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.validation.Validator.validate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        validate()
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -9402,6 +10054,42 @@ that validation has succeeded.</p>
       
         <footer class="md-footer">
   
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../types/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Types" rel="prev">
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Types
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../walk/" class="md-footer__link md-footer__link--next" aria-label="Next: Walk" rel="next">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Walk
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
     
   
   <div class="md-footer-meta md-typeset">
