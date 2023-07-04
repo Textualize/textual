@@ -508,9 +508,7 @@ TextEditor > .text-editor--cursor {
 
         target_row = max(0, cursor_row - 1)
         # TODO: Fetch last active column on this row
-        target_column = clamp(
-            cursor_column, 0, len(self.document_lines[target_row]) - 1
-        )
+        target_column = clamp(cursor_column, 0, len(self.document_lines[target_row]))
 
         self.cursor_position = (target_row, target_column)
 
