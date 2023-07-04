@@ -393,7 +393,7 @@ TextEditor > .text-editor--cursor {
         text = self.active_line_text[:column]
         column_offset = cell_len(text)
         self.scroll_to_region(
-            Region(x=column_offset, y=row, width=1, height=1),
+            Region(x=column_offset, y=row, width=3, height=1),
             spacing=Spacing(right=self.gutter_width),
             animate=False,
             force=True,
