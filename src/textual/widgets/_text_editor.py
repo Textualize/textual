@@ -41,8 +41,7 @@ TextEditor > .text-editor--active-line-gutter {
     background: $panel-lighten-1;
 }
 TextEditor > .text-editor--gutter {
-    color: $text-muted;
-    background: $background;
+    color: $text-muted 40%;
 }
 TextEditor > .text-editor--cursor {
     color: $text;
@@ -494,7 +493,7 @@ TextEditor > .text-editor--cursor {
         target_row = max(0, cursor_row - 1)
         # TODO: Fetch last active column on this row
         target_column = clamp(
-            cursor_column, 0, cell_len(self.document_lines[target_row]) - 1
+            cursor_column, 0, len(self.document_lines[target_row]) - 1
         )
 
         self.cursor_position = (target_row, target_column)
