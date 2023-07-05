@@ -3,7 +3,7 @@
 An *optionally* awaitable object returned by methods that remove widgets.
 """
 
-from asyncio import Event, Task
+from asyncio import CancelledError, Event, Task
 from typing import Generator
 
 
@@ -30,6 +30,11 @@ class AwaitRemove:
     def __await__(self) -> Generator[None, None, None]:
         async def await_prune() -> None:
             """Wait for the prune operation to finish."""
-            await self.finished_flag.wait()
+            # Ignore CancelledErrors while 3.7 is supported.
+            # C.f. https://github.com/Textualize/textual/issues/2854
+            try:
+                await self.finished_flag.wait()
+            except CancelledError:
+                pass
 
         return await_prune().__await__()
