@@ -18,3 +18,5 @@ async def test_multiple_simultaneous_removals():
     # The app should run and finish without raising any errors.
     async with RemoveOnTimerApp().run_test() as pilot:
         await pilot.pause(0.3)
+        # Sanity check to ensure labels were removed.
+        assert len(pilot.app.query(Label)) == 0
