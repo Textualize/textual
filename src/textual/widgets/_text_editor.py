@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-import os
 from collections import defaultdict
+from dataclasses import dataclass
 from pathlib import Path
 from typing import ClassVar, Iterable, NamedTuple
 
 from rich.cells import get_character_cell_size
-from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text
 from tree_sitter import Language, Node, Parser, Tree
@@ -15,7 +14,7 @@ from tree_sitter.binding import Query
 from textual import events, log
 from textual._cells import cell_len
 from textual.binding import Binding
-from textual.geometry import Region, Size, Spacing, clamp
+from textual.geometry import Offset, Region, Size, Spacing, clamp
 from textual.reactive import Reactive, reactive
 from textual.scroll_view import ScrollView
 from textual.strip import Strip
@@ -26,11 +25,27 @@ LANGUAGES_PATH = TREE_SITTER_PATH / "textual-languages.so"
 # TODO - remove hardcoded python.scm highlight query file
 HIGHLIGHTS_PATH = TREE_SITTER_PATH / "highlights/python.scm"
 
-
+# TODO - temporary proof of concept approach
 HIGHLIGHT_STYLES = {
-    "string": Style(color="green"),
-    "comment": Style(dim=True),
-    "keyword": Style(bgcolor="red"),
+    "string": Style(color="#E6DB74"),
+    "string.documentation": Style(color="yellow"),
+    "comment": Style(color="#75715E"),
+    "keyword": Style(color="#F92672"),
+    "include": Style(color="#F92672"),
+    "keyword.function": Style(color="#F92672"),
+    "keyword.return": Style(color="#F92672"),
+    "conditional": Style(color="#F92672"),
+    "number": Style(color="#AE81FF"),
+    "class": Style(color="#A6E22E"),
+    "function": Style(color="#A6E22E"),
+    "function.call": Style(color="#A6E22E"),
+    "method": Style(color="#A6E22E"),
+    "method.call": Style(color="#A6E22E"),
+    # "constant": Style(color="#AE81FF"),
+    "variable": Style(color="white"),
+    "parameter": Style(color="cyan"),
+    "type": Style(color="cyan"),
+    "escape": Style(bgcolor="magenta"),
 }
 
 
@@ -273,21 +288,29 @@ TextEditor > .text-editor--cursor {
         return gutter_longest_number
 
     # --- Syntax highlighting
-    def _prepare_highlights(self) -> None:
-        scroll_y = int(self.scroll_y)
-        visible_start = scroll_y
-        visible_end = scroll_y + self.size.height + 1
-        visible_range = range(visible_start, visible_end)
+    def _prepare_highlights(
+        self,
+        start_point: tuple[int, int] | None = None,
+        end_point: tuple[int, int] = None,
+    ) -> None:
+        # TODO - we're ignoring get changed ranges for now. Either I'm misunderstanding
+        #  it or I've made a mistake somewhere with AST editing.
 
-        # TODO - pass in the visible range to Query.captures
-        #  to ensure we only query for nodes which are currently relevant.
-        #  See py-tree-sitter readme, the pattern-matching section.
+        highlights = self._highlights
         query: Query = self._language.query(self._highlights_query)
-        captures = query.captures(self._ast.root_node)
 
-        highlight_cache = self._highlights
+        log.debug(f"capturing nodes in range {start_point!r} -> {end_point!r}")
+
+        captures_kwargs = {}
+        if start_point is not None:
+            captures_kwargs["start_point"] = start_point
+        if end_point is not None:
+            captures_kwargs["end_point"] = end_point
+
+        captures = query.captures(self._ast.root_node, **captures_kwargs)
+
+        highlight_updates: dict[int, list[Highlight]] = defaultdict(list)
         for capture in captures:
-            print(capture)
             node, highlight_name = capture
             node_start_row, node_start_column = node.start_point
             node_end_row, node_end_column = node.end_point
@@ -296,95 +319,25 @@ TextEditor > .text-editor--cursor {
                 highlight = Highlight(
                     node_start_column, node_end_column, highlight_name
                 )
-                highlight_cache[node_start_row].append(highlight)
+                highlight_updates[node_start_row].append(highlight)
             else:
                 # Add the first line
-                highlight_cache[node_start_row].append(
+                highlight_updates[node_start_row].append(
                     Highlight(node_start_column, None, highlight_name)
                 )
                 # Add the middle lines - entire row of this node is highlighted
                 for node_row in range(node_start_row + 1, node_end_row):
-                    highlight_cache[node_row].append(Highlight(0, None, highlight_name))
+                    highlight_updates[node_row].append(
+                        Highlight(0, None, highlight_name)
+                    )
 
                 # Add the last line
-                highlight_cache[node_end_row].append(
+                highlight_updates[node_end_row].append(
                     Highlight(0, node_end_column, highlight_name)
                 )
 
-    #
-    # def _cache_highlights(
-    #     self,
-    #     cursor,
-    #     document: list[str],
-    #     line_range: tuple[int, int] | None = None,
-    # ) -> None:
-    #     """Traverse the AST and highlight the document.
-    #
-    #     Args:
-    #         cursor: The tree-sitter Tree cursor.
-    #         document: The document as a list of strings.
-    #         line_range: The start and end line index that is visible. If None, highlight the whole document.
-    #     """
-    #
-    #     # TODO: Instead of traversing the AST, use AST queries and the
-    #     #  .scm files from tree-sitter GitHub org for highlighting.
-    #
-    #     reached_root = False
-    #
-    #     while not reached_root:
-    #         # The range of the document (line indices) that we want to highlight.
-    #         if line_range is not None:
-    #             window_start, window_end = line_range
-    #         else:
-    #             window_start = 0
-    #             window_end = len(document) - 1
-    #
-    #         # Get the range of this node
-    #         node_start_row, node_start_column = cursor.node.start_point
-    #         node_end_row, node_end_column = cursor.node.end_point
-    #
-    #         node_in_window = line_range is None or (
-    #             window_start <= node_end_row and window_end >= node_start_row
-    #         )
-    #
-    #         # Cache the highlight data for this node if it's within the window range
-    #         # At this point we're not actually looking at the document at all, we're
-    #         # just storing data on the locations to highlight within the document.
-    #         # This data will be referenced only when we render.
-    #         if node_in_window:
-    #             highlight_cache = self._highlights
-    #             node = cursor.node
-    #             if node_start_row == node_end_row:
-    #                 highlight = Highlight(node_start_column, node_end_column, node)
-    #                 highlight_cache[node_start_row].append(highlight)
-    #             else:
-    #                 # Add the first line
-    #                 highlight_cache[node_start_row].append(
-    #                     Highlight(node_start_column, None, node)
-    #                 )
-    #                 # Add the middle lines - entire row of this node is highlighted
-    #                 for node_row in range(node_start_row + 1, node_end_row):
-    #                     highlight_cache[node_row].append(Highlight(0, None, node))
-    #
-    #                 # Add the last line
-    #                 highlight_cache[node_end_row].append(
-    #                     Highlight(0, node_end_column, node)
-    #                 )
-    #
-    #         if cursor.goto_first_child():
-    #             continue
-    #
-    #         if cursor.goto_next_sibling():
-    #             continue
-    #
-    #         retracing = True
-    #         while retracing:
-    #             if not cursor.goto_parent():
-    #                 retracing = False
-    #                 reached_root = True
-    #
-    #             if cursor.goto_next_sibling():
-    #                 retracing = False
+        for line_index, updated_highlights in highlight_updates.items():
+            highlights[line_index] = updated_highlights
 
     # --- Lower level event/key handling
     def _on_key(self, event: events.Key) -> None:
@@ -591,7 +544,7 @@ TextEditor > .text-editor--cursor {
         document_width, document_height = self._document_size
 
         # The virtual width of the row is the cell length of the text in the row
-        # plus 1 to accommodate for a cursor potentially "resting" at the end of the row.
+        # plus 1 to accommodate for a cursor potentially "resting" at the end of the row
         insertion_width = longest_modified_line + 1
 
         new_document_width = max(insertion_width, document_width)
@@ -600,16 +553,39 @@ TextEditor > .text-editor--cursor {
         self._document_size = Size(new_document_width, new_document_height)
         self.cursor_position = (cursor_row + len(replacement_lines) - 1, end_column)
 
-        self._ast.edit(
-            start_byte=start_byte,
-            old_end_byte=start_byte,
-            new_end_byte=start_byte + len(text),
-            start_point=start_point,
-            old_end_point=start_point,
-            new_end_point=self.cursor_position,
+        edit_args = {
+            "start_byte": start_byte,
+            "old_end_byte": start_byte,
+            "new_end_byte": start_byte + len(text),  # TODO - what about newlines?
+            "start_point": start_point,
+            "old_end_point": start_point,
+            "new_end_point": self.cursor_position,
+        }
+        log.debug(edit_args)
+        self._ast.edit(**edit_args)
+
+        old_tree = self._ast
+        self._ast = self._parser.parse(self._read_callable, old_tree)
+
+        # Limit the range, rather arbitrarily for now.
+        # Perhaps we do the incremental parsing within a window here, then have some
+        # heuristic for wider parsing inside on_idle?
+        scroll_y = max(0, int(self.scroll_y))
+
+        visible_start_line = scroll_y
+        height = self.region.height or len(self.document_lines) - 1
+        visible_end_line = scroll_y + height
+
+        highlight_window_leeway = 10
+        start_point = (max(0, visible_start_line - highlight_window_leeway), 0)
+
+        end_row_index = min(
+            len(self.document_lines) - 1, visible_end_line + highlight_window_leeway
         )
-        self._ast = self._parser.parse(self._read_callable, self._ast)
-        self._prepare_highlights()
+        end_line = self.document_lines[end_row_index]
+        end_point = (end_row_index, len(end_line) - 1)
+
+        self._prepare_highlights(start_point, end_point)
 
     def _position_to_byte_offset(self, position: tuple[int, int]) -> int:
         """Given a document coordinate, return the byte offset of that coordinate."""
@@ -676,24 +652,38 @@ TextEditor > .text-editor--cursor {
     def action_print_highlight_cache(self) -> None:
         log.debug(self._highlights)
 
-    def debug_state(self) -> str:
-        return f"""\
-cursor {self.cursor_position!r}
-language {self.language!r}
-document_size {self._document_size!r}
-virtual_size {self.virtual_size!r}
-scroll {(self.scroll_x, self.scroll_y)!r}
+    @dataclass
+    class EditorDebug:
+        cursor: tuple[int, int]
+        language: str
+        document_size: Size
+        virtual_size: Size
+        scroll: Offset
+        active_line_text: str
+        active_line_cell_len: int
+        highlight_cache_key_count: int
+        highlight_cache_total_size: int
+        highlight_cache_current_row_size: int
+        highlight_cache_current_row: list[Highlight]
 
-[b]LINE INDEX {self.cursor_position[0]} (cell_len={cell_len(self.active_line_text)})[/]
-{self.active_line_text!r}
-"""
-
-    def debug_highlights(self) -> str:
-        return f"""\
-highlight cache keys (rows) {len(self._highlights)}
-highlight cache total size {sum(len(highlights) for key, highlights in self._highlights.items())}
-current row highlight cache size {len(self._highlights[self.cursor_position[0]])}
-"""
+    def debug_state(self) -> "EditorDebug":
+        return self.EditorDebug(
+            cursor=self.cursor_position,
+            language=self.language,
+            document_size=self._document_size,
+            virtual_size=self.virtual_size,
+            scroll=self.scroll_offset,
+            active_line_text=repr(self.active_line_text),
+            active_line_cell_len=cell_len(self.active_line_text),
+            highlight_cache_key_count=len(self._highlights),
+            highlight_cache_total_size=sum(
+                len(highlights) for key, highlights in self._highlights.items()
+            ),
+            highlight_cache_current_row_size=len(
+                self._highlights[self.cursor_position[0]]
+            ),
+            highlight_cache_current_row=self._highlights[self.cursor_position[0]],
+        )
 
 
 if __name__ == "__main__":
@@ -748,3 +738,105 @@ if __name__ == "__main__":
     tree = parser.parse(bytes(CODE, "utf-8"))
 
     print(list(traverse_tree(tree.walk())))
+
+# from pathlib import Path
+#
+# from rich.pretty import Pretty
+#
+# from textual.app import App, ComposeResult
+# from textual.binding import Binding
+# from textual.widgets import Footer, Static
+# from textual.widgets._text_editor import TextEditor
+#
+# SAMPLE_TEXT = [
+#     "Hello, world!",
+#     "",
+#     "你好，世界！",  # Chinese characters, which are usually double-width
+#     "こんにちは、世界！",  # Japanese characters, also usually double-width
+#     "안녕하세요, 세계!",  # Korean characters, also usually double-width
+#     "    This line has leading white space",
+#     "This line has trailing white space    ",
+#     "    This line has both leading and trailing white space    ",
+#     "    ",  # Line with only spaces
+#     "こんにちは、world! 你好，world!",  # Mixed script line
+#     "Hello, 🌍! Hello, 🌏! Hello, 🌎!",  # Line with emoji (which are often double-width)
+#     "The quick brown 🦊 jumps over the lazy 🐶.",  # Line with emoji interspersed in text
+#     "Special characters: ~!@#$%^&*()_+`-={}|[]\\:\";'<>?,./",
+#     # Line with special characters
+#     "Unicode example: Привет, мир!",  # Russian text
+#     "Unicode example: Γειά σου Κόσμε!",  # Greek text
+#     "Unicode example: مرحبا بك في",  # Arabic text
+# ]
+#
+# PYTHON_SNIPPET = """\
+# def render_line(self, y: int) -> Strip:
+#     '''Render a line of the widget. y is relative to the top of the widget.'''
+#
+#     row_index = y // 4  # A checkerboard square consists of 4 rows
+#
+#     if row_index >= 8:  # Generate blank lines when we reach the end
+#         return Strip.blank(self.size.width)
+#
+#     is_odd = row_index % 2  # Used to alternate the starting square on each row
+#
+#     white = Style.parse("on white")  # Get a style object for a white background
+#     black = Style.parse("on black")  # Get a style object for a black background
+#
+#     # Generate a list of segments with alternating black and white space characters
+#     segments = [
+#         Segment(" " * 8, black if (column + is_odd) % 2 else white)
+#         for column in range(8)
+#     ]
+#     strip = Strip(segments, 8 * 8)
+#     return strip
+# """
+#
+#
+# class TextEditorDemo(App):
+#     CSS = """\
+#     TextEditor {
+#         height: 18;
+#         background: $panel;
+#     }
+#
+#     #debug {
+#         border: wide $primary;
+#         padding: 1 2;
+#     }
+#
+#     """
+#
+#     BINDINGS = [
+#         Binding("ctrl+p", "load_python", "Load Python")
+#     ]
+#
+#     def compose(self) -> ComposeResult:
+#         text_area = TextEditor()
+#         text_area.language = "python"
+#         code_path = Path(
+#             "/Users/darrenburns/Code/textual/src/textual/widgets/_data_table.py")
+#         text_area.load_text(code_path.read_text())
+#         yield text_area
+#         yield Footer()
+#         Static.can_focus = True
+#         yield Static(id="debug")
+#
+#     def on_mount(self):
+#         editor = self.query_one(TextEditor)
+#         self.watch(editor, "cursor_position", self.update_debug)
+#         self.watch(editor, "language", self.update_debug)
+#
+#     def update_debug(self):
+#         editor = self.query_one(TextEditor)
+#         debug = self.query_one("#debug")
+#         debug.update(Pretty(editor.debug_state()))
+#
+#     def key_d(self):
+#         editor = self.query_one(TextEditor)
+#         for item in list(editor._highlights.items())[:10]:
+#             print(item)
+#
+#
+# app = TextEditorDemo()
+# if __name__ == '__main__':
+#     app.run()
