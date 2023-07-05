@@ -202,6 +202,7 @@ class ETAStatus(Label):
         self._percentage = None
         self._label_text = "--:--:--"
         self._start_time = None
+        self._refresh_timer = None
 
     def on_mount(self) -> None:
         """Periodically refresh the countdown so that the ETA is always up to date."""
@@ -211,7 +212,8 @@ class ETAStatus(Label):
         if percentage is None:
             self._label_text = "--:--:--"
         else:
-            self._refresh_timer.reset()
+            if self._refresh_timer:
+                self._refresh_timer.reset()
             self.update_eta()
 
     def update_eta(self) -> None:
