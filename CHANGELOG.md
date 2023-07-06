@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed CancelledError issue with timer https://github.com/Textualize/textual/issues/2854
+
+
 ## [0.29.0] - 2023-07-03
 
 ### Changed
@@ -23,6 +30,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed crash when columns were added to populated `DataTable` https://github.com/Textualize/textual/pull/2836
 - Fixed issues with opacity on Screens https://github.com/Textualize/textual/issues/2616
 - Fixed style problem with selected selections in a non-focused selection list https://github.com/Textualize/textual/issues/2768
+- Fixed sys.stdout and sys.stderr being None https://github.com/Textualize/textual/issues/2879
 
 ## [0.28.1] - 2023-06-20
 

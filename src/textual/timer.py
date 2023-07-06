@@ -148,6 +148,10 @@ class Timer:
         if self._callback is not None:
             try:
                 await invoke(self._callback)
+            except CancelledError:
+                # https://github.com/Textualize/textual/pull/2895
+                # Re-raise CancelledErrors that would be caught by the following exception block in Python 3.7
+                raise
             except Exception as error:
                 app = active_app.get()
                 app._handle_exception(error)
