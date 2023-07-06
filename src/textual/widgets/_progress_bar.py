@@ -186,7 +186,7 @@ class ETAStatus(Label):
     """This is used as an auxiliary reactive to only refresh the label when needed."""
     _percentage: reactive[float | None] = reactive[Optional[float]](None)
     """The percentage of progress that has been completed."""
-    _refresh_timer: Timer
+    _refresh_timer: Timer | None
     """Timer to update ETA status even when progress stalls."""
     _start_time: float | None
     """The time when the widget started tracking progress."""
@@ -212,7 +212,7 @@ class ETAStatus(Label):
         if percentage is None:
             self._label_text = "--:--:--"
         else:
-            if self._refresh_timer:
+            if self._refresh_timer is not None:
                 self._refresh_timer.reset()
             self.update_eta()
 
