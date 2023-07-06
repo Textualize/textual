@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+- Added `DataTable.remove_column` method https://github.com/Textualize/textual/pull/2899
+
 ### Fixed
 
 - Fixed CancelledError issue with timer https://github.com/Textualize/textual/issues/2854
