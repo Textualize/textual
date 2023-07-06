@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import ClassVar, Iterable, NamedTuple
 
+import rich
 from rich.cells import get_character_cell_size
 from rich.style import Style
 from rich.text import Text
@@ -130,7 +131,7 @@ TextEditor > .text-editor--cursor {
         self._language: Language | None = None
         self._parser: Parser | None = None
         """The tree-sitter parser which extracts the syntax tree from the document."""
-        self._ast: Tree | None = None
+        self._syntax_tree: Tree | None = None
         """The tree-sitter Tree (AST) built from the document."""
 
     def watch_language(self, new_language: str | None) -> None:
@@ -144,10 +145,10 @@ TextEditor > .text-editor--cursor {
             parser = Parser()
             self._parser = parser
             self._parser.set_language(self._language)
-            self._ast = self._build_ast(parser)
+            self._syntax_tree = self._build_ast(parser)
             self._highlights_query = Path(HIGHLIGHTS_PATH.resolve()).read_text()
         else:
-            self._ast = None
+            self._syntax_tree = None
 
         log.debug(f"parser set to {self._parser}")
 
@@ -175,10 +176,13 @@ TextEditor > .text-editor--cursor {
         row_out_of_bounds = row >= len(lines)
         column_out_of_bounds = not row_out_of_bounds and column > len(lines[row])
         if row_out_of_bounds or column_out_of_bounds:
-            return None
-        if column == len(lines[row]):
-            return "\n".encode("utf-8")
-        return self.document_lines[row][column:].encode("utf8")
+            return_value = None
+        elif column == len(lines[row]) and row < len(lines):
+            return_value = "\n".encode("utf8")
+        else:
+            return_value = lines[row][column].encode("utf8")
+        print(f"(point={point!r}) (offset={byte_offset!r}) {return_value!r}")
+        return return_value
 
     def load_text(self, text: str) -> None:
         """Load text from a string into the editor."""
@@ -194,10 +198,10 @@ TextEditor > .text-editor--cursor {
 
         # TODO - clear caches
         if self._parser is not None:
-            self._ast = self._build_ast(self._parser)
+            self._syntax_tree = self._build_ast(self._parser)
             self._prepare_highlights()
 
-        log.debug(f"loaded text. parser = {self._parser} ast = {self._ast}")
+        log.debug(f"loaded text. parser = {self._parser} ast = {self._syntax_tree}")
 
     # --- Methods for measuring things (e.g. virtual sizes)
     def _get_document_size(self, document_lines: list[str]) -> Size:
@@ -307,7 +311,7 @@ TextEditor > .text-editor--cursor {
         if end_point is not None:
             captures_kwargs["end_point"] = end_point
 
-        captures = query.captures(self._ast.root_node, **captures_kwargs)
+        captures = query.captures(self._syntax_tree.root_node, **captures_kwargs)
 
         highlight_updates: dict[int, list[Highlight]] = defaultdict(list)
         for capture in captures:
@@ -365,7 +369,7 @@ TextEditor > .text-editor--cursor {
         event.stop()
 
         target_x = max(offset.x - self.gutter_width + int(self.scroll_x), 0)
-        target_y = offset.y + int(self.scroll_y)
+        target_y = clamp(offset.y + int(self.scroll_y), 0, len(self.document_lines) - 1)
 
         line = self.document_lines[target_y]
         cell_offset = 0
@@ -538,7 +542,7 @@ TextEditor > .text-editor--cursor {
         end_column = len(replacement_lines[-1])
         replacement_lines[-1] += text_after_cursor
 
-        lines[cursor_row : cursor_row + 1] = replacement_lines
+        self.document_lines[cursor_row : cursor_row + 1] = replacement_lines
 
         longest_modified_line = max(cell_len(line) for line in replacement_lines)
         document_width, document_height = self._document_size
@@ -562,10 +566,16 @@ TextEditor > .text-editor--cursor {
             "new_end_point": self.cursor_position,
         }
         log.debug(edit_args)
-        self._ast.edit(**edit_args)
 
-        old_tree = self._ast
-        self._ast = self._parser.parse(self._read_callable, old_tree)
+        # Edit the tree in place
+        old_tree = self._syntax_tree
+        old_tree.edit(**edit_args)
+        new_tree = self._parser.parse(self._read_callable, old_tree)
+
+        changed_ranges = old_tree.get_changed_ranges(new_tree)
+
+        self._syntax_tree = new_tree
+        log.debug(f"changed = {changed_ranges!r}")
 
         # Limit the range, rather arbitrarily for now.
         # Perhaps we do the incremental parsing within a window here, then have some
@@ -647,7 +657,7 @@ TextEditor > .text-editor--cursor {
                     yield from traverse(cursor)
                 cursor.goto_parent()
 
-        log.debug(list(traverse(self._ast.walk())))
+        log.debug(list(traverse(self._syntax_tree.walk())))
 
     def action_print_highlight_cache(self) -> None:
         log.debug(self._highlights)
@@ -659,6 +669,7 @@ TextEditor > .text-editor--cursor {
         document_size: Size
         virtual_size: Size
         scroll: Offset
+        tree_sexp: str
         active_line_text: str
         active_line_cell_len: int
         highlight_cache_key_count: int
@@ -673,6 +684,7 @@ TextEditor > .text-editor--cursor {
             document_size=self._document_size,
             virtual_size=self.virtual_size,
             scroll=self.scroll_offset,
+            tree_sexp=self._syntax_tree.root_node.sexp(),
             active_line_text=repr(self.active_line_text),
             active_line_cell_len=cell_len(self.active_line_text),
             highlight_cache_key_count=len(self._highlights),
@@ -686,28 +698,28 @@ TextEditor > .text-editor--cursor {
         )
 
 
-if __name__ == "__main__":
+def traverse_tree(cursor):
+    reached_root = False
+    while reached_root == False:
+        yield cursor.node
 
-    def traverse_tree(cursor):
-        reached_root = False
-        while reached_root == False:
-            yield cursor.node
+        if cursor.goto_first_child():
+            continue
 
-            if cursor.goto_first_child():
-                continue
+        if cursor.goto_next_sibling():
+            continue
+
+        retracing = True
+        while retracing:
+            if not cursor.goto_parent():
+                retracing = False
+                reached_root = True
 
             if cursor.goto_next_sibling():
-                continue
+                retracing = False
 
-            retracing = True
-            while retracing:
-                if not cursor.goto_parent():
-                    retracing = False
-                    reached_root = True
 
-                if cursor.goto_next_sibling():
-                    retracing = False
-
+if __name__ == "__main__":
     language = Language(LANGUAGES_PATH.resolve(), "python")
     parser = Parser()
     parser.set_language(language)
@@ -739,6 +751,8 @@ if __name__ == "__main__":
 
     print(list(traverse_tree(tree.walk())))
 
+#
+#
 # from pathlib import Path
 #
 # from rich.pretty import Pretty
@@ -807,7 +821,7 @@ if __name__ == "__main__":
 #     """
 #
 #     BINDINGS = [
-#         Binding("ctrl+p", "load_python", "Load Python")
+#         Binding("ctrl+t", "traverse", "Traverse nodes")
 #     ]
 #
 #     def compose(self) -> ComposeResult:
@@ -815,7 +829,13 @@ if __name__ == "__main__":
 #         text_area.language = "python"
 #         code_path = Path(
 #             "/Users/darrenburns/Code/textual/src/textual/widgets/_data_table.py")
-#         text_area.load_text(code_path.read_text())
+#
+#         short_code = """\
+# print("hello")
+# print("world")
+# """
+#         text_area.load_text(short_code)
+#         # text_area.load_text(code_path.read_text())
 #         yield text_area
 #         yield Footer()
 #         Static.can_focus = True
@@ -831,10 +851,31 @@ if __name__ == "__main__":
 #         debug = self.query_one("#debug")
 #         debug.update(Pretty(editor.debug_state()))
 #
-#     def key_d(self):
+#     def action_traverse(self):
+#         def traverse_tree(cursor):
+#             reached_root = False
+#             while reached_root == False:
+#                 yield cursor.node
+#
+#                 if cursor.goto_first_child():
+#                     continue
+#
+#                 if cursor.goto_next_sibling():
+#                     continue
+#
+#                 retracing = True
+#                 while retracing:
+#                     if not cursor.goto_parent():
+#                         retracing = False
+#                         reached_root = True
+#
+#                     if cursor.goto_next_sibling():
+#                         retracing = False
+#
 #         editor = self.query_one(TextEditor)
-#         for item in list(editor._highlights.items())[:10]:
-#             print(item)
+#         nodes = list(traverse_tree(editor._syntax_tree.walk()))
+#         for node in nodes:
+#             print(node)
 #
 #
 # app = TextEditorDemo()
