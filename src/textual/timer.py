@@ -148,6 +148,8 @@ class Timer:
         if self._callback is not None:
             try:
                 await invoke(self._callback)
+            except CancelledError:
+                raise
             except Exception as error:
                 app = active_app.get()
                 app._handle_exception(error)
