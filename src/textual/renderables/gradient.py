@@ -1,16 +1,14 @@
 from __future__ import annotations
 
 from functools import lru_cache
-from math import cos, pi, sin, sqrt
+from math import cos, pi, sin
 
 from rich.color import Color as RichColor
 from rich.console import Console, ConsoleOptions, RenderResult
 from rich.segment import Segment
 from rich.style import Style
 
-from ..color import Color
-from ..color import Gradient as ColorGradient
-from ..geometry import clamp
+from ..color import Color, Gradient
 
 
 class VerticalGradient:
@@ -50,7 +48,7 @@ class LinearGradient:
         """
 
         Args:
-            angle: Angle of rotation in degrees;
+            angle: Angle of rotation in degrees.
             stops: List of stop consisting of pairs of offset (between 0 and 1) and colors.
         """
         self.angle = angle
@@ -71,7 +69,7 @@ class LinearGradient:
 
         new_line = Segment.line()
 
-        color_gradient = ColorGradient(*self._stops)
+        color_gradient = Gradient(*self._stops)
 
         _Segment = Segment
         get_color = color_gradient.get_color
