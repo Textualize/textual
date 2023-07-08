@@ -76,8 +76,16 @@ class LinearGradient:
         from_color = Style.from_color
 
         @lru_cache
-        def get_rich_color(color_index: int) -> RichColor:
-            return get_color(color_index / 255).rich_color
+        def get_rich_color(color_offset: int) -> RichColor:
+            """Get a Rich color in the gradient.
+
+            Args:
+                color_index: A offset within the color gradient normalized between 0 and 255.
+
+            Returns:
+                A Rich color.
+            """
+            return get_color(color_offset / 255).rich_color
 
         for line_y in range(height):
             y = float(line_y) * 2
