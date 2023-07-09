@@ -40,7 +40,6 @@ class Matcher:
             offsets = [
                 match.span(group_no)[0] for group_no in range(1, match.lastindex + 1)
             ]
-
             group_count = 0
             last_offset = -2
             for offset in offsets:
