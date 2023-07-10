@@ -27,7 +27,7 @@ class Matcher:
             input: Input string to match against.
 
         Returns:
-            Strength if match from 0 to 1.
+            Strength of the match from 0 to 1.
         """
         cached = self._cache.get(input)
         if cached is not None:
