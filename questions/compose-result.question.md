@@ -10,5 +10,5 @@ You likely have an older version of Textual. You can install the latest version 
 The following should do it:
 
 ```
-pip install "textual[dev]" -U
+pip install textual-dev -U
 ```

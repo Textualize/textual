@@ -76,10 +76,10 @@ class WindowsDriver(Driver):
         """Start application mode."""
         loop = asyncio.get_running_loop()
 
+        self._restore_console = win32.enable_application_mode()
+
         self._writer_thread = WriterThread(self._file)
         self._writer_thread.start()
-
-        self._restore_console = win32.enable_application_mode()
 
         self.write("\x1b[?1049h")  # Enable alt screen
         self._enable_mouse_support()
@@ -110,8 +110,6 @@ class WindowsDriver(Driver):
         """Stop application mode, restore state."""
         self._disable_bracketed_paste()
         self.disable_input()
-        if self._restore_console:
-            self._restore_console()
 
         # Disable alt screen, show cursor
         self.write("\x1b[?1049l" + "\x1b[?25h")
@@ -121,3 +119,5 @@ class WindowsDriver(Driver):
         """Perform cleanup."""
         if self._writer_thread is not None:
             self._writer_thread.stop()
+        if self._restore_console:
+            self._restore_console()

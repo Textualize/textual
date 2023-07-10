@@ -25,7 +25,7 @@ This examples shows a green tint with gradually increasing alpha.
     --8<-- "docs/examples/styles/tint.py"
     ```
 
-    1. We set the tint to a `Color` instance with varying levels of transparency, set through the method `.with_alpha`.
+    1. We set the tint to a `Color` instance with varying levels of opacity, set through the method [with_alpha][textual.color.Color.with_alpha].
 
 === "tint.css"
 

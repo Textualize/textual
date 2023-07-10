@@ -72,7 +72,7 @@ You can specify which easing method to use via the `easing` parameter on the `an
 
 !!! note
 
-    The `textual easing` preview requires the `dev` extras to be installed (using `pip install textual[dev]`).
+    The `textual easing` preview requires the `textual-dev` package to be installed (using `pip install textual-dev`).
 
 
 ## Completion callbacks

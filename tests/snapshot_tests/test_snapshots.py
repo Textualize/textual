@@ -7,7 +7,6 @@ WIDGET_EXAMPLES_DIR = Path("../../docs/examples/widgets")
 LAYOUT_EXAMPLES_DIR = Path("../../docs/examples/guide/layout")
 STYLES_EXAMPLES_DIR = Path("../../docs/examples/styles")
 SNAPSHOT_APPS_DIR = Path("./snapshot_apps")
-CLI_PREVIEWS_DIR = Path("../../src/textual/cli/previews")
 
 
 # --- Layout related stuff ---
@@ -142,6 +141,11 @@ def test_datatable_labels_and_fixed_data(snap_compare):
 def test_datatable_style_ordering(snap_compare):
     # Regression test for https://github.com/Textualize/textual/issues/2061
     assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_style_order.py")
+
+
+def test_datatable_add_column(snap_compare):
+    # Checking adding columns after adding rows
+    assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_add_column.py")
 
 
 def test_footer_render(snap_compare):
@@ -345,26 +349,6 @@ def test_programmatic_scrollbar_gutter_change(snap_compare):
     assert snap_compare(
         "snapshot_apps/programmatic_scrollbar_gutter_change.py", press=["s"]
     )
-
-
-# --- CLI Preview Apps ---
-# For our CLI previews e.g. `textual easing`, `textual colors` etc, we have snapshots
-
-
-def test_borders_preview(snap_compare):
-    assert snap_compare(CLI_PREVIEWS_DIR / "borders.py", press=["enter"])
-
-
-def test_colors_preview(snap_compare):
-    assert snap_compare(CLI_PREVIEWS_DIR / "colors.py")
-
-
-def test_easing_preview(snap_compare):
-    assert snap_compare(CLI_PREVIEWS_DIR / "easing.py")
-
-
-def test_keys_preview(snap_compare):
-    assert snap_compare(CLI_PREVIEWS_DIR / "keys.py", press=["a", "b"])
 
 
 # --- Other ---
@@ -574,3 +558,20 @@ def test_tooltips_in_compound_widgets(snap_compare):
         await pilot.pause()
 
     assert snap_compare(SNAPSHOT_APPS_DIR / "tooltips.py", run_before=run_before)
+
+# --- textual-dev library preview tests ---
+
+def test_textual_dev_border_preview(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "dev_previews_border.py", press=["enter"])
+
+
+def test_textual_dev_colors_preview(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "dev_previews_color.py")
+
+
+def test_textual_dev_easing_preview(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "dev_previews_easing.py")
+
+
+def test_textual_dev_keys_preview(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "dev_previews_keys.py", press=["a", "b"])

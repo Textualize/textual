@@ -7,14 +7,30 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Fixed
+
+- Fixed CancelledError issue with timer https://github.com/Textualize/textual/issues/2854
+
+
+## [0.29.0] - 2023-07-03
+
+### Changed
+
+- Factored dev tools (`textual` command) in to external lib (`textual-dev`).
+
 ### Added
 
+- Added can-focus pseudo-class to target widgets that may receive focus
+- Make `Markdown.update` optionally awaitable https://github.com/Textualize/textual/pull/2838
+- Added `default` parameter to `DataTable.add_column` for populating existing rows https://github.com/Textualize/textual/pull/2836
 - Added can-focus pseudo-class to target widgets that may receive focus
 
 ### Fixed
 
+- Fixed crash when columns were added to populated `DataTable` https://github.com/Textualize/textual/pull/2836
 - Fixed issues with opacity on Screens https://github.com/Textualize/textual/issues/2616
-
+- Fixed style problem with selected selections in a non-focused selection list https://github.com/Textualize/textual/issues/2768
+- Fixed sys.stdout and sys.stderr being None https://github.com/Textualize/textual/issues/2879
 
 ## [0.28.1] - 2023-06-20
 
@@ -1091,6 +1107,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.29.0]: https://github.com/Textualize/textual/compare/v0.28.1...v0.29.0
 [0.28.1]: https://github.com/Textualize/textual/compare/v0.28.0...v0.28.1
 [0.28.0]: https://github.com/Textualize/textual/compare/v0.27.0...v0.28.0
 [0.27.0]: https://github.com/Textualize/textual/compare/v0.26.0...v0.27.0
