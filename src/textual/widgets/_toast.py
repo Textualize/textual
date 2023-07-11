@@ -112,7 +112,15 @@ class ToastRack(Container, inherit_css=False):
 
     @staticmethod
     def _toast_id(notification: Notification) -> str:
-        return f"textual-toast-{notification.identity}"
+        """Create a Textual-DOM-internal ID for the given notification.
+
+        Args:
+            notification: The notification to create the ID for.
+
+        Returns:
+            An ID for the notification that can be used within the DOM.
+        """
+        return f"--textual-toast-{notification.identity}"
 
     def add_toast(self, *notifications: Notification) -> None:
         """Add a toast to the display.
