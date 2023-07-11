@@ -575,3 +575,7 @@ def test_textual_dev_easing_preview(snap_compare):
 
 def test_textual_dev_keys_preview(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "dev_previews_keys.py", press=["a", "b"])
+
+
+def test_notifications(snap_compare) -> None:
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "toast.py")
