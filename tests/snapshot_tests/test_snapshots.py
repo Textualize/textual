@@ -577,5 +577,9 @@ def test_textual_dev_keys_preview(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "dev_previews_keys.py", press=["a", "b"])
 
 
-def test_notifications(snap_compare) -> None:
+def test_notifications_example(snap_compare) -> None:
     assert snap_compare(WIDGET_EXAMPLES_DIR / "toast.py")
+
+def test_notifications_through_screens(snap_compare) -> None:
+    assert snap_compare(SNAPSHOT_APPS_DIR / "notification_through_screens.py")
+
