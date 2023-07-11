@@ -12,9 +12,15 @@ from ..notifications import Notification
 from ._static import Static
 
 
-class RightAlignToast(Container, inherit_css=False):
+class ToastHolder(Container, inherit_css=False):
+    """Container that holds a single toast.
+
+    Used to control the alignment of each of the toasts in the main toast
+    container.
+    """
+
     DEFAULT_CSS = """
-    RightAlignToast {
+    ToastHolder {
         align-horizontal: right;
         width: 1fr;
         height: auto;
@@ -85,7 +91,7 @@ class Toast(Static, inherit_css=False):
         # Note that we attempt to remove our parent, because we're wrapped
         # inside an alignment container. The testing that we are is as much
         # to keep type checkers happy as anything else.
-        (self.parent if isinstance(self.parent, RightAlignToast) else self).remove()
+        (self.parent if isinstance(self.parent, ToastHolder) else self).remove()
 
 
 class ToastRack(Container, inherit_css=False):
@@ -129,7 +135,7 @@ class ToastRack(Container, inherit_css=False):
         if new_toasts:
             # ...mount them.
             self.mount_all(
-                RightAlignToast(Toast(toast), id=self._toast_id(toast))
+                ToastHolder(Toast(toast), id=self._toast_id(toast))
                 for toast in new_toasts
             )
             self.call_later(self.scroll_end, animate=False, force=True)
