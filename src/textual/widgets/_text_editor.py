@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import string
 from collections import defaultdict
 from dataclasses import dataclass
@@ -94,8 +95,15 @@ TextEditor > .text-editor--cursor {
         Binding("ctrl+left", "cursor_left_word", "cursor left word", show=False),
         Binding("right", "cursor_right", "cursor right", show=False),
         Binding("ctrl+right", "cursor_right_word", "cursor right word", show=False),
-        Binding("home", "cursor_line_start", "cursor line start", show=False),
-        Binding("end", "cursor_line_end", "cursor line end", show=False),
+        Binding("home,ctrl+a", "cursor_line_start", "cursor line start", show=False),
+        Binding("end,ctrl+e", "cursor_line_end", "cursor line end", show=False),
+        Binding("backspace", "delete_left", "delete left", show=False),
+        Binding("ctrl+d", "delete_right", "delete right", show=False),
+        Binding("ctrl+x", "delete_line", "delete line", show=False),
+        Binding(
+            "ctrl+u", "delete_to_start_of_line", "delete to line start", show=False
+        ),
+        Binding("ctrl+k", "delete_to_end_of_line", "delete to line end", show=False),
         # Debugging bindings
         Binding("ctrl+s", "print_highlight_cache", "[debug] Print highlight cache"),
         Binding("ctrl+l", "print_line_cache", "[debug] Print line cache"),
@@ -129,6 +137,10 @@ TextEditor > .text-editor--cursor {
 
         self._highlights_query: str | None = None
         """The string containing the tree-sitter AST query used for syntax highlighting."""
+
+        self._last_intentional_column: int = 0
+        """Tracks the last column the user explicitly navigated to so that we can reset
+        to it whenever possible."""
 
         # --- Abstract syntax tree and related parsing machinery
         self._language: Language | None = None
@@ -190,6 +202,8 @@ TextEditor > .text-editor--cursor {
     def load_text(self, text: str) -> None:
         """Load text from a string into the editor."""
         lines = text.splitlines(keepends=False)
+        if text[-1] == "\n":
+            lines.append("")
         self.load_lines(lines)
 
     def load_lines(self, lines: list[str]) -> None:
@@ -361,8 +375,8 @@ TextEditor > .text-editor--cursor {
             event.prevent_default()
         elif key == "enter":
             self.split_line()
-        elif key == "backspace":
-            self.delete_left()
+        elif key == "shift+tab":
+            self.dedent_line()
 
     def _on_click(self, event: events.Click) -> None:
         """Clicking the content body moves the cursor."""
@@ -386,6 +400,9 @@ TextEditor > .text-editor--cursor {
         else:
             self.cursor_position = (target_y, len(line))
 
+        new_row, new_column = self.cursor_position
+        self._last_intentional_column = new_column
+
     def _on_paste(self, event: events.Paste) -> None:
         text = event.text
         if text:
@@ -399,7 +416,9 @@ TextEditor > .text-editor--cursor {
     #     clamped_column = clamp(new_column, 0, len(self.document_lines[clamped_row]) - 1)
     #     return clamped_row, clamped_column
 
-    def watch_cursor_position(self, new_position: tuple[int, int]) -> None:
+    def watch_cursor_position(
+        self, old_position: tuple[int, int], new_position: tuple[int, int]
+    ) -> None:
         log.debug("scrolling cursor into view")
         self.scroll_cursor_visible()
 
@@ -448,10 +467,9 @@ TextEditor > .text-editor--cursor {
 
     def cursor_to_line_end(self) -> None:
         cursor_row, cursor_column = self.cursor_position
-        self.cursor_position = (
-            cursor_row,
-            len(self.document_lines[cursor_row]),
-        )
+        target_column = len(self.document_lines[cursor_row])
+        self.cursor_position = (cursor_row, target_column)
+        self._last_intentional_column = target_column
 
     def cursor_to_line_start(self) -> None:
         cursor_row, cursor_column = self.cursor_position
@@ -474,6 +492,7 @@ TextEditor > .text-editor--cursor {
         target_column = cursor_column - 1 if cursor_column != 0 else length_of_row_above
 
         self.cursor_position = (target_row, target_column)
+        self._last_intentional_column = target_column
 
     def action_cursor_right(self) -> None:
         """Move the cursor one position to the right.
@@ -489,6 +508,7 @@ TextEditor > .text-editor--cursor {
         target_column = 0 if self.cursor_at_end_of_row else cursor_column + 1
 
         self.cursor_position = (target_row, target_column)
+        self._last_intentional_column = target_column
 
     def action_cursor_down(self) -> None:
         """Move the cursor down one cell."""
@@ -496,9 +516,9 @@ TextEditor > .text-editor--cursor {
             self.cursor_to_line_end()
 
         cursor_row, cursor_column = self.cursor_position
+        cursor_column = max(self._last_intentional_column, cursor_column)
 
         target_row = min(len(self.document_lines) - 1, cursor_row + 1)
-        # TODO: Fetch last active column on this row
         target_column = clamp(cursor_column, 0, len(self.document_lines[target_row]))
 
         self.cursor_position = (target_row, target_column)
@@ -509,9 +529,9 @@ TextEditor > .text-editor--cursor {
             self.cursor_to_line_start()
 
         cursor_row, cursor_column = self.cursor_position
+        cursor_column = max(self._last_intentional_column, cursor_column)
 
         target_row = max(0, cursor_row - 1)
-        # TODO: Fetch last active column on this row
         target_column = clamp(cursor_column, 0, len(self.document_lines[target_row]))
 
         self.cursor_position = (target_row, target_column)
@@ -523,57 +543,62 @@ TextEditor > .text-editor--cursor {
         self.cursor_to_line_start()
 
     def action_cursor_left_word(self) -> None:
-        """Move the cursor left by a single word."""
+        """Move the cursor left by a single word, skipping spaces."""
 
-        # If we're at the start of the document, there's nowhere to go
         if self.cursor_at_start_of_document:
             return
 
         cursor_row, cursor_column = self.cursor_position
-        while True:
-            # If we're at the start of a row, move up to the previous row
-            if self.cursor_at_start_of_row:
-                cursor_row -= 1
-                cursor_column = len(self.document_lines[cursor_row])
-            else:
-                cursor_column -= 1
 
-            # Update the cursor position
-            self.cursor_position = (cursor_row, cursor_column)
+        # Regular expression pattern for "word" boundaries
+        pattern = r"(?<=\W)(?=\w)|(?<=\w)(?=\W)"
 
-            # If we've moved to a word boundary, stop
-            if (
-                cursor_column == 0
-                or self.document_lines[cursor_row][cursor_column - 1]
-                in string.whitespace
-            ):
-                break
+        # Check the current line for a word boundary
+        line = self.document_lines[cursor_row][:cursor_column]
+        matches = list(re.finditer(pattern, line))
+
+        if matches:
+            # If a word boundary is found, move the cursor there
+            cursor_column = matches[-1].start()
+        elif cursor_row > 0:
+            # If no word boundary is found and we're not on the first line, move to the end of the previous line
+            cursor_row -= 1
+            cursor_column = len(self.document_lines[cursor_row])
+        else:
+            # If we're already on the first line and no word boundary is found, move to the start of the line
+            cursor_column = 0
+
+        self.cursor_position = (cursor_row, cursor_column)
+        self._last_intentional_column = cursor_column
 
     def action_cursor_right_word(self) -> None:
-        """Move the cursor right by a single word."""
+        """Move the cursor right by a single word, skipping spaces."""
 
-        # If we're at the end of the document, there's nowhere to go
         if self.cursor_at_end_of_document:
             return
 
         cursor_row, cursor_column = self.cursor_position
-        while True:
-            # If we're at the end of a row, move down to the next row
-            if self.cursor_at_end_of_row:
-                cursor_row += 1
-                cursor_column = 0
-            else:
-                cursor_column += 1
 
-            # Update the cursor position
-            self.cursor_position = (cursor_row, cursor_column)
+        # Regular expression pattern for "word" boundaries
+        pattern = r"(?<=\W)(?=\w)|(?<=\w)(?=\W)"
 
-            # If we've moved to a word boundary, stop
-            if (
-                cursor_column == len(self.document_lines[cursor_row])
-                or self.document_lines[cursor_row][cursor_column] in string.whitespace
-            ):
-                break
+        # Check the current line for a word boundary
+        line = self.document_lines[cursor_row][cursor_column:]
+        matches = list(re.finditer(pattern, line))
+
+        if matches:
+            # If a word boundary is found, move the cursor there
+            cursor_column += matches[0].end()
+        elif cursor_row < len(self.document_lines) - 1:
+            # If no word boundary is found and we're not on the last line, move to the start of the next line
+            cursor_row += 1
+            cursor_column = 0
+        else:
+            # If we're already on the last line and no word boundary is found, move to the end of the line
+            cursor_column = len(self.document_lines[cursor_row])
+
+        self.cursor_position = (cursor_row, cursor_column)
+        self._last_intentional_column = cursor_column
 
     @property
     def active_line_text(self) -> str:
@@ -676,24 +701,55 @@ TextEditor > .text-editor--cursor {
         moves to the start of this new line.
         """
         cursor_row, cursor_column = self.cursor_position
-        lines = self.document_lines
 
-        line = lines[cursor_row]
-        text_before_cursor = line[:cursor_column]
-        text_after_cursor = line[cursor_column:]
+        # Get the current line's indentation (leading whitespace)
+        current_line = self.document_lines[cursor_row]
+        indentation = len(current_line) - len(current_line.lstrip())
 
-        lines = (
-            lines[:cursor_row]
-            + [text_before_cursor, text_after_cursor]
-            + lines[cursor_row + 1 :]
-        )
+        # Split the current line into two lines at the cursor position
+        line_before = current_line[:cursor_column]
+        line_after = current_line[cursor_column:]
 
-        self.document_lines = lines
-        width, height = self._document_size
-        self._document_size = Size(width, height + 1)
-        self.cursor_position = (cursor_row + 1, 0)
+        # If the line ends with ':' or '{', add additional indentation to the new line
+        additional_indent = "    "  # Four spaces
+        if line_before.rstrip().endswith((":", "{")):
+            indentation += len(additional_indent)
+        elif cursor_row < len(self.document_lines) - 1:
+            # If there is a line below, match its indentation
+            next_line = self.document_lines[cursor_row + 1]
+            next_line_indentation = len(next_line) - len(next_line.lstrip())
+            indentation = next_line_indentation
 
-    def delete_left(self) -> None:
+        # Add the indentation to the start of the new line
+        line_after = " " * indentation + line_after
+
+        # Update the lines in the document
+        self.document_lines[cursor_row] = line_before
+        self.document_lines.insert(cursor_row + 1, line_after)
+
+        # Move the cursor to the start of the new line
+        self.cursor_position = (cursor_row + 1, indentation)
+
+    def dedent_line(self) -> None:
+        """Reduces the indentation of the current line by one level."""
+
+        cursor_row, cursor_column = self.cursor_position
+
+        # Define one level of indentation as four spaces
+        indent_level = " " * 4
+
+        current_line = self.document_lines[cursor_row]
+
+        # If the line is indented, reduce the indentation
+        if current_line.startswith(indent_level):
+            self.document_lines[cursor_row] = current_line[len(indent_level) :]
+
+        if cursor_column > len(current_line):
+            self.cursor_position = (cursor_row, len(current_line))
+
+        self.refresh()
+
+    def action_delete_left(self) -> None:
         """
         Deletes the character to the left of the cursor and updates the cursor position.
 
@@ -729,6 +785,67 @@ TextEditor > .text-editor--cursor {
             self.cursor_position = (cursor_row, cursor_column - 1)
 
         # TODO - update the syntax tree here.
+
+    def action_delete_right(self) -> None:
+        """Deletes the character to the right of the cursor and keeps the cursor at
+        the same position."""
+
+        cursor_row, cursor_column = self.cursor_position
+
+        # Check if the cursor is at the end of the document
+        if cursor_row == len(self.document_lines) - 1 and cursor_column == len(
+            self.document_lines[cursor_row]
+        ):
+            return  # Nothing to delete
+
+        current_line = self.document_lines[cursor_row]
+
+        if self.cursor_at_end_of_row:
+            # If the cursor is at the end of the line, delete the newline character by joining this line and the next line
+            self.document_lines[cursor_row] = (
+                current_line + self.document_lines[cursor_row + 1]
+            )
+            del self.document_lines[cursor_row + 1]
+        else:
+            # If the cursor is not at the end of the line, delete the character to the right of the cursor
+            self.document_lines[cursor_row] = (
+                current_line[:cursor_column] + current_line[cursor_column + 1 :]
+            )
+
+        self.refresh()
+
+    def action_delete_line(self) -> None:
+        """Deletes the entire line that the cursor is currently on."""
+
+        cursor_row, _ = self.cursor_position
+
+        # Remove the current line from the document
+        del self.document_lines[cursor_row]
+
+        # If we deleted the last line of the document, move the cursor up a line
+        if cursor_row == len(self.document_lines):
+            cursor_row -= 1
+
+        # Move the cursor to the start of the new current line
+        self.cursor_position = (cursor_row, 0)
+
+    def action_delete_to_start_of_line(self) -> None:
+        """Deletes from the cursor position to the start of the line."""
+
+        cursor_row, cursor_column = self.cursor_position
+        self.document_lines[cursor_row] = self.document_lines[cursor_row][
+            cursor_column:
+        ]
+        self.cursor_position = (cursor_row, 0)
+
+    def action_delete_to_end_of_line(self) -> None:
+        """Deletes from the cursor position to the end of the line."""
+        cursor_row, cursor_column = self.cursor_position
+        self.document_lines[cursor_row] = self.document_lines[cursor_row][
+            :cursor_column
+        ]
+
+        self.refresh()
 
     # --- Debug actions
     def action_print_line_cache(self) -> None:
