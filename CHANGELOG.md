@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- Updated `DataTable.get_cell` type hints to accept string keys https://github.com/Textualize/textual/issues/2586
+- Added `DataTable.get_cell_coordinate` method 
+- Added `DataTable.get_row_index` method https://github.com/Textualize/textual/issues/2587
+- Added `DataTable.get_column_index` method   
 - Added can-focus pseudo-class to target widgets that may receive focus
 - Make `Markdown.update` optionally awaitable https://github.com/Textualize/textual/pull/2838
 - Added `default` parameter to `DataTable.add_column` for populating existing rows https://github.com/Textualize/textual/pull/2836
