@@ -302,6 +302,20 @@ async def test_remove_row():
         assert len(table.rows) == 2
 
 
+async def test_remove_column():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        column_keys = table.add_columns("A", "B")
+        table.add_rows(ROWS)
+        assert len(table.columns) == 2
+        table.remove_column(column_keys[0])
+        assert len(table.columns) == 1
+        assert table.get_row_at(0) == ["0/1"]
+        assert table.get_row_at(1) == ["1/1"]
+        assert table.get_row_at(2) == ["2/1"]
+
+
 async def test_clear():
     app = DataTableApp()
     async with app.run_test():
@@ -392,6 +406,46 @@ async def test_get_cell_invalid_column_key():
             table.get_cell("R1", "INVALID_COLUMN")
 
 
+async def test_get_cell_coordinate_returns_coordinate():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("Column1", key="C1")
+        table.add_column("Column2", key="C2")
+        table.add_column("Column3", key="C3")
+        table.add_row("ValR1C1", "ValR1C2", "ValR1C3", key="R1")
+        table.add_row("ValR2C1", "ValR2C2", "ValR2C3", key="R2")
+        table.add_row("ValR3C1", "ValR3C2", "ValR3C3", key="R3")
+
+        assert table.get_cell_coordinate('R1', 'C1') == Coordinate(0, 0)
+        assert table.get_cell_coordinate('R2', 'C2') == Coordinate(1, 1)
+        assert table.get_cell_coordinate('R1', 'C3') == Coordinate(0, 2)
+        assert table.get_cell_coordinate('R3', 'C1') == Coordinate(2, 0)
+        assert table.get_cell_coordinate('R3', 'C2') == Coordinate(2, 1)
+
+
+async def test_get_cell_coordinate_invalid_row_key():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("Column1", key="C1")
+        table.add_row("TargetValue", key="R1")
+
+        with pytest.raises(CellDoesNotExist):
+            coordinate = table.get_cell_coordinate('INVALID_ROW', 'C1')
+
+
+async def test_get_cell_coordinate_invalid_column_key():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("Column1", key="C1")
+        table.add_row("TargetValue", key="R1")
+
+        with pytest.raises(CellDoesNotExist):
+            coordinate = table.get_cell_coordinate('R1', 'INVALID_COLUMN')
+
+
 async def test_get_cell_at_returns_value_at_cell():
     app = DataTableApp()
     async with app.run_test():
@@ -465,6 +519,32 @@ async def test_get_row_at_invalid_index(index):
             table.get_row_at(index)
 
 
+async def test_get_row_index_returns_index():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("Column1", key="C1")
+        table.add_column("Column2", key="C2")
+        table.add_row("ValR1C1", "ValR1C2", key="R1")
+        table.add_row("ValR2C1", "ValR2C2", key="R2")
+        table.add_row("ValR3C1", "ValR3C2", key="R3")
+
+        assert table.get_row_index('R1') == 0
+        assert table.get_row_index('R2') == 1
+        assert table.get_row_index('R3') == 2
+
+
+async def test_get_row_index_invalid_row_key():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("Column1", key="C1")
+        table.add_row("TargetValue", key="R1")
+
+        with pytest.raises(RowDoesNotExist):
+            index = table.get_row_index('InvalidRow')
+
+
 async def test_get_column():
     app = DataTableApp()
     async with app.run_test():
@@ -508,6 +588,34 @@ async def test_get_column_at_invalid_index(index):
         table = app.query_one(DataTable)
         with pytest.raises(ColumnDoesNotExist):
             list(table.get_column_at(index))
+
+async def test_get_column_index_returns_index():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("Column1", key="C1")
+        table.add_column("Column2", key="C2")
+        table.add_column("Column3", key="C3")
+        table.add_row("ValR1C1", "ValR1C2", "ValR1C3",  key="R1")
+        table.add_row("ValR2C1", "ValR2C2", "ValR2C3",  key="R2")
+
+        assert table.get_column_index('C1') == 0
+        assert table.get_column_index('C2') == 1
+        assert table.get_column_index('C3') == 2
+
+
+async def test_get_column_index_invalid_column_key():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("Column1", key="C1")
+        table.add_column("Column2", key="C2")
+        table.add_column("Column3", key="C3")
+        table.add_row("TargetValue1", "TargetValue2", "TargetValue3",  key="R1")
+
+        with pytest.raises(ColumnDoesNotExist):
+            index = table.get_column_index('InvalidCol')
+
 
 
 async def test_update_cell_cell_exists():
