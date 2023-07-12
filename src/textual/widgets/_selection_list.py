@@ -536,6 +536,10 @@ class SelectionList(Generic[SelectionType], OptionList):
         # BUTTON_LEFT and BUTTON_RIGHT.
         side_style = Style.from_color(button_style.bgcolor, underlying_style.bgcolor)
 
+        # Add the option index to the style. This is used to determine which
+        # option to select when the button is clicked or hovered.
+        side_style += Style(meta={"option": selection_index})
+        button_style += Style(meta={"option": selection_index})
         # At this point we should have everything we need to place a
         # "button" before the option.
         return Strip(
