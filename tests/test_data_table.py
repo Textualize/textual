@@ -302,6 +302,20 @@ async def test_remove_row():
         assert len(table.rows) == 2
 
 
+async def test_remove_column():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        column_keys = table.add_columns("A", "B")
+        table.add_rows(ROWS)
+        assert len(table.columns) == 2
+        table.remove_column(column_keys[0])
+        assert len(table.columns) == 1
+        assert table.get_row_at(0) == ["0/1"]
+        assert table.get_row_at(1) == ["1/1"]
+        assert table.get_row_at(2) == ["2/1"]
+
+
 async def test_clear():
     app = DataTableApp()
     async with app.run_test():

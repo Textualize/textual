@@ -1490,6 +1490,42 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._update_count += 1
         self.refresh(layout=True)
 
+    def remove_column(self, column_key: ColumnKey | str) -> None:
+        """Remove a column (identified by a key) from the DataTable.
+
+        Args:
+            column_key: The key identifying the column to remove.
+
+        Raises:
+            ColumnDoesNotExist: If the column key does not exist.
+        """
+        if column_key not in self._column_locations:
+            raise ColumnDoesNotExist(f"Column key {column_key!r} is not valid.")
+
+        self._require_update_dimensions = True
+        self.check_idle()
+
+        index_to_delete = self._column_locations.get(column_key)
+        new_column_locations = TwoWayDict({})
+        for column_location_key in self._column_locations:
+            column_index = self._column_locations.get(column_location_key)
+            if column_index > index_to_delete:
+                new_column_locations[column_location_key] = column_index - 1
+            elif column_index < index_to_delete:
+                new_column_locations[column_location_key] = column_index
+
+        self._column_locations = new_column_locations
+
+        del self.columns[column_key]
+        for row in self._data:
+            del self._data[row][column_key]
+
+        self.cursor_coordinate = self.cursor_coordinate
+        self.hover_coordinate = self.hover_coordinate
+
+        self._update_count += 1
+        self.refresh(layout=True)
+
     async def _on_idle(self, _: events.Idle) -> None:
         """Runs when the message pump is empty.
 

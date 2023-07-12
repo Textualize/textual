@@ -107,6 +107,20 @@ row_key, _ = table.coordinate_to_cell_key(table.cursor_coordinate)
 table.remove_row(row_key)
 ```
 
+### Removing columns
+
+To remove individual columns, use [remove_column][textual.widgets.DataTable.remove_column].
+The `remove_column` method accepts a `key` argument, which identifies the column to be removed.
+
+You can remove the column below the cursor using the same `coordinate_to_cell_key` method described above:
+
+```python
+# Get the keys for the row and column under the cursor.
+_, column_key = table.coordinate_to_cell_key(table.cursor_coordinate)
+# Supply the column key to `column_row` to delete the column.
+table.remove_column(column_key)
+```
+
 ### Fixed data
 
 You can fix a number of rows and columns in place, keeping them pinned to the top and left of the table respectively.
