@@ -583,3 +583,5 @@ def test_notifications_example(snap_compare) -> None:
 def test_notifications_through_screens(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "notification_through_screens.py")
 
+def test_notifications_through_modes(snap_compare) -> None:
+    assert snap_compare(SNAPSHOT_APPS_DIR / "notification_through_modes.py")
