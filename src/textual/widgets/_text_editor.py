@@ -181,7 +181,7 @@ TextEditor > .text-editor--cursor {
             return_value = "\n".encode("utf8")
         else:
             return_value = lines[row][column].encode("utf8")
-        print(f"(point={point!r}) (offset={byte_offset!r}) {return_value!r}")
+        # print(f"(point={point!r}) (offset={byte_offset!r}) {return_value!r}")
         return return_value
 
     def load_text(self, text: str) -> None:
@@ -358,6 +358,8 @@ TextEditor > .text-editor--cursor {
             event.prevent_default()
         elif key == "enter":
             self.split_line()
+        elif key == "backspace":
+            self.delete_left()
 
     def _on_click(self, event: events.Click) -> None:
         """Clicking the content body moves the cursor."""
@@ -609,6 +611,14 @@ TextEditor > .text-editor--cursor {
         return bytes_lines_above + bytes_this_line_left_of_cursor
 
     def split_line(self):
+        """
+        Splits the current line at the cursor's position and updates the cursor position.
+
+        This method splits the current line into two at the cursor's column position,
+        effectively inserting a newline character at the cursor's position. The part of the
+        line after the cursor becomes a new line below the current line. The cursor then
+        moves to the start of this new line.
+        """
         cursor_row, cursor_column = self.cursor_position
         lines = self.document_lines
 
@@ -628,21 +638,39 @@ TextEditor > .text-editor--cursor {
         self.cursor_position = (cursor_row + 1, 0)
 
     def delete_left(self) -> None:
+        """
+        Deletes the character to the left of the cursor and updates the cursor position.
+
+        If the cursor is at the start of a line, it deletes the newline character that separates
+        the current line from the previous one, effectively merging the two lines. The cursor
+        then moves to the end of what was previously the line above.
+
+        If the cursor is not at the start of a line, it deletes the character to the left of the
+        cursor within the current line. The cursor then moves one space to the left.
+
+        If the cursor is at the start of the document, no action is taken.
+        """
         log.debug(f"delete left at {self.cursor_position!r}")
 
         if self.cursor_at_start_of_document:
             return
 
         cursor_row, cursor_column = self.cursor_position
+        lines = self.document_lines
 
         # If the cursor is at the start of a row, then the deletion "merges" the rows
         # as it deletes the newline character that separates them.
         if self.cursor_at_start_of_row:
-            pass
+            previous_line = lines[cursor_row - 1]
+            current_line = lines[cursor_row]
+            lines[cursor_row - 1] = previous_line + current_line
+            del lines[cursor_row]
+            self.cursor_position = (cursor_row - 1, len(previous_line))
         else:
-            old_text = self.document_lines[cursor_row]
-
-        new_text = old_text[: cursor_column - 1]
+            current_line = lines[cursor_row]
+            new_line = current_line[: cursor_column - 1] + current_line[cursor_column:]
+            lines[cursor_row] = new_line
+            self.cursor_position = (cursor_row, cursor_column - 1)
 
     # --- Debug actions
     def action_print_line_cache(self) -> None:
@@ -751,134 +779,3 @@ if __name__ == "__main__":
     tree = parser.parse(bytes(CODE, "utf-8"))
 
     print(list(traverse_tree(tree.walk())))
-
-#
-#
-# from pathlib import Path
-#
-# from rich.pretty import Pretty
-#
-# from textual.app import App, ComposeResult
-# from textual.binding import Binding
-# from textual.widgets import Footer, Static
-# from textual.widgets._text_editor import TextEditor
-#
-# SAMPLE_TEXT = [
-#     "Hello, world!",
-#     "",
-#     "你好，世界！",  # Chinese characters, which are usually double-width
-#     "こんにちは、世界！",  # Japanese characters, also usually double-width
-#     "안녕하세요, 세계!",  # Korean characters, also usually double-width
-#     "    This line has leading white space",
-#     "This line has trailing white space    ",
-#     "    This line has both leading and trailing white space    ",
-#     "    ",  # Line with only spaces
-#     "こんにちは、world! 你好，world!",  # Mixed script line
-#     "Hello, 🌍! Hello, 🌏! Hello, 🌎!",  # Line with emoji (which are often double-width)
-#     "The quick brown 🦊 jumps over the lazy 🐶.",  # Line with emoji interspersed in text
-#     "Special characters: ~!@#$%^&*()_+`-={}|[]\\:\";'<>?,./",
-#     # Line with special characters
-#     "Unicode example: Привет, мир!",  # Russian text
-#     "Unicode example: Γειά σου Κόσμε!",  # Greek text
-#     "Unicode example: مرحبا بك في",  # Arabic text
-# ]
-#
-# PYTHON_SNIPPET = """\
-# def render_line(self, y: int) -> Strip:
-#     '''Render a line of the widget. y is relative to the top of the widget.'''
-#
-#     row_index = y // 4  # A checkerboard square consists of 4 rows
-#
-#     if row_index >= 8:  # Generate blank lines when we reach the end
-#         return Strip.blank(self.size.width)
-#
-#     is_odd = row_index % 2  # Used to alternate the starting square on each row
-#
-#     white = Style.parse("on white")  # Get a style object for a white background
-#     black = Style.parse("on black")  # Get a style object for a black background
-#
-#     # Generate a list of segments with alternating black and white space characters
-#     segments = [
-#         Segment(" " * 8, black if (column + is_odd) % 2 else white)
-#         for column in range(8)
-#     ]
-#     strip = Strip(segments, 8 * 8)
-#     return strip
-# """
-#
-#
-# class TextEditorDemo(App):
-#     CSS = """\
-#     TextEditor {
-#         height: 18;
-#         background: $panel;
-#     }
-#
-#     #debug {
-#         border: wide $primary;
-#         padding: 1 2;
-#     }
-#
-#     """
-#
-#     BINDINGS = [
-#         Binding("ctrl+t", "traverse", "Traverse nodes")
-#     ]
-#
-#     def compose(self) -> ComposeResult:
-#         text_area = TextEditor()
-#         text_area.language = "python"
-#         code_path = Path(
-#             "/Users/darrenburns/Code/textual/src/textual/widgets/_data_table.py")
-#
-#         short_code = """\
-# print("hello")
-# print("world")
-# """
-#         text_area.load_text(short_code)
-#         # text_area.load_text(code_path.read_text())
-#         yield text_area
-#         yield Footer()
-#         Static.can_focus = True
-#         yield Static(id="debug")
-#
-#     def on_mount(self):
-#         editor = self.query_one(TextEditor)
-#         self.watch(editor, "cursor_position", self.update_debug)
-#         self.watch(editor, "language", self.update_debug)
-#
-#     def update_debug(self):
-#         editor = self.query_one(TextEditor)
-#         debug = self.query_one("#debug")
-#         debug.update(Pretty(editor.debug_state()))
-#
-#     def action_traverse(self):
-#         def traverse_tree(cursor):
-#             reached_root = False
-#             while reached_root == False:
-#                 yield cursor.node
-#
-#                 if cursor.goto_first_child():
-#                     continue
-#
-#                 if cursor.goto_next_sibling():
-#                     continue
-#
-#                 retracing = True
-#                 while retracing:
-#                     if not cursor.goto_parent():
-#                         retracing = False
-#                         reached_root = True
-#
-#                     if cursor.goto_next_sibling():
-#                         retracing = False
-#
-#         editor = self.query_one(TextEditor)
-#         nodes = list(traverse_tree(editor._syntax_tree.walk()))
-#         for node in nodes:
-#             print(node)
-#
-#
-# app = TextEditorDemo()
-# if __name__ == '__main__':
-#     app.run()
