@@ -60,6 +60,7 @@ class Notifications:
     """Class for managing a collection of notifications."""
 
     def __init__(self) -> None:
+        """Initialise the notification collection."""
         self._notifications: list[Notification] = []
 
     def _reap(self) -> Self:
