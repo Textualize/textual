@@ -3257,5 +3257,8 @@ class Widget(DOMNode):
             title: The title for the notification.
             severity: The severity of the notification.
             timeout: The timeout for the notification.
+
+        See [`App.notify`][textual.app.App.notify] for the full
+        documentation for this method.
         """
         self.app.notify(message, title=title, severity=severity, timeout=timeout)

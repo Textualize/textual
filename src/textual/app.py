@@ -2807,6 +2807,43 @@ class App(Generic[ReturnType], DOMNode):
             title: The title for the notification.
             severity: The severity of the notification.
             timeout: The timeout for the notification.
+
+        The `notify` method is used to create an application-wide
+        notification, shown in a [`Toast`][textual.widgets._toast.Toast],
+        normally originating in the bottom right corner of the display.
+
+        Notifications can have the following severity levels:
+
+        - `information`
+        - `warning`
+        - `error`
+
+        The default is `information`.
+
+        If no `title` is provided, the title of the notification will
+        reflect the severity. If you wish to create a notification that has
+        no title whatsoever, pass an empty title (`""`).
+
+        Example:
+            ```python
+            # Show an information notification.
+            self.notify("It's an older code, sir, but it checks out.")
+
+            # Show a warning. Note that Textual's notification system allows
+            # for the use of Rich console markup.
+            self.notify(
+                "Now witness the firepower of this fully "
+                "[b]ARMED[/b] and [i][b]OPERATIONAL[/b][/i] battle station!",
+                title="Possible trap detected",
+                severity="warning",
+            )
+
+            # Show an error. Set a longer timeout so it's noticed.
+            self.notify("It's a trap!", severity="error", timeout=10)
+
+            # Show an information notification, but without any sort of title.
+            self.notify("It's against my programming to impersonate a deity.", title="")
+            ```
         """
         # Add the notification to the list of in-play notifications.
         self._notifications.add(Notification(message, title, severity, timeout))
