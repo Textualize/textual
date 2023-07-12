@@ -28,23 +28,23 @@ The three severity levels also have corresponding
 [classes](/guide/CSS/#class-name-selector), allowing you to target the
 different styles of notification. They are:
 
-- `information`
-- `warning`
-- `error`
+- `-information`
+- `-warning`
+- `-error`
 
 If you wish to tailor the notifications for your application you can add
 rules to your CSS like this:
 
 ```scss
-Toast.information {
+Toast.-information {
     /* Styling here. */
 }
 
-Toast.warning {
+Toast.-warning {
     /* Styling here. */
 }
 
-Toast.error {
+Toast.-error {
     /* Styling here. */
 }
 ```
