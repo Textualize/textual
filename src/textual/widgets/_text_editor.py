@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import string
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
@@ -90,7 +91,9 @@ TextEditor > .text-editor--cursor {
         Binding("up", "cursor_up", "cursor up", show=False),
         Binding("down", "cursor_down", "cursor down", show=False),
         Binding("left", "cursor_left", "cursor left", show=False),
+        Binding("ctrl+left", "cursor_left_word", "cursor left word", show=False),
         Binding("right", "cursor_right", "cursor right", show=False),
+        Binding("ctrl+right", "cursor_right_word", "cursor right word", show=False),
         Binding("home", "cursor_line_start", "cursor line start", show=False),
         Binding("end", "cursor_line_end", "cursor line end", show=False),
         # Debugging bindings
@@ -519,6 +522,59 @@ TextEditor > .text-editor--cursor {
     def action_cursor_line_start(self) -> None:
         self.cursor_to_line_start()
 
+    def action_cursor_left_word(self) -> None:
+        """Move the cursor left by a single word."""
+
+        # If we're at the start of the document, there's nowhere to go
+        if self.cursor_at_start_of_document:
+            return
+
+        cursor_row, cursor_column = self.cursor_position
+        while True:
+            # If we're at the start of a row, move up to the previous row
+            if self.cursor_at_start_of_row:
+                cursor_row -= 1
+                cursor_column = len(self.document_lines[cursor_row])
+            else:
+                cursor_column -= 1
+
+            # Update the cursor position
+            self.cursor_position = (cursor_row, cursor_column)
+
+            # If we've moved to a word boundary, stop
+            if (
+                cursor_column == 0
+                or self.document_lines[cursor_row][cursor_column - 1]
+                in string.whitespace
+            ):
+                break
+
+    def action_cursor_right_word(self) -> None:
+        """Move the cursor right by a single word."""
+
+        # If we're at the end of the document, there's nowhere to go
+        if self.cursor_at_end_of_document:
+            return
+
+        cursor_row, cursor_column = self.cursor_position
+        while True:
+            # If we're at the end of a row, move down to the next row
+            if self.cursor_at_end_of_row:
+                cursor_row += 1
+                cursor_column = 0
+            else:
+                cursor_column += 1
+
+            # Update the cursor position
+            self.cursor_position = (cursor_row, cursor_column)
+
+            # If we've moved to a word boundary, stop
+            if (
+                cursor_column == len(self.document_lines[cursor_row])
+                or self.document_lines[cursor_row][cursor_column] in string.whitespace
+            ):
+                break
+
     @property
     def active_line_text(self) -> str:
         # TODO - consider empty documents
@@ -671,6 +727,8 @@ TextEditor > .text-editor--cursor {
             new_line = current_line[: cursor_column - 1] + current_line[cursor_column:]
             lines[cursor_row] = new_line
             self.cursor_position = (cursor_row, cursor_column - 1)
+
+        # TODO - update the syntax tree here.
 
     # --- Debug actions
     def action_print_line_cache(self) -> None:
