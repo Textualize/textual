@@ -264,7 +264,7 @@ class Screen(Generic[ScreenResultType], Widget):
             y: Y Coordinate.
 
         Returns:
-            Rich Style object
+            Rich Style object.
         """
         return self._compositor.get_style_at(x, y)
 

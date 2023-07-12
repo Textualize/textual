@@ -959,10 +959,10 @@ class StyleFlagsProperty:
         _rich_traceback_omit = True
         if style_flags is None:
             if obj.clear_rule(self.name):
-                obj.refresh()
+                obj.refresh(children=True)
         elif isinstance(style_flags, Style):
             if obj.set_rule(self.name, style_flags):
-                obj.refresh()
+                obj.refresh(children=True)
         else:
             words = [word.strip() for word in style_flags.split(" ")]
             valid_word = VALID_STYLE_FLAGS.__contains__
@@ -986,7 +986,7 @@ class StyleFlagsProperty:
                     ) from None
                 raise error from None
             if obj.set_rule(self.name, style):
-                obj.refresh()
+                obj.refresh(children=True)
 
 
 class TransitionsProperty:

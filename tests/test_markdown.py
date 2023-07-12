@@ -6,6 +6,8 @@ from typing import Iterator
 
 import pytest
 from markdown_it.token import Token
+from rich.style import Style
+from rich.text import Span
 
 import textual.widgets._markdown as MD
 from textual.app import App, ComposeResult
@@ -89,3 +91,27 @@ async def test_markdown_nodes(
         assert [
             node.__class__ for node in markdown_nodes(pilot.app.query_one(Markdown))
         ] == expected_nodes
+
+
+async def test_softbreak_split_links_rendered_correctly() -> None:
+    """Test for https://github.com/Textualize/textual/issues/2805"""
+
+    document = """\
+My site [has
+this
+URL](https://example.com)\
+"""
+    async with MarkdownApp(document).run_test() as pilot:
+        markdown = pilot.app.query_one(Markdown)
+        paragraph = markdown.children[0]
+        assert isinstance(paragraph, MD.MarkdownParagraph)
+        assert paragraph._text.plain == "My site has this URL"
+        expected_spans = [
+            Span(0, 8, Style()),
+            Span(8, 11, Style(meta={"@click": "link('https://example.com')"})),
+            Span(11, 12, Style(meta={"@click": "link('https://example.com')"})),
+            Span(12, 16, Style(meta={"@click": "link('https://example.com')"})),
+            Span(16, 17, Style(meta={"@click": "link('https://example.com')"})),
+            Span(17, 20, Style(meta={"@click": "link('https://example.com')"})),
+        ]
+        assert paragraph._text.spans == expected_spans
