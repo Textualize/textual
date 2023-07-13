@@ -2778,6 +2778,7 @@ class App(Generic[ReturnType], DOMNode):
             self._driver.write(SYNC_END)
 
     def _refresh_notifications(self) -> None:
+        """Refresh the notifications on the current screen, if one is available."""
         # If we've got a screen to hand...
         if self.screen is not None:
             try:
