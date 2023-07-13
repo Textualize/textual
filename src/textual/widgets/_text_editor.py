@@ -727,8 +727,12 @@ TextEditor > .text-editor--cursor {
         self.document_lines[cursor_row] = line_before
         self.document_lines.insert(cursor_row + 1, line_after)
 
+        self._document_size = self._get_document_size(self.document_lines)
+
         # Move the cursor to the start of the new line
         self.cursor_position = (cursor_row + 1, indentation)
+
+        self.refresh(layout=True)
 
     def dedent_line(self) -> None:
         """Reduces the indentation of the current line by one level."""
