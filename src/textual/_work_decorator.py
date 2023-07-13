@@ -94,13 +94,9 @@ def work(
     ) -> Callable[DecoratorParamSpec, Worker[ReturnType]]:
         """The decorator."""
 
-        # An async worker in a thread doesn't make much sense.
-        if iscoroutinefunction(method) and thread:
-            raise WorkerDeclarationError(
-                f"'{method.__name__}' is async and also declared as a thread worker"
-            )
-        # Likewise, neither does a non-async worker that isn't in a thread.
-        elif not iscoroutinefunction(method) and not thread:
+        # Methods that aren't async *must* be marked as being a thread
+        # worker.
+        if not iscoroutinefunction(method) and not thread:
             raise WorkerDeclarationError(
                 f"'{method.__name__}' is not async but also not declared as a thread worker"
             )
