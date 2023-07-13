@@ -540,6 +540,7 @@ class SelectionList(Generic[SelectionType], OptionList):
         # option to select when the button is clicked or hovered.
         side_style += Style(meta={"option": selection_index})
         button_style += Style(meta={"option": selection_index})
+
         # At this point we should have everything we need to place a
         # "button" before the option.
         return Strip(
