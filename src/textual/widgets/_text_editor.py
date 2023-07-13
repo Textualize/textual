@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import re
 from collections import defaultdict
 from dataclasses import dataclass
@@ -415,7 +416,7 @@ TextEditor > .text-editor--cursor {
         for line_index, updated_highlights in highlight_updates.items():
             highlights[line_index] = updated_highlights
 
-    def perform_edit(self, edit: Edit) -> None:
+    def edit(self, edit: Edit) -> None:
         log.debug(f"performing edit {edit!r}")
         edit.do(self)
         self._undo_stack.append(edit)
@@ -673,7 +674,7 @@ TextEditor > .text-editor--cursor {
     def insert_text(
         self, text: str, position: tuple[int, int], move_cursor: bool = True
     ) -> None:
-        self.perform_edit(Insert(text, position, move_cursor))
+        self.edit(Insert(text, position, move_cursor))
 
     def _insert_text(
         self, text: str, position: tuple[int, int], move_cursor: bool = True
@@ -750,6 +751,20 @@ TextEditor > .text-editor--cursor {
 
         self._prepare_highlights(start_point, end_point)
 
+    def insert_text_range(
+        self, text: str, from_position: tuple[int, int], to_position: tuple[int, int]
+    ) -> None:
+        """Insert text at a given range and move the cursor to the end of the inserted text."""
+
+        # If we're inserting a single newline character, this is just a split.
+        # Delete the range first
+        self._delete_range(from_position, to_position, None)
+        if text == os.linesep:
+            self.split_line(from_position)
+
+        # Split the inserted text into lines
+        lines = text.splitlines()
+
     def _position_to_byte_offset(self, position: tuple[int, int]) -> int:
         """Given a document coordinate, return the byte offset of that coordinate."""
 
@@ -761,7 +776,7 @@ TextEditor > .text-editor--cursor {
         bytes_this_line_left_of_cursor = len(lines[row][:column])
         return bytes_lines_above + bytes_this_line_left_of_cursor
 
-    def split_line(self):
+    def split_line(self, position: tuple[int, int]) -> None:
         """
         Splits the current line at the cursor's position and updates the cursor position.
 
@@ -770,7 +785,7 @@ TextEditor > .text-editor--cursor {
         line after the cursor becomes a new line below the current line. The cursor then
         moves to the start of this new line.
         """
-        cursor_row, cursor_column = self.cursor_position
+        cursor_row, cursor_column = position
 
         # Get the current line's indentation (leading whitespace)
         current_line = self.document_lines[cursor_row]
@@ -807,7 +822,6 @@ TextEditor > .text-editor--cursor {
         A dedent is simply a Delete operation on some amount of whitespace
         which may exist at the start of a line.
         """
-
         cursor_row, cursor_column = self.cursor_position
 
         # Define one level of indentation as four spaces
@@ -884,21 +898,11 @@ TextEditor > .text-editor--cursor {
             # Move the cursor to the start of the deleted range
             self.cursor_position = (from_row, from_column)
 
+        self._refresh_size()
         return deleted_text
 
     def action_delete_left(self) -> None:
-        """
-        Deletes the character to the left of the cursor and updates the cursor position.
-
-        If the cursor is at the start of a line, it deletes the newline character that separates
-        the current line from the previous one, effectively merging the two lines. The cursor
-        then moves to the end of what was previously the line above.
-
-        If the cursor is not at the start of a line, it deletes the character to the left of the
-        cursor within the current line. The cursor then moves one space to the left.
-
-        If the cursor is at the start of the document, no action is taken.
-        """
+        """Deletes the character to the left of the cursor and updates the cursor position."""
         if self.cursor_at_start_of_document:
             return
 
@@ -910,11 +914,10 @@ TextEditor > .text-editor--cursor {
         else:
             to_position = (cursor_row, cursor_column - 1)
 
-        self.perform_edit(Delete(from_position, to_position))
+        self.edit(Delete(from_position, to_position))
 
     def action_delete_right(self) -> None:
-        """Deletes the character to the right of the cursor and keeps the cursor at
-        the same position."""
+        """Deletes the character to the right of the cursor and keeps the cursor at the same position."""
         if self.cursor_at_end_of_document:
             return
 
@@ -925,28 +928,28 @@ TextEditor > .text-editor--cursor {
         else:
             to_position = (cursor_row, cursor_column + 1)
 
-        self.perform_edit(Delete(from_position, to_position))
+        self.edit(Delete(from_position, to_position))
 
     def action_delete_line(self) -> None:
         """Deletes the line the cursor is on."""
         cursor_row, _ = self.cursor_position
         from_position = (cursor_row, 0)
         to_position = (cursor_row + 1, 0)
-        self.perform_edit(Delete(from_position, to_position))
+        self.edit(Delete(from_position, to_position))
 
     def action_delete_to_start_of_line(self) -> None:
         """Deletes from the cursor position to the start of the line."""
         cursor_row, cursor_column = self.cursor_position
         from_position = self.cursor_position
         to_position = (cursor_row, 0)
-        self.perform_edit(Delete(from_position, to_position))
+        self.edit(Delete(from_position, to_position))
 
     def action_delete_to_end_of_line(self) -> None:
         """Deletes from the cursor position to the end of the line."""
         cursor_row, cursor_column = self.cursor_position
         from_position = self.cursor_position
         to_position = (cursor_row, len(self.document_lines[cursor_row]))
-        self.perform_edit(Delete(from_position, to_position))
+        self.edit(Delete(from_position, to_position))
 
     # --- Debug actions
     def action_print_line_cache(self) -> None:
