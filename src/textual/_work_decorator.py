@@ -37,20 +37,26 @@ class WorkerDeclarationError(Exception):
 
 @overload
 def work(
-    method: Callable[FactoryParamSpec, Coroutine[None, None, ReturnType]]
+    method: Callable[FactoryParamSpec, Coroutine[None, None, ReturnType]],
+    *,
+    thread: bool = False,
 ) -> Callable[FactoryParamSpec, "Worker[ReturnType]"]:
     ...
 
 
 @overload
 def work(
-    method: Callable[FactoryParamSpec, ReturnType]
+    method: Callable[FactoryParamSpec, ReturnType],
+    *,
+    thread: bool = False,
 ) -> Callable[FactoryParamSpec, "Worker[ReturnType]"]:
     ...
 
 
 @overload
-def work(*, exclusive: bool = False) -> Decorator[..., ReturnType]:
+def work(
+    *, exclusive: bool = False, thread: bool = False
+) -> Decorator[..., ReturnType]:
     ...
 
 
