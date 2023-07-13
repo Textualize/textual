@@ -4,6 +4,7 @@ from textual.widgets import Static
 
 class BackgroundTransparencyApp(App):
     """Simple app to exemplify different transparency settings."""
+
     def compose(self) -> ComposeResult:
         yield Static("10%", id="t10")
         yield Static("20%", id="t20")

@@ -10,6 +10,7 @@ class KeyDisplayApp(App):
     and user supplied replacements.
     Will break when we update the Footer - but we should add a similar
     test (or updated snapshot) for the updated Footer."""
+
     BINDINGS = [
         Binding("question_mark", "question", "Question"),
         Binding("ctrl+q", "quit", "Quit app"),
@@ -32,5 +33,5 @@ class KeyDisplayApp(App):
 
 
 app = KeyDisplayApp()
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run()

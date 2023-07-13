@@ -30,5 +30,5 @@ class MultipleCSSApp(App):
 
 
 app = MultipleCSSApp(css_path=["first.css", "second.css"])
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run()

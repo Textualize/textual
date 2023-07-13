@@ -3,7 +3,6 @@ from textual import events
 
 
 class EventApp(App):
-
     COLORS = [
         "white",
         "maroon",

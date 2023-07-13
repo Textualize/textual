@@ -189,7 +189,6 @@ async def test_fire_on_inherited_message() -> None:
             self.query_one(MessageSender).post_parent()
             self.query_one(MessageSender).post_child()
 
-
     async with InheritTestApp().run_test():
         pass
 

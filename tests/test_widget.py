@@ -353,5 +353,3 @@ def test_get_set_tooltip():
     assert widget.tooltip is None
     widget.tooltip = "This is a tooltip."
     assert widget.tooltip == "This is a tooltip."
-
-

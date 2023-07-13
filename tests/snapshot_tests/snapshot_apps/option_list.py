@@ -9,14 +9,10 @@ from textual.widgets.option_list import Option
 
 
 class OptionListApp(App[None]):
-
-    def compose( self ) -> ComposeResult:
+    def compose(self) -> ComposeResult:
         with Horizontal():
             yield OptionList(
-                "One",
-                Option("Two"),
-                None,
-                Text.from_markup("[red]Three[/]")
+                "One", Option("Two"), None, Text.from_markup("[red]Three[/]")
             )
             yield OptionList(id="later-individual")
             yield OptionList(id="later-at-once")
@@ -33,13 +29,16 @@ class OptionListApp(App[None]):
             option_list.add_option(option)
         option_list.highlighted = 0
         option_list = self.query_one("#later-at-once", OptionList)
-        option_list.add_options([
-            "One",
-            Option("Two"),
-            None,
-            Text.from_markup("[red]Three[/]"),
-        ])
+        option_list.add_options(
+            [
+                "One",
+                Option("Two"),
+                None,
+                Text.from_markup("[red]Three[/]"),
+            ]
+        )
         option_list.highlighted = 0
+
 
 if __name__ == "__main__":
     OptionListApp().run()

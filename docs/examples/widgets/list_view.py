@@ -3,7 +3,6 @@ from textual.widgets import ListView, ListItem, Label, Footer
 
 
 class ListViewExample(App):
-
     CSS_PATH = "list_view.css"
 
     def compose(self) -> ComposeResult:

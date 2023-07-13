@@ -4,7 +4,6 @@ from textual.widgets import Static
 
 
 class HeightApp(App[None]):
-
     CSS = """
     Horizontal {
         border: solid red;

@@ -9,7 +9,6 @@ from textual.widgets.tree import TreeNode
 
 
 class TreeApp(App):
-
     BINDINGS = [
         ("a", "add", "Add node"),
         ("c", "clear", "Clear"),
