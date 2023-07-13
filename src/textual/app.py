@@ -2843,7 +2843,6 @@ class App(Generic[ReturnType], DOMNode):
             self.notify("It's against my programming to impersonate a deity.", title="")
             ```
         """
-        # Add the notification to the list of in-play notifications.
         self._notifications.add(Notification(message, title, severity, timeout))
         self._refresh_notifications()
 
