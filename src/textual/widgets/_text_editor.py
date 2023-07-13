@@ -1,13 +1,11 @@
 from __future__ import annotations
 
 import re
-import string
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
 from typing import ClassVar, Iterable, NamedTuple
 
-import rich
 from rich.cells import get_character_cell_size
 from rich.style import Style
 from rich.text import Text
@@ -16,6 +14,7 @@ from tree_sitter.binding import Query
 
 from textual import events, log
 from textual._cells import cell_len
+from textual._types import Protocol, runtime_checkable
 from textual.binding import Binding
 from textual.geometry import Offset, Region, Size, Spacing, clamp
 from textual.reactive import Reactive, reactive
@@ -58,6 +57,44 @@ class Highlight(NamedTuple):
     start_column: int | None
     end_column: int | None
     highlight_name: str | None
+
+
+@runtime_checkable
+class Edit(Protocol):
+    """Protocol for actions performed in the text editor that can be done and undone."""
+
+    def do(self, editor: TextEditor) -> None:
+        """Do the action."""
+
+    def undo(self, editor: TextEditor) -> None:
+        """Undo the action."""
+
+
+class Insert(NamedTuple):
+    """Implements the Edit protocol for inserting text at some position."""
+
+    text: str
+    position: tuple[int, int]
+    move_cursor: bool = True
+
+    def do(self, editor: TextEditor) -> None:
+        editor._insert_text(self.text, self.position, self.move_cursor)
+
+    def undo(self, editor: TextEditor) -> None:
+        """Undo the action."""
+
+
+@dataclass
+class Delete:
+    from_position: tuple[int, int]
+    to_position: tuple[int, int]
+
+    def do(self, editor: TextEditor) -> None:
+        """Do the action."""
+        self.deleted_text = editor._delete_range(self.from_position, self.to_position)
+
+    def undo(self, editor: TextEditor) -> None:
+        """Undo the action."""
 
 
 class TextEditor(ScrollView, can_focus=True):
@@ -141,6 +178,12 @@ TextEditor > .text-editor--cursor {
         self._last_intentional_column: int = 0
         """Tracks the last column the user explicitly navigated to so that we can reset
         to it whenever possible."""
+
+        self._word_pattern = re.compile(r"(?<=\W)(?=\w)|(?<=\w)(?=\W)")
+        """Compiled regular expression for what we consider to be a 'word'."""
+
+        self._undo_stack: list[Edit] = []
+        """A stack (the end of the list is the top of the stack) for tracking edits."""
 
         # --- Abstract syntax tree and related parsing machinery
         self._language: Language | None = None
@@ -363,6 +406,19 @@ TextEditor > .text-editor--cursor {
         for line_index, updated_highlights in highlight_updates.items():
             highlights[line_index] = updated_highlights
 
+    def perform_edit(self, edit: Edit) -> None:
+        log.debug(f"performing edit {edit!r}")
+        edit.do(self)
+        self._undo_stack.append(edit)
+
+        # TODO: Think about this...
+        self._undo_stack = self._undo_stack[-20:]
+
+    def undo(self) -> None:
+        if self._undo_stack:
+            action = self._undo_stack.pop()
+            action.undo(self)
+
     # --- Lower level event/key handling
     def _on_key(self, event: events.Key) -> None:
         log.debug(f"{event!r}")
@@ -374,7 +430,8 @@ TextEditor > .text-editor--cursor {
                 insert = event.character
             event.stop()
             assert event.character is not None
-            self.insert_text(insert)
+
+            self.insert_text(insert, self.cursor_position)
             event.prevent_default()
         elif key == "enter":
             self.split_line()
@@ -410,7 +467,7 @@ TextEditor > .text-editor--cursor {
     def _on_paste(self, event: events.Paste) -> None:
         text = event.text
         if text:
-            self.insert_text(text)
+            self._insert_text(text, self.cursor_position)
         event.stop()
 
     # --- Reactive watchers and validators
@@ -554,12 +611,9 @@ TextEditor > .text-editor--cursor {
 
         cursor_row, cursor_column = self.cursor_position
 
-        # Regular expression pattern for "word" boundaries
-        pattern = r"(?<=\W)(?=\w)|(?<=\w)(?=\W)"
-
         # Check the current line for a word boundary
         line = self.document_lines[cursor_row][:cursor_column]
-        matches = list(re.finditer(pattern, line))
+        matches = list(re.finditer(self._word_pattern, line))
 
         if matches:
             # If a word boundary is found, move the cursor there
@@ -583,12 +637,9 @@ TextEditor > .text-editor--cursor {
 
         cursor_row, cursor_column = self.cursor_position
 
-        # Regular expression pattern for "word" boundaries
-        pattern = r"(?<=\W)(?=\w)|(?<=\w)(?=\W)"
-
         # Check the current line for a word boundary
         line = self.document_lines[cursor_row][cursor_column:]
-        matches = list(re.finditer(pattern, line))
+        matches = list(re.finditer(self._word_pattern, line))
 
         if matches:
             # If a word boundary is found, move the cursor there
@@ -610,26 +661,33 @@ TextEditor > .text-editor--cursor {
         return self.document_lines[self.cursor_position[0]]
 
     # --- Editor operations
-    def insert_text(self, text: str) -> None:
+    def insert_text(
+        self, text: str, position: tuple[int, int], move_cursor: bool = True
+    ) -> None:
+        self.perform_edit(Insert(text, position, move_cursor))
+
+    def _insert_text(
+        self, text: str, position: tuple[int, int], move_cursor: bool = True
+    ) -> None:
         log.debug(f"insert {text!r} at {self.cursor_position!r}")
 
         start_byte = self._position_to_byte_offset(self.cursor_position)
-        start_point = self.cursor_position
+        start_point = position
 
-        cursor_row, cursor_column = self.cursor_position
+        target_row, target_column = position
 
         lines = self.document_lines
 
-        line = lines[cursor_row]
-        text_before_cursor = line[:cursor_column]
-        text_after_cursor = line[cursor_column:]
+        line = lines[target_row]
+        text_before_cursor = line[:target_column]
+        text_after_cursor = line[target_column:]
 
         replacement_lines = text.splitlines(keepends=False)
         replacement_lines[0] = text_before_cursor + replacement_lines[0]
         end_column = len(replacement_lines[-1])
         replacement_lines[-1] += text_after_cursor
 
-        self.document_lines[cursor_row : cursor_row + 1] = replacement_lines
+        self.document_lines[target_row : target_row + 1] = replacement_lines
 
         longest_modified_line = max(cell_len(line) for line in replacement_lines)
         document_width, document_height = self._document_size
@@ -639,7 +697,9 @@ TextEditor > .text-editor--cursor {
         insertion_width = longest_modified_line + 1
 
         self._refresh_size()
-        self.cursor_position = (cursor_row + len(replacement_lines) - 1, end_column)
+
+        if move_cursor:
+            self.cursor_position = (target_row + len(replacement_lines) - 1, end_column)
 
         edit_args = {
             "start_byte": start_byte,
@@ -752,6 +812,58 @@ TextEditor > .text-editor--cursor {
         self._refresh_size()
         self.refresh()
 
+    def _delete_range(
+        self, from_position: tuple[int, int], to_position: tuple[int, int]
+    ) -> str:
+        """Delete text between `from_position` and `to_position`.
+
+        Returns:
+            A string containing the deleted text.
+        """
+
+        from_row, from_column = from_position
+        to_row, to_column = to_position
+
+        lines = self.document_lines
+
+        # Ensure that from_position is before to_position
+        if from_position > to_position:
+            from_row, from_column, to_row, to_column = (
+                to_row,
+                to_column,
+                from_row,
+                from_column,
+            )
+
+        # If the range is within a single line
+        if from_row == to_row:
+            line = lines[from_row]
+            deleted_text = line[from_column:to_column]
+            lines[from_row] = line[:from_column] + line[to_column:]
+        else:
+            # The range spans multiple lines
+            start_line = lines[from_row]
+            end_line = lines[to_row]
+
+            # Add the deleted segments from the start and end lines to the deleted text
+            deleted_text = (
+                start_line[from_column:]
+                + "\n"
+                + "\n".join(self.document_lines[from_row + 1 : to_row])
+                + "\n"
+                + end_line[:to_column]
+            )
+
+            # Update the lines at the start and end of the range
+            lines[from_row] = start_line[:from_column] + end_line[to_column:]
+
+            # Delete the lines in between
+            del lines[from_row + 1 : to_row + 1]
+
+        # Move the cursor to the start of the deleted range
+        self.cursor_position = (from_row, from_column)
+        return deleted_text
+
     def action_delete_left(self) -> None:
         """
         Deletes the character to the left of the cursor and updates the cursor position.
@@ -765,57 +877,33 @@ TextEditor > .text-editor--cursor {
 
         If the cursor is at the start of the document, no action is taken.
         """
-        log.debug(f"delete left at {self.cursor_position!r}")
-
         if self.cursor_at_start_of_document:
             return
 
         cursor_row, cursor_column = self.cursor_position
         lines = self.document_lines
-
-        # If the cursor is at the start of a row, then the deletion "merges" the rows
-        # as it deletes the newline character that separates them.
+        from_position = self.cursor_position
         if self.cursor_at_start_of_row:
-            previous_line = lines[cursor_row - 1]
-            current_line = lines[cursor_row]
-            lines[cursor_row - 1] = previous_line + current_line
-            del lines[cursor_row]
-            self.cursor_position = (cursor_row - 1, len(previous_line))
+            to_position = (cursor_row - 1, len(lines[cursor_row - 1]))
         else:
-            current_line = lines[cursor_row]
-            new_line = current_line[: cursor_column - 1] + current_line[cursor_column:]
-            lines[cursor_row] = new_line
-            self.cursor_position = (cursor_row, cursor_column - 1)
+            to_position = (cursor_row, cursor_column - 1)
 
-        # TODO - update the syntax tree here.
+        self.perform_edit(Delete(from_position, to_position))
 
     def action_delete_right(self) -> None:
         """Deletes the character to the right of the cursor and keeps the cursor at
         the same position."""
+        if self.cursor_at_end_of_document:
+            return
 
         cursor_row, cursor_column = self.cursor_position
-
-        # Check if the cursor is at the end of the document
-        if cursor_row == len(self.document_lines) - 1 and cursor_column == len(
-            self.document_lines[cursor_row]
-        ):
-            return  # Nothing to delete
-
-        current_line = self.document_lines[cursor_row]
-
+        from_position = self.cursor_position
         if self.cursor_at_end_of_row:
-            # If the cursor is at the end of the line, delete the newline character by joining this line and the next line
-            self.document_lines[cursor_row] = (
-                current_line + self.document_lines[cursor_row + 1]
-            )
-            del self.document_lines[cursor_row + 1]
+            to_position = (cursor_row + 1, 0)
         else:
-            # If the cursor is not at the end of the line, delete the character to the right of the cursor
-            self.document_lines[cursor_row] = (
-                current_line[:cursor_column] + current_line[cursor_column + 1 :]
-            )
+            to_position = (cursor_row, cursor_column + 1)
 
-        self.refresh()
+        self.perform_edit(Delete(from_position, to_position))
 
     def action_delete_line(self) -> None:
         """Deletes the entire line that the cursor is currently on."""
@@ -874,6 +962,7 @@ TextEditor > .text-editor--cursor {
         document_size: Size
         virtual_size: Size
         scroll: Offset
+        undo_stack: list[Edit]
         tree_sexp: str
         active_line_text: str
         active_line_cell_len: int
@@ -889,6 +978,7 @@ TextEditor > .text-editor--cursor {
             document_size=self._document_size,
             virtual_size=self.virtual_size,
             scroll=self.scroll_offset,
+            undo_stack=self._undo_stack,
             # tree_sexp=self._syntax_tree.root_node.sexp(),
             tree_sexp="",
             active_line_text=repr(self.active_line_text),
