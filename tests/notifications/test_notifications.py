@@ -28,6 +28,16 @@ def test_timeout() -> None:
     assert len(tester) == 50
 
 
+def test_in() -> None:
+    """It should be possible to test if a notification is in a collection."""
+    tester = Notifications()
+    within = Notification("within", timeout=120)
+    outwith = Notification("outwith", timeout=120)
+    tester.add(within)
+    assert within in tester
+    assert outwith not in tester
+
+
 def test_remove_notification() -> None:
     """It should be possible to remove a notification."""
     tester = Notifications()
@@ -56,3 +66,13 @@ def test_remove_notification_multiple_times() -> None:
     assert list(tester) == []
     del tester[alert]
     assert list(tester) == []
+
+
+def test_clear() -> None:
+    """It should be possible to clear all notifications."""
+    tester = Notifications()
+    for _ in range(100):
+        tester.add(Notification("test", timeout=120))
+    assert len(tester) == 100
+    tester.clear()
+    assert len(tester) == 0
