@@ -2,7 +2,7 @@
 
 !!! note inline end
 
-    If you don't have the `textual` command on your path, you may have forgotten to install `textual-dev` package.
+    If you don't have the `textual` command on your path, you may have forgotten to install the `textual-dev` package.
 
     See [getting started](../getting_started.md#installation) for details.
 
