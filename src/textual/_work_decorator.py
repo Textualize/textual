@@ -83,6 +83,7 @@ def work(
         description: Readable description of the worker for debugging purposes.
             By default, it uses a string representation of the decorated method
             and its arguments.
+        thread: Mark the method as a thread worker.
     """
 
     def decorator(
