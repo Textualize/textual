@@ -3249,7 +3249,7 @@ class Widget(DOMNode):
         title: str | None = None,
         severity: SeverityLevel = "information",
         timeout: float = Notification.timeout,
-    ) -> None:
+    ) -> Notification:
         """Create a notification.
 
         Args:
@@ -3258,7 +3258,10 @@ class Widget(DOMNode):
             severity: The severity of the notification.
             timeout: The timeout for the notification.
 
+        Returns:
+            The new notification.
+
         See [`App.notify`][textual.app.App.notify] for the full
         documentation for this method.
         """
-        self.app.notify(message, title=title, severity=severity, timeout=timeout)
+        return self.app.notify(message, title=title, severity=severity, timeout=timeout)

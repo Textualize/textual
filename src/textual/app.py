@@ -2798,7 +2798,7 @@ class App(Generic[ReturnType], DOMNode):
         title: str | None = None,
         severity: SeverityLevel = "information",
         timeout: float = Notification.timeout,
-    ) -> None:
+    ) -> Notification:
         """Create a notification.
 
         Args:
@@ -2806,6 +2806,9 @@ class App(Generic[ReturnType], DOMNode):
             title: The title for the notification.
             severity: The severity of the notification.
             timeout: The timeout for the notification.
+
+        Returns:
+            The new notification.
 
         The `notify` method is used to create an application-wide
         notification, shown in a [`Toast`][textual.widgets._toast.Toast],
@@ -2844,8 +2847,10 @@ class App(Generic[ReturnType], DOMNode):
             self.notify("It's against my programming to impersonate a deity.", title="")
             ```
         """
-        self._notifications.add(Notification(message, title, severity, timeout))
+        notification = Notification(message, title, severity, timeout)
+        self._notifications.add(notification)
         self._refresh_notifications()
+        return notification
 
     def unnotify(self, notification: Notification, refresh: bool = True) -> None:
         """Remove a notification from the notification collection.
