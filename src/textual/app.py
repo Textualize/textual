@@ -2856,3 +2856,8 @@ class App(Generic[ReturnType], DOMNode):
         del self._notifications[notification]
         if refresh:
             self._refresh_notifications()
+
+    def clear_notifications(self) -> None:
+        """Clear all the current notifications."""
+        self._notifications.clear()
+        self._refresh_notifications()
