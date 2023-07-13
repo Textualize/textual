@@ -89,6 +89,9 @@ class Notifications:
     def __iter__(self) -> Iterator[Notification]:
         return iter(self._reap()._notifications.values())
 
+    def __contains__(self, notification: Notification) -> bool:
+        return notification.identity in self._notifications
+
     def __delitem__(self, notification: Notification) -> None:
         try:
             del self._reap()._notifications[notification.identity]
