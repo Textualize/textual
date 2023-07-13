@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed CancelledError issue with timer https://github.com/Textualize/textual/issues/2854
 
+### Changed
+
+- Breaking change: Creating a thread worker with the `@work` decorator not requires that a `thread=True` keyword argument is passed https://github.com/Textualize/textual/pull/2938
+
 
 ## [0.29.0] - 2023-07-03
 
@@ -25,9 +29,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Updated `DataTable.get_cell` type hints to accept string keys https://github.com/Textualize/textual/issues/2586
-- Added `DataTable.get_cell_coordinate` method 
+- Added `DataTable.get_cell_coordinate` method
 - Added `DataTable.get_row_index` method https://github.com/Textualize/textual/issues/2587
-- Added `DataTable.get_column_index` method   
+- Added `DataTable.get_column_index` method
 - Added can-focus pseudo-class to target widgets that may receive focus
 - Make `Markdown.update` optionally awaitable https://github.com/Textualize/textual/pull/2838
 - Added `default` parameter to `DataTable.add_column` for populating existing rows https://github.com/Textualize/textual/pull/2836
