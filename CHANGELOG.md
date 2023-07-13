@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Breaking change: Creating a thread worker with the `@work` decorator not requires that a `thread=True` keyword argument is passed https://github.com/Textualize/textual/pull/2938
+- Breaking change: Creating a thread worker with the `@work` decorator now requires that a `thread=True` keyword argument is passed https://github.com/Textualize/textual/pull/2938
 
 
 ## [0.29.0] - 2023-07-03
