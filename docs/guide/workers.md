@@ -161,8 +161,13 @@ Let's demonstrate thread workers by replacing `httpx` with `urllib.request` (in 
 --8<-- "docs/examples/guide/workers/weather05.py"
 ```
 
-The `update_weather` function doesn't have the `async` keyword, so the `@work` decorator will create a thread worker.
+Here the `update_weather` function doesn't have the `async` keyword, and the `work` decorator has a `thread=True` keyword argument; this will create a thread worker.
 Note the use of [get_current_worker][textual.worker.get_current_worker] which the function uses to check if it has been cancelled or not.
+
+!!! important
+
+    If you apply the `work` decorator to a method that isn't `async`, and `thread` is not `True`, an exception will be raised.
+    Conversly, if you apply the `work` decorator to a method that *is* `async`, and `thread` is `True`, an exception will also be raised.
 
 #### Posting messages
 
