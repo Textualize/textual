@@ -2788,7 +2788,7 @@ class App(Generic[ReturnType], DOMNode):
                 # or one will turn up. Things will work out later.
                 return
             # Update the toast rack.
-            toast_rack.add_toast(*self._notifications)
+            toast_rack.show(self._notifications)
 
     def notify(
         self,

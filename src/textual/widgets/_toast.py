@@ -8,7 +8,7 @@ from .. import on
 from ..containers import Container
 from ..css.query import NoMatches
 from ..events import Click, Mount
-from ..notifications import Notification
+from ..notifications import Notification, Notifications
 from ._static import Static
 
 
@@ -128,12 +128,17 @@ class ToastRack(Container, inherit_css=False):
         """
         return f"--textual-toast-{notification.identity}"
 
-    def add_toast(self, *notifications: Notification) -> None:
-        """Add a toast to the display.
+    def show(self, notifications: Notifications) -> None:
+        """Show the notifications as toasts.
 
         Args:
-            notifications: The notifications to build the toasts from.
+            notifications: The notifications to show.
         """
+
+        # Look for any stale toasts and remove them.
+        for toast in self.query(Toast):
+            if toast._notification not in notifications:
+                toast.remove()
 
         # Gather up all the notifications that we don't have toasts for yet.
         new_toasts: list[Notification] = []
