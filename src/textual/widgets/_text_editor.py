@@ -88,10 +88,13 @@ class Insert(NamedTuple):
 class Delete:
     from_position: tuple[int, int]
     to_position: tuple[int, int]
+    cursor_destination: tuple[int, int] | None = None
 
     def do(self, editor: TextEditor) -> None:
         """Do the action."""
-        self.deleted_text = editor._delete_range(self.from_position, self.to_position)
+        self.deleted_text = editor._delete_range(
+            self.from_position, self.to_position, self.cursor_destination
+        )
 
     def undo(self, editor: TextEditor) -> None:
         """Undo the action."""
@@ -813,7 +816,10 @@ TextEditor > .text-editor--cursor {
         self.refresh()
 
     def _delete_range(
-        self, from_position: tuple[int, int], to_position: tuple[int, int]
+        self,
+        from_position: tuple[int, int],
+        to_position: tuple[int, int],
+        cursor_destination: tuple[int, int] | None,
     ) -> str:
         """Delete text between `from_position` and `to_position`.
 
@@ -860,8 +866,12 @@ TextEditor > .text-editor--cursor {
             # Delete the lines in between
             del lines[from_row + 1 : to_row + 1]
 
-        # Move the cursor to the start of the deleted range
-        self.cursor_position = (from_row, from_column)
+        if cursor_destination is not None:
+            self.cursor_position = cursor_destination
+        else:
+            # Move the cursor to the start of the deleted range
+            self.cursor_position = (from_row, from_column)
+
         return deleted_text
 
     def action_delete_left(self) -> None:
@@ -907,23 +917,18 @@ TextEditor > .text-editor--cursor {
 
     def action_delete_line(self) -> None:
         """Deletes the entire line that the cursor is currently on."""
-
         cursor_row, _ = self.cursor_position
 
-        # Remove the current line from the document
-        del self.document_lines[cursor_row]
+        from_position = (cursor_row, 0)
+        to_position = (cursor_row + 1, 0)
 
-        # If we deleted the last line of the document, move the cursor up a line
-        if cursor_row == len(self.document_lines):
-            cursor_row -= 1
-
-        # Move the cursor to the start of the new current line
-        self.cursor_position = (cursor_row, 0)
+        self.perform_edit(Delete(from_position, to_position))
 
     def action_delete_to_start_of_line(self) -> None:
         """Deletes from the cursor position to the start of the line."""
 
         cursor_row, cursor_column = self.cursor_position
+
         self.document_lines[cursor_row] = self.document_lines[cursor_row][
             cursor_column:
         ]
