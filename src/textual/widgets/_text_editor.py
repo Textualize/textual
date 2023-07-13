@@ -233,6 +233,9 @@ TextEditor > .text-editor--cursor {
         # a line doesn't currently exist.
         return Size(text_width + 1, height)
 
+    def _refresh_size(self) -> None:
+        self._document_size = self._get_document_size(self.document_lines)
+
     def render_line(self, widget_y: int) -> Strip:
         document_lines = self.document_lines
 
@@ -377,6 +380,7 @@ TextEditor > .text-editor--cursor {
             self.split_line()
         elif key == "shift+tab":
             self.dedent_line()
+            event.stop()
 
     def _on_click(self, event: events.Click) -> None:
         """Clicking the content body moves the cursor."""
@@ -634,10 +638,7 @@ TextEditor > .text-editor--cursor {
         # plus 1 to accommodate for a cursor potentially "resting" at the end of the row
         insertion_width = longest_modified_line + 1
 
-        new_document_width = max(insertion_width, document_width)
-        new_document_height = len(lines)
-
-        self._document_size = Size(new_document_width, new_document_height)
+        self._refresh_size()
         self.cursor_position = (cursor_row + len(replacement_lines) - 1, end_column)
 
         edit_args = {
@@ -727,12 +728,9 @@ TextEditor > .text-editor--cursor {
         self.document_lines[cursor_row] = line_before
         self.document_lines.insert(cursor_row + 1, line_after)
 
-        self._document_size = self._get_document_size(self.document_lines)
-
+        self._refresh_size()
         # Move the cursor to the start of the new line
         self.cursor_position = (cursor_row + 1, indentation)
-
-        self.refresh(layout=True)
 
     def dedent_line(self) -> None:
         """Reduces the indentation of the current line by one level."""
@@ -751,6 +749,7 @@ TextEditor > .text-editor--cursor {
         if cursor_column > len(current_line):
             self.cursor_position = (cursor_row, len(current_line))
 
+        self._refresh_size()
         self.refresh()
 
     def action_delete_left(self) -> None:
@@ -848,7 +847,6 @@ TextEditor > .text-editor--cursor {
         self.document_lines[cursor_row] = self.document_lines[cursor_row][
             :cursor_column
         ]
-
         self.refresh()
 
     # --- Debug actions
