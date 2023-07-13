@@ -1,6 +1,9 @@
 import asyncio
 
+import pytest
+
 from textual import work
+from textual._work_decorator import WorkerDeclarationError
 from textual.app import App
 from textual.worker import Worker, WorkerState
 
@@ -31,3 +34,23 @@ async def test_work() -> None:
         assert result == "foo"
         await pilot.pause()
     assert states == [WorkerState.PENDING, WorkerState.RUNNING, WorkerState.SUCCESS]
+
+
+def test_decorate_non_async_no_thread_argument() -> None:
+    """Decorating a non-async method without saying explicitly that it's a thread is an error."""
+    with pytest.raises(WorkerDeclarationError):
+
+        class _(App[None]):
+            @work
+            def foo(self) -> None:
+                pass
+
+
+def test_decorate_non_async_no_thread_is_false() -> None:
+    """Decorating a non-async method and saying it isn't a thread is an error."""
+    with pytest.raises(WorkerDeclarationError):
+
+        class _(App[None]):
+            @work(thread=False)
+            def foo(self) -> None:
+                pass
