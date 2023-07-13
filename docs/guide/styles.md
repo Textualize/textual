@@ -321,7 +321,7 @@ The following example creates two widgets with a width of 30, a height of 6, and
 The first widget has the default `box_sizing` (`"border-box"`).
 The second widget sets `box_sizing` to `"content-box"`.
 
-```python title="box_sizing01.py" hl_lines="33"
+```python title="box_sizing01.py" hl_lines="32"
 --8<-- "docs/examples/guide/styles/box_sizing01.py"
 ```
 
