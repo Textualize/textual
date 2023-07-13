@@ -61,15 +61,13 @@ class Notifications:
 
     def __init__(self) -> None:
         """Initialise the notification collection."""
-        self._notifications: list[Notification] = []
+        self._notifications: dict[str, Notification] = {}
 
     def _reap(self) -> Self:
         """Remove any expired notifications from the notification collection."""
-        self._notifications = [
-            notification
-            for notification in self._notifications
-            if not notification.has_expired
-        ]
+        for notification in list(self._notifications.values()):
+            if notification.has_expired:
+                del self._notifications[notification.identity]
         return self
 
     def add(self, notification: Notification) -> Self:
@@ -81,7 +79,7 @@ class Notifications:
         Returns:
             Self.
         """
-        self._reap()._notifications.append(notification)
+        self._reap()._notifications[notification.identity] = notification
         return self
 
     def __len__(self) -> int:
@@ -89,4 +87,14 @@ class Notifications:
         return len(self._reap()._notifications)
 
     def __iter__(self) -> Iterator[Notification]:
-        return iter(self._reap()._notifications)
+        return iter(self._reap()._notifications.values())
+
+    def __delitem__(self, notification: Notification) -> None:
+        try:
+            del self._reap()._notifications[notification.identity]
+        except KeyError:
+            # An attempt to remove a notification we don't know about is a
+            # no-op. What matters here is that the notification is forgotten
+            # about, and it looks like a caller has tried to be
+            # belt-and-braces. We're fine with this.
+            pass

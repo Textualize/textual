@@ -79,6 +79,7 @@ class Toast(Static, inherit_css=False):
         )
         if not self.border_title:
             self.add_class("-empty-title")
+        self._notification = notification
         self._timeout = notification.time_left
 
     def _on_mount(self, _: Mount) -> None:
@@ -88,6 +89,11 @@ class Toast(Static, inherit_css=False):
     @on(Click)
     def _expire(self) -> None:
         """Remove the toast once the timer has expired."""
+        # Before we removed ourself, we also call on the app to forget about
+        # the notification that caused us to exist. Note that we tell the
+        # app to not bother refreshing the display on our account, we're
+        # about to handle that anyway.
+        self.app.unnotify(self._notification, refresh=False)
         # Note that we attempt to remove our parent, because we're wrapped
         # inside an alignment container. The testing that we are is as much
         # to keep type checkers happy as anything else.

@@ -26,3 +26,33 @@ def test_timeout() -> None:
     assert len(tester) == 100
     sleep(0.6)
     assert len(tester) == 50
+
+
+def test_remove_notification() -> None:
+    """It should be possible to remove a notification."""
+    tester = Notifications()
+    first = Notification("first", timeout=120)
+    second = Notification("second", timeout=120)
+    third = Notification("third", timeout=120)
+    tester.add(first)
+    tester.add(second)
+    tester.add(third)
+    assert list(tester) == [first, second, third]
+    del tester[second]
+    assert list(tester) == [first, third]
+    del tester[first]
+    assert list(tester) == [third]
+    del tester[third]
+    assert list(tester) == []
+
+
+def test_remove_notification_multiple_times() -> None:
+    """It should be possible to remove the same notification more than once without an error."""
+    tester = Notifications()
+    alert = Notification("delete me")
+    tester.add(alert)
+    assert list(tester) == [alert]
+    del tester[alert]
+    assert list(tester) == []
+    del tester[alert]
+    assert list(tester) == []

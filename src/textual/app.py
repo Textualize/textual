@@ -2846,3 +2846,14 @@ class App(Generic[ReturnType], DOMNode):
         # Add the notification to the list of in-play notifications.
         self._notifications.add(Notification(message, title, severity, timeout))
         self._refresh_notifications()
+
+    def unnotify(self, notification: Notification, refresh: bool = True) -> None:
+        """Remove a notification from the notification collection.
+
+        Args:
+            notification: The notification to remove.
+            refresh: Flag to say if the display of notifications should be refreshed.
+        """
+        del self._notifications[notification]
+        if refresh:
+            self._refresh_notifications()
