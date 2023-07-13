@@ -82,6 +82,11 @@ class Notifications:
         self._reap()._notifications[notification.identity] = notification
         return self
 
+    def clear(self) -> Self:
+        """Clear all the notifications."""
+        self._notifications.clear()
+        return self
+
     def __len__(self) -> int:
         """The number of notifications."""
         return len(self._reap()._notifications)
