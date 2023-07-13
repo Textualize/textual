@@ -99,6 +99,12 @@ class Delete:
     def undo(self, editor: TextEditor) -> None:
         """Undo the action."""
 
+    def __rich_repr__(self):
+        yield "from_position", self.from_position
+        yield "to_position", self.to_position
+        if hasattr(self, "deleted_text"):
+            yield "deleted_text", self.deleted_text
+
 
 class TextEditor(ScrollView, can_focus=True):
     DEFAULT_CSS = """\
@@ -796,7 +802,11 @@ TextEditor > .text-editor--cursor {
         self.cursor_position = (cursor_row + 1, indentation)
 
     def dedent_line(self) -> None:
-        """Reduces the indentation of the current line by one level."""
+        """Reduces the indentation of the current line by one level.
+
+        A dedent is simply a Delete operation on some amount of whitespace
+        which may exist at the start of a line.
+        """
 
         cursor_row, cursor_column = self.cursor_position
 
@@ -851,6 +861,8 @@ TextEditor > .text-editor--cursor {
             start_line = lines[from_row]
             end_line = lines[to_row]
 
+            # TODO - I think this might be slightly off.
+            #  When you delete a line, it records the deleted text with two newlines at the end instead of 1.
             # Add the deleted segments from the start and end lines to the deleted text
             deleted_text = (
                 start_line[from_column:]
@@ -916,31 +928,25 @@ TextEditor > .text-editor--cursor {
         self.perform_edit(Delete(from_position, to_position))
 
     def action_delete_line(self) -> None:
-        """Deletes the entire line that the cursor is currently on."""
+        """Deletes the line the cursor is on."""
         cursor_row, _ = self.cursor_position
-
         from_position = (cursor_row, 0)
         to_position = (cursor_row + 1, 0)
-
         self.perform_edit(Delete(from_position, to_position))
 
     def action_delete_to_start_of_line(self) -> None:
         """Deletes from the cursor position to the start of the line."""
-
         cursor_row, cursor_column = self.cursor_position
-
-        self.document_lines[cursor_row] = self.document_lines[cursor_row][
-            cursor_column:
-        ]
-        self.cursor_position = (cursor_row, 0)
+        from_position = self.cursor_position
+        to_position = (cursor_row, 0)
+        self.perform_edit(Delete(from_position, to_position))
 
     def action_delete_to_end_of_line(self) -> None:
         """Deletes from the cursor position to the end of the line."""
         cursor_row, cursor_column = self.cursor_position
-        self.document_lines[cursor_row] = self.document_lines[cursor_row][
-            :cursor_column
-        ]
-        self.refresh()
+        from_position = self.cursor_position
+        to_position = (cursor_row, len(self.document_lines[cursor_row]))
+        self.perform_edit(Delete(from_position, to_position))
 
     # --- Debug actions
     def action_print_line_cache(self) -> None:
@@ -983,7 +989,7 @@ TextEditor > .text-editor--cursor {
             document_size=self._document_size,
             virtual_size=self.virtual_size,
             scroll=self.scroll_offset,
-            undo_stack=self._undo_stack,
+            undo_stack=list(reversed(self._undo_stack)),
             # tree_sexp=self._syntax_tree.root_node.sexp(),
             tree_sexp="",
             active_line_text=repr(self.active_line_text),
