@@ -7,6 +7,7 @@ A decorator used to create [workers](/guide/workers).
 from __future__ import annotations
 
 from functools import partial, wraps
+from inspect import iscoroutinefunction
 from typing import TYPE_CHECKING, Callable, Coroutine, TypeVar, Union, cast, overload
 
 from typing_extensions import ParamSpec, TypeAlias
@@ -28,6 +29,10 @@ Decorator: TypeAlias = Callable[
     ],
     Callable[DecoratorParamSpec, "Worker[ReturnType]"],
 ]
+
+
+class WorkerDeclarationError(Exception):
+    """An error in the declaration of a worker method."""
 
 
 @overload
@@ -59,6 +64,7 @@ def work(
     exit_on_error: bool = True,
     exclusive: bool = False,
     description: str | None = None,
+    thread: bool = False,
 ) -> Callable[FactoryParamSpec, Worker[ReturnType]] | Decorator:
     """A decorator used to create [workers](/guide/workers).
 
@@ -80,6 +86,17 @@ def work(
         )
     ) -> Callable[DecoratorParamSpec, Worker[ReturnType]]:
         """The decorator."""
+
+        # An async worker in a thread doesn't make much sense.
+        if iscoroutinefunction(method) and thread:
+            raise WorkerDeclarationError(
+                f"'{method.__name__}' is async and also declared as a thread worker"
+            )
+        # Likewise, neither does a non-async worker that isn't in a thread.
+        elif not iscoroutinefunction(method) and not thread:
+            raise WorkerDeclarationError(
+                f"'{method.__name__}' is not async but also not declared as a thread worker"
+            )
 
         @wraps(method)
         def decorated(
