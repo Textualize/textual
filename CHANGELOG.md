@@ -35,6 +35,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `DataTable.remove_column` method https://github.com/Textualize/textual/pull/2899
 - Added notifications https://github.com/Textualize/textual/pull/2866
 - Added `on_complete` callback to scroll methods https://github.com/Textualize/textual/pull/2903
+- Make `MarkdownViewer` link click handler jump to the anchor position in anchor
+  links.
 
 ### Fixed
 

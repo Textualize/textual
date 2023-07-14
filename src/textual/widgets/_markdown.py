@@ -966,7 +966,22 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
 
     async def _on_markdown_link_clicked(self, message: Markdown.LinkClicked) -> None:
         message.stop()
-        await self.go(message.href)
+        if message.href.find("#") == -1:
+            await self.go(message.href)
+        else:
+            link, anchor = message.href.split("#", 1)
+            await self.go(link)
+
+            def scroll_to_anchor() -> None:
+                toc = self.table_of_contents.table_of_contents
+                assert toc is not None
+                for _, name, block_id in toc:
+                    if name.lower().replace(" ", "-") == anchor:
+                        block = self.query_one(f"#{block_id}", MarkdownBlock)
+                        self.scroll_to_widget(block, top=True)
+                        break
+
+            self.call_later(scroll_to_anchor)
 
     def watch_show_table_of_contents(self, show_table_of_contents: bool) -> None:
         self.set_class(show_table_of_contents, "-show-table-of-contents")
