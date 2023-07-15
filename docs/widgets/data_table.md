@@ -171,7 +171,7 @@ The example below shows how to attach simple numbered labels to rows.
 
 The `DataTable` can be centered within the available space using the `center_table` parameter.
 
-=== "Original"
+=== "Default"
 
     ```{.textual path="docs/examples/widgets/data_table_renderables.py"}
     ```
