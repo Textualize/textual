@@ -579,6 +579,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         zebra_stripes: bool = False,
         header_height: int = 1,
         show_cursor: bool = True,
+        center_table: bool = False,
         cursor_foreground_priority: Literal["renderable", "css"] = "css",
         cursor_background_priority: Literal["renderable", "css"] = "renderable",
         name: str | None = None,
@@ -668,6 +669,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.cursor_background_priority = cursor_background_priority
         """Should we prioritize the cursor component class CSS background or the renderable background
          in the event where a cell contains a renderable with a background color."""
+        self.center_table = center_table
+        """Center the table horizontally within the space available."""
 
     @property
     def hover_row(self) -> int:
@@ -1260,7 +1263,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         y = sum(ordered_row.height for ordered_row in self.ordered_rows[:row_index])
         if self.show_header:
             y += self.header_height
-        row_region = Region(0, y, row_width, row.height)
+
+        if self.center_table:
+            widget_width = self.size.width
+            offset = max(0, widget_width - row_width) // 2
+        else:
+            offset = 0
+
+        row_region = Region(offset, y, row_width, row.height)
         return row_region
 
     def _get_column_region(self, column_index: int) -> Region:
@@ -1963,7 +1973,16 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         faded_style = Style.from_color(
             color=row_style.color, bgcolor=faded_color.rich_color
         )
-        scrollable_row.append([Segment(" " * remaining_space, faded_style)])
+
+        if self.center_table:
+            if is_header_row:
+                scrollable_row.insert(0, [Segment(" " * (remaining_space // 2))])
+            else:
+                scrollable_row.insert(
+                    0, [Segment(" " * (remaining_space // 2), faded_style)]
+                )
+        else:
+            scrollable_row.append([Segment(" " * remaining_space, faded_style)])
 
         row_pair = (fixed_row, scrollable_row)
         self._row_render_cache[cache_key] = row_pair
