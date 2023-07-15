@@ -167,10 +167,24 @@ The example below shows how to attach simple numbered labels to rows.
     --8<-- "docs/examples/widgets/data_table_labels.py"
     ```
 
+### Centered Data
+
+The `DataTable` can be centered within the available space using the `center_table` parameter.
+
+=== "Original"
+
+    ```{.textual path="docs/examples/widgets/data_table_renderables.py"}
+    ```
+
+=== "Centered"
+
+    ```{.textual path="docs/examples/widgets/data_table_renderables_centered.py"}
+    ```
+
 ## Reactive Attributes
 
 | Name                | Type                                        | Default            | Description                                           |
-|---------------------|---------------------------------------------|--------------------|-------------------------------------------------------|
+| ------------------- | ------------------------------------------- | ------------------ | ----------------------------------------------------- |
 | `show_header`       | `bool`                                      | `True`             | Show the table header                                 |
 | `show_row_labels`   | `bool`                                      | `True`             | Show the row labels (if applicable)                   |
 | `fixed_rows`        | `int`                                       | `0`                | Number of fixed rows (rows which do not scroll)       |
