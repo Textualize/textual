@@ -1766,7 +1766,7 @@ class Widget(DOMNode):
                 scrolled_y = scroll_y != self.scroll_y
 
             if on_complete is not None:
-                on_complete()
+                self.call_after_refresh(on_complete)
 
         return scrolled_x or scrolled_y
 
