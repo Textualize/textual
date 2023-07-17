@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from rich.console import RenderableType
 from rich.text import Text
 
 from .. import on
@@ -34,34 +35,49 @@ class Toast(Static, inherit_css=False):
 
     DEFAULT_CSS = """
     Toast {
-        width: auto;
-        min-width: 25%;
+        width: 60;
+        max-width: 100%;
         height: auto;
         visibility: visible;
         margin-top: 1;
-        padding: 1;
+        padding: 1 2;
+        background: $panel;
+    }
+
+    .-toast--header {
+        text-style: bold;
     }
 
     Toast.-information {
-        border-top: panel $success;
-        background: $success 20%;
+
+    }
+
+    Toast.-information .-toast--header {
+        color: $success;
     }
 
     Toast.-warning {
-        border-top: panel $warning;
-        background: $warning 20%;
 
     }
 
+    Toast.-warning .-toast--header {
+        color: $warning;
+    }
+
     Toast.-error {
-        border-top: panel $error;
-        background: $error 20%;
+
+    }
+
+    Toast.-error .-toast--header {
+       color: $error;
     }
 
     Toast.-empty-title {
         border: none;
     }
     """
+
+    COMPONENT_CLASSES = {"-toast--header"}
 
     def __init__(self, notification: Notification) -> None:
         """Initialise the toast.
@@ -70,17 +86,25 @@ class Toast(Static, inherit_css=False):
             notification: The notification to show in the toast.
         """
         super().__init__(
-            Text.from_markup(notification.message), classes=f"-{notification.severity}"
+            classes=f"-{notification.severity} {'-empty-title' if not notification.title else ''}"
         )
-        self.border_title = Text.from_markup(
-            notification.title
-            if notification.title is not None
-            else notification.severity.capitalize()
-        )
-        if not self.border_title:
-            self.add_class("-empty-title")
         self._notification = notification
         self._timeout = notification.time_left
+
+    def render(self) -> RenderableType:
+        notification = self._notification
+        if notification.title:
+            header_style = self.get_component_rich_style("-toast--header")
+            notification_text = Text.assemble(
+                (notification.title, header_style),
+                "\n",
+                Text.from_markup(notification.message),
+            )
+        else:
+            notification_text = Text.assemble(
+                Text.from_markup(notification.message),
+            )
+        return notification_text
 
     def _on_mount(self, _: Mount) -> None:
         """Set the time running once the toast is mounted."""
@@ -113,6 +137,7 @@ class ToastRack(Container, inherit_css=False):
         visibility: hidden;
         layout: vertical;
         overflow-y: scroll;
+        margin-bottom: 1;
     }
     """
 
