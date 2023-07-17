@@ -40,7 +40,7 @@ class Toast(Static, inherit_css=False):
         height: auto;
         visibility: visible;
         margin-top: 1;
-        padding: 1 2;
+        padding: 1 1;
         background: $panel;
         tint: white 5%;
     }
@@ -49,8 +49,12 @@ class Toast(Static, inherit_css=False):
         text-style: bold;
     }
 
+    Toast {
+        border-right: wide $background;
+    }
+
     Toast.-information {
-        border-left: tall $success;
+        border-left: wide $success;
     }
 
     Toast.-information .toast--title {
@@ -58,7 +62,7 @@ class Toast(Static, inherit_css=False):
     }
 
     Toast.-warning {
-        border-left: tall $warning;
+        border-left: wide $warning;
     }
 
     Toast.-warning .toast--title {
@@ -66,7 +70,7 @@ class Toast(Static, inherit_css=False):
     }
 
     Toast.-error {
-        border-left: tall $error;
+        border-left: wide $error;
     }
 
     Toast.-error .toast--title {
@@ -139,6 +143,7 @@ class ToastRack(Container, inherit_css=False):
         layout: vertical;
         overflow-y: scroll;
         margin-bottom: 1;
+        margin-right: 1;
     }
     """
 
