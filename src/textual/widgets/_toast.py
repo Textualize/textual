@@ -98,10 +98,15 @@ class Toast(Static, inherit_css=False):
 
     def render(self) -> RenderableType:
         notification = self._notification
-        if notification.title:
+        title = (
+            notification.severity.capitalize()
+            if notification.title is None
+            else notification.title
+        )
+        if title:
             header_style = self.get_component_rich_style("toast--title")
             notification_text = Text.assemble(
-                (notification.title, header_style),
+                (title, header_style),
                 "\n",
                 Text.from_markup(notification.message),
             )
