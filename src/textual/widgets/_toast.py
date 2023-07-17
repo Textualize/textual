@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import ClassVar
+
 from rich.console import RenderableType
 from rich.text import Text
 
@@ -82,7 +84,7 @@ class Toast(Static, inherit_css=False):
     }
     """
 
-    COMPONENT_CLASSES = {"toast--title"}
+    COMPONENT_CLASSES: ClassVar[set[str]] = {"toast--title"}
 
     def __init__(self, notification: Notification) -> None:
         """Initialise the toast.
