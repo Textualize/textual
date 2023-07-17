@@ -97,6 +97,11 @@ class Toast(Static, inherit_css=False):
         self._timeout = notification.time_left
 
     def render(self) -> RenderableType:
+        """Render the toast's content.
+
+        Returns:
+            A Rich renderable for the title and content of the Toast.
+        """
         notification = self._notification
         if notification.title:
             header_style = self.get_component_rich_style("toast--title")
