@@ -36,12 +36,13 @@ class Toast(Static, inherit_css=False):
     DEFAULT_CSS = """
     Toast {
         width: 60;
-        max-width: 100%;
+        max-width: 50%;
         height: auto;
         visibility: visible;
         margin-top: 1;
         padding: 1 2;
         background: $panel;
+        tint: white 5%;
     }
 
     .toast--title {
@@ -49,31 +50,31 @@ class Toast(Static, inherit_css=False):
     }
 
     Toast.-information {
-
+        border-left: tall $success;
     }
 
     Toast.-information .toast--title {
-        color: $success;
+        color: $success-darken-1;
     }
 
     Toast.-warning {
-
+        border-left: tall $warning;
     }
 
     Toast.-warning .toast--title {
-        color: $warning;
+        color: $warning-darken-1;
     }
 
     Toast.-error {
-
+        border-left: tall $error;
     }
 
     Toast.-error .toast--title {
-       color: $error;
+       color: $error-darken-1;
     }
 
     Toast.-empty-title {
-        border: none;
+
     }
     """
 
