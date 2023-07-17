@@ -75,11 +75,14 @@ class Insert(NamedTuple):
     """Implements the Edit protocol for inserting text at some position."""
 
     text: str
-    position: tuple[int, int]
+    from_position: tuple[int, int]
+    to_position: tuple[int, int]
     move_cursor: bool = True
 
     def do(self, editor: TextEditor) -> None:
-        editor._insert_text(self.text, self.position, self.move_cursor)
+        editor._insert_text_range(
+            self.text, self.from_position, self.to_position, self.move_cursor
+        )
 
     def undo(self, editor: TextEditor) -> None:
         """Undo the action."""
@@ -433,18 +436,18 @@ TextEditor > .text-editor--cursor {
     def _on_key(self, event: events.Key) -> None:
         log.debug(f"{event!r}")
         key = event.key
-        if event.is_printable or key == "tab":
+        if event.is_printable or key == "tab" or key == "enter":
             if key == "tab":
                 insert = "    "
+            elif key == "enter":
+                insert = "\n"
             else:
                 insert = event.character
             event.stop()
             assert event.character is not None
-
-            self.insert_text(insert, self.cursor_position)
+            cursor_position = self.cursor_position
+            self.insert_text_range(insert, cursor_position, cursor_position)
             event.prevent_default()
-        elif key == "enter":
-            self.split_line()
         elif key == "shift+tab":
             self.dedent_line()
             event.stop()
@@ -477,7 +480,7 @@ TextEditor > .text-editor--cursor {
     def _on_paste(self, event: events.Paste) -> None:
         text = event.text
         if text:
-            self._insert_text(text, self.cursor_position)
+            self.insert_text(text, self.cursor_position)
         event.stop()
 
     # --- Reactive watchers and validators
@@ -674,7 +677,16 @@ TextEditor > .text-editor--cursor {
     def insert_text(
         self, text: str, position: tuple[int, int], move_cursor: bool = True
     ) -> None:
-        self.edit(Insert(text, position, move_cursor))
+        self.edit(Insert(text, position, position, move_cursor))
+
+    def insert_text_range(
+        self,
+        text: str,
+        from_position: tuple[int, int],
+        to_position: tuple[int, int],
+        move_cursor: bool = True,
+    ):
+        self.edit(Insert(text, from_position, to_position, move_cursor))
 
     def _insert_text(
         self, text: str, position: tuple[int, int], move_cursor: bool = True
@@ -751,19 +763,59 @@ TextEditor > .text-editor--cursor {
 
         self._prepare_highlights(start_point, end_point)
 
-    def insert_text_range(
-        self, text: str, from_position: tuple[int, int], to_position: tuple[int, int]
+    def _insert_text_range(
+        self,
+        text: str,
+        from_position: tuple[int, int],
+        to_position: tuple[int, int],
+        move_cursor: bool = True,
     ) -> None:
         """Insert text at a given range and move the cursor to the end of the inserted text."""
 
-        # If we're inserting a single newline character, this is just a split.
-        # Delete the range first
-        self._delete_range(from_position, to_position, None)
-        if text == os.linesep:
-            self.split_line(from_position)
+        inserted_text = text
+        lines = self.document_lines
 
-        # Split the inserted text into lines
-        lines = text.splitlines()
+        from_row, from_column = from_position
+        to_row, to_column = to_position
+
+        if from_position > to_position:
+            from_row, from_column, to_row, to_column = (
+                to_row,
+                to_column,
+                from_row,
+                from_column,
+            )
+
+        insert_lines = inserted_text.splitlines()
+        if inserted_text.endswith("\n"):
+            # Special case where a single newline character is inserted.
+            insert_lines.append("")
+
+        before_selection = lines[from_row][:from_column]
+        after_selection = lines[to_row][to_column:]
+
+        insert_lines[0] = before_selection + insert_lines[0]
+        destination_column = len(insert_lines[-1])
+        insert_lines[-1] = insert_lines[-1] + after_selection
+        lines[from_row : to_row + 1] = insert_lines
+        destination_row = from_row + len(insert_lines) - 1
+
+        cursor_destination = (destination_row, destination_column)
+
+        start_byte = self._position_to_byte_offset(from_position)
+        self._syntax_tree.edit(
+            start_byte=start_byte,
+            old_end_byte=self._position_to_byte_offset(to_position),
+            new_end_byte=start_byte + len(inserted_text),
+            start_point=from_position,
+            old_end_point=to_position,
+            new_end_point=cursor_destination,
+        )
+        self._syntax_tree = self._parser.parse(self._read_callable, self._syntax_tree)
+        self._prepare_highlights()
+        self._refresh_size()
+        if move_cursor:
+            self.cursor_position = cursor_destination
 
     def _position_to_byte_offset(self, position: tuple[int, int]) -> int:
         """Given a document coordinate, return the byte offset of that coordinate."""
@@ -875,7 +927,8 @@ TextEditor > .text-editor--cursor {
             start_line = lines[from_row]
             end_line = lines[to_row]
 
-            # TODO - I think this might be slightly off.
+            # TODO - I think this might be slightly off - merging lines will
+            #  result in two newline characters.
             #  When you delete a line, it records the deleted text with two newlines at the end instead of 1.
             # Add the deleted segments from the start and end lines to the deleted text
             deleted_text = (
@@ -892,13 +945,13 @@ TextEditor > .text-editor--cursor {
             # Delete the lines in between
             del lines[from_row + 1 : to_row + 1]
 
+        self._refresh_size()
         if cursor_destination is not None:
             self.cursor_position = cursor_destination
         else:
             # Move the cursor to the start of the deleted range
             self.cursor_position = (from_row, from_column)
 
-        self._refresh_size()
         return deleted_text
 
     def action_delete_left(self) -> None:
