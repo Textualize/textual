@@ -98,7 +98,7 @@ def work(
         # worker.
         if not iscoroutinefunction(method) and not thread:
             raise WorkerDeclarationError(
-                f"'{method.__name__}' is not async but also not declared as a thread worker"
+                f"'{method.__name__}' is not async but also not declared as a thread worker; decorate with @work(thread=True)"
             )
 
         @wraps(method)
