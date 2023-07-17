@@ -7049,8 +7049,9 @@ on the compositor to render children).</p>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">):</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -7136,6 +7137,16 @@ on the compositor to render children).</p>
           <td><p>Force scrolling even when prohibited by overflow styling.</p></td>
           <td>
                 <code>False</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>on_complete</code></td>
+          <td>
+                <code>CallbackType | None</code>
+          </td>
+          <td><p>A callable to invoke when the animation is finished.</p></td>
+          <td>
+                <code>None</code>
           </td>
         </tr>
     </tbody>

@@ -5822,6 +5822,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.clear_notifications" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clear_notifications()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.compose" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5998,6 +6009,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.notify" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        notify()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.panic" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6156,6 +6178,17 @@
     <span class="md-ellipsis">
       
         uninstall_screen()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.unnotify" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        unnotify()
       
     </span>
   </a>
@@ -8162,6 +8195,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.clear_notifications" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clear_notifications()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.compose" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -8338,6 +8382,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.notify" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        notify()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.panic" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -8496,6 +8551,17 @@
     <span class="md-ellipsis">
       
         uninstall_screen()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.unnotify" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        unnotify()
       
     </span>
   </a>
@@ -10808,6 +10874,29 @@ if you wish to <em>simulate</em> a key being pressed.</p>
 
 
 
+<h3 id="textual.app.App.clear_notifications" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">clear_notifications</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.app.App.clear_notifications" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">clear_notifications</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Clear all the current notifications.</p>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
 <h3 id="textual.app.App.compose" class="doc doc-heading">
         <span class="doc doc-object-name doc-function-name">compose</span>
   
@@ -11987,6 +12076,142 @@ provided a <code>MountError</code> will be raised.</p>
 
 
 
+<h3 id="textual.app.App.notify" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">notify</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.app.App.notify" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">notify</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="bp">self</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">message</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="o">*</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">severity</span><span class="o">=</span><span class="s2">&quot;information&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">timeout</span><span class="o">=</span><span class="n">Notification</span><span class="o">.</span><span class="n">timeout</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Create a notification.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>message</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+          </td>
+          <td><p>The message for the notification.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>title</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td><p>The title for the notification.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>severity</code></td>
+          <td>
+                <code><span title="textual.notifications.SeverityLevel">SeverityLevel</span></code>
+          </td>
+          <td><p>The severity of the notification.</p></td>
+          <td>
+                <code>&#39;information&#39;</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>timeout</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+          </td>
+          <td><p>The timeout for the notification.</p></td>
+          <td>
+                <code>Notification.timeout</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="textual.notifications.Notification">Notification</span></code>
+          </td>
+          <td><p>The new notification.</p></td>
+        </tr>
+    </tbody>
+  </table>
+      <p>The <code>notify</code> method is used to create an application-wide
+notification, shown in a <a class="autorefs autorefs-internal" href="../../widgets/toast/#textual.widgets._toast.Toast"><code>Toast</code></a>,
+normally originating in the bottom right corner of the display.</p>
+<p>Notifications can have the following severity levels:</p>
+<ul>
+<li><code>information</code></li>
+<li><code>warning</code></li>
+<li><code>error</code></li>
+</ul>
+<p>The default is <code>information</code>.</p>
+<p>If no <code>title</code> is provided, the title of the notification will
+reflect the severity. If you wish to create a notification that has
+no title whatsoever, pass an empty title (<code>""</code>).</p>
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Show an information notification.</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="bp">self</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span><span class="s2">&quot;It&#39;s an older code, sir, but it checks out.&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># Show a warning. Note that Textual&#39;s notification system allows</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># for the use of Rich console markup.</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="bp">self</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="s2">&quot;Now witness the firepower of this fully &quot;</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="s2">&quot;[b]ARMED[/b] and [i][b]OPERATIONAL[/b][/i] battle station!&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Possible trap detected&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">severity</span><span class="o">=</span><span class="s2">&quot;warning&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">)</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="c1"># Show an error. Set a longer timeout so it&#39;s noticed.</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="bp">self</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span><span class="s2">&quot;It&#39;s a trap!&quot;</span><span class="p">,</span> <span class="n">severity</span><span class="o">=</span><span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="c1"># Show an information notification, but without any sort of title.</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="bp">self</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span><span class="s2">&quot;It&#39;s against my programming to impersonate a deity.&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+</code></pre></div>
+</details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
 <h3 id="textual.app.App.panic" class="doc doc-heading">
         <span class="doc doc-object-name doc-function-name">panic</span>
   
@@ -12559,8 +12784,9 @@ or None to auto-detect.</p></td>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">headless</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">80</span><span class="p">,</span> <span class="mi">24</span><span class="p">),</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">tooltips</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">message_hook</span><span class="o">=</span><span class="kc">None</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">):</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">notifications</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">message_hook</span><span class="o">=</span><span class="kc">None</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -12613,6 +12839,16 @@ or None to auto-detect.</p></td>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
           <td><p>Enable tooltips when testing.</p></td>
+          <td>
+                <code>False</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>notifications</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td><p>Enable notifications when testing.</p></td>
           <td>
                 <code>False</code>
           </td>
@@ -12954,6 +13190,63 @@ Textual will also uninstall screens automatically on exit.</p>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
           </td>
           <td><p>The name of the screen that was uninstalled, or None if no screen was uninstalled.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.app.App.unnotify" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">unnotify</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.app.App.unnotify" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">unnotify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">notification</span><span class="p">,</span> <span class="n">refresh</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Remove a notification from the notification collection.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>notification</code></td>
+          <td>
+                <code><span title="textual.notifications.Notification">Notification</span></code>
+          </td>
+          <td><p>The notification to remove.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>refresh</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td><p>Flag to say if the display of notifications should be refreshed.</p></td>
+          <td>
+                <code>True</code>
+          </td>
         </tr>
     </tbody>
   </table>

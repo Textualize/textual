@@ -4520,6 +4520,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#removing-columns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Removing columns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#fixed-data" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5531,6 +5542,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._data_table.DataTable.get_cell_coordinate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_cell_coordinate()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._data_table.DataTable.get_column" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5546,6 +5568,17 @@
     <span class="md-ellipsis">
       
         get_column_at()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._data_table.DataTable.get_column_index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_column_index()
       
     </span>
   </a>
@@ -5579,6 +5612,17 @@
     <span class="md-ellipsis">
       
         get_row_height()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._data_table.DataTable.get_row_index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_row_index()
       
     </span>
   </a>
@@ -5656,6 +5700,17 @@
     <span class="md-ellipsis">
       
         refresh_row()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._data_table.DataTable.remove_column" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        remove_column()
       
     </span>
   </a>
@@ -7928,6 +7983,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#removing-columns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Removing columns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#fixed-data" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -8939,6 +9005,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._data_table.DataTable.get_cell_coordinate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_cell_coordinate()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._data_table.DataTable.get_column" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -8954,6 +9031,17 @@
     <span class="md-ellipsis">
       
         get_column_at()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._data_table.DataTable.get_column_index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_column_index()
       
     </span>
   </a>
@@ -8987,6 +9075,17 @@
     <span class="md-ellipsis">
       
         get_row_height()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._data_table.DataTable.get_row_index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_row_index()
       
     </span>
   </a>
@@ -9064,6 +9163,17 @@
     <span class="md-ellipsis">
       
         refresh_row()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._data_table.DataTable.remove_column" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        remove_column()
       
     </span>
   </a>
@@ -10096,6 +10206,15 @@ the row under the current <code>cursor_coordinate</code>, then supply this key t
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># Supply the row key to `remove_row` to delete the row.</span>
 <a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">table</span><span class="o">.</span><span class="n">remove_row</span><span class="p">(</span><span class="n">row_key</span><span class="p">)</span>
 </code></pre></div>
+<h3 id="removing-columns">Removing columns<a class="headerlink" href="#removing-columns" title="Permanent link">&para;</a></h3>
+<p>To remove individual columns, use <a class="autorefs autorefs-internal" href="#textual.widgets._data_table.DataTable.remove_column">remove_column</a>.
+The <code>remove_column</code> method accepts a <code>key</code> argument, which identifies the column to be removed.</p>
+<p>You can remove the column below the cursor using the same <code>coordinate_to_cell_key</code> method described above:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Get the keys for the row and column under the cursor.</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">_</span><span class="p">,</span> <span class="n">column_key</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">coordinate_to_cell_key</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">cursor_coordinate</span><span class="p">)</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1"># Supply the column key to `column_row` to delete the column.</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">table</span><span class="o">.</span><span class="n">remove_column</span><span class="p">(</span><span class="n">column_key</span><span class="p">)</span>
+</code></pre></div>
 <h3 id="fixed-data">Fixed data<a class="headerlink" href="#fixed-data" title="Permanent link">&para;</a></h3>
 <p>You can fix a number of rows and columns in place, keeping them pinned to the top and left of the table respectively.
 To do this, assign an integer to the <code>fixed_rows</code> or <code>fixed_columns</code> reactive attributes of the <code>DataTable</code>.</p>
@@ -10262,31 +10381,31 @@ To do this, assign an integer to the <code>fixed_rows</code> or <code>fixed_colu
 </p>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">DataTable</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="k">class</span> <span class="nc">TableApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="n">CSS</span> <span class="o">=</span> <span class="s2">&quot;DataTable {height: 1fr}&quot;</span>
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
-<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
-<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>        <span class="k">yield</span> <span class="n">DataTable</span><span class="p">()</span>
-<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>
-<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>    <span class="k">def</span> <span class="nf">on_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_one</span><span class="p">(</span><span class="n">DataTable</span><span class="p">)</span>
-<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>        <span class="n">table</span><span class="o">.</span><span class="n">focus</span><span class="p">()</span>
-<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>        <span class="n">table</span><span class="o">.</span><span class="n">add_columns</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">)</span>
-<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>        <span class="k">for</span> <span class="n">number</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">):</span>
-<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">number</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">number</span> <span class="o">*</span> <span class="mi">2</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">number</span> <span class="o">*</span> <span class="mi">3</span><span class="p">))</span>
-<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>        <span class="n">table</span><span class="o">.</span><span class="n">fixed_rows</span> <span class="o">=</span> <span class="mi">2</span>
-<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a>        <span class="n">table</span><span class="o">.</span><span class="n">fixed_columns</span> <span class="o">=</span> <span class="mi">1</span>
-<a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a>        <span class="n">table</span><span class="o">.</span><span class="n">cursor_type</span> <span class="o">=</span> <span class="s2">&quot;row&quot;</span>
-<a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a>        <span class="n">table</span><span class="o">.</span><span class="n">zebra_stripes</span> <span class="o">=</span> <span class="kc">True</span>
-<a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a>
-<a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a>
-<a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a><span class="n">app</span> <span class="o">=</span> <span class="n">TableApp</span><span class="p">()</span>
-<a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-<a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">DataTable</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="k">class</span> <span class="nc">TableApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    <span class="n">CSS</span> <span class="o">=</span> <span class="s2">&quot;DataTable {height: 1fr}&quot;</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>        <span class="k">yield</span> <span class="n">DataTable</span><span class="p">()</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>    <span class="k">def</span> <span class="nf">on_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_one</span><span class="p">(</span><span class="n">DataTable</span><span class="p">)</span>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>        <span class="n">table</span><span class="o">.</span><span class="n">focus</span><span class="p">()</span>
+<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>        <span class="n">table</span><span class="o">.</span><span class="n">add_columns</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">)</span>
+<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>        <span class="k">for</span> <span class="n">number</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">):</span>
+<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">number</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">number</span> <span class="o">*</span> <span class="mi">2</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">number</span> <span class="o">*</span> <span class="mi">3</span><span class="p">))</span>
+<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>        <span class="n">table</span><span class="o">.</span><span class="n">fixed_rows</span> <span class="o">=</span> <span class="mi">2</span>
+<a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>        <span class="n">table</span><span class="o">.</span><span class="n">fixed_columns</span> <span class="o">=</span> <span class="mi">1</span>
+<a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a>        <span class="n">table</span><span class="o">.</span><span class="n">cursor_type</span> <span class="o">=</span> <span class="s2">&quot;row&quot;</span>
+<a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a>        <span class="n">table</span><span class="o">.</span><span class="n">zebra_stripes</span> <span class="o">=</span> <span class="kc">True</span>
+<a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a>
+<a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a>
+<a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a><span class="n">app</span> <span class="o">=</span> <span class="n">TableApp</span><span class="p">()</span>
+<a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
 </div>
 </div>
@@ -10465,40 +10584,40 @@ The example below shows how to attach simple numbered labels to rows.</p>
 </p>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span> <span class="nn">rich.text</span> <span class="kn">import</span> <span class="n">Text</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">DataTable</span>
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
-<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="n">ROWS</span> <span class="o">=</span> <span class="p">[</span>
-<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    <span class="p">(</span><span class="s2">&quot;lane&quot;</span><span class="p">,</span> <span class="s2">&quot;swimmer&quot;</span><span class="p">,</span> <span class="s2">&quot;country&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">),</span>
-<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;Joseph Schooling&quot;</span><span class="p">,</span> <span class="s2">&quot;Singapore&quot;</span><span class="p">,</span> <span class="mf">50.39</span><span class="p">),</span>
-<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;Michael Phelps&quot;</span><span class="p">,</span> <span class="s2">&quot;United States&quot;</span><span class="p">,</span> <span class="mf">51.14</span><span class="p">),</span>
-<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>    <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;Chad le Clos&quot;</span><span class="p">,</span> <span class="s2">&quot;South Africa&quot;</span><span class="p">,</span> <span class="mf">51.14</span><span class="p">),</span>
-<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>    <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="s2">&quot;László Cseh&quot;</span><span class="p">,</span> <span class="s2">&quot;Hungary&quot;</span><span class="p">,</span> <span class="mf">51.14</span><span class="p">),</span>
-<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>    <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Li Zhuhao&quot;</span><span class="p">,</span> <span class="s2">&quot;China&quot;</span><span class="p">,</span> <span class="mf">51.26</span><span class="p">),</span>
-<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>    <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;Mehdy Metella&quot;</span><span class="p">,</span> <span class="s2">&quot;France&quot;</span><span class="p">,</span> <span class="mf">51.58</span><span class="p">),</span>
-<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>    <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="s2">&quot;Tom Shields&quot;</span><span class="p">,</span> <span class="s2">&quot;United States&quot;</span><span class="p">,</span> <span class="mf">51.73</span><span class="p">),</span>
-<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Aleksandr Sadovnikov&quot;</span><span class="p">,</span> <span class="s2">&quot;Russia&quot;</span><span class="p">,</span> <span class="mf">51.84</span><span class="p">),</span>
-<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>    <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;Darren Burns&quot;</span><span class="p">,</span> <span class="s2">&quot;Scotland&quot;</span><span class="p">,</span> <span class="mf">51.84</span><span class="p">),</span>
-<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="p">]</span>
-<a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>
-<a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a>
-<a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a><span class="k">class</span> <span class="nc">TableApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
-<a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
-<a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a>        <span class="k">yield</span> <span class="n">DataTable</span><span class="p">()</span>
-<a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a>
-<a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a>    <span class="k">def</span> <span class="nf">on_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a>        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_one</span><span class="p">(</span><span class="n">DataTable</span><span class="p">)</span>
-<a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a>        <span class="n">table</span><span class="o">.</span><span class="n">add_columns</span><span class="p">(</span><span class="o">*</span><span class="n">ROWS</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<a id="__codelineno-5-27" name="__codelineno-5-27" href="#__codelineno-5-27"></a>        <span class="k">for</span> <span class="n">number</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ROWS</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-<a id="__codelineno-5-28" name="__codelineno-5-28" href="#__codelineno-5-28"></a>            <span class="n">label</span> <span class="o">=</span> <span class="n">Text</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">number</span><span class="p">),</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;#B0FC38 italic&quot;</span><span class="p">)</span>
-<a id="__codelineno-5-29" name="__codelineno-5-29" href="#__codelineno-5-29"></a>            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
-<a id="__codelineno-5-30" name="__codelineno-5-30" href="#__codelineno-5-30"></a>
-<a id="__codelineno-5-31" name="__codelineno-5-31" href="#__codelineno-5-31"></a>
-<a id="__codelineno-5-32" name="__codelineno-5-32" href="#__codelineno-5-32"></a><span class="n">app</span> <span class="o">=</span> <span class="n">TableApp</span><span class="p">()</span>
-<a id="__codelineno-5-33" name="__codelineno-5-33" href="#__codelineno-5-33"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-<a id="__codelineno-5-34" name="__codelineno-5-34" href="#__codelineno-5-34"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span> <span class="nn">rich.text</span> <span class="kn">import</span> <span class="n">Text</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">DataTable</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="n">ROWS</span> <span class="o">=</span> <span class="p">[</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>    <span class="p">(</span><span class="s2">&quot;lane&quot;</span><span class="p">,</span> <span class="s2">&quot;swimmer&quot;</span><span class="p">,</span> <span class="s2">&quot;country&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">),</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;Joseph Schooling&quot;</span><span class="p">,</span> <span class="s2">&quot;Singapore&quot;</span><span class="p">,</span> <span class="mf">50.39</span><span class="p">),</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;Michael Phelps&quot;</span><span class="p">,</span> <span class="s2">&quot;United States&quot;</span><span class="p">,</span> <span class="mf">51.14</span><span class="p">),</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>    <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;Chad le Clos&quot;</span><span class="p">,</span> <span class="s2">&quot;South Africa&quot;</span><span class="p">,</span> <span class="mf">51.14</span><span class="p">),</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>    <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="s2">&quot;László Cseh&quot;</span><span class="p">,</span> <span class="s2">&quot;Hungary&quot;</span><span class="p">,</span> <span class="mf">51.14</span><span class="p">),</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>    <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Li Zhuhao&quot;</span><span class="p">,</span> <span class="s2">&quot;China&quot;</span><span class="p">,</span> <span class="mf">51.26</span><span class="p">),</span>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>    <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;Mehdy Metella&quot;</span><span class="p">,</span> <span class="s2">&quot;France&quot;</span><span class="p">,</span> <span class="mf">51.58</span><span class="p">),</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>    <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="s2">&quot;Tom Shields&quot;</span><span class="p">,</span> <span class="s2">&quot;United States&quot;</span><span class="p">,</span> <span class="mf">51.73</span><span class="p">),</span>
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Aleksandr Sadovnikov&quot;</span><span class="p">,</span> <span class="s2">&quot;Russia&quot;</span><span class="p">,</span> <span class="mf">51.84</span><span class="p">),</span>
+<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a>    <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;Darren Burns&quot;</span><span class="p">,</span> <span class="s2">&quot;Scotland&quot;</span><span class="p">,</span> <span class="mf">51.84</span><span class="p">),</span>
+<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a><span class="p">]</span>
+<a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a>
+<a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a>
+<a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a><span class="k">class</span> <span class="nc">TableApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
+<a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+<a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a>        <span class="k">yield</span> <span class="n">DataTable</span><span class="p">()</span>
+<a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a>
+<a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a>    <span class="k">def</span> <span class="nf">on_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-6-25" name="__codelineno-6-25" href="#__codelineno-6-25"></a>        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_one</span><span class="p">(</span><span class="n">DataTable</span><span class="p">)</span>
+<a id="__codelineno-6-26" name="__codelineno-6-26" href="#__codelineno-6-26"></a>        <span class="n">table</span><span class="o">.</span><span class="n">add_columns</span><span class="p">(</span><span class="o">*</span><span class="n">ROWS</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<a id="__codelineno-6-27" name="__codelineno-6-27" href="#__codelineno-6-27"></a>        <span class="k">for</span> <span class="n">number</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ROWS</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<a id="__codelineno-6-28" name="__codelineno-6-28" href="#__codelineno-6-28"></a>            <span class="n">label</span> <span class="o">=</span> <span class="n">Text</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">number</span><span class="p">),</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;#B0FC38 italic&quot;</span><span class="p">)</span>
+<a id="__codelineno-6-29" name="__codelineno-6-29" href="#__codelineno-6-29"></a>            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+<a id="__codelineno-6-30" name="__codelineno-6-30" href="#__codelineno-6-30"></a>
+<a id="__codelineno-6-31" name="__codelineno-6-31" href="#__codelineno-6-31"></a>
+<a id="__codelineno-6-32" name="__codelineno-6-32" href="#__codelineno-6-32"></a><span class="n">app</span> <span class="o">=</span> <span class="n">TableApp</span><span class="p">()</span>
+<a id="__codelineno-6-33" name="__codelineno-6-33" href="#__codelineno-6-33"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-6-34" name="__codelineno-6-34" href="#__codelineno-6-34"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
 </div>
 </div>
@@ -13227,7 +13346,7 @@ these keys are used.</p></td>
         <tr>
           <td><code>row_key</code></td>
           <td>
-                <code><span title="textual.widgets._data_table.RowKey">RowKey</span></code>
+                <code><span title="textual.widgets._data_table.RowKey">RowKey</span> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
           <td><p>The row key of the cell.</p></td>
           <td>
@@ -13237,7 +13356,7 @@ these keys are used.</p></td>
         <tr>
           <td><code>column_key</code></td>
           <td>
-                <code><span title="textual.widgets._data_table.ColumnKey">ColumnKey</span></code>
+                <code><span title="textual.widgets._data_table.ColumnKey">ColumnKey</span> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
           <td><p>The column key of the cell.</p></td>
           <td>
@@ -13344,6 +13463,99 @@ these keys are used.</p></td>
                 <code><span title="textual.widgets._data_table.CellDoesNotExist">CellDoesNotExist</span></code>
           </td>
           <td><p>If there is no cell with the given coordinate.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._data_table.DataTable.get_cell_coordinate" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">get_cell_coordinate</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._data_table.DataTable.get_cell_coordinate" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">get_cell_coordinate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_key</span><span class="p">,</span> <span class="n">column_key</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Given a row key and column key, return the corresponding cell coordinate.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>row_key</code></td>
+          <td>
+                <code><span title="textual.widgets._data_table.RowKey">RowKey</span> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+          </td>
+          <td><p>The row key of the cell.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>column_key</code></td>
+          <td>
+                <code><span title="textual.widgets._data_table.Column">Column</span> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+          </td>
+          <td><p>The column key of the cell.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.coordinate.Coordinate" href="../../api/coordinate/#textual.coordinate.Coordinate">Coordinate</a></code>
+          </td>
+          <td><p>The current coordinate of the cell identified by the row and column keys.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Raises</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="textual.widgets._data_table.CellDoesNotExist">CellDoesNotExist</span></code>
+          </td>
+          <td><p>If the specified cell does not exist.</p></td>
         </tr>
     </tbody>
   </table>
@@ -13510,6 +13722,89 @@ these keys are used.</p></td>
                 <code><span title="textual.widgets._data_table.ColumnDoesNotExist">ColumnDoesNotExist</span></code>
           </td>
           <td><p>If there is no column with the given index.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._data_table.DataTable.get_column_index" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">get_column_index</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._data_table.DataTable.get_column_index" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">get_column_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_key</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Return the current index for the column identified by column_key.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>column_key</code></td>
+          <td>
+                <code><span title="textual.widgets._data_table.ColumnKey">ColumnKey</span> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+          </td>
+          <td><p>The column key to find the current index of.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+          </td>
+          <td><p>The current index of the specified column key.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Raises</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="textual.widgets._data_table.ColumnDoesNotExist">ColumnDoesNotExist</span></code>
+          </td>
+          <td><p>If the column key does not exist.</p></td>
         </tr>
     </tbody>
   </table>
@@ -13743,6 +14038,89 @@ the table.</p>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
           </td>
           <td><p>The height of the row, measured in terminal character cells.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._data_table.DataTable.get_row_index" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">get_row_index</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._data_table.DataTable.get_row_index" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">get_row_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_key</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Return the current index for the row identified by row_key.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>row_key</code></td>
+          <td>
+                <code><span title="textual.widgets._data_table.RowKey">RowKey</span> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+          </td>
+          <td><p>The row key to find the current index of.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+          </td>
+          <td><p>The current index of the specified row key.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Raises</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="textual.widgets._data_table.RowDoesNotExist">RowDoesNotExist</span></code>
+          </td>
+          <td><p>If the row key does not exist.</p></td>
         </tr>
     </tbody>
   </table>
@@ -14209,6 +14587,71 @@ the table.</p>
                 <code><span title="typing_extensions.Self">Self</span></code>
           </td>
           <td><p>The <code>DataTable</code> instance.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._data_table.DataTable.remove_column" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">remove_column</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._data_table.DataTable.remove_column" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">remove_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_key</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Remove a column (identified by a key) from the DataTable.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>column_key</code></td>
+          <td>
+                <code><span title="textual.widgets._data_table.ColumnKey">ColumnKey</span> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+          </td>
+          <td><p>The key identifying the column to remove.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Raises</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="textual.widgets._data_table.ColumnDoesNotExist">ColumnDoesNotExist</span></code>
+          </td>
+          <td><p>If the column key does not exist.</p></td>
         </tr>
     </tbody>
   </table>

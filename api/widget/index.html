@@ -6934,6 +6934,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widget.Widget.notify" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        notify()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widget.Widget.post_message" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -8761,6 +8772,17 @@
     <span class="md-ellipsis">
       
         move_child()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.notify" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        notify()
       
     </span>
   </a>
@@ -12824,6 +12846,110 @@ or both are provided a <code>WidgetError</code> will be raised.</p>
 
 
 
+<h3 id="textual.widget.Widget.notify" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">notify</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widget.Widget.notify" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">notify</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="bp">self</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">message</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="o">*</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">severity</span><span class="o">=</span><span class="s2">&quot;information&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">timeout</span><span class="o">=</span><span class="n">Notification</span><span class="o">.</span><span class="n">timeout</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Create a notification.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>message</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+          </td>
+          <td><p>The message for the notification.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>title</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td><p>The title for the notification.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>severity</code></td>
+          <td>
+                <code><span title="textual.notifications.SeverityLevel">SeverityLevel</span></code>
+          </td>
+          <td><p>The severity of the notification.</p></td>
+          <td>
+                <code>&#39;information&#39;</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>timeout</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+          </td>
+          <td><p>The timeout for the notification.</p></td>
+          <td>
+                <code>Notification.timeout</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="textual.notifications.Notification">Notification</span></code>
+          </td>
+          <td><p>The new notification.</p></td>
+        </tr>
+    </tbody>
+  </table>
+      <p>See <a class="autorefs autorefs-internal" href="../app/#textual.app.App.notify"><code>App.notify</code></a> for the full
+documentation for this method.</p>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
 <h3 id="textual.widget.Widget.post_message" class="doc doc-heading">
         <span class="doc doc-object-name doc-function-name">post_message</span>
   
@@ -13429,8 +13555,9 @@ do this automatically.</p>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">):</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -13498,6 +13625,16 @@ do this automatically.</p>
                 <code>False</code>
           </td>
         </tr>
+        <tr>
+          <td><code>on_complete</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.messages.CallbackType" href="../types/#textual.types.CallbackType">CallbackType</a> | None</code>
+          </td>
+          <td><p>A callable to invoke when the animation is finished.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
     </tbody>
   </table>
 
@@ -13524,8 +13661,9 @@ do this automatically.</p>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">):</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -13593,6 +13731,16 @@ do this automatically.</p>
                 <code>False</code>
           </td>
         </tr>
+        <tr>
+          <td><code>on_complete</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.messages.CallbackType" href="../types/#textual.types.CallbackType">CallbackType</a> | None</code>
+          </td>
+          <td><p>A callable to invoke when the animation is finished.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
     </tbody>
   </table>
 
@@ -13619,8 +13767,9 @@ do this automatically.</p>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">):</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -13688,6 +13837,16 @@ do this automatically.</p>
                 <code>False</code>
           </td>
         </tr>
+        <tr>
+          <td><code>on_complete</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.messages.CallbackType" href="../types/#textual.types.CallbackType">CallbackType</a> | None</code>
+          </td>
+          <td><p>A callable to invoke when the animation is finished.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
     </tbody>
   </table>
 
@@ -13714,8 +13873,9 @@ do this automatically.</p>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">):</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -13783,6 +13943,16 @@ do this automatically.</p>
                 <code>False</code>
           </td>
         </tr>
+        <tr>
+          <td><code>on_complete</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.messages.CallbackType" href="../types/#textual.types.CallbackType">CallbackType</a> | None</code>
+          </td>
+          <td><p>A callable to invoke when the animation is finished.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
     </tbody>
   </table>
 
@@ -13809,8 +13979,9 @@ do this automatically.</p>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">):</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -13878,6 +14049,16 @@ do this automatically.</p>
                 <code>False</code>
           </td>
         </tr>
+        <tr>
+          <td><code>on_complete</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.messages.CallbackType" href="../types/#textual.types.CallbackType">CallbackType</a> | None</code>
+          </td>
+          <td><p>A callable to invoke when the animation is finished.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
     </tbody>
   </table>
 
@@ -13904,8 +14085,9 @@ do this automatically.</p>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">):</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -13973,6 +14155,16 @@ do this automatically.</p>
                 <code>False</code>
           </td>
         </tr>
+        <tr>
+          <td><code>on_complete</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.messages.CallbackType" href="../types/#textual.types.CallbackType">CallbackType</a> | None</code>
+          </td>
+          <td><p>A callable to invoke when the animation is finished.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
     </tbody>
   </table>
 
@@ -13999,8 +14191,9 @@ do this automatically.</p>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">):</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -14068,6 +14261,16 @@ do this automatically.</p>
                 <code>False</code>
           </td>
         </tr>
+        <tr>
+          <td><code>on_complete</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.messages.CallbackType" href="../types/#textual.types.CallbackType">CallbackType</a> | None</code>
+          </td>
+          <td><p>A callable to invoke when the animation is finished.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
     </tbody>
   </table>
 
@@ -14094,8 +14297,9 @@ do this automatically.</p>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">):</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -14163,6 +14367,16 @@ do this automatically.</p>
                 <code>False</code>
           </td>
         </tr>
+        <tr>
+          <td><code>on_complete</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.messages.CallbackType" href="../types/#textual.types.CallbackType">CallbackType</a> | None</code>
+          </td>
+          <td><p>A callable to invoke when the animation is finished.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
     </tbody>
   </table>
 
@@ -14191,8 +14405,9 @@ do this automatically.</p>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">):</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -14280,6 +14495,16 @@ do this automatically.</p>
                 <code>False</code>
           </td>
         </tr>
+        <tr>
+          <td><code>on_complete</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.messages.CallbackType" href="../types/#textual.types.CallbackType">CallbackType</a> | None</code>
+          </td>
+          <td><p>A callable to invoke when the animation is finished.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
     </tbody>
   </table>
 
@@ -14306,8 +14531,9 @@ do this automatically.</p>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">):</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -14375,6 +14601,16 @@ do this automatically.</p>
                 <code>False</code>
           </td>
         </tr>
+        <tr>
+          <td><code>on_complete</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.messages.CallbackType" href="../types/#textual.types.CallbackType">CallbackType</a> | None</code>
+          </td>
+          <td><p>A callable to invoke when the animation is finished.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
     </tbody>
   </table>
 
@@ -14403,8 +14639,9 @@ do this automatically.</p>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">):</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -14492,6 +14729,16 @@ do this automatically.</p>
                 <code>False</code>
           </td>
         </tr>
+        <tr>
+          <td><code>on_complete</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.messages.CallbackType" href="../types/#textual.types.CallbackType">CallbackType</a> | None</code>
+          </td>
+          <td><p>A callable to invoke when the animation is finished.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
     </tbody>
   </table>
 
@@ -14524,8 +14771,9 @@ do this automatically.</p>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">origin_visible</span><span class="o">=</span><span class="kc">True</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">):</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">origin_visible</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -14614,6 +14862,16 @@ do this automatically.</p>
                 <code>True</code>
           </td>
         </tr>
+        <tr>
+          <td><code>on_complete</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.messages.CallbackType" href="../types/#textual.types.CallbackType">CallbackType</a> | None</code>
+          </td>
+          <td><p>A callable to invoke when the animation is finished.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
     </tbody>
   </table>
 
@@ -14645,8 +14903,9 @@ do this automatically.</p>
 <a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">center</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">top</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">origin_visible</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="p">):</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -14756,6 +15015,16 @@ the scrollable area.</p>
                 <code>False</code>
           </td>
         </tr>
+        <tr>
+          <td><code>on_complete</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.messages.CallbackType" href="../types/#textual.types.CallbackType">CallbackType</a> | None</code>
+          </td>
+          <td><p>A callable to invoke when the animation is finished.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
     </tbody>
   </table>
 
@@ -14804,8 +15073,9 @@ the scrollable area.</p>
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">center</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">top</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">origin_visible</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="p">):</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -14903,6 +15173,16 @@ the scrollable area.</p>
                 <code>False</code>
           </td>
         </tr>
+        <tr>
+          <td><code>on_complete</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.messages.CallbackType" href="../types/#textual.types.CallbackType">CallbackType</a> | None</code>
+          </td>
+          <td><p>A callable to invoke when the animation is finished.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
     </tbody>
   </table>
 
@@ -14947,8 +15227,9 @@ the scrollable area.</p>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">):</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -15016,6 +15297,16 @@ the scrollable area.</p>
                 <code>False</code>
           </td>
         </tr>
+        <tr>
+          <td><code>on_complete</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.messages.CallbackType" href="../types/#textual.types.CallbackType">CallbackType</a> | None</code>
+          </td>
+          <td><p>A callable to invoke when the animation is finished.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
     </tbody>
   </table>
 
@@ -15043,8 +15334,9 @@ the scrollable area.</p>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">top</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">):</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -15120,6 +15412,16 @@ the scrollable area.</p>
           <td><p>Force scrolling even when prohibited by overflow styling.</p></td>
           <td>
                 <code>False</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>on_complete</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.messages.CallbackType" href="../types/#textual.types.CallbackType">CallbackType</a> | None</code>
+          </td>
+          <td><p>A callable to invoke when the animation is finished.</p></td>
+          <td>
+                <code>None</code>
           </td>
         </tr>
     </tbody>
