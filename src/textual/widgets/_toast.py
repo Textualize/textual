@@ -76,10 +76,6 @@ class Toast(Static, inherit_css=False):
     Toast.-error .toast--title {
        color: $error-darken-1;
     }
-
-    Toast.-empty-title {
-
-    }
     """
 
     COMPONENT_CLASSES = {"toast--title"}
