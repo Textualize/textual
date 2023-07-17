@@ -1,6 +1,6 @@
 # Toast
 
-!!! tip "Added in version ?.??.?"
+!!! tip "Added in version 0.30.0"
 
 A widget which displays a notification message.
 
@@ -13,10 +13,9 @@ display a message when using Textual's built-in notification system.
 
 ## Styling
 
-As just mentioned: while `Toast` isn't designed to be used directly in your
-applications, it can be styled using [Textual's CSS](/guide/CSS/). The main
-approach to styling would be to target the `Toast`
-[type](/guide/CSS/#type-selector). For example:
+You can customize the style of Toasts by targeting the `Toast` [CSS type](/guide/CSS/#type-selector).
+For example:
+
 
 ```scss
 Toast {
@@ -47,6 +46,16 @@ Toast.-warning {
 Toast.-error {
     /* Styling here. */
 }
+```
+
+You can customize just the title wih the `toast--title` class.
+The following would make the title italic for an information toast:
+
+```scss
+Toast.-information .toast--title {
+    text-style: italic;
+}
+
 ```
 
 ## Example

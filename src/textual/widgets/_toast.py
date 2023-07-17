@@ -44,7 +44,7 @@ class Toast(Static, inherit_css=False):
         background: $panel;
     }
 
-    .-toast--header {
+    .toast--title {
         text-style: bold;
     }
 
@@ -52,7 +52,7 @@ class Toast(Static, inherit_css=False):
 
     }
 
-    Toast.-information .-toast--header {
+    Toast.-information .toast--title {
         color: $success;
     }
 
@@ -60,7 +60,7 @@ class Toast(Static, inherit_css=False):
 
     }
 
-    Toast.-warning .-toast--header {
+    Toast.-warning .toast--title {
         color: $warning;
     }
 
@@ -68,7 +68,7 @@ class Toast(Static, inherit_css=False):
 
     }
 
-    Toast.-error .-toast--header {
+    Toast.-error .toast--title {
        color: $error;
     }
 
@@ -77,7 +77,7 @@ class Toast(Static, inherit_css=False):
     }
     """
 
-    COMPONENT_CLASSES = {"-toast--header"}
+    COMPONENT_CLASSES = {"toast--title"}
 
     def __init__(self, notification: Notification) -> None:
         """Initialise the toast.
@@ -94,7 +94,7 @@ class Toast(Static, inherit_css=False):
     def render(self) -> RenderableType:
         notification = self._notification
         if notification.title:
-            header_style = self.get_component_rich_style("-toast--header")
+            header_style = self.get_component_rich_style("toast--title")
             notification_text = Text.assemble(
                 (notification.title, header_style),
                 "\n",
