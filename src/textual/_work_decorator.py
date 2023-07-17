@@ -132,6 +132,7 @@ def work(
                     description=debug_description,
                     exclusive=exclusive,
                     exit_on_error=exit_on_error,
+                    thread=thread,
                 ),
             )
             return worker
