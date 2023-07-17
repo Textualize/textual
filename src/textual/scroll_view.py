@@ -117,6 +117,7 @@ class ScrollView(ScrollableContainer):
         duration: float | None = None,
         easing: EasingFunction | str | None = None,
         force: bool = False,
+        on_complete: CallbackType | None = None,
     ) -> None:
         """Scroll to a given (absolute) coordinate, optionally animating.
 
@@ -128,6 +129,7 @@ class ScrollView(ScrollableContainer):
             duration: Duration of animation, if `animate` is `True` and `speed` is `None`.
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
+            on_complete: A callable to invoke when the animation is finished.
         """
 
         self._scroll_to(
@@ -138,4 +140,5 @@ class ScrollView(ScrollableContainer):
             duration=duration,
             easing=easing,
             force=force,
+            on_complete=on_complete,
         )
