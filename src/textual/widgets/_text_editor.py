@@ -688,81 +688,6 @@ TextEditor > .text-editor--cursor {
     ):
         self.edit(Insert(text, from_position, to_position, move_cursor))
 
-    def _insert_text(
-        self, text: str, position: tuple[int, int], move_cursor: bool = True
-    ) -> None:
-        log.debug(f"insert {text!r} at {self.cursor_position!r}")
-
-        start_byte = self._position_to_byte_offset(self.cursor_position)
-        start_point = position
-
-        target_row, target_column = position
-
-        lines = self.document_lines
-
-        line = lines[target_row]
-        text_before_cursor = line[:target_column]
-        text_after_cursor = line[target_column:]
-
-        replacement_lines = text.splitlines(keepends=False)
-        replacement_lines[0] = text_before_cursor + replacement_lines[0]
-        end_column = len(replacement_lines[-1])
-        replacement_lines[-1] += text_after_cursor
-
-        self.document_lines[target_row : target_row + 1] = replacement_lines
-
-        longest_modified_line = max(cell_len(line) for line in replacement_lines)
-        document_width, document_height = self._document_size
-
-        # The virtual width of the row is the cell length of the text in the row
-        # plus 1 to accommodate for a cursor potentially "resting" at the end of the row
-        insertion_width = longest_modified_line + 1
-
-        self._refresh_size()
-
-        if move_cursor:
-            self.cursor_position = (target_row + len(replacement_lines) - 1, end_column)
-
-        edit_args = {
-            "start_byte": start_byte,
-            "old_end_byte": start_byte,
-            "new_end_byte": start_byte + len(text),  # TODO - what about newlines?
-            "start_point": start_point,
-            "old_end_point": start_point,
-            "new_end_point": self.cursor_position,
-        }
-        log.debug(edit_args)
-
-        # Edit the tree in place
-        old_tree = self._syntax_tree
-        old_tree.edit(**edit_args)
-        new_tree = self._parser.parse(self._read_callable, old_tree)
-
-        changed_ranges = old_tree.get_changed_ranges(new_tree)
-
-        self._syntax_tree = new_tree
-        log.debug(f"changed = {changed_ranges!r}")
-
-        # Limit the range, rather arbitrarily for now.
-        # Perhaps we do the incremental parsing within a window here, then have some
-        # heuristic for wider parsing inside on_idle?
-        scroll_y = max(0, int(self.scroll_y))
-
-        visible_start_line = scroll_y
-        height = self.region.height or len(self.document_lines) - 1
-        visible_end_line = scroll_y + height
-
-        highlight_window_leeway = 10
-        start_point = (max(0, visible_start_line - highlight_window_leeway), 0)
-
-        end_row_index = min(
-            len(self.document_lines) - 1, visible_end_line + highlight_window_leeway
-        )
-        end_line = self.document_lines[end_row_index]
-        end_point = (end_row_index, len(end_line) - 1)
-
-        self._prepare_highlights(start_point, end_point)
-
     def _insert_text_range(
         self,
         text: str,
@@ -827,46 +752,6 @@ TextEditor > .text-editor--cursor {
         bytes_lines_above = sum(len(line) + 1 for line in lines_above)
         bytes_this_line_left_of_cursor = len(lines[row][:column])
         return bytes_lines_above + bytes_this_line_left_of_cursor
-
-    def split_line(self, position: tuple[int, int]) -> None:
-        """
-        Splits the current line at the cursor's position and updates the cursor position.
-
-        This method splits the current line into two at the cursor's column position,
-        effectively inserting a newline character at the cursor's position. The part of the
-        line after the cursor becomes a new line below the current line. The cursor then
-        moves to the start of this new line.
-        """
-        cursor_row, cursor_column = position
-
-        # Get the current line's indentation (leading whitespace)
-        current_line = self.document_lines[cursor_row]
-        indentation = len(current_line) - len(current_line.lstrip())
-
-        # Split the current line into two lines at the cursor position
-        line_before = current_line[:cursor_column]
-        line_after = current_line[cursor_column:]
-
-        # If the line ends with ':' or '{', add additional indentation to the new line
-        additional_indent = "    "  # Four spaces
-        if line_before.rstrip().endswith((":", "{")):
-            indentation += len(additional_indent)
-        elif cursor_row < len(self.document_lines) - 1:
-            # If there is a line below, match its indentation
-            next_line = self.document_lines[cursor_row + 1]
-            next_line_indentation = len(next_line) - len(next_line.lstrip())
-            indentation = next_line_indentation
-
-        # Add the indentation to the start of the new line
-        line_after = " " * indentation + line_after
-
-        # Update the lines in the document
-        self.document_lines[cursor_row] = line_before
-        self.document_lines.insert(cursor_row + 1, line_after)
-
-        self._refresh_size()
-        # Move the cursor to the start of the new line
-        self.cursor_position = (cursor_row + 1, indentation)
 
     def dedent_line(self) -> None:
         """Reduces the indentation of the current line by one level.
