@@ -90,10 +90,12 @@ from .keys import (
     _get_unicode_name_from_key,
 )
 from .messages import CallbackType
+from .notifications import Notification, Notifications, SeverityLevel
 from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import Screen, ScreenResultCallbackType, ScreenResultType
 from .widget import AwaitMount, Widget
+from .widgets._toast import ToastRack
 
 if TYPE_CHECKING:
     from textual_dev.client import DevtoolsClient
@@ -443,6 +445,7 @@ class App(Generic[ReturnType], DOMNode):
         self._return_value: ReturnType | None = None
         self._exit = False
         self._disable_tooltips = False
+        self._disable_notifications = False
 
         self.css_monitor = (
             FileMonitor(self.css_path, self._on_css_change)
@@ -455,6 +458,7 @@ class App(Generic[ReturnType], DOMNode):
         self._batch_count = 0
         self.set_class(self.dark, "-dark-mode")
         self.set_class(not self.dark, "-light-mode")
+        self._notifications = Notifications()
 
     def validate_title(self, title: Any) -> str:
         """Make sure the title is set to a string."""
@@ -1029,6 +1033,7 @@ class App(Generic[ReturnType], DOMNode):
         headless: bool = True,
         size: tuple[int, int] | None = (80, 24),
         tooltips: bool = False,
+        notifications: bool = False,
         message_hook: Callable[[Message], None] | None = None,
     ) -> AsyncGenerator[Pilot, None]:
         """An asynchronous context manager for testing app.
@@ -1048,12 +1053,14 @@ class App(Generic[ReturnType], DOMNode):
             size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect.
             tooltips: Enable tooltips when testing.
+            notifications: Enable notifications when testing.
             message_hook: An optional callback that will called with every message going through the app.
         """
         from .pilot import Pilot
 
         app = self
         app._disable_tooltips = not tooltips
+        app._disable_notifications = not notifications
         app_ready_event = asyncio.Event()
 
         def on_app_ready() -> None:
@@ -2769,3 +2776,94 @@ class App(Generic[ReturnType], DOMNode):
     def _end_update(self) -> None:
         if self._sync_available and self._driver is not None:
             self._driver.write(SYNC_END)
+
+    def _refresh_notifications(self) -> None:
+        """Refresh the notifications on the current screen, if one is available."""
+        # If we've got a screen to hand...
+        if self.screen is not None:
+            try:
+                # ...see if it has a toast rack.
+                toast_rack = self.screen.get_child_by_type(ToastRack)
+            except NoMatches:
+                # It doesn't. That's fine. Either there won't ever be one,
+                # or one will turn up. Things will work out later.
+                return
+            # Update the toast rack.
+            toast_rack.show(self._notifications)
+
+    def notify(
+        self,
+        message: str,
+        *,
+        title: str | None = None,
+        severity: SeverityLevel = "information",
+        timeout: float = Notification.timeout,
+    ) -> Notification:
+        """Create a notification.
+
+        Args:
+            message: The message for the notification.
+            title: The title for the notification.
+            severity: The severity of the notification.
+            timeout: The timeout for the notification.
+
+        Returns:
+            The new notification.
+
+        The `notify` method is used to create an application-wide
+        notification, shown in a [`Toast`][textual.widgets._toast.Toast],
+        normally originating in the bottom right corner of the display.
+
+        Notifications can have the following severity levels:
+
+        - `information`
+        - `warning`
+        - `error`
+
+        The default is `information`.
+
+        If no `title` is provided, the title of the notification will
+        reflect the severity. If you wish to create a notification that has
+        no title whatsoever, pass an empty title (`""`).
+
+        Example:
+            ```python
+            # Show an information notification.
+            self.notify("It's an older code, sir, but it checks out.")
+
+            # Show a warning. Note that Textual's notification system allows
+            # for the use of Rich console markup.
+            self.notify(
+                "Now witness the firepower of this fully "
+                "[b]ARMED[/b] and [i][b]OPERATIONAL[/b][/i] battle station!",
+                title="Possible trap detected",
+                severity="warning",
+            )
+
+            # Show an error. Set a longer timeout so it's noticed.
+            self.notify("It's a trap!", severity="error", timeout=10)
+
+            # Show an information notification, but without any sort of title.
+            self.notify("It's against my programming to impersonate a deity.", title="")
+            ```
+        """
+        notification = Notification(message, title, severity, timeout)
+        self._notifications.add(notification)
+        self._refresh_notifications()
+        return notification
+
+    def unnotify(self, notification: Notification, refresh: bool = True) -> None:
+        """Remove a notification from the notification collection.
+
+        Args:
+            notification: The notification to remove.
+            refresh: Flag to say if the display of notifications should be refreshed.
+        """
+        del self._notifications[notification]
+        if refresh:
+            self._refresh_notifications()
+
+    def clear_notifications(self) -> None:
+        """Clear all the current notifications."""
+        self._notifications.clear()
+        self._refresh_notifications()

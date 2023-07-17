@@ -5,15 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.30.0] - 2023-07-17
 
 ### Added
 
 - Added `DataTable.remove_column` method https://github.com/Textualize/textual/pull/2899
+- Added notifications https://github.com/Textualize/textual/pull/2866
+- Added `on_complete` callback to scroll methods https://github.com/Textualize/textual/pull/2903
 
 ### Fixed
 
 - Fixed CancelledError issue with timer https://github.com/Textualize/textual/issues/2854
+- Fixed Toggle Buttons issue with not being clickable/hoverable https://github.com/Textualize/textual/pull/2930
 
 ### Changed
 
@@ -1119,6 +1122,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.30.0]: https://github.com/Textualize/textual/compare/v0.29.0...v0.30.0
 [0.29.0]: https://github.com/Textualize/textual/compare/v0.28.1...v0.29.0
 [0.28.1]: https://github.com/Textualize/textual/compare/v0.28.0...v0.28.1
 [0.28.0]: https://github.com/Textualize/textual/compare/v0.27.0...v0.28.0

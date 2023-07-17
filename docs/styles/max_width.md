@@ -42,7 +42,7 @@ Then, we set `max-width` individually on each placeholder.
 max-width: 10;
 
 /* Set the maximum width to 25% of the viewport width */
-max-width: 25vh;
+max-width: 25vw;
 ```
 
 ## Python
@@ -52,7 +52,7 @@ max-width: 25vh;
 widget.styles.max_width = 10
 
 # Set the maximum width to 25% of the viewport width
-widget.styles.max_width = "25vh"
+widget.styles.max_width = "25vw"
 ```
 
 ## See also
