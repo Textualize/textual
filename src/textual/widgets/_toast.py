@@ -76,10 +76,6 @@ class Toast(Static, inherit_css=False):
     Toast.-error .toast--title {
        color: $error-darken-1;
     }
-
-    Toast.-empty-title {
-
-    }
     """
 
     COMPONENT_CLASSES = {"toast--title"}
@@ -90,9 +86,7 @@ class Toast(Static, inherit_css=False):
         Args:
             notification: The notification to show in the toast.
         """
-        super().__init__(
-            classes=f"-{notification.severity} {'-empty-title' if not notification.title else ''}"
-        )
+        super().__init__(classes=f"-{notification.severity}")
         self._notification = notification
         self._timeout = notification.time_left
 
