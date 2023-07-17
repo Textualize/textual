@@ -728,16 +728,19 @@ TextEditor > .text-editor--cursor {
         cursor_destination = (destination_row, destination_column)
 
         start_byte = self._position_to_byte_offset(from_position)
-        self._syntax_tree.edit(
-            start_byte=start_byte,
-            old_end_byte=self._position_to_byte_offset(to_position),
-            new_end_byte=start_byte + len(inserted_text),
-            start_point=from_position,
-            old_end_point=to_position,
-            new_end_point=cursor_destination,
-        )
-        self._syntax_tree = self._parser.parse(self._read_callable, self._syntax_tree)
-        self._prepare_highlights()
+        if self._syntax_tree is not None:
+            self._syntax_tree.edit(
+                start_byte=start_byte,
+                old_end_byte=self._position_to_byte_offset(to_position),
+                new_end_byte=start_byte + len(inserted_text),
+                start_point=from_position,
+                old_end_point=to_position,
+                new_end_point=cursor_destination,
+            )
+            self._syntax_tree = self._parser.parse(
+                self._read_callable, self._syntax_tree
+            )
+            self._prepare_highlights()
         self._refresh_size()
         if move_cursor:
             self.cursor_position = cursor_destination
@@ -830,17 +833,21 @@ TextEditor > .text-editor--cursor {
             # Delete the lines in between
             del lines[from_row + 1 : to_row + 1]
 
-        start_byte = self._position_to_byte_offset(from_position)
-        self._syntax_tree.edit(
-            start_byte=start_byte,
-            old_end_byte=self._position_to_byte_offset(to_position),
-            new_end_byte=start_byte,
-            start_point=from_position,
-            old_end_point=to_position,
-            new_end_point=from_position,
-        )
-        self._syntax_tree = self._parser.parse(self._read_callable, self._syntax_tree)
-        self._prepare_highlights()
+        if self._syntax_tree is not None:
+            start_byte = self._position_to_byte_offset(from_position)
+            self._syntax_tree.edit(
+                start_byte=start_byte,
+                old_end_byte=self._position_to_byte_offset(to_position),
+                new_end_byte=start_byte,
+                start_point=from_position,
+                old_end_point=to_position,
+                new_end_point=from_position,
+            )
+            self._syntax_tree = self._parser.parse(
+                self._read_callable, self._syntax_tree
+            )
+            self._prepare_highlights()
+
         self._refresh_size()
         if cursor_destination is not None:
             self.cursor_position = cursor_destination
