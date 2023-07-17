@@ -85,6 +85,11 @@ class Toast(Static, inherit_css=False):
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {"toast--title"}
+    """
+    | Class | Description |
+    | :- | :- |
+    | `toast--title` | Targets the title of the toast. |
+    """
 
     def __init__(self, notification: Notification) -> None:
         """Initialise the toast.
