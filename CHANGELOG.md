@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed CancelledError issue with timer https://github.com/Textualize/textual/issues/2854
+- Fixed Toggle Buttons issue with not being clickable/hoverable https://github.com/Textualize/textual/pull/2930
 
 
 ## [0.29.0] - 2023-07-03
