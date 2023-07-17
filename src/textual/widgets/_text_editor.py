@@ -80,9 +80,10 @@ class Insert(NamedTuple):
     move_cursor: bool = True
 
     def do(self, editor: TextEditor) -> None:
-        editor._insert_text_range(
-            self.text, self.from_position, self.to_position, self.move_cursor
-        )
+        if self.text:
+            editor._insert_text_range(
+                self.text, self.from_position, self.to_position, self.move_cursor
+            )
 
     def undo(self, editor: TextEditor) -> None:
         """Undo the action."""
