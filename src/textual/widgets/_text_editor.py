@@ -720,9 +720,6 @@ TextEditor > .text-editor--cursor {
         before_selection = lines[from_row][:from_column]
         after_selection = lines[to_row][to_column:]
 
-        # TODO - there;s a failing test suggesting I'm taking the wrong
-        #  slice here somewhere - look at the output of `test_insert_range_text_no_newlines`.
-
         insert_lines[0] = before_selection + insert_lines[0]
         destination_column = len(insert_lines[-1])
         insert_lines[-1] = insert_lines[-1] + after_selection
