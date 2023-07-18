@@ -1,16 +1,15 @@
 from __future__ import annotations
 
-import os
 import re
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import ClassVar, Iterable, NamedTuple
+from typing import ClassVar, NamedTuple
 
 from rich.cells import get_character_cell_size
 from rich.style import Style
 from rich.text import Text
-from tree_sitter import Language, Node, Parser, Tree
+from tree_sitter import Language, Parser, Tree
 from tree_sitter.binding import Query
 
 from textual import events, log
