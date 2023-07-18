@@ -151,7 +151,13 @@ TextEditor > .text-editor--cursor {
         Binding("home,ctrl+a", "cursor_line_start", "cursor line start", show=False),
         Binding("end,ctrl+e", "cursor_line_end", "cursor line end", show=False),
         Binding("backspace", "delete_left", "delete left", show=False),
+        Binding(
+            "ctrl+w", "delete_word_left", "delete left to start of word", show=False
+        ),
         Binding("ctrl+d", "delete_right", "delete right", show=False),
+        Binding(
+            "ctrl+f", "delete_word_right", "delete right to start of word", show=False
+        ),
         Binding("ctrl+x", "delete_line", "delete line", show=False),
         Binding(
             "ctrl+u", "delete_to_start_of_line", "delete to line start", show=False
@@ -921,6 +927,52 @@ TextEditor > .text-editor--cursor {
         from_position = self.cursor_position
         to_position = (cursor_row, len(self.document_lines[cursor_row]))
         self.edit(Delete(from_position, to_position))
+
+    def action_delete_word_left(self) -> None:
+        """Deletes the word to the left of the cursor and updates the cursor position."""
+        if self.cursor_at_start_of_document:
+            return
+
+        cursor_row, cursor_column = self.cursor_position
+
+        # Check the current line for a word boundary
+        line = self.document_lines[cursor_row][:cursor_column]
+        matches = list(re.finditer(self._word_pattern, line))
+
+        if matches:
+            # If a word boundary is found, delete the word
+            from_position = (cursor_row, matches[-1].start())
+        elif cursor_row > 0:
+            # If no word boundary is found and we're not on the first line, delete to the end of the previous line
+            from_position = (cursor_row - 1, len(self.document_lines[cursor_row - 1]))
+        else:
+            # If we're already on the first line and no word boundary is found, delete to the start of the line
+            from_position = (cursor_row, 0)
+
+        self.edit(Delete(from_position, self.cursor_position))
+
+    def action_delete_word_right(self) -> None:
+        """Deletes the word to the right of the cursor and keeps the cursor at the same position."""
+        if self.cursor_at_end_of_document:
+            return
+
+        cursor_row, cursor_column = self.cursor_position
+
+        # Check the current line for a word boundary
+        line = self.document_lines[cursor_row][cursor_column:]
+        matches = list(re.finditer(self._word_pattern, line))
+
+        if matches:
+            # If a word boundary is found, delete the word
+            to_position = (cursor_row, cursor_column + matches[0].end())
+        elif cursor_row < len(self.document_lines) - 1:
+            # If no word boundary is found and we're not on the last line, delete to the start of the next line
+            to_position = (cursor_row + 1, 0)
+        else:
+            # If we're already on the last line and no word boundary is found, delete to the end of the line
+            to_position = (cursor_row, len(self.document_lines[cursor_row]))
+
+        self.edit(Delete(self.cursor_position, to_position))
 
     # --- Debugging
     @dataclass
