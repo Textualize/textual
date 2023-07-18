@@ -778,6 +778,7 @@ TextEditor > .text-editor--cursor {
         current_line = self.document_lines[cursor_row]
 
         # If the line is indented, reduce the indentation
+        # TODO - if the line is less than the indent level we should just dedent as far as possible.
         if current_line.startswith(indent_level):
             self.document_lines[cursor_row] = current_line[len(indent_level) :]
 
