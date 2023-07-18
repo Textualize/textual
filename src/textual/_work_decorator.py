@@ -39,6 +39,11 @@ class WorkerDeclarationError(Exception):
 def work(
     method: Callable[FactoryParamSpec, Coroutine[None, None, ReturnType]],
     *,
+    name: str = "",
+    group: str = "default",
+    exit_on_error: bool = True,
+    exclusive: bool = False,
+    description: str | None = None,
     thread: bool = False,
 ) -> Callable[FactoryParamSpec, "Worker[ReturnType]"]:
     ...
@@ -48,6 +53,11 @@ def work(
 def work(
     method: Callable[FactoryParamSpec, ReturnType],
     *,
+    name: str = "",
+    group: str = "default",
+    exit_on_error: bool = True,
+    exclusive: bool = False,
+    description: str | None = None,
     thread: bool = False,
 ) -> Callable[FactoryParamSpec, "Worker[ReturnType]"]:
     ...
@@ -55,7 +65,13 @@ def work(
 
 @overload
 def work(
-    *, exclusive: bool = False, thread: bool = False
+    *,
+    name: str = "",
+    group: str = "default",
+    exit_on_error: bool = True,
+    exclusive: bool = False,
+    description: str | None = None,
+    thread: bool = False,
 ) -> Decorator[..., ReturnType]:
     ...
 
