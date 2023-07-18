@@ -64,10 +64,10 @@ class Highlight(NamedTuple):
 class Edit(Protocol):
     """Protocol for actions performed in the text editor that can be done and undone."""
 
-    def do(self, editor: TextEditor) -> None:
+    def do(self, editor: TextEditor) -> object | None:
         """Do the action."""
 
-    def undo(self, editor: TextEditor) -> None:
+    def undo(self, editor: TextEditor) -> object | None:
         """Undo the action."""
 
 
@@ -100,6 +100,7 @@ class Delete:
         self.deleted_text = editor._delete_range(
             self.from_position, self.to_position, self.cursor_destination
         )
+        return self.deleted_text
 
     def undo(self, editor: TextEditor) -> None:
         """Undo the action."""
@@ -264,7 +265,9 @@ TextEditor > .text-editor--cursor {
         self.load_lines(lines)
 
     def load_lines(self, lines: list[str]) -> None:
-        """Load text from a list of lines into the editor."""
+        """Load text from a list of lines into the editor.
+
+        This will replace any previously loaded lines."""
         self.document_lines = lines
 
         # TODO Offer maximum line width and wrap if needed
@@ -276,6 +279,9 @@ TextEditor > .text-editor--cursor {
             self._prepare_highlights()
 
         log.debug(f"loaded text. parser = {self._parser} ast = {self._syntax_tree}")
+
+    def clear(self) -> None:
+        self.load_text("")
 
     # --- Methods for measuring things (e.g. virtual sizes)
     def _get_document_size(self, document_lines: list[str]) -> Size:
@@ -420,13 +426,15 @@ TextEditor > .text-editor--cursor {
         for line_index, updated_highlights in highlight_updates.items():
             highlights[line_index] = updated_highlights
 
-    def edit(self, edit: Edit) -> None:
+    def edit(self, edit: Edit) -> object | None:
         log.debug(f"performing edit {edit!r}")
-        edit.do(self)
+        result = edit.do(self)
         self._undo_stack.append(edit)
 
         # TODO: Think about this...
         self._undo_stack = self._undo_stack[-20:]
+
+        return result
 
     def undo(self) -> None:
         if self._undo_stack:
@@ -494,7 +502,6 @@ TextEditor > .text-editor--cursor {
     def watch_cursor_position(
         self, old_position: tuple[int, int], new_position: tuple[int, int]
     ) -> None:
-        log.debug("scrolling cursor into view")
         self.scroll_cursor_visible()
 
     def watch_virtual_size(self, vs):
@@ -779,6 +786,14 @@ TextEditor > .text-editor--cursor {
 
         self._refresh_size()
         self.refresh()
+
+    def delete_range(
+        self,
+        from_position: tuple[int, int],
+        to_position: tuple[int, int],
+        cursor_destination: tuple[int, int] | None = None,
+    ) -> str:
+        return self.edit(Delete(from_position, to_position, cursor_destination))
 
     def _delete_range(
         self,
