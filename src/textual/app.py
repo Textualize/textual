@@ -2795,7 +2795,7 @@ class App(Generic[ReturnType], DOMNode):
         self,
         message: str,
         *,
-        title: str | None = None,
+        title: str = "",
         severity: SeverityLevel = "information",
         timeout: float = Notification.timeout,
     ) -> Notification:
@@ -2821,10 +2821,6 @@ class App(Generic[ReturnType], DOMNode):
         - `error`
 
         The default is `information`.
-
-        If no `title` is provided, the title of the notification will
-        reflect the severity. If you wish to create a notification that has
-        no title whatsoever, pass an empty title (`""`).
 
         Example:
             ```python

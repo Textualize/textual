@@ -11,8 +11,8 @@ def test_message() -> None:
 
 
 def test_default_title() -> None:
-    """A notification with no title should have a None title."""
-    assert Notification("test").title is None
+    """A notification with no title should have a empty title."""
+    assert Notification("test").title == ""
 
 
 def test_default_severity_level() -> None:

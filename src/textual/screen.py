@@ -944,7 +944,7 @@ class Screen(Generic[ScreenResultType], Widget):
         self,
         message: str,
         *,
-        title: str | None = None,
+        title: str = "",
         severity: SeverityLevel = "information",
         timeout: float = Notification.timeout,
     ) -> Notification:

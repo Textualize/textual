@@ -21,7 +21,7 @@ class Notification:
     message: str
     """The message for the notification."""
 
-    title: str | None = None
+    title: str = ""
     """The title for the notification."""
 
     severity: SeverityLevel = "information"
@@ -48,7 +48,7 @@ class Notification:
 
     def __rich_repr__(self) -> Result:
         yield "message", self.message
-        yield "title", self.title, None
+        yield "title", self.title, ""
         yield "severity", self.severity
         yield "raised_it", self.raised_at
         yield "identity", self.identity

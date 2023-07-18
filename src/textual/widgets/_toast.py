@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import ClassVar
+
 from rich.console import RenderableType
 from rich.text import Text
 
@@ -76,13 +78,14 @@ class Toast(Static, inherit_css=False):
     Toast.-error .toast--title {
        color: $error-darken-1;
     }
-
-    Toast.-empty-title {
-
-    }
     """
 
-    COMPONENT_CLASSES = {"toast--title"}
+    COMPONENT_CLASSES: ClassVar[set[str]] = {"toast--title"}
+    """
+    | Class | Description |
+    | :- | :- |
+    | `toast--title` | Targets the title of the toast. |
+    """
 
     def __init__(self, notification: Notification) -> None:
         """Initialise the toast.
@@ -90,13 +93,16 @@ class Toast(Static, inherit_css=False):
         Args:
             notification: The notification to show in the toast.
         """
-        super().__init__(
-            classes=f"-{notification.severity} {'-empty-title' if not notification.title else ''}"
-        )
+        super().__init__(classes=f"-{notification.severity}")
         self._notification = notification
         self._timeout = notification.time_left
 
     def render(self) -> RenderableType:
+        """Render the toast's content.
+
+        Returns:
+            A Rich renderable for the title and content of the Toast.
+        """
         notification = self._notification
         if notification.title:
             header_style = self.get_component_rich_style("toast--title")
