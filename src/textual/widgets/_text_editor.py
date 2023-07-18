@@ -115,7 +115,9 @@ class Delete:
 class TextEditor(ScrollView, can_focus=True):
     DEFAULT_CSS = """\
 $editor-active-line-bg: white 8%;
-
+TextEditor {
+    background: $panel;
+}
 TextEditor > .text-editor--active-line {
     background: $editor-active-line-bg;
 }
@@ -156,9 +158,6 @@ TextEditor > .text-editor--cursor {
             "ctrl+u", "delete_to_start_of_line", "delete to line start", show=False
         ),
         Binding("ctrl+k", "delete_to_end_of_line", "delete to line end", show=False),
-        # Debugging bindings
-        Binding("ctrl+s", "print_highlight_cache", "[debug] Print highlight cache"),
-        Binding("ctrl+l", "print_line_cache", "[debug] Print line cache"),
     ]
 
     language: Reactive[str | None] = reactive(None)
@@ -924,24 +923,7 @@ TextEditor > .text-editor--cursor {
         to_position = (cursor_row, len(self.document_lines[cursor_row]))
         self.edit(Delete(from_position, to_position))
 
-    # --- Debug actions
-    def action_print_line_cache(self) -> None:
-        log.debug(self._line_cache)
-
-        def traverse(cursor) -> Iterable[Node]:
-            yield cursor.node
-
-            if cursor.goto_first_child():
-                yield from traverse(cursor)
-                while cursor.goto_next_sibling():
-                    yield from traverse(cursor)
-                cursor.goto_parent()
-
-        log.debug(list(traverse(self._syntax_tree.walk())))
-
-    def action_print_highlight_cache(self) -> None:
-        log.debug(self._highlights)
-
+    # --- Debugging
     @dataclass
     class EditorDebug:
         cursor: tuple[int, int]
