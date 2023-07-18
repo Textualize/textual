@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import io
 from collections import deque
 from typing import Callable, Deque, Generator, Generic, Iterable, NamedTuple, TypeVar
