@@ -275,19 +275,14 @@ class Worker(Generic[ResultType]):
         self._completed_steps += steps
 
     async def _run_threaded(self) -> ResultType:
-        def run_coroutine(
-            work: Callable[[], Coroutine[None, None, ResultType]]
-        ) -> ResultType:
-            """Set the active working and run the coroutine."""
+        """Run a threaded worker.
 
-            async def do_work() -> ResultType:
-                active_worker.set(self)
-                return await work()
-
-            return asyncio.run(do_work())
+        Returns:
+            Return value of the work.
+        """
 
         def run_awaitable(work: Awaitable[ResultType]) -> ResultType:
-            """Set the active working and run the coroutine."""
+            """Set the active worker and await the awaitable."""
 
             async def do_work() -> ResultType:
                 active_worker.set(self)
@@ -295,8 +290,14 @@ class Worker(Generic[ResultType]):
 
             return asyncio.run(do_work())
 
+        def run_coroutine(
+            work: Callable[[], Coroutine[None, None, ResultType]]
+        ) -> ResultType:
+            """Set the active worker and await coroutine."""
+            return run_awaitable(work())
+
         def run_callable(work: Callable[[], ResultType]) -> ResultType:
-            """Set the active worker, and run the work."""
+            """Set the active worker, and call the callable."""
             active_worker.set(self)
             return work()
 
@@ -318,6 +319,11 @@ class Worker(Generic[ResultType]):
         )
 
     async def _run_async(self) -> ResultType:
+        """Run an async worker.
+
+        Returns:
+            Return value of the work.
+        """
         if (
             inspect.iscoroutinefunction(self._work)
             or hasattr(self._work, "func")
@@ -336,7 +342,7 @@ class Worker(Generic[ResultType]):
         Implement this method in a subclass, or pass a callable to the constructor.
 
         Returns:
-            Return value of work.
+            Return value of the work.
         """
         return await (
             self._run_threaded() if self._thread_worker else self._run_async()
