@@ -24,7 +24,7 @@ import rich.repr
 from rich.console import RenderableType
 from rich.style import Style
 
-from . import errors, events, messages
+from . import constants, errors, events, messages
 from ._callback import invoke
 from ._compositor import Compositor, MapGeometry
 from ._context import active_message_pump, visible_screen_stack
@@ -53,7 +53,7 @@ if TYPE_CHECKING:
     from .message_pump import MessagePump
 
 # Screen updates will be batched so that they don't happen more often than 60 times per second:
-UPDATE_PERIOD: Final[float] = 1 / 60
+UPDATE_PERIOD: Final[float] = 1 / constants.MAX_FPS
 
 ScreenResultType = TypeVar("ScreenResultType")
 """The result type of a screen."""
