@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.31.0] - Unreleased
+
+### Added
+
+- Added the ability to run async methods as thread workers https://github.com/Textualize/textual/pull/2938
+
+### Changed
+
+- Breaking change: Creating a thread worker now requires that a `thread=True` keyword argument is passed https://github.com/Textualize/textual/pull/2938
+
 ## [0.30.0] - 2023-07-17
 
 ### Added
@@ -17,10 +27,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed CancelledError issue with timer https://github.com/Textualize/textual/issues/2854
 - Fixed Toggle Buttons issue with not being clickable/hoverable https://github.com/Textualize/textual/pull/2930
-
-### Changed
-
-- Breaking change: Creating a thread worker with the `@work` decorator now requires that a `thread=True` keyword argument is passed https://github.com/Textualize/textual/pull/2938
 
 
 ## [0.29.0] - 2023-07-03
