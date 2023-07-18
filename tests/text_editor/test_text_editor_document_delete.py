@@ -26,7 +26,6 @@ def test_delete_range_single_character(editor):
     ]
 
 
-@pytest.mark.xfail(reason="deleted text incorrect returns 2 newlines")
 def test_delete_range_single_newline(editor):
     """Testing deleting newline from right to left"""
     deleted_text = editor.delete_range((1, 0), (0, 16))
@@ -71,7 +70,6 @@ def test_delete_range_multiple_lines_partially_spanned(editor):
     ]
 
 
-@pytest.mark.xfail(reason="deleted text incorrect returns 2 newlines")
 def test_delete_range_end_of_line(editor):
     """Testing deleting newline from left to right"""
     deleted_text = editor.delete_range((0, 16), (1, 0))
@@ -95,7 +93,6 @@ def test_delete_range_single_line_excluding_newline(editor):
     ]
 
 
-@pytest.mark.xfail(reason="double newline issue again")
 def test_delete_range_single_line_including_newline(editor):
     """Delete from the start of a line to the start of the line below."""
     deleted_text = editor.delete_range((2, 0), (3, 0))

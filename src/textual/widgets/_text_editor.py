@@ -835,13 +835,13 @@ TextEditor > .text-editor--cursor {
             #  result in two newline characters.
             #  When you delete a line, it records the deleted text with two newlines at the end instead of 1.
             # Add the deleted segments from the start and end lines to the deleted text
-            deleted_text = (
-                start_line[from_column:]
-                + "\n"
-                + "\n".join(self.document_lines[from_row + 1 : to_row])
-                + "\n"
-                + end_line[:to_column]
-            )
+            deleted_text = start_line[from_column:] + "\n"
+            for row in range(from_row + 1, to_row):
+                deleted_text += lines[row] + "\n"
+
+            deleted_text += end_line[:to_column]
+            if to_column == len(end_line):
+                deleted_text += "\n"
 
             # Update the lines at the start and end of the range
             lines[from_row] = start_line[:from_column] + end_line[to_column:]
