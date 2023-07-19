@@ -42,7 +42,7 @@ Then, we set `min-width` individually on each placeholder.
 min-width: 10;
 
 /* Set the minimum width to 25% of the viewport width */
-min-width: 25vh;
+min-width: 25vw;
 ```
 
 ## Python
@@ -52,7 +52,7 @@ min-width: 25vh;
 widget.styles.min_width = 10
 
 # Set the minimum width to 25% of the viewport width
-widget.styles.min_width = "25vh"
+widget.styles.min_width = "25vw"
 ```
 
 ## See also

@@ -24,7 +24,7 @@ import rich.repr
 from rich.console import RenderableType
 from rich.style import Style
 
-from . import errors, events, messages
+from . import constants, errors, events, messages
 from ._callback import invoke
 from ._compositor import Compositor, MapGeometry
 from ._context import active_message_pump, visible_screen_stack
@@ -36,12 +36,14 @@ from .css.parse import parse_selectors
 from .css.query import NoMatches, QueryType
 from .dom import DOMNode
 from .geometry import Offset, Region, Size
+from .notifications import Notification, SeverityLevel
 from .reactive import Reactive
 from .renderables.background_screen import BackgroundScreen
 from .renderables.blank import Blank
 from .timer import Timer
 from .widget import Widget
 from .widgets import Tooltip
+from .widgets._toast import ToastRack
 
 if TYPE_CHECKING:
     from typing_extensions import Final
@@ -51,7 +53,7 @@ if TYPE_CHECKING:
     from .message_pump import MessagePump
 
 # Screen updates will be batched so that they don't happen more often than 60 times per second:
-UPDATE_PERIOD: Final[float] = 1 / 60
+UPDATE_PERIOD: Final[float] = 1 / constants.MAX_FPS
 
 ScreenResultType = TypeVar("ScreenResultType")
 """The result type of a screen."""
@@ -202,10 +204,12 @@ class Screen(Generic[ScreenResultType], Widget):
         Returns:
             Tuple of layer names.
         """
-        if self.app._disable_tooltips:
-            return super().layers
-        else:
-            return (*super().layers, "_tooltips")
+        extras = []
+        if not self.app._disable_notifications:
+            extras.append("_toastrack")
+        if not self.app._disable_tooltips:
+            extras.append("_tooltips")
+        return (*super().layers, *extras)
 
     def render(self) -> RenderableType:
         background = self.styles.background
@@ -529,9 +533,18 @@ class Screen(Generic[ScreenResultType], Widget):
         self._update_focus_styles(focused, blurred)
 
     def _extend_compose(self, widgets: list[Widget]) -> None:
-        """Insert the tooltip widget, if required."""
+        """Insert Textual's own internal widgets.
+
+        Args:
+            widgets: The list of widgets to be composed.
+
+        This method adds the tooltip, if required, and also adds the
+        container for `Toast`s.
+        """
         if not self.app._disable_tooltips:
             widgets.insert(0, Tooltip(id="textual-tooltip"))
+        if not self.app._disable_notifications:
+            widgets.insert(0, ToastRack(id="textual-toastrack"))
 
     async def _on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)
@@ -727,6 +740,7 @@ class Screen(Generic[ScreenResultType], Widget):
     def _on_screen_resume(self) -> None:
         """Screen has resumed."""
         self.stack_updates += 1
+        self.app._refresh_notifications()
         size = self.app.size
         self._refresh_layout(size, full=True)
         self.refresh()
@@ -925,6 +939,30 @@ class Screen(Generic[ScreenResultType], Widget):
             result: The optional result to be passed to the result callback.
         """
         self.dismiss(result)
+
+    def notify(
+        self,
+        message: str,
+        *,
+        title: str = "",
+        severity: SeverityLevel = "information",
+        timeout: float = Notification.timeout,
+    ) -> Notification:
+        """Create a notification.
+
+        Args:
+            message: The message for the notification.
+            title: The title for the notification.
+            severity: The severity of the notification.
+            timeout: The timeout for the notification.
+
+        Returns:
+            The new notification.
+
+        See [`App.notify`][textual.app.App.notify] for the full
+        documentation for this method.
+        """
+        return self.app.notify(message, title=title, severity=severity, timeout=timeout)
 
 
 @rich.repr.auto

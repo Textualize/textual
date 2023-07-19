@@ -67,3 +67,6 @@ PRESS: Final[str] = get_environ("TEXTUAL_PRESS", "")
 
 SHOW_RETURN: Final[bool] = get_environ_bool("TEXTUAL_SHOW_RETURN")
 """Write the return value on exit."""
+
+MAX_FPS: Final[int] = get_environ_int("TEXTUAL_FPS", 60)
+"""Maximum frames per second for updates."""
