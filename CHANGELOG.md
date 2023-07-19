@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added App.capture_print, App.end_capture_print, Widget.capture_print, Widget.end_capture_print https://github.com/Textualize/textual/issues/2952
 
+### Fixed
+
+- Fixed a crash when a `SelectionList` had a prompt wider than itself https://github.com/Textualize/textual/issues/2900
+
+
 ## [0.30.0] - 2023-07-17
 
 ### Added
