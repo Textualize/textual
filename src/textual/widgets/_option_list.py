@@ -498,7 +498,7 @@ class OptionList(ScrollView, can_focus=True):
         add_lines = self._lines.extend
 
         # Adjust the options for our purposes.
-        options = self.app.console.options.copy().update_width(
+        options = self.app.console.options.update_width(
             self.scrollable_content_region.width - self._left_gutter_width()
         )
         options.no_wrap = not self._wrap
