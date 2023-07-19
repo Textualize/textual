@@ -476,18 +476,11 @@ TextEditor > .text-editor--cursor {
         event.stop()
 
         target_x = max(offset.x - self.gutter_width + int(self.scroll_x), 0)
-        target_y = clamp(offset.y + int(self.scroll_y), 0, len(self.document_lines) - 1)
-
-        line = self.document_lines[target_y]
-        cell_offset = 0
-        for index, character in enumerate(line):
-            if cell_offset >= target_x:
-                self.cursor_position = (target_y, index)
-                break
-            cell_offset += get_character_cell_size(character)
-        else:
-            self.cursor_position = (target_y, len(line))
-
+        target_row_index = clamp(
+            offset.y + int(self.scroll_y), 0, len(self.document_lines) - 1
+        )
+        target_column = self.cell_width_to_column_index(target_x, target_row_index)
+        self.cursor_position = (target_row_index, target_column)
         self._record_last_intentional_cell_width()
 
     def _on_paste(self, event: events.Paste) -> None:
@@ -505,10 +498,10 @@ TextEditor > .text-editor--cursor {
         total_cell_offset = 0
         line = self.document_lines[row_index]
         for column_index, character in enumerate(line):
-            if total_cell_offset >= cell_width:
+            total_cell_offset += cell_len(character)
+            if total_cell_offset >= cell_width + 1:
                 log(f"cell width {cell_width} -> column_index {column_index}")
                 return column_index
-            total_cell_offset += cell_len(character)
         return len(line)
 
     # --- Reactive watchers and validators
