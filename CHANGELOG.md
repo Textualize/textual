@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added App.capture_print, App.end_capture_print, Widget.capture_print, Widget.end_capture_print
+- Added App.capture_print, App.end_capture_print, Widget.capture_print, Widget.end_capture_print https://github.com/Textualize/textual/issues/2952
 
 ## [0.30.0] - 2023-07-17
 
