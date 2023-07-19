@@ -499,6 +499,9 @@ TextEditor > .text-editor--cursor {
     def cell_width_to_column_index(self, cell_width: int, row_index: int) -> int:
         """Given a row index and a cell width, return the column that the cell width
         corresponds to."""
+
+        # TODO - this code can be reused in on_click. I think it might actually be slightly
+        #  off, so double check it when writing tests.
         total_cell_offset = 0
         line = self.document_lines[row_index]
         for column_index, character in enumerate(line):
