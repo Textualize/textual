@@ -26,7 +26,7 @@ async def test_delete_left_from_home() -> None:
     async with InputTester().run_test() as pilot:
         for input in pilot.app.query(Input):
             input.action_delete_left()
-            assert input.cursor_position == 0
+            assert input.selection == 0
             assert input.value == TEST_INPUTS[input.id]
 
 
@@ -36,7 +36,7 @@ async def test_delete_left_from_end() -> None:
         for input in pilot.app.query(Input):
             input.action_end()
             input.action_delete_left()
-            assert input.cursor_position == len(input.value)
+            assert input.selection == len(input.value)
             assert input.value == TEST_INPUTS[input.id][:-1]
 
 
@@ -45,16 +45,16 @@ async def test_delete_left_word_from_home() -> None:
     async with InputTester().run_test() as pilot:
         for input in pilot.app.query(Input):
             input.action_delete_left_word()
-            assert input.cursor_position == 0
+            assert input.selection == 0
             assert input.value == TEST_INPUTS[input.id]
 
 
 async def test_delete_left_word_from_inside_first_word() -> None:
     async with InputTester().run_test() as pilot:
         for input in pilot.app.query(Input):
-            input.cursor_position = 1
+            input.selection = 1
             input.action_delete_left_word()
-            assert input.cursor_position == 0
+            assert input.selection == 0
             assert input.value == TEST_INPUTS[input.id][1:]
 
 
@@ -70,7 +70,7 @@ async def test_delete_left_word_from_end() -> None:
         for input in pilot.app.query(Input):
             input.action_end()
             input.action_delete_left_word()
-            assert input.cursor_position == len(input.value)
+            assert input.selection == len(input.value)
             assert input.value == expected[input.id]
 
 
@@ -81,7 +81,7 @@ async def test_password_delete_left_word_from_end() -> None:
             input.action_end()
             input.password = True
             input.action_delete_left_word()
-            assert input.cursor_position == 0
+            assert input.selection == 0
             assert input.value == ""
 
 
@@ -90,7 +90,7 @@ async def test_delete_left_all_from_home() -> None:
     async with InputTester().run_test() as pilot:
         for input in pilot.app.query(Input):
             input.action_delete_left_all()
-            assert input.cursor_position == 0
+            assert input.selection == 0
             assert input.value == TEST_INPUTS[input.id]
 
 
@@ -100,7 +100,7 @@ async def test_delete_left_all_from_end() -> None:
         for input in pilot.app.query(Input):
             input.action_end()
             input.action_delete_left_all()
-            assert input.cursor_position == 0
+            assert input.selection == 0
             assert input.value == ""
 
 
@@ -109,7 +109,7 @@ async def test_delete_right_from_home() -> None:
     async with InputTester().run_test() as pilot:
         for input in pilot.app.query(Input):
             input.action_delete_right()
-            assert input.cursor_position == 0
+            assert input.selection == 0
             assert input.value == TEST_INPUTS[input.id][1:]
 
 
@@ -119,7 +119,7 @@ async def test_delete_right_from_end() -> None:
         for input in pilot.app.query(Input):
             input.action_end()
             input.action_delete_right()
-            assert input.cursor_position == len(input.value)
+            assert input.selection == len(input.value)
             assert input.value == TEST_INPUTS[input.id]
 
 
@@ -134,7 +134,7 @@ async def test_delete_right_word_from_home() -> None:
         }
         for input in pilot.app.query(Input):
             input.action_delete_right_word()
-            assert input.cursor_position == 0
+            assert input.selection == 0
             assert input.value == expected[input.id]
 
 
@@ -144,7 +144,7 @@ async def test_password_delete_right_word_from_home() -> None:
         for input in pilot.app.query(Input):
             input.password = True
             input.action_delete_right_word()
-            assert input.cursor_position == 0
+            assert input.selection == 0
             assert input.value == ""
 
 
@@ -154,7 +154,7 @@ async def test_delete_right_word_from_end() -> None:
         for input in pilot.app.query(Input):
             input.action_end()
             input.action_delete_right_word()
-            assert input.cursor_position == len(input.value)
+            assert input.selection == len(input.value)
             assert input.value == TEST_INPUTS[input.id]
 
 
@@ -163,7 +163,7 @@ async def test_delete_right_all_from_home() -> None:
     async with InputTester().run_test() as pilot:
         for input in pilot.app.query(Input):
             input.action_delete_right_all()
-            assert input.cursor_position == 0
+            assert input.selection == 0
             assert input.value == ""
 
 
@@ -173,5 +173,5 @@ async def test_delete_right_all_from_end() -> None:
         for input in pilot.app.query(Input):
             input.action_end()
             input.action_delete_right_all()
-            assert input.cursor_position == len(input.value)
+            assert input.selection == len(input.value)
             assert input.value == TEST_INPUTS[input.id]

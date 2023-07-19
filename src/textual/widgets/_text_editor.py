@@ -59,6 +59,26 @@ class Highlight(NamedTuple):
     highlight_name: str | None
 
 
+class Selection(NamedTuple):
+    """A range of characters within a document from a start point to the end point.
+    The position of the cursor is always considered to be the `end` point of the selection.
+    """
+
+    start: tuple[int, int] = (0, 0)
+    end: tuple[int, int] = (0, 0)
+
+    @classmethod
+    def cursor(cls, position: tuple[int, int]) -> "Selection":
+        """Create a Selection with the same start and end point."""
+        return cls(position, position)
+
+    @property
+    def is_cursor(self) -> bool:
+        """Return True if the selection has 0 width, i.e. it's just a cursor."""
+        start, end = self
+        return start == end
+
+
 @runtime_checkable
 class Edit(Protocol):
     """Protocol for actions performed in the text editor that can be done and undone."""
@@ -167,7 +187,7 @@ TextEditor > .text-editor--cursor {
 
     language: Reactive[str | None] = reactive(None)
     """The language to use for syntax highlighting (via tree-sitter)."""
-    cursor_position: Reactive[tuple[int, int]] = reactive((0, 0), always_update=True)
+    selection: Reactive[Selection] = reactive(Selection(), always_update=True)
     """The cursor position (zero-based line_index, offset)."""
     show_line_numbers: Reactive[bool] = reactive(True)
     """True to show line number gutter, otherwise False."""
@@ -324,11 +344,13 @@ TextEditor > .text-editor--cursor {
                 node_style = HIGHLIGHT_STYLES.get(highlight_name, null_style)
                 line_text.stylize(node_style, start, end)
 
-        # Show the cursor
-        cursor_row, cursor_column = self.cursor_position
-        if cursor_row == document_y:
+        # Show the selection
+        start, end = self.selection
+        start_row, start_column = start
+        end_row, end_column = end
+        if end_row == document_y:
             cursor_style = self.get_component_rich_style("text-editor--cursor")
-            line_text.stylize(cursor_style, cursor_column, cursor_column + 1)
+            line_text.stylize(cursor_style, end_column, end_column + 1)
             active_line_style = self.get_component_rich_style(
                 "text-editor--active-line"
             )
@@ -336,7 +358,7 @@ TextEditor > .text-editor--cursor {
 
         # Show the gutter
         if self.show_line_numbers:
-            if cursor_row == document_y:
+            if end_row == document_y:
                 gutter_style = self.get_component_rich_style(
                     "text-editor--active-line-gutter"
                 )
@@ -459,8 +481,8 @@ TextEditor > .text-editor--cursor {
                 insert = event.character
             event.stop()
             assert event.character is not None
-            cursor_position = self.cursor_position
-            self.insert_text_range(insert, cursor_position, cursor_position)
+            start, end = self.selection
+            self.insert_text_range(insert, start, end)
             event.prevent_default()
         elif key == "shift+tab":
             self.dedent_line()
@@ -476,17 +498,17 @@ TextEditor > .text-editor--cursor {
         event.stop()
 
         target_x = max(offset.x - self.gutter_width + int(self.scroll_x), 0)
-        target_row_index = clamp(
+        target_row = clamp(
             offset.y + int(self.scroll_y), 0, len(self.document_lines) - 1
         )
-        target_column = self.cell_width_to_column_index(target_x, target_row_index)
-        self.cursor_position = (target_row_index, target_column)
+        target_column = self.cell_width_to_column_index(target_x, target_row)
+        self.selection = Selection.cursor((target_row, target_column))
         self._record_last_intentional_cell_width()
 
     def _on_paste(self, event: events.Paste) -> None:
         text = event.text
         if text:
-            self.insert_text(text, self.cursor_position)
+            self.insert_text(text, self.selection)
         event.stop()
 
     def cell_width_to_column_index(self, cell_width: int, row_index: int) -> int:
@@ -511,9 +533,7 @@ TextEditor > .text-editor--cursor {
     #     clamped_column = clamp(new_column, 0, len(self.document_lines[clamped_row]) - 1)
     #     return clamped_row, clamped_column
 
-    def watch_cursor_position(
-        self, old_position: tuple[int, int], new_position: tuple[int, int]
-    ) -> None:
+    def watch_selection(self) -> None:
         self.scroll_cursor_visible()
 
     def watch_virtual_size(self, vs):
@@ -521,7 +541,9 @@ TextEditor > .text-editor--cursor {
 
     # --- Cursor utilities
     def scroll_cursor_visible(self):
-        row, column = self.cursor_position
+        # The end of the selection is always considered to be position of the cursor
+        # ... this is a constraint we need to enforce in code.
+        row, column = self.selection.end
         text = self.active_line_text[:column]
         column_offset = cell_len(text)
         self.scroll_to_region(
@@ -533,19 +555,19 @@ TextEditor > .text-editor--cursor {
 
     @property
     def cursor_at_first_row(self) -> bool:
-        return self.cursor_position[0] == 0
+        return self.selection.end[0] == 0
 
     @property
     def cursor_at_last_row(self) -> bool:
-        return self.cursor_position[0] == len(self.document_lines) - 1
+        return self.selection.end[0] == len(self.document_lines) - 1
 
     @property
     def cursor_at_start_of_row(self) -> bool:
-        return self.cursor_position[1] == 0
+        return self.selection.end[1] == 0
 
     @property
     def cursor_at_end_of_row(self) -> bool:
-        cursor_row, cursor_column = self.cursor_position
+        cursor_row, cursor_column = self.selection.end
         row_length = len(self.document_lines[cursor_row])
         cursor_at_end = cursor_column == row_length
         return cursor_at_end
@@ -560,14 +582,14 @@ TextEditor > .text-editor--cursor {
         return self.cursor_at_last_row and self.cursor_at_end_of_row
 
     def cursor_to_line_end(self) -> None:
-        cursor_row, cursor_column = self.cursor_position
+        cursor_row, cursor_column = self.selection.end
         target_column = len(self.document_lines[cursor_row])
-        self.cursor_position = (cursor_row, target_column)
+        self.selection = Selection.cursor((cursor_row, target_column))
         self._record_last_intentional_cell_width()
 
     def cursor_to_line_start(self) -> None:
-        cursor_row, cursor_column = self.cursor_position
-        self.cursor_position = (cursor_row, 0)
+        cursor_row, cursor_column = self.selection.end
+        self.selection = Selection.cursor((cursor_row, 0))
 
     # ------ Cursor movement actions
     def action_cursor_left(self) -> None:
@@ -579,13 +601,13 @@ TextEditor > .text-editor--cursor {
         if self.cursor_at_start_of_document:
             return
 
-        cursor_row, cursor_column = self.cursor_position
+        cursor_row, cursor_column = self.selection.end
         length_of_row_above = len(self.document_lines[cursor_row - 1])
 
         target_row = cursor_row if cursor_column != 0 else cursor_row - 1
         target_column = cursor_column - 1 if cursor_column != 0 else length_of_row_above
 
-        self.cursor_position = (target_row, target_column)
+        self.selection = Selection.cursor((target_row, target_column))
         self._record_last_intentional_cell_width()
 
     def action_cursor_right(self) -> None:
@@ -596,12 +618,12 @@ TextEditor > .text-editor--cursor {
         if self.cursor_at_end_of_document:
             return
 
-        cursor_row, cursor_column = self.cursor_position
+        cursor_row, cursor_column = self.selection.end
 
         target_row = cursor_row + 1 if self.cursor_at_end_of_row else cursor_row
         target_column = 0 if self.cursor_at_end_of_row else cursor_column + 1
 
-        self.cursor_position = (target_row, target_column)
+        self.selection = Selection.cursor((target_row, target_column))
         self._record_last_intentional_cell_width()
 
     def action_cursor_down(self) -> None:
@@ -609,7 +631,7 @@ TextEditor > .text-editor--cursor {
         if self.cursor_at_last_row:
             self.cursor_to_line_end()
 
-        cursor_row, cursor_column = self.cursor_position
+        cursor_row, cursor_column = self.selection.end
 
         target_row = min(len(self.document_lines) - 1, cursor_row + 1)
 
@@ -619,14 +641,14 @@ TextEditor > .text-editor--cursor {
         )
         target_column = clamp(target_column, 0, len(self.document_lines[target_row]))
 
-        self.cursor_position = (target_row, target_column)
+        self.selection = Selection.cursor((target_row, target_column))
 
     def action_cursor_up(self) -> None:
         """Move the cursor up one cell."""
         if self.cursor_at_first_row:
             self.cursor_to_line_start()
 
-        cursor_row, cursor_column = self.cursor_position
+        cursor_row, cursor_column = self.selection.end
 
         target_row = max(0, cursor_row - 1)
 
@@ -636,7 +658,7 @@ TextEditor > .text-editor--cursor {
         )
         target_column = clamp(target_column, 0, len(self.document_lines[target_row]))
 
-        self.cursor_position = (target_row, target_column)
+        self.selection = Selection.cursor((target_row, target_column))
 
     def action_cursor_line_end(self) -> None:
         self.cursor_to_line_end()
@@ -650,7 +672,7 @@ TextEditor > .text-editor--cursor {
         if self.cursor_at_start_of_document:
             return
 
-        cursor_row, cursor_column = self.cursor_position
+        cursor_row, cursor_column = self.selection.end
 
         # Check the current line for a word boundary
         line = self.document_lines[cursor_row][:cursor_column]
@@ -667,7 +689,7 @@ TextEditor > .text-editor--cursor {
             # If we're already on the first line and no word boundary is found, move to the start of the line
             cursor_column = 0
 
-        self.cursor_position = (cursor_row, cursor_column)
+        self.selection = Selection.cursor((cursor_row, cursor_column))
         self._record_last_intentional_cell_width()
 
     def action_cursor_right_word(self) -> None:
@@ -676,7 +698,7 @@ TextEditor > .text-editor--cursor {
         if self.cursor_at_end_of_document:
             return
 
-        cursor_row, cursor_column = self.cursor_position
+        cursor_row, cursor_column = self.selection.end
 
         # Check the current line for a word boundary
         line = self.document_lines[cursor_row][cursor_column:]
@@ -693,13 +715,13 @@ TextEditor > .text-editor--cursor {
             # If we're already on the last line and no word boundary is found, move to the end of the line
             cursor_column = len(self.document_lines[cursor_row])
 
-        self.cursor_position = (cursor_row, cursor_column)
+        self.selection = Selection.cursor((cursor_row, cursor_column))
         self._record_last_intentional_cell_width()
 
     @property
     def active_line_text(self) -> str:
         # TODO - consider empty documents
-        return self.document_lines[self.cursor_position[0]]
+        return self.document_lines[self.selection.end[0]]
 
     def get_column_cell_width(self, row: int, column: int) -> int:
         """Given a row and column index within the editor, return the cell offset
@@ -709,7 +731,7 @@ TextEditor > .text-editor--cursor {
         return cell_len(line[:column])
 
     def _record_last_intentional_cell_width(self) -> None:
-        row, column = self.cursor_position
+        row, column = self.selection.end
         column_cell_length = self.get_column_cell_width(row, column)
         log(f"last intentional cell width = {column_cell_length}")
         self._last_intentional_cell_width = column_cell_length
@@ -784,7 +806,7 @@ TextEditor > .text-editor--cursor {
             self._prepare_highlights()
         self._refresh_size()
         if move_cursor:
-            self.cursor_position = cursor_destination
+            self.selection = Selection.cursor(cursor_destination)
 
     def _position_to_byte_offset(self, position: tuple[int, int]) -> int:
         """Given a document coordinate, return the byte offset of that coordinate."""
@@ -803,7 +825,7 @@ TextEditor > .text-editor--cursor {
         A dedent is simply a Delete operation on some amount of whitespace
         which may exist at the start of a line.
         """
-        cursor_row, cursor_column = self.cursor_position
+        cursor_row, cursor_column = self.selection.end
 
         # Define one level of indentation as four spaces
         indent_level = " " * 4
@@ -816,7 +838,7 @@ TextEditor > .text-editor--cursor {
             self.document_lines[cursor_row] = current_line[len(indent_level) :]
 
         if cursor_column > len(current_line):
-            self.cursor_position = (cursor_row, len(current_line))
+            self.selection = Selection.cursor((cursor_row, len(current_line)))
 
         self._refresh_size()
         self.refresh()
@@ -896,10 +918,10 @@ TextEditor > .text-editor--cursor {
 
         self._refresh_size()
         if cursor_destination is not None:
-            self.cursor_position = cursor_destination
+            self.selection = Selection.cursor(cursor_destination)
         else:
             # Move the cursor to the start of the deleted range
-            self.cursor_position = (from_row, from_column)
+            self.selection = Selection.cursor((from_row, from_column))
 
         return deleted_text
 
@@ -908,48 +930,55 @@ TextEditor > .text-editor--cursor {
         if self.cursor_at_start_of_document:
             return
 
-        cursor_row, cursor_column = self.cursor_position
         lines = self.document_lines
-        from_position = self.cursor_position
-        if self.cursor_at_start_of_row:
-            to_position = (cursor_row - 1, len(lines[cursor_row - 1]))
-        else:
-            to_position = (cursor_row, cursor_column - 1)
 
-        self.edit(Delete(from_position, to_position))
+        start, end = self.selection
+        end_row, end_column = end
+
+        if self.cursor_at_start_of_row:
+            to_position = (end_row - 1, len(lines[end_row - 1]))
+        else:
+            to_position = (end_row, end_column - 1)
+
+        self.edit(Delete(start, to_position))
 
     def action_delete_right(self) -> None:
         """Deletes the character to the right of the cursor and keeps the cursor at the same position."""
         if self.cursor_at_end_of_document:
             return
 
-        cursor_row, cursor_column = self.cursor_position
-        from_position = self.cursor_position
-        if self.cursor_at_end_of_row:
-            to_position = (cursor_row + 1, 0)
-        else:
-            to_position = (cursor_row, cursor_column + 1)
+        start, end = self.selection
+        end_row, end_column = end
 
-        self.edit(Delete(from_position, to_position))
+        if self.cursor_at_end_of_row:
+            to_position = (end_row + 1, 0)
+        else:
+            to_position = (end_row, end_column + 1)
+
+        self.edit(Delete(start, to_position))
 
     def action_delete_line(self) -> None:
-        """Deletes the line the cursor is on."""
-        cursor_row, _ = self.cursor_position
-        from_position = (cursor_row, 0)
-        to_position = (cursor_row + 1, 0)
+        """Deletes the lines which intersect with the selection."""
+        start, end = self.selection
+        start_row, start_column = start
+        end_row, end_column = end
+
+        from_position = (start_row, 0)
+        to_position = (end_row + 1, 0)
+
         self.edit(Delete(from_position, to_position))
 
     def action_delete_to_start_of_line(self) -> None:
         """Deletes from the cursor position to the start of the line."""
-        cursor_row, cursor_column = self.cursor_position
-        from_position = self.cursor_position
+        from_position = self.selection.end
+        cursor_row, cursor_column = from_position
         to_position = (cursor_row, 0)
         self.edit(Delete(from_position, to_position))
 
     def action_delete_to_end_of_line(self) -> None:
         """Deletes from the cursor position to the end of the line."""
-        cursor_row, cursor_column = self.cursor_position
-        from_position = self.cursor_position
+        from_position = self.selection.end
+        cursor_row, cursor_column = from_position
         to_position = (cursor_row, len(self.document_lines[cursor_row]))
         self.edit(Delete(from_position, to_position))
 
@@ -958,7 +987,13 @@ TextEditor > .text-editor--cursor {
         if self.cursor_at_start_of_document:
             return
 
-        cursor_row, cursor_column = self.cursor_position
+        # If there's a non-zero selection, then "delete word left" typically only
+        # deletes the characters within the selection range, ignoring word boundaries.
+        start, end = self.selection
+        if start != end:
+            self.edit(Delete(start, end))
+
+        cursor_row, cursor_column = end
 
         # Check the current line for a word boundary
         line = self.document_lines[cursor_row][:cursor_column]
@@ -968,20 +1003,24 @@ TextEditor > .text-editor--cursor {
             # If a word boundary is found, delete the word
             from_position = (cursor_row, matches[-1].start())
         elif cursor_row > 0:
-            # If no word boundary is found and we're not on the first line, delete to the end of the previous line
+            # If no word boundary is found, and we're not on the first line, delete to the end of the previous line
             from_position = (cursor_row - 1, len(self.document_lines[cursor_row - 1]))
         else:
             # If we're already on the first line and no word boundary is found, delete to the start of the line
             from_position = (cursor_row, 0)
 
-        self.edit(Delete(from_position, self.cursor_position))
+        self.edit(Delete(from_position, self.selection.end))
 
     def action_delete_word_right(self) -> None:
         """Deletes the word to the right of the cursor and keeps the cursor at the same position."""
         if self.cursor_at_end_of_document:
             return
 
-        cursor_row, cursor_column = self.cursor_position
+        start, end = self.selection
+        if start != end:
+            self.edit(Delete(start, end))
+
+        cursor_row, cursor_column = end
 
         # Check the current line for a word boundary
         line = self.document_lines[cursor_row][cursor_column:]
@@ -991,13 +1030,13 @@ TextEditor > .text-editor--cursor {
             # If a word boundary is found, delete the word
             to_position = (cursor_row, cursor_column + matches[0].end())
         elif cursor_row < len(self.document_lines) - 1:
-            # If no word boundary is found and we're not on the last line, delete to the start of the next line
+            # If no word boundary is found, and we're not on the last line, delete to the start of the next line
             to_position = (cursor_row + 1, 0)
         else:
             # If we're already on the last line and no word boundary is found, delete to the end of the line
             to_position = (cursor_row, len(self.document_lines[cursor_row]))
 
-        self.edit(Delete(self.cursor_position, to_position))
+        self.edit(Delete(end, to_position))
 
     # --- Debugging
     @dataclass
@@ -1018,7 +1057,7 @@ TextEditor > .text-editor--cursor {
 
     def debug_state(self) -> "EditorDebug":
         return self.EditorDebug(
-            cursor=self.cursor_position,
+            cursor=self.selection,
             language=self.language,
             document_size=self._document_size,
             virtual_size=self.virtual_size,
@@ -1033,9 +1072,9 @@ TextEditor > .text-editor--cursor {
                 len(highlights) for key, highlights in self._highlights.items()
             ),
             highlight_cache_current_row_size=len(
-                self._highlights[self.cursor_position[0]]
+                self._highlights[self.selection.end[0]]
             ),
-            highlight_cache_current_row=self._highlights[self.cursor_position[0]],
+            highlight_cache_current_row=self._highlights[self.selection.end[0]],
         )
 
 
