@@ -308,6 +308,7 @@ class OptionList(ScrollView, can_focus=True):
             id: The ID of the option list in the DOM.
             classes: The CSS classes of the option list.
             disabled: Whether the option list is disabled or not.
+            wrap: Should prompts be auto-wrapped?
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
