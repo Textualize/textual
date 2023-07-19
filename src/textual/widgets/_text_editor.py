@@ -194,8 +194,9 @@ TextEditor > .text-editor--cursor {
         self._highlights_query: str | None = None
         """The string containing the tree-sitter AST query used for syntax highlighting."""
 
-        self._last_intentional_column: int = 0
-        """Tracks the last column the user explicitly navigated to so that we can reset
+        self._last_intentional_cell_width: int = 0
+        """Tracks the last column (measured in terms of cell length, since we care here about where
+         the cursor visually moves more than the logical characters) the user explicitly navigated to so that we can reset
         to it whenever possible."""
 
         self._word_pattern = re.compile(r"(?<=\W)(?=\w)|(?<=\w)(?=\W)")
@@ -487,14 +488,25 @@ TextEditor > .text-editor--cursor {
         else:
             self.cursor_position = (target_y, len(line))
 
-        new_row, new_column = self.cursor_position
-        self._last_intentional_column = new_column
+        self._record_last_intentional_cell_width()
 
     def _on_paste(self, event: events.Paste) -> None:
         text = event.text
         if text:
             self.insert_text(text, self.cursor_position)
         event.stop()
+
+    def cell_width_to_column_index(self, cell_width: int, row_index: int) -> int:
+        """Given a row index and a cell width, return the column that the cell width
+        corresponds to."""
+        total_cell_offset = 0
+        line = self.document_lines[row_index]
+        for column_index, character in enumerate(line):
+            if total_cell_offset >= cell_width:
+                log(f"cell width {cell_width} -> column_index {column_index}")
+                return column_index
+            total_cell_offset += cell_len(character)
+        return len(line)
 
     # --- Reactive watchers and validators
     # def validate_cursor_position(self, new_position: tuple[int, int]) -> tuple[int, int]:
@@ -555,7 +567,7 @@ TextEditor > .text-editor--cursor {
         cursor_row, cursor_column = self.cursor_position
         target_column = len(self.document_lines[cursor_row])
         self.cursor_position = (cursor_row, target_column)
-        self._last_intentional_column = target_column
+        self._record_last_intentional_cell_width()
 
     def cursor_to_line_start(self) -> None:
         cursor_row, cursor_column = self.cursor_position
@@ -578,7 +590,7 @@ TextEditor > .text-editor--cursor {
         target_column = cursor_column - 1 if cursor_column != 0 else length_of_row_above
 
         self.cursor_position = (target_row, target_column)
-        self._last_intentional_column = target_column
+        self._record_last_intentional_cell_width()
 
     def action_cursor_right(self) -> None:
         """Move the cursor one position to the right.
@@ -594,7 +606,7 @@ TextEditor > .text-editor--cursor {
         target_column = 0 if self.cursor_at_end_of_row else cursor_column + 1
 
         self.cursor_position = (target_row, target_column)
-        self._last_intentional_column = target_column
+        self._record_last_intentional_cell_width()
 
     def action_cursor_down(self) -> None:
         """Move the cursor down one cell."""
@@ -602,10 +614,14 @@ TextEditor > .text-editor--cursor {
             self.cursor_to_line_end()
 
         cursor_row, cursor_column = self.cursor_position
-        cursor_column = max(self._last_intentional_column, cursor_column)
 
         target_row = min(len(self.document_lines) - 1, cursor_row + 1)
-        target_column = clamp(cursor_column, 0, len(self.document_lines[target_row]))
+
+        # Attempt to snap last intentional cell length
+        target_column = self.cell_width_to_column_index(
+            self._last_intentional_cell_width, target_row
+        )
+        target_column = clamp(target_column, 0, len(self.document_lines[target_row]))
 
         self.cursor_position = (target_row, target_column)
 
@@ -615,10 +631,14 @@ TextEditor > .text-editor--cursor {
             self.cursor_to_line_start()
 
         cursor_row, cursor_column = self.cursor_position
-        cursor_column = max(self._last_intentional_column, cursor_column)
 
         target_row = max(0, cursor_row - 1)
-        target_column = clamp(cursor_column, 0, len(self.document_lines[target_row]))
+
+        # Attempt to snap last intentional cell length
+        target_column = self.cell_width_to_column_index(
+            self._last_intentional_cell_width, target_row
+        )
+        target_column = clamp(target_column, 0, len(self.document_lines[target_row]))
 
         self.cursor_position = (target_row, target_column)
 
@@ -652,7 +672,7 @@ TextEditor > .text-editor--cursor {
             cursor_column = 0
 
         self.cursor_position = (cursor_row, cursor_column)
-        self._last_intentional_column = cursor_column
+        self._record_last_intentional_cell_width()
 
     def action_cursor_right_word(self) -> None:
         """Move the cursor right by a single word, skipping spaces."""
@@ -678,12 +698,25 @@ TextEditor > .text-editor--cursor {
             cursor_column = len(self.document_lines[cursor_row])
 
         self.cursor_position = (cursor_row, cursor_column)
-        self._last_intentional_column = cursor_column
+        self._record_last_intentional_cell_width()
 
     @property
     def active_line_text(self) -> str:
         # TODO - consider empty documents
         return self.document_lines[self.cursor_position[0]]
+
+    def get_column_cell_width(self, row: int, column: int) -> int:
+        """Given a row and column index within the editor, return the cell offset
+        of the column from the start of the row (the left edge of the editor content area).
+        """
+        line = self.document_lines[row]
+        return cell_len(line[:column])
+
+    def _record_last_intentional_cell_width(self) -> None:
+        row, column = self.cursor_position
+        column_cell_length = self.get_column_cell_width(row, column)
+        log(f"last intentional cell width = {column_cell_length}")
+        self._last_intentional_cell_width = column_cell_length
 
     # --- Editor operations
     def insert_text(
@@ -836,10 +869,6 @@ TextEditor > .text-editor--cursor {
             start_line = lines[from_row]
             end_line = lines[to_row]
 
-            # TODO - I think this might be slightly off - merging lines will
-            #  result in two newline characters.
-            #  When you delete a line, it records the deleted text with two newlines at the end instead of 1.
-            # Add the deleted segments from the start and end lines to the deleted text
             deleted_text = start_line[from_column:] + "\n"
             for row in range(from_row + 1, to_row):
                 deleted_text += lines[row] + "\n"
