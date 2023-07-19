@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Added
+
+- Added App.capture_print, App.end_capture_print, Widget.capture_print, Widget.end_capture_print
+
 ## [0.30.0] - 2023-07-17
 
 ### Added

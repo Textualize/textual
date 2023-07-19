@@ -600,3 +600,18 @@ class ScreenSuspend(Event, bubble=False):
     - [ ] Bubbles
     - [ ] Verbose
     """
+
+
+@rich.repr.auto
+class Print(Event, bubble=False):
+    """Sent to a widget that is capturing prints.
+
+    - [ ] Bubbles
+    - [ ] Verbose
+
+    """
+
+    def __init__(self, text: str, stderr: bool = False) -> None:
+        super().__init__()
+        self.text = text
+        self.stderr = stderr
