@@ -609,6 +609,10 @@ class Print(Event, bubble=False):
     - [ ] Bubbles
     - [ ] Verbose
 
+    Args:
+        text: Text that was printed.
+        stderr: True if the print was to stderr, or False for stdout.
+
     """
 
     def __init__(self, text: str, stderr: bool = False) -> None:
