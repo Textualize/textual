@@ -256,6 +256,7 @@ class SelectionList(Generic[SelectionType], OptionList):
             id=id,
             classes=classes,
             disabled=disabled,
+            wrap=False,
         )
 
     @property
@@ -483,6 +484,19 @@ class SelectionList(Generic[SelectionType], OptionList):
         """
         if self.highlighted is not None:
             self.toggle(self.get_option_at_index(self.highlighted))
+
+    def _left_gutter_width(self) -> int:
+        """Returns the size of any left gutter that should be taken into account.
+
+        Returns:
+            The width of the left gutter.
+        """
+        return len(
+            ToggleButton.BUTTON_LEFT
+            + ToggleButton.BUTTON_INNER
+            + ToggleButton.BUTTON_RIGHT
+            + " "
+        )
 
     def render_line(self, y: int) -> Strip:
         """Render a line in the display.
