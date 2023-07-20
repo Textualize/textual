@@ -170,9 +170,12 @@ TextEditor > .text-editor--selection {
         Binding("up", "cursor_up", "cursor up", show=False),
         Binding("down", "cursor_down", "cursor down", show=False),
         Binding("left", "cursor_left", "cursor left", show=False),
-        Binding("shift+left", "cursor_left_select", "cursor left", show=False),
+        Binding("shift+left", "cursor_left_select", "cursor left select", show=False),
         Binding("ctrl+left", "cursor_left_word", "cursor left word", show=False),
         Binding("right", "cursor_right", "cursor right", show=False),
+        Binding(
+            "shift+right", "cursor_right_select", "cursor right select", show=False
+        ),
         Binding("ctrl+right", "cursor_right_word", "cursor right word", show=False),
         Binding("home,ctrl+a", "cursor_line_start", "cursor line start", show=False),
         Binding("end,ctrl+e", "cursor_line_end", "cursor line end", show=False),
@@ -378,7 +381,7 @@ TextEditor > .text-editor--selection {
                         start=selection_top_column,
                         end=len(line_string),
                     )
-                elif document_y == end_row:
+                elif document_y == selection_bottom_row:
                     line_text.stylize_before(
                         selection_style, end=selection_bottom_column
                     )
@@ -538,6 +541,14 @@ TextEditor > .text-editor--selection {
 
         return target_row, target_column
 
+    def _fix_direction(
+        self, start: tuple[int, int], end: tuple[int, int]
+    ) -> tuple[tuple[int, int], tuple[int, int]]:
+        """Given a range, return a new range (x, y) such that x <= y which covers the same characters."""
+        if start > end:
+            return end, start
+        return start, end
+
     def _on_mouse_down(self, event: events.MouseDown) -> None:
         event.stop()
         offset = event.get_content_offset(self)
@@ -670,11 +681,6 @@ TextEditor > .text-editor--selection {
             return
         new_cursor_position = self.get_cursor_left_position()
         selection_start, selection_end = self.selection
-
-        print(
-            f"selection start = {selection_start}, new_cursor_position = {new_cursor_position}"
-        )
-
         self.selection = Selection(selection_start, new_cursor_position)
         self._record_last_intentional_cell_width()
 
@@ -686,14 +692,6 @@ TextEditor > .text-editor--selection {
         target_column = cursor_column - 1 if cursor_column != 0 else length_of_row_above
         return target_row, target_column
 
-    def _fix_direction(
-        self, start: tuple[int, int], end: tuple[int, int]
-    ) -> tuple[tuple[int, int], tuple[int, int]]:
-        """Given a range, return a new range (x, y) such that x <= y which covers the same characters."""
-        if start > end:
-            return end, start
-        return start, end
-
     def action_cursor_right(self) -> None:
         """Move the cursor one position to the right.
 
@@ -702,13 +700,28 @@ TextEditor > .text-editor--selection {
         if self.cursor_at_end_of_document:
             return
 
-        cursor_row, cursor_column = self.selection.end
-
-        target_row = cursor_row + 1 if self.cursor_at_end_of_row else cursor_row
-        target_column = 0 if self.cursor_at_end_of_row else cursor_column + 1
-
+        target_row, target_column = self.get_cursor_right_position()
         self.selection = Selection.cursor((target_row, target_column))
         self._record_last_intentional_cell_width()
+
+    def action_cursor_right_select(self):
+        """Move the end of the selection one position to the right.
+
+        This will expand or contract the selection.
+        """
+        if self.cursor_at_start_of_document:
+            return
+        new_cursor_position = self.get_cursor_right_position()
+        selection_start, selection_end = self.selection
+        self.selection = Selection(selection_start, new_cursor_position)
+        self._record_last_intentional_cell_width()
+
+    def get_cursor_right_position(self) -> tuple[int, int]:
+        """Get the position the cursor will move to if it moves right."""
+        cursor_row, cursor_column = self.selection.end
+        target_row = cursor_row + 1 if self.cursor_at_end_of_row else cursor_row
+        target_column = 0 if self.cursor_at_end_of_row else cursor_column + 1
+        return target_row, target_column
 
     def action_cursor_down(self) -> None:
         """Move the cursor down one cell."""
