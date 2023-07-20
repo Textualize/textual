@@ -151,6 +151,10 @@ TextEditor > .text-editor--cursor {
     color: $text;
     background: white 80%;
 }
+
+TextEditor > .text-editor--selection {
+    background: $primary 90%;
+}
 """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
@@ -158,6 +162,7 @@ TextEditor > .text-editor--cursor {
         "text-editor--active-line-gutter",
         "text-editor--gutter",
         "text-editor--cursor",
+        "text-editor--selection",
     }
 
     BINDINGS = [
@@ -224,6 +229,9 @@ TextEditor > .text-editor--cursor {
 
         self._undo_stack: list[Edit] = []
         """A stack (the end of the list is the top of the stack) for tracking edits."""
+
+        self._selecting = False
+        """True if we're currently selecting text, otherwise False."""
 
         # --- Abstract syntax tree and related parsing machinery
         self._language: Language | None = None
@@ -344,10 +352,47 @@ TextEditor > .text-editor--cursor {
                 node_style = HIGHLIGHT_STYLES.get(highlight_name, null_style)
                 line_text.stylize(node_style, start, end)
 
-        # Show the selection
         start, end = self.selection
-        start_row, start_column = start
         end_row, end_column = end
+
+        # The selection has width, so we should highlight it
+        start_row, start_column = start
+
+        print(start_row, document_y, end_row)
+
+        selection_style = self.get_component_rich_style("text-editor--selection")
+
+        selection_top = min(start, end)
+        selection_bottom = max(start, end)
+
+        selection_top_row, selection_top_column = selection_top
+        selection_bottom_row, selection_bottom_column = selection_bottom
+
+        if start != end and selection_top_row <= document_y <= selection_bottom_row:
+            # If this row is part of the selection
+            if document_y == selection_top_row == selection_bottom_row:
+                # Selection within a single line
+                line_text.stylize_before(
+                    selection_style,
+                    start=selection_top_column,
+                    end=selection_bottom_column,
+                )
+            else:
+                # Selection spanning multiple lines
+                if document_y == selection_top_row:
+                    line_text.stylize_before(
+                        selection_style,
+                        start=selection_top_column,
+                        end=len(line_string),
+                    )
+                elif document_y == end_row:
+                    line_text.stylize_before(
+                        selection_style, end=selection_bottom_column
+                    )
+                else:
+                    line_text.stylize_before(selection_style, end=len(line_string))
+
+        # Show the cursor and the selection
         if end_row == document_y:
             cursor_style = self.get_component_rich_style("text-editor--cursor")
             line_text.stylize(cursor_style, end_column, end_column + 1)
@@ -488,22 +533,39 @@ TextEditor > .text-editor--cursor {
             self.dedent_line()
             event.stop()
 
-    def _on_click(self, event: events.Click) -> None:
-        """Clicking the content body moves the cursor."""
-
-        offset = event.get_content_offset(self)
+    def get_target_document_location(self, offset: Offset) -> tuple[int, int]:
         if offset is None:
             return
-
-        event.stop()
 
         target_x = max(offset.x - self.gutter_width + int(self.scroll_x), 0)
         target_row = clamp(
             offset.y + int(self.scroll_y), 0, len(self.document_lines) - 1
         )
         target_column = self.cell_width_to_column_index(target_x, target_row)
+
+        return target_row, target_column
+
+    def _on_mouse_down(self, event: events.MouseDown) -> None:
+        event.stop()
+        offset = event.get_content_offset(self)
+        target_row, target_column = self.get_target_document_location(offset)
         self.selection = Selection.cursor((target_row, target_column))
+        log.debug(f"started selection {self.selection!r}")
+        self._selecting = True
+
+    def _on_mouse_move(self, event: events.MouseMove) -> None:
+        event.stop()
+        if self._selecting:
+            offset = event.get_content_offset(self)
+            target = self.get_target_document_location(offset)
+            selection_start, _ = self.selection
+            self.selection = Selection(selection_start, target)
+            log.debug(f"selection updated {self.selection!r}")
+
+    def _on_mouse_up(self, event: events.MouseUp) -> None:
+        event.stop()
         self._record_last_intentional_cell_width()
+        self._selecting = False
 
     def _on_paste(self, event: events.Paste) -> None:
         text = event.text
