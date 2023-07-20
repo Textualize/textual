@@ -153,7 +153,7 @@ TextEditor > .text-editor--cursor {
 }
 
 TextEditor > .text-editor--selection {
-    background: $primary 90%;
+    background: $primary;
 }
 """
 
@@ -170,6 +170,7 @@ TextEditor > .text-editor--selection {
         Binding("up", "cursor_up", "cursor up", show=False),
         Binding("down", "cursor_down", "cursor down", show=False),
         Binding("left", "cursor_left", "cursor left", show=False),
+        Binding("shift+left", "cursor_left_select", "cursor left", show=False),
         Binding("ctrl+left", "cursor_left_word", "cursor left word", show=False),
         Binding("right", "cursor_right", "cursor right", show=False),
         Binding("ctrl+right", "cursor_right_word", "cursor right word", show=False),
@@ -246,6 +247,7 @@ TextEditor > .text-editor--selection {
         When the language reactive string is updated, fetch the Language definition
         from our tree-sitter library file. If the language reactive is set to None,
         then the no parser is used."""
+        log.debug(f"updating editor language to {new_language!r}")
         if new_language:
             self._language = Language(LANGUAGES_PATH.resolve(), new_language)
             parser = Parser()
@@ -253,8 +255,6 @@ TextEditor > .text-editor--selection {
             self._parser.set_language(self._language)
             self._syntax_tree = self._build_ast(parser)
             self._highlights_query = Path(HIGHLIGHTS_PATH.resolve()).read_text()
-        else:
-            self._syntax_tree = None
 
         log.debug(f"parser set to {self._parser}")
 
@@ -276,7 +276,7 @@ TextEditor > .text-editor--selection {
         else:
             return None
 
-    def _read_callable(self, byte_offset, point):
+    def _read_callable(self, byte_offset: int, point: tuple[int, int]) -> str:
         row, column = point
         lines = self.document_lines
         row_out_of_bounds = row >= len(lines)
@@ -302,11 +302,7 @@ TextEditor > .text-editor--selection {
 
         This will replace any previously loaded lines."""
         self.document_lines = lines
-
-        # TODO Offer maximum line width and wrap if needed
         self._document_size = self._get_document_size(lines)
-
-        # TODO - clear caches
         if self._parser is not None:
             self._syntax_tree = self._build_ast(self._parser)
             self._prepare_highlights()
@@ -355,16 +351,13 @@ TextEditor > .text-editor--selection {
         start, end = self.selection
         end_row, end_column = end
 
-        # The selection has width, so we should highlight it
-        start_row, start_column = start
-
-        print(start_row, document_y, end_row)
-
         selection_style = self.get_component_rich_style("text-editor--selection")
 
+        # Start and end can be before or after each other, depending on the direction
+        # you move the cursor during selecting text, but the "top" of the selection
+        # is always before the "bottom" of the selection.
         selection_top = min(start, end)
         selection_bottom = max(start, end)
-
         selection_top_row, selection_top_column = selection_top
         selection_bottom_row, selection_bottom_column = selection_bottom
 
@@ -589,11 +582,13 @@ TextEditor > .text-editor--selection {
         return len(line)
 
     # --- Reactive watchers and validators
-    # def validate_cursor_position(self, new_position: tuple[int, int]) -> tuple[int, int]:
-    #     new_row, new_column = new_position
-    #     clamped_row = clamp(new_row, 0, len(self.document_lines) - 1)
-    #     clamped_column = clamp(new_column, 0, len(self.document_lines[clamped_row]) - 1)
-    #     return clamped_row, clamped_column
+    def validate_cursor_position(
+        self, new_position: tuple[int, int]
+    ) -> tuple[int, int]:
+        new_row, new_column = new_position
+        clamped_row = clamp(new_row, 0, len(self.document_lines) - 1)
+        clamped_column = clamp(new_column, 0, len(self.document_lines[clamped_row]))
+        return clamped_row, clamped_column
 
     def watch_selection(self) -> None:
         self.scroll_cursor_visible()
@@ -662,15 +657,42 @@ TextEditor > .text-editor--selection {
         """
         if self.cursor_at_start_of_document:
             return
-
-        cursor_row, cursor_column = self.selection.end
-        length_of_row_above = len(self.document_lines[cursor_row - 1])
-
-        target_row = cursor_row if cursor_column != 0 else cursor_row - 1
-        target_column = cursor_column - 1 if cursor_column != 0 else length_of_row_above
-
+        target_row, target_column = self.get_cursor_left_position()
         self.selection = Selection.cursor((target_row, target_column))
         self._record_last_intentional_cell_width()
+
+    def action_cursor_left_select(self):
+        """Move the end of the selection one position to the left.
+
+        This will expand or contract the selection.
+        """
+        if self.cursor_at_start_of_document:
+            return
+        new_cursor_position = self.get_cursor_left_position()
+        selection_start, selection_end = self.selection
+
+        print(
+            f"selection start = {selection_start}, new_cursor_position = {new_cursor_position}"
+        )
+
+        self.selection = Selection(selection_start, new_cursor_position)
+        self._record_last_intentional_cell_width()
+
+    def get_cursor_left_position(self):
+        """Get the position the cursor will move to if it moves left."""
+        cursor_row, cursor_column = self.selection.end
+        length_of_row_above = len(self.document_lines[cursor_row - 1])
+        target_row = cursor_row if cursor_column != 0 else cursor_row - 1
+        target_column = cursor_column - 1 if cursor_column != 0 else length_of_row_above
+        return target_row, target_column
+
+    def _fix_direction(
+        self, start: tuple[int, int], end: tuple[int, int]
+    ) -> tuple[tuple[int, int], tuple[int, int]]:
+        """Given a range, return a new range (x, y) such that x <= y which covers the same characters."""
+        if start > end:
+            return end, start
+        return start, end
 
     def action_cursor_right(self) -> None:
         """Move the cursor one position to the right.
@@ -783,6 +805,9 @@ TextEditor > .text-editor--selection {
     @property
     def active_line_text(self) -> str:
         # TODO - consider empty documents
+        log.error(self.selection)
+        log.error(self.selection.end)
+        log.error(self.selection.end[0])
         return self.document_lines[self.selection.end[0]]
 
     def get_column_cell_width(self, row: int, column: int) -> int:
@@ -1161,34 +1186,34 @@ def traverse_tree(cursor):
                 retracing = False
 
 
-if __name__ == "__main__":
-    language = Language(LANGUAGES_PATH.resolve(), "python")
-    parser = Parser()
-    parser.set_language(language)
-
-    CODE = """\
-    from textual.app import App
-
-
-    class ScreenApp(App):
-        def on_mount(self) -> None:
-            self.screen.styles.background = "darkblue"
-            self.screen.styles.border = ("heavy", "white")
-
-
-    if __name__ == "__main__":
-        app = ScreenApp()
-        app.run()
-    """
-
-    document_lines = CODE.splitlines(keepends=False)
-
-    def read_callable(byte_offset, point):
-        row, column = point
-        if row >= len(document_lines) or column >= len(document_lines[row]):
-            return None
-        return document_lines[row][column:].encode("utf8")
-
-    tree = parser.parse(bytes(CODE, "utf-8"))
-
-    print(list(traverse_tree(tree.walk())))
+# if __name__ == "__main__":
+#     language = Language(LANGUAGES_PATH.resolve(), "python")
+#     parser = Parser()
+#     parser.set_language(language)
+#
+#     CODE = """\
+#     from textual.app import App
+#
+#
+#     class ScreenApp(App):
+#         def on_mount(self) -> None:
+#             self.screen.styles.background = "darkblue"
+#             self.screen.styles.border = ("heavy", "white")
+#
+#
+#     if __name__ == "__main__":
+#         app = ScreenApp()
+#         app.run()
+#     """
+#
+#     document_lines = CODE.splitlines(keepends=False)
+#
+#     def read_callable(byte_offset, point):
+#         row, column = point
+#         if row >= len(document_lines) or column >= len(document_lines[row]):
+#             return None
+#         return document_lines[row][column:].encode("utf8")
+#
+#     tree = parser.parse(bytes(CODE, "utf-8"))
+#
+#     print(list(traverse_tree(tree.walk())))
