@@ -168,7 +168,9 @@ TextEditor > .text-editor--selection {
     BINDINGS = [
         # Cursor movement
         Binding("up", "cursor_up", "cursor up", show=False),
+        Binding("shift+up", "cursor_up_select", "cursor up select", show=False),
         Binding("down", "cursor_down", "cursor down", show=False),
+        Binding("shift+down", "cursor_down_select", "cursor down select", show=False),
         Binding("left", "cursor_left", "cursor left", show=False),
         Binding("shift+left", "cursor_left_select", "cursor left select", show=False),
         Binding("ctrl+left", "cursor_left_word", "cursor left word", show=False),
@@ -578,11 +580,7 @@ TextEditor > .text-editor--selection {
         event.stop()
 
     def cell_width_to_column_index(self, cell_width: int, row_index: int) -> int:
-        """Given a row index and a cell width, return the column that the cell width
-        corresponds to."""
-
-        # TODO - this code can be reused in on_click. I think it might actually be slightly
-        #  off, so double check it when writing tests.
+        """Return the column that the cell width corresponds to on the given row."""
         total_cell_offset = 0
         line = self.document_lines[row_index]
         for column_index, character in enumerate(line):
@@ -592,20 +590,8 @@ TextEditor > .text-editor--selection {
                 return column_index
         return len(line)
 
-    # --- Reactive watchers and validators
-    def validate_cursor_position(
-        self, new_position: tuple[int, int]
-    ) -> tuple[int, int]:
-        new_row, new_column = new_position
-        clamped_row = clamp(new_row, 0, len(self.document_lines) - 1)
-        clamped_column = clamp(new_column, 0, len(self.document_lines[clamped_row]))
-        return clamped_row, clamped_column
-
     def watch_selection(self) -> None:
         self.scroll_cursor_visible()
-
-    def watch_virtual_size(self, vs):
-        log.debug(f"new virtual_size = {vs!r}")
 
     # --- Cursor utilities
     def scroll_cursor_visible(self):
@@ -649,15 +635,37 @@ TextEditor > .text-editor--selection {
         """True if the cursor is at the very end of the document."""
         return self.cursor_at_last_row and self.cursor_at_end_of_row
 
-    def cursor_to_line_end(self) -> None:
-        cursor_row, cursor_column = self.selection.end
+    def cursor_to_line_end(self, select: bool = False) -> None:
+        """Move the cursor to the end of the line.
+
+        Args:
+            select: Select the text between the old and new cursor locations.
+        """
+
+        start, end = self.selection
+        cursor_row, cursor_column = end
         target_column = len(self.document_lines[cursor_row])
-        self.selection = Selection.cursor((cursor_row, target_column))
+
+        if select:
+            self.selection = Selection(start, target_column)
+        else:
+            self.selection = Selection.cursor((cursor_row, target_column))
+
         self._record_last_intentional_cell_width()
 
-    def cursor_to_line_start(self) -> None:
-        cursor_row, cursor_column = self.selection.end
-        self.selection = Selection.cursor((cursor_row, 0))
+    def cursor_to_line_start(self, select: bool = False) -> None:
+        """Move the cursor to the start of the line.
+
+        Args:
+            select: Select the text between the old and new cursor locations.
+        """
+        start, end = self.selection
+        cursor_row, cursor_column = end
+        if select:
+            self.selection = Selection(start, (cursor_row, 0))
+        else:
+            self.selection = Selection.cursor((cursor_row, 0))
+            print(f"new selection = {self.selection}")
 
     # ------ Cursor movement actions
     def action_cursor_left(self) -> None:
@@ -700,8 +708,8 @@ TextEditor > .text-editor--selection {
         if self.cursor_at_end_of_document:
             return
 
-        target_row, target_column = self.get_cursor_right_position()
-        self.selection = Selection.cursor((target_row, target_column))
+        target = self.get_cursor_right_position()
+        self.selection = Selection.cursor(target)
         self._record_last_intentional_cell_width()
 
     def action_cursor_right_select(self):
@@ -709,7 +717,7 @@ TextEditor > .text-editor--selection {
 
         This will expand or contract the selection.
         """
-        if self.cursor_at_start_of_document:
+        if self.cursor_at_end_of_document:
             return
         new_cursor_position = self.get_cursor_right_position()
         selection_start, selection_end = self.selection
@@ -728,34 +736,50 @@ TextEditor > .text-editor--selection {
         if self.cursor_at_last_row:
             self.cursor_to_line_end()
 
+        target = self.get_cursor_down_position()
+        self.selection = Selection.cursor(target)
+
+    def action_cursor_down_select(self) -> None:
+        """Move the cursor down one cell, selecting the range between the old and new positions."""
+        if self.cursor_at_last_row:
+            self.cursor_to_line_end(select=True)
+        target = self.get_cursor_down_position()
+        start, end = self.selection
+        self.selection = Selection(start, target)
+
+    def get_cursor_down_position(self):
+        """Get the position the cursor will move to if it moves down."""
         cursor_row, cursor_column = self.selection.end
-
         target_row = min(len(self.document_lines) - 1, cursor_row + 1)
-
         # Attempt to snap last intentional cell length
         target_column = self.cell_width_to_column_index(
             self._last_intentional_cell_width, target_row
         )
         target_column = clamp(target_column, 0, len(self.document_lines[target_row]))
-
-        self.selection = Selection.cursor((target_row, target_column))
+        return target_row, target_column
 
     def action_cursor_up(self) -> None:
         """Move the cursor up one cell."""
+        target = self.get_cursor_up_position()
+        self.selection = Selection.cursor(target)
+
+    def action_cursor_up_select(self) -> None:
+        """Move the cursor up one cell, selecting the range between the old and new positions."""
+        target = self.get_cursor_up_position()
+        start, end = self.selection
+        self.selection = Selection(start, target)
+
+    def get_cursor_up_position(self) -> tuple[int, int]:
         if self.cursor_at_first_row:
-            self.cursor_to_line_start()
-
+            return 0, 0
         cursor_row, cursor_column = self.selection.end
-
         target_row = max(0, cursor_row - 1)
-
         # Attempt to snap last intentional cell length
         target_column = self.cell_width_to_column_index(
             self._last_intentional_cell_width, target_row
         )
         target_column = clamp(target_column, 0, len(self.document_lines[target_row]))
-
-        self.selection = Selection.cursor((target_row, target_column))
+        return target_row, target_column
 
     def action_cursor_line_end(self) -> None:
         self.cursor_to_line_end()
