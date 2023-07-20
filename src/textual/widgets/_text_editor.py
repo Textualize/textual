@@ -674,8 +674,6 @@ TextEditor > .text-editor--selection {
         If the cursor is at the left edge of the document, try to move it to
         the end of the previous line.
         """
-        if self.cursor_at_start_of_document:
-            return
         target_row, target_column = self.get_cursor_left_position()
         self.selection = Selection.cursor((target_row, target_column))
         self._record_last_intentional_cell_width()
@@ -685,15 +683,15 @@ TextEditor > .text-editor--selection {
 
         This will expand or contract the selection.
         """
-        if self.cursor_at_start_of_document:
-            return
         new_cursor_position = self.get_cursor_left_position()
         selection_start, selection_end = self.selection
         self.selection = Selection(selection_start, new_cursor_position)
         self._record_last_intentional_cell_width()
 
-    def get_cursor_left_position(self):
+    def get_cursor_left_position(self) -> tuple[int, int]:
         """Get the position the cursor will move to if it moves left."""
+        if self.cursor_at_start_of_document:
+            return 0, 0
         cursor_row, cursor_column = self.selection.end
         length_of_row_above = len(self.document_lines[cursor_row - 1])
         target_row = cursor_row if cursor_column != 0 else cursor_row - 1
@@ -705,9 +703,6 @@ TextEditor > .text-editor--selection {
 
         If the cursor is at the end of a line, attempt to go to the start of the next line.
         """
-        if self.cursor_at_end_of_document:
-            return
-
         target = self.get_cursor_right_position()
         self.selection = Selection.cursor(target)
         self._record_last_intentional_cell_width()
@@ -717,8 +712,6 @@ TextEditor > .text-editor--selection {
 
         This will expand or contract the selection.
         """
-        if self.cursor_at_end_of_document:
-            return
         new_cursor_position = self.get_cursor_right_position()
         selection_start, selection_end = self.selection
         self.selection = Selection(selection_start, new_cursor_position)
@@ -726,6 +719,8 @@ TextEditor > .text-editor--selection {
 
     def get_cursor_right_position(self) -> tuple[int, int]:
         """Get the position the cursor will move to if it moves right."""
+        if self.cursor_at_end_of_document:
+            return self.selection.end
         cursor_row, cursor_column = self.selection.end
         target_row = cursor_row + 1 if self.cursor_at_end_of_row else cursor_row
         target_column = 0 if self.cursor_at_end_of_row else cursor_column + 1
@@ -733,16 +728,11 @@ TextEditor > .text-editor--selection {
 
     def action_cursor_down(self) -> None:
         """Move the cursor down one cell."""
-        if self.cursor_at_last_row:
-            self.cursor_to_line_end()
-
         target = self.get_cursor_down_position()
         self.selection = Selection.cursor(target)
 
     def action_cursor_down_select(self) -> None:
         """Move the cursor down one cell, selecting the range between the old and new positions."""
-        if self.cursor_at_last_row:
-            self.cursor_to_line_end(select=True)
         target = self.get_cursor_down_position()
         start, end = self.selection
         self.selection = Selection(start, target)
@@ -750,6 +740,9 @@ TextEditor > .text-editor--selection {
     def get_cursor_down_position(self):
         """Get the position the cursor will move to if it moves down."""
         cursor_row, cursor_column = self.selection.end
+        if self.cursor_at_last_row:
+            return cursor_row, len(self.document_lines[cursor_row])
+
         target_row = min(len(self.document_lines) - 1, cursor_row + 1)
         # Attempt to snap last intentional cell length
         target_column = self.cell_width_to_column_index(
@@ -842,9 +835,6 @@ TextEditor > .text-editor--selection {
     @property
     def active_line_text(self) -> str:
         # TODO - consider empty documents
-        log.error(self.selection)
-        log.error(self.selection.end)
-        log.error(self.selection.end[0])
         return self.document_lines[self.selection.end[0]]
 
     def get_column_cell_width(self, row: int, column: int) -> int:
