@@ -55,6 +55,14 @@ class Option:
         """The prompt for the option."""
         return self.__prompt
 
+    def set_prompt(self, prompt: RenderableType) -> None:
+        """Set the prompt for the option.
+
+        Args:
+            prompt: The new prompt for the option.
+        """
+        self.__prompt = prompt
+
     @property
     def id(self) -> str | None:
         """The optional ID for the option."""
@@ -641,6 +649,65 @@ class OptionList(ScrollView, can_focus=True):
         """
         try:
             self._remove_option(index)
+        except IndexError:
+            raise OptionDoesNotExist(
+                f"There is no option with an index of {index}"
+            ) from None
+        return self
+
+    def _replace_option_prompt(self, index: int, prompt: RenderableType) -> None:
+        """Replace the prompt of an option in the list.
+
+        Args:
+            index: The index of the option to replace the prompt of.
+            prompt: The new prompt for the option.
+
+        Raises:
+            IndexError: If there is no option of the given index.
+        """
+        option = self._options[index]
+        option.set_prompt(prompt)
+        self._refresh_content_tracking(force=True)
+        self.refresh()
+
+    def replace_option_prompt(self, option_id: str, prompt: RenderableType) -> Self:
+        """Replace the prompt of the option with the given ID.
+
+        Args:
+            option_id: The ID of the option to replace the prompt of.
+            prompt: The new prompt for the option.
+
+        Returns:
+            The `OptionList` instance.
+
+        Raises:
+            OptionDoesNotExist: If no option has the given ID.
+        """
+        try:
+            self._replace_option_prompt(self._option_ids[option_id], prompt)
+        except KeyError:
+            raise OptionDoesNotExist(
+                f"There is no option with an ID of '{option_id}'"
+            ) from None
+        return self
+
+    def replace_option_prompt_at_index(
+        self, index: int, prompt: RenderableType
+    ) -> Self:
+        """Replace the prompt of the option at the given index.
+
+        Args:
+            index: The index of the option to replace the prompt of.
+            prompt: The new prompt for the option.
+
+        Returns:
+            The `OptionList` instance.
+
+        Raises:
+            OptionDoesNotExist: If there is no option with the given index.
+        """
+        try:
+            self._replace_option_prompt(index, prompt)
         except IndexError:
             raise OptionDoesNotExist(
                 f"There is no option with an index of {index}"
