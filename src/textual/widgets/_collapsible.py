@@ -19,6 +19,10 @@ class CollapseToggle(Horizontal):
         height: auto;
     }
 
+    CollapseToggle:hover {
+        background: grey;
+    }
+
     CollapseToggle .label {
         padding: 0 0 0 1;
     }
