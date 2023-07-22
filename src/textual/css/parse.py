@@ -287,6 +287,8 @@ def substitute_references(
                     variables.setdefault(variable_name, []).append(token)
                     yield token
                 elif token.name == "variable_value_end":
+                    # in case of an empty variable, avoid not referenced error
+                    variables.setdefault(variable_name, [])
                     yield token
                     break
                 # For variables referring to other variables
