@@ -10,7 +10,7 @@ unit-test:
 
 .PHONY: test-snapshot-update
 test-snapshot-update:
-	$(run) pytest --cov-report term-missing --cov=textual tests/ -vv --snapshot-update
+	$(run) pytest --cov-report term-missing --cov=textual tests/ -vv --snapshot-update $(PYTEST_ARGS)
 
 .PHONY: typecheck
 typecheck:

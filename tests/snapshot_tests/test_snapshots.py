@@ -590,10 +590,11 @@ def test_notifications_through_screens(snap_compare) -> None:
 def test_notifications_through_modes(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "notification_through_modes.py")
 
-
 def test_print_capture(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "capture_print.py")
 
-
 def test_text_log_blank_write(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "text_log_blank_write.py")
+
+def test_digit_display(snap_compare) -> None:
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "digit_display.py")

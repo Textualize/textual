@@ -40,6 +40,7 @@ if typing.TYPE_CHECKING:
     from ._tooltip import Tooltip
     from ._tree import Tree
     from ._welcome import Welcome
+    from ._digit_display import DigitDisplay
 
 
 __all__ = [
@@ -76,6 +77,7 @@ __all__ = [
     "Tooltip",
     "Tree",
     "Welcome",
+    "DigitDisplay",
 ]
 
 _WIDGETS_LAZY_LOADING_CACHE: dict[str, type[Widget]] = {}
