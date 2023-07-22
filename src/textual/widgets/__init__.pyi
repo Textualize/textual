@@ -32,3 +32,4 @@ from ._text_log import TextLog as TextLog
 from ._tooltip import Tooltip as Tooltip
 from ._tree import Tree as Tree
 from ._welcome import Welcome as Welcome
+from ._collapsible import Collapsible as Collapsible
