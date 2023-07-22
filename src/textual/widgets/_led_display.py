@@ -69,8 +69,8 @@ _character_map[
     "7"
 ] = """
 ╺━┓
-  ┃
   ╹
+ ╹·
 """
 
 _character_map[
@@ -375,7 +375,7 @@ _character_map[
 """
 
 _character_map[
-    "R"
+    "r"
 ] = """
 ··
 ┢━
@@ -690,6 +690,30 @@ _character_map[
 ] = """
 ╋╋
 ╋╋
+···
+"""
+
+_character_map[
+    "%"
+] = """
+•·╻
+·╻·
+╹·•
+"""
+
+_character_map[
+    "_"
+] = """
+···
+···
+╺━╸
+"""
+
+_character_map[
+    "^"
+] = """
+·╻·
+╻·╻
 ···
 """
 
