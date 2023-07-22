@@ -146,6 +146,56 @@ class DirectoryTree(Tree[DirEntry]):
         # loading up.
         self._add_to_load_queue(self.root)
 
+    def clear_subtree(self, node: TreeNode[DirEntry]) -> DirectoryTree:
+        """Clear all nodes under the given node.
+
+        Returns:
+            The `Tree` instance (the subtree below the node).
+        """
+        self._line_cache.clear()
+        self._tree_lines_cached = None
+        node_label = node._label
+        node_data = node.data
+        node = TreeNode(
+            self,
+            None,
+            self._new_id(),
+            node_label,
+            node_data,
+            expanded=True,
+        )
+        self._updates += 1
+        self.refresh()
+        return self
+
+    def reset_subtree(
+        self, node: TreeNode[DirEntry], label: TextType, data: DirEntry | None = None
+    ) -> DirectoryTree:
+        """Clear the subtree and reset the given node.
+
+        Args:
+            label: The label for the node.
+            data: Optional data for the node.
+
+        Returns:
+            The `Tree` instance (the subtree below the node).
+        """
+        self.clear_subtree(node)
+        node.label = label
+        node.data = data
+        return self
+
+    def reload_node(self, node: TreeNode[DirEntry]) -> None:
+        """Reload the given node's contents.
+
+        Args:
+            node: The node to reload.
+        """
+        self.reset_subtree(
+            node, str(node.data.path.name), DirEntry(self.PATH(node.data.path))
+        )
+        self._add_to_load_queue(node)
+
     def validate_path(self, path: str | Path) -> Path:
         """Ensure that the path is of the `Path` type.
 
