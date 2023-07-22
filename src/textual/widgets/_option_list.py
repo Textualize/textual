@@ -665,8 +665,7 @@ class OptionList(ScrollView, can_focus=True):
         Raises:
             IndexError: If there is no option of the given index.
         """
-        option = self._options[index]
-        option.set_prompt(prompt)
+        self.get_option_at_index(index).set_prompt(prompt)
         self._refresh_content_tracking(force=True)
         self.refresh()
 
