@@ -435,10 +435,10 @@ class MouseEvent(InputEvent, bubble=True):
 
 
 @rich.repr.auto
-class MouseMove(MouseEvent, bubble=False, verbose=True):
+class MouseMove(MouseEvent, bubble=True, verbose=True):
     """Sent when the mouse cursor moves.
 
-    - [ ] Bubbles
+    - [X] Bubbles
     - [X] Verbose
     """
 

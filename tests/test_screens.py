@@ -4,7 +4,9 @@ import threading
 
 import pytest
 
-from textual.app import App, ScreenStackError
+from textual.app import App, ScreenStackError, ComposeResult
+from textual.events import MouseMove
+from textual.geometry import Offset
 from textual.screen import Screen
 from textual.widgets import Button, Input, Label
 
@@ -350,3 +352,59 @@ async def test_switch_screen_updates_results_callback_stack():
         app.switch_screen("b")
         assert len(app.screen._result_callbacks) == 1
         assert app.screen._result_callbacks[-1].callback is None
+
+
+async def test_screen_receives_mouse_move_events():
+    class MouseMoveRecordingScreen(Screen):
+        mouse_events = []
+
+        def on_mouse_move(self, event: MouseMove) -> None:
+            MouseMoveRecordingScreen.mouse_events.append(event)
+
+    class SimpleApp(App[None]):
+        SCREENS = {"a": MouseMoveRecordingScreen()}
+
+        def on_mount(self):
+            self.push_screen("a")
+
+    mouse_offset = Offset(1, 1)
+
+    async with SimpleApp().run_test() as pilot:
+        await pilot.hover(None, mouse_offset)
+
+    assert len(MouseMoveRecordingScreen.mouse_events) == 1
+    mouse_event = MouseMoveRecordingScreen.mouse_events[0]
+    assert mouse_event.x, mouse_event.y == mouse_offset
+
+
+async def test_mouse_move_event_bubbles_to_screen_from_widget():
+    class MouseMoveRecordingScreen(Screen):
+        mouse_events = []
+
+        DEFAULT_CSS = """
+        Label {
+            offset: 10 10;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Label("Any label")
+
+        def on_mouse_move(self, event: MouseMove) -> None:
+            MouseMoveRecordingScreen.mouse_events.append(event)
+
+    class SimpleApp(App[None]):
+        SCREENS = {"a": MouseMoveRecordingScreen()}
+
+        def on_mount(self):
+            self.push_screen("a")
+
+    label_offset = Offset(10, 10)
+    mouse_offset = Offset(1, 1)
+
+    async with SimpleApp().run_test() as pilot:
+        await pilot.hover(Label, mouse_offset)
+
+    assert len(MouseMoveRecordingScreen.mouse_events) == 1
+    mouse_event = MouseMoveRecordingScreen.mouse_events[0]
+    assert mouse_event.x, mouse_event.y == (label_offset.x + mouse_offset.x, label_offset.y + mouse_offset.y)
