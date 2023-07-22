@@ -20,8 +20,8 @@ _character_map[
 _character_map[
     "1"
 ] = """
-_┓_
- ┃_
+·┓·
+ ┃·
 ╺┻╸
 """
 
@@ -92,9 +92,9 @@ _character_map[
 _character_map[
     " "
 ] = """
-___
-___
-___
+···
+···
+···
 """
 
 _character_map[
@@ -105,7 +105,13 @@ _character_map[
 ╹ ╹
 """
 
-_character_map["B"] = _character_map["8"]
+_character_map[
+    "a"
+] = """
+·_·
+╭━┫
+╰━┗
+"""
 
 _character_map[
     "B"
@@ -116,11 +122,27 @@ _character_map[
 """
 
 _character_map[
+    "b"
+] = """
+╻  
+┃━╮
+┗━╯
+"""
+
+_character_map[
     "C"
 ] = """
 ┏━╸
-┃__
+┃··
 ┗━╸
+"""
+
+_character_map[
+    "c"
+] = """
+···
+╭━·
+╰━·
 """
 
 _character_map[
@@ -131,6 +153,13 @@ _character_map[
 ┗━╯
 """
 
+_character_map[
+    "d"
+] = """
+··╻
+╭━┃
+╰━╯
+"""
 
 _character_map[
     "E"
@@ -141,11 +170,28 @@ _character_map[
 """
 
 _character_map[
+    "e"
+] = """
+·_·
+┢━·
+╰━·
+"""
+
+_character_map[
     "F"
 ] = """
 ┏━╸
 ┣━╸
-╹__
+╹··
+"""
+
+_character_map[
+    "f"
+] = """
+·┏·
+·┃┚
+┍┛·
+·┃·
 """
 
 _character_map[
@@ -157,6 +203,15 @@ _character_map[
 """
 
 _character_map[
+    "g"
+] = """
+···
+╭━╮
+╰━┫
+·━┛
+"""
+
+_character_map[
     "H"
 ] = """
 ╻ ╻
@@ -165,19 +220,44 @@ _character_map[
 """
 
 _character_map[
+    "h"
+] = """
+╻··
+┣━┓
+╹ ╹
+"""
+
+_character_map[
     "I"
 ] = """
-_╻_
-_┃_
-_╹_
+·┳·
+·┃·
+·┻·
+"""
+
+_character_map[
+    "i"
+] = """
+·•·
+·╻·
+·╹·
 """
 
 _character_map[
     "J"
 ] = """
 ╺┳╸
- ┃_
-╺┛_
+ ┃·
+╺┛·
+"""
+
+_character_map[
+    "j"
+] = """
+·•·
+·┳·
+·┃·
+·┛·
 """
 
 _character_map[
@@ -191,9 +271,17 @@ _character_map[
 _character_map[
     "L"
 ] = """
-╻__
-┃__
+╻··
+┃··
 ┗━╸
+"""
+
+_character_map[
+    "l"
+] = """
+·╻·
+·┃·
+·┛·
 """
 
 _character_map[
@@ -201,6 +289,14 @@ _character_map[
 ] = """
 ╻ ╻
 ┣┏┫
+╹ ╹
+"""
+
+_character_map[
+    "m"
+] = """
+···
+┣┏┓
 ╹ ╹
 """
 
@@ -213,6 +309,14 @@ _character_map[
 """
 
 _character_map[
+    "n"
+] = """
+···
+┃━┓
+╹ ╹
+"""
+
+_character_map[
     "O"
 ] = """
 ╭━╮
@@ -221,13 +325,29 @@ _character_map[
 """
 
 _character_map[
+    "o"
+] = """
+···
+╭━╮
+╰━╯
+"""
+
+_character_map[
     "P"
 ] = """
 ┏━┓
 ┣━┛
-╹__
+╹··
 """
 
+_character_map[
+    "p"
+] = """
+···
+┳━╮
+┣━╯
+╹··
+"""
 
 _character_map[
     "Q"
@@ -238,6 +358,15 @@ _character_map[
 """
 
 _character_map[
+    "q"
+] = """
+···
+╭━╮
+╰━┫
+··┖
+"""
+
+_character_map[
     "R"
 ] = """
 ┏━┓
@@ -245,14 +374,45 @@ _character_map[
 ╹ ╹
 """
 
-_character_map["S"] = _character_map["5"]
+_character_map[
+    "R"
+] = """
+··
+┢━
+╹ 
+"""
+
+
+_character_map[
+    "S"
+] = """
+┏━╸
+┗━┓
+╺━┛
+"""
+
+_character_map[
+    "s"
+] = """
+·_·
+┗━╮
+╺━╯
+"""
 
 _character_map[
     "T"
 ] = """
 ╺┳╸
- ┃_
- ╹_
+ ┃·
+ ╹·
+"""
+
+_character_map[
+    "t"
+] = """
+·╻·
+·╋·
+ ┛·
 """
 
 _character_map[
@@ -262,44 +422,93 @@ _character_map[
 ┃ ┃
 ┗━┛
 """
+_character_map[
+    "u"
+] = """
+···
+╻ ╻
+╰━┻
+"""
 
 _character_map[
     "V"
 ] = """
-╻ ╻
+···
 ┃ ┃
-_╹_
+·╹·
+"""
+
+_character_map[
+    "v"
+] = """
+···
+╻ ╻
+·╹·
 """
 
 _character_map[
     "W"
 ] = """
 ╻ ╻
-┃╻┃
-┗┻┛
+┃ ┃
+╹┻╹
+"""
+
+_character_map[
+    "w"
+] = """
+···
+╻ ╻
+╹┻╹
 """
 
 _character_map[
     "X"
 ] = """
 ╻ ╻
-_╻_
+·╻·
 ╹ ╹
+"""
+
+_character_map[
+    "x"
+] = """
+···
+╻ ╻
+_┻_
 """
 
 _character_map[
     "Y"
 ] = """
 ╻ ╻
-_╻_
-_╹_
+·╻·
+·╹·
 """
+
+_character_map[
+    "y"
+] = """
+···
+╻ ╻
+·╻·
+╹··
+"""
+
 
 _character_map[
     "Z"
 ] = """
 ╺━┓
-_╻_
+·╻·
+┗━╸
+"""
+
+_character_map[
+    "z"
+] = """
+__·
+·╻·
 ┗━╸
 """
 
@@ -307,8 +516,8 @@ _╻_
 _character_map[
     "."
 ] = """
-_
-_
+·
+·
 ╸
 """
 
@@ -316,31 +525,31 @@ _
 _character_map[
     ","
 ] = """
-_
-_
+·
+·
 ╹
 """
 
 _character_map[
     "+"
 ] = """
-___
+···
 ╺╋╸
-___
+···
 """
 
 _character_map[
     "-"
 ] = """
-___
+···
 ╺━╸
-___
+···
 """
 
 _character_map[
     "="
 ] = """
-___
+···
 ╺━╸
 ╺━╸
 """
@@ -350,33 +559,33 @@ _character_map["*"] = _character_map["X"]
 _character_map[
     "/"
 ] = """
-__╻
-_╻_
-╹__
+··╻
+·╻·
+╹··
 """
 
 _character_map[
     "!"
 ] = """
-_╻_
-_╹_
-_╹_
+·╻·
+·╹·
+·•·
 """
 
 _character_map[
     "?"
 ] = """
 ┏━┓
-_╺┛
-_╹_
+·┏┛
+·•·
 """
 
 _character_map[
     "'"
 ] = """
 ╻
-_
-_
+·
+·
 """
 
 
@@ -384,88 +593,88 @@ _character_map[
     '"'
 ] = """
 ╻╻
-__
-__
+··
+··
 """
 
 _character_map[
     ":"
 ] = """
-_
-╹
-╹
+··
+·•
+·•
 """
 
 _character_map[
     ";"
 ] = """
-_
+·
+•
 ╹
-╸
 """
 
 _character_map[
     "("
 ] = """
-__╸
-_┃_
-__╸
+··╸
+·┃·
+··╸
 """
 
 _character_map[
     ")"
 ] = """
-_╺_
-__┃
-_╺_
+·╺·
+··┃
+·╺·
 """
 
 _character_map[
     "["
 ] = """
-_┏╸
-_┃_
-_┗╸
+·┏╸
+·┃·
+·┗╸
 """
 
 _character_map[
     "]"
 ] = """
 ╺┓
-_┃
+·┃
 ╺┛
 """
 
 _character_map[
     "{"
 ] = """
-_┏╸
-_┫_
-_┗╸
+·┏╸
+·┫·
+·┗╸
 """
 
 _character_map[
     "}"
 ] = """
 ╺┓
-_┣
+·┣
 ╺┛
 """
 
 _character_map[
     "<"
 ] = """
-__╸
-_╸_
-__╸
+··╸
+·╸·
+··╸
 """
 
 _character_map[
     ">"
 ] = """
-╺__
-_╺_
-╺__
+╺··
+·╺·
+╺··
 """
 
 _character_map[
@@ -473,7 +682,7 @@ _character_map[
 ] = """
 ╭━╮
 ╹╹┛
-╰━_
+╰━·
 """
 
 _character_map[
@@ -481,12 +690,12 @@ _character_map[
 ] = """
 ╋╋
 ╋╋
-___
+···
 """
 
 
 # here we strip spaces and replace underscores with spaces
-_character_map = {k: v.strip().replace("_", " ") for k, v in _character_map.items()}
+_character_map = {k: v.strip().replace("·", " ") for k, v in _character_map.items()}
 
 
 class SingleDigitDisplay(Static):
@@ -494,20 +703,26 @@ class SingleDigitDisplay(Static):
 
     DEFAULT_CSS = """
         SingleDigitDisplay {
-          height: 3;
+          height: 4;
+          min-width: 2;
           max-width: 3;
         }
     """
 
-    def __init__(self, initial_value=" ", **kwargs):
+    def __init__(self, initial_value=" ", always_upper=False, **kwargs):
         super().__init__(**kwargs)
+        self.always_upper = always_upper
         self.digit = initial_value
 
     def watch_digit(self, digit: str) -> None:
         """Called when the digit attribute changes."""
         if len(digit) > 1:
             raise ValueError(f"Expected a single character, got {len(digit)}")
-        self.update(_character_map[digit.upper()])
+        if self.always_upper or (
+            digit not in _character_map and digit.upper() in _character_map
+        ):
+            digit = digit.upper()
+        self.update(_character_map[digit])
 
 
 class LedDisplay(Widget):
