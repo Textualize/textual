@@ -663,7 +663,7 @@ class OptionList(ScrollView, can_focus=True):
             prompt: The new prompt for the option.
 
         Raises:
-            IndexError: If there is no option of the given index.
+            OptionDoesNotExist: If there is no option with the given index.
         """
         self.get_option_at_index(index).set_prompt(prompt)
         self._refresh_content_tracking(force=True)
@@ -678,6 +678,9 @@ class OptionList(ScrollView, can_focus=True):
 
         Returns:
             The `OptionList` instance.
+
+        Raises:
+            OptionDoesNotExist: If no option has the given ID.
         """
         self._replace_option_prompt(self.get_option_index(option_id), prompt)
         return self
@@ -814,7 +817,7 @@ class OptionList(ScrollView, can_focus=True):
             The option at that index.
 
         Raises:
-            OptionDoesNotExist: If there is no option with the index.
+            OptionDoesNotExist: If there is no option with the given index.
         """
         try:
             return self._options[index]
@@ -853,7 +856,7 @@ class OptionList(ScrollView, can_focus=True):
         """
         try:
             return self._option_ids[option_id]
-        except:
+        except KeyError:
             raise OptionDoesNotExist(
                 f"There is no option with an ID of '{option_id}'"
             ) from None
