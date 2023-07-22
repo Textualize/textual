@@ -1,14 +1,16 @@
 from __future__ import annotations
 
 from textual.widget import Widget
-from ..widget import Widget
-from ..message import Message
+
 from .. import events, on
-from ._label import Label
-from ..containers import Horizontal
 from ..app import ComposeResult
+from ..containers import Horizontal
+from ..message import Message
+from ..widget import Widget
+from ._label import Label
 
 __all__ = ["Collapsible"]
+
 
 class CollapseToggle(Horizontal):
     DEFAULT_CSS = """
@@ -34,22 +36,25 @@ class CollapseToggle(Horizontal):
     }
 
     """
-    def __init__(self,
-                 *,
-                 collapsed_icon: str = "►",
-                 expanded_icon: str = "▼",
-                 label: str = "Toggle",
-                 collapsed: bool = True,
-                 name: str | None = None,
-                 id: str | None = None,
-                 classes: str | None = None,
-                 disabled: bool = False) -> None:
+
+    def __init__(
+        self,
+        *,
+        collapsed_label: str = "►",
+        expanded_label: str = "▼",
+        label: str = "Toggle",
+        collapsed: bool = True,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+        disabled: bool = False,
+    ) -> None:
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self.label = label
-        self.collapsed_icon = collapsed_icon
-        self.expanded_icon = expanded_icon
+        self.collapsed_label = collapsed_label
+        self.expanded_label = expanded_label
         self.collapsed = collapsed
-        self.set_class(self.collapsed, '-collapsed')
+        self.set_class(self.collapsed, "-collapsed")
 
     class Toggle(Message):
         """Request toggle."""
@@ -57,25 +62,26 @@ class CollapseToggle(Horizontal):
     async def _on_click(self, event: events.Click) -> None:
         """Inform ancestor we want to toggle."""
         self.collapsed = not self.collapsed
-        self.set_class(self.collapsed, '-collapsed')
+        self.set_class(self.collapsed, "-collapsed")
         self.post_message(self.Toggle())
 
     def compose(self) -> ComposeResult:
         """Compose right/down arrow and label."""
-        yield Label(self.expanded_icon, classes="label expanded-label")
-        yield Label(self.collapsed_icon, classes="label collapsed-label")
-        yield Label(self.label, classes='label')
+        yield Label(self.expanded_label, classes="label expanded-label")
+        yield Label(self.collapsed_label, classes="label collapsed-label")
+        yield Label(self.label, classes="label")
 
 
 class Collapsible(Widget):
     """A collapsible container."""
+
     # TODO: Adjust gap between contents.
     # TODO: Wrap contents within one container.
     # TODO: Expose `collapsed` as a reactivity handle if needed.
 
     def __init__(
         self,
-        *,
+        *children: Widget,
         summary: str = "Toggle",
         collapsed: bool = True,
         name: str | None = None,
@@ -94,7 +100,7 @@ class Collapsible(Widget):
             disabled: Whether the collapsible is disabled or not.
         """
         self._summary = CollapseToggle(label=summary, collapsed=collapsed)
-        self._contents: list[Widget] = []
+        self._contents: list[Widget] = list(children)
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
     @on(CollapseToggle.Toggle)
