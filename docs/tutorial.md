@@ -351,7 +351,7 @@ A recurring theme in Textual is that you rarely need to explicitly update a widg
 
 You can declare a reactive attribute with [reactive][textual.reactive.reactive]. Let's use this feature to create a timer that displays elapsed time and keeps it updated.
 
-```python title="stopwatch05.py" hl_lines="1 5 12-27"
+```python title="stopwatch05.py" hl_lines="1 5 12-27 45"
 --8<-- "docs/examples/tutorial/stopwatch05.py"
 ```
 
@@ -373,6 +373,8 @@ The `on_mount` method is an event handler called when the widget is first added 
 If you implement a method that begins with `watch_` followed by the name of a reactive attribute (making it a _watch method_), that method will be called when the attribute is modified.
 
 Because `watch_time` watches the `time` attribute, when we update `self.time` 60 times a second we also implicitly call `watch_time` which converts the elapsed time in to a string and updates the widget with a call to `self.update`.
+
+Now the initial value of the `TimeDisplay` widget no longer needs to be declared when creating the widget since it will be written by the `self.update` method that is called by `watch_time` on the first time when the widget is added (or _mounted_).
 
 The end result is that the `Stopwatch` widgets show the time elapsed since the widget was created:
 
