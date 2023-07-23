@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added the ability to run async methods as thread workers https://github.com/Textualize/textual/pull/2938
 - Added `App.stop_animation` https://github.com/Textualize/textual/issues/2786
 - Added `Widget.stop_animation` https://github.com/Textualize/textual/issues/2786
+- Added DigitDisplay widget https://github.com/Textualize/textual/pull/2995
 
 ### Changed
 

@@ -52,6 +52,15 @@ A powerful data table, with configurable cursors.
 ```{.textual path="docs/examples/widgets/data_table.py"}
 ```
 
+## DigitDisplay
+
+A widget to display digits and basic arithmetic operators using Unicode blocks.
+
+[DigitDisplay reference](./widgets/digit_display.md){ .md-button .md-button--primary }
+
+```{.textual path="docs/examples/widgets/digit_display.py"}
+```
+
 ## DirectoryTree
 
 A tree view of files and folders.

@@ -197,11 +197,11 @@ _character_map = {
 }
 
 
-class SingleDigitDisplay(Static):
+class _SingleDigitDisplay(Static):
     digit = reactive(" ", layout=True)
 
     DEFAULT_CSS = """
-        SingleDigitDisplay {
+        _SingleDigitDisplay {
           height: 3;
           min-width: 2;
           max-width: 3;
@@ -224,6 +224,8 @@ class DigitDisplay(Widget):
 
     digits = reactive("", layout=True)
 
+    supported_digits = frozenset(_character_map.keys())
+
     DEFAULT_CSS = """
     DigitDisplay {
         layout: horizontal;
@@ -233,7 +235,7 @@ class DigitDisplay(Widget):
 
     def __init__(self, initial_value="", **kwargs):
         super().__init__(**kwargs)
-        self._displays = [SingleDigitDisplay(d) for d in initial_value]
+        self._displays = [_SingleDigitDisplay(d) for d in initial_value]
         self.digits = initial_value
 
     def compose(self) -> ComposeResult:
@@ -241,7 +243,7 @@ class DigitDisplay(Widget):
             yield widget
 
     def _add_digit_widget(self, digit: str) -> None:
-        new_widget = SingleDigitDisplay(digit)
+        new_widget = _SingleDigitDisplay(digit)
         self._displays.append(new_widget)
         self.mount(new_widget)
 
