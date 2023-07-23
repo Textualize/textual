@@ -148,7 +148,7 @@ This works well if you are using an async API like `httpx`, but if your API does
     Threads are a form of concurrency supplied by your Operating System. Threads allow your code to run more than a single function simultaneously.
 
 You can create threads by setting `thread=True` on the `run_worker` method or the `work` decorator.
-The API for thread workers is identical to async workers, but there are a few differences you need to be aware of when writing threaded code.
+The API for thread workers is identical to async workers, but there are a few differences you need to be aware of when writing code for thread workers.
 
 The first difference is that you should avoid calling methods on your UI directly, or setting reactive variables.
 You can work around this with the [App.call_from_thread][textual.app.App.call_from_thread] method which schedules a call in the main thread.
@@ -162,12 +162,14 @@ The `urllib` module is not async aware, so we will need to use threads:
 --8<-- "docs/examples/guide/workers/weather05.py"
 ```
 
-Here the `update_weather` function doesn't have the `async` keyword, and the `work` decorator has a `thread=True` keyword argument; this will create a thread worker.
+In this example, the `update_weather` is not asynchronous (i.e. a regular function).
+The `@work` decorator has `thread=True` which makes it a thread worker.
 Note the use of [get_current_worker][textual.worker.get_current_worker] which the function uses to check if it has been cancelled or not.
 
 !!! important
 
-    Textual will raise an error if you add the `work` decorator to a non-async function, without `thread=True`.
+    Textual will raise an exception if you add the `work` decorator to a regular function without `thread=True`.
+
 
 #### Posting messages
 
