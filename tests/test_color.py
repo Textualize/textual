@@ -88,6 +88,34 @@ def test_color_blend():
 
 
 @pytest.mark.parametrize(
+    "start,destination,factor,expected",
+    [
+        (Color(255, 0, 0), Color(0, 0, 255), 0.0, Color(255, 0, 0)),
+        (Color(255, 0, 0), Color(0, 0, 255), 1.0, Color(0, 0, 255)),
+        (Color(255, 0, 0), Color(0, 0, 255), -1.0, Color(0, 0, 255)),
+        (Color(255, 0, 0), Color(0, 0, 255), 0.5, Color(0, 255, 0)),
+        (Color(255, 0, 0), Color(0, 0, 255), -0.5, Color(255, 0, 255)),
+        (Color(0, 0, 255), Color(0, 255, 0), 0.25, Color(255, 0, 255)),
+        (Color(0, 0, 255), Color(0, 255, 0), 0.75, Color(255, 255, 0)),
+        (Color(0, 255, 0), Color(0, 0, 255), -0.25, Color(255, 255, 0)),
+        (Color(0, 255, 0), Color(0, 0, 255), -0.75, Color(255, 0, 255)),
+        (Color(0, 0, 0), Color(255, 255, 255), 0.5, Color(128, 128, 128)),
+        (Color(0, 0, 0), Color(255, 255, 255), -0.5, Color(128, 128, 128)),
+        (Color(255, 255, 255), Color(0, 0, 0), -0.5, Color(128, 128, 128)),
+        (
+            Color(255, 0, 0, a=1.0),
+            Color(0, 0, 255, a=0.5),
+            0.5,
+            Color(0, 255, 0, a=0.75),
+        ),
+        (Color(128, 128, 128), Color(255, 0, 0), 0.5, Color(191, 64, 64)),
+    ],
+)
+def test_hsl_blend(start, destination, factor, expected):
+    assert start.hsl_blend(destination, factor) == expected
+
+
+@pytest.mark.parametrize(
     "text,expected",
     [
         ("#000000", Color(0, 0, 0, 1.0)),

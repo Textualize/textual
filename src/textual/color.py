@@ -385,6 +385,61 @@ class Color(NamedTuple):
             new_alpha,
         )
 
+    @lru_cache(maxsize=1024)
+    def hsl_blend(
+        self, destination: Color, factor: float, alpha: float | None = None
+    ) -> Color:
+        """Generate a new color between two colors in the HSL color space.
+
+        This method calculates a new color on a gradient using the HSL color space.
+        The position on the gradient is given by `factor`, which is a float between -1 and 1, where 0 is the original color, and 1 or -1 is the `destination` color.
+        A negative `factor` affects the direction of the hue angle, a positive number is in the clockwise direction, a negative number is in the counter-clockwise direction.
+        For lightess and saturation, only the absolute value of `factor` is used.
+        A value of `gradient` between the two extremes produces a color somewhere between the two end points.
+
+        Args:
+            destination: Another color.
+            factor: A blend factor, -1 -> 1.
+            alpha: New alpha for result.
+
+        Returns:
+            A new color.
+        """
+        abs_factor = factor if factor >= 0 else -1.0 * factor
+        if factor == 0:
+            return self
+        elif factor >= 1 or factor <= -1:
+            return destination
+
+        hsl_1 = self.hsl
+        a1 = self.a
+        hsl_2 = destination.hsl
+        a2 = destination.a
+
+        if alpha is None:
+            new_alpha = a1 + (a2 - a1) * abs_factor
+        else:
+            new_alpha = alpha
+
+        # When the factor is > 0, hue is clockwise, otherwise it is counter-clockwise.
+        if factor > 0:
+            if hsl_1.h <= hsl_2.h:
+                new_h = hsl_1.h + (hsl_2.h - hsl_1.h) * abs_factor
+            else:
+                new_h = hsl_1.h + (hsl_2.h + 1.0 - hsl_1.h) * abs_factor
+                new_h = new_h - 1.0 if new_h >= 1.0 else new_h
+        else:
+            if hsl_1.h >= hsl_2.h:
+                new_h = hsl_1.h + (hsl_2.h - hsl_1.h) * abs_factor
+            else:
+                new_h = (hsl_1.h + (hsl_2.h - 1.0 - hsl_1.h) * abs_factor)
+                new_h = new_h + 1.0 if new_h < 0.0 else new_h
+
+        new_s = hsl_1.s + (hsl_2.s - hsl_1.s) * abs_factor
+        new_l = hsl_1.l + (hsl_2.l - hsl_1.l) * abs_factor
+
+        return Color.from_hsl(new_h, new_s, new_l).with_alpha(new_alpha)
+
     def __add__(self, other: object) -> Color:
         if isinstance(other, Color):
             return self.blend(other, other.a, 1.0)
