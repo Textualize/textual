@@ -2,7 +2,6 @@ from textual.app import ComposeResult
 from textual.reactive import reactive
 from textual.widget import Widget
 from textual.widgets import Static
-from textual.containers import Horizontal, Vertical
 
 
 _character_map: dict[str, str] = {}
@@ -208,7 +207,7 @@ _character_map[
 ···
 ╭━╮
 ╰━┫
-·━┛
+·━╯
 """
 
 _character_map[
@@ -362,7 +361,7 @@ _character_map[
 ] = """
 ···
 ╭━╮
-╰━┫
+╰━╉
 ··┖
 """
 
@@ -466,7 +465,7 @@ _character_map[
     "X"
 ] = """
 ╻ ╻
-·╻·
+·┳·
 ╹ ╹
 """
 
@@ -474,8 +473,8 @@ _character_map[
     "x"
 ] = """
 ···
-╻ ╻
-_┻_
+╹┳╹
+╹·╹
 """
 
 _character_map[
@@ -492,7 +491,7 @@ _character_map[
 ···
 ╻ ╻
 ·╻·
-╹··
+··
 """
 
 
@@ -527,7 +526,7 @@ _character_map[
 ] = """
 ·
 ·
-╹
+▞
 """
 
 _character_map[
@@ -727,22 +726,27 @@ class SingleDigitDisplay(Static):
 
     DEFAULT_CSS = """
         SingleDigitDisplay {
-          height: 4;
+          height: 3;
           min-width: 2;
           max-width: 3;
         }
+        SingleDigitDisplay.allow_lower {
+          height: 4;
+        }
     """
 
-    def __init__(self, initial_value=" ", always_upper=False, **kwargs):
+    def __init__(self, initial_value=" ", allow_lower=False, **kwargs):
         super().__init__(**kwargs)
-        self.always_upper = always_upper
+        self.allow_lower = allow_lower
         self.digit = initial_value
+        if self.allow_lower:
+            self.add_class("allow_lower")
 
     def watch_digit(self, digit: str) -> None:
         """Called when the digit attribute changes."""
         if len(digit) > 1:
             raise ValueError(f"Expected a single character, got {len(digit)}")
-        if self.always_upper or (
+        if not self.allow_lower or (
             digit not in _character_map and digit.upper() in _character_map
         ):
             digit = digit.upper()
@@ -757,37 +761,51 @@ class LedDisplay(Widget):
     DEFAULT_CSS = """
     LedDisplay {
         layout: horizontal;
-        height: 5;
+        height: 3;
+    }
+    LedDisplay.allow_lower {
+        height: 4;
     }
     """
 
-    def __init__(self, initial_value="", **kwargs):
+    def __init__(self, initial_value="", allow_lower=False, **kwargs):
         super().__init__(**kwargs)
-        self._displays = [SingleDigitDisplay(d) for d in initial_value]
+        self.allow_lower = allow_lower
+        self._displays = [
+            SingleDigitDisplay(d, allow_lower=self.allow_lower) for d in initial_value
+        ]
         self.digits = initial_value
-        self.previous_digits = initial_value
+        if self.allow_lower:
+            self.add_class("allow_lower")
 
     def compose(self) -> ComposeResult:
         for led_display in self._displays:
             yield led_display
 
+    def _add_digit_widget(self, digit: str) -> None:
+        new_widget = SingleDigitDisplay(digit, allow_lower=self.allow_lower)
+        self._displays.append(new_widget)
+        self.mount(new_widget)
+
     def watch_digits(self, digits: str) -> None:
         """
         Called when the digits attribute changes.
-        Here we update the display widgets to match the number of digits.
+        Here we update the display widgets to match the input digits.
         """
         diff_digits_len = len(digits) - len(self._displays)
+
+        # Here we add or remove widgets to match the number of digits
         if diff_digits_len > 0:
-            # add new displays
             start = len(self._displays)
             for i in range(diff_digits_len):
-                new_widget = SingleDigitDisplay(digits[start + i])
-                self._displays.append(new_widget)
-                self.mount(new_widget)
+                self._add_digit_widget(digits[start + i])
         elif diff_digits_len < 0:
-            # remove displays
             for display in self._displays[diff_digits_len:]:
-                display.remove()
                 self._displays.remove(display)
+                display.remove()
+
+        # At this point, the number of widgets matches the number of digits, and we can
+        # update the contents of the widgets that might need it
         for i, d in enumerate(self.digits):
-            self._displays[i].digit = d
+            if self._displays[i].digit != d:
+                self._displays[i].digit = d
