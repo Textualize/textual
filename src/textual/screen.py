@@ -36,7 +36,6 @@ from .css.parse import parse_selectors
 from .css.query import NoMatches, QueryType
 from .dom import DOMNode
 from .geometry import Offset, Region, Size
-from .notifications import Notification, SeverityLevel
 from .reactive import Reactive
 from .renderables.background_screen import BackgroundScreen
 from .renderables.blank import Blank
