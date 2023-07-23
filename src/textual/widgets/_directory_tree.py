@@ -3,7 +3,10 @@ from __future__ import annotations
 from asyncio import Queue
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable, ClassVar, Iterable, Iterator
+from typing import TYPE_CHECKING, Callable, ClassVar, Iterable, Iterator
+
+if TYPE_CHECKING:
+    from typing_extensions import Self
 
 from rich.style import Style
 from rich.text import Text, TextType
@@ -146,7 +149,7 @@ class DirectoryTree(Tree[DirEntry]):
         # loading up.
         self._add_to_load_queue(self.root)
 
-    def clear_subtree(self, node: TreeNode[DirEntry]) -> DirectoryTree:
+    def clear_subtree(self, node: TreeNode[DirEntry]) -> Self:
         """Clear all nodes under the given node.
 
         Returns:
@@ -170,7 +173,7 @@ class DirectoryTree(Tree[DirEntry]):
 
     def reset_subtree(
         self, node: TreeNode[DirEntry], label: TextType, data: DirEntry | None = None
-    ) -> DirectoryTree:
+    ) -> Self:
         """Clear the subtree and reset the given node.
 
         Args:
