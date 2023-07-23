@@ -222,7 +222,7 @@ class _PrintCapture:
         self.stderr = stderr
 
     def write(self, text: str) -> None:
-        """Captured write.
+        """Called when writing to stdout or stderr.
 
         Args:
             text: Text that was "printed".
@@ -230,7 +230,7 @@ class _PrintCapture:
         self.app._print(text, stderr=self.stderr)
 
     def flush(self) -> None:
-        """Stdout or stderr was flushed."""
+        """Called when stdout or stderr was flushed."""
         self.app._flush(stderr=self.stderr)
 
     def isatty(self) -> bool:
