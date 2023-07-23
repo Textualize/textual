@@ -69,6 +69,8 @@ VALID_PSEUDO_CLASSES: Final = {
     "focus-within",
     "focus",
     "hover",
+    "first-child",
+    "last-child",
 }
 VALID_OVERLAY: Final = {"none", "screen"}
 VALID_CONSTRAIN: Final = {"x", "y", "both", "inflect", "none"}

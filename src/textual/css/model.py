@@ -88,14 +88,26 @@ class Selector:
         """
         return self._checks[self.type](node)
 
+    def _check_first_last_child(self, node: DOMNode) -> bool:
+        if "last-child" in self.pseudo_classes and node.parent.children[-1] == node:
+            return True
+
+        if "first-child" in self.pseudo_classes and node.parent.children[0] == node:
+            return True
+
     def _check_universal(self, node: DOMNode) -> bool:
         return node.has_pseudo_class(*self.pseudo_classes)
 
     def _check_type(self, node: DOMNode) -> bool:
         if self.name not in node._css_type_names:
             return False
+
+        if self._check_first_last_child(node):
+            return True
+
         if self.pseudo_classes and not node.has_pseudo_class(*self.pseudo_classes):
             return False
+
         return True
 
     def _check_class(self, node: DOMNode) -> bool:

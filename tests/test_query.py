@@ -196,6 +196,52 @@ def test_query_classes():
     assert len(app.query(".test")) == 0
 
 
+def test_query_last_child():
+    class App(Widget):
+        pass
+
+    class Child(Widget):
+        pass
+
+    CHILD_COUNT = 100
+
+    # Create a fake app to hold everything else.
+    app = App(id="app")
+
+    # Now spin up a bunch of children.
+    for n in range(CHILD_COUNT):
+        app._add_child(Child(id=f"child{n}"))
+
+    last_child = Child(id="last-one")
+    app._add_child(last_child)
+
+    assert list(app.query("Child:last-child")) == [last_child]
+
+
+def test_query_first_child():
+    class App(Widget):
+        pass
+
+    class Child(Widget):
+        pass
+
+    CHILD_COUNT = 100
+
+    # Create a fake app to hold everything else.
+    app = App(id="app")
+
+    first_child = Child(id="first-one")
+    app._add_child(first_child)
+
+    # Now spin up a bunch of children.
+    for n in range(CHILD_COUNT):
+        app._add_child(Child(id=f"child{n}"))
+
+    app._add_child(first_child)
+
+    assert list(app.query("Child:first-child")) == [first_child]
+
+
 def test_invalid_query():
     class App(Widget):
         pass
