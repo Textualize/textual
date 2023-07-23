@@ -16,7 +16,7 @@ class CaptureApp(App):
 
     def on_mount(self) -> None:
         self.query_one(TextLog).write("TextLog")
-        self.query_one(TextLog).capture_print()
+        self.query_one(TextLog).begin_capture_print()
         print("This will be captured!")
         self.query_one(TextLog).end_capture_print()
         print("This will *not* be captured")

@@ -1092,7 +1092,7 @@ class App(Generic[ReturnType], DOMNode):
             if (_stderr and stderr) or (_stdout and not stderr):
                 target.post_message(events.Print(text, stderr=stderr))
 
-    def capture_print(
+    def begin_capture_print(
         self, target: MessageTarget, stdout: bool = True, stderr: bool = True
     ) -> None:
         """Capture content that is printed (or written to stdout / stderr).

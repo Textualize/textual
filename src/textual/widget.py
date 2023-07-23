@@ -3128,7 +3128,7 @@ class Widget(DOMNode):
         """
         self.app.capture_mouse(None)
 
-    def capture_print(self, stdout: bool = True, stderr: bool = True) -> None:
+    def begin_capture_print(self, stdout: bool = True, stderr: bool = True) -> None:
         """Capture text from print statements (or writes to stdout / stderr).
 
         If printing is captured, the widget will be send an [events.Print][textual.events.Print] message.
@@ -3139,7 +3139,7 @@ class Widget(DOMNode):
             stdout: Capture stdout.
             stderr: Capture stderr.
         """
-        self.app.capture_print(self, stdout=stdout, stderr=stderr)
+        self.app.begin_capture_print(self, stdout=stdout, stderr=stderr)
 
     def end_capture_print(self) -> None:
         """End print capture (set with [capture_print][textual.widget.Widget.capture_print])."""
