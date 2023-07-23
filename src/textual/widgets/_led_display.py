@@ -303,7 +303,7 @@ _character_map[
     "N"
 ] = """
 ╻ ╻
-┃╺┫
+┃▚┃
 ╹ ╹
 """
 
@@ -524,9 +524,9 @@ _character_map[
 _character_map[
     ","
 ] = """
-·
-·
-▞
+··
+··
+·▞
 """
 
 _character_map[
@@ -549,11 +549,16 @@ _character_map[
     "="
 ] = """
 ···
-╺━╸
-╺━╸
+╺━·
+╺━·
 """
 
-_character_map["*"] = _character_map["X"]
+_character_map["*"] = """
+···
+·✱·
+···
+"""
+
 
 _character_map[
     "/"
