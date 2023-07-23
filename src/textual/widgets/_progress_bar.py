@@ -5,21 +5,46 @@ from __future__ import annotations
 from math import ceil
 from time import monotonic
 from typing import Callable, Optional
+from typing_extensions import Literal
 
 from rich.style import Style
 
 from .._types import UnusedParameter
 from ..app import ComposeResult, RenderResult
+from ..color import Color
 from ..containers import Horizontal
+from ..css._error_tools import friendly_list
 from ..geometry import clamp
 from ..reactive import reactive
 from ..renderables.bar import Bar as BarRenderable
+from ..renderables.bar import (
+    BarThickness,
+    _DEFAULT_BAR_THICKNESS,
+    _VALID_BAR_THICKNESSES,
+)
 from ..timer import Timer
 from ..widget import Widget
 from ..widgets import Label
 
 UNUSED = UnusedParameter()
 """Sentinel for method signatures."""
+
+
+BarColorScheme = Literal["default", "rainbow"]
+"""The names of the valid bar color schemes.
+
+These are the color schemes that can be used with a [`Bar`][textual.widgets.Bar].
+"""
+_VALID_BAR_COLOR_SCHEMES = {"default", "rainbow"}
+_DEFAULT_BAR_COLOR_SCHEME = "default"
+
+
+class InvalidBarColorScheme(Exception):
+    """Exception raised if an invalid bar color scheme is used."""
+
+
+class InvalidBarThickness(Exception):
+    """Exception raised if an invalid bar thickness is used."""
 
 
 class Bar(Widget, can_focus=False):
@@ -62,9 +87,15 @@ class Bar(Widget, can_focus=False):
     """The percentage of progress that has been completed."""
     _start_time: float | None
     """The time when the widget started tracking progress."""
+    color_scheme = reactive(_DEFAULT_BAR_COLOR_SCHEME)
+    """The color scheme of the bar."""
+    thickness = reactive(_DEFAULT_BAR_THICKNESS)
+    """The thickness of the bar."""
 
     def __init__(
         self,
+        color_scheme: BarColorScheme | None = None,
+        thickness: BarThickness | None = None,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -74,6 +105,26 @@ class Bar(Widget, can_focus=False):
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._start_time = None
         self._percentage = None
+        self.color_scheme = self.validate_color_scheme(color_scheme)
+        self.thickness = self.validate_thickness(thickness)
+
+    def validate_color_scheme(self, color_scheme: BarColorScheme) -> BarColorScheme:
+        if color_scheme is None:
+            color_scheme = _DEFAULT_BAR_COLOR_SCHEME
+        if color_scheme not in _VALID_BAR_COLOR_SCHEMES:
+            raise InvalidBarColorScheme(
+                f"Valid bar color schemes are {friendly_list(_VALID_BAR_COLOR_SCHEMES)}"
+            )
+        return color_scheme
+
+    def validate_thickness(self, thickness: BarThickness) -> BarThickness:
+        if thickness is None:
+            thickness = _DEFAULT_BAR_THICKNESS
+        if thickness not in _VALID_BAR_THICKNESSES:
+            raise InvalidBarThickness(
+                f"Valid thicknesses are {friendly_list(_VALID_BAR_THICKNESSES)}"
+            )
+        return thickness
 
     def watch__percentage(self, percentage: float | None) -> None:
         """Manage the timer that enables the indeterminate bar animation."""
@@ -87,15 +138,13 @@ class Bar(Widget, can_focus=False):
         if self._percentage is None:
             return self.render_indeterminate()
         else:
-            bar_style = (
-                self.get_component_rich_style("bar--bar")
-                if self._percentage < 1
-                else self.get_component_rich_style("bar--complete")
-            )
+            bar_style = self._get_bar_style()
+
             return BarRenderable(
                 highlight_range=(0, self.size.width * self._percentage),
                 highlight_style=Style.from_color(bar_style.color),
                 background_style=Style.from_color(bar_style.bgcolor),
+                thickness=self.thickness,
             )
 
     def render_indeterminate(self) -> RenderResult:
@@ -119,7 +168,25 @@ class Bar(Widget, can_focus=False):
             highlight_range=(max(0, start), min(end, width)),
             highlight_style=Style.from_color(bar_style.color),
             background_style=Style.from_color(bar_style.bgcolor),
+            thickness=self.thickness,
         )
+
+    def _get_bar_style(self):
+        if self.color_scheme == "default":
+            return (
+                self.get_component_rich_style("bar--bar")
+                if self._percentage < 1
+                else self.get_component_rich_style("bar--complete")
+            )
+        elif self.color_scheme == "rainbow":
+            from_color = self.get_component_rich_style("bar--bar").color
+            target_color = self.get_component_rich_style("bar--complete").color
+            bar_color = (
+                Color.from_rich_color(from_color)
+                .hsl_blend(Color.from_rich_color(target_color), -1.0 * self._percentage)
+                .rich_color
+            )
+            return Style.from_color(bar_color)
 
     def _get_elapsed_time(self) -> float:
         """Get time for the indeterminate progress animation.
@@ -299,6 +366,8 @@ class ProgressBar(Widget, can_focus=False):
     def __init__(
         self,
         total: float | None = None,
+        color_scheme: BarColorScheme | None = None,
+        thickness: BarThickness | None = None,
         *,
         show_bar: bool = True,
         show_percentage: bool = True,
@@ -324,6 +393,8 @@ class ProgressBar(Widget, can_focus=False):
 
         Args:
             total: The total number of steps in the progress if known.
+            color_scheme: Progress bar color scheme. If not set default scheme will be used.
+            thickness: Progress bar thickness. If not set default thickness will be used.
             show_bar: Whether to show the bar portion of the progress bar.
             show_percentage: Whether to show the percentage status of the bar.
             show_eta: Whether to show the ETA countdown of the progress bar.
@@ -338,6 +409,8 @@ class ProgressBar(Widget, can_focus=False):
         self.show_eta = show_eta
 
         self.total = total
+        self._color_scheme = color_scheme
+        self._thickness = thickness
 
     def compose(self) -> ComposeResult:
         # We create a closure so that we can determine what are the sub-widgets
@@ -354,7 +427,9 @@ class ProgressBar(Widget, can_focus=False):
 
         with Horizontal():
             if self.show_bar:
-                bar = Bar(id="bar")
+                bar = Bar(
+                    id="bar", color_scheme=self._color_scheme, thickness=self._thickness
+                )
                 self.watch(self, "percentage", update_percentage(bar))
                 yield bar
             if self.show_percentage:

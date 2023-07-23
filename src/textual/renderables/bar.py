@@ -1,8 +1,19 @@
 from __future__ import annotations
 
+from typing_extensions import Literal
+
 from rich.console import Console, ConsoleOptions, RenderResult
 from rich.style import StyleType
 from rich.text import Text
+
+
+BarThickness = Literal[0, 1, 2]
+"""The values of the valid bar thicknesses.
+
+These are the thicknesses that can be used with a [`Bar`][textual.widgets.Bar].
+"""
+_VALID_BAR_THICKNESSES = {0, 1, 2}
+_DEFAULT_BAR_THICKNESS = 1
 
 
 class Bar:
@@ -22,12 +33,14 @@ class Bar:
         background_style: StyleType = "grey37",
         clickable_ranges: dict[str, tuple[int, int]] | None = None,
         width: int | None = None,
+        thickness: BarThickness = _DEFAULT_BAR_THICKNESS,
     ) -> None:
         self.highlight_range = highlight_range
         self.highlight_style = highlight_style
         self.background_style = background_style
         self.clickable_ranges = clickable_ranges or {}
         self.width = width
+        self.thickness = thickness
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -35,9 +48,7 @@ class Bar:
         highlight_style = console.get_style(self.highlight_style)
         background_style = console.get_style(self.background_style)
 
-        half_bar_right = "╸"
-        half_bar_left = "╺"
-        bar = "━"
+        bar, half_bar_right, half_bar_left = self._bar_characters
 
         width = self.width or options.max_width
         start, end = self.highlight_range
@@ -95,6 +106,15 @@ class Bar:
 
         yield output_bar
 
+    @property
+    def _bar_characters(self) -> tuple(str, str, str):
+        bar_code = [
+            ("─", "╴", "╶"),
+            ("━", "╸", "╺"),
+            ("█", "▌", "▐"),
+        ]
+        return bar_code[self.thickness]
+
 
 if __name__ == "__main__":
     import random
@@ -130,7 +150,7 @@ if __name__ == "__main__":
 
     from rich.live import Live
 
-    bar = Bar(highlight_range=(0, 4.5), width=80)
+    bar = Bar(highlight_range=(0, 4.5), width=80, thickness=1)
     with Live(bar, refresh_per_second=60) as live:
         while True:
             bar.highlight_range = (

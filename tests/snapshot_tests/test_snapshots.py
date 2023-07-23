@@ -315,6 +315,23 @@ def test_progress_bar_completed(snap_compare):
 def test_progress_bar_completed_styled(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "progress_bar_styled_.py", press=["u"])
 
+def test_progress_bar_in_rainbow_style_low(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "progress_bar_styled_rainbow_.py", press=["1"])
+
+def test_progress_bar_in_rainbow_style_high(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "progress_bar_styled_rainbow_.py", press=["5"])
+
+def test_progress_bar_in_rainbow_style_high(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "progress_bar_styled_rainbow_.py", press=["9"])
+
+def test_progress_bar_thickness_thin(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "progress_bar_styled_thickness_.py", press=["0"])
+
+def test_progress_bar_thickness_default(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "progress_bar_styled_thickness_.py", press=["1"])
+
+def test_progress_bar_thickness_thick(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "progress_bar_styled_thickness_.py", press=["2"])
 
 def test_rule_horizontal_rules(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "horizontal_rules.py")

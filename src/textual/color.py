@@ -393,9 +393,9 @@ class Color(NamedTuple):
 
         This method calculates a new color on a gradient using the HSL color space.
         The position on the gradient is given by `factor`, which is a float between -1 and 1, where 0 is the original color, and 1 or -1 is the `destination` color.
-        A negative `factor` affects the direction of the hue angle, a positive number is in the clockwise direction, a negative number is in the counter-clockwise direction.
-        For lightess and saturation, only the absolute value of `factor` is used.
-        A value of `gradient` between the two extremes produces a color somewhere between the two end points.
+        The sign of `factor` affects the direction of the hue angle, a positive number is in the clockwise direction, a negative number is in the counter-clockwise direction.
+        For lightness and saturation, only the absolute value of `factor` is used.
+        A value of `factor` between the two extremes produces a color somewhere between the two end points.
 
         Args:
             destination: Another color.
@@ -405,10 +405,10 @@ class Color(NamedTuple):
         Returns:
             A new color.
         """
-        abs_factor = factor if factor >= 0 else -1.0 * factor
+        abs_factor = abs(factor)
         if factor == 0:
             return self
-        elif factor >= 1 or factor <= -1:
+        elif abs_factor >= 1:
             return destination
 
         hsl_1 = self.hsl
@@ -421,19 +421,11 @@ class Color(NamedTuple):
         else:
             new_alpha = alpha
 
-        # When the factor is > 0, hue is clockwise, otherwise it is counter-clockwise.
-        if factor > 0:
-            if hsl_1.h <= hsl_2.h:
-                new_h = hsl_1.h + (hsl_2.h - hsl_1.h) * abs_factor
-            else:
-                new_h = hsl_1.h + (hsl_2.h + 1.0 - hsl_1.h) * abs_factor
-                new_h = new_h - 1.0 if new_h >= 1.0 else new_h
+        sign = 1 if factor > 0 else -1
+        if (sign * hsl_1.h) <= (sign * hsl_2.h):
+            new_h = hsl_1.h + (hsl_2.h - hsl_1.h) * abs_factor
         else:
-            if hsl_1.h >= hsl_2.h:
-                new_h = hsl_1.h + (hsl_2.h - hsl_1.h) * abs_factor
-            else:
-                new_h = (hsl_1.h + (hsl_2.h - 1.0 - hsl_1.h) * abs_factor)
-                new_h = new_h + 1.0 if new_h < 0.0 else new_h
+            new_h = (hsl_1.h + (hsl_2.h + sign - hsl_1.h) * abs_factor) % 1
 
         new_s = hsl_1.s + (hsl_2.s - hsl_1.s) * abs_factor
         new_l = hsl_1.l + (hsl_2.l - hsl_1.l) * abs_factor

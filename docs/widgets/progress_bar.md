@@ -24,7 +24,7 @@ It shows the progress bar in:
 
 === "39% done"
 
-    ```{.textual path="docs/examples/widgets/progress_bar_isolated_.py" press="t"}
+    ```{.textual path="docs/examples/widgets/progress_bar_styled_.py" press="t"}
     ```
 
 === "Completed"
@@ -104,15 +104,78 @@ Refer to the [section below](#styling-the-progress-bar) for more information.
     --8<-- "docs/examples/widgets/progress_bar_styled.tcss"
     ```
 
+### Rainbow Color Schemes
+
+The rainbow color scheme gradually changes the color of the bar as it progresses.
+The initial color is defined by the component class `bar--bar` and the final color by the component class `bar--complete`.
+(The gradient is computed in the HSL color space in the counterclockwise direction.)
+
+=== "Rainbow at 10%"
+
+    ```{.textual path="docs/examples/widgets/progress_bar_styled_rainbow_.py" press="1"}
+    ```
+
+=== "Rainbow at 50%"
+
+    ```{.textual path="docs/examples/widgets/progress_bar_styled_rainbow_.py" press="5"}
+    ```
+
+=== "Rainbow at 90%"
+
+    ```{.textual path="docs/examples/widgets/progress_bar_styled_rainbow_.py" press="9"}
+    ```
+=== "progress_bar_styled_rainbow.py"
+
+    ```python
+    --8<-- "docs/examples/widgets/progress_bar_styled_rainbow.py"
+    ```
+
+=== "progress_bar_styled.css"
+
+    ```sass
+    --8<-- "docs/examples/widgets/progress_bar_styled_rainbow.css"
+    ```
+
+### Progress Bar Thickness Styling
+
+This shows a progress bar with custom bar thickness: thin, normal or thick.
+
+=== "Thin"
+
+    ```{.textual path="docs/examples/widgets/progress_bar_styled_thickness_.py" press="0"}
+    ```
+
+=== "Normal"
+
+    ```{.textual path="docs/examples/widgets/progress_bar_styled_thickness_.py" press="1"}
+    ```
+
+=== "Thick"
+
+    ```{.textual path="docs/examples/widgets/progress_bar_styled_thickness_.py" press="2"}
+    ```
+=== "progress_bar_styled_thickness.py"
+
+    ```python
+    --8<-- "docs/examples/widgets/progress_bar_styled_thickness.py"
+    ```
+
+=== "progress_bar_styled.css"
+
+    ```sass
+    --8<-- "docs/examples/widgets/progress_bar_styled.css"
+    ```
+
 ## Styling the Progress Bar
 
 The progress bar is composed of three sub-widgets that can be styled independently:
 
 | Widget name        | ID            | Description                                                      |
 | ------------------ | ------------- | ---------------------------------------------------------------- |
-| `Bar`              | `#bar`        | The bar that visually represents the progress made.              |
+| `Bar`              | `#bar`        | Bar that visually represents the progress made.              |
 | `PercentageStatus` | `#percentage` | [Label](./label.md) that shows the percentage of completion.     |
 | `ETAStatus`        | `#eta`        | [Label](./label.md) that shows the estimated time to completion. |
+
 
 ### Bar Component Classes
 
@@ -125,9 +188,9 @@ The progress bar is composed of three sub-widgets that can be styled independent
 
 | Name         | Type    | Default | Description                                                                                             |
 | ------------ | ------- | ------- | ------------------------------------------------------------------------------------------------------- |
-| `percentage` | `float  | None`   | The read-only percentage of progress that has been made. This is `None` if the `total` hasn't been set. |
+| `percentage` | `float` | `None`  | The read-only percentage of progress that has been made. This is `None` if the `total` hasn't been set. |
 | `progress`   | `float` | `0`     | The number of steps of progress already made.                                                           |
-| `total`      | `float  | None`   | The total number of steps that we are keeping track of.                                                 |
+| `total`      | `float` | `None`  | The total number of steps that we are keeping track of.                                                 |
 
 ## Messages
 
