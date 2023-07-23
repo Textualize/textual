@@ -150,7 +150,7 @@ class DirectoryTree(Tree[DirEntry]):
         """Clear all nodes under the given node.
 
         Returns:
-            The `Tree` instance (the subtree below the node).
+            The `Tree` instance.
         """
         self._line_cache.clear()
         self._tree_lines_cached = None
@@ -178,7 +178,7 @@ class DirectoryTree(Tree[DirEntry]):
             data: Optional data for the node.
 
         Returns:
-            The `Tree` instance (the subtree below the node).
+            The `Tree` instance.
         """
         self.clear_subtree(node)
         node.label = label
