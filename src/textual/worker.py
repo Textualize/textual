@@ -144,6 +144,7 @@ class Worker(Generic[ResultType]):
         group: str = "default",
         description: str = "",
         exit_on_error: bool = True,
+        thread: bool = False,
     ) -> None:
         """Initialize a Worker.
 
@@ -154,6 +155,7 @@ class Worker(Generic[ResultType]):
             group: The worker group.
             description: Description of the worker (longer string with more details).
             exit_on_error: Exit the app if the worker raises an error. Set to `False` to suppress exceptions.
+            thread: Mark the worker as a thread worker.
         """
         self._node = node
         self._work = work
@@ -161,6 +163,7 @@ class Worker(Generic[ResultType]):
         self.group = group
         self.description = description
         self.exit_on_error = exit_on_error
+        self._thread_worker = thread
         self._state = WorkerState.PENDING
         self.state = self._state
         self._error: BaseException | None = None
@@ -271,35 +274,79 @@ class Worker(Generic[ResultType]):
         """
         self._completed_steps += steps
 
-    async def run(self) -> ResultType:
-        """Run the work.
-
-        Implement this method in a subclass, or pass a callable to the constructor.
+    async def _run_threaded(self) -> ResultType:
+        """Run a threaded worker.
 
         Returns:
-            Return value of work.
+            Return value of the work.
         """
+
+        def run_awaitable(work: Awaitable[ResultType]) -> ResultType:
+            """Set the active worker and await the awaitable."""
+
+            async def do_work() -> ResultType:
+                active_worker.set(self)
+                return await work
+
+            return asyncio.run(do_work())
+
+        def run_coroutine(
+            work: Callable[[], Coroutine[None, None, ResultType]]
+        ) -> ResultType:
+            """Set the active worker and await coroutine."""
+            return run_awaitable(work())
+
+        def run_callable(work: Callable[[], ResultType]) -> ResultType:
+            """Set the active worker, and call the callable."""
+            active_worker.set(self)
+            return work()
 
         if (
             inspect.iscoroutinefunction(self._work)
             or hasattr(self._work, "func")
             and inspect.iscoroutinefunction(self._work.func)
         ):
-            # Coroutine, we can await it.
-            result: ResultType = await self._work()
+            runner = run_coroutine
         elif inspect.isawaitable(self._work):
-            result = await self._work
+            runner = run_awaitable
+        elif callable(self._work):
+            runner = run_callable
         else:
-            assert callable(self._work)
-            loop = asyncio.get_running_loop()
+            raise WorkerError("Unsupported attempt to run a thread worker")
 
-            def run_work(work: Callable[[], ResultType]) -> ResultType:
-                """Set the active worker, and run the work."""
-                active_worker.set(self)
-                return work()
+        return await asyncio.get_running_loop().run_in_executor(
+            None, runner, self._work
+        )
 
-            result = await loop.run_in_executor(None, run_work, self._work)
-        return result
+    async def _run_async(self) -> ResultType:
+        """Run an async worker.
+
+        Returns:
+            Return value of the work.
+        """
+        if (
+            inspect.iscoroutinefunction(self._work)
+            or hasattr(self._work, "func")
+            and inspect.iscoroutinefunction(self._work.func)
+        ):
+            return await self._work()
+        elif inspect.isawaitable(self._work):
+            return await self._work
+        elif callable(self._work):
+            raise WorkerError("Request to run a non-async function as an async worker")
+        raise WorkerError("Unsupported attempt to run an async worker")
+
+    async def run(self) -> ResultType:
+        """Run the work.
+
+        Implement this method in a subclass, or pass a callable to the constructor.
+
+        Returns:
+            Return value of the work.
+        """
+        return await (
+            self._run_threaded() if self._thread_worker else self._run_async()
+        )
 
     async def _run(self, app: App) -> None:
         """Run the worker.

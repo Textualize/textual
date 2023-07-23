@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added App.begin_capture_print, App.end_capture_print, Widget.begin_capture_print, Widget.end_capture_print https://github.com/Textualize/textual/issues/2952
 
+### Added
+
+- Added the ability to run async methods as thread workers https://github.com/Textualize/textual/pull/2938
+
+### Changed
+
+- Breaking change: Creating a thread worker now requires that a `thread=True` keyword argument is passed https://github.com/Textualize/textual/pull/2938
+
 ### Fixed
 
 - Fixed a crash when a `SelectionList` had a prompt wider than itself https://github.com/Textualize/textual/issues/2900
