@@ -5,13 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.31.0] - Unreleased
+## Unreleased
+
+### Added
+
+- Added App.begin_capture_print, App.end_capture_print, Widget.begin_capture_print, Widget.end_capture_print https://github.com/Textualize/textual/issues/2952
 
 ### Fixed
 
 - Fixed a crash when a `SelectionList` had a prompt wider than itself https://github.com/Textualize/textual/issues/2900
 - Fixed a bug where `Click` events were bubbling up from `Switch` widgets https://github.com/Textualize/textual/issues/2366
 - Fixed a crash when using empty CSS variables https://github.com/Textualize/textual/issues/1849
+
 
 ## [0.30.0] - 2023-07-17
 
