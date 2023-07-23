@@ -627,12 +627,7 @@ class OptionList(ScrollView, can_focus=True):
         Raises:
             OptionDoesNotExist: If no option has the given ID.
         """
-        try:
-            self._remove_option(self._option_ids[option_id])
-        except KeyError:
-            raise OptionDoesNotExist(
-                f"There is no option with an ID of '{option_id}'"
-            ) from None
+        self._remove_option(self.get_option_index(option_id))
         return self
 
     def remove_option_at_index(self, index: int) -> Self:
@@ -776,12 +771,7 @@ class OptionList(ScrollView, can_focus=True):
         Raises:
             OptionDoesNotExist: If no option has the given ID.
         """
-        try:
-            return self.enable_option_at_index(self._option_ids[option_id])
-        except KeyError:
-            raise OptionDoesNotExist(
-                f"There is no option with an ID of '{option_id}'"
-            ) from None
+        return self.enable_option_at_index(self.get_option_index(option_id))
 
     def disable_option(self, option_id: str) -> Self:
         """Disable the option with the given ID.
@@ -795,12 +785,7 @@ class OptionList(ScrollView, can_focus=True):
         Raises:
             OptionDoesNotExist: If no option has the given ID.
         """
-        try:
-            return self.disable_option_at_index(self._option_ids[option_id])
-        except KeyError:
-            raise OptionDoesNotExist(
-                f"There is no option with an ID of '{option_id}'"
-            ) from None
+        return self.disable_option_at_index(self.get_option_index(option_id))
 
     @property
     def option_count(self) -> int:
@@ -838,12 +823,7 @@ class OptionList(ScrollView, can_focus=True):
         Raises:
             OptionDoesNotExist: If no option has the given ID.
         """
-        try:
-            return self.get_option_at_index(self._option_ids[option_id])
-        except KeyError:
-            raise OptionDoesNotExist(
-                f"There is no option with an ID of '{option_id}'"
-            ) from None
+        return self.get_option_at_index(self.get_option_index(option_id))
 
     def get_option_index(self, option_id):
         """Get the index of the option with the given ID.
