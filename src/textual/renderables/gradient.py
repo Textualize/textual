@@ -75,7 +75,7 @@ class LinearGradient:
         get_color = color_gradient.get_color
         from_color = Style.from_color
 
-        @lru_cache
+        @lru_cache(maxsize=None)
         def get_rich_color(color_offset: int) -> RichColor:
             """Get a Rich color in the gradient.
 
