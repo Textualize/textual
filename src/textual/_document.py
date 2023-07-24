@@ -3,11 +3,11 @@ from __future__ import annotations
 from rich.text import Text
 
 from textual._cells import cell_len
-from textual._types import SupportsIndex
-from textual.geometry import Size
 
 # TODO - probably need to move _fix_direction either to this file or a standalone file.
-from textual.widgets._text_area import _fix_direction
+from textual._fix_direction import _fix_direction
+from textual._types import SupportsIndex
+from textual.geometry import Size
 
 
 class Document:

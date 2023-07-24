@@ -14,6 +14,7 @@ from tree_sitter.binding import Query
 from textual import events, log
 from textual._cells import cell_len
 from textual._document import Document
+from textual._fix_direction import _fix_direction
 from textual._types import Protocol, runtime_checkable
 from textual.binding import Binding
 from textual.geometry import Offset, Region, Size, Spacing, clamp
@@ -312,16 +313,20 @@ TextArea > .text-area--selection {
         return return_value
 
     def load_text(self, text: str) -> None:
-        """Load text from a string into the editor."""
-        lines = text.splitlines(keepends=False)
-        if text[-1] == "\n":
-            lines.append("")
-        self.load_lines(lines)
+        """Load text from a string into the editor.
+
+        Args:
+            text: The text to load into the editor.
+        """
+        self.document.load_text(text)
+        self._refresh_size()
 
     def load_lines(self, lines: list[str]) -> None:
         """Load text from a list of lines into the editor.
 
         This will replace any previously loaded lines."""
+
+        # TODO - migrate the highlighting stuff out of here into the Document subclass
         self.document_lines = lines
         self._document_size = self._get_document_size(lines)
         if self._parser is not None:
@@ -519,6 +524,10 @@ TextArea > .text-area--selection {
     def edit(self, edit: Edit) -> object | None:
         log.debug(f"performing edit {edit!r}")
         result = edit.do(self)
+
+        # After edits we need to refresh
+        self._refresh_size()
+
         self._undo_stack.append(edit)
 
         # TODO: Think about this...
@@ -654,6 +663,7 @@ TextArea > .text-area--selection {
 
         start, end = self.selection
         cursor_row, cursor_column = end
+        target_column = len(self.document[cursor_row])
 
         if select:
             self.selection = Selection(start, target_column)
@@ -1202,16 +1212,6 @@ TextArea > .text-area--selection {
             ),
             highlight_cache_current_row=self._highlights[self.selection.end[0]],
         )
-
-
-def _fix_direction(
-    start: tuple[int, int], end: tuple[int, int]
-) -> tuple[tuple[int, int], tuple[int, int]]:
-    """Given a range, return a new range (x, y) such
-    that x <= y which covers the same characters."""
-    if start > end:
-        return end, start
-    return start, end
 
 
 def traverse_tree(cursor):
