@@ -687,8 +687,8 @@ TextEditor > .text-editor--selection {
         If the cursor is at the left edge of the document, try to move it to
         the end of the previous line.
         """
-        target_row, target_column = self.get_cursor_left_position()
-        self.selection = Selection.cursor((target_row, target_column))
+        target = self.get_cursor_left_position()
+        self.selection = Selection.cursor(target)
         self._record_last_intentional_cell_width()
 
     def action_cursor_left_select(self):
