@@ -35,12 +35,12 @@ class ScalarAnimation(Animation):
         self.easing = easing
         self.on_complete = on_complete
 
-        parent_size = widget.parent.size
+        container_size = widget.parent.size
         viewport = widget.app.size
 
         # Resolve scalar units to a start and destination size in cells
-        self.start = getattr(styles, attribute).resolve(parent_size, viewport)
-        self.destination = value.resolve(parent_size, viewport)
+        self.start = getattr(styles, attribute).resolve(container_size, viewport)
+        self.destination = value.resolve(container_size, viewport)
 
         if speed is not None:
             distance = self.start.get_distance_to(self.destination)
