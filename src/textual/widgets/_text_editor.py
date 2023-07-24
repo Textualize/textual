@@ -110,9 +110,16 @@ class Insert(NamedTuple):
 
 @dataclass
 class Delete:
+    """Performs a delete operation."""
+
     from_position: tuple[int, int]
+    """The position to delete from (inclusive)."""
+
     to_position: tuple[int, int]
+    """The position to delete to (exclusive)."""
+
     cursor_destination: tuple[int, int] | None = None
+    """Where to move the cursor to after the deletion."""
 
     def do(self, editor: TextEditor) -> None:
         """Do the action."""
@@ -763,6 +770,7 @@ TextEditor > .text-editor--selection {
         self.selection = Selection(start, target)
 
     def get_cursor_up_position(self) -> tuple[int, int]:
+        """Get the position the cursor will move to if it moves up."""
         if self.cursor_at_first_row:
             return 0, 0
         cursor_row, cursor_column = self.selection.end
@@ -775,9 +783,11 @@ TextEditor > .text-editor--selection {
         return target_row, target_column
 
     def action_cursor_line_end(self) -> None:
+        """Move the cursor to the end of the line."""
         self.cursor_to_line_end()
 
     def action_cursor_line_start(self) -> None:
+        """Move the cursor to the start of the line."""
         self.cursor_to_line_start()
 
     def action_cursor_left_word(self) -> None:
@@ -976,26 +986,22 @@ TextEditor > .text-editor--selection {
         Returns:
             A string containing the deleted text.
         """
+        from_position = min(from_position, to_position)
+        to_position = max(from_position, to_position)
 
         from_row, from_column = from_position
         to_row, to_column = to_position
 
-        lines = self.document_lines
+        start_byte = self._position_to_byte_offset(min(from_position, to_position))
+        old_end_byte = self._position_to_byte_offset(max(from_position, to_position))
 
-        # Ensure that from_position is before to_position
-        if from_position > to_position:
-            from_row, from_column, to_row, to_column = (
-                to_row,
-                to_column,
-                from_row,
-                from_column,
-            )
+        lines = self.document_lines
 
         # If the range is within a single line
         if from_row == to_row:
             line = lines[from_row]
             deleted_text = line[from_column:to_column]
-            lines[from_row] = line[:from_column] + line[to_column:]
+            lines[from_row] = line[:from_column] + line[to_column + 1 :]
         else:
             # The range spans multiple lines
             start_line = lines[from_row]
@@ -1016,11 +1022,10 @@ TextEditor > .text-editor--selection {
             del lines[from_row + 1 : to_row + 1]
 
         if self._syntax_tree is not None:
-            start_byte = self._position_to_byte_offset(from_position)
             self._syntax_tree.edit(
                 start_byte=start_byte,
-                old_end_byte=self._position_to_byte_offset(to_position),
-                new_end_byte=start_byte,
+                old_end_byte=old_end_byte,
+                new_end_byte=old_end_byte - len(deleted_text),
                 start_point=from_position,
                 old_end_point=to_position,
                 new_end_point=from_position,
@@ -1031,6 +1036,7 @@ TextEditor > .text-editor--selection {
             self._prepare_highlights()
 
         self._refresh_size()
+
         if cursor_destination is not None:
             self.selection = Selection.cursor(cursor_destination)
         else:
@@ -1048,6 +1054,8 @@ TextEditor > .text-editor--selection {
 
         start, end = self.selection
         end_row, end_column = end
+
+        # If the cursor is at the right hand side
 
         if self.cursor_at_start_of_row:
             to_position = (end_row - 1, len(lines[end_row - 1]))
