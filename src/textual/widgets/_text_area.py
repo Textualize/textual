@@ -125,7 +125,7 @@ class Delete:
     cursor_destination: tuple[int, int] | None = None
     """Where to move the cursor to after the deletion."""
 
-    def do(self, editor: TextArea) -> None:
+    def do(self, editor: TextArea) -> str:
         """Do the action."""
         self.deleted_text = editor._delete_range(
             self.from_position, self.to_position, self.cursor_destination
