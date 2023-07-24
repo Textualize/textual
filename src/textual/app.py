@@ -601,6 +601,19 @@ class App(Generic[ReturnType], DOMNode):
             on_complete=on_complete,
         )
 
+    def stop_animation(self, attribute: str) -> None:
+        """Stop an animation on an attribute.
+
+        Args:
+            attribute: Name of the attribute whose animation should be stopped.
+
+        Note:
+            If there is no animation running, this is a no-op. If there is
+            an animation running the attribute will be left in the last
+            state it was in before the call to stop.
+        """
+        self._animator.stop_animation(self, attribute)
+
     @property
     def debug(self) -> bool:
         """Is debug mode enabled?"""

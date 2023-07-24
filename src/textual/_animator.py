@@ -374,6 +374,24 @@ class Animator:
         self._idle_event.clear()
         self._complete_event.clear()
 
+    def stop_animation(self, obj: object, attribute: str) -> None:
+        """Stop an animation on an attribute.
+
+        Args:
+            obj: The object containing the attribute.
+            attribute: The name of the attribute.
+
+        Note:
+            If there is no animation running, this is a no-op. If there is
+            an animation running the attribute will be left in the last
+            state it was in before the call to stop.
+        """
+        key = (id(obj), attribute)
+        if key in self._scheduled:
+            self._scheduled.remove(key)
+        if key in self._animations:
+            del self._animations[key]
+
     async def __call__(self) -> None:
         if not self._animations:
             self._timer.pause()
