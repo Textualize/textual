@@ -932,8 +932,8 @@ TextArea > .text-area--selection {
         lines = self.document_lines
         row, column = position
         lines_above = lines[:row]
-        bytes_lines_above = sum(len(line) + 1 for line in lines_above)
-        bytes_this_line_left_of_cursor = len(lines[row][:column])
+        bytes_lines_above = sum(len(line.encode("utf-8")) + 1 for line in lines_above)
+        bytes_this_line_left_of_cursor = len(lines[row][:column].encode("utf-8"))
         return bytes_lines_above + bytes_this_line_left_of_cursor
 
     def dedent_line(self) -> None:
