@@ -16,6 +16,7 @@ __pycache__/
 
 # C extensions
 *.so
+!tree-sitter/textual-languages.so
 
 # Distribution / packaging
 .Python
