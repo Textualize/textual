@@ -160,8 +160,15 @@ async def test_schedule_reverse_animations() -> None:
         assert styles.background.rgb == (0, 0, 0)
 
 
+class CancelAnimWidget(Static):
+    counter: var[float] = var(23)
+
+
 class CancelAnimApp(App[None]):
     counter: var[float] = var(23)
+
+    def compose(self) -> ComposeResult:
+        yield CancelAnimWidget()
 
 
 async def test_cancel_app_animation() -> None:
@@ -187,20 +194,20 @@ async def test_cancel_app_non_animation() -> None:
 async def test_cancel_widget_animation() -> None:
     """It should be possible to cancel a running widget animation."""
 
-    async with AnimApp().run_test() as pilot:
-        widget = pilot.app.query_one(Static)
-        widget.animate("height", value=1, final_value=1000, duration=60)
+    async with CancelAnimApp().run_test() as pilot:
+        widget = pilot.app.query_one(CancelAnimWidget)
+        widget.animate("counter", value=0, final_value=1000, duration=60)
         await pilot.pause()
-        assert pilot.app.animator.is_being_animated(pilot.app, "counter")
+        assert pilot.app.animator.is_being_animated(widget, "counter")
         widget.stop_animation("counter")
-        assert not pilot.app.animator.is_being_animated(pilot.app, "counter")
+        assert not pilot.app.animator.is_being_animated(widget, "counter")
 
 
 async def test_cancel_widget_non_animation() -> None:
     """It should be possible to attempt to cancel a non-running widget animation."""
 
-    async with AnimApp().run_test() as pilot:
-        widget = pilot.app.query_one(Static)
-        assert pilot.app.animator.is_being_animated(pilot.app, "counter")
+    async with CancelAnimApp().run_test() as pilot:
+        widget = pilot.app.query_one(CancelAnimWidget)
+        assert not pilot.app.animator.is_being_animated(widget, "counter")
         widget.stop_animation("counter")
-        assert not pilot.app.animator.is_being_animated(pilot.app, "counter")
+        assert not pilot.app.animator.is_being_animated(widget, "counter")
