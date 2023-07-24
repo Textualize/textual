@@ -62,6 +62,7 @@ class Highlight(NamedTuple):
 class Selection(NamedTuple):
     """A range of characters within a document from a start point to the end point.
     The position of the cursor is always considered to be the `end` point of the selection.
+    The selection is inclusive of the minimum point and exclusive of the maximum point.
     """
 
     start: tuple[int, int] = (0, 0)
@@ -73,10 +74,14 @@ class Selection(NamedTuple):
         return cls(position, position)
 
     @property
-    def is_cursor(self) -> bool:
+    def is_empty(self) -> bool:
         """Return True if the selection has 0 width, i.e. it's just a cursor."""
         start, end = self
         return start == end
+
+    def range(self) -> tuple[tuple[int, int], tuple[int, int]]:
+        start, end = self
+        return _fix_direction(start, end)
 
 
 @runtime_checkable
@@ -136,6 +141,15 @@ class Delete:
         yield "to_position", self.to_position
         if hasattr(self, "deleted_text"):
             yield "deleted_text", self.deleted_text
+
+
+def _fix_direction(
+    start: tuple[int, int], end: tuple[int, int]
+) -> tuple[tuple[int, int], tuple[int, int]]:
+    """Given a range, return a new range (x, y) such that x <= y which covers the same characters."""
+    if start > end:
+        return end, start
+    return start, end
 
 
 class TextEditor(ScrollView, can_focus=True):
@@ -550,14 +564,6 @@ TextEditor > .text-editor--selection {
 
         return target_row, target_column
 
-    def _fix_direction(
-        self, start: tuple[int, int], end: tuple[int, int]
-    ) -> tuple[tuple[int, int], tuple[int, int]]:
-        """Given a range, return a new range (x, y) such that x <= y which covers the same characters."""
-        if start > end:
-            return end, start
-        return start, end
-
     def _on_mouse_down(self, event: events.MouseDown) -> None:
         event.stop()
         offset = event.get_content_offset(self)
@@ -857,7 +863,6 @@ TextEditor > .text-editor--selection {
     def _record_last_intentional_cell_width(self) -> None:
         row, column = self.selection.end
         column_cell_length = self.get_column_cell_width(row, column)
-        log(f"last intentional cell width = {column_cell_length}")
         self._last_intentional_cell_width = column_cell_length
 
     # --- Editor operations
@@ -973,7 +978,9 @@ TextEditor > .text-editor--selection {
         to_position: tuple[int, int],
         cursor_destination: tuple[int, int] | None = None,
     ) -> str:
-        return self.edit(Delete(from_position, to_position, cursor_destination))
+        top, bottom = _fix_direction(from_position, to_position)
+        print(f"top and bottom: {top, bottom}")
+        return self.edit(Delete(top, bottom, cursor_destination))
 
     def _delete_range(
         self,
@@ -983,17 +990,16 @@ TextEditor > .text-editor--selection {
     ) -> str:
         """Delete text between `from_position` and `to_position`.
 
+        `from_position` is inclusive. The `to_position` is exclusive.
+
         Returns:
             A string containing the deleted text.
         """
-        from_position = min(from_position, to_position)
-        to_position = max(from_position, to_position)
-
         from_row, from_column = from_position
         to_row, to_column = to_position
 
-        start_byte = self._position_to_byte_offset(min(from_position, to_position))
-        old_end_byte = self._position_to_byte_offset(max(from_position, to_position))
+        start_byte = self._position_to_byte_offset(from_position)
+        old_end_byte = self._position_to_byte_offset(to_position)
 
         lines = self.document_lines
 
@@ -1001,7 +1007,7 @@ TextEditor > .text-editor--selection {
         if from_row == to_row:
             line = lines[from_row]
             deleted_text = line[from_column:to_column]
-            lines[from_row] = line[:from_column] + line[to_column + 1 :]
+            lines[from_row] = line[:from_column] + line[to_column:]
         else:
             # The range spans multiple lines
             start_line = lines[from_row]
@@ -1047,22 +1053,23 @@ TextEditor > .text-editor--selection {
 
     def action_delete_left(self) -> None:
         """Deletes the character to the left of the cursor and updates the cursor position."""
-        if self.cursor_at_start_of_document:
+
+        selection = self.selection
+        empty = selection.is_empty
+
+        if self.cursor_at_start_of_document and empty:
             return
 
-        lines = self.document_lines
-
-        start, end = self.selection
+        start, end = selection
         end_row, end_column = end
 
-        # If the cursor is at the right hand side
+        if empty:
+            if self.cursor_at_start_of_row:
+                end = (end_row - 1, len(self.document_lines[end_row - 1]))
+            else:
+                end = (end_row, end_column - 1)
 
-        if self.cursor_at_start_of_row:
-            to_position = (end_row - 1, len(lines[end_row - 1]))
-        else:
-            to_position = (end_row, end_column - 1)
-
-        self.edit(Delete(start, to_position))
+        self.delete_range(start, end)
 
     def action_delete_right(self) -> None:
         """Deletes the character to the right of the cursor and keeps the cursor at the same position."""
@@ -1077,7 +1084,7 @@ TextEditor > .text-editor--selection {
         else:
             to_position = (end_row, end_column + 1)
 
-        self.edit(Delete(start, to_position))
+        self.delete_range(start, to_position)
 
     def action_delete_line(self) -> None:
         """Deletes the lines which intersect with the selection."""
@@ -1088,21 +1095,21 @@ TextEditor > .text-editor--selection {
         from_position = (start_row, 0)
         to_position = (end_row + 1, 0)
 
-        self.edit(Delete(from_position, to_position))
+        self.delete_range(from_position, to_position)
 
     def action_delete_to_start_of_line(self) -> None:
         """Deletes from the cursor position to the start of the line."""
         from_position = self.selection.end
         cursor_row, cursor_column = from_position
         to_position = (cursor_row, 0)
-        self.edit(Delete(from_position, to_position))
+        self.delete_range(from_position, to_position)
 
     def action_delete_to_end_of_line(self) -> None:
         """Deletes from the cursor position to the end of the line."""
         from_position = self.selection.end
         cursor_row, cursor_column = from_position
         to_position = (cursor_row, len(self.document_lines[cursor_row]))
-        self.edit(Delete(from_position, to_position))
+        self.delete_range(from_position, to_position)
 
     def action_delete_word_left(self) -> None:
         """Deletes the word to the left of the cursor and updates the cursor position."""
@@ -1113,7 +1120,7 @@ TextEditor > .text-editor--selection {
         # deletes the characters within the selection range, ignoring word boundaries.
         start, end = self.selection
         if start != end:
-            self.edit(Delete(start, end))
+            self.delete_range(start, end)
 
         cursor_row, cursor_column = end
 
@@ -1131,7 +1138,7 @@ TextEditor > .text-editor--selection {
             # If we're already on the first line and no word boundary is found, delete to the start of the line
             from_position = (cursor_row, 0)
 
-        self.edit(Delete(from_position, self.selection.end))
+        self.delete_range(from_position, self.selection.end)
 
     def action_delete_word_right(self) -> None:
         """Deletes the word to the right of the cursor and keeps the cursor at the same position."""
@@ -1140,7 +1147,7 @@ TextEditor > .text-editor--selection {
 
         start, end = self.selection
         if start != end:
-            self.edit(Delete(start, end))
+            self.delete_range(start, end)
 
         cursor_row, cursor_column = end
 
@@ -1158,7 +1165,7 @@ TextEditor > .text-editor--selection {
             # If we're already on the last line and no word boundary is found, delete to the end of the line
             to_position = (cursor_row, len(self.document_lines[cursor_row]))
 
-        self.edit(Delete(end, to_position))
+        self.delete_range(end, to_position)
 
     # --- Debugging
     @dataclass
