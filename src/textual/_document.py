@@ -5,12 +5,18 @@ from rich.text import Text
 from textual._cells import cell_len
 from textual._types import SupportsIndex
 from textual.geometry import Size
+
+# TODO - probably need to move _fix_direction either to this file or a standalone file.
 from textual.widgets._text_area import _fix_direction
 
 
 class Document:
     def __init__(self) -> None:
         self._lines: list[str] = []
+
+    @property
+    def lines(self) -> list[str]:
+        return self._lines
 
     def load_text(self, text: str) -> None:
         """Load text from a string into the document.
@@ -116,9 +122,6 @@ class Document:
         # can rest at the end of a line where there isn't yet any character.
         # Similarly, the cursor can rest below the bottom line of text, where
         # a line doesn't currently exist.
-
-        # TODO: This was previously `Size(text_width + 1, height)` to leave space
-        #  for the cursor. However, that is a widget level concern.
         return Size(text_width, height)
 
     @property
@@ -128,6 +131,9 @@ class Document:
 
     def get_line(self, index: int) -> Text:
         """Returns the line with the given index from the document"""
+        line_string = self[index]
+        line_string = line_string.replace("\n", "").replace("\r", "")
+        return Text(line_string, end="", tab_size=4)
 
     def __getitem__(self, item: SupportsIndex | slice) -> str:
         return self._lines[item]
