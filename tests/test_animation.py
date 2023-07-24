@@ -1,6 +1,7 @@
 from time import perf_counter
 
 from textual.app import App, ComposeResult
+from textual.containers import Container
 from textual.widgets import Static
 
 
@@ -157,3 +158,61 @@ async def test_schedule_reverse_animations() -> None:
         styles.animate("background", "black", delay=0.05, duration=0.01)
         await pilot.wait_for_scheduled_animations()
         assert styles.background.rgb == (0, 0, 0)
+
+
+class ScalarPercentAnimApp(App):
+    # To simplify percentage calculations, the widget to be animated is placed
+    # inside a container with a width/height of 10
+    CSS = """
+    #container {
+        width: 10;
+        height: 10;
+    }
+
+    #foo {
+        width: 20%;
+        height: 20%;
+    }
+    """
+
+    def compose(self) -> ComposeResult:
+        with Container(id="container"):
+            yield Static(id="foo")
+
+
+async def test_scalar_animation_with_percentages() -> None:
+    """Test scalar animations work with percentages.
+
+    Regression test for #2940: https://github.com/Textualize/textual/issues/2940
+    """
+
+    app = ScalarPercentAnimApp()
+
+    async with app.run_test() as pilot:
+        static = app.query_one("#foo", Static)
+        assert static.size.width == 2
+        assert static.styles.width.value == 20
+
+        static.styles.animate("width", "80%", duration=0.6, easing="linear")
+        start = perf_counter()
+
+        # The animation duration is set to 0.6 seconds, so after every 0.1
+        # seconds the width should have increased by 1 cell
+        await pilot.pause(0.05)
+        assert static.size.width == 2  # No change yet
+        await pilot.pause(0.1)
+        assert static.size.width == 3
+        await pilot.pause(0.1)
+        assert static.size.width == 4
+        await pilot.pause(0.1)
+        assert static.size.width == 5
+        await pilot.pause(0.1)
+        assert static.size.width == 6
+        await pilot.pause(0.1)
+        assert static.size.width == 7
+        # Wait for the animation to finish
+        await pilot.wait_for_animation()
+        elapsed = perf_counter() - start
+        assert elapsed >= 0.6
+        assert static.size.width == 8
+        assert static.styles.width.value == 80
