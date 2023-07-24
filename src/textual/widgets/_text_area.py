@@ -87,10 +87,10 @@ class Selection(NamedTuple):
 class Edit(Protocol):
     """Protocol for actions performed in the text editor that can be done and undone."""
 
-    def do(self, editor: TextEditor) -> object | None:
+    def do(self, editor: TextArea) -> object | None:
         """Do the action."""
 
-    def undo(self, editor: TextEditor) -> object | None:
+    def undo(self, editor: TextArea) -> object | None:
         """Undo the action."""
 
 
@@ -102,13 +102,13 @@ class Insert(NamedTuple):
     to_position: tuple[int, int]
     move_cursor: bool = True
 
-    def do(self, editor: TextEditor) -> None:
+    def do(self, editor: TextArea) -> None:
         if self.text:
             editor._insert_text_range(
                 self.text, self.from_position, self.to_position, self.move_cursor
             )
 
-    def undo(self, editor: TextEditor) -> None:
+    def undo(self, editor: TextArea) -> None:
         """Undo the action."""
 
 
@@ -125,14 +125,14 @@ class Delete:
     cursor_destination: tuple[int, int] | None = None
     """Where to move the cursor to after the deletion."""
 
-    def do(self, editor: TextEditor) -> None:
+    def do(self, editor: TextArea) -> None:
         """Do the action."""
         self.deleted_text = editor._delete_range(
             self.from_position, self.to_position, self.cursor_destination
         )
         return self.deleted_text
 
-    def undo(self, editor: TextEditor) -> None:
+    def undo(self, editor: TextArea) -> None:
         """Undo the action."""
 
     def __rich_repr__(self):
@@ -142,47 +142,38 @@ class Delete:
             yield "deleted_text", self.deleted_text
 
 
-def _fix_direction(
-    start: tuple[int, int], end: tuple[int, int]
-) -> tuple[tuple[int, int], tuple[int, int]]:
-    """Given a range, return a new range (x, y) such that x <= y which covers the same characters."""
-    if start > end:
-        return end, start
-    return start, end
-
-
-class TextEditor(ScrollView, can_focus=True):
+class TextArea(ScrollView, can_focus=True):
     DEFAULT_CSS = """\
 $editor-active-line-bg: white 8%;
-TextEditor {
+TextArea {
     background: $panel;
 }
-TextEditor > .text-editor--active-line {
+TextArea > .text-area--active-line {
     background: $editor-active-line-bg;
 }
-TextEditor > .text-editor--active-line-gutter {
+TextArea > .text-area--active-line-gutter {
     color: $text;
     background: $editor-active-line-bg;
 }
-TextEditor > .text-editor--gutter {
+TextArea > .text-area--gutter {
     color: $text-muted 40%;
 }
-TextEditor > .text-editor--cursor {
+TextArea > .text-area--cursor {
     color: $text;
     background: white 80%;
 }
 
-TextEditor > .text-editor--selection {
+TextArea > .text-area--selection {
     background: $primary;
 }
 """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
-        "text-editor--active-line",
-        "text-editor--active-line-gutter",
-        "text-editor--gutter",
-        "text-editor--cursor",
-        "text-editor--selection",
+        "text-area--active-line",
+        "text-area--active-line-gutter",
+        "text-area--gutter",
+        "text-area--cursor",
+        "text-area--selection",
     }
 
     BINDINGS = [
@@ -335,6 +326,7 @@ TextEditor > .text-editor--selection {
         log.debug(f"loaded text. parser = {self._parser} ast = {self._syntax_tree}")
 
     def clear(self) -> None:
+        # TODO: Perform a delete on the whole document.
         self.load_text("")
 
     # --- Methods for measuring things (e.g. virtual sizes)
@@ -376,7 +368,7 @@ TextEditor > .text-editor--selection {
         start, end = self.selection
         end_row, end_column = end
 
-        selection_style = self.get_component_rich_style("text-editor--selection")
+        selection_style = self.get_component_rich_style("text-area--selection")
 
         # Start and end can be before or after each other, depending on the direction
         # you move the cursor during selecting text, but the "top" of the selection
@@ -412,21 +404,19 @@ TextEditor > .text-editor--selection {
 
         # Show the cursor and the selection
         if end_row == document_y:
-            cursor_style = self.get_component_rich_style("text-editor--cursor")
+            cursor_style = self.get_component_rich_style("text-area--cursor")
             line_text.stylize(cursor_style, end_column, end_column + 1)
-            active_line_style = self.get_component_rich_style(
-                "text-editor--active-line"
-            )
+            active_line_style = self.get_component_rich_style("text-area--active-line")
             line_text.stylize_before(active_line_style)
 
         # Show the gutter
         if self.show_line_numbers:
             if end_row == document_y:
                 gutter_style = self.get_component_rich_style(
-                    "text-editor--active-line-gutter"
+                    "text-area--active-line-gutter"
                 )
             else:
-                gutter_style = self.get_component_rich_style("text-editor--gutter")
+                gutter_style = self.get_component_rich_style("text-area--gutter")
 
             gutter_width_no_margin = self.gutter_width - 2
             gutter = Text(
@@ -1203,6 +1193,16 @@ TextEditor > .text-editor--selection {
             ),
             highlight_cache_current_row=self._highlights[self.selection.end[0]],
         )
+
+
+def _fix_direction(
+    start: tuple[int, int], end: tuple[int, int]
+) -> tuple[tuple[int, int], tuple[int, int]]:
+    """Given a range, return a new range (x, y) such
+    that x <= y which covers the same characters."""
+    if start > end:
+        return end, start
+    return start, end
 
 
 def traverse_tree(cursor):

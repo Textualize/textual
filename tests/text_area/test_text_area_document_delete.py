@@ -1,6 +1,6 @@
 import pytest
 
-from textual.widgets import TextEditor
+from textual.widgets import TextArea
 
 TEXT = """I must not fear.
 Fear is the mind-killer.
@@ -10,7 +10,7 @@ Sorry Will."""
 
 @pytest.fixture
 def editor():
-    editor = TextEditor()
+    editor = TextArea()
     editor.load_text(TEXT)
     return editor
 

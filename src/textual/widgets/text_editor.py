@@ -1,3 +1,3 @@
-from ._text_editor import Highlight
+from ._text_area import Highlight
 
 __all__ = ["Highlight"]
