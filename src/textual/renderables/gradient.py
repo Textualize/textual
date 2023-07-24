@@ -97,22 +97,13 @@ class LinearGradient:
                 / width
                 * 255
             )
-
             point_x = width - center_x
-
             end_x1 = (
                 (center_x + (point_x * cos_angle - point_y * sin_angle)) / width * 255
             )
-            end_x2 = (
-                (center_x + (point_x * cos_angle - (point_y + 1.0) * sin_angle))
-                / width
-                * 255
-            )
+            delta_x = (end_x1 - x1) / width
 
-            delta_x1 = (end_x1 - x1) / width
-            delta_x2 = (end_x2 - x2) / width
-
-            if delta_x1 < 0.0001:
+            if delta_x < 0.0001:
                 # Special case for verticals
                 yield _Segment(
                     "▀" * width,
@@ -127,8 +118,8 @@ class LinearGradient:
                     _Segment(
                         "▀",
                         from_color(
-                            get_rich_color(int(x1 + x * delta_x1)),
-                            get_rich_color(int(x2 + x * delta_x2)),
+                            get_rich_color(int(x1 + x * delta_x)),
+                            get_rich_color(int(x2 + x * delta_x)),
                         ),
                     )
                     for x in range(width)
