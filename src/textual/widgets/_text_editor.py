@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import ClassVar, NamedTuple
 
-from rich.cells import get_character_cell_size
 from rich.style import Style
 from rich.text import Text
 from tree_sitter import Language, Parser, Tree
@@ -599,7 +598,6 @@ TextEditor > .text-editor--selection {
         for column_index, character in enumerate(line):
             total_cell_offset += cell_len(character)
             if total_cell_offset >= cell_width + 1:
-                log(f"cell width {cell_width} -> column_index {column_index}")
                 return column_index
         return len(line)
 

@@ -28,7 +28,7 @@ async def test_input_home() -> None:
     async with InputTester().run_test() as pilot:
         for input in pilot.app.query(Input):
             input.action_home()
-            assert input.selection == 0
+            assert input.cursor_position == 0
 
 
 async def test_input_end() -> None:
@@ -36,7 +36,7 @@ async def test_input_end() -> None:
     async with InputTester().run_test() as pilot:
         for input in pilot.app.query(Input):
             input.action_end()
-            assert input.selection == len(input.value)
+            assert input.cursor_position == len(input.value)
 
 
 async def test_input_right_from_home() -> None:
@@ -44,7 +44,7 @@ async def test_input_right_from_home() -> None:
     async with InputTester().run_test() as pilot:
         for input in pilot.app.query(Input):
             input.action_cursor_right()
-            assert input.selection == (1 if input.value else 0)
+            assert input.cursor_position == (1 if input.value else 0)
 
 
 async def test_input_right_from_end() -> None:
@@ -53,7 +53,7 @@ async def test_input_right_from_end() -> None:
         for input in pilot.app.query(Input):
             input.action_end()
             input.action_cursor_right()
-            assert input.selection == len(input.value)
+            assert input.cursor_position == len(input.value)
 
 
 async def test_input_left_from_home() -> None:
@@ -61,7 +61,7 @@ async def test_input_left_from_home() -> None:
     async with InputTester().run_test() as pilot:
         for input in pilot.app.query(Input):
             input.action_cursor_left()
-            assert input.selection == 0
+            assert input.cursor_position == 0
 
 
 async def test_input_left_from_end() -> None:
@@ -70,7 +70,7 @@ async def test_input_left_from_end() -> None:
         for input in pilot.app.query(Input):
             input.action_end()
             input.action_cursor_left()
-            assert input.selection == (len(input.value) - 1 if input.value else 0)
+            assert input.cursor_position == (len(input.value) - 1 if input.value else 0)
 
 
 async def test_input_left_word_from_home() -> None:
@@ -78,7 +78,7 @@ async def test_input_left_word_from_home() -> None:
     async with InputTester().run_test() as pilot:
         for input in pilot.app.query(Input):
             input.action_cursor_left_word()
-            assert input.selection == 0
+            assert input.cursor_position == 0
 
 
 async def test_input_left_word_from_end() -> None:
@@ -94,7 +94,7 @@ async def test_input_left_word_from_end() -> None:
         for input in pilot.app.query(Input):
             input.action_end()
             input.action_cursor_left_word()
-            assert input.selection == expected_at[input.id]
+            assert input.cursor_position == expected_at[input.id]
 
 
 async def test_password_input_left_word_from_end() -> None:
@@ -104,7 +104,7 @@ async def test_password_input_left_word_from_end() -> None:
             input.action_end()
             input.password = True
             input.action_cursor_left_word()
-            assert input.selection == 0
+            assert input.cursor_position == 0
 
 
 async def test_input_right_word_from_home() -> None:
@@ -119,7 +119,7 @@ async def test_input_right_word_from_home() -> None:
         }
         for input in pilot.app.query(Input):
             input.action_cursor_right_word()
-            assert input.selection == expected_at[input.id]
+            assert input.cursor_position == expected_at[input.id]
 
 
 async def test_password_input_right_word_from_home() -> None:
@@ -128,7 +128,7 @@ async def test_password_input_right_word_from_home() -> None:
         for input in pilot.app.query(Input):
             input.password = True
             input.action_cursor_right_word()
-            assert input.selection == len(input.value)
+            assert input.cursor_position == len(input.value)
 
 
 async def test_input_right_word_from_end() -> None:
@@ -137,7 +137,7 @@ async def test_input_right_word_from_end() -> None:
         for input in pilot.app.query(Input):
             input.action_end()
             input.action_cursor_right_word()
-            assert input.selection == len(input.value)
+            assert input.cursor_position == len(input.value)
 
 
 async def test_input_right_word_to_the_end() -> None:
@@ -152,7 +152,7 @@ async def test_input_right_word_to_the_end() -> None:
         }
         for input in pilot.app.query(Input):
             hops = 0
-            while input.selection < len(input.value):
+            while input.cursor_position < len(input.value):
                 input.action_cursor_right_word()
                 hops += 1
             assert hops == expected_hops[input.id]
@@ -171,7 +171,7 @@ async def test_input_left_word_from_the_end() -> None:
         for input in pilot.app.query(Input):
             input.action_end()
             hops = 0
-            while input.selection:
+            while input.cursor_position:
                 input.action_cursor_left_word()
                 hops += 1
             assert hops == expected_hops[input.id]

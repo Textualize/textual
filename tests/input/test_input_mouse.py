@@ -32,14 +32,14 @@ async def test_mouse_clicks_within(click_at, should_land):
         # Input.
         await pilot.click(Input, Offset(click_at + 3, 1))
         await pilot.pause()
-        assert pilot.app.query_one(Input).selection == should_land
+        assert pilot.app.query_one(Input).cursor_position == should_land
 
 
 async def test_mouse_click_outwith():
     """Mouse clicks outside the input should not affect cursor position."""
     async with InputApp().run_test() as pilot:
-        pilot.app.query_one(Input).selection = 3
-        assert pilot.app.query_one(Input).selection == 3
+        pilot.app.query_one(Input).cursor_position = 3
+        assert pilot.app.query_one(Input).cursor_position == 3
         await pilot.click(Input, Offset(0, 0))
         await pilot.pause()
-        assert pilot.app.query_one(Input).selection == 3
+        assert pilot.app.query_one(Input).cursor_position == 3
