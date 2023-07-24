@@ -1,7 +1,6 @@
 import pytest
 
 from textual._document import Document
-from textual.widgets import TextArea
 
 TEXT = """I must not fear.
 Fear is the mind-killer."""

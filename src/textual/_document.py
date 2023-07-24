@@ -65,7 +65,46 @@ class Document:
         return end_point
 
     def delete_range(self, start: tuple[int, int], end: tuple[int, int]) -> str:
-        """Delete the text at the given range."""
+        """Delete the text at the given range.
+
+        Args:
+            start: A tuple (row, column) where the edit starts.
+            end: A tuple (row, column) where the edit ends.
+
+        Returns:
+            The text that was deleted from the document.
+        """
+        top, bottom = _fix_direction(start, end)
+        top_row, top_column = top
+        bottom_row, bottom_column = bottom
+
+        lines = self._lines
+
+        if top_row == bottom_row:
+            # The deletion range is within a single line.
+            line = lines[top_row]
+            deleted_text = line[top_column:bottom_column]
+            lines[top_row] = line[:top_column] + line[bottom_column:]
+        else:
+            # The deletion range spans multiple lines.
+            start_line = lines[top_row]
+            end_line = lines[bottom_row]
+
+            deleted_text = start_line[top_column:] + "\n"
+            for row in range(top_row + 1, bottom_row):
+                deleted_text += lines[row] + "\n"
+
+            deleted_text += end_line[:bottom_column]
+            if bottom_column == len(end_line):
+                deleted_text += "\n"
+
+            # Update the lines at the start and end of the range
+            lines[top_row] = start_line[:top_column] + end_line[bottom_column:]
+
+            # Delete the lines in between
+            del lines[top_row + 1 : bottom_row + 1]
+
+        return deleted_text
 
     @property
     def size(self) -> Size:
