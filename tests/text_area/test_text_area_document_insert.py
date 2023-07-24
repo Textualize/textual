@@ -6,7 +6,7 @@ TEXT = """I must not fear.
 Fear is the mind-killer."""
 
 
-def test_insert_text_no_newlines():
+def test_insert_no_newlines():
     document = Document()
     document.load_text(TEXT)
     document.insert_range((0, 1), (0, 1), " really")
@@ -16,7 +16,7 @@ def test_insert_text_no_newlines():
     ]
 
 
-def test_insert_text_empty_string():
+def test_insert_empty_string():
     document = Document()
     document.load_text(TEXT)
     document.insert_range((0, 1), (0, 1), "")
@@ -24,7 +24,7 @@ def test_insert_text_empty_string():
 
 
 @pytest.mark.xfail(reason="undecided on behaviour")
-def test_insert_text_invalid_column():
+def test_insert_invalid_column():
     # TODO - what is the correct behaviour here?
     #  right now it appends to the end of the line if the column is too large.
     document = Document()
@@ -34,7 +34,7 @@ def test_insert_text_invalid_column():
 
 
 @pytest.mark.xfail(reason="undecided on behaviour")
-def test_insert_text_invalid_row():
+def test_insert_invalid_row():
     # TODO - this raises an IndexError for list index out of range
     document = Document()
     document.load_text(TEXT)
@@ -42,21 +42,21 @@ def test_insert_text_invalid_row():
     assert document._lines == ["I must not fear.", "Fear is the mind-killer."]
 
 
-def test_insert_text_range_newline_file_start():
+def test_insert_range_newline_file_start():
     document = Document()
     document.load_text(TEXT)
     document.insert_range((0, 0), (0, 0), "\n")
     assert document._lines == ["", "I must not fear.", "Fear is the mind-killer."]
 
 
-def test_insert_text_newline_splits_line():
+def test_insert_newline_splits_line():
     document = Document()
     document.load_text(TEXT)
     document.insert_range((0, 1), (0, 1), "\n")
     assert document._lines == ["I", " must not fear.", "Fear is the mind-killer."]
 
 
-def test_insert_text_multiple_lines_ends_with_newline():
+def test_insert_multiple_lines_ends_with_newline():
     document = Document()
     document.load_text(TEXT)
     document.insert_range((0, 1), (0, 1), "Hello,\nworld!\n")
@@ -68,7 +68,7 @@ def test_insert_text_multiple_lines_ends_with_newline():
     ]
 
 
-def test_insert_text_multiple_lines_starts_with_newline():
+def test_insert_multiple_lines_starts_with_newline():
     document = Document()
     document.load_text(TEXT)
     document.insert_range((0, 1), (0, 1), "\nHello,\nworld!\n")
