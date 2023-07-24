@@ -568,7 +568,6 @@ TextArea > .text-area--selection {
             target = self.get_target_document_location(offset)
             selection_start, _ = self.selection
             self.selection = Selection(selection_start, target)
-            log.debug(f"selection updated {self.selection!r}")
 
     def _on_mouse_up(self, event: events.MouseUp) -> None:
         event.stop()
