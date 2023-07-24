@@ -103,7 +103,7 @@ class LinearGradient:
             )
             delta_x = (end_x1 - x1) / width
 
-            if delta_x < 0.0001:
+            if abs(delta_x) < 0.0001:
                 # Special case for verticals
                 yield _Segment(
                     "▀" * width,
@@ -149,3 +149,35 @@ if __name__ == "__main__":
     stops = [(i / (len(COLORS) - 1), Color.parse(c)) for i, c in enumerate(COLORS)]
 
     print(LinearGradient(25, stops))
+
+    from time import time
+
+    from textual.app import App, ComposeResult
+    from textual.widgets import Static
+
+    class GradientApp(App):
+        CSS = """
+        Screen {
+            background: transparent;
+            align: center middle;
+        }
+
+        Static {
+            padding: 2 4;
+            background: $panel;
+            width: 50;
+        }
+
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Static("Gradients are fast now :-) ")
+
+        def render(self):
+            return LinearGradient(time() * 90, stops)
+
+        def on_mount(self) -> None:
+            self.set_interval(1 / 30, self.refresh)
+
+    app = GradientApp()
+    app.run()
