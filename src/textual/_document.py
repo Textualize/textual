@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import NamedTuple
+
 from rich.text import Text
 
 from textual._cells import cell_len
@@ -137,3 +139,28 @@ class Document:
 
     def __getitem__(self, item: SupportsIndex | slice) -> str:
         return self._lines[item]
+
+
+class Selection(NamedTuple):
+    """A range of characters within a document from a start point to the end point.
+    The position of the cursor is always considered to be the `end` point of the selection.
+    The selection is inclusive of the minimum point and exclusive of the maximum point.
+    """
+
+    start: tuple[int, int] = (0, 0)
+    end: tuple[int, int] = (0, 0)
+
+    @classmethod
+    def cursor(cls, position: tuple[int, int]) -> "Selection":
+        """Create a Selection with the same start and end point."""
+        return cls(position, position)
+
+    @property
+    def is_empty(self) -> bool:
+        """Return True if the selection has 0 width, i.e. it's just a cursor."""
+        start, end = self
+        return start == end
+
+    def range(self) -> tuple[tuple[int, int], tuple[int, int]]:
+        start, end = self
+        return _fix_direction(start, end)

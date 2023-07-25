@@ -13,7 +13,7 @@ from tree_sitter.binding import Query
 
 from textual import events, log
 from textual._cells import cell_len
-from textual._document import Document
+from textual._document import Document, Selection
 from textual._fix_direction import _fix_direction
 from textual._types import Protocol, runtime_checkable
 from textual.binding import Binding
@@ -60,31 +60,6 @@ class Highlight(NamedTuple):
     highlight_name: str | None
 
 
-class Selection(NamedTuple):
-    """A range of characters within a document from a start point to the end point.
-    The position of the cursor is always considered to be the `end` point of the selection.
-    The selection is inclusive of the minimum point and exclusive of the maximum point.
-    """
-
-    start: tuple[int, int] = (0, 0)
-    end: tuple[int, int] = (0, 0)
-
-    @classmethod
-    def cursor(cls, position: tuple[int, int]) -> "Selection":
-        """Create a Selection with the same start and end point."""
-        return cls(position, position)
-
-    @property
-    def is_empty(self) -> bool:
-        """Return True if the selection has 0 width, i.e. it's just a cursor."""
-        start, end = self
-        return start == end
-
-    def range(self) -> tuple[tuple[int, int], tuple[int, int]]:
-        start, end = self
-        return _fix_direction(start, end)
-
-
 @runtime_checkable
 class Edit(Protocol):
     """Protocol for actions performed in the text editor that can be done and undone."""
@@ -114,8 +89,7 @@ class Insert(NamedTuple):
         """Undo the action."""
 
 
-@dataclass
-class Delete:
+class Delete(NamedTuple):
     """Performs a delete operation."""
 
     from_position: tuple[int, int]
@@ -211,7 +185,7 @@ TextArea > .text-area--selection {
 
     language: Reactive[str | None] = reactive(None)
     """The language to use for syntax highlighting (via tree-sitter)."""
-    selection: Reactive[Selection] = reactive(Selection(), always_update=True)
+    selection: Reactive[Selection] = reactive(Selection())
     """The cursor position (zero-based line_index, offset)."""
     show_line_numbers: Reactive[bool] = reactive(True)
     """True to show line number gutter, otherwise False."""
@@ -684,7 +658,6 @@ TextArea > .text-area--selection {
             self.selection = Selection(start, (cursor_row, 0))
         else:
             self.selection = Selection.cursor((cursor_row, 0))
-            print(f"new selection = {self.selection}")
 
     # ------ Cursor movement actions
     def action_cursor_left(self) -> None:
