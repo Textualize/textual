@@ -10,9 +10,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added App.begin_capture_print, App.end_capture_print, Widget.begin_capture_print, Widget.end_capture_print https://github.com/Textualize/textual/issues/2952
-
-### Added
-
 - Added the ability to run async methods as thread workers https://github.com/Textualize/textual/pull/2938
 
 ### Changed
@@ -25,6 +22,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed a bug where `Click` events were bubbling up from `Switch` widgets https://github.com/Textualize/textual/issues/2366
 - Fixed a crash when using empty CSS variables https://github.com/Textualize/textual/issues/1849
 - Fixed a crash if `DirectoryTree.show_root` was set before the DOM was fully available https://github.com/Textualize/textual/issues/2363
+- Fixed issue with tabs in TextLog https://github.com/Textualize/textual/issues/3007
+
+
+### Changed
+
+- Breaking change: the default style of a `DataTable` now has `max-height: 100%` https://github.com/Textualize/textual/issues/2959
 
 ## [0.30.0] - 2023-07-17
 
