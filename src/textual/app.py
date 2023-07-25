@@ -2792,6 +2792,10 @@ class App(Generic[ReturnType], DOMNode):
         """An [action](/guide/actions) to remove the topmost screen and makes the new topmost screen active."""
         self.pop_screen()
 
+    async def action_switch_mode(self, mode: str) -> None:
+        """An [action](/guide/actions) that switches to the given mode.."""
+        self.switch_mode(mode)
+
     async def action_back(self) -> None:
         """An [action](/guide/actions) to go back to the previous screen (pop the current screen).
 
