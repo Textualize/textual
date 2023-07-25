@@ -141,7 +141,7 @@ class Document:
 
 class Selection(NamedTuple):
     """A range of characters within a document from a start point to the end point.
-    The position of the cursor is always considered to be the `end` point of the selection.
+    The location of the cursor is always considered to be the `end` point of the selection.
     The selection is inclusive of the minimum point and exclusive of the maximum point.
     """
 
@@ -149,9 +149,9 @@ class Selection(NamedTuple):
     end: tuple[int, int] = (0, 0)
 
     @classmethod
-    def cursor(cls, position: tuple[int, int]) -> "Selection":
+    def cursor(cls, location: tuple[int, int]) -> "Selection":
         """Create a Selection with the same start and end point."""
-        return cls(position, position)
+        return cls(location, location)
 
     @property
     def is_empty(self) -> bool:

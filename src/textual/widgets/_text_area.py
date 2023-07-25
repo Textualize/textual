@@ -40,18 +40,18 @@ class Edit(Protocol):
 
 @dataclass
 class Insert:
-    """Implements the Edit protocol for inserting text at some position."""
+    """Implements the Edit protocol for inserting text at some location."""
 
     text: str
-    from_position: tuple[int, int]
-    to_position: tuple[int, int]
+    from_location: tuple[int, int]
+    to_location: tuple[int, int]
     cursor_destination: tuple[int, int] | None = None
     _edit_end: tuple[int, int] | None = field(init=False, default=None)
 
     def do(self, editor: TextArea) -> None:
         self._edit_end = editor._document.insert_range(
-            self.from_position,
-            self.to_position,
+            self.from_location,
+            self.to_location,
             self.text,
         )
 
@@ -59,7 +59,7 @@ class Insert:
         """Undo the action."""
 
     def post_refresh(self, editor: TextArea) -> None:
-        # Update the cursor position
+        # Update the cursor location
         cursor_destination = self.cursor_destination
         if cursor_destination is not None:
             editor.selection = cursor_destination
@@ -71,11 +71,11 @@ class Insert:
 class Delete:
     """Performs a delete operation."""
 
-    from_position: tuple[int, int]
-    """The position to delete from (inclusive)."""
+    from_location: tuple[int, int]
+    """The location to delete from (inclusive)."""
 
-    to_position: tuple[int, int]
-    """The position to delete to (exclusive)."""
+    to_location: tuple[int, int]
+    """The location to delete to (exclusive)."""
 
     cursor_destination: tuple[int, int] | None = None
     """Where to move the cursor to after the deletion."""
@@ -86,7 +86,7 @@ class Delete:
     def do(self, editor: TextArea) -> str:
         """Do the delete action and record the text that was deleted."""
         self.deleted_text = editor._document.delete_range(
-            self.from_position, self.to_position
+            self.from_location, self.to_location
         )
         return self.deleted_text
 
@@ -98,11 +98,11 @@ class Delete:
         if cursor_destination is not None:
             editor.selection = Selection.cursor(cursor_destination)
         else:
-            editor.selection = Selection.cursor(self.from_position)
+            editor.selection = Selection.cursor(self.from_location)
 
     def __rich_repr__(self):
-        yield "from_position", self.from_position
-        yield "to_position", self.to_position
+        yield "from_location", self.from_location
+        yield "to_location", self.to_location
         if hasattr(self, "deleted_text"):
             yield "deleted_text", self.deleted_text
 
@@ -177,7 +177,7 @@ TextArea > .text-area--selection {
     """The language to use for syntax highlighting (via tree-sitter)."""
 
     selection: Reactive[Selection] = reactive(Selection())
-    """The cursor position (zero-based line_index, offset)."""
+    """The selection location (zero-based line_index, offset)."""
 
     show_line_numbers: Reactive[bool] = reactive(True)
     """True to show line number gutter, otherwise False."""
@@ -374,7 +374,6 @@ TextArea > .text-area--selection {
 
     # --- Lower level event/key handling
     def _on_key(self, event: events.Key) -> None:
-        event.stop()
         log.debug(f"{event!r}")
         key = event.key
         if event.is_printable or key == "tab" or key == "enter":
@@ -387,8 +386,10 @@ TextArea > .text-area--selection {
             assert event.character is not None
             start, end = self.selection
             self.insert_text_range(insert, start, end)
+            event.stop()
             event.prevent_default()
         elif key == "shift+tab":
+            event.stop()
             self.dedent_line()
 
     def get_target_document_location(self, offset: Offset) -> tuple[int, int]:
@@ -451,7 +452,7 @@ TextArea > .text-area--selection {
         """Return True if the location is somewhere that can naturally be reached by the cursor.
 
         Generally this means it's at a row within the document, and a column which contains a character,
-        OR at the resting position at the end of a row."""
+        OR at the resting location at the end of a row."""
         row, column = location
         document = self._document
         row_text = document[row]
@@ -551,27 +552,27 @@ TextArea > .text-area--selection {
 
     # ------ Cursor movement actions
     def action_cursor_left(self) -> None:
-        """Move the cursor one position to the left.
+        """Move the cursor one location to the left.
 
         If the cursor is at the left edge of the document, try to move it to
         the end of the previous line.
         """
-        target = self.get_cursor_left_position()
+        target = self.get_cursor_left_location()
         self.selection = Selection.cursor(target)
         self._record_last_intentional_cell_width()
 
     def action_cursor_left_select(self):
-        """Move the end of the selection one position to the left.
+        """Move the end of the selection one location to the left.
 
         This will expand or contract the selection.
         """
-        new_cursor_position = self.get_cursor_left_position()
+        new_cursor_location = self.get_cursor_left_location()
         selection_start, selection_end = self.selection
-        self.selection = Selection(selection_start, new_cursor_position)
+        self.selection = Selection(selection_start, new_cursor_location)
         self._record_last_intentional_cell_width()
 
-    def get_cursor_left_position(self) -> tuple[int, int]:
-        """Get the position the cursor will move to if it moves left."""
+    def get_cursor_left_location(self) -> tuple[int, int]:
+        """Get the location the cursor will move to if it moves left."""
         if self.cursor_at_start_of_document:
             return 0, 0
         cursor_row, cursor_column = self.selection.end
@@ -581,26 +582,26 @@ TextArea > .text-area--selection {
         return target_row, target_column
 
     def action_cursor_right(self) -> None:
-        """Move the cursor one position to the right.
+        """Move the cursor one location to the right.
 
         If the cursor is at the end of a line, attempt to go to the start of the next line.
         """
-        target = self.get_cursor_right_position()
+        target = self.get_cursor_right_location()
         self.selection = Selection.cursor(target)
         self._record_last_intentional_cell_width()
 
     def action_cursor_right_select(self):
-        """Move the end of the selection one position to the right.
+        """Move the end of the selection one location to the right.
 
         This will expand or contract the selection.
         """
-        new_cursor_position = self.get_cursor_right_position()
+        new_cursor_location = self.get_cursor_right_location()
         selection_start, selection_end = self.selection
-        self.selection = Selection(selection_start, new_cursor_position)
+        self.selection = Selection(selection_start, new_cursor_location)
         self._record_last_intentional_cell_width()
 
-    def get_cursor_right_position(self) -> tuple[int, int]:
-        """Get the position the cursor will move to if it moves right."""
+    def get_cursor_right_location(self) -> tuple[int, int]:
+        """Get the location the cursor will move to if it moves right."""
         if self.cursor_at_end_of_document:
             return self.selection.end
         cursor_row, cursor_column = self.selection.end
@@ -610,17 +611,17 @@ TextArea > .text-area--selection {
 
     def action_cursor_down(self) -> None:
         """Move the cursor down one cell."""
-        target = self.get_cursor_down_position()
+        target = self.get_cursor_down_location()
         self.selection = Selection.cursor(target)
 
     def action_cursor_down_select(self) -> None:
-        """Move the cursor down one cell, selecting the range between the old and new positions."""
-        target = self.get_cursor_down_position()
+        """Move the cursor down one cell, selecting the range between the old and new locations."""
+        target = self.get_cursor_down_location()
         start, end = self.selection
         self.selection = Selection(start, target)
 
-    def get_cursor_down_position(self):
-        """Get the position the cursor will move to if it moves down."""
+    def get_cursor_down_location(self):
+        """Get the location the cursor will move to if it moves down."""
         cursor_row, cursor_column = self.selection.end
         if self.cursor_at_last_row:
             return cursor_row, len(self._document[cursor_row])
@@ -635,17 +636,17 @@ TextArea > .text-area--selection {
 
     def action_cursor_up(self) -> None:
         """Move the cursor up one cell."""
-        target = self.get_cursor_up_position()
+        target = self.get_cursor_up_location()
         self.selection = Selection.cursor(target)
 
     def action_cursor_up_select(self) -> None:
-        """Move the cursor up one cell, selecting the range between the old and new positions."""
-        target = self.get_cursor_up_position()
+        """Move the cursor up one cell, selecting the range between the old and new locations."""
+        target = self.get_cursor_up_location()
         start, end = self.selection
         self.selection = Selection(start, target)
 
-    def get_cursor_up_position(self) -> tuple[int, int]:
-        """Get the position the cursor will move to if it moves up."""
+    def get_cursor_up_location(self) -> tuple[int, int]:
+        """Get the location the cursor will move to if it moves up."""
         if self.cursor_at_first_row:
             return 0, 0
         cursor_row, cursor_column = self.selection.end
@@ -738,25 +739,25 @@ TextArea > .text-area--selection {
     def insert_text(
         self,
         text: str,
-        position: tuple[int, int],
+        location: tuple[int, int],
         cursor_destination: tuple[int, int] | None = None,
     ) -> None:
-        self.edit(Insert(text, position, position, cursor_destination))
+        self.edit(Insert(text, location, location, cursor_destination))
 
     def insert_text_range(
         self,
         text: str,
-        from_position: tuple[int, int],
-        to_position: tuple[int, int],
+        from_location: tuple[int, int],
+        to_location: tuple[int, int],
         cursor_destination: tuple[int, int] | None = None,
     ):
-        self.edit(Insert(text, from_position, to_position, cursor_destination))
+        self.edit(Insert(text, from_location, to_location, cursor_destination))
 
     # def _insert_text_range(
     #     self,
     #     text: str,
-    #     from_position: tuple[int, int],
-    #     to_position: tuple[int, int],
+    #     from_location: tuple[int, int],
+    #     to_location: tuple[int, int],
     #     move_cursor: bool = True,
     # ) -> None:
     #     """Insert text at a given range and move the cursor to the end of the inserted text."""
@@ -764,10 +765,10 @@ TextArea > .text-area--selection {
     #     inserted_text = text
     #     lines = self.document_lines
     #
-    #     from_row, from_column = from_position
-    #     to_row, to_column = to_position
+    #     from_row, from_column = from_location
+    #     to_row, to_column = to_location
     #
-    #     if from_position > to_position:
+    #     if from_location > to_location:
     #         from_row, from_column, to_row, to_column = (
     #             to_row,
     #             to_column,
@@ -791,14 +792,14 @@ TextArea > .text-area--selection {
     #
     #     cursor_destination = (destination_row, destination_column)
     #
-    #     start_byte = self._position_to_byte_offset(from_position)
+    #     start_byte = self._location_to_byte_offset(from_location)
     #     if self._syntax_tree is not None:
     #         self._syntax_tree.edit(
     #             start_byte=start_byte,
-    #             old_end_byte=self._position_to_byte_offset(to_position),
+    #             old_end_byte=self._location_to_byte_offset(to_location),
     #             new_end_byte=start_byte + len(inserted_text),
-    #             start_point=from_position,
-    #             old_end_point=to_position,
+    #             start_point=from_location,
+    #             old_end_point=to_location,
     #             new_end_point=cursor_destination,
     #         )
     #         self._syntax_tree = self._parser.parse(
@@ -809,12 +810,12 @@ TextArea > .text-area--selection {
     #     if move_cursor:
     #         self.selection = Selection.cursor(cursor_destination)
 
-    # def _position_to_byte_offset(self, position: tuple[int, int]) -> int:
+    # def _location_to_byte_offset(self, location: tuple[int, int]) -> int:
     #     """Given a document coordinate, return the byte offset of that coordinate."""
     #
     #     # TODO - this assumes all line endings are a single byte `\n`
     #     lines = self.document_lines
-    #     row, column = position
+    #     row, column = location
     #     lines_above = lines[:row]
     #     bytes_lines_above = sum(len(line.encode("utf-8")) + 1 for line in lines_above)
     #     bytes_this_line_left_of_cursor = len(lines[row][:column].encode("utf-8"))
@@ -848,31 +849,31 @@ TextArea > .text-area--selection {
 
     def delete_range(
         self,
-        from_position: tuple[int, int],
-        to_position: tuple[int, int],
+        from_location: tuple[int, int],
+        to_location: tuple[int, int],
         cursor_destination: tuple[int, int] | None = None,
     ) -> str:
-        top, bottom = _fix_direction(from_position, to_position)
+        top, bottom = _fix_direction(from_location, to_location)
         return self.edit(Delete(top, bottom, cursor_destination))
 
     # def _delete_range(
     #     self,
-    #     from_position: tuple[int, int],
-    #     to_position: tuple[int, int],
+    #     from_location: tuple[int, int],
+    #     to_location: tuple[int, int],
     #     cursor_destination: tuple[int, int] | None,
     # ) -> str:
-    #     """Delete text between `from_position` and `to_position`.
+    #     """Delete text between `from_location` and `to_location`.
     #
-    #     `from_position` is inclusive. The `to_position` is exclusive.
+    #     `from_location` is inclusive. The `to_location` is exclusive.
     #
     #     Returns:
     #         A string containing the deleted text.
     #     """
-    #     from_row, from_column = from_position
-    #     to_row, to_column = to_position
+    #     from_row, from_column = from_location
+    #     to_row, to_column = to_location
     #
-    #     start_byte = self._position_to_byte_offset(from_position)
-    #     old_end_byte = self._position_to_byte_offset(to_position)
+    #     start_byte = self._location_to_byte_offset(from_location)
+    #     old_end_byte = self._location_to_byte_offset(to_location)
     #
     #     lines = self.document_lines
     #
@@ -905,9 +906,9 @@ TextArea > .text-area--selection {
     #             start_byte=start_byte,
     #             old_end_byte=old_end_byte,
     #             new_end_byte=old_end_byte - len(deleted_text),
-    #             start_point=from_position,
-    #             old_end_point=to_position,
-    #             new_end_point=from_position,
+    #             start_point=from_location,
+    #             old_end_point=to_location,
+    #             new_end_point=from_location,
     #         )
     #         self._syntax_tree = self._parser.parse(
     #             self._read_callable, self._syntax_tree
@@ -925,7 +926,7 @@ TextArea > .text-area--selection {
     #     return deleted_text
 
     def action_delete_left(self) -> None:
-        """Deletes the character to the left of the cursor and updates the cursor position."""
+        """Deletes the character to the left of the cursor and updates the cursor location."""
 
         selection = self.selection
         empty = selection.is_empty
@@ -945,7 +946,7 @@ TextArea > .text-area--selection {
         self.delete_range(start, end)
 
     def action_delete_right(self) -> None:
-        """Deletes the character to the right of the cursor and keeps the cursor at the same position."""
+        """Deletes the character to the right of the cursor and keeps the cursor at the same location."""
         if self.cursor_at_end_of_document:
             return
 
@@ -953,11 +954,11 @@ TextArea > .text-area--selection {
         end_row, end_column = end
 
         if self.cursor_at_end_of_row:
-            to_position = (end_row + 1, 0)
+            to_location = (end_row + 1, 0)
         else:
-            to_position = (end_row, end_column + 1)
+            to_location = (end_row, end_column + 1)
 
-        self.delete_range(start, to_position)
+        self.delete_range(start, to_location)
 
     def action_delete_line(self) -> None:
         """Deletes the lines which intersect with the selection."""
@@ -965,27 +966,27 @@ TextArea > .text-area--selection {
         start_row, start_column = start
         end_row, end_column = end
 
-        from_position = (start_row, 0)
-        to_position = (end_row + 1, 0)
+        from_location = (start_row, 0)
+        to_location = (end_row + 1, 0)
 
-        self.delete_range(from_position, to_position)
+        self.delete_range(from_location, to_location)
 
     def action_delete_to_start_of_line(self) -> None:
-        """Deletes from the cursor position to the start of the line."""
-        from_position = self.selection.end
-        cursor_row, cursor_column = from_position
-        to_position = (cursor_row, 0)
-        self.delete_range(from_position, to_position)
+        """Deletes from the cursor location to the start of the line."""
+        from_location = self.selection.end
+        cursor_row, cursor_column = from_location
+        to_location = (cursor_row, 0)
+        self.delete_range(from_location, to_location)
 
     def action_delete_to_end_of_line(self) -> None:
-        """Deletes from the cursor position to the end of the line."""
-        from_position = self.selection.end
-        cursor_row, cursor_column = from_position
-        to_position = (cursor_row, len(self._document[cursor_row]))
-        self.delete_range(from_position, to_position)
+        """Deletes from the cursor location to the end of the line."""
+        from_location = self.selection.end
+        cursor_row, cursor_column = from_location
+        to_location = (cursor_row, len(self._document[cursor_row]))
+        self.delete_range(from_location, to_location)
 
     def action_delete_word_left(self) -> None:
-        """Deletes the word to the left of the cursor and updates the cursor position."""
+        """Deletes the word to the left of the cursor and updates the cursor location."""
         if self.cursor_at_start_of_document:
             return
 
@@ -1003,18 +1004,18 @@ TextArea > .text-area--selection {
 
         if matches:
             # If a word boundary is found, delete the word
-            from_position = (cursor_row, matches[-1].start())
+            from_location = (cursor_row, matches[-1].start())
         elif cursor_row > 0:
             # If no word boundary is found, and we're not on the first line, delete to the end of the previous line
-            from_position = (cursor_row - 1, len(self._document[cursor_row - 1]))
+            from_location = (cursor_row - 1, len(self._document[cursor_row - 1]))
         else:
             # If we're already on the first line and no word boundary is found, delete to the start of the line
-            from_position = (cursor_row, 0)
+            from_location = (cursor_row, 0)
 
-        self.delete_range(from_position, self.selection.end)
+        self.delete_range(from_location, self.selection.end)
 
     def action_delete_word_right(self) -> None:
-        """Deletes the word to the right of the cursor and keeps the cursor at the same position."""
+        """Deletes the word to the right of the cursor and keeps the cursor at the same location."""
         if self.cursor_at_end_of_document:
             return
 
@@ -1030,15 +1031,15 @@ TextArea > .text-area--selection {
 
         if matches:
             # If a word boundary is found, delete the word
-            to_position = (cursor_row, cursor_column + matches[0].end())
+            to_location = (cursor_row, cursor_column + matches[0].end())
         elif cursor_row < self._document.line_count - 1:
             # If no word boundary is found, and we're not on the last line, delete to the start of the next line
-            to_position = (cursor_row + 1, 0)
+            to_location = (cursor_row + 1, 0)
         else:
             # If we're already on the last line and no word boundary is found, delete to the end of the line
-            to_position = (cursor_row, len(self._document[cursor_row]))
+            to_location = (cursor_row, len(self._document[cursor_row]))
 
-        self.delete_range(end, to_position)
+        self.delete_range(end, to_location)
 
     # --- Debugging
     @dataclass
