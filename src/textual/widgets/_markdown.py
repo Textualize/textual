@@ -633,6 +633,13 @@ class Markdown(Widget):
 
         Args:
             path: Path to the document.
+
+        Raises:
+            OSError: If there was some form of error loading the document.
+
+        Note:
+            The exceptions that can be raised by this method are all of
+            those that can be raised by calling [`Path.read_text`][pathlib.Path.read_text].
         """
         await self.update(path.read_text(encoding="utf-8"))
 
