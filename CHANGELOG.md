@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Breaking change: Creating a thread worker now requires that a `thread=True` keyword argument is passed https://github.com/Textualize/textual/pull/2938
 
+### Changed
+
+- Breaking change: `Markdown.load` no longer captures all errors and returns a `bool`, errors now propagate https://github.com/Textualize/textual/issues/2956
+
 ### Fixed
 
 - Fixed a crash when a `SelectionList` had a prompt wider than itself https://github.com/Textualize/textual/issues/2900
