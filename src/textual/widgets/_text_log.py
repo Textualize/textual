@@ -128,6 +128,9 @@ class TextLog(ScrollView, can_focus=True):
             else:
                 renderable = cast(RenderableType, content)
 
+        if isinstance(renderable, Text):
+            renderable.expand_tabs()
+
         console = self.app.console
         render_options = console.options
 
