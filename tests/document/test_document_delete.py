@@ -102,13 +102,3 @@ def test_delete_single_line_including_newline(document):
         "Fear is the mind-killer.",
         "Sorry Will.",
     ]
-
-
-def test_delete_single_character_start_of_document():
-    """Check deletion of the first character in the document"""
-    pass
-
-
-def test_delete_single_character_end_of_document_newline():
-    """Check deleting the newline character at the end of the document"""
-    pass

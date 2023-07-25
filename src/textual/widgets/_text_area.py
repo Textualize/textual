@@ -206,7 +206,9 @@ TextArea > .text-area--selection {
 
     def watch__document_size(self, size: Size) -> None:
         document_width, document_height = size
-        self.virtual_size = Size(document_width + self.gutter_width, document_height)
+        self.virtual_size = Size(
+            document_width + self.gutter_width + 1, document_height
+        )
 
     def load_text(self, text: str) -> None:
         """Load text from a string into the editor.
@@ -218,9 +220,7 @@ TextArea > .text-area--selection {
         self._refresh_size()
 
     def _refresh_size(self) -> None:
-        width, height = self._document.size
-        # +1 to reserve cursor end-of-line resting space.
-        self._document_size = Size(width + 1, height)
+        self._document_size = self._document.size
 
     def render_line(self, widget_y: int) -> Strip:
         document = self._document
@@ -234,21 +234,15 @@ TextArea > .text-area--selection {
         codepoint_count = len(line)
         line.set_length(self.virtual_size.width)
 
-        start, end = self.selection
-        end_row, end_column = end
-
-        selection_style = self.get_component_rich_style("text-area--selection")
-
-        # Start and end can be before or after each other, depending on the direction
-        # you move the cursor during selecting text, but the "top" of the selection
-        # is always before the "bottom" of the selection.
-        selection_top = min(start, end)
-        selection_bottom = max(start, end)
+        selection = self.selection
+        start, end = selection
+        selection_top, selection_bottom = selection.range
         selection_top_row, selection_top_column = selection_top
         selection_bottom_row, selection_bottom_column = selection_bottom
 
         if start != end and selection_top_row <= line_index <= selection_bottom_row:
-            # If this row is part of the selection
+            # If this row intersects with the selection range
+            selection_style = self.get_component_rich_style("text-area--selection")
             if line_index == selection_top_row == selection_bottom_row:
                 # Selection within a single line
                 line.stylize_before(
@@ -269,16 +263,17 @@ TextArea > .text-area--selection {
                 else:
                     line.stylize_before(selection_style, end=codepoint_count)
 
-        # Show the cursor and the selection
-        if end_row == line_index:
+        # Highlight the cursor
+        cursor_row, cursor_column = end
+        if cursor_row == line_index:
             cursor_style = self.get_component_rich_style("text-area--cursor")
-            line.stylize(cursor_style, end_column, end_column + 1)
+            line.stylize(cursor_style, cursor_column, cursor_column + 1)
             active_line_style = self.get_component_rich_style("text-area--active-line")
             line.stylize_before(active_line_style)
 
-        # Show the gutter
+        # Build the gutter text for this line
         if self.show_line_numbers:
-            if end_row == line_index:
+            if cursor_row == line_index:
                 gutter_style = self.get_component_rich_style(
                     "text-area--active-line-gutter"
                 )
@@ -294,11 +289,13 @@ TextArea > .text-area--selection {
         else:
             gutter = Text("", end="")
 
+        # Render the gutter and the text of this line
         gutter_segments = self.app.console.render(gutter)
         text_segments = self.app.console.render(
             line, self.app.console.options.update_width(self.virtual_size.width)
         )
 
+        # Crop the line to show only the visible part (some may be scrolled out of view)
         virtual_width, virtual_height = self.virtual_size
         text_crop_start = int(self.scroll_x)
         text_crop_end = text_crop_start + virtual_width
@@ -306,8 +303,8 @@ TextArea > .text-area--selection {
         gutter_strip = Strip(gutter_segments)
         text_strip = Strip(text_segments).crop(text_crop_start, text_crop_end)
 
+        # Join and return the gutter and the visible portion of this line
         strip = Strip.join([gutter_strip, text_strip]).simplify()
-
         return strip
 
     @property
@@ -385,7 +382,8 @@ TextArea > .text-area--selection {
     def _on_paste(self, event: events.Paste) -> None:
         text = event.text
         if text:
-            self.insert_text(text, self.selection)
+            start, end = self.selection
+            self.insert_text_range(text, start, end, end)
 
     def cell_width_to_column_index(self, cell_width: int, row_index: int) -> int:
         """Return the column that the cell width corresponds to on the given row."""
@@ -440,7 +438,7 @@ TextArea > .text-area--selection {
 
     def scroll_cursor_visible(self):
         row, column = self.selection.end
-        text = self.active_line_text[:column]
+        text = self.cursor_line_text[:column]
         column_offset = cell_len(text)
         self.scroll_to_region(
             Region(x=column_offset, y=row, width=3, height=1),
@@ -640,7 +638,7 @@ TextArea > .text-area--selection {
             # If a word boundary is found, move the cursor there
             cursor_column = matches[-1].start()
         elif cursor_row > 0:
-            # If no word boundary is found and we're not on the first line, move to the end of the previous line
+            # If no word boundary is found, and we're not on the first line, move to the end of the previous line
             cursor_row -= 1
             cursor_column = len(self._document[cursor_row])
         else:
@@ -677,7 +675,7 @@ TextArea > .text-area--selection {
         self._record_last_intentional_cell_width()
 
     @property
-    def active_line_text(self) -> str:
+    def cursor_line_text(self) -> str:
         # TODO - consider empty documents
         return self._document[self.selection.end[0]]
 
@@ -723,9 +721,11 @@ TextArea > .text-area--selection {
         return deleted_text
 
     def clear(self) -> None:
-        # TODO: Perform a delete on the whole document to ensure this is
-        #  integrated with undo/redo.
-        self.delete_range()
+        """Clear the document."""
+        document = self._document
+        last_line = document[-1]
+        document_end_location = (document.line_count, len(last_line))
+        self.delete_range((0, 0), document_end_location)
 
     def action_delete_left(self) -> None:
         """Deletes the character to the left of the cursor and updates the cursor location."""
@@ -855,7 +855,7 @@ TextArea > .text-area--selection {
         active_line_text: str
         active_line_cell_len: int
 
-    def debug_state(self) -> "EditorDebug":
+    def _debug_state(self) -> "EditorDebug":
         return self.EditorDebug(
             cursor=self.selection,
             language=self.language,
@@ -865,6 +865,6 @@ TextArea > .text-area--selection {
             undo_stack=list(reversed(self._undo_stack)),
             # tree_sexp=self._syntax_tree.root_node.sexp(),
             tree_sexp="",
-            active_line_text=repr(self.active_line_text),
-            active_line_cell_len=cell_len(self.active_line_text),
+            active_line_text=repr(self.cursor_line_text),
+            active_line_cell_len=cell_len(self.cursor_line_text),
         )

@@ -159,6 +159,7 @@ class Selection(NamedTuple):
         start, end = self
         return start == end
 
+    @property
     def range(self) -> tuple[tuple[int, int], tuple[int, int]]:
         start, end = self
         return _fix_direction(start, end)
