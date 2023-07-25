@@ -1,23 +1,17 @@
 from __future__ import annotations
 
 import re
-from collections import defaultdict
 from dataclasses import dataclass, field
-from pathlib import Path
-from typing import ClassVar, NamedTuple
+from typing import ClassVar
 
-from rich.style import Style
 from rich.text import Text
-from tree_sitter import Language, Parser, Tree
-from tree_sitter.binding import Query
 
-from textual import events, log
+from textual import events
 from textual._cells import cell_len
 from textual._fix_direction import _fix_direction
 from textual._types import Protocol, runtime_checkable
 from textual.binding import Binding
 from textual.document._document import Document, Selection
-from textual.document._syntax_aware_document import Highlight
 from textual.geometry import Offset, Region, Size, Spacing, clamp
 from textual.reactive import Reactive, reactive
 from textual.scroll_view import ScrollView
@@ -80,15 +74,15 @@ class Delete:
     cursor_destination: tuple[int, int] | None = None
     """Where to move the cursor to after the deletion."""
 
-    deleted_text: str | None = None
+    _deleted_text: str | None = field(init=False, default=None)
     """The text that was deleted, or None if the deletion hasn't occurred yet."""
 
     def do(self, editor: TextArea) -> str:
         """Do the delete action and record the text that was deleted."""
-        self.deleted_text = editor._document.delete_range(
+        self._deleted_text = editor._document.delete_range(
             self.from_location, self.to_location
         )
-        return self.deleted_text
+        return self._deleted_text
 
     def undo(self, editor: TextArea) -> None:
         """Undo the delete action."""
@@ -99,12 +93,6 @@ class Delete:
             editor.selection = Selection.cursor(cursor_destination)
         else:
             editor.selection = Selection.cursor(self.from_location)
-
-    def __rich_repr__(self):
-        yield "from_location", self.from_location
-        yield "to_location", self.to_location
-        if hasattr(self, "deleted_text"):
-            yield "deleted_text", self.deleted_text
 
 
 class TextArea(ScrollView, can_focus=True):
@@ -217,7 +205,6 @@ TextArea > .text-area--selection {
         """True if we're currently selecting text, otherwise False."""
 
     def watch__document_size(self, size: Size) -> None:
-        log.debug(f"document size set to {size!r} ")
         document_width, document_height = size
         self.virtual_size = Size(document_width + self.gutter_width, document_height)
 
@@ -229,26 +216,6 @@ TextArea > .text-area--selection {
         """
         self._document.load_text(text)
         self._refresh_size()
-
-    #
-    # def load_lines(self, lines: list[str]) -> None:
-    #     """Load text from a list of lines into the editor.
-    #
-    #     This will replace any previously loaded lines."""
-    #
-    #     # TODO - migrate the highlighting stuff out of here into the Document subclass
-    #     self.document_lines = lines
-    #     self._document_size = self._get_document_size(lines)
-    #     if self._parser is not None:
-    #         self._syntax_tree = self._build_ast(self._parser)
-    #         self._prepare_highlights()
-    #
-    #     log.debug(f"loaded text. parser = {self._parser} ast = {self._syntax_tree}")
-
-    def clear(self) -> None:
-        # TODO: Perform a delete on the whole document to ensure this is
-        #  integrated with undo/redo.
-        self.load_text("")
 
     def _refresh_size(self) -> None:
         width, height = self._document.size
@@ -279,6 +246,7 @@ TextArea > .text-area--selection {
         selection_bottom = max(start, end)
         selection_top_row, selection_top_column = selection_top
         selection_bottom_row, selection_bottom_column = selection_bottom
+
         if start != end and selection_top_row <= line_index <= selection_bottom_row:
             # If this row is part of the selection
             if line_index == selection_top_row == selection_bottom_row:
@@ -354,7 +322,6 @@ TextArea > .text-area--selection {
         return gutter_longest_number
 
     def edit(self, edit: Edit) -> object | None:
-        log.debug(f"performing edit {edit!r}")
         result = edit.do(self)
 
         # TODO: Think about this...
@@ -362,7 +329,6 @@ TextArea > .text-area--selection {
         self._undo_stack = self._undo_stack[-20:]
 
         self._refresh_size()
-
         edit.post_refresh(self)
 
         return result
@@ -374,9 +340,10 @@ TextArea > .text-area--selection {
 
     # --- Lower level event/key handling
     def _on_key(self, event: events.Key) -> None:
-        log.debug(f"{event!r}")
         key = event.key
         if event.is_printable or key == "tab" or key == "enter":
+            event.stop()
+            event.prevent_default()
             if key == "tab":
                 insert = "    "
             elif key == "enter":
@@ -386,11 +353,6 @@ TextArea > .text-area--selection {
             assert event.character is not None
             start, end = self.selection
             self.insert_text_range(insert, start, end)
-            event.stop()
-            event.prevent_default()
-        elif key == "shift+tab":
-            event.stop()
-            self.dedent_line()
 
     def get_target_document_location(self, offset: Offset) -> tuple[int, int]:
         target_x = max(offset.x - self.gutter_width + int(self.scroll_x), 0)
@@ -402,7 +364,6 @@ TextArea > .text-area--selection {
         return target_row, target_column
 
     def _on_mouse_down(self, event: events.MouseDown) -> None:
-        event.stop()
         offset = event.get_content_offset(self)
         if offset is not None:
             target = self.get_target_document_location(offset)
@@ -410,7 +371,6 @@ TextArea > .text-area--selection {
             self._selecting = True
 
     def _on_mouse_move(self, event: events.MouseMove) -> None:
-        event.stop()
         if self._selecting:
             offset = event.get_content_offset(self)
             if offset is not None:
@@ -419,12 +379,10 @@ TextArea > .text-area--selection {
                 self.selection = Selection(selection_start, target)
 
     def _on_mouse_up(self, event: events.MouseUp) -> None:
-        event.stop()
         self._record_last_intentional_cell_width()
         self._selecting = False
 
     def _on_paste(self, event: events.Paste) -> None:
-        event.stop()
         text = event.text
         if text:
             self.insert_text(text, self.selection)
@@ -750,102 +708,8 @@ TextArea > .text-area--selection {
         from_location: tuple[int, int],
         to_location: tuple[int, int],
         cursor_destination: tuple[int, int] | None = None,
-    ):
+    ) -> None:
         self.edit(Insert(text, from_location, to_location, cursor_destination))
-
-    # def _insert_text_range(
-    #     self,
-    #     text: str,
-    #     from_location: tuple[int, int],
-    #     to_location: tuple[int, int],
-    #     move_cursor: bool = True,
-    # ) -> None:
-    #     """Insert text at a given range and move the cursor to the end of the inserted text."""
-    #
-    #     inserted_text = text
-    #     lines = self.document_lines
-    #
-    #     from_row, from_column = from_location
-    #     to_row, to_column = to_location
-    #
-    #     if from_location > to_location:
-    #         from_row, from_column, to_row, to_column = (
-    #             to_row,
-    #             to_column,
-    #             from_row,
-    #             from_column,
-    #         )
-    #
-    #     insert_lines = inserted_text.splitlines()
-    #     if inserted_text.endswith("\n"):
-    #         # Special case where a single newline character is inserted.
-    #         insert_lines.append("")
-    #
-    #     before_selection = lines[from_row][:from_column]
-    #     after_selection = lines[to_row][to_column:]
-    #
-    #     insert_lines[0] = before_selection + insert_lines[0]
-    #     destination_column = len(insert_lines[-1])
-    #     insert_lines[-1] = insert_lines[-1] + after_selection
-    #     lines[from_row : to_row + 1] = insert_lines
-    #     destination_row = from_row + len(insert_lines) - 1
-    #
-    #     cursor_destination = (destination_row, destination_column)
-    #
-    #     start_byte = self._location_to_byte_offset(from_location)
-    #     if self._syntax_tree is not None:
-    #         self._syntax_tree.edit(
-    #             start_byte=start_byte,
-    #             old_end_byte=self._location_to_byte_offset(to_location),
-    #             new_end_byte=start_byte + len(inserted_text),
-    #             start_point=from_location,
-    #             old_end_point=to_location,
-    #             new_end_point=cursor_destination,
-    #         )
-    #         self._syntax_tree = self._parser.parse(
-    #             self._read_callable, self._syntax_tree
-    #         )
-    #         self._prepare_highlights()
-    #     self._refresh_size()
-    #     if move_cursor:
-    #         self.selection = Selection.cursor(cursor_destination)
-
-    # def _location_to_byte_offset(self, location: tuple[int, int]) -> int:
-    #     """Given a document coordinate, return the byte offset of that coordinate."""
-    #
-    #     # TODO - this assumes all line endings are a single byte `\n`
-    #     lines = self.document_lines
-    #     row, column = location
-    #     lines_above = lines[:row]
-    #     bytes_lines_above = sum(len(line.encode("utf-8")) + 1 for line in lines_above)
-    #     bytes_this_line_left_of_cursor = len(lines[row][:column].encode("utf-8"))
-    #     return bytes_lines_above + bytes_this_line_left_of_cursor
-
-    def dedent_line(self) -> None:
-        """Reduces the indentation of the current line by one level.
-
-        A dedent is simply a Delete operation on some amount of whitespace
-        which may exist at the start of a line.
-        """
-        # cursor_row, cursor_column = self.selection.end
-        #
-        # # Define one level of indentation as four spaces
-        # indent_level = " " * 4
-        #
-        # current_line = self.document[cursor_row]
-        #
-        # # If the line is indented, reduce the indentation
-        # # TODO - if the line is less than the indent level we should just dedent as far as possible.
-        # if current_line.startswith(indent_level):
-        #     self.document_lines[cursor_row] = current_line[len(indent_level) :]
-        #
-        # if cursor_column > len(current_line):
-        #     self.selection = Selection.cursor((cursor_row, len(current_line)))
-        #
-        # self._refresh_size()
-        # self.refresh()
-        # TODO - reimplement with new Document API
-        pass
 
     def delete_range(
         self,
@@ -853,91 +717,28 @@ TextArea > .text-area--selection {
         to_location: tuple[int, int],
         cursor_destination: tuple[int, int] | None = None,
     ) -> str:
+        """Delete text between from_location and to_location."""
         top, bottom = _fix_direction(from_location, to_location)
-        return self.edit(Delete(top, bottom, cursor_destination))
+        deleted_text = self.edit(Delete(top, bottom, cursor_destination))
+        return deleted_text
 
-    # def _delete_range(
-    #     self,
-    #     from_location: tuple[int, int],
-    #     to_location: tuple[int, int],
-    #     cursor_destination: tuple[int, int] | None,
-    # ) -> str:
-    #     """Delete text between `from_location` and `to_location`.
-    #
-    #     `from_location` is inclusive. The `to_location` is exclusive.
-    #
-    #     Returns:
-    #         A string containing the deleted text.
-    #     """
-    #     from_row, from_column = from_location
-    #     to_row, to_column = to_location
-    #
-    #     start_byte = self._location_to_byte_offset(from_location)
-    #     old_end_byte = self._location_to_byte_offset(to_location)
-    #
-    #     lines = self.document_lines
-    #
-    #     # If the range is within a single line
-    #     if from_row == to_row:
-    #         line = lines[from_row]
-    #         deleted_text = line[from_column:to_column]
-    #         lines[from_row] = line[:from_column] + line[to_column:]
-    #     else:
-    #         # The range spans multiple lines
-    #         start_line = lines[from_row]
-    #         end_line = lines[to_row]
-    #
-    #         deleted_text = start_line[from_column:] + "\n"
-    #         for row in range(from_row + 1, to_row):
-    #             deleted_text += lines[row] + "\n"
-    #
-    #         deleted_text += end_line[:to_column]
-    #         if to_column == len(end_line):
-    #             deleted_text += "\n"
-    #
-    #         # Update the lines at the start and end of the range
-    #         lines[from_row] = start_line[:from_column] + end_line[to_column:]
-    #
-    #         # Delete the lines in between
-    #         del lines[from_row + 1 : to_row + 1]
-    #
-    #     if self._syntax_tree is not None:
-    #         self._syntax_tree.edit(
-    #             start_byte=start_byte,
-    #             old_end_byte=old_end_byte,
-    #             new_end_byte=old_end_byte - len(deleted_text),
-    #             start_point=from_location,
-    #             old_end_point=to_location,
-    #             new_end_point=from_location,
-    #         )
-    #         self._syntax_tree = self._parser.parse(
-    #             self._read_callable, self._syntax_tree
-    #         )
-    #         self._prepare_highlights()
-    #
-    #     self._refresh_size()
-    #
-    #     if cursor_destination is not None:
-    #         self.selection = Selection.cursor(cursor_destination)
-    #     else:
-    #         # Move the cursor to the start of the deleted range
-    #         self.selection = Selection.cursor((from_row, from_column))
-    #
-    #     return deleted_text
+    def clear(self) -> None:
+        # TODO: Perform a delete on the whole document to ensure this is
+        #  integrated with undo/redo.
+        self.delete_range()
 
     def action_delete_left(self) -> None:
         """Deletes the character to the left of the cursor and updates the cursor location."""
 
         selection = self.selection
-        empty = selection.is_empty
-
-        if self.cursor_at_start_of_document and empty:
-            return
 
         start, end = selection
         end_row, end_column = end
 
-        if empty:
+        if selection.is_empty:
+            if self.cursor_at_start_of_document:
+                return
+
             if self.cursor_at_start_of_row:
                 end = (end_row - 1, len(self._document[end_row - 1]))
             else:

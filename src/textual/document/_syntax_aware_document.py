@@ -9,7 +9,7 @@ from rich.text import Text
 from tree_sitter import Language, Parser, Tree
 from tree_sitter.binding import Query
 
-from textual import log
+from textual._fix_direction import _fix_direction
 from textual.document._document import Document
 
 # TODO - remove hardcoded python.scm highlight query file
@@ -80,23 +80,75 @@ class SyntaxAwareDocument(Document):
     ) -> tuple[int, int]:
         end_location = super().insert_range(start, end, text)
 
+        top, bottom = _fix_direction(start, end)
+
+        start_byte = self._location_to_byte_offset(top)
+        text_byte_length = len(text.encode("utf-8"))
+
+        if self._syntax_tree is not None:
+            self._syntax_tree.edit(
+                start_byte=start_byte,
+                old_end_byte=self._location_to_byte_offset(bottom),
+                new_end_byte=start_byte + text_byte_length,
+                start_point=top,
+                old_end_point=bottom,
+                new_end_point=end_location,
+            )
+            self._syntax_tree = self._parser.parse(
+                self._read_callable, self._syntax_tree
+            )
+            self._prepare_highlights()
+
+        return end_location
+
     def delete_range(self, start: tuple[int, int], end: tuple[int, int]) -> str:
+        """Delete text between `start` and `end`.
+
+        This will update the internal syntax tree of the document, refreshing
+        the syntax highlighting data. Calling `get_line` will now return a Text
+        object with new highlights corresponding to this change.
+
+        Returns:
+            A string containing the deleted text.
+        """
         deleted_text = super().delete_range(start, end)
 
-        # TODO - apply edits to the ast
+        top, bottom = _fix_direction(start, end)
+        start_byte = self._location_to_byte_offset(top)
+        old_end_byte = self._location_to_byte_offset(bottom)
+
+        if self._syntax_tree is not None:
+            self._syntax_tree.edit(
+                start_byte=start_byte,
+                old_end_byte=old_end_byte,
+                new_end_byte=old_end_byte - len(deleted_text),
+                start_point=top,
+                old_end_point=bottom,
+                new_end_point=top,
+            )
+            self._syntax_tree = self._parser.parse(
+                self._read_callable, self._syntax_tree
+            )
+            self._prepare_highlights()
+
+        return deleted_text
+
+    def _location_to_byte_offset(self, location: tuple[int, int]) -> int:
+        """Given a document coordinate, return the byte offset of that coordinate."""
+        lines = self._lines
+        row, column = location
+        lines_above = lines[:row]
+        bytes_lines_above = sum(len(line.encode("utf-8")) + 1 for line in lines_above)
+        bytes_this_line_left_of_cursor = len(lines[row][:column].encode("utf-8"))
+        return bytes_lines_above + bytes_this_line_left_of_cursor
 
     def _prepare_highlights(
         self,
         start_point: tuple[int, int] | None = None,
         end_point: tuple[int, int] = None,
     ) -> None:
-        # TODO - we're ignoring get changed ranges for now. Either I'm misunderstanding
-        #  it or I've made a mistake somewhere with AST editing.
-
         highlights = self._highlights
         query: Query = self._language.query(self._highlights_query)
-
-        log.debug(f"capturing nodes in range {start_point!r} -> {end_point!r}")
 
         captures_kwargs = {}
         if start_point is not None:
