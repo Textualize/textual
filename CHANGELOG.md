@@ -10,21 +10,27 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added App.begin_capture_print, App.end_capture_print, Widget.begin_capture_print, Widget.end_capture_print https://github.com/Textualize/textual/issues/2952
-
-### Added
-
 - Added the ability to run async methods as thread workers https://github.com/Textualize/textual/pull/2938
 
 ### Changed
 
 - Breaking change: Creating a thread worker now requires that a `thread=True` keyword argument is passed https://github.com/Textualize/textual/pull/2938
 
+### Changed
+
+- Breaking change: `Markdown.load` no longer captures all errors and returns a `bool`, errors now propagate https://github.com/Textualize/textual/issues/2956
+
 ### Fixed
 
 - Fixed a crash when a `SelectionList` had a prompt wider than itself https://github.com/Textualize/textual/issues/2900
 - Fixed a bug where `Click` events were bubbling up from `Switch` widgets https://github.com/Textualize/textual/issues/2366
 - Fixed a crash when using empty CSS variables https://github.com/Textualize/textual/issues/1849
+- Fixed issue with tabs in TextLog https://github.com/Textualize/textual/issues/3007
 
+
+### Changed
+
+- Breaking change: the default style of a `DataTable` now has `max-height: 100%` https://github.com/Textualize/textual/issues/2959
 
 ## [0.30.0] - 2023-07-17
 
