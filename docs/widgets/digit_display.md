@@ -7,7 +7,10 @@ A widget to display digits and basic arithmetic operators using Unicode blocks.
 
 ## Examples
 
-=== "Static example"
+
+### Static display example
+
+=== "Screenshot"
 
     ```{.textual path="docs/examples/widgets/digit_display.py"}
     ```
@@ -18,9 +21,12 @@ A widget to display digits and basic arithmetic operators using Unicode blocks.
     --8<-- "docs/examples/widgets/digit_display.py"
     ```
 
-=== "Reacting to an input"
 
-    ```{.textual path="docs/examples/widgets/digit_display_reacting.py"}
+### Reacting to an input
+
+=== "Screenshot"
+
+    ```{.textual path="docs/examples/widgets/digit_display_reacting.py" press="1,2,3"}
     ```
 
 === "digit_display_reacting.py"
@@ -31,16 +37,16 @@ A widget to display digits and basic arithmetic operators using Unicode blocks.
 
 ## Reactive attributes
 
-| Name     | Type     | Default | Description                                                                                                                                                                                      |
-| ------   | ------   | ------- | ---------------------------------------------- |
-| `digits` | `str`    | `""`    | Use this to update the digits to be displayed. |
+| Name     | Type   | Default | Description                                    |
+| ------   | ------ | ------- | ---------------------------------------------- |
+| `digits` | `str`  | `""`    | Use this to update the digits to be displayed. |
 
 
 ## Read-only attributes
 
-| Name                   | Type             | Description                                    |
-| ------                 | ------           | ----------------------------------------- |
-| `supported_digits`     | `frozenset[str]` | Contains the list of supported digits/characters.
+| Name               | Type             | Description                                       |
+| ------             | ------           | -----------------------------------------         |
+| `supported_digits` | `frozenset[str]` | Contains the list of supported digits/characters. |
 
 ## Messages
 

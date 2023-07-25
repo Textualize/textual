@@ -199,6 +199,7 @@ _character_map = {
 
 class _SingleDigitDisplay(Static):
     digit = reactive(" ", layout=True)
+    """The digit to display."""
 
     DEFAULT_CSS = """
         _SingleDigitDisplay {
@@ -212,10 +213,17 @@ class _SingleDigitDisplay(Static):
         super().__init__(**kwargs)
         self.digit = initial_value
 
-    def watch_digit(self, digit: str) -> None:
-        """Called when the digit attribute changes."""
+    def validate_digit(self, digit: str) -> str:
+        """Sanitize and validate the digit input."""
         if len(digit) > 1:
             raise ValueError(f"Expected a single character, got {len(digit)}")
+        digit = digit.upper()
+        if digit not in _character_map:
+            raise ValueError(f"Unsupported character: {digit}")
+        return digit
+
+    def _watch_digit(self, digit: str) -> None:
+        """Called when the digit attribute changes and passes validation."""
         self.update(_character_map[digit.upper()])
 
 
@@ -223,8 +231,10 @@ class DigitDisplay(Widget):
     """A widget to display digits and basic arithmetic operators using Unicode blocks."""
 
     digits = reactive("", layout=True)
+    """The digits to display."""
 
     supported_digits = frozenset(_character_map.keys())
+    """The digits and characters supported by this widget."""
 
     DEFAULT_CSS = """
     DigitDisplay {
@@ -242,27 +252,17 @@ class DigitDisplay(Widget):
         for widget in self._displays:
             yield widget
 
-    def _add_digit_widget(self, digit: str) -> None:
-        new_widget = _SingleDigitDisplay(digit)
-        self._displays.append(new_widget)
-        self.mount(new_widget)
-
-    def watch_digits(self, digits: str) -> None:
+    def _watch_digits(self, digits: str) -> None:
         """
         Called when the digits attribute changes.
         Here we update the display widgets to match the input digits.
         """
-        diff_digits_len = len(digits) - len(self._displays)
-
         # Here we add or remove widgets to match the number of digits
-        if diff_digits_len > 0:
-            start = len(self._displays)
-            for i in range(diff_digits_len):
-                self._add_digit_widget(digits[start + i])
-        elif diff_digits_len < 0:
-            for display in self._displays[diff_digits_len:]:
-                self._displays.remove(display)
-                display.remove()
+        while len(self._displays) < len(digits):
+            self._displays.append(_SingleDigitDisplay(digits[len(self._displays)]))
+            self.mount(self._displays[-1])
+        while len(self._displays) > len(digits):
+            self._displays.pop().remove()
 
         # At this point, the number of widgets matches the number of digits, and we can
         # update the contents of the widgets that might need it
