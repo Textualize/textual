@@ -24,6 +24,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed issue with tabs in TextLog https://github.com/Textualize/textual/issues/3007
 
 
+### Changed
+
+- Breaking change: the default style of a `DataTable` now has `max-height: 100%` https://github.com/Textualize/textual/issues/2959
+
 ## [0.30.0] - 2023-07-17
 
 ### Added

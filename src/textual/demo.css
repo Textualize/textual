@@ -208,6 +208,7 @@ LocationLink:hover {
 
 DataTable {
     height: 16;
+    max-height: 16;
 }
 
 
