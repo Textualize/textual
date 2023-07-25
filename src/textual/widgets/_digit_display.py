@@ -2,12 +2,15 @@ from textual.app import ComposeResult
 from textual.reactive import reactive
 from textual.widget import Widget
 from textual.widgets import Static
+from ..geometry import Size
 
 
 _character_map: dict[str, str] = {}
 
-# in the mappings below, we use underscores to make spaces more visible,
-# we will strip them out later
+_VIRTUAL_SPACE = "·"
+
+# in the mappings below, we use a dot instead of spaces to make them more
+# visible, we will strip them out later
 _character_map[
     "0"
 ] = """
@@ -158,9 +161,9 @@ _character_map[
 _character_map[
     "="
 ] = """
-···
-╺━·
-╺━·
+··
+╺━
+╺━
 """
 
 _character_map[
@@ -189,8 +192,6 @@ _character_map[
 """
 
 
-_VIRTUAL_SPACE = "·"
-
 # here we strip spaces and replace virtual spaces with spaces
 _character_map = {
     k: v.strip().replace(_VIRTUAL_SPACE, " ") for k, v in _character_map.items()
@@ -198,20 +199,52 @@ _character_map = {
 
 
 class _SingleDigitDisplay(Static):
+    """
+    A widget to display a single digit or basic arithmetic symbol using Unicode blocks.
+    """
+
     digit = reactive(" ", layout=True)
     """The digit to display."""
 
     DEFAULT_CSS = """
-        _SingleDigitDisplay {
-          height: 3;
-          min-width: 2;
-          max-width: 3;
-        }
+    _SingleDigitDisplay {
+      height: 3;
+      min-width: 2;
+      max-width: 3;
+    }
     """
 
-    def __init__(self, initial_value=" ", **kwargs):
-        super().__init__(**kwargs)
+    def __init__(
+        self,
+        initial_value: str = " ",
+        expand: bool = False,
+        shrink: bool = False,
+        markup: bool = True,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+        disabled: bool = False,
+    ):
+        """
+        Create a single digit display widget.
+
+        Example:
+            ```py
+            class Example(App):
+                def compose(self) -> ComposeResult:
+                    return _SingleDigitDisplay("1")
+        """
+        super().__init__(
+            expand=expand,
+            shrink=shrink,
+            markup=markup,
+            name=name,
+            id=id,
+            classes=classes,
+            disabled=disabled,
+        )
         self.digit = initial_value
+        self._content_width = 3
 
     def validate_digit(self, digit: str) -> str:
         """Sanitize and validate the digit input."""
@@ -224,11 +257,21 @@ class _SingleDigitDisplay(Static):
 
     def _watch_digit(self, digit: str) -> None:
         """Called when the digit attribute changes and passes validation."""
-        self.update(_character_map[digit.upper()])
+        content = _character_map[digit.upper()]
+        self._content_width = len(content.splitlines()[0])
+        self.update(content)
+
+    def get_content_width(self, container: Size, viewport: Size) -> int:
+        return self._content_width
+
+    def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
+        return 3
 
 
 class DigitDisplay(Widget):
-    """A widget to display digits and basic arithmetic operators using Unicode blocks."""
+    """
+    A widget to display digits and basic arithmetic symbols using Unicode blocks.
+    """
 
     digits = reactive("", layout=True)
     """The digits to display."""
@@ -243,8 +286,31 @@ class DigitDisplay(Widget):
     }
     """
 
-    def __init__(self, initial_value="", **kwargs):
-        super().__init__(**kwargs)
+    def __init__(
+        self,
+        initial_value: str = "",
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+        disabled: bool = False,
+    ):
+        """
+        Create a Digit Display widget.
+
+        Example:
+            ```py
+            class Example(App):
+                def compose(self) -> ComposeResult:
+                    return DigitDisplay("123+456")
+
+        Args:
+            initial_value (str, optional): The initial value to display. Defaults to "".
+            name: The name of the widget.
+            id: The ID of the widget in the DOM.
+            classes: The CSS classes for the widget.
+            disabled: Whether the widget is disabled or not.
+        """
+        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._displays = [_SingleDigitDisplay(d) for d in initial_value]
         self.digits = initial_value
 

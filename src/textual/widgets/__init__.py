@@ -48,6 +48,7 @@ __all__ = [
     "Checkbox",
     "ContentSwitcher",
     "DataTable",
+    "DigitDisplay",
     "DirectoryTree",
     "Footer",
     "Header",
@@ -77,7 +78,6 @@ __all__ = [
     "Tooltip",
     "Tree",
     "Welcome",
-    "DigitDisplay",
 ]
 
 _WIDGETS_LAZY_LOADING_CACHE: dict[str, type[Widget]] = {}
