@@ -162,13 +162,19 @@ class TextLog(ScrollView, can_focus=True):
             strip.adjust_cell_length(render_width)
         self.lines.extend(strips)
 
+        y_adjust: int = 0
         if self.max_lines is not None and len(self.lines) > self.max_lines:
-            self._start_line += len(self.lines) - self.max_lines
-            self.refresh()
+            y_adjust = len(self.lines) - self.max_lines
+            self._start_line += y_adjust
             self.lines = self.lines[-self.max_lines :]
+
         self.virtual_size = Size(self.max_width, len(self.lines))
+
         if auto_scroll:
             self.scroll_end(animate=False)
+        elif y_adjust > 0:
+            scroll_x, scroll_y = self.scroll_offset
+            self.scroll_to(y=max(0, scroll_y - y_adjust), animate=False)
 
         return self
 
