@@ -182,7 +182,7 @@ class TextLog(ScrollView, can_focus=True):
         if self.max_lines is not None and len(self.lines) > self.max_lines:
             y_adjust = len(self.lines) - self.max_lines
             self._start_line += y_adjust
-            self.lines = self.lines[-self.max_lines :]
+            self.lines = self.lines[-self.max_lines:]
             self.refresh()
 
         self.virtual_size = Size(self.max_width, len(self.lines))
