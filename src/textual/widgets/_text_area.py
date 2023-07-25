@@ -374,6 +374,7 @@ TextArea > .text-area--selection {
 
     # --- Lower level event/key handling
     def _on_key(self, event: events.Key) -> None:
+        event.stop()
         log.debug(f"{event!r}")
         key = event.key
         if event.is_printable or key == "tab" or key == "enter":
@@ -383,19 +384,14 @@ TextArea > .text-area--selection {
                 insert = "\n"
             else:
                 insert = event.character
-            event.stop()
             assert event.character is not None
             start, end = self.selection
             self.insert_text_range(insert, start, end)
             event.prevent_default()
         elif key == "shift+tab":
             self.dedent_line()
-            event.stop()
 
     def get_target_document_location(self, offset: Offset) -> tuple[int, int]:
-        if offset is None:
-            return
-
         target_x = max(offset.x - self.gutter_width + int(self.scroll_x), 0)
         target_row = clamp(
             offset.y + int(self.scroll_y), 0, self._document.line_count - 1
@@ -407,18 +403,19 @@ TextArea > .text-area--selection {
     def _on_mouse_down(self, event: events.MouseDown) -> None:
         event.stop()
         offset = event.get_content_offset(self)
-        target_row, target_column = self.get_target_document_location(offset)
-        self.selection = Selection.cursor((target_row, target_column))
-        log.debug(f"started selection {self.selection!r}")
-        self._selecting = True
+        if offset is not None:
+            target = self.get_target_document_location(offset)
+            self.selection = Selection.cursor(target)
+            self._selecting = True
 
     def _on_mouse_move(self, event: events.MouseMove) -> None:
         event.stop()
         if self._selecting:
             offset = event.get_content_offset(self)
-            target = self.get_target_document_location(offset)
-            selection_start, _ = self.selection
-            self.selection = Selection(selection_start, target)
+            if offset is not None:
+                target = self.get_target_document_location(offset)
+                selection_start, _ = self.selection
+                self.selection = Selection(selection_start, target)
 
     def _on_mouse_up(self, event: events.MouseUp) -> None:
         event.stop()
@@ -426,10 +423,10 @@ TextArea > .text-area--selection {
         self._selecting = False
 
     def _on_paste(self, event: events.Paste) -> None:
+        event.stop()
         text = event.text
         if text:
             self.insert_text(text, self.selection)
-        event.stop()
 
     def cell_width_to_column_index(self, cell_width: int, row_index: int) -> int:
         """Return the column that the cell width corresponds to on the given row."""
@@ -446,8 +443,8 @@ TextArea > .text-area--selection {
 
     def validate_selection(self, selection: Selection) -> Selection:
         start, end = selection
-        clamp_location = self.clamp_location
-        return Selection(clamp_location(start), clamp_location(end))
+        clamp_visitable = self.clamp_visitable
+        return Selection(clamp_visitable(start), clamp_visitable(end))
 
     # --- Cursor/selection utilities
     def is_visitable(self, location: tuple[int, int]) -> bool:
@@ -468,7 +465,7 @@ TextArea > .text-area--selection {
         start, end = selection
         return visitable(start) and visitable(end)
 
-    def clamp_location(self, location: tuple[int, int]) -> tuple[int, int]:
+    def clamp_visitable(self, location: tuple[int, int]) -> tuple[int, int]:
         document = self._document
 
         row, column = location
@@ -483,7 +480,6 @@ TextArea > .text-area--selection {
         return row, column
 
     def scroll_cursor_visible(self):
-        log.debug("scrolling cursor visible")
         row, column = self.selection.end
         text = self.active_line_text[:column]
         column_offset = cell_len(text)

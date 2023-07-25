@@ -73,13 +73,12 @@ class SyntaxAwareDocument(Document):
     def load_text(self, text: str) -> None:
         super().load_text(text)
         self._build_ast(self._parser)
+        self._prepare_highlights()
 
     def insert_range(
         self, start: tuple[int, int], end: tuple[int, int], text: str
     ) -> tuple[int, int]:
         end_location = super().insert_range(start, end, text)
-
-        # TODO - apply edits to the ast
 
     def delete_range(self, start: tuple[int, int], end: tuple[int, int]) -> str:
         deleted_text = super().delete_range(start, end)
