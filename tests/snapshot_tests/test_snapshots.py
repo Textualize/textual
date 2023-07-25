@@ -166,6 +166,11 @@ def test_textlog_max_lines(snap_compare):
     assert snap_compare("snapshot_apps/textlog_max_lines.py", press=[*"abcde"])
 
 
+def test_textlog_max_lines_noautoscroll(snap_compare):
+    press = ["a"] * 50
+    assert snap_compare("snapshot_apps/textlog_max_lines_noautoscroll.py", press=press)
+
+
 def test_fr_units(snap_compare):
     assert snap_compare("snapshot_apps/fr_units.py")
 
