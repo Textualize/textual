@@ -13,10 +13,10 @@ from tree_sitter.binding import Query
 
 from textual import events, log
 from textual._cells import cell_len
-from textual._document import Document, Selection
 from textual._fix_direction import _fix_direction
 from textual._types import Protocol, runtime_checkable
 from textual.binding import Binding
+from textual.document._document import Document, Selection
 from textual.geometry import Offset, Region, Size, Spacing, clamp
 from textual.reactive import Reactive, reactive
 from textual.scroll_view import ScrollView
@@ -89,7 +89,8 @@ class Insert(NamedTuple):
         """Undo the action."""
 
 
-class Delete(NamedTuple):
+@dataclass
+class Delete:
     """Performs a delete operation."""
 
     from_position: tuple[int, int]
@@ -101,15 +102,26 @@ class Delete(NamedTuple):
     cursor_destination: tuple[int, int] | None = None
     """Where to move the cursor to after the deletion."""
 
+    deleted_text: str | None = None
+    """The text that was deleted, or None if the deletion hasn't occurred yet."""
+
     def do(self, editor: TextArea) -> str:
-        """Do the action."""
-        self.deleted_text = editor._delete_range(
-            self.from_position, self.to_position, self.cursor_destination
-        )
+        """Do the delete action and record the text that was deleted."""
+        from_position = self.from_position
+        to_position = self.to_position
+        cursor_destination = self.cursor_destination
+
+        self.deleted_text = editor.document.delete_range(from_position, to_position)
+
+        if cursor_destination is not None:
+            editor.selection = Selection.cursor(cursor_destination)
+        else:
+            editor.selection = Selection.cursor(from_position)
+
         return self.deleted_text
 
     def undo(self, editor: TextArea) -> None:
-        """Undo the action."""
+        """Undo the delete action."""
 
     def __rich_repr__(self):
         yield "from_position", self.from_position
@@ -185,13 +197,19 @@ TextArea > .text-area--selection {
 
     language: Reactive[str | None] = reactive(None)
     """The language to use for syntax highlighting (via tree-sitter)."""
+
     selection: Reactive[Selection] = reactive(Selection())
     """The cursor position (zero-based line_index, offset)."""
+
     show_line_numbers: Reactive[bool] = reactive(True)
     """True to show line number gutter, otherwise False."""
-    _document_size: Reactive[Size] = reactive(Size(), init=False)
-    """Tracks the width of the document. Used to update virtual size. Do not
-    update virtual size directly."""
+
+    _document_size: Reactive[Size] = reactive(Size(), init=False, always_update=True)
+    """Tracks the size of the document.
+
+    This is the width and height of the bounding box of the text.
+    Used to update virtual size.
+    """
 
     def __init__(
         self,
@@ -295,36 +313,25 @@ TextArea > .text-area--selection {
         self.document.load_text(text)
         self._refresh_size()
 
-    def load_lines(self, lines: list[str]) -> None:
-        """Load text from a list of lines into the editor.
-
-        This will replace any previously loaded lines."""
-
-        # TODO - migrate the highlighting stuff out of here into the Document subclass
-        self.document_lines = lines
-        self._document_size = self._get_document_size(lines)
-        if self._parser is not None:
-            self._syntax_tree = self._build_ast(self._parser)
-            self._prepare_highlights()
-
-        log.debug(f"loaded text. parser = {self._parser} ast = {self._syntax_tree}")
+    #
+    # def load_lines(self, lines: list[str]) -> None:
+    #     """Load text from a list of lines into the editor.
+    #
+    #     This will replace any previously loaded lines."""
+    #
+    #     # TODO - migrate the highlighting stuff out of here into the Document subclass
+    #     self.document_lines = lines
+    #     self._document_size = self._get_document_size(lines)
+    #     if self._parser is not None:
+    #         self._syntax_tree = self._build_ast(self._parser)
+    #         self._prepare_highlights()
+    #
+    #     log.debug(f"loaded text. parser = {self._parser} ast = {self._syntax_tree}")
 
     def clear(self) -> None:
-        # TODO: Perform a delete on the whole document.
+        # TODO: Perform a delete on the whole document to ensure this is
+        #  integrated with undo/redo.
         self.load_text("")
-
-    # --- Methods for measuring things (e.g. virtual sizes)
-    def _get_document_size(self, document_lines: list[str]) -> Size:
-        """Return the virtual size of the document - the document only
-        refers to the area in which the cursor can move. It does not, for
-        example, include the width of the gutter."""
-        text_width = max(cell_len(line) for line in document_lines)
-        height = len(document_lines)
-        # We add one to the text width to leave a space for the cursor, since it
-        # can rest at the end of a line where there isn't yet any character.
-        # Similarly, the cursor can rest below the bottom line of text, where
-        # a line doesn't currently exist.
-        return Size(text_width + 1, height)
 
     def _refresh_size(self) -> None:
         width, height = self.document.size
@@ -334,16 +341,13 @@ TextArea > .text-area--selection {
     def render_line(self, widget_y: int) -> Strip:
         document = self.document
 
-        # TODO - we should ask the document itself for the content of the line
-        #  for the given line number.
-
         line_index = round(self.scroll_y + widget_y)
         out_of_bounds = line_index >= document.line_count
         if out_of_bounds:
             return Strip.blank(self.size.width)
 
         line = document.get_line(line_index)
-        line_length = len(line)
+        codepoint_count = len(line)
         line.set_length(self.virtual_size.width)
 
         # TODO - probably remove this highlighting code from here, we can
@@ -384,12 +388,12 @@ TextArea > .text-area--selection {
                     line.stylize_before(
                         selection_style,
                         start=selection_top_column,
-                        end=line_length,
+                        end=codepoint_count,
                     )
                 elif line_index == selection_bottom_row:
                     line.stylize_before(selection_style, end=selection_bottom_column)
                 else:
-                    line.stylize_before(selection_style, end=line_length)
+                    line.stylize_before(selection_style, end=codepoint_count)
 
         # Show the cursor and the selection
         if end_row == line_index:
@@ -499,7 +503,6 @@ TextArea > .text-area--selection {
         log.debug(f"performing edit {edit!r}")
         result = edit.do(self)
 
-        # After edits we need to refresh
         self._refresh_size()
 
         self._undo_stack.append(edit)
@@ -586,7 +589,44 @@ TextArea > .text-area--selection {
     def watch_selection(self) -> None:
         self.scroll_cursor_visible()
 
-    # --- Cursor utilities
+    def validate_selection(self, selection: Selection) -> Selection:
+        start, end = selection
+        clamp_location = self.clamp_location
+        return Selection(clamp_location(start), clamp_location(end))
+
+    # --- Cursor/selection utilities
+    def is_visitable(self, location: tuple[int, int]) -> bool:
+        """Return True if the location is somewhere that can naturally be reached by the cursor.
+
+        Generally this means it's at a row within the document, and a column which contains a character,
+        OR at the resting position at the end of a row."""
+        row, column = location
+        document = self.document
+        row_text = document[row]
+        is_valid_row = row < document.line_count
+        is_valid_column = column <= len(row_text)
+        return is_valid_row and is_valid_column
+
+    def is_visitable_selection(self, selection: Selection) -> bool:
+        """Return True if the Selection is valid (start and end in bounds)"""
+        visitable = self.is_visitable
+        start, end = selection
+        return visitable(start) and visitable(end)
+
+    def clamp_location(self, location: tuple[int, int]) -> tuple[int, int]:
+        document = self.document
+
+        row, column = location
+        try:
+            line_text = document[row]
+        except IndexError:
+            line_text = ""
+
+        row = clamp(row, 0, document.line_count - 1)
+        column = clamp(column, 0, len(line_text))
+
+        return row, column
+
     def scroll_cursor_visible(self):
         # The end of the selection is always considered to be position of the cursor
         # ... this is a constraint we need to enforce in code.
@@ -1185,57 +1225,3 @@ TextArea > .text-area--selection {
             ),
             highlight_cache_current_row=self._highlights[self.selection.end[0]],
         )
-
-
-def traverse_tree(cursor):
-    reached_root = False
-    while reached_root == False:
-        yield cursor.node
-
-        if cursor.goto_first_child():
-            continue
-
-        if cursor.goto_next_sibling():
-            continue
-
-        retracing = True
-        while retracing:
-            if not cursor.goto_parent():
-                retracing = False
-                reached_root = True
-
-            if cursor.goto_next_sibling():
-                retracing = False
-
-
-# if __name__ == "__main__":
-#     language = Language(LANGUAGES_PATH.resolve(), "python")
-#     parser = Parser()
-#     parser.set_language(language)
-#
-#     CODE = """\
-#     from textual.app import App
-#
-#
-#     class ScreenApp(App):
-#         def on_mount(self) -> None:
-#             self.screen.styles.background = "darkblue"
-#             self.screen.styles.border = ("heavy", "white")
-#
-#
-#     if __name__ == "__main__":
-#         app = ScreenApp()
-#         app.run()
-#     """
-#
-#     document_lines = CODE.splitlines(keepends=False)
-#
-#     def read_callable(byte_offset, point):
-#         row, column = point
-#         if row >= len(document_lines) or column >= len(document_lines[row]):
-#             return None
-#         return document_lines[row][column:].encode("utf8")
-#
-#     tree = parser.parse(bytes(CODE, "utf-8"))
-#
-#     print(list(traverse_tree(tree.walk())))
