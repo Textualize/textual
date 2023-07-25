@@ -91,6 +91,34 @@ class TextLog(ScrollView, can_focus=True):
     def notify_style_update(self) -> None:
         self._line_cache.clear()
 
+    def _make_renderable(self, content: RenderableType | object) -> RenderableType:
+        """Make content renderable.
+
+        Args:
+            content: Content to render.
+
+        Returns:
+            A Rich renderable.
+        """
+        renderable: RenderableType
+        if not is_renderable(content):
+            renderable = Pretty(content)
+        else:
+            if isinstance(content, str):
+                if self.markup:
+                    renderable = Text.from_markup(content)
+                else:
+                    renderable = Text(content)
+                if self.highlight:
+                    renderable = self.highlighter(renderable)
+            else:
+                renderable = cast(RenderableType, content)
+
+        if isinstance(renderable, Text):
+            renderable.expand_tabs()
+
+        return renderable
+
     def write(
         self,
         content: RenderableType | object,
@@ -114,25 +142,10 @@ class TextLog(ScrollView, can_focus=True):
 
         auto_scroll = self.auto_scroll if scroll_end is None else scroll_end
 
-        renderable: RenderableType
-        if not is_renderable(content):
-            renderable = Pretty(content)
-        else:
-            if isinstance(content, str):
-                if self.markup:
-                    renderable = Text.from_markup(content)
-                else:
-                    renderable = Text(content)
-                if self.highlight:
-                    renderable = self.highlighter(renderable)
-            else:
-                renderable = cast(RenderableType, content)
-
-        if isinstance(renderable, Text):
-            renderable.expand_tabs()
-
         console = self.app.console
         render_options = console.options
+
+        renderable = self._make_renderable(content)
 
         if isinstance(renderable, Text) and not self.wrap:
             render_options = render_options.update(overflow="ignore", no_wrap=True)
