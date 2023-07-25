@@ -17,47 +17,11 @@ from textual._fix_direction import _fix_direction
 from textual._types import Protocol, runtime_checkable
 from textual.binding import Binding
 from textual.document._document import Document, Selection
+from textual.document._syntax_aware_document import Highlight
 from textual.geometry import Offset, Region, Size, Spacing, clamp
 from textual.reactive import Reactive, reactive
 from textual.scroll_view import ScrollView
 from textual.strip import Strip
-
-TREE_SITTER_PATH = Path(__file__) / "../../../../tree-sitter/"
-LANGUAGES_PATH = TREE_SITTER_PATH / "textual-languages.so"
-
-# TODO - remove hardcoded python.scm highlight query file
-HIGHLIGHTS_PATH = TREE_SITTER_PATH / "highlights/python.scm"
-
-# TODO - temporary proof of concept approach
-HIGHLIGHT_STYLES = {
-    "string": Style(color="#E6DB74"),
-    "string.documentation": Style(color="yellow"),
-    "comment": Style(color="#75715E"),
-    "keyword": Style(color="#F92672"),
-    "include": Style(color="#F92672"),
-    "keyword.function": Style(color="#F92672"),
-    "keyword.return": Style(color="#F92672"),
-    "conditional": Style(color="#F92672"),
-    "number": Style(color="#AE81FF"),
-    "class": Style(color="#A6E22E"),
-    "function": Style(color="#A6E22E"),
-    "function.call": Style(color="#A6E22E"),
-    "method": Style(color="#A6E22E"),
-    "method.call": Style(color="#A6E22E"),
-    # "constant": Style(color="#AE81FF"),
-    "variable": Style(color="white"),
-    "parameter": Style(color="cyan"),
-    "type": Style(color="cyan"),
-    "escape": Style(bgcolor="magenta"),
-}
-
-
-class Highlight(NamedTuple):
-    """A range to highlight within a single line"""
-
-    start_column: int | None
-    end_column: int | None
-    highlight_name: str | None
 
 
 @runtime_checkable
@@ -238,12 +202,6 @@ TextArea > .text-area--selection {
         self._document = Document()
         """The document this widget is currently editing."""
 
-        self._highlights: dict[int, list[Highlight]] = defaultdict(list)
-        """Mapping line numbers to the set of cached highlights for that line."""
-
-        self._highlights_query: str | None = None
-        """The string containing the tree-sitter AST query used for syntax highlighting."""
-
         self._last_intentional_cell_width: int = 0
         """Tracks the last column (measured in terms of cell length, since we care here about where
          the cursor visually moves more than the logical characters) the user explicitly navigated to so that we can reset
@@ -258,61 +216,10 @@ TextArea > .text-area--selection {
         self._selecting = False
         """True if we're currently selecting text, otherwise False."""
 
-        # --- Abstract syntax tree and related parsing machinery
-        self._language: Language | None = None
-        self._parser: Parser | None = None
-        """The tree-sitter parser which extracts the syntax tree from the document."""
-        self._syntax_tree: Tree | None = None
-        """The tree-sitter Tree (AST) built from the document."""
-
-    def watch_language(self, new_language: str | None) -> None:
-        """Update the language used in AST parsing.
-
-        When the language reactive string is updated, fetch the Language definition
-        from our tree-sitter library file. If the language reactive is set to None,
-        then the no parser is used."""
-        log.debug(f"updating editor language to {new_language!r}")
-        if new_language:
-            self._language = Language(LANGUAGES_PATH.resolve(), new_language)
-            parser = Parser()
-            self._parser = parser
-            self._parser.set_language(self._language)
-            self._syntax_tree = self._build_ast(parser)
-            self._highlights_query = Path(HIGHLIGHTS_PATH.resolve()).read_text()
-
-        log.debug(f"parser set to {self._parser}")
-
     def watch__document_size(self, size: Size) -> None:
         log.debug(f"document size set to {size!r} ")
         document_width, document_height = size
         self.virtual_size = Size(document_width + self.gutter_width, document_height)
-
-    def _build_ast(
-        self,
-        parser: Parser,
-    ) -> Tree | None:
-        """Fully parse the document and build the abstract syntax tree for it.
-
-        Returns None if there's no parser available (e.g. when no language is selected).
-        """
-        if parser:
-            return parser.parse(self._read_callable)
-        else:
-            return None
-
-    def _read_callable(self, byte_offset: int, point: tuple[int, int]) -> str:
-        row, column = point
-        lines = self._document.lines
-        row_out_of_bounds = row >= len(lines)
-        column_out_of_bounds = not row_out_of_bounds and column > len(lines[row])
-        if row_out_of_bounds or column_out_of_bounds:
-            return_value = None
-        elif column == len(lines[row]) and row < len(lines):
-            return_value = "\n".encode("utf8")
-        else:
-            return_value = lines[row][column].encode("utf8")
-        # print(f"(point={point!r}) (offset={byte_offset!r}) {return_value!r}")
-        return return_value
 
     def load_text(self, text: str) -> None:
         """Load text from a string into the editor.
@@ -360,16 +267,6 @@ TextArea > .text-area--selection {
         codepoint_count = len(line)
         line.set_length(self.virtual_size.width)
 
-        # TODO - probably remove this highlighting code from here, we can
-        #   do it in our syntax aware Document subclass.
-        # Apply highlighting
-        null_style = Style.null()
-        if self._highlights:
-            highlights = self._highlights[line_index]
-            for start, end, highlight_name in highlights:
-                node_style = HIGHLIGHT_STYLES.get(highlight_name, null_style)
-                line.stylize(node_style, start, end)
-
         start, end = self.selection
         end_row, end_column = end
 
@@ -382,7 +279,6 @@ TextArea > .text-area--selection {
         selection_bottom = max(start, end)
         selection_top_row, selection_top_column = selection_top
         selection_bottom_row, selection_bottom_column = selection_bottom
-
         if start != end and selection_top_row <= line_index <= selection_bottom_row:
             # If this row is part of the selection
             if line_index == selection_top_row == selection_bottom_row:
@@ -456,58 +352,6 @@ TextArea > .text-area--selection {
             else 0
         )
         return gutter_longest_number
-
-    # --- Syntax highlighting
-    def _prepare_highlights(
-        self,
-        start_point: tuple[int, int] | None = None,
-        end_point: tuple[int, int] = None,
-    ) -> None:
-        # TODO - we're ignoring get changed ranges for now. Either I'm misunderstanding
-        #  it or I've made a mistake somewhere with AST editing.
-
-        highlights = self._highlights
-        query: Query = self._language.query(self._highlights_query)
-
-        log.debug(f"capturing nodes in range {start_point!r} -> {end_point!r}")
-
-        captures_kwargs = {}
-        if start_point is not None:
-            captures_kwargs["start_point"] = start_point
-        if end_point is not None:
-            captures_kwargs["end_point"] = end_point
-
-        captures = query.captures(self._syntax_tree.root_node, **captures_kwargs)
-
-        highlight_updates: dict[int, list[Highlight]] = defaultdict(list)
-        for capture in captures:
-            node, highlight_name = capture
-            node_start_row, node_start_column = node.start_point
-            node_end_row, node_end_column = node.end_point
-
-            if node_start_row == node_end_row:
-                highlight = Highlight(
-                    node_start_column, node_end_column, highlight_name
-                )
-                highlight_updates[node_start_row].append(highlight)
-            else:
-                # Add the first line
-                highlight_updates[node_start_row].append(
-                    Highlight(node_start_column, None, highlight_name)
-                )
-                # Add the middle lines - entire row of this node is highlighted
-                for node_row in range(node_start_row + 1, node_end_row):
-                    highlight_updates[node_row].append(
-                        Highlight(0, None, highlight_name)
-                    )
-
-                # Add the last line
-                highlight_updates[node_end_row].append(
-                    Highlight(0, node_end_column, highlight_name)
-                )
-
-        for line_index, updated_highlights in highlight_updates.items():
-            highlights[line_index] = updated_highlights
 
     def edit(self, edit: Edit) -> object | None:
         log.debug(f"performing edit {edit!r}")
@@ -1212,10 +1056,6 @@ TextArea > .text-area--selection {
         tree_sexp: str
         active_line_text: str
         active_line_cell_len: int
-        highlight_cache_key_count: int
-        highlight_cache_total_size: int
-        highlight_cache_current_row_size: int
-        highlight_cache_current_row: list[Highlight]
 
     def debug_state(self) -> "EditorDebug":
         return self.EditorDebug(
@@ -1229,12 +1069,4 @@ TextArea > .text-area--selection {
             tree_sexp="",
             active_line_text=repr(self.active_line_text),
             active_line_cell_len=cell_len(self.active_line_text),
-            highlight_cache_key_count=len(self._highlights),
-            highlight_cache_total_size=sum(
-                len(highlights) for key, highlights in self._highlights.items()
-            ),
-            highlight_cache_current_row_size=len(
-                self._highlights[self.selection.end[0]]
-            ),
-            highlight_cache_current_row=self._highlights[self.selection.end[0]],
         )
