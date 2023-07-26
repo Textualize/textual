@@ -207,20 +207,21 @@ class BoundAnimator:
 
 
 class Animator:
-    """An object to manage updates to a given attribute over a period of time.
-
-    Attrs:
-        _animations: Dictionary that maps animation keys to the corresponding animation
-            instances.
-        _scheduled: Keys corresponding to animations that have been scheduled but not yet
-            started.
-        app: The app that owns the animator object.
-    """
+    """An object to manage updates to a given attribute over a period of time."""
 
     def __init__(self, app: App, frames_per_second: int = 60) -> None:
+        """Initialise the animator object.
+
+        Args:
+            app: The application that owns the animator.
+            frames_per_second: The number of frames/second to run the animation at.
+        """
         self._animations: dict[AnimationKey, Animation] = {}
+        """Dictionary that maps animation keys to the corresponding animation instances."""
         self._scheduled: set[AnimationKey] = set()
+        """Keys corresponding to animations that have been scheduled but not yet started."""
         self.app = app
+        """The app that owns the animator object."""
         self._timer = Timer(
             app,
             1 / frames_per_second,
@@ -228,10 +229,11 @@ class Animator:
             callback=self,
             pause=True,
         )
-        # Flag if no animations are currently taking place.
+        """The timer that runs the animator."""
         self._idle_event = asyncio.Event()
-        # Flag if no animations are currently taking place and none are scheduled.
+        """Flag if no animations are currently taking place."""
         self._complete_event = asyncio.Event()
+        """Flag if no animations are currently taking place and none are scheduled."""
 
     async def start(self) -> None:
         """Start the animator task."""
@@ -250,11 +252,26 @@ class Animator:
             self._complete_event.set()
 
     def bind(self, obj: object) -> BoundAnimator:
-        """Bind the animator to a given object."""
+        """Bind the animator to a given object.
+
+        Args:
+            obj: The object to bind to.
+
+        Returns:
+            The bound animator.
+        """
         return BoundAnimator(self, obj)
 
     def is_being_animated(self, obj: object, attribute: str) -> bool:
-        """Does the object/attribute pair have an ongoing or scheduled animation?"""
+        """Does the object/attribute pair have an ongoing or scheduled animation?
+
+        Args:
+            obj: An object to check for.
+            attribute: The attribute on the object to test for.
+
+        Returns:
+            `True` if that attribute is being animated for that object, `False` if not.
+        """
         key = (id(obj), attribute)
         return key in self._animations or key in self._scheduled
 
@@ -455,7 +472,11 @@ class Animator:
                     await animation.invoke_callback()
 
     def _get_time(self) -> float:
-        """Get the current wall clock time, via the internal Timer."""
+        """Get the current wall clock time, via the internal Timer.
+
+        Returns:
+            The wall clock time.
+        """
         # N.B. We could remove this method and always call `self._timer.get_time()` internally,
         # but it's handy to have in mocking situations
         return _time.get_time()
