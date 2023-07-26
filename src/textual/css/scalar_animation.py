@@ -62,7 +62,7 @@ class ScalarAnimation(Animation):
             value = self.start + (self.destination - self.start) * eased_factor
         current = self.styles.get_rule(self.attribute)
         if current != value:
-            setattr(self.styles, f"{self.attribute}", value)
+            setattr(self.styles, self.attribute, value)
 
         return False
 
