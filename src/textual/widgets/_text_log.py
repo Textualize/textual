@@ -167,7 +167,7 @@ class TextLog(ScrollView, can_focus=True):
         )
         lines = list(Segment.split_lines(segments))
         if not lines:
-            self.lines.append(Strip.blank(0))
+            self.lines.append(Strip.blank(render_width))
         else:
             self.max_width = max(
                 self.max_width,
