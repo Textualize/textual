@@ -440,9 +440,11 @@ class Animator:
         schedule = self._scheduled[key]
         del self._scheduled[key]
         schedule.stop()
-        # If there was a callback (there will be, but this just keeps type
-        # checkers happy really)...
-        if schedule._callback is not None:
+        # If we've been asked to complete (there's no point in making the
+        # animation only to then do nothing with it), and if there was a
+        # callback (there will be, but this just keeps type checkers happy
+        # really)...
+        if complete and schedule._callback is not None:
             # ...invoke it to get the animator created and in the running
             # animations. Yes, this does mean that a stopped scheduled
             # animation will start running early...
