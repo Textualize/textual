@@ -69,17 +69,14 @@ class Animation(ABC):
         if self.on_complete is not None:
             await invoke(self.on_complete)
 
+    @abstractmethod
     async def stop(self, complete: bool = True) -> None:
         """Stop the animation.
 
         Args:
             complete: Flag to say if the animation should be taken to completion.
-
-        Note:
-            [`on_complete`][Animation.on_complete] will be called regardless
-            of the value provided for `complete`.
         """
-        await self.invoke_callback()
+        raise NotImplementedError
 
     def __eq__(self, other: object) -> bool:
         return False
@@ -146,7 +143,7 @@ class SimpleAnimation(Animation):
         """
         if complete:
             setattr(self.obj, self.attribute, self.end_value)
-        await super().stop(complete)
+        await self.invoke_callback()
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, SimpleAnimation):

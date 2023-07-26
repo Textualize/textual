@@ -78,7 +78,7 @@ class ScalarAnimation(Animation):
         """
         if complete:
             setattr(self.styles, self.attribute, self.final_value)
-        await super().stop(complete)
+        await self.invoke_callback()
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, ScalarAnimation):
