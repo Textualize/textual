@@ -132,19 +132,22 @@ TextArea > .text-area--selection {
     BINDINGS = [
         # Cursor movement
         Binding("up", "cursor_up", "cursor up", show=False),
-        Binding("shift+up", "cursor_up_select", "cursor up select", show=False),
         Binding("down", "cursor_down", "cursor down", show=False),
-        Binding("shift+down", "cursor_down_select", "cursor down select", show=False),
         Binding("left", "cursor_left", "cursor left", show=False),
-        Binding("shift+left", "cursor_left_select", "cursor left select", show=False),
         Binding("ctrl+left", "cursor_left_word", "cursor left word", show=False),
         Binding("right", "cursor_right", "cursor right", show=False),
-        Binding(
-            "shift+right", "cursor_right_select", "cursor right select", show=False
-        ),
         Binding("ctrl+right", "cursor_right_word", "cursor right word", show=False),
         Binding("home,ctrl+a", "cursor_line_start", "cursor line start", show=False),
         Binding("end,ctrl+e", "cursor_line_end", "cursor line end", show=False),
+        Binding("pageup", "cursor_page_up", "cursor page up", show=False),
+        Binding("pagedown", "cursor_page_down", "cursor page down", show=False),
+        # Selection with the cursor
+        Binding("shift+up", "cursor_up_select", "cursor up select", show=False),
+        Binding("shift+down", "cursor_down_select", "cursor down select", show=False),
+        Binding("shift+left", "cursor_left_select", "cursor left select", show=False),
+        Binding(
+            "shift+right", "cursor_right_select", "cursor right select", show=False
+        ),
         # Deletion
         Binding("backspace", "delete_left", "delete left", show=False),
         Binding(
@@ -673,6 +676,22 @@ TextArea > .text-area--selection {
 
         self.selection = Selection.cursor((cursor_row, cursor_column))
         self._record_last_intentional_cell_width()
+
+    def action_cursor_page_up(self) -> None:
+        height = self.content_size.height
+        _, cursor_location = self.selection
+        row, column = cursor_location
+        target = (row - height, column)
+        self.scroll_y -= height
+        self.selection = Selection.cursor(target)
+
+    def action_cursor_page_down(self) -> None:
+        height = self.content_size.height
+        _, cursor_location = self.selection
+        row, column = cursor_location
+        target = (row + height, column)
+        self.scroll_y += height
+        self.selection = Selection.cursor(target)
 
     @property
     def cursor_line_text(self) -> str:
