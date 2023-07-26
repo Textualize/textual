@@ -66,6 +66,20 @@ class ScalarAnimation(Animation):
 
         return False
 
+    async def stop(self, complete: bool = True) -> None:
+        """Stop the animation.
+
+        Args:
+            complete: Flag to say if the animation should be taken to completion.
+
+        Note:
+            [`on_complete`][Animation.on_complete] will be called regardless
+            of the value provided for `complete`.
+        """
+        if complete:
+            setattr(self.styles, self.attribute, self.final_value)
+        await self.invoke_callback()
+
     def __eq__(self, other: object) -> bool:
         if isinstance(other, ScalarAnimation):
             return (
