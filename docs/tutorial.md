@@ -363,13 +363,13 @@ Both attributes will be available on `self` as if you had assigned them in `__in
 
     The `monotonic` function in this example is imported from the standard library `time` module. It is similar to `time.time` but won't go backwards if the system clock is changed.
 
-The first argument to `reactive` may be a default value or a callable that returns the default value.
-The default for `start_time` is the `monotonic` function which will be called to initialize the attribute when the `TimeDisplay` is added to the app.
+The first argument to `reactive` may be a default value for the attribute or a callable that returns a default value.
+We set the default for `start_time` to the `monotonic` function which will be called to initialize the attribute with the current time when the `TimeDisplay` is added to the app.
 
-The `time` attribute has a simple float as the default value, so `self.time` will be `0` on start.
+The `time` attribute has a simple float as the default value, so `self.time` will be initialized to `0`.
 
 
-The `on_mount` method is an event handler called when the widget is first added to the application (or _mounted_). In this method we call [set_interval()][textual.message_pump.MessagePump.set_interval] to create a timer which calls `self.update_time` sixty times a second. This `update_time` method calculates the time elapsed since the widget started and assigns it to `self.time` &mdash; which brings us to one of Reactive's super-powers.
+The `on_mount` method is an event handler called when the widget is first added to the application (or _mounted_ in Textual terminology). In this method we call [set_interval()][textual.message_pump.MessagePump.set_interval] to create a timer which calls `self.update_time` sixty times a second. This `update_time` method calculates the time elapsed since the widget started and assigns it to `self.time` &mdash; which brings us to one of Reactive's super-powers.
 
 If you implement a method that begins with `watch_` followed by the name of a reactive attribute, then the method will be called when the attribute is modified.
 Such methods are known as *watch methods*.
