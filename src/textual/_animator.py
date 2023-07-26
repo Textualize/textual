@@ -437,7 +437,10 @@ class Animator:
         """
         # First off, pull the timer out of the schedule and stop it; it
         # won't be needed.
-        schedule = self._scheduled[key]
+        try:
+            schedule = self._scheduled[key]
+        except KeyError:
+            return
         del self._scheduled[key]
         schedule.stop()
         # If we've been asked to complete (there's no point in making the
@@ -460,7 +463,10 @@ class Animator:
             key: The key for the animation to stop.
             complete: Should the animation be moved to its completed state?
         """
-        animation = self._animations[key]
+        try:
+            animation = self._animations[key]
+        except KeyError:
+            return
         del self._animations[key]
         await animation.stop(complete)
 
