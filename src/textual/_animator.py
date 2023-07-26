@@ -218,8 +218,8 @@ class Animator:
         """
         self._animations: dict[AnimationKey, Animation] = {}
         """Dictionary that maps animation keys to the corresponding animation instances."""
-        self._scheduled: set[AnimationKey] = set()
-        """Keys corresponding to animations that have been scheduled but not yet started."""
+        self._scheduled: dict[AnimationKey, Timer] = {}
+        """Dictionary of scheduled animations, comprising of their keys and the timer objects."""
         self.app = app
         """The app that owns the animator object."""
         self._timer = Timer(
@@ -313,9 +313,10 @@ class Animator:
             on_complete=on_complete,
         )
         if delay:
-            self._scheduled.add((id(obj), attribute))
             self._complete_event.clear()
-            self.app.set_timer(delay, animate_callback)
+            self._scheduled[(id(obj), attribute)] = self.app.set_timer(
+                delay, animate_callback
+            )
         else:
             animate_callback()
 
@@ -352,7 +353,10 @@ class Animator:
         ), "An Animation should have a duration OR a speed"
 
         animation_key = (id(obj), attribute)
-        self._scheduled.discard(animation_key)
+        try:
+            del self._scheduled[animation_key]
+        except KeyError:
+            pass
 
         if final_value is ...:
             final_value = value
@@ -422,6 +426,31 @@ class Animator:
         self._idle_event.clear()
         self._complete_event.clear()
 
+    async def _stop_scheduled_animation(
+        self, key: AnimationKey, complete: bool
+    ) -> None:
+        """Stop a scheduled animation.
+
+        Args:
+            key: The key for the animation to stop.
+            complete: Should the animation be moved to its completed state?
+        """
+        # First off, pull the timer out of the schedule and stop it; it
+        # won't be needed.
+        schedule = self._scheduled[key]
+        del self._scheduled[key]
+        schedule.stop()
+        # If there was a callback (there will be, but this just keeps type
+        # checkers happy really)...
+        if schedule._callback is not None:
+            # ...invoke it to get the animator created and in the running
+            # animations. Yes, this does mean that a stopped scheduled
+            # animation will start running early...
+            await invoke(schedule._callback)
+            # ...but only so we can call on it to run right to the very end
+            # right away.
+            await self._stop_running_animation(key, complete)
+
     async def _stop_running_animation(self, key: AnimationKey, complete: bool) -> None:
         """Stop a running animation.
 
@@ -450,8 +479,7 @@ class Animator:
         """
         key = (id(obj), attribute)
         if key in self._scheduled:
-            self._scheduled.remove(key)
-            # TODO: need to get the animation and find its callback, etc.
+            await self._stop_scheduled_animation(key, complete)
         elif key in self._animations:
             await self._stop_running_animation(key, complete)
 
