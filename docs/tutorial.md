@@ -373,7 +373,7 @@ The `on_mount` method is an event handler called when the widget is first added 
 If you implement a method that begins with `watch_` followed by the name of a reactive attribute, then the method will be called when the attribute is modified.
 Such methods are known as *watch methods*.
 
-Because `watch_time` watches the `time` attribute, when we update `self.time` 60 times a second we also implicitly call `watch_time` which converts the elapsed time to a string and updates the widget with a call to `self.update`.
+Because `watch_time` watches the `time` attribute, when we update `self.time` 60 times a second we also implicitly call `watch_time` which converts the elapsed time to a string and updates the widget with a call to `self.update`. Because this happens automatically, we don't need to pass in an initial argument to `TimeDisplay`.
 
 The end result is that the `Stopwatch` widgets show the time elapsed since the widget was created:
 
