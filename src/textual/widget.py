@@ -1567,6 +1567,18 @@ class Widget(DOMNode):
             on_complete=on_complete,
         )
 
+    async def stop_animation(self, attribute: str, complete: bool = True) -> None:
+        """Stop an animation on an attribute.
+
+        Args:
+            attribute: Name of the attribute whose animation should be stopped.
+            complete: Should the animation be set to its final value?
+
+        Note:
+            If there is no animation running, this is a no-op.
+        """
+        await self.app.animator.stop_animation(self, attribute, complete)
+
     @property
     def _layout(self) -> Layout:
         """Get the layout object if set in styles, or a default layout.
