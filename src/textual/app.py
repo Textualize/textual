@@ -601,6 +601,18 @@ class App(Generic[ReturnType], DOMNode):
             on_complete=on_complete,
         )
 
+    async def stop_animation(self, attribute: str, complete: bool = True) -> None:
+        """Stop an animation on an attribute.
+
+        Args:
+            attribute: Name of the attribute whose animation should be stopped.
+            complete: Should the animation be set to its final value?
+
+        Note:
+            If there is no animation running, this is a no-op.
+        """
+        await self._animator.stop_animation(self, attribute, complete)
+
     @property
     def debug(self) -> bool:
         """Is debug mode enabled?"""
@@ -2791,6 +2803,10 @@ class App(Generic[ReturnType], DOMNode):
     async def action_pop_screen(self) -> None:
         """An [action](/guide/actions) to remove the topmost screen and makes the new topmost screen active."""
         self.pop_screen()
+
+    async def action_switch_mode(self, mode: str) -> None:
+        """An [action](/guide/actions) that switches to the given mode.."""
+        self.switch_mode(mode)
 
     async def action_back(self) -> None:
         """An [action](/guide/actions) to go back to the previous screen (pop the current screen).

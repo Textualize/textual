@@ -939,6 +939,25 @@ class Screen(Generic[ScreenResultType], Widget):
         """
         self.dismiss(result)
 
+    def can_view(self, widget: Widget) -> bool:
+        """Check if a given widget is in the current view (scrollable area).
+
+        Note: This doesn't necessarily equate to a widget being visible.
+        There are other reasons why a widget may not be visible.
+
+        Args:
+            widget: A widget that is a descendant of self.
+
+        Returns:
+            True if the entire widget is in view, False if it is partially visible or not in view.
+        """
+        # If the widget is one that overlays the screen...
+        if widget.styles.overlay == "screen":
+            # ...simply check if it's within the screen's region.
+            return widget.region in self.region
+        # Failing that fall back to normal checking.
+        return super().can_view(widget)
+
 
 @rich.repr.auto
 class ModalScreen(Screen[ScreenResultType]):

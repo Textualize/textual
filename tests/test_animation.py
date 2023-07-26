@@ -2,6 +2,7 @@ from time import perf_counter
 
 from textual.app import App, ComposeResult
 from textual.containers import Container
+from textual.reactive import var
 from textual.widgets import Static
 
 
@@ -216,3 +217,56 @@ async def test_scalar_animation_with_percentages() -> None:
         assert elapsed >= 0.6
         assert static.size.width == 8
         assert static.styles.width.value == 80
+
+
+class CancelAnimWidget(Static):
+    counter: var[float] = var(23)
+
+
+class CancelAnimApp(App[None]):
+    counter: var[float] = var(23)
+
+    def compose(self) -> ComposeResult:
+        yield CancelAnimWidget()
+
+
+async def test_cancel_app_animation() -> None:
+    """It should be possible to cancel a running app animation."""
+
+    async with CancelAnimApp().run_test() as pilot:
+        pilot.app.animate("counter", value=0, final_value=1000, duration=60)
+        await pilot.pause()
+        assert pilot.app.animator.is_being_animated(pilot.app, "counter")
+        await pilot.app.stop_animation("counter")
+        assert not pilot.app.animator.is_being_animated(pilot.app, "counter")
+
+
+async def test_cancel_app_non_animation() -> None:
+    """It should be possible to attempt to cancel a non-running app animation."""
+
+    async with CancelAnimApp().run_test() as pilot:
+        assert not pilot.app.animator.is_being_animated(pilot.app, "counter")
+        await pilot.app.stop_animation("counter")
+        assert not pilot.app.animator.is_being_animated(pilot.app, "counter")
+
+
+async def test_cancel_widget_animation() -> None:
+    """It should be possible to cancel a running widget animation."""
+
+    async with CancelAnimApp().run_test() as pilot:
+        widget = pilot.app.query_one(CancelAnimWidget)
+        widget.animate("counter", value=0, final_value=1000, duration=60)
+        await pilot.pause()
+        assert pilot.app.animator.is_being_animated(widget, "counter")
+        await widget.stop_animation("counter")
+        assert not pilot.app.animator.is_being_animated(widget, "counter")
+
+
+async def test_cancel_widget_non_animation() -> None:
+    """It should be possible to attempt to cancel a non-running widget animation."""
+
+    async with CancelAnimApp().run_test() as pilot:
+        widget = pilot.app.query_one(CancelAnimWidget)
+        assert not pilot.app.animator.is_being_animated(widget, "counter")
+        await widget.stop_animation("counter")
+        assert not pilot.app.animator.is_being_animated(widget, "counter")
