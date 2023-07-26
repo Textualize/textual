@@ -364,23 +364,25 @@ TextArea > .text-area--selection {
         return target_row, target_column
 
     def _on_mouse_down(self, event: events.MouseDown) -> None:
-        offset = event.get_content_offset(self)
+        offset = event.get_content_offset_capture(self)
         if offset is not None:
-            target = self.get_target_document_location(offset)
+            target = self.get_target_document_location(event)
             self.selection = Selection.cursor(target)
             self._selecting = True
+            self.capture_mouse(True)
 
     def _on_mouse_move(self, event: events.MouseMove) -> None:
         if self._selecting:
-            offset = event.get_content_offset(self)
+            offset = event.get_content_offset_capture(self)
             if offset is not None:
-                target = self.get_target_document_location(offset)
+                target = self.get_target_document_location(event)
                 selection_start, _ = self.selection
                 self.selection = Selection(selection_start, target)
 
     def _on_mouse_up(self, event: events.MouseUp) -> None:
         self._record_last_intentional_cell_width()
         self._selecting = False
+        self.capture_mouse(False)
 
     def _on_paste(self, event: events.Paste) -> None:
         text = event.text
