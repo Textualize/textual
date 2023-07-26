@@ -438,10 +438,9 @@ class Animator:
         # First off, pull the timer out of the schedule and stop it; it
         # won't be needed.
         try:
-            schedule = self._scheduled[key]
+            schedule = self._scheduled.pop(key)
         except KeyError:
             return
-        del self._scheduled[key]
         schedule.stop()
         # If we've been asked to complete (there's no point in making the
         # animation only to then do nothing with it), and if there was a
@@ -464,10 +463,9 @@ class Animator:
             complete: Should the animation be moved to its completed state?
         """
         try:
-            animation = self._animations[key]
+            animation = self._animations.pop(key)
         except KeyError:
             return
-        del self._animations[key]
         await animation.stop(complete)
 
     async def stop_animation(
