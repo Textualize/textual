@@ -167,21 +167,21 @@ class TextLog(ScrollView, can_focus=True):
         )
         lines = list(Segment.split_lines(segments))
         if not lines:
-            return self
+            self.lines.append(Strip.blank(render_width))
+        else:
+            self.max_width = max(
+                self.max_width,
+                max(sum([segment.cell_length for segment in _line]) for _line in lines),
+            )
+            strips = Strip.from_lines(lines)
+            for strip in strips:
+                strip.adjust_cell_length(render_width)
+            self.lines.extend(strips)
 
-        self.max_width = max(
-            self.max_width,
-            max(sum([segment.cell_length for segment in _line]) for _line in lines),
-        )
-        strips = Strip.from_lines(lines)
-        for strip in strips:
-            strip.adjust_cell_length(render_width)
-        self.lines.extend(strips)
-
-        if self.max_lines is not None and len(self.lines) > self.max_lines:
-            self._start_line += len(self.lines) - self.max_lines
-            self.refresh()
-            self.lines = self.lines[-self.max_lines :]
+            if self.max_lines is not None and len(self.lines) > self.max_lines:
+                self._start_line += len(self.lines) - self.max_lines
+                self.refresh()
+                self.lines = self.lines[-self.max_lines :]
         self.virtual_size = Size(self.max_width, len(self.lines))
         if auto_scroll:
             self.scroll_end(animate=False)
