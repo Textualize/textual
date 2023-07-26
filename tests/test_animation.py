@@ -178,7 +178,7 @@ async def test_cancel_app_animation() -> None:
         pilot.app.animate("counter", value=0, final_value=1000, duration=60)
         await pilot.pause()
         assert pilot.app.animator.is_being_animated(pilot.app, "counter")
-        pilot.app.stop_animation("counter")
+        await pilot.app.stop_animation("counter")
         assert not pilot.app.animator.is_being_animated(pilot.app, "counter")
 
 
@@ -187,7 +187,7 @@ async def test_cancel_app_non_animation() -> None:
 
     async with CancelAnimApp().run_test() as pilot:
         assert not pilot.app.animator.is_being_animated(pilot.app, "counter")
-        pilot.app.stop_animation("counter")
+        await pilot.app.stop_animation("counter")
         assert not pilot.app.animator.is_being_animated(pilot.app, "counter")
 
 
@@ -199,7 +199,7 @@ async def test_cancel_widget_animation() -> None:
         widget.animate("counter", value=0, final_value=1000, duration=60)
         await pilot.pause()
         assert pilot.app.animator.is_being_animated(widget, "counter")
-        widget.stop_animation("counter")
+        await widget.stop_animation("counter")
         assert not pilot.app.animator.is_being_animated(widget, "counter")
 
 
@@ -209,5 +209,5 @@ async def test_cancel_widget_non_animation() -> None:
     async with CancelAnimApp().run_test() as pilot:
         widget = pilot.app.query_one(CancelAnimWidget)
         assert not pilot.app.animator.is_being_animated(widget, "counter")
-        widget.stop_animation("counter")
+        await widget.stop_animation("counter")
         assert not pilot.app.animator.is_being_animated(widget, "counter")

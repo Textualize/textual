@@ -64,6 +64,23 @@ class Animation(ABC):
         """
         raise NotImplementedError("")
 
+    async def invoke_callback(self) -> None:
+        """Calls the [`on_complete`][Animation.on_complete] callback if one is provided."""
+        if self.on_complete is not None:
+            await invoke(self.on_complete)
+
+    async def stop(self, complete: bool = True) -> None:
+        """Stop the animation.
+
+        Args:
+            complete: Flag to say if the animation should be taken to completion.
+
+        Note:
+            [`on_complete`][Animation.on_complete] will be called regardless
+            of the value provided for `complete`.
+        """
+        await self.invoke_callback()
+
     def __eq__(self, other: object) -> bool:
         return False
 
@@ -116,6 +133,20 @@ class SimpleAnimation(Animation):
                 )
         setattr(self.obj, self.attribute, value)
         return factor >= 1
+
+    async def stop(self, complete: bool = True) -> None:
+        """Stop the animation.
+
+        Args:
+            complete: Flag to say if the animation should be taken to completion.
+
+        Note:
+            [`on_complete`][Animation.on_complete] will be called regardless
+            of the value provided for `complete`.
+        """
+        if complete:
+            setattr(self.obj, self.attribute, self.end_value)
+        await super().stop(complete)
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, SimpleAnimation):
@@ -374,12 +405,26 @@ class Animator:
         self._idle_event.clear()
         self._complete_event.clear()
 
-    def stop_animation(self, obj: object, attribute: str) -> None:
+    async def _stop_running_animation(self, key: AnimationKey, complete: bool) -> None:
+        """Stop a running animation.
+
+        Args:
+            key: The key for the animation to stop.
+            complete: Should the animation be moved to its completed state?
+        """
+        animation = self._animations[key]
+        del self._animations[key]
+        await animation.stop(complete)
+
+    async def stop_animation(
+        self, obj: object, attribute: str, complete: bool = True
+    ) -> None:
         """Stop an animation on an attribute.
 
         Args:
             obj: The object containing the attribute.
             attribute: The name of the attribute.
+            complete: Should the animation be set to its final value?
 
         Note:
             If there is no animation running, this is a no-op. If there is
@@ -389,8 +434,9 @@ class Animator:
         key = (id(obj), attribute)
         if key in self._scheduled:
             self._scheduled.remove(key)
-        if key in self._animations:
-            del self._animations[key]
+            # TODO: need to get the animation and find its callback, etc.
+        elif key in self._animations:
+            await self._stop_running_animation(key, complete)
 
     async def __call__(self) -> None:
         if not self._animations:
@@ -405,10 +451,8 @@ class Animator:
                 animation = self._animations[animation_key]
                 animation_complete = animation(animation_time)
                 if animation_complete:
-                    completion_callback = animation.on_complete
-                    if completion_callback is not None:
-                        await invoke(completion_callback)
                     del self._animations[animation_key]
+                    await animation.invoke_callback()
 
     def _get_time(self) -> float:
         """Get the current wall clock time, via the internal Timer."""
