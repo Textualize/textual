@@ -28,7 +28,7 @@ class CollapsibleApp(App):
         with Collapsible(collapsed=False, summary="Leto"):
             yield Label(LETO)
         yield Collapsible(Markdown(JESSICA), collapsed=False, summary="Jessica")
-        with Collapsible(collapsed=False, summary="Paul"):
+        with Collapsible(collapsed=True, summary="Paul"):
             yield Markdown(PAUL)
 
 
