@@ -61,3 +61,10 @@ You can see the full range of options with this delightful little incantation:
 ```
 
 If you are interested in Rich or Textual, join our [Discord server](https://discord.gg/Enf6Z3qhVr)!
+
+
+## Addendum
+
+Here's how to have `inspect` always available without an explicit import:
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Put this in your pythonrc file: <a href="https://t.co/pXTi69ykZL">pic.twitter.com/pXTi69ykZL</a></p>&mdash; Tushar Sadhwani (@sadhlife) <a href="https://twitter.com/sadhlife/status/1684446413785280517?ref_src=twsrc%5Etfw">July 27, 2023</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
