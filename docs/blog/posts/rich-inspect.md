@@ -10,7 +10,7 @@ authors:
 
 # Using Rich Inspect to interrogate Python objects
 
-The [Rich](https://github.com/Textualize/rich) library has a few functions that are admittedly a little out of scope for a terminal color library. One such function is `inspect` which is so useful you may want to install `rich` just for this feature.
+The [Rich](https://github.com/Textualize/rich) library has a few functions that are admittedly a little out of scope for a terminal color library. One such function is `inspect` which is so useful you may want to `pip install rich` just for this feature.
 
 <!-- more -->
 
