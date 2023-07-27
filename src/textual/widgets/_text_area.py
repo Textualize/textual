@@ -244,6 +244,7 @@ TextArea > .text-area--selection {
             return Strip.blank(self.size.width)
 
         line = document.get_line_text(line_index)
+        line_character_count = len(line)
         line.tab_size = self.indent_width
         line.set_length(self.virtual_size.width)
 
