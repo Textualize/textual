@@ -149,7 +149,7 @@ class DirectoryTree(Tree[DirEntry]):
         # loading up.
         self._add_to_load_queue(self.root)
 
-    def clear_subtree(self, node: TreeNode[DirEntry]) -> Self:
+    def clear_node(self, node: TreeNode[DirEntry]) -> Self:
         """Clear all nodes under the given node.
 
         Returns:
@@ -171,7 +171,7 @@ class DirectoryTree(Tree[DirEntry]):
         self.refresh()
         return self
 
-    def reset_subtree(
+    def reset_node(
         self, node: TreeNode[DirEntry], label: TextType, data: DirEntry | None = None
     ) -> Self:
         """Clear the subtree and reset the given node.
@@ -183,7 +183,7 @@ class DirectoryTree(Tree[DirEntry]):
         Returns:
             The `Tree` instance.
         """
-        self.clear_subtree(node)
+        self.clear_node(node)
         node.label = label
         node.data = data
         return self
@@ -194,7 +194,7 @@ class DirectoryTree(Tree[DirEntry]):
         Args:
             node: The node to reload.
         """
-        self.reset_subtree(
+        self.reset_node(
             node, str(node.data.path.name), DirEntry(self.PATH(node.data.path))
         )
         self._add_to_load_queue(node)
