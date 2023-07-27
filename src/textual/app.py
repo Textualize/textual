@@ -346,6 +346,7 @@ class App(Generic[ReturnType], DOMNode):
             _environ=environ,
             force_terminal=True,
             safe_box=False,
+            tab_size=0,
         )
         self._workers = WorkerManager(self)
         self.error_console = Console(markup=False, stderr=True)

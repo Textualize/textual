@@ -9,7 +9,7 @@ from rich.text import Text
 from textual import events
 from textual._cells import cell_len
 from textual._fix_direction import _fix_direction
-from textual._types import Protocol, runtime_checkable
+from textual._types import Literal, Protocol, runtime_checkable
 from textual.binding import Binding
 from textual.document._document import Document, Selection
 from textual.geometry import Offset, Region, Size, Spacing, clamp
@@ -173,6 +173,12 @@ TextArea > .text-area--selection {
     show_line_numbers: Reactive[bool] = reactive(True)
     """True to show line number gutter, otherwise False."""
 
+    indent_type: Reactive[Literal["tabs", "spaces"]] = "spaces"
+    """Whether to indent using tabs or spaces."""
+
+    indent_width: Reactive[int] = reactive(4)
+    """The width of tabs or the number of spaces to insert on pressing the `tab` key."""
+
     _document_size: Reactive[Size] = reactive(Size(), init=False, always_update=True)
     """Tracks the size of the document.
 
@@ -194,9 +200,9 @@ TextArea > .text-area--selection {
         """The document this widget is currently editing."""
 
         self._last_intentional_cell_width: int = 0
-        """Tracks the last column (measured in terms of cell length, since we care here about where
-         the cursor visually moves more than the logical characters) the user explicitly navigated to so that we can reset
-        to it whenever possible."""
+        """Tracks the last column (measured in terms of cell length, since we care here about where the cursor
+        visually moves more than the logical characters) the user explicitly navigated to so that we can reset to it
+        whenever possible."""
 
         self._word_pattern = re.compile(r"(?<=\W)(?=\w)|(?<=\w)(?=\W)")
         """Compiled regular expression for what we consider to be a 'word'."""
@@ -223,7 +229,11 @@ TextArea > .text-area--selection {
         self._refresh_size()
 
     def _refresh_size(self) -> None:
-        self._document_size = self._document.size
+        # Calculate document
+        lines = self._document.lines
+        text_width = max(cell_len(line.expandtabs(self.indent_width)) for line in lines)
+        height = len(lines)
+        self._document_size = Size(text_width, height)
 
     def render_line(self, widget_y: int) -> Strip:
         document = self._document
@@ -233,7 +243,8 @@ TextArea > .text-area--selection {
         if out_of_bounds:
             return Strip.blank(self.size.width)
 
-        line = document.get_line(line_index)
+        line = document.get_line_text(line_index)
+        line.tab_size = self.indent_width
         codepoint_count = len(line)
         line.set_length(self.virtual_size.width)
 
@@ -345,7 +356,9 @@ TextArea > .text-area--selection {
             event.stop()
             event.prevent_default()
             if key == "tab":
-                insert = "    "
+                insert = (
+                    " " * self.indent_width if self.indent_type == "spaces" else "\t"
+                )
             elif key == "enter":
                 insert = "\n"
             else:
@@ -392,10 +405,11 @@ TextArea > .text-area--selection {
 
     def cell_width_to_column_index(self, cell_width: int, row_index: int) -> int:
         """Return the column that the cell width corresponds to on the given row."""
+        tab_width = self.indent_width
         total_cell_offset = 0
         line = self._document[row_index]
         for column_index, character in enumerate(line):
-            total_cell_offset += cell_len(character)
+            total_cell_offset += cell_len(character.expandtabs(tab_width))
             if total_cell_offset >= cell_width + 1:
                 return column_index
         return len(line)
@@ -444,7 +458,7 @@ TextArea > .text-area--selection {
     def scroll_cursor_visible(self):
         row, column = self.selection.end
         text = self.cursor_line_text[:column]
-        column_offset = cell_len(text)
+        column_offset = cell_len(text.expandtabs(self.indent_width))
         self.scroll_to_region(
             Region(x=column_offset, y=row, width=3, height=1),
             spacing=Spacing(right=self.gutter_width),
@@ -705,7 +719,7 @@ TextArea > .text-area--selection {
         of the column from the start of the row (the left edge of the editor content area).
         """
         line = self._document[row]
-        return cell_len(line[:column])
+        return cell_len(line[:column].expandtabs(self.indent_width))
 
     def _record_last_intentional_cell_width(self) -> None:
         row, column = self.selection.end

@@ -217,7 +217,7 @@ class SyntaxAwareDocument(Document):
 
         return return_value
 
-    def get_line(self, line_index: int) -> Text:
+    def get_line_text(self, line_index: int) -> Text:
         null_style = Style.null()
         line = Text(self[line_index])
 

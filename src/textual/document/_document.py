@@ -120,27 +120,15 @@ class Document:
         return deleted_text
 
     @property
-    def size(self) -> Size:
-        """Returns the size (width, height) of the document."""
-        lines = self._lines
-        text_width = max(cell_len(line) for line in lines)
-        height = len(lines)
-        # We add one to the text width to leave a space for the cursor, since it
-        # can rest at the end of a line where there isn't yet any character.
-        # Similarly, the cursor can rest below the bottom line of text, where
-        # a line doesn't currently exist.
-        return Size(text_width, height)
-
-    @property
     def line_count(self) -> int:
         """Returns the number of lines in the document"""
         return len(self._lines)
 
-    def get_line(self, index: int) -> Text:
+    def get_line_text(self, index: int) -> Text:
         """Returns the line with the given index from the document"""
         line_string = self[index]
         line_string = line_string.replace("\n", "").replace("\r", "")
-        return Text(line_string, end="", tab_size=4)
+        return Text(line_string, end="")
 
     def __getitem__(self, item: SupportsIndex | slice) -> str:
         return self._lines[item]
