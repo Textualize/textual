@@ -90,6 +90,7 @@ class WorkerManager:
         exit_on_error: bool = True,
         start: bool = True,
         exclusive: bool = False,
+        thread: bool = False,
     ) -> Worker:
         """Create a worker from a function, coroutine, or awaitable.
 
@@ -101,6 +102,7 @@ class WorkerManager:
             exit_on_error: Exit the app if the worker raises an error. Set to `False` to suppress exceptions.
             start: Automatically start the worker.
             exclusive: Cancel all workers in the same group.
+            thread: Mark the worker as a thread worker.
 
         Returns:
             A Worker instance.
@@ -112,6 +114,7 @@ class WorkerManager:
             group=group,
             description=description or repr(work),
             exit_on_error=exit_on_error,
+            thread=thread,
         )
         self.add_worker(worker, start=start, exclusive=exclusive)
         return worker

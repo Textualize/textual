@@ -91,6 +91,34 @@ class TextLog(ScrollView, can_focus=True):
     def notify_style_update(self) -> None:
         self._line_cache.clear()
 
+    def _make_renderable(self, content: RenderableType | object) -> RenderableType:
+        """Make content renderable.
+
+        Args:
+            content: Content to render.
+
+        Returns:
+            A Rich renderable.
+        """
+        renderable: RenderableType
+        if not is_renderable(content):
+            renderable = Pretty(content)
+        else:
+            if isinstance(content, str):
+                if self.markup:
+                    renderable = Text.from_markup(content)
+                else:
+                    renderable = Text(content)
+                if self.highlight:
+                    renderable = self.highlighter(renderable)
+            else:
+                renderable = cast(RenderableType, content)
+
+        if isinstance(renderable, Text):
+            renderable.expand_tabs()
+
+        return renderable
+
     def write(
         self,
         content: RenderableType | object,
@@ -114,22 +142,10 @@ class TextLog(ScrollView, can_focus=True):
 
         auto_scroll = self.auto_scroll if scroll_end is None else scroll_end
 
-        renderable: RenderableType
-        if not is_renderable(content):
-            renderable = Pretty(content)
-        else:
-            if isinstance(content, str):
-                if self.markup:
-                    renderable = Text.from_markup(content)
-                else:
-                    renderable = Text(content)
-                if self.highlight:
-                    renderable = self.highlighter(renderable)
-            else:
-                renderable = cast(RenderableType, content)
-
         console = self.app.console
         render_options = console.options
+
+        renderable = self._make_renderable(content)
 
         if isinstance(renderable, Text) and not self.wrap:
             render_options = render_options.update(overflow="ignore", no_wrap=True)
@@ -151,21 +167,21 @@ class TextLog(ScrollView, can_focus=True):
         )
         lines = list(Segment.split_lines(segments))
         if not lines:
-            return self
+            self.lines.append(Strip.blank(render_width))
+        else:
+            self.max_width = max(
+                self.max_width,
+                max(sum([segment.cell_length for segment in _line]) for _line in lines),
+            )
+            strips = Strip.from_lines(lines)
+            for strip in strips:
+                strip.adjust_cell_length(render_width)
+            self.lines.extend(strips)
 
-        self.max_width = max(
-            self.max_width,
-            max(sum([segment.cell_length for segment in _line]) for _line in lines),
-        )
-        strips = Strip.from_lines(lines)
-        for strip in strips:
-            strip.adjust_cell_length(render_width)
-        self.lines.extend(strips)
-
-        if self.max_lines is not None and len(self.lines) > self.max_lines:
-            self._start_line += len(self.lines) - self.max_lines
-            self.refresh()
-            self.lines = self.lines[-self.max_lines :]
+            if self.max_lines is not None and len(self.lines) > self.max_lines:
+                self._start_line += len(self.lines) - self.max_lines
+                self.refresh()
+                self.lines = self.lines[-self.max_lines :]
         self.virtual_size = Size(self.max_width, len(self.lines))
         if auto_scroll:
             self.scroll_end(animate=False)

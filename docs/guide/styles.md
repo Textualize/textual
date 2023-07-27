@@ -243,7 +243,7 @@ The [border](../styles/border.md) style draws a border around a widget. To add a
 
 The following example adds a border around a widget:
 
-```python title="border01.py" hl_lines="22"
+```python title="border01.py" hl_lines="21"
 --8<-- "docs/examples/guide/styles/border01.py"
 ```
 
@@ -321,7 +321,7 @@ The following example creates two widgets with a width of 30, a height of 6, and
 The first widget has the default `box_sizing` (`"border-box"`).
 The second widget sets `box_sizing` to `"content-box"`.
 
-```python title="box_sizing01.py" hl_lines="33"
+```python title="box_sizing01.py" hl_lines="32"
 --8<-- "docs/examples/guide/styles/box_sizing01.py"
 ```
 

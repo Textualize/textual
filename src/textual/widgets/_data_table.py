@@ -251,6 +251,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         background: $surface ;
         color: $text;
         height: auto;
+        max-height: 100%;
     }
     DataTable > .datatable--header {
         text-style: bold;
@@ -1756,6 +1757,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             base_style,
             cursor,
             hover,
+            self._show_hover_cursor,
             self._update_count,
             self._pseudo_class_state,
         )
@@ -2075,8 +2077,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         and column metadata from the segments present in the cells."""
         self._set_hover_cursor(True)
         meta = event.style.meta
+        if not meta:
+            self._set_hover_cursor(False)
+            return
 
-        if meta and self.show_cursor and self.cursor_type != "none":
+        if self.show_cursor and self.cursor_type != "none":
             try:
                 self.hover_coordinate = Coordinate(meta["row"], meta["column"])
             except KeyError:

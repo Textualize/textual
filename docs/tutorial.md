@@ -351,11 +351,11 @@ A recurring theme in Textual is that you rarely need to explicitly update a widg
 
 You can declare a reactive attribute with [reactive][textual.reactive.reactive]. Let's use this feature to create a timer that displays elapsed time and keeps it updated.
 
-```python title="stopwatch05.py" hl_lines="1 5 12-27"
+```python title="stopwatch05.py" hl_lines="1 5 12-27 45"
 --8<-- "docs/examples/tutorial/stopwatch05.py"
 ```
 
-We have added two reactive attributes: `start_time` will contain the time in seconds when the stopwatch was started, and `time` will contain the time to be displayed on the `Stopwatch`.
+We have added two reactive attributes to the `TimeDisplay` widget: `start_time` will contain the time (in seconds) the stopwatch was started, and `time` will contain the time to be displayed on the `Stopwatch`.
 
 Both attributes will be available on `self` as if you had assigned them in `__init__`. If you write to either of these attributes the widget will update automatically.
 
@@ -363,16 +363,17 @@ Both attributes will be available on `self` as if you had assigned them in `__in
 
     The `monotonic` function in this example is imported from the standard library `time` module. It is similar to `time.time` but won't go backwards if the system clock is changed.
 
-The first argument to `reactive` may be a default value or a callable that returns the default value. The default for `start_time` is `monotonic`. When `TimeDisplay` is added to the app, the `start_time` attribute will be set to the result of `monotonic()`.
+The first argument to `reactive` may be a default value for the attribute or a callable that returns a default value.
+We set the default for `start_time` to the `monotonic` function which will be called to initialize the attribute with the current time when the `TimeDisplay` is added to the app.
+The `time` attribute has a simple float as the default, so `self.time` will be initialized to `0`.
 
-The `time` attribute has a simple float as the default value, so `self.time` will be `0` on start.
 
+The `on_mount` method is an event handler called when the widget is first added to the application (or _mounted_ in Textual terminology). In this method we call [set_interval()][textual.message_pump.MessagePump.set_interval] to create a timer which calls `self.update_time` sixty times a second. This `update_time` method calculates the time elapsed since the widget started and assigns it to `self.time` &mdash; which brings us to one of Reactive's super-powers.
 
-The `on_mount` method is an event handler called when the widget is first added to the application (or _mounted_). In this method we call [set_interval()][textual.message_pump.MessagePump.set_interval] to create a timer which calls `self.update_time` sixty times a second. This `update_time` method calculates the time elapsed since the widget started and assigns it to `self.time`. Which brings us to one of Reactive's super-powers.
+If you implement a method that begins with `watch_` followed by the name of a reactive attribute, then the method will be called when the attribute is modified.
+Such methods are known as *watch methods*.
 
-If you implement a method that begins with `watch_` followed by the name of a reactive attribute (making it a _watch method_), that method will be called when the attribute is modified.
-
-Because `watch_time` watches the `time` attribute, when we update `self.time` 60 times a second we also implicitly call `watch_time` which converts the elapsed time in to a string and updates the widget with a call to `self.update`.
+Because `watch_time` watches the `time` attribute, when we update `self.time` 60 times a second we also implicitly call `watch_time` which converts the elapsed time to a string and updates the widget with a call to `self.update`. Because this happens automatically, we don't need to pass in an initial argument to `TimeDisplay`.
 
 The end result is that the `Stopwatch` widgets show the time elapsed since the widget was created:
 

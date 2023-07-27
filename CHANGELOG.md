@@ -5,14 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.31.0] - Unreleased
+## Unreleased
+
+### Added
+
+- Added App.begin_capture_print, App.end_capture_print, Widget.begin_capture_print, Widget.end_capture_print https://github.com/Textualize/textual/issues/2952
+- Added the ability to run async methods as thread workers https://github.com/Textualize/textual/pull/2938
+- Added `App.stop_animation` https://github.com/Textualize/textual/issues/2786
+- Added `Widget.stop_animation` https://github.com/Textualize/textual/issues/2786
+- Added `DirectoryTree.reload_node` method https://github.com/Textualize/textual/issues/2757
+
+### Changed
+
+- Breaking change: Creating a thread worker now requires that a `thread=True` keyword argument is passed https://github.com/Textualize/textual/pull/2938
+- Breaking change: `Markdown.load` no longer captures all errors and returns a `bool`, errors now propagate https://github.com/Textualize/textual/issues/2956
+- Breaking change: the default style of a `DataTable` now has `max-height: 100%` https://github.com/Textualize/textual/issues/2959
 
 ### Fixed
 
 - Fixed a crash when a `SelectionList` had a prompt wider than itself https://github.com/Textualize/textual/issues/2900
 - Fixed a bug where `Click` events were bubbling up from `Switch` widgets https://github.com/Textualize/textual/issues/2366
 - Fixed a crash when using empty CSS variables https://github.com/Textualize/textual/issues/1849
-- Added `DirectoryTree.reload_node` method https://github.com/Textualize/textual/issues/2757
+- Fixed issue with tabs in TextLog https://github.com/Textualize/textual/issues/3007
+- Fixed a bug with `DataTable` hover highlighting https://github.com/Textualize/textual/issues/2909
 
 ## [0.30.0] - 2023-07-17
 
