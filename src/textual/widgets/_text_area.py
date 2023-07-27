@@ -173,9 +173,6 @@ TextArea > .text-area--selection {
     show_line_numbers: Reactive[bool] = reactive(True)
     """True to show line number gutter, otherwise False."""
 
-    indent_type: Reactive[Literal["tabs", "spaces"]] = "spaces"
-    """Whether to indent using tabs or spaces."""
-
     indent_width: Reactive[int] = reactive(4)
     """The width of tabs or the number of spaces to insert on pressing the `tab` key."""
 
@@ -198,6 +195,9 @@ TextArea > .text-area--selection {
         # --- Core editor data
         self._document = Document()
         """The document this widget is currently editing."""
+
+        self.indent_type: Literal["tabs", "spaces"] = "spaces"
+        """Whether to indent using tabs or spaces."""
 
         self._last_intentional_cell_width: int = 0
         """Tracks the last column (measured in terms of cell length, since we care here about where the cursor
