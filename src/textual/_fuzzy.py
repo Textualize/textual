@@ -69,7 +69,7 @@ class Matcher:
             match.span(group_no)[0] for group_no in range(1, match.lastindex + 1)
         ]
         for offset in offsets:
-            text.stylize("bold", offset, offset + 1)
+            text.stylize("reverse", offset, offset + 1)
 
         return text
 
