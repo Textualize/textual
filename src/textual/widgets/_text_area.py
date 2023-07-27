@@ -336,33 +336,31 @@ TextArea > .text-area--selection {
         result = edit.do(self)
 
         # TODO: Think about this...
-        self._undo_stack.append(edit)
-        self._undo_stack = self._undo_stack[-20:]
+        # self._undo_stack.append(edit)
+        # self._undo_stack = self._undo_stack[-20:]
 
         self._refresh_size()
         edit.post_refresh(self)
 
         return result
 
-    def undo(self) -> None:
-        if self._undo_stack:
-            action = self._undo_stack.pop()
-            action.undo(self)
+    # def undo(self) -> None:
+    #     if self._undo_stack:
+    #         action = self._undo_stack.pop()
+    #         action.undo(self)
 
     # --- Lower level event/key handling
     def _on_key(self, event: events.Key) -> None:
         key = event.key
-        if event.is_printable or key == "tab" or key == "enter":
+        insert_values = {
+            "tab": " " * self.indent_width if self.indent_type == "spaces" else "\t",
+            "enter": "\n",
+        }
+
+        if event.is_printable or key in insert_values:
             event.stop()
             event.prevent_default()
-            if key == "tab":
-                insert = (
-                    " " * self.indent_width if self.indent_type == "spaces" else "\t"
-                )
-            elif key == "enter":
-                insert = "\n"
-            else:
-                insert = event.character
+            insert = insert_values.get(key, event.character)
             assert event.character is not None
             start, end = self.selection
             self.insert_text_range(insert, start, end)

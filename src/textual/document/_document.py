@@ -4,10 +4,8 @@ from typing import NamedTuple
 
 from rich.text import Text
 
-from textual._cells import cell_len
 from textual._fix_direction import _fix_direction
 from textual._types import SupportsIndex
-from textual.geometry import Size
 
 
 class Document:
