@@ -42,7 +42,7 @@ Here's an example:
 --8<-- "docs/blog/images/inspect2.svg"
 </div>
 
-The documentation is summarized by default to avoid generated verbose reports.
+The documentation is summarized by default to avoid generating verbose reports.
 If you want to see the full unabbreviated help you can add `help=True`:
 
 ```python
