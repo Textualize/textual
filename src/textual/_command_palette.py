@@ -1,5 +1,7 @@
 """The Textual command palette."""
 
+from __future__ import annotations
+
 from rich.text import Text
 
 from . import on
