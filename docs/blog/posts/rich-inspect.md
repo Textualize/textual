@@ -23,7 +23,7 @@ If you invoke it with any object, `inspect` will display a nicely formatted repo
 >>> inspect(text_file)
 ```
 
-Here we're inspect a file object, but it could be literally anything.
+Here we're inspecting a file object, but it could be literally anything.
 You will see the following output in the terminal:
 
 <div>
