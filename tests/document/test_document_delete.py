@@ -10,8 +10,7 @@ Sorry Will."""
 
 @pytest.fixture
 def document():
-    document = Document()
-    document.load_text(TEXT)
+    document = Document(TEXT)
     return document
 
 

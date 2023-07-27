@@ -193,7 +193,7 @@ TextArea > .text-area--selection {
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
         # --- Core editor data
-        self._document = Document()
+        self._document = Document("")
         """The document this widget is currently editing."""
 
         self.indent_type: Literal["tabs", "spaces"] = "spaces"
@@ -225,7 +225,7 @@ TextArea > .text-area--selection {
         Args:
             text: The text to load into the editor.
         """
-        self._document.load_text(text)
+        self._document = Document(text)
         self._refresh_size()
 
     def _refresh_size(self) -> None:

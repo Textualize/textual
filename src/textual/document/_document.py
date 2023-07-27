@@ -5,13 +5,37 @@ from typing import NamedTuple
 from rich.text import Text
 
 from textual._fix_direction import _fix_direction
-from textual._types import SupportsIndex
+from textual._types import Literal, SupportsIndex, get_args
+
+NewlineStyle = Literal["\r\n", "\n", "\r"]
+VALID_NEWLINE_STYLES = set(get_args(NewlineStyle))
+
+
+def _detect_newline_style(text: str) -> NewlineStyle:
+    """Return the newline type used in this document.
+
+    Args:
+        text: The text to inspect.
+
+    Returns:
+        The NewlineStyle used in the file.
+    """
+    if "\r\n" in text:  # Windows newline
+        return "\r\n"
+    elif "\n" in text:  # Unix/Linux/MacOS newline
+        return "\n"
+    elif "\r" in text:  # Old MacOS newline
+        return "\r"
+    else:
+        return "\n"  # Default to Unix style newline
 
 
 class Document:
-    def __init__(self) -> None:
-        self._lines: list[str] = []
-        self._eof_newline = False
+    def __init__(self, text: str) -> None:
+        self._newline_style = _detect_newline_style(text)
+        """The type of newline used in the text"""
+        self._eof_newline = text and text[-1] in VALID_NEWLINE_STYLES
+        self._lines: list[str] = text.splitlines(keepends=False)
 
     @property
     def lines(self) -> list[str]:
@@ -23,11 +47,6 @@ class Document:
         Args:
             text: The text to load into the document
         """
-        lines = text.splitlines(keepends=False)
-        if text[-1] == "\n":
-            self._eof_newline = True
-
-        self._lines = lines
 
     def insert_range(
         self, start: tuple[int, int], end: tuple[int, int], text: str

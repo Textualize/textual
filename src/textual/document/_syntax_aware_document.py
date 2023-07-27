@@ -49,8 +49,8 @@ class Highlight(NamedTuple):
 
 
 class SyntaxAwareDocument(Document):
-    def __init__(self, language: str | None = None):
-        super().__init__()
+    def __init__(self, text: str, language: str | None = None):
+        super().__init__(text)
 
         # TODO validate language string
 
@@ -68,10 +68,8 @@ class SyntaxAwareDocument(Document):
         """The tree-sitter query string for used to fetch highlighted ranges"""
 
         self._highlights: dict[int, list[Highlight]] = defaultdict(list)
-        """Mapping line numbers to the set of cached highlights for that line."""
 
-    def load_text(self, text: str) -> None:
-        super().load_text(text)
+        """Mapping line numbers to the set of cached highlights for that line."""
         self._build_ast(self._parser)
         self._prepare_highlights()
 
