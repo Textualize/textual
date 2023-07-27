@@ -7462,8 +7462,9 @@
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">group</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">exit_on_error</span><span class="o">=</span><span class="kc">True</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">):</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">exit_on_error</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">thread</span><span class="o">=</span><span class="kc">False</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -7544,6 +7545,16 @@
           <td><p>Exit the app if the worker raises an error. Set to <code>False</code> to suppress exceptions.</p></td>
           <td>
                 <code>True</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>thread</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td><p>Mark the worker as a thread worker.</p></td>
+          <td>
+                <code>False</code>
           </td>
         </tr>
     </tbody>
@@ -7755,8 +7766,8 @@
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
       <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 <a href="#textual.worker.Worker.state" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -7980,7 +7991,7 @@
           <td>
                 <code><span title="textual.worker.ResultType">ResultType</span></code>
           </td>
-          <td><p>Return value of work.</p></td>
+          <td><p>Return value of the work.</p></td>
         </tr>
     </tbody>
   </table>

@@ -5806,6 +5806,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.events.Print" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Print
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.events.Ready" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7387,6 +7398,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.events.Print" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Print
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.events.Ready" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7493,7 +7515,7 @@
       <p>Builtin events sent by Textual.</p>
 <p>Events may be marked as "Bubbles" and "Verbose".
 See the <a href="/guide/events/#bubbling">events guide</a> for an explanation of bubbling.
-Verbose events are excluded from the textual console, unless you explicit request them with the <code>-v</code> switch as follows:</p>
+Verbose events are excluded from the textual console, unless you explicitly request them with the <code>-v</code> switch as follows:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>textual console -v
 </code></pre></div>
 
@@ -8594,8 +8616,8 @@ configuration and binding keys.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
       <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 <a href="#textual.events.MouseEvent.style" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -8946,6 +8968,91 @@ and disable it when the app shuts down.</p>
           <td><p>The text that has been pasted.</p></td>
           <td>
               <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+
+
+<h2 id="textual.events.Print" class="doc doc-heading">
+        <span class="doc doc-object-name doc-class-name">Print</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class"><code>class</code></small>
+  </span>
+
+<a href="#textual.events.Print" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+      <p class="doc doc-class-bases">
+        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
+
+  
+      <p>Sent to a widget that is capturing prints.</p>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
+</ul>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>text</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+          </td>
+          <td><p>Text that was printed.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>stderr</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td><p>True if the print was to stderr, or False for stdout.</p></td>
+          <td>
+                <code>False</code>
           </td>
         </tr>
     </tbody>

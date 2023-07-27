@@ -5974,6 +5974,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.screen.Screen.can_view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        can_view()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.screen.Screen.dismiss" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6055,17 +6066,6 @@
     <span class="md-ellipsis">
       
         get_widgets_at()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.screen.Screen.notify" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        notify()
       
     </span>
   </a>
@@ -7085,6 +7085,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.screen.Screen.can_view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        can_view()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.screen.Screen.dismiss" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7166,17 +7177,6 @@
     <span class="md-ellipsis">
       
         get_widgets_at()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.screen.Screen.notify" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        notify()
       
     </span>
   </a>
@@ -7837,6 +7837,73 @@ Set to <code>""</code> to disable auto focus.</p>
 
 
 
+<h3 id="textual.screen.Screen.can_view" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">can_view</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.screen.Screen.can_view" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">can_view</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Check if a given widget is in the current view (scrollable area).</p>
+<p>Note: This doesn't necessarily equate to a widget being visible.
+There are other reasons why a widget may not be visible.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>widget</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code>
+          </td>
+          <td><p>A widget that is a descendant of self.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td><p>True if the entire widget is in view, False if it is partially visible or not in view.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
 <h3 id="textual.screen.Screen.dismiss" class="doc doc-heading">
         <span class="doc doc-object-name doc-function-name">dismiss</span>
   
@@ -8409,110 +8476,6 @@ the CSS selectors given in the argument.</p></td>
         </tr>
     </tbody>
   </table>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-
-<h3 id="textual.screen.Screen.notify" class="doc doc-heading">
-        <span class="doc doc-object-name doc-function-name">notify</span>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-method"><code>method</code></small>
-  </span>
-
-<a href="#textual.screen.Screen.notify" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">notify</span><span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="bp">self</span><span class="p">,</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">message</span><span class="p">,</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="o">*</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">severity</span><span class="o">=</span><span class="s2">&quot;information&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">timeout</span><span class="o">=</span><span class="n">Notification</span><span class="o">.</span><span class="n">timeout</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">):</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-  
-      <p>Create a notification.</p>
-
-  <h5>Parameters</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>message</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
-          </td>
-          <td><p>The message for the notification.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>title</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
-          </td>
-          <td><p>The title for the notification.</p></td>
-          <td>
-                <code>None</code>
-          </td>
-        </tr>
-        <tr>
-          <td><code>severity</code></td>
-          <td>
-                <code><span title="textual.notifications.SeverityLevel">SeverityLevel</span></code>
-          </td>
-          <td><p>The severity of the notification.</p></td>
-          <td>
-                <code>&#39;information&#39;</code>
-          </td>
-        </tr>
-        <tr>
-          <td><code>timeout</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
-          </td>
-          <td><p>The timeout for the notification.</p></td>
-          <td>
-                <code>Notification.timeout</code>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><span title="textual.notifications.Notification">Notification</span></code>
-          </td>
-          <td><p>The new notification.</p></td>
-        </tr>
-    </tbody>
-  </table>
-      <p>See <a class="autorefs autorefs-internal" href="../app/#textual.app.App.notify"><code>App.notify</code></a> for the full
-documentation for this method.</p>
 
   </div>
 

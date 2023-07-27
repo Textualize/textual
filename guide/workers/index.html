@@ -7304,12 +7304,13 @@ This works well if you are using an async API like <code>httpx</code>, but if yo
 <p class="admonition-title">What are threads?</p>
 <p>Threads are a form of concurrency supplied by your Operating System. Threads allow your code to run more than a single function simultaneously.</p>
 </div>
-<p>You can create threads by applying <code>run_worker</code> or the <code>work</code> decorator to a plain (non async) method or function.
-The API for thread workers is identical to async workers, but there are a few differences you need to be aware of when writing threaded code.</p>
+<p>You can create threads by setting <code>thread=True</code> on the <code>run_worker</code> method or the <code>work</code> decorator.
+The API for thread workers is identical to async workers, but there are a few differences you need to be aware of when writing code for thread workers.</p>
 <p>The first difference is that you should avoid calling methods on your UI directly, or setting reactive variables.
 You can work around this with the <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.call_from_thread">App.call_from_thread</a> method which schedules a call in the main thread.</p>
 <p>The second difference is that you can't cancel threads in the same way as coroutines, but you <em>can</em> manually check if the worker was cancelled.</p>
-<p>Let's demonstrate thread workers by replacing <code>httpx</code> with <code>urllib.request</code> (in the standard library). The <code>urllib</code> module is not async aware, so we will need to use threads:</p>
+<p>Let's demonstrate thread workers by replacing <code>httpx</code> with <code>urllib.request</code> (in the standard library).
+The <code>urllib</code> module is not async aware, so we will need to use threads:</p>
 <div class="highlight"><span class="filename">weather05.py</span><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="hll"><span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">Request</span><span class="p">,</span> <span class="n">urlopen</span>
 </span><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
 <a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="kn">from</span> <span class="nn">rich.text</span> <span class="kn">import</span> <span class="n">Text</span>
@@ -7335,7 +7336,7 @@ You can work around this with the <a class="autorefs autorefs-internal" href="..
 <a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Called when the input changes&quot;&quot;&quot;</span>
 <a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">update_weather</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 <a id="__codelineno-6-25" name="__codelineno-6-25" href="#__codelineno-6-25"></a>
-<a id="__codelineno-6-26" name="__codelineno-6-26" href="#__codelineno-6-26"></a><span class="hll">    <span class="nd">@work</span><span class="p">(</span><span class="n">exclusive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-6-26" name="__codelineno-6-26" href="#__codelineno-6-26"></a><span class="hll">    <span class="nd">@work</span><span class="p">(</span><span class="n">exclusive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">thread</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span><a id="__codelineno-6-27" name="__codelineno-6-27" href="#__codelineno-6-27"></a><span class="hll">    <span class="k">def</span> <span class="nf">update_weather</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">city</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><a id="__codelineno-6-28" name="__codelineno-6-28" href="#__codelineno-6-28"></a><span class="hll"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the weather for the given city.&quot;&quot;&quot;</span>
 </span><a id="__codelineno-6-29" name="__codelineno-6-29" href="#__codelineno-6-29"></a><span class="hll">        <span class="n">weather_widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_one</span><span class="p">(</span><span class="s2">&quot;#weather&quot;</span><span class="p">,</span> <span class="n">Static</span><span class="p">)</span>
@@ -7363,8 +7364,13 @@ You can work around this with the <a class="autorefs autorefs-internal" href="..
 <a id="__codelineno-6-51" name="__codelineno-6-51" href="#__codelineno-6-51"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">WeatherApp</span><span class="p">()</span>
 <a id="__codelineno-6-52" name="__codelineno-6-52" href="#__codelineno-6-52"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
-<p>The <code>update_weather</code> function doesn't have the <code>async</code> keyword, so the <code>@work</code> decorator will create a thread worker.
+<p>In this example, the <code>update_weather</code> is not asynchronous (i.e. a regular function).
+The <code>@work</code> decorator has <code>thread=True</code> which makes it a thread worker.
 Note the use of <a class="autorefs autorefs-internal" href="../../api/worker/#textual.worker.get_current_worker">get_current_worker</a> which the function uses to check if it has been cancelled or not.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Textual will raise an exception if you add the <code>work</code> decorator to a regular function without <code>thread=True</code>.</p>
+</div>
 <h4 id="posting-messages">Posting messages<a class="headerlink" href="#posting-messages" title="Permanent link">&para;</a></h4>
 <p>Most Textual functions are not thread-safe which means you will need to use <code>call_from_thread</code> to run them from a thread worker.
 An exception would be <a class="autorefs autorefs-internal" href="../../api/widget/#textual.widget.Widget.post_message">post_message</a> which <em>is</em> thread-safe.

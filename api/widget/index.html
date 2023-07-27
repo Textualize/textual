@@ -6736,6 +6736,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widget.Widget.begin_capture_print" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        begin_capture_print()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widget.Widget.blur" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6784,6 +6795,17 @@
     <span class="md-ellipsis">
       
         compose()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.end_capture_print" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        end_capture_print()
       
     </span>
   </a>
@@ -7235,6 +7257,17 @@
     <span class="md-ellipsis">
       
         scroll_visible()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.stop_animation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stop_animation()
       
     </span>
   </a>
@@ -8581,6 +8614,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widget.Widget.begin_capture_print" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        begin_capture_print()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widget.Widget.blur" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -8629,6 +8673,17 @@
     <span class="md-ellipsis">
       
         compose()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.end_capture_print" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        end_capture_print()
       
     </span>
   </a>
@@ -9080,6 +9135,17 @@
     <span class="md-ellipsis">
       
         scroll_visible()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.stop_animation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stop_animation()
       
     </span>
   </a>
@@ -10456,8 +10522,8 @@ cache-key.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
       <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 <a href="#textual.widget.Widget.offset" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -11151,8 +11217,8 @@ cache-key.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
       <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 <a href="#textual.widget.Widget.tooltip" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -11537,6 +11603,65 @@ depending on the scroll offset.</p>
 
 
 
+<h3 id="textual.widget.Widget.begin_capture_print" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">begin_capture_print</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widget.Widget.begin_capture_print" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">begin_capture_print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Capture text from print statements (or writes to stdout / stderr).</p>
+<p>If printing is captured, the widget will be send an <a class="autorefs autorefs-internal" href="../events/#textual.events.Print">events.Print</a> message.</p>
+<p>Call <a class="autorefs autorefs-internal" href="#textual.widget.Widget.end_capture_print">end_capture_print</a> to disable print capture.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>stdout</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td><p>Capture stdout.</p></td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>stderr</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td><p>Capture stderr.</p></td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
 <h3 id="textual.widget.Widget.blur" class="doc doc-heading">
         <span class="doc doc-object-name doc-function-name">blur</span>
   
@@ -11785,6 +11910,29 @@ There are other reasons why a widget may not be visible.</p>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="k">yield</span> <span class="n">Footer</span><span class="p">()</span>
 </code></pre></div>
 </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widget.Widget.end_capture_print" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">end_capture_print</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widget.Widget.end_capture_print" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">end_capture_print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>End print capture (set with [capture_print][textual.widget.Widget.capture_print]).</p>
+
   </div>
 
 </div>
@@ -12858,7 +13006,7 @@ or both are provided a <code>WidgetError</code> will be raised.</p>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="bp">self</span><span class="p">,</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">message</span><span class="p">,</span>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="o">*</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">severity</span><span class="o">=</span><span class="s2">&quot;information&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">timeout</span><span class="o">=</span><span class="n">Notification</span><span class="o">.</span><span class="n">timeout</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">):</span>
@@ -12892,11 +13040,11 @@ or both are provided a <code>WidgetError</code> will be raised.</p>
         <tr>
           <td><code>title</code></td>
           <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
           <td><p>The title for the notification.</p></td>
           <td>
-                <code>None</code>
+                <code>&#39;&#39;</code>
           </td>
         </tr>
         <tr>
@@ -15427,6 +15575,67 @@ the scrollable area.</p>
     </tbody>
   </table>
 
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widget.Widget.stop_animation" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">stop_animation</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+<a href="#textual.widget.Widget.stop_animation" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">stop_animation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">complete</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Stop an animation on an attribute.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>attribute</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+          </td>
+          <td><p>Name of the attribute whose animation should be stopped.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>complete</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td><p>Should the animation be set to its final value?</p></td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+<details class="note" open>
+  <summary>Note</summary>
+  <p>If there is no animation running, this is a no-op.</p>
+</details>
   </div>
 
 </div>

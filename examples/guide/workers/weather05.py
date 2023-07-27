@@ -23,7 +23,7 @@ class WeatherApp(App):
         """Called when the input changes"""
         self.update_weather(message.value)
 
-    @work(exclusive=True)
+    @work(exclusive=True, thread=True)
     def update_weather(self, city: str) -> None:
         """Update the weather for the given city."""
         weather_widget = self.query_one("#weather", Static)

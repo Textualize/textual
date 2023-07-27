@@ -7784,7 +7784,7 @@ and is used by the <a class="autorefs autorefs-internal" href="../../api/on/#tex
     </tbody>
   </table>
 
-  <h5>Returns</h5>
+  <h5>Raises</h5>
   <table>
     <thead>
       <tr>
@@ -7795,13 +7795,18 @@ and is used by the <a class="autorefs autorefs-internal" href="../../api/on/#tex
     <tbody>
         <tr>
           <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#OSError">OSError</a></code>
           </td>
-          <td><p>True on success, or False if the document could not be read.</p></td>
+          <td><p>If there was some form of error loading the document.</p></td>
         </tr>
     </tbody>
   </table>
 
+<details class="note" open>
+  <summary>Note</summary>
+  <p>The exceptions that can be raised by this method are all of
+those that can be raised by calling <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path.read_text"><code>Path.read_text</code></a>.</p>
+</details>
   </div>
 
 </div>
