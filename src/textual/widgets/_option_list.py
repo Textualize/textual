@@ -130,8 +130,8 @@ class OptionList(ScrollView, can_focus=True):
         Binding("end", "last", "Last", show=False),
         Binding("enter", "select", "Select", show=False),
         Binding("home", "first", "First", show=False),
-        Binding("page_down", "page_down", "Page Down", show=False),
-        Binding("page_up", "page_up", "Page Up", show=False),
+        Binding("pagedown", "page_down", "Page Down", show=False),
+        Binding("pageup", "page_up", "Page Up", show=False),
         Binding("up", "cursor_up", "Up", show=False),
     ]
     """
@@ -141,8 +141,8 @@ class OptionList(ScrollView, can_focus=True):
     | end | Move the highlight to the last option. |
     | enter | Select the current option. |
     | home | Move the highlight to the first option. |
-    | page_down | Move the highlight down a page of options. |
-    | page_up | Move the highlight up a page of options. |
+    | pagedown | Move the highlight down a page of options. |
+    | pageup | Move the highlight up a page of options. |
     | up | Move the highlight up. |
     """
 
