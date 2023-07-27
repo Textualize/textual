@@ -17,10 +17,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Breaking change: Creating a thread worker now requires that a `thread=True` keyword argument is passed https://github.com/Textualize/textual/pull/2938
-
-### Changed
-
 - Breaking change: `Markdown.load` no longer captures all errors and returns a `bool`, errors now propagate https://github.com/Textualize/textual/issues/2956
+- Breaking change: the default style of a `DataTable` now has `max-height: 100%` https://github.com/Textualize/textual/issues/2959
 
 ### Fixed
 
@@ -29,10 +27,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed a crash when using empty CSS variables https://github.com/Textualize/textual/issues/1849
 - Fixed issue with tabs in TextLog https://github.com/Textualize/textual/issues/3007
 - Fixed a bug with `DataTable` hover highlighting https://github.com/Textualize/textual/issues/2909
-
-### Changed
-
-- Breaking change: the default style of a `DataTable` now has `max-height: 100%` https://github.com/Textualize/textual/issues/2959
 
 ## [0.30.0] - 2023-07-17
 
