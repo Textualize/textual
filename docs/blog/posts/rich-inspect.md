@@ -54,7 +54,7 @@ If you want to see the full unabbreviated help you can add `help=True`:
 </div>
 
 There are a few more methods to refine the level of detail you need (private methods, dunder attributes etc).
-If you're interested, you can see the full range of options with this delightful little incantation:
+You can see the full range of options with this delightful little incantation:
 
 ```python
 >>> inspect(inspect)
