@@ -7,11 +7,11 @@ from rich.text import Text
 from textual._fix_direction import _fix_direction
 from textual._types import Literal, SupportsIndex, get_args
 
-NewlineStyle = Literal["\r\n", "\n", "\r"]
-VALID_NEWLINE_STYLES = set(get_args(NewlineStyle))
+Newline = Literal["\r\n", "\n", "\r"]
+VALID_NEWLINES = set(get_args(Newline))
 
 
-def _detect_newline_style(text: str) -> NewlineStyle:
+def _detect_newline_style(text: str) -> Newline:
     """Return the newline type used in this document.
 
     Args:
@@ -32,21 +32,19 @@ def _detect_newline_style(text: str) -> NewlineStyle:
 
 class Document:
     def __init__(self, text: str) -> None:
-        self._newline_style = _detect_newline_style(text)
-        """The type of newline used in the text"""
-        self._eof_newline = text and text[-1] in VALID_NEWLINE_STYLES
+        self._newline = _detect_newline_style(text)
+        """The type of newline used in the text."""
         self._lines: list[str] = text.splitlines(keepends=False)
+        """The lines of the document, excluding newline characters.
+
+        If there's a newline at the end of the file, the final line is an empty string.
+        """
+        if text.endswith(tuple(VALID_NEWLINES)):
+            self._lines.append("")
 
     @property
     def lines(self) -> list[str]:
         return self._lines
-
-    def load_text(self, text: str) -> None:
-        """Load text from a string into the document.
-
-        Args:
-            text: The text to load into the document
-        """
 
     def insert_range(
         self, start: tuple[int, int], end: tuple[int, int], text: str
@@ -69,7 +67,7 @@ class Document:
         bottom_row, bottom_column = bottom
 
         insert_lines = text.splitlines()
-        if text.endswith("\n"):
+        if text.endswith(tuple(VALID_NEWLINES)):
             # Special case where a single newline character is inserted.
             insert_lines.append("")
 
@@ -119,13 +117,13 @@ class Document:
 
             deleted_text = start_line[top_column:] + "\n"
             for row in range(top_row + 1, bottom_row):
-                deleted_text += lines[row]
+                deleted_text += lines[row] + self._newline
                 # Never add the newline at the end without checking its presence:
                 if row != self.line_count - 1:
                     deleted_text += "\n"
 
             deleted_text += end_line[:bottom_column]
-            if bottom == (self.line_count, 0) and self._eof_newline:
+            if bottom == (self.line_count, 0):
                 deleted_text += "\n"
 
             # Update the lines at the start and end of the range

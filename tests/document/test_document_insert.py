@@ -81,3 +81,18 @@ def test_insert_range_text_no_newlines():
         "I MUST not fear.",
         "Fear is the mind-killer.",
     ]
+
+
+TEXT_NEWLINE_EOF = """\
+I must not fear.
+Fear is the mind-killer.
+"""
+
+
+def test_newline_eof():
+    document = Document(TEXT_NEWLINE_EOF)
+    assert document._lines == [
+        "I must not fear.",
+        "Fear is the mind-killer.",
+        "",
+    ]

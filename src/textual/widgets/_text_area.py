@@ -245,7 +245,6 @@ TextArea > .text-area--selection {
 
         line = document.get_line_text(line_index)
         line.tab_size = self.indent_width
-        codepoint_count = len(line)
         line.set_length(self.virtual_size.width)
 
         selection = self.selection
@@ -270,12 +269,12 @@ TextArea > .text-area--selection {
                     line.stylize_before(
                         selection_style,
                         start=selection_top_column,
-                        end=codepoint_count,
+                        end=line_character_count,
                     )
                 elif line_index == selection_bottom_row:
                     line.stylize_before(selection_style, end=selection_bottom_column)
                 else:
-                    line.stylize_before(selection_style, end=codepoint_count)
+                    line.stylize_before(selection_style, end=line_character_count)
 
         # Highlight the cursor
         cursor_row, cursor_column = end

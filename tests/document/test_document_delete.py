@@ -107,3 +107,19 @@ def test_delete_single_line_including_newline(document):
         "Fear is the mind-killer.",
         "Sorry Will.",
     ]
+
+
+TEXT_NEWLINE_EOF = """\
+I must not fear.
+Fear is the mind-killer.
+"""
+
+
+def test_delete_end_of_file_newline():
+    document = Document(TEXT_NEWLINE_EOF)
+    deleted_text = document.delete_range((2, 0), (1, 24))
+    assert deleted_text == "\n"
+    assert document.lines == [
+        "I must not fear.",
+        "Fear is the mind-killer.",
+    ]
