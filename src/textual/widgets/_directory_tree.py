@@ -159,9 +159,10 @@ class DirectoryTree(Tree[DirEntry]):
         self._tree_lines_cached = None
         node_label = node._label
         node_data = node.data
+        node_parent = node.parent
         node = TreeNode(
             self,
-            None,
+            node_parent,
             self._new_id(),
             node_label,
             node_data,
