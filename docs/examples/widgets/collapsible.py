@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.widgets import Collapsible, Label, Markdown
+from textual.widgets import Collapsible, Footer, Label, Markdown
 
 LETO = """
 # Duke Leto I Atreides
@@ -23,13 +23,23 @@ Son of Leto and Jessica.
 class CollapsibleApp(App):
     """An example of colllapsible container."""
 
+    BINDINGS = [
+        ("c", "collapse_or_expand(True)", "Collapse All"),
+        ("e", "collapse_or_expand(False)", "Expand All"),
+    ]
+
     def compose(self) -> ComposeResult:
         """Compose app with collapsible containers."""
+        yield Footer()
         with Collapsible(collapsed=False, summary="Leto"):
             yield Label(LETO)
         yield Collapsible(Markdown(JESSICA), collapsed=False, summary="Jessica")
         with Collapsible(collapsed=True, summary="Paul"):
             yield Markdown(PAUL)
+
+    def action_collapse_or_expand(self, collapse: bool) -> None:
+        for child in self.walk_children(Collapsible):
+            child.collapsed = collapse
 
 
 if __name__ == "__main__":
