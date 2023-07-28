@@ -115,7 +115,7 @@ class Collapsible(Widget):
             classes: The CSS classes of the collapsible.
             disabled: Whether the collapsible is disabled or not.
         """
-        self._summary = summary
+        self.summary: str = summary
         self._contents_list: list[Widget] = list(children)
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self.collapsed = collapsed
@@ -132,7 +132,7 @@ class Collapsible(Widget):
         yield from (
             child.set_class(self.collapsed, "-collapsed")
             for child in (
-                self.Summary(label=self._summary),
+                self.Summary(label=self.summary),
                 self.Contents(*self._contents_list),
             )
         )
