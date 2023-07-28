@@ -6,6 +6,7 @@ from .. import events, on
 from ..app import ComposeResult
 from ..containers import Container, Horizontal
 from ..message import Message
+from ..reactive import reactive
 from ..widget import Widget
 from ._label import Label
 
@@ -14,6 +15,8 @@ __all__ = ["Collapsible"]
 
 class Collapsible(Widget):
     """A collapsible container."""
+
+    collapsed = reactive(True)
 
     DEFAULT_CSS = """
     Collapsible {
@@ -112,16 +115,18 @@ class Collapsible(Widget):
             classes: The CSS classes of the collapsible.
             disabled: Whether the collapsible is disabled or not.
         """
-        self.collapsed = collapsed
         self._summary = summary
         self._contents_list: list[Widget] = list(children)
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
+        self.collapsed = collapsed
 
     @on(Summary.Toggle)
-    def _collapse_or_expand(self) -> None:
+    def _update_collapsed(self) -> None:
         self.collapsed = not self.collapsed
-        for child_type in (self.Summary, self.Contents):
-            self.get_child_by_type(child_type).set_class(self.collapsed, "-collapsed")
+
+    def watch_collapsed(self) -> None:
+        for child in self._nodes:
+            child.set_class(self.collapsed, "-collapsed")
 
     def compose(self) -> ComposeResult:
         yield from (
