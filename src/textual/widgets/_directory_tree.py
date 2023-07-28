@@ -155,8 +155,7 @@ class DirectoryTree(Tree[DirEntry]):
         Returns:
             The `Tree` instance.
         """
-        self._line_cache.clear()
-        self._tree_lines_cached = None
+        self.clear_line_cache()
         node_label = node._label
         node_data = node.data
         node_parent = node.parent
