@@ -6,8 +6,8 @@ from textual.widgets import Collapsible, Label
 COLLAPSED_CLASS = "-collapsed"
 
 
-def get_summary(collapsible: Collapsible) -> Collapsible.Summary:
-    return collapsible.get_child_by_type(Collapsible.Summary)
+def get_title(collapsible: Collapsible) -> Collapsible.Title:
+    return collapsible.get_child_by_type(Collapsible.Title)
 
 
 def get_contents(collapsible: Collapsible) -> Collapsible.Contents:
@@ -15,9 +15,9 @@ def get_contents(collapsible: Collapsible) -> Collapsible.Contents:
 
 
 async def test_collapsible():
-    """It should be possible to access summary and collapsed."""
-    collapsible = Collapsible(summary="Pilot", collapsed=True)
-    assert collapsible.summary == "Pilot"
+    """It should be possible to access title and collapsed."""
+    collapsible = Collapsible(title="Pilot", collapsed=True)
+    assert collapsible.title == "Pilot"
     assert collapsible.collapsed
 
 
@@ -30,8 +30,8 @@ async def test_compose_default_collapsible():
 
     async with CollapsibleApp().run_test() as pilot:
         collapsible = pilot.app.query_one(Collapsible)
-        assert get_summary(collapsible).label == "Toggle"
-        assert get_summary(collapsible).has_class(COLLAPSED_CLASS)
+        assert get_title(collapsible).label == "Toggle"
+        assert get_title(collapsible).has_class(COLLAPSED_CLASS)
         assert len(get_contents(collapsible).children) == 1
         assert get_contents(collapsible).has_class(COLLAPSED_CLASS)
 
@@ -72,34 +72,34 @@ async def test_compose_expanded_collapsible():
 
     async with CollapsibleApp().run_test() as pilot:
         collapsible = pilot.app.query_one(Collapsible)
-        assert not get_summary(collapsible).has_class(COLLAPSED_CLASS)
+        assert not get_title(collapsible).has_class(COLLAPSED_CLASS)
         assert not get_contents(collapsible).has_class(COLLAPSED_CLASS)
 
 
-async def test_collapsible_collapsed_summary_label():
-    """Collapsed summary label should be displayed."""
+async def test_collapsible_collapsed_title_label():
+    """Collapsed title label should be displayed."""
 
     class CollapsibleApp(App[None]):
         def compose(self) -> ComposeResult:
             yield Collapsible(Label("Some Contents"), collapsed=True)
 
     async with CollapsibleApp().run_test() as pilot:
-        summary = get_summary(pilot.app.query_one(Collapsible))
-        assert not summary.get_child_by_id("expanded-label").display
-        assert summary.get_child_by_id("collapsed-label").display
+        title = get_title(pilot.app.query_one(Collapsible))
+        assert not title.get_child_by_id("expanded-label").display
+        assert title.get_child_by_id("collapsed-label").display
 
 
-async def test_collapsible_expanded_summary_label():
-    """Expanded summary label should be displayed."""
+async def test_collapsible_expanded_title_label():
+    """Expanded title label should be displayed."""
 
     class CollapsibleApp(App[None]):
         def compose(self) -> ComposeResult:
             yield Collapsible(Label("Some Contents"), collapsed=False)
 
     async with CollapsibleApp().run_test() as pilot:
-        summary = get_summary(pilot.app.query_one(Collapsible))
-        assert summary.get_child_by_id("expanded-label").display
-        assert not summary.get_child_by_id("collapsed-label").display
+        title = get_title(pilot.app.query_one(Collapsible))
+        assert title.get_child_by_id("expanded-label").display
+        assert not title.get_child_by_id("collapsed-label").display
 
 
 async def test_collapsible_collapsed_contents_display_false():
@@ -135,15 +135,15 @@ async def test_reactive_collapsed():
 
     async with CollapsibleApp().run_test() as pilot:
         collapsible = pilot.app.query_one(Collapsible)
-        assert not get_summary(collapsible).has_class(COLLAPSED_CLASS)
+        assert not get_title(collapsible).has_class(COLLAPSED_CLASS)
         collapsible.collapsed = True
         assert get_contents(collapsible).has_class(COLLAPSED_CLASS)
         collapsible.collapsed = False
-        assert not get_summary(collapsible).has_class(COLLAPSED_CLASS)
+        assert not get_title(collapsible).has_class(COLLAPSED_CLASS)
 
 
-async def test_toggle_summary():
-    """Clicking summary should update ``collapsed``."""
+async def test_toggle_title():
+    """Clicking title should update ``collapsed``."""
 
     class CollapsibleApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -152,12 +152,12 @@ async def test_toggle_summary():
     async with CollapsibleApp().run_test() as pilot:
         collapsible = pilot.app.query_one(Collapsible)
         assert not collapsible.collapsed
-        assert not get_summary(collapsible).has_class(COLLAPSED_CLASS)
+        assert not get_title(collapsible).has_class(COLLAPSED_CLASS)
 
-        await pilot.click(Collapsible.Summary)
+        await pilot.click(Collapsible.Title)
         assert collapsible.collapsed
         assert get_contents(collapsible).has_class(COLLAPSED_CLASS)
 
-        await pilot.click(Collapsible.Summary)
+        await pilot.click(Collapsible.Title)
         assert not collapsible.collapsed
-        assert not get_summary(collapsible).has_class(COLLAPSED_CLASS)
+        assert not get_title(collapsible).has_class(COLLAPSED_CLASS)

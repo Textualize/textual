@@ -25,30 +25,30 @@ class Collapsible(Widget):
     }
     """
 
-    class Summary(Horizontal):
+    class Title(Horizontal):
         DEFAULT_CSS = """
-        Summary {
+        Title {
             width: 100%;
             height: auto;
         }
 
-        Summary:hover {
+        Title:hover {
             background: grey;
         }
 
-        Summary .label {
+        Title .label {
             padding: 0 0 0 1;
         }
 
-        Summary #collapsed-label {
+        Title #collapsed-label {
             display:none;
         }
 
-        Summary.-collapsed #expanded-label {
+        Title.-collapsed #expanded-label {
             display:none;
         }
 
-        Summary.-collapsed #collapsed-label {
+        Title.-collapsed #collapsed-label {
             display:block;
         }
         """
@@ -97,7 +97,7 @@ class Collapsible(Widget):
     def __init__(
         self,
         *children: Widget,
-        summary: str = "Toggle",
+        title: str = "Toggle",
         collapsed: bool = True,
         name: str | None = None,
         id: str | None = None,
@@ -108,19 +108,19 @@ class Collapsible(Widget):
 
         Args:
             *children: Contents that will be collapsed/expanded.
-            summary: Summary of the collapsed/expanded contents.
+            title: Title of the collapsed/expanded contents.
             collapsed: Default status of the contents.
             name: The name of the collapsible.
             id: The ID of the collapsible in the DOM.
             classes: The CSS classes of the collapsible.
             disabled: Whether the collapsible is disabled or not.
         """
-        self.summary: str = summary
+        self.title: str = title
         self._contents_list: list[Widget] = list(children)
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self.collapsed = collapsed
 
-    @on(Summary.Toggle)
+    @on(Title.Toggle)
     def _update_collapsed(self) -> None:
         self.collapsed = not self.collapsed
 
@@ -132,7 +132,7 @@ class Collapsible(Widget):
         yield from (
             child.set_class(self.collapsed, "-collapsed")
             for child in (
-                self.Summary(label=self.summary),
+                self.Title(label=self.title),
                 self.Contents(*self._contents_list),
             )
         )

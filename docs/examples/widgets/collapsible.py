@@ -31,10 +31,10 @@ class CollapsibleApp(App):
     def compose(self) -> ComposeResult:
         """Compose app with collapsible containers."""
         yield Footer()
-        with Collapsible(collapsed=False, summary="Leto"):
+        with Collapsible(collapsed=False, title="Leto"):
             yield Label(LETO)
-        yield Collapsible(Markdown(JESSICA), collapsed=False, summary="Jessica")
-        with Collapsible(collapsed=True, summary="Paul"):
+        yield Collapsible(Markdown(JESSICA), collapsed=False, title="Jessica")
+        with Collapsible(collapsed=True, title="Paul"):
             yield Markdown(PAUL)
 
     def action_collapse_or_expand(self, collapse: bool) -> None:
