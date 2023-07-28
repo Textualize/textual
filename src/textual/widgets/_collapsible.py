@@ -40,15 +40,15 @@ class Collapsible(Widget):
             padding: 0 0 0 1;
         }
 
-        Summary .collapsed-label {
+        Summary #collapsed-label {
             display:none;
         }
 
-        Summary.-collapsed .expanded-label {
+        Summary.-collapsed #expanded-label {
             display:none;
         }
 
-        Summary.-collapsed .collapsed-label {
+        Summary.-collapsed #collapsed-label {
             display:block;
         }
         """
@@ -78,8 +78,8 @@ class Collapsible(Widget):
 
         def compose(self) -> ComposeResult:
             """Compose right/down arrow and label."""
-            yield Label(self.expanded_label, classes="label expanded-label")
-            yield Label(self.collapsed_label, classes="label collapsed-label")
+            yield Label(self.expanded_label, classes="label", id="expanded-label")
+            yield Label(self.collapsed_label, classes="label", id="collapsed-label")
             yield Label(self.label, classes="label")
 
     class Contents(Container):
