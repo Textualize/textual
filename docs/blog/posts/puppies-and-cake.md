@@ -43,7 +43,7 @@ Don't take it as a rejection of your gift: it's just that the maintainer can't c
 
 There are other ways to contribute code to a project that don't require the code to be merged in to the core.
 You could publish your change as a third party library.
-Take it from me, that maintainers love it when their project spawns an ecosystem.
+Take it from me: maintainers love it when their project spawns an ecosystem.
 You could also blog about how you solved your problem without an update to the core project.
 Having a resource that can be googled for, or a maintainer can direct people to, can be a huge help.
 
