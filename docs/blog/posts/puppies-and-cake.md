@@ -37,11 +37,11 @@ After all, having others join you to build something is the joy of Open Source.
 And yet when a project gets more mature there may be a growing resistance to adding new features, and a greater risk that a feature PR is rejected or sits unappreciated in the PR queue.
 
 So how should a contributor avoid this?
-It very much depends on the feature, but the best way is to first ask the maintainer if they would be interested in the new feature.
+If there is any doubt, it's best to propose the feature to the maintainers before undertaking the work.
 In all likelihood they will be happy for your contribution, just be prepared for them to say "thanks but no thanks".
 Don't take it as a rejection of your gift: it's just that the maintainer can't commit to taking on a puppy.
 
-There are other ways to contribute code to a project that doesn't require the code to be merged in to the core.
+There are other ways to contribute code to a project that don't require the code to be merged in to the core.
 You could publish your change as a third party library.
 Take it from me, that maintainers love it when their project spawns an ecosystem.
 You could also blog about how you solved your problem without an update to the core project.
