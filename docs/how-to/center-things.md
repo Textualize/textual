@@ -4,7 +4,7 @@ If you have ever needed to center something in a web page, you will be glad to k
 
 This article discusses a few different ways in which things can be centered, and the differences between them.
 
-## The Align rule
+## Aligning widgets
 
 The [align](../styles/align.md) rule will center a widget relative to one or both edges.
 This rule is applied to a *container*, and will impact how the container's children are arranged.
@@ -60,13 +60,13 @@ If you run this now, you should see the widget is aligned on both axis:
 ```{.textual path="docs/examples/how-to/center03.py"}
 ```
 
-## Text alignment
+## Aligning text
 
 In addition to aligning widgets, you may also want to align *text*.
 In order to demonstrate the difference, lets update the example with some longer text.
 We will also set the width of the widget to something smaller, to force the text to wrap.
 
-```python hl_lines="5 19 24"
+```python hl_lines="4 18 23"
 --8<-- "docs/examples/how-to/center04.py"
 ```
 
@@ -79,7 +79,7 @@ Note how the widget is centered, but the text within it is flushed to the left e
 Left aligned text is the default, but you can also center the text with the [text-align](../styles/text_align.md) rule.
 Let's center align the longer text by setting this rule:
 
-```python hl_lines="20"
+```python hl_lines="18"
 --8<-- "docs/examples/how-to/center05.py"
 ```
 
@@ -90,7 +90,7 @@ If you run this, you will see that each line of text is individually centered:
 
 You can also use `text-align` to right align text or justify the text (align to both edges).
 
-## Content alignment
+## Aligning content
 
 There is one last rule that can help us center things.
 The [content-align](../styles/content_align.md) rule aligns content *within* a widget.
@@ -99,7 +99,7 @@ It treats the text as a rectangular region and positions it relative to the spac
 In order to see why we might need this rule, we need to make the Static widget larger than required to fit the text.
 Let's set the height of the Static widget to 9 to give the content room to move:
 
-```python hl_lines="20"
+```python hl_lines="19"
 --8<-- "docs/examples/how-to/center06.py"
 ```
 
@@ -116,7 +116,7 @@ We can tell Textual to align the content to the center by setting `content-align
     Strictly speaking, we only need to align the content vertically here (there is no room to move the content left or right)
     So we could have done `content-align-vertical: middle;`
 
-```python hl_lines="22"
+```python hl_lines="21"
 --8<-- "docs/examples/how-to/center07.py"
 ```
 
@@ -130,7 +130,7 @@ If you run this now, the content will be centered within the widget:
 Keep the following in mind when you want to center content in Textual:
 
 - In order to center a widget, it needs to be smaller than its container.
-- The `align` rule is applied to the *parent*.
+- The `align` rule is applied to the *parent* of the widget you want to center (i.e. the widget's container).
 - The `text-align` rule aligns text on a line by line basis.
 - The `content-align` rule aligns content *within* a widget.
 - Add a border if the alignment isn't working as you would expect.
