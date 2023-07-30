@@ -20,7 +20,7 @@ Here's the output:
 ```
 
 The container of the widget is the screen, which has the `align: center middle;` rule applied. The
-`center` part tells Textual to align on the horizontal edge, and `middle` tells Textual to align on the vertical edge.
+`center` part tells Textual to align in the horizontal direction, and `middle` tells Textual to align in the vertical direction.
 
 The output *may* surprise you.
 The text appears to be aligned in the middle (i.e. vertical edge), but *left* aligned on the horizontal.
@@ -79,7 +79,7 @@ Note how the widget is centered, but the text within it is flushed to the left e
 Left aligned text is the default, but you can also center the text with the [text-align](../styles/text_align.md) rule.
 Let's center align the longer text by setting this rule:
 
-```python hl_lines="18"
+```python hl_lines="19"
 --8<-- "docs/examples/how-to/center05.py"
 ```
 
