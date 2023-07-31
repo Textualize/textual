@@ -190,6 +190,9 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
     placeholder: var[str] = var("Textual spotlight search", init=False)
     """The placeholder text for the command palette input."""
 
+    _list_visible: var[bool] = var(False, init=False)
+    """Internal reactive to toggle the visibility of the command list."""
+
     def compose(self) -> ComposeResult:
         """Compose the command palette."""
         yield CommandInput(placeholder=self.placeholder)
@@ -199,6 +202,10 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         """Pass the new placeholder text down to the `CommandInput`."""
         self.query_one(CommandInput).placeholder = self.placeholder
 
+    def _watch__list_visible(self) -> None:
+        """React to the list visible flag being toggled."""
+        self.query_one(CommandList).set_class(self._list_visible, "--visible")
+
     @on(Input.Changed)
     def _input(self, event: Input.Changed) -> None:
         """React to input in the command palette.
@@ -206,9 +213,9 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         Args:
             event: The input event.
         """
-        command_list = self.query_one(CommandList)
         search_value = event.value.strip()
-        command_list.set_class(bool(search_value), "--visible")
+        self._list_visible = bool(search_value)
+        command_list = self.query_one(CommandList)
         command_list.clear_options()
         if search_value:
             command_list.add_options(
@@ -232,7 +239,7 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         with self.prevent(Input.Changed):
             input.value = str(event.option.prompt)
         input.action_end()
-        self.query_one(CommandList).set_class(False, "--visible")
+        self._list_visible = False
 
     def action_escape(self) -> None:
         """Handle a request to escape out of the command palette."""
