@@ -236,12 +236,17 @@ TextArea > .text-area--selection {
         self._document = Document(text)
         self._refresh_size()
 
+    def watch_scroll_x(self, old_value: float, new_value: float) -> None:
+        super().watch_scroll_x(old_value, new_value)
+        print(new_value)
+
     def _refresh_size(self) -> None:
         # Calculate document
         lines = self._document.lines
         text_width = max(cell_len(line.expandtabs(self.indent_width)) for line in lines)
         height = len(lines)
         self.virtual_size = Size(text_width + self.gutter_width + 1, height)
+        print(f"new virtual_size = {self.virtual_size}")
 
     def render_line(self, widget_y: int) -> Strip:
         document = self._document
@@ -319,7 +324,7 @@ TextArea > .text-area--selection {
 
         # Crop the line to show only the visible part (some may be scrolled out of view)
         virtual_width, virtual_height = self.virtual_size
-        text_crop_start = int(self.scroll_x)
+        text_crop_start = self.scroll_offset.x
         text_crop_end = text_crop_start + virtual_width
 
         gutter_strip = Strip(gutter_segments)
@@ -380,16 +385,21 @@ TextArea > .text-area--selection {
             self.insert_text_range(insert, start, end)
 
     def get_target_document_location(self, offset: Offset) -> Location:
-        target_x = max(
-            offset.x - self.gutter_width + int(self.scroll_x) - self.gutter.left, 0
-        )
+        print(f"offset.x = {offset.x}")
+        target_x = offset.x - self.gutter_width + int(self.scroll_x) - self.gutter.left
+
+        # TODO: target_x looks wrong here!
+        print(f"prior target x = {target_x}")
+        target_x = max(target_x, 0)
         target_row = clamp(
             offset.y + int(self.scroll_y) - self.gutter.top,
             0,
             self._document.line_count - 1,
         )
         target_column = self.cell_width_to_column_index(target_x, target_row)
-        print(target_column)
+        print(f"scroll_x = {self.scroll_x}")
+        print(f"target_x = {target_x!r}")
+        print(f"target_column = {target_column!r}")
         return target_row, target_column
 
     def _on_mouse_down(self, event: events.MouseDown) -> None:
@@ -471,12 +481,12 @@ TextArea > .text-area--selection {
         row, column = self.selection.end
         text = self.cursor_line_text[:column]
         column_offset = cell_len(text.expandtabs(self.indent_width))
-        self.scroll_to_region(
+        scrolled_amount = self.scroll_to_region(
             Region(x=column_offset, y=row, width=1, height=1),
             spacing=Spacing(right=self.gutter_width),
             animate=False,
-            force=True,
         )
+        print(scrolled_amount)
 
     @property
     def cursor_at_first_row(self) -> bool:
