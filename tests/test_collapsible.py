@@ -17,7 +17,7 @@ def get_contents(collapsible: Collapsible) -> Collapsible.Contents:
 async def test_collapsible():
     """It should be possible to access title and collapsed."""
     collapsible = Collapsible(title="Pilot", collapsed=True)
-    assert collapsible.title == "Pilot"
+    assert collapsible._title.label == "Pilot"
     assert collapsible.collapsed
 
 
@@ -85,8 +85,8 @@ async def test_collapsible_collapsed_title_label():
 
     async with CollapsibleApp().run_test() as pilot:
         title = get_title(pilot.app.query_one(Collapsible))
-        assert not title.get_child_by_id("expanded-label").display
-        assert title.get_child_by_id("collapsed-label").display
+        assert not title.get_child_by_id("expanded-symbol").display
+        assert title.get_child_by_id("collapsed-symbol").display
 
 
 async def test_collapsible_expanded_title_label():
@@ -98,8 +98,8 @@ async def test_collapsible_expanded_title_label():
 
     async with CollapsibleApp().run_test() as pilot:
         title = get_title(pilot.app.query_one(Collapsible))
-        assert title.get_child_by_id("expanded-label").display
-        assert not title.get_child_by_id("collapsed-label").display
+        assert title.get_child_by_id("expanded-symbol").display
+        assert not title.get_child_by_id("collapsed-symbol").display
 
 
 async def test_collapsible_collapsed_contents_display_false():
