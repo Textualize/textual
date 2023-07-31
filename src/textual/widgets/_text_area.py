@@ -435,10 +435,10 @@ TextArea > .text-area--selection {
                 return column_index
         return len(line)
 
-    def watch_selection(self) -> None:
+    def _watch_selection(self) -> None:
         self.scroll_cursor_visible()
 
-    def validate_selection(self, selection: Selection) -> Selection:
+    def _validate_selection(self, selection: Selection) -> Selection:
         start, end = selection
         clamp_visitable = self.clamp_visitable
         return Selection(clamp_visitable(start), clamp_visitable(end))

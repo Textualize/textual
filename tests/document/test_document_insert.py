@@ -50,6 +50,12 @@ def test_insert_newline_splits_line():
     assert document._lines == ["I", " must not fear.", "Fear is the mind-killer."]
 
 
+def test_insert_newline_splits_line_selection():
+    document = Document(TEXT)
+    document.insert_range((0, 1), (0, 6), "\n")
+    assert document._lines == ["I", " not fear.", "Fear is the mind-killer."]
+
+
 def test_insert_multiple_lines_ends_with_newline():
     document = Document(TEXT)
     document.insert_range((0, 1), (0, 1), "Hello,\nworld!\n")
@@ -57,6 +63,16 @@ def test_insert_multiple_lines_ends_with_newline():
         "IHello,",
         "world!",
         " must not fear.",
+        "Fear is the mind-killer.",
+    ]
+
+
+def test_insert_multiple_lines_ends_with_no_newline():
+    document = Document(TEXT)
+    document.insert_range((0, 1), (0, 1), "Hello,\nworld!")
+    assert document._lines == [
+        "IHello,",
+        "world! must not fear.",
         "Fear is the mind-killer.",
     ]
 
