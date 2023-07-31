@@ -2761,8 +2761,9 @@ class Widget(DOMNode):
         if (
             isinstance(renderable, Text)
             and text_justify is not None
-            and renderable.justify is None
+            and renderable.justify != text_justify
         ):
+            renderable = renderable.copy()
             renderable.justify = text_justify
 
         renderable = _Styled(
