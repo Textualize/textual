@@ -46,6 +46,10 @@ class Document:
     def lines(self) -> list[str]:
         return self._lines
 
+    @property
+    def content(self) -> str:
+        return self._newline.join(self._lines)
+
     def insert_range(
         self, start: tuple[int, int], end: tuple[int, int], text: str
     ) -> tuple[int, int]:
@@ -146,18 +150,34 @@ class Document:
         return self._lines[item]
 
 
+Location = tuple[int, int]
+"""A location (row, column) within the document."""
+
+
 class Selection(NamedTuple):
     """A range of characters within a document from a start point to the end point.
     The location of the cursor is always considered to be the `end` point of the selection.
     The selection is inclusive of the minimum point and exclusive of the maximum point.
     """
 
-    start: tuple[int, int] = (0, 0)
-    end: tuple[int, int] = (0, 0)
+    start: Location = (0, 0)
+    """The start location of the selection.
+
+    If you were to click and drag a selection inside a text-editor, this is where you *started* dragging.
+    """
+    end: Location = (0, 0)
+    """The end location of the selection.
+
+    If you were to click and drag a selection inside a text-editor, this is where you *finished* dragging.
+    """
 
     @classmethod
-    def cursor(cls, location: tuple[int, int]) -> "Selection":
-        """Create a Selection with the same start and end point."""
+    def cursor(cls, location: Location) -> "Selection":
+        """Create a Selection with the same start and end point - a "cursor".
+
+        Args:
+            location: The location to create the zero-width Selection.
+        """
         return cls(location, location)
 
     @property
@@ -167,6 +187,8 @@ class Selection(NamedTuple):
         return start == end
 
     @property
-    def range(self) -> tuple[tuple[int, int], tuple[int, int]]:
+    def range(self) -> tuple[Location, Location]:
+        """Return the Selection as a "standard" range, from top to bottom i.e. (minimum point, maximum point)
+        where the minimum point is inclusive and the maximum point is exclusive."""
         start, end = self
         return _fix_direction(start, end)
