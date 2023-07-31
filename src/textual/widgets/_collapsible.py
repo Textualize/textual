@@ -40,15 +40,15 @@ class Collapsible(Widget):
             padding: 0 0 0 1;
         }
 
-        Title #collapsed-label {
+        Title #collapsed-symbol {
             display:none;
         }
 
-        Title.-collapsed #expanded-label {
+        Title.-collapsed #expanded-symbol {
             display:none;
         }
 
-        Title.-collapsed #collapsed-label {
+        Title.-collapsed #collapsed-symbol {
             display:block;
         }
         """
@@ -56,18 +56,18 @@ class Collapsible(Widget):
         def __init__(
             self,
             *,
-            collapsed_label: str = "►",
-            expanded_label: str = "▼",
-            label: str = "Toggle",
+            label: str,
+            collapsed_symbol: str,
+            expanded_symbol: str,
             name: str | None = None,
             id: str | None = None,
             classes: str | None = None,
             disabled: bool = False,
         ) -> None:
             super().__init__(name=name, id=id, classes=classes, disabled=disabled)
+            self.collapsed_symbol = collapsed_symbol
+            self.expanded_symbol = expanded_symbol
             self.label = label
-            self.collapsed_label = collapsed_label
-            self.expanded_label = expanded_label
 
         class Toggle(Message):
             """Request toggle."""
@@ -78,8 +78,8 @@ class Collapsible(Widget):
 
         def compose(self) -> ComposeResult:
             """Compose right/down arrow and label."""
-            yield Label(self.expanded_label, classes="label", id="expanded-label")
-            yield Label(self.collapsed_label, classes="label", id="collapsed-label")
+            yield Label(self.expanded_symbol, classes="label", id="expanded-symbol")
+            yield Label(self.collapsed_symbol, classes="label", id="collapsed-symbol")
             yield Label(self.label, classes="label")
 
     class Contents(Container):
@@ -89,6 +89,7 @@ class Collapsible(Widget):
             height: auto;
             padding: 0 0 0 3;
         }
+
         Contents.-collapsed {
             display: none;
         }
@@ -99,6 +100,8 @@ class Collapsible(Widget):
         *children: Widget,
         title: str = "Toggle",
         collapsed: bool = True,
+        collapsed_symbol: str = "►",
+        expanded_symbol: str = "▼",
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -110,12 +113,18 @@ class Collapsible(Widget):
             *children: Contents that will be collapsed/expanded.
             title: Title of the collapsed/expanded contents.
             collapsed: Default status of the contents.
+            collapsed_symbol: Collapsed symbol before the title.
+            expanded_symbol: Expanded symbol before the title.
             name: The name of the collapsible.
             id: The ID of the collapsible in the DOM.
             classes: The CSS classes of the collapsible.
             disabled: Whether the collapsible is disabled or not.
         """
-        self.title: str = title
+        self._title = self.Title(
+            label=title,
+            collapsed_symbol=collapsed_symbol,
+            expanded_symbol=expanded_symbol,
+        )
         self._contents_list: list[Widget] = list(children)
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self.collapsed = collapsed
@@ -132,7 +141,7 @@ class Collapsible(Widget):
         yield from (
             child.set_class(self.collapsed, "-collapsed")
             for child in (
-                self.Title(label=self.title),
+                self._title,
                 self.Contents(*self._contents_list),
             )
         )
