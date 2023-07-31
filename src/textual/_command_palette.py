@@ -30,6 +30,9 @@ class CommandSourceHit(NamedTuple):
     command_text: str
     """The command text associated with the hit."""
 
+    command_help: str = ""
+    """Optional help text for the command."""
+
 
 class CommandSource(ABC):
     """Base class for command palette command sources."""
@@ -275,8 +278,8 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         """
         command_list = self.query_one(CommandList)
         self._show_busy = True
-        async for _, prompt, _ in TotallyFakeCommandSource().hunt_for(search_value):
-            command_list.add_option(prompt)
+        async for hit in TotallyFakeCommandSource().hunt_for(search_value):
+            command_list.add_option(hit.match_text)
         self._show_busy = False
         if command_list.option_count == 0:
             command_list.add_option(
