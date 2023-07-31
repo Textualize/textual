@@ -241,7 +241,7 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         input.action_end()
         self._list_visible = False
 
-    def action_escape(self) -> None:
+    def _action_escape(self) -> None:
         """Handle a request to escape out of the command palette."""
         self.dismiss()
 
