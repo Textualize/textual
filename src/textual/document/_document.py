@@ -44,11 +44,23 @@ class Document:
 
     @property
     def lines(self) -> list[str]:
+        """Get the document as a list of strings, where each string represents a line.
+
+        Newline characters are not included in at the end of the strings.
+
+        The newline character used in this document can be found via the `Document.newline` property.
+        """
         return self._lines
 
     @property
     def text(self) -> str:
+        """Get the text from the document."""
         return self._newline.join(self._lines)
+
+    @property
+    def newline(self) -> Newline:
+        """Get the Newline used in this document (e.g. '\r\n', '\n'. etc.)"""
+        return self._newline
 
     def insert_range(self, start: Location, end: Location, text: str) -> Location:
         """Insert text at the given range.
@@ -104,7 +116,7 @@ class Document:
 
         lines = self._lines
 
-        deleted_text = self.get_selection(top, bottom)
+        deleted_text = self.get_selected_text(top, bottom)
 
         if top_row == bottom_row:
             line = lines[top_row]
@@ -117,7 +129,7 @@ class Document:
 
         return deleted_text
 
-    def get_selection(self, start: Location, end: Location) -> str:
+    def get_selected_text(self, start: Location, end: Location) -> str:
         """Get the text that falls between the start and end locations.
 
         Args:
