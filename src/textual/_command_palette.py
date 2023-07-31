@@ -278,6 +278,11 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         if request_id == self._current_request:
             self.query_one(CommandList).add_options([prompt for (_, prompt, _) in hits])
 
+    def _new_request(self) -> None:
+        """Start a new round of command requests."""
+        # TODO: This might be a good place to cancel any existing requests.
+        self._current_request = uuid4()
+
     @on(Input.Changed)
     def _input(self, event: Input.Changed) -> None:
         """React to input in the command palette.
@@ -290,7 +295,7 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         command_list = self.query_one(CommandList)
         command_list.clear_options()
         if search_value:
-            self._current_request = uuid4()
+            self._new_request()
             TotallyFakeCommandSource().command_hunt(
                 search_value, partial(self._process_hits, self._current_request)
             )
