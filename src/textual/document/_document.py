@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import NamedTuple
+from typing import NamedTuple, Tuple
 
 from rich.text import Text
 
@@ -150,7 +150,7 @@ class Document:
         return self._lines[item]
 
 
-Location = tuple[int, int]
+Location = Tuple[int, int]
 """A location (row, column) within the document."""
 
 
