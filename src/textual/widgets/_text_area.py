@@ -20,15 +20,20 @@ from textual.strip import Strip
 
 @runtime_checkable
 class Edit(Protocol):
-    """Protocol for actions performed in the text editor that can be done and undone."""
+    """Protocol for actions performed in the text editor which can be done and undone.
 
-    def do(self, editor: TextArea) -> object | None:
+    These are typically actions which affect the document (e.g. inserting and deleting
+    text), but they can really be anything.
+
+    To perform an edit operation, pass the Edit to `TextArea.edit()`"""
+
+    def do(self, text_area: TextArea) -> object | None:
         """Do the action."""
 
-    def undo(self, editor: TextArea) -> object | None:
+    def undo(self, text_area: TextArea) -> object | None:
         """Undo the action."""
 
-    def post_refresh(self, editor: TextArea) -> None:
+    def post_refresh(self, text_area: TextArea) -> None:
         """Code to execute after content size recalculated and repainted."""
 
 
@@ -37,28 +42,46 @@ class Insert:
     """Implements the Edit protocol for inserting text at some location."""
 
     text: str
+    """The text to insert."""
     from_location: tuple[int, int]
+    """The start location of the insert."""
     to_location: tuple[int, int]
+    """The end location of the insert"""
     cursor_destination: tuple[int, int] | None = None
+    """The location to move the cursor to after the operation completes."""
     _edit_end: tuple[int, int] | None = field(init=False, default=None)
+    """Computed location to move the cursor to if `cursor_destination` is None."""
 
-    def do(self, editor: TextArea) -> None:
-        self._edit_end = editor._document.insert_range(
+    def do(self, text_area: TextArea) -> None:
+        """Perform the Insert operation.
+
+        Args:
+            text_area: The TextArea to perform the insert on.
+        """
+        self._edit_end = text_area._document.insert_range(
             self.from_location,
             self.to_location,
             self.text,
         )
 
-    def undo(self, editor: TextArea) -> None:
-        """Undo the action."""
+    def undo(self, text_area: TextArea) -> None:
+        """Undo the Insert operation.
 
-    def post_refresh(self, editor: TextArea) -> None:
-        # Update the cursor location
+        Args:
+            text_area: The TextArea to undo the insert operation on.
+        """
+
+    def post_refresh(self, text_area: TextArea) -> None:
+        """Update the cursor location after the widget has been refreshed.
+
+        Args:
+            text_area: The TextArea this operation was performed on.
+        """
         cursor_destination = self.cursor_destination
         if cursor_destination is not None:
-            editor.selection = cursor_destination
+            text_area.selection = cursor_destination
         else:
-            editor.selection = Selection.cursor(self._edit_end)
+            text_area.selection = Selection.cursor(self._edit_end)
 
 
 @dataclass
@@ -77,22 +100,22 @@ class Delete:
     _deleted_text: str | None = field(init=False, default=None)
     """The text that was deleted, or None if the deletion hasn't occurred yet."""
 
-    def do(self, editor: TextArea) -> str:
+    def do(self, text_area: TextArea) -> str:
         """Do the delete action and record the text that was deleted."""
-        self._deleted_text = editor._document.delete_range(
+        self._deleted_text = text_area._document.delete_range(
             self.from_location, self.to_location
         )
         return self._deleted_text
 
-    def undo(self, editor: TextArea) -> None:
+    def undo(self, text_area: TextArea) -> None:
         """Undo the delete action."""
 
-    def post_refresh(self, editor: TextArea) -> None:
+    def post_refresh(self, text_area: TextArea) -> None:
         cursor_destination = self.cursor_destination
         if cursor_destination is not None:
-            editor.selection = Selection.cursor(cursor_destination)
+            text_area.selection = Selection.cursor(cursor_destination)
         else:
-            editor.selection = Selection.cursor(self.from_location)
+            text_area.selection = Selection.cursor(self.from_location)
 
 
 class TextArea(ScrollView, can_focus=True):
@@ -522,6 +545,8 @@ TextArea > .text-area--selection {
             self.selection = Selection(start, (cursor_row, 0))
         else:
             self.selection = Selection.cursor((cursor_row, 0))
+
+        self._record_last_intentional_cell_width()
 
     # ------ Cursor movement actions
     def action_cursor_left(self) -> None:
