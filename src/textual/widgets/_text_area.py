@@ -381,7 +381,7 @@ TextArea > .text-area--selection {
 
     def get_target_document_location(self, offset: Offset) -> Location:
         target_x = max(
-            offset.x - self.gutter_width + int(self.scroll_x) - self.gutter.top - 1, 0
+            offset.x - self.gutter_width + int(self.scroll_x) - self.gutter.top, 0
         )
         target_row = clamp(
             offset.y + int(self.scroll_y) - self.gutter.top,
