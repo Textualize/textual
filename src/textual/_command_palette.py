@@ -33,7 +33,7 @@ class CommandSource(ABC):
     """Base class for command palette command sources."""
 
     @abstractmethod
-    async def command_hunt(self, user_input: str) -> AsyncIterator[CommandSourceHit]:
+    async def hunt_for(self, user_input: str) -> AsyncIterator[CommandSourceHit]:
         """A request to hunt for commands relevant to the given user input.
 
         Args:
@@ -145,7 +145,7 @@ You can't have your cake and eat it too.
 You can't teach an old dog new tricks.
     """.strip().splitlines()
 
-    async def command_hunt(self, user_input: str) -> AsyncIterator[CommandSourceHit]:
+    async def hunt_for(self, user_input: str) -> AsyncIterator[CommandSourceHit]:
         """A request to hunt for commands relevant to the given user input.
 
         Args:
@@ -252,7 +252,7 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
             search_value: The value to search for.
         """
         command_list = self.query_one(CommandList)
-        async for _, prompt, _ in TotallyFakeCommandSource().command_hunt(search_value):
+        async for _, prompt, _ in TotallyFakeCommandSource().hunt_for(search_value):
             command_list.add_option(prompt)
 
     @on(Input.Changed)
