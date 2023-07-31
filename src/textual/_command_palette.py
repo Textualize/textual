@@ -200,7 +200,7 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         self.query_one(CommandInput).placeholder = self.placeholder
 
     @on(Input.Changed)
-    def input(self, event: Input.Changed) -> None:
+    def _input(self, event: Input.Changed) -> None:
         """React to input in the command palette.
 
         Args:
@@ -221,7 +221,7 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
             )
 
     @on(OptionList.OptionSelected)
-    def select_command(self, event: OptionList.OptionSelected) -> None:
+    def _select_command(self, event: OptionList.OptionSelected) -> None:
         """React to a command being selected from the dropdown.
 
         Args:
