@@ -50,9 +50,7 @@ class Document:
     def content(self) -> str:
         return self._newline.join(self._lines)
 
-    def insert_range(
-        self, start: tuple[int, int], end: tuple[int, int], text: str
-    ) -> tuple[int, int]:
+    def insert_range(self, start: Location, end: Location, text: str) -> Location:
         """Insert text at the given range.
 
         Args:
@@ -90,7 +88,7 @@ class Document:
         end_point = destination_row, destination_column
         return end_point
 
-    def delete_range(self, start: tuple[int, int], end: tuple[int, int]) -> str:
+    def delete_range(self, start: Location, end: Location) -> str:
         """Delete the text at the given range.
 
         Args:
