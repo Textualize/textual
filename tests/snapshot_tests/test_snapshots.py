@@ -439,7 +439,7 @@ def test_scrollbar_thumb_height(snap_compare):
 
 
 def test_css_hot_reloading(snap_compare):
-    """Regression test for https://github.com/Textualize/textual/issues/2063"""
+    """Regression test for https://github.com/Textualize/textual/issues/2063."""
 
     async def run_before(pilot):
         css_file = pilot.app.CSS_PATH
