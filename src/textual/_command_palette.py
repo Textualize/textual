@@ -2,18 +2,63 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
+from functools import partial
+from typing import Callable, NamedTuple, TypeAlias
+from uuid import UUID, uuid4
+
 from rich.text import Text
 
 from . import on
 from ._fuzzy import Matcher
 from .app import ComposeResult
 from .binding import Binding
+from .message import Message
 from .reactive import var
 from .screen import ModalScreen
 from .widgets import Input, OptionList
 
 
-class TotallyFakeCommandSource:
+class CommandSourceHit(NamedTuple):
+    """Holds the details of a single hit."""
+
+    match_value: float
+    """The match value of the command hit."""
+
+    match_text: Text
+    """The [rich.text.Text][`Text`] representation of the hit."""
+
+    command_text: str
+    """The command text associated with the hit."""
+
+
+HitsAdder: TypeAlias = Callable[[list[CommandSourceHit]], None]
+"""The type of a call back for registering hits."""
+
+
+class CommandSource:
+    """Base class for command palette command sources."""
+
+    @dataclass
+    class Hits(Message):
+        """Message sent by a command source to pass on some hits."""
+
+        request_id: UUID
+        """The ID of the request."""
+
+        hits: list[CommandSourceHit]
+        """A list of hits."""
+
+    def command_hunt(self, user_input: str, add_hits: HitsAdder) -> None:
+        """A request to hunt for commands relevant to the given user input.
+
+        Args:
+            user_input: The user input to be matched.
+            add_hits: The function to call to add the hits.
+        """
+
+
+class TotallyFakeCommandSource(CommandSource):
     """Really, this isn't going to be the UI. Not even close."""
 
     DATA = """\
@@ -116,13 +161,23 @@ You can't have your cake and eat it too.
 You can't teach an old dog new tricks.
     """.strip().splitlines()
 
-    def command_hunt(self, user_input: str) -> list[tuple[float, Text]]:
+    def command_hunt(self, user_input: str, add_hits: HitsAdder) -> None:
+        """A request to hunt for commands relevant to the given user input.
+
+        Args:
+            user_input: The user input to be matched.
+            add_hits: The function to call to add the hits.
+        """
         matcher = Matcher(user_input)
-        return [
-            (matcher.match(candidate), matcher.highlight(candidate))
-            for candidate in self.DATA
-            if matcher.match(candidate)
-        ]
+        add_hits(
+            [
+                CommandSourceHit(
+                    matcher.match(candidate), matcher.highlight(candidate), candidate
+                )
+                for candidate in self.DATA
+                if matcher.match(candidate)
+            ]
+        )
 
 
 class CommandList(OptionList, can_focus=False):
@@ -193,6 +248,10 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
     _list_visible: var[bool] = var(False, init=False)
     """Internal reactive to toggle the visibility of the command list."""
 
+    def __init__(self) -> None:
+        super().__init__()
+        self._current_request: UUID = uuid4()
+
     def compose(self) -> ComposeResult:
         """Compose the command palette."""
         yield CommandInput(placeholder=self.placeholder)
@@ -206,6 +265,16 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         """React to the list visible flag being toggled."""
         self.query_one(CommandList).set_class(self._list_visible, "--visible")
 
+    def _process_hits(self, request_id: UUID, hits: list[CommandSourceHit]) -> None:
+        """Process incoming hits.
+
+        Args:
+            request_id: The ID of the request that resulted in these hits.
+            hits: The list of hits.
+        """
+        if request_id == self._current_request:
+            self.query_one(CommandList).add_options([prompt for (_, prompt, _) in hits])
+
     @on(Input.Changed)
     def _input(self, event: Input.Changed) -> None:
         """React to input in the command palette.
@@ -218,13 +287,9 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         command_list = self.query_one(CommandList)
         command_list.clear_options()
         if search_value:
-            command_list.add_options(
-                [
-                    prompt
-                    for (_, prompt) in TotallyFakeCommandSource().command_hunt(
-                        search_value
-                    )
-                ]
+            self._current_request = uuid4()
+            TotallyFakeCommandSource().command_hunt(
+                search_value, partial(self._process_hits, self._current_request)
             )
 
     @on(OptionList.OptionSelected)
