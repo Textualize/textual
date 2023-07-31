@@ -6,7 +6,7 @@ from typing import ClassVar
 
 from rich.text import Text
 
-from textual import events
+from textual import events, log
 from textual._cells import cell_len
 from textual._fix_direction import _fix_direction
 from textual._types import Literal, Protocol, runtime_checkable
@@ -199,13 +199,6 @@ TextArea > .text-area--selection {
     indent_width: Reactive[int] = reactive(4)
     """The width of tabs or the number of spaces to insert on pressing the `tab` key."""
 
-    _document_size: Reactive[Size] = reactive(Size(), init=False, always_update=True)
-    """Tracks the size of the document.
-
-    This is the width and height of the bounding box of the text.
-    Used to update virtual size.
-    """
-
     def __init__(
         self,
         name: str | None = None,
@@ -214,33 +207,25 @@ TextArea > .text-area--selection {
         disabled: bool = False,
     ) -> None:
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
-
-        # --- Core editor data
         self._document = Document("")
         """The document this widget is currently editing."""
 
         self.indent_type: Literal["tabs", "spaces"] = "spaces"
         """Whether to indent using tabs or spaces."""
 
+        self.word_pattern = re.compile(r"(?<=\W)(?=\w)|(?<=\w)(?=\W)")
+        """Compiled regular expression for what we consider to be a 'word'."""
+
         self._last_intentional_cell_width: int = 0
         """Tracks the last column (measured in terms of cell length, since we care here about where the cursor
         visually moves more than the logical characters) the user explicitly navigated to so that we can reset to it
         whenever possible."""
-
-        self._word_pattern = re.compile(r"(?<=\W)(?=\w)|(?<=\w)(?=\W)")
-        """Compiled regular expression for what we consider to be a 'word'."""
 
         self._undo_stack: list[Edit] = []
         """A stack (the end of the list is the top of the stack) for tracking edits."""
 
         self._selecting = False
         """True if we're currently selecting text, otherwise False."""
-
-    def watch__document_size(self, size: Size) -> None:
-        document_width, document_height = size
-        self.virtual_size = Size(
-            document_width + self.gutter_width + 1, document_height
-        )
 
     def load_text(self, text: str) -> None:
         """Load text from a string into the editor.
@@ -256,7 +241,7 @@ TextArea > .text-area--selection {
         lines = self._document.lines
         text_width = max(cell_len(line.expandtabs(self.indent_width)) for line in lines)
         height = len(lines)
-        self._document_size = Size(text_width, height)
+        self.virtual_size = Size(text_width + self.gutter_width + 1, height)
 
     def render_line(self, widget_y: int) -> Strip:
         document = self._document
@@ -354,12 +339,12 @@ TextArea > .text-area--selection {
     def gutter_width(self) -> int:
         # The longest number in the gutter plus two extra characters: `│ `.
         gutter_margin = 2
-        gutter_longest_number = (
+        gutter_width = (
             len(str(self._document.line_count + 1)) + gutter_margin
             if self.show_line_numbers
             else 0
         )
-        return gutter_longest_number
+        return gutter_width
 
     def edit(self, edit: Edit) -> object | None:
         result = edit.do(self)
@@ -395,12 +380,16 @@ TextArea > .text-area--selection {
             self.insert_text_range(insert, start, end)
 
     def get_target_document_location(self, offset: Offset) -> Location:
-        target_x = max(offset.x - self.gutter_width + int(self.scroll_x), 0)
+        target_x = max(
+            offset.x - self.gutter_width + int(self.scroll_x) - self.gutter.top - 1, 0
+        )
         target_row = clamp(
-            offset.y + int(self.scroll_y), 0, self._document.line_count - 1
+            offset.y + int(self.scroll_y) - self.gutter.top,
+            0,
+            self._document.line_count - 1,
         )
         target_column = self.cell_width_to_column_index(target_x, target_row)
-
+        print(target_column)
         return target_row, target_column
 
     def _on_mouse_down(self, event: events.MouseDown) -> None:
@@ -487,7 +476,7 @@ TextArea > .text-area--selection {
         text = self.cursor_line_text[:column]
         column_offset = cell_len(text.expandtabs(self.indent_width))
         self.scroll_to_region(
-            Region(x=column_offset, y=row, width=3, height=1),
+            Region(x=column_offset, y=row, width=1, height=1),
             spacing=Spacing(right=self.gutter_width),
             animate=False,
             force=True,
@@ -680,7 +669,7 @@ TextArea > .text-area--selection {
 
         # Check the current line for a word boundary
         line = self._document[cursor_row][:cursor_column]
-        matches = list(re.finditer(self._word_pattern, line))
+        matches = list(re.finditer(self.word_pattern, line))
 
         if matches:
             # If a word boundary is found, move the cursor there
@@ -706,7 +695,7 @@ TextArea > .text-area--selection {
 
         # Check the current line for a word boundary
         line = self._document[cursor_row][cursor_column:]
-        matches = list(re.finditer(self._word_pattern, line))
+        matches = list(re.finditer(self.word_pattern, line))
 
         if matches:
             # If a word boundary is found, move the cursor there
@@ -873,7 +862,7 @@ TextArea > .text-area--selection {
 
         # Check the current line for a word boundary
         line = self._document[cursor_row][:cursor_column]
-        matches = list(re.finditer(self._word_pattern, line))
+        matches = list(re.finditer(self.word_pattern, line))
 
         if matches:
             # If a word boundary is found, delete the word
@@ -900,7 +889,7 @@ TextArea > .text-area--selection {
 
         # Check the current line for a word boundary
         line = self._document[cursor_row][cursor_column:]
-        matches = list(re.finditer(self._word_pattern, line))
+        matches = list(re.finditer(self.word_pattern, line))
 
         if matches:
             # If a word boundary is found, delete the word
