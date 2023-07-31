@@ -758,7 +758,7 @@ TextArea > .text-area--selection {
         document = self._document
         last_line = document[-1]
         document_end_location = (document.line_count, len(last_line))
-        self.delete_range((0, 0), document_end_location)
+        self.delete_range((0, 0), document_end_location, cursor_destination=(0, 0))
 
     def action_delete_left(self) -> None:
         """Deletes the character to the left of the cursor and updates the cursor location."""
@@ -874,30 +874,3 @@ TextArea > .text-area--selection {
             to_location = (cursor_row, len(self._document[cursor_row]))
 
         self.delete_range(end, to_location)
-
-    # --- Debugging
-    @dataclass
-    class EditorDebug:
-        cursor: tuple[int, int]
-        language: str
-        document_size: Size
-        virtual_size: Size
-        scroll: Offset
-        undo_stack: list[Edit]
-        tree_sexp: str
-        active_line_text: str
-        active_line_cell_len: int
-
-    def _debug_state(self) -> "EditorDebug":
-        return self.EditorDebug(
-            cursor=self.selection,
-            language=self.language,
-            document_size=self._document_size,
-            virtual_size=self.virtual_size,
-            scroll=self.scroll_offset,
-            undo_stack=list(reversed(self._undo_stack)),
-            # tree_sexp=self._syntax_tree.root_node.sexp(),
-            tree_sexp="",
-            active_line_text=repr(self.cursor_line_text),
-            active_line_cell_len=cell_len(self.cursor_line_text),
-        )

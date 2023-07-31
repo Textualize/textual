@@ -110,21 +110,18 @@ class Document:
         else:
             # The deletion range spans multiple lines.
             start_line = lines[top_row]
-            if bottom_row == self.line_count:
-                end_line = ""
-            else:
-                end_line = lines[bottom_row]
 
-            deleted_text = start_line[top_column:] + "\n"
+            deleted_text = start_line[top_column:]
             for row in range(top_row + 1, bottom_row):
-                deleted_text += lines[row] + self._newline
-                # Never add the newline at the end without checking its presence:
-                if row != self.line_count - 1:
-                    deleted_text += "\n"
+                deleted_text += self._newline + lines[row]
 
-            deleted_text += end_line[:bottom_column]
-            if bottom == (self.line_count, 0):
-                deleted_text += "\n"
+            # Now handle the bottom line of the selection
+            end_line = lines[bottom_row] if bottom_row <= self.line_count - 1 else ""
+
+            # Only include the newline if the endline actually exists
+            if bottom_row < self.line_count:
+                deleted_text += self._newline
+                deleted_text += end_line[:bottom_column]
 
             # Update the lines at the start and end of the range
             lines[top_row] = start_line[:top_column] + end_line[bottom_column:]
