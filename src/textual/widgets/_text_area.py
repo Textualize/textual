@@ -11,7 +11,7 @@ from textual._cells import cell_len
 from textual._fix_direction import _fix_direction
 from textual._types import Literal, Protocol, runtime_checkable
 from textual.binding import Binding
-from textual.document._document import Document, Selection
+from textual.document._document import Document, Location, Selection
 from textual.geometry import Offset, Region, Size, Spacing, clamp
 from textual.reactive import Reactive, reactive
 from textual.scroll_view import ScrollView
@@ -43,13 +43,13 @@ class Insert:
 
     text: str
     """The text to insert."""
-    from_location: tuple[int, int]
+    from_location: Location
     """The start location of the insert."""
-    to_location: tuple[int, int]
+    to_location: Location
     """The end location of the insert"""
-    cursor_destination: tuple[int, int] | None = None
+    cursor_destination: Location | None = None
     """The location to move the cursor to after the operation completes."""
-    _edit_end: tuple[int, int] | None = field(init=False, default=None)
+    _edit_end: Location | None = field(init=False, default=None)
     """Computed location to move the cursor to if `cursor_destination` is None."""
 
     def do(self, text_area: TextArea) -> None:
@@ -88,13 +88,13 @@ class Insert:
 class Delete:
     """Performs a delete operation."""
 
-    from_location: tuple[int, int]
+    from_location: Location
     """The location to delete from (inclusive)."""
 
-    to_location: tuple[int, int]
+    to_location: Location
     """The location to delete to (exclusive)."""
 
-    cursor_destination: tuple[int, int] | None = None
+    cursor_destination: Location | None = None
     """Where to move the cursor to after the deletion."""
 
     _deleted_text: str | None = field(init=False, default=None)
@@ -388,7 +388,7 @@ TextArea > .text-area--selection {
             start, end = self.selection
             self.insert_text_range(insert, start, end)
 
-    def get_target_document_location(self, offset: Offset) -> tuple[int, int]:
+    def get_target_document_location(self, offset: Offset) -> Location:
         target_x = max(offset.x - self.gutter_width + int(self.scroll_x), 0)
         target_row = clamp(
             offset.y + int(self.scroll_y), 0, self._document.line_count - 1
@@ -444,7 +444,7 @@ TextArea > .text-area--selection {
         return Selection(clamp_visitable(start), clamp_visitable(end))
 
     # --- Cursor/selection utilities
-    def is_visitable(self, location: tuple[int, int]) -> bool:
+    def is_visitable(self, location: Location) -> bool:
         """Return True if the location is somewhere that can naturally be reached by the cursor.
 
         Generally this means it's at a row within the document, and a column which contains a character,
@@ -462,7 +462,7 @@ TextArea > .text-area--selection {
         start, end = selection
         return visitable(start) and visitable(end)
 
-    def clamp_visitable(self, location: tuple[int, int]) -> tuple[int, int]:
+    def clamp_visitable(self, location: Location) -> Location:
         document = self._document
 
         row, column = location
@@ -569,7 +569,7 @@ TextArea > .text-area--selection {
         self.selection = Selection(selection_start, new_cursor_location)
         self._record_last_intentional_cell_width()
 
-    def get_cursor_left_location(self) -> tuple[int, int]:
+    def get_cursor_left_location(self) -> Location:
         """Get the location the cursor will move to if it moves left."""
         if self.cursor_at_start_of_document:
             return 0, 0
@@ -598,7 +598,7 @@ TextArea > .text-area--selection {
         self.selection = Selection(selection_start, new_cursor_location)
         self._record_last_intentional_cell_width()
 
-    def get_cursor_right_location(self) -> tuple[int, int]:
+    def get_cursor_right_location(self) -> Location:
         """Get the location the cursor will move to if it moves right."""
         if self.cursor_at_end_of_document:
             return self.selection.end
@@ -643,7 +643,7 @@ TextArea > .text-area--selection {
         start, end = self.selection
         self.selection = Selection(start, target)
 
-    def get_cursor_up_location(self) -> tuple[int, int]:
+    def get_cursor_up_location(self) -> Location:
         """Get the location the cursor will move to if it moves up."""
         if self.cursor_at_first_row:
             return 0, 0
@@ -753,8 +753,8 @@ TextArea > .text-area--selection {
     def insert_text(
         self,
         text: str,
-        location: tuple[int, int],
-        cursor_destination: tuple[int, int] | None = None,
+        location: Location,
+        cursor_destination: Location | None = None,
     ) -> None:
         self.edit(Insert(text, location, location, cursor_destination))
         self._record_last_intentional_cell_width()
@@ -762,18 +762,18 @@ TextArea > .text-area--selection {
     def insert_text_range(
         self,
         text: str,
-        from_location: tuple[int, int],
-        to_location: tuple[int, int],
-        cursor_destination: tuple[int, int] | None = None,
+        from_location: Location,
+        to_location: Location,
+        cursor_destination: Location | None = None,
     ) -> None:
         self.edit(Insert(text, from_location, to_location, cursor_destination))
         self._record_last_intentional_cell_width()
 
     def delete_range(
         self,
-        from_location: tuple[int, int],
-        to_location: tuple[int, int],
-        cursor_destination: tuple[int, int] | None = None,
+        from_location: Location,
+        to_location: Location,
+        cursor_destination: Location | None = None,
     ) -> str:
         """Delete text between from_location and to_location."""
         top, bottom = _fix_direction(from_location, to_location)
