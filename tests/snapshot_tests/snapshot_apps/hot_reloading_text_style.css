@@ -1,0 +1,9 @@
+
+Container {
+    align: center middle;
+    width: 100%;
+}
+
+#hello {
+    text-align: right;
+}
