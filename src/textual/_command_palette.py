@@ -5,6 +5,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import AsyncIterator, NamedTuple
 
+from rich.align import Align
 from rich.text import Text
 
 from . import on, work
@@ -15,6 +16,7 @@ from .containers import Vertical
 from .reactive import var
 from .screen import ModalScreen
 from .widgets import Input, LoadingIndicator, OptionList
+from .widgets.option_list import Option
 
 
 class CommandSourceHit(NamedTuple):
@@ -277,6 +279,10 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         async for _, prompt, _ in TotallyFakeCommandSource().hunt_for(search_value):
             command_list.add_option(prompt)
         self._show_busy = False
+        if command_list.option_count == 0:
+            command_list.add_option(
+                Option(Align.center(Text("No matches found")), disabled=True)
+            )
 
     @on(Input.Changed)
     def _input(self, event: Input.Changed) -> None:
