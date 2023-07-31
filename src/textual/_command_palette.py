@@ -184,6 +184,7 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         Binding("pagedown", "command('page_down')", show=False),
         Binding("pageup", "command('page_up')", show=False),
         Binding("up", "command('cursor_up')", show=False),
+        Binding("enter", "command('select'),", show=False, priority=True),
     ]
 
     placeholder: var[str] = var("Textual spotlight search", init=False)
@@ -218,6 +219,20 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
                     )
                 ]
             )
+
+    @on(OptionList.OptionSelected)
+    def select_command(self, event: OptionList.OptionSelected) -> None:
+        """React to a command being selected from the dropdown.
+
+        Args:
+            event: The option selection event.
+        """
+        event.stop()
+        input = self.query_one(CommandInput)
+        with self.prevent(Input.Changed):
+            input.value = str(event.option.prompt)
+        input.action_end()
+        self.query_one(CommandList).set_class(False, "--visible")
 
     def action_escape(self) -> None:
         """Handle a request to escape out of the command palette."""
