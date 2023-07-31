@@ -11,9 +11,10 @@ from . import on, work
 from ._fuzzy import Matcher
 from .app import ComposeResult
 from .binding import Binding
+from .containers import Vertical
 from .reactive import var
 from .screen import ModalScreen
-from .widgets import Input, OptionList
+from .widgets import Input, LoadingIndicator, OptionList
 
 
 class CommandSourceHit(NamedTuple):
@@ -214,6 +215,16 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
     CommandPalette > * {
         width: 90%;
     }
+
+    CommandPalette LoadingIndicator {
+        height: auto;
+        width: 90%;
+        visibility: hidden;
+    }
+
+    CommandPalette LoadingIndicator.--visible {
+        visibility: visible;
+    }
     """
 
     BINDINGS = [
@@ -231,10 +242,14 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
     _list_visible: var[bool] = var(False, init=False)
     """Internal reactive to toggle the visibility of the command list."""
 
+    _show_busy: var[bool] = var(False, init=False)
+    """Internal reactive to toggle the visibility of the busy indicator."""
+
     def compose(self) -> ComposeResult:
         """Compose the command palette."""
         yield CommandInput(placeholder=self.placeholder)
         yield CommandList()
+        yield LoadingIndicator()
 
     def _watch_placeholder(self) -> None:
         """Pass the new placeholder text down to the `CommandInput`."""
@@ -243,6 +258,12 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
     def _watch__list_visible(self) -> None:
         """React to the list visible flag being toggled."""
         self.query_one(CommandList).set_class(self._list_visible, "--visible")
+        if not self._list_visible:
+            self._show_busy = False
+
+    def _watch__show_busy(self) -> None:
+        """React to the show busy flag being toggled."""
+        self.query_one(LoadingIndicator).set_class(self._show_busy, "--visible")
 
     @work(exclusive=True)
     async def _gather_commands(self, search_value: str) -> None:
@@ -252,8 +273,10 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
             search_value: The value to search for.
         """
         command_list = self.query_one(CommandList)
+        self._show_busy = True
         async for _, prompt, _ in TotallyFakeCommandSource().hunt_for(search_value):
             command_list.add_option(prompt)
+        self._show_busy = False
 
     @on(Input.Changed)
     def _input(self, event: Input.Changed) -> None:
