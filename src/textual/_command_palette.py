@@ -12,7 +12,6 @@ from . import on, work
 from ._fuzzy import Matcher
 from .app import ComposeResult
 from .binding import Binding
-from .containers import Vertical
 from .reactive import var
 from .screen import ModalScreen
 from .widgets import Input, LoadingIndicator, OptionList
