@@ -757,6 +757,7 @@ TextArea > .text-area--selection {
         cursor_destination: tuple[int, int] | None = None,
     ) -> None:
         self.edit(Insert(text, location, location, cursor_destination))
+        self._record_last_intentional_cell_width()
 
     def insert_text_range(
         self,
@@ -766,6 +767,7 @@ TextArea > .text-area--selection {
         cursor_destination: tuple[int, int] | None = None,
     ) -> None:
         self.edit(Insert(text, from_location, to_location, cursor_destination))
+        self._record_last_intentional_cell_width()
 
     def delete_range(
         self,
@@ -776,6 +778,7 @@ TextArea > .text-area--selection {
         """Delete text between from_location and to_location."""
         top, bottom = _fix_direction(from_location, to_location)
         deleted_text = self.edit(Delete(top, bottom, cursor_destination))
+        self._record_last_intentional_cell_width()
         return deleted_text
 
     def clear(self) -> None:
