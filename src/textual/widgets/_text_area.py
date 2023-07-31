@@ -345,6 +345,12 @@ TextArea > .text-area--selection {
         return strip
 
     @property
+    def selected_text(self) -> str:
+        start, end = self.selection
+        start, end = _fix_direction(start, end)
+        return self._document.get_selected_text(start, end)
+
+    @property
     def gutter_width(self) -> int:
         # The longest number in the gutter plus two extra characters: `│ `.
         gutter_margin = 2
