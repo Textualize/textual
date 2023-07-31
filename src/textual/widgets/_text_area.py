@@ -786,7 +786,9 @@ TextArea > .text-area--selection {
         self.delete_range((0, 0), document_end_location, cursor_destination=(0, 0))
 
     def action_delete_left(self) -> None:
-        """Deletes the character to the left of the cursor and updates the cursor location."""
+        """Deletes the character to the left of the cursor and updates the cursor location.
+
+        If there's a selection, then the selected range is deleted."""
 
         selection = self.selection
 
@@ -805,19 +807,23 @@ TextArea > .text-area--selection {
         self.delete_range(start, end)
 
     def action_delete_right(self) -> None:
-        """Deletes the character to the right of the cursor and keeps the cursor at the same location."""
+        """Deletes the character to the right of the cursor and keeps the cursor at the same location.
+
+        If there's a selection, then the selected range is deleted."""
         if self.cursor_at_end_of_document:
             return
 
-        start, end = self.selection
+        selection = self.selection
+        start, end = selection
         end_row, end_column = end
 
-        if self.cursor_at_end_of_row:
-            to_location = (end_row + 1, 0)
-        else:
-            to_location = (end_row, end_column + 1)
+        if selection.is_empty:
+            if self.cursor_at_end_of_row:
+                end = (end_row + 1, 0)
+            else:
+                end = (end_row, end_column + 1)
 
-        self.delete_range(start, to_location)
+        self.delete_range(start, end)
 
     def action_delete_line(self) -> None:
         """Deletes the lines which intersect with the selection."""
