@@ -196,7 +196,7 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
     def compose(self) -> ComposeResult:
         """Compose the command palette."""
         yield CommandInput(placeholder=self.placeholder)
-        yield CommandList(*[f"{n} This is a test {n}" for n in range(500)])
+        yield CommandList()
 
     def _watch_placeholder(self) -> None:
         """Pass the new placeholder text down to the `CommandInput`."""
