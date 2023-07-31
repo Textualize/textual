@@ -209,8 +209,7 @@ class _SingleDigitDisplay(Static):
     DEFAULT_CSS = """
     _SingleDigitDisplay {
       height: 3;
-      min-width: 2;
-      max-width: 3;
+      width: 3;
     }
     """
 
@@ -244,7 +243,6 @@ class _SingleDigitDisplay(Static):
             disabled=disabled,
         )
         self.digit = initial_value
-        self._content_width = 3
 
     def validate_digit(self, digit: str) -> str:
         """Sanitize and validate the digit input."""
@@ -258,11 +256,10 @@ class _SingleDigitDisplay(Static):
     def _watch_digit(self, digit: str) -> None:
         """Called when the digit attribute changes and passes validation."""
         content = _character_map[digit.upper()]
-        self._content_width = len(content.splitlines()[0])
         self.update(content)
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
-        return self._content_width
+        return 3
 
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
         return 3
