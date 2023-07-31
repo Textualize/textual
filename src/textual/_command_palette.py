@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from functools import partial
 from typing import Callable, NamedTuple, TypeAlias
@@ -36,7 +37,7 @@ HitsAdder: TypeAlias = Callable[[list[CommandSourceHit]], None]
 """The type of a call back for registering hits."""
 
 
-class CommandSource:
+class CommandSource(ABC):
     """Base class for command palette command sources."""
 
     @dataclass
@@ -49,6 +50,7 @@ class CommandSource:
         hits: list[CommandSourceHit]
         """A list of hits."""
 
+    @abstractmethod
     def command_hunt(self, user_input: str, add_hits: HitsAdder) -> None:
         """A request to hunt for commands relevant to the given user input.
 
@@ -56,6 +58,7 @@ class CommandSource:
             user_input: The user input to be matched.
             add_hits: The function to call to add the hits.
         """
+        raise NotImplemented
 
 
 class TotallyFakeCommandSource(CommandSource):
