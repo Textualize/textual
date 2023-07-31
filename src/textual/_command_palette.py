@@ -3,18 +3,14 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from functools import partial
-from typing import Callable, NamedTuple, TypeAlias
-from uuid import UUID, uuid4
+from typing import AsyncIterator, NamedTuple
 
 from rich.text import Text
 
-from . import on
+from . import on, work
 from ._fuzzy import Matcher
 from .app import ComposeResult
 from .binding import Binding
-from .message import Message
 from .reactive import var
 from .screen import ModalScreen
 from .widgets import Input, OptionList
@@ -33,30 +29,15 @@ class CommandSourceHit(NamedTuple):
     """The command text associated with the hit."""
 
 
-HitsAdder: TypeAlias = Callable[[list[CommandSourceHit]], None]
-"""The type of a call back for registering hits."""
-
-
 class CommandSource(ABC):
     """Base class for command palette command sources."""
 
-    @dataclass
-    class Hits(Message):
-        """Message sent by a command source to pass on some hits."""
-
-        request_id: UUID
-        """The ID of the request."""
-
-        hits: list[CommandSourceHit]
-        """A list of hits."""
-
     @abstractmethod
-    def command_hunt(self, user_input: str, add_hits: HitsAdder) -> None:
+    async def command_hunt(self, user_input: str) -> AsyncIterator[CommandSourceHit]:
         """A request to hunt for commands relevant to the given user input.
 
         Args:
             user_input: The user input to be matched.
-            add_hits: The function to call to add the hits.
         """
         raise NotImplemented
 
@@ -164,23 +145,22 @@ You can't have your cake and eat it too.
 You can't teach an old dog new tricks.
     """.strip().splitlines()
 
-    def command_hunt(self, user_input: str, add_hits: HitsAdder) -> None:
+    async def command_hunt(self, user_input: str) -> AsyncIterator[CommandSourceHit]:
         """A request to hunt for commands relevant to the given user input.
 
         Args:
             user_input: The user input to be matched.
-            add_hits: The function to call to add the hits.
         """
+        from asyncio import sleep
+        from random import random
+
         matcher = Matcher(user_input)
-        add_hits(
-            [
-                CommandSourceHit(
+        for candidate in self.DATA:
+            await sleep(random() / 10)
+            if matcher.match(candidate):
+                yield CommandSourceHit(
                     matcher.match(candidate), matcher.highlight(candidate), candidate
                 )
-                for candidate in self.DATA
-                if matcher.match(candidate)
-            ]
-        )
 
 
 class CommandList(OptionList, can_focus=False):
@@ -251,10 +231,6 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
     _list_visible: var[bool] = var(False, init=False)
     """Internal reactive to toggle the visibility of the command list."""
 
-    def __init__(self) -> None:
-        super().__init__()
-        self._current_request: UUID = uuid4()
-
     def compose(self) -> ComposeResult:
         """Compose the command palette."""
         yield CommandInput(placeholder=self.placeholder)
@@ -268,20 +244,16 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         """React to the list visible flag being toggled."""
         self.query_one(CommandList).set_class(self._list_visible, "--visible")
 
-    def _process_hits(self, request_id: UUID, hits: list[CommandSourceHit]) -> None:
-        """Process incoming hits.
+    @work(exclusive=True)
+    async def _gather_commands(self, search_value: str) -> None:
+        """Gather up all of the commands that match the search value.
 
         Args:
-            request_id: The ID of the request that resulted in these hits.
-            hits: The list of hits.
+            search_value: The value to search for.
         """
-        if request_id == self._current_request:
-            self.query_one(CommandList).add_options([prompt for (_, prompt, _) in hits])
-
-    def _new_request(self) -> None:
-        """Start a new round of command requests."""
-        # TODO: This might be a good place to cancel any existing requests.
-        self._current_request = uuid4()
+        command_list = self.query_one(CommandList)
+        async for _, prompt, _ in TotallyFakeCommandSource().command_hunt(search_value):
+            command_list.add_option(prompt)
 
     @on(Input.Changed)
     def _input(self, event: Input.Changed) -> None:
@@ -295,10 +267,7 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         command_list = self.query_one(CommandList)
         command_list.clear_options()
         if search_value:
-            self._new_request()
-            TotallyFakeCommandSource().command_hunt(
-                search_value, partial(self._process_hits, self._current_request)
-            )
+            self._gather_commands(search_value)
 
     @on(OptionList.OptionSelected)
     def _select_command(self, event: OptionList.OptionSelected) -> None:
