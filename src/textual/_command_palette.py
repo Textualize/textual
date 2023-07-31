@@ -238,7 +238,7 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
 
     BINDINGS = [
         Binding("escape", "escape", "Exit the command palette"),
-        Binding("down", "command('cursor_down')", show=False),
+        Binding("down", "cursor_down", show=False),
         Binding("pagedown", "command('page_down')", show=False),
         Binding("pageup", "command('page_up')", show=False),
         Binding("up", "command('cursor_up')", show=False),
@@ -311,7 +311,10 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
 
     def _action_escape(self) -> None:
         """Handle a request to escape out of the command palette."""
-        self.dismiss()
+        if self._list_visible:
+            self._list_visible = False
+        else:
+            self.dismiss()
 
     def _action_command(self, action: str) -> None:
         """Pass an action on to the `CommandList`.
@@ -324,3 +327,16 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         except AttributeError:
             return
         command_action()
+
+    def _action_cursor_down(self) -> None:
+        """Handle the cursor down action.
+
+        This allows the cursor down key to either open the command list, if
+        it's closed but has options, or if it's open with options just
+        cursor through them.
+        """
+        if self.query_one(CommandList).option_count and not self._list_visible:
+            self._list_visible = True
+            self.query_one(CommandList).highlighted = 0
+        else:
+            self._action_command("cursor_down")
