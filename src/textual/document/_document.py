@@ -47,7 +47,7 @@ class Document:
         return self._lines
 
     @property
-    def content(self) -> str:
+    def text(self) -> str:
         return self._newline.join(self._lines)
 
     def insert_range(self, start: Location, end: Location, text: str) -> Location:
@@ -104,34 +104,48 @@ class Document:
 
         lines = self._lines
 
+        deleted_text = self.get_selection(top, bottom)
+
         if top_row == bottom_row:
-            # The deletion range is within a single line.
             line = lines[top_row]
-            deleted_text = line[top_column:bottom_column]
             lines[top_row] = line[:top_column] + line[bottom_column:]
         else:
-            # The deletion range spans multiple lines.
             start_line = lines[top_row]
-
-            deleted_text = start_line[top_column:]
-            for row in range(top_row + 1, bottom_row):
-                deleted_text += self._newline + lines[row]
-
-            # Now handle the bottom line of the selection
             end_line = lines[bottom_row] if bottom_row <= self.line_count - 1 else ""
-
-            # Only include the newline if the endline actually exists
-            if bottom_row < self.line_count:
-                deleted_text += self._newline
-                deleted_text += end_line[:bottom_column]
-
-            # Update the lines at the start and end of the range
             lines[top_row] = start_line[:top_column] + end_line[bottom_column:]
-
-            # Delete the lines in between
             del lines[top_row + 1 : bottom_row + 1]
 
         return deleted_text
+
+    def get_selection(self, start: Location, end: Location) -> str:
+        """Get the text that falls between the start and end locations.
+
+        Args:
+            start: The start location of the selection.
+            end: The end location of the selection.
+
+        Returns:
+            The text between start (inclusive) and end (exclusive).
+        """
+        top, bottom = _fix_direction(start, end)
+        top_row, top_column = top
+        bottom_row, bottom_column = bottom
+        lines = self._lines
+        if top_row == bottom_row:
+            line = lines[top_row]
+            selected_text = line[top_column:bottom_column]
+        else:
+            start_line = lines[top_row]
+            end_line = lines[bottom_row] if bottom_row <= self.line_count - 1 else ""
+            selected_text = start_line[top_column:]
+            for row in range(top_row + 1, bottom_row):
+                selected_text += self._newline + lines[row]
+
+            if bottom_row < self.line_count:
+                selected_text += self._newline
+                selected_text += end_line[:bottom_column]
+
+        return selected_text
 
     @property
     def line_count(self) -> int:

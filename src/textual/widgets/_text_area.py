@@ -734,7 +734,6 @@ TextArea > .text-area--selection {
 
     @property
     def cursor_line_text(self) -> str:
-        # TODO - consider empty documents
         return self._document[self.selection.end[0]]
 
     def get_column_cell_width(self, row: int, column: int) -> int:
