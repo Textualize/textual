@@ -1,10 +1,10 @@
 from textual.app import App, ComposeResult
 from textual import events
-from textual.widgets import TextLog
+from textual.widgets import RichLog
 
 
-class PrintLogger(TextLog):
-    """A TextLog which captures printed text."""
+class PrintLogger(RichLog):
+    """A RichLog which captures printed text."""
 
     def on_print(self, event: events.Print) -> None:
         self.write(event.text)
@@ -15,10 +15,10 @@ class CaptureApp(App):
         yield PrintLogger()
 
     def on_mount(self) -> None:
-        self.query_one(TextLog).write("TextLog")
-        self.query_one(TextLog).begin_capture_print()
+        self.query_one(RichLog).write("RichLog")
+        self.query_one(RichLog).begin_capture_print()
         print("This will be captured!")
-        self.query_one(TextLog).end_capture_print()
+        self.query_one(RichLog).end_capture_print()
         print("This will *not* be captured")
 
 

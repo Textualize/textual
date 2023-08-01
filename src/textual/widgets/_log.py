@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING, Iterable, Optional
 
 from rich.cells import cell_len
 from rich.highlighter import ReprHighlighter
 from rich.segment import Segment
+from rich.text import Text
 
 from .. import work
 from .._cache import LRUCache
@@ -31,12 +32,17 @@ class Log(ScrollView, can_focus=True):
     }
     """
 
+    max_lines: var[int | None] = var[Optional[int]](None)
+    """Maximum number of lines to show"""
+
     auto_scroll: var[bool] = var(True)
     """Automatically scroll to new lines."""
 
     def __init__(
         self,
-        highlight: bool = False,
+        highlight: bool = True,
+        max_lines: int | None = None,
+        auto_scroll: bool = True,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -46,12 +52,16 @@ class Log(ScrollView, can_focus=True):
 
         Args:
             highlight: Enable highlighting.
+            max_lines: Maximum number of lines to display.
+            auto_scroll: Scroll to end on new lines.
             name: The name of the text log.
             id: The ID of the text log in the DOM.
             classes: The CSS classes of the text log.
             disabled: Whether the text log is disabled or not.
         """
         self.highlight = highlight
+        self.max_lines = max_lines
+        self.auto_scroll = auto_scroll
         self.lines: list[str] = []
         self._width = 0
         self._updates = 0
@@ -74,7 +84,13 @@ class Log(ScrollView, can_focus=True):
         """
         return [_sub_escape("�", _line.expandtabs()) for _line in line.splitlines()]
 
-    def _update_maximum(self, updates: int, size: int) -> None:
+    def _update_maximum_width(self, updates: int, size: int) -> None:
+        """Update the virtual size width.
+
+        Args:
+            updates: A counter of updates.
+            size: Maximum size of new lines.
+        """
         if updates == self._updates:
             self._width = max(size, self._width)
             self.virtual_size = Size(self._width, len(self.lines))
@@ -88,43 +104,58 @@ class Log(ScrollView, can_focus=True):
             lines: Lines that were added.
         """
         max_length = max(cell_len(line) for line in lines)
-        self.app.call_from_thread(self._update_maximum, updates, max_length)
+        self.app.call_from_thread(self._update_maximum_width, updates, max_length)
 
-    def write_line(self, line: str) -> None:
+    def write_line(self, line: str) -> Self:
         """Write content on a new line.
 
         Args:
             data: Data to write.
+
+        Returns:
+            The `Log` instance.
         """
         self.write_lines([line])
+        return self
 
     def write_lines(
         self,
         lines: Iterable[str],
         scroll_end: bool | None = None,
-    ) -> None:
+    ) -> Self:
         """Write an iterable of lines.
 
         Args:
             lines: An iterable of strings to write.
             scroll_end: Scroll to the end after writing, or `None` to use `self.auto_scroll`.
+
+        Returns:
+            The `Log` instance.
         """
         auto_scroll = self.auto_scroll if scroll_end is None else scroll_end
         new_lines = []
         for line in lines:
             new_lines.extend(self._process_line(line))
         self.lines.extend(new_lines)
+        if self.max_lines is not None and len(self.lines) > self.max_lines:
+            del self.lines[: -self.max_lines]
         self.virtual_size = Size(self._width, len(self.lines))
-        self._update_size(self._updates, self.lines)
+        self._update_size(self._updates, new_lines)
         if auto_scroll:
             self.scroll_end(animate=False)
+        return self
 
     def clear(self) -> Self:
-        """Clear the Log."""
+        """Clear the Log.
+
+        Returns:
+            The `Log` instance.
+        """
         self.lines.clear()
         self._width = 0
         self._render_line_cache.clear()
         self._updates += 1
+        self.virtual_size = Size(0, 0)
         return self
 
     def render_line(self, y: int) -> Strip:
@@ -159,9 +190,9 @@ class Log(ScrollView, can_focus=True):
         raw_line = self.lines[y]
 
         if self.highlight:
-            line_text = self.highlighter(raw_line)
+            line_text = self.highlighter(Text(raw_line, style=self.rich_style))
             line = Strip(line_text.render(self.app.console))
         else:
-            line = Strip([Segment(self.lines[y])])
+            line = Strip([Segment(self.lines[y], self.rich_style)])
         self._render_line_cache[y] = line
         return line

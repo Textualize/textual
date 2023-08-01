@@ -30,6 +30,7 @@ if typing.TYPE_CHECKING:
     from ._progress_bar import ProgressBar
     from ._radio_button import RadioButton
     from ._radio_set import RadioSet
+    from ._rich_log import RichLog
     from ._select import Select
     from ._selection_list import SelectionList
     from ._sparkline import Sparkline
@@ -37,7 +38,6 @@ if typing.TYPE_CHECKING:
     from ._switch import Switch
     from ._tabbed_content import TabbedContent, TabPane
     from ._tabs import Tab, Tabs
-    from ._text_log import TextLog
     from ._tooltip import Tooltip
     from ._tree import Tree
     from ._welcome import Welcome
@@ -74,7 +74,7 @@ __all__ = [
     "TabbedContent",
     "TabPane",
     "Tabs",
-    "TextLog",
+    "RichLog",
     "Tooltip",
     "Tree",
     "Welcome",

@@ -260,11 +260,11 @@ A Combination of Tabs and ContentSwitcher to navigate static content.
 ```{.textual path="docs/examples/widgets/tabbed_content.py" press="j"}
 ```
 
-## TextLog
+## RichLog
 
 Display and update text in a scrolling panel.
 
-[TextLog reference](./widgets/text_log.md){ .md-button .md-button--primary }
+[RichLog reference](./widgets/rich_log.md){ .md-button .md-button--primary }
 
 ```{.textual path="docs/examples/widgets/text_log.py" press="H,i"}
 ```
