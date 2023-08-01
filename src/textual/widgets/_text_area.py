@@ -236,17 +236,12 @@ TextArea > .text-area--selection {
         self._document = Document(text)
         self._refresh_size()
 
-    def watch_scroll_x(self, old_value: float, new_value: float) -> None:
-        super().watch_scroll_x(old_value, new_value)
-        print(new_value)
-
     def _refresh_size(self) -> None:
         # Calculate document
         lines = self._document.lines
         text_width = max(cell_len(line.expandtabs(self.indent_width)) for line in lines)
         height = len(lines)
         self.virtual_size = Size(text_width + self.gutter_width + 1, height)
-        print(f"new virtual_size = {self.virtual_size}")
 
     def render_line(self, widget_y: int) -> Strip:
         document = self._document
@@ -385,21 +380,15 @@ TextArea > .text-area--selection {
             self.insert_text_range(insert, start, end)
 
     def get_target_document_location(self, offset: Offset) -> Location:
-        print(f"offset.x = {offset.x}")
-        target_x = offset.x - self.gutter_width + int(self.scroll_x) - self.gutter.left
-
-        # TODO: target_x looks wrong here!
-        print(f"prior target x = {target_x}")
+        scroll_x, scroll_y = self.scroll_offset
+        target_x = offset.x - self.gutter_width + scroll_x - self.gutter.left
         target_x = max(target_x, 0)
         target_row = clamp(
-            offset.y + int(self.scroll_y) - self.gutter.top,
+            offset.y + scroll_y - self.gutter.top,
             0,
             self._document.line_count - 1,
         )
         target_column = self.cell_width_to_column_index(target_x, target_row)
-        print(f"scroll_x = {self.scroll_x}")
-        print(f"target_x = {target_x!r}")
-        print(f"target_column = {target_column!r}")
         return target_row, target_column
 
     def _on_mouse_down(self, event: events.MouseDown) -> None:
@@ -486,7 +475,6 @@ TextArea > .text-area--selection {
             spacing=Spacing(right=self.gutter_width),
             animate=False,
         )
-        print(scrolled_amount)
 
     @property
     def cursor_at_first_row(self) -> bool:
