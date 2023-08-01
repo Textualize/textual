@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import AsyncIterator, NamedTuple
+from asyncio import Queue, TimeoutError, create_task, wait_for
+from typing import AsyncIterable, AsyncIterator, NamedTuple, Type
 
 from rich.align import Align
 from rich.console import RenderableType
@@ -12,7 +13,6 @@ from rich.table import Table
 from rich.text import Text
 
 from . import on, work
-from ._fuzzy import Matcher
 from .app import ComposeResult
 from .binding import Binding
 from .css.query import NoMatches
@@ -56,130 +56,6 @@ class CommandSource(ABC):
             Instances of [CommandSourceHit][`CommandSourceHit`].
         """
         raise NotImplemented
-
-
-class TotallyFakeCommandSource(CommandSource):
-    """Really, this isn't going to be the UI. Not even close."""
-
-    DATA = """\
-A bird in the hand is worth two in the bush.
-A chain is only as strong as its weakest link.
-A fool and his money are soon parted.
-A man's reach should exceed his grasp.
-A picture is worth a thousand words.
-A stitch in time saves nine.
-Absence makes the heart grow fonder.
-Actions speak louder than words.
-Although never is often better than *right* now.
-Although practicality beats purity.
-Although that way may not be obvious at first unless you're Dutch.
-Anything is possible.
-Be grateful for what you have.
-Be kind to yourself and to others.
-Be open to new experiences.
-Be the change you want to see in the world.
-Beautiful is better than ugly.
-Believe in yourself.
-Better late than never.
-Complex is better than complicated.
-Curiosity killed the cat.
-Don't judge a book by its cover.
-Don't put all your eggs in one basket.
-Enjoy the ride.
-Errors should never pass silently.
-Explicit is better than implicit.
-Flat is better than nested.
-Follow your dreams.
-Follow your heart.
-Forgive yourself and others.
-Fortune favors the bold.
-He who hesitates is lost.
-If the implementation is easy to explain, it may be a good idea.
-If the implementation is hard to explain, it's a bad idea.
-If wishes were horses, beggars would ride.
-If you can't beat them, join them.
-If you can't do it right, don't do it at all.
-If you don't like something, change it. If you can't change it, change your attitude.
-If you want something you've never had, you have to do something you've never done.
-In the face of ambiguity, refuse the temptation to guess.
-It's better to have loved and lost than to have never loved at all.
-It's not over until the fat lady sings.
-Knowledge is power.
-Let go of the past and focus on the present.
-Life is a journey, not a destination.
-Live each day to the fullest.
-Live your dreams.
-Look before you leap.
-Make a difference.
-Make the most of every moment.
-Namespaces are one honking great idea -- let's do more of those!
-Never give up.
-Never say never.
-No man is an island.
-No pain, no gain.
-Now is better than never.
-One for all and all for one.
-One man's trash is another man's treasure.
-Readability counts.
-Silence is golden.
-Simple is better than complex.
-Sparse is better than dense.
-Special cases aren't special enough to break the rules.
-The answer is always in the last place you look.
-The best defense is a good offense.
-The best is yet to come.
-The best way to predict the future is to create it.
-The early bird gets the worm.
-The exception proves the rule.
-The future belongs to those who believe in the beauty of their dreams.
-The future is not an inheritance, it is an opportunity and an obligation.
-The grass is always greener on the other side.
-The journey is the destination.
-The journey of a thousand miles begins with a single step.
-The more things change, the more they stay the same.
-The only person you are destined to become is the person you decide to be.
-The only way to do great work is to love what you do.
-The past is a foreign country, they do things differently there.
-The pen is mightier than the sword.
-The road to hell is paved with good intentions.
-The sky is the limit.
-The squeaky wheel gets the grease.
-The whole is greater than the sum of its parts.
-The world is a beautiful place, don't be afraid to explore it.
-The world is your oyster.
-There is always something to be grateful for.
-There should be one-- and preferably only one --obvious way to do it.
-There's no such thing as a free lunch.
-Too many cooks spoil the broth.
-United we stand, divided we fall.
-Unless explicitly silenced.
-We are all in this together.
-What doesn't kill you makes you stronger.
-When in doubt, consult a chicken.
-You are the master of your own destiny.
-You can't have your cake and eat it too.
-You can't teach an old dog new tricks.
-    """.strip().splitlines()
-
-    async def hunt_for(self, user_input: str) -> AsyncIterator[CommandSourceHit]:
-        """A request to hunt for commands relevant to the given user input.
-
-        Args:
-            user_input: The user input to be matched.
-        """
-        from asyncio import sleep
-        from random import random
-
-        matcher = Matcher(user_input)
-        for candidate in self.DATA:
-            await sleep(random() / 10)
-            if matcher.match(candidate):
-                yield CommandSourceHit(
-                    matcher.match(candidate),
-                    matcher.highlight(candidate),
-                    candidate,
-                    "This is some help; this could be more interesting really",
-                )
 
 
 class Command(Option):
@@ -280,6 +156,18 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
     _show_busy: var[bool] = var(False, init=False)
     """Internal reactive to toggle the visibility of the busy indicator."""
 
+    _sources: set[Type[CommandSource]] = set()
+    """The list of command source classes."""
+
+    @classmethod
+    def register_source(cls, source: Type[CommandSource]) -> None:
+        """Register a source of commands for the command palette.
+
+        Args:
+            source: The class of the source to register.
+        """
+        cls._sources.add(source)
+
     def compose(self) -> ComposeResult:
         """Compose the command palette."""
         yield CommandInput(placeholder=self.placeholder)
@@ -315,6 +203,42 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         elif indicator is not None:
             await indicator.remove()
 
+    @staticmethod
+    async def _consume(
+        source: AsyncIterable[CommandSourceHit], commands: Queue[CommandSourceHit]
+    ) -> None:
+        """Consume a source of matching commands, feeding the given command queue.
+
+        Args:
+            source: The source to consume.
+            commands: The command queue to feed.
+        """
+        async for hit in source:
+            await commands.put(hit)
+
+    @classmethod
+    async def _hunt_for(cls, search_value: str) -> AsyncIterator[CommandSourceHit]:
+        """Hunt for a given search value amongst all of the command sources.
+
+        Args:
+            search_value: The value to search for.
+
+        Yields:
+            The hits made amongst the registered command sources.
+        """
+        commands = Queue[CommandSourceHit]()
+        searches = [
+            create_task(cls._consume(source().hunt_for(search_value), commands))
+            for source in cls._sources
+        ]
+        while any(not search.done() for search in searches):
+            try:
+                yield await wait_for(commands.get(), 0.1)
+            except TimeoutError:
+                pass
+            else:
+                commands.task_done()
+
     @work(exclusive=True)
     async def _gather_commands(self, search_value: str) -> None:
         """Gather up all of the commands that match the search value.
@@ -324,7 +248,7 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         """
         command_list = self.query_one(CommandList)
         self._show_busy = True
-        async for hit in TotallyFakeCommandSource().hunt_for(search_value):
+        async for hit in self._hunt_for(search_value):
             prompt = hit.match_text
             if hit.command_help:
                 prompt = Table.grid(expand=True)
