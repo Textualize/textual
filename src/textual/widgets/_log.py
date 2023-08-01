@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Iterable, Optional
 from rich.cells import cell_len
 from rich.highlighter import ReprHighlighter
 from rich.segment import Segment
+from rich.style import Style
 from rich.text import Text
 
 from .. import work
@@ -160,29 +161,27 @@ class Log(ScrollView, can_focus=True):
         return strip
 
     def _render_line(self, y: int, scroll_x: int, width: int) -> Strip:
+        rich_style = self.rich_style
         if y >= len(self.lines):
-            return Strip.blank(width, self.rich_style)
+            return Strip.blank(width, rich_style)
 
-        line = self._render_line_strip(y)
-        self._width = max(line.cell_length, self._width)
-        self.virtual_size = Size(self._width, len(self.lines))
-        line = line.adjust_cell_length(max(self._width, width), self.rich_style).crop(
+        line = self._render_line_strip(y, rich_style)
+
+        line = line.adjust_cell_length(self._width, rich_style).crop(
             scroll_x, scroll_x + width
         )
         return line
 
-    def _render_line_strip(self, y: int) -> Strip:
+    def _render_line_strip(self, y: int, rich_style: Style) -> Strip:
         if y in self._render_line_cache:
             return self._render_line_cache[y]
 
         _line = _sub_escape("�", self.lines[y].expandtabs())
 
         if self.highlight:
-            line_text = self.highlighter(
-                Text(_line, style=self.rich_style, no_wrap=True)
-            )
+            line_text = self.highlighter(Text(_line, style=rich_style, no_wrap=True))
             line = Strip(line_text.render(self.app.console))
         else:
-            line = Strip([Segment(_line, self.rich_style)])
+            line = Strip([Segment(_line, rich_style)])
         self._render_line_cache[y] = line
         return line
