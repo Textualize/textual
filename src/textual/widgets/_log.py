@@ -167,7 +167,7 @@ class Log(ScrollView, can_focus=True):
 
         line = self._render_line_strip(y, rich_style)
 
-        line = line.adjust_cell_length(self._width, rich_style).crop(
+        line = line.adjust_cell_length(self._width or self.size.width, rich_style).crop(
             scroll_x, scroll_x + width
         )
         return line
