@@ -15,6 +15,7 @@ from . import on, work
 from ._fuzzy import Matcher
 from .app import ComposeResult
 from .binding import Binding
+from .css.query import NoMatches
 from .reactive import var
 from .screen import ModalScreen
 from .widgets import Input, LoadingIndicator, OptionList
@@ -258,11 +259,6 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
     CommandPalette LoadingIndicator {
         height: auto;
         width: 90%;
-        visibility: hidden;
-    }
-
-    CommandPalette LoadingIndicator.--visible {
-        visibility: visible;
     }
     """
 
@@ -288,7 +284,6 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         """Compose the command palette."""
         yield CommandInput(placeholder=self.placeholder)
         yield CommandList()
-        yield LoadingIndicator()
 
     def _watch_placeholder(self) -> None:
         """Pass the new placeholder text down to the `CommandInput`."""
@@ -300,9 +295,22 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         if not self._list_visible:
             self._show_busy = False
 
-    def _watch__show_busy(self) -> None:
-        """React to the show busy flag being toggled."""
-        self.query_one(LoadingIndicator).set_class(self._show_busy, "--visible")
+    async def _watch__show_busy(self) -> None:
+        """React to the show busy flag being toggled.
+
+        This watcher adds or removes a busy indication depending on the
+        flag's state.
+        """
+        # First off, figure out if there's an indicator in the DOM.
+        try:
+            indicator = self.query_one(LoadingIndicator)
+        except NoMatches:
+            indicator = None
+        # Now react to the flag, using the above knowledge to decide what to do.
+        if self._show_busy and indicator is None:
+            await self.mount(LoadingIndicator(), after=self.query_one(CommandList))
+        elif indicator is not None:
+            await indicator.remove()
 
     @work(exclusive=True)
     async def _gather_commands(self, search_value: str) -> None:
