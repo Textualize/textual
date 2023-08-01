@@ -11,6 +11,7 @@ from ._label import Label as Label
 from ._list_item import ListItem as ListItem
 from ._list_view import ListView as ListView
 from ._loading_indicator import LoadingIndicator as LoadingIndicator
+from ._log import Log
 from ._markdown import Markdown as Markdown
 from ._markdown import MarkdownViewer as MarkdownViewer
 from ._option_list import OptionList as OptionList
