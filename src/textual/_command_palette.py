@@ -53,7 +53,7 @@ class CommandSource(ABC):
             user_input: The user input to be matched.
 
         Yields:
-            Instances of [CommandSourceHit][`CommandSourceHut`].
+            Instances of [CommandSourceHit][`CommandSourceHit`].
         """
         raise NotImplemented
 
