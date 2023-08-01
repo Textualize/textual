@@ -19,7 +19,7 @@ from .widgets.option_list import Option
 
 
 class CommandSourceHit(NamedTuple):
-    """Holds the details of a single hit."""
+    """Holds the details of a single command search hit."""
 
     match_value: float
     """The match value of the command hit."""
@@ -28,14 +28,18 @@ class CommandSourceHit(NamedTuple):
     """The [rich.text.Text][`Text`] representation of the hit."""
 
     command_text: str
-    """The command text associated with the hit."""
+    """The command text associated with the hit, as plain text."""
 
-    command_help: str = ""
+    command_help: str | None = None
     """Optional help text for the command."""
 
 
 class CommandSource(ABC):
-    """Base class for command palette command sources."""
+    """Base class for command palette command sources.
+
+    To create a source of commands inherit from this class and implement
+    [CommandSource.hunt_for][`hunt_for`].
+    """
 
     @abstractmethod
     async def hunt_for(self, user_input: str) -> AsyncIterator[CommandSourceHit]:
@@ -43,6 +47,9 @@ class CommandSource(ABC):
 
         Args:
             user_input: The user input to be matched.
+
+        Yields:
+            Instances of [CommandSourceHit][`CommandSourceHut`].
         """
         raise NotImplemented
 
